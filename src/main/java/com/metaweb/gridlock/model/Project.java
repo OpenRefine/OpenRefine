@@ -1,12 +1,12 @@
-package com.metaweb.gridlock;
+package com.metaweb.gridlock.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.metaweb.gridlock.model.ColumnModel;
-import com.metaweb.gridlock.model.Row;
-
-public class Project {
+public class Project implements Serializable {
+	private static final long serialVersionUID = -5089046824819472570L;
+	
 	public long id;
 	public ColumnModel columnModel = new ColumnModel();
 	public List<Row> rows = new ArrayList<Row>();

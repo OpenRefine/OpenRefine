@@ -2,7 +2,7 @@
  * Created on Dec 1, 2005
  * Created by dfhuynh
  */
-package com.metaweb.gridlock;
+package com.metaweb.gridlock.util;
 
 import java.io.IOException;
 import java.io.Writer;

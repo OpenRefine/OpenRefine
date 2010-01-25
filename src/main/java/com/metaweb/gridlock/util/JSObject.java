@@ -1,4 +1,4 @@
-package com.metaweb.gridlock;
+package com.metaweb.gridlock.util;
 
 import java.io.IOException;
 import java.util.Collection;

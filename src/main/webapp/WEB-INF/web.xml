@@ -13,6 +13,6 @@
 
     <servlet-mapping>
         <servlet-name>Gridlock</servlet-name>
-        <url-pattern>/gridlock</url-pattern>
+        <url-pattern>/command/*</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -1,0 +1,32 @@
+html {
+    font-size: 62.5%;
+    font-family: Tahoma, Helvetica, Arial, sans-serif;
+}
+
+body {
+    font-size: 120%;
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    font-size: inherit;
+}
+
+tr, td {
+    vertical-align: top;
+}
+
+#header {
+    padding: 10px 20px;
+    background: #eee;
+}
+
+#header h1 {
+    margin: 0;
+}
+
+#body {
+    padding: 20px;
+}
+
