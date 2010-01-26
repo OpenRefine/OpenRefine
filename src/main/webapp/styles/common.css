@@ -65,12 +65,27 @@ a.inaction {
     border: 1px solid #ddd;
 }
 
+.menu-container hr {
+    height: 1px;
+    border: none;
+    border-top: 1px solid #ccc;
+    padding: 0px;
+    margin: 2px 0px;
+}
+
 a.menu-item {
     display: block;
-    padding: 2px 5px;
+    padding: 5px 7px;
     text-decoration: none;
+    color: black;
+    white-space: pre;
 }
 
 a.menu-item:hover {
-    background: #dddddd;
+    color: #44a;
+    background: #eee;
+}
+
+a.menu-item img {
+    border: none;
 }

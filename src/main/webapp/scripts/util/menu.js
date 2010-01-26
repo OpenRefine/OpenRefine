@@ -21,19 +21,20 @@ MenuSystem.showMenu = function(elmt) {
     
     var level = MenuSystem._layers.length;
     
-    elmt.mouseout(function() { MenuSystem._dismissUtil(level); });
     elmt.click(MenuSystem.dismissAll);
+    
+    return level;
 };
 
 MenuSystem.dismissAll = function() {
-    MenuSystem._dismissUtil(0);
+    MenuSystem.dismissUntil(0);
     if (MenuSystem._overlay != null) {
         MenuSystem._overlay.remove();
         MenuSystem._overlay = null;
     }
 };
 
-MenuSystem._dismissUtil = function(level) {
+MenuSystem.dismissUntil = function(level) {
     for (var i = MenuSystem._layers.length - 1; i >= level; i--) {
         MenuSystem._layers[i].elmt.remove();
     }
@@ -58,4 +59,39 @@ MenuSystem.positionMenuLeftRight = function(menu, elmt) {
     var offset = elmt.offset();
     menu.css("top", offset.top + "px")
         .css("left", (offset.left + elmt.width()) + "px");
+};
+
+MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
+    options = options || {
+        horizontal: false
+    };
+    
+    var menu = MenuSystem.createMenu();
+    var createMenuItem = function(item) {
+        if ("label" in item) {
+            var menuItem = MenuSystem.createMenuItem().appendTo(menu);
+            if ("submenu" in item) {
+                menuItem.html('<table width="100%" cellspacing="0" cellpadding="0"><tr><td>' + item.label + '</td><td width="1%"><img src="/images/right-arrow.png" /></td></tr></table>');
+                menuItem.mouseover(function() {
+                    MenuSystem.dismissUntil(level);
+                    MenuSystem.createAndShowStandardMenu(item.submenu, this, { horizontal: true });
+                });
+            } else {
+                menuItem.html(item.label).click(item.click);
+            }
+        } else {
+            $('<hr />').appendTo(menu);
+        }
+    };
+    
+    for (var i = 0; i < items.length; i++) {
+        createMenuItem(items[i]);
+    }
+    
+    var level = MenuSystem.showMenu(menu);
+    if (options.horizontal) {
+        MenuSystem.positionMenuLeftRight(menu, $(elmt));
+    } else {
+        MenuSystem.positionMenuAboveBelow(menu, $(elmt));
+    }
 };
