@@ -1,0 +1,17 @@
+table.data-table td {
+    padding: 2px 5px;
+}
+
+table.data-table tr.odd {
+}
+
+table.data-table tr.even {
+    background: #eee;
+}
+
+.viewPanel-summary {
+}
+.viewPanel-pagingControls {
+    text-align: center;
+    margin: 1em 0;
+}

@@ -30,3 +30,17 @@ tr, td {
     padding: 20px;
 }
 
+a.action {
+    margin: 0 3px;
+    text-decoration: none;
+    color: #448;
+}
+a.action:hover {
+    color: #88f;
+}
+
+a.inaction {
+    margin: 0 3px;
+    text-decoration: none;
+    color: #ccc;
+}

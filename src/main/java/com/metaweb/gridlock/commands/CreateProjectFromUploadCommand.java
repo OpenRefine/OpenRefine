@@ -23,8 +23,8 @@ public class CreateProjectFromUploadCommand extends Command {
 		String content = readFileUpload(request, properties);
 		
 		ProjectMetadata pm = new ProjectMetadata();
-		pm.name = properties.getProperty("name");
-		pm.password = properties.getProperty("password");
+		pm.name = properties.getProperty("project-name");
+		pm.password = properties.getProperty("project-password");
 		
 		Project project = ProjectManager.singleton.createProject(pm);
 		
@@ -49,14 +49,14 @@ public class CreateProjectFromUploadCommand extends Command {
 				if (tab >= 0) {
 					sep = "\t";
 				} else {
-					sep = "\\,";
+					sep = ",";
 				}
 			}
 			
-			String[] cells = line.split(sep);
 			if (first) {
-				first = false;
+				String[] cells = line.split(sep);
 				
+				first = false;
 				for (int c = 0; c < cells.length; c++) {
 					String cell = cells[c];
 					if (cell.startsWith("\"") && cell.endsWith("\"")) {
@@ -74,13 +74,10 @@ public class CreateProjectFromUploadCommand extends Command {
 			} else {
 				Row row = new Row(cellCount);
 				
-				for (int c = 0; c < cells.length; c++) {
-					String text = cells[c];
-					
-					Cell cell = new Cell();
-					cell.value = parseCellValue(text);
-					
-					row.cells.add(cell);
+				if (sep.charAt(0) == ',') {
+					parseCSVIntoRow(row, line);
+				} else {
+					parseTSVIntoRow(row, line);
 				}
 				
 				project.rows.add(row);
@@ -90,21 +87,66 @@ public class CreateProjectFromUploadCommand extends Command {
 		redirect(response, "/project.html?project=" + project.id);
 	}
 	
-	static public Object parseCellValue(String text) {
-		if (text.startsWith("\"") && text.endsWith("\"")) {
-			return text.substring(1, text.length() - 1);
+	static protected void parseTSVIntoRow(Row row, String line) {
+		String[] cells = line.split("\t");
+		for (int c = 0; c < cells.length; c++) {
+			String text = cells[c];
+			
+			Cell cell = new Cell();
+			cell.value = parseCellValue(text);
+			
+			row.cells.add(cell);
 		}
-		
-		try {
-			return Long.parseLong(text);
-		} catch (NumberFormatException e) {
-		}
+	}
 	
-		try {
-			return Double.parseDouble(text);
-		} catch (NumberFormatException e) {
+	static protected void parseCSVIntoRow(Row row, String line) {
+		int start = 0;
+		while (start < line.length()) {
+			String text = null;
+			
+			if (line.charAt(start) == '"') {
+				int next = line.indexOf('"', start + 1);
+				if (next < 0) {
+					text = line.substring(start);
+					start = line.length();
+				} else {
+					text = line.substring(start, next + 1);
+					start = next + 2;
+				}
+			} else {
+				int next = line.indexOf(',', start);
+				if (next < 0) {
+					text = line.substring(start);
+					start = line.length();
+				} else {
+					text = line.substring(start, next);
+					start = next + 1;
+				}
+			}
+			
+			Cell cell = new Cell();
+			cell.value = parseCellValue(text);
+			
+			row.cells.add(cell);
 		}
+	}
+	
+	static public Object parseCellValue(String text) {
+		if (text.length() > 0) {
+			if (text.length() > 1 && text.startsWith("\"") && text.endsWith("\"")) {
+				return text.substring(1, text.length() - 1);
+			}
+			
+			try {
+				return Long.parseLong(text);
+			} catch (NumberFormatException e) {
+			}
 		
+			try {
+				return Double.parseDouble(text);
+			} catch (NumberFormatException e) {
+			}
+		}
 		return text;
 	}
 }

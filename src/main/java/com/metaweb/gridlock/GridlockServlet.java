@@ -17,6 +17,7 @@ import org.json.JSONTokener;
 import com.metaweb.gridlock.commands.Command;
 import com.metaweb.gridlock.commands.CreateProjectFromUploadCommand;
 import com.metaweb.gridlock.commands.GetColumnModelCommand;
+import com.metaweb.gridlock.commands.GetProjectMetadataCommand;
 import com.metaweb.gridlock.commands.GetRowsCommand;
 
 public class GridlockServlet extends HttpServlet {
@@ -26,6 +27,7 @@ public class GridlockServlet extends HttpServlet {
 	
 	static {
 		_commands.put("create-project-from-upload", new CreateProjectFromUploadCommand());
+		_commands.put("get-project-metadata", new GetProjectMetadataCommand());
 		_commands.put("get-column-model", new GetColumnModelCommand());
 		_commands.put("get-rows", new GetRowsCommand());
 	}

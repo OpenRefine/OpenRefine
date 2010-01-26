@@ -16,7 +16,7 @@ public class ProjectManager implements Serializable {
 	private static final long serialVersionUID = -2967415873336723962L;
 	
 	protected File _dir;
-	protected Map<Long, ProjectMetadata> _projectsMetadata = new HashMap<Long, ProjectMetadata>();
+	protected Map<Long, ProjectMetadata> _projectsMetadata;
 	
 	transient protected Map<Long, Project> _projects;
 	
@@ -67,6 +67,9 @@ public class ProjectManager implements Serializable {
 	private ProjectManager(File dir) {
 		_dir = dir;
 		_dir.mkdirs();
+		
+		_projectsMetadata = new HashMap<Long, ProjectMetadata>();
+		
 		internalInitialize();
 	}
 	
@@ -86,6 +89,10 @@ public class ProjectManager implements Serializable {
 		_projectsMetadata.put(project.id, projectMetadata);
 		
 		return project;
+	}
+	
+	public ProjectMetadata getProjectMetadata(long id) {
+		return _projectsMetadata.get(id);
 	}
 	
 	public Project getProject(long id) {

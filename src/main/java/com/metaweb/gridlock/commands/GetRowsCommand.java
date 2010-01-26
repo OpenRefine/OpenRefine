@@ -40,6 +40,7 @@ public class GetRowsCommand extends Command {
 			o.put("start", start);
 			o.put("limit", limit);
 			o.put("rows", a);
+			o.put("total", project.rows.size());
 		
 			respondJSON(response, o);
 		} catch (JSONException e) {
