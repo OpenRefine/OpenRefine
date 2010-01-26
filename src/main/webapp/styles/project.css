@@ -9,9 +9,23 @@ table.data-table tr.even {
     background: #eee;
 }
 
+table.data-table td.column-header {
+    background: #ddd;
+    cursor: pointer;
+    padding: 5px 5px;
+    border-bottom: 2px solid #aaa;
+}
+
+img.column-header-menu {
+    position: relative;
+    top: -7px;
+    right: -7px;
+}
+
 .viewPanel-summary {
 }
 .viewPanel-pagingControls {
     text-align: center;
     margin: 1em 0;
 }
+

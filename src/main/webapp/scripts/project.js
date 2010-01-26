@@ -93,12 +93,27 @@ function renderView() {
     
     var trHead = table.insertRow(0);
     var td = trHead.insertCell(trHead.cells.length);
+    var createColumnHeader = function(column, index) {
+        var td = trHead.insertCell(trHead.cells.length);
+        $(td).addClass("column-header");
+        
+        var headerTable = document.createElement("table");
+        $(headerTable).attr("cellspacing", "0").attr("cellpadding", "0").attr("width", "100%").appendTo(td);
+        
+        var headerTableRow = headerTable.insertRow(0);
+        var headerLeft = headerTableRow.insertCell(0);
+        var headerRight = headerTableRow.insertCell(1);
+        $(headerRight).attr("width", "1%");
+        
+        $('<span></span>').html(column.headerLabel).appendTo(headerLeft);
+        $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(headerRight).click(function() {
+            createMenuForColumnHeader(column, index, this);
+        });
+    };
         
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
-        var column = columns[i];
-        var td = trHead.insertCell(trHead.cells.length);
-        $(td).html(column.headerLabel);
+        createColumnHeader(columns[i], i);
     }
     
     var rows = theProject.rowModel.rows;
@@ -150,4 +165,13 @@ function onClickFirstPage() {
 
 function onClickLastPage() {
     showRows(Math.floor(theProject.rowModel.total / theProject.view.pageSize) * theProject.view.pageSize);
+}
+
+function createMenuForColumnHeader(column, index, elmt) {
+    var menu = MenuSystem.createMenu();
+    MenuSystem.createMenuItem().html("Reconcile").appendTo(menu);
+    
+    MenuSystem.showMenu(menu);
+    MenuSystem.positionMenuAboveBelow(menu, $(elmt));
+
 }
