@@ -16,9 +16,12 @@ import org.json.JSONTokener;
 
 import com.metaweb.gridlock.commands.Command;
 import com.metaweb.gridlock.commands.CreateProjectFromUploadCommand;
+import com.metaweb.gridlock.commands.DoTextTransformCommand;
 import com.metaweb.gridlock.commands.GetColumnModelCommand;
+import com.metaweb.gridlock.commands.GetHistoryCommand;
 import com.metaweb.gridlock.commands.GetProjectMetadataCommand;
 import com.metaweb.gridlock.commands.GetRowsCommand;
+import com.metaweb.gridlock.commands.UndoRedoCommand;
 
 public class GridlockServlet extends HttpServlet {
 	private static final long serialVersionUID = 2386057901503517403L;
@@ -30,6 +33,9 @@ public class GridlockServlet extends HttpServlet {
 		_commands.put("get-project-metadata", new GetProjectMetadataCommand());
 		_commands.put("get-column-model", new GetColumnModelCommand());
 		_commands.put("get-rows", new GetRowsCommand());
+		_commands.put("get-history", new GetHistoryCommand());
+		_commands.put("undo-redo", new UndoRedoCommand());
+		_commands.put("do-text-transform", new DoTextTransformCommand());
 	}
 
 	@Override

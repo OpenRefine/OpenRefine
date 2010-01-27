@@ -3,6 +3,7 @@ package com.metaweb.gridlock.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,12 +19,12 @@ public class Row implements Serializable {
 		cells = new ArrayList<Cell>(cellCount);
 	}
 	
-	public JSONObject getJSON() throws JSONException {
+	public JSONObject getJSON(Properties options) throws JSONException {
 		JSONObject o = new JSONObject();
 		
 		List<JSONObject> a = new ArrayList<JSONObject>(cells.size());
 		for (Cell cell : cells) {
-			a.add(cell.getJSON());
+			a.add(cell.getJSON(options));
 		}
 		o.put("cells", a);
 		o.put("flagged", flagged);

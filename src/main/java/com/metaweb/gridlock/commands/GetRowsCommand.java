@@ -3,6 +3,7 @@ package com.metaweb.gridlock.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.metaweb.gridlock.model.Column;
 import com.metaweb.gridlock.model.Project;
 import com.metaweb.gridlock.model.Row;
 
@@ -23,6 +23,7 @@ public class GetRowsCommand extends Command {
 		Project project = getProject(request);
 		int start = Math.min(project.rows.size(), Math.max(0, getIntegerParameter(request, "start", 0)));
 		int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
+		Properties options = new Properties();
 		
 		try {
 			JSONObject o = new JSONObject();
@@ -32,7 +33,7 @@ public class GetRowsCommand extends Command {
 				for (int r = start; r < start + limit && r < project.rows.size(); r++) {
 					Row row = project.rows.get(r);
 					
-					a.add(row.getJSON());
+					a.add(row.getJSON(options));
 				}
 			} catch (JSONException e) {
 				respondException(response, e);

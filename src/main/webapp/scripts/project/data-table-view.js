@@ -218,20 +218,25 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
             submenu: [
                 {
                     label: "To Titlecase",
-                    click: function() {}
+                    click: function() { self._doTextTransform(column, "toTitlecase(this.value)"); }
                 },
                 {
                     label: "To Uppercase",
-                    click: function() {}
+                    click: function() { self._doTextTransform(column, "toUppercase(this.value)"); }
                 },
                 {
                     label: "To Lowercase",
-                    click: function() {}
+                    click: function() { self._doTextTransform(column, "toLowercase(this.value)"); }
                 },
                 {},
                 {
-                    label: "Find &amp; Replace ...",
-                    click: function() {}
+                    label: "Custom Expression ...",
+                    click: function() {
+                        var expression = window.prompt("Enter expression", 'replace(this.value,"","")');
+                        if (expression != null) {
+                            self._doTextTransform(column, expression);
+                        }
+                    }
                 }
             ]
         },
@@ -250,4 +255,25 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
             ]
         }
     ], elmt);
+};
+
+DataTableView.prototype._doTextTransform = function(column, expression) {
+    var self = this;
+    $.post(
+        "/command/do-text-transform?" + $.param({ project: theProject.id, cell: column.cellIndex, expression: expression }), 
+        null,
+        function(data) {
+            if (data.code == "ok") {
+                self.update();
+                ui.historyWidget.update();
+            } else {
+                // update process UI
+            }
+        },
+        "json"
+    );
+};
+
+DataTableView.prototype.update = function() {
+    this._showRows(theProject.rowModel.start);
 };

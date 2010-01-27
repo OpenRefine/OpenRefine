@@ -54,6 +54,8 @@ function initializeUI() {
     
     ui.viewPanel = $('<div></div>').appendTo(tdLeft).css("width", tdLeft.offsetWidth + "px").css("overflow-x", "auto");
     ui.facetPanel = $('<div></div>').appendTo(tdRight);
+    ui.historyPanel = $('<div></div>').addClass("history-panel").appendTo(document.body);
     
     ui.dataTableView = new DataTableView(ui.viewPanel);
+    ui.historyWidget = new HistoryWidget(ui.historyPanel);
 }

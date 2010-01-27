@@ -1,6 +1,7 @@
 package com.metaweb.gridlock.model;
 
 import java.io.Serializable;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +13,7 @@ public class Column implements Serializable {
 	public String	headerLabel;
 	public Class 	valueType;
 	
-	public JSONObject getJSON() throws JSONException {
+	public JSONObject getJSON(Properties options) throws JSONException {
 		JSONObject o = new JSONObject();
 		
 		o.put("cellIndex", cellIndex);

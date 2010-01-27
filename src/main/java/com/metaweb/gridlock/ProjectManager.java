@@ -82,6 +82,10 @@ public class ProjectManager implements Serializable {
 		_projects = new HashMap<Long, Project>();
 	}
 	
+	public File getDataDir() {
+		return _dir;
+	}
+	
 	public Project createProject(ProjectMetadata projectMetadata) {
 		Project project = new Project();
 		

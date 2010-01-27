@@ -11,7 +11,7 @@ import org.json.JSONException;
 
 import com.metaweb.gridlock.model.Project;
 
-public class GetColumnModelCommand extends Command {
+public class GetHistoryCommand extends Command {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -20,7 +20,7 @@ public class GetColumnModelCommand extends Command {
 		Properties options = new Properties();
 		
 		try {
-			respondJSON(response, project.columnModel.getJSON(options));
+			respondJSON(response, project.history.getJSON(options));
 		} catch (JSONException e) {
 			respondException(response, e);
 		}

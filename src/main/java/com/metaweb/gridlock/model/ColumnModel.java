@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,12 +14,12 @@ public class ColumnModel implements Serializable {
 	
 	public List<Column> columns = new LinkedList<Column>();
 	
-	public JSONObject getJSON() throws JSONException {
+	public JSONObject getJSON(Properties options) throws JSONException {
 		JSONObject o = new JSONObject();
 		
 		List<JSONObject> a = new ArrayList<JSONObject>(columns.size());
 		for (Column column : columns) {
-			a.add(column.getJSON());
+			a.add(column.getJSON(options));
 		}
 		o.put("columns", a);
 		
