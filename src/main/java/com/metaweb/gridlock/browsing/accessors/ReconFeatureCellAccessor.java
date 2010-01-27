@@ -10,7 +10,7 @@ public class ReconFeatureCellAccessor implements CellAccessor {
 	}
 	
 	@Override
-	public Object[] get(Cell cell) {
+	public Object[] get(Cell cell, boolean decorated) {
 		if (cell.recon != null) {
 			return new Object[] { cell.recon.features.get(_name) };
 		}

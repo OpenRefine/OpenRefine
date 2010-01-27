@@ -218,21 +218,21 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
             submenu: [
                 {
                     label: "To Titlecase",
-                    click: function() { self._doTextTransform(column, "toTitlecase(this.value)"); }
+                    click: function() { self._doTextTransform(column, "toTitlecase(value)"); }
                 },
                 {
                     label: "To Uppercase",
-                    click: function() { self._doTextTransform(column, "toUppercase(this.value)"); }
+                    click: function() { self._doTextTransform(column, "toUppercase(value)"); }
                 },
                 {
                     label: "To Lowercase",
-                    click: function() { self._doTextTransform(column, "toLowercase(this.value)"); }
+                    click: function() { self._doTextTransform(column, "toLowercase(value)"); }
                 },
                 {},
                 {
                     label: "Custom Expression ...",
                     click: function() {
-                        var expression = window.prompt("Enter expression", 'replace(this.value,"","")');
+                        var expression = window.prompt("Enter expression", 'replace(value, "", "")');
                         if (expression != null) {
                             self._doTextTransform(column, expression);
                         }

@@ -20,4 +20,8 @@ public class FieldAccessorExpr implements Evaluable {
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return _inner.toString() + "." + _fieldName;
+	}
 }

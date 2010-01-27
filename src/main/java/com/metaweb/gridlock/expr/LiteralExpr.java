@@ -2,6 +2,8 @@ package com.metaweb.gridlock.expr;
 
 import java.util.Properties;
 
+import org.json.JSONObject;
+
 public class LiteralExpr implements Evaluable {
 	final protected Object _value;
 	
@@ -14,4 +16,8 @@ public class LiteralExpr implements Evaluable {
 		return _value;
 	}
 
+	@Override
+	public String toString() {
+		return _value instanceof String ? JSONObject.quote((String) _value) : _value.toString();
+	}
 }

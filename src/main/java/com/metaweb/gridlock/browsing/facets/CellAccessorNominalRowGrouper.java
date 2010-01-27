@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.metaweb.gridlock.browsing.RowVisitor;
 import com.metaweb.gridlock.browsing.accessors.CellAccessor;
+import com.metaweb.gridlock.browsing.accessors.DecoratedValue;
 import com.metaweb.gridlock.model.Cell;
 import com.metaweb.gridlock.model.Row;
 
@@ -12,7 +13,7 @@ public class CellAccessorNominalRowGrouper implements RowVisitor {
 	final protected CellAccessor 	_accessor;
 	final protected int 			_cellIndex;
 	
-	final public Map<Object, NominalFacetChoice> groups = new HashMap<Object, NominalFacetChoice>();
+	final public Map<Object, NominalFacetChoice> choices = new HashMap<Object, NominalFacetChoice>();
 	
 	public CellAccessorNominalRowGrouper(CellAccessor accessor, int cellIndex) {
 		_accessor = accessor;
@@ -24,18 +25,23 @@ public class CellAccessorNominalRowGrouper implements RowVisitor {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {
-				Object[] values = _accessor.get(cell);
+				Object[] values = _accessor.get(cell, true);
 				if (values != null && values.length > 0) {
-					for (Object v : values) {
-						if (v != null) {
-							if (groups.containsKey(v)) {
-								groups.get(v).count++;
+					for (Object value : values) {
+						if (value != null) {
+							DecoratedValue dValue = 
+								value instanceof DecoratedValue ?
+									(DecoratedValue) value : 
+									new DecoratedValue(value, value.toString());
+							
+							Object v = dValue.value;
+							if (choices.containsKey(value)) {
+								choices.get(value).count++;
 							} else {
-								NominalFacetChoice group = new NominalFacetChoice();
-								group.value = v;
-								group.count = 1;
+								NominalFacetChoice choice = new NominalFacetChoice(dValue, v);
+								choice.count = 1;
 								
-								groups.put(v, group);
+								choices.put(v, choice);
 							}
 						}
 					}

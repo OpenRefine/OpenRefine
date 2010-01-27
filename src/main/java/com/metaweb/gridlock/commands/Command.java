@@ -5,7 +5,9 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -68,12 +70,28 @@ public abstract class Command {
     }
     
     protected void respondJSON(HttpServletResponse response, JSONObject o) throws IOException {
+    	response.setHeader("Content-Type", "application/json");
     	respond(response, o.toString());
     }
     
     protected void respondException(HttpServletResponse response, Exception e) throws IOException {
-    	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-   		e.printStackTrace(response.getWriter());
+    	try {
+        	JSONObject o = new JSONObject();
+        	o.put("code", "error");
+			o.put("message", e.getMessage());
+			
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			pw.flush();
+			sw.flush();
+			
+			o.put("stack", sw.toString());
+			
+			respondJSON(response, o);
+		} catch (JSONException e1) {
+	   		e.printStackTrace(response.getWriter());
+		}
     }
     
     protected void redirect(HttpServletResponse response, String url) throws IOException {

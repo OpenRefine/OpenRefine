@@ -20,4 +20,17 @@ public class FunctionCallExpr implements Evaluable {
 		return _function.call(bindings, args);
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		
+		for (Evaluable ev : _args) {
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append(ev.toString());
+		}
+		
+		return _function.getClass().getSimpleName() + "(" + sb.toString() + ")";
+	}
 }

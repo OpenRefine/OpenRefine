@@ -20,7 +20,7 @@ public class CellAccessorEqualRowFilter implements RowFilter {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {
-				Object[] values = _accessor.get(cell);
+				Object[] values = _accessor.get(cell, false);
 				if (values != null && values.length > 0) {
 					for (Object v : values) {
 						for (Object match : _matches) {
