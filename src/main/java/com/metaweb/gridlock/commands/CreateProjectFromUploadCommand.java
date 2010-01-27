@@ -74,20 +74,18 @@ public class CreateProjectFromUploadCommand extends Command {
 			} else {
 				Row row = new Row(cellCount);
 				
-				if (sep.charAt(0) == ',') {
-					parseCSVIntoRow(row, line);
-				} else {
-					parseTSVIntoRow(row, line);
+				if ((sep.charAt(0) == ',') ? parseCSVIntoRow(row, line) : parseTSVIntoRow(row, line)) {
+					project.rows.add(row);
 				}
-				
-				project.rows.add(row);
 			}
 		}
 		
 		redirect(response, "/project.html?project=" + project.id);
 	}
 	
-	static protected void parseTSVIntoRow(Row row, String line) {
+	static protected boolean parseTSVIntoRow(Row row, String line) {
+		boolean hasData = false;
+		
 		String[] cells = line.split("\t");
 		for (int c = 0; c < cells.length; c++) {
 			String text = cells[c];
@@ -96,10 +94,17 @@ public class CreateProjectFromUploadCommand extends Command {
 			cell.value = parseCellValue(text);
 			
 			row.cells.add(cell);
+			
+			if (text.length() > 0) {
+				hasData = true;
+			}
 		}
+		return hasData;
 	}
 	
-	static protected void parseCSVIntoRow(Row row, String line) {
+	static protected boolean parseCSVIntoRow(Row row, String line) {
+		boolean hasData = false;
+		
 		int start = 0;
 		while (start < line.length()) {
 			String text = null;
@@ -128,7 +133,13 @@ public class CreateProjectFromUploadCommand extends Command {
 			cell.value = parseCellValue(text);
 			
 			row.cells.add(cell);
+			
+			if (text.length() > 0) {
+				hasData = true;
+			}
 		}
+		
+		return hasData;
 	}
 	
 	static public Object parseCellValue(String text) {
