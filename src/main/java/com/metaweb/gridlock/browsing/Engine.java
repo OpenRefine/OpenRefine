@@ -11,9 +11,15 @@ import org.json.JSONObject;
 
 import com.metaweb.gridlock.browsing.facets.Facet;
 import com.metaweb.gridlock.browsing.facets.ListFacet;
+import com.metaweb.gridlock.model.Project;
 
 public class Engine {
-	protected List<Facet> facets = new LinkedList<Facet>();
+	protected Project 		_project;
+	protected List<Facet> 	_facets = new LinkedList<Facet>();
+	
+	public Engine(Project project) {
+		_project  = project;
+	}
 	
 	public FilteredRows getAllFilteredRows() {
 		return getFilteredRows(null);
@@ -21,7 +27,7 @@ public class Engine {
 
 	public FilteredRows getFilteredRows(Facet except) {
 		ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows();
-		for (Facet facet : facets) {
+		for (Facet facet : _facets) {
 			if (facet != except) {
 				cfr.add(facet.getRowFilter());
 			}
@@ -32,8 +38,8 @@ public class Engine {
 	public JSONObject getJSON(Properties options) throws JSONException {
 		JSONObject o = new JSONObject();
 		
-		List<JSONObject> a = new ArrayList<JSONObject>(facets.size());
-		for (Facet facet : facets) {
+		List<JSONObject> a = new ArrayList<JSONObject>(_facets.size());
+		for (Facet facet : _facets) {
 			a.add(facet.getJSON(options));
 		}
 		o.put("facets", a);
@@ -41,7 +47,7 @@ public class Engine {
 		return o;
 	}
 
-	public void initializeFromJSON(JSONObject o) throws JSONException {
+	public void initializeFromJSON(JSONObject o) throws Exception {
 		JSONArray a = o.getJSONArray("facets");
 		int length = a.length();
 		
@@ -56,16 +62,16 @@ public class Engine {
 			
 			if (facet != null) {
 				facet.initializeFromJSON(fo);
-				facets.add(facet);
+				_facets.add(facet);
 			}
 		}
 	}
 	
 	public void computeFacets() throws JSONException {
-		for (Facet facet : facets) {
+		for (Facet facet : _facets) {
 			FilteredRows filteredRows = getFilteredRows(facet);
 			
-			facet.computeChoices(filteredRows);
+			facet.computeChoices(_project, filteredRows);
 		}
 	}
 }

@@ -21,7 +21,7 @@ public class CellAccessorNominalRowGrouper implements RowVisitor {
 	}
 	
 	@Override
-	public void visit(Row row) {
+	public void visit(int rowIndex, Row row) {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {
@@ -35,10 +35,10 @@ public class CellAccessorNominalRowGrouper implements RowVisitor {
 									new DecoratedValue(value, value.toString());
 							
 							Object v = dValue.value;
-							if (choices.containsKey(value)) {
-								choices.get(value).count++;
+							if (choices.containsKey(v)) {
+								choices.get(v).count++;
 							} else {
-								NominalFacetChoice choice = new NominalFacetChoice(dValue, v);
+								NominalFacetChoice choice = new NominalFacetChoice(dValue);
 								choice.count = 1;
 								
 								choices.put(v, choice);

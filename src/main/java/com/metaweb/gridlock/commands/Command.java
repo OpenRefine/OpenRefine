@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import com.metaweb.gridlock.ProjectManager;
+import com.metaweb.gridlock.browsing.Engine;
 import com.metaweb.gridlock.model.Project;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -149,5 +150,19 @@ public abstract class Command {
     	JSONTokener t = new JSONTokener(s);
     	JSONObject o = (JSONObject) t.nextValue();
     	return o;
+    }
+    
+    protected Engine getEngine(HttpServletRequest request, Project project) throws Exception {
+		Properties properties = new Properties();
+		readFileUpload(request, properties);
+
+		Engine engine = new Engine(project);
+		if (properties.containsKey("engine")) {
+			String json = properties.getProperty("engine");
+			JSONObject o = jsonStringToObject(json);
+			
+			engine.initializeFromJSON(o);
+		}
+		return engine;
     }
 }

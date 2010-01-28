@@ -16,7 +16,9 @@ public class ConjunctiveFilteredRows implements FilteredRows {
 	
 	@Override
 	public void accept(Project project, RowVisitor visitor) {
-		for (Row row : project.rows) {
+		for (int i = 0; i < project.rows.size(); i++) {
+			Row row = project.rows.get(i);
+			
 			boolean ok = true;
 			for (RowFilter rowFilter : _rowFilters) {
 				if (!rowFilter.filterRow(row)) {
@@ -26,7 +28,7 @@ public class ConjunctiveFilteredRows implements FilteredRows {
 			}
 			
 			if (ok) {
-				visitor.visit(row);
+				visitor.visit(i, row);
 			}
 		}
 	}

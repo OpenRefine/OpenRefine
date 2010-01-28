@@ -7,13 +7,14 @@ import org.json.JSONObject;
 
 import com.metaweb.gridlock.browsing.FilteredRows;
 import com.metaweb.gridlock.browsing.filters.RowFilter;
+import com.metaweb.gridlock.model.Project;
 
 public interface Facet {
 	public RowFilter getRowFilter();
 	
-	public void computeChoices(FilteredRows filteredRows);
+	public void computeChoices(Project project, FilteredRows filteredRows);
 	
 	public JSONObject getJSON(Properties options) throws JSONException;
 
-	public void initializeFromJSON(JSONObject o) throws JSONException;
+	public void initializeFromJSON(JSONObject o) throws Exception;
 }
