@@ -5,10 +5,7 @@ function onLoad() {
     var params = URL.getParameters();
     if ("project" in params) {
         theProject = {
-            id: parseInt(params.project),
-            view: {
-                pageSize: 25
-            }
+            id: parseInt(params.project)
         };
         
         Ajax.chainGetJSON(
@@ -22,10 +19,6 @@ function onLoad() {
                 for (var i = 0; i < theProject.columnModel.columns.length; i++) {
                     theProject.columnModel.columns[i].collapsed = false;
                 }
-            },
-            "/command/get-rows?" + $.param({ project: theProject.id, start: 0, limit: 25 }), null,
-            function(data) {
-                theProject.rowModel = data;
             },
             function() {
                 initializeUI();
@@ -56,6 +49,7 @@ function initializeUI() {
     ui.facetPanel = $('<div></div>').appendTo(tdRight);
     ui.historyPanel = $('<div></div>').addClass("history-panel").appendTo(document.body);
     
-    ui.dataTableView = new DataTableView(ui.viewPanel);
+    ui.browsingEngine = new BrowsingEngine(ui.facetPanel);
     ui.historyWidget = new HistoryWidget(ui.historyPanel);
+    ui.dataTableView = new DataTableView(ui.viewPanel);
 }

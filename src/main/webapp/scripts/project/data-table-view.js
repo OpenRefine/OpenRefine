@@ -1,6 +1,7 @@
 function DataTableView(div) {
     this._div = div;
-    this.render();
+    this._pageSize = 20;
+    this._showRows(0);
 }
 
 DataTableView.prototype.render = function() {
@@ -11,8 +12,8 @@ DataTableView.prototype.render = function() {
     $('<span>' + 
             (theProject.rowModel.start + 1) + " to " + 
             (theProject.rowModel.start + theProject.rowModel.limit) + " of " + 
-            (theProject.rowModel.total) + 
-            " rows total" + 
+            (theProject.rowModel.filtered) + " filtered rows, " +
+            (theProject.rowModel.total) + " total rows" + 
         '</span>'
     ).appendTo(divSummary);
     
@@ -88,7 +89,7 @@ DataTableView.prototype.render = function() {
         tr.className = (r % 2) == 1 ? "odd" : "even";
         
         var td = tr.insertCell(tr.cells.length);
-        $(td).html((theProject.rowModel.start + r + 1) + ".");
+        $(td).html((row.i + 1) + ".");
         
         for (var i = 0; i < columns.length; i++) {
             var column = columns[i];
@@ -107,29 +108,36 @@ DataTableView.prototype.render = function() {
 
 DataTableView.prototype._showRows = function(start, onDone) {
     var self = this;
-    Ajax.chainGetJSON(
-        "/command/get-rows?" + $.param({ project: theProject.id, start: start, limit: theProject.view.pageSize }), null,
+    
+    $.post(
+        "/command/get-rows?" + $.param({ project: theProject.id, start: start, limit: this._pageSize }),
+        { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
             theProject.rowModel = data;
             self.render();
-        }
+            
+            if (onDone) {
+                onDone();
+            }
+        },
+        "json"
     );
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
-    this._showRows(theProject.rowModel.start - theProject.view.pageSize);
+    this._showRows(theProject.rowModel.start - this._pageSize);
 };
 
 DataTableView.prototype._onClickNextPage = function(elmt, evt) {
-    this._showRows(theProject.rowModel.start + theProject.view.pageSize);
+    this._showRows(theProject.rowModel.start + this._pageSize);
 };
 
 DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
-    this._showRows(0, theProject.view.pageSize);
+    this._showRows(0);
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-    this._showRows(Math.floor(theProject.rowModel.total / theProject.view.pageSize) * theProject.view.pageSize);
+    this._showRows(Math.floor(theProject.rowModel.total / this._pageSize) * this._pageSize);
 };
 
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {

@@ -20,7 +20,7 @@ import com.metaweb.gridlock.model.Row;
 
 public class GetRowsCommand extends Command {
 	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
 		try {
@@ -47,9 +47,11 @@ public class GetRowsCommand extends Command {
 					}
 					
 					@Override
-					public void internalVisit(Row row) {
+					public void internalVisit(int rowIndex, Row row) {
 						try {
-							list.add(row.getJSON(options));
+							JSONObject ro = row.getJSON(options);
+							ro.put("i", rowIndex);
+							list.add(ro);
 						} catch (JSONException e) {
 						}
 					}
@@ -86,12 +88,12 @@ public class GetRowsCommand extends Command {
 		@Override
 		public void visit(int rowIndex, Row row) {
 			if (total >= start && total < start + limit) {
-				internalVisit(row);
+				internalVisit(rowIndex, row);
 			}
 			total++;
 		}
 		
-		protected void internalVisit(Row row) {
+		protected void internalVisit(int rowIndex, Row row) {
 		}
 	}
 }
