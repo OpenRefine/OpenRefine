@@ -33,38 +33,3 @@ img.column-header-menu {
     text-align: center;
     margin: 1em 0;
 }
-
-.history-panel {
-    position: absolute;
-    top: -1px;
-    right: 20px;
-    width: 200px;
-    padding: 2px;
-    background: white;
-    border: 1px solid #eee;
-    height: 200px;
-    overflow: auto;
-}
-.history-panel h3 {
-    margin: 0;
-    padding: 5px;
-    background: #fee;
-}
-.history-past {
-    padding-bottom: 3px;
-    border-bottom: 2px solid #aaa;
-}
-.history-future {
-    padding-top: 3px;
-}
-a.history-entry {
-    display: block;
-    padding: 3px 5px;
-    border-bottom: 1px solid #eee;
-    text-decoration: none;
-    color: black;
-}
-a.history-entry:hover {
-    background: #eee;
-    color: #a88;
-}

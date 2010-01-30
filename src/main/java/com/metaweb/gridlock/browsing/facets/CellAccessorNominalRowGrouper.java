@@ -21,7 +21,7 @@ public class CellAccessorNominalRowGrouper implements RowVisitor {
 	}
 	
 	@Override
-	public void visit(int rowIndex, Row row) {
+	public boolean visit(int rowIndex, Row row) {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {
@@ -48,5 +48,6 @@ public class CellAccessorNominalRowGrouper implements RowVisitor {
 				}
 			}
 		}
+		return false;
 	}
 }

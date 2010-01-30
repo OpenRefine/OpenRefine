@@ -8,8 +8,10 @@ import java.util.Map;
 import com.metaweb.gridlock.expr.Scanner.NumberToken;
 import com.metaweb.gridlock.expr.Scanner.Token;
 import com.metaweb.gridlock.expr.Scanner.TokenType;
+import com.metaweb.gridlock.expr.functions.Get;
 import com.metaweb.gridlock.expr.functions.Replace;
 import com.metaweb.gridlock.expr.functions.Slice;
+import com.metaweb.gridlock.expr.functions.Split;
 import com.metaweb.gridlock.expr.functions.ToLowercase;
 import com.metaweb.gridlock.expr.functions.ToTitlecase;
 import com.metaweb.gridlock.expr.functions.ToUppercase;
@@ -26,7 +28,9 @@ public class Parser {
 		functionTable.put("toTitlecase", new ToTitlecase());
 		functionTable.put("slice", new Slice());
 		functionTable.put("substring", new Slice());
+		functionTable.put("get", new Get());
 		functionTable.put("replace", new Replace());
+		functionTable.put("split", new Split());
 	}
 	
 	public Parser(String s) throws Exception {
@@ -196,7 +200,7 @@ public class Parser {
 				List<Evaluable> args = parseExpressionList("]");
 				args.add(0, eval);
 				
-				eval = new FunctionCallExpr(makeArray(args), functionTable.get("slice"));
+				eval = new FunctionCallExpr(makeArray(args), functionTable.get("get"));
 			} else {
 				break;
 			}

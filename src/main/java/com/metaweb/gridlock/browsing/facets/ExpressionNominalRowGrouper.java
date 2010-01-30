@@ -22,7 +22,7 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
 	}
 	
 	@Override
-	public void visit(int rowIndex, Row row) {
+	public boolean visit(int rowIndex, Row row) {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {
@@ -33,18 +33,30 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
 				
 				Object value = _evaluable.evaluate(bindings);
 				if (value != null) {
-					DecoratedValue dValue = new DecoratedValue(value, value.toString());
-					
-					if (choices.containsKey(value)) {
-						choices.get(value).count++;
+					if (value.getClass().isArray()) {
+						Object[] a = (Object[]) value;
+						for (Object v : a) {
+							processValue(v);
+						}
 					} else {
-						NominalFacetChoice choice = new NominalFacetChoice(dValue);
-						choice.count = 1;
-						
-						choices.put(value, choice);
+						processValue(value);
 					}
 				}
 			}
+		}
+		return false;
+	}
+	
+	protected void processValue(Object value) {
+		DecoratedValue dValue = new DecoratedValue(value, value.toString());
+		
+		if (choices.containsKey(value)) {
+			choices.get(value).count++;
+		} else {
+			NominalFacetChoice choice = new NominalFacetChoice(dValue);
+			choice.count = 1;
+			
+			choices.put(value, choice);
 		}
 	}
 }

@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import com.metaweb.gridlock.expr.Function;
 
-public class Slice implements Function {
+public class Get implements Function {
 
 	@Override
 	public Object call(Properties bindings, Object[] args) {
@@ -17,23 +17,27 @@ public class Slice implements Function {
 				if (v.getClass().isArray()) {
 					Object[] a = (Object[]) v;
 					int start = ((Number) from).intValue();
-					int end = to != null && to instanceof Number ? 
-							((Number) to).intValue() : a.length;
-								
 					if (start < 0) {
 						start = a.length + start;
 					}
 					start = Math.min(a.length, Math.max(0, start));
 					
-					if (end < 0) {
-						end = a.length - end;
+					if (to == null) {
+						return a[start];
+					} else {
+						int end = to != null && to instanceof Number ? 
+								((Number) to).intValue() : a.length;
+									
+						if (end < 0) {
+							end = a.length - end;
+						}
+						end = Math.min(a.length, Math.max(start, end));
+						
+						Object[] a2 = new Object[end - start];
+						System.arraycopy(a, start, a2, 0, end - start);
+						
+						return a2;
 					}
-					end = Math.min(a.length, Math.max(start, end));
-					
-					Object[] a2 = new Object[end - start];
-					System.arraycopy(a, start, a2, 0, end - start);
-					
-					return a2;
 				} else {
 					String s = (v instanceof String ? (String) v : v.toString());
 					
@@ -52,7 +56,7 @@ public class Slice implements Function {
 						
 						return s.substring(start, end);
 					} else {
-						return s.substring(start);
+						return s.substring(start, start + 1);
 					}
 				}
 			}

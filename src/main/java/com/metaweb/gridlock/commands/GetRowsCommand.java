@@ -47,13 +47,14 @@ public class GetRowsCommand extends Command {
 					}
 					
 					@Override
-					public void internalVisit(int rowIndex, Row row) {
+					public boolean internalVisit(int rowIndex, Row row) {
 						try {
 							JSONObject ro = row.getJSON(options);
 							ro.put("i", rowIndex);
 							list.add(ro);
 						} catch (JSONException e) {
 						}
+						return false;
 					}
 				}.init(a, options);
 				
@@ -86,14 +87,18 @@ public class GetRowsCommand extends Command {
 		}
 		
 		@Override
-		public void visit(int rowIndex, Row row) {
+		public boolean visit(int rowIndex, Row row) {
+			boolean r = false;
+			
 			if (total >= start && total < start + limit) {
-				internalVisit(rowIndex, row);
+				r = internalVisit(rowIndex, row);
 			}
 			total++;
+			return r;
 		}
 		
-		protected void internalVisit(int rowIndex, Row row) {
+		protected boolean internalVisit(int rowIndex, Row row) {
+			return false;
 		}
 	}
 }

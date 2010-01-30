@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import com.metaweb.gridlock.browsing.facets.Facet;
 import com.metaweb.gridlock.browsing.facets.ListFacet;
+import com.metaweb.gridlock.browsing.filters.RowFilter;
 import com.metaweb.gridlock.model.Project;
 
 public class Engine {
@@ -29,7 +30,10 @@ public class Engine {
 		ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows();
 		for (Facet facet : _facets) {
 			if (facet != except) {
-				cfr.add(facet.getRowFilter());
+				RowFilter rowFilter = facet.getRowFilter();
+				if (rowFilter != null) {
+					cfr.add(rowFilter);
+				}
 			}
 		}
 		return cfr;
@@ -53,7 +57,7 @@ public class Engine {
 		
 		for (int i = 0; i < length; i++) {
 			JSONObject fo = a.getJSONObject(i);
-			String type = fo.getString("type");
+			String type = fo.has("type") ? fo.getString("type") : "list";
 			
 			Facet facet = null;
 			if ("list".equals(type)) {

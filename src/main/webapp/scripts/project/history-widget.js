@@ -1,5 +1,11 @@
 function HistoryWidget(div) {
     this._div = div;
+    this._div.mouseover(function() {
+        this.style.height = "300px";
+    }).mouseout(function() {
+        this.style.height = "100px";
+    });
+    
     this.update();
 }
 

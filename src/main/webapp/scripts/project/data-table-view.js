@@ -11,7 +11,7 @@ DataTableView.prototype.render = function() {
     var divSummary = $('<div></div>').addClass("viewPanel-summary").appendTo(container);
     $('<span>' + 
             (theProject.rowModel.start + 1) + " to " + 
-            (theProject.rowModel.start + theProject.rowModel.limit) + " of " + 
+            Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit) + " of " + 
             (theProject.rowModel.filtered) + " filtered rows, " +
             (theProject.rowModel.total) + " total rows" + 
         '</span>'
@@ -30,7 +30,7 @@ DataTableView.prototype.render = function() {
     $('<span> &bull; </span>').appendTo(pagingControls);
     var nextPage = $('<a href="javascript:{}">next page &raquo;</a>').appendTo(pagingControls);
     var lastPage = $('<a href="javascript:{}">last &raquo;</a>').appendTo(pagingControls);
-    if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.total) {
+    if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
         nextPage.addClass("action").click(function(evt) { self._onClickNextPage(this, evt); });
         lastPage.addClass("action").click(function(evt) { self._onClickLastPage(this, evt); });
     } else {
@@ -137,7 +137,7 @@ DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-    this._showRows(Math.floor(theProject.rowModel.total / this._pageSize) * this._pageSize);
+    this._showRows(Math.floor(theProject.rowModel.filtered / this._pageSize) * this._pageSize);
 };
 
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
@@ -172,15 +172,29 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
             submenu: [
                 {
                     label: "By Nominal Choices",
-                    click: function() {}
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : column.headerLabel,
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "value"
+                            }
+                        );
+                    }
                 },
                 {
                     label: "By Simple Text Search",
                     click: function() {}
                 },
                 {
-                    label: "By Regular Expression",
-                    click: function() {}
+                    label: "By Custom Expression",
+                    click: function() {
+                        var expression = window.prompt("Enter expression", 'value');
+                        if (expression != null) {
+                            self._doFilterByExpression(column, expression);
+                        }                    
+                    }
                 },
                 {
                     label: "By Reconciliation Features",
@@ -282,6 +296,18 @@ DataTableView.prototype._doTextTransform = function(column, expression) {
     );
 };
 
-DataTableView.prototype.update = function() {
-    this._showRows(theProject.rowModel.start);
+DataTableView.prototype._doFilterByExpression = function(column, expression) {
+    ui.browsingEngine.addFacet(
+        "list", 
+        {
+            "name" : column.headerLabel + ": " + expression,
+            "cellIndex" : column.cellIndex, 
+            "expression" : expression
+        }
+    );
 };
+
+DataTableView.prototype.update = function(reset) {
+    this._showRows(reset ? 0 : theProject.rowModel.start);
+};
+

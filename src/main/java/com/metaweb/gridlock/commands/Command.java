@@ -153,14 +153,10 @@ public abstract class Command {
     }
     
     protected Engine getEngine(HttpServletRequest request, Project project) throws Exception {
-		Properties properties = new Properties();
-		readFileUpload(request, properties);
-
 		Engine engine = new Engine(project);
-		if (properties.containsKey("engine")) {
-			String json = properties.getProperty("engine");
+		String json = request.getParameter("engine");
+		if (json != null) {
 			JSONObject o = jsonStringToObject(json);
-			
 			engine.initializeFromJSON(o);
 		}
 		return engine;

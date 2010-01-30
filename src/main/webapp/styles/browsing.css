@@ -1,0 +1,59 @@
+.browsing-panel {
+}
+
+.facet-container {
+    clear: both;
+    margin-top: 1em;
+}
+
+.facet-title {
+    padding: 5px;
+    background: #eee;
+    font-weight: bold;
+}
+.facet-body {
+    border: 1px solid #ccc;
+    padding: 1px;
+    height: 20em;
+    overflow: auto;
+}
+.facet-choice {
+    padding: 2px 5px;
+    clear: both;
+}
+.facet-choice-selected .facet-choice-label {
+    font-weight: bold;
+}
+
+a.facet-choice-label {
+    margin-right: 0.5em;
+    text-decoration: none;
+    color: #004;
+}
+a.facet-choice-label:hover {
+    text-decoration: underline;
+    color: #66f;
+}
+
+.facet-choice-count {
+    color: #aaa;
+}
+.facet-choice-count:before {
+    content: "(";
+    color: #aaa;
+}
+.facet-choice-count:after {
+    content: ")";
+    color: #aaa;
+}
+
+a.facet-choice-link {
+    font-size: 80%;
+    float: right;
+    text-decoration: none;
+    color: #aac;
+}
+a.facet-choice-link:hover {
+    text-decoration: underline;
+    color: #88a;
+}

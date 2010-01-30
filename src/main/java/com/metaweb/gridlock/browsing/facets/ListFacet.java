@@ -76,7 +76,8 @@ public class ListFacet implements Facet {
 
 	@Override
 	public RowFilter getRowFilter() {
-		return new ExpressionEqualRowFilter(_eval, _cellIndex, createMatches());
+		return _selection.size() == 0 ? null :
+			new ExpressionEqualRowFilter(_eval, _cellIndex, createMatches());
 	}
 
 	@Override
@@ -88,12 +89,21 @@ public class ListFacet implements Facet {
 		
 		_choices.clear();
 		_choices.addAll(grouper.choices.values());
+		
+		for (NominalFacetChoice choice : _selection) {
+			if (grouper.choices.containsKey(choice.decoratedValue.value)) {
+				grouper.choices.get(choice.decoratedValue.value).selected = true;
+			} else {
+				choice.count = 0;
+				_choices.add(choice);
+			}
+		}
 	}
 	
 	protected Object[] createMatches() {
-		Object[] a = new Object[_choices.size()];
+		Object[] a = new Object[_selection.size()];
 		for (int i = 0; i < a.length; i++) {
-			a[i] = _choices.get(i).decoratedValue.value;
+			a[i] = _selection.get(i).decoratedValue.value;
 		}
 		return a;
 	}
