@@ -8,7 +8,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Row implements Serializable {
+import com.metaweb.gridlock.expr.HasFields;
+
+public class Row implements Serializable, HasFields {
 	private static final long serialVersionUID = -689264211730915507L;
 	
 	public boolean		flagged;
@@ -31,5 +33,32 @@ public class Row implements Serializable {
 		o.put("starred", starred);
 		
 		return o;
+	}
+
+	@Override
+	public Object getField(String name, Properties bindings) {
+		if ("flagged".equals(name)) {
+			return flagged;
+		} else if ("starred".equals(name)) {
+			return starred;
+		} else if ("cells".equals(name)) {
+			return new Cells();
+		}
+		return null;
+	}
+	
+	public class Cells implements HasFields {
+		private Cells() {};
+
+		@Override
+		public Object getField(String name, Properties bindings) {
+			Project project = (Project) bindings.get("project");
+			Column column = project.columnModel.getColumnByName(name);
+			if (column != null) {
+				return cells.get(column.cellIndex);
+			}
+			return null;
+		}
+		
 	}
 }

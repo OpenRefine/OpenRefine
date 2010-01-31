@@ -87,7 +87,7 @@ public class GetRowsCommand extends Command {
 		}
 		
 		@Override
-		public boolean visit(int rowIndex, Row row) {
+		public boolean visit(Project project, int rowIndex, Row row) {
 			boolean r = false;
 			
 			if (total >= start && total < start + limit) {

@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.metaweb.gridlock.browsing.DecoratedValue;
 import com.metaweb.gridlock.browsing.RowVisitor;
-import com.metaweb.gridlock.browsing.accessors.DecoratedValue;
 import com.metaweb.gridlock.expr.Evaluable;
 import com.metaweb.gridlock.model.Cell;
+import com.metaweb.gridlock.model.Project;
 import com.metaweb.gridlock.model.Row;
 
 public class ExpressionNominalRowGrouper implements RowVisitor {
@@ -22,13 +23,14 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
 	}
 	
 	@Override
-	public boolean visit(int rowIndex, Row row) {
+	public boolean visit(Project project, int rowIndex, Row row) {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {
 				Properties bindings = new Properties();
 				
-				bindings.put("this", cell);
+				bindings.put("project", project);
+				bindings.put("cell", cell);
 				bindings.put("value", cell.value);
 				
 				Object value = _evaluable.evaluate(bindings);

@@ -9,8 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.metaweb.gridlock.browsing.DecoratedValue;
 import com.metaweb.gridlock.browsing.FilteredRows;
-import com.metaweb.gridlock.browsing.accessors.DecoratedValue;
 import com.metaweb.gridlock.browsing.filters.ExpressionEqualRowFilter;
 import com.metaweb.gridlock.browsing.filters.RowFilter;
 import com.metaweb.gridlock.expr.Evaluable;

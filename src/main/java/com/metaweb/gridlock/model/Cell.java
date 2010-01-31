@@ -26,9 +26,11 @@ public class Cell implements Serializable, HasFields {
 	}
 
 	@Override
-	public Object getField(String name) {
+	public Object getField(String name, Properties bindings) {
 		if ("value".equals(name)) {
 			return value;
+		} else if ("recon".equals(name)) {
+			return recon;
 		}
 		return null;
 	}

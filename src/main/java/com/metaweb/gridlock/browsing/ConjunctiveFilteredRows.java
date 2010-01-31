@@ -21,14 +21,14 @@ public class ConjunctiveFilteredRows implements FilteredRows {
 			
 			boolean ok = true;
 			for (RowFilter rowFilter : _rowFilters) {
-				if (!rowFilter.filterRow(row)) {
+				if (!rowFilter.filterRow(project, i, row)) {
 					ok = false;
 					break;
 				}
 			}
 			
 			if (ok) {
-				visitor.visit(i, row);
+				visitor.visit(project, i, row);
 			}
 		}
 	}

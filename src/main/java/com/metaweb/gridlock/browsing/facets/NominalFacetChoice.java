@@ -5,7 +5,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.metaweb.gridlock.browsing.accessors.DecoratedValue;
+import com.metaweb.gridlock.browsing.DecoratedValue;
 
 public class NominalFacetChoice {
 	final public DecoratedValue	decoratedValue;

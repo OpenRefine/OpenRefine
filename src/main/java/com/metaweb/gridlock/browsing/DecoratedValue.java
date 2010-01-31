@@ -1,4 +1,4 @@
-package com.metaweb.gridlock.browsing.accessors;
+package com.metaweb.gridlock.browsing;
 
 import java.util.Properties;
 

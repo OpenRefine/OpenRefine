@@ -15,7 +15,7 @@ public class FieldAccessorExpr implements Evaluable {
 	public Object evaluate(Properties bindings) {
 		Object o = _inner.evaluate(bindings);
 		if (o != null && o instanceof HasFields) {
-			return ((HasFields) o).getField(_fieldName);
+			return ((HasFields) o).getField(_fieldName, bindings);
 		}
 		return null;
 	}

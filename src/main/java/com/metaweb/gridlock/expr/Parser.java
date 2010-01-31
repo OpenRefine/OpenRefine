@@ -8,7 +8,12 @@ import java.util.Map;
 import com.metaweb.gridlock.expr.Scanner.NumberToken;
 import com.metaweb.gridlock.expr.Scanner.Token;
 import com.metaweb.gridlock.expr.Scanner.TokenType;
+import com.metaweb.gridlock.expr.functions.And;
 import com.metaweb.gridlock.expr.functions.Get;
+import com.metaweb.gridlock.expr.functions.IsNotNull;
+import com.metaweb.gridlock.expr.functions.IsNull;
+import com.metaweb.gridlock.expr.functions.Not;
+import com.metaweb.gridlock.expr.functions.Or;
 import com.metaweb.gridlock.expr.functions.Replace;
 import com.metaweb.gridlock.expr.functions.Slice;
 import com.metaweb.gridlock.expr.functions.Split;
@@ -26,11 +31,18 @@ public class Parser {
 		functionTable.put("toUppercase", new ToUppercase());
 		functionTable.put("toLowercase", new ToLowercase());
 		functionTable.put("toTitlecase", new ToTitlecase());
+		
+		functionTable.put("get", new Get());
 		functionTable.put("slice", new Slice());
 		functionTable.put("substring", new Slice());
-		functionTable.put("get", new Get());
 		functionTable.put("replace", new Replace());
 		functionTable.put("split", new Split());
+		
+		functionTable.put("and", new And());
+		functionTable.put("or", new Or());
+		functionTable.put("not", new Not());
+		functionTable.put("isNull", new IsNull());
+		functionTable.put("isNotNull", new IsNotNull());
 	}
 	
 	public Parser(String s) throws Exception {

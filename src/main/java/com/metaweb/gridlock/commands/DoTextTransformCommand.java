@@ -44,6 +44,8 @@ public class DoTextTransformCommand extends Command {
 			Evaluable eval = new Parser(expression).getExpression();
 			//System.out.println("--- " + eval.toString());
 			Properties bindings = new Properties();
+			bindings.put("project", project);
+			
 			List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
 			
 			for (int r = 0; r < project.rows.size(); r++) {
@@ -54,7 +56,7 @@ public class DoTextTransformCommand extends Command {
 						continue;
 					}
 					
-					bindings.put("this", cell);
+					bindings.put("cell", cell);
 					bindings.put("value", cell.value);
 					
 					Cell newCell = new Cell();

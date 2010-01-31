@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import com.metaweb.gridlock.expr.Evaluable;
 import com.metaweb.gridlock.model.Cell;
+import com.metaweb.gridlock.model.Project;
 import com.metaweb.gridlock.model.Row;
 
 public class ExpressionEqualRowFilter implements RowFilter {
@@ -18,13 +19,13 @@ public class ExpressionEqualRowFilter implements RowFilter {
 	}
 
 	@Override
-	public boolean filterRow(Row row) {
+	public boolean filterRow(Project project, int rowIndex, Row row) {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {
 				Properties bindings = new Properties();
 				
-				bindings.put("this", cell);
+				bindings.put("cell", cell);
 				bindings.put("value", cell.value);
 				
 				Object value = _evaluable.evaluate(bindings);
