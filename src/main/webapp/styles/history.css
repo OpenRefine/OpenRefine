@@ -3,18 +3,26 @@
     top: -1px;
     right: 20px;
     width: 200px;
-    padding: 2px;
     background: #fffee0;
     border: 1px solid #ccc;
-    height: 100px;
-    overflow: auto;
 }
 .history-panel h3 {
     margin: 0;
     padding: 3px;
-    background: #fee;
+    background: #888;
+    color: #eee;
     font-size: 100%;
 }
+.history-panel-body {
+    padding: 2px;
+    height: 50px;
+    overflow: auto;
+}
+.history-panel-message {
+    text-align: center;
+    color: #aaa;
+}
+
 .history-past {
     padding-bottom: 3px;
     border-bottom: 2px solid #aaa;
@@ -32,4 +40,9 @@ a.history-entry {
 a.history-entry:hover {
     background: #eee;
     color: #a88;
+}
+
+.history-future a.history-entry {
+    color: #888;
+    font-style: italic;
 }

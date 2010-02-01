@@ -19,6 +19,10 @@ ListFacet.prototype.getJSON = function() {
     return o;
 };
 
+ListFacet.prototype.hasSelection = function() {
+    return this._selection.length > 0;
+};
+
 ListFacet.prototype.updateState = function(data) {
     this._data = data;
     
@@ -48,6 +52,10 @@ ListFacet.prototype.render = function() {
     var headerDiv = $('<div></div>').addClass("facet-title").appendTo(container);
     $('<span></span>').text(this._config.name).appendTo(headerDiv);
     
+    var removeButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("remove").click(function() {
+        self._remove();
+    }).prependTo(headerDiv);
+    
     var bodyDiv = $('<div></div>').addClass("facet-body").appendTo(container);
     if (this._data == null) {
         bodyDiv.html("Loading...");
@@ -57,7 +65,9 @@ ListFacet.prototype.render = function() {
             var reset = function() {
                 self._reset();
             };
-            $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("reset").click(reset).prependTo(headerDiv);
+            removeButton.after(
+                $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("reset").click(reset)
+            );
         }
         
         var renderChoice = function(choice) {
@@ -134,6 +144,15 @@ ListFacet.prototype._deselect = function(choice) {
 ListFacet.prototype._reset = function() {
     this._selection = [];
     this._updateRest();
+};
+
+ListFacet.prototype._remove = function() {
+    ui.browsingEngine.removeFacet(this);
+    
+    this._div = null;
+    this._config = null;
+    this._selection = null;
+    this._data = null;
 };
 
 ListFacet.prototype._updateRest = function() {

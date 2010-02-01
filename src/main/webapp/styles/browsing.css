@@ -48,6 +48,7 @@ a.facet-choice-label:hover {
 }
 
 a.facet-choice-link {
+    margin-left: 1em;
     font-size: 80%;
     float: right;
     text-decoration: none;
