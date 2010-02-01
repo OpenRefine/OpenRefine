@@ -48,8 +48,10 @@ function initializeUI() {
     ui.viewPanel = $('<div></div>').appendTo(tdLeft).css("width", tdLeft.offsetWidth + "px").css("overflow-x", "auto");
     ui.facetPanel = $('<div></div>').appendTo(tdRight);
     ui.historyPanel = $('<div></div>').addClass("history-panel").appendTo(document.body);
+    ui.processPanel = $('<div></div>').addClass("process-panel").appendTo(document.body);
     
     ui.browsingEngine = new BrowsingEngine(ui.facetPanel);
+    ui.processWidget = new ProcessWidget(ui.processPanel);
     ui.historyWidget = new HistoryWidget(ui.historyPanel);
     ui.dataTableView = new DataTableView(ui.viewPanel);
 }

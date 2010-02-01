@@ -1,0 +1,15 @@
+.process-panel {
+    position: absolute;
+    top: -1px;
+    width: 100%;
+    text-align: center;
+}
+
+.process-panel-inner {
+    border: 1px solid #ccc;
+    width: 500px;
+    padding: 10px;
+    background: #fffee0;
+    margin: 0 auto;
+    text-align: left;
+}

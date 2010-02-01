@@ -30,14 +30,13 @@ public class DoTextTransformCommand extends Command {
 		Project project = getProject(request);
 		int cellIndex = Integer.parseInt(request.getParameter("cell"));
 		
-		String columnName = null;
-		for (Column column : project.columnModel.columns) {
-			if (column.cellIndex == cellIndex) {
-				columnName = column.headerLabel;
-				break;
-			}
+		Column column = project.columnModel.getColumnByCellIndex(cellIndex);
+		if (column == null) {
+			respond(response, "{ \"code\" : \"error\", \"message\" : \"No such column\" }");
+			return;
 		}
 		
+		String columnName = column.headerLabel;
 		String expression = request.getParameter("expression");
 		
 		try {

@@ -37,4 +37,13 @@ public class ColumnModel implements Serializable {
 		}
 		return _nameToColumn.get(name);
 	}
+	
+	public Column getColumnByCellIndex(int cellIndex) {
+		for (Column column : columns) {
+			if (column.cellIndex == cellIndex) {
+				return column;
+			}
+		}
+		return null;
+	}
 }

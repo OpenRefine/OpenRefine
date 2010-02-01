@@ -289,7 +289,7 @@ DataTableView.prototype._doTextTransform = function(column, expression) {
                 self.update();
                 ui.historyWidget.update();
             } else {
-                // update process UI
+                ui.processWidget.update();
             }
         },
         "json"

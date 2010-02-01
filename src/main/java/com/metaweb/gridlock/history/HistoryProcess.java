@@ -2,6 +2,7 @@ package com.metaweb.gridlock.history;
 
 import com.metaweb.gridlock.model.Project;
 import com.metaweb.gridlock.process.Process;
+import com.metaweb.gridlock.process.ProcessManager;
 
 public class HistoryProcess extends Process {
 	final protected Project _project;
@@ -27,6 +28,6 @@ public class HistoryProcess extends Process {
 	}
 
 	@Override
-	public void startPerforming() {
+	public void startPerforming(ProcessManager manager) {
 	}
 }
