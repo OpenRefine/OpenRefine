@@ -1,6 +1,7 @@
 function DataTableView(div) {
     this._div = div;
     this._pageSize = 20;
+    this._showRecon = true;
     this._showRows(0);
 }
 
@@ -81,6 +82,29 @@ DataTableView.prototype.render = function() {
         createColumnHeader(columns[i], i);
     }
     
+    var renderCell = function(cell, td) {
+        if (cell.v == null) {
+            return;
+        }
+        
+        $(td).html(cell.v);
+            
+        if ("r" in cell && self._showRecon) {
+            var candidates = cell.r.c;
+            var ul = $('<ul></ul>').appendTo(td);
+            
+            for (var i = 0; i < candidates.length; i++) {
+                var candidate = candidates[i];
+                var li = $('<li></li>').appendTo(ul);
+                $('<a></a>')
+                    .attr("href", "http://www.freebase.com/view" + candidate.id)
+                    .attr("target", "_blank")
+                    .text(candidate.name)
+                    .appendTo(li);
+            }
+        }
+    };
+    
     var rows = theProject.rowModel.rows;
     for (var r = 0; r < rows.length; r++) {
         var row = rows[r];
@@ -99,9 +123,7 @@ DataTableView.prototype.render = function() {
                 td.innerHTML = "&nbsp;";
             } else if (column.cellIndex < cells.length) {
                 var cell = cells[column.cellIndex];
-                if (cell.v != null) {
-                    $(td).html(cell.v);
-                }
+                renderCell(cell, td);
             }
         }
     }

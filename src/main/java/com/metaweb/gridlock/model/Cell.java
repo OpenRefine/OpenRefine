@@ -31,8 +31,8 @@ public class Cell implements Serializable, HasFields, Jsonizable {
 		writer.key("v");
 		writer.value(value);
 		
-		if (recon != null && options.containsKey("cell-recon")) {
-			writer.key("recon");
+		if (recon != null) {
+			writer.key("r");
 			recon.write(writer, options);
 		}
 		writer.endObject();

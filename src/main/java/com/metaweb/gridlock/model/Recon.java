@@ -39,6 +39,13 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 			return judgment == Judgment.New;
 		} else if ("match".equals(name)) {
 			return match;
+		} else if ("features".equals(name)) {
+			return new HasFields() {
+				@Override
+				public Object getField(String name, Properties bindings) {
+					return features.get(name);
+				}
+			};
 		}
 		return null;
 	}
@@ -67,6 +74,18 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 		writer.object();
 		writer.key("j");
 		writer.value(judgmentToString());
+		
+		writer.key("c"); writer.array();
+		for (ReconCandidate c : candidates) {
+			c.write(writer, options);
+		}
+		writer.endArray();
+		
+		if (match != null) {
+			writer.key("m");
+			match.write(writer, options);
+		}
+		
 		writer.endObject();
 	}
 }

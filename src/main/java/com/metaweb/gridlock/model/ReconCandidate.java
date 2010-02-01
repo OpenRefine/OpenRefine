@@ -40,15 +40,17 @@ public class ReconCandidate implements Serializable, HasFields, Jsonizable {
 		
 		writer.object();
 		writer.key("id"); writer.value(topicID);
-		writer.key("guid"); writer.value(topicGUID);
+		//writer.key("guid"); writer.value(topicGUID);
 		writer.key("name"); writer.value(topicName);
-		writer.key("score"); writer.value(score);
+		//writer.key("score"); writer.value(score);
 		
+		/*
 		writer.key("types"); writer.array();
 		for (String typeID : typeIDs) {
 			writer.value(typeID);
 		}
 		writer.endArray();
+		*/
 		
 		writer.endObject();
 	}

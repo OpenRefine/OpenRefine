@@ -30,9 +30,20 @@ public class ExpressionEqualRowFilter implements RowFilter {
 				
 				Object value = _evaluable.evaluate(bindings);
 				if (value != null) {
-					for (Object match : _matches) {
-						if (match.equals(value)) {
-							return true;
+					if (value.getClass().isArray()) {
+						Object[] a = (Object[]) value;
+						for (Object v : a) {
+							for (Object match : _matches) {
+								if (match.equals(v)) {
+									return true;
+								}
+							}
+						}
+					} else {
+						for (Object match : _matches) {
+							if (match.equals(value)) {
+								return true;
+							}
 						}
 					}
 				}

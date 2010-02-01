@@ -190,22 +190,23 @@ public class Parser {
 				}
 				
 				String identifier = _token.text;
-				Function f = functionTable.get(identifier);
-				if (f == null) {
-					throw makeException("Unknown function " + identifier);
-				}
 				next();
 				
-				if (_token == null || _token.type != TokenType.Delimiter || !_token.text.equals("(")) {
-					throw makeException("Missing (");
+				if (_token != null && _token.type == TokenType.Delimiter && _token.text.equals("(")) {
+					next(); // swallow (
+					
+					Function f = functionTable.get(identifier);
+					if (f == null) {
+						throw makeException("Unknown function " + identifier);
+					}
+					
+					List<Evaluable> args = parseExpressionList(")");
+					args.add(0, eval);
+					
+					eval = new FunctionCallExpr(makeArray(args), f);
+				} else {
+					eval = new FieldAccessorExpr(eval, identifier);
 				}
-				next();
-				
-				List<Evaluable> args = parseExpressionList(")");
-				args.add(0, eval);
-				
-				eval = new FunctionCallExpr(makeArray(args), f);
-				
 			} else if (_token.type == TokenType.Delimiter && _token.text.equals("[")) {
 				next(); // swallow [
 				
