@@ -2,16 +2,18 @@ package com.metaweb.gridlock.history;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
+import com.metaweb.gridlock.Jsonizable;
 import com.metaweb.gridlock.ProjectManager;
 import com.metaweb.gridlock.model.Project;
 
-public class History implements Serializable {
+public class History implements Serializable, Jsonizable {
 	private static final long serialVersionUID = -1529783362243627391L;
 	
 	protected long				 _projectID;
@@ -31,7 +33,13 @@ public class History implements Serializable {
 		_futureEntries.clear();
 		
 		_pastEntries.add(entry);
+		
 		entry.apply(ProjectManager.singleton.getProject(_projectID));
+		setModified();
+	}
+	
+	protected void setModified() {
+		ProjectManager.singleton.getProjectMetadata(_projectID).modified = new Date();
 	}
 	
 	public List<HistoryEntry> getLastPastEntries(int count) {
@@ -84,6 +92,7 @@ public class History implements Serializable {
 			
 			_futureEntries.add(0, entry);
 		}
+		setModified();
 	}
 	
 	protected void redo(int times) {
@@ -97,23 +106,27 @@ public class History implements Serializable {
 			
 			_pastEntries.add(entry);
 		}
+		setModified();
 	}
 	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
 		
-		List<JSONObject> a = new ArrayList<JSONObject>(_pastEntries.size());
+		writer.object();
+		
+		writer.key("past"); writer.array();
 		for (HistoryEntry entry : _pastEntries) {
-			a.add(entry.getJSON(options));
+			entry.write(writer, options);
 		}
-		o.put("past", a);
+		writer.endArray();
 		
-		List<JSONObject> b = new ArrayList<JSONObject>(_futureEntries.size());
+		writer.key("future"); writer.array();
 		for (HistoryEntry entry : _futureEntries) {
-			b.add(entry.getJSON(options));
+			entry.write(writer, options);
 		}
-		o.put("future", b);
+		writer.endArray();
 		
-		return o;
+		writer.endObject();
 	}
 }

@@ -2,8 +2,6 @@ package com.metaweb.gridlock.expr;
 
 import java.util.Properties;
 
-import org.json.JSONObject;
-
 public class VariableExpr implements Evaluable {
 	final protected String _name;
 	

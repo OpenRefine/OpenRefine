@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
+import com.metaweb.gridlock.Jsonizable;
 import com.metaweb.gridlock.expr.HasFields;
 
-public class Row implements Serializable, HasFields {
+public class Row implements Serializable, HasFields, Jsonizable {
 	private static final long serialVersionUID = -689264211730915507L;
 	
 	public boolean		flagged;
@@ -21,20 +22,6 @@ public class Row implements Serializable, HasFields {
 		cells = new ArrayList<Cell>(cellCount);
 	}
 	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
-		
-		List<JSONObject> a = new ArrayList<JSONObject>(cells.size());
-		for (Cell cell : cells) {
-			a.add(cell.getJSON(options));
-		}
-		o.put("cells", a);
-		o.put("flagged", flagged);
-		o.put("starred", starred);
-		
-		return o;
-	}
-
 	@Override
 	public Object getField(String name, Properties bindings) {
 		if ("flagged".equals(name)) {
@@ -60,5 +47,26 @@ public class Row implements Serializable, HasFields {
 			return null;
 		}
 		
+	}
+
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
+		
+		writer.object();
+		writer.key("flagged"); writer.value(flagged);
+		writer.key("starred"); writer.value(starred);
+		
+		writer.key("cells"); writer.array();
+		for (Cell cell : cells) {
+			cell.write(writer, options);
+		}
+		writer.endArray();
+		
+		if (options.containsKey("rowIndex")) {
+			writer.key("i"); writer.value(options.get("rowIndex"));
+		}
+		
+		writer.endObject();
 	}
 }

@@ -3,9 +3,11 @@ package com.metaweb.gridlock.browsing;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
-public class DecoratedValue {
+import com.metaweb.gridlock.Jsonizable;
+
+public class DecoratedValue implements Jsonizable {
 	final public Object value;
 	final public String	label;
 	
@@ -14,12 +16,12 @@ public class DecoratedValue {
 		this.label = label;
 	}
 	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
-		
-		o.put("v", value);
-		o.put("l", label);
-		
-		return o;
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
+		writer.object();
+		writer.key("v"); writer.value(value);
+		writer.key("l"); writer.value(label);
+		writer.endObject();
 	}
 }

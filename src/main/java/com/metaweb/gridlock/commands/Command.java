@@ -18,7 +18,9 @@ import org.apache.commons.lang.NotImplementedException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.json.JSONWriter;
 
+import com.metaweb.gridlock.Jsonizable;
 import com.metaweb.gridlock.ProjectManager;
 import com.metaweb.gridlock.browsing.Engine;
 import com.metaweb.gridlock.model.Project;
@@ -70,9 +72,16 @@ public abstract class Command {
     	}
     }
     
-    protected void respondJSON(HttpServletResponse response, JSONObject o) throws IOException {
+    protected void respondJSON(HttpServletResponse response, Jsonizable o) throws IOException, JSONException {
+    	respondJSON(response, o, new Properties());
+    }
+    
+    protected void respondJSON(HttpServletResponse response, Jsonizable o, Properties options) throws IOException, JSONException {
     	response.setHeader("Content-Type", "application/json");
-    	respond(response, o.toString());
+    	
+		JSONWriter writer = new JSONWriter(response.getWriter());
+		
+		o.write(writer, options);
     }
     
     protected void respondException(HttpServletResponse response, Exception e) throws IOException {
@@ -89,7 +98,8 @@ public abstract class Command {
 			
 			o.put("stack", sw.toString());
 			
-			respondJSON(response, o);
+	    	response.setHeader("Content-Type", "application/json");
+			respond(response, o.toString());
 		} catch (JSONException e1) {
 	   		e.printStackTrace(response.getWriter());
 		}

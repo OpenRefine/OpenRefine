@@ -1,7 +1,6 @@
 package com.metaweb.gridlock.commands;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +18,7 @@ public class GetProcessesCommand extends Command {
 		Project project = getProject(request);
 		
 		try {
-			Properties options = new Properties();
-			
-			respondJSON(response, project.processManager.getJSON(options));
+			respondJSON(response, project.processManager);
 		} catch (JSONException e) {
 			respondException(response, e);
 		}

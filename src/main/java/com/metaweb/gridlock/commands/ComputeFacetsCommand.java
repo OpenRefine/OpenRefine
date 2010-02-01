@@ -1,7 +1,6 @@
 package com.metaweb.gridlock.commands;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,8 +20,7 @@ public class ComputeFacetsCommand extends Command {
 			
 			engine.computeFacets();
 			
-			Properties options = new Properties();
-			respondJSON(response, engine.getJSON(options));
+			respondJSON(response, engine);
 		} catch (Exception e) {
 			respondException(response, e);
 		}

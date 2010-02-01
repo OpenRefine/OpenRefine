@@ -4,22 +4,25 @@ import java.io.Serializable;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
-public class Column implements Serializable {
+import com.metaweb.gridlock.Jsonizable;
+
+public class Column implements Serializable, Jsonizable {
 	private static final long serialVersionUID = -1063342490951563563L;
 	
 	public int		cellIndex;
 	public String	headerLabel;
 	public Class 	valueType;
 	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
 		
-		o.put("cellIndex", cellIndex);
-		o.put("headerLabel", headerLabel);
-		o.put("valueType", valueType == null ? null : valueType.getSimpleName());
-		
-		return o;
+		writer.object();
+		writer.key("cellIndex"); writer.value(cellIndex);
+		writer.key("headerLabel"); writer.value(headerLabel);
+		writer.key("valueType"); writer.value(valueType == null ? null : valueType.getSimpleName());
+		writer.endObject();
 	}
 }

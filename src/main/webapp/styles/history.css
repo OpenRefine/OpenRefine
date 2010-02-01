@@ -25,7 +25,7 @@
 
 .history-past {
     padding-bottom: 3px;
-    border-bottom: 2px solid #aaa;
+    border-bottom: 2px solid #f88;
 }
 .history-future {
     padding-top: 3px;
@@ -33,9 +33,12 @@
 a.history-entry {
     display: block;
     padding: 3px 5px;
-    border-bottom: 1px solid #eee;
     text-decoration: none;
     color: black;
+    border-top: 1px solid #eee;
+}
+a.history-entry:first-child {
+    border-top: none;
 }
 a.history-entry:hover {
     background: #eee;

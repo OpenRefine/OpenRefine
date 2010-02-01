@@ -1,8 +1,6 @@
 package com.metaweb.gridlock.commands;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -10,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
 import com.metaweb.gridlock.browsing.Engine;
 import com.metaweb.gridlock.browsing.FilteredRows;
@@ -31,17 +29,18 @@ public class GetRowsCommand extends Command {
 			int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
 			Properties options = new Properties();
 			
-			JSONObject o = new JSONObject();
+	    	response.setHeader("Content-Type", "application/json");
+	    	
+			JSONWriter writer = new JSONWriter(response.getWriter());
+			writer.object();
 			
-			List<JSONObject> a = new ArrayList<JSONObject>(limit);
-			try {
-				FilteredRows filteredRows = engine.getAllFilteredRows();
+			{
 				RowAccumulator acc = new RowAccumulator(start, limit) {
-					List<JSONObject> list;
-					Properties		 options;
+					JSONWriter	writer;
+					Properties	options;
 					
-					public RowAccumulator init(List<JSONObject> list, Properties options) {
-						this.list = list;
+					public RowAccumulator init(JSONWriter writer, Properties options) {
+						this.writer = writer;
 						this.options = options;
 						return this;
 					}
@@ -49,27 +48,28 @@ public class GetRowsCommand extends Command {
 					@Override
 					public boolean internalVisit(int rowIndex, Row row) {
 						try {
-							JSONObject ro = row.getJSON(options);
-							ro.put("i", rowIndex);
-							list.add(ro);
+							options.put("rowIndex", rowIndex);
+							row.write(writer, options);
 						} catch (JSONException e) {
 						}
 						return false;
 					}
-				}.init(a, options);
+				}.init(writer, options);
 				
+				FilteredRows filteredRows = engine.getAllFilteredRows();
+				
+				writer.key("rows"); writer.array();
 				filteredRows.accept(project, acc);
+				writer.endArray();
 				
-				o.put("filtered", acc.total);
-			} catch (JSONException e) {
-				respondException(response, e);
+				writer.key("filtered"); writer.value(acc.total);
 			}
-			o.put("start", start);
-			o.put("limit", limit);
-			o.put("rows", a);
-			o.put("total", project.rows.size());
-		
-			respondJSON(response, o);
+			
+			writer.key("start"); writer.value(start);
+			writer.key("limit"); writer.value(limit);
+			writer.key("total"); writer.value(project.rows.size());
+			
+			writer.endObject();
 		} catch (Exception e) {
 			respondException(response, e);
 		}

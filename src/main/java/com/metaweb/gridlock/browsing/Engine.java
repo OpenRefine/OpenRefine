@@ -1,6 +1,5 @@
 package com.metaweb.gridlock.browsing;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -8,13 +7,15 @@ import java.util.Properties;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
+import com.metaweb.gridlock.Jsonizable;
 import com.metaweb.gridlock.browsing.facets.Facet;
 import com.metaweb.gridlock.browsing.facets.ListFacet;
 import com.metaweb.gridlock.browsing.filters.RowFilter;
 import com.metaweb.gridlock.model.Project;
 
-public class Engine {
+public class Engine implements Jsonizable {
 	protected Project 		_project;
 	protected List<Facet> 	_facets = new LinkedList<Facet>();
 	
@@ -39,18 +40,6 @@ public class Engine {
 		return cfr;
 	}
 	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
-		
-		List<JSONObject> a = new ArrayList<JSONObject>(_facets.size());
-		for (Facet facet : _facets) {
-			a.add(facet.getJSON(options));
-		}
-		o.put("facets", a);
-		
-		return o;
-	}
-
 	public void initializeFromJSON(JSONObject o) throws Exception {
 		JSONArray a = o.getJSONArray("facets");
 		int length = a.length();
@@ -77,5 +66,18 @@ public class Engine {
 			
 			facet.computeChoices(_project, filteredRows);
 		}
+	}
+
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
+		
+		writer.object();
+		writer.key("facets"); writer.array();
+		for (Facet facet : _facets) {
+			facet.write(writer, options);
+		}
+		writer.endArray();
+		writer.endObject();
 	}
 }

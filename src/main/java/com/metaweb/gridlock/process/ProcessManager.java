@@ -1,32 +1,36 @@
 package com.metaweb.gridlock.process;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
-public class ProcessManager {
+import com.metaweb.gridlock.Jsonizable;
+
+public class ProcessManager implements Jsonizable {
 	protected List<Process> _processes = new LinkedList<Process>();
 	
 	public ProcessManager() {
 		
 	}
 	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
+
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
 		
-		List<JSONObject> a = new ArrayList<JSONObject>(_processes.size());
+		writer.object();
+		writer.key("processes"); writer.array();
 		for (Process p : _processes) {
-			a.add(p.getJSON(options));
+			p.write(writer, options);
 		}
-		o.put("processes", a);
+		writer.endArray();
 		
-		return o;
+		writer.endObject();
 	}
-	
+
 	public boolean queueProcess(Process process) {
 		if (process.isImmediate() && _processes.size() == 0) {
 			process.performImmediate();

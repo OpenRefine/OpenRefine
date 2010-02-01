@@ -1,11 +1,8 @@
 package com.metaweb.gridlock.process;
 
-import java.util.Properties;
+import com.metaweb.gridlock.Jsonizable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public abstract class Process {
+public abstract class Process implements Jsonizable {
 	abstract public boolean isImmediate();
 	
 	abstract public boolean isRunning();
@@ -15,6 +12,4 @@ public abstract class Process {
 	
 	abstract public void startPerforming(ProcessManager manager);
 	abstract public void cancel();
-	
-	public abstract JSONObject getJSON(Properties options) throws JSONException;
 }

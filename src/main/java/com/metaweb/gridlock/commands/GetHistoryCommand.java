@@ -1,7 +1,6 @@
 package com.metaweb.gridlock.commands;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +16,8 @@ public class GetHistoryCommand extends Command {
 			throws ServletException, IOException {
 		
 		Project project = getProject(request);
-		Properties options = new Properties();
-		
 		try {
-			respondJSON(response, project.history.getJSON(options));
+			respondJSON(response, project.history);
 		} catch (JSONException e) {
 			respondException(response, e);
 		}

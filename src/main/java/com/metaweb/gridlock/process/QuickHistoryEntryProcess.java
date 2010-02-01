@@ -3,7 +3,7 @@ package com.metaweb.gridlock.process;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
 import com.metaweb.gridlock.history.HistoryEntry;
 import com.metaweb.gridlock.model.Project;
@@ -45,16 +45,16 @@ public class QuickHistoryEntryProcess extends Process {
 	}
 
 	@Override
-	public
-	JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
 		
-		o.put("description", _historyEntry.description);
-		o.put("immediate", true);
-		o.put("status", _done ? "done" : "pending");
-		
-		return o;
+		writer.object();
+		writer.key("description"); writer.value(_historyEntry.description);
+		writer.key("immediate"); writer.value(true);
+		writer.key("status"); writer.value(_done ? "done" : "pending");
+		writer.endObject();
 	}
+
 
 	@Override
 	public boolean isDone() {

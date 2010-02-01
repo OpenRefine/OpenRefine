@@ -12,12 +12,13 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
+import com.metaweb.gridlock.Jsonizable;
 import com.metaweb.gridlock.ProjectManager;
 import com.metaweb.gridlock.model.Project;
 
-public class HistoryEntry implements Serializable {
+public class HistoryEntry implements Serializable, Jsonizable {
 	private static final long serialVersionUID = 532766467813930262L;
 	
 	public long 	id;
@@ -38,16 +39,17 @@ public class HistoryEntry implements Serializable {
 		saveChange();
 	}
 	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
 		
 		SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
 		
-		o.put("id", id);
-		o.put("description", description);
-		o.put("time", sdf.format(time));
-		
-		return o;
+		writer.object();
+		writer.key("id"); writer.value(id);
+		writer.key("description"); writer.value(description);
+		writer.key("time"); writer.value(sdf.format(time));
+		writer.endObject();
 	}
 	
 	public void apply(Project project) {

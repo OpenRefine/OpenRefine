@@ -4,11 +4,12 @@ import java.io.Serializable;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
+import com.metaweb.gridlock.Jsonizable;
 import com.metaweb.gridlock.expr.HasFields;
 
-public class ReconCandidate implements Serializable, HasFields {
+public class ReconCandidate implements Serializable, HasFields, Jsonizable {
 	private static final long serialVersionUID = -8013997214978715606L;
 	
 	public String 	topicID;
@@ -17,18 +18,6 @@ public class ReconCandidate implements Serializable, HasFields {
 	public String[] typeIDs;
 	public double	score;
 	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
-		
-		o.put("id", topicID);
-		o.put("guid", topicGUID);
-		o.put("name", topicName);
-		o.put("types", typeIDs);
-		o.put("score", score);
-		
-		return o;
-	}
-
 	@Override
 	public Object getField(String name, Properties bindings) {
 		if ("id".equals(name)) {
@@ -43,5 +32,24 @@ public class ReconCandidate implements Serializable, HasFields {
 			return score;
 		}
 		return null;
+	}
+
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
+		
+		writer.object();
+		writer.key("id"); writer.value(topicID);
+		writer.key("guid"); writer.value(topicGUID);
+		writer.key("name"); writer.value(topicName);
+		writer.key("score"); writer.value(score);
+		
+		writer.key("types"); writer.array();
+		for (String typeID : typeIDs) {
+			writer.value(typeID);
+		}
+		writer.endArray();
+		
+		writer.endObject();
 	}
 }

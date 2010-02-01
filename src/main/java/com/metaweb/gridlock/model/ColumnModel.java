@@ -1,33 +1,22 @@
 package com.metaweb.gridlock.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONWriter;
 
-public class ColumnModel implements Serializable {
+import com.metaweb.gridlock.Jsonizable;
+
+public class ColumnModel implements Serializable, Jsonizable {
 	private static final long serialVersionUID = 7679639795211544511L;
 	
 	public List<Column> columns = new LinkedList<Column>();
 	
 	transient protected Map<String, Column> _nameToColumn;
-	
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
-		
-		List<JSONObject> a = new ArrayList<JSONObject>(columns.size());
-		for (Column column : columns) {
-			a.add(column.getJSON(options));
-		}
-		o.put("columns", a);
-		
-		return o;
-	}
 	
 	public Column getColumnByName(String name) {
 		if (_nameToColumn == null) {
@@ -45,5 +34,19 @@ public class ColumnModel implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
+		
+		writer.object();
+		writer.key("columns");
+		writer.array();
+		for (Column column : columns) {
+			column.write(writer, options);
+		}
+		writer.endArray();
+		writer.endObject();
 	}
 }

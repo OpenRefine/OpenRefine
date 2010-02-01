@@ -1,7 +1,6 @@
 package com.metaweb.gridlock.commands;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +16,9 @@ public class GetColumnModelCommand extends Command {
 			throws ServletException, IOException {
 		
 		Project project = getProject(request);
-		Properties options = new Properties();
 		
 		try {
-			respondJSON(response, project.columnModel.getJSON(options));
+			respondJSON(response, project.columnModel);
 		} catch (JSONException e) {
 			respondException(response, e);
 		}

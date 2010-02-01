@@ -1,6 +1,5 @@
 package com.metaweb.gridlock.browsing.facets;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -8,6 +7,7 @@ import java.util.Properties;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
 import com.metaweb.gridlock.browsing.DecoratedValue;
 import com.metaweb.gridlock.browsing.FilteredRows;
@@ -30,20 +30,20 @@ public class ListFacet implements Facet {
 	}
 
 	@Override
-	public JSONObject getJSON(Properties options) throws JSONException {
-		JSONObject o = new JSONObject();
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
 		
-		o.put("name", _name);
-		o.put("expression", _expression);
-		o.put("cellIndex", _cellIndex);
+		writer.object();
+		writer.key("name"); writer.value(_name);
+		writer.key("expression"); writer.value(_expression);
+		writer.key("cellIndex"); writer.value(_cellIndex);
 		
-		List<JSONObject> a = new ArrayList<JSONObject>(_choices.size());
+		writer.key("choices"); writer.array();
 		for (NominalFacetChoice choice : _choices) {
-			a.add(choice.getJSON(options));
+			choice.write(writer, options);
 		}
-		o.put("choices", a);
-		
-		return o;
+		writer.endArray();
+		writer.endObject();
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package com.metaweb.gridlock.history;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.metaweb.gridlock.model.Project;
