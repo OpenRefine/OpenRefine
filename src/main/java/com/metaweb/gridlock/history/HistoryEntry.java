@@ -64,6 +64,13 @@ public class HistoryEntry implements Serializable {
 		_change.revert(project);
 	}
 	
+	public void delete() {
+		File file = getFile();
+		if (file.exists()) {
+			file.delete();
+		}
+	}
+	
 	protected void loadChange() {
 		File file = getFile();
 		

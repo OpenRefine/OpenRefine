@@ -45,6 +45,7 @@ DataTableView.prototype.render = function() {
     var trHead = table.insertRow(0);
     
     var td = trHead.insertCell(trHead.cells.length);
+    $(td).addClass("column-header");
     $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(td).click(function() {
         self._createMenuForAllColumns(this);
     });
@@ -267,7 +268,9 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
             submenu: [
                 {
                     label: "Initiate on Filtered Rows...",
-                    click: function() {}
+                    click: function() {
+                        new ReconDialog(index);
+                    }
                 },
                 {},
                 {
@@ -283,7 +286,7 @@ DataTableView.prototype._doTextTransform = function(column, expression) {
     var self = this;
     $.post(
         "/command/do-text-transform?" + $.param({ project: theProject.id, cell: column.cellIndex, expression: expression }), 
-        null,
+        { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
             if (data.code == "ok") {
                 self.update();

@@ -16,5 +16,5 @@ public abstract class Process {
 	abstract public void startPerforming(ProcessManager manager);
 	abstract public void cancel();
 	
-	abstract JSONObject getJSON(Properties options) throws JSONException;
+	public abstract JSONObject getJSON(Properties options) throws JSONException;
 }

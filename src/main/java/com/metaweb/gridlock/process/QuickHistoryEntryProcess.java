@@ -45,6 +45,7 @@ public class QuickHistoryEntryProcess extends Process {
 	}
 
 	@Override
+	public
 	JSONObject getJSON(Properties options) throws JSONException {
 		JSONObject o = new JSONObject();
 		

@@ -6,10 +6,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 abstract public class LongRunningProcess extends Process {
-	final protected String _description;
+	final protected String 		_description;
 	protected ProcessManager 	_manager;
 	protected Thread 			_thread;
 	protected int				_progress; // out of 100
+	protected boolean			_canceled;
 	
 	protected LongRunningProcess(String description) {
 		_description = description;
@@ -17,11 +18,14 @@ abstract public class LongRunningProcess extends Process {
 
 	@Override
 	public void cancel() {
-		// TODO Auto-generated method stub
-
+		_canceled = true;
+		if (_thread != null && _thread.isAlive()) {
+			_thread.interrupt();
+		}
 	}
 
 	@Override
+	public
 	JSONObject getJSON(Properties options) throws JSONException {
 		JSONObject o = new JSONObject();
 		
@@ -36,6 +40,16 @@ abstract public class LongRunningProcess extends Process {
 	@Override
 	public boolean isImmediate() {
 		return false;
+	}
+	
+	@Override
+	public boolean isRunning() {
+		return _thread != null && _thread.isAlive();
+	}
+	
+	@Override
+	public boolean isDone() {
+		return _thread != null && !_thread.isAlive();
 	}
 
 	@Override

@@ -25,7 +25,11 @@ public class History implements Serializable {
 	}
 	
 	public void addEntry(HistoryEntry entry) {
+		for (HistoryEntry entry2 : _futureEntries) {
+			entry2.delete();
+		}
 		_futureEntries.clear();
+		
 		_pastEntries.add(entry);
 		entry.apply(ProjectManager.singleton.getProject(_projectID));
 	}
@@ -52,6 +56,21 @@ public class History implements Serializable {
 				}
 			}
 		}
+	}
+	
+	protected HistoryEntry getEntry(long entryID) {
+		for (int i = 0; i < _pastEntries.size(); i++) {
+			if (_pastEntries.get(i).id == entryID) {
+				return _pastEntries.get(i);
+			}
+		}
+		
+		for (int i = 0; i < _futureEntries.size(); i++) {
+			if (_futureEntries.get(i).id == entryID) {
+				return _futureEntries.get(i);
+			}
+		}
+		return null;
 	}
 	
 	protected void undo(int times) {

@@ -23,6 +23,7 @@ import com.metaweb.gridlock.commands.GetHistoryCommand;
 import com.metaweb.gridlock.commands.GetProcessesCommand;
 import com.metaweb.gridlock.commands.GetProjectMetadataCommand;
 import com.metaweb.gridlock.commands.GetRowsCommand;
+import com.metaweb.gridlock.commands.ReconcileCommand;
 import com.metaweb.gridlock.commands.UndoRedoCommand;
 
 public class GridlockServlet extends HttpServlet {
@@ -42,6 +43,7 @@ public class GridlockServlet extends HttpServlet {
 		_commands.put("undo-redo", new UndoRedoCommand());
 		_commands.put("compute-facets", new ComputeFacetsCommand());
 		_commands.put("do-text-transform", new DoTextTransformCommand());
+		_commands.put("reconcile", new ReconcileCommand());
 	}
 
 	@Override

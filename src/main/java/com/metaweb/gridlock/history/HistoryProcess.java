@@ -1,20 +1,35 @@
 package com.metaweb.gridlock.history;
 
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.metaweb.gridlock.model.Project;
 import com.metaweb.gridlock.process.Process;
 import com.metaweb.gridlock.process.ProcessManager;
 
 public class HistoryProcess extends Process {
 	final protected Project _project;
-	final protected long _lastDoneID;
-	
+	final protected long 	_lastDoneID;
+	final protected String	_description;
+	boolean _done = false;
+
 	public HistoryProcess(Project project, long lastDoneID) {
 		_project = project;
 		_lastDoneID = lastDoneID;
+		
+		if (_lastDoneID == 0) {
+			_description = "Undo all";
+		} else {
+			HistoryEntry entry = _project.history.getEntry(_lastDoneID);
+			_description = "Undo/redo until after " + entry.description;
+		}
 	}
 	
 	@Override
 	public void cancel() {
+		throw new RuntimeException("Not a long-running process");
 	}
 
 	@Override
@@ -25,9 +40,32 @@ public class HistoryProcess extends Process {
 	@Override
 	public void performImmediate() {
 		_project.history.undoRedo(_lastDoneID);
+		_done = true;
 	}
 
 	@Override
 	public void startPerforming(ProcessManager manager) {
+		throw new RuntimeException("Not a long-running process");
+	}
+
+	@Override
+	public JSONObject getJSON(Properties options) throws JSONException {
+		JSONObject o = new JSONObject();
+		
+		o.put("description", _description);
+		o.put("immediate", true);
+		o.put("status", _done ? "done" : "pending");
+		
+		return o;
+	}
+
+	@Override
+	public boolean isDone() {
+		throw new RuntimeException("Not a long-running process");
+	}
+
+	@Override
+	public boolean isRunning() {
+		throw new RuntimeException("Not a long-running process");
 	}
 }

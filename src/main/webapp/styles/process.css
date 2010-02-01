@@ -13,3 +13,7 @@
     margin: 0 auto;
     text-align: left;
 }
+
+.fbs-pane, .fbs-flyout-pane {
+    z-index: 200;
+}

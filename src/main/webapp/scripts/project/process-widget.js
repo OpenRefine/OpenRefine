@@ -24,9 +24,11 @@ ProcessWidget.prototype._render = function() {
     
     this._div.empty();
     
-    var bodyDiv = $('<div></div>').addClass("process-panel-inner").text("Testing").appendTo(this._div);
+    var bodyDiv = $('<div></div>').addClass("process-panel-inner").appendTo(this._div);
     if (this._data.processes.length == 0) {
         this._div.hide();
+
+        ui.historyWidget.update();
         return;
     }
     

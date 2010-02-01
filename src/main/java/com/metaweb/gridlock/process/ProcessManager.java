@@ -33,11 +33,15 @@ public class ProcessManager {
 			return true;
 		} else {
 			_processes.add(process);
+			
+			update();
+			
 			return false;
 		}
 	}
 	
 	public void onDoneProcess(Process p) {
+		_processes.remove(p);
 		update();
 	}
 	
