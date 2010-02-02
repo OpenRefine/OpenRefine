@@ -78,7 +78,12 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
                 });
             } else {
                 menuItem.html(item.label).click(item.click);
+                if ("tooltip" in item) {
+                    menuItem.attr("title", item.tooltip);
+                }
             }
+        } else if ("heading" in item) {
+            $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);
         } else {
             $('<hr />').appendTo(menu);
         }

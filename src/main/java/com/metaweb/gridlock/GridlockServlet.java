@@ -14,9 +14,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.metaweb.gridlock.commands.ApproveNewReconcileCommand;
+import com.metaweb.gridlock.commands.ApproveReconcileCommand;
 import com.metaweb.gridlock.commands.Command;
 import com.metaweb.gridlock.commands.ComputeFacetsCommand;
 import com.metaweb.gridlock.commands.CreateProjectFromUploadCommand;
+import com.metaweb.gridlock.commands.DiscardReconcileCommand;
 import com.metaweb.gridlock.commands.DoTextTransformCommand;
 import com.metaweb.gridlock.commands.GetColumnModelCommand;
 import com.metaweb.gridlock.commands.GetHistoryCommand;
@@ -43,7 +46,11 @@ public class GridlockServlet extends HttpServlet {
 		_commands.put("undo-redo", new UndoRedoCommand());
 		_commands.put("compute-facets", new ComputeFacetsCommand());
 		_commands.put("do-text-transform", new DoTextTransformCommand());
+		
 		_commands.put("reconcile", new ReconcileCommand());
+		_commands.put("approve-reconcile", new ApproveReconcileCommand());
+		_commands.put("approve-new-reconcile", new ApproveNewReconcileCommand());
+		_commands.put("discard-reconcile", new DiscardReconcileCommand());
 	}
 
 	@Override

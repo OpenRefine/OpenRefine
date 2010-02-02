@@ -27,6 +27,15 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 	public Judgment				judgment = Judgment.None;
 	public ReconCandidate		match = null;
 	
+	public Recon dup() {
+		Recon r = new Recon();
+		r.features.putAll(new HashMap<String, Object>(features));
+		r.candidates.addAll(candidates);
+		r.judgment = judgment;
+		r.match = match;
+		return r;
+	}
+	
 	@Override
 	public Object getField(String name, Properties bindings) {
 		if ("best".equals(name)) {
@@ -75,15 +84,15 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 		writer.key("j");
 		writer.value(judgmentToString());
 		
-		writer.key("c"); writer.array();
-		for (ReconCandidate c : candidates) {
-			c.write(writer, options);
-		}
-		writer.endArray();
-		
 		if (match != null) {
 			writer.key("m");
 			match.write(writer, options);
+		} else {
+			writer.key("c"); writer.array();
+			for (ReconCandidate c : candidates) {
+				c.write(writer, options);
+			}
+			writer.endArray();
 		}
 		
 		writer.endObject();

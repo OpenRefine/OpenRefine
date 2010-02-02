@@ -59,7 +59,7 @@ a.inaction {
 
 .menu-container {
     position: absolute;
-    width: 200px;
+    width: 250px;
     background: white;
     padding: 1px;
     border: 1px solid #ddd;
@@ -88,6 +88,13 @@ a.menu-item:hover {
 
 a.menu-item img {
     border: none;
+}
+
+.menu-section {
+    padding: 2px 7px;
+    background: #aaa;
+    color: white;
+    font-weight: bold;
 }
 
 .dialog-overlay {

@@ -5,6 +5,10 @@ function DataTableView(div) {
     this._showRows(0);
 }
 
+DataTableView.prototype.update = function(reset) {
+    this._showRows(reset ? 0 : theProject.rowModel.start);
+};
+
 DataTableView.prototype.render = function() {
     var self = this;
     var container = this._div.empty();
@@ -115,20 +119,36 @@ DataTableView.prototype.render = function() {
             return;
         }
         
-        $(td).html(cell.v);
-            
-        if ("r" in cell && self._showRecon) {
-            var candidates = cell.r.c;
-            var ul = $('<ul></ul>').appendTo(td);
-            
-            for (var i = 0; i < candidates.length; i++) {
-                var candidate = candidates[i];
-                var li = $('<li></li>').appendTo(ul);
+        if (!("r" in cell) || cell.r == null) {
+            $(td).html(cell.v);
+        } else {
+            var r = cell.r;
+            if (r.j == "new") {
+                $(td).html(cell.v + " (new)");
+            } else if (r.j == "approve" && "m" in r && r.m != null) {
+                var match = cell.r.m;
                 $('<a></a>')
-                    .attr("href", "http://www.freebase.com/view" + candidate.id)
+                    .attr("href", "http://www.freebase.com/view" + match.id)
                     .attr("target", "_blank")
-                    .text(candidate.name)
-                    .appendTo(li);
+                    .text(match.name)
+                    .appendTo(td);
+            } else {
+                $(td).html(cell.v);
+                if (self._showRecon && "c" in r && r.c.length > 0) {
+                    var candidates = r.c;
+                    var ul = $('<ul></ul>').appendTo(td);
+                    
+                    for (var i = 0; i < candidates.length; i++) {
+                        var candidate = candidates[i];
+                        var li = $('<li></li>').appendTo(ul);
+                        $('<a></a>')
+                            .attr("href", "http://www.freebase.com/view" + candidate.id)
+                            .attr("target", "_blank")
+                            .text(candidate.name)
+                            .appendTo(li);
+                        $('<span></span>').addClass("recon-score").text("(" + Math.round(candidate.score) + ")").appendTo(li);
+                    }
+                }
             }
         }
     };
@@ -221,8 +241,9 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
         {
             label: "Filter",
             submenu: [
+                {   "heading" : "On Cell Content" },
                 {
-                    label: "By Nominal Choices",
+                    label: "Simple Facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -234,9 +255,18 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                         );
                     }
                 },
+                {
+                    label: "Custom Facet ...",
+                    click: function() {
+                        var expression = window.prompt("Enter expression", 'value');
+                        if (expression != null) {
+                            self._doFilterByExpression(column, expression);
+                        }                    
+                    }
+                },
                 {},
                 {
-                    label: "By Simple Text Search",
+                    label: "Text Search",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "text", 
@@ -250,12 +280,12 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                     }
                 },
                 {
-                    label: "By Regular Expression",
+                    label: "Regular Expression Search",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "text", 
                             {
-                                "name" : column.headerLabel,
+                                "name" : column.headerLabel + " (regex)",
                                 "cellIndex" : column.cellIndex, 
                                 "mode" : "regex",
                                 "caseSensitive" : true
@@ -263,121 +293,123 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                         );
                     }
                 },
+                {   "heading" : "By Reconciliation Features" },
                 {
-                    label: "By Custom Expression ...",
+                    label: "By Judgment",
                     click: function() {
-                        var expression = window.prompt("Enter expression", 'value');
-                        if (expression != null) {
-                            self._doFilterByExpression(column, expression);
-                        }                    
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : column.headerLabel + ": judgment",
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "cell.recon.judgment"
+                            }
+                        );
                     }
                 },
                 {},
                 {
-                    label: "By Reconciliation Features",
-                    submenu: [
-                        {
-                            label: "By Type Match",
-                            click: function() {
-                                ui.browsingEngine.addFacet(
-                                    "list", 
-                                    {
-                                        "name" : column.headerLabel + ": recon type match",
-                                        "cellIndex" : column.cellIndex, 
-                                        "expression" : "cell.recon.features.typeMatch"
-                                    },
-                                    {
-                                        "scroll" : false
-                                    }
-                                );
+                    label: "Best Candidate's Relevance Score",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "range", 
+                            {
+                                "name" : column.headerLabel + ": best candidate's relevance score",
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "cell.recon.best.score",
+                                "mode" : "range",
+                                "min" : 0,
+                                "max" : 200
+                            },
+                            {
                             }
-                        },
-                        {
-                            label: "By Name Match",
-                            click: function() {
-                                ui.browsingEngine.addFacet(
-                                    "list", 
-                                    {
-                                        "name" : column.headerLabel + ": recon name match",
-                                        "cellIndex" : column.cellIndex, 
-                                        "expression" : "cell.recon.features.nameMatch"
-                                    },
-                                    {
-                                        "scroll" : false
-                                    }
-                                );
+                        );
+                    }
+                },
+                {
+                    label: "Best Candidate's Type Match",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : column.headerLabel + ": best candidate's type match",
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "cell.recon.features.typeMatch"
+                            },
+                            {
+                                "scroll" : false
                             }
-                        },
-                        {
-                            label: "By Best Candidate's Score",
-                            click: function() {
-                                ui.browsingEngine.addFacet(
-                                    "range", 
-                                    {
-                                        "name" : column.headerLabel + ": best candidate's score",
-                                        "cellIndex" : column.cellIndex, 
-                                        "expression" : "cell.recon.best.score",
-                                        "mode" : "range",
-                                        "min" : 0,
-                                        "max" : 200
-                                    },
-                                    {
-                                    }
-                                );
+                        );
+                    }
+                },
+                {
+                    label: "Best Candidate's Name Match",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : column.headerLabel + ": best candidate's name match",
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "cell.recon.features.nameMatch"
+                            },
+                            {
+                                "scroll" : false
                             }
-                        },
-                        {
-                            label: "By Name's Edit Distance",
-                            click: function() {
-                                ui.browsingEngine.addFacet(
-                                    "range", 
-                                    {
-                                        "name" : column.headerLabel + ": name's edit distance",
-                                        "cellIndex" : column.cellIndex, 
-                                        "expression" : "cell.recon.features.nameLevenshtein",
-                                        "mode" : "range",
-                                        "min" : 0,
-                                        "max" : 1,
-                                        "step" : 0.1
-                                    },
-                                    {
-                                    }
-                                );
+                        );
+                    }
+                },
+                {},
+                {
+                    label: "Best Candidate's Name Edit Distance",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "range", 
+                            {
+                                "name" : column.headerLabel + ": best candidate's name edit distance",
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "cell.recon.features.nameLevenshtein",
+                                "mode" : "range",
+                                "min" : 0,
+                                "max" : 1,
+                                "step" : 0.1
+                            },
+                            {
                             }
-                        },
-                        {
-                            label: "By Name's Word Similarity",
-                            click: function() {
-                                ui.browsingEngine.addFacet(
-                                    "range", 
-                                    {
-                                        "name" : column.headerLabel + ": name's word similarity",
-                                        "cellIndex" : column.cellIndex, 
-                                        "expression" : "cell.recon.features.nameWordDistance",
-                                        "mode" : "range",
-                                        "min" : 0,
-                                        "max" : 1,
-                                        "step" : 0.1
-                                    },
-                                    {
-                                    }
-                                );
+                        );
+                    }
+                },
+                {
+                    label: "Best Candidate's Name Word Similarity",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "range", 
+                            {
+                                "name" : column.headerLabel + ": best candidate's name word similarity",
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "cell.recon.features.nameWordDistance",
+                                "mode" : "range",
+                                "min" : 0,
+                                "max" : 1,
+                                "step" : 0.1
+                            },
+                            {
                             }
-                        },
-                        {
-                            label: "By Best Candidate's Types",
-                            click: function() {
-                                ui.browsingEngine.addFacet(
-                                    "list", 
-                                    {
-                                        "name" : column.headerLabel + ": best candidate's types",
-                                        "cellIndex" : column.cellIndex, 
-                                        "expression" : "cell.recon.best.type"
-                                    }
-                                );
+                        );
+                    }
+                },
+                {},
+                {
+                    label: "Best Candidate's Types",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : column.headerLabel + ": best candidate's types",
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "cell.recon.best.type"
                             }
-                        }
-                    ]
+                        );
+                    }
                 }
             ]
         },
@@ -445,36 +477,37 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
             label: "Reconcile",
             submenu: [
                 {
-                    label: "Initiate on Filtered Rows...",
+                    label: "Start Reconciling ...",
+                    tooltip: "Reconcile text in this column with topics on Freebase",
                     click: function() {
                         new ReconDialog(index);
                     }
                 },
                 {},
                 {
-                    label: "Approve Filtered Rows",
-                    click: function() {}
+                    label: "Approve Best Candidates",
+                    tooltip: "Approve best reconciliaton candidate per cell in this column for all current filtered rows",
+                    click: function() {
+                        self._doApproveBestCandidates(column);
+                    }
+                },
+                {
+                    label: "Approve As New Topics",
+                    tooltip: "Set to create new topics for cells in this column for all current filtered rows",
+                    click: function() {
+                        self._doApproveNewTopics(column);
+                    }
+                },
+                {
+                    label: "Discard Reconciliation Results",
+                    tooltip: "Discard reconciliaton results in this column for all current filtered rows",
+                    click: function() {
+                        self._doDiscardReconResults(column);
+                    }
                 }
             ]
         }
     ], elmt);
-};
-
-DataTableView.prototype._doTextTransform = function(column, expression) {
-    var self = this;
-    $.post(
-        "/command/do-text-transform?" + $.param({ project: theProject.id, cell: column.cellIndex, expression: expression }), 
-        { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
-        function(data) {
-            if (data.code == "ok") {
-                self.update();
-                ui.historyWidget.update();
-            } else {
-                ui.processWidget.update();
-            }
-        },
-        "json"
-    );
 };
 
 DataTableView.prototype._doFilterByExpression = function(column, expression) {
@@ -488,7 +521,52 @@ DataTableView.prototype._doFilterByExpression = function(column, expression) {
     );
 };
 
-DataTableView.prototype.update = function(reset) {
-    this._showRows(reset ? 0 : theProject.rowModel.start);
+DataTableView.prototype._createUpdateFunction = function() {
+    var self = this;
+    return function(data) {
+        if (data.code == "ok") {
+            self.update();
+            ui.historyWidget.update();
+        } else {
+            ui.processWidget.update();
+        }
+    };
 };
 
+DataTableView.prototype._doPostThenUpdate = function(command, params) {
+    params.project = theProject.id;
+    $.post(
+        "/command/" + command + "?" + $.param(params),
+        { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+        this._createUpdateFunction(),
+        "json"
+    );
+};
+
+DataTableView.prototype._doTextTransform = function(column, expression) {
+    this._doPostThenUpdate(
+        "do-text-transform",
+        { cell: column.cellIndex, expression: expression }
+    ); 
+};
+
+DataTableView.prototype._doDiscardReconResults = function(column) {
+    this._doPostThenUpdate(
+        "discard-reconcile",
+        { cell: column.cellIndex }
+    );
+};
+
+DataTableView.prototype._doApproveBestCandidates = function(column) {
+    this._doPostThenUpdate(
+        "approve-reconcile",
+        { cell: column.cellIndex }
+    );
+};
+
+DataTableView.prototype._doApproveNewTopics = function(column) {
+    this._doPostThenUpdate(
+        "approve-new-reconcile",
+        { cell: column.cellIndex }
+    );
+};
