@@ -29,6 +29,7 @@ ProcessWidget.prototype._render = function() {
         this._div.hide();
 
         ui.historyWidget.update();
+        ui.dataTableView.update(true);
         return;
     }
     
