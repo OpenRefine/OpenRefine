@@ -18,9 +18,16 @@ DataTableView.prototype.render = function() {
         '</span>'
     ).appendTo(divSummary);
     
-    var pagingControls = $('<div></div>').addClass("viewPanel-pagingControls").appendTo(container);
-    var firstPage = $('<a href="javascript:{}">&laquo; first</a>').appendTo(pagingControls);
-    var previousPage = $('<a href="javascript:{}">&laquo; previous</a>').appendTo(pagingControls);
+    /*
+     *  Paging controls
+     */
+    
+    var pagingControls = $('<table width="100%"><tr><td align="center"></td><td align="center"></td></tr></table>').addClass("viewPanel-pagingControls").appendTo(container);
+    var pagingControls0 = pagingControls[0].rows[0].cells[0];
+    var pagingControls1 = pagingControls[0].rows[0].cells[1];
+    
+    var firstPage = $('<a href="javascript:{}">&laquo; first</a>').appendTo(pagingControls0);
+    var previousPage = $('<a href="javascript:{}">&laquo; previous</a>').appendTo(pagingControls0);
     if (theProject.rowModel.start > 0) {
         firstPage.addClass("action").click(function(evt) { self._onClickFirstPage(this, evt); });
         previousPage.addClass("action").click(function(evt) { self._onClickPreviousPage(this, evt); });
@@ -28,9 +35,9 @@ DataTableView.prototype.render = function() {
         firstPage.addClass("inaction");
         previousPage.addClass("inaction");
     }
-    $('<span> &bull; </span>').appendTo(pagingControls);
-    var nextPage = $('<a href="javascript:{}">next page &raquo;</a>').appendTo(pagingControls);
-    var lastPage = $('<a href="javascript:{}">last &raquo;</a>').appendTo(pagingControls);
+    $('<span> &bull; </span>').appendTo(pagingControls0);
+    var nextPage = $('<a href="javascript:{}">next page &raquo;</a>').appendTo(pagingControls0);
+    var lastPage = $('<a href="javascript:{}">last &raquo;</a>').appendTo(pagingControls0);
     if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
         nextPage.addClass("action").click(function(evt) { self._onClickNextPage(this, evt); });
         lastPage.addClass("action").click(function(evt) { self._onClickLastPage(this, evt); });
@@ -39,6 +46,27 @@ DataTableView.prototype.render = function() {
         lastPage.addClass("inaction");
     }
     
+    $('<span>page size: </span>').appendTo(pagingControls1);
+    var sizes = [ 5, 10, 15, 20, 25, 50 ];
+    var renderPageSize = function(index) {
+        var pageSize = sizes[index];
+        var a = $('<a href="javascript:{}"></a>').appendTo(pagingControls1)
+        if (pageSize == self._pageSize) {
+            a.text("[" + pageSize + "]").addClass("inaction");
+        } else {
+            a.text(pageSize).addClass("action").click(function(evt) {
+                self._pageSize = pageSize;
+                self.update(true);
+            });
+        }
+    };
+    for (var i = 0; i < sizes.length; i++) {
+        renderPageSize(i);
+    }
+    
+    /*
+     *  Data table
+     */
     var table = document.createElement("table");
     table.className = "data-table";
     container.append(table);
