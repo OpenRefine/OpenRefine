@@ -77,6 +77,7 @@ public abstract class Command {
     }
     
     protected void respondJSON(HttpServletResponse response, Jsonizable o, Properties options) throws IOException, JSONException {
+    	response.setCharacterEncoding("UTF-8");
     	response.setHeader("Content-Type", "application/json");
     	
 		JSONWriter writer = new JSONWriter(response.getWriter());

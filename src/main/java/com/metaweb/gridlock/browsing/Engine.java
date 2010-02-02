@@ -12,6 +12,7 @@ import org.json.JSONWriter;
 import com.metaweb.gridlock.Jsonizable;
 import com.metaweb.gridlock.browsing.facets.Facet;
 import com.metaweb.gridlock.browsing.facets.ListFacet;
+import com.metaweb.gridlock.browsing.facets.RangeFacet;
 import com.metaweb.gridlock.browsing.filters.RowFilter;
 import com.metaweb.gridlock.model.Project;
 
@@ -51,6 +52,8 @@ public class Engine implements Jsonizable {
 			Facet facet = null;
 			if ("list".equals(type)) {
 				facet = new ListFacet();
+			} else if ("range".equals(type)) {
+				facet = new RangeFacet();
 			}
 			
 			if (facet != null) {

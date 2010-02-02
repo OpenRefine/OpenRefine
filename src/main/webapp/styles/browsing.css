@@ -14,9 +14,17 @@
 .facet-body {
     border: 1px solid #ccc;
     padding: 1px;
+}
+.facet-body-scrollable {
     height: 20em;
     overflow: auto;
 }
+.facet-footer {
+    padding: 1px;
+    text-align: center;
+    font-size: 80%;
+}
+
 .facet-choice {
     padding: 2px 5px;
     clear: both;
@@ -57,4 +65,15 @@ a.facet-choice-link {
 a.facet-choice-link:hover {
     text-decoration: underline;
     color: #88a;
+}
+
+.facet-range-body {
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+.facet-range-slider {
+}
+.facet-range-status {
+    margin: 5px 0px;
+    text-align: center;
 }

@@ -29,6 +29,7 @@ public class GetRowsCommand extends Command {
 			int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
 			Properties options = new Properties();
 			
+			response.setCharacterEncoding("UTF-8");
 	    	response.setHeader("Content-Type", "application/json");
 	    	
 			JSONWriter writer = new JSONWriter(response.getWriter());

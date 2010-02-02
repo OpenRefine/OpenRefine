@@ -78,16 +78,16 @@ public class ReconProcess extends LongRunningProcess implements Runnable {
 		
 		List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
 		List<String> values = new ArrayList<String>(valueToEntries.keySet());
-		for (int i = 0; i < values.size(); i += 20) {
+		for (int i = 0; i < values.size(); i += 10) {
 			try {
-				recon(valueToEntries, values, i, Math.min(i + 20, values.size()), cellChanges);
+				recon(valueToEntries, values, i, Math.min(i + 10, values.size()), cellChanges);
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 			}
 			_progress = i * 100 / values.size();
 			
 			try {
-				Thread.sleep(100);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				if (_canceled) {
 					break;
@@ -125,6 +125,8 @@ public class ReconProcess extends LongRunningProcess implements Runnable {
 			jsonWriter.key("type"); jsonWriter.value(_typeID);
 			jsonWriter.key("type_strict"); jsonWriter.value("should");
 			jsonWriter.key("indent"); jsonWriter.value(1);
+			jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
+			jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
 			
 			jsonWriter.endObject();
 		}

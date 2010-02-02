@@ -42,8 +42,8 @@ function initializeUI() {
     
     var tdLeft = tr.insertCell(0);
     var tdRight = tr.insertCell(1);
-    tdLeft.setAttribute("width", "75%");
-    tdRight.setAttribute("width", "25%");
+    tdLeft.setAttribute("width", "82%");
+    tdRight.setAttribute("width", "18%");
     
     ui.viewPanel = $('<div></div>').appendTo(tdLeft).css("width", tdLeft.offsetWidth + "px").css("overflow-x", "auto");
     ui.facetPanel = $('<div></div>').appendTo(tdRight);

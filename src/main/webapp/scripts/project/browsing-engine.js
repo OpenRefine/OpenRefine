@@ -18,12 +18,15 @@ BrowsingEngine.prototype.getJSON = function() {
     return a;
 };
 
-BrowsingEngine.prototype.addFacet = function(type, config) {
+BrowsingEngine.prototype.addFacet = function(type, config, options) {
     var div = $('<div></div>').addClass("facet-container").appendTo(this._div);
     var facet;
     switch (type) {
+        case "range":
+            facet = new RangeFacet(div, config, options);
+            break;
         default:
-            facet = new ListFacet(div, config, {});
+            facet = new ListFacet(div, config, options);
     }
     
     this._facets.push({ elmt: div, facet: facet });

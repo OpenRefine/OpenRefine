@@ -221,7 +221,109 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                 },
                 {
                     label: "By Reconciliation Features",
-                    click: function() {}
+                    submenu: [
+                        {
+                            label: "By Type Match",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : column.headerLabel + ": recon type match",
+                                        "cellIndex" : column.cellIndex, 
+                                        "expression" : "cell.recon.features.typeMatch"
+                                    },
+                                    {
+                                        "scroll" : false
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "By Name Match",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : column.headerLabel + ": recon name match",
+                                        "cellIndex" : column.cellIndex, 
+                                        "expression" : "cell.recon.features.nameMatch"
+                                    },
+                                    {
+                                        "scroll" : false
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "By Best Candidate's Score",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : column.headerLabel + ": best candidate's score",
+                                        "cellIndex" : column.cellIndex, 
+                                        "expression" : "cell.recon.best.score",
+                                        "mode" : "range",
+                                        "min" : 0,
+                                        "max" : 200
+                                    },
+                                    {
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "By Name's Edit Distance",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : column.headerLabel + ": name's edit distance",
+                                        "cellIndex" : column.cellIndex, 
+                                        "expression" : "cell.recon.features.nameLevenshtein",
+                                        "mode" : "range",
+                                        "min" : 0,
+                                        "max" : 1,
+                                        "step" : 0.1
+                                    },
+                                    {
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "By Name's Word Similarity",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : column.headerLabel + ": name's word similarity",
+                                        "cellIndex" : column.cellIndex, 
+                                        "expression" : "cell.recon.features.nameWordDistance",
+                                        "mode" : "range",
+                                        "min" : 0,
+                                        "max" : 1,
+                                        "step" : 0.1
+                                    },
+                                    {
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "By Best Candidate's Types",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : column.headerLabel + ": best candidate's types",
+                                        "cellIndex" : column.cellIndex, 
+                                        "expression" : "cell.recon.best.type"
+                                    }
+                                );
+                            }
+                        }
+                    ]
                 }
             ]
         },
