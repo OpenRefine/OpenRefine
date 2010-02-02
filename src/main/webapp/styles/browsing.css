@@ -77,3 +77,12 @@ a.facet-choice-link:hover {
     margin: 5px 0px;
     text-align: center;
 }
+
+.facet-text-body {
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+.facet-text-body input {
+    width: 98%;
+}

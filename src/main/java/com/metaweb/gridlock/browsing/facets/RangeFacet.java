@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridlock.browsing.FilteredRows;
-import com.metaweb.gridlock.browsing.filters.ExpressionComparisonRowFilter;
+import com.metaweb.gridlock.browsing.filters.ExpressionNumberComparisonRowFilter;
 import com.metaweb.gridlock.browsing.filters.RowFilter;
 import com.metaweb.gridlock.expr.Evaluable;
 import com.metaweb.gridlock.expr.Parser;
@@ -69,19 +69,19 @@ public class RangeFacet implements Facet {
 	@Override
 	public RowFilter getRowFilter() {
 		if ("min".equals(_mode)) {
-			return new ExpressionComparisonRowFilter(_eval, _cellIndex) {
+			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
 				protected boolean checkValue(double d) {
 					return d >= _min;
 				};
 			};
 		} else if ("max".equals(_mode)) {
-			return new ExpressionComparisonRowFilter(_eval, _cellIndex) {
+			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
 				protected boolean checkValue(double d) {
 					return d <= _max;
 				};
 			};
 		} else {
-			return new ExpressionComparisonRowFilter(_eval, _cellIndex) {
+			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
 				protected boolean checkValue(double d) {
 					return d >= _min && d <= _max;
 				};

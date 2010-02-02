@@ -7,11 +7,11 @@ import com.metaweb.gridlock.model.Cell;
 import com.metaweb.gridlock.model.Project;
 import com.metaweb.gridlock.model.Row;
 
-abstract public class ExpressionComparisonRowFilter implements RowFilter {
+abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
 	final protected Evaluable		_evaluable;
 	final protected int 			_cellIndex;
 	
-	public ExpressionComparisonRowFilter(Evaluable evaluable, int cellIndex) {
+	public ExpressionStringComparisonRowFilter(Evaluable evaluable, int cellIndex) {
 		_evaluable = evaluable;
 		_cellIndex = cellIndex;
 	}
@@ -31,12 +31,12 @@ abstract public class ExpressionComparisonRowFilter implements RowFilter {
 					if (value.getClass().isArray()) {
 						Object[] a = (Object[]) value;
 						for (Object v : a) {
-							if (v instanceof Number && checkValue(((Number) v).doubleValue())) {
+							if (checkValue(v instanceof String ? ((String) v) : v.toString())) {
 								return true;
 							}
 						}
 					} else {
-						if (value instanceof Number && checkValue(((Number) value).doubleValue())) {
+						if (checkValue(value instanceof String ? ((String) value) : value.toString())) {
 							return true;
 						}
 					}
@@ -46,5 +46,5 @@ abstract public class ExpressionComparisonRowFilter implements RowFilter {
 		return false;
 	}
 	
-	abstract protected boolean checkValue(double d);
+	abstract protected boolean checkValue(String s);
 }

@@ -234,12 +234,37 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                         );
                     }
                 },
+                {},
                 {
                     label: "By Simple Text Search",
-                    click: function() {}
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "text", 
+                            {
+                                "name" : column.headerLabel,
+                                "cellIndex" : column.cellIndex, 
+                                "mode" : "text",
+                                "caseSensitive" : false
+                            }
+                        );
+                    }
                 },
                 {
-                    label: "By Custom Expression",
+                    label: "By Regular Expression",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "text", 
+                            {
+                                "name" : column.headerLabel,
+                                "cellIndex" : column.cellIndex, 
+                                "mode" : "regex",
+                                "caseSensitive" : true
+                            }
+                        );
+                    }
+                },
+                {
+                    label: "By Custom Expression ...",
                     click: function() {
                         var expression = window.prompt("Enter expression", 'value');
                         if (expression != null) {
@@ -247,6 +272,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                         }                    
                     }
                 },
+                {},
                 {
                     label: "By Reconciliation Features",
                     submenu: [

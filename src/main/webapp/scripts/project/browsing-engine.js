@@ -25,6 +25,9 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
         case "range":
             facet = new RangeFacet(div, config, options);
             break;
+        case "text":
+            facet = new TextSearchFacet(div, config, options);
+            break;
         default:
             facet = new ListFacet(div, config, options);
     }
