@@ -1,0 +1,17 @@
+.expression-preview-container {
+    border: 1px solid #ccc;
+    height: 300px;
+    overflow: auto;
+}
+
+.expression-preview-container td {
+    padding: 2px 5px;
+    border-top: 1px solid #ccc;
+}
+
+td.expression-preview-heading {
+    border-top: none;
+    background: #ddd;
+    font-weight: bold;
+}
+

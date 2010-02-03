@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -161,6 +162,12 @@ public abstract class Command {
     	JSONTokener t = new JSONTokener(s);
     	JSONObject o = (JSONObject) t.nextValue();
     	return o;
+    }
+    
+    protected JSONArray jsonStringToArray(String s) throws JSONException {
+    	JSONTokener t = new JSONTokener(s);
+    	JSONArray a = (JSONArray) t.nextValue();
+    	return a;
     }
     
     protected Engine getEngine(HttpServletRequest request, Project project) throws Exception {

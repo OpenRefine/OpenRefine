@@ -278,12 +278,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                 },
                 {
                     label: "Custom Text Facet ...",
-                    click: function() {
-                        var expression = window.prompt("Enter expression", 'value');
-                        if (expression != null) {
-                            self._doFilterByExpression(column, expression);
-                        }                    
-                    }
+                    click: function() { self._doFilterByExpressionPrompt(column); }
                 },
                 {},
                 {
@@ -489,12 +484,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                 {},
                 {
                     label: "Custom Expression ...",
-                    click: function() {
-                        var expression = window.prompt("Enter expression", 'replace(value, "", "")');
-                        if (expression != null) {
-                            self._doTextTransform(column, expression);
-                        }
-                    }
+                    click: function() { self._doTextTransformPrompt(column); }
                 }
             ]
         },
@@ -536,13 +526,21 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
     ], elmt);
 };
 
-DataTableView.prototype._doFilterByExpression = function(column, expression) {
-    ui.browsingEngine.addFacet(
-        "list", 
-        {
-            "name" : column.headerLabel + ": " + expression,
-            "cellIndex" : column.cellIndex, 
-            "expression" : expression
+DataTableView.prototype._doFilterByExpressionPrompt = function(column, expression) {
+    var self = this;
+    DataTableView.promptExpressionOnVisibleRows(
+        column,
+        "Custom Filter on " + column.headerLabel, 
+        "value",
+        function(expression) {
+            ui.browsingEngine.addFacet(
+                "list", 
+                {
+                    "name" : column.headerLabel + ": " + expression,
+                    "cellIndex" : column.cellIndex, 
+                    "expression" : expression
+                }
+            );
         }
     );
 };
@@ -573,7 +571,50 @@ DataTableView.prototype._doTextTransform = function(column, expression) {
     this._doPostThenUpdate(
         "do-text-transform",
         { cell: column.cellIndex, expression: expression }
-    ); 
+    );
+};
+
+DataTableView.prototype._doTextTransformPrompt = function(column) {
+    var self = this;
+    DataTableView.promptExpressionOnVisibleRows(
+        column,
+        "Custom Transform on " + column.headerLabel, 
+        "value",
+        function(expression) {
+            self._doTextTransform(column, expression);
+        }
+    );
+};
+
+DataTableView.promptExpressionOnVisibleRows = function(column, title, expression, onDone) {
+    var rowIndices = [];
+    var values = [];
+    
+    var rows = theProject.rowModel.rows;
+    for (var r = 0; r < rows.length; r++) {
+        var row = rows[r];
+        
+        rowIndices.push(row.i);
+        
+        var v = null;
+        if (column.cellIndex < row.cells.length) {
+            var cell = row.cells[column.cellIndex];
+            if (cell != null) {
+                v = cell.v;
+            }
+        }
+        values.push(v);
+    }
+    
+    var self = this;
+    new ExpressionPreviewDialog(
+        title,
+        column.cellIndex, 
+        rowIndices, 
+        values,
+        expression,
+        onDone
+    );
 };
 
 DataTableView.prototype._doDiscardReconResults = function(column) {

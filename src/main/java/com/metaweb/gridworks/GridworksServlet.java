@@ -27,6 +27,7 @@ import com.metaweb.gridworks.commands.GetHistoryCommand;
 import com.metaweb.gridworks.commands.GetProcessesCommand;
 import com.metaweb.gridworks.commands.GetProjectMetadataCommand;
 import com.metaweb.gridworks.commands.GetRowsCommand;
+import com.metaweb.gridworks.commands.PreviewExpressionCommand;
 import com.metaweb.gridworks.commands.ReconcileCommand;
 import com.metaweb.gridworks.commands.UndoRedoCommand;
 
@@ -54,6 +55,8 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("approve-reconcile", new ApproveReconcileCommand());
 		_commands.put("approve-new-reconcile", new ApproveNewReconcileCommand());
 		_commands.put("discard-reconcile", new DiscardReconcileCommand());
+		
+		_commands.put("preview-expression", new PreviewExpressionCommand());
 	}
 
 	@Override
