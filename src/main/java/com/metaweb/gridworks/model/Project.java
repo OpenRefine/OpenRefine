@@ -34,5 +34,11 @@ public class Project implements Serializable {
 	
 	protected void internalInitialize() {
 		processManager = new ProcessManager();
+		
+		computeContext();
+	}
+	
+	protected void computeContext() {
+		// TODO
 	}
 }

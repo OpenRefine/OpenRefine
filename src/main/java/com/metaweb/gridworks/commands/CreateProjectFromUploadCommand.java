@@ -76,9 +76,13 @@ public class CreateProjectFromUploadCommand extends Command {
 				
 				if ((sep.charAt(0) == ',') ? parseCSVIntoRow(row, line) : parseTSVIntoRow(row, line)) {
 					project.rows.add(row);
+					project.columnModel.maxCellIndex = 
+						Math.max(project.columnModel.maxCellIndex, row.cells.size());
 				}
 			}
 		}
+		
+		project.columnModel.update();
 		
 		redirect(response, "/project.html?project=" + project.id);
 	}

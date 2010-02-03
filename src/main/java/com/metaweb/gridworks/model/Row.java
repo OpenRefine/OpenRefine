@@ -18,6 +18,9 @@ public class Row implements Serializable, HasFields, Jsonizable {
 	public boolean		starred;
 	public List<Cell> 	cells;
 	
+	transient public	List<Integer> contextRows;
+	transient public	List<Integer> contextCells;
+	
 	public Row(int cellCount) {
 		cells = new ArrayList<Cell>(cellCount);
 	}
