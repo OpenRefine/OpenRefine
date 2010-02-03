@@ -115,9 +115,9 @@ public class RangeFacet implements Facet {
 			column.setPrecompute(key, index);
 		}
 		
-		_min = index.min;
-		_max = index.max;
-		_step = index.step;
-		_bins = index.bins;
+		_min = index.getMin();
+		_max = index.getMax();
+		_step = index.getStep();
+		_bins = index.getBins();
 	}
 }

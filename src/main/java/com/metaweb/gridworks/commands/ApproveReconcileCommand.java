@@ -38,7 +38,7 @@ public class ApproveReconcileCommand extends Command {
 				return;
 			}
 			
-			String columnName = column.headerLabel;
+			String columnName = column.getHeaderLabel();
 			List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
 			
 			FilteredRows filteredRows = engine.getAllFilteredRows();
@@ -57,9 +57,10 @@ public class ApproveReconcileCommand extends Command {
 					if (cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(cellIndex);
 						if (cell.recon != null && cell.recon.candidates.size() > 0) {
-							Cell newCell = new Cell();
-							newCell.value = cell.value;
-							newCell.recon = cell.recon.dup();
+							Cell newCell = new Cell(
+								cell.value,
+								cell.recon.dup()
+							);
 							newCell.recon.match = newCell.recon.candidates.get(0);
 							newCell.recon.judgment = Judgment.Approve;
 							

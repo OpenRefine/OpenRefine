@@ -15,13 +15,15 @@ import com.metaweb.gridworks.Jsonizable;
 public class ColumnGroup implements Serializable, Jsonizable {
 	private static final long serialVersionUID = 2161780779920066118L;
 
-	public int[] cellIndices;  // must be in order from smallest to largest
-	public int	 keyCellIndex; // could be -1 if there is no key cell 
+	final public int[] 	cellIndices;  // must be in order from smallest to largest
+	final public int	keyCellIndex; // could be -1 if there is no key cell 
 	
 	transient public ColumnGroup		parentGroup;
 	transient public List<ColumnGroup> 	subgroups;
 	
-	public ColumnGroup() {
+	public ColumnGroup(int[] cellIndices, int keyCellIndex) {
+		this.cellIndices = cellIndices;
+		this.keyCellIndex = keyCellIndex;
 		internalInitialize();
 	}
 	

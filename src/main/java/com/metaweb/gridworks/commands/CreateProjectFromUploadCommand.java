@@ -23,8 +23,8 @@ public class CreateProjectFromUploadCommand extends Command {
 		String content = readFileUpload(request, properties);
 		
 		ProjectMetadata pm = new ProjectMetadata();
-		pm.name = properties.getProperty("project-name");
-		pm.password = properties.getProperty("project-password");
+		pm.setName(properties.getProperty("project-name"));
+		pm.setPassword(properties.getProperty("project-password"));
 		
 		Project project = ProjectManager.singleton.createProject(pm);
 		
@@ -63,9 +63,7 @@ public class CreateProjectFromUploadCommand extends Command {
 						cell = cell.substring(1, cell.length() - 1);
 					}
 					
-					Column column = new Column();
-					column.cellIndex = c;
-					column.headerLabel = cell;
+					Column column = new Column(c, cell);
 					
 					project.columnModel.columns.add(column);
 				}
@@ -76,8 +74,7 @@ public class CreateProjectFromUploadCommand extends Command {
 				
 				if ((sep.charAt(0) == ',') ? parseCSVIntoRow(row, line) : parseTSVIntoRow(row, line)) {
 					project.rows.add(row);
-					project.columnModel.maxCellIndex = 
-						Math.max(project.columnModel.maxCellIndex, row.cells.size());
+					project.columnModel.setMaxCellIndex(Math.max(project.columnModel.getMaxCellIndex(), row.cells.size()));
 				}
 			}
 		}
@@ -94,8 +91,7 @@ public class CreateProjectFromUploadCommand extends Command {
 		for (int c = 0; c < cells.length; c++) {
 			String text = cells[c];
 			
-			Cell cell = new Cell();
-			cell.value = parseCellValue(text);
+			Cell cell = new Cell(parseCellValue(text), null);
 			
 			row.cells.add(cell);
 			
@@ -133,8 +129,7 @@ public class CreateProjectFromUploadCommand extends Command {
 				}
 			}
 			
-			Cell cell = new Cell();
-			cell.value = parseCellValue(text);
+			Cell cell = new Cell(parseCellValue(text), null);
 			
 			row.cells.add(cell);
 			

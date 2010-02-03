@@ -12,11 +12,11 @@ import com.metaweb.gridworks.process.ProcessManager;
 public class Project implements Serializable {
 	private static final long serialVersionUID = -5089046824819472570L;
 	
-	public long id;
+	final public long 			id;
 	
-	public ColumnModel 		columnModel = new ColumnModel();
-	public List<Row> 		rows = new ArrayList<Row>();
-	public History 			history;
+	final public ColumnModel 	columnModel = new ColumnModel();
+	final public List<Row> 		rows = new ArrayList<Row>();
+	final public History 		history;
 	
 	transient public ProcessManager processManager;
 	

@@ -13,20 +13,40 @@ import com.metaweb.gridworks.Jsonizable;
 public class Column implements Serializable, Jsonizable {
 	private static final long serialVersionUID = -1063342490951563563L;
 	
-	public int		cellIndex;
-	public String	headerLabel;
-	public Class 	valueType;
+	final private int		_cellIndex;
+	final private String	_originalHeaderLabel;
+	private String			_headerLabel;
 	
 	transient protected Map<String, Object> _precomputes;
 	
+	public Column(int cellIndex, String headerLabel) {
+		_cellIndex = cellIndex;
+		_originalHeaderLabel = _headerLabel = headerLabel;
+	}
+	
+	public int getCellIndex() {
+		return _cellIndex;
+	}
+
+	public String getOriginalHeaderLabel() {
+		return _originalHeaderLabel;
+	}
+	
+	public void setHeaderLabel(String headerLabel) {
+		this._headerLabel = headerLabel;
+	}
+
+	public String getHeaderLabel() {
+		return _headerLabel;
+	}
+
 	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		
 		writer.object();
-		writer.key("cellIndex"); writer.value(cellIndex);
-		writer.key("headerLabel"); writer.value(headerLabel);
-		writer.key("valueType"); writer.value(valueType == null ? null : valueType.getSimpleName());
+		writer.key("cellIndex"); writer.value(getCellIndex());
+		writer.key("headerLabel"); writer.value(getHeaderLabel());
 		writer.endObject();
 	}
 	

@@ -37,7 +37,7 @@ public class DiscardReconcileCommand extends Command {
 				return;
 			}
 			
-			String columnName = column.headerLabel;
+			String columnName = column.getHeaderLabel();
 			List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
 			
 			FilteredRows filteredRows = engine.getAllFilteredRows();
@@ -56,9 +56,7 @@ public class DiscardReconcileCommand extends Command {
 					if (cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(cellIndex);
 
-						Cell newCell = new Cell();
-						newCell.value = cell.value;
-						newCell.recon = null;
+						Cell newCell = new Cell(cell.value, null);
 						
 						CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
 						cellChanges.add(cellChange);

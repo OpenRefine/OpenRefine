@@ -7,11 +7,9 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.FilteredRows;
-import com.metaweb.gridworks.browsing.filters.ExpressionNumberComparisonRowFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionStringComparisonRowFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
-import com.metaweb.gridworks.expr.Parser;
 import com.metaweb.gridworks.expr.VariableExpr;
 import com.metaweb.gridworks.model.Project;
 

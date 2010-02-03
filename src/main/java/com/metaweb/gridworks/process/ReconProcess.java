@@ -165,9 +165,7 @@ public class ReconProcess extends LongRunningProcess implements Runnable {
 					for (ReconEntry entry : valueToEntries.get(value)) {
 						Cell oldCell = entry.cell;
 						
-						Cell newCell = new Cell();
-						newCell.value = oldCell.value;
-						newCell.recon = recon;
+						Cell newCell = new Cell(oldCell.value, recon);
 						
 						CellChange cellChange = new CellChange(
 							entry.rowIndex, 
@@ -198,18 +196,19 @@ public class ReconProcess extends LongRunningProcess implements Runnable {
 				continue;
 			}
 			
-			ReconCandidate candidate = new ReconCandidate();
-			
-			candidate.topicID = result.getString("id");
-			candidate.topicGUID = result.getString("guid");
-			candidate.topicName = result.getString("name");
-			candidate.score = result.getDouble("relevance:score");
-			
 			JSONArray types = result.getJSONArray("type");
-			candidate.typeIDs = new String[types.length()];
-			for (int j = 0; j < candidate.typeIDs.length; j++) {
-				candidate.typeIDs[j] = types.getJSONObject(j).getString("id");
+			String[] typeIDs = new String[types.length()];
+			for (int j = 0; j < typeIDs.length; j++) {
+				typeIDs[j] = types.getJSONObject(j).getString("id");
 			}
+			
+			ReconCandidate candidate = new ReconCandidate(
+				result.getString("id"),
+				result.getString("guid"),
+				result.getString("name"),
+				typeIDs,
+				result.getDouble("relevance:score")
+			);
 			
 			// best match
 			if (i == 0) {

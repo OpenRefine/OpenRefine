@@ -13,7 +13,8 @@ public class HistoryProcess extends Process {
 	final protected Project _project;
 	final protected long 	_lastDoneID;
 	final protected String	_description;
-	boolean _done = false;
+	
+	protected boolean _done = false;
 
 	public HistoryProcess(Project project, long lastDoneID) {
 		_project = project;

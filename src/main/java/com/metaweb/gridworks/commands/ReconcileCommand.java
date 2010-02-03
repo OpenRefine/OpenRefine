@@ -35,7 +35,7 @@ public class ReconcileCommand extends Command {
 				return;
 			}
 			
-			String columnName = column.headerLabel;
+			String columnName = column.getHeaderLabel();
 			String typeID = request.getParameter("type");
 			
 			List<ReconEntry> entries = new ArrayList<ReconEntry>(project.rows.size());

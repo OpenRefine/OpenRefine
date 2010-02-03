@@ -12,11 +12,19 @@ import com.metaweb.gridworks.expr.HasFields;
 public class ReconCandidate implements Serializable, HasFields, Jsonizable {
 	private static final long serialVersionUID = -8013997214978715606L;
 	
-	public String 	topicID;
-	public String 	topicGUID;
-	public String	topicName;
-	public String[] typeIDs;
-	public double	score;
+	final public String 	topicID;
+	final public String 	topicGUID;
+	final public String		topicName;
+	final public String[] 	typeIDs;
+	final public double		score;
+	
+	public ReconCandidate(String topicID, String topicGUID, String topicName, String[] typeIDs, double score) {
+		this.topicID = topicID;
+		this.topicGUID = topicGUID;
+		this.topicName = topicName;
+		this.typeIDs = typeIDs;
+		this.score = score;
+	}
 	
 	@Override
 	public Object getField(String name, Properties bindings) {

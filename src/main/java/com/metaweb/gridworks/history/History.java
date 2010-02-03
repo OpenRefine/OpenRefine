@@ -2,7 +2,6 @@ package com.metaweb.gridworks.history;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -39,7 +38,7 @@ public class History implements Serializable, Jsonizable {
 	}
 	
 	protected void setModified() {
-		ProjectManager.singleton.getProjectMetadata(_projectID).modified = new Date();
+		ProjectManager.singleton.getProjectMetadata(_projectID).updateModified();
 	}
 	
 	public List<HistoryEntry> getLastPastEntries(int count) {

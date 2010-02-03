@@ -16,7 +16,7 @@ public class Row implements Serializable, HasFields, Jsonizable {
 	
 	public boolean		flagged;
 	public boolean		starred;
-	public List<Cell> 	cells;
+	final public List<Cell> 	cells;
 	
 	transient public	List<Integer> contextRows;
 	transient public	List<Integer> contextCells;
@@ -45,7 +45,7 @@ public class Row implements Serializable, HasFields, Jsonizable {
 			Project project = (Project) bindings.get("project");
 			Column column = project.columnModel.getColumnByName(name);
 			if (column != null) {
-				return cells.get(column.cellIndex);
+				return cells.get(column.getCellIndex());
 			}
 			return null;
 		}

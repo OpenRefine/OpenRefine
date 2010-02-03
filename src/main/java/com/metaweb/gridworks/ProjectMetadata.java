@@ -11,11 +11,39 @@ import org.json.JSONWriter;
 public class ProjectMetadata implements Serializable, Jsonizable {
 	private static final long serialVersionUID = 7959027046468240844L;
 	
-	public String 	name;
-	public String 	password;
-	public Date 	created = new Date();
-	public Date 	modified = new Date();
+	private final Date 	_created = new Date();
+	private String 		_name;
+	private String 		_password;
+	private Date 		_modified = new Date();
 	
+	public Date getCreated() {
+		return _created;
+	}
+
+	public void setName(String name) {
+		this._name = name;
+	}
+
+	public String getName() {
+		return _name;
+	}
+
+	public void setPassword(String password) {
+		this._password = password;
+	}
+
+	public String getPassword() {
+		return _password;
+	}
+	
+	public Date getModified() {
+		return _modified;
+	}
+	
+	public void updateModified() {
+		_modified = new Date();
+	}
+
 	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
@@ -23,9 +51,9 @@ public class ProjectMetadata implements Serializable, Jsonizable {
 		SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
 		
 		writer.object();
-		writer.key("name"); writer.value(name);
-		writer.key("created"); writer.value(sdf.format(created));
-		writer.key("modified"); writer.value(sdf.format(modified));
+		writer.key("name"); writer.value(getName());
+		writer.key("created"); writer.value(sdf.format(getCreated()));
+		writer.key("modified"); writer.value(sdf.format(_modified));
 		writer.endObject();
 	}
 }

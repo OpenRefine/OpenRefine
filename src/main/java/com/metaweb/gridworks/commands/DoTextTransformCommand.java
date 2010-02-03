@@ -41,7 +41,7 @@ public class DoTextTransformCommand extends Command {
 				return;
 			}
 			
-			String columnName = column.headerLabel;
+			String columnName = column.getHeaderLabel();
 			String expression = request.getParameter("expression");
 			
 			Evaluable eval = new Parser(expression).getExpression();
@@ -73,9 +73,7 @@ public class DoTextTransformCommand extends Command {
 							bindings.put("cell", cell);
 							bindings.put("value", cell.value);
 							
-							Cell newCell = new Cell();
-							newCell.value = eval.evaluate(bindings);
-							newCell.recon = cell.recon;
+							Cell newCell = new Cell(eval.evaluate(bindings), cell.recon);
 							
 							CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
 							cellChanges.add(cellChange);

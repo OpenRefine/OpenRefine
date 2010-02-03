@@ -10,16 +10,16 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class NumericBinIndex {
-	public double min;
-	public double max;
-	public double step;
-	public int[]  bins;
+	private double _min;
+	private double _max;
+	private double _step;
+	private int[]  _bins;
 	
 	public NumericBinIndex(Project project, int cellIndex, Evaluable eval) {
 		Properties bindings = new Properties();
 		
-		min = Double.POSITIVE_INFINITY;
-		max = Double.NEGATIVE_INFINITY;
+		_min = Double.POSITIVE_INFINITY;
+		_max = Double.NEGATIVE_INFINITY;
 		
 		List<Double> allValues = new ArrayList<Double>();
 		for (int i = 0; i < project.rows.size(); i++) {
@@ -49,40 +49,55 @@ public class NumericBinIndex {
 			}
 		}
 		
-		if (min >= max) {
-			step = 0;
-			bins = new int[0];
+		if (getMin() >= getMax()) {
+			_step = 0;
+			_bins = new int[0];
 			return;
 		}
 		
-		double diff = max - min;
+		double diff = getMax() - getMin();
+		_step = 1;
 		if (diff > 10) {
-			step = 1;
-			while (step * 100 < diff) {
-				step *= 10;
+			while (getStep() * 100 < diff) {
+				_step *= 10;
 			}
 		} else {
-			step = 1;
-			while (step * 100 > diff) {
-				step /= 10;
+			while (getStep() * 100 > diff) {
+				_step /= 10;
 			}
 		}
 		
-		min = Math.floor(min / step) * step;
-		max = Math.ceil(max / step) * step;
+		_min = (Math.floor(_min / _step) * _step);
+		_max = (Math.ceil(_max / _step) * _step);
 		
-		int binCount = 1 + (int) Math.ceil((max - min) / step);
+		int binCount = 1 + (int) Math.ceil((getMax() - getMin()) / getStep());
 		
-		bins = new int[binCount];
+		_bins = new int[binCount];
 		for (double d : allValues) {
-			int bin = (int) Math.round((d - min) / step);
-			bins[bin]++;
+			int bin = (int) Math.round((d - getMin()) / getStep());
+			getBins()[bin]++;
 		}
 	}
 	
+	public double getMin() {
+		return _min;
+	}
+
+	public double getMax() {
+		return _max;
+	}
+
+	public double getStep() {
+		return _step;
+	}
+
+	public int[] getBins() {
+		return _bins;
+	}
+
 	protected void processValue(double v, List<Double> allValues) {
-		min = Math.min(min, v);
-		max = Math.max(max, v);
+		_min = Math.min(getMin(), v);
+		_max = Math.max(getMax(), v);
 		allValues.add(v);
 	}
 }

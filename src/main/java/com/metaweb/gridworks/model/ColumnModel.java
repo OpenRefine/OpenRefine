@@ -19,11 +19,11 @@ import com.metaweb.gridworks.Jsonizable;
 public class ColumnModel implements Serializable, Jsonizable {
 	private static final long serialVersionUID = 7679639795211544511L;
 	
-	public List<Column> 		columns = new LinkedList<Column>();
-	public int					maxCellIndex;
+	final public List<Column> 		columns = new LinkedList<Column>();
+	final public List<ColumnGroup> 	columnGroups = new LinkedList<ColumnGroup>();
 	
-	public List<ColumnGroup> 	columnGroups = new LinkedList<ColumnGroup>();
-	public int					keyCellIndex;
+	private int					_maxCellIndex;
+	private int					_keyCellIndex;
 	
 	transient protected Map<String, Column> 	_nameToColumn;
 	transient protected Map<Integer, Column> 	_cellIndexToColumn;
@@ -33,6 +33,23 @@ public class ColumnModel implements Serializable, Jsonizable {
 		internalInitialize();
 	}
 	
+	public void setMaxCellIndex(int maxCellIndex) {
+		this._maxCellIndex = Math.max(this._maxCellIndex, maxCellIndex);
+	}
+
+	public int getMaxCellIndex() {
+		return _maxCellIndex;
+	}
+
+	public void setKeyCellIndex(int keyCellIndex) {
+		// TODO: check validity of new cell index, e.g., it's not in any group
+		this._keyCellIndex = keyCellIndex;
+	}
+
+	public int getKeyCellIndex() {
+		return _keyCellIndex;
+	}
+
 	public void update() {
 		generateMaps();
 	}
@@ -58,7 +75,7 @@ public class ColumnModel implements Serializable, Jsonizable {
 		}
 		writer.endArray();
 		
-		writer.key("keyCellIndex"); writer.value(keyCellIndex);
+		writer.key("keyCellIndex"); writer.value(getKeyCellIndex());
 		writer.key("columnGroups");
 		writer.array();
 		for (ColumnGroup g : _rootColumnGroups) {
@@ -114,8 +131,8 @@ public class ColumnModel implements Serializable, Jsonizable {
 		_cellIndexToColumn = new HashMap<Integer, Column>();
 		
 		for (Column column : columns) {
-			_nameToColumn.put(column.headerLabel, column);
-			_cellIndexToColumn.put(column.cellIndex, column);
+			_nameToColumn.put(column.getHeaderLabel(), column);
+			_cellIndexToColumn.put(column.getCellIndex(), column);
 		}
 	}
 }
