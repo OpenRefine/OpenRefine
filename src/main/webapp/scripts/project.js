@@ -29,8 +29,8 @@ function onLoad() {
 $(onLoad);
 
 function initializeUI() {
-    document.title = theProject.metadata.name + " - Gridlock";
-    $("#title").html(document.title);
+    document.title = theProject.metadata.name + " - Gridworks";
+    $('<span></span>').text(theProject.metadata.name).appendTo($("#title"));
     
     var body = $("#body").empty();
     

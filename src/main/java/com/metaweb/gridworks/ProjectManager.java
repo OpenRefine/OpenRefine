@@ -99,6 +99,10 @@ public class ProjectManager implements Serializable {
 		return _projectsMetadata.get(id);
 	}
 	
+	public Map<Long, ProjectMetadata> getAllProjectMetadata() {
+		return _projectsMetadata;
+	}
+	
 	public Project getProject(long id) {
 		if (_projects.containsKey(id)) {
 			return _projects.get(id);

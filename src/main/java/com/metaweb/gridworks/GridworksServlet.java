@@ -21,6 +21,7 @@ import com.metaweb.gridworks.commands.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.CreateProjectFromUploadCommand;
 import com.metaweb.gridworks.commands.DiscardReconcileCommand;
 import com.metaweb.gridworks.commands.DoTextTransformCommand;
+import com.metaweb.gridworks.commands.GetAllProjectMetadataCommand;
 import com.metaweb.gridworks.commands.GetColumnModelCommand;
 import com.metaweb.gridworks.commands.GetHistoryCommand;
 import com.metaweb.gridworks.commands.GetProcessesCommand;
@@ -38,6 +39,8 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("create-project-from-upload", new CreateProjectFromUploadCommand());
 		
 		_commands.put("get-project-metadata", new GetProjectMetadataCommand());
+		_commands.put("get-all-project-metadata", new GetAllProjectMetadataCommand());
+		
 		_commands.put("get-column-model", new GetColumnModelCommand());
 		_commands.put("get-rows", new GetRowsCommand());
 		_commands.put("get-processes", new GetProcessesCommand());
