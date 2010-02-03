@@ -19,7 +19,7 @@ HistoryWidget.prototype._render = function() {
     
     this._div.empty();
     
-    $('<h3>History</h3>').appendTo(this._div);
+    $('<h3>History for Undo/Redo</h3>').appendTo(this._div);
     
     var bodyDiv = $('<div></div>').addClass("history-panel-body").appendTo(this._div);
     bodyDiv.mouseover(function() {
@@ -43,9 +43,11 @@ HistoryWidget.prototype._render = function() {
     } else {
         for (var i = 0; i < this._data.past.length; i++) {
             var entry = this._data.past[i];
-            lastPast = renderEntry(divPast, entry, i == 0 ? 0 : this._data.past[i - 1].id, "Undo upto and including this change");
+            lastPast = renderEntry(divPast, entry, i == 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
         }
     }
+    
+    $('<div></div>').text("done upto here").addClass("history-now").appendTo(bodyDiv);
     
     var divFuture = $('<div></div>').addClass("history-future").appendTo(bodyDiv);
     if (this._data.future.length == 0) {
@@ -53,7 +55,7 @@ HistoryWidget.prototype._render = function() {
     } else {
         for (var i = 0; i < this._data.future.length; i++) {
             var entry = this._data.future[i];
-            renderEntry(divFuture, entry, entry.id, "Redo upto and including this change");
+            renderEntry(divFuture, entry, entry.id, "Redo to here");
         }
     }
     

@@ -26,27 +26,44 @@
 
 .history-past {
     padding-bottom: 3px;
-    border-bottom: 2px solid #f88;
+}
+.history-now {
+    padding: 1px;
+    background: #f88;
+    color: white;
+    font-size: 80%;
+    text-align: center;
+    font-variant: small-caps;
+    font-weight: bold;
 }
 .history-future {
     padding-top: 3px;
 }
 a.history-entry {
     display: block;
-    padding: 3px 5px;
+    padding: 7px 5px;
     text-decoration: none;
     color: black;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #ddd;
 }
 a.history-entry:first-child {
     border-top: none;
 }
 a.history-entry:hover {
-    background: #eee;
-    color: #a88;
+    background: #ddd;
+}
+
+.history-past a.history-entry:hover{
+    padding: 11px 5px 2px 5px;
+    border-top: 2px solid red;
+    background: url(../images/up-arrow.png) top center no-repeat;
+}
+.history-future a.history-entry:hover{
+    padding: 2px 5px 11px 5px;
+    border-bottom: 2px solid red;
+    background: url(../images/down-arrow.png) bottom center no-repeat;
 }
 
 .history-future a.history-entry {
     color: #888;
-    font-style: italic;
 }
