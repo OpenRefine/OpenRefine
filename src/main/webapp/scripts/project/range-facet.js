@@ -173,16 +173,16 @@ RangeFacet.prototype.render = function() {
     } else {
         var a = [];
         for (var i = 0; i < this._bins.length; i++) {
-            a.push(Math.round(100 * this._bins[i] / max));
+            var v = Math.ceil(100 * this._bins[i] / max);
+            a.push(v == 0 ? 0 : Math.max(2, v)); // use min 2 to make sure something shows up
         }
         
         this._histogramDiv.empty().show();
         $('<img />').attr("src", 
             "http://chart.apis.google.com/chart?" + [
-                "cht=ls",
                 "chs=" + this._histogramDiv[0].offsetWidth + "x50",
-                "chm=o,ff6600,0,-1,3",
-                "chls=0",
+                //"cht=ls&chm=o,ff6600,0,-1,3&chls=0", // use for line plot
+                "cht=bvs&chbh=r,0&chco=000088", // use for histogram
                 "chd=t:" + a.join(",")
             ].join("&")
         ).appendTo(this._histogramDiv);

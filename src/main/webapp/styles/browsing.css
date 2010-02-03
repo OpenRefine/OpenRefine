@@ -73,6 +73,11 @@ a.facet-choice-link:hover {
 }
 .facet-range-histogram {
     margin-bottom: 10px;
+    overflow: hidden;
+}
+.facet-range-histogram img {
+    position: relative;
+    left: -2px;
 }
 .facet-range-slider {
 }

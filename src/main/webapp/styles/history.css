@@ -5,6 +5,7 @@
     width: 200px;
     background: #fffee0;
     border: 1px solid #ccc;
+    z-index: 10;
 }
 .history-panel h3 {
     margin: 0;
