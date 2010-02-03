@@ -45,7 +45,7 @@ function initializeUI() {
     tdLeft.setAttribute("width", "82%");
     tdRight.setAttribute("width", "18%");
     
-    ui.viewPanel = $('<div></div>').appendTo(tdLeft).css("width", tdLeft.offsetWidth + "px").css("overflow-x", "auto");
+    ui.viewPanel = $('<div></div>').appendTo(tdLeft);
     ui.facetPanel = $('<div></div>').appendTo(tdRight);
     ui.historyPanel = $('<div></div>').addClass("history-panel").appendTo(document.body);
     ui.processPanel = $('<div></div>').addClass("process-panel").appendTo(document.body);

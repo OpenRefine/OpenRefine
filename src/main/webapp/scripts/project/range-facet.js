@@ -178,9 +178,13 @@ RangeFacet.prototype.render = function() {
         
         this._histogramDiv.empty().show();
         $('<img />').attr("src", 
-            "http://chart.apis.google.com/chart?cht=ls&chs=" + 
-            this._histogramDiv[0].offsetWidth + 
-            "x50&chd=t:" + a.join(",")
+            "http://chart.apis.google.com/chart?" + [
+                "cht=ls",
+                "chs=" + this._histogramDiv[0].offsetWidth + "x50",
+                "chm=o,ff6600,0,-1,3",
+                "chls=0",
+                "chd=t:" + a.join(",")
+            ].join("&")
         ).appendTo(this._histogramDiv);
     }
     

@@ -71,9 +71,11 @@ DataTableView.prototype.render = function() {
     /*
      *  Data table
      */
+    var tableDiv = $('<div></div>').addClass("data-table-container").css("width", container.width() + "px").appendTo(container);
+    
     var table = document.createElement("table");
     table.className = "data-table";
-    container.append(table);
+    tableDiv.append(table);
     
     var trHead = table.insertRow(0);
     
@@ -244,7 +246,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
             submenu: [
                 {   "heading" : "On Cell Content" },
                 {
-                    label: "Simple Facet",
+                    label: "Text Facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -257,7 +259,25 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                     }
                 },
                 {
-                    label: "Custom Facet ...",
+                    label: "Numeric Facet",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "range", 
+                            {
+                                "name" : column.headerLabel,
+                                "cellIndex" : column.cellIndex, 
+                                "expression" : "value",
+                                "mode" : "range",
+                                "min" : 0,
+                                "max" : 1
+                            },
+                            {
+                            }
+                        );
+                    }
+                },
+                {
+                    label: "Custom Text Facet ...",
                     click: function() {
                         var expression = window.prompt("Enter expression", 'value');
                         if (expression != null) {

@@ -1,3 +1,8 @@
+.data-table-container {
+    border: 1px solid #ccc;
+    overflow-x: auto;
+}
+
 table.data-table td {
     padding: 2px 5px;
 }
