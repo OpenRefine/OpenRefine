@@ -6,12 +6,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.metaweb</groupId>
-  <artifactId>gridlock</artifactId>
+  <artifactId>gridworks</artifactId>
   <version>1.0.0</version>
 
-  <name>Gridlock</name>
-  <description>Gridlock description here.</description> 
-  <url>http://www.metaweb.com/gridlock/</url>
+  <name>Gridworks</name>
+  <description>Gridworks description here.</description> 
+  <url>http://www.metaweb.com/gridworks/</url>
   <inceptionYear>2010</inceptionYear>
     
   <build>

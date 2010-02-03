@@ -6,13 +6,13 @@
 
 <web-app>
     <servlet>
-        <servlet-name>Gridlock</servlet-name>
-        <servlet-class>com.metaweb.gridlock.GridlockServlet</servlet-class>
+        <servlet-name>Gridworks</servlet-name>
+        <servlet-class>com.metaweb.gridworks.GridworksServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Gridlock</servlet-name>
+        <servlet-name>Gridworks</servlet-name>
         <url-pattern>/command/*</url-pattern>
     </servlet-mapping>
 </web-app>
