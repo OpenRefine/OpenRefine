@@ -1,6 +1,8 @@
 package com.metaweb.gridlock.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -15,6 +17,8 @@ public class Column implements Serializable, Jsonizable {
 	public String	headerLabel;
 	public Class 	valueType;
 	
+	transient protected Map<String, Object> _precomputes;
+	
 	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
@@ -24,5 +28,25 @@ public class Column implements Serializable, Jsonizable {
 		writer.key("headerLabel"); writer.value(headerLabel);
 		writer.key("valueType"); writer.value(valueType == null ? null : valueType.getSimpleName());
 		writer.endObject();
+	}
+	
+	public void clearPrecomputes() {
+		if (_precomputes != null) {
+			_precomputes.clear();
+		}
+	}
+	
+	public Object getPrecompute(String key) {
+		if (_precomputes != null) {
+			return _precomputes.get(key);
+		}
+		return null;
+	}
+	
+	public void setPrecompute(String key, Object value) {
+		if (_precomputes == null) {
+			_precomputes = new HashMap<String, Object>();
+		}
+		_precomputes.put(key, value);
 	}
 }

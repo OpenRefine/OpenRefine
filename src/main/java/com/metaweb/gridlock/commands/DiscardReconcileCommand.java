@@ -67,7 +67,7 @@ public class DiscardReconcileCommand extends Command {
 				}
 			}.init(cellIndex, cellChanges));
 			
-			MassCellChange massCellChange = new MassCellChange(cellChanges);
+			MassCellChange massCellChange = new MassCellChange(cellChanges, cellIndex);
 			HistoryEntry historyEntry = new HistoryEntry(
 				project, "Discard recon results for " + columnName, massCellChange);
 			

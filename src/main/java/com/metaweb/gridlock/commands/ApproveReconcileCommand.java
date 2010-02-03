@@ -71,7 +71,7 @@ public class ApproveReconcileCommand extends Command {
 				}
 			}.init(cellIndex, cellChanges));
 			
-			MassCellChange massCellChange = new MassCellChange(cellChanges);
+			MassCellChange massCellChange = new MassCellChange(cellChanges, cellIndex);
 			HistoryEntry historyEntry = new HistoryEntry(
 				project, "Approve best recon candidates for " + columnName, massCellChange);
 			

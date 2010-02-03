@@ -240,6 +240,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
     MenuSystem.createAndShowStandardMenu([
         {
             label: "Filter",
+            tooltip: "Filter rows by this column's cell content or characteristics",
             submenu: [
                 {   "heading" : "On Cell Content" },
                 {
@@ -303,6 +304,9 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                                 "name" : column.headerLabel + ": judgment",
                                 "cellIndex" : column.cellIndex, 
                                 "expression" : "cell.recon.judgment"
+                            },
+                            {
+                                "scroll" : false
                             }
                         );
                     }
@@ -415,6 +419,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
         },
         {
             label: "Collapse/Expand",
+            tooltip: "Collapse/expand columns to make viewing the data more convenient",
             submenu: [
                 {
                     label: "Collapse This Column",
@@ -475,6 +480,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
         },
         {
             label: "Reconcile",
+            tooltip: "Match this column's cells to topics on Freebase",
             submenu: [
                 {
                     label: "Start Reconciling ...",

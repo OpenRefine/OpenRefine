@@ -85,7 +85,7 @@ public class DoTextTransformCommand extends Command {
 				}
 			}.init(cellIndex, bindings, cellChanges, eval));
 			
-			MassCellChange massCellChange = new MassCellChange(cellChanges);
+			MassCellChange massCellChange = new MassCellChange(cellChanges, cellIndex);
 			HistoryEntry historyEntry = new HistoryEntry(
 				project, "Text transform on " + columnName + ": " + expression, massCellChange);
 			

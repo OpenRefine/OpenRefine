@@ -69,12 +69,15 @@ a.facet-choice-link:hover {
 
 .facet-range-body {
     border: 1px solid #ccc;
-    padding: 5px;
+    padding: 15px;
+}
+.facet-range-histogram {
+    margin-bottom: 10px;
 }
 .facet-range-slider {
 }
 .facet-range-status {
-    margin: 5px 0px;
+    margin-top: 5px;
     text-align: center;
 }
 

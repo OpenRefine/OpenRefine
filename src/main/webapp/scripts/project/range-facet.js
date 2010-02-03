@@ -12,14 +12,14 @@ function RangeFacet(div, config, options) {
 RangeFacet.prototype._setDefaults = function() {
     switch (this._config.mode) {
     case "min":
-        this._min = this._config.min;
+        this._from = this._config.min;
         break;
     case "max":
-        this._max = this._config.max;
+        this._to = this._config.max;
         break;
     default:
-        this._min = this._config.min;
-        this._max = this._config.max;
+        this._from = this._config.min;
+        this._to = this._config.max;
     }
 };
 
@@ -29,18 +29,18 @@ RangeFacet.prototype.getJSON = function() {
     
     switch (this._config.mode) {
     case "min":
-        o.min = this._min;
+        o.from = this._from;
         break;
     case "max":
-        o.max = this._max;
+        o.to = this._to;
         break;
     default:
-        o.min = this._min;
-        if (this._max == this._config.max) {
+        o.from = this._from;
+        if (this._to == this._config.max) {
             // pretend to be open-ended
             o.mode = "min";
         } else {
-            o.max = this._max;
+            o.to = this._to;
         }
     }
     
@@ -50,12 +50,12 @@ RangeFacet.prototype.getJSON = function() {
 RangeFacet.prototype.hasSelection = function() {
     switch (this._config.mode) {
     case "min":
-        return this._min > this._config.min;
+        return this._from > this._config.min;
     case "max":
-        return this._max < this._config.max;
+        return this._to < this._config.max;
     default:
-        return this._min > this._config.min ||
-            this._max < this._config.max;
+        return this._from > this._config.min ||
+            this._to < this._config.max;
     }
 };
 
@@ -71,21 +71,22 @@ RangeFacet.prototype._initializeUI = function() {
     }).prependTo(headerDiv);
     
     var bodyDiv = $('<div></div>').addClass("facet-range-body").appendTo(container);
-
+    
+    this._histogramDiv = $('<div></div>').addClass("facet-range-histogram").appendTo(bodyDiv);
     this._sliderDiv = $('<div></div>').addClass("facet-range-slider").appendTo(bodyDiv);
     this._statusDiv = $('<div></div>').addClass("facet-range-status").appendTo(bodyDiv);
     
     var onSlide = function(event, ui) {
         switch (self._config.mode) {
         case "min":
-            self._min = ui.value;
+            self._from = ui.value;
             break;
         case "max":
-            self._max = ui.value;
+            self._to = ui.value;
             break;
         default:
-            self._min = ui.values[0];
-            self._max = ui.values[1];
+            self._from = ui.values[0];
+            self._to = ui.values[1];
         }
         self._setRangeIndicators();
         self._scheduleUpdate();
@@ -104,15 +105,15 @@ RangeFacet.prototype._initializeUI = function() {
     switch (this._config.mode) {
     case "min":
         sliderConfig.range = "max";
-        sliderConfig.value = this._min;
+        sliderConfig.value = this._from;
         break;
     case "max":
         sliderConfig.range = "min";
-        sliderConfig.value = this._max;
+        sliderConfig.value = this._to;
         break;
     default:
         sliderConfig.range = true;
-        sliderConfig.values = [ this._min, this._max ];
+        sliderConfig.values = [ this._from, this._to ];
     }
     this._sliderDiv.slider(sliderConfig);
     this._setRangeIndicators();
@@ -122,29 +123,36 @@ RangeFacet.prototype._setRangeIndicators = function() {
     var text;
     switch (this._config.mode) {
     case "min":
-        text = "At least " + this._min;
+        text = "At least " + this._from;
         break;
     case "max":
-        text = "At most " + this._max;
+        text = "At most " + this._to;
         break;
     default:
-        text = this._min + " to " + this._max;
+        text = this._from + " to " + this._to;
     }
     this._statusDiv.text(text);
 };
 
 RangeFacet.prototype.updateState = function(data) {
+    this._config.min = data.min;
+    this._config.max = data.max;
+    this._config.step = data.step;
+    this._bins = data.bins;
+    
     switch (this._config.mode) {
     case "min":
-        this._min = data.min;
+        this._from = Math.max(data.from, this._config.min);
         break;
     case "max":
-        this._max = data.max;
+        this._to = Math.min(data.to, this._config.max);
         break;
     default:
-        this._min = data.min;
-        if ("max" in data) {
-            this._max = data.max;
+        this._from = Math.max(data.from, this._config.min);
+        if ("to" in data) {
+            this._to = Math.min(data.to, this._config.max);
+        } else {
+            this._to = data.max;
         }
     }
     
@@ -152,6 +160,30 @@ RangeFacet.prototype.updateState = function(data) {
 };
 
 RangeFacet.prototype.render = function() {
+    this._sliderDiv.slider("option", "min", this._config.min);
+    this._sliderDiv.slider("option", "max", this._config.max);
+    this._sliderDiv.slider("option", "step", this._config.step);
+    
+    var max = 0;
+    for (var i = 0; i < this._bins.length; i++) {
+        max = Math.max(max, this._bins[i]);
+    }
+    if (max == 0) {
+        this._histogramDiv.hide();
+    } else {
+        var a = [];
+        for (var i = 0; i < this._bins.length; i++) {
+            a.push(Math.round(100 * this._bins[i] / max));
+        }
+        
+        this._histogramDiv.empty().show();
+        $('<img />').attr("src", 
+            "http://chart.apis.google.com/chart?cht=ls&chs=" + 
+            this._histogramDiv[0].offsetWidth + 
+            "x50&chd=t:" + a.join(",")
+        ).appendTo(this._histogramDiv);
+    }
+    
     this._setRangeIndicators();
 };
 

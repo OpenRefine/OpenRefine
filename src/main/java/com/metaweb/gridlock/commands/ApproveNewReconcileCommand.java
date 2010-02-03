@@ -71,7 +71,7 @@ public class ApproveNewReconcileCommand extends Command {
 				}
 			}.init(cellIndex, cellChanges));
 			
-			MassCellChange massCellChange = new MassCellChange(cellChanges);
+			MassCellChange massCellChange = new MassCellChange(cellChanges, cellIndex);
 			HistoryEntry historyEntry = new HistoryEntry(
 				project, "Approve new topics for " + columnName, massCellChange);
 			

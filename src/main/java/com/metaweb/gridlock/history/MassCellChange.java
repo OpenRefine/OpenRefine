@@ -8,10 +8,12 @@ import com.metaweb.gridlock.model.Row;
 public class MassCellChange implements Change {
 	private static final long serialVersionUID = -933571199802688027L;
 	
-	protected CellChange[] _cellChanges;
+	protected CellChange[] 	_cellChanges;
+	protected int			_commonCellIndex;
 	
-	public MassCellChange(List<CellChange> cellChanges) {
+	public MassCellChange(List<CellChange> cellChanges, int commonCellIndex) {
 		_cellChanges = new CellChange[cellChanges.size()];
+		_commonCellIndex = commonCellIndex;
 		cellChanges.toArray(_cellChanges);
 	}
 	
@@ -23,6 +25,10 @@ public class MassCellChange implements Change {
 			for (CellChange cellChange : _cellChanges) {
 				rows.get(cellChange.row).cells.set(cellChange.column, cellChange.newCell);
 			}
+			
+			if (_commonCellIndex >= 0) {
+				project.columnModel.getColumnByCellIndex(_commonCellIndex).clearPrecomputes();
+			}
 		}
 	}
 
@@ -33,6 +39,10 @@ public class MassCellChange implements Change {
 			
 			for (CellChange cellChange : _cellChanges) {
 				rows.get(cellChange.row).cells.set(cellChange.column, cellChange.oldCell);
+			}
+			
+			if (_commonCellIndex >= 0) {
+				project.columnModel.getColumnByCellIndex(_commonCellIndex).clearPrecomputes();
 			}
 		}
 	}

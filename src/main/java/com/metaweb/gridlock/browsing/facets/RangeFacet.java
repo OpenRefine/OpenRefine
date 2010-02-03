@@ -11,6 +11,7 @@ import com.metaweb.gridlock.browsing.filters.ExpressionNumberComparisonRowFilter
 import com.metaweb.gridlock.browsing.filters.RowFilter;
 import com.metaweb.gridlock.expr.Evaluable;
 import com.metaweb.gridlock.expr.Parser;
+import com.metaweb.gridlock.model.Column;
 import com.metaweb.gridlock.model.Project;
 
 public class RangeFacet implements Facet {
@@ -22,6 +23,11 @@ public class RangeFacet implements Facet {
 	protected String	_mode;
 	protected double	_min;
 	protected double	_max;
+	protected double	_step;
+	protected int[]		_bins;
+	
+	protected double	_from;
+	protected double	_to;
 	
 	public RangeFacet() {
 	}
@@ -34,15 +40,24 @@ public class RangeFacet implements Facet {
 		writer.key("name"); writer.value(_name);
 		writer.key("expression"); writer.value(_expression);
 		writer.key("cellIndex"); writer.value(_cellIndex);
+		writer.key("min"); writer.value(_min);
+		writer.key("max"); writer.value(_max);
+		writer.key("step"); writer.value(_step);
+		
+		writer.key("bins"); writer.array();
+		for (int b : _bins) {
+			writer.value(b);
+		}
+		writer.endArray();
 		
 		writer.key("mode"); writer.value(_mode);
 		if ("min".equals(_mode)) {
-			writer.key("min"); writer.value(_min);
+			writer.key("from"); writer.value(_from);
 		} else if ("max".equals(_mode)) {
-			writer.key("max"); writer.value(_max);
+			writer.key("to"); writer.value(_to);
 		} else {
-			writer.key("min"); writer.value(_min);
-			writer.key("max"); writer.value(_max);
+			writer.key("from"); writer.value(_from);
+			writer.key("to"); writer.value(_to);
 		}
 		writer.endObject();
 	}
@@ -57,12 +72,12 @@ public class RangeFacet implements Facet {
 		
 		_mode = o.getString("mode");
 		if ("min".equals(_mode)) {
-			_min = o.getDouble("min");
+			_from = o.getDouble("from");
 		} else if ("max".equals(_mode)) {
-			_max = o.getDouble("max");
+			_to = o.getDouble("to");
 		} else {
-			_min = o.getDouble("min");
-			_max = o.getDouble("max");
+			_from = o.getDouble("from");
+			_to = o.getDouble("to");
 		}
 	}
 
@@ -71,19 +86,19 @@ public class RangeFacet implements Facet {
 		if ("min".equals(_mode)) {
 			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
 				protected boolean checkValue(double d) {
-					return d >= _min;
+					return d >= _from;
 				};
 			};
 		} else if ("max".equals(_mode)) {
 			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
 				protected boolean checkValue(double d) {
-					return d <= _max;
+					return d <= _to;
 				};
 			};
 		} else {
 			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
 				protected boolean checkValue(double d) {
-					return d >= _min && d <= _max;
+					return d >= _from && d <= _to;
 				};
 			};
 		}		
@@ -91,6 +106,18 @@ public class RangeFacet implements Facet {
 
 	@Override
 	public void computeChoices(Project project, FilteredRows filteredRows) {
-		// nothing to do
+		Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+		
+		String key = "numeric-bin:" + _expression;
+		NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+		if (index == null) {
+			index = new NumericBinIndex(project, _cellIndex, _eval);
+			column.setPrecompute(key, index);
+		}
+		
+		_min = index.min;
+		_max = index.max;
+		_step = index.step;
+		_bins = index.bins;
 	}
 }

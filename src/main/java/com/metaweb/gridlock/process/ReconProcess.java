@@ -95,7 +95,7 @@ public class ReconProcess extends LongRunningProcess implements Runnable {
 			}
 		}
 		
-		MassCellChange massCellChange = new MassCellChange(cellChanges);
+		MassCellChange massCellChange = new MassCellChange(cellChanges, _cellIndex);
 		HistoryEntry historyEntry = new HistoryEntry(_project, _description, massCellChange);
 		
 		_project.history.addEntry(historyEntry);
