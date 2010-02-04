@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.history;
+package com.metaweb.gridworks.model.changes;
 
 import java.io.Serializable;
 

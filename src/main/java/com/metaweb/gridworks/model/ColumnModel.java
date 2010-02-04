@@ -41,6 +41,10 @@ public class ColumnModel implements Serializable, Jsonizable {
 		return _maxCellIndex;
 	}
 
+    public int allocateNewCellIndex() {
+        return ++_maxCellIndex;
+    }
+    
 	public void setKeyCellIndex(int keyCellIndex) {
 		// TODO: check validity of new cell index, e.g., it's not in any group
 		this._keyCellIndex = keyCellIndex;

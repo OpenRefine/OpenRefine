@@ -20,13 +20,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.history.CellChange;
 import com.metaweb.gridworks.history.HistoryEntry;
-import com.metaweb.gridworks.history.MassCellChange;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
+import com.metaweb.gridworks.model.changes.CellChange;
+import com.metaweb.gridworks.model.changes.MassCellChange;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class ReconProcess extends LongRunningProcess implements Runnable {

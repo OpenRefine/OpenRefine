@@ -11,14 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
-import com.metaweb.gridworks.history.CellChange;
 import com.metaweb.gridworks.history.HistoryEntry;
-import com.metaweb.gridworks.history.MassCellChange;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
+import com.metaweb.gridworks.model.changes.CellChange;
+import com.metaweb.gridworks.model.changes.MassCellChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
 public class ApproveReconcileCommand extends Command {

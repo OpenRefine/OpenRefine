@@ -1,7 +1,8 @@
-package com.metaweb.gridworks.history;
+package com.metaweb.gridworks.model.changes;
 
 import java.util.List;
 
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
