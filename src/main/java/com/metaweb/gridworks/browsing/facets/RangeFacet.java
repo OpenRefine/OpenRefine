@@ -24,6 +24,7 @@ public class RangeFacet implements Facet {
 	protected double	_min;
 	protected double	_max;
 	protected double	_step;
+	protected int[]		_baseBins;
 	protected int[]		_bins;
 	
 	protected double	_from;
@@ -46,6 +47,12 @@ public class RangeFacet implements Facet {
 		
 		writer.key("bins"); writer.array();
 		for (int b : _bins) {
+			writer.value(b);
+		}
+		writer.endArray();
+		
+		writer.key("baseBins"); writer.array();
+		for (int b : _baseBins) {
 			writer.value(b);
 		}
 		writer.endArray();
@@ -118,6 +125,13 @@ public class RangeFacet implements Facet {
 		_min = index.getMin();
 		_max = index.getMax();
 		_step = index.getStep();
-		_bins = index.getBins();
+		_baseBins = index.getBins();
+		
+		ExpressionNumericRowBinner binner = 
+			new ExpressionNumericRowBinner(_eval, _cellIndex, index);
+		
+		filteredRows.accept(project, binner);
+		
+		_bins = binner.bins;
 	}
 }

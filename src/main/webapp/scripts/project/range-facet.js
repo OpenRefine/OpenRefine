@@ -138,6 +138,7 @@ RangeFacet.prototype.updateState = function(data) {
     this._config.min = data.min;
     this._config.max = data.max;
     this._config.step = data.step;
+    this._baseBins = data.baseBins;
     this._bins = data.bins;
     
     switch (this._config.mode) {
@@ -165,16 +166,22 @@ RangeFacet.prototype.render = function() {
     this._sliderDiv.slider("option", "step", this._config.step);
     
     var max = 0;
-    for (var i = 0; i < this._bins.length; i++) {
-        max = Math.max(max, this._bins[i]);
+    for (var i = 0; i < this._baseBins.length; i++) {
+        max = Math.max(max, this._baseBins[i]);
     }
+    
     if (max == 0) {
         this._histogramDiv.hide();
     } else {
-        var a = [];
-        for (var i = 0; i < this._bins.length; i++) {
+        var values = [];
+        var diffs = [];
+        
+        for (var i = 0; i < this._baseBins.length; i++) {
             var v = Math.ceil(100 * this._bins[i] / max);
-            a.push(v == 0 ? 0 : Math.max(2, v)); // use min 2 to make sure something shows up
+            var diff = Math.ceil(100 * this._baseBins[i] / max) - v;
+            
+            values.push(v == 0 ? 0 : Math.max(2, v)); // use min 2 to make sure something shows up
+            diffs.push(diff == 0 ? 0 : Math.max(2, diff));
         }
         
         this._histogramDiv.empty().show();
@@ -182,8 +189,8 @@ RangeFacet.prototype.render = function() {
             "http://chart.apis.google.com/chart?" + [
                 "chs=" + this._histogramDiv[0].offsetWidth + "x50",
                 //"cht=ls&chm=o,ff6600,0,-1,3&chls=0", // use for line plot
-                "cht=bvs&chbh=r,0&chco=000088", // use for histogram
-                "chd=t:" + a.join(",")
+                "cht=bvs&chbh=r,0&chco=000088,aaaaff", // use for histogram
+                "chd=t:" + values.join(",") + "|" + diffs.join(",")
             ].join("&")
         ).appendTo(this._histogramDiv);
     }
