@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Row;
 
 public class ColumnAdditionChange extends ColumnChange {
     private static final long serialVersionUID = -3938837464064526052L;
@@ -28,9 +29,12 @@ public class ColumnAdditionChange extends ColumnChange {
             Column column = new Column(_newCellIndex, _headerLabel);
             
             project.columnModel.columns.add(_columnIndex, column);
-            
-            for (CellAtRow cell : _newCells) {
-                project.rows.get(cell.row).cells.set(_newCellIndex, cell.cell);
+            try {
+	            for (CellAtRow cell : _newCells) {
+            		project.rows.get(cell.row).setCell(_newCellIndex, cell.cell);
+	            }
+            } catch (Exception e) {
+            	e.printStackTrace();
             }
         }
     }
@@ -39,7 +43,8 @@ public class ColumnAdditionChange extends ColumnChange {
     public void revert(Project project) {
         synchronized (project) {
             for (CellAtRow cell : _newCells) {
-                project.rows.get(cell.row).cells.remove(_newCellIndex);
+            	Row row = project.rows.get(cell.row);
+        		row.setCell(_newCellIndex, null);
             }
             
             project.columnModel.columns.remove(_columnIndex);

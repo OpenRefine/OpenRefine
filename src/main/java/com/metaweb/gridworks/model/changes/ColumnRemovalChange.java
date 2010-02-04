@@ -31,6 +31,8 @@ public class ColumnRemovalChange extends ColumnChange {
                     oldCell = row.cells.get(cellIndex);
                 }
                 _oldCells[i] = new CellAtRow(i, oldCell);
+                
+                row.setCell(cellIndex, null);
             }
         }
     }

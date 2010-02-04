@@ -81,6 +81,9 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
                 if ("tooltip" in item) {
                     menuItem.attr("title", item.tooltip);
                 }
+                menuItem.mouseover(function() {
+                    MenuSystem.dismissUntil(level);
+                });
             }
         } else if ("heading" in item) {
             $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);

@@ -9,7 +9,12 @@ import com.metaweb.gridworks.model.Row;
 public class ExpressionUtils {
     static public Properties createBindings(Project project) {
         Properties bindings = new Properties();
+        
+        bindings.put("true", true);
+        bindings.put("false", false);
+        
         bindings.put("project", project);
+        
         return bindings;
     }
     

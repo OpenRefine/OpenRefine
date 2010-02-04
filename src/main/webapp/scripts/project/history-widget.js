@@ -72,7 +72,7 @@ HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) 
         function(data) {
             if (data.code == "ok") {
                 self.update();
-                ui.dataTableView.update();
+                ui.dataTableView.update(true);
             } else {
                 // update process UI
             }

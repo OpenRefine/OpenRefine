@@ -37,6 +37,17 @@ public class Row implements Serializable, HasFields, Jsonizable {
 		return null;
 	}
 	
+	public void setCell(int cellIndex, Cell cell) {
+		if (cellIndex < cells.size()) {
+			cells.set(cellIndex, cell);
+		} else {
+			while (cellIndex > cells.size()) {
+				cells.add(null);
+			}
+			cells.add(cell);
+		}
+	}
+	
 	public class Cells implements HasFields {
 		private Cells() {};
 
@@ -62,7 +73,11 @@ public class Row implements Serializable, HasFields, Jsonizable {
 		
 		writer.key("cells"); writer.array();
 		for (Cell cell : cells) {
-			cell.write(writer, options);
+			if (cell != null) {
+				cell.write(writer, options);
+			} else {
+				writer.value(null);
+			}
 		}
 		writer.endArray();
 		

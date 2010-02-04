@@ -15,8 +15,10 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import com.metaweb.gridworks.commands.Command;
+import com.metaweb.gridworks.commands.edit.AddColumnCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectFromUploadCommand;
 import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
+import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
 import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
@@ -50,6 +52,9 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("undo-redo", new UndoRedoCommand());
 		_commands.put("compute-facets", new ComputeFacetsCommand());
 		_commands.put("do-text-transform", new DoTextTransformCommand());
+		
+		_commands.put("add-column", new AddColumnCommand());
+		_commands.put("remove-column", new RemoveColumnCommand());
 		
 		_commands.put("reconcile", new ReconcileCommand());
 		_commands.put("approve-reconcile", new ApproveReconcileCommand());

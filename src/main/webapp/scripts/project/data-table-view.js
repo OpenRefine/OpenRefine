@@ -6,7 +6,14 @@ function DataTableView(div) {
 }
 
 DataTableView.prototype.update = function(reset) {
-    this._showRows(reset ? 0 : theProject.rowModel.start);
+    if (reset) {
+        var self = this;
+        reinitializeProjectData(function() {
+            self._showRows(0);
+        });
+    } else {
+        this._showRows(theProject.rowModel.start);
+    }
 };
 
 DataTableView.prototype.render = function() {
@@ -117,7 +124,7 @@ DataTableView.prototype.render = function() {
     }
     
     var renderCell = function(cell, td) {
-        if (cell.v == null) {
+        if (cell == null || cell.v == null) {
             return;
         }
         
@@ -467,6 +474,15 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
         },
         {},
         {
+            label: "Add Column Based on This Column",
+            click: function() { self._doAddColumn(column, index, "value"); }
+        },
+        {
+            label: "Remove This Column",
+            click: function() { self._doRemoveColumn(column, index); }
+        },
+        {},
+        {
             label: "Text Transform",
             submenu: [
                 {
@@ -545,24 +561,34 @@ DataTableView.prototype._doFilterByExpressionPrompt = function(column, expressio
     );
 };
 
-DataTableView.prototype._createUpdateFunction = function() {
+DataTableView.prototype._createUpdateFunction = function(onBefore) {
     var self = this;
     return function(data) {
         if (data.code == "ok") {
-            self.update();
-            ui.historyWidget.update();
+            var onDone = function() {
+                self.update();
+                ui.historyWidget.update();
+            };
         } else {
-            ui.processWidget.update();
+            var onDone = function() {
+                ui.processWidget.update();
+            }
+        }
+        
+        if (onBefore) {
+            onBefore(onDone);
+        } else {
+            onDone();
         }
     };
 };
 
-DataTableView.prototype._doPostThenUpdate = function(command, params) {
+DataTableView.prototype._doPostThenUpdate = function(command, params, updateColumnModel) {
     params.project = theProject.id;
     $.post(
         "/command/" + command + "?" + $.param(params),
         { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
-        this._createUpdateFunction(),
+        this._createUpdateFunction(updateColumnModel ? reinitializeProjectData : undefined),
         "json"
     );
 };
@@ -637,3 +663,36 @@ DataTableView.prototype._doApproveNewTopics = function(column) {
         { cell: column.cellIndex }
     );
 };
+
+DataTableView.prototype._doAddColumn = function(column, index, initialExpression) {
+    var self = this;
+    DataTableView.promptExpressionOnVisibleRows(
+        column,
+        "Add Column Based on Column " + column.headerLabel, 
+        initialExpression,
+        function(expression) {
+            var headerLabel = window.prompt("Enter header label for new column:");
+            if (headerLabel != null) {
+                self._doPostThenUpdate(
+                    "add-column",
+                    {
+                        baseCellIndex: column.cellIndex, 
+                        expression: expression, 
+                        headerLabel: headerLabel, 
+                        columnInsertIndex: index + 1 
+                    },
+                    true
+                );
+            }
+        }
+    );
+};
+
+DataTableView.prototype._doRemoveColumn = function(column, index) {
+    this._doPostThenUpdate(
+        "remove-column",
+        { columnRemovalIndex: index },
+        true
+    );
+};
+

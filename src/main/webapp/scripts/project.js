@@ -8,22 +8,7 @@ function onLoad() {
             id: parseInt(params.project)
         };
         
-        Ajax.chainGetJSON(
-            "/command/get-project-metadata?" + $.param({ project: theProject.id }), null,
-            function(data) {
-                theProject.metadata = data;
-            },
-            "/command/get-column-model?" + $.param({ project: theProject.id }), null,
-            function(data) {
-                theProject.columnModel = data;
-                for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                    theProject.columnModel.columns[i].collapsed = false;
-                }
-            },
-            function() {
-                initializeUI();
-            }
-        );
+        reinitializeProjectData(initializeUI);
     }
 }
 $(onLoad);
@@ -54,4 +39,21 @@ function initializeUI() {
     ui.processWidget = new ProcessWidget(ui.processPanel);
     ui.historyWidget = new HistoryWidget(ui.historyPanel);
     ui.dataTableView = new DataTableView(ui.viewPanel);
+}
+
+function reinitializeProjectData(f) {
+    Ajax.chainGetJSON(
+        "/command/get-project-metadata?" + $.param({ project: theProject.id }), null,
+        function(data) {
+            theProject.metadata = data;
+        },
+        "/command/get-column-model?" + $.param({ project: theProject.id }), null,
+        function(data) {
+            theProject.columnModel = data;
+            for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+                theProject.columnModel.columns[i].collapsed = false;
+            }
+        },
+        f
+    );
 }
