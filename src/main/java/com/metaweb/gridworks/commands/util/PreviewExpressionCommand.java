@@ -13,6 +13,7 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.Evaluable;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.Parser;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
@@ -47,8 +48,7 @@ public class PreviewExpressionCommand extends Command {
 			writer.key("code"); writer.value("ok");
 			writer.key("results"); writer.array();
 			
-			Properties bindings = new Properties();
-			bindings.put("project", project);
+			Properties bindings = ExpressionUtils.createBindings(project);
 			for (int i = 0; i < length; i++) {
 				Object result = null;
 				
@@ -58,8 +58,7 @@ public class PreviewExpressionCommand extends Command {
 					if (cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(cellIndex);
 						if (cell.value != null) {
-							bindings.put("cell", cell);
-							bindings.put("value", cell.value);
+						    ExpressionUtils.bind(bindings, row, cell);
 							
 							try {
 								result = eval.evaluate(bindings);

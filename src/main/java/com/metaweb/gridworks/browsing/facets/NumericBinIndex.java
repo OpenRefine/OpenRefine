@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.metaweb.gridworks.expr.Evaluable;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
@@ -16,7 +17,7 @@ public class NumericBinIndex {
 	private int[]  _bins;
 	
 	public NumericBinIndex(Project project, int cellIndex, Evaluable eval) {
-		Properties bindings = new Properties();
+        Properties bindings = ExpressionUtils.createBindings(project);
 		
 		_min = Double.POSITIVE_INFINITY;
 		_max = Double.NEGATIVE_INFINITY;
@@ -28,9 +29,7 @@ public class NumericBinIndex {
 			if (cellIndex < row.cells.size()) {
 				Cell cell = row.cells.get(cellIndex);
 				if (cell != null) {
-					bindings.put("project", project);
-					bindings.put("cell", cell);
-					bindings.put("value", cell.value);
+                    ExpressionUtils.bind(bindings, row, cell);
 					
 					Object value = eval.evaluate(bindings);
 					if (value != null) {

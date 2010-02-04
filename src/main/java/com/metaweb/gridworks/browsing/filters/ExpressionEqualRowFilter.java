@@ -3,6 +3,7 @@ package com.metaweb.gridworks.browsing.filters;
 import java.util.Properties;
 
 import com.metaweb.gridworks.expr.Evaluable;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
@@ -23,10 +24,8 @@ public class ExpressionEqualRowFilter implements RowFilter {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {
-				Properties bindings = new Properties();
-				
-				bindings.put("cell", cell);
-				bindings.put("value", cell.value);
+	            Properties bindings = ExpressionUtils.createBindings(project);
+                ExpressionUtils.bind(bindings, row, cell);
 				
 				Object value = _evaluable.evaluate(bindings);
 				if (value != null) {

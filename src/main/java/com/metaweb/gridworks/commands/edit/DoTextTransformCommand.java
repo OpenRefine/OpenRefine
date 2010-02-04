@@ -15,6 +15,7 @@ import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.Evaluable;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.Parser;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Cell;
@@ -46,8 +47,7 @@ public class DoTextTransformCommand extends Command {
 			String expression = request.getParameter("expression");
 			
 			Evaluable eval = new Parser(expression).getExpression();
-			Properties bindings = new Properties();
-			bindings.put("project", project);
+            Properties bindings = ExpressionUtils.createBindings(project);
 			
 			List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
 			
@@ -71,8 +71,7 @@ public class DoTextTransformCommand extends Command {
 					if (cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(cellIndex);
 						if (cell.value != null) {
-							bindings.put("cell", cell);
-							bindings.put("value", cell.value);
+			                ExpressionUtils.bind(bindings, row, cell);
 							
 							Cell newCell = new Cell(eval.evaluate(bindings), cell.recon);
 							
