@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.edit;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;

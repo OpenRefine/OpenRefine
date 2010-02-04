@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.recon;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,14 +11,18 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.commands.Command;
+import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.process.ReconProcess;
-import com.metaweb.gridworks.process.ReconProcess.ReconEntry;
+import com.metaweb.gridworks.model.Recon.Judgment;
+import com.metaweb.gridworks.model.changes.CellChange;
+import com.metaweb.gridworks.model.changes.MassCellChange;
+import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
-public class ReconcileCommand extends Command {
+public class ApproveReconcileCommand extends Command {
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -36,18 +40,16 @@ public class ReconcileCommand extends Command {
 			}
 			
 			String columnName = column.getHeaderLabel();
-			String typeID = request.getParameter("type");
-			
-			List<ReconEntry> entries = new ArrayList<ReconEntry>(project.rows.size());
+			List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
 			
 			FilteredRows filteredRows = engine.getAllFilteredRows();
 			filteredRows.accept(project, new RowVisitor() {
 				int cellIndex;
-				List<ReconEntry> entries;
+				List<CellChange> cellChanges;
 				
-				public RowVisitor init(int cellIndex, List<ReconEntry> entries) {
+				public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
 					this.cellIndex = cellIndex;
-					this.entries = entries;
+					this.cellChanges = cellChanges;
 					return this;
 				}
 				
@@ -55,26 +57,30 @@ public class ReconcileCommand extends Command {
 				public boolean visit(Project project, int rowIndex, Row row) {
 					if (cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(cellIndex);
-						if (cell.value != null) {
-							entries.add(new ReconEntry(rowIndex, cell));
+						if (cell.recon != null && cell.recon.candidates.size() > 0) {
+							Cell newCell = new Cell(
+								cell.value,
+								cell.recon.dup()
+							);
+							newCell.recon.match = newCell.recon.candidates.get(0);
+							newCell.recon.judgment = Judgment.Approve;
+							
+							CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+							cellChanges.add(cellChange);
 						}
 					}
 					return false;
 				}
-			}.init(cellIndex, entries));
+			}.init(cellIndex, cellChanges));
 			
-			ReconProcess process = new ReconProcess(
-				project,
-				"Reconcile " + columnName + " to type " + typeID,
-				cellIndex,
-				entries,
-				typeID
-			);
+			MassCellChange massCellChange = new MassCellChange(cellChanges, cellIndex);
+			HistoryEntry historyEntry = new HistoryEntry(
+				project, "Approve best recon candidates for " + columnName, massCellChange);
 			
-			boolean done = project.processManager.queueProcess(process);
+			boolean done = project.processManager.queueProcess(
+					new QuickHistoryEntryProcess(project, historyEntry));
 			
 			respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
-			
 		} catch (Exception e) {
 			respondException(response, e);
 		}

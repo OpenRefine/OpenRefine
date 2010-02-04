@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.util;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONWriter;
 
 
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.Parser;
 import com.metaweb.gridworks.model.Cell;

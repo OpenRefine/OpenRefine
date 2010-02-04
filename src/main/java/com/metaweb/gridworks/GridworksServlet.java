@@ -14,22 +14,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import com.metaweb.gridworks.commands.ApproveNewReconcileCommand;
-import com.metaweb.gridworks.commands.ApproveReconcileCommand;
 import com.metaweb.gridworks.commands.Command;
-import com.metaweb.gridworks.commands.ComputeFacetsCommand;
-import com.metaweb.gridworks.commands.CreateProjectFromUploadCommand;
-import com.metaweb.gridworks.commands.DiscardReconcileCommand;
-import com.metaweb.gridworks.commands.DoTextTransformCommand;
-import com.metaweb.gridworks.commands.GetAllProjectMetadataCommand;
-import com.metaweb.gridworks.commands.GetColumnModelCommand;
-import com.metaweb.gridworks.commands.GetHistoryCommand;
-import com.metaweb.gridworks.commands.GetProcessesCommand;
-import com.metaweb.gridworks.commands.GetProjectMetadataCommand;
-import com.metaweb.gridworks.commands.GetRowsCommand;
-import com.metaweb.gridworks.commands.PreviewExpressionCommand;
-import com.metaweb.gridworks.commands.ReconcileCommand;
-import com.metaweb.gridworks.commands.UndoRedoCommand;
+import com.metaweb.gridworks.commands.edit.CreateProjectFromUploadCommand;
+import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
+import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
+import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
+import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
+import com.metaweb.gridworks.commands.info.GetColumnModelCommand;
+import com.metaweb.gridworks.commands.info.GetHistoryCommand;
+import com.metaweb.gridworks.commands.info.GetProcessesCommand;
+import com.metaweb.gridworks.commands.info.GetProjectMetadataCommand;
+import com.metaweb.gridworks.commands.info.GetRowsCommand;
+import com.metaweb.gridworks.commands.recon.ApproveNewReconcileCommand;
+import com.metaweb.gridworks.commands.recon.ApproveReconcileCommand;
+import com.metaweb.gridworks.commands.recon.DiscardReconcileCommand;
+import com.metaweb.gridworks.commands.recon.ReconcileCommand;
+import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
 
 public class GridworksServlet extends HttpServlet {
 	private static final long serialVersionUID = 2386057901503517403L;

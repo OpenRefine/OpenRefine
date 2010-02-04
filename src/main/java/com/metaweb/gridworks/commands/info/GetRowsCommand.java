@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.info;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -13,6 +13,7 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 

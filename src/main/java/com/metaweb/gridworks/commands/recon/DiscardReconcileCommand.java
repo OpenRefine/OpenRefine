@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.recon;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,17 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.MassCellChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
-public class ApproveReconcileCommand extends Command {
+public class DiscardReconcileCommand extends Command {
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -56,17 +56,11 @@ public class ApproveReconcileCommand extends Command {
 				public boolean visit(Project project, int rowIndex, Row row) {
 					if (cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(cellIndex);
-						if (cell.recon != null && cell.recon.candidates.size() > 0) {
-							Cell newCell = new Cell(
-								cell.value,
-								cell.recon.dup()
-							);
-							newCell.recon.match = newCell.recon.candidates.get(0);
-							newCell.recon.judgment = Judgment.Approve;
-							
-							CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-							cellChanges.add(cellChange);
-						}
+
+						Cell newCell = new Cell(cell.value, null);
+						
+						CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+						cellChanges.add(cellChange);
 					}
 					return false;
 				}
@@ -74,7 +68,7 @@ public class ApproveReconcileCommand extends Command {
 			
 			MassCellChange massCellChange = new MassCellChange(cellChanges, cellIndex);
 			HistoryEntry historyEntry = new HistoryEntry(
-				project, "Approve best recon candidates for " + columnName, massCellChange);
+				project, "Discard recon results for " + columnName, massCellChange);
 			
 			boolean done = project.processManager.queueProcess(
 					new QuickHistoryEntryProcess(project, historyEntry));

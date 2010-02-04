@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.recon;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,16 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.MassCellChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
-public class DiscardReconcileCommand extends Command {
+public class ApproveNewReconcileCommand extends Command {
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -55,8 +58,13 @@ public class DiscardReconcileCommand extends Command {
 				public boolean visit(Project project, int rowIndex, Row row) {
 					if (cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(cellIndex);
-
-						Cell newCell = new Cell(cell.value, null);
+						
+						Cell newCell = new Cell(
+							cell.value,
+							cell.recon != null ? cell.recon.dup() : new Recon()
+						);
+						newCell.recon.match = null;
+						newCell.recon.judgment = Judgment.New;
 						
 						CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
 						cellChanges.add(cellChange);
@@ -67,7 +75,7 @@ public class DiscardReconcileCommand extends Command {
 			
 			MassCellChange massCellChange = new MassCellChange(cellChanges, cellIndex);
 			HistoryEntry historyEntry = new HistoryEntry(
-				project, "Discard recon results for " + columnName, massCellChange);
+				project, "Approve new topics for " + columnName, massCellChange);
 			
 			boolean done = project.processManager.queueProcess(
 					new QuickHistoryEntryProcess(project, historyEntry));

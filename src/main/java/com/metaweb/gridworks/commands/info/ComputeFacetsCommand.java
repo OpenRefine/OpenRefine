@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.info;
 
 import java.io.IOException;
 
@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.metaweb.gridworks.browsing.Engine;
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 
 public class ComputeFacetsCommand extends Command {

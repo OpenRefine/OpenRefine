@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.info;
 
 import java.io.IOException;
 import java.util.Map;
@@ -13,6 +13,7 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
+import com.metaweb.gridworks.commands.Command;
 
 public class GetAllProjectMetadataCommand extends Command {
 	@Override

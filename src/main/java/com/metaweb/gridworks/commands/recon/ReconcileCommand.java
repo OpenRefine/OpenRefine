@@ -1,30 +1,25 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.recon;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
-import com.metaweb.gridworks.expr.Evaluable;
-import com.metaweb.gridworks.expr.Parser;
-import com.metaweb.gridworks.history.HistoryEntry;
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.model.changes.CellChange;
-import com.metaweb.gridworks.model.changes.MassCellChange;
-import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
+import com.metaweb.gridworks.process.ReconProcess;
+import com.metaweb.gridworks.process.ReconProcess.ReconEntry;
 
-public class DoTextTransformCommand extends Command {
+public class ReconcileCommand extends Command {
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -42,26 +37,18 @@ public class DoTextTransformCommand extends Command {
 			}
 			
 			String columnName = column.getHeaderLabel();
-			String expression = request.getParameter("expression");
+			String typeID = request.getParameter("type");
 			
-			Evaluable eval = new Parser(expression).getExpression();
-			Properties bindings = new Properties();
-			bindings.put("project", project);
-			
-			List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
+			List<ReconEntry> entries = new ArrayList<ReconEntry>(project.rows.size());
 			
 			FilteredRows filteredRows = engine.getAllFilteredRows();
 			filteredRows.accept(project, new RowVisitor() {
 				int cellIndex;
-				Properties bindings;
-				List<CellChange> cellChanges;
-				Evaluable eval;
+				List<ReconEntry> entries;
 				
-				public RowVisitor init(int cellIndex, Properties bindings, List<CellChange> cellChanges, Evaluable eval) {
+				public RowVisitor init(int cellIndex, List<ReconEntry> entries) {
 					this.cellIndex = cellIndex;
-					this.bindings = bindings;
-					this.cellChanges = cellChanges;
-					this.eval = eval;
+					this.entries = entries;
 					return this;
 				}
 				
@@ -70,25 +57,22 @@ public class DoTextTransformCommand extends Command {
 					if (cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(cellIndex);
 						if (cell.value != null) {
-							bindings.put("cell", cell);
-							bindings.put("value", cell.value);
-							
-							Cell newCell = new Cell(eval.evaluate(bindings), cell.recon);
-							
-							CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-							cellChanges.add(cellChange);
+							entries.add(new ReconEntry(rowIndex, cell));
 						}
 					}
 					return false;
 				}
-			}.init(cellIndex, bindings, cellChanges, eval));
+			}.init(cellIndex, entries));
 			
-			MassCellChange massCellChange = new MassCellChange(cellChanges, cellIndex);
-			HistoryEntry historyEntry = new HistoryEntry(
-				project, "Text transform on " + columnName + ": " + expression, massCellChange);
+			ReconProcess process = new ReconProcess(
+				project,
+				"Reconcile " + columnName + " to type " + typeID,
+				cellIndex,
+				entries,
+				typeID
+			);
 			
-			boolean done = project.processManager.queueProcess(
-					new QuickHistoryEntryProcess(project, historyEntry));
+			boolean done = project.processManager.queueProcess(process);
 			
 			respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
 			

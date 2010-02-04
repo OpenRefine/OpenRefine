@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands;
+package com.metaweb.gridworks.commands.info;
 
 import java.io.IOException;
 
@@ -8,20 +8,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 
-import com.metaweb.gridworks.ProjectManager;
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 
-public class GetProjectMetadataCommand extends Command {
+public class GetHistoryCommand extends Command {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
 		Project project = getProject(request);
-		
 		try {
-			respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
+			respondJSON(response, project.history);
 		} catch (JSONException e) {
 			respondException(response, e);
 		}
 	}
+
 }
