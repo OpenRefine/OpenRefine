@@ -170,6 +170,14 @@ public abstract class Command {
     	return a;
     }
     
+    protected JSONObject getEngineConfig(HttpServletRequest request) throws Exception {
+		String json = request.getParameter("engine");
+		if (json != null) {
+			return jsonStringToObject(json);
+		}
+		return null;
+    }
+    
     protected Engine getEngine(HttpServletRequest request, Project project) throws Exception {
 		Engine engine = new Engine(project);
 		String json = request.getParameter("engine");

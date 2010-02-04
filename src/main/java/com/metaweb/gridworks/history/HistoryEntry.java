@@ -16,22 +16,25 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
+import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 
 public class HistoryEntry implements Serializable, Jsonizable {
 	private static final long serialVersionUID = 532766467813930262L;
 	
-	public long 	id;
-	public long 	projectID;
-	public String	description;
-	public Date		time;
+	final public long 				id;
+	final public long 				projectID;
+	final public String				description;
+	final public AbstractOperation	operation;
+	final public Date				time;
 	
 	transient protected Change _change;
 	
-	public HistoryEntry(Project project, String description, Change change) {
+	public HistoryEntry(Project project, String description, AbstractOperation operation, Change change) {
 		this.id = Math.round(Math.random() * 1000000) + System.currentTimeMillis();
 		this.projectID = project.id;
 		this.description = description;
+		this.operation = operation;
 		this.time = new Date();
 		
 		_change = change;

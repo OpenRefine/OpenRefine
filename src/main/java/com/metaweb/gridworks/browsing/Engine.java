@@ -73,7 +73,7 @@ public class Engine implements Jsonizable {
 			facet.computeChoices(_project, filteredRows);
 		}
 	}
-
+	
 	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
