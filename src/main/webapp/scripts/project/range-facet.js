@@ -3,10 +3,11 @@ function RangeFacet(div, config, options) {
     this._config = config;
     this._options = options;
     
-    this._setDefaults();
-    this._timerID = null;
+    this._from = ("from" in this._config) ? this._config.from : null;
+    this._to = ("to" in this._config) ? this._config.to : null;
     
-    this._initializeUI();
+    this._timerID = null;
+    this._initializedUI = false;
 }
 
 RangeFacet.prototype._setDefaults = function() {
@@ -21,25 +22,20 @@ RangeFacet.prototype._setDefaults = function() {
         this._from = this._config.min;
         this._to = this._config.max;
     }
+    
 };
 
 RangeFacet.prototype.getJSON = function() {
     var o = cloneDeep(this._config);
     o.type = "range";
     
-    switch (this._config.mode) {
-    case "min":
-        o.from = this._from;
-        break;
-    case "max":
-        o.to = this._to;
-        break;
-    default:
-        o.from = this._from;
-        if (this._to == this._config.max) {
-            // pretend to be open-ended
-            o.mode = "min";
-        } else {
+    if (this._config.mode == "min" || this._config.mode == "range") {
+        if (this._from != null) {
+            o.from = this._from;
+        }
+    }
+    if (this._config.mode == "max" || this._config.mode == "range") {
+        if (this._to != null) {
             o.to = this._to;
         }
     }
@@ -50,12 +46,12 @@ RangeFacet.prototype.getJSON = function() {
 RangeFacet.prototype.hasSelection = function() {
     switch (this._config.mode) {
     case "min":
-        return this._from > this._config.min;
+        return this._from != null && (!this._initializedUI || this._from > this._config.min);
     case "max":
-        return this._to < this._config.max;
+        return this._to != null && (!this._initializedUI || this._to < this._config.max);
     default:
-        return this._from > this._config.min ||
-            this._to < this._config.max;
+        return (this._from != null && (!this._initializedUI || this._from > this._config.min)) ||
+            (this._to != null && (!this._initializedUI || this._to < this._config.max));
     }
 };
 
@@ -66,10 +62,30 @@ RangeFacet.prototype._initializeUI = function() {
     var headerDiv = $('<div></div>').addClass("facet-title").appendTo(container);
     $('<span></span>').text(this._config.name).appendTo(headerDiv);
     
+    var resetButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("reset").click(function() {
+        switch (self._config.mode) {
+        case "min":
+            self._from = self._config.min;
+            self._sliderDiv.slider("value", self._from);
+            break;
+        case "max":
+            self._to = self._config.max;
+            self._sliderDiv.slider("value", self._to);
+            break;
+        default:
+            self._from = self._config.min;
+            self._to = self._config.max;
+            self._sliderDiv.slider("values", 0, self._from);
+            self._sliderDiv.slider("values", 1, self._to);
+        }
+        self._setRangeIndicators();
+        self._scheduleUpdate();
+    }).prependTo(headerDiv);
+    
     var removeButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("remove").click(function() {
         self._remove();
     }).prependTo(headerDiv);
-    
+
     var bodyDiv = $('<div></div>').addClass("facet-range-body").appendTo(container);
     
     this._histogramDiv = $('<div></div>').addClass("facet-range-histogram").appendTo(bodyDiv);
@@ -115,6 +131,7 @@ RangeFacet.prototype._initializeUI = function() {
         sliderConfig.range = true;
         sliderConfig.values = [ this._from, this._to ];
     }
+    
     this._sliderDiv.slider(sliderConfig);
     this._setRangeIndicators();
 };
@@ -161,6 +178,11 @@ RangeFacet.prototype.updateState = function(data) {
 };
 
 RangeFacet.prototype.render = function() {
+    if (!this._initializedUI) {
+        this._initializeUI();
+        this._initializedUI = true;
+    }
+    
     this._sliderDiv.slider("option", "min", this._config.min);
     this._sliderDiv.slider("option", "max", this._config.max);
     this._sliderDiv.slider("option", "step", this._config.step);
