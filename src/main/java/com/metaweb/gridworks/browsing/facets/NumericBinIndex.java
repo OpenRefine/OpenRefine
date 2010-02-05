@@ -70,11 +70,15 @@ public class NumericBinIndex {
 		_max = (Math.ceil(_max / _step) * _step);
 		
 		int binCount = 1 + (int) Math.ceil((getMax() - getMin()) / getStep());
+		if (binCount > 100) {
+			_step *= 2;
+			binCount = Math.round((1 + binCount) / 2);
+		}
 		
 		_bins = new int[binCount];
 		for (double d : allValues) {
-			int bin = (int) Math.round((d - getMin()) / getStep());
-			getBins()[bin]++;
+			int bin = (int) Math.round((d - _min) / _step);
+			_bins[bin]++;
 		}
 	}
 	
