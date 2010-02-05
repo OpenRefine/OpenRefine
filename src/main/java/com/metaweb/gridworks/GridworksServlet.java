@@ -21,6 +21,7 @@ import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
 import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
+import com.metaweb.gridworks.commands.info.ExportRowsCommand;
 import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
 import com.metaweb.gridworks.commands.info.GetColumnModelCommand;
 import com.metaweb.gridworks.commands.info.GetHistoryCommand;
@@ -40,6 +41,7 @@ public class GridworksServlet extends HttpServlet {
 	
 	static {
 		_commands.put("create-project-from-upload", new CreateProjectFromUploadCommand());
+		_commands.put("export-rows", new ExportRowsCommand());
 		
 		_commands.put("get-project-metadata", new GetProjectMetadataCommand());
 		_commands.put("get-all-project-metadata", new GetAllProjectMetadataCommand());

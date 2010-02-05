@@ -320,6 +320,11 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 }
                 self.render();
             }
+        },
+        {},
+        {
+            label: "Export Filtered Rows",
+            click: function() { self._doExportRows(); }
         }
     ], elmt);
 };
@@ -776,3 +781,23 @@ DataTableView.prototype._doRemoveColumn = function(column, index) {
     );
 };
 
+DataTableView.prototype._doExportRows = function() {
+    var form = document.createElement("form");
+    $(form)
+        .css("display", "none")
+        .attr("method", "post")
+        .attr("action", "/command/export-rows?project=" + theProject.id)
+        .attr("target", "gridworks-export");
+
+    $('<input />')
+        .attr("name", "engine")
+        .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
+        .appendTo(form);
+    
+    document.body.appendChild(form);
+
+    window.open("about:blank", "gridworks-export");
+    form.submit();
+    
+    document.body.removeChild(form);
+};
