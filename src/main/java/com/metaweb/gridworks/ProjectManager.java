@@ -86,13 +86,9 @@ public class ProjectManager implements Serializable {
 		return _dir;
 	}
 	
-	public Project createProject(ProjectMetadata projectMetadata) {
-		Project project = new Project();
-		
+	public void registerProject(Project project, ProjectMetadata projectMetadata) {
 		_projects.put(project.id, project);
 		_projectsMetadata.put(project.id, projectMetadata);
-		
-		return project;
 	}
 	
 	public ProjectMetadata getProjectMetadata(long id) {

@@ -16,7 +16,7 @@ import org.json.JSONTokener;
 
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.commands.edit.AddColumnCommand;
-import com.metaweb.gridworks.commands.edit.CreateProjectFromUploadCommand;
+import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
 import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
@@ -42,7 +42,7 @@ public class GridworksServlet extends HttpServlet {
 	static protected Map<String, Command> _commands = new HashMap<String, Command>();
 	
 	static {
-		_commands.put("create-project-from-upload", new CreateProjectFromUploadCommand());
+		_commands.put("create-project-from-upload", new CreateProjectCommand());
 		_commands.put("export-rows", new ExportRowsCommand());
 		
 		_commands.put("get-project-metadata", new GetProjectMetadataCommand());

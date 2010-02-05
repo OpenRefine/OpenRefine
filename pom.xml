@@ -63,6 +63,13 @@
         <artifactId>commons-lang</artifactId>
         <version>2.1</version>
     </dependency>
+    
+    <!-- For reading XLS files -->
+    <dependency>
+        <groupId>poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>2.5.1-final-20040804</version>
+    </dependency>
   </dependencies>
   
 </project>

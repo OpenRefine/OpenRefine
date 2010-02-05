@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,5 +56,13 @@ public class ParsingUtilities {
 			return s; // should not happen
 		}
     }
-
+    static public String decode(String s) {
+        try {
+			return codec.decode(s, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			return s; // should not happen
+		} catch (DecoderException e) {
+			return s; // should not happen
+		}
+    }
 }
