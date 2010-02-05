@@ -15,15 +15,17 @@ import com.metaweb.gridworks.Jsonizable;
 public class ColumnGroup implements Serializable, Jsonizable {
 	private static final long serialVersionUID = 2161780779920066118L;
 
-	final public int[] 	cellIndices;  // must be in order from smallest to largest
-	final public int	keyCellIndex; // could be -1 if there is no key cell 
+	final public int 	startColumnIndex;
+	final public int	columnSpan;
+	final public int	keyColumnIndex; // could be -1 if there is no key cell 
 	
 	transient public ColumnGroup		parentGroup;
 	transient public List<ColumnGroup> 	subgroups;
 	
-	public ColumnGroup(int[] cellIndices, int keyCellIndex) {
-		this.cellIndices = cellIndices;
-		this.keyCellIndex = keyCellIndex;
+	public ColumnGroup(int startColumnIndex, int columnSpan, int keyColumnIndex) {
+		this.startColumnIndex = startColumnIndex;
+		this.columnSpan = columnSpan;
+		this.keyColumnIndex = keyColumnIndex;
 		internalInitialize();
 	}
 	
@@ -33,11 +35,9 @@ public class ColumnGroup implements Serializable, Jsonizable {
 		
 		writer.object();
 		
-		writer.key("cellIndices"); writer.array();
-		for (int i : cellIndices) {
-			writer.value(i);
-		}
-		writer.endArray();
+		writer.key("startColumnIndex"); writer.value(startColumnIndex);
+		writer.key("columnSpan"); writer.value(columnSpan);
+		writer.key("keyColumnIndex"); writer.value(keyColumnIndex);
 		
 		if (subgroups != null && subgroups.size() > 0) {
 			writer.key("subgroups"); writer.array();
@@ -51,19 +51,8 @@ public class ColumnGroup implements Serializable, Jsonizable {
 	}
 	
 	public boolean contains(ColumnGroup g) {
-		for (int c : g.cellIndices) {
-			boolean has = false;
-			for (int d : cellIndices) {
-				if (c == d) {
-					has = true;
-					break;
-				}
-			}
-			if (!has) {
-				return false;
-			}
-		}
-		return true;
+		return (g.startColumnIndex >= startColumnIndex &&
+			g.startColumnIndex < startColumnIndex + columnSpan);
 	}
 	
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

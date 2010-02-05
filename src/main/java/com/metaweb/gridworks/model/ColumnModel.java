@@ -104,10 +104,10 @@ public class ColumnModel implements Serializable, Jsonizable {
 		Collections.sort(_rootColumnGroups, new Comparator<ColumnGroup>() {
 			@Override
 			public int compare(ColumnGroup o1, ColumnGroup o2) {
-				int firstDiff = o1.cellIndices[0] - o2.cellIndices[0];
+				int firstDiff = o1.startColumnIndex - o2.startColumnIndex;
 				return firstDiff != 0 ?
 					firstDiff : // whichever group that starts first goes first 
-					(o2.cellIndices.length - o1.cellIndices.length); // otherwise, the larger group goes first
+					(o2.columnSpan - o1.columnSpan); // otherwise, the larger group goes first
 			}
 		});
 		

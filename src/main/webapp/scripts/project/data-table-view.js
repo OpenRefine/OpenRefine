@@ -75,8 +75,9 @@ DataTableView.prototype.render = function() {
         renderPageSize(i);
     }
     
-    /*
-     *  Data table
+    /*============================================================
+     *  Data Table
+     *============================================================
      */
     var tableDiv = $('<div></div>').addClass("data-table-container").css("width", container.width() + "px").appendTo(container);
     
@@ -84,7 +85,82 @@ DataTableView.prototype.render = function() {
     table.className = "data-table";
     tableDiv.append(table);
     
-    var trHead = table.insertRow(0);
+    var columns = theProject.columnModel.columns;
+    var columnGroups = theProject.columnModel.columnGroups;
+    
+    /*------------------------------------------------------------
+     *  Column Group Headers
+     *------------------------------------------------------------
+     */
+    
+    var renderColumnKeys = function(keys) {
+        if (keys.length > 0) {
+            var tr = table.insertRow(table.rows.length);
+            tr.insertCell(0); // row index
+            
+            for (var c = 0; c < columns.length; c++) {
+                var td = tr.insertCell(tr.cells.length);
+                
+                for (var k = 0; k < keys.length; k++) {
+                    if (c == keys[k]) {
+                        $('<img />').attr("src", "images/down-arrow.png").appendTo(td);
+                        break;
+                    }
+                }
+            }
+        }
+    };
+    var renderColumnGroups = function(groups, keys) {
+        var nextLayer = [];
+        
+        if (groups.length > 0) {
+            var tr = table.insertRow(table.rows.length);
+            tr.insertCell(0); // row index
+            
+            for (var c = 0; c < columns.length; c++) {
+                var foundGroup = false;
+                
+                for (var g = 0; g < groups.length; g++) {
+                    var columnGroup = groups[g];
+                    if (columnGroup.startColumnIndex == c) {
+                        foundGroup = true;
+                        break;
+                    }
+                }
+                
+                var td = tr.insertCell(tr.cells.length);
+                if (foundGroup) {
+                    td.setAttribute("colspan", columnGroup.columnSpan);
+                    td.style.background = "blue";
+                    
+                    if (columnGroup.keyColumnIndex >= 0) {
+                        keys.push(columnGroup.keyColumnIndex);
+                    }
+                    
+                    c += (columnGroup.columnSpan - 1);
+                    
+                    nextLayer = nextLayer.concat(columnGroup.subgroups);
+                }
+            }
+        }
+        
+        renderColumnKeys(keys);
+        
+        if (nextLayer.length > 0) {
+            renderColumnGroups(nextLayer, []);
+        }
+    };
+    renderColumnGroups(
+        columnGroups, 
+        [ theProject.columnModel.keyCellIndex ]
+    );
+    
+    /*------------------------------------------------------------
+     *  Column Headers with Menus
+     *------------------------------------------------------------
+     */
+    
+    var trHead = table.insertRow(table.rows.length);
     
     var td = trHead.insertCell(trHead.cells.length);
     $(td).addClass("column-header");
@@ -118,10 +194,14 @@ DataTableView.prototype.render = function() {
         }
     };
     
-    var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
         createColumnHeader(columns[i], i);
     }
+    
+    /*------------------------------------------------------------
+     *  Data Cells
+     *------------------------------------------------------------
+     */
     
     var renderCell = function(cell, td) {
         if (cell == null || cell.v == null) {
