@@ -49,7 +49,8 @@ public class Project implements Serializable {
 	public void recomputeRowContextDependencies() {
 		List<Group> keyedGroups = new ArrayList<Group>();
 		
-		keyedGroups.add(createRootKeyedGroup());
+		addRootKeyedGroup(keyedGroups);
+		
 		for (ColumnGroup group : columnModel.columnGroups) {
 			if (group.keyColumnIndex >= 0) {
 				Group keyedGroup = new Group();
@@ -120,21 +121,22 @@ public class Project implements Serializable {
 		}
 	}
 	
-	protected Group createRootKeyedGroup() {
-		int count = columnModel.getMaxCellIndex();
-		
-		Group rootKeyedGroup = new Group();
-		
-		rootKeyedGroup.cellIndices = new int[count - 1];
-		rootKeyedGroup.keyCellIndex = columnModel.columns.get(columnModel.getKeyColumnIndex()).getCellIndex();
-		for (int i = 0; i < count; i++) {
-			if (i < rootKeyedGroup.keyCellIndex) {
-				rootKeyedGroup.cellIndices[i] = i;
-			} else if (i > rootKeyedGroup.keyCellIndex) {
-				rootKeyedGroup.cellIndices[i - 1] = i;
+	protected void addRootKeyedGroup(List<Group> keyedGroups) {
+		int count = columnModel.getMaxCellIndex() + 1;
+		if (count > 0 && columnModel.getKeyColumnIndex() < columnModel.columns.size()) {
+			Group rootKeyedGroup = new Group();
+			
+			rootKeyedGroup.cellIndices = new int[count - 1];
+			rootKeyedGroup.keyCellIndex = columnModel.columns.get(columnModel.getKeyColumnIndex()).getCellIndex();
+			for (int i = 0; i < count; i++) {
+				if (i < rootKeyedGroup.keyCellIndex) {
+					rootKeyedGroup.cellIndices[i] = i;
+				} else if (i > rootKeyedGroup.keyCellIndex) {
+					rootKeyedGroup.cellIndices[i - 1] = i;
+				}
 			}
+			keyedGroups.add(rootKeyedGroup);
 		}
-		return rootKeyedGroup;
 	}
 	
 	protected void setRowDependency(Row row, int cellIndex, int contextRowIndex, int contextCellIndex) {
