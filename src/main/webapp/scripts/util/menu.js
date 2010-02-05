@@ -3,7 +3,7 @@ MenuSystem = {
     _overlay: null
 };
 
-MenuSystem.showMenu = function(elmt) {
+MenuSystem.showMenu = function(elmt, onDismiss) {
     if (MenuSystem._overlay == null) {
         MenuSystem._overlay = $('<div>&nbsp;</div>')
             .addClass("menu-overlay")
@@ -15,7 +15,8 @@ MenuSystem.showMenu = function(elmt) {
     elmt.css("z-index", 1001 + MenuSystem._layers.length).appendTo(document.body);
     
     var layer = {
-        elmt: elmt
+        elmt: elmt,
+        onDismiss: onDismiss
     };
     MenuSystem._layers.push(layer);
     
@@ -36,7 +37,9 @@ MenuSystem.dismissAll = function() {
 
 MenuSystem.dismissUntil = function(level) {
     for (var i = MenuSystem._layers.length - 1; i >= level; i--) {
-        MenuSystem._layers[i].elmt.remove();
+        var layer = MenuSystem._layers[i];
+        layer.elmt.remove();
+        layer["onDismiss"]();
     }
     MenuSystem._layers = MenuSystem._layers.slice(0, level);
 };
@@ -58,7 +61,7 @@ MenuSystem.positionMenuAboveBelow = function(menu, elmt) {
 MenuSystem.positionMenuLeftRight = function(menu, elmt) {
     var offset = elmt.offset();
     menu.css("top", offset.top + "px")
-        .css("left", (offset.left + elmt.width()) + "px");
+        .css("left", (offset.left + elmt.width() + 10) + "px");
 };
 
 MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
@@ -78,7 +81,19 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
                 menuItem.html('<table width="100%" cellspacing="0" cellpadding="0"><tr><td>' + item.label + '</td><td width="1%"><img src="/images/right-arrow.png" /></td></tr></table>');
                 menuItem.mouseover(function() {
                     MenuSystem.dismissUntil(level);
-                    MenuSystem.createAndShowStandardMenu(item.submenu, this, { horizontal: true });
+                    
+                    menuItem.addClass("menu-expanded");
+                    
+                    MenuSystem.createAndShowStandardMenu(
+                        item.submenu, 
+                        this,
+                        {
+                            horizontal: true,
+                            onDismiss: function() {
+                                menuItem.removeClass("menu-expanded");
+                            }
+                        }
+                    );
                 });
             } else {
                 menuItem.html(item.label).click(item.click);
@@ -100,7 +115,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
         createMenuItem(items[i]);
     }
     
-    var level = MenuSystem.showMenu(menu);
+    var level = MenuSystem.showMenu(menu, "onDismiss" in options ? options.onDismiss : function(){});
     if (options.horizontal) {
         MenuSystem.positionMenuLeftRight(menu, $(elmt));
     } else {

@@ -86,6 +86,10 @@ a.menu-item:hover {
     background: #eee;
 }
 
+a.menu-item.menu-expanded {
+    background: #ddd;
+}
+
 a.menu-item img {
     border: none;
 }
