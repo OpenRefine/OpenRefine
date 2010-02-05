@@ -99,7 +99,8 @@ public class Row implements Serializable, HasFields, Jsonizable {
 			Project project = (Project) bindings.get("project");
 			Column column = project.columnModel.getColumnByName(name);
 			if (column != null) {
-				return cells.get(column.getCellIndex());
+			    int cellIndex = column.getCellIndex();
+				return getCell(cellIndex);
 			}
 			return null;
 		}

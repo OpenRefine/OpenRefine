@@ -39,7 +39,7 @@ public class MultiValueCellJoinOperation implements AbstractOperation {
 	public Process createProcess(Project project, Properties options)
 			throws Exception {
 		
-		Column column = project.columnModel.columns.get(_cellIndex);
+		Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
 		if (column == null) {
 			throw new Exception("No column corresponding to cell index " + _cellIndex);
 		}

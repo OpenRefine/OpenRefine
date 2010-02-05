@@ -8,8 +8,13 @@ import java.util.Map;
 import com.metaweb.gridworks.expr.Scanner.NumberToken;
 import com.metaweb.gridworks.expr.Scanner.Token;
 import com.metaweb.gridworks.expr.Scanner.TokenType;
+import com.metaweb.gridworks.expr.controls.ForEach;
+import com.metaweb.gridworks.expr.controls.ForNonBlank;
+import com.metaweb.gridworks.expr.controls.If;
 import com.metaweb.gridworks.expr.functions.And;
 import com.metaweb.gridworks.expr.functions.Get;
+import com.metaweb.gridworks.expr.functions.IsBlank;
+import com.metaweb.gridworks.expr.functions.IsNotBlank;
 import com.metaweb.gridworks.expr.functions.IsNotNull;
 import com.metaweb.gridworks.expr.functions.IsNull;
 import com.metaweb.gridworks.expr.functions.Not;
@@ -27,6 +32,8 @@ public class Parser {
 	protected Evaluable _root;
 	
 	static public Map<String, Function> functionTable = new HashMap<String, Function>();
+    static public Map<String, Control> controlTable = new HashMap<String, Control>();
+    
 	static {
 		functionTable.put("toUppercase", new ToUppercase());
 		functionTable.put("toLowercase", new ToLowercase());
@@ -43,8 +50,14 @@ public class Parser {
 		functionTable.put("not", new Not());
 		functionTable.put("isNull", new IsNull());
 		functionTable.put("isNotNull", new IsNotNull());
-	}
-	
+        functionTable.put("isBlank", new IsBlank());
+        functionTable.put("isNotBlank", new IsNotBlank());
+
+        controlTable.put("if", new If());
+        controlTable.put("forEach", new ForEach());
+        controlTable.put("forNonBlank", new ForNonBlank());
+    }
+    
 	public Parser(String s) throws Exception {
 		this(s, 0, s.length());
 	}
@@ -157,15 +170,20 @@ public class Parser {
 				eval = new VariableExpr(text);
 			} else {
 				Function f = functionTable.get(text);
-				if (f == null) {
-					throw makeException("Unknown function " + text);
+				Control c = controlTable.get(text);
+				if (f == null && c == null) {
+					throw makeException("Unknown function or control named " + text);
 				}
 				
 				next(); // swallow (
 				
 				List<Evaluable> args = parseExpressionList(")");
 				
-				eval = new FunctionCallExpr(makeArray(args), f);
+				if (c != null) {
+                    eval = new ControlCallExpr(makeArray(args), c);
+				} else {
+				    eval = new FunctionCallExpr(makeArray(args), f);
+				}
 			}
 		} else if (_token.type == TokenType.Delimiter && _token.text.equals("(")) {
 			next();

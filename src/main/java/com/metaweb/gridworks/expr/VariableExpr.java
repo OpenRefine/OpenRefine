@@ -18,4 +18,8 @@ public class VariableExpr implements Evaluable {
 	public String toString() {
 		return _name;
 	}
+	
+	public String getName() {
+	    return _name;
+	}
 }

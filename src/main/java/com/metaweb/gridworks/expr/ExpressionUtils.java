@@ -25,4 +25,15 @@ public class ExpressionUtils {
         bindings.put("cell", cell);
         bindings.put("value", cell.value);
     }
+    
+    static public boolean isBlank(Object o) {
+        return o == null || (o instanceof String && ((String) o).isEmpty());
+    }
+
+    static public boolean isTrue(Object o) {
+        return o != null && 
+            (o instanceof Boolean ? 
+                ((Boolean) o).booleanValue() : 
+                Boolean.parseBoolean(o.toString()));
+    }
 }
