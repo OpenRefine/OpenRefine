@@ -23,7 +23,7 @@ public class ColumnModel implements Serializable, Jsonizable {
 	final public List<ColumnGroup> 	columnGroups = new LinkedList<ColumnGroup>();
 	
 	private int					_maxCellIndex;
-	private int					_keyCellIndex;
+	private int					_keyColumnIndex;
 	
 	transient protected Map<String, Column> 	_nameToColumn;
 	transient protected Map<Integer, Column> 	_cellIndexToColumn;
@@ -45,13 +45,13 @@ public class ColumnModel implements Serializable, Jsonizable {
         return ++_maxCellIndex;
     }
     
-	public void setKeyCellIndex(int keyCellIndex) {
+	public void setKeyColumnIndex(int keyColumnIndex) {
 		// TODO: check validity of new cell index, e.g., it's not in any group
-		this._keyCellIndex = keyCellIndex;
+		this._keyColumnIndex = keyColumnIndex;
 	}
 
-	public int getKeyCellIndex() {
-		return _keyCellIndex;
+	public int getKeyColumnIndex() {
+		return _keyColumnIndex;
 	}
 
 	public void update() {
@@ -79,7 +79,7 @@ public class ColumnModel implements Serializable, Jsonizable {
 		}
 		writer.endArray();
 		
-		writer.key("keyCellIndex"); writer.value(getKeyCellIndex());
+		writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
 		writer.key("columnGroups");
 		writer.array();
 		for (ColumnGroup g : _rootColumnGroups) {

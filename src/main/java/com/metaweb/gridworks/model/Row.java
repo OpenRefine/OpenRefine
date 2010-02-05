@@ -18,8 +18,9 @@ public class Row implements Serializable, HasFields, Jsonizable {
 	public boolean		       starred;
 	final public List<Cell>    cells;
 	
-	transient public	List<Integer> contextRows;
-	transient public	List<Integer> contextCells;
+	transient public List<Integer> 	contextRows;
+	transient public int[] 			contextRowSlots;
+	transient public int[] 			contextCellSlots;
 	
 	public Row(int cellCount) {
 		cells = new ArrayList<Cell>(cellCount);
@@ -127,6 +128,15 @@ public class Row implements Serializable, HasFields, Jsonizable {
 		
 		if (options.containsKey("rowIndex")) {
 			writer.key("i"); writer.value(options.get("rowIndex"));
+		}
+		if (options.containsKey("extra")) {
+			Properties extra = (Properties) options.get("extra");
+			if (extra != null) {
+				for (Object key : extra.keySet()) {
+					writer.key((String) key);
+					writer.value(extra.get(key));
+				}
+			}
 		}
 		
 		writer.endObject();

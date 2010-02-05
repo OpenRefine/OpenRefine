@@ -63,7 +63,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		
 		List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
 		
-		FilteredRows filteredRows = engine.getAllFilteredRows();
+		FilteredRows filteredRows = engine.getAllFilteredRows(false);
 		filteredRows.accept(project, createRowVisitor(project, cellsAtRows));
 		
 		String description = createDescription(column, cellsAtRows);
@@ -108,7 +108,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 			}
 			
 			@Override
-			public boolean visit(Project project, int rowIndex, Row row) {
+			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
 					if (cell.value != null) {

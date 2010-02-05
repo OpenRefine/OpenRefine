@@ -24,7 +24,7 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
 	}
 	
 	@Override
-	public boolean visit(Project project, int rowIndex, Row row) {
+	public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 		if (_cellIndex < row.cells.size()) {
 			Cell cell = row.cells.get(_cellIndex);
 			if (cell != null) {

@@ -40,17 +40,28 @@ public class GetRowsCommand extends Command {
 				RowAccumulator acc = new RowAccumulator(start, limit) {
 					JSONWriter	writer;
 					Properties	options;
+					Properties  extra;
 					
 					public RowAccumulator init(JSONWriter writer, Properties options) {
 						this.writer = writer;
 						this.options = options;
+						
+						this.extra = new Properties();
+						this.extra.put("contextual", true);
+						
 						return this;
 					}
 					
 					@Override
-					public boolean internalVisit(int rowIndex, Row row) {
+					public boolean internalVisit(int rowIndex, Row row, boolean contextual) {
 						try {
+							if (contextual) {
+								options.put("extra", extra);
+							} else {
+								options.remove("extra");
+							}
 							options.put("rowIndex", rowIndex);
+							
 							row.write(writer, options);
 						} catch (JSONException e) {
 						}
@@ -58,7 +69,7 @@ public class GetRowsCommand extends Command {
 					}
 				}.init(writer, options);
 				
-				FilteredRows filteredRows = engine.getAllFilteredRows();
+				FilteredRows filteredRows = engine.getAllFilteredRows(true);
 				
 				writer.key("rows"); writer.array();
 				filteredRows.accept(project, acc);
@@ -89,17 +100,19 @@ public class GetRowsCommand extends Command {
 		}
 		
 		@Override
-		public boolean visit(Project project, int rowIndex, Row row) {
+		public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 			boolean r = false;
 			
 			if (total >= start && total < start + limit) {
-				r = internalVisit(rowIndex, row);
+				r = internalVisit(rowIndex, row, contextual);
 			}
-			total++;
+			if (!contextual) {
+				total++;
+			}
 			return r;
 		}
 		
-		protected boolean internalVisit(int rowIndex, Row row) {
+		protected boolean internalVisit(int rowIndex, Row row, boolean contextual) {
 			return false;
 		}
 	}

@@ -250,6 +250,10 @@ DataTableView.prototype.render = function() {
         var tr = table.insertRow(table.rows.length);
         tr.className = (r % 2) == 1 ? "odd" : "even";
         
+        if ("contextual" in row && row.contextual) {
+            $(tr).addClass("contextual");
+        }
+        
         var td = tr.insertCell(tr.cells.length);
         $(td).html((row.i + 1) + ".");
         

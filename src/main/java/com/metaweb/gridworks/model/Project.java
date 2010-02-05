@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.History;
 import com.metaweb.gridworks.process.ProcessManager;
 
@@ -35,10 +38,118 @@ public class Project implements Serializable {
 	protected void internalInitialize() {
 		processManager = new ProcessManager();
 		
-		computeContext();
+		recomputeRowContextDependencies();
 	}
 	
-	protected void computeContext() {
-		// TODO
+	static protected class Group {
+		int[] 	cellIndices;
+		int 	keyCellIndex;
+	}
+	
+	public void recomputeRowContextDependencies() {
+		List<Group> keyedGroups = new ArrayList<Group>();
+		
+		keyedGroups.add(createRootKeyedGroup());
+		for (ColumnGroup group : columnModel.columnGroups) {
+			if (group.keyColumnIndex >= 0) {
+				Group keyedGroup = new Group();
+				keyedGroup.keyCellIndex = columnModel.columns.get(group.keyColumnIndex).getCellIndex();
+				keyedGroup.cellIndices = new int[group.columnSpan - 1];
+				
+				int c = 0;
+				for (int i = 0; i < group.columnSpan; i++) {
+					int columnIndex = group.startColumnIndex + i;
+					if (columnIndex != group.keyColumnIndex) {
+						int cellIndex = columnModel.columns.get(columnIndex).getCellIndex();
+						keyedGroup.cellIndices[c++] = cellIndex;
+					}
+				}
+				
+				keyedGroups.add(keyedGroup);
+			}
+		}
+		
+		Collections.sort(keyedGroups, new Comparator<Group>() {
+			@Override
+			public int compare(Group o1, Group o2) {
+				return o2.cellIndices.length - o1.cellIndices.length; // larger groups first
+			}
+		});
+		
+		int[] lastNonBlankRowsByGroup = new int[keyedGroups.size()];
+		for (int i = 0; i < lastNonBlankRowsByGroup.length; i++) {
+			lastNonBlankRowsByGroup[i] = -1;
+		}
+		
+		for (int r = 0; r < rows.size(); r++) {
+			Row row = rows.get(r);
+			row.contextRowSlots = null;
+			row.contextCellSlots = null;
+			
+			for (int g = 0; g < keyedGroups.size(); g++) {
+				Group group = keyedGroups.get(g);
+				
+				if (ExpressionUtils.isBlank(row.getCellValue(group.keyCellIndex))) {
+					int contextRowIndex = lastNonBlankRowsByGroup[g];
+					if (contextRowIndex >= 0) {
+						for (int dependentCellIndex : group.cellIndices) {
+							if (!ExpressionUtils.isBlank(row.getCellValue(dependentCellIndex))) {
+								setRowDependency(
+									row, 
+									dependentCellIndex, 
+									contextRowIndex, 
+									group.keyCellIndex
+								);
+							}
+						}
+					}
+				} else {
+					lastNonBlankRowsByGroup[g] = r;
+				}
+			}
+			
+			if (row.contextRowSlots != null) {
+				row.contextRows = new ArrayList<Integer>();
+				for (int index : row.contextRowSlots) {
+					if (index >= 0) {
+						row.contextRows.add(index);
+					}
+				}
+				Collections.sort(row.contextRows);
+			}
+		}
+	}
+	
+	protected Group createRootKeyedGroup() {
+		int count = columnModel.getMaxCellIndex();
+		
+		Group rootKeyedGroup = new Group();
+		
+		rootKeyedGroup.cellIndices = new int[count - 1];
+		rootKeyedGroup.keyCellIndex = columnModel.columns.get(columnModel.getKeyColumnIndex()).getCellIndex();
+		for (int i = 0; i < count; i++) {
+			if (i < rootKeyedGroup.keyCellIndex) {
+				rootKeyedGroup.cellIndices[i] = i;
+			} else if (i > rootKeyedGroup.keyCellIndex) {
+				rootKeyedGroup.cellIndices[i - 1] = i;
+			}
+		}
+		return rootKeyedGroup;
+	}
+	
+	protected void setRowDependency(Row row, int cellIndex, int contextRowIndex, int contextCellIndex) {
+		int count = columnModel.getMaxCellIndex() + 1;
+		if (row.contextRowSlots == null || row.contextCellSlots == null) {
+			row.contextRowSlots = new int[count];
+			row.contextCellSlots = new int[count];
+			
+			for (int i = 0; i < count; i++) {
+				row.contextRowSlots[i] = -1;
+				row.contextCellSlots[i] = -1;
+			}
+		}
+		
+		row.contextRowSlots[cellIndex] = contextRowIndex;
+		row.contextCellSlots[cellIndex] = contextCellIndex;
 	}
 }

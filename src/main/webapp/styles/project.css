@@ -14,6 +14,10 @@ table.data-table tr.even {
     background: #eee;
 }
 
+table.data-table tr.contextual {
+    opacity: 0.2;
+}
+
 table.data-table td.column-header {
     background: #ddd;
     cursor: pointer;

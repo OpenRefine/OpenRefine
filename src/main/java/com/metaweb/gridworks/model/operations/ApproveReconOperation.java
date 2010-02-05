@@ -51,7 +51,7 @@ public class ApproveReconOperation extends EngineDependentMassCellOperation {
 			}
 			
 			@Override
-			public boolean visit(Project project, int rowIndex, Row row) {
+			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
 					if (cell.recon != null && cell.recon.candidates.size() > 0) {

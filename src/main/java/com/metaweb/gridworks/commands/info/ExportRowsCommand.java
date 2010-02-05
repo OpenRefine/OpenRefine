@@ -51,7 +51,7 @@ public class ExportRowsCommand extends Command {
 					}
 					
 					@Override
-					public boolean visit(Project project, int rowIndex, Row row) {
+					public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 						boolean first = true;
 						for (Column column : project.columnModel.columns) {
 							if (first) {
@@ -74,7 +74,7 @@ public class ExportRowsCommand extends Command {
 					}
 				}.init(writer);
 				
-				FilteredRows filteredRows = engine.getAllFilteredRows();
+				FilteredRows filteredRows = engine.getAllFilteredRows(true);
 				filteredRows.accept(project, visitor);
 			}
 		} catch (Exception e) {
@@ -94,7 +94,7 @@ public class ExportRowsCommand extends Command {
 		}
 		
 		@Override
-		public boolean visit(Project project, int rowIndex, Row row) {
+		public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 			boolean r = false;
 			
 			if (total >= start && total < start + limit) {

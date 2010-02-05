@@ -60,7 +60,7 @@ public class ReconOperation extends EngineDependentOperation {
 		
 		List<ReconEntry> entries = new ArrayList<ReconEntry>(project.rows.size());
 		
-		FilteredRows filteredRows = engine.getAllFilteredRows();
+		FilteredRows filteredRows = engine.getAllFilteredRows(false);
 		filteredRows.accept(project, new RowVisitor() {
 			int cellIndex;
 			List<ReconEntry> entries;
@@ -72,7 +72,7 @@ public class ReconOperation extends EngineDependentOperation {
 			}
 			
 			@Override
-			public boolean visit(Project project, int rowIndex, Row row) {
+			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
 					if (cell.value != null) {

@@ -25,12 +25,12 @@ public class Engine implements Jsonizable {
 		_project  = project;
 	}
 	
-	public FilteredRows getAllFilteredRows() {
-		return getFilteredRows(null);
+	public FilteredRows getAllFilteredRows(boolean contextual) {
+		return getFilteredRows(null, contextual);
 	}
 
-	public FilteredRows getFilteredRows(Facet except) {
-		ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows();
+	public FilteredRows getFilteredRows(Facet except, boolean contextual) {
+		ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows(contextual);
 		for (Facet facet : _facets) {
 			if (facet != except) {
 				RowFilter rowFilter = facet.getRowFilter();
@@ -68,7 +68,7 @@ public class Engine implements Jsonizable {
 	
 	public void computeFacets() throws JSONException {
 		for (Facet facet : _facets) {
-			FilteredRows filteredRows = getFilteredRows(facet);
+			FilteredRows filteredRows = getFilteredRows(facet, false);
 			
 			facet.computeChoices(_project, filteredRows);
 		}
