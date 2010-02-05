@@ -17,6 +17,7 @@ import com.metaweb.gridworks.expr.functions.IsBlank;
 import com.metaweb.gridworks.expr.functions.IsNotBlank;
 import com.metaweb.gridworks.expr.functions.IsNotNull;
 import com.metaweb.gridworks.expr.functions.IsNull;
+import com.metaweb.gridworks.expr.functions.Length;
 import com.metaweb.gridworks.expr.functions.Not;
 import com.metaweb.gridworks.expr.functions.Or;
 import com.metaweb.gridworks.expr.functions.Replace;
@@ -44,6 +45,7 @@ public class Parser {
 		functionTable.put("substring", new Slice());
 		functionTable.put("replace", new Replace());
 		functionTable.put("split", new Split());
+		functionTable.put("length", new Length());
 		
 		functionTable.put("and", new And());
 		functionTable.put("or", new Or());

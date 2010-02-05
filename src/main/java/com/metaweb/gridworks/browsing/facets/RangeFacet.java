@@ -29,6 +29,7 @@ public class RangeFacet implements Facet {
 	
 	protected double	_from;
 	protected double	_to;
+	protected boolean	_selected;
 	
 	public RangeFacet() {
 	}
@@ -79,36 +80,49 @@ public class RangeFacet implements Facet {
 		
 		_mode = o.getString("mode");
 		if ("min".equals(_mode)) {
-			_from = o.getDouble("from");
+			if (o.has("from")) {
+				_from = o.getDouble("from");
+				_selected = true;
+			}
 		} else if ("max".equals(_mode)) {
-			_to = o.getDouble("to");
+			if (o.has("to")) {
+				_to = o.getDouble("to");
+				_selected = true;
+			}
 		} else {
-			_from = o.getDouble("from");
-			_to = o.getDouble("to");
+			if (o.has("from") && o.has("to")) {
+				_from = o.getDouble("from");
+				_to = o.getDouble("to");
+				_selected = true;
+			}
 		}
 	}
 
 	@Override
 	public RowFilter getRowFilter() {
-		if ("min".equals(_mode)) {
-			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
-				protected boolean checkValue(double d) {
-					return d >= _from;
+		if (_selected) {
+			if ("min".equals(_mode)) {
+				return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
+					protected boolean checkValue(double d) {
+						return d >= _from;
+					};
 				};
-			};
-		} else if ("max".equals(_mode)) {
-			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
-				protected boolean checkValue(double d) {
-					return d <= _to;
+			} else if ("max".equals(_mode)) {
+				return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
+					protected boolean checkValue(double d) {
+						return d <= _to;
+					};
 				};
-			};
+			} else {
+				return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
+					protected boolean checkValue(double d) {
+						return d >= _from && d <= _to;
+					};
+				};
+			}		
 		} else {
-			return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
-				protected boolean checkValue(double d) {
-					return d >= _from && d <= _to;
-				};
-			};
-		}		
+			return null;
+		}
 	}
 
 	@Override
@@ -126,6 +140,14 @@ public class RangeFacet implements Facet {
 		_max = index.getMax();
 		_step = index.getStep();
 		_baseBins = index.getBins();
+		
+		if (_selected) {
+			_from = Math.max(_from, _min);
+			_to = Math.min(_to, _max);
+		} else {
+			_from = _min;
+			_to = _max;
+		}
 		
 		ExpressionNumericRowBinner binner = 
 			new ExpressionNumericRowBinner(_eval, _cellIndex, index);

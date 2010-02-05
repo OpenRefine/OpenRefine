@@ -370,7 +370,11 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                 },
                 {
                     label: "Custom Text Facet ...",
-                    click: function() { self._doFilterByExpressionPrompt(column); }
+                    click: function() { self._doFilterByExpressionPrompt(column, "value", "list"); }
+                },
+                {
+                    label: "Custom Numeric Facet ...",
+                    click: function() { self._doFilterByExpressionPrompt(column, "value", "range"); }
                 },
                 {},
                 {
@@ -637,21 +641,23 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
     ], elmt, { width: "120px", horizontal: false });
 };
 
-DataTableView.prototype._doFilterByExpressionPrompt = function(column, expression) {
+DataTableView.prototype._doFilterByExpressionPrompt = function(column, expression, type) {
     var self = this;
     DataTableView.promptExpressionOnVisibleRows(
         column,
         "Custom Filter on " + column.headerLabel, 
-        "value",
+        expression,
         function(expression) {
-            ui.browsingEngine.addFacet(
-                "list", 
-                {
-                    "name" : column.headerLabel + ": " + expression,
-                    "cellIndex" : column.cellIndex, 
-                    "expression" : expression
-                }
-            );
+            var config = {
+                "name" : column.headerLabel + ": " + expression,
+                "cellIndex" : column.cellIndex, 
+                "expression" : expression
+            };
+            if (type == "range") {
+                config.mode = "range";
+            }
+
+            ui.browsingEngine.addFacet(type, config);
         }
     );
 };
