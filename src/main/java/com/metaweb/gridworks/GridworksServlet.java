@@ -18,7 +18,9 @@ import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.commands.edit.AddColumnCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectFromUploadCommand;
 import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
+import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
+import com.metaweb.gridworks.commands.edit.SplitMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.info.ExportRowsCommand;
@@ -57,6 +59,8 @@ public class GridworksServlet extends HttpServlet {
 		
 		_commands.put("add-column", new AddColumnCommand());
 		_commands.put("remove-column", new RemoveColumnCommand());
+        _commands.put("join-multi-value-cells", new JoinMultiValueCellsCommand());
+        _commands.put("split-multi-value-cells", new SplitMultiValueCellsCommand());
 		
 		_commands.put("reconcile", new ReconcileCommand());
 		_commands.put("approve-reconcile", new ApproveReconcileCommand());

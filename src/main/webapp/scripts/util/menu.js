@@ -67,6 +67,10 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
     };
     
     var menu = MenuSystem.createMenu();
+    if ("width" in options) {
+        menu.width(options.width);
+    }
+    
     var createMenuItem = function(item) {
         if ("label" in item) {
             var menuItem = MenuSystem.createMenuItem().appendTo(menu);

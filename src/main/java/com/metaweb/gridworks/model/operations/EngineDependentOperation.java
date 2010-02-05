@@ -9,7 +9,9 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 abstract public class EngineDependentOperation implements AbstractOperation {
-	final private String _engineConfigString;
+    private static final long serialVersionUID = -2800091595856881731L;
+
+    final private String _engineConfigString;
 	
 	transient protected JSONObject	_engineConfig;
 	

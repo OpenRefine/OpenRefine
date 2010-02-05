@@ -525,7 +525,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
             ]
         },
         {
-            label: "Collapse/Expand",
+            label: "View",
             tooltip: "Collapse/expand columns to make viewing the data more convenient",
             submenu: [
                 {
@@ -559,17 +559,18 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
         },
         {},
         {
-            label: "Add Column Based on This Column",
-            click: function() { self._doAddColumn(column, index, "value"); }
-        },
-        {
-            label: "Remove This Column",
-            click: function() { self._doRemoveColumn(column, index); }
-        },
-        {},
-        {
-            label: "Text Transform",
+            label: "Edit",
             submenu: [
+                {   "heading" : "Column Operations" },
+                {
+                    label: "Add Column Based on This Column",
+                    click: function() { self._doAddColumn(column, index, "value"); }
+                },
+                {
+                    label: "Remove This Column",
+                    click: function() { self._doRemoveColumn(column, index); }
+                },
+                {   "heading" : "Cell Content Transformations" },
                 {
                     label: "To Titlecase",
                     click: function() { self._doTextTransform(column, "toTitlecase(value)"); }
@@ -586,6 +587,15 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                 {
                     label: "Custom Expression ...",
                     click: function() { self._doTextTransformPrompt(column); }
+                },
+                {   "heading" : "Advanced Transformations" },
+                {
+                    label: "Join Multi-Value Cells ...",
+                    click: function() { self._doJoinMultiValueCells(column); }
+                },
+                {
+                    label: "Split Multi-Value Cells ...",
+                    click: function() { self._doSplitMultiValueCells(column); }
                 }
             ]
         },
@@ -624,7 +634,7 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                 }
             ]
         }
-    ], elmt);
+    ], elmt, { width: "120px", horizontal: false });
 };
 
 DataTableView.prototype._doFilterByExpressionPrompt = function(column, expression) {
@@ -779,6 +789,35 @@ DataTableView.prototype._doRemoveColumn = function(column, index) {
         { columnRemovalIndex: index },
         true
     );
+};
+
+DataTableView.prototype._doJoinMultiValueCells = function(column) {
+    var separator = window.prompt("Enter separator to use between values", ", ");
+    if (separator != null) {
+        this._doPostThenUpdate(
+            "join-multi-value-cells",
+            {
+                cellIndex: column.cellIndex,
+                keyCellIndex: theProject.columnModel.keyCellIndex,
+                separator: separator
+            }
+        );
+    }
+};
+
+DataTableView.prototype._doSplitMultiValueCells = function(column) {
+    var separator = window.prompt("What separator currently separates the values?", ", ");
+    if (separator != null) {
+        this._doPostThenUpdate(
+            "split-multi-value-cells",
+            {
+                cellIndex: column.cellIndex,
+                keyCellIndex: theProject.columnModel.keyCellIndex,
+                separator: separator,
+                mode: "plain"
+            }
+        );
+    }
 };
 
 DataTableView.prototype._doExportRows = function() {

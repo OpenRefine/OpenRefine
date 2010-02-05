@@ -14,15 +14,23 @@ import com.metaweb.gridworks.expr.HasFields;
 public class Row implements Serializable, HasFields, Jsonizable {
 	private static final long serialVersionUID = -689264211730915507L;
 	
-	public boolean		flagged;
-	public boolean		starred;
-	final public List<Cell> 	cells;
+	public boolean		       flagged;
+	public boolean		       starred;
+	final public List<Cell>    cells;
 	
 	transient public	List<Integer> contextRows;
 	transient public	List<Integer> contextCells;
 	
 	public Row(int cellCount) {
 		cells = new ArrayList<Cell>(cellCount);
+	}
+	
+	public Row dup() {
+	    Row row = new Row(cells.size());
+	    row.flagged = flagged;
+	    row.starred = starred;
+	    row.cells.addAll(cells);
+	    return row;
 	}
 	
 	@Override
@@ -37,6 +45,41 @@ public class Row implements Serializable, HasFields, Jsonizable {
 		return null;
 	}
 	
+	public boolean isEmpty() {
+	    for (Cell cell : cells) {
+	        if (cell != null && cell.value != null && !isValueBlank(cell.value)) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
+	
+	public Cell getCell(int cellIndex) {
+        if (cellIndex < cells.size()) {
+            return cells.get(cellIndex);
+        } else {
+            return null;
+        }
+	}
+	
+    public Object getCellValue(int cellIndex) {
+        if (cellIndex < cells.size()) {
+            Cell cell = cells.get(cellIndex);
+            if (cell != null) {
+                return cell.value;
+            }
+        }
+        return null;
+    }
+    
+    public boolean isCellBlank(int cellIndex) {
+        return isValueBlank(getCellValue(cellIndex));
+    }
+    
+    protected boolean isValueBlank(Object value) {
+        return value == null || !(value instanceof String) || ((String) value).trim().isEmpty();
+    }
+    
 	public void setCell(int cellIndex, Cell cell) {
 		if (cellIndex < cells.size()) {
 			cells.set(cellIndex, cell);
