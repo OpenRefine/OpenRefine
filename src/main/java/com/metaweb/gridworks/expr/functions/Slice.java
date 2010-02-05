@@ -26,7 +26,7 @@ public class Slice implements Function {
 					start = Math.min(a.length, Math.max(0, start));
 					
 					if (end < 0) {
-						end = a.length - end;
+						end = a.length + end;
 					}
 					end = Math.min(a.length, Math.max(start, end));
 					
@@ -46,7 +46,7 @@ public class Slice implements Function {
 					if (to != null && to instanceof Number) {
 						int end = ((Number) to).intValue();
 						if (end < 0) {
-							end = s.length() - end;
+							end = s.length() + end;
 						}
 						end = Math.min(s.length(), Math.max(start, end));
 						

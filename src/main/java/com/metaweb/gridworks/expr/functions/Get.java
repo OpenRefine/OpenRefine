@@ -30,20 +30,23 @@ public class Get implements Function {
         					start = Math.min(a.length, Math.max(0, start));
         					
         					if (to == null) {
-        						return a[start];
+        						return start < a.length ? a[start] : null;
         					} else {
         						int end = to != null && to instanceof Number ? 
         								((Number) to).intValue() : a.length;
         									
         						if (end < 0) {
-        							end = a.length - end;
+        							end = a.length + end;
         						}
         						end = Math.min(a.length, Math.max(start, end));
         						
-        						Object[] a2 = new Object[end - start];
-        						System.arraycopy(a, start, a2, 0, end - start);
-        						
-        						return a2;
+        						if (end > start) {
+                                    Object[] a2 = new Object[end - start];
+                                    
+        						    System.arraycopy(a, start, a2, 0, end - start);
+        						    
+                                    return a2;
+        						}
         					}
         				} else {
         					String s = (v instanceof String ? (String) v : v.toString());
@@ -57,7 +60,7 @@ public class Get implements Function {
         					if (to != null && to instanceof Number) {
         						int end = ((Number) to).intValue();
         						if (end < 0) {
-        							end = s.length() - end;
+        							end = s.length() + end;
         						}
         						end = Math.min(s.length(), Math.max(start, end));
         						
