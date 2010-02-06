@@ -14,6 +14,7 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
+import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.expr.Parser;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
@@ -31,8 +32,6 @@ public class PreviewExpressionCommand extends Command {
 			int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
 			
 			String expression = request.getParameter("expression");
-			Evaluable eval = new Parser(expression).getExpression();
-			
 			String rowIndicesString = request.getParameter("rowIndices");
 			if (rowIndicesString == null) {
 				respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
@@ -43,35 +42,47 @@ public class PreviewExpressionCommand extends Command {
 			int length = rowIndices.length();
 			
 			JSONWriter writer = new JSONWriter(response.getWriter());
-			
 			writer.object();
-			writer.key("code"); writer.value("ok");
-			writer.key("results"); writer.array();
 			
-			Properties bindings = ExpressionUtils.createBindings(project);
-			for (int i = 0; i < length; i++) {
-				Object result = null;
+			try {
+				Evaluable eval = new Parser(expression).getExpression();
 				
-				int rowIndex = rowIndices.getInt(i);
-				if (rowIndex >= 0 && rowIndex < project.rows.size()) {
-					Row row = project.rows.get(rowIndex);
-					if (cellIndex < row.cells.size()) {
-						Cell cell = row.cells.get(cellIndex);
-						if (cell.value != null) {
-						    ExpressionUtils.bind(bindings, row, cell);
-							
-							try {
-								result = eval.evaluate(bindings);
-							} catch (Exception e) {
-								// ignore
+				writer.key("code"); writer.value("ok");
+				writer.key("results"); writer.array();
+				
+				Properties bindings = ExpressionUtils.createBindings(project);
+				for (int i = 0; i < length; i++) {
+					Object result = null;
+					
+					int rowIndex = rowIndices.getInt(i);
+					if (rowIndex >= 0 && rowIndex < project.rows.size()) {
+						Row row = project.rows.get(rowIndex);
+						if (cellIndex < row.cells.size()) {
+							Cell cell = row.cells.get(cellIndex);
+							if (cell != null && cell.value != null) {
+							    ExpressionUtils.bind(bindings, row, cell);
+								
+								try {
+									result = eval.evaluate(bindings);
+								} catch (Exception e) {
+									// ignore
+								}
 							}
 						}
 					}
+					
+					if (result != null) {
+						if (result instanceof HasFields) {
+							result = "[object " + result.getClass().getSimpleName() + "]";
+						}
+					}
+					writer.value(result);
 				}
-				
-				writer.value(result);
+				writer.endArray();
+			} catch (Exception e) {
+				writer.key("code"); writer.value("error");
 			}
-			writer.endArray();
+			
 			writer.endObject();
 		} catch (Exception e) {
 			respondException(response, e);
