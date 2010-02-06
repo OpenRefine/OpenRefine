@@ -5,12 +5,12 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-public class TopicNode extends Node {
+public class ExistingTopicNode extends Node {
 	private static final long serialVersionUID = 8418548867745587387L;
 
 	final protected FreebaseTopic _topic;
 	
-	public TopicNode(FreebaseTopic topic) {
+	public ExistingTopicNode(FreebaseTopic topic) {
 		_topic = topic;
 	}
 

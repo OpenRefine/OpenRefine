@@ -11,22 +11,14 @@ import com.metaweb.gridworks.Jsonizable;
 public class FreebaseTopic implements Serializable, Jsonizable {
 	private static final long serialVersionUID = -3427885694129112432L;
 	
-	final protected String _id;
-	final protected String _name;
+	final public String id;
+	final public String name;
 	
 	public FreebaseTopic(String id, String name) {
-		_id = id;
-		_name = name;
+		this.id = id;
+		this.name = name;
 	}
 	
-	public String getID() {
-		return _id;
-	}
-
-	public String getName() {
-		return _name;
-	}
-
 	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
