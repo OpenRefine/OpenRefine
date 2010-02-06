@@ -9,13 +9,16 @@ import com.metaweb.gridworks.model.Row;
 public class MassCellChange implements Change {
 	private static final long serialVersionUID = -933571199802688027L;
 	
-	protected CellChange[] 	_cellChanges;
-	protected int			_commonCellIndex;
+	final protected CellChange[]  _cellChanges;
+	final protected int			  _commonCellIndex;
+	final protected boolean       _updateRowContextDependencies;
 	
-	public MassCellChange(List<CellChange> cellChanges, int commonCellIndex) {
+	public MassCellChange(List<CellChange> cellChanges, int commonCellIndex, boolean updateRowContextDependencies) {
 		_cellChanges = new CellChange[cellChanges.size()];
 		_commonCellIndex = commonCellIndex;
 		cellChanges.toArray(_cellChanges);
+		
+		_updateRowContextDependencies = updateRowContextDependencies;
 	}
 	
 	@Override
@@ -29,6 +32,10 @@ public class MassCellChange implements Change {
 			
 			if (_commonCellIndex >= 0) {
 				project.columnModel.getColumnByCellIndex(_commonCellIndex).clearPrecomputes();
+			}
+			
+			if (_updateRowContextDependencies) {
+			    project.recomputeRowContextDependencies();
 			}
 		}
 	}
@@ -44,6 +51,10 @@ public class MassCellChange implements Change {
 			
 			if (_commonCellIndex >= 0) {
 				project.columnModel.getColumnByCellIndex(_commonCellIndex).clearPrecomputes();
+			}
+			
+			if (_updateRowContextDependencies) {
+			    project.recomputeRowContextDependencies();
 			}
 		}
 	}

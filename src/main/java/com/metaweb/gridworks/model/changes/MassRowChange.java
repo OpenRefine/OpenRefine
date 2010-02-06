@@ -23,6 +23,8 @@ public class MassRowChange implements Change {
             _oldRows = new ArrayList<Row>(project.rows);
             project.rows.clear();
             project.rows.addAll(_newRows);
+            
+            project.recomputeRowContextDependencies();
         }
     }
 
@@ -31,6 +33,8 @@ public class MassRowChange implements Change {
         synchronized (project) {
             project.rows.clear();
             project.rows.addAll(_oldRows);
+            
+            project.recomputeRowContextDependencies();
         }
     }
 

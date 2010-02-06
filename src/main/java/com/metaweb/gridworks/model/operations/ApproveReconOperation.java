@@ -19,7 +19,7 @@ public class ApproveReconOperation extends EngineDependentMassCellOperation {
 	private static final long serialVersionUID = 5393888241057341155L;
 	
 	public ApproveReconOperation(JSONObject engineConfig, int cellIndex) {
-		super(engineConfig, cellIndex);
+		super(engineConfig, cellIndex, false);
 	}
 
 	@Override

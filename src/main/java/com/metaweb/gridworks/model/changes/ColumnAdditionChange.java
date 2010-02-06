@@ -36,6 +36,8 @@ public class ColumnAdditionChange extends ColumnChange {
             } catch (Exception e) {
             	e.printStackTrace();
             }
+            project.columnModel.update();
+            project.recomputeRowContextDependencies();
         }
     }
 
@@ -48,6 +50,9 @@ public class ColumnAdditionChange extends ColumnChange {
             }
             
             project.columnModel.columns.remove(_columnIndex);
+            
+            project.columnModel.update();
+            project.recomputeRowContextDependencies();
         }
     }
 

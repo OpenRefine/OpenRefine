@@ -160,7 +160,7 @@ public class ReconOperation extends EngineDependentOperation {
 				}
 			}
 			
-			MassCellChange massCellChange = new MassCellChange(cellChanges, _cellIndex);
+			MassCellChange massCellChange = new MassCellChange(cellChanges, _cellIndex, false);
 			HistoryEntry historyEntry = new HistoryEntry(
 				_project, 
 				_description, 

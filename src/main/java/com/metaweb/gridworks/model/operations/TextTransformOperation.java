@@ -23,7 +23,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 	final protected String _expression;
 	
 	public TextTransformOperation(JSONObject engineConfig, int cellIndex, String expression) {
-		super(engineConfig, cellIndex);
+		super(engineConfig, cellIndex, true);
 		_expression = expression;
 	}
 

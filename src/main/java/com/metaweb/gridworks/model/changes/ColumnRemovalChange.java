@@ -34,6 +34,9 @@ public class ColumnRemovalChange extends ColumnChange {
                 
                 row.setCell(cellIndex, null);
             }
+            
+            project.columnModel.update();
+            project.recomputeRowContextDependencies();
         }
     }
 
@@ -46,6 +49,9 @@ public class ColumnRemovalChange extends ColumnChange {
             for (CellAtRow cell : _oldCells) {
                 project.rows.get(cell.row).cells.set(cellIndex, cell.cell);
             }
+            
+            project.columnModel.update();
+            project.recomputeRowContextDependencies();
         }
     }
 

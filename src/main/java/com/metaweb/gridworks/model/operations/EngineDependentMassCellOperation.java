@@ -21,10 +21,13 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
 	private static final long serialVersionUID = -8962461328087299452L;
 	
 	final protected int	_cellIndex;
+	final protected boolean _updateRowContextDependencies;
 	
-	protected EngineDependentMassCellOperation(JSONObject engineConfig, int cellIndex) {
+	protected EngineDependentMassCellOperation(
+	        JSONObject engineConfig, int cellIndex, boolean updateRowContextDependencies) {
 		super(engineConfig);
 		_cellIndex = cellIndex;
+		_updateRowContextDependencies = updateRowContextDependencies;
 	}
 
 	@Override
@@ -43,7 +46,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
 		
 		String description = createDescription(column, cellChanges);
 		
-		MassCellChange massCellChange = new MassCellChange(cellChanges, _cellIndex);
+		MassCellChange massCellChange = new MassCellChange(cellChanges, _cellIndex, _updateRowContextDependencies);
 		HistoryEntry historyEntry = new HistoryEntry(
 			project, description, this, massCellChange);
 

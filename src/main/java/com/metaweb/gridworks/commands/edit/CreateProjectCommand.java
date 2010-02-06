@@ -43,6 +43,7 @@ public class CreateProjectCommand extends Command {
 			ProjectManager.singleton.registerProject(project, pm);
 
 			project.columnModel.update();
+            project.recomputeRowContextDependencies();
 			
 			redirect(response, "/project.html?project=" + project.id);
 		} catch (Exception e) {

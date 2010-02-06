@@ -18,7 +18,7 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 	private static final long serialVersionUID = 6799029731665369179L;
 
 	public DiscardReconOperation(JSONObject engineConfig, int cellIndex) {
-		super(engineConfig, cellIndex);
+		super(engineConfig, cellIndex, false);
 	}
 
 	@Override
