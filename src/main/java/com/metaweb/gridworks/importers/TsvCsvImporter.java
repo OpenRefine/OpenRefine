@@ -25,7 +25,7 @@ public class TsvCsvImporter implements Importer {
 			int 		cellCount = 1;
 			
 			while ((line = lnReader.readLine()) != null) {
-				if (line.trim().isEmpty()) {
+				if (line.trim().length() == 0) {
 					continue;
 				}
 				

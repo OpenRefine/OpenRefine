@@ -78,7 +78,7 @@ public class Row implements Serializable, HasFields, Jsonizable {
     }
     
     protected boolean isValueBlank(Object value) {
-        return value == null || !(value instanceof String) || ((String) value).trim().isEmpty();
+        return value == null || !(value instanceof String) || ((String) value).trim().length() == 0;
     }
     
 	public void setCell(int cellIndex, Cell cell) {
