@@ -16,21 +16,21 @@ where [options] include:
 
   -h print this message and exit
   
-  -p <port> is the port that gridworks will listen to
+  -p <port> the port that gridworks will listen to
      default: 3333
 
-  -d <port> enable JVM debugging (on port 8000)
+  -d enable JVM debugging (on port 8000)
   
   -s <mode> enable profiling   
      (available modes are "hprof" and "yourkit")
      
-  -x enable JMX monitoring
+  -x enable JMX monitoring (for jconsole and friends)
   
 and <action> is one of
 
-   run          Run gridworks (default)
+   run          Run Gridworks (default)
     
-   eclipse      Build eclipse project files
+   eclipse      Build Eclipse project files
             
 EOF
 exit 0
@@ -105,7 +105,7 @@ add_option "-Djetty.port=$GRIDWORKS_PORT"
 
 # ----- Respond to the action given. ----------------------------------------------------------
 
-if ["$ACTION" == ''] ; then
+if [ "$ACTION" == '' ] ; then
     ACTION='run'
 fi
 
