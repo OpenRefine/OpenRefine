@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--+
+    |
+    |  Gridworks Build File    
+    |                
+    +-->
+
+<project name="gridworks" default="compile" basedir=".">
+
+    <property environment="env"/>
+
+    <property name="src.dir" value="${basedir}/src/main/java" />
+    <property name="lib.dir" value="${basedir}/lib" />
+    <property name="build.dir" value="${basedir}/build" />
+    <property name="classes.dir" value="${build.dir}/classes" />
+
+    <path id="class.path">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+            
+    <target name="compile">
+        <mkdir dir="${classes.dir}" />
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="true">
+            <classpath refid="class.path" />
+        </javac>
+    </target>
+
+    <target name="clean">
+        <delete dir="${classes.dir}" />
+    </target>
+
+    <target name="distclean">
+        <delete dir="${build.dir}" />
+    </target>
+
+</project>

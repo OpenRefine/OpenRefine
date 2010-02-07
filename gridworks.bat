@@ -9,6 +9,9 @@ rem JAVA_OPTIONS
 rem   Extra options to pass to the JVM
 rem
 
+if "%OS%"=="Windows_NT" @setlocal
+if "%OS%"=="WINNT" @setlocal
+
 rem --- First two utilities for exiting --------------------------------------------
 
 goto endUtils
@@ -22,19 +25,20 @@ echo.
 echo  /p <port> the port that Gridworks will listen to
 echo     default: 3333
 echo.
-echo  /d enable JVM debugging (on port 8000)
+echo  /i <interface> the host interface gridworks should bind to
+echo     default: 127.0.0.1
 echo.
-echo  /s <mode> enable profiling
-echo     (available modes are "hprof" and "yourkit")
+echo  /w <path> path to the webapp
+echo     default src\main\webapp
+echo.
+echo  /d enable JVM debugging (on port 8000)
 echo.
 echo  /x enable JMX monitoring (for jconsole and friends)
 echo.
 echo and <action> is one of
 echo.
-echo   run         Run Gridworks (default)
-echo. 
-echo   eclipse     Build Eclipse project files
-echo.
+echo   build ..... Build Gridworks
+echo   run ....... Run Gridworks
 echo.
 goto end
 
@@ -49,7 +53,7 @@ echo You must set JAVA_HOME to point at your Java Development Kit installation
 goto fail
 :gotJavaHome
 
-set MAVEN_OPTS=%GRIDWORKS_OPTS% -Djava.awt.headless=true
+set OPTS=%GRIDWORKS_OPTS%
 
 rem --- Argument parsing --------------------------------------------
 
@@ -57,8 +61,9 @@ rem --- Argument parsing --------------------------------------------
 if ""%1"" == """" goto endArgumentParsing
 if ""%1"" == ""/h"" goto usage
 if ""%1"" == ""/p"" goto arg-p
+if ""%1"" == ""/i"" goto arg-i
+if ""%1"" == ""/w"" goto arg-w
 if ""%1"" == ""/d"" goto arg-d
-if ""%1"" == ""/s"" goto arg-s
 if ""%1"" == ""/x"" goto arg-x
 goto endArgumentParsing
 
@@ -66,26 +71,20 @@ goto endArgumentParsing
 set GRIDWORKS_PORT=%2
 goto shift2loop
 
+:arg-i
+set GRIDWORKS_HOST=%2
+goto shift2loop
+
+:arg-w
+set GRIDWORKS_WEBAPP=%2
+goto shift2loop
+
 :arg-d
-set MAVEN_OPTS=%MAVEN_OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
-goto shift2loop
-
-:arg-s
-set PROFILE_MODE=%2
-if ""%PROFILE_MODE%"" == ""hprof"" goto profileWithHprof
-if ""%PROFILE_MODE%"" == ""yourkit"" goto profileWithYourkit
-goto shift2loop
-
-:profileWithHprof
-set MAVEN_OPTS=%MAVEN_OPTS% -Xrunhprof:heap=all,cpu=samples,thread=y,depth=3
-goto shift2loop
-
-:profileWithYourkit
-set MAVEN_OPTS=%MAVEN_OPTS% -agentlib:yjpagent=sessionname=Gridworks
+set OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
 goto shift2loop
 
 :arg-x
-set MAVEN_OPTS=%MAVEN_OPTS% -Dcom.sun.management.jmxremote
+set OPTS=%OPTS% -Dcom.sun.management.jmxremote
 goto shift2loop 
 
 :shift2loop
@@ -100,12 +99,30 @@ rem --- Fold in Environment Vars --------------------------------------------
 if not "%JAVA_OPTIONS%" == "" goto gotJavaOptions
 set JAVA_OPTIONS=-Xms32M -Xmx256M
 :gotJavaOptions
-set MAVEN_OPTS=%MAVEN_OPTS% %JAVA_OPTIONS%
+set OPTS=%OPTS% %JAVA_OPTIONS%
 
 if not "%GRIDWORKS_PORT%" == "" goto gotPort
 set GRIDWORKS_PORT=3333
 :gotPort
-set MAVEN_OPTS=%MAVEN_OPTS% -Djetty.port=%GRIDWORKS_PORT%
+set OPTS=%OPTS% -Dgridworks.port=%GRIDWORKS_PORT%
+
+if not "%GRIDWORKS_HOST%" == "" goto gotHost
+set GRIDWORKS_HOST=127.0.0.1
+:gotHOST
+set OPTS=%OPTS% -Dgridworks.host=%GRIDWORKS_HOST%
+
+if not "%GRIDWORKS_WEBAPP%" == "" goto gotHost
+set GRIDWORKS_WEBAPP=src\main\webapp
+:gotHOST
+set OPTS=%OPTS% -Dgridworks.webapp=%GRIDWORKS_WEBAPP%
+
+if not "%GRIDWORKS_BUILD_DIR%" == "" goto gotBuildDir
+set GRIDWORKS_BUILD_DIR=build
+:gotBuildDir
+
+if not "%GRIDWORKS_LIB_DIR%" == "" goto gotLibDir
+set GRIDWORKS_LIB_DIR=lib
+:gotLibDir
 
 rem ----- Respond to the action ----------------------------------------------------------
 
@@ -113,21 +130,20 @@ set ACTION=%1
 
 if not "%ACTION%" == "" goto gotAction
 set ACTION="run"
-:gotJavaOptions
-set MAVEN_OPTS=%MAVEN_OPTS% %JAVA_OPTIONS%
+:gotAction
 
+if ""%ACTION%"" == ""build"" goto doBuild
 if ""%ACTION%"" == ""run"" goto doRun
-if ""%ACTION%"" == ""eclipse"" goto doEclipse
 
-:doRun
-echo MAVEN_OPTS=%MAVEN_OPTS%
-start http://127.0.0.1:%GRIDWORKS_PORT%/
-mvn %MAVEN_PARAMS% jetty:run
+goto usage
+
+:doBuild
+ant -f build.xml compile
 goto end
 
-:doEclipse
-mvn eclipse:clean
-mvn eclipse:eclipse
+:doRun
+CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*.jar"
+"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% com.metaweb.gridworks.Gridworks
 goto end
 
 :end

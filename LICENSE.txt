@@ -1,0 +1,4 @@
+/*
+ *  (c) Copyright 2010 Metaweb Technologies, Inc. All rights reserved.
+ *
+ */

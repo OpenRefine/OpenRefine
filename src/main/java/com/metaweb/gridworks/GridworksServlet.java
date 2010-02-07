@@ -79,9 +79,11 @@ public class GridworksServlet extends HttpServlet {
 	
 	@Override
 	public void destroy() {
-		ProjectManager.singleton.saveAllProjects();
-		ProjectManager.singleton.save();
-		ProjectManager.singleton = null;
+	    if (ProjectManager.singleton != null) {
+    		ProjectManager.singleton.saveAllProjects();
+    		ProjectManager.singleton.save();
+    		ProjectManager.singleton = null;
+	    }
 		
 		super.destroy();
 	}

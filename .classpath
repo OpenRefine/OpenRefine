@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/servlet-api-2.5.jar" sourcepath="lib-src/servlet-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-6.1.22.jar" sourcepath="lib-src/jetty-6.1.22-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-util-6.1.22.jar" sourcepath="lib-src/jetty-util-6.1.22-sources.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar" sourcepath="lib-src/log4j-1.2.15-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar" sourcepath="lib-src/commons-codec-1.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar" sourcepath="lib-src/commons-lang-2.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/poi-3.6.jar" sourcepath="lib-src/poi-3.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/cos-05Nov2002.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

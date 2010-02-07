@@ -6,13 +6,18 @@
 
 <web-app>
     <servlet>
-        <servlet-name>Gridworks</servlet-name>
+        <servlet-name>gridworks</servlet-name>
         <servlet-class>com.metaweb.gridworks.GridworksServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Gridworks</servlet-name>
+        <servlet-name>gridworks</servlet-name>
         <url-pattern>/command/*</url-pattern>
     </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    
 </web-app>

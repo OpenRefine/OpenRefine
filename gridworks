@@ -1,16 +1,20 @@
 #!/bin/sh
 
-fail () {
-cat <<EOF
+########################################################## 
+#               Gridworks Control System                 #
+##########################################################
+
+fail() {
+    cat <<EOF
 ERROR: $1
 Usage: $0 [options] <action>
   -h for more details
 EOF
-exit 1
+    exit 1
 }
 
 usage() {
-cat <<EOF
+    cat <<EOF
 Usage: $0 [options] <action>
 where [options] include:
 
@@ -19,111 +23,151 @@ where [options] include:
   -p <port> the port that gridworks will listen to
      default: 3333
 
-  -d enable JVM debugging (on port 8000)
-  
-  -s <mode> enable profiling   
-     (available modes are "hprof" and "yourkit")
+  -i <interface> the host interface gridworks should bind to
+     default: 127.0.0.1
+
+  -w <path> path to the webapp
+     default: src/main/webapp
      
-  -x enable JMX monitoring (for jconsole and friends)
+  -d enable JVM debugging (on port 8000)
+       
+  -x enable JMX monitoring (for jconsole)
   
 and <action> is one of
 
-   run          Run Gridworks (default)
-    
-   eclipse      Build Eclipse project files
-            
+   build ..... Build Gridworks      
+   run ....... Run Gridworks
+                
 EOF
-exit 0
+    exit 0
 }
 
-absolute_path () {
-  case $1 in
-    /*) echo $1; ;;
-    *) echo `pwd`/$1; ;;
-  esac
+add_option() {
+  OPTS="$OPTS $1"
 }
 
-add_option () {
-  MAVEN_OPTS="$MAVEN_OPTS $1"
+OPTS="$GRIDWORKS_OPTS"
+
+# ----- actions -------------------------------------------------
+
+build() {
+    if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
+        mkdir $GRIDWORKS_BUILD_DIR || exit 1
+    fi
+    
+    ANT=`which ant`
+    if [ "$ANT" = "" ] ; then
+        ANT_TAR=`ls thirdparty | grep apache-ant`
+        ANT_DIR="$GRIDWORKS_BUILD_DIR/ant"
+        ANT="$ANT_DIR/bin/ant"
+        if [ ! -d $ANT_DIR ] ; then
+            tar xzf $ANT_TAR -C $BUILD_DIR || exit 1
+        fi
+    fi
+    
+    $ANT -f build.xml compile || exit 1
 }
 
-### Parse the command line args.
+run() {
+    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
+        build
+        echo ""
+    fi
+    
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*.jar"
 
-MAVEN_OPTS="$GRIDWORKS_OPTS -Djava.awt.headless=true"
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
+  
+    echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
+    echo ""
+    #echo "$RUN_CMD"
+    #echo ""
+
+    exec $RUN_CMD
+}
+    
+# ----- We called without arguments print the usage -------------
+
+[ $# -gt 0 ] || usage
+
+# ----- Normalize the current directory -------------------------
+
+cd `dirname $0`
+
+# ----- Make sure there is a java environment installed -------------------------
+    
+if [ ! -z "$JAVA_HOME" ] ; then
+    JAVA="$JAVA_HOME/bin/java"
+else 
+    JAVA=`which java`
+    if [ -z "$JAVA" ] ; then
+        system=`uname`
+        
+        if [ "$system" = 'Darwin' ] ; then
+            JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Home
+        else
+            echo "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
+            exit 1
+        fi
+    fi
+fi
+
+# ----- Parse the command line args ------------------------------------------
 
 while [ $# -ne 0 ] ; do
-  case "x$1" in
-    x-p) shift; GRIDWORKS_PORT="$1"; shift; ;;
-    x-d) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; ;;
-    x-s) shift; 
-        case "$1" in
-          profile)
-            add_option '-Xrunhprof:heap=all,cpu=samples,thread=y,depth=3'; ;;
-          shark)
-            add_option '-Xrunshark'; ;;
-          yourkit)
-            if [ "$YOURKIT_HOME" = "" ] ; then
-                echo "YOURKIT_HOME should be set to Yourkit Java Profiler absolute path"
-                exit
-            fi
-            if [ `uname` = 'Linux' ] ; then
-              if [ "`uname -a | grep x86_64`" ] ; then
-                # Assume Linux AMD 64 has 64-bit Java
-                export LD_LIBRARY_PATH="$YOURKIT_HOME/bin/linux-amd64:$LD_LIBRARY_PATH"
-              else
-                # 32-bit Java
-                export LD_LIBRARY_PATH="$YOURKIT_HOME/bin/linux-x86-32:$LD_LIBRARY_PATH"
-              fi
-            elif [ `uname` = 'Darwin' ] ; then
-              # Mac OS X
-              export DYLD_LIBRARY_PATH="$YOURKIT_HOME/bin/mac:$DYLD_LIBRARY_PATH"
-            elif [ `uname` = 'SunOS' ] ; then
-              # Solaris, unlike Linux, probes entire LD_LIBRARY_PATH instead of stopping after first improper shared library
-              LD_LIBRARY_PATH="$YOURKIT_HOME/bin/solaris-sparc-32:$YOURKIT_HOME/bin/solaris-sparc-64:$YOURKIT_HOME/bin/solaris-x86-32:$YOURKIT_HOME/bin/solaris-x86-64:$LD_LIBRARY_PATH"
-              export LD_LIBRARY_PATH
-            fi
-            add_option '-agentlib:yjpagent=sessionname=Gridworks'; ;;
-        esac
-        shift; ;;
-    x-x) shift; add_option '-Dcom.sun.management.jmxremote'; ;;
-    x-h) usage; ;;
-    *) ACTION="$1"; shift; ;;
+  case "$1" in
+    -p) shift; GRIDWORKS_PORT="$1"; shift; continue;;
+    -i) shift; GRIDWORKS_HOST="$1"; shift; continue;;
+    -w) shift; GRIDWORKS_WEBAPP="$1"; shift; continue;;
+    -d) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
+    -x) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
+    -*) fail "Invalid option: $1";;
+    *) break;;
   esac
 done
 
+ACTION=$1; shift
+
 # ----- Verify and Set Required Environment Variables -------------------------
 
-if [ "$JAVA_OPTIONS" = "" ] ; then
+if [ "$JAVA_OPTIONS" == "" ] ; then
   JAVA_OPTIONS="-Xms256M -Xmx1024M"
 fi
 add_option "$JAVA_OPTIONS"
 
-if [ "$GRIDWORKS_PORT" = "" ] ; then
+if [ "$GRIDWORKS_PORT" == "" ] ; then
     GRIDWORKS_PORT="3333"
 fi
-add_option "-Djetty.port=$GRIDWORKS_PORT"
+add_option "-Dgridworks.port=$GRIDWORKS_PORT"
 
-# ----- Respond to the action given. ----------------------------------------------------------
+if [ "$GRIDWORKS_HOST" == "" ] ; then
+    GRIDWORKS_HOST="127.0.0.1"
+fi
+add_option "-Dgridworks.host=$GRIDWORKS_HOST"
 
-if [ "$ACTION" == '' ] ; then
-    ACTION='run'
+if [ "$GRIDWORKS_WEBAPP" == "" ] ; then
+    GRIDWORKS_WEBAPP="src/main/webapp"
+fi
+add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
+
+if [ "$GRIDWORKS_BUILD_DIR" == "" ] ; then
+    GRIDWORKS_BUILD_DIR="build"
 fi
 
+if [ "$GRIDWORKS_LIB_DIR" == "" ] ; then
+    GRIDWORKS_LIB_DIR="lib"
+fi
+
+
+# ----- Respond to the action given --------------------------------------------
+
 case "$ACTION" in
+  build)
+    build;;
+
   run) 
-    OPEN=`which 'open'`
-    if [ $OPEN != '' ] ; then
-        $OPEN "http://127.0.0.1:$GRIDWORKS_PORT/"
-    fi
-  
-    export MAVEN_OPTS
-    echo "[INFO] MAVEN_OPTS: '$MAVEN_OPTS'"
-    exec mvn $MAVEN_PARAMS jetty:run; ;;
-    
-  eclipse)
-    mvn eclipse:clean
-    mvn eclipse:eclipse; ;;
+    run;;  
     
   *)
-    fail "Unknown action '$ACTION'"; ;;
+    usage; ;;
 esac
