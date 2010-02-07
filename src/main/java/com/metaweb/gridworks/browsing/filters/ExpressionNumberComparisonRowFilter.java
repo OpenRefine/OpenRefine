@@ -19,26 +19,23 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
 
 	@Override
 	public boolean filterRow(Project project, int rowIndex, Row row) {
-		if (_cellIndex < row.cells.size()) {
-			Cell cell = row.cells.get(_cellIndex);
-			if (cell != null) {
-	            Properties bindings = ExpressionUtils.createBindings(project);
-                ExpressionUtils.bind(bindings, row, cell);
-				
-				Object value = _evaluable.evaluate(bindings);
-				if (value != null) {
-					if (value.getClass().isArray()) {
-						Object[] a = (Object[]) value;
-						for (Object v : a) {
-							if (v instanceof Number && checkValue(((Number) v).doubleValue())) {
-								return true;
-							}
-						}
-					} else {
-						if (value instanceof Number && checkValue(((Number) value).doubleValue())) {
-							return true;
-						}
+		Cell cell = row.getCell(_cellIndex);
+
+        Properties bindings = ExpressionUtils.createBindings(project);
+        ExpressionUtils.bind(bindings, row, cell);
+		
+		Object value = _evaluable.evaluate(bindings);
+		if (value != null) {
+			if (value.getClass().isArray()) {
+				Object[] a = (Object[]) value;
+				for (Object v : a) {
+					if (v instanceof Number && checkValue(((Number) v).doubleValue())) {
+						return true;
 					}
+				}
+			} else {
+				if (value instanceof Number && checkValue(((Number) value).doubleValue())) {
+					return true;
 				}
 			}
 		}

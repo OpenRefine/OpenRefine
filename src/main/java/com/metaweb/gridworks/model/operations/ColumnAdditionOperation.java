@@ -109,16 +109,17 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 			
 			@Override
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
-				if (cellIndex < row.cells.size()) {
-					Cell cell = row.cells.get(cellIndex);
-					if (cell.value != null) {
-		                ExpressionUtils.bind(bindings, row, cell);
-						
-						Cell newCell = new Cell(eval.evaluate(bindings), null);
-						
-						cellsAtRows.add(new CellAtRow(rowIndex, newCell));
-					}
-				}
+				Cell cell = row.getCell(cellIndex);
+
+                ExpressionUtils.bind(bindings, row, cell);
+				
+                Object v = eval.evaluate(bindings);
+                if (v != null) {
+                    Cell newCell = new Cell(v, null);
+				
+                    cellsAtRows.add(new CellAtRow(rowIndex, newCell));
+                }
+                
 				return false;
 			}
 		}.init(_baseCellIndex, bindings, cellsAtRows, eval);

@@ -327,6 +327,15 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         },
         {},
         {
+            label: "Automatically Align Schemas with Freebase ...",
+            click: function() { self._doAutoSchemaAlignment(); }
+        },
+        {
+            label: "Edit Schema Alignment ...",
+            click: function() {  }
+        },
+        {},
+        {
             label: "Export Filtered Rows",
             click: function() { self._doExportRows(); }
         }
@@ -337,10 +346,50 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
     self = this;
     MenuSystem.createAndShowStandardMenu([
         {
+            label: "Edit",
+            submenu: [
+                {   "heading" : "Cell Content Transformations" },
+                {
+                    label: "To Titlecase",
+                    click: function() { self._doTextTransform(column, "toTitlecase(value)"); }
+                },
+                {
+                    label: "To Uppercase",
+                    click: function() { self._doTextTransform(column, "toUppercase(value)"); }
+                },
+                {
+                    label: "To Lowercase",
+                    click: function() { self._doTextTransform(column, "toLowercase(value)"); }
+                },
+                {},
+                {
+                    label: "Custom Expression ...",
+                    click: function() { self._doTextTransformPrompt(column); }
+                },
+                {   "heading" : "Column Operations" },
+                {
+                    label: "Add Column Based on This Column ...",
+                    click: function() { self._doAddColumn(column, index, "value"); }
+                },
+                {
+                    label: "Remove This Column",
+                    click: function() { self._doRemoveColumn(column, index); }
+                },
+                {   "heading" : "Advanced Transformations" },
+                {
+                    label: "Split Multi-Value Cells ...",
+                    click: function() { self._doSplitMultiValueCells(column); }
+                },
+                {
+                    label: "Join Multi-Value Cells ...",
+                    click: function() { self._doJoinMultiValueCells(column); }
+                }
+            ]
+        },
+        {
             label: "Filter",
             tooltip: "Filter rows by this column's cell content or characteristics",
             submenu: [
-                {   "heading" : "On Cell Content" },
                 {
                     label: "Text Facet",
                     click: function() {
@@ -354,6 +403,11 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                         );
                     }
                 },
+                {
+                    label: "Custom Text Facet ...",
+                    click: function() { self._doFilterByExpressionPrompt(column, "value", "list"); }
+                },
+                {},
                 {
                     label: "Numeric Facet",
                     click: function() {
@@ -371,10 +425,6 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                             }
                         );
                     }
-                },
-                {
-                    label: "Custom Text Facet ...",
-                    click: function() { self._doFilterByExpressionPrompt(column, "value", "list"); }
                 },
                 {
                     label: "Custom Numeric Facet ...",
@@ -408,8 +458,82 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                             }
                         );
                     }
+                }
+            ]
+        },
+        {
+            label: "View",
+            tooltip: "Collapse/expand columns to make viewing the data more convenient",
+            submenu: [
+                {
+                    label: "Collapse This Column",
+                    click: function() {
+                        theProject.columnModel.columns[index].collapsed = true;
+                        self.render();
+                    }
                 },
-                {   "heading" : "By Reconciliation Features" },
+                {
+                    label: "Collapse All Other Columns",
+                    click: function() {
+                        for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+                            if (i != index) {
+                                theProject.columnModel.columns[i].collapsed = true;
+                            }
+                        }
+                        self.render();
+                    }
+                },
+                {
+                    label: "Collapse All Columns To Right",
+                    click: function() {
+                        for (var i = index + 1; i < theProject.columnModel.columns.length; i++) {
+                            theProject.columnModel.columns[i].collapsed = true;
+                        }
+                        self.render();
+                    }
+                }
+            ]
+        },
+        {},
+        {
+            label: "Reconcile",
+            tooltip: "Match this column's cells to topics on Freebase",
+            submenu: [
+                {
+                    label: "Start Reconciling ...",
+                    tooltip: "Reconcile text in this column with topics on Freebase",
+                    click: function() {
+                        new ReconDialog(index);
+                    }
+                },
+                {},
+                {
+                    label: "Approve Best Candidates",
+                    tooltip: "Approve best reconciliaton candidate per cell in this column for all current filtered rows",
+                    click: function() {
+                        self._doApproveBestCandidates(column);
+                    }
+                },
+                {
+                    label: "Approve As New Topics",
+                    tooltip: "Set to create new topics for cells in this column for all current filtered rows",
+                    click: function() {
+                        self._doApproveNewTopics(column);
+                    }
+                },
+                {
+                    label: "Discard Reconciliation Results",
+                    tooltip: "Discard reconciliaton results in this column for all current filtered rows",
+                    click: function() {
+                        self._doDiscardReconResults(column);
+                    }
+                }
+            ]
+        },
+        {
+            label: "Reconcile Filter",
+            tooltip: "Match this column's cells to topics on Freebase",
+            submenu: [
                 {
                     label: "By Judgment",
                     click: function() {
@@ -528,116 +652,6 @@ DataTableView.prototype._createMenuForColumnHeader = function(column, index, elm
                                 "expression" : "cell.recon.best.type"
                             }
                         );
-                    }
-                }
-            ]
-        },
-        {
-            label: "View",
-            tooltip: "Collapse/expand columns to make viewing the data more convenient",
-            submenu: [
-                {
-                    label: "Collapse This Column",
-                    click: function() {
-                        theProject.columnModel.columns[index].collapsed = true;
-                        self.render();
-                    }
-                },
-                {
-                    label: "Collapse All Other Columns",
-                    click: function() {
-                        for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                            if (i != index) {
-                                theProject.columnModel.columns[i].collapsed = true;
-                            }
-                        }
-                        self.render();
-                    }
-                },
-                {
-                    label: "Collapse All Columns To Right",
-                    click: function() {
-                        for (var i = index + 1; i < theProject.columnModel.columns.length; i++) {
-                            theProject.columnModel.columns[i].collapsed = true;
-                        }
-                        self.render();
-                    }
-                }
-            ]
-        },
-        {},
-        {
-            label: "Edit",
-            submenu: [
-                {   "heading" : "Column Operations" },
-                {
-                    label: "Add Column Based on This Column",
-                    click: function() { self._doAddColumn(column, index, "value"); }
-                },
-                {
-                    label: "Remove This Column",
-                    click: function() { self._doRemoveColumn(column, index); }
-                },
-                {   "heading" : "Cell Content Transformations" },
-                {
-                    label: "To Titlecase",
-                    click: function() { self._doTextTransform(column, "toTitlecase(value)"); }
-                },
-                {
-                    label: "To Uppercase",
-                    click: function() { self._doTextTransform(column, "toUppercase(value)"); }
-                },
-                {
-                    label: "To Lowercase",
-                    click: function() { self._doTextTransform(column, "toLowercase(value)"); }
-                },
-                {},
-                {
-                    label: "Custom Expression ...",
-                    click: function() { self._doTextTransformPrompt(column); }
-                },
-                {   "heading" : "Advanced Transformations" },
-                {
-                    label: "Join Multi-Value Cells ...",
-                    click: function() { self._doJoinMultiValueCells(column); }
-                },
-                {
-                    label: "Split Multi-Value Cells ...",
-                    click: function() { self._doSplitMultiValueCells(column); }
-                }
-            ]
-        },
-        {
-            label: "Reconcile",
-            tooltip: "Match this column's cells to topics on Freebase",
-            submenu: [
-                {
-                    label: "Start Reconciling ...",
-                    tooltip: "Reconcile text in this column with topics on Freebase",
-                    click: function() {
-                        new ReconDialog(index);
-                    }
-                },
-                {},
-                {
-                    label: "Approve Best Candidates",
-                    tooltip: "Approve best reconciliaton candidate per cell in this column for all current filtered rows",
-                    click: function() {
-                        self._doApproveBestCandidates(column);
-                    }
-                },
-                {
-                    label: "Approve As New Topics",
-                    tooltip: "Set to create new topics for cells in this column for all current filtered rows",
-                    click: function() {
-                        self._doApproveNewTopics(column);
-                    }
-                },
-                {
-                    label: "Discard Reconciliation Results",
-                    tooltip: "Discard reconciliaton results in this column for all current filtered rows",
-                    click: function() {
-                        self._doDiscardReconResults(column);
                     }
                 }
             ]
@@ -849,4 +863,8 @@ DataTableView.prototype._doExportRows = function() {
     form.submit();
     
     document.body.removeChild(form);
+};
+
+DataTableView.prototype._doAutoSchemaAlignment = function() {
+    SchemaAlignment.autoAlign();
 };

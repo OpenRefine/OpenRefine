@@ -20,11 +20,12 @@ ExpressionPreviewDialog.prototype._createDialog = function(title) {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    $('<p></p>').text("Expression:").appendTo(body);
+    var p = $('<p></p>').text("Expression: ").appendTo(body);
     
     this._input = $('<input />').width("400px").keypress(function(){
         self._scheduleUpdate();
-    }).appendTo($('<p></p>').appendTo(body));
+    }).appendTo(p);
+    
     this._preview = $('<div></div>').addClass("expression-preview-container").appendTo(body);
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
@@ -40,7 +41,7 @@ ExpressionPreviewDialog.prototype._createDialog = function(title) {
     
     this._input[0].value = this._expression;
     this._input[0].focus();
-    this._renderPreview(this._expression);
+    this._update();
 };
 
 ExpressionPreviewDialog.prototype._scheduleUpdate = function() {
@@ -75,23 +76,34 @@ ExpressionPreviewDialog.prototype._update = function() {
 ExpressionPreviewDialog.prototype._renderPreview = function(expression) {
     var container = this._preview.empty();
     
-    var table = $('<table></table>').appendTo(container)[0];
+    var table = $('<table width="100%"></table>').appendTo(container)[0];
+    
     var tr = table.insertRow(0);
-    $(tr.insertCell(0)).addClass("expression-preview-heading").text("value");
-    $(tr.insertCell(1)).addClass("expression-preview-heading").text(expression);
+    $(tr.insertCell(0)).addClass("expression-preview-heading").text("row");
+    $(tr.insertCell(1)).addClass("expression-preview-heading").text("value");
+    $(tr.insertCell(2)).addClass("expression-preview-heading").text(expression);
+    
+    var renderValue = function(td, v) {
+        if (v != null) {
+            td.html($.isArray(v) ? JSON.stringify(v) : v);
+        } else {
+            $('<span>(null)</span>').addClass("expression-preview-empty").appendTo(td);
+        }
+    };
     
     for (var i = 0; i < this._values.length; i++) {
         var tr = table.insertRow(table.rows.length);
         
-        $(tr.insertCell(0)).html(this._values[i]);
+        $(tr.insertCell(0)).attr("width", "1%").html((this._rowIndices[i] + 1) + ".");
+        
+        renderValue($(tr.insertCell(1)), this._values[i]);
+        
+        var tdValue = $(tr.insertCell(2));
         if (this._results != null) {
             var v = this._results[i];
-            if (v != null) {
-                if ($.isArray(v)) {
-                    v = JSON.stringify(v);
-                }
-                $(tr.insertCell(1)).html(v);
-            }
+            renderValue(tdValue, v);
+        } else {
+            $('<span>(error)</span>').addClass("expression-preview-empty").appendTo(tdValue);
         }
     }
 };

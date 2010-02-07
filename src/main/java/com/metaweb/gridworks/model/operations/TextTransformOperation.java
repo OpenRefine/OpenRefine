@@ -63,17 +63,18 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 			
 			@Override
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
-				if (cellIndex < row.cells.size()) {
-					Cell cell = row.cells.get(cellIndex);
-					if (cell.value != null) {
-		                ExpressionUtils.bind(bindings, row, cell);
-						
-						Cell newCell = new Cell(eval.evaluate(bindings), cell.recon);
-						
-						CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-						cellChanges.add(cellChange);
-					}
-				}
+				Cell cell = row.getCell(cellIndex);
+
+                ExpressionUtils.bind(bindings, row, cell);
+				
+                Object v = eval.evaluate(bindings);
+                if ((cell != null && cell.value != null) || v != null) {
+                    Cell newCell = new Cell(v, cell.recon);
+				
+    				CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+    				cellChanges.add(cellChange);
+                }
+                
 				return false;
 			}
 		}.init(_cellIndex, bindings, cellChanges, eval);

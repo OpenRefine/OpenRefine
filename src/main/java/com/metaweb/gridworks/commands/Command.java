@@ -87,6 +87,7 @@ public abstract class Command {
     }
     
     protected void respondException(HttpServletResponse response, Exception e) throws IOException {
+        e.printStackTrace();
     	try {
         	JSONObject o = new JSONObject();
         	o.put("code", "error");

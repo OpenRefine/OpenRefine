@@ -2,21 +2,28 @@
     position: absolute;
     top: -1px;
     right: 20px;
-    width: 200px;
+    width: 250px;
     background: #fffee0;
-    border: 1px solid #ccc;
+    border: 1px solid #666;
     z-index: 10;
+    -moz-border-radius-bottomleft: 20px;
+    padding-bottom: 10px;
 }
 .history-panel h3 {
     margin: 0;
     padding: 3px;
-    background: #888;
+    background: #aaa;
     color: #eee;
     font-size: 100%;
+    text-align: center;
 }
 .history-panel-body {
     padding: 2px;
     height: 50px;
+    overflow: hidden;
+}
+.history-panel-body.history-panel-body-expanded {
+    height: 300px;
     overflow: auto;
 }
 .history-panel-message {

@@ -19,16 +19,16 @@ HistoryWidget.prototype._render = function() {
     
     this._div.empty();
     
-    $('<h3>History for Undo/Redo</h3>').appendTo(this._div);
+    $('<h3>Undo/Redo History</h3>').appendTo(this._div);
     
     var bodyDiv = $('<div></div>').addClass("history-panel-body").appendTo(this._div);
-    bodyDiv.mouseover(function() {
-        this.style.height = "300px";
-    }).mouseout(function() {
-        this.style.height = "50px";
+    bodyDiv.mouseenter(function(evt) {
+        $(this).addClass("history-panel-body-expanded");
+    }).mouseleave(function(evt) {
+        $(this).removeClass("history-panel-body-expanded");
+        autoscroll();
     });
     
-    var lastPast = null;
     var renderEntry = function(container, entry, lastDoneID, title) {
         var a = $('<a href="javascript:{}"></a>').appendTo(container);
         a.addClass("history-entry").html(entry.description).attr("title", title).click(function(evt) {
@@ -43,11 +43,11 @@ HistoryWidget.prototype._render = function() {
     } else {
         for (var i = 0; i < this._data.past.length; i++) {
             var entry = this._data.past[i];
-            lastPast = renderEntry(divPast, entry, i == 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
+            renderEntry(divPast, entry, i == 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
         }
     }
     
-    $('<div></div>').text("done upto here").addClass("history-now").appendTo(bodyDiv);
+    var divNow = $('<div></div>').text("done upto here").addClass("history-now").appendTo(bodyDiv);
     
     var divFuture = $('<div></div>').addClass("history-future").appendTo(bodyDiv);
     if (this._data.future.length == 0) {
@@ -59,9 +59,10 @@ HistoryWidget.prototype._render = function() {
         }
     }
     
-    if (lastPast != null) {
-        bodyDiv[0].scrollTop = lastPast[0].offsetTop;
-    }
+    var autoscroll = function() {
+        bodyDiv[0].scrollTop = divNow[0].offsetTop + divNow[0].offsetHeight - bodyDiv[0].offsetHeight;
+    };
+    autoscroll();
 };
 
 HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {

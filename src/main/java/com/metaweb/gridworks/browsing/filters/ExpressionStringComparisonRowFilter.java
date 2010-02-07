@@ -19,26 +19,22 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
 
 	@Override
 	public boolean filterRow(Project project, int rowIndex, Row row) {
-		if (_cellIndex < row.cells.size()) {
-			Cell cell = row.cells.get(_cellIndex);
-			if (cell != null) {
-	            Properties bindings = ExpressionUtils.createBindings(project);
-                ExpressionUtils.bind(bindings, row, cell);
-				
-				Object value = _evaluable.evaluate(bindings);
-				if (value != null) {
-					if (value.getClass().isArray()) {
-						Object[] a = (Object[]) value;
-						for (Object v : a) {
-							if (checkValue(v instanceof String ? ((String) v) : v.toString())) {
-								return true;
-							}
-						}
-					} else {
-						if (checkValue(value instanceof String ? ((String) value) : value.toString())) {
-							return true;
-						}
+		Cell cell = row.getCell(_cellIndex);
+        Properties bindings = ExpressionUtils.createBindings(project);
+        ExpressionUtils.bind(bindings, row, cell);
+		
+		Object value = _evaluable.evaluate(bindings);
+		if (value != null) {
+			if (value.getClass().isArray()) {
+				Object[] a = (Object[]) value;
+				for (Object v : a) {
+					if (checkValue(v instanceof String ? ((String) v) : v.toString())) {
+						return true;
 					}
+				}
+			} else {
+				if (checkValue(value instanceof String ? ((String) value) : value.toString())) {
+					return true;
 				}
 			}
 		}

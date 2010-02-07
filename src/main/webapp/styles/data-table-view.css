@@ -1,0 +1,43 @@
+.data-table-container {
+    border: 1px solid #ccc;
+    overflow-x: auto;
+}
+
+table.data-table td {
+    padding: 2px 5px;
+}
+
+table.data-table tr.odd {
+}
+
+table.data-table tr.even {
+    background: #eee;
+}
+
+table.data-table tr.contextual {
+    opacity: 0.2;
+}
+
+table.data-table td.column-header {
+    background: #ddd;
+    cursor: pointer;
+    padding: 5px 5px;
+    border-bottom: 2px solid #aaa;
+    white-space: pre;
+    font-weight: bold;
+}
+
+table.column-header-layout td {
+    padding: 0px;
+    font-weight: bold;
+}
+
+img.column-header-menu {
+}
+
+.viewPanel-summary {
+}
+.viewPanel-pagingControls {
+    text-align: center;
+    margin: 1em 0;
+}

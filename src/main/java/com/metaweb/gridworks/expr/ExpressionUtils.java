@@ -22,8 +22,13 @@ public class ExpressionUtils {
         bindings.put("row", row);
         bindings.put("cells", row.getField("cells", bindings));
         
-        bindings.put("cell", cell);
-        bindings.put("value", cell.value);
+        if (cell == null) {
+            bindings.remove("cell");
+            bindings.remove("value");
+        } else {
+            bindings.put("cell", cell);
+            bindings.put("value", cell.value);
+        }
     }
     
     static public boolean isBlank(Object o) {

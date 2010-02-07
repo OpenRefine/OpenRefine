@@ -78,8 +78,13 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
         if ("label" in item) {
             var menuItem = MenuSystem.createMenuItem().appendTo(menu);
             if ("submenu" in item) {
-                menuItem.html('<table width="100%" cellspacing="0" cellpadding="0"><tr><td>' + item.label + '</td><td width="1%"><img src="/images/right-arrow.png" /></td></tr></table>');
-                menuItem.mouseover(function() {
+                menuItem.html(
+                    '<table width="100%" cellspacing="0" cellpadding="0" class="menu-item-layout"><tr>' +
+                        '<td>' + item.label + '</td>' +
+                        '<td width="1%"><img src="/images/right-arrow.png" /></td>' +
+                    '</tr></table>'
+                );
+                menuItem.mouseenter(function() {
                     MenuSystem.dismissUntil(level);
                     
                     menuItem.addClass("menu-expanded");
@@ -100,7 +105,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
                 if ("tooltip" in item) {
                     menuItem.attr("title", item.tooltip);
                 }
-                menuItem.mouseover(function() {
+                menuItem.mouseenter(function() {
                     MenuSystem.dismissUntil(level);
                 });
             }

@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
@@ -68,7 +69,7 @@ public class MultiValueCellJoinOperation implements AbstractOperation {
 		    StringBuffer sb = new StringBuffer();
 		    for (int r3 = r; r3 < r2; r3++) {
 		        Object value = project.rows.get(r3).getCellValue(_cellIndex);
-		        if (value != null) {
+		        if (!ExpressionUtils.isBlank(value)) {
 		            if (sb.length() > 0) {
 		                sb.append(_separator);
 		            }

@@ -57,17 +57,14 @@ public class PreviewExpressionCommand extends Command {
 					int rowIndex = rowIndices.getInt(i);
 					if (rowIndex >= 0 && rowIndex < project.rows.size()) {
 						Row row = project.rows.get(rowIndex);
-						if (cellIndex < row.cells.size()) {
-							Cell cell = row.cells.get(cellIndex);
-							if (cell != null && cell.value != null) {
-							    ExpressionUtils.bind(bindings, row, cell);
-								
-								try {
-									result = eval.evaluate(bindings);
-								} catch (Exception e) {
-									// ignore
-								}
-							}
+						Cell cell = row.getCell(cellIndex);
+							
+					    ExpressionUtils.bind(bindings, row, cell);
+						
+						try {
+							result = eval.evaluate(bindings);
+						} catch (Exception e) {
+							// ignore
 						}
 					}
 					

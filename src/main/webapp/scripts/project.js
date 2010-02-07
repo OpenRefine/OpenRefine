@@ -15,7 +15,8 @@ $(onLoad);
 
 function initializeUI() {
     document.title = theProject.metadata.name + " - Gridworks";
-    $('<span></span>').text(theProject.metadata.name).appendTo($("#title"));
+    $('<span></span>').text(theProject.metadata.name).addClass("app-path-section").appendTo($("#path"));
+    $('<span></span>').text(" project").appendTo($("#path"));
     
     var body = $("#body").empty();
     

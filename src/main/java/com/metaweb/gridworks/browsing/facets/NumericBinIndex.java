@@ -25,25 +25,21 @@ public class NumericBinIndex {
 		List<Double> allValues = new ArrayList<Double>();
 		for (int i = 0; i < project.rows.size(); i++) {
 			Row row = project.rows.get(i);
+			Cell cell = row.getCell(cellIndex);
+
+            ExpressionUtils.bind(bindings, row, cell);
 			
-			if (cellIndex < row.cells.size()) {
-				Cell cell = row.cells.get(cellIndex);
-				if (cell != null) {
-                    ExpressionUtils.bind(bindings, row, cell);
-					
-					Object value = eval.evaluate(bindings);
-					if (value != null) {
-						if (value.getClass().isArray()) {
-							Object[] a = (Object[]) value;
-							for (Object v : a) {
-								if (v instanceof Number) {
-									processValue(((Number) v).doubleValue(), allValues);
-								}
-							}
-						} else if (value instanceof Number) {
-							processValue(((Number) value).doubleValue(), allValues);
+			Object value = eval.evaluate(bindings);
+			if (value != null) {
+				if (value.getClass().isArray()) {
+					Object[] a = (Object[]) value;
+					for (Object v : a) {
+						if (v instanceof Number) {
+							processValue(((Number) v).doubleValue(), allValues);
 						}
 					}
+				} else if (value instanceof Number) {
+					processValue(((Number) value).doubleValue(), allValues);
 				}
 			}
 		}

@@ -25,23 +25,20 @@ public class ExpressionNumericRowBinner implements RowVisitor {
 	
 	@Override
 	public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
-		if (_cellIndex < row.cells.size()) {
-			Cell cell = row.cells.get(_cellIndex);
-			if (cell != null) {
-		        Properties bindings = ExpressionUtils.createBindings(project);
-                ExpressionUtils.bind(bindings, row, cell);
-				
-				Object value = _evaluable.evaluate(bindings);
-				if (value != null) {
-					if (value.getClass().isArray()) {
-						Object[] a = (Object[]) value;
-						for (Object v : a) {
-							processValue(v);
-						}
-					} else {
-						processValue(value);
-					}
+		Cell cell = row.getCell(_cellIndex);
+
+        Properties bindings = ExpressionUtils.createBindings(project);
+        ExpressionUtils.bind(bindings, row, cell);
+		
+		Object value = _evaluable.evaluate(bindings);
+		if (value != null) {
+			if (value.getClass().isArray()) {
+				Object[] a = (Object[]) value;
+				for (Object v : a) {
+					processValue(v);
 				}
+			} else {
+				processValue(value);
 			}
 		}
 		return false;

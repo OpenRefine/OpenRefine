@@ -21,29 +21,25 @@ public class ExpressionEqualRowFilter implements RowFilter {
 
 	@Override
 	public boolean filterRow(Project project, int rowIndex, Row row) {
-		if (_cellIndex < row.cells.size()) {
-			Cell cell = row.cells.get(_cellIndex);
-			if (cell != null) {
-	            Properties bindings = ExpressionUtils.createBindings(project);
-                ExpressionUtils.bind(bindings, row, cell);
-				
-				Object value = _evaluable.evaluate(bindings);
-				if (value != null) {
-					if (value.getClass().isArray()) {
-						Object[] a = (Object[]) value;
-						for (Object v : a) {
-							for (Object match : _matches) {
-								if (match.equals(v)) {
-									return true;
-								}
-							}
+		Cell cell = row.getCell(_cellIndex);
+        Properties bindings = ExpressionUtils.createBindings(project);
+        ExpressionUtils.bind(bindings, row, cell);
+		
+		Object value = _evaluable.evaluate(bindings);
+		if (value != null) {
+			if (value.getClass().isArray()) {
+				Object[] a = (Object[]) value;
+				for (Object v : a) {
+					for (Object match : _matches) {
+						if (match.equals(v)) {
+							return true;
 						}
-					} else {
-						for (Object match : _matches) {
-							if (match.equals(value)) {
-								return true;
-							}
-						}
+					}
+				}
+			} else {
+				for (Object match : _matches) {
+					if (match.equals(value)) {
+						return true;
 					}
 				}
 			}
