@@ -20,19 +20,16 @@ import com.metaweb.gridworks.model.Row;
 
 public class ExcelImporter implements Importer {
 
-	@Override
 	public boolean takesReader() {
 		return false;
 	}
 	
-	@Override
 	public void read(Reader reader, Project project, Properties options)
 			throws Exception {
 		
 		throw new NotImplementedException();
 	}
 
-	@Override
 	public void read(InputStream inputStream, Project project,
 			Properties options) throws Exception {
 		

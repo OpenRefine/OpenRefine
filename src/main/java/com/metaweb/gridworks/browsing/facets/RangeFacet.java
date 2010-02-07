@@ -34,7 +34,6 @@ public class RangeFacet implements Facet {
 	public RangeFacet() {
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		
@@ -70,7 +69,6 @@ public class RangeFacet implements Facet {
 		writer.endObject();
 	}
 
-	@Override
 	public void initializeFromJSON(JSONObject o) throws Exception {
 		_name = o.getString("name");
 		_expression = o.getString("expression");
@@ -98,7 +96,6 @@ public class RangeFacet implements Facet {
 		}
 	}
 
-	@Override
 	public RowFilter getRowFilter() {
 		if (_selected) {
 			if ("min".equals(_mode)) {
@@ -125,7 +122,6 @@ public class RangeFacet implements Facet {
 		}
 	}
 
-	@Override
 	public void computeChoices(Project project, FilteredRows filteredRows) {
 		Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
 		

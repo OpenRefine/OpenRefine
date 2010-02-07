@@ -7,7 +7,6 @@ import com.metaweb.gridworks.expr.Function;
 
 public class IsBlank implements Function {
 
-	@Override
 	public Object call(Properties bindings, Object[] args) {
 		return args.length == 0 || ExpressionUtils.isBlank(args[0]);
 	}

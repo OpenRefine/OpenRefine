@@ -34,7 +34,6 @@ public class Row implements Serializable, HasFields, Jsonizable {
 	    return row;
 	}
 	
-	@Override
 	public Object getField(String name, Properties bindings) {
 		if ("flagged".equals(name)) {
 			return flagged;
@@ -95,7 +94,6 @@ public class Row implements Serializable, HasFields, Jsonizable {
 	public class Cells implements HasFields {
 		private Cells() {};
 
-		@Override
 		public Object getField(String name, Properties bindings) {
 			Project project = (Project) bindings.get("project");
 			Column column = project.columnModel.getColumnByName(name);
@@ -108,7 +106,6 @@ public class Row implements Serializable, HasFields, Jsonizable {
 		
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

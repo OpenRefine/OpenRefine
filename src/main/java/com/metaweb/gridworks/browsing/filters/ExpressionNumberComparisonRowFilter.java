@@ -17,7 +17,6 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
 		_cellIndex = cellIndex;
 	}
 
-	@Override
 	public boolean filterRow(Project project, int rowIndex, Row row) {
 		Cell cell = row.getCell(_cellIndex);
 

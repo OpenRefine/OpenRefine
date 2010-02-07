@@ -50,7 +50,6 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		_columnInsertIndex = columnInsertIndex;
 	}
 
-	@Override
 	public Process createProcess(Project project, Properties options)
 			throws Exception {
 		
@@ -75,7 +74,6 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		return new QuickHistoryEntryProcess(project, historyEntry);
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub
@@ -107,7 +105,6 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 				return this;
 			}
 			
-			@Override
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				Cell cell = row.getCell(cellIndex);
 

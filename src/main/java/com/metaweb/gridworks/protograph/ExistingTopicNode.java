@@ -14,7 +14,6 @@ public class ExistingTopicNode extends Node {
 		_topic = topic;
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub

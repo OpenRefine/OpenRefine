@@ -20,7 +20,6 @@ public class Cell implements Serializable, HasFields, Jsonizable {
 		this.recon = recon;
 	}
 	
-	@Override
 	public Object getField(String name, Properties bindings) {
 		if ("value".equals(name)) {
 			return value;
@@ -30,7 +29,6 @@ public class Cell implements Serializable, HasFields, Jsonizable {
 		return null;
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options) throws JSONException {
 		writer.object();
 		writer.key("v");

@@ -17,7 +17,6 @@ public class NominalFacetChoice implements Jsonizable {
 		this.decoratedValue = decoratedValue;
 	}
 	
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		writer.object();

@@ -22,7 +22,6 @@ public class CellNode extends Node {
 		this.type = type;
 	}
 	
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub

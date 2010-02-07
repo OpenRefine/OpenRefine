@@ -6,7 +6,6 @@ import com.metaweb.gridworks.expr.Function;
 
 public class Length implements Function {
 
-	@Override
 	public Object call(Properties bindings, Object[] args) {
 		if (args.length == 1) {
 			Object v = args[0];

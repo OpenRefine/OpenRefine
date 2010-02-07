@@ -18,8 +18,8 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class GetRowsCommand extends Command {
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
 		try {
@@ -99,7 +99,6 @@ public class GetRowsCommand extends Command {
 			this.limit = limit;
 		}
 		
-		@Override
 		public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 			boolean r = false;
 			

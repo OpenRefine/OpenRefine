@@ -7,7 +7,6 @@ import com.metaweb.gridworks.expr.HasFields;
 
 public class Get implements Function {
 
-	@Override
 	public Object call(Properties bindings, Object[] args) {
 		if (args.length > 1 && args.length <= 3) {
 			Object v = args[0];

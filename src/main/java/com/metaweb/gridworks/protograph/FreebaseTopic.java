@@ -19,7 +19,6 @@ public class FreebaseTopic implements Serializable, Jsonizable {
 		this.name = name;
 	}
 	
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub

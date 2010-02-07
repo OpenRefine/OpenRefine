@@ -42,7 +42,6 @@ public class HistoryEntry implements Serializable, Jsonizable {
 		saveChange();
 	}
 	
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

@@ -11,7 +11,6 @@ public class ControlCallExpr implements Evaluable {
 		_control = c;
 	}
 	                          
-	@Override
 	public Object evaluate(Properties bindings) {
 		return _control.call(bindings, _args);
 	}

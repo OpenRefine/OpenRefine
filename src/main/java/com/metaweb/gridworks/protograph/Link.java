@@ -27,7 +27,6 @@ public class Link implements Serializable, Jsonizable {
 		return _target;
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub

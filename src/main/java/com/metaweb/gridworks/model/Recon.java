@@ -36,7 +36,6 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 		return r;
 	}
 	
-	@Override
 	public Object getField(String name, Properties bindings) {
 		if ("best".equals(name)) {
 			return candidates.size() > 0 ? candidates.get(0) : null;
@@ -50,7 +49,6 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 			return match;
 		} else if ("features".equals(name)) {
 			return new HasFields() {
-				@Override
 				public Object getField(String name, Properties bindings) {
 					return features.get(name);
 				}
@@ -70,13 +68,11 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 	}
 	
 	public class Features implements HasFields {
-		@Override
 		public Object getField(String name, Properties bindings) {
 			return features.get(name);
 		}
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

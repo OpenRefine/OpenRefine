@@ -108,7 +108,6 @@ public class History implements Serializable, Jsonizable {
 		setModified();
 	}
 	
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

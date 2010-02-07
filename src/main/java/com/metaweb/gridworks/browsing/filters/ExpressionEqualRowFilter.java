@@ -19,7 +19,6 @@ public class ExpressionEqualRowFilter implements RowFilter {
 		_matches = matches;
 	}
 
-	@Override
 	public boolean filterRow(Project project, int rowIndex, Row row) {
 		Cell cell = row.getCell(_cellIndex);
         Properties bindings = ExpressionUtils.createBindings(project);

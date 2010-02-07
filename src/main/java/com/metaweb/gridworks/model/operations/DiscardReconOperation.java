@@ -21,14 +21,12 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 		super(engineConfig, cellIndex, false);
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		
@@ -36,7 +34,6 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 			" cells in column " + column.getHeaderLabel();
 	}
 
-	@Override
 	protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
 		// TODO Auto-generated method stub
 		return new RowVisitor() {
@@ -49,7 +46,6 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 				return this;
 			}
 			
-			@Override
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);

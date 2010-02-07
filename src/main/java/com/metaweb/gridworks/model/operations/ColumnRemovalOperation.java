@@ -25,7 +25,6 @@ public class ColumnRemovalOperation implements AbstractOperation {
 		_columnRemovalIndex = columnRemoveIndex;
 	}
 
-	@Override
 	public Process createProcess(Project project, Properties options)
 			throws Exception {
 		
@@ -43,7 +42,6 @@ public class ColumnRemovalOperation implements AbstractOperation {
 		return new QuickHistoryEntryProcess(project, historyEntry);
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub

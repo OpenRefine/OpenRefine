@@ -23,7 +23,6 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
 		_cellIndex = cellIndex;
 	}
 	
-	@Override
 	public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 		Cell cell = row.getCell(_cellIndex);
 

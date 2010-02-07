@@ -21,7 +21,6 @@ public class ColumnAdditionChange extends ColumnChange {
         newCells.toArray(_newCells);
     }
 
-    @Override
     public void apply(Project project) {
         synchronized (project) {
             _newCellIndex = project.columnModel.allocateNewCellIndex();
@@ -41,7 +40,6 @@ public class ColumnAdditionChange extends ColumnChange {
         }
     }
 
-    @Override
     public void revert(Project project) {
         synchronized (project) {
             for (CellAtRow cell : _newCells) {

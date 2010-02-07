@@ -6,7 +6,6 @@ import com.metaweb.gridworks.expr.Function;
 
 public class Slice implements Function {
 
-	@Override
 	public Object call(Properties bindings, Object[] args) {
 		if (args.length > 1 && args.length <= 3) {
 			Object v = args[0];

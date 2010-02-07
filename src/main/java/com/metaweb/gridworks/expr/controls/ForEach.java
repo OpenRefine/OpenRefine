@@ -10,7 +10,6 @@ import com.metaweb.gridworks.expr.VariableExpr;
 
 public class ForEach implements Control {
 
-    @Override
     public Object call(Properties bindings, Evaluable[] args) {
         if (args.length >= 3) {
             Object o = args[0].evaluate(bindings);

@@ -52,7 +52,6 @@ public class ReconOperation extends EngineDependentOperation {
 		_typeID = typeID;
 	}
 
-	@Override
 	public Process createProcess(Project project, Properties options) throws Exception {
 		Engine engine = createEngine(project);
 		
@@ -74,7 +73,6 @@ public class ReconOperation extends EngineDependentOperation {
 				return this;
 			}
 			
-			@Override
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
@@ -94,7 +92,6 @@ public class ReconOperation extends EngineDependentOperation {
 		return new ReconProcess(project, description, entries);
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub
@@ -156,12 +153,10 @@ public class ReconOperation extends EngineDependentOperation {
 			_entries = entries;
 		}
 		
-		@Override
 		protected Runnable getRunnable() {
 			return this;
 		}
 		
-		@Override
 		public void run() {
 			Map<String, List<ReconEntry>> valueToEntries = new HashMap<String, List<ReconEntry>>();
 			

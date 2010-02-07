@@ -16,7 +16,6 @@ public class ColumnRemovalChange extends ColumnChange {
         _oldColumnIndex = index;
     }
     
-    @Override
     public void apply(Project project) {
         synchronized (project) {
             _oldColumn = project.columnModel.columns.remove(_oldColumnIndex);
@@ -40,7 +39,6 @@ public class ColumnRemovalChange extends ColumnChange {
         }
     }
 
-    @Override
     public void revert(Project project) {
         synchronized (project) {
             project.columnModel.columns.add(_oldColumnIndex, _oldColumn);

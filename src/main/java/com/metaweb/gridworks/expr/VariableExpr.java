@@ -9,12 +9,10 @@ public class VariableExpr implements Evaluable {
 		_name = name;
 	}
 	
-	@Override
 	public Object evaluate(Properties bindings) {
 		return bindings.get(_name);
 	}
 
-	@Override
 	public String toString() {
 		return _name;
 	}

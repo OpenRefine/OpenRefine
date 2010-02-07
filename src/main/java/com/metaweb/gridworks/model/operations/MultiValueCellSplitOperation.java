@@ -39,7 +39,6 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 		_mode = mode;
 	}
 
-	@Override
 	public Process createProcess(Project project, Properties options)
 			throws Exception {
 		
@@ -117,7 +116,6 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 		return new QuickHistoryEntryProcess(project, historyEntry);
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub

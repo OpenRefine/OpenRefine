@@ -49,7 +49,6 @@ public class Column implements Serializable, Jsonizable {
         return _reconConfig;
     }
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

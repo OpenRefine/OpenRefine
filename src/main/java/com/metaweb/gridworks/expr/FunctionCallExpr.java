@@ -11,7 +11,6 @@ public class FunctionCallExpr implements Evaluable {
 		_function = f;
 	}
 	                          
-	@Override
 	public Object evaluate(Properties bindings) {
 		Object[] args = new Object[_args.length];
 		for (int i = 0; i < _args.length; i++) {
@@ -20,7 +19,6 @@ public class FunctionCallExpr implements Evaluable {
 		return _function.call(bindings, args);
 	}
 
-	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		

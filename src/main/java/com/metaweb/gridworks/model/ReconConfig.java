@@ -17,7 +17,6 @@ public class ReconConfig implements Serializable, Jsonizable {
         this.typeID = typeID;
     }
 
-    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

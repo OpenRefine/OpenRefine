@@ -17,7 +17,6 @@ public class MassRowChange implements Change {
         _newRows = newRows;
     }
     
-    @Override
     public void apply(Project project) {
         synchronized (project) {
             _oldRows = new ArrayList<Row>(project.rows);
@@ -28,7 +27,6 @@ public class MassRowChange implements Change {
         }
     }
 
-    @Override
     public void revert(Project project) {
         synchronized (project) {
             project.rows.clear();

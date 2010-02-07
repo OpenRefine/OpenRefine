@@ -20,6 +20,7 @@ import org.json.JSONObject;
 public class JSObject extends Properties {
     private static final long serialVersionUID = 5864375136126385719L;
 
+    @SuppressWarnings("unchecked")
     static public void writeJSObject(IndentWriter writer, JSObject jso) throws IOException, JSONException {
         writer.println("{");
         writer.indent();
@@ -44,6 +45,7 @@ public class JSObject extends Properties {
         writer.print("}");
     }
     
+    @SuppressWarnings("unchecked")
     static public void writeCollection(IndentWriter writer, Collection c) throws IOException, JSONException {
     	writer.println("[");
     	writer.indent();
@@ -66,7 +68,7 @@ public class JSObject extends Properties {
         writer.println("{");
         writer.indent();
         {
-        	String[] names = no.getNames(no);
+        	String[] names = JSONObject.getNames(no);
 			for (int i = 0; i < names.length; i++) {
 				String name = names[i];
 				Object value = no.get(name);
@@ -106,6 +108,7 @@ public class JSObject extends Properties {
         writer.print("]");
     }
     
+    @SuppressWarnings("unchecked")
     static public void writeObject(IndentWriter writer, Object o) throws IOException, JSONException {
 	    if (o == null) {
 	    	writer.print("null");

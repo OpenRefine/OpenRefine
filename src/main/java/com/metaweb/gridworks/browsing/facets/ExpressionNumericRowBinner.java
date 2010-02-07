@@ -23,7 +23,6 @@ public class ExpressionNumericRowBinner implements RowVisitor {
 		bins = new int[_index.getBins().length];
 	}
 	
-	@Override
 	public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 		Cell cell = row.getCell(_cellIndex);
 

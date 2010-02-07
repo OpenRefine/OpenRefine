@@ -44,7 +44,6 @@ public class ProjectMetadata implements Serializable, Jsonizable {
 		_modified = new Date();
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

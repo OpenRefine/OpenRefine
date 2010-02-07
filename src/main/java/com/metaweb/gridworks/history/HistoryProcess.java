@@ -28,28 +28,23 @@ public class HistoryProcess extends Process {
 		}
 	}
 	
-	@Override
 	public void cancel() {
 		throw new RuntimeException("Not a long-running process");
 	}
 
-	@Override
 	public boolean isImmediate() {
 		return true;
 	}
 
-	@Override
 	public void performImmediate() {
 		_project.history.undoRedo(_lastDoneID);
 		_done = true;
 	}
 
-	@Override
 	public void startPerforming(ProcessManager manager) {
 		throw new RuntimeException("Not a long-running process");
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		
@@ -60,12 +55,10 @@ public class HistoryProcess extends Process {
 		writer.endObject();
 	}
 
-	@Override
 	public boolean isDone() {
 		throw new RuntimeException("Not a long-running process");
 	}
 
-	@Override
 	public boolean isRunning() {
 		throw new RuntimeException("Not a long-running process");
 	}

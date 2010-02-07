@@ -6,7 +6,6 @@ import com.metaweb.gridworks.expr.Function;
 
 public class Split implements Function {
 
-	@Override
 	public Object call(Properties bindings, Object[] args) {
 		if (args.length == 2) {
 			Object v = args[0];

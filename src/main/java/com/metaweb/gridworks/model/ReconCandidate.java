@@ -26,7 +26,6 @@ public class ReconCandidate implements Serializable, HasFields, Jsonizable {
 		this.score = score;
 	}
 	
-	@Override
 	public Object getField(String name, Properties bindings) {
 		if ("id".equals(name)) {
 			return topicName;
@@ -42,7 +41,6 @@ public class ReconCandidate implements Serializable, HasFields, Jsonizable {
 		return null;
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

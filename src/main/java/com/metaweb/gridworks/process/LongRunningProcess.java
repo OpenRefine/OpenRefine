@@ -16,7 +16,6 @@ abstract public class LongRunningProcess extends Process {
 		_description = description;
 	}
 
-	@Override
 	public void cancel() {
 		_canceled = true;
 		if (_thread != null && _thread.isAlive()) {
@@ -24,7 +23,6 @@ abstract public class LongRunningProcess extends Process {
 		}
 	}
 	
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

@@ -18,33 +18,27 @@ public class QuickHistoryEntryProcess extends Process {
 		_historyEntry = historyEntry;
 	}
 	
-	@Override
 	public void cancel() {
 		throw new RuntimeException("Not a long-running process");
 	}
 
-	@Override
 	public boolean isImmediate() {
 		return true;
 	}
 	
-	@Override
 	public boolean isRunning() {
 		throw new RuntimeException("Not a long-running process");
 	}
 
-	@Override
 	public void performImmediate() {
 		_project.history.addEntry(_historyEntry);
 		_done = true;
 	}
 
-	@Override
 	public void startPerforming(ProcessManager manager) {
 		throw new RuntimeException("Not a long-running process");
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

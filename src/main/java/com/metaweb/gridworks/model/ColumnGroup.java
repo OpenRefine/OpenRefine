@@ -29,7 +29,6 @@ public class ColumnGroup implements Serializable, Jsonizable {
 		internalInitialize();
 	}
 	
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		

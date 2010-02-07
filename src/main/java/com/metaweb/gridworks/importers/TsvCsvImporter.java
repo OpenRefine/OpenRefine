@@ -13,7 +13,6 @@ import com.metaweb.gridworks.model.Row;
 
 public class TsvCsvImporter implements Importer {
 
-	@Override
 	public void read(Reader reader, Project project, Properties options)
 			throws Exception {
 		
@@ -68,14 +67,12 @@ public class TsvCsvImporter implements Importer {
 		}
 	}
 
-	@Override
 	public void read(InputStream inputStream, Project project,
 			Properties options) throws Exception {
 		
 		throw new NotImplementedException();
 	}
 
-	@Override
 	public boolean takesReader() {
 		return true;
 	}

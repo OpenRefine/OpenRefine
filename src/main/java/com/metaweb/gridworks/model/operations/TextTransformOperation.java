@@ -27,14 +27,11 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 		_expression = expression;
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		
@@ -42,7 +39,6 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 			" cells in column " + column.getHeaderLabel() + ": " + _expression;
 	}
 
-	@Override
 	protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
 		Evaluable eval = new Parser(_expression).getExpression();
         Properties bindings = ExpressionUtils.createBindings(project);
@@ -61,7 +57,6 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 				return this;
 			}
 			
-			@Override
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				Cell cell = row.getCell(cellIndex);
 

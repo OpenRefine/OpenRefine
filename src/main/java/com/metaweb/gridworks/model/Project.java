@@ -71,7 +71,6 @@ public class Project implements Serializable {
 		}
 		
 		Collections.sort(keyedGroups, new Comparator<Group>() {
-			@Override
 			public int compare(Group o1, Group o2) {
 				return o2.cellIndices.length - o1.cellIndices.length; // larger groups first
 			}

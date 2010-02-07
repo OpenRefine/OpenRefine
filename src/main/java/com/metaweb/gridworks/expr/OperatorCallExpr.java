@@ -11,7 +11,6 @@ public class OperatorCallExpr implements Evaluable {
 		_op = op;
 	}
 	                          
-	@Override
 	public Object evaluate(Properties bindings) {
 		Object[] args = new Object[_args.length];
 		for (int i = 0; i < _args.length; i++) {

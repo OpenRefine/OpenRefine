@@ -24,7 +24,6 @@ public class TextSearchFacet implements Facet {
 	public TextSearchFacet() {
 	}
 
-	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		
@@ -37,7 +36,6 @@ public class TextSearchFacet implements Facet {
 		writer.endObject();
 	}
 
-	@Override
 	public void initializeFromJSON(JSONObject o) throws Exception {
 		_name = o.getString("name");
 		_cellIndex = o.getInt("cellIndex");
@@ -49,7 +47,6 @@ public class TextSearchFacet implements Facet {
 		}
 	}
 
-	@Override
 	public RowFilter getRowFilter() {
 		Evaluable eval = new VariableExpr("value");
 		
@@ -68,7 +65,6 @@ public class TextSearchFacet implements Facet {
 		}		
 	}
 
-	@Override
 	public void computeChoices(Project project, FilteredRows filteredRows) {
 		// nothing to do
 	}
