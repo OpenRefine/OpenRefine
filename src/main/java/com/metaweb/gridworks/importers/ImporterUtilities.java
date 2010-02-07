@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.importers;
 
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Row;
 
@@ -51,12 +52,12 @@ public class ImporterUtilities {
 				}
 			}
 			
-			Cell cell = new Cell(parseCellValue(text), null);
-			
-			row.cells.add(cell);
-			
-			if (text.length() > 0) {
-				hasData = true;
+			Object value = parseCellValue(text);
+			if (ExpressionUtils.isBlank(value)) {
+                row.cells.add(null);
+			} else {
+			    row.cells.add(new Cell(value, null));
+                hasData = true;
 			}
 		}
 		
@@ -70,13 +71,13 @@ public class ImporterUtilities {
 		for (int c = 0; c < cells.length; c++) {
 			String text = cells[c];
 			
-			Cell cell = new Cell(parseCellValue(text), null);
-			
-			row.cells.add(cell);
-			
-			if (text.length() > 0) {
-				hasData = true;
-			}
+            Object value = parseCellValue(text);
+            if (ExpressionUtils.isBlank(value)) {
+                row.cells.add(null);
+            } else {
+                row.cells.add(new Cell(value, null));
+                hasData = true;
+            }
 		}
 		return hasData;
 	}
