@@ -74,7 +74,11 @@ run() {
         echo ""
     fi
     
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*.jar"
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes"
+    for i in `ls $GRIDWORKS_LIB_DIR/*.jar` ; do 
+        CLASSPATH=$CLASSPATH:$i
+    done
+
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
   
