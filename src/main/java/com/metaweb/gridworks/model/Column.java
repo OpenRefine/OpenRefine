@@ -16,6 +16,7 @@ public class Column implements Serializable, Jsonizable {
 	final private int		_cellIndex;
 	final private String	_originalHeaderLabel;
 	private String			_headerLabel;
+	private ReconConfig     _reconConfig;
 	
 	transient protected Map<String, Object> _precomputes;
 	
@@ -40,6 +41,14 @@ public class Column implements Serializable, Jsonizable {
 		return _headerLabel;
 	}
 
+    public void setReconConfig(ReconConfig config) {
+        this._reconConfig = config;
+    }
+
+    public ReconConfig getReconConfig() {
+        return _reconConfig;
+    }
+
 	@Override
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
@@ -47,6 +56,10 @@ public class Column implements Serializable, Jsonizable {
 		writer.object();
 		writer.key("cellIndex"); writer.value(getCellIndex());
 		writer.key("headerLabel"); writer.value(getHeaderLabel());
+		if (_reconConfig != null) {
+		    writer.key("reconConfig");
+		    _reconConfig.write(writer, options);
+		}
 		writer.endObject();
 	}
 	

@@ -24,12 +24,15 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.expr.ExpressionUtils;
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
+import com.metaweb.gridworks.model.ReconConfig;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.MassCellChange;
@@ -75,7 +78,7 @@ public class ReconOperation extends EngineDependentOperation {
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
-					if (cell.value != null) {
+					if (cell != null && !ExpressionUtils.isBlank(cell.value)) {
 						entries.add(new ReconEntry(rowIndex, cell));
 					}
 				}
@@ -106,6 +109,41 @@ public class ReconOperation extends EngineDependentOperation {
 			this.rowIndex = rowIndex;
 			this.cell = cell;
 		}
+	}
+	
+	static protected class ReconChange extends MassCellChange {
+        private static final long serialVersionUID = 7048806528587330543L;
+        
+        final protected ReconConfig _newReconConfig;
+        protected ReconConfig _oldReconConfig;
+        
+        public ReconChange(
+            List<CellChange> cellChanges, 
+            int commonCellIndex,
+            ReconConfig newReconConfig
+        ) {
+            super(cellChanges, commonCellIndex, false);
+            _newReconConfig = newReconConfig;
+        }
+	    @Override
+	    public void apply(Project project) {
+	        synchronized (project) {
+	            super.apply(project);
+	            
+	            Column column = project.columnModel.getColumnByCellIndex(_commonCellIndex);
+	            _oldReconConfig = column.getReconConfig();
+	            column.setReconConfig(_newReconConfig);
+	        }
+	    }
+	    
+	    @Override
+	    public void revert(Project project) {
+            synchronized (project) {
+                super.revert(project);
+                
+                project.columnModel.getColumnByCellIndex(_commonCellIndex).setReconConfig(_oldReconConfig);
+            }
+	    }
 	}
 	
 	public class ReconProcess extends LongRunningProcess implements Runnable {
@@ -160,12 +198,15 @@ public class ReconOperation extends EngineDependentOperation {
 				}
 			}
 			
-			MassCellChange massCellChange = new MassCellChange(cellChanges, _cellIndex, false);
+			ReconConfig reconConfig = new ReconConfig(_typeID);
+			
+			Change reconChange = new ReconChange(cellChanges, _cellIndex, reconConfig);
+			
 			HistoryEntry historyEntry = new HistoryEntry(
 				_project, 
 				_description, 
 				ReconOperation.this, 
-				massCellChange
+				reconChange
 			);
 			
 			_project.history.addEntry(historyEntry);
