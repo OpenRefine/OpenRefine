@@ -34,6 +34,7 @@ import com.metaweb.gridworks.commands.recon.ApproveNewReconcileCommand;
 import com.metaweb.gridworks.commands.recon.ApproveReconcileCommand;
 import com.metaweb.gridworks.commands.recon.DiscardReconcileCommand;
 import com.metaweb.gridworks.commands.recon.ReconcileCommand;
+import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
 import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
 
 public class GridworksServlet extends HttpServlet {
@@ -68,6 +69,7 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("discard-reconcile", new DiscardReconcileCommand());
 		
 		_commands.put("preview-expression", new PreviewExpressionCommand());
+        _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());
 	}
 
 	@Override

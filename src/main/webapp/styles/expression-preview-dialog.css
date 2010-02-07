@@ -1,3 +1,15 @@
+td.expression-preview-help-column {
+    padding-left: 10px;
+}
+.expression-preview-help-outer {
+    border: 1px solid #ccc;
+    height: 300px;
+    overflow: auto;
+}
+.expression-preview-help-inner {
+    padding: 10px;
+}
+
 .expression-preview-container {
     border: 1px solid #ccc;
     height: 300px;
