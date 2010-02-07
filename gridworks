@@ -1,0 +1,129 @@
+#!/bin/sh
+
+fail () {
+cat <<EOF
+ERROR: $1
+Usage: $0 [options] <action>
+  -h for more details
+EOF
+exit 1
+}
+
+usage() {
+cat <<EOF
+Usage: $0 [options] <action>
+where [options] include:
+
+  -h print this message and exit
+  
+  -p <port> is the port that gridworks will listen to
+     default: 3333
+
+  -d <port> enable JVM debugging (on port 8000)
+  
+  -s <mode> enable profiling   
+     (available modes are "hprof" and "yourkit")
+     
+  -x enable JMX monitoring
+  
+and <action> is one of
+
+   run          Run gridworks (default)
+    
+   eclipse      Build eclipse project files
+            
+EOF
+exit 0
+}
+
+absolute_path () {
+  case $1 in
+    /*) echo $1; ;;
+    *) echo `pwd`/$1; ;;
+  esac
+}
+
+add_option () {
+  MAVEN_OPTS="$MAVEN_OPTS $1"
+}
+
+### Parse the command line args.
+
+MAVEN_OPTS="$GRIDWORKS_OPTS -Djava.awt.headless=true"
+
+while [ $# -ne 0 ] ; do
+  case "x$1" in
+    x-p) shift; GRIDWORKS_PORT="$1"; shift; ;;
+    x-d) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; ;;
+    x-s) shift; 
+        case "$1" in
+          profile)
+            add_option '-Xrunhprof:heap=all,cpu=samples,thread=y,depth=3'; ;;
+          shark)
+            add_option '-Xrunshark'; ;;
+          yourkit)
+            if [ "$YOURKIT_HOME" = "" ] ; then
+                echo "YOURKIT_HOME should be set to Yourkit Java Profiler absolute path"
+                exit
+            fi
+            if [ `uname` = 'Linux' ] ; then
+              if [ "`uname -a | grep x86_64`" ] ; then
+                # Assume Linux AMD 64 has 64-bit Java
+                export LD_LIBRARY_PATH="$YOURKIT_HOME/bin/linux-amd64:$LD_LIBRARY_PATH"
+              else
+                # 32-bit Java
+                export LD_LIBRARY_PATH="$YOURKIT_HOME/bin/linux-x86-32:$LD_LIBRARY_PATH"
+              fi
+            elif [ `uname` = 'Darwin' ] ; then
+              # Mac OS X
+              export DYLD_LIBRARY_PATH="$YOURKIT_HOME/bin/mac:$DYLD_LIBRARY_PATH"
+            elif [ `uname` = 'SunOS' ] ; then
+              # Solaris, unlike Linux, probes entire LD_LIBRARY_PATH instead of stopping after first improper shared library
+              LD_LIBRARY_PATH="$YOURKIT_HOME/bin/solaris-sparc-32:$YOURKIT_HOME/bin/solaris-sparc-64:$YOURKIT_HOME/bin/solaris-x86-32:$YOURKIT_HOME/bin/solaris-x86-64:$LD_LIBRARY_PATH"
+              export LD_LIBRARY_PATH
+            fi
+            add_option '-agentlib:yjpagent=sessionname=Gridworks'; ;;
+        esac
+        shift; ;;
+    x-x) shift; add_option '-Dcom.sun.management.jmxremote'; ;;
+    x-h) usage; ;;
+    *) ACTION="$1"; shift; ;;
+  esac
+done
+
+# ----- Verify and Set Required Environment Variables -------------------------
+
+if [ "$JAVA_OPTIONS" = "" ] ; then
+  JAVA_OPTIONS="-Xms256M -Xmx1024M"
+fi
+add_option "$JAVA_OPTIONS"
+
+if [ "$GRIDWORKS_PORT" = "" ] ; then
+    GRIDWORKS_PORT="3333"
+fi
+add_option "-Djetty.port=$GRIDWORKS_PORT"
+
+# ----- Respond to the action given. ----------------------------------------------------------
+
+if ["$ACTION" == ''] ; then
+    ACTION='run'
+fi
+
+case "$ACTION" in
+  run) 
+    OPEN=`which 'open'`
+    if [ $OPEN != '' ] ; then
+        $OPEN "http://127.0.0.1:$GRIDWORKS_PORT/"
+    fi
+  
+    export MAVEN_OPTS
+    echo "[INFO] MAVEN_OPTS: '$MAVEN_OPTS'"
+    exec mvn $MAVEN_PARAMS jetty:run; ;;
+    
+  eclipse)
+    mvn eclipse:clean
+    mvn eclipse:eclipse; ;;
+    
+  *)
+    fail "Unknown action '$ACTION'"; ;;
+esac

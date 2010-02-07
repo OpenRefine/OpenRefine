@@ -30,7 +30,7 @@
         <configuration>
           <connectors>
             <connector implementation="org.mortbay.jetty.bio.SocketConnector">
-              <port>3333</port>
+              <port>${jetty.port}</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>
@@ -39,8 +39,32 @@
           <webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
         </configuration>
       </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   
   <dependencies>
     <dependency>
