@@ -38,8 +38,6 @@ public class HistoryEntry implements Serializable, Jsonizable {
 		this.time = new Date();
 		
 		_change = change;
-		
-		saveChange();
 	}
 	
 	public void write(JSONWriter writer, Properties options)
@@ -59,6 +57,11 @@ public class HistoryEntry implements Serializable, Jsonizable {
 			loadChange();
 		}
 		_change.apply(project);
+        
+		// When a change is applied, it can hang on to old data (in order to be able
+		// to revert later). Hence, we need to save the change out.
+		
+        saveChange();
 	}
 	
 	public void revert(Project project) {
