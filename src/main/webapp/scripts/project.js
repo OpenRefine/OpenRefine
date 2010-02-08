@@ -35,11 +35,13 @@ function initializeUI() {
     ui.facetPanel = $('<div></div>').appendTo(tdRight);
     ui.historyPanel = $('<div></div>').addClass("history-panel").appendTo(document.body);
     ui.processPanel = $('<div></div>').addClass("process-panel").appendTo(document.body);
+    ui.menuBarPanel = $('<div></div>'); $("#header").after(ui.menuBarPanel);
     
     ui.browsingEngine = new BrowsingEngine(ui.facetPanel);
     ui.processWidget = new ProcessWidget(ui.processPanel);
     ui.historyWidget = new HistoryWidget(ui.historyPanel);
     ui.dataTableView = new DataTableView(ui.viewPanel);
+    ui.menuBar = new MenuBar(ui.menuBarPanel);
 }
 
 function reinitializeProjectData(f) {

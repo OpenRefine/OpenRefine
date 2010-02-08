@@ -7,12 +7,11 @@ MenuSystem.showMenu = function(elmt, onDismiss) {
     if (MenuSystem._overlay == null) {
         MenuSystem._overlay = $('<div>&nbsp;</div>')
             .addClass("menu-overlay")
-            .css("z-index", 1000)
             .appendTo(document.body)
             .click(MenuSystem.dismissAll);
     }
     
-    elmt.css("z-index", 1001 + MenuSystem._layers.length).appendTo(document.body);
+    elmt.css("z-index", 1010 + MenuSystem._layers.length).appendTo(document.body);
     
     var layer = {
         elmt: elmt,
@@ -55,13 +54,13 @@ MenuSystem.createMenuItem = function() {
 MenuSystem.positionMenuAboveBelow = function(menu, elmt) {
     var offset = elmt.offset();
     menu.css("left", offset.left + "px")
-        .css("top", (offset.top + elmt.height()) + "px");
+        .css("top", (offset.top + elmt.outerHeight()) + "px");
 };
 
 MenuSystem.positionMenuLeftRight = function(menu, elmt) {
     var offset = elmt.offset();
     menu.css("top", offset.top + "px")
-        .css("left", (offset.left + elmt.width() + 10) + "px");
+        .css("left", (offset.left + elmt.outerWidth()) + "px");
 };
 
 MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
@@ -126,4 +125,6 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
     } else {
         MenuSystem.positionMenuAboveBelow(menu, $(elmt));
     }
+    
+    return level;
 };

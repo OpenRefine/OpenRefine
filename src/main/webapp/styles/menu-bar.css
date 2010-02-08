@@ -1,0 +1,21 @@
+.menu-bar {
+    padding: 5px 10px;
+    background: #eee;
+    position: relative;
+}
+
+.menu-bar-inner {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 5px 10px;
+}
+
+.menu-bar-inner a.menu-item {
+    display: inline;
+    padding: 5px 10px;
+}
+
+.menu-bar-inner a.menu-item:hover {
+    background: #ddd;
+}

@@ -324,20 +324,6 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 }
                 self.render();
             }
-        },
-        {},
-        {
-            label: "Automatically Align Schemas with Freebase ...",
-            click: function() { self._doAutoSchemaAlignment(); }
-        },
-        {
-            label: "Edit Schema Alignment ...",
-            click: function() {  }
-        },
-        {},
-        {
-            label: "Export Filtered Rows",
-            click: function() { self._doExportRows(); }
         }
     ], elmt);
 };
@@ -842,29 +828,4 @@ DataTableView.prototype._doSplitMultiValueCells = function(column) {
             }
         );
     }
-};
-
-DataTableView.prototype._doExportRows = function() {
-    var form = document.createElement("form");
-    $(form)
-        .css("display", "none")
-        .attr("method", "post")
-        .attr("action", "/command/export-rows?project=" + theProject.id)
-        .attr("target", "gridworks-export");
-
-    $('<input />')
-        .attr("name", "engine")
-        .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
-        .appendTo(form);
-    
-    document.body.appendChild(form);
-
-    window.open("about:blank", "gridworks-export");
-    form.submit();
-    
-    document.body.removeChild(form);
-};
-
-DataTableView.prototype._doAutoSchemaAlignment = function() {
-    SchemaAlignment.autoAlign();
 };
