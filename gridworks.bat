@@ -17,7 +17,7 @@ rem --- First two utilities for exiting ----------------------------------------
 goto endUtils
 
 :usage
-echo Usage: %0 [options] <action>
+echo Usage %0 [options] ^<action^>
 echo where [options] include:
 echo.
 echo  /h print this message and exit
@@ -97,7 +97,7 @@ goto loop
 rem --- Fold in Environment Vars --------------------------------------------
 
 if not "%JAVA_OPTIONS%" == "" goto gotJavaOptions
-set JAVA_OPTIONS=-Xms32M -Xmx256M
+set JAVA_OPTIONS=-Xms256M -Xmx1024M
 :gotJavaOptions
 set OPTS=%OPTS% %JAVA_OPTIONS%
 
@@ -142,7 +142,7 @@ ant -f build.xml compile
 goto end
 
 :doRun
-CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*.jar"
+set CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% com.metaweb.gridworks.Gridworks
 goto end
 
