@@ -74,11 +74,7 @@ run() {
         echo ""
     fi
     
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes"
-    for i in `ls $GRIDWORKS_LIB_DIR/*.jar` ; do 
-        CLASSPATH=$CLASSPATH:$i
-    done
-
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
   
@@ -114,6 +110,12 @@ else
             exit 1
         fi
     fi
+fi
+
+JAVA_VERSION=`java -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1.6`
+if [ -z "$JAVA_VERSION" ] ; then
+    echo "Gridworks requires java version 6 or later."
+    exit 1
 fi
 
 # ----- Parse the command line args ------------------------------------------
