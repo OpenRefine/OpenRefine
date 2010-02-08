@@ -189,15 +189,18 @@ public class CreateProjectCommand extends Command {
 		        "application/x-ms-excel".equals(contentType) ||
 		        "application/vnd.ms-excel".equals(contentType) ||
 		        "application/x-excel".equals(contentType) ||
-		        "application/xls".equals(contentType) ||
-		        "application/x-xls".equals(contentType)) {
+		        "application/xls".equals(contentType)) {
 				
-				return new ExcelImporter(); 
+				return new ExcelImporter(false);
+			} else if("application/x-xls".equals(contentType)) {
+				return new ExcelImporter(true); 
 			}
 		} else if (fileName != null) {
 			fileName = fileName.toLowerCase();
-			if (fileName.endsWith(".xls")) { // Note: we can't handle .xlsx yet
-				return new ExcelImporter(); 
+			if (fileName.endsWith(".xls")) {
+				return new ExcelImporter(false); 
+			} else if (fileName.endsWith(".xlsx")) {
+				return new ExcelImporter(true); 
 			}
 		}
 		

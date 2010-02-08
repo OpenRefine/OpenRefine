@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
@@ -19,6 +19,11 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class ExcelImporter implements Importer {
+	final protected boolean _xmlBased;
+	
+	public ExcelImporter(boolean xmlBased) {
+		_xmlBased = xmlBased;
+	}
 
 	public boolean takesReader() {
 		return false;
@@ -33,9 +38,11 @@ public class ExcelImporter implements Importer {
 	public void read(InputStream inputStream, Project project,
 			Properties options) throws Exception {
 		
-        POIFSFileSystem fs = new POIFSFileSystem(inputStream);
-        HSSFWorkbook wb = new HSSFWorkbook(fs);
-        HSSFSheet sheet = wb.getSheetAt(0);
+        Workbook wb = _xmlBased ? 
+        		new XSSFWorkbook(inputStream) : 
+        		new HSSFWorkbook(new POIFSFileSystem(inputStream));
+        		
+        Sheet sheet = wb.getSheetAt(0);
 
         int firstRow = sheet.getFirstRowNum();
         int lastRow = sheet.getLastRowNum();
@@ -48,7 +55,7 @@ public class ExcelImporter implements Importer {
          *  Find the header row
          */
         for (; r <= lastRow; r++) {
-            HSSFRow row = sheet.getRow(r);
+            org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
                 continue;
             }
@@ -60,7 +67,7 @@ public class ExcelImporter implements Importer {
             	nonBlankHeaderStrings = new ArrayList<String>(lastCell - firstCell + 1);
             	
                 for (int c = firstCell; c <= lastCell; c++) {
-                    HSSFCell cell = row.getCell(c);
+                    org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
                     if (cell != null) {
                         String text = cell.getStringCellValue().trim();
                         if (text.length() > 0) {
@@ -93,7 +100,7 @@ public class ExcelImporter implements Importer {
          *  Now process the data rows
          */
         for (; r <= lastRow; r++) {
-            HSSFRow row = sheet.getRow(r);
+            org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
                 continue;
             }
@@ -109,21 +116,21 @@ public class ExcelImporter implements Importer {
             			continue;
             		}
             		
-        			HSSFCell cell = row.getCell(c);
+        			org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
         			if (cell == null) {
         				continue;
         			}
         			
             		int cellType = cell.getCellType();
-            		if (cellType == HSSFCell.CELL_TYPE_ERROR || 
-            			cellType == HSSFCell.CELL_TYPE_BLANK) {
+            		if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR || 
+            			cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
             			continue;
             		}
             		
             		Object value = null;
-            		if (cellType == HSSFCell.CELL_TYPE_BOOLEAN) {
+            		if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
             			value = cell.getBooleanCellValue();
-            		} else if (cellType == HSSFCell.CELL_TYPE_NUMERIC) {
+            		} else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {
             			value = cell.getNumericCellValue();
             		} else {
                         String text = cell.getStringCellValue().trim();
