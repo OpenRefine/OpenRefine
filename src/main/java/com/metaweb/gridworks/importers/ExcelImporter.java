@@ -59,7 +59,7 @@ public class ExcelImporter implements Importer {
             	nonBlankIndices = new ArrayList<Integer>(lastCell - firstCell + 1);
             	nonBlankHeaderStrings = new ArrayList<String>(lastCell - firstCell + 1);
             	
-                for (short c = firstCell; c <= lastCell; c++) {
+                for (int c = firstCell; c <= lastCell; c++) {
                     HSSFCell cell = row.getCell(c);
                     if (cell != null) {
                         String text = cell.getStringCellValue().trim();
@@ -104,7 +104,7 @@ public class ExcelImporter implements Importer {
             	Row newRow = new Row(nonBlankIndices.size());
             	boolean hasData = false;
             	
-            	for (short c = 0; c < nonBlankIndices.size(); c++) {
+            	for (int c = 0; c < nonBlankIndices.size(); c++) {
             		if (c < firstCell || c > lastCell) {
             			continue;
             		}
