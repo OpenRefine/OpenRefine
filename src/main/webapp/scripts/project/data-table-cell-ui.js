@@ -65,6 +65,11 @@ DataTableCellUI.prototype._render = function() {
                         .addClass("data-table-recon-topic")
                         .attr("href", "http://www.freebase.com/view" + candidate.id)
                         .attr("target", "_blank")
+                        .click(function(evt) {
+                            self._previewCandidateTopic(candidate.id, this);
+                            evt.preventDefault();
+                            return false;
+                        })
                         .text(candidate.name)
                         .appendTo(li);
                         
@@ -135,4 +140,26 @@ DataTableCellUI.prototype.doPostThenUpdate = function(command, params) {
         this.createUpdateFunction(),
         "json"
     );
+};
+
+DataTableCellUI.prototype._previewCandidateTopic = function(id, elmt) {
+    var url = "http://www.freebase.com/widget/topic" + id + '?mode=content&blocks=[{"block"%3A"image"}%2C{"block"%3A"full_info"}%2C{"block"%3A"article_props"}]';
+    
+    var fakeMenu = MenuSystem.createMenu();
+    fakeMenu
+        .width(700)
+        .height(300)
+        .css("background", "none")
+        .css("border", "none");
+    
+    var iframe = $('<iframe></iframe>')
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .css("background", "none")
+        .css("border", "none")
+        .attr("src", url)
+        .appendTo(fakeMenu);
+    
+    MenuSystem.showMenu(fakeMenu, function(){});
+    MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
 };
