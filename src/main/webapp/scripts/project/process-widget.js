@@ -1,6 +1,7 @@
 function ProcessWidget(div) {
     this._div = div;
     this._timerID = null;
+    this._processCount = 0;
     this.update();
 }
 
@@ -27,11 +28,16 @@ ProcessWidget.prototype._render = function() {
     var bodyDiv = $('<div></div>').addClass("process-panel-inner").appendTo(this._div);
     if (this._data.processes.length == 0) {
         this._div.hide();
-
-        ui.historyWidget.update();
-        ui.dataTableView.update(true);
+        
+        if (this._processCount > 0) {
+            this._processCount = 0;
+            
+            ui.historyWidget.update();
+            ui.dataTableView.update(true);
+        }
         return;
     }
+    this._processCount = this._data.processes.length;
     
     this._div.show();
     
