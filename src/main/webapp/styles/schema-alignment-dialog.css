@@ -3,3 +3,24 @@
     overflow: auto;
     border: 1px solid #aaa;
 }
+
+td.schema-alignment-node-main {
+    white-space: pre;
+    width: 300px;
+}
+
+td.schema-alignment-node-toggle {
+    white-space: pre;
+    width: 1%;
+}
+
+td.schema-alignment-node-toggle img {
+    cursor: pointer;
+    vertical-align: middle;
+    padding: 2px;
+}
+
+td.schema-alignment-node-details {
+    width: 90%;
+}
+
