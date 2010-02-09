@@ -126,6 +126,9 @@ public class ExcelImporter implements Importer {
             			cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
             			continue;
             		}
+            		if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
+            			cellType = cell.getCachedFormulaResultType();
+            		}
             		
             		Object value = null;
             		if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
