@@ -18,7 +18,7 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 	
 	static public enum Judgment {
 		None,
-		Approve,
+		Matched,
 		New
 	}
 	
@@ -41,8 +41,8 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 			return candidates.size() > 0 ? candidates.get(0) : null;
 		} else if ("judgment".equals(name) || "judgement".equals(name)) {
 			return judgmentToString();
-		} else if ("approved".equals(name)) {
-			return judgment == Judgment.Approve;
+		} else if ("matched".equals(name)) {
+			return judgment == Judgment.Matched;
 		} else if ("new".equals(name)) {
 			return judgment == Judgment.New;
 		} else if ("match".equals(name)) {
@@ -58,8 +58,8 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 	}
 	
 	protected String judgmentToString() {
-		if (judgment == Judgment.Approve) {
-			return "approve";
+		if (judgment == Judgment.Matched) {
+			return "matched";
 		} else if (judgment == Judgment.New) {
 			return "new";
 		} else {

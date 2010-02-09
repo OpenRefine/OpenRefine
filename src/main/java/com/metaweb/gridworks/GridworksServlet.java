@@ -33,6 +33,7 @@ import com.metaweb.gridworks.commands.info.GetRowsCommand;
 import com.metaweb.gridworks.commands.recon.ApproveNewReconcileCommand;
 import com.metaweb.gridworks.commands.recon.ApproveReconcileCommand;
 import com.metaweb.gridworks.commands.recon.DiscardReconcileCommand;
+import com.metaweb.gridworks.commands.recon.JudgeOneCellCommand;
 import com.metaweb.gridworks.commands.recon.ReconcileCommand;
 import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
 import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
@@ -67,6 +68,7 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("approve-reconcile", new ApproveReconcileCommand());
 		_commands.put("approve-new-reconcile", new ApproveNewReconcileCommand());
 		_commands.put("discard-reconcile", new DiscardReconcileCommand());
+		_commands.put("judge-one-cell", new JudgeOneCellCommand());
 		
 		_commands.put("preview-expression", new PreviewExpressionCommand());
         _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());

@@ -41,3 +41,35 @@ img.column-header-menu {
     text-align: center;
     margin: 1em 0;
 }
+
+
+ul.data-table-recon-candidates {
+    margin: 0.75em 1.5em;
+    padding: 0;
+    list-style: circle;
+    color: #88a;
+}
+
+a.data-table-recon-topic {
+    text-decoration: none;
+    color: #88a;
+}
+a.data-table-recon-topic:hover {
+    text-decoration: underline;
+    color: #008;
+}
+
+.data-table-recon-score {
+    color: #aaa;
+    margin: 0 0.5em;
+}
+
+a.data-table-recon-action {
+    font-size: 80%;
+    text-decoration: none;
+    color: #aaf;
+}
+a.data-table-recon-action:hover {
+    text-decoration: underline;
+    color: #008;
+}

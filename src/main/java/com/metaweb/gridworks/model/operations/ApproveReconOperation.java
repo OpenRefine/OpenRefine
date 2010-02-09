@@ -56,7 +56,7 @@ public class ApproveReconOperation extends EngineDependentMassCellOperation {
 							cell.recon.dup()
 						);
 						newCell.recon.match = newCell.recon.candidates.get(0);
-						newCell.recon.judgment = Judgment.Approve;
+						newCell.recon.judgment = Judgment.Matched;
 						
 						CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
 						cellChanges.add(cellChange);

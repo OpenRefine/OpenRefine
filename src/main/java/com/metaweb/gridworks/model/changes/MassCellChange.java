@@ -26,7 +26,7 @@ public class MassCellChange implements Change {
 			List<Row> rows = project.rows;
 			
 			for (CellChange cellChange : _cellChanges) {
-				rows.get(cellChange.row).cells.set(cellChange.column, cellChange.newCell);
+				rows.get(cellChange.row).setCell(cellChange.cellIndex, cellChange.newCell);
 			}
 			
 			if (_commonCellIndex >= 0) {
@@ -44,7 +44,7 @@ public class MassCellChange implements Change {
 			List<Row> rows = project.rows;
 			
 			for (CellChange cellChange : _cellChanges) {
-				rows.get(cellChange.row).cells.set(cellChange.column, cellChange.oldCell);
+				rows.get(cellChange.row).setCell(cellChange.cellIndex, cellChange.oldCell);
 			}
 			
 			if (_commonCellIndex >= 0) {
