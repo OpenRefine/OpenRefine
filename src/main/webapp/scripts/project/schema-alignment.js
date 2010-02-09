@@ -89,3 +89,53 @@ SchemaAlignment._batchSearch = function(queries, onDone) {
 SchemaAlignment._cleanName = function(s) {
     return s.replace(/\W/g, " ").replace(/\s+/g, " ").toLowerCase();
 }
+
+function SchemaAlignmentDialog(protograph) {
+    var protograph = {
+        rootNodes: [
+            {
+                nodeType: "existing",
+                column: "name",
+                linkages: [
+                ]
+            }
+        ]
+    };
+    
+    this._createDialog();
+};
+
+SchemaAlignmentDialog.prototype._createDialog = function() {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    
+    frame.width("1000px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Schema Alignment").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    this._renderFooter(footer);
+    this._renderBody(body);
+    
+    this._level = DialogSystem.showDialog(frame);
+};
+
+SchemaAlignmentDialog.prototype._renderFooter = function(footer) {
+    var self = this;
+    
+    $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+        DialogSystem.dismissUntil(self._level - 1);
+        self._onDone(self._getNewProtograph());
+    }).appendTo(footer);
+    
+    $('<button></button>').text("Cancel").click(function() {
+        DialogSystem.dismissUntil(self._level - 1);
+    }).appendTo(footer);
+};
+
+SchemaAlignmentDialog.prototype._renderBody = function(body) {
+    var self = this;
+    
+    this._canvas = $('<div></div>').addClass("schema-alignment-dialog-canvas").appendTo(body);
+};

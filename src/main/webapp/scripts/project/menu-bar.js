@@ -135,5 +135,15 @@ MenuBar.prototype._doExportRows = function() {
 };
 
 MenuBar.prototype._doAutoSchemaAlignment = function() {
-    SchemaAlignment.autoAlign();
+    //SchemaAlignment.autoAlign();
+    new SchemaAlignmentDialog({
+        rootNodes: [
+            {
+                nodeType: "existing",
+                column: "name",
+                linkages: [
+                ]
+            }
+        ]
+    });
 };
