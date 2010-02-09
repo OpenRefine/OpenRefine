@@ -11,9 +11,17 @@
     <property environment="env"/>
 
     <property name="src.dir" value="${basedir}/src/main/java" />
+    <property name="graphics.dir" value="${basedir}/src/graphics" />
     <property name="lib.dir" value="${basedir}/lib" />
-    <property name="build.dir" value="${basedir}/build" />
+    <property name="tools.dir" value="${basedir}/thirdparty" />
     <property name="classes.dir" value="${build.dir}/classes" />
+    <property name="bundle.dir" value="${build.dir}/bundle" />
+    
+    <taskdef 
+        name="jarbundler" 
+        classpath="${tools.dir}/jarbundler-2.1.0.jar" 
+        classname="net.sourceforge.jarbundler.JarBundler" 
+    />
 
     <path id="class.path">
         <fileset dir="${lib.dir}">
@@ -28,12 +36,49 @@
         </javac>
     </target>
 
+    <target name="jar" depends="compile">
+        <jar destfile="${build.dir}/gridworks.jar" basedir="${classes.dir}"/>
+    </target>
+    
+    <target name="bundle" depends="jar">
+        <mkdir dir="${bundle.dir}"/>
+        <jarbundler 
+                dir="${bundle.dir}"
+                name="Gridworks"
+                mainclass="com.metaweb.gridworks.Gridworks" 
+                icon="${graphics.dir}/icon/gridworks.icns"
+                version="${version}"
+                infostring="Gridworks ${version}"
+                aboutmenuname="Gridworks"
+                workingdirectory="$APP_PACKAGE/Contents/Resources"
+                jvmversion="1.6+"
+                bundleid="com.metaweb.gridworks.Gridworks"
+                vmoptions="-Xms256M -Xmx1024M"
+                antialiasedgraphics="true"
+                antialiasedtext="true"
+                liveresize="true"
+                growboxintrudes="true"
+                screenmenu="true">
+            <jarfileset dir="${lib.dir}">
+                <exclude name="**/.svn" />
+                <include name="**/*.jar" />
+            </jarfileset>
+            <jarfilelist dir="${build.dir}" files="gridworks.jar" />
+            <resourcefileset dir="${basedir}/src/main/">
+                <include name="webapp/**" />
+            </resourcefileset>
+
+        </jarbundler>
+    </target>
+    
     <target name="clean">
+        <delete file="${build.dir}/gridworks.jar" />
         <delete dir="${classes.dir}" />
     </target>
 
     <target name="distclean">
         <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
     </target>
 
 </project>

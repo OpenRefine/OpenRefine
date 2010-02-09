@@ -4,12 +4,16 @@
 #               Gridworks Control System                 #
 ##########################################################
 
-fail() {
-    cat <<EOF
+fail () {
+   cat <<EOF
 ERROR: $1
-Usage: $0 [options] <action>
-  -h for more details
+Type '$0 -h' for usage information.
 EOF
+exit 1
+}
+
+error() {
+    echo "$1"
     exit 1
 }
 
@@ -35,11 +39,16 @@ where [options] include:
   
 and <action> is one of
 
-   build ..... Build Gridworks      
-   run ....... Run Gridworks
+   build ..................... Build Gridworks      
+   run ....................... Run Gridworks
+   
+   make_dmg <version> ........ Make MacOSX DMG distribution
+   
+   clean ..................... Clean compiled classes
+   distclean ................. Remove all generated files
                 
 EOF
-    exit 0
+    exit 1
 }
 
 add_option() {
@@ -48,9 +57,17 @@ add_option() {
 
 OPTS="$GRIDWORKS_OPTS"
 
+SYSTEM=`uname`
+        
 # ----- actions -------------------------------------------------
 
-build() {
+check_macosx() {
+    if [ "$SYSTEM" != 'Darwin' ] ; then
+        error "This action can only run on MacOSX"
+    fi
+}
+    
+ant_prepare() {
     if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
         mkdir $GRIDWORKS_BUILD_DIR || exit 1
     fi
@@ -64,19 +81,84 @@ build() {
             tar xzf $ANT_TAR -C $BUILD_DIR || exit 1
         fi
     fi
+}
+
+ant() {
+    ant_prepare    
+    $ANT -f build.xml -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" $1 || exit 1
+}
+
+dist_prepare() {
+    if [ ! -d $GRIDWORKS_DIST_DIR ] ; then 
+        mkdir $GRIDWORKS_DIST_DIR || exit 1
+    fi
+}
+        
+make_dmg() {
+    check_macosx
+    dist_prepare
+        
+    VERSION=$1
+
+    if [ "$VERSION" == "" ] ; then
+        fail "Must specify a version number"
+    fi
     
-    $ANT -f build.xml compile || exit 1
+    ant bundle
+
+    mkdir "$GRIDWORKS_BUILD_DIR/bundle/.background"
+    cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/bundle/.background/dmg_background.png"
+    
+    SIZE=30
+    
+    TITLE="Gridworks $VERSION"
+    echo "Building MacOSX DMG for $TITLE"
+    hdiutil create -srcfolder "$GRIDWORKS_BUILD_DIR/bundle" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    DEVICE=$(hdiutil attach -readwrite -noverify -noautoopen "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}')
+    hdiutil attach "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    
+    echo '
+       tell application "Finder"
+         tell disk "'$TITLE'"
+            open
+            set current view of container window to icon view
+            set toolbar visible of container window to false
+            set statusbar visible of container window to false
+            set the bounds of container window to {200, 100, 945, 461}
+            set theViewOptions to the icon view options of container window
+            set arrangement of theViewOptions to not arranged
+            set icon size of theViewOptions to 100
+            set background picture of theViewOptions to file ".background:'dmg_background.png'"
+            make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
+            set position of item "'Gridworks'" of container window to {450, 150}
+            set position of item "Applications" of container window to {600, 150}
+            close
+            open               
+            update without registering applications
+            delay 2
+            eject
+         end tell
+       end tell
+    ' | osascript    
+    
+    chmod -Rf go-w /Volumes/Gridworks
+    sync
+    sync
+    hdiutil detach $DEVICE
+    hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION.dmg"
+    hdiutil internet-enable -yes "$GRIDWORKS_DIST_DIR/gridworks-$VERSION.dmg"
+    rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
 }
 
 run() {
     if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
-        build
+        ant build
         echo ""
     fi
     
     CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
 
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS -Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns com.metaweb.gridworks.Gridworks"
   
     echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
@@ -101,21 +183,17 @@ if [ ! -z "$JAVA_HOME" ] ; then
 else 
     JAVA=`which java`
     if [ -z "$JAVA" ] ; then
-        system=`uname`
-        
-        if [ "$system" = 'Darwin' ] ; then
+        if [ "$SYSTEM" = 'Darwin' ] ; then
             JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Home
         else
-            echo "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
-            exit 1
+            error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
         fi
     fi
 fi
 
 JAVA_VERSION=`java -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1.6`
 if [ -z "$JAVA_VERSION" ] ; then
-    echo "Gridworks requires java version 6 or later."
-    exit 1
+    error "Gridworks requires java version 6 or later."
 fi
 
 # ----- Parse the command line args ------------------------------------------
@@ -137,7 +215,7 @@ ACTION=$1; shift
 # ----- Verify and Set Required Environment Variables -------------------------
 
 if [ "$JAVA_OPTIONS" == "" ] ; then
-  JAVA_OPTIONS="-Xms256M -Xmx1024M"
+  JAVA_OPTIONS="-Xms256M -Xmx1024M -XX:+UseLargePages -XX:+UseConcMarkSweepGC -XX:+UseParallelGC"
 fi
 add_option "$JAVA_OPTIONS"
 
@@ -164,16 +242,31 @@ if [ "$GRIDWORKS_LIB_DIR" == "" ] ; then
     GRIDWORKS_LIB_DIR="lib"
 fi
 
+if [ "$GRIDWORKS_DIST_DIR" == "" ] ; then
+    GRIDWORKS_DIST_DIR="dist"
+fi
 
 # ----- Respond to the action given --------------------------------------------
 
 case "$ACTION" in
   build)
-    build;;
+    ant compile;;
+
+  bundle)
+    ant bundle;;
+
+  clean)
+    ant clean;;
+
+  distclean)
+    ant distclean;;
 
   run) 
     run;;  
     
+  make_dmg)
+    make_dmg $1;;
+      
   *)
     usage; ;;
 esac
