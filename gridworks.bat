@@ -37,13 +37,16 @@ echo  /x enable JMX monitoring (for jconsole and friends)
 echo.
 echo and <action> is one of
 echo.
-echo   build ..... Build Gridworks
-echo   run ....... Run Gridworks
+echo   build ..................... Build Gridworks      
+echo   run ....................... Run Gridworks
+echo.
+echo   clean ..................... Clean compiled classes
+echo   distclean ................. Remove all generated files
 echo.
 goto end
 
 :fail
-echo See: '%0 /h' for usage.
+echo Type 'gridworks /h' for usage.
 goto end
 
 :endUtils
@@ -97,7 +100,7 @@ goto loop
 rem --- Fold in Environment Vars --------------------------------------------
 
 if not "%JAVA_OPTIONS%" == "" goto gotJavaOptions
-set JAVA_OPTIONS=-Xms256M -Xmx1024M
+set JAVA_OPTIONS=-Xms256M -Xmx1024M -XX:+UseLargePages -XX:+UseParallelGC
 :gotJavaOptions
 set OPTS=%OPTS% %JAVA_OPTIONS%
 
@@ -128,22 +131,20 @@ rem ----- Respond to the action ------------------------------------------------
 
 set ACTION=%1
 
-if not "%ACTION%" == "" goto gotAction
-set ACTION="run"
-:gotAction
-
-if ""%ACTION%"" == ""build"" goto doBuild
+if ""%ACTION%"" == ""build"" goto doAnt
+if ""%ACTION%"" == ""clean"" goto doAnt
+if ""%ACTION%"" == ""distclean"" goto doAnt
 if ""%ACTION%"" == ""run"" goto doRun
 
 goto usage
 
-:doBuild
-ant -f build.xml compile
-goto end
-
 :doRun
 set CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% com.metaweb.gridworks.Gridworks
+goto end
+
+:doAnt
+ant -f build.xml -Dbuild.dir="%GRIDWORKS_BUILD_DI%" -Ddist.dir="%GRIDWORKS_DIST_DIR%" -Dversion="%VERSION%" %ACTION%
 goto end
 
 :end

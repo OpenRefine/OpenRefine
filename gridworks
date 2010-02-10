@@ -43,6 +43,7 @@ and <action> is one of
    run ....................... Run Gridworks
    
    make_dmg <version> ........ Make MacOSX DMG distribution
+   make_exe <version> ........ Make Windows EXE distribution
    
    clean ..................... Clean compiled classes
    distclean ................. Remove all generated files
@@ -74,18 +75,18 @@ ant_prepare() {
     
     ANT=`which ant`
     if [ "$ANT" = "" ] ; then
-        ANT_TAR=`ls thirdparty | grep apache-ant`
-        ANT_DIR="$GRIDWORKS_BUILD_DIR/ant"
-        ANT="$ANT_DIR/bin/ant"
+        ANT_TAR=`find thirdparty | grep apache-ant | grep -v svn`
+        ANT_DIR=`echo $ANT_TAR | sed 's/.tar.gz//'`
         if [ ! -d $ANT_DIR ] ; then
-            tar xzf $ANT_TAR -C $BUILD_DIR || exit 1
+            tar xzf $ANT_TAR -C $GRIDWORKS_BUILD_DIR || exit 1
         fi
+        ANT="$ANT_DIR/bin/ant"
     fi
 }
 
 ant() {
     ant_prepare    
-    $ANT -f build.xml -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" $1 || exit 1
+    $ANT -f build.xml -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Djava.options="$JAVA_OPTIONS" $1 || exit 1
 }
 
 dist_prepare() {
@@ -93,7 +94,29 @@ dist_prepare() {
         mkdir $GRIDWORKS_DIST_DIR || exit 1
     fi
 }
-        
+       
+launch4j_prepare() {
+    LAUNCH4J_TAR=`find thirdparty | grep launch4j | grep -v svn`
+    LAUNCH4J_DIR="thirdparty/launch4j"
+    if [ ! -d "$LAUNCH4J_DIR" ] ; then
+        tar xzf $LAUNCH4J_TAR -C thirdparty || exit 1
+    fi
+}
+
+make_exe() {
+    check_macosx
+    dist_prepare
+    launch4j_prepare
+    
+    VERSION=$1        
+    
+    if [ "$VERSION" == "" ] ; then
+        fail "Must specify a version number"
+    fi
+    
+    ant exe
+}
+    
 make_dmg() {
     check_macosx
     dist_prepare
@@ -215,7 +238,7 @@ ACTION=$1; shift
 # ----- Verify and Set Required Environment Variables -------------------------
 
 if [ "$JAVA_OPTIONS" == "" ] ; then
-  JAVA_OPTIONS="-Xms256M -Xmx1024M -XX:+UseLargePages -XX:+UseConcMarkSweepGC -XX:+UseParallelGC"
+  JAVA_OPTIONS="-Xms256M -Xmx1024M -XX:+UseLargePages -XX:+UseParallelGC"
 fi
 add_option "$JAVA_OPTIONS"
 
@@ -250,7 +273,7 @@ fi
 
 case "$ACTION" in
   build)
-    ant compile;;
+    ant build;;
 
   bundle)
     ant bundle;;
@@ -266,6 +289,9 @@ case "$ACTION" in
     
   make_dmg)
     make_dmg $1;;
+
+  make_exe)
+    make_exe $1;;
       
   *)
     usage; ;;

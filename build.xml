@@ -6,7 +6,7 @@
     |                
     +-->
 
-<project name="gridworks" default="compile" basedir=".">
+<project name="gridworks" default="build" basedir=".">
 
     <property environment="env"/>
 
@@ -17,31 +17,31 @@
 	<property name="build.dir" value="${basedir}/build" />
     <property name="classes.dir" value="${build.dir}/classes" />
     <property name="bundle.dir" value="${build.dir}/bundle" />
+    <property name="exe.dir" value="${build.dir}/exe" />
     
-    <taskdef 
-        name="jarbundler" 
-        classpath="${tools.dir}/jarbundler-2.1.0.jar" 
-        classname="net.sourceforge.jarbundler.JarBundler" 
-    />
-
     <path id="class.path">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar" />
         </fileset>
     </path>
             
-    <target name="compile">
+    <target name="build">
         <mkdir dir="${classes.dir}" />
-        <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="true">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="true" includeAntRuntime="no">
             <classpath refid="class.path" />
         </javac>
     </target>
 
-    <target name="jar" depends="compile">
+    <target name="jar" depends="build">
         <jar destfile="${build.dir}/gridworks.jar" basedir="${classes.dir}"/>
     </target>
     
     <target name="bundle" depends="jar">
+        <taskdef 
+            name="jarbundler" 
+            classname="net.sourceforge.jarbundler.JarBundler" 
+            classpath="${tools.dir}/jarbundler-2.1.0.jar" 
+        />
         <mkdir dir="${bundle.dir}"/>
         <jarbundler 
                 dir="${bundle.dir}"
@@ -54,7 +54,7 @@
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
                 jvmversion="1.6+"
                 bundleid="com.metaweb.gridworks.Gridworks"
-                vmoptions="-Xms256M -Xmx1024M"
+                vmoptions="${java.options}"
                 antialiasedgraphics="true"
                 antialiasedtext="true"
                 liveresize="true"
@@ -68,10 +68,52 @@
             <resourcefileset dir="${basedir}/src/main/">
                 <include name="webapp/**" />
             </resourcefileset>
-
         </jarbundler>
     </target>
     
+    <target name="exe" depends="jar">
+        <mkdir dir="${exe.dir}"/>
+		<taskdef 
+		      name="launch4j" 
+		      classname="net.sf.launch4j.ant.Launch4jTask" 
+		      classpath="${tools.dir}/launch4j/launch4j.jar:${tools.dir}/launch4j/lib/xstream.jar" 
+	    />
+        <launch4j>
+          <config 
+               headerType="console" 
+               outfile="${exe.dir}/Gridworks.exe" 
+               jarPath="lib/gridworks-${version}.jar" 
+               dontWrapJar="true"
+               icon="${graphics.dir}/icon/gridworks.ico">
+            <classPath mainClass="com.metaweb.gridworks.Gridworks">
+                <cp>${lib.dir}/*.jar</cp>
+            </classPath>
+            <jre minVersion="1.6.0" jdkPreference="preferJre">
+                <opt>${java.version}</opt>
+            </jre>
+            <versionInfo
+                fileVersion="${version}.0.0"
+                txtFileVersion="${version}"
+                fileDescription="gridworks"
+                copyright="Copyright (c) 2010, Metaweb Technologies, Inc."
+                productVersion="${version}.0.0"
+                txtProductVersion="${version}.0.0"
+                productName="Gridworks"
+                companyName="Metaweb Technologies, Inc."
+                internalName="gridworks"
+                originalFilename="gridworks.exe" 
+            />
+          </config>
+        </launch4j>		
+        <copy todir="${exe.dir}/lib">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+        <copy file="${build.dir}/gridworks.jar" tofile="${exe.dir}/lib/gridworks-${version}.jar"/>
+        <zip destfile="${dist.dir}/gridworks-${version}.zip" basedir="${exe.dir}"/>                
+	</target>
+
     <target name="clean">
         <delete file="${build.dir}/gridworks.jar" />
         <delete dir="${classes.dir}" />
