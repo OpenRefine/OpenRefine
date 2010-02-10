@@ -63,3 +63,13 @@ a.schema-alignment-link-tag {
 a.schema-alignment-link-tag:hover {
     color: #88f;
 }
+
+.schema-alignment-node-dialog-column-list {
+    height: 300px;
+    overflow: auto;
+    border: 1px solid #aaa;
+    padding: 2px;
+}
+.schema-alignment-node-dialog-column-choice {
+    margin: 5px;
+}

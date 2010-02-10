@@ -205,7 +205,11 @@ SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
         .addClass("schema-alignment-node-tag")
         .appendTo(this._tdMain)
         .click(function(evt) {
-            self._showTagMenu(this);
+            if (self._options.mustBeCellTopic) {
+                self._showTagMenu(this);
+            } else {
+                self._showTagDialog();
+            }
         });
         
     if (this._node.nodeType == "cell-as-topic" || this._node.nodeType == "cell-as-value") {
@@ -217,7 +221,7 @@ SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
                 .addClass("schema-alignment-node-column")
                 .prependTo(a);
         } else {
-            a.html("Which column?");
+            a.html(this._options.mustBeCellTopic ? "Which column?" : "Configure...");
         }
     } else if (this._node.nodeType == "topic") {
         if ("topic" in this._node) {
@@ -370,6 +374,103 @@ SchemaAlignmentDialog.UINode.prototype._showTagMenu = function(elmt) {
     
     MenuSystem.createAndShowStandardMenu(menu, elmt);
 };
+
+SchemaAlignmentDialog.UINode.prototype._showTagDialog = function() {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    
+    frame.width("800px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Protograph Node").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    /*
+     * Body
+     */
+     
+    var table = $('<table></table>')
+        .attr("width", "100%")
+        .attr("cellspacing", "10")
+        .attr("cellpadding", "0")
+        .appendTo(body)[0];
+        
+    var tr0 = table.insertRow(0);
+    var tr1 = table.insertRow(1);
+    
+    var tdTop = tr0.insertCell(0);
+    var tdRightColumn = tr0.insertCell(1);
+    var tdLeftColumn = tr1.insertCell(0);
+    var tdMiddleColumn = tr1.insertCell(1);
+    
+    $(tdTop).attr("colspan", "2");
+    $(tdRightColumn).attr("rowspan", "2");
+    
+    var makeNodeTypeChoice = function(label, value, checked, parent) {
+        var heading = $('<h3></h3>').appendTo(parent);
+        
+        var radio = $('<input />')
+            .attr("type", "radio")
+            .attr("value", value)
+            .attr("name", "schema-align-node-dialog-node-type")
+            .appendTo(heading);
+            
+        if (checked) {
+            radio.attr("checked", "true");
+        }
+            
+        $('<span></span>').text(label).appendTo(heading);
+    };
+    
+    makeNodeTypeChoice("Set to Cell in Column", "cell-as-topic", this._node.nodeType == "cell-as-value" || this._node.nodeType == "cell-as-topic", tdTop);
+    
+    var divColumns = $('<div></div>')
+        .addClass("schema-alignment-node-dialog-column-list")
+        .appendTo(tdLeftColumn);
+        
+    var makeColumnChoice = function(column) {
+        var div = $('<div></div>')
+            .addClass("schema-alignment-node-dialog-column-choice")
+            .appendTo(divColumns);
+            
+        var radio = $('<input />')
+            .attr("type", "radio")
+            .attr("value", column.cellIndex)
+            .attr("name", "schema-align-node-dialog-column")
+            .appendTo(div);
+            
+        if (column.cellIndex == self._node.cellIndex) {
+            radio.attr("checked", "true");
+        }
+            
+        $('<span></span>').text(column.headerLabel).appendTo(div);
+    };
+    var columns = theProject.columnModel.columns;
+    for (var i = 0; i < columns.length; i++) {
+        makeColumnChoice(columns[i]);
+    }
+    
+    makeNodeTypeChoice("Set to Anonymous Node", "anonymous", this._node.nodeType == "anonymous", tdRightColumn);
+    makeNodeTypeChoice("Set to Freebase Topic", "topic", this._node.nodeType == "topic", tdRightColumn);
+    makeNodeTypeChoice("Set to Value", "value", this._node.nodeType == "value", tdRightColumn);
+    
+    /*
+     * Footer
+     */
+    
+    $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+        DialogSystem.dismissUntil(level - 1);
+        self._onDone(self._getNewProtograph());
+    }).appendTo(footer);
+    
+    $('<button></button>').text("Cancel").click(function() {
+        DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+    
+    var level = DialogSystem.showDialog(frame);
+};
+
+
 
 /*----------------------------------------------------------------------
  *  UILink

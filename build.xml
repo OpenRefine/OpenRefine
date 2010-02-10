@@ -14,6 +14,7 @@
     <property name="graphics.dir" value="${basedir}/src/graphics" />
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="tools.dir" value="${basedir}/thirdparty" />
+	<property name="build.dir" value="${basedir}/build" />
     <property name="classes.dir" value="${build.dir}/classes" />
     <property name="bundle.dir" value="${build.dir}/bundle" />
     
