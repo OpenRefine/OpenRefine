@@ -317,14 +317,14 @@ public class ReconOperation extends EngineDependentOperation {
 				
 				// best match
 				if (i == 0) {
-					recon.features.put("nameMatch", text.equalsIgnoreCase(candidate.topicName));
-					recon.features.put("nameLevenshtein", StringUtils.getLevenshteinDistance(text, candidate.topicName));
-					recon.features.put("nameWordDistance", wordDistance(text, candidate.topicName));
+					recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
+					recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
+					recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
 					
-					recon.features.put("typeMatch", false);
+					recon.setFeature(Recon.Feature_typeMatch, false);
 					for (String typeID : candidate.typeIDs) {
 						if (_typeID.equals(typeID)) {
-							recon.features.put("typeMatch", true);
+							recon.setFeature(Recon.Feature_typeMatch, true);
 							break;
 						}
 					}

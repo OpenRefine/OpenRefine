@@ -22,18 +22,58 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 		New
 	}
 	
-	public Map<String, Object> 	features = new HashMap<String, Object>();
+	static public int Feature_typeMatch = 0;
+	static public int Feature_nameMatch = 1;
+	static public int Feature_nameLevenshtein = 2;
+	static public int Feature_nameWordDistance = 3;
+	static public int Feature_max = 4;
+
+	static protected Map<String, Integer> s_featureMap;
+	static {
+		s_featureMap = new HashMap<String, Integer>();
+		s_featureMap.put("typeMatch", Feature_typeMatch);
+		s_featureMap.put("nameMatch", Feature_nameMatch);
+		s_featureMap.put("nameLevenshtein", Feature_nameLevenshtein);
+		s_featureMap.put("nameWordDistance", Feature_nameWordDistance);
+	}
+	
+	public Object[] 			features = new Object[Feature_max];
 	public List<ReconCandidate> candidates = new LinkedList<ReconCandidate>();
 	public Judgment				judgment = Judgment.None;
 	public ReconCandidate		match = null;
 	
 	public Recon dup() {
 		Recon r = new Recon();
-		r.features.putAll(new HashMap<String, Object>(features));
+		
+		System.arraycopy(features, 0, r.features, 0, features.length);
+		
 		r.candidates.addAll(candidates);
 		r.judgment = judgment;
 		r.match = match;
 		return r;
+	}
+	
+	public Object getFeature(int feature) {
+		return feature < features.length ? features[feature] : null;
+	}
+	
+	public void setFeature(int feature, Object v) {
+		if (feature >= features.length) {
+			if (feature >= Feature_max) {
+				return;
+			}
+			
+			// We deserialized this object from an older version of the class
+			// that had fewer features, so we can just try to extend it
+			
+			Object[] newFeatures = new Object[Feature_max];
+			
+			System.arraycopy(features, 0, newFeatures, 0, features.length);
+			
+			features = newFeatures;
+		}
+		
+		features[feature] = v;
 	}
 	
 	public Object getField(String name, Properties bindings) {
@@ -48,11 +88,7 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 		} else if ("match".equals(name)) {
 			return match;
 		} else if ("features".equals(name)) {
-			return new HasFields() {
-				public Object getField(String name, Properties bindings) {
-					return features.get(name);
-				}
-			};
+			return new Features();
 		}
 		return null;
 	}
@@ -69,7 +105,8 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 	
 	public class Features implements HasFields {
 		public Object getField(String name, Properties bindings) {
-			return features.get(name);
+			int index = s_featureMap.get(name);
+			return index < features.length ? features[index] : null;
 		}
 	}
 
