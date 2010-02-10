@@ -1,0 +1,36 @@
+package com.metaweb.gridworks.protograph;
+
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
+
+public class CellValueNode extends CellNode {
+	private static final long serialVersionUID = 7311884925532708576L;
+	
+	final public String		valueType;
+	final public String 	lang;
+
+	public CellValueNode(
+		int 	cellIndex,
+		String 	valueType, 
+		String  lang
+	) {
+		super(cellIndex);
+		
+		this.valueType = valueType;
+		this.lang = lang;
+	}
+	
+	public void write(JSONWriter writer, Properties options)
+		throws JSONException {
+
+		writer.object();
+		writer.key("nodeType"); writer.value("cell-as-value");
+		writer.key("cellIndex"); writer.value(cellIndex);
+		writer.key("valueType"); writer.value(valueType);
+		writer.key("lang"); writer.value(lang);
+		writer.endObject();
+	}
+
+}

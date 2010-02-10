@@ -63,3 +63,7 @@ a img {
 img {
     vertical-align: middle;
 }
+
+.fbs-pane, .fbs-flyout-pane {
+    z-index: 2000;
+}

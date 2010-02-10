@@ -1,31 +1,13 @@
 package com.metaweb.gridworks.protograph;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-public class CellNode extends Node {
+abstract public class CellNode extends Node {
 	private static final long serialVersionUID = 5820786756175547307L;
 
-	final public int			cellIndex;
-	final public boolean		createUnlessRecon;
-	final public FreebaseType 	type;
+	final public int cellIndex;
 	
 	public CellNode(
-		int 			cellIndex,
-		boolean 		createUnlessRecon, 
-		FreebaseType 	type
+		int cellIndex
 	) {
 		this.cellIndex = cellIndex;
-		this.createUnlessRecon = createUnlessRecon;
-		this.type = type;
 	}
-	
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		// TODO Auto-generated method stub
-
-	}
-
 }

@@ -11,26 +11,29 @@ import com.metaweb.gridworks.Jsonizable;
 public class Link implements Serializable, Jsonizable {
 	private static final long serialVersionUID = 2908086768260322876L;
 	
-	final protected FreebaseProperty 	_property;
-	final protected Node				_target;
+	final public FreebaseProperty 	property;
+	final public Node				target;
 	
 	public Link(FreebaseProperty property, Node target) {
-		_property = property;
-		_target = target;
+		this.property = property;
+		this.target = target;
 	}
 	
 	public FreebaseProperty getProperty() {
-		return _property;
+		return property;
 	}
 	
 	public Node getTarget() {
-		return _target;
+		return target;
 	}
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
-		
+
+		writer.object();
+		writer.key("property"); property.write(writer, options);
+		writer.key("target"); target.write(writer, options);
+		writer.endObject();
 	}
 
 }
