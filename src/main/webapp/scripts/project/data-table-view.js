@@ -79,11 +79,16 @@ DataTableView.prototype.render = function() {
      *  Data Table
      *============================================================
      */
-    var tableDiv = $('<div></div>').addClass("data-table-container").css("width", container.width() + "px").appendTo(container);
+    var tableDiv = $('<div></div>')
+        .addClass("data-table-container")
+        .css("width", container.width() + "px")
+        .appendTo(container);
     
     var table = document.createElement("table");
-    table.className = "data-table";
-    tableDiv.append(table);
+    $(table)
+        .attr("cellspacing", "0")
+        .addClass("data-table")
+        .appendTo(tableDiv);
     
     var columns = theProject.columnModel.columns;
     var columnGroups = theProject.columnModel.columnGroups;
@@ -192,19 +197,28 @@ DataTableView.prototype.render = function() {
      */
     
     var rows = theProject.rowModel.rows;
+    var even = true;
     for (var r = 0; r < rows.length; r++) {
         var row = rows[r];
         var cells = row.cells;
         
         var tr = table.insertRow(table.rows.length);
-        tr.className = (r % 2) == 1 ? "odd" : "even";
+        
+        var td = tr.insertCell(tr.cells.length);
+        if ("j" in row) {
+            even = !even;
+            
+            $(tr).addClass("record");
+            $('<div></div>').html((row.j + 1) + ".").appendTo(td);
+        } else {
+            $('<div></div>').html("&nbsp;").appendTo(td);
+        }
         
         if ("contextual" in row && row.contextual) {
             $(tr).addClass("contextual");
         }
         
-        var td = tr.insertCell(tr.cells.length);
-        $(td).html((row.i + 1) + ".");
+        $(tr).addClass(even ? "even" : "odd");
         
         for (var i = 0; i < columns.length; i++) {
             var column = columns[i];

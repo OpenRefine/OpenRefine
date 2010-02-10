@@ -3,19 +3,28 @@
     overflow-x: auto;
 }
 
-table.data-table td {
+table.data-table {
+}
+
+table.data-table > tbody > tr > td {
     padding: 2px 5px;
+    border-top: 1px solid white;
+    border-right: 1px solid white;
 }
 
-table.data-table tr.odd {
+table.data-table > tbody > tr.odd > td {
+    border-top: 1px solid #ddd;
 }
 
-table.data-table tr.even {
-    background: #eee;
+table.data-table > tbody > tr.even > td {
+    background: #ddd;
 }
 
-table.data-table tr.contextual {
-    opacity: 0.2;
+table.data-table > tbody > tr.contextual > td > div {
+    opacity: 0.3;
+}
+
+table.data-table > tbody > tr.record.contextual > td {
 }
 
 table.data-table td.column-header {

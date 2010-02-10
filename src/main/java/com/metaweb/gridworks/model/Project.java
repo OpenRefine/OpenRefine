@@ -81,6 +81,7 @@ public class Project implements Serializable {
 			lastNonBlankRowsByGroup[i] = -1;
 		}
 		
+		int recordIndex = 0;
 		for (int r = 0; r < rows.size(); r++) {
 			Row row = rows.get(r);
 			row.contextRowSlots = null;
@@ -109,6 +110,7 @@ public class Project implements Serializable {
 			}
 			
 			if (row.contextRowSlots != null) {
+				row.recordIndex = -1;
 				row.contextRows = new ArrayList<Integer>();
 				for (int index : row.contextRowSlots) {
 					if (index >= 0) {
@@ -116,6 +118,8 @@ public class Project implements Serializable {
 					}
 				}
 				Collections.sort(row.contextRows);
+			} else {
+				row.recordIndex = recordIndex++;
 			}
 		}
 	}

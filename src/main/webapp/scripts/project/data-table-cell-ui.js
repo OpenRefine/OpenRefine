@@ -11,26 +11,27 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
 DataTableCellUI.prototype._render = function() {
     var self = this;
     var cell = this._cell;
-    var td = this._td;
     
-    $(td).empty();
+    $(this._td).empty();
+    var divContent = $('<div></div>').appendTo(this._td);
     
     if (cell == null || cell.v == null) {
+        $(divContent).html("&nbsp;");
         // TODO: content editing UI
         return;
     }
     
     if (!("r" in cell) || cell.r == null) {
-        $(td).html(cell.v);
+        $(divContent).html(cell.v);
     } else {
         var r = cell.r;
         if (r.j == "new") {
-            $(td).html(cell.v + " (new topic)");
+            $(divContent).html(cell.v + " (new topic)");
             
-            $('<span> </span>').appendTo(td);
+            $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}">re-match</a>')
                 .addClass("data-table-recon-action")
-                .appendTo(td).click(function(evt) {
+                .appendTo(divContent).click(function(evt) {
                     self._doRematch();
                 });
         } else if (r.j == "matched" && "m" in r && r.m != null) {
@@ -39,26 +40,26 @@ DataTableCellUI.prototype._render = function() {
                 .attr("href", "http://www.freebase.com/view" + match.id)
                 .attr("target", "_blank")
                 .text(match.name)
-                .appendTo(td);
+                .appendTo(divContent);
                 
-            $('<span> </span>').appendTo(td);
+            $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}">re-match</a>')
                 .addClass("data-table-recon-action")
-                .appendTo(td).click(function(evt) {
+                .appendTo(divContent).click(function(evt) {
                     self._doRematch();
                 });
         } else {
-            $(td).html(cell.v);
-            $('<span> </span>').appendTo(td);
+            $(divContent).html(cell.v);
+            $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}">mark as new</a>')
                 .addClass("data-table-recon-action")
-                .appendTo(td).click(function(evt) {
+                .appendTo(divContent).click(function(evt) {
                     self._doMarkAsNew();
                 });
             
             if (this._dataTableView._showRecon && "c" in r && r.c.length > 0) {
                 var candidates = r.c;
-                var ul = $('<ul></ul>').addClass("data-table-recon-candidates").appendTo(td);
+                var ul = $('<ul></ul>').addClass("data-table-recon-candidates").appendTo(divContent);
                 var renderCandidate = function(candidate, index) {
                     var li = $('<li></li>').appendTo(ul);
                     $('<a></a>')

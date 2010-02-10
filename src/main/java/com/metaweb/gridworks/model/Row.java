@@ -18,6 +18,7 @@ public class Row implements Serializable, HasFields, Jsonizable {
 	public boolean		       starred;
 	final public List<Cell>    cells;
 	
+	transient public int			recordIndex; // -1 for rows that are not main record rows
 	transient public List<Integer> 	contextRows;
 	transient public int[] 			contextRowSlots;
 	transient public int[] 			contextCellSlots;
@@ -122,6 +123,10 @@ public class Row implements Serializable, HasFields, Jsonizable {
 			}
 		}
 		writer.endArray();
+		
+		if (recordIndex >= 0) {
+			writer.key("j"); writer.value(recordIndex);
+		}
 		
 		if (options.containsKey("rowIndex")) {
 			writer.key("i"); writer.value(options.get("rowIndex"));
