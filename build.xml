@@ -5,6 +5,16 @@
     |  Gridworks Build File    
     |                
     +-->
+    
+<!--+
+    | NOTE: this script expects the 'build.dir' and 'dist.dir' properties to be set 
+    | when invoking it. This is done like this
+    |
+    |   ant -f build.xml -Dbuild.dir="/path/to/build/dir" -Ddist.dir="/path/to/dist/dir"
+    |
+    | the 'gridworks' shell script does this and it's meant to be the way to invoke ant,
+    | so running this script directly in ant is not suggested.
+    +-->
 
 <project name="gridworks" default="build" basedir=".">
 
@@ -14,7 +24,7 @@
     <property name="graphics.dir" value="${basedir}/src/graphics" />
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="tools.dir" value="${basedir}/thirdparty" />
-	<property name="build.dir" value="${basedir}/build" />
+    
     <property name="classes.dir" value="${build.dir}/classes" />
     <property name="bundle.dir" value="${build.dir}/bundle" />
     <property name="exe.dir" value="${build.dir}/exe" />
@@ -111,6 +121,11 @@
             </fileset>
         </copy>
         <copy file="${build.dir}/gridworks.jar" tofile="${exe.dir}/lib/gridworks-${version}.jar"/>
+        <copy todir="${exe.dir}/webapp">
+            <fileset dir="${basedir}/src/main/webapp">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
         <zip destfile="${dist.dir}/gridworks-${version}.zip" basedir="${exe.dir}"/>                
 	</target>
 
