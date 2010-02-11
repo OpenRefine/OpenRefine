@@ -50,9 +50,11 @@ function reinitializeProjectData(f) {
         function(data) {
             theProject.metadata = data;
         },
-        "/command/get-column-model?" + $.param({ project: theProject.id }), null,
+        "/command/get-models?" + $.param({ project: theProject.id }), null,
         function(data) {
-            theProject.columnModel = data;
+            theProject.columnModel = data.columnModel;
+            theProject.protograph = data.protograph;
+            
             for (var i = 0; i < theProject.columnModel.columns.length; i++) {
                 theProject.columnModel.columns[i].collapsed = false;
             }

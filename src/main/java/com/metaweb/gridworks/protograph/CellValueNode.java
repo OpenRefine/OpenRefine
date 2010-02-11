@@ -12,11 +12,11 @@ public class CellValueNode extends CellNode {
 	final public String 	lang;
 
 	public CellValueNode(
-		int 	cellIndex,
+		String	columnName,
 		String 	valueType, 
 		String  lang
 	) {
-		super(cellIndex);
+		super(columnName);
 		
 		this.valueType = valueType;
 		this.lang = lang;
@@ -27,7 +27,7 @@ public class CellValueNode extends CellNode {
 
 		writer.object();
 		writer.key("nodeType"); writer.value("cell-as-value");
-		writer.key("cellIndex"); writer.value(cellIndex);
+		writer.key("columnName"); writer.value(columnName);
 		writer.key("valueType"); writer.value(valueType);
 		writer.key("lang"); writer.value(lang);
 		writer.endObject();

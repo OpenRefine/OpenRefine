@@ -5,7 +5,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-public class AnonymousNode extends Node {
+public class AnonymousNode implements Node {
 	private static final long serialVersionUID = -6956243664838720646L;
 	
 	final public FreebaseType type;

@@ -1,13 +1,13 @@
 package com.metaweb.gridworks.protograph;
 
-abstract public class CellNode extends Node {
+abstract public class CellNode implements Node {
 	private static final long serialVersionUID = 5820786756175547307L;
 
-	final public int cellIndex;
+	final public String columnName;
 	
 	public CellNode(
-		int cellIndex
+		String columnName
 	) {
-		this.cellIndex = cellIndex;
+		this.columnName = columnName;
 	}
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.History;
 import com.metaweb.gridworks.process.ProcessManager;
+import com.metaweb.gridworks.protograph.Protograph;
 
 public class Project implements Serializable {
 	private static final long serialVersionUID = -5089046824819472570L;
@@ -20,6 +21,7 @@ public class Project implements Serializable {
 	final public ColumnModel 	columnModel = new ColumnModel();
 	final public List<Row> 		rows = new ArrayList<Row>();
 	final public History 		history;
+	public Protograph			protograph;
 	
 	transient public ProcessManager processManager;
 	

@@ -20,12 +20,13 @@ import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
 import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
+import com.metaweb.gridworks.commands.edit.SaveProtographCommand;
 import com.metaweb.gridworks.commands.edit.SplitMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.info.ExportRowsCommand;
 import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
-import com.metaweb.gridworks.commands.info.GetColumnModelCommand;
+import com.metaweb.gridworks.commands.info.GetModelsCommand;
 import com.metaweb.gridworks.commands.info.GetHistoryCommand;
 import com.metaweb.gridworks.commands.info.GetProcessesCommand;
 import com.metaweb.gridworks.commands.info.GetProjectMetadataCommand;
@@ -50,7 +51,7 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("get-project-metadata", new GetProjectMetadataCommand());
 		_commands.put("get-all-project-metadata", new GetAllProjectMetadataCommand());
 		
-		_commands.put("get-column-model", new GetColumnModelCommand());
+		_commands.put("get-models", new GetModelsCommand());
 		_commands.put("get-rows", new GetRowsCommand());
 		_commands.put("get-processes", new GetProcessesCommand());
 		_commands.put("get-history", new GetHistoryCommand());
@@ -69,6 +70,8 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("approve-new-reconcile", new ApproveNewReconcileCommand());
 		_commands.put("discard-reconcile", new DiscardReconcileCommand());
 		_commands.put("judge-one-cell", new JudgeOneCellCommand());
+		
+		_commands.put("save-protograph", new SaveProtographCommand());
 		
 		_commands.put("preview-expression", new PreviewExpressionCommand());
         _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());

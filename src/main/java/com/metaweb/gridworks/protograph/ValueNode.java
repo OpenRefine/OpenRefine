@@ -5,7 +5,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-public class ValueNode extends Node {
+public class ValueNode implements Node {
 	private static final long serialVersionUID = -5626883493437735688L;
 	
 	final public Object value;

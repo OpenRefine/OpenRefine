@@ -90,19 +90,11 @@ SchemaAlignment._cleanName = function(s) {
     return s.replace(/\W/g, " ").replace(/\s+/g, " ").toLowerCase();
 }
 
-function SchemaAlignmentDialog(protograph) {
-    protograph = {
-        rootNodes: [
-            {
-                nodeType: "cell-as-topic",
-                links: [
-                ]
-            }
-        ]
-    };
-
+function SchemaAlignmentDialog(protograph, onDone) {
+    this._onDone = onDone;
     this._originalProtograph = protograph;
-    this._protograph = cloneDeep(protograph);
+    this._protograph = cloneDeep(protograph); // this is what can be munched on
+    this._nodeUIs = [];
     
     this._createDialog();
 };
@@ -127,8 +119,26 @@ SchemaAlignmentDialog.prototype._renderFooter = function(footer) {
     var self = this;
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
-        DialogSystem.dismissUntil(self._level - 1);
-        self._onDone(self._getNewProtograph());
+        var protograph = self.getJSON();
+        
+        $.post(
+            "/command/save-protograph?" + $.param({ project: theProject.id }),
+            { protograph: JSON.stringify(protograph) },
+            function(data) {
+                if (data.code == "error") {
+                    alert("Failed to save protograph");
+                    return;
+                } else if (data.code == "ok") {
+                    ui.historyWidget.update();
+                } else {
+                    ui.processWidget.update();
+                }
+                
+                DialogSystem.dismissUntil(self._level - 1);
+                self._onDone(prototgraph);
+            },
+            "json"
+        );
     }).appendTo(footer);
     
     $('<button></button>').text("Cancel").click(function() {
@@ -143,15 +153,29 @@ SchemaAlignmentDialog.prototype._renderBody = function(body) {
     this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._canvas)[0];
     
     for (var i = 0; i < this._originalProtograph.rootNodes.length; i++) {
-        new SchemaAlignmentDialog.UINode(
+        this._nodeUIs.push(new SchemaAlignmentDialog.UINode(
             this._protograph.rootNodes[i], 
             this._nodeTable, 
             {
                 expanded: true,
                 mustBeCellTopic: true
             }
-        );
+        ));
     }
+};
+
+SchemaAlignmentDialog.prototype.getJSON = function() {
+    var rootNodes = [];
+    for (var i = 0; i < this._nodeUIs.length; i++) {
+        var node = this._nodeUIs[i].getJSON();
+        if (node != null) {
+            rootNodes.push(node);
+        }
+    }
+    
+    return {
+        rootNodes: rootNodes
+    };
 };
 
 /*----------------------------------------------------------------------
@@ -212,7 +236,10 @@ SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
             }
         });
         
-    if (this._node.nodeType == "cell-as-topic" || this._node.nodeType == "cell-as-value") {
+    if (this._node.nodeType == "cell-as-topic" || 
+        this._node.nodeType == "cell-as-value" || 
+        this._node.nodeType == "cell-as-key") {
+        
         if ("cellIndex" in this._node) {
             a.html(" cell");
             
@@ -385,53 +412,115 @@ SchemaAlignmentDialog.UINode.prototype._showTagDialog = function() {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    /*
+    /*--------------------------------------------------
      * Body
+     *--------------------------------------------------
      */
-     
-    var table = $('<table></table>')
-        .attr("width", "100%")
-        .attr("cellspacing", "10")
-        .attr("cellpadding", "0")
-        .appendTo(body)[0];
-        
-    var tr0 = table.insertRow(0);
-    var tr1 = table.insertRow(1);
     
-    var tdTop = tr0.insertCell(0);
-    var tdRightColumn = tr0.insertCell(1);
-    var tdLeftColumn = tr1.insertCell(0);
-    var tdMiddleColumn = tr1.insertCell(1);
+    var html = $(
+        '<table>' +
+            '<tr>' +
+                '<td>' +
+                    '<p><input type="radio" name="schema-align-node-dialog-node-type" value="cell-as" id="radioCellAs" /> Set to Cell in Column</p>' +
+                    '<table>' +
+                        '<tr>' +
+                            '<td><div class="schema-alignment-node-dialog-column-list" id="divColumns"></div></td>' +
+                            '<td>' +
+                                '<p>The cell\'s content will be ...</p>' +
+                                '<table>' +
+                                    '<tr>' +
+                                        '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-topic" id="radioCellAsTopic" /></td>' +
+                                        '<td colspan="2">name of a topic (as reconciled)</td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<td></td>' +
+                                        '<td>of Freebase type</td>' +
+                                        '<td><input /></td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<td></td>' +
+                                        '<td>create new topic if not reconciled</td>' +
+                                        '<td><input type="checkbox" /></td>' +
+                                    '</tr>' +
+                                    
+                                    '<tr>' +
+                                        '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-value" id="radioCellAsValue" /></td>' +
+                                        '<td colspan="2">a literal value</td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<td></td>' +
+                                        '<td>of literal type</td>' +
+                                        '<td><input /></td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<td></td>' +
+                                        '<td>in language</td>' +
+                                        '<td><input /></td>' +
+                                    '</tr>' +
+                                    
+                                    '<tr>' +
+                                        '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-key" id="radioCellAsKey" /></td>' +
+                                        '<td colspan="2">a key in a namespace</td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<td></td>' +
+                                        '<td>in namespace</td>' +
+                                        '<td><input /></td>' +
+                                    '</tr>' +
+                                '</table>' +
+                            '</td>' +
+                        '</tr>' +
+                    '</table>' +
+                '</td>' +
+                
+                '<td>' +
+                    '<p><input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" id="radioAnonymous" /> Set to Anonymous Node</p>' +
+                    '<table>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>of Freebase type</td>' +
+                            '<td><input /></td>' +
+                        '</tr>' +
+                    '</table>' +
+                    
+                    '<p><input type="radio" name="schema-align-node-dialog-node-type" value="topic" id="radioTopic" /> Set to Freebase Topic</p>' +
+                    '<table>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>topic</td>' +
+                            '<td><input /></td>' +
+                        '</tr>' +
+                    '</table>' +
+                    
+                    '<p><input type="radio" name="schema-align-node-dialog-node-type" value="value" id="radioValue" /> Set to Literal Value</p>' +
+                    '<table>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>value</td>' +
+                            '<td><input /></td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>value type</td>' +
+                            '<td><input /></td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>lang</td>' +
+                            '<td><input /></td>' +
+                        '</tr>' +
+                    '</table>' +
+                '</td>' +
+            '</tr>' +
+        '</table>'
+    ).appendTo(body);
     
-    $(tdTop).attr("colspan", "2");
-    $(tdRightColumn).attr("rowspan", "2");
+    var elmtMap = DOM.bind(html, [ "divColumns" ]);
     
-    var makeNodeTypeChoice = function(label, value, checked, parent) {
-        var heading = $('<h3></h3>').appendTo(parent);
-        
-        var radio = $('<input />')
-            .attr("type", "radio")
-            .attr("value", value)
-            .attr("name", "schema-align-node-dialog-node-type")
-            .appendTo(heading);
-            
-        if (checked) {
-            radio.attr("checked", "true");
-        }
-            
-        $('<span></span>').text(label).appendTo(heading);
-    };
-    
-    makeNodeTypeChoice("Set to Cell in Column", "cell-as-topic", this._node.nodeType == "cell-as-value" || this._node.nodeType == "cell-as-topic", tdTop);
-    
-    var divColumns = $('<div></div>')
-        .addClass("schema-alignment-node-dialog-column-list")
-        .appendTo(tdLeftColumn);
-        
     var makeColumnChoice = function(column) {
         var div = $('<div></div>')
             .addClass("schema-alignment-node-dialog-column-choice")
-            .appendTo(divColumns);
+            .appendTo(elmtMap.divColumns);
             
         var radio = $('<input />')
             .attr("type", "radio")
@@ -449,13 +538,11 @@ SchemaAlignmentDialog.UINode.prototype._showTagDialog = function() {
     for (var i = 0; i < columns.length; i++) {
         makeColumnChoice(columns[i]);
     }
+        
     
-    makeNodeTypeChoice("Set to Anonymous Node", "anonymous", this._node.nodeType == "anonymous", tdRightColumn);
-    makeNodeTypeChoice("Set to Freebase Topic", "topic", this._node.nodeType == "topic", tdRightColumn);
-    makeNodeTypeChoice("Set to Value", "value", this._node.nodeType == "value", tdRightColumn);
-    
-    /*
+    /*--------------------------------------------------
      * Footer
+     *--------------------------------------------------
      */
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
@@ -470,7 +557,86 @@ SchemaAlignmentDialog.UINode.prototype._showTagDialog = function() {
     var level = DialogSystem.showDialog(frame);
 };
 
-
+SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
+    var result = null;
+    var getLinks = false;
+    
+    if (this._node.nodeType.match(/^cell-as-/)) {
+        if (!("columnName" in this._node) || this._node.columnName == null) {
+            return null;
+        }
+            
+        if (this._node.nodeType == "cell-as-topic") {
+            result = {
+                nodeType: this._node.nodeType,
+                columnName: this._node.columnName,
+                type: "type" in this._node ? cloneNode(this._node.type) : { "id" : "/common/topic", "name" : "Topic", "cvt" : false },
+                createForNoReconMatch: "createForNoReconMatch" in this._node ? this._node.createForNoReconMatch : true
+            };
+            getLinks = true;
+        } else if (this._node.nodeType == "cell-as-value") {
+            result = {
+                nodeType: this._node.nodeType,
+                columnName: this._node.columnName,
+                valueType: "valueType" in this._node ? this._node.valueType : "/type/text",
+                lang: "lang" in this._node ? this._node.lang : "/lang/en"
+            };
+        } else if (this._node.nodeType == "cell-as-key") {
+            if (!("namespace" in this._node) || this._node.namespace == null) {
+                return null;
+            }
+            result = {
+                nodeType: this._node.nodeType,
+                columnName: this._node.columnName,
+                type: cloneNode(this._node.namespace)
+            };
+        }
+    } else if (this._node.nodeType == "topic") {
+        if (!("topic" in this._node) || this._node.topic == null) {
+            return null;
+        }
+        result = {
+            nodeType: this._node.nodeType,
+            topic: cloneNode(this._node.topic)
+        };
+        getLinks = true;
+    } else if (this._node.nodeType == "value") {
+        if (!("value" in this._node) || this._node.value == null) {
+            return null;
+        }
+        result = {
+            nodeType: this._node.nodeType,
+            value: this._node.value,
+            valueType: "valueType" in this._node ? this._node.valueType : "/type/text",
+            lang: "lang" in this._node ? this._node.lang : "/lang/en"
+        };
+    } else if (this._node.nodeType == "anonymous") {
+        if (!("type" in this._node) || this._node.type == null) {
+            return null;
+        }
+        result = {
+            nodeType: this._node.nodeType,
+            type: cloneNode(this._node.type)
+        };
+        getLinks = true;
+    }
+    
+    if (result == null) {
+        return null;
+    }
+    if (getLinks) {
+        var links = [];
+        for (var i = 0; i < this._linkUIs.length; i++) {
+            var link = this._linkUIs[i].getJSON();
+            if (link != null) {
+                links.push(link);
+            }
+        }
+        result.links = links;
+    }
+    
+    return result;
+};
 
 /*----------------------------------------------------------------------
  *  UILink
@@ -569,4 +735,19 @@ SchemaAlignmentDialog.UILink.prototype._showTagSuggest = function(elmt) {
         }, 100);
     });
     input[0].focus();
+};
+
+SchemaAlignmentDialog.UILink.prototype.getJSON = function() {
+    if ("property" in this._link && this._link.property != null &&
+        "target" in this._link && this._link.target != null) {
+        
+        var targetJSON = this._targetUI.getJSON();
+        if (targetJSON != null) {
+            return {
+                property: cloneNode(this._link.property),
+                target: targetJSON
+            };
+        }
+    }
+    return null;
 };
