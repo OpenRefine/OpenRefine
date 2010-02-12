@@ -62,7 +62,10 @@ SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
 
 SchemaAlignmentDialog.UILink.prototype._renderDetails = function() {
     var tableDetails = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._expandedDetailDiv)[0];
-    this._targetUI = new SchemaAlignmentDialog.UINode(this._link.target, tableDetails, true);
+    this._targetUI = new SchemaAlignmentDialog.UINode(
+        this._link.target, 
+        tableDetails, 
+        { expanded: "links" in this._link.target && this._link.target.links.length > 0 });
 };
 
 SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt) {

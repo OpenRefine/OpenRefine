@@ -23,7 +23,9 @@ SchemaAlignmentDialog.UINode = function(node, table, options) {
 };
 
 SchemaAlignmentDialog.UINode.prototype._isExpandable = function() {
-    return this._node.nodeType == "cell-as-topic";
+    return this._node.nodeType == "cell-as-topic" ||
+        this._node.nodeType == "anonymous" ||
+        this._node.nodeType == "topic";
 };
 
 SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
@@ -68,8 +70,6 @@ SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
     } else if (this._node.nodeType == "anonymous") {
         a.html("(anonymous)");
     }
-    
-    $('<img />').attr("src", "images/down-arrow.png").appendTo(a);
 };
 
 SchemaAlignmentDialog.UINode.prototype._showExpandable = function() {
@@ -399,7 +399,6 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     elmts.valueNodeTypeLanguageInput
         .bind("focus", function() { elmts.radioNodeTypeValue[0].checked = true; })
         .suggest({ type: "/type/lang" });
-
         
     elmts.radioNodeTypeCellAsTopicCreate
         .click(function() {
@@ -447,6 +446,36 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         elmts.radioNodeTypeTopic[0].checked = true;
     } else if (this._node.nodeType == "value") {
         elmts.radioNodeTypeValue[0].checked = true;
+    }
+    
+    if ("type" in this._node) {
+        elmts.anonymousNodeTypeInput[0].value = this._node.type.name;
+        elmts.anonymousNodeTypeInput.data("data.suggest", this._node.type);
+        
+        elmts.cellAsTopicNodeTypeInput[0].value = this._node.type.name;
+        elmts.cellAsTopicNodeTypeInput.data("data.suggest", this._node.type);
+    }
+    if ("topic" in this._node) {
+        elmts.topicNodeTypeInput[0].value = this._node.topic.name;
+        elmts.topicNodeTypeInput.data("data.suggest", this._node.topic);
+    }
+    if ("namespace" in this._node) {
+        elmts.cellAsKeyInput[0].value = this._node.namespace.name;
+        elmts.cellAsKeyInput.data("data.suggest", this._node.namespace);
+    }
+    if ("createForNoReconMatch" in this._node) {
+        elmts.radioNodeTypeCellAsTopicCreate[0].checked = this._node.createForNoReconMatch;
+    }
+    if ("lang" in this._node) {
+        elmts.valueNodeTypeLanguageInput[0].value = this._node.lang;
+        elmts.valueNodeTypeLanguageInput.data("data.suggest", { id: this._node.lang });
+        
+        elmts.cellAsValueLanguageInput[0].value = this._node.lang;
+        elmts.cellAsValueLanguageInput.data("data.suggest", { id: this._node.lang });
+    }
+    if ("valueType" in this._node) {
+        elmts.valueNodeTypeValueTypeSelect[0].value = this._node.valueType;
+        elmts.cellAsValueTypeSelect.value(this._node.valueType);
     }
     
     /*--------------------------------------------------

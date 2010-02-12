@@ -144,6 +144,8 @@ SchemaAlignmentDialog.prototype._renderFooter = function(footer) {
                 
                 DialogSystem.dismissUntil(self._level - 1);
                 
+                theProject.protograph = protograph;
+                
                 self._onDone(protograph);
             },
             "json"
