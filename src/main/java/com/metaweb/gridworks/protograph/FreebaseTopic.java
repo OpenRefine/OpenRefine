@@ -21,8 +21,11 @@ public class FreebaseTopic implements Serializable, Jsonizable {
 	
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
-
+		
+		writer.object();
+		writer.key("id"); writer.value(id);
+		writer.key("name"); writer.value(name);
+		writer.endObject();
 	}
 
 }

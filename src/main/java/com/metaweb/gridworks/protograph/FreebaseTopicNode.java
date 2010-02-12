@@ -23,13 +23,14 @@ public class FreebaseTopicNode implements Node, NodeWithLinks {
 		writer.object();
 		writer.key("nodeType"); writer.value("topic");
 		writer.key("topic"); topic.write(writer, options);
-		
-		writer.key("links"); writer.array();
-		for (Link link : links) {
-			link.write(writer, options);
+		if (links != null) {
+			writer.key("links"); writer.array();
+			for (Link link : links) {
+				link.write(writer, options);
+			}
+			writer.endArray();
 		}
-		writer.endArray();
-
+		
 		writer.endObject();
 	}
 

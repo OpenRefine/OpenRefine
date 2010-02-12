@@ -95,16 +95,14 @@ public class Protograph implements Serializable, Jsonizable {
 	static protected FreebaseProperty reconstructProperty(JSONObject o) throws JSONException {
 		return new FreebaseProperty(
 			o.getString("id"),
-			o.getString("name"),
-			reconstructType(o.getJSONObject("expected"))
+			o.getString("name")
 		);
 	}
 	
 	static protected FreebaseType reconstructType(JSONObject o) throws JSONException {
 		return new FreebaseType(
 			o.getString("id"),
-			o.getString("name"),
-			o.getBoolean("cvt")
+			o.getString("name")
 		);
 	}
 	

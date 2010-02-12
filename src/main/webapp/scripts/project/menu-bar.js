@@ -137,17 +137,7 @@ MenuBar.prototype._doExportRows = function() {
 MenuBar.prototype._doAutoSchemaAlignment = function() {
     //SchemaAlignment.autoAlign();
     
-    var protograph = theProject.protograph != null ? theProject.protograph : {
-        rootNodes: [
-            {
-                nodeType: "cell-as-topic",
-                links: [
-                ]
-            }
-        ]
-    };
-
-    new SchemaAlignmentDialog(protograph, function(newProtograph) {
+    new SchemaAlignmentDialog(theProject.protograph, function(newProtograph) {
         
     });
 };

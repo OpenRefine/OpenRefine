@@ -31,14 +31,17 @@ public class CellTopicNode extends CellNode implements NodeWithLinks {
 		writer.object();
 		writer.key("nodeType"); writer.value("cell-as-topic");
 		writer.key("columnName"); writer.value(columnName);
-		writer.key("type"); type.write(writer, options);
 		writer.key("createUnlessRecon"); writer.value(createForNoReconMatch);
-		
-		writer.key("links"); writer.array();
-		for (Link link : links) {
-			link.write(writer, options);
+		if (createForNoReconMatch && type != null) {
+			writer.key("type"); type.write(writer, options);
 		}
-		writer.endArray();
+		if (links != null) {
+			writer.key("links"); writer.array();
+			for (Link link : links) {
+				link.write(writer, options);
+			}
+			writer.endArray();
+		}
 		
 		writer.endObject();
 	}
