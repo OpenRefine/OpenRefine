@@ -1,10 +1,7 @@
 var DOM = {};
 
-DOM.bind = function(elmt, fields) {
+DOM.bind = function(elmt) {
     var map = {};
-    for (var i = 0; i < fields.length; i++) {
-        map[fields[i]] = null;
-    }
     
     DOM._bindDOMChildren(elmt[0], map);
     
@@ -14,10 +11,8 @@ DOM.bind = function(elmt, fields) {
 DOM._bindDOMElement = function(elmt, map) {
     var id = elmt.id;
     if (id != null && id.length > 0) {
-        if (id in map && map.hasOwnProperty(id)) {
-            map[id] = $(elmt);
-            elmt.removeAttribute("id");
-        }
+        map[id] = $(elmt);
+        elmt.removeAttribute("id");
     }
     
     if (elmt.hasChildNodes()) {

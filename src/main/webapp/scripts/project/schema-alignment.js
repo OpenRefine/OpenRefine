@@ -149,6 +149,14 @@ SchemaAlignmentDialog.prototype._renderFooter = function(footer) {
 SchemaAlignmentDialog.prototype._renderBody = function(body) {
     var self = this;
     
+    $('<p>' +
+        'The protograph serves as a skeleton for the graph-shaped data that will get generated ' +
+        'from your grid-shaped data and written into Freebase. The cells in each record of your data will ' +
+        'get placed into nodes within the protograph. Configure the protograph by specifying which ' +
+        'column to substitute into which node. A node can also be an automatically generated ' +
+        'anonymous node, or it can be an explicit value or topic that is the same for all records.' +
+    '</p>').appendTo(body);
+
     this._canvas = $('<div></div>').addClass("schema-alignment-dialog-canvas").appendTo(body);
     this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._canvas)[0];
     
@@ -418,96 +426,125 @@ SchemaAlignmentDialog.UINode.prototype._showTagDialog = function() {
      */
     
     var html = $(
-        '<table>' +
+        '<table class="schema-align-node-dialog-layout">' +
             '<tr>' +
                 '<td>' +
-                    '<p><input type="radio" name="schema-align-node-dialog-node-type" value="cell-as" id="radioCellAs" /> Set to Cell in Column</p>' +
-                    '<table>' +
+                    '<table class="schema-align-node-dialog-layout2">' +
                         '<tr>' +
-                            '<td><div class="schema-alignment-node-dialog-column-list" id="divColumns"></div></td>' +
-                            '<td>' +
-                                '<p>The cell\'s content will be ...</p>' +
-                                '<table>' +
-                                    '<tr>' +
-                                        '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-topic" id="radioCellAsTopic" /></td>' +
-                                        '<td colspan="2">name of a topic (as reconciled)</td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<td></td>' +
-                                        '<td>of Freebase type</td>' +
-                                        '<td><input /></td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<td></td>' +
-                                        '<td>create new topic if not reconciled</td>' +
-                                        '<td><input type="checkbox" /></td>' +
-                                    '</tr>' +
-                                    
-                                    '<tr>' +
-                                        '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-value" id="radioCellAsValue" /></td>' +
-                                        '<td colspan="2">a literal value</td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<td></td>' +
-                                        '<td>of literal type</td>' +
-                                        '<td><input /></td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<td></td>' +
-                                        '<td>in language</td>' +
-                                        '<td><input /></td>' +
-                                    '</tr>' +
-                                    
-                                    '<tr>' +
-                                        '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-key" id="radioCellAsKey" /></td>' +
-                                        '<td colspan="2">a key in a namespace</td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<td></td>' +
-                                        '<td>in namespace</td>' +
-                                        '<td><input /></td>' +
-                                    '</tr>' +
-                                '</table>' +
+                            '<td colspan="3">' +
+                                '<div class="schema-align-node-dialog-node-type">' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" id="radioNodeTypeAnonymous" /> Generate an anonymous graph node' +
+                                '</div>' +
                             '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Assign a type to the node</td>' +
+                            '<td>&nbsp;<input id="anonymousNodeTypeInput" /></td>' +
+                        '</tr>' +
+                    
+                        '<tr>' +
+                            '<td colspan="3">' +
+                                '<div class="schema-align-node-dialog-node-type">' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="topic" id="radioNodeTypeTopic" /> Use one existing Freebase topic' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Topic</td>' +
+                            '<td><input id="topicNodeTypeInput" /></td>' +
+                        '</tr>' +
+                    
+                        '<tr>' +
+                            '<td colspan="3">' +
+                                '<div class="schema-align-node-dialog-node-type">' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="value" id="radioNodeTypeValue" /> Use a literal value' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Value</td>' +
+                            '<td><input id="valueNodeTypeValueInput" /></td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Value type</td>' +
+                            '<td><input id="valueNodeTypeValueTypeInput" /></td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Language</td>' +
+                            '<td><input id="valueNodeTypeLanguageInput" /></td>' +
                         '</tr>' +
                     '</table>' +
                 '</td>' +
                 
                 '<td>' +
-                    '<p><input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" id="radioAnonymous" /> Set to Anonymous Node</p>' +
-                    '<table>' +
+                    '<table class="schema-align-node-dialog-layout2">' +
                         '<tr>' +
-                            '<td></td>' +
-                            '<td>of Freebase type</td>' +
-                            '<td><input /></td>' +
-                        '</tr>' +
-                    '</table>' +
-                    
-                    '<p><input type="radio" name="schema-align-node-dialog-node-type" value="topic" id="radioTopic" /> Set to Freebase Topic</p>' +
-                    '<table>' +
-                        '<tr>' +
-                            '<td></td>' +
-                            '<td>topic</td>' +
-                            '<td><input /></td>' +
-                        '</tr>' +
-                    '</table>' +
-                    
-                    '<p><input type="radio" name="schema-align-node-dialog-node-type" value="value" id="radioValue" /> Set to Literal Value</p>' +
-                    '<table>' +
-                        '<tr>' +
-                            '<td></td>' +
-                            '<td>value</td>' +
-                            '<td><input /></td>' +
+                            '<td>' +
+                                '<div class="schema-align-node-dialog-node-type">' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="cell-as" id="radioNodeTypeCellAs" /> Set to Cell in Column' +
+                                '</div>' +
+                            '</td>' +
                         '</tr>' +
                         '<tr>' +
-                            '<td></td>' +
-                            '<td>value type</td>' +
-                            '<td><input /></td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td></td>' +
-                            '<td>lang</td>' +
-                            '<td><input /></td>' +
+                            '<td>' +
+                                '<table class="schema-align-node-dialog-layout2">' +
+                                    '<tr>' +
+                                        '<td><div class="schema-alignment-node-dialog-column-list" id="divColumns"></div></td>' +
+                                        '<td>' +
+                                            '<table class="schema-align-node-dialog-layout2" cols="4">' +
+                                                '<tr>' +
+                                                    '<td colspan="4">The cell\'s content is used ...</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-topic" id="radioNodeTypeCellAsTopic" /></td>' +
+                                                    '<td colspan="3">to specify a Freebase topic, as reconciled</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                    '<td></td>' +
+                                                    '<td colspan="1" width="1%"><input type="checkbox" id="radioNodeTypeCellAsTopicCreate" /></td>' +
+                                                    '<td colspan="2">If not reconciled, create new topic named by the cell\'s content, and assign it a type</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                    '<td></td>' +
+                                                    '<td></td>' +
+                                                    '<td colspan="1">Type:</td>' +
+                                                    '<td colspan="1"><input id="cellAsTopicNodeTypeInput" /></td>' +
+                                                '</tr>' +
+                                                
+                                                '<tr>' +
+                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-value" id="radioNodeTypeCellAsValue" /></td>' +
+                                                    '<td colspan="3">as a literal value</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                    '<td></td>' +
+                                                    '<td colspan="2">Literal type</td>' +
+                                                    '<td colspan="1"><input id="cellAsValueTypeInput" /></td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                    '<td></td>' +
+                                                    '<td colspan="2">Language (for text)</td>' +
+                                                    '<td colspan="1"><input id="cellAsValueLanguageInput" /></td>' +
+                                                '</tr>' +
+                                                
+                                                '<tr>' +
+                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-key" id="radioNodeTypeCellAsKey" /></td>' +
+                                                    '<td colspan="3">as a key in a namespace</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                    '<td></td>' +
+                                                    '<td colspan="2">Namespace</td>' +
+                                                    '<td colspan="1"><input id="cellAsKeyInput" /></td>' +
+                                                '</tr>' +
+                                            '</table>' +
+                                        '</td>' +
+                                    '</tr>' +
+                                '</table>' +
+                            '</td>' +
                         '</tr>' +
                     '</table>' +
                 '</td>' +
@@ -515,39 +552,117 @@ SchemaAlignmentDialog.UINode.prototype._showTagDialog = function() {
         '</table>'
     ).appendTo(body);
     
-    var elmtMap = DOM.bind(html, [ "divColumns" ]);
+    var elmts = DOM.bind(html);
     
-    var makeColumnChoice = function(column) {
-        var div = $('<div></div>')
-            .addClass("schema-alignment-node-dialog-column-choice")
-            .appendTo(elmtMap.divColumns);
-            
+    var tableColumns = $('<table></table>')
+        .attr("cellspacing", "5")
+        .attr("cellpadding", "0")
+        .appendTo(elmts.divColumns)[0];
+        
+    var makeColumnChoice = function(column, columnIndex) {
+        var tr = tableColumns.insertRow(tableColumns.rows.length);
+        
         var radio = $('<input />')
             .attr("type", "radio")
             .attr("value", column.cellIndex)
             .attr("name", "schema-align-node-dialog-column")
-            .appendTo(div);
+            .appendTo(tr.insertCell(0))
+            .click(function() {
+                elmts.radioNodeTypeCellAs[0].checked = true;
+            });
             
-        if (column.cellIndex == self._node.cellIndex) {
+        if ((!("cellIndex" in self._node) || self._node.cellIndex == null) && columnIndex == 0) {
+            radio.attr("checked", "true");
+        } else if (column.cellIndex == self._node.cellIndex) {
             radio.attr("checked", "true");
         }
             
-        $('<span></span>').text(column.headerLabel).appendTo(div);
+        $('<span></span>').text(column.headerLabel).appendTo(tr.insertCell(1));
     };
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
-        makeColumnChoice(columns[i]);
+        makeColumnChoice(columns[i], i);
     }
         
+    elmts.anonymousNodeTypeInput
+        .bind("focus", function() { elmts.radioNodeTypeAnonymous[0].checked = true; })
+        .suggest({ type: "/type/type" });
+        
+    elmts.topicNodeTypeInput
+        .bind("focus", function() { elmts.radioNodeTypeTopic[0].checked = true; })
+        .suggest({});
+        
+    elmts.valueNodeTypeValueInput
+        .bind("focus", function() { elmts.radioNodeTypeValue[0].checked = true; })
+    elmts.valueNodeTypeValueTypeInput
+        .bind("focus", function() { elmts.radioNodeTypeValue[0].checked = true; })
+    elmts.valueNodeTypeLanguageInput
+        .bind("focus", function() { elmts.radioNodeTypeValue[0].checked = true; })
+        
+    elmts.radioNodeTypeCellAsTopicCreate
+        .click(function() {
+            elmts.radioNodeTypeCellAs[0].checked = true;
+            elmts.radioNodeTypeCellAsTopic[0].checked = true;
+        });
+    elmts.cellAsTopicNodeTypeInput
+        .bind("focus", function() {
+            elmts.radioNodeTypeCellAs[0].checked = true;
+            elmts.radioNodeTypeCellAsTopic[0].checked = true; 
+        })
+        .suggest({ type: "/type/type" });
+        
+    elmts.cellAsValueTypeInput
+        .bind("focus", function() {
+            elmts.radioNodeTypeCellAs[0].checked = true;
+            elmts.radioNodeTypeCellAsValue[0].checked = true; 
+        })
+    elmts.cellAsValueLanguageInput
+        .bind("focus", function() {
+            elmts.radioNodeTypeCellAs[0].checked = true;
+            elmts.radioNodeTypeCellAsValue[0].checked = true; 
+        })
+        
+    elmts.cellAsKeyInput
+        .bind("focus", function() {
+            elmts.radioNodeTypeCellAs[0].checked = true;
+            elmts.radioNodeTypeCellAsKey[0].checked = true;
+        })
+        .suggest({ type: "/type/namespace" });
+        
+    if (this._node.nodeType.match(/^cell-as-/)) {
+        elmts.radioNodeTypeCellAs[0].checked = true;
+        if (this._node.nodeType == "cell-as-topic") {
+            elmts.radioNodeTypeCellAsTopic[0].checked = true;
+        } else if (this._node.nodeType == "cell-as-value") {
+            elmts.radioNodeTypeCellAsValue[0].checked = true;
+        } else if (this._node.nodeType == "cell-as-key") {
+            elmts.radioNodeTypeCellAsKey[0].checked = true;
+        }
+    } else if (this._node.nodeType == "anonymous") {
+        elmts.radioNodeTypeAnonymous[0].checked = true;
+    } else if (this._node.nodeType == "topic") {
+        elmts.radioNodeTypeTopic[0].checked = true;
+    } else if (this._node.nodeType == "value") {
+        elmts.radioNodeTypeValue[0].checked = true;
+    }
     
     /*--------------------------------------------------
      * Footer
      *--------------------------------------------------
      */
     
+    var getResultJSON = function() {
+    };
+    
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         DialogSystem.dismissUntil(level - 1);
-        self._onDone(self._getNewProtograph());
+        self._node = getResultJSON();
+        if (self._isExpandable()) {
+            self._showExpandable();
+        } else {
+            hide._showExpandable();
+        }
+        self._renderMain();
     }).appendTo(footer);
     
     $('<button></button>').text("Cancel").click(function() {

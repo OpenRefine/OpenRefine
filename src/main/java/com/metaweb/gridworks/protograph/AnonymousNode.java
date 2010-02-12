@@ -16,8 +16,11 @@ public class AnonymousNode implements Node {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
-
+		
+		writer.object();
+		writer.key("nodeType"); writer.value("anonymous");
+		writer.key("type"); type.write(writer, options);
+		writer.endObject();
 	}
 
 }

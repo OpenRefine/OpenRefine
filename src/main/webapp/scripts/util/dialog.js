@@ -1,18 +1,10 @@
 DialogSystem = {
-    _layers: [],
-    _bottomOverlay: null
+    _layers: []
 };
 
 DialogSystem.showDialog = function(elmt, onCancel) {
-    if (DialogSystem._bottomOverlay == null) {
-        DialogSystem._bottomOverlay = $('<div>&nbsp;</div>')
-            .addClass("dialog-overlay")
-            .css("z-index", 100)
-            .appendTo(document.body);
-    }
-    
     var overlay = $('<div>&nbsp;</div>')
-        .addClass("dialog-overlay2")
+        .addClass("dialog-overlay")
         .css("z-index", 101 + DialogSystem._layers.length * 2)
         .appendTo(document.body);
         
@@ -55,13 +47,6 @@ DialogSystem.dismissUntil = function(level) {
         }
     }
     DialogSystem._layers = DialogSystem._layers.slice(0, level);
-    
-    if (level == 0) {
-        if (DialogSystem._bottomOverlay != null) {
-            DialogSystem._bottomOverlay.remove();
-            DialogSystem._bottomOverlay = null;
-        }
-    }
 };
 
 DialogSystem.createDialog = function() {
