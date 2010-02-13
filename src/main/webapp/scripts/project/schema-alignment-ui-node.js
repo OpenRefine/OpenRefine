@@ -22,10 +22,36 @@ SchemaAlignmentDialog.UINode = function(node, table, options) {
     }
 };
 
+SchemaAlignmentDialog.UINode.prototype.removeLink = function(linkUI) {
+    for (var i = this._linkUIs.length - 1; i >= 0; i--) {
+        if (this._linkUIs[i] === linkUI) {
+            this._linkUIs.splice(i, 1);
+            this._node.links.splice(i, 1);
+            break;
+        }
+    }
+};
+
 SchemaAlignmentDialog.UINode.prototype._isExpandable = function() {
     return this._node.nodeType == "cell-as-topic" ||
         this._node.nodeType == "anonymous" ||
         this._node.nodeType == "topic";
+};
+
+SchemaAlignmentDialog.UINode.prototype.render = function() {
+    this._renderMain();
+    if (this._isExpandable()) {
+        this._showExpandable();
+    } else {
+        this._hideExpandable();
+    }
+};
+
+SchemaAlignmentDialog.UINode.prototype.getExpectedType = function() {
+    if ("type" in this._node) {
+        return this._node.type.id;
+    }
+    return null;
 };
 
 SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
@@ -123,7 +149,7 @@ SchemaAlignmentDialog.UINode.prototype._renderDetails = function() {
     
     if ("links" in this._node && this._node.links != null) {
         for (var i = 0; i < this._node.links.length; i++) {
-            this._linkUIs.push(new SchemaAlignmentDialog.UILink(this._node.links[i], this._tableLinks, true));
+            this._linkUIs.push(new SchemaAlignmentDialog.UILink(this._node.links[i], this._tableLinks, { expanded: true }, this));
         }
     }
     
@@ -146,7 +172,8 @@ SchemaAlignmentDialog.UINode.prototype._renderDetails = function() {
                 {
                     expanded: true,
                     mustBeCellTopic: false
-                }
+                },
+                self
             ));
         });
 };
@@ -369,6 +396,22 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             .appendTo(tr.insertCell(0))
             .click(function() {
                 elmts.radioNodeTypeCellAs[0].checked = true;
+                
+                if ("reconConfig" in column) {
+                    var typeID = column.reconConfig.type;
+                    $.getJSON(
+                        "http://api.freebase.com/api/service/mqlread?query=" + JSON.stringify({ query: { "id" : typeID, "name" : null } }) + "&callback=?",
+                        null,
+                        function(o) {
+                            if ("result" in o) {
+                                elmts.cellAsTopicNodeTypeInput[0].value = o.result.name;
+                                elmts.cellAsTopicNodeTypeInput.data("data.suggest", { "id" : typeID, "name" : o.result.name });
+                                elmts.radioNodeTypeCellAsTopicCreate[0].checked = true;
+                            }
+                        },
+                        "jsonp"
+                    );
+                }
             });
             
         if ((!("columnName" in self._node) || self._node.columnName == null) && columnIndex == 0) {
@@ -431,6 +474,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         })
         .suggest({ type: "/type/namespace" });
         
+    elmts.radioNodeTypeCellAsTopic[0].checked = true; // just make sure some subtype is selected
     if (this._node.nodeType.match(/^cell-as-/)) {
         elmts.radioNodeTypeCellAs[0].checked = true;
         if (this._node.nodeType == "cell-as-topic") {
@@ -564,12 +608,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             DialogSystem.dismissUntil(level - 1);
             
             self._node = node;
-            if (self._isExpandable()) {
-                self._showExpandable();
-            } else {
-                self._hideExpandable();
-            }
-            self._renderMain();
+            self.render();
         }
     }).appendTo(footer);
     

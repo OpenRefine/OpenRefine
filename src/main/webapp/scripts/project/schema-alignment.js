@@ -93,7 +93,7 @@ SchemaAlignment._cleanName = function(s) {
 function SchemaAlignmentDialog(protograph, onDone) {
     this._onDone = onDone;
     this._originalProtograph = protograph || { rootNodes: [] };
-    this._protograph = cloneDeep(protograph); // this is what can be munched on
+    this._protograph = cloneDeep(this._originalProtograph); // this is what can be munched on
     
     if (this._protograph.rootNodes.length == 0) {
         this._protograph.rootNodes.push({

@@ -1,6 +1,7 @@
-SchemaAlignmentDialog.UILink = function(link, table, expanded) {
+SchemaAlignmentDialog.UILink = function(link, table, options, parentUINode) {
     this._link = link;
-    this._expanded = expanded;
+    this._options = options;
+    this._parentUINode = parentUINode;
     
     this._tr = table.insertRow(table.rows.length);
     this._tdMain = this._tr.insertCell(0);
@@ -15,7 +16,7 @@ SchemaAlignmentDialog.UILink = function(link, table, expanded) {
     this._expandedDetailDiv = $('<div></div>').appendTo(this._tdDetails).addClass("schema-alignment-detail-container");
     var self = this;
     var show = function() {
-        if (self._expanded) {
+        if (self._options.expanded) {
             self._collapsedDetailDiv.hide();
             self._expandedDetailDiv.show();
         } else {
@@ -27,12 +28,12 @@ SchemaAlignmentDialog.UILink = function(link, table, expanded) {
     
     $(this._tdToggle).html("&nbsp;");
     $('<img />')
-        .attr("src", this._expanded ? "images/expanded.png" : "images/collapsed.png")
+        .attr("src", this._options.expanded ? "images/expanded.png" : "images/collapsed.png")
         .appendTo(this._tdToggle)
         .click(function() {
-            self._expanded = !self._expanded;
+            self._options.expanded = !self._options.expanded;
             
-            $(this).attr("src", self._expanded ? "images/expanded.png" : "images/collapsed.png");
+            $(this).attr("src", self._options.expanded ? "images/expanded.png" : "images/collapsed.png");
             
             show();
         });
@@ -47,6 +48,18 @@ SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
     var label = this._link.property != null ? this._link.property.id : "property?";
     
     var self = this;
+    
+    $('<img />')
+        .attr("title", "remove property")
+        .attr("src", "images/close.png")
+        .css("cursor", "pointer")
+        .prependTo(this._tdMain)
+        .click(function() {
+            window.setTimeout(function() {
+                self._parentUINode.removeLink(self);
+                self._tr.parentNode.removeChild(self._tr);
+            }, 100);
+        });
     
     var a = $('<a href="javascript:{}"></a>')
         .addClass("schema-alignment-link-tag")
@@ -81,12 +94,23 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     
     var level = MenuSystem.showMenu(fakeMenu, function(){});
     MenuSystem.positionMenuAboveBelow(fakeMenu, $(elmt));
+    
+    var options = {
+        type : '/type/property'
+    };
+    var expectedTypeID = this._parentUINode.getExpectedType();
+    if (expectedTypeID != null) {
+        options.mql_filter = [{
+            "/type/property/schema" : { "id" : expectedTypeID }
+        }];
+    }
 
-    input.suggest({ type : '/type/property' }).bind("fb-select", function(e, data) {
+    input.suggest(options).bind("fb-select", function(e, data) {
         self._link.property = {
             id: data.id,
             name: data.name
         };
+        self._configureTarget();
         
         window.setTimeout(function() {
             MenuSystem.dismissAll();
@@ -109,4 +133,44 @@ SchemaAlignmentDialog.UILink.prototype.getJSON = function() {
         }
     }
     return null;
+};
+
+SchemaAlignmentDialog.UILink.prototype._configureTarget = function() {
+    var self = this;
+    $.getJSON(
+        "http://api.freebase.com/api/service/mqlread?query=" + JSON.stringify({
+            query: {
+                "id" : this._link.property.id,
+                "type" : "/type/property",
+                "expected_type" : {
+                    "id" : null,
+                    "name" : null,
+                    "/freebase/type_hints/mediator" : null
+                }
+            }
+        }) + "&callback=?",
+        null,
+        function(o) {
+            if ("result" in o) {
+                var expected_type = o.result.expected_type;
+                self._link.target.type = {
+                    id: expected_type.id,
+                    name: expected_type.name
+                };
+                if (expected_type["/freebase/type_hints/mediator"] == true) {
+                    self._link.target.nodeType = "anonymous";
+                } else if (expected_type.id == "/type/key") {
+                    self._link.target.nodeType = "cell-as-key";
+                } else if (expected_type.id.match(/^\/type\//)) {
+                    self._link.target.nodeType = "cell-as-value";
+                } else if (!("topic" in self._link.target)) {
+                    self._link.target.nodeType = "cell-as-topic";
+                    self._link.target.createForNoReconMatch = true;
+                }
+                
+                self._targetUI.render();
+            }
+        },
+        "jsonp"
+    );
 };
