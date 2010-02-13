@@ -181,6 +181,8 @@ SchemaAlignmentDialog.prototype._renderBody = function(body) {
             }
         ));
     }
+    
+    this._previewPane = $('<div></div>').addClass("schema-alignment-dialog-preview").appendTo(body);
 };
 
 SchemaAlignmentDialog.prototype.getJSON = function() {
