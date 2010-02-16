@@ -173,12 +173,16 @@ SchemaAlignmentDialog.prototype._constructBody = function(body) {
         '<div id="schema-alignment-tabs">' +
             '<ul>' +
                 '<li><a href="#schema-alignment-tabs-protograph">Protograph</a></li>' +
-                '<li><a href="#schema-alignment-tabs-preview">Preview</a></li>' +
+                '<li><a href="#schema-alignment-tabs-preview-mqllike">MQL-like Preview</a></li>' +
+                '<li><a href="#schema-alignment-tabs-preview-tripleloader">TripleLoader Preview</a></li>' +
             '</ul>' +
             '<div id="schema-alignment-tabs-protograph">' +
                 '<div class="schema-alignment-dialog-canvas"></div>' +
             '</div>' +
-            '<div id="schema-alignment-tabs-preview" style="display: none;">' +
+            '<div id="schema-alignment-tabs-preview-mqllike" style="display: none;">' +
+                '<div class="schema-alignment-dialog-preview"></div>' +
+            '</div>' +
+            '<div id="schema-alignment-tabs-preview-tripleloader" style="display: none;">' +
                 '<div class="schema-alignment-dialog-preview"></div>' +
             '</div>' +
         '</div>'
@@ -189,7 +193,8 @@ SchemaAlignmentDialog.prototype._renderBody = function(body) {
     var self = this;
     
     $("#schema-alignment-tabs").tabs();
-    $("#schema-alignment-tabs-preview").css("display", "");
+    $("#schema-alignment-tabs-preview-mqllike").css("display", "");
+    $("#schema-alignment-tabs-preview-tripleloader").css("display", "");
 
     this._canvas = $(".schema-alignment-dialog-canvas");
     this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._canvas)[0];
@@ -206,7 +211,7 @@ SchemaAlignmentDialog.prototype._renderBody = function(body) {
         ));
     }
     
-    this._previewPane = $(".schema-alignment-dialog-preview");
+    this._previewPanes = $(".schema-alignment-dialog-preview");
 };
 
 SchemaAlignmentDialog.prototype.getJSON = function() {
@@ -226,15 +231,18 @@ SchemaAlignmentDialog.prototype.getJSON = function() {
 SchemaAlignmentDialog.prototype.preview = function() {
     var self = this;
     
-    this._previewPane.empty();
+    this._previewPanes.empty();
     
     var protograph = this.getJSON();
     $.post(
         "/command/preview-protograph?" + $.param({ project: theProject.id }),
         { protograph: JSON.stringify(protograph) },
         function(data) {
-            if ("result" in data) {
-                self._previewPane.text(JSON.stringify(data.result, null, 2));
+            if ("mqllike" in data) {
+                $(self._previewPanes[0]).text(JSON.stringify(data.mqllike, null, 2));
+            }
+            if ("tripleloader" in data) {
+                $(self._previewPanes[1]).text(data.tripleloader);
             }
         },
         "json"

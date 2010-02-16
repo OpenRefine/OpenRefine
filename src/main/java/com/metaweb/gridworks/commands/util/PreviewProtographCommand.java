@@ -14,6 +14,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.protograph.Protograph;
 import com.metaweb.gridworks.protograph.transpose.MqlreadLikeTransposedNodeFactory;
 import com.metaweb.gridworks.protograph.transpose.Transposer;
+import com.metaweb.gridworks.protograph.transpose.TripleLoaderTransposedNodeFactory;
 
 public class PreviewProtographCommand extends Command {
 	@Override
@@ -27,14 +28,32 @@ public class PreviewProtographCommand extends Command {
 			JSONObject json = jsonStringToObject(jsonString);
 			Protograph protograph = Protograph.reconstruct(json);
 			
-			MqlreadLikeTransposedNodeFactory nodeFactory = new MqlreadLikeTransposedNodeFactory();
+			StringBuffer sb = new StringBuffer();
+			sb.append("{ ");
 			
-			Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory);
+			{
+				TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory();
+				
+				Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory);
+				
+				sb.append("\"tripleloader\" : ");
+				sb.append(JSONObject.quote(nodeFactory.getLoad()));
+			}
 			
-			JSONArray results = nodeFactory.getJSON();
+			{
+				MqlreadLikeTransposedNodeFactory nodeFactory = new MqlreadLikeTransposedNodeFactory();
+				
+				Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory);
+				
+				JSONArray results = nodeFactory.getJSON();
+				
+				sb.append(", \"mqllike\" : ");
+				sb.append(results.toString());
+			}
+
+			sb.append(" }");
 			
-			respond(response, "{ \"result\" : " + results.toString() + " }");
-			
+			respond(response, sb.toString());
 		} catch (Exception e) {
 			respondException(response, e);
 		}
