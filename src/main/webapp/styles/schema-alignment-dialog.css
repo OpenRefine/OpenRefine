@@ -1,8 +1,9 @@
 .schema-alignment-dialog-canvas {
-    height: 325px;
+    height: 500px;
     overflow: auto;
     border: 1px solid #aaa;
     padding: 10px;
+    background: white;
 }
 
 table.schema-alignment-table-layout {
@@ -65,14 +66,14 @@ a.schema-alignment-link-tag:hover {
 }
 
 div.schema-alignment-dialog-preview {
-    height: 200px;
+    height: 500px;
     overflow: auto;
     border: 1px solid #aaa;
+    background: white;
     padding: 10px;
-    margin-top: 10px;
     white-space: pre;
     font-family: monospace;
-    font-size: 11pt;
+    font-size: 9pt;
 }
 
 /*--------------------------------------------------

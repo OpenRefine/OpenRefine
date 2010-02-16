@@ -118,13 +118,15 @@ SchemaAlignmentDialog.prototype._createDialog = function() {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    this._renderFooter(footer);
-    this._renderBody(body);
+    this._constructFooter(footer);
+    this._constructBody(body);
     
     this._level = DialogSystem.showDialog(frame);
+    
+    this._renderBody(body);
 };
 
-SchemaAlignmentDialog.prototype._renderFooter = function(footer) {
+SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
@@ -158,9 +160,7 @@ SchemaAlignmentDialog.prototype._renderFooter = function(footer) {
     }).appendTo(footer);
 };
 
-SchemaAlignmentDialog.prototype._renderBody = function(body) {
-    var self = this;
-    
+SchemaAlignmentDialog.prototype._constructBody = function(body) {
     $('<p>' +
         'The protograph serves as a skeleton for the graph-shaped data that will get generated ' +
         'from your grid-shaped data and written into Freebase. The cells in each record of your data will ' +
@@ -168,8 +168,30 @@ SchemaAlignmentDialog.prototype._renderBody = function(body) {
         'column to substitute into which node. A node can also be an automatically generated ' +
         'anonymous node, or it can be an explicit value or topic that is the same for all records.' +
     '</p>').appendTo(body);
+    
+    $(
+        '<div id="schema-alignment-tabs">' +
+            '<ul>' +
+                '<li><a href="#schema-alignment-tabs-protograph">Protograph</a></li>' +
+                '<li><a href="#schema-alignment-tabs-preview">Preview</a></li>' +
+            '</ul>' +
+            '<div id="schema-alignment-tabs-protograph">' +
+                '<div class="schema-alignment-dialog-canvas"></div>' +
+            '</div>' +
+            '<div id="schema-alignment-tabs-preview" style="display: none;">' +
+                '<div class="schema-alignment-dialog-preview"></div>' +
+            '</div>' +
+        '</div>'
+    ).appendTo(body);
+};
 
-    this._canvas = $('<div></div>').addClass("schema-alignment-dialog-canvas").appendTo(body);
+SchemaAlignmentDialog.prototype._renderBody = function(body) {
+    var self = this;
+    
+    $("#schema-alignment-tabs").tabs();
+    $("#schema-alignment-tabs-preview").css("display", "");
+
+    this._canvas = $(".schema-alignment-dialog-canvas");
     this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._canvas)[0];
     
     for (var i = 0; i < this._protograph.rootNodes.length; i++) {
@@ -184,7 +206,7 @@ SchemaAlignmentDialog.prototype._renderBody = function(body) {
         ));
     }
     
-    this._previewPane = $('<div></div>').addClass("schema-alignment-dialog-preview").appendTo(body);
+    this._previewPane = $(".schema-alignment-dialog-preview");
 };
 
 SchemaAlignmentDialog.prototype.getJSON = function() {

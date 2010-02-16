@@ -119,7 +119,8 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
 				obj = new JSONObject();
 				try {
 					obj.put("value", cell.value.toString());
-					if (node.lang != null) {
+					obj.put("type", node.valueType);
+					if ("/type/text".equals(node.lang)) {
 						obj.put("lang", node.lang);
 					}
 					
@@ -195,7 +196,8 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
 				obj = new JSONObject();
 				try {
 					obj.put("value", node.value);
-					if (node.lang != null) {
+					obj.put("type", node.valueType);
+					if ("/type/text".equals(node.lang)) {
 						obj.put("lang", node.lang);
 					}
 					
