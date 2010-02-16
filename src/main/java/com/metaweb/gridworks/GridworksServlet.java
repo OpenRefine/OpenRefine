@@ -38,6 +38,7 @@ import com.metaweb.gridworks.commands.recon.JudgeOneCellCommand;
 import com.metaweb.gridworks.commands.recon.ReconcileCommand;
 import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
 import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
+import com.metaweb.gridworks.commands.util.PreviewProtographCommand;
 
 public class GridworksServlet extends HttpServlet {
 	private static final long serialVersionUID = 2386057901503517403L;
@@ -75,6 +76,7 @@ public class GridworksServlet extends HttpServlet {
 		
 		_commands.put("preview-expression", new PreviewExpressionCommand());
         _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());
+        _commands.put("preview-protograph", new PreviewProtographCommand());
 	}
 
 	@Override

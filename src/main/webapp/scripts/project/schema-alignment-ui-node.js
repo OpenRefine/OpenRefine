@@ -1,4 +1,5 @@
-SchemaAlignmentDialog.UINode = function(node, table, options) {
+SchemaAlignmentDialog.UINode = function(dialog, node, table, options) {
+    this._dialog = dialog;
     this._node = node;
     this._options = options;
     
@@ -149,7 +150,13 @@ SchemaAlignmentDialog.UINode.prototype._renderDetails = function() {
     
     if ("links" in this._node && this._node.links != null) {
         for (var i = 0; i < this._node.links.length; i++) {
-            this._linkUIs.push(new SchemaAlignmentDialog.UILink(this._node.links[i], this._tableLinks, { expanded: true }, this));
+            this._linkUIs.push(new SchemaAlignmentDialog.UILink(
+                this._dialog, 
+                this._node.links[i], 
+                this._tableLinks, 
+                { expanded: true }, 
+                this
+            ));
         }
     }
     
@@ -167,6 +174,7 @@ SchemaAlignmentDialog.UINode.prototype._renderDetails = function() {
                 }
             };
             self._linkUIs.push(new SchemaAlignmentDialog.UILink(
+                self._dialog,
                 newLink, 
                 self._tableLinks,
                 {
@@ -519,7 +527,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     }
     if ("valueType" in this._node) {
         elmts.valueNodeTypeValueTypeSelect[0].value = this._node.valueType;
-        elmts.cellAsValueTypeSelect.value(this._node.valueType);
+        elmts.cellAsValueTypeSelect[0].value = this._node.valueType;
     }
     
     /*--------------------------------------------------
@@ -554,8 +562,10 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             } else if (node.nodeType == "cell-as-value") {
                 node.valueType = elmts.cellAsValueTypeSelect[0].value;
                 
-                var l = elmts.cellAsValueLanguageInput[0].data("data.suggest");
-                node.lang = (l) ? l.id : "/type/text";
+                if (node.valueType == "/type/text") {
+                    var l = elmts.cellAsValueLanguageInput.data("data.suggest");
+                    node.lang = (l) ? l.id : "/lang/en";
+                }
             } else if (node.nodeType == "cell-as-key") {
                 var t = elmts.cellAsKeyInput.data("data.suggest");
                 if (!(t)) {
@@ -595,8 +605,10 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             }
             node.valueType = elmts.valueNodeTypeValueTypeSelect[0].value;
             
-            var l = elmts.valueNodeTypeLanguageInput[0].data("data.suggest");
-            node.lang = (l) ? l.id : "/type/text";
+            if (node.valueType == "/type/text") {
+                var l = elmts.valueNodeTypeLanguageInput.data("data.suggest");
+                node.lang = (l) ? l.id : "/lang/en";
+            }
         }
         
         return node;
@@ -609,6 +621,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             
             self._node = node;
             self.render();
+            self._dialog.preview();
         }
     }).appendTo(footer);
     

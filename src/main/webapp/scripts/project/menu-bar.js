@@ -19,13 +19,13 @@ MenuBar.prototype._initializeUI = function() {
         }
     ]);
     this._createTopLevelMenuItem("Schemas", [
-        {
+        /*{
             label: "Auto-Align with Freebase ...",
             click: function() { self._doAutoSchemaAlignment(); }
-        },
+        },*/
         {
             label: "Edit Schema Alignment ...",
-            click: function() {  }
+            click: function() { self._doEditSchemaAlignment(); }
         }
     ]);
     
@@ -136,8 +136,8 @@ MenuBar.prototype._doExportRows = function() {
 
 MenuBar.prototype._doAutoSchemaAlignment = function() {
     //SchemaAlignment.autoAlign();
-    
-    new SchemaAlignmentDialog(theProject.protograph, function(newProtograph) {
-        
-    });
+};
+
+MenuBar.prototype._doEditSchemaAlignment = function() {
+    new SchemaAlignmentDialog(theProject.protograph, function(newProtograph) {});
 };

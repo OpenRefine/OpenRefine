@@ -17,6 +17,14 @@ public class Protograph implements Serializable, Jsonizable {
 	
 	final protected List<Node> _rootNodes = new LinkedList<Node>();
 	
+	public int getRootNodeCount() {
+		return _rootNodes.size();
+	}
+	
+	public Node getRootNode(int index) {
+		return _rootNodes.get(index);
+	}
+	
 	static public Protograph reconstruct(JSONObject o) throws JSONException {
 		Protograph g = new Protograph();
 		

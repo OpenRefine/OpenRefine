@@ -49,4 +49,12 @@ public class CellTopicNode extends CellNode implements NodeWithLinks {
 	public void addLink(Link link) {
 		links.add(link);
 	}
+
+	public Link getLink(int index) {
+		return links.get(index);
+	}
+
+	public int getLinkCount() {
+		return links.size();
+	}
 }

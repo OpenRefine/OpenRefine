@@ -1,4 +1,5 @@
-SchemaAlignmentDialog.UILink = function(link, table, options, parentUINode) {
+SchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentUINode) {
+    this._dialog = dialog;
     this._link = link;
     this._options = options;
     this._parentUINode = parentUINode;
@@ -76,6 +77,7 @@ SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
 SchemaAlignmentDialog.UILink.prototype._renderDetails = function() {
     var tableDetails = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._expandedDetailDiv)[0];
     this._targetUI = new SchemaAlignmentDialog.UINode(
+        this._dialog,
         this._link.target, 
         tableDetails, 
         { expanded: "links" in this._link.target && this._link.target.links.length > 0 });
@@ -115,6 +117,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
         window.setTimeout(function() {
             MenuSystem.dismissAll();
             self._renderMain();
+            self._dialog.preview();
         }, 100);
     });
     input[0].focus();

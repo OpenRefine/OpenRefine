@@ -105,6 +105,7 @@ function SchemaAlignmentDialog(protograph, onDone) {
     
     this._nodeUIs = [];
     this._createDialog();
+    this.preview();
 };
 
 SchemaAlignmentDialog.prototype._createDialog = function() {
@@ -173,6 +174,7 @@ SchemaAlignmentDialog.prototype._renderBody = function(body) {
     
     for (var i = 0; i < this._protograph.rootNodes.length; i++) {
         this._nodeUIs.push(new SchemaAlignmentDialog.UINode(
+            this,
             this._protograph.rootNodes[i], 
             this._nodeTable, 
             {
@@ -197,6 +199,24 @@ SchemaAlignmentDialog.prototype.getJSON = function() {
     return {
         rootNodes: rootNodes
     };
+};
+
+SchemaAlignmentDialog.prototype.preview = function() {
+    var self = this;
+    
+    this._previewPane.empty();
+    
+    var protograph = this.getJSON();
+    $.post(
+        "/command/preview-protograph?" + $.param({ project: theProject.id }),
+        { protograph: JSON.stringify(protograph) },
+        function(data) {
+            if ("result" in data) {
+                self._previewPane.text(JSON.stringify(data.result, null, 2));
+            }
+        },
+        "json"
+    );
 };
 
 SchemaAlignmentDialog._findColumn = function(cellIndex) {
