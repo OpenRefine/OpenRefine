@@ -21,9 +21,9 @@ public class RemoveColumnCommand extends Command {
 		try {
 			Project project = getProject(request);
 			
-			int columnRemovalIndex = Integer.parseInt(request.getParameter("columnRemovalIndex"));
+			String columnName = request.getParameter("columnName");
 			
-			AbstractOperation op = new ColumnRemovalOperation(columnRemovalIndex);
+			AbstractOperation op = new ColumnRemovalOperation(columnName);
 			Process process = op.createProcess(project, new Properties());
 			
 			boolean done = project.processManager.queueProcess(process);

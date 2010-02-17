@@ -21,12 +21,12 @@ public class SplitMultiValueCellsCommand extends Command {
 		try {
 			Project project = getProject(request);
 			
-			int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
-            int keyCellIndex = Integer.parseInt(request.getParameter("keyCellIndex"));
+			String columnName = request.getParameter("columnName");
+			String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
             String mode = request.getParameter("mode");
 			
-			AbstractOperation op = new MultiValueCellSplitOperation(cellIndex, keyCellIndex, separator, mode);
+			AbstractOperation op = new MultiValueCellSplitOperation(columnName, keyColumnName, separator, mode);
 			Process process = op.createProcess(project, new Properties());
 			
 			boolean done = project.processManager.queueProcess(process);

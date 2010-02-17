@@ -187,7 +187,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     label: "Start Reconciling ...",
                     tooltip: "Reconcile text in this column with topics on Freebase",
                     click: function() {
-                        new ReconDialog(self._columnIndex);
+                        new ReconDialog(self._column);
                     }
                 },
                 {},
@@ -367,7 +367,7 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
 DataTableColumnHeaderUI.prototype._doTextTransform = function(expression) {
     this._dataTableView.doPostThenUpdate(
         "do-text-transform",
-        { cell: this._column.cellIndex, expression: expression }
+        { columnName: this._column.headerLabel, expression: expression }
     );
 };
 
@@ -386,21 +386,21 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
 DataTableColumnHeaderUI.prototype._doDiscardReconResults = function() {
     this._dataTableView.doPostThenUpdate(
         "discard-reconcile",
-        { cell: this._column.cellIndex }
+        { columnName: this._column.headerLabel }
     );
 };
 
 DataTableColumnHeaderUI.prototype._doApproveBestCandidates = function() {
     this._dataTableView.doPostThenUpdate(
         "approve-reconcile",
-        { cell: this._column.cellIndex }
+        { columnName: this._column.headerLabel }
     );
 };
 
 DataTableColumnHeaderUI.prototype._doApproveNewTopics = function() {
     this._dataTableView.doPostThenUpdate(
         "approve-new-reconcile",
-        { cell: this._column.cellIndex }
+        { columnName: this._column.headerLabel }
     );
 };
 
@@ -416,7 +416,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
                 self._dataTableView.doPostThenUpdate(
                     "add-column",
                     {
-                        baseCellIndex: self._column.cellIndex, 
+                        baseColumnName: self._column.headerLabel, 
                         expression: expression, 
                         headerLabel: headerLabel, 
                         columnInsertIndex: self._columnIndex + 1 
@@ -431,7 +431,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
 DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {
     this._dataTableView.doPostThenUpdate(
         "remove-column",
-        { columnRemovalIndex: this._columnIndex },
+        { columnName: this._column.headerLabel },
         true
     );
 };
@@ -442,8 +442,8 @@ DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
         this._dataTableView.doPostThenUpdate(
             "join-multi-value-cells",
             {
-                cellIndex: this._column.cellIndex,
-                keyCellIndex: theProject.columnModel.keyCellIndex,
+                columnName: this._column.headerLabel,
+                keyColumnName: theProject.columnModel.keyColumnName,
                 separator: separator
             }
         );
@@ -456,8 +456,8 @@ DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
         this._dataTableView.doPostThenUpdate(
             "split-multi-value-cells",
             {
-                cellIndex: this._column.cellIndex,
-                keyCellIndex: theProject.columnModel.keyCellIndex,
+                columnName: this._column.headerLabel,
+                keyColumnName: theProject.columnModel.keyColumnName,
                 separator: separator,
                 mode: "plain"
             }

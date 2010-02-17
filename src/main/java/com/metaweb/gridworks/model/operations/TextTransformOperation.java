@@ -22,8 +22,8 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
 	final protected String _expression;
 	
-	public TextTransformOperation(JSONObject engineConfig, int cellIndex, String expression) {
-		super(engineConfig, cellIndex, true);
+	public TextTransformOperation(JSONObject engineConfig, String columnName, String expression) {
+		super(engineConfig, columnName, true);
 		_expression = expression;
 	}
 
@@ -40,6 +40,8 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 	}
 
 	protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
+		Column column = project.columnModel.getColumnByName(_columnName);
+		
 		Evaluable eval = new Parser(_expression).getExpression();
         Properties bindings = ExpressionUtils.createBindings(project);
         
@@ -72,6 +74,6 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                 
 				return false;
 			}
-		}.init(_cellIndex, bindings, cellChanges, eval);
+		}.init(column.getCellIndex(), bindings, cellChanges, eval);
 	}
 }

@@ -22,19 +22,19 @@ import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 public class MultiValueCellSplitOperation implements AbstractOperation {
     private static final long serialVersionUID = 8217930220439070322L;
     
-    final protected int	    _cellIndex;
-    final protected int     _keyCellIndex;
+    final protected String	_columnName;
+    final protected String	_keyColumnName;
     final protected String  _separator;
     final protected String  _mode;
 
 	public MultiValueCellSplitOperation(
-		int       cellIndex,
-		int       keyCellIndex,
+		String	  columnName,
+		String	  keyColumnName,
 		String    separator,
 		String    mode
 	) {
-		_cellIndex = cellIndex;
-		_keyCellIndex = keyCellIndex;
+		_columnName = columnName;
+		_keyColumnName = keyColumnName;
 		_separator = separator;
 		_mode = mode;
 	}
@@ -42,22 +42,29 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 	public Process createProcess(Project project, Properties options)
 			throws Exception {
 		
-		Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+		Column column = project.columnModel.getColumnByName(_columnName);
 		if (column == null) {
-			throw new Exception("No column corresponding to cell index " + _cellIndex);
+			throw new Exception("No column named " + _columnName);
 		}
+		int cellIndex = column.getCellIndex();
+		
+		Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
+		if (column == null) {
+			throw new Exception("No key column named " + _keyColumnName);
+		}
+		int keyCellIndex = keyColumn.getCellIndex();
 		
 		List<Row> newRows = new ArrayList<Row>();
 		
 		int oldRowCount = project.rows.size();
 		for (int r = 0; r < oldRowCount; r++) {
 		    Row oldRow = project.rows.get(r);
-		    if (oldRow.isCellBlank(_cellIndex)) {
+		    if (oldRow.isCellBlank(cellIndex)) {
 		        newRows.add(oldRow.dup());
 		        continue;
 		    }
 		    
-            Object value = oldRow.getCellValue(_cellIndex);
+            Object value = oldRow.getCellValue(cellIndex);
 		    String s = value instanceof String ? ((String) value) : value.toString();
 		    String[] values = null;
 		    if (_mode.equals("regex")) {
@@ -74,7 +81,7 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 		    // First value goes into the same row
 		    {
 		        Row firstNewRow = oldRow.dup();
-		        firstNewRow.setCell(_cellIndex, new Cell(values[0].trim(), null));
+		        firstNewRow.setCell(cellIndex, new Cell(values[0].trim(), null));
 		        
 		        newRows.add(firstNewRow);
 		    }
@@ -85,11 +92,11 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 		        
 		        if (r2 < project.rows.size()) {
 	                Row oldRow2 = project.rows.get(r2);
-		            if (oldRow2.isCellBlank(_cellIndex) && 
-		                oldRow2.isCellBlank(_keyCellIndex)) {
+		            if (oldRow2.isCellBlank(cellIndex) && 
+		                oldRow2.isCellBlank(keyCellIndex)) {
 		                
 		                Row newRow = oldRow2.dup();
-		                newRow.setCell(_cellIndex, newCell);
+		                newRow.setCell(cellIndex, newCell);
 		                
 		                newRows.add(newRow);
 		                r2++;
@@ -98,8 +105,8 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 		            }
 		        }
 		        
-		        Row newRow = new Row(_cellIndex + 1);
-		        newRow.setCell(_cellIndex, newCell);
+		        Row newRow = new Row(cellIndex + 1);
+		        newRow.setCell(cellIndex, newCell);
 		        
 		        newRows.add(newRow);
 		    }

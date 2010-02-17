@@ -28,7 +28,7 @@ import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 public class ColumnAdditionOperation extends EngineDependentOperation {
 	private static final long serialVersionUID = -5672677479629932356L;
 
-	final protected int		_baseCellIndex;
+	final protected String	_baseColumnName;
 	final protected String 	_expression;
 	
 	final protected String 	_headerLabel;
@@ -36,14 +36,14 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 
 	public ColumnAdditionOperation(
 		JSONObject 	engineConfig,
-		int			baseCellIndex,
+		String		baseColumnName,
 		String 		expression,
 		String 		headerLabel, 
 		int 		columnInsertIndex 
 	) {
 		super(engineConfig);
 		
-		_baseCellIndex = baseCellIndex;
+		_baseColumnName = baseColumnName;
 		_expression = expression;
 		
 		_headerLabel = headerLabel;
@@ -55,9 +55,9 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		
 		Engine engine = createEngine(project);
 		
-		Column column = project.columnModel.getColumnByCellIndex(_baseCellIndex);
+		Column column = project.columnModel.getColumnByName(_baseColumnName);
 		if (column == null) {
-			throw new Exception("No column corresponding to cell index " + _baseCellIndex);
+			throw new Exception("No column named " + _baseColumnName);
 		}
 		
 		List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
@@ -88,6 +88,8 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 	}
 	
 	protected RowVisitor createRowVisitor(Project project, List<CellAtRow> cellsAtRows) throws Exception {
+		Column column = project.columnModel.getColumnByName(_baseColumnName);
+		
 		Evaluable eval = new Parser(_expression).getExpression();
         Properties bindings = ExpressionUtils.createBindings(project);
         
@@ -119,6 +121,6 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 
 				return false;
 			}
-		}.init(_baseCellIndex, bindings, cellsAtRows, eval);
+		}.init(column.getCellIndex(), bindings, cellsAtRows, eval);
 	}
 }

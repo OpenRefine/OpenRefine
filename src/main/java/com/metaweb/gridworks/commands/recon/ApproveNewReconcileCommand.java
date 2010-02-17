@@ -14,8 +14,8 @@ public class ApproveNewReconcileCommand extends EngineDependentCommand {
 	protected AbstractOperation createOperation(HttpServletRequest request,
 			JSONObject engineConfig) throws Exception {
 		
-		int cellIndex = Integer.parseInt(request.getParameter("cell"));
+		String columnName = request.getParameter("columnName");
 		
-		return new ApproveNewReconOperation(engineConfig, cellIndex);
+		return new ApproveNewReconOperation(engineConfig, columnName);
 	}
 }

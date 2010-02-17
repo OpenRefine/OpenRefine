@@ -13,14 +13,14 @@ public class AddColumnCommand extends EngineDependentCommand {
 	protected AbstractOperation createOperation(HttpServletRequest request,
 			JSONObject engineConfig) throws Exception {
 		
-		int baseCellIndex = Integer.parseInt(request.getParameter("baseCellIndex"));
+		String baseColumnName = request.getParameter("baseColumnName");
 		String expression = request.getParameter("expression");
 		String headerLabel = request.getParameter("headerLabel");
 		int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));
 		
 		return new ColumnAdditionOperation(
 			engineConfig, 
-			baseCellIndex, 
+			baseColumnName, 
 			expression,
 			headerLabel,
 			columnInsertIndex

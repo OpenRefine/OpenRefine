@@ -17,25 +17,25 @@ import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 public class ColumnRemovalOperation implements AbstractOperation {
 	private static final long serialVersionUID = 8422079695048733734L;
 	
-	final protected int	_columnRemovalIndex;
+	final protected String _columnName;
 
 	public ColumnRemovalOperation(
-		int columnRemoveIndex
+		String columnName
 	) {
-		_columnRemovalIndex = columnRemoveIndex;
+		_columnName = columnName;
 	}
 
 	public Process createProcess(Project project, Properties options)
 			throws Exception {
 		
-		Column column = project.columnModel.columns.get(_columnRemovalIndex);
+		Column column = project.columnModel.getColumnByName(_columnName);
 		if (column == null) {
-			throw new Exception("No column at index " + _columnRemovalIndex);
+			throw new Exception("No column named " + _columnName);
 		}
 		
 		String description = "Remove column " + column.getHeaderLabel();
 		
-		Change change = new ColumnRemovalChange(_columnRemovalIndex);
+		Change change = new ColumnRemovalChange(project.columnModel.columns.indexOf(column));
 		HistoryEntry historyEntry = new HistoryEntry(
 			project, description, this, change);
 

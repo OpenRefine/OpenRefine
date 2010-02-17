@@ -43,21 +43,21 @@ import com.metaweb.gridworks.util.ParsingUtilities;
 public class ReconOperation extends EngineDependentOperation {
 	private static final long serialVersionUID = 838795186905314865L;
 	
-	final protected int			_cellIndex;
+	final protected String		_columnName;
 	final protected String 		_typeID;
 	
-	public ReconOperation(JSONObject engineConfig, int cellIndex, String typeID) {
+	public ReconOperation(JSONObject engineConfig, String columnName, String typeID) {
 		super(engineConfig);
-		_cellIndex = cellIndex;
+		_columnName = columnName;
 		_typeID = typeID;
 	}
 
 	public Process createProcess(Project project, Properties options) throws Exception {
 		Engine engine = createEngine(project);
 		
-		Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+		Column column = project.columnModel.getColumnByName(_columnName);
 		if (column == null) {
-			throw new Exception("No column corresponding to cell index " + _cellIndex);
+			throw new Exception("No column named " + _columnName);
 		}
 		
 		List<ReconEntry> entries = new ArrayList<ReconEntry>(project.rows.size());
@@ -82,14 +82,14 @@ public class ReconOperation extends EngineDependentOperation {
 				}
 				return false;
 			}
-		}.init(_cellIndex, entries));
+		}.init(column.getCellIndex(), entries));
 		
 		String description = 
 			"Reconcile " + entries.size() + 
 			" cells in column " + column.getHeaderLabel() + 
 			" to type " + _typeID;
 		
-		return new ReconProcess(project, description, entries);
+		return new ReconProcess(project, description, entries, column.getCellIndex());
 	}
 
 	public void write(JSONWriter writer, Properties options)
@@ -146,11 +146,13 @@ public class ReconOperation extends EngineDependentOperation {
 	public class ReconProcess extends LongRunningProcess implements Runnable {
 		final protected Project				_project;
 		final protected List<ReconEntry> 	_entries;
+		final protected int					_cellIndex;
 		
-		public ReconProcess(Project project, String description, List<ReconEntry> entries) {
+		public ReconProcess(Project project, String description, List<ReconEntry> entries, int cellIndex) {
 			super(description);
 			_project = project;
 			_entries = entries;
+			_cellIndex = cellIndex;
 		}
 		
 		protected Runnable getRunnable() {

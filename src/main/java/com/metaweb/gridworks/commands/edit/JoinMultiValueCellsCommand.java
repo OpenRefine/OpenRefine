@@ -21,11 +21,11 @@ public class JoinMultiValueCellsCommand extends Command {
 		try {
 			Project project = getProject(request);
 			
-			int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
-            int keyCellIndex = Integer.parseInt(request.getParameter("keyCellIndex"));
+			String columnName = request.getParameter("columnName");
+			String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
 			
-			AbstractOperation op = new MultiValueCellJoinOperation(cellIndex, keyCellIndex, separator);
+			AbstractOperation op = new MultiValueCellJoinOperation(columnName, keyColumnName, separator);
 			Process process = op.createProcess(project, new Properties());
 			
 			boolean done = project.processManager.queueProcess(process);

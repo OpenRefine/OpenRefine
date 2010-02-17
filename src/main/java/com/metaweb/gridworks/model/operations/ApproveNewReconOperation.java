@@ -19,14 +19,18 @@ import com.metaweb.gridworks.model.changes.CellChange;
 public class ApproveNewReconOperation extends EngineDependentMassCellOperation {
 	private static final long serialVersionUID = -5205694623711144436L;
 
-	public ApproveNewReconOperation(JSONObject engineConfig, int cellIndex) {
-		super(engineConfig, cellIndex, false);
+	public ApproveNewReconOperation(JSONObject engineConfig, String columnName) {
+		super(engineConfig, columnName, false);
 	}
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
 		
+		writer.object();
+		writer.key("description"); writer.value("Approve new topics in column " + _columnName);
+		writer.key("engineConfig"); writer.value(_engineConfig);
+		writer.key("columnName"); writer.value(_columnName);
+		writer.endObject();
 	}
 
 	protected String createDescription(Column column,
@@ -37,7 +41,8 @@ public class ApproveNewReconOperation extends EngineDependentMassCellOperation {
 	}
 
 	protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
-		// TODO Auto-generated method stub
+		Column column = project.columnModel.getColumnByName(_columnName);
+		
 		return new RowVisitor() {
 			int cellIndex;
 			List<CellChange> cellChanges;
@@ -64,6 +69,6 @@ public class ApproveNewReconOperation extends EngineDependentMassCellOperation {
 				}
 				return false;
 			}
-		}.init(_cellIndex, cellChanges);
+		}.init(column.getCellIndex(), cellChanges);
 	}
 }

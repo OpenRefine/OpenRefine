@@ -79,6 +79,7 @@ public class ColumnModel implements Serializable, Jsonizable {
 		writer.endArray();
 		
 		writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
+		writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getHeaderLabel());
 		writer.key("columnGroups");
 		writer.array();
 		for (ColumnGroup g : _rootColumnGroups) {

@@ -1,7 +1,5 @@
-function ReconDialog(columnIndex) {
-    this._columnIndex = columnIndex;
-    this._column = theProject.columnModel.columns[columnIndex];
-    
+function ReconDialog(column) {
+    this._column = column;
     this._createDialog();
 }
 
@@ -25,7 +23,7 @@ ReconDialog.prototype._createDialog = function() {
     $('<button></button>').text("Start Reconciling").click(function() {
         DialogSystem.dismissUntil(level - 1);
         $.post(
-            "/command/reconcile?" + $.param({ project: theProject.id, cell: self._column.cellIndex, type: type }), 
+            "/command/reconcile?" + $.param({ project: theProject.id, columnName: self._column.headerLabel, type: type }), 
             { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
             function(data) {
                 if (data.code != "error") {

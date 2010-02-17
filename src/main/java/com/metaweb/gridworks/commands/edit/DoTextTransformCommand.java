@@ -14,9 +14,9 @@ public class DoTextTransformCommand extends EngineDependentCommand {
 	protected AbstractOperation createOperation(HttpServletRequest request,
 			JSONObject engineConfig) throws Exception {
 		
-		int cellIndex = Integer.parseInt(request.getParameter("cell"));
+		String columnName = request.getParameter("columnName");
 		String expression = request.getParameter("expression");
 		
-		return new TextTransformOperation(engineConfig, cellIndex, expression);
+		return new TextTransformOperation(engineConfig, columnName, expression);
 	}
 }

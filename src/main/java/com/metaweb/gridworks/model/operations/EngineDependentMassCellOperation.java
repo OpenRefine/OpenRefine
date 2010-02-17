@@ -20,22 +20,22 @@ import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 abstract public class EngineDependentMassCellOperation extends EngineDependentOperation {
 	private static final long serialVersionUID = -8962461328087299452L;
 	
-	final protected int	_cellIndex;
+	final protected String	_columnName;
 	final protected boolean _updateRowContextDependencies;
 	
 	protected EngineDependentMassCellOperation(
-	        JSONObject engineConfig, int cellIndex, boolean updateRowContextDependencies) {
+	        JSONObject engineConfig, String columnName, boolean updateRowContextDependencies) {
 		super(engineConfig);
-		_cellIndex = cellIndex;
+		_columnName = columnName;
 		_updateRowContextDependencies = updateRowContextDependencies;
 	}
 
 	public Process createProcess(Project project, Properties options) throws Exception {
 		Engine engine = createEngine(project);
 		
-		Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+		Column column = project.columnModel.getColumnByName(_columnName);
 		if (column == null) {
-			throw new Exception("No column corresponding to cell index " + _cellIndex);
+			throw new Exception("No column named " + _columnName);
 		}
 		
 		List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
@@ -45,7 +45,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
 		
 		String description = createDescription(column, cellChanges);
 		
-		MassCellChange massCellChange = new MassCellChange(cellChanges, _cellIndex, _updateRowContextDependencies);
+		MassCellChange massCellChange = new MassCellChange(cellChanges, column.getCellIndex(), _updateRowContextDependencies);
 		HistoryEntry historyEntry = new HistoryEntry(
 			project, description, this, massCellChange);
 
