@@ -100,6 +100,7 @@ public class ReconOperation extends EngineDependentOperation {
 		writer.key("description"); writer.value("Reconcile cells in column " + _columnName + " to type " + _typeID);
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("typeID"); writer.value(_typeID);
+		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.endObject();
 	}
 

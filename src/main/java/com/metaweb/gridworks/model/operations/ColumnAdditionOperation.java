@@ -85,7 +85,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 			" based on column " + _baseColumnName + 
 			" using expression " + _expression);
 		
-		writer.key("engineConfig"); writer.value(_engineConfig);
+		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("headerLabel"); writer.value(_headerLabel);
 		writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
 		writer.key("baseColumnName"); writer.value(_baseColumnName);
