@@ -93,7 +93,7 @@ HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) 
 };
 
 HistoryWidget.prototype._extractOperations = function() {
-    var self = this;console.log("here");
+    var self = this;
     $.getJSON(
         "/command/get-operations?" + $.param({ project: theProject.id }), 
         null,
