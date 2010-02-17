@@ -2,6 +2,7 @@ package com.metaweb.gridworks.history;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -42,7 +43,11 @@ public class History implements Serializable, Jsonizable {
 	}
 	
 	public List<HistoryEntry> getLastPastEntries(int count) {
-		return _pastEntries.subList(Math.max(_pastEntries.size() - count, 0), _pastEntries.size());
+		if (count <= 0) {
+			return new LinkedList<HistoryEntry>(_pastEntries);
+		} else {
+			return _pastEntries.subList(Math.max(_pastEntries.size() - count, 0), _pastEntries.size());
+		}
 	}
 	
 	public void undoRedo(long lastDoneEntryID) {

@@ -23,8 +23,13 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
 		
+		writer.object();
+		writer.key("op"); writer.value("disapprove-recon");
+		writer.key("description"); writer.value("Discard recon judgments in column " + _columnName);
+		writer.key("engineConfig"); writer.value(_engineConfig);
+		writer.key("columnName"); writer.value(_columnName);
+		writer.endObject();
 	}
 
 	protected String createDescription(Column column,

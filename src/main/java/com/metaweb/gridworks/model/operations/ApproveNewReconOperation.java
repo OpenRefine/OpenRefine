@@ -27,6 +27,7 @@ public class ApproveNewReconOperation extends EngineDependentMassCellOperation {
 			throws JSONException {
 		
 		writer.object();
+		writer.key("op"); writer.value("approve-new-recon");
 		writer.key("description"); writer.value("Approve new topics in column " + _columnName);
 		writer.key("engineConfig"); writer.value(_engineConfig);
 		writer.key("columnName"); writer.value(_columnName);

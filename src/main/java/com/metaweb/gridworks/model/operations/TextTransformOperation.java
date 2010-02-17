@@ -29,7 +29,14 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
+		
+		writer.object();
+		writer.key("op"); writer.value("text-transform");
+		writer.key("description"); writer.value("Text transform on cells in column " + _columnName + " with expression " + _expression);
+		writer.key("engineConfig"); writer.value(_engineConfig);
+		writer.key("columnName"); writer.value(_columnName);
+		writer.key("expression"); writer.value(_expression);
+		writer.endObject();
 	}
 
 	protected String createDescription(Column column,

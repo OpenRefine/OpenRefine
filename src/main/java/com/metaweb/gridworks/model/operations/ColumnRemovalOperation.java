@@ -44,7 +44,11 @@ public class ColumnRemovalOperation implements AbstractOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
-
+		
+		writer.object();
+		writer.key("op"); writer.value("remove-column");
+		writer.key("description"); writer.value("Remove column " + _columnName);
+		writer.key("columnName"); writer.value(_columnName);
+		writer.endObject();
 	}
 }

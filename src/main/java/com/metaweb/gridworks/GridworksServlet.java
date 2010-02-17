@@ -28,6 +28,7 @@ import com.metaweb.gridworks.commands.info.ExportRowsCommand;
 import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
 import com.metaweb.gridworks.commands.info.GetModelsCommand;
 import com.metaweb.gridworks.commands.info.GetHistoryCommand;
+import com.metaweb.gridworks.commands.info.GetOperationsCommand;
 import com.metaweb.gridworks.commands.info.GetProcessesCommand;
 import com.metaweb.gridworks.commands.info.GetProjectMetadataCommand;
 import com.metaweb.gridworks.commands.info.GetRowsCommand;
@@ -56,6 +57,7 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("get-rows", new GetRowsCommand());
 		_commands.put("get-processes", new GetProcessesCommand());
 		_commands.put("get-history", new GetHistoryCommand());
+		_commands.put("get-operations", new GetOperationsCommand());
 		
 		_commands.put("undo-redo", new UndoRedoCommand());
 		_commands.put("compute-facets", new ComputeFacetsCommand());

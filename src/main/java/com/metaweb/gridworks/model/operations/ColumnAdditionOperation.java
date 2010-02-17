@@ -76,8 +76,21 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
-
+		
+		writer.object();
+		writer.key("op"); writer.value("add-column");
+		writer.key("description"); writer.value(
+			"Create column " + _headerLabel + 
+			" at index " + _columnInsertIndex + 
+			" based on column " + _baseColumnName + 
+			" using expression " + _expression);
+		
+		writer.key("engineConfig"); writer.value(_engineConfig);
+		writer.key("headerLabel"); writer.value(_headerLabel);
+		writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
+		writer.key("baseColumnName"); writer.value(_baseColumnName);
+		writer.key("expression"); writer.value(_expression);
+		writer.endObject();
 	}
 
 	protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {

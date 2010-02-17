@@ -99,7 +99,7 @@ public class MultiValueCellJoinOperation implements AbstractOperation {
 		    r = r2 - 1; // r will be incremented by the for loop anyway
 		}
 		
-        String description = "Join multi-value cells in column " + column.getHeaderLabel();
+        String description = "Join multi-valued cells in column " + column.getHeaderLabel();
         
 		Change change = new MassRowChange(newRows);
 		HistoryEntry historyEntry = new HistoryEntry(
@@ -110,7 +110,13 @@ public class MultiValueCellJoinOperation implements AbstractOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
-
+		
+		writer.object();
+		writer.key("op"); writer.value("join-multivalued-cells");
+		writer.key("description"); writer.value("Join multi-valued cells in column " + _columnName);
+		writer.key("columnName"); writer.value(_columnName);
+		writer.key("keyColumnName"); writer.value(_keyColumnName);
+		writer.key("separator"); writer.value(_separator);
+		writer.endObject();
 	}
 }

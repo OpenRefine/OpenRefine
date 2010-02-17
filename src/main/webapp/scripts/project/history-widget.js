@@ -63,6 +63,16 @@ HistoryWidget.prototype._render = function() {
         bodyDiv[0].scrollTop = divNow[0].offsetTop + divNow[0].offsetHeight - bodyDiv[0].offsetHeight;
     };
     autoscroll();
+    
+    
+    var footerDiv = $('<div></div>').addClass("history-panel-footer").appendTo(this._div);
+    $('<a href="javascript:{}"></a>').text("extract").appendTo(footerDiv).click(function() {
+        self._extractOperations();
+    });
+    $('<span> &bull; </span>').appendTo(footerDiv);
+    $('<a href="javascript:{}"></a>').text("apply").appendTo(footerDiv).click(function() {
+        self._applyOperations();
+    });
 };
 
 HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
@@ -80,4 +90,39 @@ HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) 
         },
         "json"
     );
+};
+
+HistoryWidget.prototype._extractOperations = function() {
+    var self = this;console.log("here");
+    $.getJSON(
+        "/command/get-operations?" + $.param({ project: theProject.id }), 
+        null,
+        function(data) {
+            if ("operations" in data) {
+                self._showOperationsDialog(data.operations);
+            }
+        },
+        "jsonp"
+    );
+};
+
+HistoryWidget.prototype._showOperationsDialog = function(json) {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    frame.width("800px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Operations").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    var textarea = $('<textarea />').attr("wrap", "hard").width("100%").height("400px").appendTo(body);
+    textarea.text(JSON.stringify(json, null, 2));
+    
+    $('<button></button>').text("Done").click(function() {
+        DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+    
+    var level = DialogSystem.showDialog(frame);
+    
+    textarea[0].focus();
 };

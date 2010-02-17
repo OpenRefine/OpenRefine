@@ -24,8 +24,13 @@ public class ApproveReconOperation extends EngineDependentMassCellOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
 		
+		writer.object();
+		writer.key("op"); writer.value("approve-recon");
+		writer.key("description"); writer.value("Approve best recon matches in column " + _columnName);
+		writer.key("engineConfig"); writer.value(_engineConfig);
+		writer.key("columnName"); writer.value(_columnName);
+		writer.endObject();
 	}
 
 	protected String createDescription(Column column,

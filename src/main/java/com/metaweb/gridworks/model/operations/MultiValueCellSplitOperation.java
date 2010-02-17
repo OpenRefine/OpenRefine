@@ -114,7 +114,7 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 		    r = r2 - 1; // r will be incremented by the for loop anyway
 		}
 		
-        String description = "Split multi-value cells in column " + column.getHeaderLabel();
+        String description = "Split multi-valued cells in column " + column.getHeaderLabel();
         
 		Change change = new MassRowChange(newRows);
 		HistoryEntry historyEntry = new HistoryEntry(
@@ -125,7 +125,14 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
-
+		
+		writer.object();
+		writer.key("op"); writer.value("split-multivalued-cells");
+		writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
+		writer.key("columnName"); writer.value(_columnName);
+		writer.key("keyColumnName"); writer.value(_keyColumnName);
+		writer.key("separator"); writer.value(_separator);
+		writer.key("mode"); writer.value(_mode);
+		writer.endObject();
 	}
 }

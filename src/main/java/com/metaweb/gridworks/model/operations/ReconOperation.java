@@ -94,8 +94,13 @@ public class ReconOperation extends EngineDependentOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
 		
+		writer.object();
+		writer.key("op"); writer.value("recon");
+		writer.key("description"); writer.value("Reconcile cells in column " + _columnName + " to type " + _typeID);
+		writer.key("columnName"); writer.value(_columnName);
+		writer.key("typeID"); writer.value(_typeID);
+		writer.endObject();
 	}
 
 	static protected class ReconEntry {

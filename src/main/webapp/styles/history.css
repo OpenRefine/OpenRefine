@@ -7,7 +7,6 @@
     border: 1px solid #666;
     z-index: 10;
     -moz-border-radius-bottomleft: 20px;
-    padding-bottom: 10px;
 }
 .history-panel h3 {
     margin: 0;
@@ -73,4 +72,17 @@ a.history-entry:hover {
 
 .history-future a.history-entry {
     color: #888;
+}
+
+.history-panel-footer {
+    margin: 0;
+    padding: 3px;
+    background: #aaa;
+    color: #eee;
+    font-size: 80%;
+    text-align: center;
+}
+.history-panel-footer a {
+    color: white;
+    text-decoration: none;
 }

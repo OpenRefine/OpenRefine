@@ -38,8 +38,12 @@ public class SaveProtographOperation implements AbstractOperation {
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
-		// TODO Auto-generated method stub
-
+		
+		writer.object();
+		writer.key("op"); writer.value("save-protograph");
+		writer.key("description"); writer.value("Save protograph");
+		writer.key("protograph"); _protograph.write(writer, options);
+		writer.endObject();
 	}
 	
 
