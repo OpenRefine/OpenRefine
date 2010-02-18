@@ -33,6 +33,10 @@ public class ApproveNewReconOperation extends EngineDependentMassCellOperation {
 		writer.key("columnName"); writer.value(_columnName);
 		writer.endObject();
 	}
+	
+	protected String getBriefDescription() {
+		return "Approve new topics for cells in column " + _columnName;
+	}
 
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {

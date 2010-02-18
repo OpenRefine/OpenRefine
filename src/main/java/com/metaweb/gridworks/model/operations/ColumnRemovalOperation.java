@@ -11,10 +11,8 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.changes.ColumnRemovalChange;
-import com.metaweb.gridworks.process.Process;
-import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
-public class ColumnRemovalOperation implements AbstractOperation {
+public class ColumnRemovalOperation extends AbstractOperation {
 	private static final long serialVersionUID = 8422079695048733734L;
 	
 	final protected String _columnName;
@@ -25,9 +23,11 @@ public class ColumnRemovalOperation implements AbstractOperation {
 		_columnName = columnName;
 	}
 
-	public Process createProcess(Project project, Properties options)
-			throws Exception {
-		
+	protected String getBriefDescription() {
+		return "Remove column " + _columnName;
+	}
+
+	protected HistoryEntry createHistoryEntry(Project project) throws Exception {
 		Column column = project.columnModel.getColumnByName(_columnName);
 		if (column == null) {
 			throw new Exception("No column named " + _columnName);
@@ -36,10 +36,8 @@ public class ColumnRemovalOperation implements AbstractOperation {
 		String description = "Remove column " + column.getHeaderLabel();
 		
 		Change change = new ColumnRemovalChange(project.columnModel.columns.indexOf(column));
-		HistoryEntry historyEntry = new HistoryEntry(
-			project, description, this, change);
-
-		return new QuickHistoryEntryProcess(project, historyEntry);
+		
+		return new HistoryEntry(project, description, ColumnRemovalOperation.this, change);
 	}
 
 	public void write(JSONWriter writer, Properties options)

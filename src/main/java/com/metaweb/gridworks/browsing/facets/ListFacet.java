@@ -23,6 +23,7 @@ public class ListFacet implements Facet {
 	
 	protected String 	_name;
 	protected String 	_expression;
+	protected String	_columnName;
 	protected int		_cellIndex;
 	protected Evaluable _eval;
 	
@@ -35,7 +36,7 @@ public class ListFacet implements Facet {
 		writer.object();
 		writer.key("name"); writer.value(_name);
 		writer.key("expression"); writer.value(_expression);
-		writer.key("cellIndex"); writer.value(_cellIndex);
+		writer.key("columnName"); writer.value(_columnName);
 		
 		writer.key("choices"); writer.array();
 		for (NominalFacetChoice choice : _choices) {
@@ -45,10 +46,11 @@ public class ListFacet implements Facet {
 		writer.endObject();
 	}
 
-	public void initializeFromJSON(JSONObject o) throws Exception {
+	public void initializeFromJSON(Project project, JSONObject o) throws Exception {
 		_name = o.getString("name");
 		_expression = o.getString("expression");
-		_cellIndex = o.getInt("cellIndex");
+		_columnName = o.getString("columnName");
+		_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
 		
 		_eval = new Parser(_expression).getExpression();
 		_selection.clear();
@@ -64,9 +66,7 @@ public class ListFacet implements Facet {
 				ocv.get("v"), ocv.getString("l"));
 			
 			NominalFacetChoice nominalFacetChoice = new NominalFacetChoice(decoratedValue);
-			
-			nominalFacetChoice.count = oc.getInt("c");
-			nominalFacetChoice.selected = oc.getBoolean("s");
+			nominalFacetChoice.selected = true;
 			
 			_selection.add(nominalFacetChoice);
 		}

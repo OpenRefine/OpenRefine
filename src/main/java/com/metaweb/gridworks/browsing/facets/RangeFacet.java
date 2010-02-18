@@ -17,6 +17,7 @@ import com.metaweb.gridworks.model.Project;
 public class RangeFacet implements Facet {
 	protected String 	_name;
 	protected String 	_expression;
+	protected String 	_columnName;
 	protected int		_cellIndex;
 	protected Evaluable _eval;
 	
@@ -40,7 +41,7 @@ public class RangeFacet implements Facet {
 		writer.object();
 		writer.key("name"); writer.value(_name);
 		writer.key("expression"); writer.value(_expression);
-		writer.key("cellIndex"); writer.value(_cellIndex);
+		writer.key("columnName"); writer.value(_columnName);
 		writer.key("min"); writer.value(_min);
 		writer.key("max"); writer.value(_max);
 		writer.key("step"); writer.value(_step);
@@ -69,10 +70,11 @@ public class RangeFacet implements Facet {
 		writer.endObject();
 	}
 
-	public void initializeFromJSON(JSONObject o) throws Exception {
+	public void initializeFromJSON(Project project, JSONObject o) throws Exception {
 		_name = o.getString("name");
 		_expression = o.getString("expression");
-		_cellIndex = o.getInt("cellIndex");
+		_columnName = o.getString("columnName");
+		_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
 		
 		_eval = new Parser(_expression).getExpression();
 		

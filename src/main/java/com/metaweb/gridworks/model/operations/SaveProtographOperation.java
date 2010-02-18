@@ -9,11 +9,9 @@ import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.process.Process;
-import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 import com.metaweb.gridworks.protograph.Protograph;
 
-public class SaveProtographOperation implements AbstractOperation {
+public class SaveProtographOperation extends AbstractOperation {
     private static final long serialVersionUID = 3134524625206033285L;
     
     final protected Protograph _protograph;
@@ -24,16 +22,17 @@ public class SaveProtographOperation implements AbstractOperation {
 		_protograph = protograph;
 	}
 
-	public Process createProcess(Project project, Properties options)
-			throws Exception {
-		
+	protected String getBriefDescription() {
+		return "Save schema skeleton";
+	}
+
+	@Override
+	protected HistoryEntry createHistoryEntry(Project project) throws Exception {
         String description = "Save schema-alignment protograph";
         
 		Change change = new ProtographChange(_protograph);
-		HistoryEntry historyEntry = new HistoryEntry(
-			project, description, this, change);
-
-		return new QuickHistoryEntryProcess(project, historyEntry);
+		
+		return new HistoryEntry(project, description, SaveProtographOperation.this, change);
 	}
 
 	public void write(JSONWriter writer, Properties options)

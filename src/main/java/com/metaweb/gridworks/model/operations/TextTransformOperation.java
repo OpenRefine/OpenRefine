@@ -39,6 +39,10 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 		writer.endObject();
 	}
 
+	protected String getBriefDescription() {
+		return "Text transform on cells in column " + _columnName + " using " + _expression;
+	}
+
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		

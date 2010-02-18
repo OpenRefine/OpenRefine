@@ -22,8 +22,6 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellAtRow;
 import com.metaweb.gridworks.model.changes.ColumnAdditionChange;
-import com.metaweb.gridworks.process.Process;
-import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
 public class ColumnAdditionOperation extends EngineDependentOperation {
 	private static final long serialVersionUID = -5672677479629932356L;
@@ -50,9 +48,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		_columnInsertIndex = columnInsertIndex;
 	}
 
-	public Process createProcess(Project project, Properties options)
-			throws Exception {
-		
+	protected HistoryEntry createHistoryEntry(Project project) throws Exception {
 		Engine engine = createEngine(project);
 		
 		Column column = project.columnModel.getColumnByName(_baseColumnName);
@@ -68,10 +64,9 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		String description = createDescription(column, cellsAtRows);
 		
 		Change change = new ColumnAdditionChange(_headerLabel, _columnInsertIndex, cellsAtRows);
-		HistoryEntry historyEntry = new HistoryEntry(
+		
+		return new HistoryEntry(
 			project, description, this, change);
-
-		return new QuickHistoryEntryProcess(project, historyEntry);
 	}
 
 	public void write(JSONWriter writer, Properties options)
@@ -91,6 +86,10 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		writer.key("baseColumnName"); writer.value(_baseColumnName);
 		writer.key("expression"); writer.value(_expression);
 		writer.endObject();
+	}
+
+	protected String getBriefDescription() {
+		return "Add in column " + _headerLabel + " based on column " + _baseColumnName;
 	}
 
 	protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {

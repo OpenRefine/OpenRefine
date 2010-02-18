@@ -14,12 +14,17 @@ function ListFacet(div, config, options) {
 }
 
 ListFacet.prototype.getJSON = function() {
-    var o = cloneDeep(this._config);
-    o.type = "list";
-    o.selection = [];
+    var o = {
+        type: "list",
+        name: this._config.name,
+        columnName: this._config.columnName,
+        expression: this._config.expression,
+        selection: []
+    }
     for (var i = 0; i < this._selection.length; i++) {
-        var choice = cloneDeep(this._selection[i]);
-        choice.s = true;
+        var choice = {
+            v: cloneDeep(this._selection[i].v)
+        };
         o.selection.push(choice);
     }
     return o;

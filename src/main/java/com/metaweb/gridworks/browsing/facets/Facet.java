@@ -12,5 +12,5 @@ public interface Facet extends Jsonizable {
 	
 	public void computeChoices(Project project, FilteredRows filteredRows);
 	
-	public void initializeFromJSON(JSONObject o) throws Exception;
+	public void initializeFromJSON(Project project, JSONObject o) throws Exception;
 }

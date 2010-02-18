@@ -16,10 +16,8 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.MassRowChange;
-import com.metaweb.gridworks.process.Process;
-import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
-public class MultiValueCellSplitOperation implements AbstractOperation {
+public class MultiValueCellSplitOperation extends AbstractOperation {
     private static final long serialVersionUID = 8217930220439070322L;
     
     final protected String	_columnName;
@@ -39,9 +37,12 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
 		_mode = mode;
 	}
 
-	public Process createProcess(Project project, Properties options)
-			throws Exception {
-		
+	protected String getBriefDescription() {
+		return "Split multi-valued cells in column " + _columnName;
+	}
+
+	@Override
+	protected HistoryEntry createHistoryEntry(Project project) throws Exception {
 		Column column = project.columnModel.getColumnByName(_columnName);
 		if (column == null) {
 			throw new Exception("No column named " + _columnName);
@@ -117,10 +118,8 @@ public class MultiValueCellSplitOperation implements AbstractOperation {
         String description = "Split multi-valued cells in column " + column.getHeaderLabel();
         
 		Change change = new MassRowChange(newRows);
-		HistoryEntry historyEntry = new HistoryEntry(
-			project, description, this, change);
-
-		return new QuickHistoryEntryProcess(project, historyEntry);
+		
+		return new HistoryEntry(project, description, this, change);
 	}
 
 	public void write(JSONWriter writer, Properties options)

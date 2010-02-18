@@ -2,7 +2,6 @@ package com.metaweb.gridworks.model.operations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.json.JSONObject;
 
@@ -14,8 +13,6 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.MassCellChange;
-import com.metaweb.gridworks.process.Process;
-import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
 abstract public class EngineDependentMassCellOperation extends EngineDependentOperation {
 	private static final long serialVersionUID = -8962461328087299452L;
@@ -30,7 +27,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
 		_updateRowContextDependencies = updateRowContextDependencies;
 	}
 
-	public Process createProcess(Project project, Properties options) throws Exception {
+	protected HistoryEntry createHistoryEntry(Project project) throws Exception {
 		Engine engine = createEngine(project);
 		
 		Column column = project.columnModel.getColumnByName(_columnName);
@@ -45,11 +42,10 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
 		
 		String description = createDescription(column, cellChanges);
 		
-		MassCellChange massCellChange = new MassCellChange(cellChanges, column.getCellIndex(), _updateRowContextDependencies);
-		HistoryEntry historyEntry = new HistoryEntry(
+		MassCellChange massCellChange = new MassCellChange(cellChanges, column.getHeaderLabel(), _updateRowContextDependencies);
+		
+		return new HistoryEntry(
 			project, description, this, massCellChange);
-
-		return new QuickHistoryEntryProcess(project, historyEntry);
 	}
 	
 	abstract protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception;

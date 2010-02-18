@@ -15,6 +15,7 @@ import com.metaweb.gridworks.model.Project;
 
 public class TextSearchFacet implements Facet {
 	protected String 	_name;
+	protected String 	_columnName;
 	protected int		_cellIndex;
 	protected String 	_query;
 	
@@ -29,16 +30,17 @@ public class TextSearchFacet implements Facet {
 		
 		writer.object();
 		writer.key("name"); writer.value(_name);
-		writer.key("cellIndex"); writer.value(_cellIndex);
+		writer.key("columnName"); writer.value(_columnName);
 		writer.key("query"); writer.value(_query);
 		writer.key("mode"); writer.value(_mode);
 		writer.key("caseSensitive"); writer.value(_caseSensitive);
 		writer.endObject();
 	}
 
-	public void initializeFromJSON(JSONObject o) throws Exception {
+	public void initializeFromJSON(Project project, JSONObject o) throws Exception {
 		_name = o.getString("name");
-		_cellIndex = o.getInt("cellIndex");
+		_columnName = o.getString("columnName");
+		_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
 		_query = o.getString("query");
 		_mode = o.getString("mode");
 		_caseSensitive = o.getBoolean("caseSensitive");

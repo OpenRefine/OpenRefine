@@ -8,14 +8,15 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Project;
 
-public class QuickHistoryEntryProcess extends Process {
+abstract public class QuickHistoryEntryProcess extends Process {
 	final protected Project _project;
-	final protected HistoryEntry _historyEntry;
+	final protected String _briefDescription;
+	protected HistoryEntry _historyEntry;
 	boolean _done = false;
 	
-	public QuickHistoryEntryProcess(Project project, HistoryEntry historyEntry) {
+	public QuickHistoryEntryProcess(Project project, String briefDescription) {
 		_project = project;
-		_historyEntry = historyEntry;
+		_briefDescription = briefDescription;
 	}
 	
 	public void cancel() {
@@ -30,7 +31,10 @@ public class QuickHistoryEntryProcess extends Process {
 		throw new RuntimeException("Not a long-running process");
 	}
 
-	public void performImmediate() {
+	public void performImmediate() throws Exception {
+		if (_historyEntry == null) {
+			_historyEntry = createHistoryEntry();
+		}
 		_project.history.addEntry(_historyEntry);
 		_done = true;
 	}
@@ -43,7 +47,7 @@ public class QuickHistoryEntryProcess extends Process {
 			throws JSONException {
 		
 		writer.object();
-		writer.key("description"); writer.value(_historyEntry.description);
+		writer.key("description"); writer.value(_historyEntry != null ? _historyEntry.description : _briefDescription);
 		writer.key("immediate"); writer.value(true);
 		writer.key("status"); writer.value(_done ? "done" : "pending");
 		writer.endObject();
@@ -54,4 +58,6 @@ public class QuickHistoryEntryProcess extends Process {
 	public boolean isDone() {
 		return _done;
 	}
+	
+	abstract protected HistoryEntry createHistoryEntry() throws Exception;
 }

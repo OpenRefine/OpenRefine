@@ -81,7 +81,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "list", 
                             {
                                 "name" : self._column.headerLabel,
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "value"
                             }
                         );
@@ -99,7 +99,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "range", 
                             {
                                 "name" : self._column.headerLabel,
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "value",
                                 "mode" : "range",
                                 "min" : 0,
@@ -122,7 +122,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "text", 
                             {
                                 "name" : self._column.headerLabel,
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "mode" : "text",
                                 "caseSensitive" : false
                             }
@@ -136,7 +136,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "text", 
                             {
                                 "name" : self._column.headerLabel + " (regex)",
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "mode" : "regex",
                                 "caseSensitive" : true
                             }
@@ -225,7 +225,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "list", 
                             {
                                 "name" : self._column.headerLabel + ": judgment",
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "cell.recon.judgment"
                             },
                             {
@@ -242,11 +242,9 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "range", 
                             {
                                 "name" : self._column.headerLabel + ": best candidate's relevance score",
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "cell.recon.best.score",
-                                "mode" : "range",
-                                "min" : 0,
-                                "max" : 200
+                                "mode" : "range"
                             },
                             {
                             }
@@ -260,7 +258,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "list", 
                             {
                                 "name" : self._column.headerLabel + ": best candidate's type match",
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "cell.recon.features.typeMatch"
                             },
                             {
@@ -276,7 +274,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "list", 
                             {
                                 "name" : self._column.headerLabel + ": best candidate's name match",
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "cell.recon.features.nameMatch"
                             },
                             {
@@ -293,12 +291,9 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "range", 
                             {
                                 "name" : self._column.headerLabel + ": best candidate's name edit distance",
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "cell.recon.features.nameLevenshtein",
-                                "mode" : "range",
-                                "min" : 0,
-                                "max" : 1,
-                                "step" : 0.1
+                                "mode" : "range"
                             },
                             {
                             }
@@ -312,12 +307,9 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "range", 
                             {
                                 "name" : self._column.headerLabel + ": best candidate's name word similarity",
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "cell.recon.features.nameWordDistance",
-                                "mode" : "range",
-                                "min" : 0,
-                                "max" : 1,
-                                "step" : 0.1
+                                "mode" : "range"
                             },
                             {
                             }
@@ -332,7 +324,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             "list", 
                             {
                                 "name" : self._column.headerLabel + ": best candidate's types",
-                                "cellIndex" : self._column.cellIndex, 
+                                "columnName" : self._column.headerLabel, 
                                 "expression" : "cell.recon.best.type"
                             }
                         );
@@ -352,7 +344,7 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
         function(expression) {
             var config = {
                 "name" : self._column.headerLabel + ": " + expression,
-                "cellIndex" : self._column.cellIndex, 
+                "columnName" : self._column.headerLabel, 
                 "expression" : expression
             };
             if (type == "range") {

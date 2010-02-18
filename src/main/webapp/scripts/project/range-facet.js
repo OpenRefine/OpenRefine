@@ -26,8 +26,13 @@ RangeFacet.prototype._setDefaults = function() {
 };
 
 RangeFacet.prototype.getJSON = function() {
-    var o = cloneDeep(this._config);
-    o.type = "range";
+    var o = {
+        type: "range",
+        name: this._config.name,
+        mode: this._config.mode,
+        expression: this._config.expression,
+        columnName: this._config.columnName
+    };
     
     if (this._config.mode == "min" || this._config.mode == "range") {
         if (this._from != null) {

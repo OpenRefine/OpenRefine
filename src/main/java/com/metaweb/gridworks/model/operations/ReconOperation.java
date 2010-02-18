@@ -53,43 +53,20 @@ public class ReconOperation extends EngineDependentOperation {
 	}
 
 	public Process createProcess(Project project, Properties options) throws Exception {
-		Engine engine = createEngine(project);
-		
 		Column column = project.columnModel.getColumnByName(_columnName);
 		if (column == null) {
 			throw new Exception("No column named " + _columnName);
 		}
 		
-		List<ReconEntry> entries = new ArrayList<ReconEntry>(project.rows.size());
-		
-		FilteredRows filteredRows = engine.getAllFilteredRows(false);
-		filteredRows.accept(project, new RowVisitor() {
-			int cellIndex;
-			List<ReconEntry> entries;
-			
-			public RowVisitor init(int cellIndex, List<ReconEntry> entries) {
-				this.cellIndex = cellIndex;
-				this.entries = entries;
-				return this;
-			}
-			
-			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
-				if (cellIndex < row.cells.size()) {
-					Cell cell = row.cells.get(cellIndex);
-					if (cell != null && !ExpressionUtils.isBlank(cell.value)) {
-						entries.add(new ReconEntry(rowIndex, cell));
-					}
-				}
-				return false;
-			}
-		}.init(column.getCellIndex(), entries));
-		
 		String description = 
-			"Reconcile " + entries.size() + 
-			" cells in column " + column.getHeaderLabel() + 
-			" to type " + _typeID;
+			"Reconcile cells in column " + column.getHeaderLabel() + " to type " + _typeID;
 		
-		return new ReconProcess(project, description, entries, column.getCellIndex());
+		return new ReconProcess(
+			project, 
+			getEngineConfig(),
+			description, 
+			_columnName
+		);
 	}
 
 	public void write(JSONWriter writer, Properties options)
@@ -121,11 +98,11 @@ public class ReconOperation extends EngineDependentOperation {
         protected ReconConfig _oldReconConfig;
         
         public ReconChange(
-            List<CellChange> cellChanges, 
-            int commonCellIndex,
+            List<CellChange> cellChanges,
+            String commonColumnName,
             ReconConfig newReconConfig
         ) {
-            super(cellChanges, commonCellIndex, false);
+            super(cellChanges, commonColumnName, false);
             _newReconConfig = newReconConfig;
         }
 	    @Override
@@ -133,7 +110,7 @@ public class ReconOperation extends EngineDependentOperation {
 	        synchronized (project) {
 	            super.apply(project);
 	            
-	            Column column = project.columnModel.getColumnByCellIndex(_commonCellIndex);
+	            Column column = project.columnModel.getColumnByName(_commonColumnName);
 	            _oldReconConfig = column.getReconConfig();
 	            column.setReconConfig(_newReconConfig);
 	        }
@@ -144,28 +121,69 @@ public class ReconOperation extends EngineDependentOperation {
             synchronized (project) {
                 super.revert(project);
                 
-                project.columnModel.getColumnByCellIndex(_commonCellIndex).setReconConfig(_oldReconConfig);
+                project.columnModel.getColumnByName(_commonColumnName)
+                	.setReconConfig(_oldReconConfig);
             }
 	    }
 	}
 	
 	public class ReconProcess extends LongRunningProcess implements Runnable {
-		final protected Project				_project;
-		final protected List<ReconEntry> 	_entries;
-		final protected int					_cellIndex;
+		final protected Project		_project;
+		final protected JSONObject	_engineConfig;
+		final protected String		_columnName;
+		protected List<ReconEntry> 	_entries;
+		protected int				_cellIndex;
 		
-		public ReconProcess(Project project, String description, List<ReconEntry> entries, int cellIndex) {
+		public ReconProcess(
+			Project project, 
+			JSONObject engineConfig, 
+			String description, 
+			String columnName
+		) {
 			super(description);
 			_project = project;
-			_entries = entries;
-			_cellIndex = cellIndex;
+			_engineConfig = engineConfig;
+			_columnName = columnName;
 		}
 		
 		protected Runnable getRunnable() {
 			return this;
 		}
 		
+		protected void populateEntries() throws Exception {
+			Engine engine = new Engine(_project);
+			engine.initializeFromJSON(_engineConfig);
+			
+			Column column = _project.columnModel.getColumnByName(_columnName);
+			if (column == null) {
+				throw new Exception("No column named " + _columnName);
+			}
+			
+			_entries = new ArrayList<ReconEntry>(_project.rows.size());
+			_cellIndex = column.getCellIndex();
+			
+			FilteredRows filteredRows = engine.getAllFilteredRows(false);
+			filteredRows.accept(_project, new RowVisitor() {
+				public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+					if (_cellIndex < row.cells.size()) {
+						Cell cell = row.cells.get(_cellIndex);
+						if (cell != null && !ExpressionUtils.isBlank(cell.value)) {
+							_entries.add(new ReconEntry(rowIndex, cell));
+						}
+					}
+					return false;
+				}
+			});
+		}
+		
 		public void run() {
+			try {
+				populateEntries();
+			} catch (Exception e2) {
+				// TODO : Not sure what to do here?
+				e2.printStackTrace();
+			}
+			
 			Map<String, List<ReconEntry>> valueToEntries = new HashMap<String, List<ReconEntry>>();
 			
 			for (ReconEntry entry : _entries) {
@@ -203,7 +221,7 @@ public class ReconOperation extends EngineDependentOperation {
 			
 			ReconConfig reconConfig = new ReconConfig(_typeID);
 			
-			Change reconChange = new ReconChange(cellChanges, _cellIndex, reconConfig);
+			Change reconChange = new ReconChange(cellChanges, _columnName, reconConfig);
 			
 			HistoryEntry historyEntry = new HistoryEntry(
 				_project, 

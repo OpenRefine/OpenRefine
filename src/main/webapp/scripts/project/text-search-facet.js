@@ -14,9 +14,14 @@ TextSearchFacet.prototype._setDefaults = function() {
 };
 
 TextSearchFacet.prototype.getJSON = function() {
-    var o = cloneDeep(this._config);
-    o.type = "text";
-    o.query = this._query;
+    var o = {
+        type: "text",
+        name: this._config.name,
+        columnName: this._config.columnName,
+        mode: this._config.mode,
+        caseSensitive: this._config.caseSensitive,
+        query: this._query
+    };
     return o;
 };
 

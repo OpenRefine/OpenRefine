@@ -12,7 +12,7 @@ public class ColumnAdditionChange extends ColumnChange {
     final protected String          _headerLabel;
     final protected int             _columnIndex;
     final protected CellAtRow[]     _newCells;
-    protected int                   _newCellIndex;
+    protected int                   _newCellIndex = -1;
     
     public ColumnAdditionChange(String headerLabel, int columnIndex, List<CellAtRow> newCells) {
         _headerLabel = headerLabel;
@@ -23,8 +23,10 @@ public class ColumnAdditionChange extends ColumnChange {
 
     public void apply(Project project) {
         synchronized (project) {
-            _newCellIndex = project.columnModel.allocateNewCellIndex();
-            
+        	if (_newCellIndex < 0) {
+        		_newCellIndex = project.columnModel.allocateNewCellIndex();
+        	}
+        	
             Column column = new Column(_newCellIndex, _headerLabel);
             
             project.columnModel.columns.add(_columnIndex, column);

@@ -60,7 +60,7 @@ public class Engine implements Jsonizable {
 			}
 			
 			if (facet != null) {
-				facet.initializeFromJSON(fo);
+				facet.initializeFromJSON(_project, fo);
 				_facets.add(facet);
 			}
 		}

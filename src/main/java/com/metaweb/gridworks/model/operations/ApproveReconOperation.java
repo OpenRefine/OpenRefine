@@ -33,6 +33,10 @@ public class ApproveReconOperation extends EngineDependentMassCellOperation {
 		writer.endObject();
 	}
 
+	protected String getBriefDescription() {
+		return "Approve best recon candidates for cells in column " + _columnName;
+	}
+
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		

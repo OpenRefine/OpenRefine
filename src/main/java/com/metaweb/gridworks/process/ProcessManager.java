@@ -31,7 +31,12 @@ public class ProcessManager implements Jsonizable {
 
 	public boolean queueProcess(Process process) {
 		if (process.isImmediate() && _processes.size() == 0) {
-			process.performImmediate();
+			try {
+				process.performImmediate();
+			} catch (Exception e) {
+				// TODO: Not sure what to do yet
+				e.printStackTrace();
+			}
 			return true;
 		} else {
 			_processes.add(process);
@@ -51,7 +56,12 @@ public class ProcessManager implements Jsonizable {
 		while (_processes.size() > 0) {
 			Process p = _processes.get(0);
 			if (p.isImmediate()) {
-				p.performImmediate();
+				try {
+					p.performImmediate();
+				} catch (Exception e) {
+					// TODO: Not sure what to do yet
+					e.printStackTrace();
+				}
 				_processes.remove(0);
 			} else if (p.isDone()) {
 				_processes.remove(0);

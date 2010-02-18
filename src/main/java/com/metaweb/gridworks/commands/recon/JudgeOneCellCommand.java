@@ -18,7 +18,6 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.changes.CellChange;
-import com.metaweb.gridworks.process.Process;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
 public class JudgeOneCellCommand extends Command {
@@ -31,19 +30,61 @@ public class JudgeOneCellCommand extends Command {
 			
 			int rowIndex = Integer.parseInt(request.getParameter("row"));
 			int cellIndex = Integer.parseInt(request.getParameter("cell"));
-			Cell cell = project.rows.get(rowIndex).getCell(cellIndex);
+			String judgment = request.getParameter("judgment");
+			String candidateID = request.getParameter("candidate");
+
+			JudgeOneCellProcess process = new JudgeOneCellProcess(
+				project, 
+				"Judge one cell's recon result",
+				rowIndex, 
+				cellIndex, 
+				judgment, 
+				candidateID
+			);
+			
+			boolean done = project.processManager.queueProcess(process);
+			if (done) {
+				JSONWriter writer = new JSONWriter(response.getWriter());
+				writer.object();
+				writer.key("code"); writer.value("ok");
+				writer.key("cell"); process.newCell.write(writer, new Properties());
+				writer.endObject();
+			} else {
+				respond(response, "{ \"code\" : \"pending\" }");
+			}
+		} catch (Exception e) {
+			respondException(response, e);
+		}
+	}
+	
+	protected class JudgeOneCellProcess extends QuickHistoryEntryProcess {
+		final int rowIndex;
+		final int cellIndex;
+		final String judgment;
+		final String candidateID;
+		Cell newCell;
+		
+		
+		JudgeOneCellProcess(Project project, String briefDescription, int rowIndex, int cellIndex, String judgment, String candidateID) {
+			super(project, briefDescription);
+			this.rowIndex = rowIndex;
+			this.cellIndex = cellIndex;
+			this.judgment = judgment;
+			this.candidateID = candidateID;
+		}
+
+		protected HistoryEntry createHistoryEntry() throws Exception {
+			Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
 			if (cell == null || cell.value == null) {
-				respond(response, "{ \"code\" : \"error\", \"message\" : \"Cell is blank\" }");
-				return;
+				throw new Exception("Cell is blank");
 			}
 			
-			Column column = project.columnModel.getColumnByCellIndex(cellIndex);
+			Column column = _project.columnModel.getColumnByCellIndex(cellIndex);
 			if (column == null) {
-				respond(response, "{ \"code\" : \"error\", \"message\" : \"No such column\" }");
-				return;
+				throw new Exception("No such column");
 			}
 			
-			Cell newCell = new Cell(
+			newCell = new Cell(
 				cell.value, 
 				cell.recon == null ? new Recon() : cell.recon.dup()
 			);
@@ -55,13 +96,10 @@ public class JudgeOneCellCommand extends Command {
 			
 			String description = null;
 			
-			String judgment = request.getParameter("judgment");
 			if ("match".equals(judgment)) {
 				ReconCandidate match = null;
 				
 				if (cell.recon != null) {
-					String candidateID = request.getParameter("candidate");
-					
 					for (ReconCandidate c : cell.recon.candidates) {
 						if (candidateID.equals(c.topicID)) {
 							match = c;
@@ -70,8 +108,7 @@ public class JudgeOneCellCommand extends Command {
 					}
 				}
 				if (match == null) {
-					respond(response, "{ \"code\" : \"error\", \"message\" : \"No such recon candidate\" }");
-					return;
+					throw new Exception("No such recon candidate");
 				}
 				
 				newCell.recon.judgment = Recon.Judgment.Matched;
@@ -88,29 +125,12 @@ public class JudgeOneCellCommand extends Command {
 				newCell.recon.judgment = Recon.Judgment.None;
 				newCell.recon.match = null;
 				description = "Discard recon judgment for " + cellDescription;
-			} else {
-				respond(response, "{ \"code\" : \"error\", \"message\" : \"bad judgment\" }");
-				return;
 			}
 			
 			Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
-			HistoryEntry historyEntry = new HistoryEntry(
-				project, description, null, change);
-
-			Process process = new QuickHistoryEntryProcess(project, historyEntry);
 			
-			boolean done = project.processManager.queueProcess(process);
-			if (done) {
-				JSONWriter writer = new JSONWriter(response.getWriter());
-				writer.object();
-				writer.key("code"); writer.value("ok");
-				writer.key("cell"); newCell.write(writer, new Properties());
-				writer.endObject();
-			} else {
-				respond(response, "{ \"code\" : \"pending\" }");
-			}
-		} catch (Exception e) {
-			respondException(response, e);
+			return new HistoryEntry(
+				_project, description, null, change);
 		}
 	}
 }

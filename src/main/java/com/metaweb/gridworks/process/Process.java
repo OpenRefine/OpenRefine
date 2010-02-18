@@ -8,7 +8,7 @@ public abstract class Process implements Jsonizable {
 	abstract public boolean isRunning();
 	abstract public boolean isDone();
 	
-	abstract public void performImmediate();
+	abstract public void performImmediate() throws Exception;
 	
 	abstract public void startPerforming(ProcessManager manager);
 	abstract public void cancel();

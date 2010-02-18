@@ -32,6 +32,10 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 		writer.endObject();
 	}
 
+	protected String getBriefDescription() {
+		return "Discard recon results for cells in column " + _columnName;
+	}
+
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		
