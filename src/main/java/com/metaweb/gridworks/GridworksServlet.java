@@ -16,6 +16,7 @@ import org.json.JSONTokener;
 
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.commands.edit.AddColumnCommand;
+import com.metaweb.gridworks.commands.edit.ApplyOperationsCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
 import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
@@ -60,6 +61,8 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("get-operations", new GetOperationsCommand());
 		
 		_commands.put("undo-redo", new UndoRedoCommand());
+		_commands.put("apply-operations", new ApplyOperationsCommand());
+		
 		_commands.put("compute-facets", new ComputeFacetsCommand());
 		_commands.put("do-text-transform", new DoTextTransformCommand());
 		

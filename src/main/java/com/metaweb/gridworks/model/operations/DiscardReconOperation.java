@@ -25,8 +25,8 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 			throws JSONException {
 		
 		writer.object();
-		writer.key("op"); writer.value("disapprove-recon");
-		writer.key("description"); writer.value("Discard recon judgments in column " + _columnName);
+		writer.key("op"); writer.value("discard-recon");
+		writer.key("description"); writer.value("Discard recon matches in column " + _columnName);
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.endObject();

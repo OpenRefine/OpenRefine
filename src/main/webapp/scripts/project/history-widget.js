@@ -18,15 +18,26 @@ HistoryWidget.prototype._render = function() {
     var self = this;
     
     this._div.empty();
+    this._div.unbind();
     
     $('<h3>Undo/Redo History</h3>').appendTo(this._div);
     
     var bodyDiv = $('<div></div>').addClass("history-panel-body").appendTo(this._div);
     bodyDiv.mouseenter(function(evt) {
-        $(this).addClass("history-panel-body-expanded");
+        bodyDiv.addClass("history-panel-body-expanded");
+    });
+    
+    this._div.mouseenter(function(evt) {
+        if (self._timerID != null) {
+            window.clearTimeout(self._timerID);
+            self._timerID = null;
+        }
     }).mouseleave(function(evt) {
-        $(this).removeClass("history-panel-body-expanded");
-        autoscroll();
+        self._timerID = window.setTimeout(function() {
+            self._timerID = null;
+            bodyDiv.removeClass("history-panel-body-expanded");
+            autoscroll();
+        }, 1000);
     });
     
     var renderEntry = function(container, entry, lastDoneID, title) {
@@ -71,7 +82,7 @@ HistoryWidget.prototype._render = function() {
     });
     $('<span> &bull; </span>').appendTo(footerDiv);
     $('<a href="javascript:{}"></a>').text("apply").appendTo(footerDiv).click(function() {
-        self._applyOperations();
+        self._showApplyOperationsDialog();
     });
 };
 
@@ -99,26 +110,76 @@ HistoryWidget.prototype._extractOperations = function() {
         null,
         function(data) {
             if ("operations" in data) {
-                self._showOperationsDialog(data.operations);
+                self._showExtractOperationsDialog(data.operations);
             }
         },
         "jsonp"
     );
 };
 
-HistoryWidget.prototype._showOperationsDialog = function(json) {
+HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     var self = this;
     var frame = DialogSystem.createDialog();
     frame.width("800px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Operations").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Extract Operations").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
+    $('<p></p>').text(
+        "The following JSON code encodes the operations you have done that can be abstracted. " + 
+        "You can copy and save it in order to apply the same operations in the future.").appendTo(body);
+        
     var textarea = $('<textarea />').attr("wrap", "hard").width("100%").height("400px").appendTo(body);
     textarea.text(JSON.stringify(json, null, 2));
     
     $('<button></button>').text("Done").click(function() {
+        DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+    
+    var level = DialogSystem.showDialog(frame);
+    
+    textarea[0].select();
+};
+
+HistoryWidget.prototype._showApplyOperationsDialog = function(json) {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    frame.width("800px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Apply Operations").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    $('<p></p>').text(
+        "Paste the JSON code encoding the operations to perform.").appendTo(body);
+        
+    var textarea = $('<textarea />').attr("wrap", "hard").width("100%").height("400px").appendTo(body);
+    textarea.text(JSON.stringify(json, null, 2));
+    
+    $('<button></button>').text("Apply").click(function() {
+        try {
+            var json = JSON.parse(textarea[0].value);
+        } catch (e) {
+            alert("The JSON you pasted is invalid.");
+            return;
+        }
+        
+        DialogSystem.dismissUntil(level - 1);
+        
+        $.post(
+            "/command/apply-operations?" + $.param({ project: theProject.id }),
+            { operations: JSON.stringify(json) },
+            function(data) {
+                self.update();
+                ui.dataTableView.update(true);
+                ui.processWidget.update();
+            },
+            "json"
+        );
+    }).appendTo(footer);
+    
+    $('<button></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
