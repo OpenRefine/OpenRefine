@@ -30,9 +30,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     self = this;
     MenuSystem.createAndShowStandardMenu([
         {
-            label: "Edit",
+            label: "Edit Cells",
             submenu: [
-                {   "heading" : "Cell Content Transformations" },
                 {
                     label: "To Titlecase",
                     click: function() { self._doTextTransform("toTitlecase(value)"); }
@@ -45,12 +44,24 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     label: "To Lowercase",
                     click: function() { self._doTextTransform("toLowercase(value)"); }
                 },
-                {},
                 {
-                    label: "Custom Expression ...",
+                    label: "Custom Transform ...",
                     click: function() { self._doTextTransformPrompt(); }
                 },
-                {   "heading" : "Column Operations" },
+                {},
+                {
+                    label: "Split Multi-Valued Cells ...",
+                    click: function() { self._doSplitMultiValueCells(); }
+                },
+                {
+                    label: "Join Multi-Valued Cells ...",
+                    click: function() { self._doJoinMultiValueCells(); }
+                }
+            ]
+        },
+        {
+            label: "Edit Column",
+            submenu: [
                 {
                     label: "Add Column Based on This Column ...",
                     click: function() { self._doAddColumn("value"); }
@@ -59,17 +70,9 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     label: "Remove This Column",
                     click: function() { self._doRemoveColumn(); }
                 },
-                {   "heading" : "Advanced Transformations" },
-                {
-                    label: "Split Multi-Value Cells ...",
-                    click: function() { self._doSplitMultiValueCells(); }
-                },
-                {
-                    label: "Join Multi-Value Cells ...",
-                    click: function() { self._doJoinMultiValueCells(); }
-                }
             ]
         },
+        {},
         {
             label: "Filter",
             tooltip: "Filter rows by this column's cell content or characteristics",
@@ -458,7 +461,7 @@ DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
 };
 
 DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
-    var separator = window.prompt("What separator currently separates the values?", ", ");
+    var separator = window.prompt("What separator currently separates the values?", ",");
     if (separator != null) {
         this._dataTableView.doPostThenUpdate(
             "split-multi-value-cells",
