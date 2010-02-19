@@ -1,7 +1,9 @@
 package com.metaweb.gridworks.protograph.transpose;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -19,6 +21,7 @@ import com.metaweb.gridworks.protograph.ValueNode;
 public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory {
 	protected List<WritingTransposedNode> rootNodes = new LinkedList<WritingTransposedNode>();
 	protected StringBuffer stringBuffer;
+	protected Map<String, Long> varPool = new HashMap<String, Long>();
 	
 	public String getLoad() {
 		stringBuffer = new StringBuffer();
@@ -112,10 +115,20 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
 				cell.recon.match != null) {
 				id = cell.recon.match.topicID;
 			} else {
-				id = "$" + node.columnName.replaceAll("\\W", "_");
+			    long var = 0;
+			    if (varPool.containsKey(node.columnName)) {
+			        var = varPool.get(node.columnName);
+			    }
+			    varPool.put(node.columnName, var + 1);
+			    
+				id = "$" + node.columnName.replaceAll("\\W+", "_") + "_" + var;
 				
 				writeLine("{ 's' : '" + id + "', 'p' : 'type', 'o' : '" + node.type.id + "' }");
 				writeLine("{ 's' : '" + id + "', 'p' : 'name', 'o' : " + JSONObject.quote(cell.value.toString()) + " }");
+			}
+			
+			if (subject != null) {
+			    writeLine(subject, predicate, id);
 			}
 			
 			writeChildren(id);
