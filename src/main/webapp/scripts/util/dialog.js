@@ -53,3 +53,17 @@ DialogSystem.createDialog = function() {
     return $('<div></div>').addClass("dialog-frame");
 };
 
+DialogSystem.showBusy = function(message) {
+    var frame = DialogSystem.createDialog();
+    frame.width("300px").css("-moz-border-radius", "25px");
+    
+    var body = $('<div>').addClass("dialog-busy-body").appendTo(frame);
+    $('<img>').attr("src", "images/large-spinner.gif").appendTo(body);
+    $('<span>').text(" " + (message || "Working...")).appendTo(body);
+    
+    var level = DialogSystem.showDialog(frame);
+    
+    return function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+};

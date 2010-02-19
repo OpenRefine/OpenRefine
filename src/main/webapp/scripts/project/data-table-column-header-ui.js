@@ -377,10 +377,12 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
 
 DataTableColumnHeaderUI.prototype._doReconcile = function() {
     var self = this;
+    var dismissBusy = DialogSystem.showBusy();
     $.post(
         "/command/guess-types-of-column?" + $.param({ project: theProject.id, columnName: this._column.headerLabel }), 
         null,
         function(data) {
+            dismissBusy();
             new ReconDialog(self._column, data.code == "ok" ? data.types : []);
         },
         "json"

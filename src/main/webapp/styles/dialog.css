@@ -46,3 +46,12 @@
 .dialog-footer button {
     margin-left: 5px;
 }
+
+.dialog-busy-body {
+    margin: 1em;
+    text-align: center;
+    font-size: 200%;
+    font-weight: bold;
+    color: #faa;
+}
+
