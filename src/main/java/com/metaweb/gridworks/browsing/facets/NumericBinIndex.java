@@ -44,9 +44,9 @@ public class NumericBinIndex {
 			}
 		}
 		
-		if (getMin() >= getMax()) {
+		if (_min >= _max) {
 			_step = 0;
-			_bins = new int[0];
+			_bins = new int[1];
 			return;
 		}
 		

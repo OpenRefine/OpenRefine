@@ -6,7 +6,6 @@
     background: #fffee0;
     border: 1px solid #666;
     z-index: 10;
-    -moz-border-radius-bottomleft: 20px;
 }
 .history-panel h3 {
     margin: 0;
