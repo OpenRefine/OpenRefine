@@ -187,7 +187,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     label: "Start Reconciling ...",
                     tooltip: "Reconcile text in this column with topics on Freebase",
                     click: function() {
-                        new ReconDialog(self._column);
+                        self._doReconcile();
                     }
                 },
                 {},
@@ -373,6 +373,19 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
             self._doTextTransform(expression);
         }
     );
+};
+
+DataTableColumnHeaderUI.prototype._doReconcile = function() {
+    var self = this;
+    $.post(
+        "/command/guess-types-of-column?" + $.param({ project: theProject.id, columnName: this._column.headerLabel }), 
+        null,
+        function(data) {
+            new ReconDialog(self._column, data.code == "ok" ? data.types : []);
+        },
+        "json"
+    );
+
 };
 
 DataTableColumnHeaderUI.prototype._doDiscardReconResults = function() {

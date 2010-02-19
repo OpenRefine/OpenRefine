@@ -39,6 +39,7 @@ import com.metaweb.gridworks.commands.recon.DiscardReconcileCommand;
 import com.metaweb.gridworks.commands.recon.JudgeOneCellCommand;
 import com.metaweb.gridworks.commands.recon.ReconcileCommand;
 import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
+import com.metaweb.gridworks.commands.util.GuessTypesOfColumnCommand;
 import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
 import com.metaweb.gridworks.commands.util.PreviewProtographCommand;
 
@@ -82,6 +83,7 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("preview-expression", new PreviewExpressionCommand());
         _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());
         _commands.put("preview-protograph", new PreviewProtographCommand());
+        _commands.put("guess-types-of-column", new GuessTypesOfColumnCommand());
 	}
 
 	@Override
