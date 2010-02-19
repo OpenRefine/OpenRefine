@@ -151,20 +151,22 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
 			String object = cell.value instanceof String ? 
 					JSONObject.quote((String) cell.value) : cell.value.toString();
 					
-			if ("/type/text".equals(node.lang)) {
-				writeLine(
-					"{ 's' : '" + subject + 
-					"', 'p' : '" + predicate + 
-					"', 'o' : " + object + 
-					", 'lang' : '" + node.lang + 
-					"' }"
-				);
-			} else {
-				writeLine(
-					"{ 's' : '" + subject + 
-					"', 'p' : '" + predicate + 
-					"', 'o' : " + object + " }"
-				);
+			if (subject != null) {
+				if ("/type/text".equals(node.lang)) {
+					writeLine(
+						"{ 's' : '" + subject + 
+						"', 'p' : '" + predicate + 
+						"', 'o' : " + object + 
+						", 'lang' : '" + node.lang + 
+						"' }"
+					);
+				} else {
+					writeLine(
+						"{ 's' : '" + subject + 
+						"', 'p' : '" + predicate + 
+						"', 'o' : " + object + " }"
+					);
+				}
 			}
 			
 			return object;

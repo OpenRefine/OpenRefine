@@ -67,7 +67,7 @@ SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
         .html(label)
         .appendTo(this._tdMain)
         .click(function(evt) {
-            self._showPropertySuggestPopup(this);
+            self._startEditProperty(this);
         });
         
     $('<img />').attr("src", "images/arrow-start.png").prependTo(a);
@@ -75,51 +75,247 @@ SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
 };
 
 SchemaAlignmentDialog.UILink.prototype._renderDetails = function() {
-    var tableDetails = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._expandedDetailDiv)[0];
+    if (this._targetUI) {
+        this._targetUI.dispose();
+    }
+    if (this._tableDetails) {
+        this._tableDetails.remove();
+    }
+    
+    this._tableDetails = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._expandedDetailDiv);
     this._targetUI = new SchemaAlignmentDialog.UINode(
         this._dialog,
         this._link.target, 
-        tableDetails, 
+        this._tableDetails[0], 
         { expanded: "links" in this._link.target && this._link.target.links.length > 0 });
 };
 
-SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt) {
+SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
+    var sourceTypeID = this._parentUINode.getExpectedType();
+    var targetTypeID = "type" in this._link.target && this._link.target.type != null ? this._link.target.type.id : null;
+    var targetTypeName = "columnName" in this._link.target ? this._link.target.columnName : null;
+    
+    if (sourceTypeID != null) {
+        var self = this;
+        var dismissBusy = DialogSystem.showBusy();
+        
+        var instanceCount = 0;
+        var outgoing = [];
+        var incoming = [];
+        
+        function onDone() {
+            dismissBusy();
+            
+            var suggestions = SchemaAlignmentDialog.UILink._rankProperties(outgoing, incoming, sourceTypeID, targetTypeID, targetTypeName);
+            self._showPropertySuggestPopup(elmt, suggestions);
+        };
+        
+        var cotypes = [];
+        function doCoTypes() {
+            if (cotypes.length === 0) {
+                onDone();
+            } else {
+                var cotype = cotypes.pop();
+                SchemaAlignmentDialog.UILink._getPropertiesOfType(
+                    cotype.t,
+                    outgoing,
+                    incoming,
+                    cotype.c / instanceCount,
+                    doCoTypes
+                );
+            }
+        };
+        
+        SchemaAlignmentDialog.UILink._getPropertiesOfType(
+            sourceTypeID,
+            outgoing,
+            incoming,
+            1,
+            function(data) {
+                if ("result" in data) {
+                    instanceCount = data.result.count;
+                    if ("cotypes" in data.result) {
+                        cotypes = data.result.cotypes.slice(0, 3);
+                    }
+                }
+                doCoTypes();
+            }
+        );
+    } else {
+        this._showPropertySuggestPopup(elmt, []);
+    }
+};
+
+SchemaAlignmentDialog.UILink._rankProperties = function(outgoing, incoming, sourceTypeID, targetTypeID, targetTypeName) {
+    var nameScorer;
+    if (targetTypeName === null) {
+        nameScorer = function() { return 1; };
+    } else {
+        var nameWords = targetTypeName.toLowerCase().replace(/\W/g, ' ').replace(/\s+/g, ' ').split(" ");
+        var nameScoreString = function(score, s) {
+            s = s.toLowerCase().replace(/\W/g, ' ');
+            
+            var n = 0;
+            for (var i = 0; i < nameWords.length; i++) {
+                if (s.indexOf(nameWords[i]) >= 0) {
+                    n++;
+                }
+            }
+            return Math.max(score, n / nameWords.length);
+        };
+        var nameScoreStrings = function(score, a) {
+            $.each(a, function() { score = nameScoreString(score, this); });
+            return score;
+        };
+        
+        nameScorer = function(p) {
+            var score = nameScoreString(0, p.name);
+            score = nameScoreStrings(score, p.alias);
+            
+            if ("expects" in p && p.expects !== null) {
+                score = nameScoreString(score, p.expects.name);
+                score = nameScoreStrings(score, p.expects.alias);
+                if ("plural_names" in p.expects) {
+                    score = nameScoreStrings(score, p.expects.plural_names);
+                }
+                if ("plural_aliases" in p.expects) {
+                    score = nameScoreStrings(score, p.expects.plural_aliases);
+                }
+            }
+            
+            return score;
+        };
+    };
+    
+    var typeScorer;
+    if (targetTypeID === null) {
+        typeScorer = function(p) { return p.weight; };
+    } else {
+        typeScorer = function(p) {
+            return p.expects.id == targetTypeID ? 1 : p.weight;
+        };
+    }
+    
+    var suggestions = [];
+    for (var i = 0; i < outgoing.length; i++) {
+        var p = outgoing[i];
+        p.score = p.weight * (0.5 * nameScorer(p) + 0.5 * typeScorer(p));
+        if (p.score > 0) {
+            suggestions.push(p);
+        }
+    }
+    
+    suggestions.sort(function(a, b) { return b.score - a.score; });
+    suggestions = suggestions.slice(0, 7);
+    
+    return suggestions;
+};
+
+SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, outgoing, incoming, weight, onDone) {
+    $.getJSON(
+        "http://api.sandbox-freebase.com/api/trans/schema_index/-" + typeID + "?callback=?",
+        null,
+        function(data) {
+            if ("result" in data) {
+                var result = data.result;
+                if ("outgoing" in result) {
+                    for (var i = 0; i < result.outgoing.length; i++) {
+                        var p = result.outgoing[i];
+                        p.weight = weight;
+                        outgoing.push(p);
+                    }
+                }
+                if ("incoming" in result) {
+                    for (var i = 0; i < result.incoming.length; i++) {
+                        var p = result.incoming[i];
+                        p.weight = weight;
+                        incoming.push(p);
+                    }
+                }
+            }
+            onDone(data);
+        },
+        "jsonp"
+    );
+};
+
+SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt, suggestions) {
     self = this;
     
-    var fakeMenu = MenuSystem.createMenu()
-        .width(300)
-        .height(100)
-        .css("background", "none")
-        .css("border", "none");
+    var menu = MenuSystem.createMenu().width("350px");
     
-    var input = $('<input />').appendTo(fakeMenu);
+    var commitProperty = function(p) {
+        window.setTimeout(function() { MenuSystem.dismissAll(); }, 100);
+        
+        if ("plies" in p && p.plies.length > 1) {
+            // self._targetUI.dispose();
+            self._link.property = {
+                id: p.plies[0],
+                name: p.name
+            };
+            self._link.target = {
+                nodeType: "anonymous",
+                links: [{
+                    property: {
+                        id: p.plies[1],
+                        name: p.name2
+                    },
+                    target: self._link.target
+                }]
+            };
+            
+            self._renderDetails();
+        } else {
+            self._link.property = {
+                id: p.id,
+                name: p.name
+            };
+        }
+        self._configureTarget();
+    };
     
-    var level = MenuSystem.showMenu(fakeMenu, function(){});
-    MenuSystem.positionMenuAboveBelow(fakeMenu, $(elmt));
+    if (suggestions.length > 0) {
+        var divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search2").html('<div>Search for a property or pick one below</div>').appendTo(menu);
+        
+        function createSuggestion(suggestion) {
+            var menuItem = MenuSystem.createMenuItem().appendTo(menu);
+            menuItem.html(suggestion.id).click(function() {
+                commitProperty(suggestion);
+            });
+        }
+        
+        for (var i = 0; i < suggestions.length; i++) {
+            createSuggestion(suggestions[i]);
+        }
+    } else {
+        var divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search").html('<div>Search for a property</div>').appendTo(menu);
+    }
+    var input = $('<input />').appendTo($('<div>').appendTo(divSearch));
     
-    var options = {
+    MenuSystem.showMenu(menu, function(){});
+    MenuSystem.positionMenuAboveBelow(menu, $(elmt));
+    
+    var suggestOptions = {
         type : '/type/property'
     };
-    var expectedTypeID = this._parentUINode.getExpectedType();
-    if (expectedTypeID != null) {
-        options.mql_filter = [{
-            "/type/property/schema" : { "id" : expectedTypeID }
+    if (this._link.target != null && "type" in this._link.target && this._link.target.type != null) {
+        suggestOptions.mql_filter = [{
+            "/type/property/expected_type" : {
+                id: this._link.target.type.id
+            }
         }];
+    } else {
+        var sourceTypeID = this._parentUINode.getExpectedType();
+        if (sourceTypeID != null) {
+            suggestOptions.mql_filter = [{
+                "/type/property/schema" : {
+                    id: sourceTypeID
+                }
+            }];
+        }
     }
-
-    input.suggest(options).bind("fb-select", function(e, data) {
-        self._link.property = {
-            id: data.id,
-            name: data.name
-        };
-        self._configureTarget();
-        
-        window.setTimeout(function() {
-            MenuSystem.dismissAll();
-            self._renderMain();
-            self._dialog.preview();
-        }, 100);
-    });
+    input.suggest(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });
+    
     input[0].focus();
 };
 
@@ -140,6 +336,8 @@ SchemaAlignmentDialog.UILink.prototype.getJSON = function() {
 
 SchemaAlignmentDialog.UILink.prototype._configureTarget = function() {
     var self = this;
+    var dismissBusy = DialogSystem.showBusy();
+    
     $.getJSON(
         "http://api.freebase.com/api/service/mqlread?query=" + JSON.stringify({
             query: {
@@ -154,6 +352,8 @@ SchemaAlignmentDialog.UILink.prototype._configureTarget = function() {
         }) + "&callback=?",
         null,
         function(o) {
+            dismissBusy();
+            
             if ("result" in o) {
                 var expected_type = o.result.expected_type;
                 self._link.target.type = {
@@ -173,6 +373,9 @@ SchemaAlignmentDialog.UILink.prototype._configureTarget = function() {
                 
                 self._targetUI.render();
             }
+            
+            self._renderMain();
+            self._dialog.preview();
         },
         "jsonp"
     );

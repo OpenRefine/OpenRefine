@@ -192,9 +192,9 @@ SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
 
 SchemaAlignmentDialog.prototype._constructBody = function(body) {
     $('<p>' +
-        'The protograph serves as a skeleton for the graph-shaped data that will get generated ' +
+        'The schema alignment skeleton below specifies how the graph-shaped data that will get generated ' +
         'from your grid-shaped data and written into Freebase. The cells in each record of your data will ' +
-        'get placed into nodes within the protograph. Configure the protograph by specifying which ' +
+        'get placed into nodes within the skeleton. Configure the skeleton by specifying which ' +
         'column to substitute into which node. A node can also be an automatically generated ' +
         'anonymous node, or it can be an explicit value or topic that is the same for all records.' +
     '</p>').appendTo(body);
@@ -202,7 +202,7 @@ SchemaAlignmentDialog.prototype._constructBody = function(body) {
     $(
         '<div id="schema-alignment-tabs">' +
             '<ul>' +
-                '<li><a href="#schema-alignment-tabs-protograph">Protograph</a></li>' +
+                '<li><a href="#schema-alignment-tabs-protograph">Skeleton</a></li>' +
                 '<li><a href="#schema-alignment-tabs-preview-mqllike">MQL-like Preview</a></li>' +
                 '<li><a href="#schema-alignment-tabs-preview-tripleloader">TripleLoader Preview</a></li>' +
             '</ul>' +

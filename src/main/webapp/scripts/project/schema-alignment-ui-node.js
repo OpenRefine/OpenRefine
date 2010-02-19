@@ -23,6 +23,10 @@ SchemaAlignmentDialog.UINode = function(dialog, node, table, options) {
     }
 };
 
+SchemaAlignmentDialog.UINode.prototype.dispose = function() {
+    // nothing for now
+};
+
 SchemaAlignmentDialog.UINode.prototype.removeLink = function(linkUI) {
     for (var i = this._linkUIs.length - 1; i >= 0; i--) {
         if (this._linkUIs[i] === linkUI) {
@@ -412,6 +416,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                     elmts.cellAsTopicNodeTypeInput[0].value = typeName;
                     elmts.cellAsTopicNodeTypeInput.data("data.suggest", { "id" : typeID, "name" : typeName });
                     elmts.radioNodeTypeCellAsTopicCreate[0].checked = true;
+                    elmts.radioNodeTypeCellAsTopic[0].checked = true;
                 }
             });
             

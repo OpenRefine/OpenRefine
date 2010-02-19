@@ -24,8 +24,17 @@ MenuBar.prototype._initializeUI = function() {
             click: function() { self._doAutoSchemaAlignment(); }
         },*/
         {
-            label: "Edit Schema Alignment ...",
-            click: function() { self._doEditSchemaAlignment(); }
+            label: "Edit Schema Aligment Skeleton ...",
+            click: function() { self._doEditSchemaAlignment(false); }
+        },
+        {
+            label: "Reset Schema Alignment Skeleton ...",
+            click: function() { self._doEditSchemaAlignment(true); }
+        },
+        {},
+        {
+            label: "Load into Freebase ...",
+            click: function() {}
         }
     ]);
     
@@ -139,6 +148,6 @@ MenuBar.prototype._doAutoSchemaAlignment = function() {
     //SchemaAlignment.autoAlign();
 };
 
-MenuBar.prototype._doEditSchemaAlignment = function() {
-    new SchemaAlignmentDialog(theProject.protograph, function(newProtograph) {});
+MenuBar.prototype._doEditSchemaAlignment = function(reset) {
+    new SchemaAlignmentDialog(reset ? null : theProject.protograph, function(newProtograph) {});
 };

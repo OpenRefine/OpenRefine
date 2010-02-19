@@ -125,3 +125,18 @@ table.schema-align-node-dialog-layout2 > tbody > tr:last-child > td {
     overflow: auto;
     border: 1px solid #ddd;
 }
+
+/*--------------------------------------------------
+ *  Link dialog
+ *--------------------------------------------------
+ */
+
+.schema-alignment-link-menu-type-search {
+    padding: 8px;
+}
+
+.schema-alignment-link-menu-type-search2 {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 3px;
+}
