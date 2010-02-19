@@ -106,6 +106,7 @@ MenuBar.prototype._activateMenu = function() {
 
 MenuBar.prototype._deactivateMenu = function() {
     this._innerDiv.remove()
+        .css("z-index", "auto")
         .css("top", "0px")
         .appendTo(this._div);
         
