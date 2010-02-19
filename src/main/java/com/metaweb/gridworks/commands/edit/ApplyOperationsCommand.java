@@ -91,7 +91,8 @@ public class ApplyOperationsCommand extends Command {
 				operation = new ReconOperation(
 					engineConfig, 
 					columnName,
-					obj.getString("typeID")
+					obj.getString("typeID"),
+					obj.getString("typeName")
 				);
 			} else if ("save-protograph".equals(op)) {
 				operation = new SaveProtographOperation(

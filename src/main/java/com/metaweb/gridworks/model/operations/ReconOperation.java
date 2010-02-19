@@ -43,11 +43,13 @@ public class ReconOperation extends EngineDependentOperation {
 	
 	final protected String		_columnName;
 	final protected String 		_typeID;
+	final protected String 		_typeName;
 	
-	public ReconOperation(JSONObject engineConfig, String columnName, String typeID) {
+	public ReconOperation(JSONObject engineConfig, String columnName, String typeID, String typeName) {
 		super(engineConfig);
 		_columnName = columnName;
 		_typeID = typeID;
+		_typeName = typeName;
 	}
 
 	public Process createProcess(Project project, Properties options) throws Exception {
@@ -75,6 +77,7 @@ public class ReconOperation extends EngineDependentOperation {
 		writer.key("description"); writer.value("Reconcile cells in column " + _columnName + " to type " + _typeID);
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("typeID"); writer.value(_typeID);
+		writer.key("typeName"); writer.value(_typeName);
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.endObject();
 	}
@@ -214,7 +217,7 @@ public class ReconOperation extends EngineDependentOperation {
 				}
 			}
 			
-			ReconConfig reconConfig = new ReconConfig(_typeID);
+			ReconConfig reconConfig = new ReconConfig(_typeID, _typeName);
 			
 			Change reconChange = new ReconChange(cellChanges, _columnName, reconConfig);
 			

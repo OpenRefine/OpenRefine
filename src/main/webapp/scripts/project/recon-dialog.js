@@ -20,6 +20,7 @@ ReconDialog.prototype._createDialog = function() {
             var div = $('<div>').appendTo(body);
             $('<input type="radio" name="recon-dialog-type-choice">')
                 .attr("value", type.id)
+                .attr("typeName", type.name)
                 .appendTo(div);
                 
             $('<span></span>').text(" " + type.name).appendTo(div);
@@ -40,14 +41,20 @@ ReconDialog.prototype._createDialog = function() {
     var type = null;
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
     input.suggest({ type : '/type/type' }).bind("fb-select", function(e, data) {
-        type = data.id;
+        type = {
+            id: data.id,
+            name: data.name
+        };
         $('input[name="recon-dialog-type-choice"][value=""]').attr("checked", "true");
     });
     
     $('<button></button>').text("Start Reconciling").click(function() {
         var choices = $('input[name="recon-dialog-type-choice"]:checked');
         if (choices != null && choices.length > 0 && choices[0].value != "") {
-            type = choices[0].value;
+            type = {
+                id: choices[0].value,
+                name: choices.attr("typeName")
+            };
         }
         
         if (type == null)  {
@@ -55,7 +62,7 @@ ReconDialog.prototype._createDialog = function() {
         } else {
             DialogSystem.dismissUntil(level - 1);
             $.post(
-                "/command/reconcile?" + $.param({ project: theProject.id, columnName: self._column.headerLabel, type: type }), 
+                "/command/reconcile?" + $.param({ project: theProject.id, columnName: self._column.headerLabel, typeID: type.id, typeName: type.name }), 
                 { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
                 function(data) {
                     if (data.code != "error") {

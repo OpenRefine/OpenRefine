@@ -15,8 +15,9 @@ public class ReconcileCommand extends EngineDependentCommand {
 			JSONObject engineConfig) throws Exception {
 		
 		String columnName = request.getParameter("columnName");
-		String typeID = request.getParameter("type");
+		String typeID = request.getParameter("typeID");
+		String typeName = request.getParameter("typeName");
 		
-		return new ReconOperation(engineConfig, columnName, typeID);
+		return new ReconOperation(engineConfig, columnName, typeID, typeName);
 	}
 }

@@ -90,17 +90,47 @@ SchemaAlignment._cleanName = function(s) {
     return s.replace(/\W/g, " ").replace(/\s+/g, " ").toLowerCase();
 }
 
+SchemaAlignment.createNewRootNode = function() {
+    var rootNode = null;
+    var links = [];
+    var columns = theProject.columnModel.columns;
+    for (var i = 0; i < columns.length; i++) {
+        var column = columns[i];
+        var target = {
+            nodeType: "cell-as-topic",
+            columnName: column.headerLabel,
+            createForNoReconMatch: true
+        };
+        if ("reconConfig" in column && column.reconConfig != null) {
+            target.type = {
+                id: column.reconConfig.type.id,
+                name: column.reconConfig.type.name
+            };
+        }
+        
+        if (column.headerLabel == theProject.columnModel.keyColumnName) {
+            rootNode = target;
+        } else {
+            links.push({
+                property: null,
+                target: target
+            });
+        }
+    }
+    
+    rootNode = rootNode || { nodeType: "cell-as-topic" };
+    rootNode.links = links;
+    
+    return rootNode;
+};
+
 function SchemaAlignmentDialog(protograph, onDone) {
     this._onDone = onDone;
     this._originalProtograph = protograph || { rootNodes: [] };
     this._protograph = cloneDeep(this._originalProtograph); // this is what can be munched on
     
     if (this._protograph.rootNodes.length == 0) {
-        this._protograph.rootNodes.push({
-            nodeType: "cell-as-topic",
-            links: [
-            ]
-        });
+        this._protograph.rootNodes.push(SchemaAlignment.createNewRootNode());
     }
     
     this._nodeUIs = [];

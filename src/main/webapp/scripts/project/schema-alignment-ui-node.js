@@ -266,59 +266,6 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                 '<td>' +
                     '<table class="schema-align-node-dialog-layout2">' +
                         '<tr>' +
-                            '<td colspan="3">' +
-                                '<div class="schema-align-node-dialog-node-type">' +
-                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" id="radioNodeTypeAnonymous" /> Generate an anonymous graph node' +
-                                '</div>' +
-                            '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td></td>' +
-                            '<td>Assign a type to the node</td>' +
-                            '<td>&nbsp;<input id="anonymousNodeTypeInput" /></td>' +
-                        '</tr>' +
-                    
-                        '<tr>' +
-                            '<td colspan="3">' +
-                                '<div class="schema-align-node-dialog-node-type">' +
-                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="topic" id="radioNodeTypeTopic" /> Use one existing Freebase topic' +
-                                '</div>' +
-                            '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td></td>' +
-                            '<td>Topic</td>' +
-                            '<td><input id="topicNodeTypeInput" /></td>' +
-                        '</tr>' +
-                    
-                        '<tr>' +
-                            '<td colspan="3">' +
-                                '<div class="schema-align-node-dialog-node-type">' +
-                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="value" id="radioNodeTypeValue" /> Use a literal value' +
-                                '</div>' +
-                            '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td></td>' +
-                            '<td>Value</td>' +
-                            '<td><input id="valueNodeTypeValueInput" /></td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td></td>' +
-                            '<td>Value type</td>' +
-                            '<td><select id="valueNodeTypeValueTypeSelect">' + literalTypeSelectHtml + '</select></td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td></td>' +
-                            '<td>Language</td>' +
-                            '<td><input id="valueNodeTypeLanguageInput" /></td>' +
-                        '</tr>' +
-                    '</table>' +
-                '</td>' +
-                
-                '<td>' +
-                    '<table class="schema-align-node-dialog-layout2">' +
-                        '<tr>' +
                             '<td>' +
                                 '<div class="schema-align-node-dialog-node-type">' +
                                     '<input type="radio" name="schema-align-node-dialog-node-type" value="cell-as" id="radioNodeTypeCellAs" /> Set to Cell in Column' +
@@ -383,6 +330,59 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                         '</tr>' +
                     '</table>' +
                 '</td>' +
+                
+                '<td>' +
+                    '<table class="schema-align-node-dialog-layout2">' +
+                        '<tr>' +
+                            '<td colspan="3">' +
+                                '<div class="schema-align-node-dialog-node-type">' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" id="radioNodeTypeAnonymous" /> Generate an anonymous graph node' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Assign a type to the node</td>' +
+                            '<td>&nbsp;<input id="anonymousNodeTypeInput" /></td>' +
+                        '</tr>' +
+                    
+                        '<tr>' +
+                            '<td colspan="3">' +
+                                '<div class="schema-align-node-dialog-node-type">' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="topic" id="radioNodeTypeTopic" /> Use one existing Freebase topic' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Topic</td>' +
+                            '<td><input id="topicNodeTypeInput" /></td>' +
+                        '</tr>' +
+                    
+                        '<tr>' +
+                            '<td colspan="3">' +
+                                '<div class="schema-align-node-dialog-node-type">' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="value" id="radioNodeTypeValue" /> Use a literal value' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Value</td>' +
+                            '<td><input id="valueNodeTypeValueInput" /></td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Value type</td>' +
+                            '<td><select id="valueNodeTypeValueTypeSelect">' + literalTypeSelectHtml + '</select></td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td></td>' +
+                            '<td>Language</td>' +
+                            '<td><input id="valueNodeTypeLanguageInput" /></td>' +
+                        '</tr>' +
+                    '</table>' +
+                '</td>' +
             '</tr>' +
         '</table>'
     ).appendTo(body);
@@ -406,19 +406,12 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                 elmts.radioNodeTypeCellAs[0].checked = true;
                 
                 if ("reconConfig" in column) {
-                    var typeID = column.reconConfig.type;
-                    $.getJSON(
-                        "http://api.freebase.com/api/service/mqlread?query=" + JSON.stringify({ query: { "id" : typeID, "name" : null } }) + "&callback=?",
-                        null,
-                        function(o) {
-                            if ("result" in o) {
-                                elmts.cellAsTopicNodeTypeInput[0].value = o.result.name;
-                                elmts.cellAsTopicNodeTypeInput.data("data.suggest", { "id" : typeID, "name" : o.result.name });
-                                elmts.radioNodeTypeCellAsTopicCreate[0].checked = true;
-                            }
-                        },
-                        "jsonp"
-                    );
+                    var typeID = column.reconConfig.type.id;
+                    var typeName = column.reconConfig.type.name;
+                    
+                    elmts.cellAsTopicNodeTypeInput[0].value = typeName;
+                    elmts.cellAsTopicNodeTypeInput.data("data.suggest", { "id" : typeID, "name" : typeName });
+                    elmts.radioNodeTypeCellAsTopicCreate[0].checked = true;
                 }
             });
             
