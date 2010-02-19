@@ -1,9 +1,7 @@
 package com.metaweb.gridworks.model.operations;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -203,11 +201,8 @@ public class ReconOperation extends EngineDependentOperation {
 			List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
 			List<String> values = new ArrayList<String>(valueToEntries.keySet());
 			for (int i = 0; i < values.size(); i += 10) {
-				try {
-					recon(valueToEntries, values, i, Math.min(i + 10, values.size()), cellChanges);
-				} catch (JSONException e1) {
-					e1.printStackTrace();
-				}
+				recon(valueToEntries, values, i, Math.min(i + 10, values.size()), cellChanges);
+				
 				_progress = i * 100 / values.size();
 				
 				try {
@@ -240,34 +235,33 @@ public class ReconOperation extends EngineDependentOperation {
 			int from, 
 			int to,
 			List<CellChange> cellChanges
-		) throws JSONException {
-			
-			StringWriter stringWriter = new StringWriter();
-			JSONWriter jsonWriter = new JSONWriter(stringWriter);
-			
-			jsonWriter.object();
-			for (int i = 0; from + i < to; i++) {
-				jsonWriter.key("q" + i + ":search");
+		) {
+			try {
+				StringWriter stringWriter = new StringWriter();
+				JSONWriter jsonWriter = new JSONWriter(stringWriter);
 				
 				jsonWriter.object();
-				
-				jsonWriter.key("query"); jsonWriter.value(values.get(from + i));
-				jsonWriter.key("limit"); jsonWriter.value(5);
-				jsonWriter.key("type"); jsonWriter.value(_typeID);
-				jsonWriter.key("type_strict"); jsonWriter.value("should");
-				jsonWriter.key("indent"); jsonWriter.value(1);
-				jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
-				jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
-				
+				for (int i = 0; from + i < to; i++) {
+					jsonWriter.key("q" + i + ":search");
+					
+					jsonWriter.object();
+					
+					jsonWriter.key("query"); jsonWriter.value(values.get(from + i));
+					jsonWriter.key("limit"); jsonWriter.value(5);
+					jsonWriter.key("type"); jsonWriter.value(_typeID);
+					jsonWriter.key("type_strict"); jsonWriter.value("should");
+					jsonWriter.key("indent"); jsonWriter.value(1);
+					jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
+					jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
+					
+					jsonWriter.endObject();
+				}
 				jsonWriter.endObject();
-			}
-			jsonWriter.endObject();
-			
-			StringBuffer sb = new StringBuffer();
-			sb.append("http://api.freebase.com/api/service/search?indent=1&queries=");
-			sb.append(ParsingUtilities.encode(stringWriter.toString()));
-			
-			try {
+				
+				StringBuffer sb = new StringBuffer();
+				sb.append("http://api.freebase.com/api/service/search?indent=1&queries=");
+				sb.append(ParsingUtilities.encode(stringWriter.toString()));
+				
 				URL url = new URL(sb.toString());
 				URLConnection connection = url.openConnection();
 				connection.setConnectTimeout(5000);
@@ -285,14 +279,17 @@ public class ReconOperation extends EngineDependentOperation {
 							continue;
 						}
 						
+						Recon recon;
+						
 						JSONObject o2 = o.getJSONObject(key);
-						if (!(o2.has("result"))) {
-							continue;
+						if (o2.has("result")) {
+							JSONArray results = o2.getJSONArray("result");
+							
+							recon = createRecon(value, results);
+						} else {
+							recon = new Recon();
 						}
 						
-						JSONArray results = o2.getJSONArray("result");
-						
-						Recon recon = createRecon(value, results);
 						for (ReconEntry entry : valueToEntries.get(value)) {
 							Cell oldCell = entry.cell;
 							
@@ -306,59 +303,78 @@ public class ReconOperation extends EngineDependentOperation {
 							);
 							cellChanges.add(cellChange);
 						}
+						
+						valueToEntries.remove(value);
 					}
 				} finally {
 					is.close();
 				}
-			} catch (UnsupportedEncodingException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			}
+			
+			for (List<ReconEntry> entries : valueToEntries.values()) {
+				Recon recon = new Recon();
+				
+				for (ReconEntry entry : entries) {
+					Cell oldCell = entry.cell;
+					Cell newCell = new Cell(oldCell.value, recon);
+					
+					CellChange cellChange = new CellChange(
+						entry.rowIndex, 
+						_cellIndex, 
+						oldCell, 
+						newCell
+					);
+					cellChanges.add(cellChange);
+				}
 			}
 		}
 	
-		protected Recon createRecon(String text, JSONArray results) throws JSONException {
+		protected Recon createRecon(String text, JSONArray results) {
 			Recon recon = new Recon();
-			
-			int length = results.length();
-			for (int i = 0; i < length && recon.candidates.size() < 3; i++) {
-				JSONObject result = results.getJSONObject(i);
-				if (!result.has("name")) {
-					continue;
-				}
-				
-				JSONArray types = result.getJSONArray("type");
-				String[] typeIDs = new String[types.length()];
-				for (int j = 0; j < typeIDs.length; j++) {
-					typeIDs[j] = types.getJSONObject(j).getString("id");
-				}
-				
-				ReconCandidate candidate = new ReconCandidate(
-					result.getString("id"),
-					result.getString("guid"),
-					result.getString("name"),
-					typeIDs,
-					result.getDouble("relevance:score")
-				);
-				
-				// best match
-				if (i == 0) {
-					recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
-					recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
-					recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
+			try {
+				int length = results.length();
+				for (int i = 0; i < length && recon.candidates.size() < 3; i++) {
+					JSONObject result = results.getJSONObject(i);
+					if (!result.has("name")) {
+						continue;
+					}
 					
-					recon.setFeature(Recon.Feature_typeMatch, false);
-					for (String typeID : candidate.typeIDs) {
-						if (_typeID.equals(typeID)) {
-							recon.setFeature(Recon.Feature_typeMatch, true);
-							break;
+					JSONArray types = result.getJSONArray("type");
+					String[] typeIDs = new String[types.length()];
+					for (int j = 0; j < typeIDs.length; j++) {
+						typeIDs[j] = types.getJSONObject(j).getString("id");
+					}
+					
+					ReconCandidate candidate = new ReconCandidate(
+						result.getString("id"),
+						result.getString("guid"),
+						result.getString("name"),
+						typeIDs,
+						result.getDouble("relevance:score")
+					);
+					
+					// best match
+					if (i == 0) {
+						recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
+						recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
+						recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
+						
+						recon.setFeature(Recon.Feature_typeMatch, false);
+						for (String typeID : candidate.typeIDs) {
+							if (_typeID.equals(typeID)) {
+								recon.setFeature(Recon.Feature_typeMatch, true);
+								break;
+							}
 						}
 					}
+					
+					recon.candidates.add(candidate);
 				}
-				
-				recon.candidates.add(candidate);
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
-			
 			return recon;
 		}
 	}
