@@ -37,6 +37,7 @@ import com.metaweb.gridworks.commands.recon.ApproveNewReconcileCommand;
 import com.metaweb.gridworks.commands.recon.ApproveReconcileCommand;
 import com.metaweb.gridworks.commands.recon.DiscardReconcileCommand;
 import com.metaweb.gridworks.commands.recon.JudgeOneCellCommand;
+import com.metaweb.gridworks.commands.recon.MatchSpecificTopicCommand;
 import com.metaweb.gridworks.commands.recon.ReconcileCommand;
 import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
 import com.metaweb.gridworks.commands.util.GuessTypesOfColumnCommand;
@@ -73,10 +74,11 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("split-multi-value-cells", new SplitMultiValueCellsCommand());
 		
 		_commands.put("reconcile", new ReconcileCommand());
-		_commands.put("approve-reconcile", new ApproveReconcileCommand());
-		_commands.put("approve-new-reconcile", new ApproveNewReconcileCommand());
-		_commands.put("discard-reconcile", new DiscardReconcileCommand());
-		_commands.put("judge-one-cell", new JudgeOneCellCommand());
+		_commands.put("recon-approve-best-matches", new ApproveReconcileCommand());
+		_commands.put("recon-mark-new-topics", new ApproveNewReconcileCommand());
+		_commands.put("recon-discard-judgments", new DiscardReconcileCommand());
+		_commands.put("recon-match-specific-topic-to-cells", new MatchSpecificTopicCommand());
+		_commands.put("recon-judge-one-cell", new JudgeOneCellCommand());
 		
 		_commands.put("save-protograph", new SaveProtographCommand());
 		

@@ -1,0 +1,29 @@
+package com.metaweb.gridworks.commands.recon;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
+
+import com.metaweb.gridworks.commands.EngineDependentCommand;
+import com.metaweb.gridworks.model.AbstractOperation;
+import com.metaweb.gridworks.model.ReconCandidate;
+import com.metaweb.gridworks.model.operations.MatchSpecificTopicReconOperation;
+
+public class MatchSpecificTopicCommand extends EngineDependentCommand {
+	
+	@Override
+	protected AbstractOperation createOperation(HttpServletRequest request,
+			JSONObject engineConfig) throws Exception {
+		
+		String columnName = request.getParameter("columnName");
+		ReconCandidate match = new ReconCandidate(
+			request.getParameter("topicID"),
+			request.getParameter("topicGUID"),
+			request.getParameter("topicName"),
+			request.getParameter("types").split(","),
+			100
+		);
+		
+		return new MatchSpecificTopicReconOperation(engineConfig, columnName, match);
+	}
+}

@@ -30,17 +30,36 @@ public class JudgeOneCellCommand extends Command {
 			
 			int rowIndex = Integer.parseInt(request.getParameter("row"));
 			int cellIndex = Integer.parseInt(request.getParameter("cell"));
-			String judgment = request.getParameter("judgment");
-			String candidateID = request.getParameter("candidate");
+			String judgment = request.getParameter("judgment"); 
 
-			JudgeOneCellProcess process = new JudgeOneCellProcess(
-				project, 
-				"Judge one cell's recon result",
-				rowIndex, 
-				cellIndex, 
-				judgment, 
-				candidateID
-			);
+			JudgeOneCellProcess process = null;
+			
+			if (judgment != null) {
+				process = new JudgeOneCellProcess(
+					project, 
+					"Judge one cell's recon result",
+					judgment,
+					rowIndex, 
+					cellIndex, 
+					request.getParameter("candidate")
+				);
+			} else {
+				ReconCandidate match = new ReconCandidate(
+					request.getParameter("topicID"),
+					request.getParameter("topicGUID"),
+					request.getParameter("topicName"),
+					request.getParameter("types").split(","),
+					100
+				);
+				
+				process = new JudgeOneCellProcess(
+					project, 
+					"Judge one cell's recon result",
+					rowIndex, 
+					cellIndex, 
+					match
+				);
+			}
 			
 			boolean done = project.processManager.queueProcess(process);
 			if (done) {
@@ -62,15 +81,26 @@ public class JudgeOneCellCommand extends Command {
 		final int cellIndex;
 		final String judgment;
 		final String candidateID;
+		final ReconCandidate match;
 		Cell newCell;
 		
 		
-		JudgeOneCellProcess(Project project, String briefDescription, int rowIndex, int cellIndex, String judgment, String candidateID) {
+		JudgeOneCellProcess(Project project, String briefDescription, String judgment, int rowIndex, int cellIndex, String candidateID) {
 			super(project, briefDescription);
 			this.rowIndex = rowIndex;
 			this.cellIndex = cellIndex;
 			this.judgment = judgment;
 			this.candidateID = candidateID;
+			this.match = null;
+		}
+		
+		JudgeOneCellProcess(Project project, String briefDescription, int rowIndex, int cellIndex, ReconCandidate match) {
+			super(project, briefDescription);
+			this.rowIndex = rowIndex;
+			this.cellIndex = cellIndex;
+			this.judgment = null;
+			this.candidateID = null;
+			this.match = match;
 		}
 
 		protected HistoryEntry createHistoryEntry() throws Exception {
@@ -96,35 +126,44 @@ public class JudgeOneCellCommand extends Command {
 			
 			String description = null;
 			
-			if ("match".equals(judgment)) {
-				ReconCandidate match = null;
-				
-				if (cell.recon != null) {
-					for (ReconCandidate c : cell.recon.candidates) {
-						if (candidateID.equals(c.topicID)) {
-							match = c;
-							break;
-						}
-					}
-				}
-				if (match == null) {
-					throw new Exception("No such recon candidate");
-				}
-				
+			if (match != null) {
 				newCell.recon.judgment = Recon.Judgment.Matched;
-				newCell.recon.match = match;
+				newCell.recon.match = this.match;
 				
-				description = "Match " + match.topicName +
+				description = "Match " + this.match.topicName +
 					" (" + match.topicID + ") to " + 
 					cellDescription;
-				
-			} else if ("new".equals(judgment)) {
-				newCell.recon.judgment = Recon.Judgment.New;
-				description = "Mark to create new topic for " + cellDescription;
-			} else if ("discard".equals(judgment)) {
-				newCell.recon.judgment = Recon.Judgment.None;
-				newCell.recon.match = null;
-				description = "Discard recon judgment for " + cellDescription;
+			} else {
+				if ("match".equals(judgment)) {
+					ReconCandidate match = null;
+					
+					if (cell.recon != null) {
+						for (ReconCandidate c : cell.recon.candidates) {
+							if (candidateID.equals(c.topicID)) {
+								match = c;
+								break;
+							}
+						}
+					}
+					if (match == null) {
+						throw new Exception("No such recon candidate");
+					}
+					
+					newCell.recon.judgment = Recon.Judgment.Matched;
+					newCell.recon.match = match;
+					
+					description = "Match " + match.topicName +
+						" (" + match.topicID + ") to " + 
+						cellDescription;
+					
+				} else if ("new".equals(judgment)) {
+					newCell.recon.judgment = Recon.Judgment.New;
+					description = "Mark to create new topic for " + cellDescription;
+				} else if ("discard".equals(judgment)) {
+					newCell.recon.judgment = Recon.Judgment.None;
+					newCell.recon.match = null;
+					description = "Discard recon judgment for " + cellDescription;
+				}
 			}
 			
 			Change change = new CellChange(rowIndex, cellIndex, cell, newCell);

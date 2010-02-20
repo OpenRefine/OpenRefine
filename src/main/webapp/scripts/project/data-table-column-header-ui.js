@@ -214,6 +214,14 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     click: function() {
                         self._doDiscardReconResults();
                     }
+                },
+                {},
+                {
+                    label: "Match Filtered Cells to ...",
+                    tooltip: "Search for a topic to match all filtered cells to",
+                    click: function() {
+                        self._doSearchToMatch();
+                    }
                 }
             ]
         },
@@ -395,23 +403,58 @@ DataTableColumnHeaderUI.prototype._doReconcile = function() {
 
 DataTableColumnHeaderUI.prototype._doDiscardReconResults = function() {
     this._dataTableView.doPostThenUpdate(
-        "discard-reconcile",
+        "recon-discard-judgments",
         { columnName: this._column.headerLabel }
     );
 };
 
 DataTableColumnHeaderUI.prototype._doApproveBestCandidates = function() {
     this._dataTableView.doPostThenUpdate(
-        "approve-reconcile",
+        "recon-approve-best-matches",
         { columnName: this._column.headerLabel }
     );
 };
 
 DataTableColumnHeaderUI.prototype._doApproveNewTopics = function() {
     this._dataTableView.doPostThenUpdate(
-        "approve-new-reconcile",
+        "recon-mark-new-topics",
         { columnName: this._column.headerLabel }
     );
+};
+
+DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    frame.width("200px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Search for Match").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    $('<p></p>').text("Search Freebase for a topic to match all filtered cells:").appendTo(body);
+    
+    var input = $('<input />').appendTo($('<p></p>').appendTo(body));
+    
+    input.suggest({}).bind("fb-select", function(e, data) {
+        self._dataTableView.doPostThenUpdate(
+            "recon-match-specific-topic-to-cells",
+            {
+                columnName: self._column.headerLabel,
+                topicID: data.id,
+                topicGUID: data.guid,
+                topicName: data.name,
+                types: $.map(data.type, function(elmt) { return elmt.id; }).join(",")
+            }
+        );
+        DialogSystem.dismissUntil(level - 1);
+    });
+    
+    $('<button></button>').text("Cancel").click(function() {
+        DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+    
+    var level = DialogSystem.showDialog(frame);
+    input[0].focus();
 };
 
 DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {

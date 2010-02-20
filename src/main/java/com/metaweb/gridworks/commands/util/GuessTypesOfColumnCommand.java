@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -76,12 +78,18 @@ public class GuessTypesOfColumnCommand extends Command {
 		int cellIndex = column.getCellIndex();
 		
 		List<String> samples = new ArrayList<String>(10);
+		Set<String> sampleSet = new HashSet<String>();
+		
 		for (Row row : project.rows) {
 			Object value = row.getCellValue(cellIndex);
 			if (!ExpressionUtils.isBlank(value)) {
-				samples.add(value.toString());
-				if (samples.size() >= 10) {
-					break;
+				String s = value.toString().trim();
+				if (!sampleSet.contains(s)) {
+					samples.add(s);
+					sampleSet.add(s);
+					if (samples.size() >= 10) {
+						break;
+					}
 				}
 			}
 		}

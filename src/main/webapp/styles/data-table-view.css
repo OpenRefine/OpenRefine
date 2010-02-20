@@ -73,12 +73,12 @@ a.data-table-recon-topic:hover {
     margin: 0 0.5em;
 }
 
-a.data-table-recon-action {
+a.data-table-recon-action, a.data-table-recon-search {
     font-size: 80%;
     text-decoration: none;
     color: #aaf;
 }
-a.data-table-recon-action:hover {
+a.data-table-recon-action:hover, a.data-table-recon-search:hover {
     text-decoration: underline;
     color: #008;
 }

@@ -86,6 +86,15 @@ DataTableCellUI.prototype._render = function() {
                     renderCandidate(candidates[i], i);
                 }
             }
+            
+            $('<a href="javascript:{}"></a>')
+                .addClass("data-table-recon-search")
+                .click(function(evt) {
+                    self._searchForMatch();
+                    return false;
+                })
+                .text("search for match")
+                .appendTo($('<div>').appendTo(divContent));
         }
     }
 };
@@ -107,7 +116,41 @@ DataTableCellUI.prototype._doJudgment = function(judgment, params) {
     params.row = this._rowIndex;
     params.cell = this._cellIndex;
     params.judgment = judgment;
-    this.doPostThenUpdate("judge-one-cell", params);
+    this.doPostThenUpdate("recon-judge-one-cell", params);
+};
+
+DataTableCellUI.prototype._searchForMatch = function() {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    frame.width("200px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Search for Match").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    $('<p></p>').text("Search Freebase for topic to match " + this._cell.v).appendTo(body);
+    
+    var input = $('<input />').attr("value", this._cell.v).appendTo($('<p></p>').appendTo(body));
+    input.suggest({}).bind("fb-select", function(e, data) {
+        var params = {
+            row: self._rowIndex,
+            cell: self._cellIndex,
+            topicID: data.id,
+            topicGUID: data.guid,
+            topicName: data.name,
+            types: $.map(data.type, function(elmt) { return elmt.id; }).join(",")
+        };
+        self.doPostThenUpdate("recon-judge-one-cell", params);
+        
+        DialogSystem.dismissUntil(level - 1);
+    });
+    
+    $('<button></button>').text("Cancel").click(function() {
+        DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+    
+    var level = DialogSystem.showDialog(frame);
+    input[0].focus();
 };
 
 DataTableCellUI.prototype.createUpdateFunction = function(onBefore) {
