@@ -57,6 +57,8 @@ public class GuessTypesOfColumnCommand extends Command {
 						writer.object();
 						writer.key("id"); writer.value(tg.id);
 						writer.key("name"); writer.value(tg.name);
+                        writer.key("score"); writer.value(tg.score);
+                        writer.key("count"); writer.value(tg.count);
 						writer.endObject();
 					}
 					
@@ -72,12 +74,14 @@ public class GuessTypesOfColumnCommand extends Command {
 		}
 	}
 	
+    final static int s_sampleSize = 20;
+    
 	protected List<TypeGroup> guessTypes(Project project, Column column) {
 		Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
 		
 		int cellIndex = column.getCellIndex();
 		
-		List<String> samples = new ArrayList<String>(10);
+		List<String> samples = new ArrayList<String>(s_sampleSize);
 		Set<String> sampleSet = new HashSet<String>();
 		
 		for (Row row : project.rows) {
@@ -87,7 +91,7 @@ public class GuessTypesOfColumnCommand extends Command {
 				if (!sampleSet.contains(s)) {
 					samples.add(s);
 					sampleSet.add(s);
-					if (samples.size() >= 10) {
+					if (samples.size() >= s_sampleSize) {
 						break;
 					}
 				}
@@ -105,8 +109,6 @@ public class GuessTypesOfColumnCommand extends Command {
 				
 				jsonWriter.key("query"); jsonWriter.value(samples.get(i));
 				jsonWriter.key("limit"); jsonWriter.value(3);
-				jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
-				jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
 				
 				jsonWriter.endObject();
 			}
@@ -142,7 +144,7 @@ public class GuessTypesOfColumnCommand extends Command {
 					
 					for (int j = 0; j < count; j++) {
 						JSONObject result = results.getJSONObject(j);
-						double score = result.getDouble("relevance:score");
+						double score = 1.0 / (1 + j); //result.getDouble("relevance:score");
 						
 						JSONArray types = result.getJSONArray("type");
 						int typeCount = types.length();
@@ -151,14 +153,18 @@ public class GuessTypesOfColumnCommand extends Command {
 							JSONObject type = types.getJSONObject(t);
 							String id = type.getString("id");
 							if (id.equals("/common/topic") ||
+							    id.equals("/base/ontologies/ontology_instance") ||
 								(id.startsWith("/base/") && id.endsWith("/topic")) ||
-								id.startsWith("/user/")
+								id.startsWith("/user/") ||
+								id.startsWith("/freebase/")
 							) {
 								continue;
 							}
 							
 							if (map.containsKey(id)) {
-								map.get(id).score += score;
+								TypeGroup tg = map.get(id);
+								tg.score += score;
+								tg.count++;
 							} else {
 								map.put(id, new TypeGroup(id, type.getString("name"), score));
 							}
@@ -175,7 +181,11 @@ public class GuessTypesOfColumnCommand extends Command {
 		List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());
 		Collections.sort(types, new Comparator<TypeGroup>() {
 			public int compare(TypeGroup o1, TypeGroup o2) {
-				return (int) Math.signum(o2.score - o1.score);
+			    int c = Math.min(s_sampleSize, o2.count) - Math.min(s_sampleSize, o1.count);
+			    if (c != 0) {
+			        return c;
+			    }
+				return (int) Math.signum(o2.score / o2.count - o1.score / o1.count);
 			}
 		});
 		
@@ -185,12 +195,14 @@ public class GuessTypesOfColumnCommand extends Command {
 	static protected class TypeGroup {
 		String id;
 		String name;
+		int count;
 		double score;
 		
 		TypeGroup(String id, String name, double score) {
 			this.id = id;
 			this.name = name;
 			this.score = score;
+			this.count = 1;
 		}
 	}
 }

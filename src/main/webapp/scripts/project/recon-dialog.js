@@ -7,13 +7,13 @@ function ReconDialog(column, types) {
 ReconDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
-    frame.width("400px");
+    frame.width("500px");
     
     var header = $('<div></div>').addClass("dialog-header").text("Reconcile column " + this._column.headerLabel).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    $('<p></p>').text("Reconcile cell values to topics of type:").appendTo(body);
+    $('<p>').text("Reconcile cell values to Freebase topics of type:").appendTo(body);
     
     if (this._types.length > 0) {
         var createTypeChoice = function(type) {
@@ -35,11 +35,14 @@ ReconDialog.prototype._createDialog = function() {
             .attr("value", "")
             .appendTo(divCustom);
             
-        $('<span></span>').text(" Other:").appendTo(divCustom);
+        $('<span></span>').text(" Other: ").appendTo(divCustom);
+        
+        var input = $('<input />').appendTo(divCustom);
+    } else {
+        var input = $('<input />').appendTo($('<p></p>').appendTo(body));
     }
     
     var type = null;
-    var input = $('<input />').appendTo($('<p></p>').appendTo(body));
     input.suggest({ type : '/type/type' }).bind("fb-select", function(e, data) {
         type = {
             id: data.id,
@@ -47,6 +50,11 @@ ReconDialog.prototype._createDialog = function() {
         };
         $('input[name="recon-dialog-type-choice"][value=""]').attr("checked", "true");
     });
+    
+    var optionDiv = $('<p>').appendTo(body);
+    var autoMatchCheckbox = $('<input type="checkbox" checked />').appendTo(optionDiv);
+    $('<span>').text(" Auto-match correctly-typed candidates scoring at least ").appendTo(optionDiv);
+    var minScoreInput = $('<input/>').attr("value", "100").appendTo(optionDiv);
     
     $('<button></button>').text("Start Reconciling").click(function() {
         var choices = $('input[name="recon-dialog-type-choice"]:checked');
@@ -62,7 +70,14 @@ ReconDialog.prototype._createDialog = function() {
         } else {
             DialogSystem.dismissUntil(level - 1);
             $.post(
-                "/command/reconcile?" + $.param({ project: theProject.id, columnName: self._column.headerLabel, typeID: type.id, typeName: type.name }), 
+                "/command/reconcile?" + $.param({
+                    project: theProject.id, 
+                    columnName: self._column.headerLabel, 
+                    typeID: type.id, 
+                    typeName: type.name,
+                    autoMatch: autoMatchCheckbox[0].checked,
+                    minScore: minScoreInput[0].value
+                }), 
                 { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
                 function(data) {
                     if (data.code != "error") {
