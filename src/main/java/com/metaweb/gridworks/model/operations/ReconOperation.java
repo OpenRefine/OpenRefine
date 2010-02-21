@@ -32,6 +32,7 @@ import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.ReconConfig;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.MassCellChange;
 import com.metaweb.gridworks.process.LongRunningProcess;
@@ -44,12 +45,23 @@ public class ReconOperation extends EngineDependentOperation {
 	final protected String		_columnName;
 	final protected String 		_typeID;
 	final protected String 		_typeName;
+	final protected boolean     _autoMatch;
+	final protected double      _minScore;
 	
-	public ReconOperation(JSONObject engineConfig, String columnName, String typeID, String typeName) {
+	public ReconOperation(
+        JSONObject engineConfig, 
+        String columnName, 
+        String typeID, 
+        String typeName, 
+        boolean autoMatch, 
+        double minScore
+    ) {
 		super(engineConfig);
 		_columnName = columnName;
 		_typeID = typeID;
 		_typeName = typeName;
+		_autoMatch = autoMatch;
+		_minScore = minScore;
 	}
 
 	public Process createProcess(Project project, Properties options) throws Exception {
@@ -64,8 +76,7 @@ public class ReconOperation extends EngineDependentOperation {
 		return new ReconProcess(
 			project, 
 			getEngineConfig(),
-			description, 
-			_columnName
+			description
 		);
 	}
 
@@ -78,6 +89,8 @@ public class ReconOperation extends EngineDependentOperation {
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("typeID"); writer.value(_typeID);
 		writer.key("typeName"); writer.value(_typeName);
+        writer.key("autoMatch"); writer.value(_autoMatch);
+        writer.key("minScore"); writer.value(_minScore);
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.endObject();
 	}
@@ -131,20 +144,17 @@ public class ReconOperation extends EngineDependentOperation {
 	public class ReconProcess extends LongRunningProcess implements Runnable {
 		final protected Project		_project;
 		final protected JSONObject	_engineConfig;
-		final protected String		_columnName;
 		protected List<ReconEntry> 	_entries;
 		protected int				_cellIndex;
 		
 		public ReconProcess(
 			Project project, 
 			JSONObject engineConfig, 
-			String description, 
-			String columnName
+			String description
 		) {
 			super(description);
 			_project = project;
 			_engineConfig = engineConfig;
-			_columnName = columnName;
 		}
 		
 		protected Runnable getRunnable() {
@@ -350,12 +360,13 @@ public class ReconOperation extends EngineDependentOperation {
 						typeIDs[j] = types.getJSONObject(j).getString("id");
 					}
 					
+					double score = result.getDouble("relevance:score");
 					ReconCandidate candidate = new ReconCandidate(
 						result.getString("id"),
 						result.getString("guid"),
 						result.getString("name"),
 						typeIDs,
-						result.getDouble("relevance:score")
+						score
 					);
 					
 					// best match
@@ -368,6 +379,10 @@ public class ReconOperation extends EngineDependentOperation {
 						for (String typeID : candidate.typeIDs) {
 							if (_typeID.equals(typeID)) {
 								recon.setFeature(Recon.Feature_typeMatch, true);
+		                        if (_autoMatch && score >= _minScore) {
+		                            recon.match = candidate;
+		                            recon.judgment = Judgment.Matched;
+		                        }
 								break;
 							}
 						}

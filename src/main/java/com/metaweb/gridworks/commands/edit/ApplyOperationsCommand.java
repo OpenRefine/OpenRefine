@@ -92,7 +92,9 @@ public class ApplyOperationsCommand extends Command {
 					engineConfig, 
 					columnName,
 					obj.getString("typeID"),
-					obj.getString("typeName")
+					obj.getString("typeName"),
+					obj.getBoolean("autoMatch"),
+					obj.getDouble("minScore")
 				);
 			} else if ("save-protograph".equals(op)) {
 				operation = new SaveProtographOperation(

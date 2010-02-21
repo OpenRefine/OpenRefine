@@ -17,7 +17,9 @@ public class ReconcileCommand extends EngineDependentCommand {
 		String columnName = request.getParameter("columnName");
 		String typeID = request.getParameter("typeID");
 		String typeName = request.getParameter("typeName");
+        boolean autoMatch = "true".equals(request.getParameter("autoMatch"));
+        double minScore = autoMatch ? Double.parseDouble(request.getParameter("minScore")) : 0;
 		
-		return new ReconOperation(engineConfig, columnName, typeID, typeName);
+		return new ReconOperation(engineConfig, columnName, typeID, typeName, autoMatch, minScore);
 	}
 }
