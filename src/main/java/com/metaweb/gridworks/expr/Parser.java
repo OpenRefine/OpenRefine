@@ -11,18 +11,24 @@ import com.metaweb.gridworks.expr.Scanner.TokenType;
 import com.metaweb.gridworks.expr.controls.ForEach;
 import com.metaweb.gridworks.expr.controls.ForNonBlank;
 import com.metaweb.gridworks.expr.controls.If;
+import com.metaweb.gridworks.expr.controls.With;
 import com.metaweb.gridworks.expr.functions.And;
+import com.metaweb.gridworks.expr.functions.EndsWith;
 import com.metaweb.gridworks.expr.functions.Get;
+import com.metaweb.gridworks.expr.functions.IndexOf;
 import com.metaweb.gridworks.expr.functions.IsBlank;
 import com.metaweb.gridworks.expr.functions.IsNotBlank;
 import com.metaweb.gridworks.expr.functions.IsNotNull;
 import com.metaweb.gridworks.expr.functions.IsNull;
+import com.metaweb.gridworks.expr.functions.Join;
+import com.metaweb.gridworks.expr.functions.LastIndexOf;
 import com.metaweb.gridworks.expr.functions.Length;
 import com.metaweb.gridworks.expr.functions.Not;
 import com.metaweb.gridworks.expr.functions.Or;
 import com.metaweb.gridworks.expr.functions.Replace;
 import com.metaweb.gridworks.expr.functions.Slice;
 import com.metaweb.gridworks.expr.functions.Split;
+import com.metaweb.gridworks.expr.functions.StartsWith;
 import com.metaweb.gridworks.expr.functions.ToLowercase;
 import com.metaweb.gridworks.expr.functions.ToTitlecase;
 import com.metaweb.gridworks.expr.functions.ToUppercase;
@@ -47,6 +53,12 @@ public class Parser {
 		functionTable.put("split", new Split());
 		functionTable.put("length", new Length());
 		
+		functionTable.put("indexOf", new IndexOf());
+		functionTable.put("lastIndexOf", new LastIndexOf());
+		functionTable.put("startsWith", new StartsWith());
+		functionTable.put("endsWith", new EndsWith());
+		functionTable.put("join", new Join());
+		
 		functionTable.put("and", new And());
 		functionTable.put("or", new Or());
 		functionTable.put("not", new Not());
@@ -56,6 +68,7 @@ public class Parser {
         functionTable.put("isNotBlank", new IsNotBlank());
 
         controlTable.put("if", new If());
+        controlTable.put("with", new With());
         controlTable.put("forEach", new ForEach());
         controlTable.put("forNonBlank", new ForNonBlank());
     }

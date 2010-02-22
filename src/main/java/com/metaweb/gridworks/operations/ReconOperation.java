@@ -223,8 +223,10 @@ public class ReconOperation extends EngineDependentOperation {
 			
 			List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
 			List<String> values = new ArrayList<String>(valueToEntries.keySet());
-			for (int i = 0; i < values.size(); i += 10) {
-				recon(valueToEntries, values, i, Math.min(i + 10, values.size()), cellChanges);
+			
+			final int batchSize = 20;
+			for (int i = 0; i < values.size(); i += batchSize) {
+				recon(valueToEntries, values, i, Math.min(i + batchSize, values.size()), cellChanges);
 				
 				_progress = i * 100 / values.size();
 				
@@ -270,10 +272,10 @@ public class ReconOperation extends EngineDependentOperation {
 					jsonWriter.object();
 					
 					jsonWriter.key("query"); jsonWriter.value(values.get(from + i));
-					jsonWriter.key("limit"); jsonWriter.value(5);
+					jsonWriter.key("limit"); jsonWriter.value(3);
 					jsonWriter.key("type"); jsonWriter.value(_typeID);
 					jsonWriter.key("type_strict"); jsonWriter.value("should");
-					jsonWriter.key("indent"); jsonWriter.value(1);
+					//jsonWriter.key("indent"); jsonWriter.value(1);
 					jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
 					jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
 					
@@ -352,6 +354,8 @@ public class ReconOperation extends EngineDependentOperation {
 					cellChanges.add(cellChange);
 				}
 			}
+			
+			System.gc();
 		}
 	
 		protected Recon createRecon(String text, JSONArray results) {

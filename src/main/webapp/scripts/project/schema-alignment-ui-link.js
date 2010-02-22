@@ -299,13 +299,16 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
         type : '/type/property'
     };
     if (this._link.target != null && "type" in this._link.target && this._link.target.type != null) {
+        /*
         suggestOptions.mql_filter = [{
             "/type/property/expected_type" : {
                 id: this._link.target.type.id
             }
         }];
+        */
     } else {
         var sourceTypeID = this._parentUINode.getExpectedType();
+        /*
         if (sourceTypeID != null) {
             suggestOptions.mql_filter = [{
                 "/type/property/schema" : {
@@ -313,6 +316,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
                 }
             }];
         }
+        */
     }
     input.suggest(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });
     
