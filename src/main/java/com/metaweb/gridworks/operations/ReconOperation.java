@@ -224,7 +224,7 @@ public class ReconOperation extends EngineDependentOperation {
 			List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
 			List<String> values = new ArrayList<String>(valueToEntries.keySet());
 			
-			final int batchSize = 20;
+			final int batchSize = 10;
 			for (int i = 0; i < values.size(); i += batchSize) {
 				recon(valueToEntries, values, i, Math.min(i + batchSize, values.size()), cellChanges);
 				
