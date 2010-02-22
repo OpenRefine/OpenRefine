@@ -1,8 +1,8 @@
 package com.metaweb.gridworks.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -12,7 +12,7 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
-
+ 
 public class Recon implements Serializable, HasFields, Jsonizable {
 	private static final long serialVersionUID = 8906257833709315762L;
 	
@@ -60,7 +60,7 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 	
 	final public long			id;
 	public Object[] 			features = new Object[Feature_max];
-	public List<ReconCandidate> candidates = new LinkedList<ReconCandidate>();
+	public List<ReconCandidate> candidates;
 	public Judgment				judgment = Judgment.None;
 	public ReconCandidate		match = null;
 	
@@ -77,6 +77,20 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 		r.judgment = judgment;
 		r.match = match;
 		return r;
+	}
+	
+	public void addCandidate(ReconCandidate candidate) {
+		if (candidates == null) {
+			candidates = new ArrayList<ReconCandidate>(3);
+		}
+		candidates.add(candidate);
+	}
+	
+	public ReconCandidate getBestCandidate() {
+		if (candidates != null && candidates.size() > 0) {
+			return candidates.get(0);
+		}
+		return null;
 	}
 	
 	public Object getFeature(int feature) {
@@ -104,7 +118,7 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 	
 	public Object getField(String name, Properties bindings) {
 		if ("best".equals(name)) {
-			return candidates.size() > 0 ? candidates.get(0) : null;
+			return candidates != null && candidates.size() > 0 ? candidates.get(0) : null;
 		} else if ("judgment".equals(name) || "judgement".equals(name)) {
 			return judgmentToString();
 		} else if ("matched".equals(name)) {
@@ -142,8 +156,10 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 			match.write(writer, options);
 		} else {
 			writer.key("c"); writer.array();
-			for (ReconCandidate c : candidates) {
-				c.write(writer, options);
+			if (candidates != null) {
+				for (ReconCandidate c : candidates) {
+					c.write(writer, options);
+				}
 			}
 			writer.endArray();
 		}

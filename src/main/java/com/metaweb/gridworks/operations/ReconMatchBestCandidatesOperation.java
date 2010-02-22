@@ -12,6 +12,7 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
@@ -71,16 +72,19 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
-					if (cell.recon != null && cell.recon.candidates.size() > 0) {
-						Cell newCell = new Cell(
-							cell.value,
-							cell.recon.dup()
-						);
-						newCell.recon.match = newCell.recon.candidates.get(0);
-						newCell.recon.judgment = Judgment.Matched;
-						
-						CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-						cellChanges.add(cellChange);
+					if (cell.recon != null) {
+						ReconCandidate candidate = cell.recon.getBestCandidate();
+						if (candidate != null) {
+							Cell newCell = new Cell(
+								cell.value,
+								cell.recon.dup()
+							);
+							newCell.recon.match = candidate;
+							newCell.recon.judgment = Judgment.Matched;
+							
+							CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+							cellChanges.add(cellChange);
+						}
 					}
 				}
 				return false;

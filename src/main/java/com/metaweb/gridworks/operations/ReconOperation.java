@@ -362,7 +362,8 @@ public class ReconOperation extends EngineDependentOperation {
 			Recon recon = new Recon();
 			try {
 				int length = results.length();
-				for (int i = 0; i < length && recon.candidates.size() < 3; i++) {
+				int count = 0;
+				for (int i = 0; i < length && count < 3; i++) {
 					JSONObject result = results.getJSONObject(i);
 					if (!result.has("name")) {
 						continue;
@@ -402,7 +403,8 @@ public class ReconOperation extends EngineDependentOperation {
 						}
 					}
 					
-					recon.candidates.add(candidate);
+					recon.addCandidate(candidate);
+					count++;
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
