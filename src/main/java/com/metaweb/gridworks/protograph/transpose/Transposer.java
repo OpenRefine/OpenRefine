@@ -8,8 +8,10 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.protograph.AnonymousNode;
 import com.metaweb.gridworks.protograph.CellNode;
+import com.metaweb.gridworks.protograph.CellTopicNode;
 import com.metaweb.gridworks.protograph.FreebaseProperty;
 import com.metaweb.gridworks.protograph.FreebaseTopicNode;
 import com.metaweb.gridworks.protograph.Link;
@@ -25,7 +27,7 @@ public class Transposer {
 		Node 					rootNode,
 		TransposedNodeFactory 	nodeFactory
 	) {
-		Context rootContext = new Context(rootNode, null, null, 5);
+		Context rootContext = new Context(rootNode, null, null, 20);
 		
 		for (Row row : project.rows) {
 			descend(project, protograph, nodeFactory, row, rootNode, rootContext);
@@ -53,6 +55,13 @@ public class Transposer {
 			Column column = project.columnModel.getColumnByName(node2.columnName);
 			Cell cell = row.getCell(column.getCellIndex());
 			if (cell != null && !ExpressionUtils.isBlank(cell.value)) {
+				if (node2 instanceof CellTopicNode) {
+					if (!((CellTopicNode) node2).createForNoReconMatch && 
+						(cell.recon == null || cell.recon.judgment == Judgment.None)) {
+						return;
+					}
+				}
+				
 				context.count++;
 				if (context.limit > 0 && context.count > context.limit) {
 					return;

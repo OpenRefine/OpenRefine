@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Recon;
+import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.protograph.AnonymousNode;
 import com.metaweb.gridworks.protograph.CellKeyNode;
 import com.metaweb.gridworks.protograph.CellNode;
@@ -22,6 +23,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
 	protected List<WritingTransposedNode> rootNodes = new LinkedList<WritingTransposedNode>();
 	protected StringBuffer stringBuffer;
 	protected Map<String, Long> varPool = new HashMap<String, Long>();
+	protected Map<Long, String> newTopicVars = new HashMap<Long, String>();
 	
 	public String getLoad() {
 		stringBuffer = new StringBuffer();
@@ -38,7 +40,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
 		stringBuffer.append(line);
 	}
 	protected void writeLine(String subject, String predicate, String object) {
-		if (subject != null) {
+		if (subject != null && object != null) {
 			writeLine("{ 's' : '" + subject + "', 'p' : '" + predicate + "', 'o' : " + object + " }");
 		}
 	}
@@ -110,21 +112,33 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
 		
 		public String write(String subject, String predicate) {
 			String id = null;
-			if (cell.recon != null && 
+			if (cell.recon != null &&
 				cell.recon.judgment == Recon.Judgment.Matched &&
 				cell.recon.match != null) {
-				id = cell.recon.match.topicID;
-			} else {
-			    long var = 0;
-			    if (varPool.containsKey(node.columnName)) {
-			        var = varPool.get(node.columnName);
-			    }
-			    varPool.put(node.columnName, var + 1);
-			    
-				id = "$" + node.columnName.replaceAll("\\W+", "_") + "_" + var;
 				
-				writeLine("{ 's' : '" + id + "', 'p' : 'type', 'o' : '" + node.type.id + "' }");
-				writeLine("{ 's' : '" + id + "', 'p' : 'name', 'o' : " + JSONObject.quote(cell.value.toString()) + " }");
+				id = cell.recon.match.topicID;
+			} else if (node.createForNoReconMatch || 
+					(cell.recon != null && cell.recon.judgment == Judgment.New)) {
+				if (cell.recon != null && newTopicVars.containsKey(cell.recon.id)) {
+					id = newTopicVars.get(cell.recon.id);
+				} else {
+				    long var = 0;
+				    if (varPool.containsKey(node.columnName)) {
+				        var = varPool.get(node.columnName);
+				    }
+				    varPool.put(node.columnName, var + 1);
+				    
+					id = "$" + node.columnName.replaceAll("\\W+", "_") + "_" + var;
+					
+					writeLine("{ 's' : '" + id + "', 'p' : 'type', 'o' : '" + node.type.id + "' }");
+					writeLine("{ 's' : '" + id + "', 'p' : 'name', 'o' : " + JSONObject.quote(cell.value.toString()) + " }");
+					
+					if (cell.recon != null) {
+						newTopicVars.put(cell.recon.id, id);
+					}
+				}
+			} else {
+				return null;
 			}
 			
 			if (subject != null) {

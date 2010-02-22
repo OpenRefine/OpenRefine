@@ -58,10 +58,15 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 		s_featureMap.put("nameWordDistance", Feature_nameWordDistance);
 	}
 	
+	final public long			id;
 	public Object[] 			features = new Object[Feature_max];
 	public List<ReconCandidate> candidates = new LinkedList<ReconCandidate>();
 	public Judgment				judgment = Judgment.None;
 	public ReconCandidate		match = null;
+	
+	public Recon() {
+		id = System.currentTimeMillis() * 1000000 + Math.round(Math.random() * 1000000);
+	}
 	
 	public Recon dup() {
 		Recon r = new Recon();

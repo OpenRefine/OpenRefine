@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.operations;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -20,18 +22,21 @@ import com.metaweb.gridworks.model.changes.CellChange;
 public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
 	private static final long serialVersionUID = -5205694623711144436L;
 	
+	final protected boolean	_shareNewTopics;
+	
 	static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        String columnName = obj.getString("columnName");
         
         return new ReconMarkNewTopicsOperation(
             engineConfig, 
-            columnName
+            obj.getString("columnName"),
+            obj.has("shareNewTopics") ? obj.getBoolean("shareNewTopics") : false
         );
 	}
 
-	public ReconMarkNewTopicsOperation(JSONObject engineConfig, String columnName) {
+	public ReconMarkNewTopicsOperation(JSONObject engineConfig, String columnName, boolean shareNewTopics) {
 		super(engineConfig, columnName, false);
+		_shareNewTopics = shareNewTopics;
 	}
 
 	public void write(JSONWriter writer, Properties options)
@@ -42,18 +47,25 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
 		writer.key("description"); writer.value(getBriefDescription());
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
+		writer.key("shareNewTopics"); writer.value(_shareNewTopics);
 		writer.endObject();
 	}
 	
 	protected String getBriefDescription() {
-		return "Mark to create new topics for cells in column " + _columnName;
+		return "Mark to create new topics for cells in column " + _columnName +
+			(_shareNewTopics ? 
+				", one topic for each group of similar cells" : 
+				", one topic for each cell");
 	}
 
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		
 		return "Mark to create new topics for " + cellChanges.size() + 
-			" cells in column " + column.getHeaderLabel();
+			" cells in column " + column.getHeaderLabel() +
+			(_shareNewTopics ? 
+				", one topic for each group of similar cells" : 
+				", one topic for each cell");
 	}
 
 	protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
@@ -62,6 +74,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
 		return new RowVisitor() {
 			int cellIndex;
 			List<CellChange> cellChanges;
+			Map<String, Recon>  _sharedRecons = new HashMap<String, Recon>();
 			
 			public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
 				this.cellIndex = cellIndex;
@@ -70,15 +83,26 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
 			}
 			
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
-				if (cellIndex < row.cells.size()) {
-					Cell cell = row.cells.get(cellIndex);
-					
-					Cell newCell = new Cell(
-						cell.value,
-						cell.recon != null ? cell.recon.dup() : new Recon()
-					);
-					newCell.recon.match = null;
-					newCell.recon.judgment = Judgment.New;
+                Cell cell = row.getCell(cellIndex);
+                if (cell != null) {
+                	Recon recon = null;
+                	if (_shareNewTopics) {
+                		String s = cell.value == null ? "" : cell.value.toString();
+                		if (_sharedRecons.containsKey(s)) {
+                			recon = _sharedRecons.get(s);
+                		} else {
+                			recon = new Recon();
+                			recon.judgment = Judgment.New;
+                			
+                			_sharedRecons.put(s, recon);
+                		}
+                	} else {
+                		recon = cell.recon == null ? new Recon() : cell.recon.dup();
+    					recon.match = null;
+    					recon.judgment = Judgment.New;
+                	}
+                	
+					Cell newCell = new Cell(cell.value, recon);
 					
 					CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
 					cellChanges.add(cellChange);

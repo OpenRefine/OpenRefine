@@ -14,8 +14,10 @@ public class ReconMarkNewTopicsCommand extends EngineDependentCommand {
 	protected AbstractOperation createOperation(HttpServletRequest request,
 			JSONObject engineConfig) throws Exception {
 		
-		String columnName = request.getParameter("columnName");
-		
-		return new ReconMarkNewTopicsOperation(engineConfig, columnName);
+		return new ReconMarkNewTopicsOperation(
+			engineConfig, 
+			request.getParameter("columnName"),
+			"true".equals(request.getParameter("shareNewTopics"))
+		);
 	}
 }

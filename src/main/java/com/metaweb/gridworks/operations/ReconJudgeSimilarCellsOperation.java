@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.operations;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONArray;
@@ -26,6 +28,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 	final protected String 			_similarValue;
 	final protected Judgment 		_judgment;
 	final protected ReconCandidate 	_match;
+	final protected boolean			_shareNewTopics;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
@@ -59,7 +62,8 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
             obj.getString("columnName"),
             obj.getString("similarValue"),
             judgment,
-            match
+            match,
+            obj.has("shareNewTopics") ? obj.getBoolean("shareNewTopics") : false
         );
     }
     
@@ -68,25 +72,14 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 		String 			columnName, 
 		String 			similarValue,
 		Judgment		judgment,
-		ReconCandidate 	match
+		ReconCandidate 	match,
+		boolean			shareNewTopics
 	) {
 		super(engineConfig, columnName, false);
 		this._similarValue = similarValue;
 		this._judgment = judgment;
 		this._match = match;
-	}
-
-	public ReconJudgeSimilarCellsOperation(
-		JSONObject 		engineConfig, 
-		String 			columnName, 
-		String 			similarValue,
-		String			judgmentString,
-		ReconCandidate 	match
-	) {
-		super(engineConfig, columnName, false);
-		this._similarValue = similarValue;
-        this._judgment = Recon.stringToJudgment(judgmentString);
-		this._match = match;
+		this._shareNewTopics = shareNewTopics;
 	}
 
 	public void write(JSONWriter writer, Properties options)
@@ -102,6 +95,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 		if (_match != null) {
 			writer.key("match"); _match.write(writer, options);
 		}
+		writer.key("shareNewTopics"); writer.value(_shareNewTopics);
 		
 		writer.endObject();
 	}
@@ -111,8 +105,13 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 			return "Discard recon judgments for cells containing \"" +
 				_similarValue + "\" in column " + _columnName;
 		} else if (_judgment == Judgment.New) {
-			return "Mark to create new topics for cells containing \"" +
-				_similarValue + "\" in column " + _columnName;
+			if (_shareNewTopics) {
+				return "Mark to create one single new topic for all cells containing \"" +
+					_similarValue + "\" in column " + _columnName;
+			} else {
+				return "Mark to create one new topic for each cell containing \"" +
+					_similarValue + "\" in column " + _columnName;
+			}
 		} else if (_judgment == Judgment.Matched) {
 			return "Match topic " + 
 				_match.topicName +  " (" +
@@ -129,8 +128,13 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 			return "Discard recon judgments for " + cellChanges.size() + " cells containing \"" +
 				_similarValue + "\" in column " + _columnName;
 		} else if (_judgment == Judgment.New) {
-			return "Mark to create new topics for " + cellChanges.size() + " cells containing \"" +
-				_similarValue + "\" in column " + _columnName;
+			if (_shareNewTopics) {
+				return "Mark to create one single new topic for " + cellChanges.size() + " cells containing \"" +
+					_similarValue + "\" in column " + _columnName;
+			} else {
+				return "Mark to create one new topic for each of " + cellChanges.size() + " cells containing \"" +
+					_similarValue + "\" in column " + _columnName;
+			}
 		} else if (_judgment == Judgment.Matched) {
 			return "Match topic " + 
 				_match.topicName + " (" +
@@ -145,8 +149,9 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 		Column column = project.columnModel.getColumnByName(_columnName);
 		
 		return new RowVisitor() {
-			int _cellIndex;
-			List<CellChange> _cellChanges;
+			int 				_cellIndex;
+			List<CellChange> 	_cellChanges;
+			Map<String, Recon>  _sharedRecons = new HashMap<String, Recon>();
 			
 			public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
 				_cellIndex = cellIndex;
@@ -160,20 +165,32 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 	!ExpressionUtils.isBlank(cell.value) && 
                 	_similarValue.equals(cell.value)) {
                 	
-                    Cell newCell = new Cell(
-                        cell.value, 
-                        cell.recon == null ? new Recon() : cell.recon.dup()
-                    );
-                    
-                    if (_judgment == Judgment.Matched) {
-                        newCell.recon.judgment = Recon.Judgment.Matched;
-                        newCell.recon.match = _match;
-                    } else if (_judgment == Judgment.New) {
-                        newCell.recon.judgment = Recon.Judgment.New;
-                    } else if (_judgment == Judgment.None) {
-                        newCell.recon.judgment = Recon.Judgment.None;
-                        newCell.recon.match = null;
-                    }
+                	Recon recon = null;
+                	if (_judgment == Judgment.New && _shareNewTopics) {
+                		String s = cell.value.toString();
+                		if (_sharedRecons.containsKey(s)) {
+                			recon = _sharedRecons.get(s);
+                		} else {
+                			recon = new Recon();
+                			recon.judgment = Judgment.New;
+                			
+                			_sharedRecons.put(s, recon);
+                		}
+                	} else {
+                		recon = cell.recon == null ? new Recon() : cell.recon.dup();
+                        if (_judgment == Judgment.Matched) {
+                            recon.judgment = Recon.Judgment.Matched;
+                            recon.match = _match;
+                        } else if (_judgment == Judgment.New) {
+                            recon.judgment = Recon.Judgment.New;
+                            recon.match = null;
+                        } else if (_judgment == Judgment.None) {
+                            recon.judgment = Recon.Judgment.None;
+                            recon.match = null;
+                        }
+                	}
+                	
+                    Cell newCell = new Cell(cell.value, recon);
                     
                     CellChange cellChange = new CellChange(rowIndex, _cellIndex, cell, newCell);
                     _cellChanges.add(cellChange);

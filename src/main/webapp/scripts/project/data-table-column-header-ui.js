@@ -209,8 +209,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     }
                 },
                 {
-                    label: "Create One New Topic for All Cells",
-                    tooltip: "Mark to create one new, common topic for all cells in this column for all current filtered rows",
+                    label: "Create One New Topic for Similar Cells",
+                    tooltip: "Mark to create one new topic for each group of similar cells in this column for all current filtered rows",
                     click: function() {
                         self._doReconMarkNewTopics(true);
                     }
@@ -459,10 +459,10 @@ DataTableColumnHeaderUI.prototype._doReconMatchBestCandidates = function() {
     );
 };
 
-DataTableColumnHeaderUI.prototype._doReconMarkNewTopics = function() {
+DataTableColumnHeaderUI.prototype._doReconMarkNewTopics = function(shareNewTopics) {
     this._dataTableView.doPostThenUpdate(
         "recon-mark-new-topics",
-        { columnName: this._column.headerLabel }
+        { columnName: this._column.headerLabel, shareNewTopics: shareNewTopics }
     );
 };
 

@@ -130,7 +130,7 @@ DataTableCellUI.prototype._doMatchNewTopicToOneCell = function() {
 };
 
 DataTableCellUI.prototype._doMatchNewTopicToSimilarCells = function() {
-    this._doJudgmentForSimilarCells("new");
+    this._doJudgmentForSimilarCells("new", { shareNewTopics: true });
 };
 
 DataTableCellUI.prototype._doMatchTopicToOneCell = function(candidate) {
