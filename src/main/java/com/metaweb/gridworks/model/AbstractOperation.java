@@ -15,7 +15,9 @@ import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
  *  projects.
  */
 abstract public class AbstractOperation implements Serializable, Jsonizable {
-	public Process createProcess(Project project, Properties options) throws Exception {
+    private static final long serialVersionUID = 3916055862440019600L;
+
+    public Process createProcess(Project project, Properties options) throws Exception {
 		return new QuickHistoryEntryProcess(project, getBriefDescription()) {
 			@Override
 			protected HistoryEntry createHistoryEntry() throws Exception {

@@ -195,24 +195,31 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 },
                 {},
                 {
-                    label: "Approve Best Candidates",
-                    tooltip: "Approve best reconciliaton candidate per cell in this column for all current filtered rows",
+                    label: "Match Each Cell to Its Best Candidate",
+                    tooltip: "Match each cell to its best candidate in this column for all current filtered rows",
                     click: function() {
-                        self._doApproveBestCandidates();
+                        self._doReconMatchBestCandidates();
                     }
                 },
                 {
-                    label: "Approve As New Topics",
-                    tooltip: "Set to create new topics for cells in this column for all current filtered rows",
+                    label: "Create a New Topic for Each Cell",
+                    tooltip: "Mark to create one new topic for each cell in this column for all current filtered rows",
                     click: function() {
-                        self._doApproveNewTopics();
+                        self._doReconMarkNewTopics(false);
                     }
                 },
                 {
-                    label: "Discard Reconciliation Results",
+                    label: "Create One New Topic for All Cells",
+                    tooltip: "Mark to create one new, common topic for all cells in this column for all current filtered rows",
+                    click: function() {
+                        self._doReconMarkNewTopics(true);
+                    }
+                },
+                {
+                    label: "Discard Reconciliation Judgments",
                     tooltip: "Discard reconciliaton results in this column for all current filtered rows",
                     click: function() {
-                        self._doDiscardReconResults();
+                        self._doReconDiscardJudgments();
                     }
                 },
                 {},
@@ -438,21 +445,21 @@ DataTableColumnHeaderUI.prototype._doReconcile = function() {
 
 };
 
-DataTableColumnHeaderUI.prototype._doDiscardReconResults = function() {
+DataTableColumnHeaderUI.prototype._doReconDiscardJudgments = function() {
     this._dataTableView.doPostThenUpdate(
         "recon-discard-judgments",
         { columnName: this._column.headerLabel }
     );
 };
 
-DataTableColumnHeaderUI.prototype._doApproveBestCandidates = function() {
+DataTableColumnHeaderUI.prototype._doReconMatchBestCandidates = function() {
     this._dataTableView.doPostThenUpdate(
-        "recon-approve-best-matches",
+        "recon-match-best-candidates",
         { columnName: this._column.headerLabel }
     );
 };
 
-DataTableColumnHeaderUI.prototype._doApproveNewTopics = function() {
+DataTableColumnHeaderUI.prototype._doReconMarkNewTopics = function() {
     this._dataTableView.doPostThenUpdate(
         "recon-mark-new-topics",
         { columnName: this._column.headerLabel }
@@ -462,7 +469,7 @@ DataTableColumnHeaderUI.prototype._doApproveNewTopics = function() {
 DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
-    frame.width("200px");
+    frame.width("400px");
     
     var header = $('<div></div>').addClass("dialog-header").text("Search for Match").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
@@ -491,7 +498,7 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
     }).appendTo(footer);
     
     var level = DialogSystem.showDialog(frame);
-    input[0].focus();
+    input.focus().data("suggest").textchange();
 };
 
 DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {

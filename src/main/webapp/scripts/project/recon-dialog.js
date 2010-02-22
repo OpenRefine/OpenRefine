@@ -97,6 +97,6 @@ ReconDialog.prototype._createDialog = function() {
     
     var level = DialogSystem.showDialog(frame);
     
-    input[0].focus();
+    input.focus().data("suggest").textchange();
 };
 

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.commands.Command;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Cell;
@@ -105,7 +106,7 @@ public class JudgeOneCellCommand extends Command {
 
 		protected HistoryEntry createHistoryEntry() throws Exception {
 			Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
-			if (cell == null || cell.value == null) {
+            if (cell == null || ExpressionUtils.isBlank(cell.value)) {
 				throw new Exception("Cell is blank");
 			}
 			

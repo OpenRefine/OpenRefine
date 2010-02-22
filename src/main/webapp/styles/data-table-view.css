@@ -52,11 +52,14 @@ img.column-header-menu {
 }
 
 
-ul.data-table-recon-candidates {
-    margin: 0.75em 1.5em;
-    padding: 0;
-    list-style: circle;
+div.data-table-recon-candidates {
+    margin: 0.5em 0;
+    min-width: 15em;
     color: #88a;
+}
+div.data-table-recon-candidate {
+    padding-left: 35px;
+    position: relative;
 }
 
 a.data-table-recon-topic {
@@ -81,4 +84,36 @@ a.data-table-recon-action, a.data-table-recon-search {
 a.data-table-recon-action:hover, a.data-table-recon-search:hover {
     text-decoration: underline;
     color: #008;
+}
+
+a.data-table-recon-match {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-image: url('../images/checks-map.png');
+    background-repeat: no-repeat;
+    background-position: -17px 0px;
+    text-decoration: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+a.data-table-recon-match:hover {
+    background-position: 0px 0px;
+}
+
+a.data-table-recon-match-similar {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-image: url('../images/checks-map.png');
+    background-repeat: no-repeat;
+    background-position: -17px -17px;
+    text-decoration: none;
+    position: absolute;
+    top: 0px;
+    left: 16px;
+}
+a.data-table-recon-match-similar:hover {
+    background-position: 0px -17px;
 }
