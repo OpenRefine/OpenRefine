@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.ReconCandidate;
-import com.metaweb.gridworks.model.operations.ReconMatchSpecificTopicOperation;
+import com.metaweb.gridworks.operations.ReconMatchSpecificTopicOperation;
 
 public class ReconMatchSpecificTopicCommand extends EngineDependentCommand {
 	

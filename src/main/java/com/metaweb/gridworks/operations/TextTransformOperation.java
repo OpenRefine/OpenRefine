@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.model.operations;
+package com.metaweb.gridworks.operations;
 
 import java.util.List;
 import java.util.Properties;

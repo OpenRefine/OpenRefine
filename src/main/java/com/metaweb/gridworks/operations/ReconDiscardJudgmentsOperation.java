@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.model.operations;
+package com.metaweb.gridworks.operations;
 
 import java.util.List;
 import java.util.Properties;
@@ -17,20 +17,20 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 
-public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
-	private static final long serialVersionUID = -5205694623711144436L;
-	
-	static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOperation {
+	private static final long serialVersionUID = 6799029731665369179L;
+
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         String columnName = obj.getString("columnName");
         
-        return new ReconMarkNewTopicsOperation(
+        return new ReconDiscardJudgmentsOperation(
             engineConfig, 
             columnName
         );
-	}
-
-	public ReconMarkNewTopicsOperation(JSONObject engineConfig, String columnName) {
+    }
+    
+	public ReconDiscardJudgmentsOperation(JSONObject engineConfig, String columnName) {
 		super(engineConfig, columnName, false);
 	}
 
@@ -44,15 +44,15 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
 		writer.key("columnName"); writer.value(_columnName);
 		writer.endObject();
 	}
-	
+
 	protected String getBriefDescription() {
-		return "Mark to create new topics for cells in column " + _columnName;
+		return "Discard recon judgments for cells in column " + _columnName;
 	}
 
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		
-		return "Mark to create new topics for " + cellChanges.size() + 
+		return "Discard recon judgments for " + cellChanges.size() + 
 			" cells in column " + column.getHeaderLabel();
 	}
 
@@ -72,16 +72,15 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
-					
-					Cell newCell = new Cell(
-						cell.value,
-						cell.recon != null ? cell.recon.dup() : new Recon()
-					);
-					newCell.recon.match = null;
-					newCell.recon.judgment = Judgment.New;
-					
-					CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-					cellChanges.add(cellChange);
+					if (cell.recon != null) {
+    					Recon recon = cell.recon.dup();
+    					recon.judgment = Judgment.None;
+    
+    					Cell newCell = new Cell(cell.value, recon);
+    					
+    					CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+    					cellChanges.add(cellChange);
+					}
 				}
 				return false;
 			}

@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.model.operations;
+package com.metaweb.gridworks.operations;
 
 import java.util.HashMap;
 import java.util.Map;

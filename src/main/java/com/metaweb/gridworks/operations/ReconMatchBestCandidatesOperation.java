@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.model.operations;
+package com.metaweb.gridworks.operations;
 
 import java.util.List;
 import java.util.Properties;
@@ -12,25 +12,24 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 
-public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOperation {
-	private static final long serialVersionUID = 6799029731665369179L;
-
+public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
+	private static final long serialVersionUID = 5393888241057341155L;
+	
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         String columnName = obj.getString("columnName");
         
-        return new ReconDiscardJudgmentsOperation(
+        return new ReconMatchBestCandidatesOperation(
             engineConfig, 
             columnName
         );
     }
     
-	public ReconDiscardJudgmentsOperation(JSONObject engineConfig, String columnName) {
+	public ReconMatchBestCandidatesOperation(JSONObject engineConfig, String columnName) {
 		super(engineConfig, columnName, false);
 	}
 
@@ -46,14 +45,14 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
 	}
 
 	protected String getBriefDescription() {
-		return "Discard recon judgments for cells in column " + _columnName;
+		return "Match each cell to its best recon candidate in column " + _columnName;
 	}
 
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		
-		return "Discard recon judgments for " + cellChanges.size() + 
-			" cells in column " + column.getHeaderLabel();
+		return "Match each of " + cellChanges.size() + 
+			" cells to its best candidate in column " + column.getHeaderLabel();
 	}
 
 	protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
@@ -72,14 +71,16 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
-					if (cell.recon != null) {
-    					Recon recon = cell.recon.dup();
-    					recon.judgment = Judgment.None;
-    
-    					Cell newCell = new Cell(cell.value, recon);
-    					
-    					CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-    					cellChanges.add(cellChange);
+					if (cell.recon != null && cell.recon.candidates.size() > 0) {
+						Cell newCell = new Cell(
+							cell.value,
+							cell.recon.dup()
+						);
+						newCell.recon.match = newCell.recon.candidates.get(0);
+						newCell.recon.judgment = Judgment.Matched;
+						
+						CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+						cellChanges.add(cellChange);
 					}
 				}
 				return false;

@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.model.operations;
+package com.metaweb.gridworks.operations;
 
 import java.io.InputStream;
 import java.io.StringWriter;

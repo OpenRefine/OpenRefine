@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.operations.OperationRegistry;
+import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.process.Process;
 
 public class ApplyOperationsCommand extends Command {

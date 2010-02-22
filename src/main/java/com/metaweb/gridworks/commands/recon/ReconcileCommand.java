@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
-import com.metaweb.gridworks.model.operations.ReconOperation;
+import com.metaweb.gridworks.operations.ReconOperation;
 
 public class ReconcileCommand extends EngineDependentCommand {
 	

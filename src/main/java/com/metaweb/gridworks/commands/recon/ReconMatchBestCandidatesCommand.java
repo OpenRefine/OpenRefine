@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
-import com.metaweb.gridworks.model.operations.ReconMatchBestCandidatesOperation;
+import com.metaweb.gridworks.operations.ReconMatchBestCandidatesOperation;
 
 public class ReconMatchBestCandidatesCommand extends EngineDependentCommand {
 	
