@@ -84,7 +84,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				Cell cell = row.getCell(cellIndex);
 
-                ExpressionUtils.bind(bindings, row, cell);
+                ExpressionUtils.bind(bindings, row, rowIndex, cell);
 				
                 Object v = eval.evaluate(bindings);
                 if ((cell != null && cell.value != null) || v != null) {

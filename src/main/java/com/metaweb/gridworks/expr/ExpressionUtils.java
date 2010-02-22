@@ -18,8 +18,9 @@ public class ExpressionUtils {
         return bindings;
     }
     
-    static public void bind(Properties bindings, Row row, Cell cell) {
+    static public void bind(Properties bindings, Row row, int rowIndex, Cell cell) {
         bindings.put("row", row);
+        bindings.put("rowIndex", rowIndex);
         bindings.put("cells", row.getField("cells", bindings));
         
         if (cell == null) {

@@ -59,7 +59,7 @@ public class PreviewExpressionCommand extends Command {
 						Row row = project.rows.get(rowIndex);
 						Cell cell = row.getCell(cellIndex);
 							
-					    ExpressionUtils.bind(bindings, row, cell);
+					    ExpressionUtils.bind(bindings, row, rowIndex, cell);
 						
 						try {
 							result = eval.evaluate(bindings);

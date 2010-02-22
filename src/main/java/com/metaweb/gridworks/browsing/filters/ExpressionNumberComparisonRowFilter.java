@@ -21,7 +21,7 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
 		Cell cell = row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings(project);
-        ExpressionUtils.bind(bindings, row, cell);
+        ExpressionUtils.bind(bindings, row, rowIndex, cell);
 		
 		Object value = _evaluable.evaluate(bindings);
 		if (value != null) {

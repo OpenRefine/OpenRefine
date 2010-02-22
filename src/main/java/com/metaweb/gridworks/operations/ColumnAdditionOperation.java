@@ -133,7 +133,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				Cell cell = row.getCell(cellIndex);
 
-                ExpressionUtils.bind(bindings, row, cell);
+                ExpressionUtils.bind(bindings, row, rowIndex, cell);
 				
                 Object v = eval.evaluate(bindings);
                 if (v != null) {

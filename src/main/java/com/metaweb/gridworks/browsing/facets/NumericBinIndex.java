@@ -27,7 +27,7 @@ public class NumericBinIndex {
 			Row row = project.rows.get(i);
 			Cell cell = row.getCell(cellIndex);
 
-            ExpressionUtils.bind(bindings, row, cell);
+            ExpressionUtils.bind(bindings, row, i, cell);
 			
 			Object value = eval.evaluate(bindings);
 			if (value != null) {

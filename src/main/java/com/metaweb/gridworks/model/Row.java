@@ -42,6 +42,8 @@ public class Row implements Serializable, HasFields, Jsonizable {
 			return starred;
 		} else if ("cells".equals(name)) {
 			return new Cells();
+		} else if ("index".equals(name)) {
+			return bindings.get("rowIndex");
 		}
 		return null;
 	}

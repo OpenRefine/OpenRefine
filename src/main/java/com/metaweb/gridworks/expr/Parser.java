@@ -13,7 +13,9 @@ import com.metaweb.gridworks.expr.controls.ForNonBlank;
 import com.metaweb.gridworks.expr.controls.If;
 import com.metaweb.gridworks.expr.controls.With;
 import com.metaweb.gridworks.expr.functions.And;
+import com.metaweb.gridworks.expr.functions.Ceil;
 import com.metaweb.gridworks.expr.functions.EndsWith;
+import com.metaweb.gridworks.expr.functions.Floor;
 import com.metaweb.gridworks.expr.functions.Get;
 import com.metaweb.gridworks.expr.functions.IndexOf;
 import com.metaweb.gridworks.expr.functions.IsBlank;
@@ -23,13 +25,17 @@ import com.metaweb.gridworks.expr.functions.IsNull;
 import com.metaweb.gridworks.expr.functions.Join;
 import com.metaweb.gridworks.expr.functions.LastIndexOf;
 import com.metaweb.gridworks.expr.functions.Length;
+import com.metaweb.gridworks.expr.functions.Mod;
 import com.metaweb.gridworks.expr.functions.Not;
 import com.metaweb.gridworks.expr.functions.Or;
 import com.metaweb.gridworks.expr.functions.Replace;
+import com.metaweb.gridworks.expr.functions.Round;
 import com.metaweb.gridworks.expr.functions.Slice;
 import com.metaweb.gridworks.expr.functions.Split;
 import com.metaweb.gridworks.expr.functions.StartsWith;
 import com.metaweb.gridworks.expr.functions.ToLowercase;
+import com.metaweb.gridworks.expr.functions.ToNumber;
+import com.metaweb.gridworks.expr.functions.ToString;
 import com.metaweb.gridworks.expr.functions.ToTitlecase;
 import com.metaweb.gridworks.expr.functions.ToUppercase;
 
@@ -42,6 +48,9 @@ public class Parser {
     static public Map<String, Control> controlTable = new HashMap<String, Control>();
     
 	static {
+		functionTable.put("toString", new ToString());
+		functionTable.put("toNumber", new ToNumber());
+		
 		functionTable.put("toUppercase", new ToUppercase());
 		functionTable.put("toLowercase", new ToLowercase());
 		functionTable.put("toTitlecase", new ToTitlecase());
@@ -58,6 +67,11 @@ public class Parser {
 		functionTable.put("startsWith", new StartsWith());
 		functionTable.put("endsWith", new EndsWith());
 		functionTable.put("join", new Join());
+		
+		functionTable.put("round", new Round());
+		functionTable.put("floor", new Floor());
+		functionTable.put("ceil", new Ceil());
+		functionTable.put("mod", new Mod());
 		
 		functionTable.put("and", new And());
 		functionTable.put("or", new Or());
