@@ -29,12 +29,16 @@ public class GetOperationsCommand extends Command {
 			JSONWriter writer = new JSONWriter(response.getWriter());
 			
 			writer.object();
-			writer.key("operations"); writer.array();
+			writer.key("entries"); writer.array();
 			
 			for (HistoryEntry entry : project.history.getLastPastEntries(-1)) {
+			    writer.object();
+			    writer.key("description"); writer.value(entry.description);
 				if (entry.operation != null) {
+				    writer.key("operation");
 					entry.operation.write(writer, options);
 				}
+				writer.endObject();
 			}
 			writer.endArray();
 			writer.endObject();

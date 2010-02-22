@@ -109,8 +109,8 @@ HistoryWidget.prototype._extractOperations = function() {
         "/command/get-operations?" + $.param({ project: theProject.id }), 
         null,
         function(data) {
-            if ("operations" in data) {
-                self._showExtractOperationsDialog(data.operations);
+            if ("entries" in data) {
+                self._showExtractOperationsDialog(data);
             }
         },
         "jsonp"
@@ -130,8 +130,55 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
         "The following JSON code encodes the operations you have done that can be abstracted. " + 
         "You can copy and save it in order to apply the same operations in the future.").appendTo(body);
         
-    var textarea = $('<textarea />').attr("wrap", "hard").width("100%").height("400px").appendTo(body);
-    textarea.text(JSON.stringify(json, null, 2));
+    var table = $('<table width="100%" cellspacing="0" cellpadding="0"><tr></tr></table>').appendTo(body)[0];
+    var leftColumn = table.rows[0].insertCell(0);
+    var rightColumn = table.rows[0].insertCell(1);
+    $(leftColumn).width("50%");
+    $(rightColumn).width("50%").css("padding-left", "20px");
+    
+    var entryDiv = $('<div>').height("400px").css("overflow", "auto").appendTo(leftColumn);
+    var entryTable = $('<table cellspacing="5"></table>').appendTo(entryDiv)[0];
+    var createEntry = function(entry) {
+        var tr = entryTable.insertRow(entryTable.rows.length);
+        var td0 = tr.insertCell(0);
+        var td1 = tr.insertCell(1);
+        td0.width = "1%";
+        
+        if ("operation" in entry) {
+            entry.selected = true;
+            
+            $('<input type="checkbox" checked="true" />').appendTo(td0).click(function() {
+                entry.selected = !entry.selected;
+                updateJson();
+            });
+            
+            $('<span>').text(entry.operation.description).appendTo(td1);
+        } else {
+            $('<span>').text(entry.description).css("color", "#888").appendTo(td1);
+        }
+    };
+    for (var i = 0; i < json.entries.length; i++) {
+        createEntry(json.entries[i]);
+    }
+        
+    var textarea = $('<textarea />')
+        .attr("wrap", "off")
+        .css("white-space", "pre")
+        .css("font-family", "monospace")
+        .width("100%")
+        .height("400px")
+        .appendTo(rightColumn);
+    var updateJson = function() {
+        var a = [];
+        for (var i = 0; i < json.entries.length; i++) {
+            var entry = json.entries[i];
+            if ("operation" in entry && entry.selected) {
+                a.push(entry.operation);
+            }
+        }
+        textarea.text(JSON.stringify(a, null, 2));
+    };
+    updateJson();
     
     $('<button></button>').text("Done").click(function() {
         DialogSystem.dismissUntil(level - 1);
@@ -154,7 +201,13 @@ HistoryWidget.prototype._showApplyOperationsDialog = function(json) {
     $('<p></p>').text(
         "Paste the JSON code encoding the operations to perform.").appendTo(body);
         
-    var textarea = $('<textarea />').attr("wrap", "hard").width("100%").height("400px").appendTo(body);
+    var textarea = $('<textarea />')
+        .attr("wrap", "off")
+        .css("white-space", "pre")
+        .css("font-family", "monospace")
+        .width("100%")
+        .height("400px")
+        .appendTo(body);
     textarea.text(JSON.stringify(json, null, 2));
     
     $('<button></button>').text("Apply").click(function() {
