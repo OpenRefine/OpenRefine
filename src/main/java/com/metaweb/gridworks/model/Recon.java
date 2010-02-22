@@ -22,6 +22,27 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 		New
 	}
 	
+	static public String judgmentToString(Judgment judgment) {
+		if (judgment == Judgment.Matched) {
+			return "matched";
+		} else if (judgment == Judgment.New) {
+			return "new";
+		} else {
+			return "none";
+		}
+	}
+	
+	static public Judgment stringToJudgment(String s) {
+		if ("matched".equals(s)) {
+			return Judgment.Matched;
+		} else if ("new".equals(s)) {
+			return Judgment.New;
+		} else {
+			return Judgment.None;
+		}
+	}
+	
+	
 	static public int Feature_typeMatch = 0;
 	static public int Feature_nameMatch = 1;
 	static public int Feature_nameLevenshtein = 2;
@@ -94,13 +115,7 @@ public class Recon implements Serializable, HasFields, Jsonizable {
 	}
 	
 	protected String judgmentToString() {
-		if (judgment == Judgment.Matched) {
-			return "matched";
-		} else if (judgment == Judgment.New) {
-			return "new";
-		} else {
-			return "none";
-		}
+		return judgmentToString(judgment);
 	}
 	
 	public class Features implements HasFields {

@@ -23,6 +23,7 @@ public abstract class OperationRegistry {
         register("recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
         register("recon-discard-judgments", ReconDiscardJudgmentsOperation.class);
         register("recon-match-specific-topic-to-cells", ReconMatchSpecificTopicOperation.class);
+        register("recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
         
         register("multivalued-cell-join", MultiValuedCellJoinOperation.class);
         register("multivalued-cell-split", MultiValuedCellSplitOperation.class);

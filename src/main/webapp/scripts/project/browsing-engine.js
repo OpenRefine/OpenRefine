@@ -10,10 +10,13 @@ BrowsingEngine.prototype._initializeUI = function() {
     var container = this._div.empty();
 };
 
-BrowsingEngine.prototype.getJSON = function() {
+BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets) {
     var a = { facets: [] };
     for (var i = 0; i < this._facets.length; i++) {
-        a.facets.push(this._facets[i].facet.getJSON());
+        var facet = this._facets[i];
+        if (keepUnrestrictedFacets || facet.facet.hasSelection()) {
+            a.facets.push(this._facets[i].facet.getJSON());
+        }
     }
     return a;
 };
@@ -57,7 +60,7 @@ BrowsingEngine.prototype.update = function() {
     
     $.post(
         "/command/compute-facets?" + $.param({ project: theProject.id }),
-        { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+        { engine: JSON.stringify(ui.browsingEngine.getJSON(true)) },
         function(data) {
             var facetData = data.facets;
             

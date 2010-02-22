@@ -54,7 +54,7 @@ ReconDialog.prototype._createDialog = function() {
     var optionDiv = $('<p>').appendTo(body);
     var autoMatchCheckbox = $('<input type="checkbox" checked />').appendTo(optionDiv);
     $('<span>').text(" Auto-match correctly-typed candidates scoring at least ").appendTo(optionDiv);
-    var minScoreInput = $('<input/>').attr("value", "100").appendTo(optionDiv);
+    var minScoreInput = $('<input/>').width("3em").attr("value", "100").appendTo(optionDiv);
     
     $('<button></button>').text("Start Reconciling").click(function() {
         var choices = $('input[name="recon-dialog-type-choice"]:checked');

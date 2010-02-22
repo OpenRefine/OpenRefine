@@ -62,14 +62,14 @@ DataTableCellUI.prototype._render = function() {
                         .addClass("data-table-recon-match-similar")
                         .attr("title", "Match this topic to this cell and other cells with the same content")
                         .appendTo(li).click(function(evt) {
-                            self._doMatchTopicToSimilarCells(candidate.id);
+                            self._doMatchTopicToSimilarCells(candidate);
                         });
                         
                     $('<a href="javascript:{}">&nbsp;</a>')
                         .addClass("data-table-recon-match")
                         .attr("title", "Match this topic to this cell")
                         .appendTo(li).click(function(evt) {
-                            self._doMatchTopicToOneCell(candidate.id);
+                            self._doMatchTopicToOneCell(candidate);
                         });
                         
                     $('<a></a>')
@@ -122,7 +122,7 @@ DataTableCellUI.prototype._render = function() {
 };
 
 DataTableCellUI.prototype._doRematch = function() {
-    this._doJudgment("discard");
+    this._doJudgment("none");
 };
 
 DataTableCellUI.prototype._doMatchNewTopicToOneCell = function() {
@@ -133,12 +133,24 @@ DataTableCellUI.prototype._doMatchNewTopicToSimilarCells = function() {
     this._doJudgmentForSimilarCells("new");
 };
 
-DataTableCellUI.prototype._doMatchTopicToOneCell = function(candidateID) {
-    this._doJudgment("match", { candidate : candidateID });
+DataTableCellUI.prototype._doMatchTopicToOneCell = function(candidate) {
+    this._doJudgment("matched", {
+        topicID : candidate.id,
+        topicGUID: candidate.guid,
+        topicName: candidate.name,
+        score: candidate.score,
+        types: candidate.types.join(",")
+   });
 };
 
-DataTableCellUI.prototype._doMatchTopicToSimilarCells = function(candidateID) {
-    this._doJudgmentForSimilarCells("match", { candidate : candidateID });
+DataTableCellUI.prototype._doMatchTopicToSimilarCells = function(candidate) {
+    this._doJudgmentForSimilarCells("matched", {
+        topicID : candidate.id,
+        topicGUID: candidate.guid,
+        topicName: candidate.name,
+        score: candidate.score,
+        types: candidate.types.join(",")
+    });
 };
 
 DataTableCellUI.prototype._doJudgment = function(judgment, params) {
@@ -151,8 +163,8 @@ DataTableCellUI.prototype._doJudgment = function(judgment, params) {
 
 DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params) {
     params = params || {};
-    params.row = this._rowIndex;
-    params.cell = this._cellIndex;
+    params.columnName = cellIndexToColumn(this._cellIndex).headerLabel;
+    params.similarValue = this._cell.v;
     params.judgment = judgment;
     
     ui.dataTableView.doPostThenUpdate("recon-judge-similar-cells", params);
@@ -182,16 +194,21 @@ DataTableCellUI.prototype._searchForMatch = function() {
     $('<button></button>').text("Match").click(function() {
         if (match != null) {
             var params = {
-                row: self._rowIndex,
-                cell: self._cellIndex,
+                judgment: "matched",
                 topicID: match.id,
                 topicGUID: match.guid,
                 topicName: match.name,
                 types: $.map(match.type, function(elmt) { return elmt.id; }).join(",")
             };
             if (checkSimilar[0].checked) {
+                params.similarValue = self._cell.v;
+                params.columnName = cellIndexToColumn(self._cellIndex).headerLabel;
+                
                 ui.dataTableView.doPostThenUpdate("recon-judge-similar-cells", params);
             } else {
+                params.row = self._rowIndex;
+                params.cell = self._cellIndex;
+                
                 self.doPostThenUpdate("recon-judge-one-cell", params);
             }
         

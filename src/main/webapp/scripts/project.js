@@ -62,3 +62,14 @@ function reinitializeProjectData(f) {
         f
     );
 }
+
+function cellIndexToColumn(index) {
+    var columns = theProject.columnModel.columns;
+    for (var i = 0; i < columns.length; i++) {
+        var column = columns[i];
+        if (column.cellIndex == index) {
+            return column;
+        }
+    }
+    return null;
+}
