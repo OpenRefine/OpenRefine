@@ -8,16 +8,29 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 
-public class DiscardReconOperation extends EngineDependentMassCellOperation {
-	private static final long serialVersionUID = 6799029731665369179L;
+public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
+	private static final long serialVersionUID = -5205694623711144436L;
+	
+	static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+        JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        String columnName = obj.getString("columnName");
+        
+        return new ReconMarkNewTopicsOperation(
+            engineConfig, 
+            columnName
+        );
+	}
 
-	public DiscardReconOperation(JSONObject engineConfig, String columnName) {
+	public ReconMarkNewTopicsOperation(JSONObject engineConfig, String columnName) {
 		super(engineConfig, columnName, false);
 	}
 
@@ -25,21 +38,21 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 			throws JSONException {
 		
 		writer.object();
-		writer.key("op"); writer.value("discard-recon");
-		writer.key("description"); writer.value("Discard recon matches in column " + _columnName);
+		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+		writer.key("description"); writer.value(getBriefDescription());
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.endObject();
 	}
-
+	
 	protected String getBriefDescription() {
-		return "Discard recon results for cells in column " + _columnName;
+		return "Mark to create new topics for cells in column " + _columnName;
 	}
 
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		
-		return "Discard recon results for " + cellChanges.size() + 
+		return "Mark to create new topics for " + cellChanges.size() + 
 			" cells in column " + column.getHeaderLabel();
 	}
 
@@ -59,8 +72,13 @@ public class DiscardReconOperation extends EngineDependentMassCellOperation {
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
-
-					Cell newCell = new Cell(cell.value, null);
+					
+					Cell newCell = new Cell(
+						cell.value,
+						cell.recon != null ? cell.recon.dup() : new Recon()
+					);
+					newCell.recon.match = null;
+					newCell.recon.judgment = Judgment.New;
 					
 					CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
 					cellChanges.add(cellChange);

@@ -1,14 +1,14 @@
 package com.metaweb.gridworks.model.operations;
 
- import java.util.ArrayList;
+ import java.util.ArrayList; 
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
@@ -17,7 +17,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.MassRowChange;
 
-public class MultiValueCellSplitOperation extends AbstractOperation {
+public class MultiValuedCellSplitOperation extends AbstractOperation {
     private static final long serialVersionUID = 8217930220439070322L;
     
     final protected String	_columnName;
@@ -25,7 +25,16 @@ public class MultiValueCellSplitOperation extends AbstractOperation {
     final protected String  _separator;
     final protected String  _mode;
 
-	public MultiValueCellSplitOperation(
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+        return new MultiValuedCellSplitOperation(
+            obj.getString("columnName"),
+            obj.getString("keyColumnName"),
+            obj.getString("separator"),
+            obj.getString("mode")
+        );
+    }
+    
+	public MultiValuedCellSplitOperation(
 		String	  columnName,
 		String	  keyColumnName,
 		String    separator,
@@ -36,6 +45,19 @@ public class MultiValueCellSplitOperation extends AbstractOperation {
 		_separator = separator;
 		_mode = mode;
 	}
+
+   public void write(JSONWriter writer, Properties options)
+           throws JSONException {
+       
+       writer.object();
+       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+       writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
+       writer.key("columnName"); writer.value(_columnName);
+       writer.key("keyColumnName"); writer.value(_keyColumnName);
+       writer.key("separator"); writer.value(_separator);
+       writer.key("mode"); writer.value(_mode);
+       writer.endObject();
+    }
 
 	protected String getBriefDescription() {
 		return "Split multi-valued cells in column " + _columnName;
@@ -115,23 +137,11 @@ public class MultiValueCellSplitOperation extends AbstractOperation {
 		    r = r2 - 1; // r will be incremented by the for loop anyway
 		}
 		
-        String description = "Split multi-valued cells in column " + column.getHeaderLabel();
-        
-		Change change = new MassRowChange(newRows);
-		
-		return new HistoryEntry(project, description, this, change);
-	}
-
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		
-		writer.object();
-		writer.key("op"); writer.value("split-multivalued-cells");
-		writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
-		writer.key("columnName"); writer.value(_columnName);
-		writer.key("keyColumnName"); writer.value(_keyColumnName);
-		writer.key("separator"); writer.value(_separator);
-		writer.key("mode"); writer.value(_mode);
-		writer.endObject();
+		return new HistoryEntry(
+		    project, 
+		    getBriefDescription(), 
+		    this, 
+		    new MassRowChange(newRows)
+		);
 	}
 }

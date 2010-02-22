@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.operations.MultiValueCellSplitOperation;
+import com.metaweb.gridworks.model.operations.MultiValuedCellSplitOperation;
 import com.metaweb.gridworks.process.Process;
 
 public class SplitMultiValueCellsCommand extends Command {
@@ -26,7 +26,7 @@ public class SplitMultiValueCellsCommand extends Command {
             String separator = request.getParameter("separator");
             String mode = request.getParameter("mode");
 			
-			AbstractOperation op = new MultiValueCellSplitOperation(columnName, keyColumnName, separator, mode);
+			AbstractOperation op = new MultiValuedCellSplitOperation(columnName, keyColumnName, separator, mode);
 			Process process = op.createProcess(project, new Properties());
 			
 			boolean done = project.processManager.queueProcess(process);

@@ -6,15 +6,16 @@ import org.json.JSONObject;
 
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
-import com.metaweb.gridworks.model.operations.DiscardReconOperation;
+import com.metaweb.gridworks.model.operations.ReconMatchBestCandidatesOperation;
 
-public class DiscardReconcileCommand extends EngineDependentCommand {
+public class ReconMatchBestCandidatesCommand extends EngineDependentCommand {
+	
 	@Override
 	protected AbstractOperation createOperation(HttpServletRequest request,
 			JSONObject engineConfig) throws Exception {
 		
 		String columnName = request.getParameter("columnName");
 		
-		return new DiscardReconOperation(engineConfig, columnName);
+		return new ReconMatchBestCandidatesOperation(engineConfig, columnName);
 	}
 }

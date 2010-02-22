@@ -1,14 +1,14 @@
 package com.metaweb.gridworks.model.operations;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;  
 import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
@@ -17,14 +17,22 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.MassRowChange;
 
-public class MultiValueCellJoinOperation extends AbstractOperation {
+public class MultiValuedCellJoinOperation extends AbstractOperation {
     private static final long serialVersionUID = 3134524625206033285L;
     
     final protected String	_columnName;
     final protected String	_keyColumnName;
     final protected String  _separator;
 
-	public MultiValueCellJoinOperation(
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+        return new MultiValuedCellJoinOperation(
+            obj.getString("columnName"),
+            obj.getString("keyColumnName"),
+            obj.getString("separator")
+        );
+    }
+    
+	public MultiValuedCellJoinOperation(
 		String	  columnName,
 		String	  keyColumnName,
 		String    separator
@@ -34,6 +42,18 @@ public class MultiValueCellJoinOperation extends AbstractOperation {
 		_separator = separator;
 	}
 
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value(getBriefDescription());
+        writer.key("columnName"); writer.value(_columnName);
+        writer.key("keyColumnName"); writer.value(_keyColumnName);
+        writer.key("separator"); writer.value(_separator);
+        writer.endObject();
+    }
+    
 	protected String getBriefDescription() {
 		return "Join multi-valued cells in column " + _columnName;
 	}
@@ -99,22 +119,12 @@ public class MultiValueCellJoinOperation extends AbstractOperation {
 		    r = r2 - 1; // r will be incremented by the for loop anyway
 		}
 		
-        String description = "Join multi-valued cells in column " + column.getHeaderLabel();
-        
-		Change change = new MassRowChange(newRows);
-		
-		return new HistoryEntry(project, description, this, change);
+		return new HistoryEntry(
+		    project, 
+		    getBriefDescription(), 
+		    this, 
+		    new MassRowChange(newRows)
+		);
 	}
 
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		
-		writer.object();
-		writer.key("op"); writer.value("join-multivalued-cells");
-		writer.key("description"); writer.value("Join multi-valued cells in column " + _columnName);
-		writer.key("columnName"); writer.value(_columnName);
-		writer.key("keyColumnName"); writer.value(_keyColumnName);
-		writer.key("separator"); writer.value(_separator);
-		writer.endObject();
-	}
 }

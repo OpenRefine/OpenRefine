@@ -21,7 +21,7 @@ import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
-public class JudgeOneCellCommand extends Command {
+public class ReconJudgeOneCellCommand extends Command {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

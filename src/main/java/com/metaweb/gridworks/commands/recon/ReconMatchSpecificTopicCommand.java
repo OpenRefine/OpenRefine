@@ -7,9 +7,9 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.ReconCandidate;
-import com.metaweb.gridworks.model.operations.MatchSpecificTopicReconOperation;
+import com.metaweb.gridworks.model.operations.ReconMatchSpecificTopicOperation;
 
-public class MatchSpecificTopicCommand extends EngineDependentCommand {
+public class ReconMatchSpecificTopicCommand extends EngineDependentCommand {
 	
 	@Override
 	protected AbstractOperation createOperation(HttpServletRequest request,
@@ -24,6 +24,6 @@ public class MatchSpecificTopicCommand extends EngineDependentCommand {
 			100
 		);
 		
-		return new MatchSpecificTopicReconOperation(engineConfig, columnName, match);
+		return new ReconMatchSpecificTopicOperation(engineConfig, columnName, match);
 	}
 }

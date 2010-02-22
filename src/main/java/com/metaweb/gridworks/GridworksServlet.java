@@ -33,12 +33,12 @@ import com.metaweb.gridworks.commands.info.GetOperationsCommand;
 import com.metaweb.gridworks.commands.info.GetProcessesCommand;
 import com.metaweb.gridworks.commands.info.GetProjectMetadataCommand;
 import com.metaweb.gridworks.commands.info.GetRowsCommand;
-import com.metaweb.gridworks.commands.recon.ApproveNewReconcileCommand;
-import com.metaweb.gridworks.commands.recon.ApproveReconcileCommand;
-import com.metaweb.gridworks.commands.recon.DiscardReconcileCommand;
-import com.metaweb.gridworks.commands.recon.JudgeOneCellCommand;
-import com.metaweb.gridworks.commands.recon.JudgeSimilarCellsCommand;
-import com.metaweb.gridworks.commands.recon.MatchSpecificTopicCommand;
+import com.metaweb.gridworks.commands.recon.ReconMarkNewTopicsCommand;
+import com.metaweb.gridworks.commands.recon.ReconMatchBestCandidatesCommand;
+import com.metaweb.gridworks.commands.recon.ReconDiscardJudgmentsCommand;
+import com.metaweb.gridworks.commands.recon.ReconJudgeOneCellCommand;
+import com.metaweb.gridworks.commands.recon.ReconJudgeSimilarCellsCommand;
+import com.metaweb.gridworks.commands.recon.ReconMatchSpecificTopicCommand;
 import com.metaweb.gridworks.commands.recon.ReconcileCommand;
 import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
 import com.metaweb.gridworks.commands.util.GuessTypesOfColumnCommand;
@@ -75,12 +75,12 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("split-multi-value-cells", new SplitMultiValueCellsCommand());
 		
 		_commands.put("reconcile", new ReconcileCommand());
-		_commands.put("recon-match-best-candidates", new ApproveReconcileCommand());
-		_commands.put("recon-mark-new-topics", new ApproveNewReconcileCommand());
-		_commands.put("recon-discard-judgments", new DiscardReconcileCommand());
-		_commands.put("recon-match-specific-topic-to-cells", new MatchSpecificTopicCommand());
-		_commands.put("recon-judge-one-cell", new JudgeOneCellCommand());
-        _commands.put("recon-judge-similar-cells", new JudgeSimilarCellsCommand());
+		_commands.put("recon-match-best-candidates", new ReconMatchBestCandidatesCommand());
+		_commands.put("recon-mark-new-topics", new ReconMarkNewTopicsCommand());
+		_commands.put("recon-discard-judgments", new ReconDiscardJudgmentsCommand());
+		_commands.put("recon-match-specific-topic-to-cells", new ReconMatchSpecificTopicCommand());
+		_commands.put("recon-judge-one-cell", new ReconJudgeOneCellCommand());
+        _commands.put("recon-judge-similar-cells", new ReconJudgeSimilarCellsCommand());
 		
 		_commands.put("save-protograph", new SaveProtographCommand());
 		

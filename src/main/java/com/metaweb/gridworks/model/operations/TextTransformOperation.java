@@ -11,6 +11,7 @@ import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.Parser;
+import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
@@ -22,6 +23,16 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
 	final protected String _expression;
 	
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+        JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        
+        return new TextTransformOperation(
+            engineConfig,
+            obj.getString("columnName"),
+            obj.getString("expression")
+        );
+    }
+    
 	public TextTransformOperation(JSONObject engineConfig, String columnName, String expression) {
 		super(engineConfig, columnName, true);
 		_expression = expression;
@@ -31,8 +42,8 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 			throws JSONException {
 		
 		writer.object();
-		writer.key("op"); writer.value("text-transform");
-		writer.key("description"); writer.value("Text transform on cells in column " + _columnName + " with expression " + _expression);
+		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+		writer.key("description"); writer.value(getBriefDescription());
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("expression"); writer.value(_expression);
@@ -40,7 +51,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 	}
 
 	protected String getBriefDescription() {
-		return "Text transform on cells in column " + _columnName + " using " + _expression;
+		return "Text transform on cells in column " + _columnName + " using expression " + _expression;
 	}
 
 	protected String createDescription(Column column,

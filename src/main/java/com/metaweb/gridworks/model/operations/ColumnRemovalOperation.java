@@ -3,6 +3,7 @@ package com.metaweb.gridworks.model.operations;
 import java.util.Properties;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.history.Change;
@@ -17,11 +18,28 @@ public class ColumnRemovalOperation extends AbstractOperation {
 	
 	final protected String _columnName;
 
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+        return new ColumnRemovalOperation(
+            obj.getString("columnName")
+        );
+    }
+    
 	public ColumnRemovalOperation(
 		String columnName
 	) {
 		_columnName = columnName;
 	}
+	
+   public void write(JSONWriter writer, Properties options)
+           throws JSONException {
+       
+       writer.object();
+       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+       writer.key("description"); writer.value("Remove column " + _columnName);
+       writer.key("columnName"); writer.value(_columnName);
+       writer.endObject();
+    }
+
 
 	protected String getBriefDescription() {
 		return "Remove column " + _columnName;
@@ -38,15 +56,5 @@ public class ColumnRemovalOperation extends AbstractOperation {
 		Change change = new ColumnRemovalChange(project.columnModel.columns.indexOf(column));
 		
 		return new HistoryEntry(project, description, ColumnRemovalOperation.this, change);
-	}
-
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		
-		writer.object();
-		writer.key("op"); writer.value("remove-column");
-		writer.key("description"); writer.value("Remove column " + _columnName);
-		writer.key("columnName"); writer.value(_columnName);
-		writer.endObject();
 	}
 }

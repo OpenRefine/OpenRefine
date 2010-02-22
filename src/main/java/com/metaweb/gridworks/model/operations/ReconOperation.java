@@ -25,6 +25,7 @@ import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
+import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
@@ -48,6 +49,19 @@ public class ReconOperation extends EngineDependentOperation {
 	final protected boolean     _autoMatch;
 	final protected double      _minScore;
 	
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+        JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        
+        return new ReconOperation(
+            engineConfig, 
+            obj.getString("columnName"),
+            obj.getString("typeID"),
+            obj.getString("typeName"),
+            obj.getBoolean("autoMatch"),
+            obj.getDouble("minScore")
+        );
+    }
+    
 	public ReconOperation(
         JSONObject engineConfig, 
         String columnName, 
@@ -65,27 +79,23 @@ public class ReconOperation extends EngineDependentOperation {
 	}
 
 	public Process createProcess(Project project, Properties options) throws Exception {
-		Column column = project.columnModel.getColumnByName(_columnName);
-		if (column == null) {
-			throw new Exception("No column named " + _columnName);
-		}
-		
-		String description = 
-			"Reconcile cells in column " + column.getHeaderLabel() + " to type " + _typeID;
-		
 		return new ReconProcess(
 			project, 
 			getEngineConfig(),
-			description
+			getBriefDescription()
 		);
+	}
+	
+	protected String getBriefDescription() {
+        return "Reconcile cells in column " + _columnName + " to type " + _typeID;
 	}
 
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		
 		writer.object();
-		writer.key("op"); writer.value("recon");
-		writer.key("description"); writer.value("Reconcile cells in column " + _columnName + " to type " + _typeID);
+		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+		writer.key("description"); writer.value(getBriefDescription());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("typeID"); writer.value(_typeID);
 		writer.key("typeName"); writer.value(_typeName);

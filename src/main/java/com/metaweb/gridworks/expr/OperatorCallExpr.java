@@ -43,6 +43,46 @@ public class OperatorCallExpr implements Evaluable {
 					return ((Number) args[0]).doubleValue() / ((Number) args[1]).doubleValue();
 				}
 			}
+        } else if (">".equals(_op)) {
+            if (args.length == 2) {
+                if (args[0] instanceof Number && args[1] instanceof Number) {
+                    return ((Number) args[0]).doubleValue() > ((Number) args[1]).doubleValue();
+                }
+            }
+        } else if (">=".equals(_op)) {
+            if (args.length == 2) {
+                if (args[0] instanceof Number && args[1] instanceof Number) {
+                    return ((Number) args[0]).doubleValue() >= ((Number) args[1]).doubleValue();
+                }
+            }
+        } else if ("<".equals(_op)) {
+            if (args.length == 2) {
+                if (args[0] instanceof Number && args[1] instanceof Number) {
+                    return ((Number) args[0]).doubleValue() < ((Number) args[1]).doubleValue();
+                }
+            }
+        } else if ("<=".equals(_op)) {
+            if (args.length == 2) {
+                if (args[0] instanceof Number && args[1] instanceof Number) {
+                    return ((Number) args[0]).doubleValue() <= ((Number) args[1]).doubleValue();
+                }
+            }
+        } else if ("==".equals(_op)) {
+            if (args.length == 2) {
+                if (args[0] != null) {
+                    return args[0].equals(args[1]);
+                } else {
+                    return args[1] == null;
+                }
+            }
+        } else if ("!=".equals(_op)) {
+            if (args.length == 2) {
+                if (args[0] != null) {
+                    return !args[0].equals(args[1]);
+                } else {
+                    return args[1] != null;
+                }
+            }
 		}
 		return null;
 	}

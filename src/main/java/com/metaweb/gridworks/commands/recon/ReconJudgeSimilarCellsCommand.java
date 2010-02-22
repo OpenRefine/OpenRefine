@@ -26,7 +26,7 @@ import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.MassCellChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
-public class JudgeSimilarCellsCommand extends Command {
+public class ReconJudgeSimilarCellsCommand extends Command {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

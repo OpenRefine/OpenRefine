@@ -16,6 +16,7 @@ import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.Parser;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
+import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
@@ -32,6 +33,18 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 	final protected String 	_headerLabel;
 	final protected int		_columnInsertIndex;
 
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+        JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        
+        return new ColumnAdditionOperation(
+            engineConfig,
+            obj.getString("baseColumnName"),
+            obj.getString("expression"),
+            obj.getString("headerLabel"),
+            obj.getInt("columnInsertIndex")
+        );
+    }
+    
 	public ColumnAdditionOperation(
 		JSONObject 	engineConfig,
 		String		baseColumnName,
@@ -48,38 +61,12 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		_columnInsertIndex = columnInsertIndex;
 	}
 
-	protected HistoryEntry createHistoryEntry(Project project) throws Exception {
-		Engine engine = createEngine(project);
-		
-		Column column = project.columnModel.getColumnByName(_baseColumnName);
-		if (column == null) {
-			throw new Exception("No column named " + _baseColumnName);
-		}
-		
-		List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
-		
-		FilteredRows filteredRows = engine.getAllFilteredRows(false);
-		filteredRows.accept(project, createRowVisitor(project, cellsAtRows));
-		
-		String description = createDescription(column, cellsAtRows);
-		
-		Change change = new ColumnAdditionChange(_headerLabel, _columnInsertIndex, cellsAtRows);
-		
-		return new HistoryEntry(
-			project, description, this, change);
-	}
-
 	public void write(JSONWriter writer, Properties options)
 			throws JSONException {
 		
 		writer.object();
-		writer.key("op"); writer.value("add-column");
-		writer.key("description"); writer.value(
-			"Create column " + _headerLabel + 
-			" at index " + _columnInsertIndex + 
-			" based on column " + _baseColumnName + 
-			" using expression " + _expression);
-		
+		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+		writer.key("description"); writer.value(getBriefDescription());
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("headerLabel"); writer.value(_headerLabel);
 		writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
@@ -89,7 +76,10 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 	}
 
 	protected String getBriefDescription() {
-		return "Add in column " + _headerLabel + " based on column " + _baseColumnName;
+        return "Create column " + _headerLabel + 
+            " at index " + _columnInsertIndex + 
+            " based on column " + _baseColumnName + 
+            " using expression " + _expression;
 	}
 
 	protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
@@ -99,6 +89,27 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 			" rows with " + _expression;
 	}
 	
+    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+        Engine engine = createEngine(project);
+        
+        Column column = project.columnModel.getColumnByName(_baseColumnName);
+        if (column == null) {
+            throw new Exception("No column named " + _baseColumnName);
+        }
+        
+        List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
+        
+        FilteredRows filteredRows = engine.getAllFilteredRows(false);
+        filteredRows.accept(project, createRowVisitor(project, cellsAtRows));
+        
+        String description = createDescription(column, cellsAtRows);
+        
+        Change change = new ColumnAdditionChange(_headerLabel, _columnInsertIndex, cellsAtRows);
+        
+        return new HistoryEntry(
+            project, description, this, change);
+    }
+
 	protected RowVisitor createRowVisitor(Project project, List<CellAtRow> cellsAtRows) throws Exception {
 		Column column = project.columnModel.getColumnByName(_baseColumnName);
 		

@@ -8,18 +8,28 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 
-public class ApproveNewReconOperation extends EngineDependentMassCellOperation {
-	private static final long serialVersionUID = -5205694623711144436L;
-
-	public ApproveNewReconOperation(JSONObject engineConfig, String columnName) {
+public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
+	private static final long serialVersionUID = 5393888241057341155L;
+	
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+        JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        String columnName = obj.getString("columnName");
+        
+        return new ReconMatchBestCandidatesOperation(
+            engineConfig, 
+            columnName
+        );
+    }
+    
+	public ReconMatchBestCandidatesOperation(JSONObject engineConfig, String columnName) {
 		super(engineConfig, columnName, false);
 	}
 
@@ -27,22 +37,22 @@ public class ApproveNewReconOperation extends EngineDependentMassCellOperation {
 			throws JSONException {
 		
 		writer.object();
-		writer.key("op"); writer.value("approve-new-recon");
-		writer.key("description"); writer.value("Approve new topics in column " + _columnName);
+		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+		writer.key("description"); writer.value(getBriefDescription());
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.endObject();
 	}
-	
+
 	protected String getBriefDescription() {
-		return "Approve new topics for cells in column " + _columnName;
+		return "Match each cell to its best recon candidate in column " + _columnName;
 	}
 
 	protected String createDescription(Column column,
 			List<CellChange> cellChanges) {
 		
-		return "Approve new topics for " + cellChanges.size() + 
-			" cells in column " + column.getHeaderLabel();
+		return "Match each of " + cellChanges.size() + 
+			" cells to its best candidate in column " + column.getHeaderLabel();
 	}
 
 	protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
@@ -61,16 +71,17 @@ public class ApproveNewReconOperation extends EngineDependentMassCellOperation {
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 				if (cellIndex < row.cells.size()) {
 					Cell cell = row.cells.get(cellIndex);
-					
-					Cell newCell = new Cell(
-						cell.value,
-						cell.recon != null ? cell.recon.dup() : new Recon()
-					);
-					newCell.recon.match = null;
-					newCell.recon.judgment = Judgment.New;
-					
-					CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-					cellChanges.add(cellChange);
+					if (cell.recon != null && cell.recon.candidates.size() > 0) {
+						Cell newCell = new Cell(
+							cell.value,
+							cell.recon.dup()
+						);
+						newCell.recon.match = newCell.recon.candidates.get(0);
+						newCell.recon.judgment = Judgment.Matched;
+						
+						CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+						cellChanges.add(cellChange);
+					}
 				}
 				return false;
 			}

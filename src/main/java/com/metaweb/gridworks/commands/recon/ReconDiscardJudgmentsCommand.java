@@ -6,16 +6,15 @@ import org.json.JSONObject;
 
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
-import com.metaweb.gridworks.model.operations.ApproveReconOperation;
+import com.metaweb.gridworks.model.operations.ReconDiscardJudgmentsOperation;
 
-public class ApproveReconcileCommand extends EngineDependentCommand {
-	
+public class ReconDiscardJudgmentsCommand extends EngineDependentCommand {
 	@Override
 	protected AbstractOperation createOperation(HttpServletRequest request,
 			JSONObject engineConfig) throws Exception {
 		
 		String columnName = request.getParameter("columnName");
 		
-		return new ApproveReconOperation(engineConfig, columnName);
+		return new ReconDiscardJudgmentsOperation(engineConfig, columnName);
 	}
 }

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.operations.MultiValueCellJoinOperation;
+import com.metaweb.gridworks.model.operations.MultiValuedCellJoinOperation;
 import com.metaweb.gridworks.process.Process;
 
 public class JoinMultiValueCellsCommand extends Command {
@@ -25,7 +25,7 @@ public class JoinMultiValueCellsCommand extends Command {
 			String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
 			
-			AbstractOperation op = new MultiValueCellJoinOperation(columnName, keyColumnName, separator);
+			AbstractOperation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
 			Process process = op.createProcess(project, new Properties());
 			
 			boolean done = project.processManager.queueProcess(process);
