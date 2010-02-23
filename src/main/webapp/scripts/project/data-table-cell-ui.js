@@ -50,73 +50,74 @@ DataTableCellUI.prototype._render = function() {
                 });
         } else {
             $(divContent).html(cell.v);
-            $('<span> </span>').appendTo(divContent);
             
-            var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContent);
-            if (this._dataTableView._showRecon && "c" in r && r.c.length > 0) {
-                var candidates = r.c;
-                var renderCandidate = function(candidate, index) {
-                    var li = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
+            if (this._dataTableView._showRecon) {
+                var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContent);
+                if ("c" in r && r.c.length > 0) {
+                    var candidates = r.c;
+                    var renderCandidate = function(candidate, index) {
+                        var li = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
+                        
+                        $('<a href="javascript:{}">&nbsp;</a>')
+                            .addClass("data-table-recon-match-similar")
+                            .attr("title", "Match this topic to this cell and other cells with the same content")
+                            .appendTo(li).click(function(evt) {
+                                self._doMatchTopicToSimilarCells(candidate);
+                            });
+                            
+                        $('<a href="javascript:{}">&nbsp;</a>')
+                            .addClass("data-table-recon-match")
+                            .attr("title", "Match this topic to this cell")
+                            .appendTo(li).click(function(evt) {
+                                self._doMatchTopicToOneCell(candidate);
+                            });
+                            
+                        $('<a></a>')
+                            .addClass("data-table-recon-topic")
+                            .attr("href", "http://www.freebase.com/view" + candidate.id)
+                            .attr("target", "_blank")
+                            .click(function(evt) {
+                                self._previewCandidateTopic(candidate.id, this);
+                                evt.preventDefault();
+                                return false;
+                            })
+                            .text(candidate.name)
+                            .appendTo(li);
+                            
+                        $('<span></span>').addClass("data-table-recon-score").text("(" + Math.round(candidate.score) + ")").appendTo(li);
+                    };
                     
-                    $('<a href="javascript:{}">&nbsp;</a>')
-                        .addClass("data-table-recon-match-similar")
-                        .attr("title", "Match this topic to this cell and other cells with the same content")
-                        .appendTo(li).click(function(evt) {
-                            self._doMatchTopicToSimilarCells(candidate);
-                        });
-                        
-                    $('<a href="javascript:{}">&nbsp;</a>')
-                        .addClass("data-table-recon-match")
-                        .attr("title", "Match this topic to this cell")
-                        .appendTo(li).click(function(evt) {
-                            self._doMatchTopicToOneCell(candidate);
-                        });
-                        
-                    $('<a></a>')
-                        .addClass("data-table-recon-topic")
-                        .attr("href", "http://www.freebase.com/view" + candidate.id)
-                        .attr("target", "_blank")
-                        .click(function(evt) {
-                            self._previewCandidateTopic(candidate.id, this);
-                            evt.preventDefault();
-                            return false;
-                        })
-                        .text(candidate.name)
-                        .appendTo(li);
-                        
-                    $('<span></span>').addClass("data-table-recon-score").text("(" + Math.round(candidate.score) + ")").appendTo(li);
-                };
-                
-                for (var i = 0; i < candidates.length; i++) {
-                    renderCandidate(candidates[i], i);
+                    for (var i = 0; i < candidates.length; i++) {
+                        renderCandidate(candidates[i], i);
+                    }
                 }
+                
+                var liNew = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
+                $('<a href="javascript:{}">&nbsp;</a>')
+                    .addClass("data-table-recon-match-similar")
+                    .attr("title", "Create a new topic for this cell and other cells with the same content")
+                    .appendTo(liNew).click(function(evt) {
+                        self._doMatchNewTopicToSimilarCells();
+                    });
+                    
+                $('<a href="javascript:{}">&nbsp;</a>')
+                    .addClass("data-table-recon-match")
+                    .attr("title", "Create a new topic for this cell")
+                    .appendTo(liNew).click(function(evt) {
+                        self._doMatchNewTopicToOneCell();
+                    });
+                    
+                $('<span>').text("(New topic)").appendTo(liNew);
+                
+                $('<a href="javascript:{}"></a>')
+                    .addClass("data-table-recon-search")
+                    .click(function(evt) {
+                        self._searchForMatch();
+                        return false;
+                    })
+                    .text("search for match")
+                    .appendTo($('<div>').appendTo(divContent));
             }
-            
-            var liNew = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
-            $('<a href="javascript:{}">&nbsp;</a>')
-                .addClass("data-table-recon-match-similar")
-                .attr("title", "Create a new topic for this cell and other cells with the same content")
-                .appendTo(liNew).click(function(evt) {
-                    self._doMatchNewTopicToSimilarCells();
-                });
-                
-            $('<a href="javascript:{}">&nbsp;</a>')
-                .addClass("data-table-recon-match")
-                .attr("title", "Create a new topic for this cell")
-                .appendTo(liNew).click(function(evt) {
-                    self._doMatchNewTopicToOneCell();
-                });
-                
-            $('<span>').text("(New topic)").appendTo(liNew);
-            
-            $('<a href="javascript:{}"></a>')
-                .addClass("data-table-recon-search")
-                .click(function(evt) {
-                    self._searchForMatch();
-                    return false;
-                })
-                .text("search for match")
-                .appendTo($('<div>').appendTo(divContent));
         }
     }
 };

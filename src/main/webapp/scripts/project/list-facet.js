@@ -150,18 +150,24 @@ ListFacet.prototype.render = function() {
         
         var footerDiv = $('<div></div>').addClass("facet-footer").appendTo(container);
         if (this._options.sort == "name") {
-            $('<a href="javascript:{}"></a>').addClass("action").text("re-sort choices by count").click(function() {
+            $('<a href="javascript:{}"></a>').addClass("action").text("re-sort by count").click(function() {
                 self._options.sort = "count";
                 self._reSortChoices();
                 self.render();
             }).appendTo(footerDiv);
         } else {
-            $('<a href="javascript:{}"></a>').addClass("action").text("re-sort choices by name").click(function() {
+            $('<a href="javascript:{}"></a>').addClass("action").text("re-sort by name").click(function() {
                 self._options.sort = "name";
                 self._reSortChoices();
                 self.render();
             }).appendTo(footerDiv);
         }
+        
+        $('<span>').html(" &bull; ").appendTo(footerDiv);
+        
+        $('<a href="javascript:{}"></a>').addClass("action").text("refresh").click(function() {
+            ui.browsingEngine.update();
+        }).appendTo(footerDiv);
     }
 };
 
