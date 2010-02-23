@@ -2,6 +2,9 @@ package com.metaweb.gridworks.expr.functions;
 
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.metaweb.gridworks.expr.Function;
 
 public class Replace implements Function {
@@ -19,4 +22,14 @@ public class Replace implements Function {
 		return null;
 	}
 
+	
+	public void write(JSONWriter writer, Properties options)
+		throws JSONException {
+	
+		writer.object();
+		writer.key("description"); writer.value("Returns the string obtained by replacing f with r in s");
+		writer.key("params"); writer.value("string s, string f, string r");
+		writer.key("returns"); writer.value("string");
+		writer.endObject();
+	}
 }

@@ -2,6 +2,9 @@ package com.metaweb.gridworks.expr.functions;
 
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.metaweb.gridworks.expr.Function;
 
 public class Join implements Function {
@@ -33,4 +36,13 @@ public class Join implements Function {
 		return null;
 	}
 
+	public void write(JSONWriter writer, Properties options)
+		throws JSONException {
+	
+		writer.object();
+		writer.key("description"); writer.value("Returns the string obtained by joining the array a with the separator sep");
+		writer.key("params"); writer.value("array a, string sep");
+		writer.key("returns"); writer.value("string");
+		writer.endObject();
+	}
 }

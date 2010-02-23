@@ -2,6 +2,9 @@ package com.metaweb.gridworks.expr.functions;
 
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.metaweb.gridworks.expr.Function;
 
 public class Slice implements Function {
@@ -59,4 +62,16 @@ public class Slice implements Function {
 		return null;
 	}
 
+	public void write(JSONWriter writer, Properties options)
+		throws JSONException {
+	
+		writer.object();
+		writer.key("description"); writer.value(
+			"If o is an array, returns o[from, to]. " +
+			"if o is a string, returns o.substring(from, to)"
+		);
+		writer.key("params"); writer.value("o, number from, optional number to");
+		writer.key("returns"); writer.value("Depends on actual arguments");
+		writer.endObject();
+	}
 }

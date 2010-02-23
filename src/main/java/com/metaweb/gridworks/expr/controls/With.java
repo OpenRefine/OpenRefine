@@ -2,6 +2,9 @@ package com.metaweb.gridworks.expr.controls;
 
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.metaweb.gridworks.expr.Control;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.VariableExpr;
@@ -32,5 +35,16 @@ public class With implements Control {
         }
         return null;
     }
-
+    
+	public void write(JSONWriter writer, Properties options)
+		throws JSONException {
+	
+		writer.object();
+		writer.key("description"); writer.value(
+			"Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result"
+		);
+		writer.key("params"); writer.value("expression o, variable v, expression eNonBlank, expression eBlank");
+		writer.key("returns"); writer.value("Depends on actual arguments");
+		writer.endObject();
+	}
 }

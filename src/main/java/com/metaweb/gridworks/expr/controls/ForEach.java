@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.metaweb.gridworks.expr.Control;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.VariableExpr;
@@ -49,5 +52,16 @@ public class ForEach implements Control {
         }
         return null;
     }
-
+    
+	public void write(JSONWriter writer, Properties options)
+		throws JSONException {
+	
+		writer.object();
+		writer.key("description"); writer.value(
+			"Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array."
+		);
+		writer.key("params"); writer.value("expression a, variable v, expression e");
+		writer.key("returns"); writer.value("array");
+		writer.endObject();
+	}
 }

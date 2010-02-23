@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.commands.util;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
@@ -22,6 +23,8 @@ public class GetExpressionLanguageInfoCommand extends Command {
 		
 		try {
 			JSONWriter writer = new JSONWriter(response.getWriter());
+			Properties options = new Properties();
+			
 			writer.object();
 			
 			writer.key("functions");
@@ -29,8 +32,7 @@ public class GetExpressionLanguageInfoCommand extends Command {
 			{
 			    for (Entry<String, Function> entry : Parser.functionTable.entrySet()) {
 			        writer.key(entry.getKey());
-			        writer.object();
-			        writer.endObject();
+			        entry.getValue().write(writer, options);
 			    }
 			}
 			writer.endObject();
@@ -40,8 +42,7 @@ public class GetExpressionLanguageInfoCommand extends Command {
             {
                 for (Entry<String, Control> entry : Parser.controlTable.entrySet()) {
                     writer.key(entry.getKey());
-                    writer.object();
-                    writer.endObject();
+			        entry.getValue().write(writer, options);
                 }
             }
             writer.endObject();

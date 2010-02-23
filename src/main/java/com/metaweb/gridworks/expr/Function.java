@@ -2,6 +2,8 @@ package com.metaweb.gridworks.expr;
 
 import java.util.Properties;
 
-public interface Function {
+import com.metaweb.gridworks.Jsonizable;
+
+public interface Function extends Jsonizable {
 	public Object call(Properties bindings, Object[] args);
 }

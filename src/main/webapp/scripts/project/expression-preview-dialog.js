@@ -81,18 +81,32 @@ ExpressionPreviewDialog.prototype._renderHelpTab = function() {
 ExpressionPreviewDialog.prototype._renderHelp = function(data) {
     var elmt = this._elmts.helpTabBody.empty();
     
-    $('<h3></h3>').text("Functions").appendTo(elmt);
+    var renderEntry = function(table, name, entry) {
+        var tr0 = table.insertRow(table.rows.length);
+        var tr1 = table.insertRow(table.rows.length);
+        var tr2 = table.insertRow(table.rows.length);
+        
+        $(tr0.insertCell(0)).text(name);
+        $(tr0.insertCell(1)).text("(" + entry.params + ")");
+        
+        $(tr1.insertCell(0));
+        $(tr1.insertCell(1)).text("returns: " + entry.returns);
+        
+        $(tr2.insertCell(0));
+        $(tr2.insertCell(1)).text(entry.description);
+    };
     
-    var ul = $('<ul></ul>').appendTo(elmt);
-    for (var n in data.functions) {
-        $('<li></li>').text(n).appendTo(ul);
-    }
+    $('<h3></h3>').text("Functions").appendTo(elmt);
+    var functionTable = $('<table width="100%"></table>').appendTo(elmt)[0];
     
     $('<h3></h3>').text("Controls").appendTo(elmt);
+    var controlTable = $('<table width="100%"></table>').appendTo(elmt)[0];
     
-    ul = $('<ul></ul>').appendTo(elmt);
+    for (var n in data.functions) {
+        renderEntry(functionTable, n, data.functions[n]);
+    }
     for (var n in data.controls) {
-        $('<li></li>').text(n).appendTo(ul);
+        renderEntry(controlTable, n, data.controls[n]);
     }
 };
 

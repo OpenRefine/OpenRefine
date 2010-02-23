@@ -2,6 +2,9 @@ package com.metaweb.gridworks.expr.functions;
 
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.metaweb.gridworks.expr.Function;
 
 public class Log implements Function {
@@ -13,4 +16,13 @@ public class Log implements Function {
 		return null;
 	}
 
+	public void write(JSONWriter writer, Properties options)
+		throws JSONException {
+	
+		writer.object();
+		writer.key("description"); writer.value("Returns the base 10 log of n");
+		writer.key("params"); writer.value("number n");
+		writer.key("returns"); writer.value("number");
+		writer.endObject();
+	}
 }
