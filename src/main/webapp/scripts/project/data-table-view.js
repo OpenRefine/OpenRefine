@@ -21,19 +21,24 @@ DataTableView.prototype.render = function() {
     var container = this._div.empty();
     
     var divSummary = $('<div></div>').addClass("viewPanel-summary").appendTo(container);
-    $('<span>' + 
-            (theProject.rowModel.start + 1) + " to " + 
-            Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit) + " of " + 
-            (theProject.rowModel.filtered) + " filtered rows, " +
-            (theProject.rowModel.total) + " total rows" + 
-        '</span>'
-    ).appendTo(divSummary);
+    
+    var summaryText;
+    
+    var from = (theProject.rowModel.start + 1);
+    var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
+    if (theProject.rowModel.filtered == theProject.rowModel.total) {
+        summaryText = from + ' to ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> rows';
+    } else {
+        summaryText = from + ' to ' + to + ' of <span class="viewPanel-summary-row-count">' + 
+            (theProject.rowModel.filtered) + '</span> rows (filtered from ' + (theProject.rowModel.total) + ' rows total)';
+    }
+    $('<span>').html(summaryText).appendTo(divSummary);
     
     /*
      *  Paging controls
      */
     
-    var pagingControls = $('<table width="100%"><tr><td align="center"></td><td align="center"></td></tr></table>').addClass("viewPanel-pagingControls").appendTo(container);
+    var pagingControls = $('<table width="100%"><tr><td align="right"></td><td align="right"></td></tr></table>').addClass("viewPanel-pagingControls").appendTo(container);
     var pagingControls0 = pagingControls[0].rows[0].cells[0];
     var pagingControls1 = pagingControls[0].rows[0].cells[1];
     

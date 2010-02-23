@@ -49,6 +49,11 @@ img.column-header-menu {
 
 .viewPanel-summary {
 }
+.viewPanel-summary-row-count {
+    font-size: 150%;
+    font-weight: bold;
+}
+
 .viewPanel-pagingControls {
     text-align: center;
     margin: 1em 0;
