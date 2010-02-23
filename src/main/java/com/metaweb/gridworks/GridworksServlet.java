@@ -16,6 +16,8 @@ import org.json.JSONTokener;
 
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.commands.edit.AddColumnCommand;
+import com.metaweb.gridworks.commands.edit.AnnotateOneRowCommand;
+import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
 import com.metaweb.gridworks.commands.edit.ApplyOperationsCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
@@ -82,6 +84,9 @@ public class GridworksServlet extends HttpServlet {
 		_commands.put("recon-judge-one-cell", new ReconJudgeOneCellCommand());
         _commands.put("recon-judge-similar-cells", new ReconJudgeSimilarCellsCommand());
 		
+        _commands.put("annotate-one-row", new AnnotateOneRowCommand());
+        _commands.put("annotate-rows", new AnnotateRowsCommand());
+        
 		_commands.put("save-protograph", new SaveProtographCommand());
 		
 		_commands.put("preview-expression", new PreviewExpressionCommand());

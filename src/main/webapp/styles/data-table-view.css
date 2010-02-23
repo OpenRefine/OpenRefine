@@ -42,6 +42,9 @@ table.column-header-layout td {
 }
 
 img.column-header-menu {
+    position: relative;
+    top: -5px;
+    left: 5px;
 }
 
 .viewPanel-summary {
@@ -116,4 +119,19 @@ a.data-table-recon-match-similar {
 }
 a.data-table-recon-match-similar:hover {
     background-position: 0px -17px;
+}
+
+a.data-table-star-on, a.data-table-star-off {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-image: url('../images/star-flag-map.png');
+    background-repeat: no-repeat;
+    text-decoration: none;
+}
+a.data-table-star-on {
+    background-position: 0px 0px;
+}
+a.data-table-star-off {
+    background-position: -17px 0px;
 }

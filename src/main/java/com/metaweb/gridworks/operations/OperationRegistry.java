@@ -31,6 +31,8 @@ public abstract class OperationRegistry {
         register("column-addition", ColumnAdditionOperation.class);
         register("column-removal", ColumnRemovalOperation.class);
         
+        register("row-star", RowStarOperation.class);
+        
         register("save-protograph", SaveProtographOperation.class);
         register("text-transform", TextTransformOperation.class);
     }

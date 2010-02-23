@@ -101,7 +101,8 @@ DataTableView.prototype.render = function() {
     var renderColumnKeys = function(keys) {
         if (keys.length > 0) {
             var tr = table.insertRow(table.rows.length);
-            tr.insertCell(0); // row index
+            tr.insertCell(0); // star
+            tr.insertCell(1); // row index
             
             for (var c = 0; c < columns.length; c++) {
                 var td = tr.insertCell(tr.cells.length);
@@ -120,7 +121,8 @@ DataTableView.prototype.render = function() {
         
         if (groups.length > 0) {
             var tr = table.insertRow(table.rows.length);
-            tr.insertCell(0); // row index
+            tr.insertCell(0); // star
+            tr.insertCell(1); // row index
             
             for (var c = 0; c < columns.length; c++) {
                 var foundGroup = false;
@@ -167,9 +169,9 @@ DataTableView.prototype.render = function() {
     
     var trHead = table.insertRow(table.rows.length);
     
-    var td = trHead.insertCell(trHead.cells.length);
-    $(td).addClass("column-header");
-    $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(td).click(function() {
+    var tdHeadIndex = trHead.insertCell(trHead.cells.length);
+    $(tdHeadIndex).attr("colspan", "2").addClass("column-header");
+    $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(tdHeadIndex).click(function() {
         self._createMenuForAllColumns(this);
     });
     
@@ -197,21 +199,42 @@ DataTableView.prototype.render = function() {
      */
     
     var rows = theProject.rowModel.rows;
-    var even = true;
-    for (var r = 0; r < rows.length; r++) {
-        var row = rows[r];
+    var renderRow = function(tr, r, row, even) {
         var cells = row.cells;
         
-        var tr = table.insertRow(table.rows.length);
+        var tdStar = tr.insertCell(tr.cells.length);
+        var star = $('<a href="javascript:{}">&nbsp;</a>')
+            .addClass(row.starred ? "data-table-star-on" : "data-table-star-off")
+            .appendTo(tdStar)
+            .click(function() {
+                var newStarred = !row.starred;
+                $.post(
+                    "/command/annotate-one-row?" + $.param({ project: theProject.id, row: row.i, starred: newStarred }),
+                    null,
+                    function(o) {
+                        if (o.code == "ok") {
+                            row.starred = newStarred;
+
+                            $(tr).empty();
+                            
+                            renderRow(tr, r, row, even);
+                            
+                            ui.historyWidget.update();
+                        } else {
+                            ui.processWidget.update();
+                        }
+                    },
+                    "json"
+                );
+                
+            });
         
-        var td = tr.insertCell(tr.cells.length);
+        var tdIndex = tr.insertCell(tr.cells.length);
         if ("j" in row) {
-            even = !even;
-            
             $(tr).addClass("record");
-            $('<div></div>').html((row.j + 1) + ".").appendTo(td);
+            $('<div></div>').html((row.j + 1) + ".").appendTo(tdIndex);
         } else {
-            $('<div></div>').html("&nbsp;").appendTo(td);
+            $('<div></div>').html("&nbsp;").appendTo(tdIndex);
         }
         
         if ("contextual" in row && row.contextual) {
@@ -230,6 +253,16 @@ DataTableView.prototype.render = function() {
                 new DataTableCellUI(this, cell, row.i, column.cellIndex, td);
             }
         }
+    };
+    
+    var even = true;
+    for (var r = 0; r < rows.length; r++) {
+        var row = rows[r];
+        var tr = table.insertRow(table.rows.length);
+        if ("j" in row) {
+            even = !even;
+        }
+        renderRow(tr, r, row, even);
     }
 };
 
@@ -286,6 +319,19 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                     theProject.columnModel.columns[i].collapsed = false;
                 }
                 self.render();
+            }
+        },
+        {},
+        {
+            label: "Star Rows",
+            click: function() {
+                self.doPostThenUpdate("annotate-rows", { "starred" : "true" }, false);
+            }
+        },
+        {
+            label: "Unstar Rows",
+            click: function() {
+                self.doPostThenUpdate("annotate-rows", { "starred" : "false" }, false);
             }
         }
     ], elmt);
