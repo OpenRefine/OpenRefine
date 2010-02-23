@@ -25,6 +25,10 @@ import com.metaweb.gridworks.expr.functions.IsNull;
 import com.metaweb.gridworks.expr.functions.Join;
 import com.metaweb.gridworks.expr.functions.LastIndexOf;
 import com.metaweb.gridworks.expr.functions.Length;
+import com.metaweb.gridworks.expr.functions.Ln;
+import com.metaweb.gridworks.expr.functions.Log;
+import com.metaweb.gridworks.expr.functions.Max;
+import com.metaweb.gridworks.expr.functions.Min;
 import com.metaweb.gridworks.expr.functions.Mod;
 import com.metaweb.gridworks.expr.functions.Not;
 import com.metaweb.gridworks.expr.functions.Or;
@@ -72,6 +76,10 @@ public class Parser {
 		functionTable.put("floor", new Floor());
 		functionTable.put("ceil", new Ceil());
 		functionTable.put("mod", new Mod());
+		functionTable.put("max", new Max());
+		functionTable.put("min", new Min());
+		functionTable.put("log", new Log());
+		functionTable.put("ln", new Ln());
 		
 		functionTable.put("and", new And());
 		functionTable.put("or", new Or());

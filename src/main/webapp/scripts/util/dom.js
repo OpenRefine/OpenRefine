@@ -9,10 +9,10 @@ DOM.bind = function(elmt) {
 };
 
 DOM._bindDOMElement = function(elmt, map) {
-    var id = elmt.id;
-    if (id != null && id.length > 0) {
-        map[id] = $(elmt);
-        elmt.removeAttribute("id");
+    var bind = elmt.getAttribute("bind");
+    if (bind != null && bind.length > 0) {
+        map[bind] = $(elmt);
+        elmt.removeAttribute("bind");
     }
     
     if (elmt.hasChildNodes()) {

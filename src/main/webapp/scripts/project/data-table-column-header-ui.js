@@ -357,7 +357,7 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
     var self = this;
     DataTableView.promptExpressionOnVisibleRows(
         this._column,
-        "Custom Filter on " + this._column.headerLabel, 
+        (type == "list" ? "Custom Facet on column " : "Custom Numeric Facet on column") + this._column.headerLabel, 
         expression,
         function(expression) {
             var config = {

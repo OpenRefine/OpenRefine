@@ -1,18 +1,15 @@
-td.expression-preview-help-column {
-    padding-left: 10px;
-}
-.expression-preview-help-outer {
-    border: 1px solid #ccc;
-    height: 300px;
-    overflow: auto;
-}
-.expression-preview-help-inner {
-    padding: 10px;
+#expression-preview-tabs-preview, #expression-preview-tabs-help {
+    padding: 7px;
 }
 
-.expression-preview-container {
-    border: 1px solid #ccc;
+.expression-preview-help-container {
     height: 300px;
+    padding: 5px;
+    overflow: auto;
+}
+.expression-preview-container {
+    height: 300px;
+    padding: 5px;
     overflow: auto;
 }
 

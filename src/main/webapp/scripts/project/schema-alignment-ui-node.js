@@ -272,7 +272,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                         '<tr>' +
                             '<td>' +
                                 '<div class="schema-align-node-dialog-node-type">' +
-                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="cell-as" id="radioNodeTypeCellAs" /> Set to Cell in Column' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="cell-as" bind="radioNodeTypeCellAs" /> Set to Cell in Column' +
                                 '</div>' +
                             '</td>' +
                         '</tr>' +
@@ -280,51 +280,51 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                             '<td>' +
                                 '<table class="schema-align-node-dialog-layout2">' +
                                     '<tr>' +
-                                        '<td><div class="schema-alignment-node-dialog-column-list" id="divColumns"></div></td>' +
+                                        '<td><div class="schema-alignment-node-dialog-column-list" bind="divColumns"></div></td>' +
                                         '<td>' +
                                             '<table class="schema-align-node-dialog-layout2" cols="4">' +
                                                 '<tr>' +
                                                     '<td colspan="4">The cell\'s content is used ...</td>' +
                                                 '</tr>' +
                                                 '<tr>' +
-                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-topic" id="radioNodeTypeCellAsTopic" /></td>' +
+                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-topic" bind="radioNodeTypeCellAsTopic" /></td>' +
                                                     '<td colspan="3">to specify a Freebase topic, as reconciled</td>' +
                                                 '</tr>' +
                                                 '<tr>' +
                                                     '<td></td>' +
-                                                    '<td colspan="1" width="1%"><input type="checkbox" id="radioNodeTypeCellAsTopicCreate" /></td>' +
+                                                    '<td colspan="1" width="1%"><input type="checkbox" bind="radioNodeTypeCellAsTopicCreate" /></td>' +
                                                     '<td colspan="2">If not reconciled, create new topic named by the cell\'s content, and assign it a type</td>' +
                                                 '</tr>' +
                                                 '<tr>' +
                                                     '<td></td>' +
                                                     '<td></td>' +
                                                     '<td colspan="1">Type:</td>' +
-                                                    '<td colspan="1"><input id="cellAsTopicNodeTypeInput" /></td>' +
+                                                    '<td colspan="1"><input bind="cellAsTopicNodeTypeInput" /></td>' +
                                                 '</tr>' +
                                                 
                                                 '<tr>' +
-                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-value" id="radioNodeTypeCellAsValue" /></td>' +
+                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-value" bind="radioNodeTypeCellAsValue" /></td>' +
                                                     '<td colspan="3">as a literal value</td>' +
                                                 '</tr>' +
                                                 '<tr>' +
                                                     '<td></td>' +
                                                     '<td colspan="2">Literal type</td>' +
-                                                    '<td colspan="1"><select id="cellAsValueTypeSelect">' + literalTypeSelectHtml + '</select></td>' +
+                                                    '<td colspan="1"><select bind="cellAsValueTypeSelect">' + literalTypeSelectHtml + '</select></td>' +
                                                 '</tr>' +
                                                 '<tr>' +
                                                     '<td></td>' +
                                                     '<td colspan="2">Language (for text)</td>' +
-                                                    '<td colspan="1"><input id="cellAsValueLanguageInput" /></td>' +
+                                                    '<td colspan="1"><input bind="cellAsValueLanguageInput" /></td>' +
                                                 '</tr>' +
                                                 
                                                 '<tr>' +
-                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-key" id="radioNodeTypeCellAsKey" /></td>' +
+                                                    '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-key" bind="radioNodeTypeCellAsKey" /></td>' +
                                                     '<td colspan="3">as a key in a namespace</td>' +
                                                 '</tr>' +
                                                 '<tr>' +
                                                     '<td></td>' +
                                                     '<td colspan="2">Namespace</td>' +
-                                                    '<td colspan="1"><input id="cellAsKeyInput" /></td>' +
+                                                    '<td colspan="1"><input bind="cellAsKeyInput" /></td>' +
                                                 '</tr>' +
                                             '</table>' +
                                         '</td>' +
@@ -340,50 +340,50 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                         '<tr>' +
                             '<td colspan="3">' +
                                 '<div class="schema-align-node-dialog-node-type">' +
-                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" id="radioNodeTypeAnonymous" /> Generate an anonymous graph node' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" bind="radioNodeTypeAnonymous" /> Generate an anonymous graph node' +
                                 '</div>' +
                             '</td>' +
                         '</tr>' +
                         '<tr>' +
                             '<td></td>' +
                             '<td>Assign a type to the node</td>' +
-                            '<td>&nbsp;<input id="anonymousNodeTypeInput" /></td>' +
+                            '<td>&nbsp;<input bind="anonymousNodeTypeInput" /></td>' +
                         '</tr>' +
                     
                         '<tr>' +
                             '<td colspan="3">' +
                                 '<div class="schema-align-node-dialog-node-type">' +
-                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="topic" id="radioNodeTypeTopic" /> Use one existing Freebase topic' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="topic" bind="radioNodeTypeTopic" /> Use one existing Freebase topic' +
                                 '</div>' +
                             '</td>' +
                         '</tr>' +
                         '<tr>' +
                             '<td></td>' +
                             '<td>Topic</td>' +
-                            '<td><input id="topicNodeTypeInput" /></td>' +
+                            '<td><input bind="topicNodeTypeInput" /></td>' +
                         '</tr>' +
                     
                         '<tr>' +
                             '<td colspan="3">' +
                                 '<div class="schema-align-node-dialog-node-type">' +
-                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="value" id="radioNodeTypeValue" /> Use a literal value' +
+                                    '<input type="radio" name="schema-align-node-dialog-node-type" value="value" bind="radioNodeTypeValue" /> Use a literal value' +
                                 '</div>' +
                             '</td>' +
                         '</tr>' +
                         '<tr>' +
                             '<td></td>' +
                             '<td>Value</td>' +
-                            '<td><input id="valueNodeTypeValueInput" /></td>' +
+                            '<td><input bind="valueNodeTypeValueInput" /></td>' +
                         '</tr>' +
                         '<tr>' +
                             '<td></td>' +
                             '<td>Value type</td>' +
-                            '<td><select id="valueNodeTypeValueTypeSelect">' + literalTypeSelectHtml + '</select></td>' +
+                            '<td><select bind="valueNodeTypeValueTypeSelect">' + literalTypeSelectHtml + '</select></td>' +
                         '</tr>' +
                         '<tr>' +
                             '<td></td>' +
                             '<td>Language</td>' +
-                            '<td><input id="valueNodeTypeLanguageInput" /></td>' +
+                            '<td><input bind="valueNodeTypeLanguageInput" /></td>' +
                         '</tr>' +
                     '</table>' +
                 '</td>' +

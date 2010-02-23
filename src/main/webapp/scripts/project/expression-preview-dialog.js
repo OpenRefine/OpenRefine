@@ -20,23 +20,25 @@ ExpressionPreviewDialog.prototype._createDialog = function(title) {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    var layoutTable = $('<table cellspacing="0" cellpadding="0" width="100%"><tr><td></td><td></td></tr></table>').appendTo(body);
-    var mainColumn = layoutTable[0].rows[0].cells[0];
-    var helpColumn = layoutTable[0].rows[0].cells[1];
-    
-    this._renderFooter($(footer));
-    this._renderMainColumn($(mainColumn));
-    this._renderHelpColumn($(helpColumn));
-    
-    this._level = DialogSystem.showDialog(frame);
-    
-    this._input[0].value = this._expression;
-    this._input[0].focus();
-    this._update();
-};
+    var html = $(
+        '<div class="dialog-body">' +
+            '<p>Expression: <input bind="expressionInput" /></p>' +
+            '<div id="expression-preview-tabs">' +
+                '<ul>' +
+                    '<li><a href="#expression-preview-tabs-preview">Preview</a></li>' +
+                    '<li><a href="#expression-preview-tabs-help">Help</a></li>' +
+                '</ul>' +
+                '<div id="expression-preview-tabs-preview">' +
+                    '<div class="expression-preview-container" bind="previewContainer"></div>' +
+                '</div>' +
+                '<div id="expression-preview-tabs-help" style="display: none;">' +
+                    '<div class="expression-preview-help-container" bind="helpTabBody"></div>' +
+                '</div>' +
+            '</div>' +
+        '</div>'
+    ).appendTo(body);
 
-ExpressionPreviewDialog.prototype._renderFooter = function(footer) {
-    var self = this;
+    this._elmts = DOM.bind(html);
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
@@ -46,27 +48,38 @@ ExpressionPreviewDialog.prototype._renderFooter = function(footer) {
     $('<button></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
+    
+    this._elmts.expressionInput
+        .width("400px")
+        .attr("value", this._expression)
+        .keyup(function(){
+            self._scheduleUpdate();
+        })
+        .focus();
+    
+    this._level = DialogSystem.showDialog(frame);
+    $("#expression-preview-tabs").tabs();
+    $("#expression-preview-tabs-preview").css("display", "");
+    $("#expression-preview-tabs-help").css("display", "");
+        
+    this._update();
+    this._renderHelpTab();
 };
 
-ExpressionPreviewDialog.prototype._renderHelpColumn = function(helpColumn) {
-    helpColumn.addClass("expression-preview-help-column").attr("width", "250").attr("height", "100%");
-    
-    var outer = $('<div></div>').addClass("expression-preview-help-outer").appendTo(helpColumn);
-    var inner = $('<div></div>').addClass("expression-preview-help-inner").text("Loading expression language help info ...").appendTo(outer);
+ExpressionPreviewDialog.prototype._renderHelpTab = function() {
     var self = this;
-    
     $.getJSON(
         "/command/get-expression-language-info",
         null,
         function(data) {
-            self._renderHelp(inner, data);
+            self._renderHelp(data);
         },
         "json"
     );
 };
 
-ExpressionPreviewDialog.prototype._renderHelp = function(elmt, data) {
-    elmt.empty();
+ExpressionPreviewDialog.prototype._renderHelp = function(data) {
+    var elmt = this._elmts.helpTabBody.empty();
     
     $('<h3></h3>').text("Functions").appendTo(elmt);
     
@@ -83,17 +96,6 @@ ExpressionPreviewDialog.prototype._renderHelp = function(elmt, data) {
     }
 };
 
-ExpressionPreviewDialog.prototype._renderMainColumn = function(mainColumn) {
-    var self = this;
-    var p = $('<p></p>').text("Expression: ").appendTo(mainColumn);
-    
-    this._input = $('<input />').width("400px").keypress(function(){
-        self._scheduleUpdate();
-    }).appendTo(p);
-    
-    this._preview = $('<div></div>').addClass("expression-preview-container").appendTo(mainColumn);
-};
-
 ExpressionPreviewDialog.prototype._scheduleUpdate = function() {
     if (this._timerID != null) {
         window.clearTimeout(this._timerID);
@@ -104,7 +106,7 @@ ExpressionPreviewDialog.prototype._scheduleUpdate = function() {
 
 ExpressionPreviewDialog.prototype._update = function() {
     var self = this;
-    var expression = this._expression = $.trim(this._input[0].value);
+    var expression = this._expression = $.trim(this._elmts.expressionInput[0].value);
     
     $.post(
         "/command/preview-expression?" + $.param({ project: theProject.id, expression: expression, cellIndex: this._cellIndex }), 
@@ -124,8 +126,7 @@ ExpressionPreviewDialog.prototype._update = function() {
 };
 
 ExpressionPreviewDialog.prototype._renderPreview = function(expression) {
-    var container = this._preview.empty();
-    
+    var container = this._elmts.previewContainer.empty();
     var table = $('<table width="100%"></table>').appendTo(container)[0];
     
     var tr = table.insertRow(0);
