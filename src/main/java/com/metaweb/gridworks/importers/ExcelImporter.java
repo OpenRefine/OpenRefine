@@ -29,14 +29,14 @@ public class ExcelImporter implements Importer {
 		return false;
 	}
 	
-	public void read(Reader reader, Project project, Properties options)
+	public void read(Reader reader, Project project, Properties options, int limit)
 			throws Exception {
 		
 		throw new NotImplementedException();
 	}
 
 	public void read(InputStream inputStream, Project project,
-			Properties options) throws Exception {
+			Properties options, int limit) throws Exception {
 		
         Workbook wb = _xmlBased ? 
         		new XSSFWorkbook(inputStream) : 
@@ -150,6 +150,9 @@ public class ExcelImporter implements Importer {
                 
                 if (hasData) {
                 	project.rows.add(newRow);
+                	if (limit > 0 && project.rows.size() >= limit) {
+                		break;
+                	}
                 }
             }
         }

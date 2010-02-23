@@ -13,7 +13,7 @@ import com.metaweb.gridworks.model.Row;
 
 public class TsvCsvImporter implements Importer {
 
-	public void read(Reader reader, Project project, Properties options)
+	public void read(Reader reader, Project project, Properties options, int limit)
 			throws Exception {
 		
 		LineNumberReader lnReader = new LineNumberReader(reader);
@@ -59,6 +59,10 @@ public class TsvCsvImporter implements Importer {
 					if ((sep.charAt(0) == ',') ? ImporterUtilities.parseCSVIntoRow(row, line) : ImporterUtilities.parseTSVIntoRow(row, line)) {
 						project.rows.add(row);
 						project.columnModel.setMaxCellIndex(Math.max(project.columnModel.getMaxCellIndex(), row.cells.size()));
+						
+	                	if (limit > 0 && project.rows.size() >= limit) {
+	                		break;
+	                	}
 					}
 				}
 			}
@@ -68,7 +72,7 @@ public class TsvCsvImporter implements Importer {
 	}
 
 	public void read(InputStream inputStream, Project project,
-			Properties options) throws Exception {
+			Properties options, int limit) throws Exception {
 		
 		throw new NotImplementedException();
 	}

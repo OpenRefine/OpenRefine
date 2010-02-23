@@ -5,3 +5,11 @@
     background: #fffee0;
     padding: 20px;
 }
+
+#file-upload-form > table > tbody > tr > td {
+    vertical-align: baseline;
+}
+
+#submit-container {
+    padding: 20px 0px;
+}

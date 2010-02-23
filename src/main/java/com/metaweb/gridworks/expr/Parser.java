@@ -33,8 +33,10 @@ import com.metaweb.gridworks.expr.functions.Mod;
 import com.metaweb.gridworks.expr.functions.Not;
 import com.metaweb.gridworks.expr.functions.Or;
 import com.metaweb.gridworks.expr.functions.Replace;
+import com.metaweb.gridworks.expr.functions.Reverse;
 import com.metaweb.gridworks.expr.functions.Round;
 import com.metaweb.gridworks.expr.functions.Slice;
+import com.metaweb.gridworks.expr.functions.Sort;
 import com.metaweb.gridworks.expr.functions.Split;
 import com.metaweb.gridworks.expr.functions.StartsWith;
 import com.metaweb.gridworks.expr.functions.ToLowercase;
@@ -71,6 +73,8 @@ public class Parser {
 		functionTable.put("startsWith", new StartsWith());
 		functionTable.put("endsWith", new EndsWith());
 		functionTable.put("join", new Join());
+		functionTable.put("reverse", new Reverse());
+		functionTable.put("sort", new Sort());
 		
 		functionTable.put("round", new Round());
 		functionTable.put("floor", new Floor());

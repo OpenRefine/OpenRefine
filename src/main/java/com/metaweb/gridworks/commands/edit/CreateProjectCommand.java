@@ -87,6 +87,17 @@ public class CreateProjectCommand extends Command {
 		
 		if (parser != null) {
 			Part part = null;
+			String url = null;
+			
+			int limit = -1;
+			if (options.containsKey("limit")) {
+				String s = options.getProperty("limit");
+				try {
+					limit = Integer.parseInt(s);
+				} catch (Exception e) {
+				}
+			}
+			
 			while ((part = parser.readNextPart()) != null) {
 	            
 				if (part.isFile()) {
@@ -97,14 +108,14 @@ public class CreateProjectCommand extends Command {
 					if (importer.takesReader()) {
 						Reader reader = new InputStreamReader(filePart.getInputStream());
 						try {
-							importer.read(reader, project, options);
+							importer.read(reader, project, options, limit);
 						} finally {
 							reader.close();
 						}
 					} else {
 						InputStream inputStream = filePart.getInputStream();
 						try {
-							importer.read(inputStream, project, options);
+							importer.read(inputStream, project, options, limit);
 						} finally {
 							inputStream.close();
 						}
@@ -115,19 +126,20 @@ public class CreateProjectCommand extends Command {
 					if (paramName.equals("raw-text")) {
 						StringReader reader = new StringReader(paramPart.getStringValue());
 						try {
-							new TsvCsvImporter().read(reader, project, options);
+							new TsvCsvImporter().read(reader, project, options, limit);
 						} finally {
 							reader.close();
 						}
 					} else if (paramName.equals("url")) {
-						String url = paramPart.getStringValue();
-						if (url.length() > 0) {
-							internalImportURL(request, project, options, url);
-						}
+						url = paramPart.getStringValue();
 					} else {
 						options.put(paramName, paramPart.getStringValue());
 					}
 				}
+			}
+			
+			if (url != null && url.length() > 0) {
+				internalImportURL(request, project, options, url, limit);
 			}
 		}
 	}
@@ -136,7 +148,8 @@ public class CreateProjectCommand extends Command {
 		HttpServletRequest	request,
 		Project				project,
 		Properties			options,
-		String				urlString
+		String				urlString,
+		int					limit
 	) throws Exception {
 		URL url = new URL(urlString);
 		URLConnection connection = null;
@@ -169,9 +182,9 @@ public class CreateProjectCommand extends Command {
 				Reader reader = new InputStreamReader(
 					inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
 							
-				importer.read(reader, project, options);
+				importer.read(reader, project, options, limit);
 			} else {
-				importer.read(inputStream, project, options);
+				importer.read(inputStream, project, options, limit);
 			}
         } finally {
 			inputStream.close();

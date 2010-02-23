@@ -18,6 +18,8 @@ function onClickUploadFileButton(evt) {
         
         evt.preventDefault();
         return false;
+    } else {
+        $("#file-upload-form").attr("action", "/command/create-project-from-upload?limit=" + $("#limit-input")[0].value);
     }
 }
 
