@@ -50,11 +50,13 @@ public class Protograph implements Serializable, Jsonizable {
 			String columnName = o.getString("columnName");
 			
 			if ("cell-as-topic".equals(nodeType)) {
-				node = new CellTopicNode(
-					columnName,
-					o.getBoolean("createForNoReconMatch"),
-					reconstructType(o.getJSONObject("type"))
-				);
+				if (o.has("type")) {
+					node = new CellTopicNode(
+						columnName,
+						o.getBoolean("createForNoReconMatch"),
+						reconstructType(o.getJSONObject("type"))
+					);
+				}
 			} else if ("cell-as-value".equals(nodeType)) {
 				node = new CellValueNode(
 					columnName,

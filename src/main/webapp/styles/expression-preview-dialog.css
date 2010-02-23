@@ -2,11 +2,6 @@
     padding: 7px;
 }
 
-.expression-preview-help-container {
-    height: 300px;
-    padding: 5px;
-    overflow: auto;
-}
 .expression-preview-container {
     height: 300px;
     padding: 5px;
@@ -26,4 +21,30 @@ td.expression-preview-heading {
 
 .expression-preview-empty {
     color: #aaa;
+}
+
+.expression-preview-help-container {
+    height: 300px;
+    padding: 5px;
+    overflow: auto;
+}
+
+.expression-preview-help-container h3 {
+    background: white;
+    padding: 3px 10px;
+}
+
+.expression-preview-doc-item-title {
+    font-weight: bold;
+    text-align: right;
+}
+
+.expression-preview-doc-item-params {
+}
+
+.expression-preview-doc-item-returns {
+}
+
+.expression-preview-doc-item-desc {
+    color: #666;
 }

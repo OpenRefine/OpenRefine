@@ -81,33 +81,70 @@ ExpressionPreviewDialog.prototype._renderHelpTab = function() {
 ExpressionPreviewDialog.prototype._renderHelp = function(data) {
     var elmt = this._elmts.helpTabBody.empty();
     
+    $('<h3></h3>').text("Variables").appendTo(elmt);
+    var varTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
+    var vars = [
+        {   name: "cell",
+            description: "The current cell. It has a few fields: 'value' and 'recon'."
+        },
+        {   name: "value",
+            description: "The current cell's value. This is a shortcut for 'cell.value'."
+        },
+        {   name: "row",
+            description: "The current row. It has 4 fields: 'flagged', 'starred', 'index', and 'cells'."
+        },
+        {   name: "cells",
+            description: "The cells of the current row. This is a shortcut for 'row.cells'. " +
+                "A particular cell can be retrieved with 'cells.<column name>' if the <column name> is a single word, " +
+                "or with 'cells[\"<column name>\"] otherwise."
+        },
+        {   name: "rowIndex",
+            description: "The current row's index. This is a shortcut for 'row.index'."
+        }
+    ];
+    for (var i = 0; i < vars.length; i++) {
+        var variable = vars[i];
+        var tr = varTable.insertRow(varTable.rows.length);
+        $(tr.insertCell(0)).addClass("expression-preview-doc-item-title").text(variable.name);
+        $(tr.insertCell(1)).addClass("expression-preview-doc-item-desc").text(variable.description);
+    }
+    
     var renderEntry = function(table, name, entry) {
         var tr0 = table.insertRow(table.rows.length);
         var tr1 = table.insertRow(table.rows.length);
         var tr2 = table.insertRow(table.rows.length);
         
-        $(tr0.insertCell(0)).text(name);
-        $(tr0.insertCell(1)).text("(" + entry.params + ")");
+        $(tr0.insertCell(0)).addClass("expression-preview-doc-item-title").text(name);
+        $(tr0.insertCell(1)).addClass("expression-preview-doc-item-params").text("(" + entry.params + ")");
         
         $(tr1.insertCell(0));
-        $(tr1.insertCell(1)).text("returns: " + entry.returns);
+        $(tr1.insertCell(1)).addClass("expression-preview-doc-item-returns").text("returns: " + entry.returns);
         
         $(tr2.insertCell(0));
-        $(tr2.insertCell(1)).text(entry.description);
+        $(tr2.insertCell(1)).addClass("expression-preview-doc-item-desc").text(entry.description);
+    };
+    var renderEntries = function(table, map) {
+        var names = [];
+        for (var n in map) {
+            if (map.hasOwnProperty(n)) {
+                names.push(n);
+            }
+        }
+        names.sort();
+        
+        for (var i = 0; i < names.length; i++) {
+            var name = names[i];
+            renderEntry(table, name, map[name]);
+        }
     };
     
     $('<h3></h3>').text("Functions").appendTo(elmt);
-    var functionTable = $('<table width="100%"></table>').appendTo(elmt)[0];
+    var functionTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
+    renderEntries(functionTable, data.functions);
     
     $('<h3></h3>').text("Controls").appendTo(elmt);
-    var controlTable = $('<table width="100%"></table>').appendTo(elmt)[0];
-    
-    for (var n in data.functions) {
-        renderEntry(functionTable, n, data.functions[n]);
-    }
-    for (var n in data.controls) {
-        renderEntry(controlTable, n, data.controls[n]);
-    }
+    var controlTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
+    renderEntries(controlTable, data.controls);
 };
 
 ExpressionPreviewDialog.prototype._scheduleUpdate = function() {

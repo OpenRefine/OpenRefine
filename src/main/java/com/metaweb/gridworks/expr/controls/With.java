@@ -43,7 +43,7 @@ public class With implements Control {
 		writer.key("description"); writer.value(
 			"Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result"
 		);
-		writer.key("params"); writer.value("expression o, variable v, expression eNonBlank, expression eBlank");
+		writer.key("params"); writer.value("expression o, variable v, expression e");
 		writer.key("returns"); writer.value("Depends on actual arguments");
 		writer.endObject();
 	}
