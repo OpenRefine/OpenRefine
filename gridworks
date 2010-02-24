@@ -147,14 +147,14 @@ make_dmg() {
             set current view of container window to icon view
             set toolbar visible of container window to false
             set statusbar visible of container window to false
-            set the bounds of container window to {200, 100, 945, 461}
+            set the bounds of container window to {200, 100, 760, 460}
             set theViewOptions to the icon view options of container window
             set arrangement of theViewOptions to not arranged
             set icon size of theViewOptions to 100
             set background picture of theViewOptions to file ".background:'dmg_background.png'"
             make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
-            set position of item "'Gridworks'" of container window to {450, 150}
-            set position of item "Applications" of container window to {600, 150}
+            set position of item "'Gridworks'" of container window to {170, 175}
+            set position of item "Applications" of container window to {380, 175}
             close
             open               
             update without registering applications
