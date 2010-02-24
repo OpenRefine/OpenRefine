@@ -86,7 +86,7 @@ ant_prepare() {
 
 ant() {
     ant_prepare    
-    $ANT -f build.xml -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Djava.options="$JAVA_OPTIONS" $1 || exit 1
+    $ANT -f build.xml -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Djava.options="$JAVA_OPTIONS" $1 || exit 1
 }
 
 dist_prepare() {
@@ -103,16 +103,21 @@ launch4j_prepare() {
     fi
 }
 
-make_exe() {
-    check_macosx
-    dist_prepare
-    launch4j_prepare
-    
+get_version() {
     VERSION=$1        
     
     if [ "$VERSION" == "" ] ; then
         fail "Must specify a version number"
     fi
+    
+    NUM_VERSION=`echo $VERSION | sed 's/\a//g'`
+}
+    
+make_exe() {
+    check_macosx
+    dist_prepare
+    launch4j_prepare
+    get_version $1
     
     ant exe
 }
@@ -120,12 +125,7 @@ make_exe() {
 make_dmg() {
     check_macosx
     dist_prepare
-        
-    VERSION=$1
-
-    if [ "$VERSION" == "" ] ; then
-        fail "Must specify a version number"
-    fi
+    get_version $1
     
     ant bundle
 

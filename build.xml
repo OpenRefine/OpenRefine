@@ -102,12 +102,12 @@
                 <opt>${java.version}</opt>
             </jre>
             <versionInfo
-                fileVersion="${version}.0.0"
+                fileVersion="${num_version}.0.0"
                 txtFileVersion="${version}"
                 fileDescription="gridworks"
                 copyright="Copyright (c) 2010, Metaweb Technologies, Inc."
-                productVersion="${version}.0.0"
-                txtProductVersion="${version}.0.0"
+                productVersion="${num_version}.0.0"
+                txtProductVersion="${num_version}.0.0"
                 productName="Gridworks"
                 companyName="Metaweb Technologies, Inc."
                 internalName="gridworks"
