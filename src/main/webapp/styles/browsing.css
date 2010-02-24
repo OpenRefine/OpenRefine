@@ -76,6 +76,7 @@ a.facet-choice-link:hover {
     overflow: hidden;
 }
 .facet-range-histogram img {
+    height: 50px;
     position: relative;
     left: -2px;
 }

@@ -19,19 +19,15 @@ function onClickUploadFileButton(evt) {
         evt.preventDefault();
         return false;
     } else {
-        $("#file-upload-form").attr("action", "/command/create-project-from-upload?limit=" + $("#limit-input")[0].value);
+        $("#file-upload-form").attr("action", 
+            "/command/create-project-from-upload?" + [
+                "skip=" + $("#skip-input")[0].value,
+                "limit=" + $("#limit-input")[0].value
+            ].join("&"));
     }
 }
 
 function renderProjects(data) {
-    var container = $("#projects").empty();
-    
-    $('<h2></h2>').text("Projects").appendTo(container);
-    
-    var table = $('<table><tr><td></td><td>last modified</td></tr></table>')
-        .attr("cellspacing", "5")
-        .appendTo(container)[0];
-    
     var projects = [];
     for (var n in data.projects) {
         if (data.projects.hasOwnProperty(n)) {
@@ -41,16 +37,27 @@ function renderProjects(data) {
             projects.push(project);
         }
     }
-    projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
     
-    for (var i = 0; i < projects.length; i++) {
-        var project = projects[i];
-        var tr = table.insertRow(table.rows.length);
-        var td0 = tr.insertCell(0);
-        var td1 = tr.insertCell(1);
+    if (projects.length > 0) {
+        projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
         
-        $('<a></a>').text(project.name).attr("href", "/project.html?project=" + project.id).appendTo(td0);
-        $('<span></span>').text(formatDate(project.date)).appendTo(td1);
+        var container = $("#projects").empty().show();
+
+        $('<h2></h2>').text("Projects").appendTo(container);
+
+        var table = $('<table><tr><td></td><td>last modified</td></tr></table>')
+            .attr("cellspacing", "5")
+            .appendTo(container)[0];
+
+        for (var i = 0; i < projects.length; i++) {
+            var project = projects[i];
+            var tr = table.insertRow(table.rows.length);
+            var td0 = tr.insertCell(0);
+            var td1 = tr.insertCell(1);
+        
+            $('<a></a>').text(project.name).attr("href", "/project.html?project=" + project.id).appendTo(td0);
+            $('<span></span>').text(formatDate(project.date)).appendTo(td1);
+        }
     }
 }
 

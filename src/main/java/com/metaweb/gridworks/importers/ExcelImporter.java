@@ -29,14 +29,14 @@ public class ExcelImporter implements Importer {
 		return false;
 	}
 	
-	public void read(Reader reader, Project project, Properties options, int limit)
+	public void read(Reader reader, Project project, Properties options, int skip, int limit)
 			throws Exception {
 		
 		throw new NotImplementedException();
 	}
 
 	public void read(InputStream inputStream, Project project,
-			Properties options, int limit) throws Exception {
+			Properties options, int skip, int limit) throws Exception {
 		
         Workbook wb = _xmlBased ? 
         		new XSSFWorkbook(inputStream) : 
@@ -99,6 +99,7 @@ public class ExcelImporter implements Importer {
         /*
          *  Now process the data rows
          */
+        int rowsWithData = 0;
         for (; r <= lastRow; r++) {
             org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
@@ -149,10 +150,14 @@ public class ExcelImporter implements Importer {
                 }
                 
                 if (hasData) {
-                	project.rows.add(newRow);
-                	if (limit > 0 && project.rows.size() >= limit) {
-                		break;
-                	}
+                    rowsWithData++;
+                    
+                    if (skip <= 0 || rowsWithData > skip) {
+                    	project.rows.add(newRow);
+                    	if (limit > 0 && project.rows.size() >= limit) {
+                    		break;
+                    	}
+                    }
                 }
             }
         }

@@ -90,6 +90,8 @@ public class CreateProjectCommand extends Command {
 			String url = null;
 			
 			int limit = -1;
+			int skip = 0;
+			
 			if (options.containsKey("limit")) {
 				String s = options.getProperty("limit");
 				try {
@@ -97,6 +99,13 @@ public class CreateProjectCommand extends Command {
 				} catch (Exception e) {
 				}
 			}
+            if (options.containsKey("skip")) {
+                String s = options.getProperty("skip");
+                try {
+                    skip = Integer.parseInt(s);
+                } catch (Exception e) {
+                }
+            }
 			
 			while ((part = parser.readNextPart()) != null) {
 	            
@@ -108,14 +117,14 @@ public class CreateProjectCommand extends Command {
 					if (importer.takesReader()) {
 						Reader reader = new InputStreamReader(filePart.getInputStream());
 						try {
-							importer.read(reader, project, options, limit);
+							importer.read(reader, project, options, skip, limit);
 						} finally {
 							reader.close();
 						}
 					} else {
 						InputStream inputStream = filePart.getInputStream();
 						try {
-							importer.read(inputStream, project, options, limit);
+							importer.read(inputStream, project, options, skip, limit);
 						} finally {
 							inputStream.close();
 						}
@@ -126,7 +135,7 @@ public class CreateProjectCommand extends Command {
 					if (paramName.equals("raw-text")) {
 						StringReader reader = new StringReader(paramPart.getStringValue());
 						try {
-							new TsvCsvImporter().read(reader, project, options, limit);
+							new TsvCsvImporter().read(reader, project, options, skip, limit);
 						} finally {
 							reader.close();
 						}
@@ -139,7 +148,7 @@ public class CreateProjectCommand extends Command {
 			}
 			
 			if (url != null && url.length() > 0) {
-				internalImportURL(request, project, options, url, limit);
+				internalImportURL(request, project, options, url, skip, limit);
 			}
 		}
 	}
@@ -149,6 +158,7 @@ public class CreateProjectCommand extends Command {
 		Project				project,
 		Properties			options,
 		String				urlString,
+		int                 skip,
 		int					limit
 	) throws Exception {
 		URL url = new URL(urlString);
@@ -182,9 +192,9 @@ public class CreateProjectCommand extends Command {
 				Reader reader = new InputStreamReader(
 					inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
 							
-				importer.read(reader, project, options, limit);
+				importer.read(reader, project, options, skip, limit);
 			} else {
-				importer.read(inputStream, project, options, limit);
+				importer.read(inputStream, project, options, skip, limit);
 			}
         } finally {
 			inputStream.close();

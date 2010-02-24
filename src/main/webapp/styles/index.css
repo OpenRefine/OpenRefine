@@ -4,6 +4,7 @@
     border: 1px solid #ccc;
     background: #fffee0;
     padding: 20px;
+    display: none;
 }
 
 #file-upload-form > table > tbody > tr > td {
