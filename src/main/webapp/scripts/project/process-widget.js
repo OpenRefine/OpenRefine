@@ -41,7 +41,6 @@ ProcessWidget.prototype._render = function() {
     
     this._div.show();
     
-    var hasPending = false;
     var renderProcess = function(process) {
         var div = $('<div></div>').addClass("process-panel-entry").appendTo(bodyDiv);
         
@@ -49,7 +48,6 @@ ProcessWidget.prototype._render = function() {
             div.text(process.description + " (pending)");
         } else {
             div.text(process.description + " (" + process.progress + "%)");
-            hasPending = true;
         }
     };
     
@@ -58,7 +56,7 @@ ProcessWidget.prototype._render = function() {
         renderProcess(processes[i]);
     }
     
-    if (hasPending && this._timerID == null) {
+    if (processes.length > 0 && this._timerID == null) {
         this._timerID = window.setTimeout(function() {
             self._timerID = null;
             self.update();
