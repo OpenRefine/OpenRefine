@@ -59,6 +59,10 @@ add_option() {
 OPTS="$GRIDWORKS_OPTS"
 
 SYSTEM=`uname`
+
+if [ "$SYSTEM" == "Darwin" ] && [ "$JAVA_HOME" == "" ] ; then
+    export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
+fi
         
 # ----- actions -------------------------------------------------
 
