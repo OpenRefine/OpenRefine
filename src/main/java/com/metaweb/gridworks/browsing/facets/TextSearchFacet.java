@@ -41,15 +41,26 @@ public class TextSearchFacet implements Facet {
 		_name = o.getString("name");
 		_columnName = o.getString("columnName");
 		_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
-		_query = o.getString("query");
+		
+		if (!o.isNull("query")) {
+			_query = o.getString("query"); 
+		}
+		
 		_mode = o.getString("mode");
 		_caseSensitive = o.getBoolean("caseSensitive");
-		if (!_caseSensitive) {
-			_query = _query.toLowerCase();
+		if (_query != null) {
+			_query = _query.trim();
+			if (!_caseSensitive) {
+				_query = _query.toLowerCase();
+			}
 		}
 	}
 
 	public RowFilter getRowFilter() {
+		if (_query == null || _query.length() == 0) {
+			return null;
+		}
+		
 		Evaluable eval = new VariableExpr("value");
 		
 		if ("regex".equals(_mode)) {
@@ -61,7 +72,7 @@ public class TextSearchFacet implements Facet {
 		} else {
 			return new ExpressionStringComparisonRowFilter(eval, _cellIndex) {
 				protected boolean checkValue(String s) {
-					return s.toLowerCase().contains(_query);
+					return (_caseSensitive ? s : s.toLowerCase()).contains(_query);
 				};
 			};
 		}		
