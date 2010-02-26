@@ -67,6 +67,13 @@ a.facet-choice-link:hover {
     color: #88a;
 }
 
+img.facet-choice-link {
+    text-align: baseline;
+    cursor: pointer;
+    margin: 0 2px;
+    float: right;
+}
+
 .facet-range-body {
     border: 1px solid #ccc;
     padding: 15px;
