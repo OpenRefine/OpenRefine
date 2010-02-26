@@ -24,6 +24,31 @@ DataTableColumnHeaderUI.prototype._render = function() {
     $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(headerRight).click(function() {
         self._createMenuForColumnHeader(this);
     });
+    
+    if ("reconStats" in this._column) {
+        var stats = this._column.reconStats;
+        if (stats.nonBlanks > 0) {
+            var newPercent = Math.ceil(100 * stats.newTopics / stats.nonBlanks);
+            var matchPercent = Math.ceil(100 * stats.matchedTopics / stats.nonBlanks);
+            var unreconciledPercent = Math.ceil(100 * (stats.nonBlanks - stats.matchedTopics - stats.newTopics) / stats.nonBlanks);
+            
+            var whole = $('<div>')
+                .height("3px")
+                .css("background", "#333")
+                .css("position", "relative")
+                .attr("title", matchPercent + "% matched, " + newPercent + "% new, " + unreconciledPercent + "% to be reconciled")
+                .width("100%")
+                .appendTo(td);
+            
+            $('<div>').height("100%").css("background", "white").css("position", "absolute")
+                .width(Math.round((stats.newTopics + stats.matchedTopics) * 100 / stats.nonBlanks) + "%")
+                .appendTo(whole);
+                
+            $('<div>').height("100%").css("background", "#6d6").css("position", "absolute")
+                .width(Math.round(stats.matchedTopics * 100 / stats.nonBlanks) + "%")
+                .appendTo(whole);
+        }
+    }
 };
 
 DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
@@ -452,7 +477,7 @@ DataTableColumnHeaderUI.prototype._doReconDiscardJudgments = function() {
         "recon-discard-judgments",
         { columnName: this._column.headerLabel },
         null,
-        { cellsChanged: true }
+        { cellsChanged: true, columnStatsChanged: true }
     );
 };
 
@@ -461,7 +486,7 @@ DataTableColumnHeaderUI.prototype._doReconMatchBestCandidates = function() {
         "recon-match-best-candidates",
         { columnName: this._column.headerLabel },
         null,
-        { cellsChanged: true }
+        { cellsChanged: true, columnStatsChanged: true }
     );
 };
 
@@ -470,7 +495,7 @@ DataTableColumnHeaderUI.prototype._doReconMarkNewTopics = function(shareNewTopic
         "recon-mark-new-topics",
         { columnName: this._column.headerLabel, shareNewTopics: shareNewTopics },
         null,
-        { cellsChanged: true }
+        { cellsChanged: true, columnStatsChanged: true }
     );
 };
 
@@ -498,7 +523,7 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
                 types: $.map(data.type, function(elmt) { return elmt.id; }).join(",")
             },
             null,
-            { cellsChanged: true }
+            { cellsChanged: true, columnStatsChanged: true }
         );
         
         DialogSystem.dismissUntil(level - 1);

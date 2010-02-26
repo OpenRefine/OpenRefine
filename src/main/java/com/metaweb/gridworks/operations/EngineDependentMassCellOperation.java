@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
@@ -42,10 +43,13 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
 		
 		String description = createDescription(column, cellChanges);
 		
-		MassCellChange massCellChange = new MassCellChange(cellChanges, column.getHeaderLabel(), _updateRowContextDependencies);
-		
 		return new HistoryEntry(
-			project, description, this, massCellChange);
+			project, description, this, createChange(project, column, cellChanges));
+	}
+	
+	protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
+		return new MassCellChange(
+			cellChanges, column.getHeaderLabel(), _updateRowContextDependencies);
 	}
 	
 	abstract protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception;

@@ -131,7 +131,7 @@ DataTableCellUI.prototype._doMatchNewTopicToOneCell = function() {
 };
 
 DataTableCellUI.prototype._doMatchNewTopicToSimilarCells = function() {
-    this._doJudgmentForSimilarCells("new", { shareNewTopics: true });
+    this._doJudgmentForSimilarCells("new", { shareNewTopics: true }, true);
 };
 
 DataTableCellUI.prototype._doMatchTopicToOneCell = function(candidate) {
@@ -151,7 +151,7 @@ DataTableCellUI.prototype._doMatchTopicToSimilarCells = function(candidate) {
         topicName: candidate.name,
         score: candidate.score,
         types: candidate.types.join(",")
-    });
+    }, true);
 };
 
 DataTableCellUI.prototype._doJudgment = function(judgment, params) {
@@ -159,7 +159,7 @@ DataTableCellUI.prototype._doJudgment = function(judgment, params) {
     params.row = this._rowIndex;
     params.cell = this._cellIndex;
     params.judgment = judgment;
-    this._postProcessOneCell("recon-judge-one-cell", params);
+    this._postProcessOneCell("recon-judge-one-cell", params, true);
 };
 
 DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params) {
@@ -168,7 +168,7 @@ DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params
     params.similarValue = this._cell.v;
     params.judgment = judgment;
     
-    this._postProcessSeveralCells("recon-judge-similar-cells", params);
+    this._postProcessSeveralCells("recon-judge-similar-cells", params, true);
 };
 
 DataTableCellUI.prototype._searchForMatch = function() {
@@ -205,12 +205,12 @@ DataTableCellUI.prototype._searchForMatch = function() {
                 params.similarValue = self._cell.v;
                 params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).headerLabel;
                 
-                self._postProcessSeveralCells("recon-judge-similar-cells", params);
+                self._postProcessSeveralCells("recon-judge-similar-cells", params, true);
             } else {
                 params.row = self._rowIndex;
                 params.cell = self._cellIndex;
                 
-                self._postProcessOneCell("recon-judge-one-cell", params);
+                self._postProcessOneCell("recon-judge-one-cell", params, true);
             }
         
             DialogSystem.dismissUntil(level - 1);
@@ -225,14 +225,14 @@ DataTableCellUI.prototype._searchForMatch = function() {
     input.focus().data("suggest").textchange();
 };
 
-DataTableCellUI.prototype._postProcessOneCell = function(command, params) {
+DataTableCellUI.prototype._postProcessOneCell = function(command, params, columnStatsChanged) {
     var self = this;
 
     Gridworks.postProcess(
         command, 
         params, 
         null,
-        {},
+        { columnStatsChanged: columnStatsChanged },
         {
             onDone: function(o) {
                 self._cell = data.cell;
@@ -242,12 +242,12 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params) {
     );
 };
 
-DataTableCellUI.prototype._postProcessSeveralCells = function(command, params) {
+DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, columnStatsChanged) {
     Gridworks.postProcess(
         command, 
         params, 
         null,
-        { cellsChanged: true }
+        { cellsChanged: true, columnStatsChanged: columnStatsChanged }
     );
 };
 

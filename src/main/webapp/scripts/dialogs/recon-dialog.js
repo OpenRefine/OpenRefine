@@ -80,7 +80,7 @@ ReconDialog.prototype._createDialog = function() {
                     minScore: minScoreInput[0].value
                 }, 
                 null,
-                { cellsChanged: true }
+                { cellsChanged: true, columnStatsChanged: true }
             );
         }
     }).appendTo(footer);

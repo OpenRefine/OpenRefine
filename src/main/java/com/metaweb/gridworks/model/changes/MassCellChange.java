@@ -22,6 +22,15 @@ public class MassCellChange implements Change {
 		_updateRowContextDependencies = updateRowContextDependencies;
 	}
 	
+	public MassCellChange(CellChange cellChange, String commonColumnName, boolean updateRowContextDependencies) {
+		_cellChanges = new CellChange[1];
+		_cellChanges[0] = cellChange;
+		
+		_commonColumnName = commonColumnName;
+		
+		_updateRowContextDependencies = updateRowContextDependencies;
+	}
+	
 	public void apply(Project project) {
 		synchronized (project) {
 			List<Row> rows = project.rows;

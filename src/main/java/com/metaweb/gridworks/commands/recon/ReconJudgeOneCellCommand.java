@@ -18,8 +18,10 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
+import com.metaweb.gridworks.model.ReconStats;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
+import com.metaweb.gridworks.model.changes.ReconChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
 public class ReconJudgeOneCellCommand extends Command {
@@ -107,6 +109,8 @@ public class ReconJudgeOneCellCommand extends Command {
 				throw new Exception("No such column");
 			}
 			
+			Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
+			
 			newCell = new Cell(
 				cell.value, 
 				cell.recon == null ? new Recon() : cell.recon.dup()
@@ -134,8 +138,39 @@ public class ReconJudgeOneCellCommand extends Command {
 					cellDescription;
 			}
 			
-			Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
+			ReconStats stats = column.getReconStats();
+			if (stats == null) {
+				stats = ReconStats.create(_project, cellIndex);
+			} else {
+				int newChange = 0;
+				int matchChange = 0;
+				
+				if (oldJudgment == Judgment.New) {
+					newChange--;
+				}
+				if (oldJudgment == Judgment.Matched) {
+					matchChange--;
+				}
+				if (newCell.recon.judgment == Judgment.New) {
+					newChange++;
+				}
+				if (newCell.recon.judgment == Judgment.Matched) {
+					matchChange++;
+				}
+				
+				stats = new ReconStats(
+					stats.nonBlanks, 
+					stats.newTopics + newChange, 
+					stats.matchedTopics + matchChange);
+			}
 			
+			Change change = new ReconChange(
+				new CellChange(rowIndex, cellIndex, cell, newCell), 
+				column.getHeaderLabel(), 
+				column.getReconConfig(),
+				stats
+			);
+				
 			return new HistoryEntry(
 				_project, description, null, change);
 		}

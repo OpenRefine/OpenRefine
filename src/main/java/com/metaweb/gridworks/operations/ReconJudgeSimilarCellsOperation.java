@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.operations;
 
-import java.util.HashMap;
+ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -12,6 +12,7 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.ExpressionUtils;
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
@@ -21,6 +22,7 @@ import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
+import com.metaweb.gridworks.model.changes.ReconChange;
 
 public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOperation {
 	private static final long serialVersionUID = -5205694623711144436L;
@@ -198,5 +200,15 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 return false;
 			}
 		}.init(column.getCellIndex(), cellChanges);
+	}
+	
+	
+	protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
+		return new ReconChange(
+			cellChanges, 
+			_columnName, 
+			column.getReconConfig(),
+			null
+		);
 	}
 }

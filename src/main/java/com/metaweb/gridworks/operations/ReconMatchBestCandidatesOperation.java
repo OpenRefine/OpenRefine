@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
@@ -16,6 +17,7 @@ import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
+import com.metaweb.gridworks.model.changes.ReconChange;
 
 public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
 	private static final long serialVersionUID = 5393888241057341155L;
@@ -90,5 +92,14 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
 				return false;
 			}
 		}.init(column.getCellIndex(), cellChanges);
+	}
+	
+	protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
+		return new ReconChange(
+			cellChanges, 
+			_columnName, 
+			column.getReconConfig(),
+			null
+		);
 	}
 }

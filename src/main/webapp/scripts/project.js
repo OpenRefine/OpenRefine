@@ -89,7 +89,7 @@ Gridworks.createUpdateFunction = function(options, onFinallyDone) {
     pushFunction(function(onDone) {
         ui.historyWidget.update(onDone);
     });
-    if (options["everythingChanged"] || options["modelsChanged"]) {
+    if (options["everythingChanged"] || options["modelsChanged"] || options["columnStatsChanged"]) {
         pushFunction(Gridworks.reinitializeProjectData);
     }
     if (options["everythingChanged"] || options["modelsChanged"] || options["rowsChanged"] || options["cellsChanged"] || options["engineChanged"]) {

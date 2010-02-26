@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.model;
 
-import java.io.Serializable;
+import java.io.Serializable; 
 import java.util.Properties;
 
 import org.json.JSONException;
