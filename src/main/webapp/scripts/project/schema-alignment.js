@@ -162,26 +162,16 @@ SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         var protograph = self.getJSON();
         
-        $.post(
-            "/command/save-protograph?" + $.param({ project: theProject.id }),
+        Gridworks.postProcess(
+            "save-protograph",
+            {},
             { protograph: JSON.stringify(protograph) },
-            function(data) {
-                if (data.code == "error") {
-                    alert("Failed to save protograph");
-                    return;
-                } else if (data.code == "ok") {
-                    ui.historyWidget.update();
-                } else {
-                    ui.processWidget.update();
+            {   
+                onDone: function() {
+                    DialogSystem.dismissUntil(self._level - 1);
+                    theProject.protograph = protograph;
                 }
-                
-                DialogSystem.dismissUntil(self._level - 1);
-                
-                theProject.protograph = protograph;
-                
-                self._onDone(protograph);
-            },
-            "json"
+            }
         );
     }).appendTo(footer);
     

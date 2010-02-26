@@ -47,6 +47,10 @@ public class ProcessManager implements Jsonizable {
 		}
 	}
 	
+	public boolean hasPending() {
+		return _processes.size() > 0;
+	}
+	
 	public void onDoneProcess(Process p) {
 		_processes.remove(p);
 		update();

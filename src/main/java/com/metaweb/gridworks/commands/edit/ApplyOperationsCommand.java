@@ -35,7 +35,11 @@ public class ApplyOperationsCommand extends Command {
 				reconstructOperation(project, obj);
 			}
 
-			respond(response, "{ \"code\" : \"pending\" }");
+			if (project.processManager.hasPending()) {
+				respond(response, "{ \"code\" : \"pending\" }");
+			} else {
+				respond(response, "{ \"code\" : \"ok\" }");
+			}
 		} catch (JSONException e) {
 			respondException(response, e);
 		}

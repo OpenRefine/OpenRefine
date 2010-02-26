@@ -375,9 +375,11 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
 };
 
 DataTableColumnHeaderUI.prototype._doTextTransform = function(expression) {
-    this._dataTableView.doPostThenUpdate(
+    Gridworks.postProcess(
         "do-text-transform",
-        { columnName: this._column.headerLabel, expression: expression }
+        { columnName: this._column.headerLabel, expression: expression },
+        null,
+        { cellsChanged: true }
     );
 };
 
@@ -446,23 +448,29 @@ DataTableColumnHeaderUI.prototype._doReconcile = function() {
 };
 
 DataTableColumnHeaderUI.prototype._doReconDiscardJudgments = function() {
-    this._dataTableView.doPostThenUpdate(
+    Gridworks.postProcess(
         "recon-discard-judgments",
-        { columnName: this._column.headerLabel }
+        { columnName: this._column.headerLabel },
+        null,
+        { cellsChanged: true }
     );
 };
 
 DataTableColumnHeaderUI.prototype._doReconMatchBestCandidates = function() {
-    this._dataTableView.doPostThenUpdate(
+    Gridworks.postProcess(
         "recon-match-best-candidates",
-        { columnName: this._column.headerLabel }
+        { columnName: this._column.headerLabel },
+        null,
+        { cellsChanged: true }
     );
 };
 
 DataTableColumnHeaderUI.prototype._doReconMarkNewTopics = function(shareNewTopics) {
-    this._dataTableView.doPostThenUpdate(
+    Gridworks.postProcess(
         "recon-mark-new-topics",
-        { columnName: this._column.headerLabel, shareNewTopics: shareNewTopics }
+        { columnName: this._column.headerLabel, shareNewTopics: shareNewTopics },
+        null,
+        { cellsChanged: true }
     );
 };
 
@@ -480,7 +488,7 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
     
     input.suggest({}).bind("fb-select", function(e, data) {
-        self._dataTableView.doPostThenUpdate(
+        Gridworks.postProcess(
             "recon-match-specific-topic-to-cells",
             {
                 columnName: self._column.headerLabel,
@@ -488,8 +496,11 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
                 topicGUID: data.guid,
                 topicName: data.name,
                 types: $.map(data.type, function(elmt) { return elmt.id; }).join(",")
-            }
+            },
+            null,
+            { cellsChanged: true }
         );
+        
         DialogSystem.dismissUntil(level - 1);
     });
     
@@ -510,15 +521,16 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
         function(expression) {
             var headerLabel = window.prompt("Enter header label for new column:");
             if (headerLabel != null) {
-                self._dataTableView.doPostThenUpdate(
-                    "add-column",
+                Gridworks.postProcess(
+                    "add-column", 
                     {
                         baseColumnName: self._column.headerLabel, 
                         expression: expression, 
                         headerLabel: headerLabel, 
                         columnInsertIndex: self._columnIndex + 1 
                     },
-                    true
+                    null,
+                    { modelsChanged: true }
                 );
             }
         }
@@ -526,23 +538,28 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
 };
 
 DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {
-    this._dataTableView.doPostThenUpdate(
-        "remove-column",
-        { columnName: this._column.headerLabel },
-        true
+    Gridworks.postProcess(
+        "remove-column", 
+        {
+            columnName: this._column.headerLabel
+        },
+        null,
+        { modelsChanged: true }
     );
 };
 
 DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
     var separator = window.prompt("Enter separator to use between values", ", ");
     if (separator != null) {
-        this._dataTableView.doPostThenUpdate(
-            "join-multi-value-cells",
+        Gridworks.postProcess(
+            "join-multi-value-cells", 
             {
                 columnName: this._column.headerLabel,
                 keyColumnName: theProject.columnModel.keyColumnName,
                 separator: separator
-            }
+            },
+            null,
+            { rowsChanged: true }
         );
     }
 };
@@ -550,14 +567,16 @@ DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
 DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
     var separator = window.prompt("What separator currently separates the values?", ",");
     if (separator != null) {
-        this._dataTableView.doPostThenUpdate(
-            "split-multi-value-cells",
+        Gridworks.postProcess(
+            "split-multi-value-cells", 
             {
                 columnName: this._column.headerLabel,
                 keyColumnName: theProject.columnModel.keyColumnName,
                 separator: separator,
                 mode: "plain"
-            }
+            },
+            null,
+            { rowsChanged: true }
         );
     }
 };

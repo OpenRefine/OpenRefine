@@ -81,6 +81,5 @@ TextSearchFacet.prototype._scheduleUpdate = function() {
 };
 
 TextSearchFacet.prototype._updateRest = function() {
-    ui.browsingEngine.update();
-    ui.dataTableView.update(true);
+    Gridworks.update({ engineChanged: true });
 };

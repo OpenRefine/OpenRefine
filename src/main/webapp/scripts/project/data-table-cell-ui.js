@@ -159,16 +159,16 @@ DataTableCellUI.prototype._doJudgment = function(judgment, params) {
     params.row = this._rowIndex;
     params.cell = this._cellIndex;
     params.judgment = judgment;
-    this.doPostThenUpdate("recon-judge-one-cell", params);
+    this._postProcessOneCell("recon-judge-one-cell", params);
 };
 
 DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params) {
     params = params || {};
-    params.columnName = cellIndexToColumn(this._cellIndex).headerLabel;
+    params.columnName = Gridworks.cellIndexToColumn(this._cellIndex).headerLabel;
     params.similarValue = this._cell.v;
     params.judgment = judgment;
     
-    ui.dataTableView.doPostThenUpdate("recon-judge-similar-cells", params);
+    this._postProcessSeveralCells("recon-judge-similar-cells", params);
 };
 
 DataTableCellUI.prototype._searchForMatch = function() {
@@ -203,14 +203,14 @@ DataTableCellUI.prototype._searchForMatch = function() {
             };
             if (checkSimilar[0].checked) {
                 params.similarValue = self._cell.v;
-                params.columnName = cellIndexToColumn(self._cellIndex).headerLabel;
+                params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).headerLabel;
                 
-                ui.dataTableView.doPostThenUpdate("recon-judge-similar-cells", params);
+                self._postProcessSeveralCells("recon-judge-similar-cells", params);
             } else {
                 params.row = self._rowIndex;
                 params.cell = self._cellIndex;
                 
-                self.doPostThenUpdate("recon-judge-one-cell", params);
+                self._postProcessOneCell("recon-judge-one-cell", params);
             }
         
             DialogSystem.dismissUntil(level - 1);
@@ -225,36 +225,29 @@ DataTableCellUI.prototype._searchForMatch = function() {
     input.focus().data("suggest").textchange();
 };
 
-DataTableCellUI.prototype.createUpdateFunction = function(onBefore) {
+DataTableCellUI.prototype._postProcessOneCell = function(command, params) {
     var self = this;
-    return function(data) {
-        if (data.code == "ok") {
-            var onDone = function() {
+
+    Gridworks.postProcess(
+        command, 
+        params, 
+        null,
+        {},
+        {
+            onDone: function(o) {
                 self._cell = data.cell;
                 self._render();
-                ui.historyWidget.update();
-            };
-        } else {
-            var onDone = function() {
-                ui.processWidget.update();
             }
         }
-        
-        if (onBefore) {
-            onBefore(onDone);
-        } else {
-            onDone();
-        }
-    };
+    );
 };
 
-DataTableCellUI.prototype.doPostThenUpdate = function(command, params) {
-    params.project = theProject.id;
-    $.post(
-        "/command/" + command + "?" + $.param(params),
+DataTableCellUI.prototype._postProcessSeveralCells = function(command, params) {
+    Gridworks.postProcess(
+        command, 
+        params, 
         null,
-        this.createUpdateFunction(),
-        "json"
+        { cellsChanged: true }
     );
 };
 

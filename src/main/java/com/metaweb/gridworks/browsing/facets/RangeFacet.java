@@ -42,31 +42,35 @@ public class RangeFacet implements Facet {
 		writer.key("name"); writer.value(_name);
 		writer.key("expression"); writer.value(_expression);
 		writer.key("columnName"); writer.value(_columnName);
-		writer.key("min"); writer.value(_min);
-		writer.key("max"); writer.value(_max);
-		writer.key("step"); writer.value(_step);
-		
-		writer.key("bins"); writer.array();
-		for (int b : _bins) {
-			writer.value(b);
-		}
-		writer.endArray();
-		
-		writer.key("baseBins"); writer.array();
-		for (int b : _baseBins) {
-			writer.value(b);
-		}
-		writer.endArray();
-		
 		writer.key("mode"); writer.value(_mode);
-		if ("min".equals(_mode)) {
-			writer.key("from"); writer.value(_from);
-		} else if ("max".equals(_mode)) {
-			writer.key("to"); writer.value(_to);
-		} else {
-			writer.key("from"); writer.value(_from);
-			writer.key("to"); writer.value(_to);
+		
+		if (!Double.isInfinite(_min) && !Double.isInfinite(_max)) {
+			writer.key("min"); writer.value(_min);
+			writer.key("max"); writer.value(_max);
+			writer.key("step"); writer.value(_step);
+			
+			writer.key("bins"); writer.array();
+			for (int b : _bins) {
+				writer.value(b);
+			}
+			writer.endArray();
+			
+			writer.key("baseBins"); writer.array();
+			for (int b : _baseBins) {
+				writer.value(b);
+			}
+			writer.endArray();
+			
+			if ("min".equals(_mode)) {
+				writer.key("from"); writer.value(_from);
+			} else if ("max".equals(_mode)) {
+				writer.key("to"); writer.value(_to);
+			} else {
+				writer.key("from"); writer.value(_from);
+				writer.key("to"); writer.value(_to);
+			}
 		}
+		
 		writer.endObject();
 	}
 

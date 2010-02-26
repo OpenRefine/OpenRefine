@@ -50,12 +50,11 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
     }
     
     if (update) {
-        this.update();
-        ui.dataTableView.update(true);
+        Gridworks.update({ engineChanged: true }, onFinallyDone);
     }
 };
 
-BrowsingEngine.prototype.update = function() {
+BrowsingEngine.prototype.update = function(onDone) {
     var self = this;
     
     $.post(
@@ -66,6 +65,10 @@ BrowsingEngine.prototype.update = function() {
             
             for (var i = 0; i < facetData.length; i++) {
                 self._facets[i].facet.updateState(facetData[i]);
+            }
+            
+            if (onDone) {
+                onDone();
             }
         },
         "json"

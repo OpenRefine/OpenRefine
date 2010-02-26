@@ -10,6 +10,10 @@ HistoryWidget.prototype.update = function(onDone) {
         function(data) {
             self._data = data;
             self._render();
+            
+            if (onDone) {
+                onDone();
+            }
         }
     );
 };
@@ -88,18 +92,12 @@ HistoryWidget.prototype._render = function() {
 
 HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
     var self = this;
-    $.post(
-        "/command/undo-redo?" + $.param({ project: theProject.id, lastDoneID: lastDoneID }), 
+    
+    Gridworks.postProcess(
+        "undo-redo",
+        { lastDoneID: lastDoneID },
         null,
-        function(data) {
-            if (data.code == "ok") {
-                self.update();
-                ui.dataTableView.update(true);
-            } else {
-                // update process UI
-            }
-        },
-        "json"
+        { everythingChanged: true }
     );
 };
 
@@ -218,18 +216,22 @@ HistoryWidget.prototype._showApplyOperationsDialog = function(json) {
             return;
         }
         
-        DialogSystem.dismissUntil(level - 1);
-        
-        $.post(
-            "/command/apply-operations?" + $.param({ project: theProject.id }),
+        Gridworks.postProcess(
+            "apply-operations",
+            {},
             { operations: JSON.stringify(json) },
-            function(data) {
-                self.update();
-                ui.dataTableView.update(true);
-                ui.processWidget.update();
-            },
-            "json"
+            { everythingChanged: true },
+            {
+                onDone: function(o) {
+                    if (o.code == "pending") {
+                        // Something might have already been done and so it's good to update
+                        Gridworks.update({ everythingChanged: true });
+                    }
+                }
+            }
         );
+        
+        DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
     $('<button></button>').text("Cancel").click(function() {

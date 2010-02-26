@@ -5,15 +5,8 @@ function DataTableView(div) {
     this._showRows(0);
 }
 
-DataTableView.prototype.update = function(reset) {
-    if (reset) {
-        var self = this;
-        reinitializeProjectData(function() {
-            self._showRows(0);
-        });
-    } else {
-        this._showRows(theProject.rowModel.start);
-    }
+DataTableView.prototype.update = function(onDone) {
+    this._showRows(0, onDone);
 };
 
 DataTableView.prototype.render = function() {
@@ -72,7 +65,7 @@ DataTableView.prototype.render = function() {
         } else {
             a.text(pageSize).addClass("action").click(function(evt) {
                 self._pageSize = pageSize;
-                self.update(true);
+                self.update();
             });
         }
     };
@@ -205,6 +198,8 @@ DataTableView.prototype.render = function() {
     
     var rows = theProject.rowModel.rows;
     var renderRow = function(tr, r, row, even) {
+        $(tr).empty();
+        
         var cells = row.cells;
         
         var tdStar = tr.insertCell(tr.cells.length);
@@ -213,25 +208,19 @@ DataTableView.prototype.render = function() {
             .appendTo(tdStar)
             .click(function() {
                 var newStarred = !row.starred;
-                $.post(
-                    "/command/annotate-one-row?" + $.param({ project: theProject.id, row: row.i, starred: newStarred }),
+                
+                Gridworks.postProcess(
+                    "annotate-one-row",
+                    { row: row.i, starred: newStarred },
                     null,
-                    function(o) {
-                        if (o.code == "ok") {
+                    {},
+                    {   onDone: function(o) {
                             row.starred = newStarred;
-
-                            $(tr).empty();
-                            
                             renderRow(tr, r, row, even);
-                            
-                            ui.historyWidget.update();
-                        } else {
-                            ui.processWidget.update();
                         }
                     },
                     "json"
                 );
-                
             });
         
         var tdIndex = tr.insertCell(tr.cells.length);
@@ -273,20 +262,13 @@ DataTableView.prototype.render = function() {
 
 DataTableView.prototype._showRows = function(start, onDone) {
     var self = this;
-    
-    $.post(
-        "/command/get-rows?" + $.param({ project: theProject.id, start: start, limit: this._pageSize }),
-        { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
-        function(data) {
-            theProject.rowModel = data;
-            self.render();
-            
-            if (onDone) {
-                onDone();
-            }
-        },
-        "json"
-    );
+    Gridworks.fetchRows(start, this._pageSize, function() {
+        self.render();
+        
+        if (onDone) {
+            onDone();
+        }
+    });
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
@@ -330,48 +312,16 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
             label: "Star Rows",
             click: function() {
-                self.doPostThenUpdate("annotate-rows", { "starred" : "true" }, false);
+                Gridworks.postProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
             }
         },
         {
             label: "Unstar Rows",
             click: function() {
-                self.doPostThenUpdate("annotate-rows", { "starred" : "false" }, false);
+                Gridworks.postProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
             }
         }
     ], elmt);
-};
-
-DataTableView.prototype.createUpdateFunction = function(onBefore) {
-    var self = this;
-    return function(data) {
-        if (data.code == "ok") {
-            var onDone = function() {
-                self.update();
-                ui.historyWidget.update();
-            };
-        } else {
-            var onDone = function() {
-                ui.processWidget.update();
-            }
-        }
-        
-        if (onBefore) {
-            onBefore(onDone);
-        } else {
-            onDone();
-        }
-    };
-};
-
-DataTableView.prototype.doPostThenUpdate = function(command, params, updateColumnModel) {
-    params.project = theProject.id;
-    $.post(
-        "/command/" + command + "?" + $.param(params),
-        { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
-        this.createUpdateFunction(updateColumnModel ? reinitializeProjectData : undefined),
-        "json"
-    );
 };
 
 DataTableView.promptExpressionOnVisibleRows = function(column, title, expression, onDone) {

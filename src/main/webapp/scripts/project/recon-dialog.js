@@ -69,24 +69,18 @@ ReconDialog.prototype._createDialog = function() {
             alert("Please specify a type.");
         } else {
             DialogSystem.dismissUntil(level - 1);
-            $.post(
-                "/command/reconcile?" + $.param({
-                    project: theProject.id, 
+            
+            Gridworks.postProcess(
+                "reconcile",
+                {
                     columnName: self._column.headerLabel, 
                     typeID: type.id, 
                     typeName: type.name,
                     autoMatch: autoMatchCheckbox[0].checked,
                     minScore: minScoreInput[0].value
-                }), 
-                { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
-                function(data) {
-                    if (data.code != "error") {
-                        ui.processWidget.update();
-                    } else {
-                        alert(data.message);
-                    }
-                },
-                "json"
+                }, 
+                null,
+                { cellsChanged: true }
             );
         }
     }).appendTo(footer);

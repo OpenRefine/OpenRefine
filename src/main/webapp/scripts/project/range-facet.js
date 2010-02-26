@@ -7,6 +7,7 @@ function RangeFacet(div, config, options) {
     this._to = ("to" in this._config) ? this._config.to : null;
     
     this._timerID = null;
+    this._error = false;
     this._initializedUI = false;
 }
 
@@ -93,6 +94,10 @@ RangeFacet.prototype._initializeUI = function() {
 
     var bodyDiv = $('<div></div>').addClass("facet-range-body").appendTo(container);
     
+    if (this._error) {
+        return;
+    }
+    
     this._histogramDiv = $('<div></div>').addClass("facet-range-histogram").appendTo(bodyDiv);
     this._sliderDiv = $('<div></div>').addClass("facet-range-slider").appendTo(bodyDiv);
     this._statusDiv = $('<div></div>').addClass("facet-range-status").appendTo(bodyDiv);
@@ -157,26 +162,30 @@ RangeFacet.prototype._setRangeIndicators = function() {
 };
 
 RangeFacet.prototype.updateState = function(data) {
-    this._config.min = data.min;
-    this._config.max = data.max;
-    this._config.step = data.step;
-    this._baseBins = data.baseBins;
-    this._bins = data.bins;
-    
-    switch (this._config.mode) {
-    case "min":
-        this._from = Math.max(data.from, this._config.min);
-        break;
-    case "max":
-        this._to = Math.min(data.to, this._config.max);
-        break;
-    default:
-        this._from = Math.max(data.from, this._config.min);
-        if ("to" in data) {
+    if ("min" in data && "max" in data) {
+        this._config.min = data.min;
+        this._config.max = data.max;
+        this._config.step = data.step;
+        this._baseBins = data.baseBins;
+        this._bins = data.bins;
+        
+        switch (this._config.mode) {
+        case "min":
+            this._from = Math.max(data.from, this._config.min);
+            break;
+        case "max":
             this._to = Math.min(data.to, this._config.max);
-        } else {
-            this._to = data.max;
+            break;
+        default:
+            this._from = Math.max(data.from, this._config.min);
+            if ("to" in data) {
+                this._to = Math.min(data.to, this._config.max);
+            } else {
+                this._to = data.max;
+            }
         }
+    } else {
+        this._error = true;
     }
     
     this.render();
@@ -186,6 +195,9 @@ RangeFacet.prototype.render = function() {
     if (!this._initializedUI) {
         this._initializeUI();
         this._initializedUI = true;
+    }
+    if (this._error) {
+        return;
     }
     
     this._sliderDiv.slider("option", "min", this._config.min);
@@ -249,6 +261,5 @@ RangeFacet.prototype._scheduleUpdate = function() {
 };
 
 RangeFacet.prototype._updateRest = function() {
-    ui.browsingEngine.update();
-    ui.dataTableView.update(true);
+    Gridworks.update({ engineChanged: true });
 };

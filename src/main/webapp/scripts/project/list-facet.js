@@ -162,12 +162,6 @@ ListFacet.prototype.render = function() {
                 self.render();
             }).appendTo(footerDiv);
         }
-        
-        $('<span>').html(" &bull; ").appendTo(footerDiv);
-        
-        $('<a href="javascript:{}"></a>').addClass("action").text("refresh").click(function() {
-            ui.browsingEngine.update();
-        }).appendTo(footerDiv);
     }
 };
 
@@ -204,6 +198,5 @@ ListFacet.prototype._remove = function() {
 };
 
 ListFacet.prototype._updateRest = function() {
-    ui.browsingEngine.update();
-    ui.dataTableView.update(true);
+    Gridworks.update({ engineChanged: true });
 };
