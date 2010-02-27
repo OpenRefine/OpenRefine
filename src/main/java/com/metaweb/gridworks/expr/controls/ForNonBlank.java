@@ -11,32 +11,37 @@ import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.VariableExpr;
 
 public class ForNonBlank implements Control {
-
-    public Object call(Properties bindings, Evaluable[] args) {
-        if (args.length >= 3) {
-            Object o = args[0].evaluate(bindings);
-            Evaluable var = args[1];
-            String name = (var instanceof VariableExpr) ? ((VariableExpr) var).getName() :
-                ((String) var.evaluate(bindings));
-            
-            if (!ExpressionUtils.isBlank(o)) {
-                Object oldValue = bindings.containsKey(name) ? bindings.get(name) : null;
-                bindings.put(name, o);
-                
-                try {
-                    return args[2].evaluate(bindings);
-                } finally {
-                    if (oldValue != null) {
-                        bindings.put(name, oldValue);
-                    } else {
-                        bindings.remove(name);
-                    }
-                }
-            } else if (args.length >= 4) {
-                return args[3].evaluate(bindings);
-            }
+    public String checkArguments(Evaluable[] args) {
+        if (args.length != 4) {
+            return "forNonBlank expects 4 arguments";
+        } else if (!(args[1] instanceof VariableExpr)) {
+            return "forNonBlank expects second argument to be a variable name";
         }
         return null;
+    }
+    
+    public Object call(Properties bindings, Evaluable[] args) {
+        Object o = args[0].evaluate(bindings);
+        
+        Evaluable var = args[1];
+        String name = ((VariableExpr) var).getName();
+        
+        if (ExpressionUtils.isNonBlankData(o)) {
+            Object oldValue = bindings.containsKey(name) ? bindings.get(name) : null;
+            bindings.put(name, o);
+            
+            try {
+                return args[2].evaluate(bindings);
+            } finally {
+                if (oldValue != null) {
+                    bindings.put(name, oldValue);
+                } else {
+                    bindings.remove(name);
+                }
+            }
+        } else {
+            return args[3].evaluate(bindings);
+        }
     }
 
 	public void write(JSONWriter writer, Properties options)

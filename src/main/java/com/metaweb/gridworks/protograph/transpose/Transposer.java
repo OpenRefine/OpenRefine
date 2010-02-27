@@ -54,7 +54,7 @@ public class Transposer {
 			CellNode node2 = (CellNode) node;
 			Column column = project.columnModel.getColumnByName(node2.columnName);
 			Cell cell = row.getCell(column.getCellIndex());
-			if (cell != null && !ExpressionUtils.isBlank(cell.value)) {
+			if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
 				if (node2 instanceof CellTopicNode) {
 					if (!((CellTopicNode) node2).createForNoReconMatch && 
 						(cell.recon == null || cell.recon.judgment == Judgment.None)) {

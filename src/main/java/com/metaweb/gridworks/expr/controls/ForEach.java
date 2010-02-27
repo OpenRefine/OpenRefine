@@ -8,49 +8,52 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.Control;
+import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.expr.Evaluable;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.VariableExpr;
 
 public class ForEach implements Control {
-
-    public Object call(Properties bindings, Evaluable[] args) {
-        if (args.length >= 3) {
-            Object o = args[0].evaluate(bindings);
-            Evaluable var = args[1];
-            String name = (var instanceof VariableExpr) ? ((VariableExpr) var).getName() :
-                ((String) var.evaluate(bindings));
-            
-            if (o != null) {
-                Object oldValue = bindings.get(name);
-                try {
-                    Object[] values;
-                    if (o.getClass().isArray()) {
-                        values = (Object[]) o;
-                    } else {
-                        values = new Object[] { o };
-                    }
-            
-                    List<Object> results = new ArrayList<Object>(values.length);
-                    for (Object v : values) {
-                        bindings.put(name, v);
-                        
-                        Object r = args[2].evaluate(bindings);
-                        if (r != null) {
-                            results.add(r);
-                        }
-                    }
-                    
-                    return results.toArray(); 
-                } finally {
-                	if (oldValue != null) {
-                		bindings.put(name, oldValue);
-                	} else {
-                		bindings.remove(name);
-                	}
-                }
-            }
+    public String checkArguments(Evaluable[] args) {
+        if (args.length != 3) {
+            return "forEach expects 3 arguments";
+        } else if (!(args[1] instanceof VariableExpr)) {
+            return "forEach expects second argument to be a variable name";
         }
         return null;
+    }
+
+    public Object call(Properties bindings, Evaluable[] args) {
+        Object o = args[0].evaluate(bindings);
+        if (ExpressionUtils.isError(o)) {
+            return o;
+        } else if (o == null || !o.getClass().isArray()) {
+            return new EvalError("First argument to forEach is not an array");
+        }
+        
+        String name = ((VariableExpr) args[1]).getName();
+        
+        Object oldValue = bindings.get(name);
+        try {
+            Object[] values = (Object[]) o;
+    
+            List<Object> results = new ArrayList<Object>(values.length);
+            for (Object v : values) {
+                bindings.put(name, v);
+                
+                Object r = args[2].evaluate(bindings);
+                
+                results.add(r);
+            }
+            
+            return results.toArray(); 
+        } finally {
+        	if (oldValue != null) {
+        		bindings.put(name, oldValue);
+        	} else {
+        		bindings.remove(name);
+        	}
+        }
     }
     
 	public void write(JSONWriter writer, Properties options)

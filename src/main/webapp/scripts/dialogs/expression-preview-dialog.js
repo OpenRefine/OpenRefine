@@ -170,13 +170,13 @@ ExpressionPreviewDialog.prototype._update = function() {
             } else {
                 self._results = null;
             }
-            self._renderPreview(expression);
+            self._renderPreview(expression, data);
         },
         "json"
     );
 };
 
-ExpressionPreviewDialog.prototype._renderPreview = function(expression) {
+ExpressionPreviewDialog.prototype._renderPreview = function(expression, data) {
     var container = this._elmts.previewContainer.empty();
     var table = $('<table width="100%"></table>').appendTo(container)[0];
     
@@ -211,7 +211,10 @@ ExpressionPreviewDialog.prototype._renderPreview = function(expression) {
             var v = this._results[i];
             renderValue(tdValue, v);
         } else {
-            $('<span>error</span>').addClass("expression-preview-empty").appendTo(tdValue);
+            // error
+            
+            var message = (data.type == "parser") ? data.message : "internal error";
+            $('<span></span>').text(message).addClass("expression-preview-empty").appendTo(tdValue);
         }
     }
 };

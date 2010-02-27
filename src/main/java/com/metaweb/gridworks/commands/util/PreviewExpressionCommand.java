@@ -12,10 +12,12 @@ import org.json.JSONWriter;
 
 
 import com.metaweb.gridworks.commands.Command;
+import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.expr.Parser;
+import com.metaweb.gridworks.expr.Parser.ParserException;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
@@ -69,15 +71,23 @@ public class PreviewExpressionCommand extends Command {
 					}
 					
 					if (result != null) {
-						if (result instanceof HasFields) {
+					    if (result instanceof EvalError) {
+                            result = "[Error: " + ((EvalError) result).message + "]";
+					    } else if (result instanceof HasFields) {
 							result = "[object " + result.getClass().getSimpleName() + "]";
 						}
 					}
 					writer.value(result);
 				}
 				writer.endArray();
+			} catch (ParserException e) {
+                writer.key("code"); writer.value("error");
+                writer.key("type"); writer.value("parser");
+                writer.key("message"); writer.value(e.getMessage());
 			} catch (Exception e) {
 				writer.key("code"); writer.value("error");
+                writer.key("type"); writer.value("other");
+                writer.key("message"); writer.value(e.getMessage());
 			}
 			
 			writer.endObject();

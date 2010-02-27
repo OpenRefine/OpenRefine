@@ -40,7 +40,7 @@ public class ReconStats implements Serializable, Jsonizable {
     	
     	for (Row row : project.rows) {
     		Cell cell = row.getCell(cellIndex);
-    		if (cell != null && !ExpressionUtils.isBlank(cell.value)) {
+    		if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
     			nonBlanks++;
     			
     			if (cell.recon != null) {

@@ -152,7 +152,7 @@ public class ReconOperation extends EngineDependentOperation {
 				public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
 					if (_cellIndex < row.cells.size()) {
 						Cell cell = row.cells.get(_cellIndex);
-						if (cell != null && !ExpressionUtils.isBlank(cell.value)) {
+						if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
 							_entries.add(new ReconEntry(rowIndex, cell));
 						}
 					}

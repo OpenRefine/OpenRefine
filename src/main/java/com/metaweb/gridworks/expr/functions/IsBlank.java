@@ -11,7 +11,7 @@ import com.metaweb.gridworks.expr.Function;
 public class IsBlank implements Function {
 
 	public Object call(Properties bindings, Object[] args) {
-		return args.length == 0 || ExpressionUtils.isBlank(args[0]);
+		return args.length == 0 || !ExpressionUtils.isNonBlankData(args[0]);
 	}
 
 	public void write(JSONWriter writer, Properties options)

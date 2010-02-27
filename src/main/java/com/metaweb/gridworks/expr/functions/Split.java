@@ -5,7 +5,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.EvalError;
 
 public class Split implements Function {
 
@@ -17,7 +19,7 @@ public class Split implements Function {
 				return (v instanceof String ? (String) v : v.toString()).split((String) split);
 			}
 		}
-		return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
 	}
 	
 	public void write(JSONWriter writer, Properties options)

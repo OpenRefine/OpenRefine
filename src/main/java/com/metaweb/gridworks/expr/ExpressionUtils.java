@@ -32,8 +32,19 @@ public class ExpressionUtils {
         }
     }
     
+    static public boolean isError(Object o) {
+        return o != null && o instanceof EvalError;
+    }
+    /*
     static public boolean isBlank(Object o) {
         return o == null || (o instanceof String && ((String) o).length() == 0);
+    }
+    */
+    static public boolean isNonBlankData(Object o) {
+        return 
+            o != null && 
+            !(o instanceof EvalError) &&
+            (!(o instanceof String) || ((String) o).length() > 0);
     }
 
     static public boolean isTrue(Object o) {

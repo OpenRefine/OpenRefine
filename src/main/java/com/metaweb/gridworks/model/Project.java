@@ -92,11 +92,11 @@ public class Project implements Serializable {
 			for (int g = 0; g < keyedGroups.size(); g++) {
 				Group group = keyedGroups.get(g);
 				
-				if (ExpressionUtils.isBlank(row.getCellValue(group.keyCellIndex))) {
+				if (!ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
 					int contextRowIndex = lastNonBlankRowsByGroup[g];
 					if (contextRowIndex >= 0) {
 						for (int dependentCellIndex : group.cellIndices) {
-							if (!ExpressionUtils.isBlank(row.getCellValue(dependentCellIndex))) {
+							if (ExpressionUtils.isNonBlankData(row.getCellValue(dependentCellIndex))) {
 								setRowDependency(
 									row, 
 									dependentCellIndex, 

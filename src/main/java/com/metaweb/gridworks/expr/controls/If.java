@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.expr.controls;
 
- import java.util.Properties;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -10,18 +10,22 @@ import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 
 public class If implements Control {
-
-    public Object call(Properties bindings, Evaluable[] args) {
-        if (args.length >= 3) {
-            Object o = args[0].evaluate(bindings);
-            
-            if (ExpressionUtils.isTrue(o)) {
-                return args[1].evaluate(bindings);
-            } else if (args.length >= 3) {
-                return args[2].evaluate(bindings);
-            }
+    public String checkArguments(Evaluable[] args) {
+        if (args.length != 3) {
+            return "if expects 3 arguments";
         }
         return null;
+    }
+
+    public Object call(Properties bindings, Evaluable[] args) {
+        Object o = args[0].evaluate(bindings);
+        if (ExpressionUtils.isError(o)) {
+            return o;
+        } else if (ExpressionUtils.isTrue(o)) {
+            return args[1].evaluate(bindings);
+        } else {
+            return args[2].evaluate(bindings);
+        }
     }
     
 	public void write(JSONWriter writer, Properties options)

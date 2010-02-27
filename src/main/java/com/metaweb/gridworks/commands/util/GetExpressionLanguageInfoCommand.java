@@ -12,8 +12,8 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.Control;
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
-import com.metaweb.gridworks.expr.Parser;
 
 public class GetExpressionLanguageInfoCommand extends Command {
 	
@@ -30,7 +30,7 @@ public class GetExpressionLanguageInfoCommand extends Command {
 			writer.key("functions");
 			writer.object();
 			{
-			    for (Entry<String, Function> entry : Parser.functionTable.entrySet()) {
+			    for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
 			        writer.key(entry.getKey());
 			        entry.getValue().write(writer, options);
 			    }
@@ -40,7 +40,7 @@ public class GetExpressionLanguageInfoCommand extends Command {
             writer.key("controls");
             writer.object();
             {
-                for (Entry<String, Control> entry : Parser.controlTable.entrySet()) {
+                for (Entry<String, Control> entry : ControlFunctionRegistry.getControlMapping()) {
                     writer.key(entry.getKey());
 			        entry.getValue().write(writer, options);
                 }

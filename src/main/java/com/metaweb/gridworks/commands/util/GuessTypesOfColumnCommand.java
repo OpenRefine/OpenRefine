@@ -86,7 +86,7 @@ public class GuessTypesOfColumnCommand extends Command {
 		
 		for (Row row : project.rows) {
 			Object value = row.getCellValue(cellIndex);
-			if (!ExpressionUtils.isBlank(value)) {
+			if (ExpressionUtils.isNonBlankData(value)) {
 				String s = value.toString().trim();
 				if (!sampleSet.contains(s)) {
 					samples.add(s);

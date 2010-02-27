@@ -5,7 +5,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.EvalError;
 
 public class ToTitlecase implements Function {
 
@@ -28,7 +30,7 @@ public class ToTitlecase implements Function {
 			
 			return sb.toString();
 		}
-		return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
 	}
 	
 	public void write(JSONWriter writer, Properties options)

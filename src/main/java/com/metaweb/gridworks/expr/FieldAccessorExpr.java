@@ -13,10 +13,15 @@ public class FieldAccessorExpr implements Evaluable {
 	
 	public Object evaluate(Properties bindings) {
 		Object o = _inner.evaluate(bindings);
-		if (o != null && o instanceof HasFields) {
+		if (ExpressionUtils.isError(o)) {
+		    return o;
+		} else if (o == null) {
+		    return new EvalError("Cannot retrieve field from null");
+		} else if (o instanceof HasFields) {
 			return ((HasFields) o).getField(_fieldName, bindings);
+		} else {
+		    return new EvalError("Object does not have any field, including " + _fieldName);
 		}
-		return null;
 	}
 
 	@Override

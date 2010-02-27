@@ -5,7 +5,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.EvalError;
 
 public class Length implements Function {
 
@@ -23,7 +25,7 @@ public class Length implements Function {
 				}
 			}
 		}
-		return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array or a string");
 	}
 
 	public void write(JSONWriter writer, Properties options)

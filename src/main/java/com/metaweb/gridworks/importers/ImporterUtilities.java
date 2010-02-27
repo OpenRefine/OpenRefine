@@ -53,11 +53,11 @@ public class ImporterUtilities {
 			}
 			
 			Object value = parseCellValue(text);
-			if (ExpressionUtils.isBlank(value)) {
-                row.cells.add(null);
-			} else {
-			    row.cells.add(new Cell(value, null));
+			if (ExpressionUtils.isNonBlankData(value)) {
+                row.cells.add(new Cell(value, null));
                 hasData = true;
+			} else {
+                row.cells.add(null);
 			}
 		}
 		
@@ -72,11 +72,11 @@ public class ImporterUtilities {
 			String text = cells[c];
 			
             Object value = parseCellValue(text);
-            if (ExpressionUtils.isBlank(value)) {
-                row.cells.add(null);
-            } else {
+            if (ExpressionUtils.isNonBlankData(value)) {
                 row.cells.add(new Cell(value, null));
                 hasData = true;
+            } else {
+                row.cells.add(null);
             }
 		}
 		return hasData;

@@ -100,8 +100,8 @@ public class ReconJudgeOneCellCommand extends Command {
 
 		protected HistoryEntry createHistoryEntry() throws Exception {
 			Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
-            if (cell == null || ExpressionUtils.isBlank(cell.value)) {
-				throw new Exception("Cell is blank");
+            if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
+				throw new Exception("Cell is blank or error");
 			}
 			
 			Column column = _project.columnModel.getColumnByCellIndex(cellIndex);

@@ -6,7 +6,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.EvalError;
 
 public class Sort implements Function {
 
@@ -24,7 +26,7 @@ public class Sort implements Function {
 				return r;
 			}
 		}
-		return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
 	}
 
 	public void write(JSONWriter writer, Properties options)

@@ -5,7 +5,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.EvalError;
 
 public class Join implements Function {
 
@@ -33,7 +35,7 @@ public class Join implements Function {
 				return sb.toString();
 			}
 		}
-		return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array and a string");
 	}
 
 	public void write(JSONWriter writer, Properties options)

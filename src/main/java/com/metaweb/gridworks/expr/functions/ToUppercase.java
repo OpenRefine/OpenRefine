@@ -5,7 +5,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.EvalError;
 
 public class ToUppercase implements Function {
 
@@ -14,7 +16,7 @@ public class ToUppercase implements Function {
 			Object o = args[0];
 			return (o instanceof String ? (String) o : o.toString()).toUpperCase();
 		}
-		return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
 	}
 
 	public void write(JSONWriter writer, Properties options)

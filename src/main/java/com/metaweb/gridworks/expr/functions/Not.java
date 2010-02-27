@@ -5,15 +5,17 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.EvalError;
 
 public class Not implements Function {
 
 	public Object call(Properties bindings, Object[] args) {
-		if (args.length > 0) {
+		if (args.length == 1) {
 			return !objectToBoolean(args[0]);
 		}
-		return true;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a boolean");
 	}
 
 	public static boolean objectToBoolean(Object o) {

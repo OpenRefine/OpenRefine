@@ -5,17 +5,21 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.EvalError;
 
 public class Max implements Function {
 
 	public Object call(Properties bindings, Object[] args) {
-		if (args.length == 2 && args[0] instanceof Number && args[1] instanceof Number) {
+		if (args.length == 2 && 
+		        args[0] != null && args[0] instanceof Number &&
+		        args[1] != null && args[1] instanceof Number) {
 			return Math.max(
 				((Number) args[0]).doubleValue(),
 				((Number) args[1]).doubleValue());
 		}
-		return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 numbers");
 	}
 
 	public void write(JSONWriter writer, Properties options)

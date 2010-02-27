@@ -164,7 +164,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
                 Cell cell = row.getCell(_cellIndex);
                 if (cell != null && 
-                	!ExpressionUtils.isBlank(cell.value) && 
+                	ExpressionUtils.isNonBlankData(cell.value) && 
                 	_similarValue.equals(cell.value)) {
                 	
                 	Recon recon = null;
