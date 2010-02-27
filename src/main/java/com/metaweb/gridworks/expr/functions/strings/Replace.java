@@ -6,20 +6,20 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.ControlFunctionRegistry;
-import com.metaweb.gridworks.expr.Function;
 import com.metaweb.gridworks.expr.EvalError;
+import com.metaweb.gridworks.expr.Function;
 
 public class Replace implements Function {
 
 	public Object call(Properties bindings, Object[] args) {
 		if (args.length == 3) {
-			Object v = args[0];
-			Object find = args[1];
-			Object replace = args[2];
-			if (v != null && find != null && replace != null
-					&& find instanceof String && replace instanceof String) {
-				return (v instanceof String ? (String) v : v.toString()).replace((String) find, (String) replace);
-			}
+            Object o1 = args[0];
+            Object o2 = args[1];
+            Object o3 = args[2];
+            if (o1 != null && o2 != null && o3 != null && o2 instanceof String && o3 instanceof String) {
+                String str = (o1 instanceof String) ? (String) o1 : o1.toString();
+                return str.replace((String) o2, (String) o3);
+            }
 		}
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
 	}
