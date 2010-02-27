@@ -1,4 +1,4 @@
-function ListFacet(div, config, options) {
+function ListFacet(div, config, options, selection) {
     this._div = div;
     this._config = config;
     
@@ -7,10 +7,26 @@ function ListFacet(div, config, options) {
         this._options.sort = "name";
     }
     
-    this._selection = [];
+    this._selection = selection || [];
     this._data = null;
     
     this.render();
+}
+
+ListFacet.reconstruct = function(div, uiState) {
+    return new ListFacet(div, uiState.c, uiState.o, uiState.s);
+};
+
+ListFacet.prototype.getUIState = function() {
+    var json = {
+        c: this.getJSON(),
+        o: this._options
+    };
+    
+    json.s = json.c.selection;
+    delete json.c.selection;
+    
+    return json;
 }
 
 ListFacet.prototype.getJSON = function() {

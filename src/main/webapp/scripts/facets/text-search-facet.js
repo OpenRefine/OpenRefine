@@ -3,15 +3,24 @@ function TextSearchFacet(div, config, options) {
     this._config = config;
     this._options = options;
     
-    this._setDefaults();
+    this._query = config.query || null;
     this._timerID = null;
     
     this._initializeUI();
 }
 
-TextSearchFacet.prototype._setDefaults = function() {
-    this._query = null;
+TextSearchFacet.reconstruct = function(div, uiState) {
+    return new TextSearchFacet(div, uiState.c, uiState.o);
 };
+
+TextSearchFacet.prototype.getUIState = function() {
+    var json = {
+        c: this.getJSON(),
+        o: this._options
+    };
+    
+    return json;
+}
 
 TextSearchFacet.prototype.getJSON = function() {
     var o = {
@@ -58,7 +67,7 @@ TextSearchFacet.prototype.render = function() {
 };
 
 TextSearchFacet.prototype._reset = function() {
-    this._setDefaults();
+    this._query = null;
     this._updateRest();
 };
 

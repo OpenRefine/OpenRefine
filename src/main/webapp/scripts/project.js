@@ -10,7 +10,6 @@ Gridworks.reportException = function(e) {
     }
 };
 
-
 function onLoad() {
     var params = URL.getParameters();
     if ("project" in params) {
@@ -18,15 +17,36 @@ function onLoad() {
             id: parseInt(params.project)
         };
         
-        Gridworks.reinitializeProjectData(initializeUI);
+        var uiState = {};
+        if ("ui" in params) {
+            try {
+                uiState = JSON.parse(params.ui);
+            } catch (e) {
+            }
+        }
+        
+        Gridworks.reinitializeProjectData(function() {
+            initializeUI(uiState);
+        });
     }
 }
 $(onLoad);
 
-function initializeUI() {
+function initializeUI(uiState) {
     document.title = theProject.metadata.name + " - Gridworks";
-    $('<span></span>').text(theProject.metadata.name).addClass("app-path-section").appendTo($("#path"));
-    $('<span></span>').text(" project").appendTo($("#path"));
+    
+    var path = $("#path");
+    $('<span></span>').text(theProject.metadata.name).addClass("app-path-section").appendTo(path);
+    $('<span></span>').text(" project").appendTo(path);
+    
+    $('<span>').html(" &raquo; ").appendTo(path);
+    $('<a href="javascript:{}"></a>')
+        .addClass("app-path-section")
+        .text("current view")
+        .mouseenter(function() {
+            this.href = Gridworks.getPermanentLink();
+        })
+        .appendTo(path);
     
     var body = $("#body").empty();
     
@@ -47,7 +67,7 @@ function initializeUI() {
     ui.processPanel = $('<div></div>').addClass("process-panel").appendTo(document.body);
     ui.menuBarPanel = $('<div></div>'); $("#header").after(ui.menuBarPanel);
     
-    ui.browsingEngine = new BrowsingEngine(ui.facetPanel);
+    ui.browsingEngine = new BrowsingEngine(ui.facetPanel, uiState.facets || []);
     ui.processWidget = new ProcessWidget(ui.processPanel);
     ui.historyWidget = new HistoryWidget(ui.historyPanel);
     ui.dataTableView = new DataTableView(ui.viewPanel);
@@ -219,4 +239,14 @@ Gridworks.fetchRows = function(start, limit, onDone) {
         },
         "json"
     );
+};
+
+Gridworks.getPermanentLink = function() {
+    var params = [
+        "project=" + escape(theProject.id),
+        "ui=" + escape(JSON.stringify({
+            facets: ui.browsingEngine.getFacetUIStates()
+        }))
+    ];
+    return "project.html?" + params.join("&");
 };

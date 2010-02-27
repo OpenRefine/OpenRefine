@@ -26,6 +26,20 @@ RangeFacet.prototype._setDefaults = function() {
     
 };
 
+RangeFacet.reconstruct = function(div, uiState) {
+    return new RangeFacet(div, uiState.c, uiState.o);
+};
+
+RangeFacet.prototype.getUIState = function() {
+    var json = {
+        c: this.getJSON(),
+        o: this._options
+    };
+    
+    return json;
+}
+
+
 RangeFacet.prototype.getJSON = function() {
     var o = {
         type: "range",

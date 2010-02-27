@@ -1,8 +1,40 @@
-function BrowsingEngine(div) {
+function BrowsingEngine(div, facetConfigs) {
     this._div = div;
     this._facets = [];
     
     this._initializeUI();
+    
+    if (facetConfigs.length > 0) {
+        for (var i = 0; i < facetConfigs.length; i++) {
+            var facetConfig = facetConfigs[i];
+            var type = facetConfig.c.type;
+            
+            var div = $('<div></div>').addClass("facet-container").appendTo(this._div);
+            var facet;
+            switch (type) {
+                case "range":
+                    facet = RangeFacet.reconstruct(div, facetConfig);
+                    break;
+                case "text":
+                    facet = TextSearchFacet.reconstruct(div, facetConfig);
+                    break;
+                default:
+                    facet = ListFacet.reconstruct(div, facetConfig);
+            }
+            
+            this._facets.push({ elmt: div, facet: facet });
+        }
+        this.update();
+    }
+}
+
+BrowsingEngine.prototype.getFacetUIStates = function() {
+    var f = [];
+    for (var i = 0; i < this._facets.length; i++) {
+        var facet = this._facets[i];
+        f.push(facet.facet.getUIState());
+    }
+    return f;
 }
 
 BrowsingEngine.prototype._initializeUI = function() {
@@ -59,7 +91,7 @@ BrowsingEngine.prototype.update = function(onDone) {
     
     $.post(
         "/command/compute-facets?" + $.param({ project: theProject.id }),
-        { engine: JSON.stringify(ui.browsingEngine.getJSON(true)) },
+        { engine: JSON.stringify(this.getJSON(true)) },
         function(data) {
             var facetData = data.facets;
             
