@@ -17,6 +17,8 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
 	final protected int 		_cellIndex;
 	
 	final public Map<Object, NominalFacetChoice> choices = new HashMap<Object, NominalFacetChoice>();
+	public int blankCount = 0;
+	public int errorCount = 0;
 	
 	public ExpressionNominalRowGrouper(Evaluable evaluable, int cellIndex) {
 		_evaluable = evaluable;
@@ -30,29 +32,33 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
         ExpressionUtils.bind(bindings, row, rowIndex, cell);
 		
 		Object value = _evaluable.evaluate(bindings);
-		if (value != null) {
-			if (value.getClass().isArray()) {
-				Object[] a = (Object[]) value;
-				for (Object v : a) {
-					processValue(v);
-				}
-			} else {
-				processValue(value);
+		if (value != null && value.getClass().isArray()) {
+			Object[] a = (Object[]) value;
+			for (Object v : a) {
+				processValue(v);
 			}
+		} else {
+			processValue(value);
 		}
 		return false;
 	}
 	
 	protected void processValue(Object value) {
-		DecoratedValue dValue = new DecoratedValue(value, value.toString());
-		
-		if (choices.containsKey(value)) {
-			choices.get(value).count++;
-		} else {
-			NominalFacetChoice choice = new NominalFacetChoice(dValue);
-			choice.count = 1;
-			
-			choices.put(value, choice);
-		}
+        if (ExpressionUtils.isError(value)) {
+            errorCount++;
+        } else if (ExpressionUtils.isNonBlankData(value)) {
+    		DecoratedValue dValue = new DecoratedValue(value, value.toString());
+    		
+    		if (choices.containsKey(value)) {
+    			choices.get(value).count++;
+    		} else {
+    			NominalFacetChoice choice = new NominalFacetChoice(dValue);
+    			choice.count = 1;
+    			
+    			choices.put(value, choice);
+    		}
+        } else {
+            blankCount++;
+        }
 	}
 }

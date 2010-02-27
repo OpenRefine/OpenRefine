@@ -10,11 +10,7 @@ public class VariableExpr implements Evaluable {
 	}
 	
 	public Object evaluate(Properties bindings) {
-	    if (bindings.containsKey(_name)) {
-	        return bindings.get(_name);
-	    } else {
-	        return new EvalError("No variable named " + _name);
-	    }
+        return bindings.get(_name);
 	}
 
 	public String toString() {

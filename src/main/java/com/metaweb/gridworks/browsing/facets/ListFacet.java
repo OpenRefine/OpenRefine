@@ -19,7 +19,8 @@ import com.metaweb.gridworks.model.Project;
 
 public class ListFacet implements Facet {
 	protected List<NominalFacetChoice> _selection = new LinkedList<NominalFacetChoice>();
-	protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
+	protected boolean _selectBlank;
+	protected boolean _selectError;
 	
 	protected String 	_name;
 	protected String 	_expression;
@@ -27,6 +28,11 @@ public class ListFacet implements Facet {
 	protected int		_cellIndex;
 	protected Evaluable _eval;
 	
+	// computed
+    protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
+    protected int _blankCount;
+    protected int _errorCount;
+    
 	public ListFacet() {
 	}
 
@@ -43,6 +49,22 @@ public class ListFacet implements Facet {
 			choice.write(writer, options);
 		}
 		writer.endArray();
+		
+		if (_selectBlank || _blankCount > 0) {
+		    writer.key("blankChoice");
+		    writer.object();
+		    writer.key("s"); writer.value(_selectBlank);
+		    writer.key("c"); writer.value(_blankCount);
+		    writer.endObject();
+		}
+        if (_selectError || _errorCount > 0) {
+            writer.key("errorChoice");
+            writer.object();
+            writer.key("s"); writer.value(_selectError);
+            writer.key("c"); writer.value(_errorCount);
+            writer.endObject();
+        }
+		
 		writer.endObject();
 	}
 
@@ -70,11 +92,18 @@ public class ListFacet implements Facet {
 			
 			_selection.add(nominalFacetChoice);
 		}
+		
+		if (o.has("selectBlank")) {
+		    _selectBlank = o.getBoolean("selectBlank");
+		}
+        if (o.has("selectError")) {
+            _selectError = o.getBoolean("selectError");
+        }
 	}
 
 	public RowFilter getRowFilter() {
-		return _selection.size() == 0 ? null :
-			new ExpressionEqualRowFilter(_eval, _cellIndex, createMatches());
+		return _selection.size() == 0 && !_selectBlank && !_selectError ? null :
+			new ExpressionEqualRowFilter(_eval, _cellIndex, createMatches(), _selectBlank, _selectError);
 	}
 
 	public void computeChoices(Project project, FilteredRows filteredRows) {
@@ -94,6 +123,9 @@ public class ListFacet implements Facet {
 				_choices.add(choice);
 			}
 		}
+		
+		_blankCount = grouper.blankCount;
+		_errorCount = grouper.errorCount;
 	}
 	
 	protected Object[] createMatches() {

@@ -8,6 +8,9 @@ function ListFacet(div, config, options, selection) {
     }
     
     this._selection = selection || [];
+    this._blankChoice = null;
+    this._errorChoice = null;
+    
     this._data = null;
     
     this.render();
@@ -35,7 +38,9 @@ ListFacet.prototype.getJSON = function() {
         name: this._config.name,
         columnName: this._config.columnName,
         expression: this._config.expression,
-        selection: []
+        selection: [],
+        selectBlank: this._blankChoice != null && this._blankChoice.s,
+        selectError: this._errorChoice != null && this._errorChoice.s
     }
     for (var i = 0; i < this._selection.length; i++) {
         var choice = {
@@ -47,7 +52,9 @@ ListFacet.prototype.getJSON = function() {
 };
 
 ListFacet.prototype.hasSelection = function() {
-    return this._selection.length > 0;
+    return this._selection.length > 0 || 
+        (this._blankChoice != null && this._blankChoice.s) || 
+        (this._errorChoice != null && this._errorChoice.s);
 };
 
 ListFacet.prototype.updateState = function(data) {
@@ -63,6 +70,9 @@ ListFacet.prototype.updateState = function(data) {
     }
     this._selection = selection;
     this._reSortChoices();
+    
+    this._blankChoice = data.blankChoice || null;
+    this._errorChoice = data.errorChoice || null;
     
     this.render();
 };
@@ -107,7 +117,10 @@ ListFacet.prototype.render = function() {
     if (this._data == null) {
         bodyDiv.html("Loading...");
     } else {
-        var selectionCount = this._selection.length;
+        var selectionCount = this._selection.length
+            + (this._blankChoice != null && this._blankChoice.s ? 1 : 0)
+            + (this._errorChoice != null && this._errorChoice.s ? 1 : 0);
+            
         if (selectionCount > 0) {
             var reset = function() {
                 self._reset();
@@ -117,8 +130,8 @@ ListFacet.prototype.render = function() {
             );
         }
         
-        var renderChoice = function(choice) {
-            var label = choice.v.l;
+        var renderChoice = function(choice, customLabel) {
+            var label = customLabel || choice.v.l;
             var count = choice.c;
             
             var choiceDiv = $('<div></div>').addClass("facet-choice").appendTo(bodyDiv);
@@ -165,6 +178,12 @@ ListFacet.prototype.render = function() {
         for (var i = 0; i < choices.length; i++) {
             renderChoice(choices[i]);
         }
+        if (this._blankChoice != null) {
+            renderChoice(this._blankChoice, "(blank)");
+        }
+        if (this._errorChoice != null) {
+            renderChoice(this._errorChoice, "(error)");
+        }
         
         bodyDiv[0].scrollTop = scrollTop;
         
@@ -190,16 +209,31 @@ ListFacet.prototype.render = function() {
 ListFacet.prototype._select = function(choice, only) {
     if (only) {
         this._selection = [];
+        if (this._blankChoice != null) {
+            this._blankChoice.s = false;
+        }
+        if (this._errorChoice != null) {
+            this._errorChoice.s = false;
+        }
     }
-    this._selection.push(choice);
+    
+    choice.s = true;
+    if (choice !== this._errorChoice && choice !== this._blankChoice) {
+        this._selection.push(choice);
+    }
+    
     this._updateRest();
 };
 
 ListFacet.prototype._deselect = function(choice) {
-    for (var i = this._selection.length - 1; i >= 0; i--) {
-        if (this._selection[i] == choice) {
-            this._selection.splice(i, 1);
-            break;
+    if (choice === this._errorChoice || choice === this._blankChoice) {
+        choice.s = false;
+    } else {
+        for (var i = this._selection.length - 1; i >= 0; i--) {
+            if (this._selection[i] === choice) {
+                this._selection.splice(i, 1);
+                break;
+            }
         }
     }
     this._updateRest();
@@ -207,6 +241,9 @@ ListFacet.prototype._deselect = function(choice) {
 
 ListFacet.prototype._reset = function() {
     this._selection = [];
+    this._blankChoice = null;
+    this._errorChoice = null;
+    
     this._updateRest();
 };
 
@@ -215,7 +252,10 @@ ListFacet.prototype._remove = function() {
     
     this._div = null;
     this._config = null;
+    
     this._selection = null;
+    this._blankChoice = null;
+    this._errorChoice = null;
     this._data = null;
 };
 

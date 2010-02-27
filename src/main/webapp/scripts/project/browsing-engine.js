@@ -82,7 +82,7 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
     }
     
     if (update) {
-        Gridworks.update({ engineChanged: true }, onFinallyDone);
+        Gridworks.update({ engineChanged: true });
     }
 };
 
