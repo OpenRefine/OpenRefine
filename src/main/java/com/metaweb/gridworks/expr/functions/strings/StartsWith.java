@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.expr.functions;
+package com.metaweb.gridworks.expr.functions.strings;
 
 import java.util.Properties;
 

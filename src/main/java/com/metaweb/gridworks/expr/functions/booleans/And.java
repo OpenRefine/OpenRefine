@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.expr.functions;
+package com.metaweb.gridworks.expr.functions.booleans;
 
 import java.util.Properties;
 

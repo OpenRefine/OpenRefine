@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.expr.functions;
+package com.metaweb.gridworks.expr.functions.strings;
 
 import java.util.Properties;
 
@@ -9,14 +9,14 @@ import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Function;
 import com.metaweb.gridworks.expr.EvalError;
 
-public class Split implements Function {
+public class LastIndexOf implements Function {
 
 	public Object call(Properties bindings, Object[] args) {
 		if (args.length == 2) {
-			Object v = args[0];
-			Object split = args[1];
-			if (v != null && split != null && split instanceof String) {
-				return (v instanceof String ? (String) v : v.toString()).split((String) split);
+			Object s1 = args[0];
+			Object s2 = args[1];
+			if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof String) {
+				return ((String) s1).lastIndexOf((String) s2);
 			}
 		}
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
@@ -26,9 +26,10 @@ public class Split implements Function {
 		throws JSONException {
 	
 		writer.object();
-		writer.key("description"); writer.value("Returns the array of strings obtained by splitting s with separator sep");
-		writer.key("params"); writer.value("string s, string sep");
-		writer.key("returns"); writer.value("array");
+		writer.key("description"); writer.value("Returns the index of sub last ocurring in s");
+		writer.key("params"); writer.value("string s, string sub");
+		writer.key("returns"); writer.value("number");
 		writer.endObject();
 	}
+
 }
