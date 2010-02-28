@@ -40,6 +40,9 @@ public class PreviewExpressionCommand extends Command {
 				return;
 			}
 			
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
+			
 			JSONArray rowIndices = jsonStringToArray(rowIndicesString);
 			int length = rowIndices.length();
 			

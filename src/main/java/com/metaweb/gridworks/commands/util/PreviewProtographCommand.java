@@ -24,6 +24,9 @@ public class PreviewProtographCommand extends Command {
 		try {
 			Project project = getProject(request);
 			
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
+			
 			String jsonString = request.getParameter("protograph");
 			JSONObject json = jsonStringToObject(jsonString);
 			Protograph protograph = Protograph.reconstruct(json);

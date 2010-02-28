@@ -22,6 +22,9 @@ public class GetExpressionLanguageInfoCommand extends Command {
 			throws ServletException, IOException {
 		
 		try {
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
+		    
 			JSONWriter writer = new JSONWriter(response.getWriter());
 			Properties options = new Properties();
 			

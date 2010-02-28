@@ -1,5 +1,7 @@
 package com.metaweb.gridworks.commands.edit;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,6 +15,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
@@ -27,7 +33,10 @@ import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
 
 public class CreateProjectCommand extends Command {
-	@Override
+
+    private final static Logger logger = Logger.getLogger("gridworks");
+
+    @Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
@@ -111,16 +120,19 @@ public class CreateProjectCommand extends Command {
 	            
 				if (part.isFile()) {
 					FilePart filePart = (FilePart) part;
-					Importer importer = guessImporter(
-							options, null, filePart.getFileName());
+					
+					Importer importer = guessImporter(options, null, filePart.getFileName());
 					
 					if (importer.takesReader()) {
-						Reader reader = new InputStreamReader(filePart.getInputStream());
-						try {
-							importer.read(reader, project, options, skip, limit);
-						} finally {
-							reader.close();
-						}
+                        CharsetDetector detector = new CharsetDetector();
+                        CharsetMatch charsetMatch = detector.setText(enforceMarking(filePart.getInputStream())).detect();
+                        logger.info("Best encoding guess: " + charsetMatch.getName() + " [confidence: " + charsetMatch.getConfidence() + "]");
+                        Reader reader = charsetMatch.getReader();
+                        try {
+                            importer.read(charsetMatch.getReader(), project, options, skip, limit);
+                        } finally {
+                            reader.close();
+                        }
 					} else {
 						InputStream inputStream = filePart.getInputStream();
 						try {
@@ -230,4 +242,28 @@ public class CreateProjectCommand extends Command {
 		return new TsvCsvImporter();
 	}
 
+	/*
+	 * NOTE(SM): The ICU4J char detection code requires the input stream to support mark/reset. Unfortunately, not
+	 * all ServletInputStream implementations are marking, so we need do this memory-expensive wrapping to make
+	 * it work. It's far from ideal but I don't have a more efficient solution.
+	 */
+    private static InputStream enforceMarking(InputStream input) throws IOException {
+        if (input.markSupported()) {
+            return input;
+        } else {
+            ByteArrayOutputStream output = new ByteArrayOutputStream(64 * 1024);
+            
+            byte[] buffer = new byte[1024 * 4];
+            long count = 0;
+            int n = 0;
+            while (-1 != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+                count += n;
+            }
+            input.close();
+            
+            return new ByteArrayInputStream(output.toByteArray());
+        }
+    }
+	
 }

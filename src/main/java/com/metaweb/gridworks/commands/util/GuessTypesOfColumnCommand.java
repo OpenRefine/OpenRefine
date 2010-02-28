@@ -40,6 +40,9 @@ public class GuessTypesOfColumnCommand extends Command {
 			Project project = getProject(request);
 			String columnName = request.getParameter("columnName");
 			
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
+			
 			JSONWriter writer = new JSONWriter(response.getWriter());
 			writer.object();
 			
