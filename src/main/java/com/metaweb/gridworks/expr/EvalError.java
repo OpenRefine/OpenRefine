@@ -14,6 +14,10 @@ public class EvalError implements Jsonizable {
         this.message = message;
     }
     
+    public String toString() {
+        return this.message;
+    }
+    
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

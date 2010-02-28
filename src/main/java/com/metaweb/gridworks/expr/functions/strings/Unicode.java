@@ -15,9 +15,9 @@ public class Unicode implements Function {
 		if (args.length == 1 && args[0] != null) {
 			Object o = args[0];
 			String s = (o instanceof String) ? (String) o : o.toString();
-			int[] output = new int[s.length()];
+			Integer[] output = new Integer[s.length()];
 			for (int i = 0; i < s.length(); i++) {
-			    output[i] = Character.getNumericValue(s.codePointAt(i));
+			    output[i] = s.codePointAt(i);
 			}
 			return output;
 		}

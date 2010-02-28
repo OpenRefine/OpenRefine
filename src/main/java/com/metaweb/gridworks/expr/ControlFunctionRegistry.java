@@ -34,6 +34,7 @@ import com.metaweb.gridworks.expr.functions.math.Round;
 import com.metaweb.gridworks.expr.functions.strings.Contains;
 import com.metaweb.gridworks.expr.functions.strings.Diff;
 import com.metaweb.gridworks.expr.functions.strings.EndsWith;
+import com.metaweb.gridworks.expr.functions.strings.Fingerprint;
 import com.metaweb.gridworks.expr.functions.strings.IndexOf;
 import com.metaweb.gridworks.expr.functions.strings.LastIndexOf;
 import com.metaweb.gridworks.expr.functions.strings.MD5;
@@ -125,6 +126,7 @@ public class ControlFunctionRegistry {
         registerFunction("unicode", new Unicode());
         registerFunction("diff", new Diff());
         registerFunction("chomp", new Diff());
+        registerFunction("fingerprint", new Fingerprint());
         
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

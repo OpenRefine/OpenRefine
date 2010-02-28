@@ -88,7 +88,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 				
                 Object v = eval.evaluate(bindings);
                 if ((cell != null && cell.value != null) || v != null) {
-                    Cell newCell = new Cell(v, cell.recon);
+                    Cell newCell = new Cell(v, (cell != null) ? cell.recon : null);
 				
     				CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
     				cellChanges.add(cellChange);
