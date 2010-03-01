@@ -1,0 +1,57 @@
+table.recon-dialog-main-layout {
+    border-collapse: collapse;
+}
+table.recon-dialog-main-layout > tbody > tr > td {
+    padding: 0px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+table.recon-dialog-main-layout > tbody > tr > td:last-child {
+    padding-right: 0px;
+}
+table.recon-dialog-main-layout > tbody > tr:last-child > td {
+    padding-bottom: 0px;
+}
+
+table.recon-dialog-inner-layout {
+    border-collapse: collapse;
+}
+table.recon-dialog-inner-layout > tbody > tr > td {
+    padding: 0px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+table.recon-dialog-inner-layout > tbody > tr > td:last-child {
+    padding-right: 0px;
+}
+table.recon-dialog-inner-layout > tbody > tr:last-child > td {
+    padding-bottom: 0px;
+}
+table.recon-dialog-inner-layout > tbody > tr > th {
+    text-align: left;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+
+.recon-dialog-type-id {
+    color: #888;
+}
+
+.recon-dialog-heuristic-types-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-height: 200px;
+    overflow: auto;
+}
+.recon-dialog-heuristic-other-type-container {
+    margin: 10px;
+}
+
+.recon-dialog-heuristic-details-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-height: 300px;
+    overflow: auto;
+}
+
