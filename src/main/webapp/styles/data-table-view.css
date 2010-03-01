@@ -60,6 +60,9 @@ img.column-header-menu {
 }
 
 
+.data-table-error {
+    color: red;
+}
 div.data-table-recon-candidates {
     margin: 0.5em 0;
     min-width: 15em;

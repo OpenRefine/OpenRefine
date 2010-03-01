@@ -15,13 +15,11 @@ DataTableCellUI.prototype._render = function() {
     $(this._td).empty();
     var divContent = $('<div></div>').appendTo(this._td);
     
-    if (cell == null || cell.v == null) {
+    if (cell == null || ("v" in cell && cell.v == null)) {
         $(divContent).html("&nbsp;");
-        // TODO: content editing UI
-        return;
-    }
-    
-    if (!("r" in cell) || cell.r == null) {
+    } else if ("e" in cell) {
+        $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
+    } else if (!("r" in cell) || cell.r == null) {
         $(divContent).html(cell.v);
     } else {
         var r = cell.r;

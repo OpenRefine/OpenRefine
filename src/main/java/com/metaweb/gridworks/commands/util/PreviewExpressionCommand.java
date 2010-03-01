@@ -73,14 +73,16 @@ public class PreviewExpressionCommand extends Command {
 						}
 					}
 					
-					if (result != null) {
-					    if (result instanceof EvalError) {
-                            result = "[Error: " + ((EvalError) result).message + "]";
-					    } else if (result instanceof HasFields) {
+					if (ExpressionUtils.isError(result)) {
+					    writer.object();
+					    writer.key("message"); writer.value(((EvalError) result).message);
+					    writer.endObject();
+					} else {
+    					if (result != null && result instanceof HasFields) {
 							result = "[object " + result.getClass().getSimpleName() + "]";
-						}
+    					}
+    					writer.value(result);
 					}
-					writer.value(result);
 				}
 				writer.endArray();
 			} catch (ParserException e) {

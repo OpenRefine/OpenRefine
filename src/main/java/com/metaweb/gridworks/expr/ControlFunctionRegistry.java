@@ -8,6 +8,11 @@ import java.util.Map.Entry;
 import com.metaweb.gridworks.expr.controls.ForEach;
 import com.metaweb.gridworks.expr.controls.ForNonBlank;
 import com.metaweb.gridworks.expr.controls.If;
+import com.metaweb.gridworks.expr.controls.IsBlank;
+import com.metaweb.gridworks.expr.controls.IsNonBlank;
+import com.metaweb.gridworks.expr.controls.IsNotNull;
+import com.metaweb.gridworks.expr.controls.IsNull;
+import com.metaweb.gridworks.expr.controls.IsNumeric;
 import com.metaweb.gridworks.expr.controls.With;
 import com.metaweb.gridworks.expr.functions.Get;
 import com.metaweb.gridworks.expr.functions.Length;
@@ -56,11 +61,6 @@ import com.metaweb.gridworks.expr.functions.strings.Trim;
 import com.metaweb.gridworks.expr.functions.strings.Unescape;
 import com.metaweb.gridworks.expr.functions.strings.Unicode;
 import com.metaweb.gridworks.expr.functions.strings.UnicodeType;
-import com.metaweb.gridworks.expr.functions.tests.IsBlank;
-import com.metaweb.gridworks.expr.functions.tests.IsNotBlank;
-import com.metaweb.gridworks.expr.functions.tests.IsNotNull;
-import com.metaweb.gridworks.expr.functions.tests.IsNull;
-import com.metaweb.gridworks.expr.functions.tests.IsNumeric;
 
 public class ControlFunctionRegistry {
 
@@ -83,7 +83,7 @@ public class ControlFunctionRegistry {
     static public Control getControl(String name) {
         return s_nameToControl.get(name);
     }
-    static public String getControlName(Function f) {
+    static public String getControlName(Control f) {
         return s_controlToName.get(f);
     }
     static public Set<Entry<String, Control>> getControlMapping() {
@@ -156,15 +156,16 @@ public class ControlFunctionRegistry {
         registerFunction("and", new And());
         registerFunction("or", new Or());
         registerFunction("not", new Not());
-        registerFunction("isNull", new IsNull());
-        registerFunction("isNotNull", new IsNotNull());
-        registerFunction("isBlank", new IsBlank());
-        registerFunction("isNotBlank", new IsNotBlank());
-        registerFunction("isNumeric", new IsNumeric());
 
         registerControl("if", new If());
         registerControl("with", new With());
         registerControl("forEach", new ForEach());
         registerControl("forNonBlank", new ForNonBlank());
+        
+        registerControl("isNull", new IsNull());
+        registerControl("isNotNull", new IsNotNull());
+        registerControl("isBlank", new IsBlank());
+        registerControl("isNonBlank", new IsNonBlank());
+        registerControl("isNumeric", new IsNumeric());
     }
 }

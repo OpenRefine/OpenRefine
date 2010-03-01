@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.Control;
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.VariableExpr;
@@ -13,9 +14,9 @@ import com.metaweb.gridworks.expr.VariableExpr;
 public class ForNonBlank implements Control {
     public String checkArguments(Evaluable[] args) {
         if (args.length != 4) {
-            return "forNonBlank expects 4 arguments";
+            return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
-            return "forNonBlank expects second argument to be a variable name";
+            return ControlFunctionRegistry.getControlName(this) + " expects second argument to be a variable name";
         }
         return null;
     }

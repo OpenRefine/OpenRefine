@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.Control;
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
@@ -16,9 +17,9 @@ import com.metaweb.gridworks.expr.VariableExpr;
 public class ForEach implements Control {
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
-            return "forEach expects 3 arguments";
+            return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
-            return "forEach expects second argument to be a variable name";
+            return ControlFunctionRegistry.getControlName(this) + " expects second argument to be a variable name";
         }
         return null;
     }

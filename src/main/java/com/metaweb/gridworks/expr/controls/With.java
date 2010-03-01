@@ -1,31 +1,27 @@
 package com.metaweb.gridworks.expr.controls;
 
-import java.util.Properties;
+import java.util.Properties; 
 
 import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.Control;
+import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Evaluable;
-import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.VariableExpr;
 
 public class With implements Control {
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
-            return "with expects 3 arguments";
+            return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
-            return "with expects second argument to be a variable name";
+            return ControlFunctionRegistry.getControlName(this) + " expects second argument to be a variable name";
         }
         return null;
     }
 
     public Object call(Properties bindings, Evaluable[] args) {
         Object o = args[0].evaluate(bindings);
-        if (ExpressionUtils.isError(o)) {
-            return o;
-        }
-        
         String name = ((VariableExpr) args[1]).getName();
         
         Object oldValue = bindings.get(name);

@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
+import com.metaweb.gridworks.expr.EvalError;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
 
 public class Cell implements Serializable, HasFields, Jsonizable {
@@ -31,8 +33,13 @@ public class Cell implements Serializable, HasFields, Jsonizable {
 
 	public void write(JSONWriter writer, Properties options) throws JSONException {
 		writer.object();
-		writer.key("v");
-		writer.value(value);
+		if (ExpressionUtils.isError(value)) {
+            writer.key("e");
+            writer.value(((EvalError) value).message);
+		} else {
+		    writer.key("v");
+		    writer.value(value);
+		}
 		
 		if (recon != null) {
 			writer.key("r");

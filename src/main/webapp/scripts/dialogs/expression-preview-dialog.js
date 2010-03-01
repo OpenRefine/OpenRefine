@@ -189,13 +189,15 @@ ExpressionPreviewDialog.prototype._renderPreview = function(expression, data) {
         if (v !== null && v !== undefined) {
             if ($.isArray(v)) {
                 td.html(JSON.stringify(v));
+            } else if ($.isPlainObject(v)) {
+                $('<span></span>').addClass("expression-preview-special-value").text("Error: " + v.message).appendTo(td);
             } else if (typeof v === "string" && v.length == 0) {
-                $('<span>empty string</span>').addClass("expression-preview-empty").appendTo(td);
+                $('<span>empty string</span>').addClass("expression-preview-special-value").appendTo(td);
             } else {
                 td.html(v.toString());
             }
         } else {
-            $('<span>null</span>').addClass("expression-preview-empty").appendTo(td);
+            $('<span>null</span>').addClass("expression-preview-special-value").appendTo(td);
         }
     };
     
@@ -214,7 +216,7 @@ ExpressionPreviewDialog.prototype._renderPreview = function(expression, data) {
             // error
             
             var message = (data.type == "parser") ? data.message : "internal error";
-            $('<span></span>').text(message).addClass("expression-preview-empty").appendTo(tdValue);
+            $('<span></span>').text(message).addClass("expression-preview-special-value").appendTo(tdValue);
         }
     }
 };

@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.expr;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -7,7 +8,9 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 
-public class EvalError implements Jsonizable {
+public class EvalError implements Serializable, Jsonizable {
+    private static final long serialVersionUID = -102681220092874080L;
+    
     final public String message;
     
     public EvalError(String message) {
