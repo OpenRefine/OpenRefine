@@ -41,7 +41,7 @@ public class ColumnRemovalOperation extends AbstractOperation {
     }
 
 
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Remove column " + _columnName;
 	}
 

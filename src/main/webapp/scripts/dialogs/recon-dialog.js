@@ -59,11 +59,17 @@ ReconDialog.prototype._createDialog = function() {
                             '<div class="recon-dialog-heuristic-details-container" bind="heuristicDetailContainer"></div>' +
                         '</td>' +
                     '</tr>' +
+                    '<tr>' +
+                        '<td>' +
+                            '<input type="checkbox" checked bind="heuristicAutomatchCheck" /> Auto-match correctly-typed candidates scoring' +
+                        '</td>' +
+                        '<td>' +
+                            'Use ' +
+                            '<input type="radio" name="recon-dialog-heuristic-service" value="recon" checked /> recon service ' +
+                            '<input type="radio" name="recon-dialog-heuristic-service" value="relevance" /> relevance service ' +
+                        '</td>' +
+                    '</tr>' +
                 '</table>' +
-                '<p>' +
-                    '<input type="checkbox" checked bind="heuristicAutomatchCheck" /> Auto-match correctly-typed candidates scoring at least ' +
-                    '<input size="3" value="100" bind="heuristicAutomatchScoreInput" />' +
-                '</p>' +
             '</div>' +
             '<div id="recon-dialog-tabs-strict" style="display: none;">' +
                 '<p>Each cell contains:</p>' +
@@ -203,19 +209,24 @@ ReconDialog.prototype._onDoHeuristic = function() {
     if (type == null)  {
         alert("Please specify a type.");
     } else {
-        this._dismiss();
-        
         Gridworks.postProcess(
             "reconcile",
+            {},
             {
-                columnName: this._column.headerLabel, 
-                typeID: type.id, 
-                typeName: type.name,
-                autoMatch: this._elmts.heuristicAutomatchCheck[0].checked,
-                minScore: this._elmts.heuristicAutomatchScoreInput[0].value
-            }, 
-            null,
+                columnName: this._column.headerLabel,
+                config: JSON.stringify({
+                    mode: "heuristic",
+                    service: $('input[name="recon-dialog-heuristic-service"]:checked')[0].value,
+                    type: {
+                        id: type.id, 
+                        name: type.name
+                    },
+                    autoMatch: this._elmts.heuristicAutomatchCheck[0].checked
+                })
+            },
             { cellsChanged: true, columnStatsChanged: true }
         );
+        
+        this._dismiss();
     }
 };

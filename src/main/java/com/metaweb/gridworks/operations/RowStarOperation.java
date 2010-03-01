@@ -44,13 +44,13 @@ public class RowStarOperation extends EngineDependentOperation {
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("starred"); writer.value(_starred);
 		writer.endObject();
 	}
 
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return (_starred ? "Star rows" : "Unstar rows");
 	}
 

@@ -39,7 +39,7 @@ public class SaveProtographOperation extends AbstractOperation {
         writer.endObject();
     }
 
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Save schema skeleton";
 	}
 

@@ -60,7 +60,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("match");
@@ -78,7 +78,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
 		writer.endObject();
 	}
 	
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Match specific topic " +
 			match.topicName + " (" + 
 			match.topicID + ") to cells in column " + _columnName;

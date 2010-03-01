@@ -41,13 +41,13 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.endObject();
 	}
 
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Discard recon judgments for cells in column " + _columnName;
 	}
 

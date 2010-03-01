@@ -66,7 +66,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("headerLabel"); writer.value(_headerLabel);
 		writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
@@ -75,7 +75,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 		writer.endObject();
 	}
 
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
         return "Create column " + _headerLabel + 
             " at index " + _columnInsertIndex + 
             " based on column " + _baseColumnName + 

@@ -47,14 +47,14 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription());
+        writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("columnName"); writer.value(_columnName);
         writer.key("keyColumnName"); writer.value(_keyColumnName);
         writer.key("separator"); writer.value(_separator);
         writer.endObject();
     }
     
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Join multi-valued cells in column " + _columnName;
 	}
 
@@ -121,7 +121,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
 		
 		return new HistoryEntry(
 		    project, 
-		    getBriefDescription(), 
+		    getBriefDescription(null), 
 		    this, 
 		    new MassRowChange(newRows)
 		);

@@ -46,14 +46,14 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("shareNewTopics"); writer.value(_shareNewTopics);
 		writer.endObject();
 	}
 	
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Mark to create new topics for cells in column " + _columnName +
 			(_shareNewTopics ? 
 				", one topic for each group of similar cells" : 

@@ -41,13 +41,13 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.endObject();
 	}
 
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Match each cell to its best recon candidate in column " + _columnName;
 	}
 

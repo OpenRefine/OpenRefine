@@ -1,20 +1,11 @@
 package com.metaweb.gridworks.operations;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -30,24 +21,19 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
-import com.metaweb.gridworks.model.ReconCandidate;
-import com.metaweb.gridworks.model.ReconConfig;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
+import com.metaweb.gridworks.model.recon.ReconConfig;
+import com.metaweb.gridworks.model.recon.ReconJob;
 import com.metaweb.gridworks.process.LongRunningProcess;
 import com.metaweb.gridworks.process.Process;
-import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class ReconOperation extends EngineDependentOperation {
 	private static final long serialVersionUID = 838795186905314865L;
 	
 	final protected String		_columnName;
-	final protected String 		_typeID;
-	final protected String 		_typeName;
-	final protected boolean     _autoMatch;
-	final protected double      _minScore;
+	final protected ReconConfig _reconConfig;
 	
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
@@ -55,39 +41,30 @@ public class ReconOperation extends EngineDependentOperation {
         return new ReconOperation(
             engineConfig, 
             obj.getString("columnName"),
-            obj.getString("typeID"),
-            obj.getString("typeName"),
-            obj.getBoolean("autoMatch"),
-            obj.getDouble("minScore")
+            ReconConfig.reconstruct(obj.getJSONObject("config"))
         );
     }
     
 	public ReconOperation(
         JSONObject engineConfig, 
         String columnName, 
-        String typeID, 
-        String typeName, 
-        boolean autoMatch, 
-        double minScore
+        ReconConfig reconConfig
     ) {
 		super(engineConfig);
 		_columnName = columnName;
-		_typeID = typeID;
-		_typeName = typeName;
-		_autoMatch = autoMatch;
-		_minScore = minScore;
+		_reconConfig = reconConfig;
 	}
 
 	public Process createProcess(Project project, Properties options) throws Exception {
 		return new ReconProcess(
 			project, 
 			getEngineConfig(),
-			getBriefDescription()
+			getBriefDescription(null)
 		);
 	}
 	
-	protected String getBriefDescription() {
-        return "Reconcile cells in column " + _columnName + " to type " + _typeID;
+	protected String getBriefDescription(Project project) {
+        return _reconConfig.getBriefDescription(project, _columnName);
 	}
 
 	public void write(JSONWriter writer, Properties options)
@@ -95,12 +72,9 @@ public class ReconOperation extends EngineDependentOperation {
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("columnName"); writer.value(_columnName);
-		writer.key("typeID"); writer.value(_typeID);
-		writer.key("typeName"); writer.value(_typeName);
-        writer.key("autoMatch"); writer.value(_autoMatch);
-        writer.key("minScore"); writer.value(_minScore);
+		writer.key("config"); _reconConfig.write(writer, options);
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.endObject();
 	}
@@ -112,6 +86,14 @@ public class ReconOperation extends EngineDependentOperation {
 		public ReconEntry(int rowIndex, Cell cell) {
 			this.rowIndex = rowIndex;
 			this.cell = cell;
+		}
+	}
+	static protected class JobGroup {
+		final public ReconJob job;
+		final public List<ReconEntry> entries = new ArrayList<ReconEntry>();
+		
+		public JobGroup(ReconJob job) {
+			this.job = job;
 		}
 	}
 	
@@ -169,31 +151,60 @@ public class ReconOperation extends EngineDependentOperation {
 				e2.printStackTrace();
 			}
 			
-			Map<String, List<ReconEntry>> valueToEntries = new HashMap<String, List<ReconEntry>>();
+			Map<Integer, JobGroup> jobKeyToGroup = new HashMap<Integer, JobGroup>();
 			
 			for (ReconEntry entry : _entries) {
-				Object value = entry.cell.value;
-				if (value != null && value instanceof String) {
-					List<ReconEntry> entries2;
-					if (valueToEntries.containsKey(value)) {
-						entries2 = valueToEntries.get(value);
-					} else {
-						entries2 = new LinkedList<ReconEntry>();
-						valueToEntries.put((String) value, entries2);
-					}
-					entries2.add(entry);
+				ReconJob job = _reconConfig.createJob(
+					_project, 
+					entry.rowIndex, 
+					_project.rows.get(entry.rowIndex), 
+					_columnName, 
+					entry.cell
+				);
+				
+				int key = job.getKey();
+				JobGroup group = jobKeyToGroup.get(key);
+				if (group == null) {
+					group = new JobGroup(job);
+					jobKeyToGroup.put(key, group);
 				}
+				group.entries.add(entry);
 			}
 			
 			List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
-			List<String> values = new ArrayList<String>(valueToEntries.keySet());
+			List<JobGroup> groups = new ArrayList<JobGroup>(jobKeyToGroup.values());
 			
-			final int batchSize = 10;
-			for (int i = 0; i < values.size(); i += batchSize) {
-				recon(valueToEntries, values, i, Math.min(i + batchSize, values.size()), cellChanges);
+			int batchSize = _reconConfig.getBatchSize();
+			for (int i = 0; i < groups.size(); i += batchSize) {
+				int to = Math.min(i + batchSize, groups.size());
 				
-				_progress = i * 100 / values.size();
+				List<ReconJob> jobs = new ArrayList<ReconJob>(to - i);
+				for (int j = i; j < to; j++) {
+					jobs.add(groups.get(j).job);
+				}
 				
+				List<Recon> recons = _reconConfig.batchRecon(jobs);
+				for (int j = i; j < to; j++) {
+					Recon recon = recons.get(j - i);
+					if (recon == null) {
+						recon = new Recon();
+					}
+					
+					for (ReconEntry entry : groups.get(j).entries) {
+						Cell oldCell = entry.cell;
+						Cell newCell = new Cell(oldCell.value, recon);
+						
+						CellChange cellChange = new CellChange(
+							entry.rowIndex, 
+							_cellIndex, 
+							oldCell, 
+							newCell
+						);
+						cellChanges.add(cellChange);
+					}
+				}
+				
+				_progress = i * 100 / groups.size();
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
@@ -206,7 +217,7 @@ public class ReconOperation extends EngineDependentOperation {
 			Change reconChange = new ReconChange(
 				cellChanges, 
 				_columnName, 
-				new ReconConfig(_typeID, _typeName),
+				_reconConfig,
 				null
 			);
 			
@@ -220,204 +231,5 @@ public class ReconOperation extends EngineDependentOperation {
 			_project.history.addEntry(historyEntry);
 			_project.processManager.onDoneProcess(this);
 		}
-		
-		protected void recon(
-			Map<String, List<ReconEntry>> valueToEntries, 
-			List<String> values, 
-			int from, 
-			int to,
-			List<CellChange> cellChanges
-		) {
-			try {
-				StringWriter stringWriter = new StringWriter();
-				JSONWriter jsonWriter = new JSONWriter(stringWriter);
-				
-				jsonWriter.object();
-				for (int i = 0; from + i < to; i++) {
-					jsonWriter.key("q" + i + ":search");
-					
-					jsonWriter.object();
-					
-					jsonWriter.key("query"); jsonWriter.value(values.get(from + i));
-					jsonWriter.key("limit"); jsonWriter.value(3);
-					jsonWriter.key("type"); jsonWriter.value(_typeID);
-					jsonWriter.key("type_strict"); jsonWriter.value("should");
-					//jsonWriter.key("indent"); jsonWriter.value(1);
-					jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
-					jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
-					
-					jsonWriter.endObject();
-				}
-				jsonWriter.endObject();
-				
-				StringBuffer sb = new StringBuffer();
-				sb.append("http://api.freebase.com/api/service/search?indent=1&queries=");
-				sb.append(ParsingUtilities.encode(stringWriter.toString()));
-				
-				URL url = new URL(sb.toString());
-				URLConnection connection = url.openConnection();
-				connection.setConnectTimeout(5000);
-				connection.connect();
-				
-				InputStream is = connection.getInputStream();
-				try {
-					String s = ParsingUtilities.inputStreamToString(is);
-					JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-					
-					for (int i = 0; from + i < to; i++) {
-						String value = values.get(from + i);
-						String key = "q" + i + ":search";
-						if (!o.has(key)) {
-							continue;
-						}
-						
-						Recon recon;
-						
-						JSONObject o2 = o.getJSONObject(key);
-						if (o2.has("result")) {
-							JSONArray results = o2.getJSONArray("result");
-							
-							recon = createRecon(value, results);
-						} else {
-							recon = new Recon();
-						}
-						
-						for (ReconEntry entry : valueToEntries.get(value)) {
-							Cell oldCell = entry.cell;
-							
-							Cell newCell = new Cell(oldCell.value, recon);
-							
-							CellChange cellChange = new CellChange(
-								entry.rowIndex, 
-								_cellIndex, 
-								oldCell, 
-								newCell
-							);
-							cellChanges.add(cellChange);
-						}
-						
-						valueToEntries.remove(value);
-					}
-				} finally {
-					is.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			for (List<ReconEntry> entries : valueToEntries.values()) {
-				Recon recon = new Recon();
-				
-				for (ReconEntry entry : entries) {
-					Cell oldCell = entry.cell;
-					Cell newCell = new Cell(oldCell.value, recon);
-					
-					CellChange cellChange = new CellChange(
-						entry.rowIndex, 
-						_cellIndex, 
-						oldCell, 
-						newCell
-					);
-					cellChanges.add(cellChange);
-				}
-			}
-			
-			System.gc();
-		}
-	
-		protected Recon createRecon(String text, JSONArray results) {
-			Recon recon = new Recon();
-			try {
-				int length = results.length();
-				int count = 0;
-				for (int i = 0; i < length && count < 3; i++) {
-					JSONObject result = results.getJSONObject(i);
-					if (!result.has("name")) {
-						continue;
-					}
-					
-					JSONArray types = result.getJSONArray("type");
-					String[] typeIDs = new String[types.length()];
-					for (int j = 0; j < typeIDs.length; j++) {
-						typeIDs[j] = types.getJSONObject(j).getString("id");
-					}
-					
-					double score = result.getDouble("relevance:score");
-					ReconCandidate candidate = new ReconCandidate(
-						result.getString("id"),
-						result.getString("guid"),
-						result.getString("name"),
-						typeIDs,
-						score
-					);
-					
-					// best match
-					if (i == 0) {
-						recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
-						recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
-						recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
-						
-						recon.setFeature(Recon.Feature_typeMatch, false);
-						for (String typeID : candidate.typeIDs) {
-							if (_typeID.equals(typeID)) {
-								recon.setFeature(Recon.Feature_typeMatch, true);
-		                        if (_autoMatch && score >= _minScore) {
-		                            recon.match = candidate;
-		                            recon.judgment = Judgment.Matched;
-		                        }
-								break;
-							}
-						}
-					}
-					
-					recon.addCandidate(candidate);
-					count++;
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			return recon;
-		}
-	}
-	
-	static protected double wordDistance(String s1, String s2) {
-		Set<String> words1 = breakWords(s1);
-		Set<String> words2 = breakWords(s2);
-		return words1.size() >= words2.size() ? wordDistance(words1, words2) : wordDistance(words2, words1);
-	}
-	
-	static protected double wordDistance(Set<String> longWords, Set<String> shortWords) {
-		double common = 0;
-		for (String word : shortWords) {
-			if (longWords.contains(word)) {
-				common++;
-			}
-		}
-		return common / longWords.size();
-	}
-	
-	static protected Set<String> s_stopWords;
-	static {
-		s_stopWords = new HashSet<String>();
-		s_stopWords.add("the");
-		s_stopWords.add("a");
-		s_stopWords.add("and");
-		s_stopWords.add("of");
-		s_stopWords.add("on");
-		s_stopWords.add("in");
-		s_stopWords.add("at");
-		s_stopWords.add("by");
-	}
-	
-	static protected Set<String> breakWords(String s) {
-		String[] words = s.toLowerCase().split("\\s+");
-		
-		Set<String> set = new HashSet<String>(words.length);
-		for (String word : words) {
-			if (!s_stopWords.contains(word)) {
-				set.add(word);
-			}
-		}
-		return set;
 	}
 }

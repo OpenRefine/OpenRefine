@@ -43,14 +43,14 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("expression"); writer.value(_expression);
 		writer.endObject();
 	}
 
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Text transform on cells in column " + _columnName + " using expression " + _expression;
 	}
 

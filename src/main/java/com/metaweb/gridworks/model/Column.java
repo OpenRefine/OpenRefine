@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
+import com.metaweb.gridworks.model.recon.ReconConfig;
 
 public class Column implements Serializable, Jsonizable {
 	private static final long serialVersionUID = -1063342490951563563L;

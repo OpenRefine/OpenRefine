@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.ReconConfig;
 import com.metaweb.gridworks.model.ReconStats;
+import com.metaweb.gridworks.model.recon.ReconConfig;
 
 public class ReconChange extends MassCellChange {
     private static final long serialVersionUID = 7048806528587330543L;

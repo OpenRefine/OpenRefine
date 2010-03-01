@@ -59,7 +59,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
        writer.endObject();
     }
 
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		return "Split multi-valued cells in column " + _columnName;
 	}
 
@@ -139,7 +139,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 		
 		return new HistoryEntry(
 		    project, 
-		    getBriefDescription(), 
+		    getBriefDescription(null), 
 		    this, 
 		    new MassRowChange(newRows)
 		);

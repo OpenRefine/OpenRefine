@@ -89,7 +89,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 		
 		writer.object();
 		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription());
+		writer.key("description"); writer.value(getBriefDescription(null));
 		writer.key("engineConfig"); writer.value(getEngineConfig());
 		writer.key("columnName"); writer.value(_columnName);
 		writer.key("similarValue"); writer.value(_similarValue);
@@ -102,7 +102,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 		writer.endObject();
 	}
 	
-	protected String getBriefDescription() {
+	protected String getBriefDescription(Project project) {
 		if (_judgment == Judgment.None) {
 			return "Discard recon judgments for cells containing \"" +
 				_similarValue + "\" in column " + _columnName;
