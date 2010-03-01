@@ -10,7 +10,7 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.expr.Parser;
+import com.metaweb.gridworks.gel.Parser;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;

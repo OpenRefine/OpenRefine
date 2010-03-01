@@ -5,9 +5,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.expr.Function;
 import com.metaweb.gridworks.expr.util.CalendarParser;
 import com.metaweb.gridworks.expr.util.CalendarParserException;
+import com.metaweb.gridworks.gel.Function;
 
 public class ToDate implements Function {
 

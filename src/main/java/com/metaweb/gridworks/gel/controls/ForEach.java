@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.expr.controls;
+package com.metaweb.gridworks.gel.controls;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,12 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.expr.Control;
-import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.expr.ast.VariableExpr;
+import com.metaweb.gridworks.gel.Control;
+import com.metaweb.gridworks.gel.ControlFunctionRegistry;
+import com.metaweb.gridworks.gel.ast.VariableExpr;
 
 public class ForEach implements Control {
     public String checkArguments(Evaluable[] args) {

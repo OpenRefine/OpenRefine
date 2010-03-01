@@ -8,9 +8,9 @@ import org.apache.commons.codec.language.Soundex;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.EvalError;
-import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.gel.ControlFunctionRegistry;
+import com.metaweb.gridworks.gel.Function;
 
 public class Phonetic implements Function {
 

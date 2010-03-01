@@ -5,9 +5,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.EvalError;
-import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.gel.ControlFunctionRegistry;
+import com.metaweb.gridworks.gel.Function;
 
 public class Replace implements Function {
 

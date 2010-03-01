@@ -10,7 +10,7 @@ import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.filters.ExpressionNumberComparisonRowFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
-import com.metaweb.gridworks.expr.Parser;
+import com.metaweb.gridworks.gel.Parser;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 

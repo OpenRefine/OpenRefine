@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.expr;
+package com.metaweb.gridworks.gel;
 
 import java.util.Properties;
 

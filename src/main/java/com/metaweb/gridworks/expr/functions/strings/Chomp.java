@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.gel.Function;
 
 public class Chomp implements Function {
 

@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.commands.Command;
-import com.metaweb.gridworks.expr.Control;
-import com.metaweb.gridworks.expr.ControlFunctionRegistry;
-import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.gel.Control;
+import com.metaweb.gridworks.gel.ControlFunctionRegistry;
+import com.metaweb.gridworks.gel.Function;
 
 public class GetExpressionLanguageInfoCommand extends Command {
 	

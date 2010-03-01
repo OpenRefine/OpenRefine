@@ -1,19 +1,10 @@
-package com.metaweb.gridworks.expr;
+package com.metaweb.gridworks.gel;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import com.metaweb.gridworks.expr.controls.ForEach;
-import com.metaweb.gridworks.expr.controls.ForNonBlank;
-import com.metaweb.gridworks.expr.controls.If;
-import com.metaweb.gridworks.expr.controls.IsBlank;
-import com.metaweb.gridworks.expr.controls.IsNonBlank;
-import com.metaweb.gridworks.expr.controls.IsNotNull;
-import com.metaweb.gridworks.expr.controls.IsNull;
-import com.metaweb.gridworks.expr.controls.IsNumeric;
-import com.metaweb.gridworks.expr.controls.With;
 import com.metaweb.gridworks.expr.functions.Get;
 import com.metaweb.gridworks.expr.functions.Length;
 import com.metaweb.gridworks.expr.functions.Slice;
@@ -61,6 +52,15 @@ import com.metaweb.gridworks.expr.functions.strings.Trim;
 import com.metaweb.gridworks.expr.functions.strings.Unescape;
 import com.metaweb.gridworks.expr.functions.strings.Unicode;
 import com.metaweb.gridworks.expr.functions.strings.UnicodeType;
+import com.metaweb.gridworks.gel.controls.ForEach;
+import com.metaweb.gridworks.gel.controls.ForNonBlank;
+import com.metaweb.gridworks.gel.controls.If;
+import com.metaweb.gridworks.gel.controls.IsBlank;
+import com.metaweb.gridworks.gel.controls.IsNonBlank;
+import com.metaweb.gridworks.gel.controls.IsNotNull;
+import com.metaweb.gridworks.gel.controls.IsNull;
+import com.metaweb.gridworks.gel.controls.IsNumeric;
+import com.metaweb.gridworks.gel.controls.With;
 
 public class ControlFunctionRegistry {
 

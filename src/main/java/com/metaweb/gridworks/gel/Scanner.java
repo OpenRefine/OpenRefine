@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.expr;
+package com.metaweb.gridworks.gel;
 
 public class Scanner {
 	static public enum TokenType {

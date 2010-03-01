@@ -1,10 +1,10 @@
-package com.metaweb.gridworks.expr.ast;
+package com.metaweb.gridworks.gel.ast;
 
 import java.util.Properties;
 
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.gel.Function;
 
 public class FunctionCallExpr implements Evaluable {
 	final protected Evaluable[] _args;

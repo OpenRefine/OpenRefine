@@ -10,7 +10,7 @@ import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.filters.ExpressionStringComparisonRowFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
-import com.metaweb.gridworks.expr.ast.VariableExpr;
+import com.metaweb.gridworks.gel.ast.VariableExpr;
 import com.metaweb.gridworks.model.Project;
 
 public class TextSearchFacet implements Facet {
