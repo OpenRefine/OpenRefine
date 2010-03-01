@@ -1,6 +1,9 @@
-package com.metaweb.gridworks.expr;
+package com.metaweb.gridworks.expr.ast;
 
 import java.util.Properties;
+
+import com.metaweb.gridworks.expr.Evaluable;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 
 public class OperatorCallExpr implements Evaluable {
 	final protected Evaluable[] _args;

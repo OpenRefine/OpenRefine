@@ -7,9 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.expr.CalendarParser;
-import com.metaweb.gridworks.expr.CalendarParserException;
 import com.metaweb.gridworks.expr.Function;
+import com.metaweb.gridworks.expr.util.CalendarParser;
+import com.metaweb.gridworks.expr.util.CalendarParserException;
 
 public class Diff implements Function {
 

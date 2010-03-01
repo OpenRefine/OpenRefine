@@ -9,7 +9,7 @@ import com.metaweb.gridworks.expr.Control;
 import com.metaweb.gridworks.expr.ControlFunctionRegistry;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.expr.VariableExpr;
+import com.metaweb.gridworks.expr.ast.VariableExpr;
 
 public class ForNonBlank implements Control {
     public String checkArguments(Evaluable[] args) {

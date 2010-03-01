@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.expr;
+package com.metaweb.gridworks.expr.util;
 
 // Taken from http://icecube.wisc.edu/~dglo/software/calparse/index.html
 // Copyright Dave Glowacki. Released under the BSD license.

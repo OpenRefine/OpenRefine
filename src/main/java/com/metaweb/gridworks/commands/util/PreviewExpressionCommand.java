@@ -17,7 +17,7 @@ import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.expr.Parser;
-import com.metaweb.gridworks.expr.Parser.ParserException;
+import com.metaweb.gridworks.expr.ParsingException;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
@@ -85,7 +85,7 @@ public class PreviewExpressionCommand extends Command {
 					}
 				}
 				writer.endArray();
-			} catch (ParserException e) {
+			} catch (ParsingException e) {
                 writer.key("code"); writer.value("error");
                 writer.key("type"); writer.value("parser");
                 writer.key("message"); writer.value(e.getMessage());

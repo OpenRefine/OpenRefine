@@ -1,8 +1,10 @@
-package com.metaweb.gridworks.expr;
+package com.metaweb.gridworks.expr.ast;
 
 import java.util.Properties;
 
 import org.json.JSONObject;
+
+import com.metaweb.gridworks.expr.Evaluable;
 
 public class LiteralExpr implements Evaluable {
 	final protected Object _value;

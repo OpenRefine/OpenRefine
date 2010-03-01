@@ -6,25 +6,23 @@ import java.util.List;
 import com.metaweb.gridworks.expr.Scanner.NumberToken;
 import com.metaweb.gridworks.expr.Scanner.Token;
 import com.metaweb.gridworks.expr.Scanner.TokenType;
+import com.metaweb.gridworks.expr.ast.ControlCallExpr;
+import com.metaweb.gridworks.expr.ast.FieldAccessorExpr;
+import com.metaweb.gridworks.expr.ast.FunctionCallExpr;
+import com.metaweb.gridworks.expr.ast.LiteralExpr;
+import com.metaweb.gridworks.expr.ast.OperatorCallExpr;
+import com.metaweb.gridworks.expr.ast.VariableExpr;
 
 public class Parser {
 	protected Scanner 	_scanner;
 	protected Token 	_token;
 	protected Evaluable _root;
 	
-	static public class ParserException extends Exception {
-        private static final long serialVersionUID = 155004505172098755L;
-
-        protected ParserException(String message) {
-	        super(message);
-	    }
-	}
-	
-	public Parser(String s) throws ParserException {
+	public Parser(String s) throws ParsingException {
 		this(s, 0, s.length());
 	}
 	
-	public Parser(String s, int from, int to) throws ParserException {
+	public Parser(String s, int from, int to) throws ParsingException {
 		_scanner = new Scanner(s, from, to);
 		_token = _scanner.next();
 		
@@ -39,13 +37,13 @@ public class Parser {
 		_token = _scanner.next();
 	}
 	
-	protected ParserException makeException(String desc) {
+	protected ParsingException makeException(String desc) {
 		int index = _token != null ? _token.start : _scanner.getIndex();
 		
-		return new ParserException("Parsing error at offset " + index + ": " + desc);
+		return new ParsingException("Parsing error at offset " + index + ": " + desc);
 	}
 	
-	protected Evaluable parseExpression() throws ParserException {
+	protected Evaluable parseExpression() throws ParsingException {
 		Evaluable sub = parseSubExpression();
 		
 		while (_token != null && 
@@ -64,7 +62,7 @@ public class Parser {
 		return sub;
 	}
 	
-	protected Evaluable parseSubExpression() throws ParserException {
+	protected Evaluable parseSubExpression() throws ParsingException {
 		Evaluable sub = parseTerm();
 		
 		while (_token != null && 
@@ -83,7 +81,7 @@ public class Parser {
 		return sub;
 	}
 	
-	protected Evaluable parseTerm() throws ParserException {
+	protected Evaluable parseTerm() throws ParsingException {
 		Evaluable factor = parseFactor();
 		
 		while (_token != null && 
@@ -102,7 +100,7 @@ public class Parser {
 		return factor;
 	}
 	
-	protected Evaluable parseFactor() throws ParserException {
+	protected Evaluable parseFactor() throws ParsingException {
 		if (_token == null) {
 			throw makeException("Expression ends too early");
 		}
@@ -207,7 +205,7 @@ public class Parser {
 		return eval;
 	}
 	
-	protected List<Evaluable> parseExpressionList(String closingDelimiter) throws ParserException {
+	protected List<Evaluable> parseExpressionList(String closingDelimiter) throws ParsingException {
 		List<Evaluable> l = new LinkedList<Evaluable>();
 		
 		if (_token != null && 
