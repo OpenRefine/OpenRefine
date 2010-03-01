@@ -14,7 +14,7 @@ import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.filters.ExpressionEqualRowFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
-import com.metaweb.gridworks.gel.Parser;
+import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.model.Project;
 
 public class ListFacet implements Facet {
@@ -74,7 +74,7 @@ public class ListFacet implements Facet {
 		_columnName = o.getString("columnName");
 		_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
 		
-		_eval = new Parser(_expression).getExpression();
+		_eval = MetaParser.parse(_expression);
 		_selection.clear();
 		
 		JSONArray a = o.getJSONArray("selection");

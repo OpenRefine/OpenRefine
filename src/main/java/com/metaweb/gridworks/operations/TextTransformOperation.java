@@ -10,7 +10,7 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.gel.Parser;
+import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
@@ -64,7 +64,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 	protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
 		Column column = project.columnModel.getColumnByName(_columnName);
 		
-		Evaluable eval = new Parser(_expression).getExpression();
+		Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
         
 		return new RowVisitor() {

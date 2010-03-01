@@ -10,7 +10,7 @@ import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.filters.ExpressionNumberComparisonRowFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
-import com.metaweb.gridworks.gel.Parser;
+import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 
@@ -80,7 +80,7 @@ public class RangeFacet implements Facet {
 		_columnName = o.getString("columnName");
 		_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
 		
-		_eval = new Parser(_expression).getExpression();
+		_eval = MetaParser.parse(_expression);
 		
 		_mode = o.getString("mode");
 		if ("min".equals(_mode)) {

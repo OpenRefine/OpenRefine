@@ -16,8 +16,8 @@ import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
+import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.expr.ParsingException;
-import com.metaweb.gridworks.gel.Parser;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
@@ -50,7 +50,7 @@ public class PreviewExpressionCommand extends Command {
 			writer.object();
 			
 			try {
-				Evaluable eval = new Parser(expression).getExpression();
+				Evaluable eval = MetaParser.parse(expression);
 				
 				writer.key("code"); writer.value("ok");
 				writer.key("results"); writer.array();

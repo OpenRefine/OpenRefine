@@ -13,7 +13,7 @@ import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.gel.Parser;
+import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
@@ -113,7 +113,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 	protected RowVisitor createRowVisitor(Project project, List<CellAtRow> cellsAtRows) throws Exception {
 		Column column = project.columnModel.getColumnByName(_baseColumnName);
 		
-		Evaluable eval = new Parser(_expression).getExpression();
+		Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
         
 		return new RowVisitor() {
