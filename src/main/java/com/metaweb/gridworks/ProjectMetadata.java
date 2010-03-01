@@ -14,6 +14,8 @@ public class ProjectMetadata implements Serializable, Jsonizable {
 	private final Date 	_created = new Date();
 	private String 		_name;
 	private String 		_password;
+	private String      _encoding;
+	private int         _encodingConfidence;
 	private Date 		_modified = new Date();
 	
 	public Date getCreated() {
@@ -28,6 +30,26 @@ public class ProjectMetadata implements Serializable, Jsonizable {
 		return _name;
 	}
 
+    public void setEncoding(String encoding) {
+        this._encoding = encoding;
+    }
+
+    public String getEncoding() {
+        return _encoding;
+    }
+
+    public void setEncodingConfidence(int confidence) {
+        this._encodingConfidence = confidence;
+    }
+    
+    public void setEncodingConfidence(String confidence) {
+        this.setEncodingConfidence(Integer.parseInt(confidence));
+    }
+
+    public int getEncodingConfidence() {
+        return _encodingConfidence;
+    }
+    
 	public void setPassword(String password) {
 		this._password = password;
 	}

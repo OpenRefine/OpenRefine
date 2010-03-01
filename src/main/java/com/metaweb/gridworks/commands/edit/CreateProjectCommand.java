@@ -49,6 +49,8 @@ public class CreateProjectCommand extends Command {
 			ProjectMetadata pm = new ProjectMetadata();
 			pm.setName(options.getProperty("project-name"));
 			pm.setPassword(options.getProperty("project-password"));
+            pm.setEncoding(options.getProperty("encoding"));
+            pm.setEncodingConfidence(options.getProperty("encoding_confidence"));
 			ProjectManager.singleton.registerProject(project, pm);
 
 			project.columnModel.update();
@@ -125,7 +127,10 @@ public class CreateProjectCommand extends Command {
 					
 					if (importer.takesReader()) {
                         CharsetDetector detector = new CharsetDetector();
+                        detector.setDeclaredEncoding("utf8"); // the content on the web is encoded in UTF-8 so assume that
                         CharsetMatch charsetMatch = detector.setText(enforceMarking(filePart.getInputStream())).detect();
+                        options.setProperty("encoding", charsetMatch.getName());
+                        options.setProperty("encoding_confidence", Integer.toString(charsetMatch.getConfidence()));
                         logger.info("Best encoding guess: " + charsetMatch.getName() + " [confidence: " + charsetMatch.getConfidence() + "]");
                         Reader reader = charsetMatch.getReader();
                         try {

@@ -8,8 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.expr.EvalError;
-import com.metaweb.gridworks.gel.ControlFunctionRegistry;
 import com.metaweb.gridworks.gel.Function;
 
 public class Fingerprint implements Function {
@@ -28,7 +26,7 @@ public class Fingerprint implements Function {
 			return StringUtils.join(frags," "); // rejoin them with a single space between them 
 			
 		}
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+        return null;
 	}
 	
 	public void write(JSONWriter writer, Properties options)

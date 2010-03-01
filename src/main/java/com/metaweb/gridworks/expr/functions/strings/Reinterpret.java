@@ -6,9 +6,12 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
+import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.gel.ControlFunctionRegistry;
 import com.metaweb.gridworks.gel.Function;
+import com.metaweb.gridworks.model.Project;
 
 public class Reinterpret implements Function {
 
@@ -18,13 +21,16 @@ public class Reinterpret implements Function {
             Object o2 = args[1];
             if (o1 != null && o2 != null && o2 instanceof String) {
                 String str = (o1 instanceof String) ? (String) o1 : o1.toString();
-                String decoder = (String) o2;
+                Project project = (Project) bindings.get("project");
+                ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
+                String decoder = (String) metadata.getEncoding();
+                String encoder = (String) o2;
                 String reinterpreted = null;
 
                 try {
-                    reinterpreted = new String(str.getBytes(decoder), "UTF8");
+                    reinterpreted = new String(str.getBytes(decoder), encoder);
                 } catch (UnsupportedEncodingException e) {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": encoding '" + decoder + "' is not available or recognized.");
+                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": encoding '" + encoder + "' is not available or recognized.");
                 }
                                 
                 return reinterpreted;
