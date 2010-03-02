@@ -203,7 +203,24 @@ ListFacet.prototype.render = function() {
                 self.render();
             }).appendTo(footerDiv);
         }
+        
+        $('<span>').html(" &bull; ").appendTo(footerDiv);
+        $('<a href="javascript:{}"></a>').addClass("action").text("edit").click(function() {
+            self._doEdit();
+        }).appendTo(footerDiv);
     }
+};
+
+ListFacet.prototype._doEdit = function() {
+    var entries = [];
+    for (var i = 0; i < this._data.choices.length; i++) {
+        var choice = this._data.choices[i];
+        entries.push({
+            v: choice.v,
+            c: choice.c
+        });
+    }
+    new FacetBasedEditDialog(this._config.columnName, entries);
 };
 
 ListFacet.prototype._select = function(choice, only) {

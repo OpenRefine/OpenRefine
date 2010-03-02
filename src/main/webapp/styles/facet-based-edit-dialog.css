@@ -1,0 +1,46 @@
+table.facet-based-edit-dialog-main-layout {
+    border-collapse: collapse;
+}
+table.facet-based-edit-dialog-main-layout > tbody > tr > td {
+    padding: 0px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+table.facet-based-edit-dialog-main-layout > tbody > tr > td:last-child {
+    padding-right: 0px;
+}
+table.facet-based-edit-dialog-main-layout > tbody > tr:last-child > td {
+    padding-bottom: 0px;
+}
+
+.facet-based-edit-dialog-table-container {
+    height: 450px;
+    overflow: auto;
+    border: 1px solid #aaa;
+}
+
+table.facet-based-edit-dialog-entry-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.facet-based-edit-dialog-entry-table > tbody > tr.header {
+    background: #ccc;
+    font-weight: bold;
+}
+
+table.facet-based-edit-dialog-entry-table > tbody > tr > td {
+    padding: 2px 5px;
+}
+
+table.facet-based-edit-dialog-entry-table > tbody > tr.odd > td {
+    background: #eee;
+}
+
+table.facet-based-edit-dialog-entry-table > tbody > tr.even > td {
+    background: white;
+}
+
+table.facet-based-edit-dialog-entry-table input {
+    border: none;
+}
