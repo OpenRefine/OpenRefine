@@ -47,7 +47,7 @@ public class ExpressionEqualRowFilter implements RowFilter {
 	        return _selectError;
 	    } else if (ExpressionUtils.isNonBlankData(v)) {
             for (Object match : _matches) {
-                if (match.equals(v)) {
+                if (testValue(v, match)) {
                     return true;
                 }
             }
@@ -55,5 +55,11 @@ public class ExpressionEqualRowFilter implements RowFilter {
 	    } else {
 	        return _selectBlank;
 	    }
+	}
+	
+	protected boolean testValue(Object v, Object match) {
+		return (v instanceof Number && match instanceof Number) ?
+				((Number) match).doubleValue() == ((Number) v).doubleValue() :
+				match.equals(v);
 	}
 }

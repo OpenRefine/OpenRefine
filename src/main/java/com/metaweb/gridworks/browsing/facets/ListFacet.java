@@ -116,8 +116,9 @@ public class ListFacet implements Facet {
 		_choices.addAll(grouper.choices.values());
 		
 		for (NominalFacetChoice choice : _selection) {
-			if (grouper.choices.containsKey(choice.decoratedValue.value)) {
-				grouper.choices.get(choice.decoratedValue.value).selected = true;
+			String valueString = choice.decoratedValue.value.toString();
+			if (grouper.choices.containsKey(valueString)) {
+				grouper.choices.get(valueString).selected = true;
 			} else {
 				choice.count = 0;
 				_choices.add(choice);

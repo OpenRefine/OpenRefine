@@ -47,15 +47,18 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
         if (ExpressionUtils.isError(value)) {
             errorCount++;
         } else if (ExpressionUtils.isNonBlankData(value)) {
-    		DecoratedValue dValue = new DecoratedValue(value, value.toString());
+			String valueString = value.toString();
+        	String label = value.toString();
+        	
+    		DecoratedValue dValue = new DecoratedValue(value, label);
     		
-    		if (choices.containsKey(value)) {
-    			choices.get(value).count++;
+    		if (choices.containsKey(valueString)) {
+    			choices.get(valueString).count++;
     		} else {
     			NominalFacetChoice choice = new NominalFacetChoice(dValue);
     			choice.count = 1;
     			
-    			choices.put(value, choice);
+    			choices.put(valueString, choice);
     		}
         } else {
             blankCount++;
