@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
@@ -77,9 +78,10 @@ public class HeuristicReconConfig extends ReconConfig {
     
     static protected class HeuristicReconJob extends ReconJob {
     	String text;
+    	String code;
     	
     	public int getKey() {
-    		return text.hashCode();
+    		return code.hashCode();
     	}
     }
 	
@@ -142,9 +144,42 @@ public class HeuristicReconConfig extends ReconConfig {
 			String columnName, Cell cell) {
 		
 		HeuristicReconJob job = new HeuristicReconJob();
-		
-		job.text = cell.value.toString();
-		
+		if ("relevance".equals(service)) {
+			job.code = job.text = cell.value.toString();
+		} else {
+			try {
+				StringWriter stringWriter = new StringWriter();
+				JSONWriter jsonWriter = new JSONWriter(stringWriter);
+				
+				jsonWriter.object();
+					jsonWriter.key("/type/object/name"); jsonWriter.value(cell.value.toString());
+					jsonWriter.key("/type/object/type"); jsonWriter.value(typeID);
+					
+					for (ColumnDetail c : columnDetails) {
+						int cellIndex = project.columnModel.getColumnByName(c.columnName).getCellIndex();
+						
+						Cell cell2 = row.getCell(cellIndex);
+						if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
+							jsonWriter.key(c.property.id);
+							
+							if (cell2.recon != null && cell2.recon.match != null) {
+								jsonWriter.object();
+								jsonWriter.key("id"); jsonWriter.value(cell2.recon.match.topicID);
+								jsonWriter.key("name"); jsonWriter.value(cell2.recon.match.topicName);
+								jsonWriter.endObject();
+							} else {
+								jsonWriter.value(cell2.value.toString());
+							}
+						}
+					}
+				jsonWriter.endObject();
+				
+				job.text = cell.value.toString();
+				job.code = stringWriter.toString();
+			} catch (JSONException e) {
+				//
+			}
+		}
 		return job;
 	}
 	
@@ -283,71 +318,41 @@ public class HeuristicReconConfig extends ReconConfig {
 		return recon;
 	}
 	
+	static final String s_reconService = "http://data.labs.freebase.com/recon/query";
+	
 	protected List<Recon> batchReconUsingReconService(List<ReconJob> jobs) {
 		List<Recon> recons = new ArrayList<Recon>(jobs.size());
 		
-		try {
-			StringWriter stringWriter = new StringWriter();
-			JSONWriter jsonWriter = new JSONWriter(stringWriter);
-			
-			jsonWriter.object();
-			for (int i = 0; i < jobs.size(); i++) {
-				HeuristicReconJob job = (HeuristicReconJob) jobs.get(i);
-				
-				jsonWriter.key("q" + i + ":search");
-				
-				jsonWriter.object();
-					jsonWriter.key("query"); jsonWriter.value(job.text);
-					jsonWriter.key("limit"); jsonWriter.value(3);
-					jsonWriter.key("type"); jsonWriter.value(typeID);
-					jsonWriter.key("type_strict"); jsonWriter.value("should");
-					jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
-					jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
-				jsonWriter.endObject();
-			}
-			jsonWriter.endObject();
-			
-			StringBuffer sb = new StringBuffer();
-			sb.append("http://api.freebase.com/api/service/search?indent=1&queries=");
-			sb.append(ParsingUtilities.encode(stringWriter.toString()));
-			
-			URL url = new URL(sb.toString());
-			URLConnection connection = url.openConnection();
-			connection.setConnectTimeout(5000);
-			connection.connect();
-			
-			InputStream is = connection.getInputStream();
+		for (int i = 0; i < jobs.size(); i++) {
+			HeuristicReconJob job = (HeuristicReconJob) jobs.get(i);
+			Recon recon = null;
 			try {
-				String s = ParsingUtilities.inputStreamToString(is);
-				JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+				StringBuffer sb = new StringBuffer();
+				sb.append(s_reconService + "?limit=5&q=");
+				sb.append(ParsingUtilities.encode(job.code));
 				
-				for (int i = 0; i < jobs.size(); i++) {
-					HeuristicReconJob job = (HeuristicReconJob) jobs.get(i);
-					
-					String text = job.text;
-					String key = "q" + i + ":search";
-					if (!o.has(key)) {
-						continue;
-					}
-					
-					Recon recon = null;
-					
-					JSONObject o2 = o.getJSONObject(key);
-					if (o2.has("result")) {
-						JSONArray results = o2.getJSONArray("result");
-						
-						recon = createReconFromRelevanceResults(text, results);
-					} else {
-						recon = new Recon();
-					}
-					
-					recons.add(recon);
+				URL url = new URL(sb.toString());
+				URLConnection connection = url.openConnection();
+				connection.setConnectTimeout(5000);
+				connection.connect();
+				
+				InputStream is = connection.getInputStream();
+				try {
+					String s = ParsingUtilities.inputStreamToString(is);
+					JSONArray a = ParsingUtilities.evaluateJsonStringToArray(s);
+				
+					recon = createReconFromReconResults(job.text, a);
+				} finally {
+					is.close();
 				}
-			} finally {
-				is.close();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			if (recon == null) {
+				recon = new Recon();
+			}
+			recons.add(recon);
 		}
 		
 		System.gc();
@@ -355,6 +360,64 @@ public class HeuristicReconConfig extends ReconConfig {
 		return recons;
 	}
 
+	protected Recon createReconFromReconResults(String text, JSONArray results) {
+		Recon recon = new Recon();
+		try {
+			int length = results.length();
+			int count = 0;
+			for (int i = 0; i < length && count < 3; i++) {
+				JSONObject result = results.getJSONObject(i);
+				if (!result.has("name")) {
+					continue;
+				}
+				
+				String id = result.getString("id");
+				JSONArray names = result.getJSONArray("name");
+				double score = result.getDouble("score");
+				
+				JSONArray types = result.getJSONArray("type");
+				String[] typeIDs = new String[types.length()];
+				for (int j = 0; j < typeIDs.length; j++) {
+					typeIDs[j] = types.getString(j);
+				}
+				
+				ReconCandidate candidate = new ReconCandidate(
+					id,
+					"#" + id.substring(6),
+					names.getString(0),
+					typeIDs,
+					score
+				);
+				
+				// best match
+				if (i == 0) {
+					recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
+					recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
+					recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
+					
+					recon.setFeature(Recon.Feature_typeMatch, false);
+					for (String typeID : candidate.typeIDs) {
+						if (typeID.equals(typeID)) {
+							recon.setFeature(Recon.Feature_typeMatch, true);
+	                        if (autoMatch && 
+	                        	(score > 0.6 ||
+	                        		(result.has("match") && result.getBoolean("match")))) {
+	                            recon.match = candidate;
+	                            recon.judgment = Judgment.Matched;
+	                        }
+							break;
+						}
+					}
+				}
+				
+				recon.addCandidate(candidate);
+				count++;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return recon;
+	}
 	
 	static protected double wordDistance(String s1, String s2) {
 		Set<String> words1 = breakWords(s1);

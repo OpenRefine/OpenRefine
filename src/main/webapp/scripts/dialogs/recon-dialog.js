@@ -61,7 +61,7 @@ ReconDialog.prototype._createDialog = function() {
                     '</tr>' +
                     '<tr>' +
                         '<td>' +
-                            '<input type="checkbox" checked bind="heuristicAutomatchCheck" /> Auto-match correctly-typed candidates scoring' +
+                            '<input type="checkbox" checked bind="heuristicAutomatchCheck" /> Auto-match candidates with high confidence' +
                         '</td>' +
                         '<td>' +
                             'Use ' +
@@ -158,7 +158,8 @@ ReconDialog.prototype._populateDialog = function() {
         var td1 = tr.insertCell(1);
         
         $(td0).html(column.headerLabel);
-        $('<input size="15" />')
+        $('<input size="15" name="recon-dialog-heuristic-property" />')
+            .attr("columnName", column.headerLabel)
             .appendTo(td1)
             .suggest({ type: '/type/property' });
     }
@@ -209,6 +210,21 @@ ReconDialog.prototype._onDoHeuristic = function() {
     if (type == null)  {
         alert("Please specify a type.");
     } else {
+        var columnDetails = [];
+        var propertyInputs = $('input[name="recon-dialog-heuristic-property"]');
+        $.each(propertyInputs, function() {
+            var property = $(this).data("data.suggest");
+            if (property != null) {
+                columnDetails.push({
+                    column: this.getAttribute("columnName"),
+                    property: {
+                        id: property.id,
+                        name: property.name
+                    }
+                });
+            }
+        });
+        
         Gridworks.postProcess(
             "reconcile",
             {},
@@ -221,7 +237,8 @@ ReconDialog.prototype._onDoHeuristic = function() {
                         id: type.id, 
                         name: type.name
                     },
-                    autoMatch: this._elmts.heuristicAutomatchCheck[0].checked
+                    autoMatch: this._elmts.heuristicAutomatchCheck[0].checked,
+                    columnDetails: columnDetails
                 })
             },
             { cellsChanged: true, columnStatsChanged: true }
