@@ -18,6 +18,8 @@ abstract public class ReconConfig implements Serializable, Jsonizable {
         String mode = obj.getString("mode");
         if ("heuristic".equals(mode)) {
         	return HeuristicReconConfig.reconstruct(obj);
+        } else if ("strict".equals(mode)) {
+        	return StrictReconConfig.reconstruct(obj);
         }
         return null;
     }
