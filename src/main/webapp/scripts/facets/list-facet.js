@@ -220,7 +220,7 @@ ListFacet.prototype._doEdit = function() {
             c: choice.c
         });
     }
-    new FacetBasedEditDialog(this._config.columnName, entries);
+    new FacetBasedEditDialog(this._config.columnName, this._config.expression, entries);
 };
 
 ListFacet.prototype._select = function(choice, only) {

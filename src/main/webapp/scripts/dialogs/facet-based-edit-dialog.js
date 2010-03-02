@@ -1,5 +1,6 @@
-function FacetBasedEditDialog(columnName, entries) {
+function FacetBasedEditDialog(columnName, expression, entries) {
     this._columnName = columnName;
+    this._expression = expression;
     this._entries = entries;
     
     this._createDialog();
@@ -84,13 +85,6 @@ FacetBasedEditDialog.prototype._renderTable = function() {
     }
 };
 
-FacetBasedEditDialog.prototype._onOK = function() {
-};
-
-FacetBasedEditDialog.prototype._dismiss = function() {
-    DialogSystem.dismissUntil(this._level - 1);
-};
-
 FacetBasedEditDialog.prototype._cluster = function() {
     var clusters = [];
     var map = {};
@@ -113,10 +107,13 @@ FacetBasedEditDialog.prototype._cluster = function() {
     });
     
     $.each(clusters, function() {
-        this.choices.sort(function(a, b) {
-            var c = b.c - a.c;
-            return c != 0 ? c : a.v.l.localeCompare(b.v.l);
-        });
+        if (this.choices.length > 1) {
+            this.choices.sort(function(a, b) {
+                var c = b.c - a.c;
+                return c != 0 ? c : a.v.l.localeCompare(b.v.l);
+            });
+            this.edit = true;
+        }
         this.value = this.choices[0].v.l;
     });
     clusters.sort(function(a, b) {
@@ -145,3 +142,43 @@ FacetBasedEditDialog.prototype._uncluster = function() {
     this._clusters = clusters;
     this._renderTable();
 };
+
+FacetBasedEditDialog.prototype._onOK = function() {
+    var edits = [];
+    for (var i = 0; i < this._clusters.length; i++) {
+        var cluster = this._clusters[i];
+        if (cluster.edit) {
+            var values = [];
+            for (var j = 0; j < cluster.choices.length; j++) {
+                values.push(cluster.choices[j].v.v);
+            }
+            
+            edits.push({
+                from: values,
+                to: cluster.value
+            });
+        }
+    }
+    
+    if (edits.length > 0) {
+        Gridworks.postProcess(
+            "facet-based-edit",
+            {},
+            {
+                columnName: this._columnName,
+                expression: this._expression,
+                edits: JSON.stringify(edits)
+            },
+            { cellsChanged: true }
+        );
+        
+        this._dismiss();
+    } else {
+        alert("You must check some Edit? checkboxes for your edits to be applied.");
+    }
+};
+
+FacetBasedEditDialog.prototype._dismiss = function() {
+    DialogSystem.dismissUntil(this._level - 1);
+};
+
