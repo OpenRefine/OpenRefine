@@ -107,6 +107,8 @@ ReconDialog.prototype._createDialog = function() {
     
     $("#recon-dialog-tabs").tabs();
     $("#recon-dialog-tabs-strict").css("display", "");
+    
+    this._wireEvents();
 };
 
 ReconDialog.prototype._populateDialog = function() {
@@ -122,13 +124,16 @@ ReconDialog.prototype._populateDialog = function() {
         var td1 = tr.insertCell(1);
         
         td0.width = "1%";
-        var checkbox = $('<input type="radio" name="recon-dialog-type-choice">')
+        var radio = $('<input type="radio" name="recon-dialog-type-choice">')
             .attr("value", type.id)
             .attr("typeName", type.name)
-            .appendTo(td0);
+            .appendTo(td0)
+            .click(function() {
+                self._rewirePropertySuggests(this.value);
+            });
             
         if (check) {
-            checkbox.attr("checked", "true");
+            radio.attr("checked", "true");
         }
             
         $(td1).html(type.name + '<br/><span class="recon-dialog-type-id">' + type.id + '</span>');
@@ -136,12 +141,6 @@ ReconDialog.prototype._populateDialog = function() {
     for (var i = 0; i < this._types.length; i++) {
         createTypeChoice(this._types[i], i == 0);
     }
-    
-    this._elmts.heuristicTypeInput
-        .suggest({ type : '/type/type' })
-        .bind("fb-select", function(e, data) {
-            $('input[name="recon-dialog-type-choice"][value=""]').attr("checked", "true");
-        });
     
     /*
      *  Populate properties in heuristic tab
@@ -160,8 +159,7 @@ ReconDialog.prototype._populateDialog = function() {
         $(td0).html(column.headerLabel);
         $('<input size="15" name="recon-dialog-heuristic-property" />')
             .attr("columnName", column.headerLabel)
-            .appendTo(td1)
-            .suggest({ type: '/type/property' });
+            .appendTo(td1);
     }
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
@@ -170,16 +168,33 @@ ReconDialog.prototype._populateDialog = function() {
             renderDetailColumn(column);
         }
     }
+};
+
+ReconDialog.prototype._wireEvents = function() {
+    this._elmts.heuristicTypeInput
+        .suggest({ type : '/type/type' })
+        .bind("fb-select", function(e, data) {
+            $('input[name="recon-dialog-type-choice"][value=""]').attr("checked", "true");
+            
+            self._rewirePropertySuggests(data.id);
+        });
     
-    /*
-     *  Populate strict tab
-     */
-     
+    this._rewirePropertySuggests(this._types[0].id);
+    
     this._elmts.strictNamespaceInput
         .suggest({ type: '/type/namespace' })
         .bind("fb-select", function(e, data) {
             $('input[name="recon-dialog-strict-choice"][value="key"]').attr("checked", "true");
             $('input[name="recon-dialog-strict-namespace-choice"][value="other"]').attr("checked", "true");
+        });
+};
+
+ReconDialog.prototype._rewirePropertySuggests = function(schema) {
+    var inputs = $('input[name="recon-dialog-heuristic-property"]');
+    
+    inputs.suggestP({
+            type: '/type/property',
+            schema: schema || "/common/topic"
         });
 };
 

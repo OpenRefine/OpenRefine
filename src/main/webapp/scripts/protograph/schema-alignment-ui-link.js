@@ -318,7 +318,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
         }
         */
     }
-    input.suggest(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });
+    input.suggestP(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });
     
     input[0].focus();
 };
