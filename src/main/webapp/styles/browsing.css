@@ -1,15 +1,37 @@
 .browsing-panel {
 }
-
-.facet-container {
+.browsing-panel-indicator {
     clear: both;
+    display: none;
+    margin: 1em;
+    text-align: center;
+}
+.browsing-panel-controls {
+    clear: both;
+    display: none;
+    margin: 1em;
+    text-align: center;
+}
+
+ul.facets-container {
+    margin: 0;
+    padding: 0;
+}
+
+li.facet-container {
+    display: block;
+    clear: both;
+    margin: 0;
+    padding: 0;
     margin-top: 1em;
+    background: white;
 }
 
 .facet-title {
     padding: 5px;
     background: #eee;
     font-weight: bold;
+    cursor: move;
 }
 .facet-body {
     border: 1px solid #ccc;
