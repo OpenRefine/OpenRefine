@@ -21,34 +21,23 @@ import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
-import com.metaweb.gridworks.protograph.FreebaseTopic;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class KeyBasedReconConfig extends StrictReconConfig {
-	private static final long serialVersionUID = 2363754609522023900L;
-	
-	final public FreebaseTopic namespace;
-	
-    static public ReconConfig reconstruct(JSONObject obj) throws Exception {
-		JSONObject ns = obj.getJSONObject("namespace");
-		
-    	return new KeyBasedReconConfig(
-    		new FreebaseTopic(
-    			ns.getString("id"),
-    			ns.getString("name")
-    		)
-        );
+public class IdBasedReconConfig extends StrictReconConfig {
+	private static final long serialVersionUID = 1857895989346775294L;
+
+	static public ReconConfig reconstruct(JSONObject obj) throws Exception {
+    	return new IdBasedReconConfig();
     }
     
-    public KeyBasedReconConfig(FreebaseTopic namespace) {
-		this.namespace = namespace;
+    public IdBasedReconConfig() {
 	}
 
-    static protected class KeyBasedReconJob extends ReconJob {
-    	String key;
+    static protected class IdBasedReconJob extends ReconJob {
+    	String id;
     	
     	public int getKey() {
-    		return key.hashCode();
+    		return id.hashCode();
     	}
     }
 
@@ -56,9 +45,20 @@ public class KeyBasedReconConfig extends StrictReconConfig {
 	public ReconJob createJob(Project project, int rowIndex, Row row,
 			String columnName, Cell cell) {
 		
-		KeyBasedReconJob job = new KeyBasedReconJob();
+		IdBasedReconJob job = new IdBasedReconJob();
+		String s = cell.value.toString();
 		
-		job.key = cell.value.toString().replace(' ', '_');
+		if (!s.startsWith("/")) {
+			if (s.startsWith("92")) {
+				s = "/guid/" + s;
+			} else if (!s.contains("/")){
+				s = "/en/" + s;
+			} else {
+				s = "/" + s;
+			}
+		}
+		
+		job.id = s;
 		
 		return job;
 	}
@@ -70,7 +70,7 @@ public class KeyBasedReconConfig extends StrictReconConfig {
 
 	@Override
 	public String getBriefDescription(Project project, String columnName) {
-        return "Reconcile cells in column " + columnName + " to topics with keys in namespace " + namespace.id;
+        return "Reconcile cells in column " + columnName + " as Freebase IDs";
 	}
 
 	public void write(JSONWriter writer, Properties options)
@@ -78,15 +78,14 @@ public class KeyBasedReconConfig extends StrictReconConfig {
 		
         writer.object();
         writer.key("mode"); writer.value("strict");
-        writer.key("match"); writer.value("key"); 
-        writer.key("namespace"); namespace.write(writer, options); 
+        writer.key("match"); writer.value("id"); 
         writer.endObject();
     }
 	
 	@Override
 	public List<Recon> batchRecon(List<ReconJob> jobs) {
 		List<Recon> recons = new ArrayList<Recon>(jobs.size());
-		Map<String, Recon> keyToRecon = new HashMap<String, Recon>();
+		Map<String, Recon> idToRecon = new HashMap<String, Recon>();
 		
 		try {
 			String query = null;
@@ -104,24 +103,11 @@ public class KeyBasedReconConfig extends StrictReconConfig {
 						jsonWriter.key("guid"); jsonWriter.value(null);
 						jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
 						
-						jsonWriter.key("key");
+						jsonWriter.key("id|=");
 							jsonWriter.array();
-							jsonWriter.object();
-							
-							jsonWriter.key("namespace");
-								jsonWriter.object();
-								jsonWriter.key("id"); jsonWriter.value(namespace.id);
-								jsonWriter.endObject();
-								
-							jsonWriter.key("value"); jsonWriter.value(null);
-							jsonWriter.key("value|=");
-								jsonWriter.array();
-								for (ReconJob job : jobs) {
-									jsonWriter.value(((KeyBasedReconJob) job).key);
-								}
-								jsonWriter.endArray();
-								
-							jsonWriter.endObject();
+							for (ReconJob job : jobs) {
+								jsonWriter.value(((IdBasedReconJob) job).id);
+							}
 							jsonWriter.endArray();
 						
 					jsonWriter.endObject();
@@ -150,7 +136,7 @@ public class KeyBasedReconConfig extends StrictReconConfig {
 				for (int i = 0; i < count; i++) {
 					JSONObject result = results.getJSONObject(i);
 					
-					String key = result.getJSONArray("key").getJSONObject(0).getString("value");
+					String id = result.getString("id");
 					
 					JSONArray types = result.getJSONArray("type");
 					String[] typeIDs = new String[types.length()];
@@ -159,7 +145,7 @@ public class KeyBasedReconConfig extends StrictReconConfig {
 					}
 					
 					ReconCandidate candidate = new ReconCandidate(
-						result.getString("id"),
+						id,
 						result.getString("guid"),
 						result.getString("name"),
 						typeIDs,
@@ -171,7 +157,7 @@ public class KeyBasedReconConfig extends StrictReconConfig {
 					recon.match = candidate;
 					recon.judgment = Judgment.Matched;
 					
-					keyToRecon.put(key, recon);
+					idToRecon.put(id, recon);
 				}
 			} finally {
 				is.close();
@@ -181,8 +167,8 @@ public class KeyBasedReconConfig extends StrictReconConfig {
 		}
 		
 		for (int i = 0; i < jobs.size(); i++) {
-			String key = ((KeyBasedReconJob) jobs.get(i)).key;
-			Recon recon = keyToRecon.get(key);
+			String id = ((IdBasedReconJob) jobs.get(i)).id;
+			Recon recon = idToRecon.get(id);
 			recons.add(recon);
 		}
 		

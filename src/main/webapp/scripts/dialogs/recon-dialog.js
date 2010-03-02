@@ -82,7 +82,7 @@ ReconDialog.prototype._createDialog = function() {
                             '<table class="recon-dialog-inner-layout">' +
                                 '<tr><td colspan="2">a Freebase key in</td></tr>' +
                                 '<tr>' +
-                                    '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="wikipedia-en" checked /></td>' +
+                                    '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="/wikipedia/en" nsName="Wikipedia EN" checked /></td>' +
                                     '<td>the Wikipedia English namespace</td>' +
                                 '</tr>' +
                                 '<tr>' +
@@ -246,4 +246,65 @@ ReconDialog.prototype._onDoHeuristic = function() {
         
         this._dismiss();
     }
+};
+
+ReconDialog.prototype._onDoStrict = function() {
+    var bodyParams;
+    
+    var match = $('input[name="recon-dialog-strict-choice"]:checked')[0].value;
+    if (match == "key") {
+        var namespaceChoice = $('input[name="recon-dialog-strict-namespace-choice"]:checked')[0];
+        var namespace;
+        
+        if (namespaceChoice.value == "other") {
+            var suggest = this._elmts.strictNamespaceInput.data("data.suggest");
+            if (suggest == null) {
+                alert("Please specify a namespace.");
+                return;
+            }
+            namespace = {
+                id: suggest.id,
+                name: suggest.name
+            };
+        } else {
+            namespace = {
+                id: namespaceChoice.value,
+                name: namespaceChoice.getAttribute("nsName")
+            };
+        }
+    
+        bodyParams = {
+            columnName: this._column.headerLabel,
+            config: JSON.stringify({
+                mode: "strict",
+                match: "key",
+                namespace: namespace
+            })
+        };
+    } else if (match == "id") {
+        bodyParams = {
+            columnName: this._column.headerLabel,
+            config: JSON.stringify({
+                mode: "strict",
+                match: "id"
+            })
+        };
+    } else if (match == "guid") {
+        bodyParams = {
+            columnName: this._column.headerLabel,
+            config: JSON.stringify({
+                mode: "strict",
+                match: "guid"
+            })
+        };
+    }
+    
+    Gridworks.postProcess(
+        "reconcile",
+        {},
+        bodyParams,
+        { cellsChanged: true, columnStatsChanged: true }
+    );
+    
+    this._dismiss();
 };

@@ -434,37 +434,42 @@ DataTableColumnHeaderUI.prototype._doReconcile = function() {
                 data.types = data.types.slice(0, 20);
                 
                 var ids = $.map(data.types, function(elmt) { return elmt.id; });
-                var query = [{
-                    "id|=" : ids,
-                    "id" : null,
-                    "/freebase/type_profile/kind" : []
-                }];
-                $.getJSON(
-                    "http://api.freebase.com/api/service/mqlread?" + $.param({ "query" : JSON.stringify({ "query" : query }) }) + "&callback=?",
-                    null,
-                    function(o) {
-                        dismissBusy();
-                        
-                        var kindMap = {};
-                        $.each(o.result, function() {
-                            var m = kindMap[this.id] = {};
-                            $.each(this["/freebase/type_profile/kind"], function() {
-                                m[this] = true;
+                if (ids.length == 0) {
+                    dismissBusy();
+                    new ReconDialog(self._column, []);
+                } else {
+                    var query = [{
+                        "id|=" : ids,
+                        "id" : null,
+                        "/freebase/type_profile/kind" : []
+                    }];
+                    $.getJSON(
+                        "http://api.freebase.com/api/service/mqlread?" + $.param({ "query" : JSON.stringify({ "query" : query }) }) + "&callback=?",
+                        null,
+                        function(o) {
+                            dismissBusy();
+                            
+                            var kindMap = {};
+                            $.each(o.result, function() {
+                                var m = kindMap[this.id] = {};
+                                $.each(this["/freebase/type_profile/kind"], function() {
+                                    m[this] = true;
+                                });
                             });
-                        });
-                        
-                        new ReconDialog(self._column, $.map(data.types, function(type) {
-                            if (type.id in kindMap) {
-                                var m = kindMap[type.id];
-                                if (!("Role" in m) && !("Annotation" in m)) {
-                                    return type;
+                            
+                            new ReconDialog(self._column, $.map(data.types, function(type) {
+                                if (type.id in kindMap) {
+                                    var m = kindMap[type.id];
+                                    if (!("Role" in m) && !("Annotation" in m)) {
+                                        return type;
+                                    }
                                 }
-                            }
-                            return null;
-                        }));
-                    },
-                    "jsonp"
-                );
+                                return null;
+                            }));
+                        },
+                        "jsonp"
+                    );
+                }
             }
         },
         "json"
