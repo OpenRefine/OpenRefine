@@ -23,11 +23,11 @@ public class SaveProtographOperation extends AbstractOperation {
         );
     }
     
-	public SaveProtographOperation(
-		Protograph protograph
-	) {
-		_protograph = protograph;
-	}
+    public SaveProtographOperation(
+        Protograph protograph
+    ) {
+        _protograph = protograph;
+    }
 
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
@@ -39,40 +39,40 @@ public class SaveProtographOperation extends AbstractOperation {
         writer.endObject();
     }
 
-	protected String getBriefDescription(Project project) {
-		return "Save schema skeleton";
-	}
+    protected String getBriefDescription(Project project) {
+        return "Save schema skeleton";
+    }
 
-	@Override
-	protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    @Override
+    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
         String description = "Save schema-alignment protograph";
         
-		Change change = new ProtographChange(_protograph);
-		
-		return new HistoryEntry(project, description, SaveProtographOperation.this, change);
-	}
+        Change change = new ProtographChange(_protograph);
+        
+        return new HistoryEntry(project, description, SaveProtographOperation.this, change);
+    }
 
-	static public class ProtographChange implements Change {
-		private static final long serialVersionUID = -564820111174473901L;
-		
-		final protected Protograph 	_newProtograph;
-	    protected Protograph		_oldProtograph;
-	    
-	    public ProtographChange(Protograph protograph) {
-	        _newProtograph = protograph;
-	    }
-	    
-	    public void apply(Project project) {
-	        synchronized (project) {
-	        	_oldProtograph = project.protograph;
-	        	project.protograph = _newProtograph;
-	        }
-	    }
+    static public class ProtographChange implements Change {
+        private static final long serialVersionUID = -564820111174473901L;
+        
+        final protected Protograph     _newProtograph;
+        protected Protograph        _oldProtograph;
+        
+        public ProtographChange(Protograph protograph) {
+            _newProtograph = protograph;
+        }
+        
+        public void apply(Project project) {
+            synchronized (project) {
+                _oldProtograph = project.protograph;
+                project.protograph = _newProtograph;
+            }
+        }
 
-	    public void revert(Project project) {
-	        synchronized (project) {
-	        	project.protograph = _oldProtograph;
-	        }
-	    }
-	} 
+        public void revert(Project project) {
+            synchronized (project) {
+                project.protograph = _oldProtograph;
+            }
+        }
+    } 
 }

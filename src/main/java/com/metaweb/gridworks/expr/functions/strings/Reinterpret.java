@@ -15,7 +15,7 @@ import com.metaweb.gridworks.model.Project;
 
 public class Reinterpret implements Function {
 
-	public Object call(Properties bindings, Object[] args) {
+    public Object call(Properties bindings, Object[] args) {
         if (args.length == 2) {
             Object o1 = args[0];
             Object o2 = args[1];
@@ -37,15 +37,15 @@ public class Reinterpret implements Function {
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 arguments");
-	}
-	
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
-	
-		writer.object();
-		writer.key("description"); writer.value("Returns s reinterpreted thru the given encoder.");
-		writer.key("params"); writer.value("string s, string encoder");
-		writer.key("returns"); writer.value("string");
-		writer.endObject();
-	}
+    }
+    
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value("Returns s reinterpreted thru the given encoder.");
+        writer.key("params"); writer.value("string s, string encoder");
+        writer.key("returns"); writer.value("string");
+        writer.endObject();
+    }
 }

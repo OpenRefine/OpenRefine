@@ -11,21 +11,21 @@ import com.metaweb.gridworks.gel.Function;
 
 public class ToLowercase implements Function {
 
-	public Object call(Properties bindings, Object[] args) {
-		if (args.length == 1 && args[0] != null) {
-			Object o = args[0];
-			return (o instanceof String ? (String) o : o.toString()).toLowerCase();
-		}
+    public Object call(Properties bindings, Object[] args) {
+        if (args.length == 1 && args[0] != null) {
+            Object o = args[0];
+            return (o instanceof String ? (String) o : o.toString()).toLowerCase();
+        }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
-	}
-	
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
-	
-		writer.object();
-		writer.key("description"); writer.value("Returns s converted to lowercase");
-		writer.key("params"); writer.value("string s");
-		writer.key("returns"); writer.value("string");
-		writer.endObject();
-	}
+    }
+    
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value("Returns s converted to lowercase");
+        writer.key("params"); writer.value("string s");
+        writer.key("returns"); writer.value("string");
+        writer.endObject();
+    }
 }

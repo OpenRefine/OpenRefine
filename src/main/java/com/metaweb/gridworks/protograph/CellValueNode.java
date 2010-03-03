@@ -6,31 +6,31 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class CellValueNode extends CellNode {
-	private static final long serialVersionUID = 7311884925532708576L;
-	
-	final public String		valueType;
-	final public String 	lang;
+    private static final long serialVersionUID = 7311884925532708576L;
+    
+    final public String        valueType;
+    final public String     lang;
 
-	public CellValueNode(
-		String	columnName,
-		String 	valueType, 
-		String  lang
-	) {
-		super(columnName);
-		
-		this.valueType = valueType;
-		this.lang = lang;
-	}
-	
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
+    public CellValueNode(
+        String    columnName,
+        String     valueType, 
+        String  lang
+    ) {
+        super(columnName);
+        
+        this.valueType = valueType;
+        this.lang = lang;
+    }
+    
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
 
-		writer.object();
-		writer.key("nodeType"); writer.value("cell-as-value");
-		writer.key("columnName"); writer.value(columnName);
-		writer.key("valueType"); writer.value(valueType);
-		writer.key("lang"); writer.value(lang);
-		writer.endObject();
-	}
+        writer.object();
+        writer.key("nodeType"); writer.value("cell-as-value");
+        writer.key("columnName"); writer.value(columnName);
+        writer.key("valueType"); writer.value(valueType);
+        writer.key("lang"); writer.value(lang);
+        writer.endObject();
+    }
 
 }

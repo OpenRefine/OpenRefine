@@ -10,19 +10,19 @@ import com.metaweb.gridworks.operations.FacetBasedEditOperation;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class FacetBasedEditCommand extends EngineDependentCommand {
-	@Override
-	protected AbstractOperation createOperation(HttpServletRequest request,
-			JSONObject engineConfig) throws Exception {
-		
-		String columnName = request.getParameter("columnName");
-		String expression = request.getParameter("expression");
-		String editsString = request.getParameter("edits");
-		
+    @Override
+    protected AbstractOperation createOperation(HttpServletRequest request,
+            JSONObject engineConfig) throws Exception {
+        
+        String columnName = request.getParameter("columnName");
+        String expression = request.getParameter("expression");
+        String editsString = request.getParameter("edits");
+        
         return new FacetBasedEditOperation(
             engineConfig,
             columnName,
             expression,
             FacetBasedEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString))
         );
-	}
+    }
 }

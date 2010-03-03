@@ -14,24 +14,24 @@ import com.metaweb.gridworks.operations.ColumnRemovalOperation;
 import com.metaweb.gridworks.process.Process;
 
 public class RemoveColumnCommand extends Command {
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		try {
-			Project project = getProject(request);
-			
-			String columnName = request.getParameter("columnName");
-			
-			AbstractOperation op = new ColumnRemovalOperation(columnName);
-			Process process = op.createProcess(project, new Properties());
-			
-			boolean done = project.processManager.queueProcess(process);
-			
-			respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
-			
-		} catch (Exception e) {
-			respondException(response, e);
-		}
-	}
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            Project project = getProject(request);
+            
+            String columnName = request.getParameter("columnName");
+            
+            AbstractOperation op = new ColumnRemovalOperation(columnName);
+            Process process = op.createProcess(project, new Properties());
+            
+            boolean done = project.processManager.queueProcess(process);
+            
+            respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
+            
+        } catch (Exception e) {
+            respondException(response, e);
+        }
+    }
 }

@@ -16,43 +16,43 @@ import com.metaweb.gridworks.gel.ControlFunctionRegistry;
 import com.metaweb.gridworks.gel.Function;
 
 public class GetExpressionLanguageInfoCommand extends Command {
-	
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		try {
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-		    
-			JSONWriter writer = new JSONWriter(response.getWriter());
-			Properties options = new Properties();
-			
-			writer.object();
-			
-			writer.key("functions");
-			writer.object();
-			{
-			    for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
-			        writer.key(entry.getKey());
-			        entry.getValue().write(writer, options);
-			    }
-			}
-			writer.endObject();
-			
+            
+            JSONWriter writer = new JSONWriter(response.getWriter());
+            Properties options = new Properties();
+            
+            writer.object();
+            
+            writer.key("functions");
+            writer.object();
+            {
+                for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+                    writer.key(entry.getKey());
+                    entry.getValue().write(writer, options);
+                }
+            }
+            writer.endObject();
+            
             writer.key("controls");
             writer.object();
             {
                 for (Entry<String, Control> entry : ControlFunctionRegistry.getControlMapping()) {
                     writer.key(entry.getKey());
-			        entry.getValue().write(writer, options);
+                    entry.getValue().write(writer, options);
                 }
             }
             writer.endObject();
             
-			writer.endObject();
-		} catch (Exception e) {
-			respondException(response, e);
-		}
-	}
+            writer.endObject();
+        } catch (Exception e) {
+            respondException(response, e);
+        }
+    }
 }

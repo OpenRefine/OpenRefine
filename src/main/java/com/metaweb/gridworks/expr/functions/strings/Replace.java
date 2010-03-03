@@ -11,8 +11,8 @@ import com.metaweb.gridworks.gel.Function;
 
 public class Replace implements Function {
 
-	public Object call(Properties bindings, Object[] args) {
-		if (args.length == 3) {
+    public Object call(Properties bindings, Object[] args) {
+        if (args.length == 3) {
             Object o1 = args[0];
             Object o2 = args[1];
             Object o3 = args[2];
@@ -20,18 +20,18 @@ public class Replace implements Function {
                 String str = (o1 instanceof String) ? (String) o1 : o1.toString();
                 return str.replace((String) o2, (String) o3);
             }
-		}
+        }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
-	}
+    }
 
-	
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
-	
-		writer.object();
-		writer.key("description"); writer.value("Returns the string obtained by replacing f with r in s");
-		writer.key("params"); writer.value("string s, string f, string r");
-		writer.key("returns"); writer.value("string");
-		writer.endObject();
-	}
+    
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value("Returns the string obtained by replacing f with r in s");
+        writer.key("params"); writer.value("string s, string f, string r");
+        writer.key("returns"); writer.value("string");
+        writer.endObject();
+    }
 }

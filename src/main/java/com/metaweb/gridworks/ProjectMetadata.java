@@ -9,26 +9,26 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class ProjectMetadata implements Serializable, Jsonizable {
-	private static final long serialVersionUID = 7959027046468240844L;
-	
-	private final Date 	_created = new Date();
-	private String 		_name;
-	private String 		_password;
-	private String      _encoding;
-	private int         _encodingConfidence;
-	private Date 		_modified = new Date();
-	
-	public Date getCreated() {
-		return _created;
-	}
+    private static final long serialVersionUID = 7959027046468240844L;
+    
+    private final Date     _created = new Date();
+    private String         _name;
+    private String         _password;
+    private String      _encoding;
+    private int         _encodingConfidence;
+    private Date         _modified = new Date();
+    
+    public Date getCreated() {
+        return _created;
+    }
 
-	public void setName(String name) {
-		this._name = name;
-	}
+    public void setName(String name) {
+        this._name = name;
+    }
 
-	public String getName() {
-		return _name;
-	}
+    public String getName() {
+        return _name;
+    }
 
     public void setEncoding(String encoding) {
         this._encoding = encoding;
@@ -50,31 +50,31 @@ public class ProjectMetadata implements Serializable, Jsonizable {
         return _encodingConfidence;
     }
     
-	public void setPassword(String password) {
-		this._password = password;
-	}
+    public void setPassword(String password) {
+        this._password = password;
+    }
 
-	public String getPassword() {
-		return _password;
-	}
-	
-	public Date getModified() {
-		return _modified;
-	}
-	
-	public void updateModified() {
-		_modified = new Date();
-	}
+    public String getPassword() {
+        return _password;
+    }
+    
+    public Date getModified() {
+        return _modified;
+    }
+    
+    public void updateModified() {
+        _modified = new Date();
+    }
 
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		
-		SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
-		
-		writer.object();
-		writer.key("name"); writer.value(getName());
-		writer.key("created"); writer.value(sdf.format(getCreated()));
-		writer.key("modified"); writer.value(sdf.format(_modified));
-		writer.endObject();
-	}
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        
+        SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
+        
+        writer.object();
+        writer.key("name"); writer.value(getName());
+        writer.key("created"); writer.value(sdf.format(getCreated()));
+        writer.key("modified"); writer.value(sdf.format(_modified));
+        writer.endObject();
+    }
 }

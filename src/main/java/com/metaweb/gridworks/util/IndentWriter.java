@@ -26,12 +26,12 @@ public class IndentWriter {
         }
     }
     
-    private Writer		m_writer;
+    private Writer        m_writer;
     private int         m_count = 0;
     private boolean     m_indent = true;
     
     public IndentWriter(Writer writer) {
-    	m_writer = writer;
+        m_writer = writer;
     }
     
     public void close() throws IOException {
@@ -39,7 +39,7 @@ public class IndentWriter {
     }
     
     public void flush() throws IOException {
-    	m_writer.flush();
+        m_writer.flush();
     }
     
     public void print(Object o) throws IOException {

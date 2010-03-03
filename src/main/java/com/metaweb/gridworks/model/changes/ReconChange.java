@@ -20,10 +20,10 @@ public class ReconChange extends MassCellChange {
     protected ReconStats _oldReconStats;
     
     public ReconChange(
-        List<CellChange> 	cellChanges,
-        String 				commonColumnName,
-        ReconConfig 		newReconConfig,
-        ReconStats			newReconStats // can be null
+        List<CellChange>     cellChanges,
+        String                 commonColumnName,
+        ReconConfig         newReconConfig,
+        ReconStats            newReconStats // can be null
     ) {
         super(cellChanges, commonColumnName, false);
         _newReconConfig = newReconConfig;
@@ -31,10 +31,10 @@ public class ReconChange extends MassCellChange {
     }
     
     public ReconChange(
-        CellChange	 	cellChange,
-        String 			commonColumnName,
-        ReconConfig 	newReconConfig,
-        ReconStats		newReconStats // can be null
+        CellChange         cellChange,
+        String             commonColumnName,
+        ReconConfig     newReconConfig,
+        ReconStats        newReconStats // can be null
     ) {
         super(cellChange, commonColumnName, false);
         _newReconConfig = newReconConfig;
@@ -49,7 +49,7 @@ public class ReconChange extends MassCellChange {
             Column column = project.columnModel.getColumnByName(_commonColumnName);
             
             if (_newReconStats == null) {
-            	_newReconStats = ReconStats.create(project, column.getCellIndex());
+                _newReconStats = ReconStats.create(project, column.getCellIndex());
             }
             
             _oldReconConfig = column.getReconConfig();

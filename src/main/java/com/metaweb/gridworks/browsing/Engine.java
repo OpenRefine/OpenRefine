@@ -18,71 +18,71 @@ import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.model.Project;
 
 public class Engine implements Jsonizable {
-	protected Project 		_project;
-	protected List<Facet> 	_facets = new LinkedList<Facet>();
-	
-	public Engine(Project project) {
-		_project  = project;
-	}
-	
-	public FilteredRows getAllFilteredRows(boolean contextual) {
-		return getFilteredRows(null, contextual);
-	}
+    protected Project         _project;
+    protected List<Facet>     _facets = new LinkedList<Facet>();
+    
+    public Engine(Project project) {
+        _project  = project;
+    }
+    
+    public FilteredRows getAllFilteredRows(boolean contextual) {
+        return getFilteredRows(null, contextual);
+    }
 
-	public FilteredRows getFilteredRows(Facet except, boolean contextual) {
-		ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows(contextual);
-		for (Facet facet : _facets) {
-			if (facet != except) {
-				RowFilter rowFilter = facet.getRowFilter();
-				if (rowFilter != null) {
-					cfr.add(rowFilter);
-				}
-			}
-		}
-		return cfr;
-	}
-	
-	public void initializeFromJSON(JSONObject o) throws Exception {
-		JSONArray a = o.getJSONArray("facets");
-		int length = a.length();
-		
-		for (int i = 0; i < length; i++) {
-			JSONObject fo = a.getJSONObject(i);
-			String type = fo.has("type") ? fo.getString("type") : "list";
-			
-			Facet facet = null;
-			if ("list".equals(type)) {
-				facet = new ListFacet();
-			} else if ("range".equals(type)) {
-				facet = new RangeFacet();
-			} else if ("text".equals(type)) {
-				facet = new TextSearchFacet();
-			}
-			
-			if (facet != null) {
-				facet.initializeFromJSON(_project, fo);
-				_facets.add(facet);
-			}
-		}
-	}
-	
-	public void computeFacets() throws JSONException {
-		for (Facet facet : _facets) {
-			FilteredRows filteredRows = getFilteredRows(facet, false);
-			
-			facet.computeChoices(_project, filteredRows);
-		}
-	}
-	
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		
-		writer.object();
-		writer.key("facets"); writer.array();
-		for (Facet facet : _facets) {
-			facet.write(writer, options);
-		}
-		writer.endArray();
-		writer.endObject();
-	}
+    public FilteredRows getFilteredRows(Facet except, boolean contextual) {
+        ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows(contextual);
+        for (Facet facet : _facets) {
+            if (facet != except) {
+                RowFilter rowFilter = facet.getRowFilter();
+                if (rowFilter != null) {
+                    cfr.add(rowFilter);
+                }
+            }
+        }
+        return cfr;
+    }
+    
+    public void initializeFromJSON(JSONObject o) throws Exception {
+        JSONArray a = o.getJSONArray("facets");
+        int length = a.length();
+        
+        for (int i = 0; i < length; i++) {
+            JSONObject fo = a.getJSONObject(i);
+            String type = fo.has("type") ? fo.getString("type") : "list";
+            
+            Facet facet = null;
+            if ("list".equals(type)) {
+                facet = new ListFacet();
+            } else if ("range".equals(type)) {
+                facet = new RangeFacet();
+            } else if ("text".equals(type)) {
+                facet = new TextSearchFacet();
+            }
+            
+            if (facet != null) {
+                facet.initializeFromJSON(_project, fo);
+                _facets.add(facet);
+            }
+        }
+    }
+    
+    public void computeFacets() throws JSONException {
+        for (Facet facet : _facets) {
+            FilteredRows filteredRows = getFilteredRows(facet, false);
+            
+            facet.computeChoices(_project, filteredRows);
+        }
+    }
+    
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        
+        writer.object();
+        writer.key("facets"); writer.array();
+        for (Facet facet : _facets) {
+            facet.write(writer, options);
+        }
+        writer.endArray();
+        writer.endObject();
+    }
 }

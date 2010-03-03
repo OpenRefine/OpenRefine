@@ -34,25 +34,25 @@ public class RowStarOperation extends EngineDependentOperation {
         );
     }
     
-	public RowStarOperation(JSONObject engineConfig, boolean starred) {
-		super(engineConfig);
-		_starred = starred;
-	}
+    public RowStarOperation(JSONObject engineConfig, boolean starred) {
+        super(engineConfig);
+        _starred = starred;
+    }
 
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		
-		writer.object();
-		writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-		writer.key("description"); writer.value(getBriefDescription(null));
-		writer.key("engineConfig"); writer.value(getEngineConfig());
-		writer.key("starred"); writer.value(_starred);
-		writer.endObject();
-	}
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value(getBriefDescription(null));
+        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("starred"); writer.value(_starred);
+        writer.endObject();
+    }
 
-	protected String getBriefDescription(Project project) {
-		return (_starred ? "Star rows" : "Unstar rows");
-	}
+    protected String getBriefDescription(Project project) {
+        return (_starred ? "Star rows" : "Unstar rows");
+    }
 
    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
         Engine engine = createEngine(project);
@@ -70,23 +70,23 @@ public class RowStarOperation extends EngineDependentOperation {
         );
     }
 
-	protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
-		return new RowVisitor() {
-			List<Change> changes;
-			
-			public RowVisitor init(List<Change> changes) {
-				this.changes = changes;
-				return this;
-			}
-			
-			public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
-			    if (row.starred != _starred) {
-			        RowStarChange change = new RowStarChange(rowIndex, _starred);
-			        
-			        changes.add(change);
-				}
-				return false;
-			}
-		}.init(changes);
-	}
+    protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
+        return new RowVisitor() {
+            List<Change> changes;
+            
+            public RowVisitor init(List<Change> changes) {
+                this.changes = changes;
+                return this;
+            }
+            
+            public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+                if (row.starred != _starred) {
+                    RowStarChange change = new RowStarChange(rowIndex, _starred);
+                    
+                    changes.add(change);
+                }
+                return false;
+            }
+        }.init(changes);
+    }
 }

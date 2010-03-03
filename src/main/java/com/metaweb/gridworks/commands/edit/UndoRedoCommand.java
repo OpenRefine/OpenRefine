@@ -11,17 +11,17 @@ import com.metaweb.gridworks.history.HistoryProcess;
 import com.metaweb.gridworks.model.Project;
 
 public class UndoRedoCommand extends Command {
-	
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		Project project = getProject(request);
-		long lastDoneID = Long.parseLong(request.getParameter("lastDoneID"));
-		
-		boolean done = project.processManager.queueProcess(
-			new HistoryProcess(project, lastDoneID));
+    
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        Project project = getProject(request);
+        long lastDoneID = Long.parseLong(request.getParameter("lastDoneID"));
+        
+        boolean done = project.processManager.queueProcess(
+            new HistoryProcess(project, lastDoneID));
 
-		respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
-	}
+        respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
+    }
 }

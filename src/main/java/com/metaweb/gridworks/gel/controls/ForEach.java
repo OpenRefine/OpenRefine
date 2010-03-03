@@ -49,23 +49,23 @@ public class ForEach implements Control {
             
             return results.toArray(); 
         } finally {
-        	if (oldValue != null) {
-        		bindings.put(name, oldValue);
-        	} else {
-        		bindings.remove(name);
-        	}
+            if (oldValue != null) {
+                bindings.put(name, oldValue);
+            } else {
+                bindings.remove(name);
+            }
         }
     }
     
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
-	
-		writer.object();
-		writer.key("description"); writer.value(
-			"Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array."
-		);
-		writer.key("params"); writer.value("expression a, variable v, expression e");
-		writer.key("returns"); writer.value("array");
-		writer.endObject();
-	}
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value(
+            "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array."
+        );
+        writer.key("params"); writer.value("expression a, variable v, expression e");
+        writer.key("returns"); writer.value("array");
+        writer.endObject();
+    }
 }

@@ -9,11 +9,11 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.operations.RowStarOperation;
 
 public class AnnotateRowsCommand extends EngineDependentCommand {
-	
-	@Override
-	protected AbstractOperation createOperation(HttpServletRequest request,
-			JSONObject engineConfig) throws Exception {
-		
+    
+    @Override
+    protected AbstractOperation createOperation(HttpServletRequest request,
+            JSONObject engineConfig) throws Exception {
+        
         String starredString = request.getParameter("starred");
         if (starredString != null) {
             boolean starred = "true".endsWith(starredString);
@@ -21,5 +21,5 @@ public class AnnotateRowsCommand extends EngineDependentCommand {
             return new RowStarOperation(engineConfig, starred);
         }
         return null;
-	}
+    }
 }

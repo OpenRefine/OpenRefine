@@ -6,7 +6,7 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.Evaluable;
 
 public interface Control extends Jsonizable {
-	public Object call(Properties bindings, Evaluable[] args);
-	
-	public String checkArguments(Evaluable[] args);
+    public Object call(Properties bindings, Evaluable[] args);
+    
+    public String checkArguments(Evaluable[] args);
 }

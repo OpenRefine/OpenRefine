@@ -18,7 +18,7 @@ public class Phonetic implements Function {
     private Metaphone metaphone = new Metaphone();
     private Soundex soundex = new Soundex();
 
-	public Object call(Properties bindings, Object[] args) {
+    public Object call(Properties bindings, Object[] args) {
         if (args.length == 2) {
             Object o1 = args[0];
             Object o2 = args[1];
@@ -37,15 +37,15 @@ public class Phonetic implements Function {
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
-	}
-	
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
-	
-		writer.object();
-		writer.key("description"); writer.value("Returns the a phonetic encoding of s (optionally indicating which encoding to use')");
-		writer.key("params"); writer.value("string s, string encoding (optional, defaults to 'DoubleMetaphone')");
-		writer.key("returns"); writer.value("string");
-		writer.endObject();
-	}
+    }
+    
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value("Returns the a phonetic encoding of s (optionally indicating which encoding to use')");
+        writer.key("params"); writer.value("string s, string encoding (optional, defaults to 'DoubleMetaphone')");
+        writer.key("returns"); writer.value("string");
+        writer.endObject();
+    }
 }

@@ -46,89 +46,89 @@ import com.metaweb.gridworks.commands.util.PreviewProtographCommand;
 
 public class GridworksServlet extends HttpServlet {
     
-	private static final long serialVersionUID = 2386057901503517403L;
-	
-	static protected Map<String, Command> _commands = new HashMap<String, Command>();
-	
-	static {
-		_commands.put("create-project-from-upload", new CreateProjectCommand());
-		_commands.put("export-rows", new ExportRowsCommand());
-		
-		_commands.put("get-project-metadata", new GetProjectMetadataCommand());
-		_commands.put("get-all-project-metadata", new GetAllProjectMetadataCommand());
-		
-		_commands.put("get-models", new GetModelsCommand());
-		_commands.put("get-rows", new GetRowsCommand());
-		_commands.put("get-processes", new GetProcessesCommand());
-		_commands.put("get-history", new GetHistoryCommand());
-		_commands.put("get-operations", new GetOperationsCommand());
-		
-		_commands.put("undo-redo", new UndoRedoCommand());
-		_commands.put("apply-operations", new ApplyOperationsCommand());
-		_commands.put("cancel-processes", new CancelProcessesCommand());
-		
-		_commands.put("compute-facets", new ComputeFacetsCommand());
-		_commands.put("do-text-transform", new DoTextTransformCommand());
-		_commands.put("facet-based-edit", new FacetBasedEditCommand());
-		
-		_commands.put("add-column", new AddColumnCommand());
-		_commands.put("remove-column", new RemoveColumnCommand());
+    private static final long serialVersionUID = 2386057901503517403L;
+    
+    static protected Map<String, Command> _commands = new HashMap<String, Command>();
+    
+    static {
+        _commands.put("create-project-from-upload", new CreateProjectCommand());
+        _commands.put("export-rows", new ExportRowsCommand());
+        
+        _commands.put("get-project-metadata", new GetProjectMetadataCommand());
+        _commands.put("get-all-project-metadata", new GetAllProjectMetadataCommand());
+        
+        _commands.put("get-models", new GetModelsCommand());
+        _commands.put("get-rows", new GetRowsCommand());
+        _commands.put("get-processes", new GetProcessesCommand());
+        _commands.put("get-history", new GetHistoryCommand());
+        _commands.put("get-operations", new GetOperationsCommand());
+        
+        _commands.put("undo-redo", new UndoRedoCommand());
+        _commands.put("apply-operations", new ApplyOperationsCommand());
+        _commands.put("cancel-processes", new CancelProcessesCommand());
+        
+        _commands.put("compute-facets", new ComputeFacetsCommand());
+        _commands.put("do-text-transform", new DoTextTransformCommand());
+        _commands.put("facet-based-edit", new FacetBasedEditCommand());
+        
+        _commands.put("add-column", new AddColumnCommand());
+        _commands.put("remove-column", new RemoveColumnCommand());
         _commands.put("join-multi-value-cells", new JoinMultiValueCellsCommand());
         _commands.put("split-multi-value-cells", new SplitMultiValueCellsCommand());
-		
-		_commands.put("reconcile", new ReconcileCommand());
-		_commands.put("recon-match-best-candidates", new ReconMatchBestCandidatesCommand());
-		_commands.put("recon-mark-new-topics", new ReconMarkNewTopicsCommand());
-		_commands.put("recon-discard-judgments", new ReconDiscardJudgmentsCommand());
-		_commands.put("recon-match-specific-topic-to-cells", new ReconMatchSpecificTopicCommand());
-		_commands.put("recon-judge-one-cell", new ReconJudgeOneCellCommand());
+        
+        _commands.put("reconcile", new ReconcileCommand());
+        _commands.put("recon-match-best-candidates", new ReconMatchBestCandidatesCommand());
+        _commands.put("recon-mark-new-topics", new ReconMarkNewTopicsCommand());
+        _commands.put("recon-discard-judgments", new ReconDiscardJudgmentsCommand());
+        _commands.put("recon-match-specific-topic-to-cells", new ReconMatchSpecificTopicCommand());
+        _commands.put("recon-judge-one-cell", new ReconJudgeOneCellCommand());
         _commands.put("recon-judge-similar-cells", new ReconJudgeSimilarCellsCommand());
-		
+        
         _commands.put("annotate-one-row", new AnnotateOneRowCommand());
         _commands.put("annotate-rows", new AnnotateRowsCommand());
         
-		_commands.put("save-protograph", new SaveProtographCommand());
-		
-		_commands.put("preview-expression", new PreviewExpressionCommand());
+        _commands.put("save-protograph", new SaveProtographCommand());
+        
+        _commands.put("preview-expression", new PreviewExpressionCommand());
         _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());
         _commands.put("preview-protograph", new PreviewProtographCommand());
         _commands.put("guess-types-of-column", new GuessTypesOfColumnCommand());
-	}
+    }
 
-	@Override
-	public void init() throws ServletException {
-		super.init();
-	}
-	
-	@Override
-	public void destroy() {
-	    if (ProjectManager.singleton != null) {
-    		ProjectManager.singleton.saveAllProjects();
-    		ProjectManager.singleton.save();
-    		ProjectManager.singleton = null;
-	    }
-		
-		super.destroy();
-	}
-	
+    @Override
+    public void init() throws ServletException {
+        super.init();
+    }
+    
+    @Override
+    public void destroy() {
+        if (ProjectManager.singleton != null) {
+            ProjectManager.singleton.saveAllProjects();
+            ProjectManager.singleton.save();
+            ProjectManager.singleton = null;
+        }
+        
+        super.destroy();
+    }
+    
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ProjectManager.initialize();
-		
-    	String commandName = request.getPathInfo().substring(1);
-    	Command command = _commands.get(commandName);
-    	if (command != null) {
-    		command.doPost(request, response);
-    	}
+        ProjectManager.initialize();
+        
+        String commandName = request.getPathInfo().substring(1);
+        Command command = _commands.get(commandName);
+        if (command != null) {
+            command.doPost(request, response);
+        }
     }
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ProjectManager.initialize();
-		
-    	String commandName = request.getPathInfo().substring(1);
-    	Command command = _commands.get(commandName);
-    	if (command != null) {
-    		command.doGet(request, response);
-    	}
+        ProjectManager.initialize();
+        
+        String commandName = request.getPathInfo().substring(1);
+        Command command = _commands.get(commandName);
+        if (command != null) {
+            command.doGet(request, response);
+        }
     }
     
 }

@@ -14,71 +14,71 @@ import com.metaweb.gridworks.gel.ast.VariableExpr;
 import com.metaweb.gridworks.model.Project;
 
 public class TextSearchFacet implements Facet {
-	protected String 	_name;
-	protected String 	_columnName;
-	protected int		_cellIndex;
-	protected String 	_query;
-	
-	protected String	_mode;
-	protected boolean	_caseSensitive;
-	
-	public TextSearchFacet() {
-	}
+    protected String     _name;
+    protected String     _columnName;
+    protected int        _cellIndex;
+    protected String     _query;
+    
+    protected String    _mode;
+    protected boolean    _caseSensitive;
+    
+    public TextSearchFacet() {
+    }
 
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		
-		writer.object();
-		writer.key("name"); writer.value(_name);
-		writer.key("columnName"); writer.value(_columnName);
-		writer.key("query"); writer.value(_query);
-		writer.key("mode"); writer.value(_mode);
-		writer.key("caseSensitive"); writer.value(_caseSensitive);
-		writer.endObject();
-	}
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        
+        writer.object();
+        writer.key("name"); writer.value(_name);
+        writer.key("columnName"); writer.value(_columnName);
+        writer.key("query"); writer.value(_query);
+        writer.key("mode"); writer.value(_mode);
+        writer.key("caseSensitive"); writer.value(_caseSensitive);
+        writer.endObject();
+    }
 
-	public void initializeFromJSON(Project project, JSONObject o) throws Exception {
-		_name = o.getString("name");
-		_columnName = o.getString("columnName");
-		_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
-		
-		if (!o.isNull("query")) {
-			_query = o.getString("query"); 
-		}
-		
-		_mode = o.getString("mode");
-		_caseSensitive = o.getBoolean("caseSensitive");
-		if (_query != null) {
-			_query = _query.trim();
-			if (!_caseSensitive) {
-				_query = _query.toLowerCase();
-			}
-		}
-	}
+    public void initializeFromJSON(Project project, JSONObject o) throws Exception {
+        _name = o.getString("name");
+        _columnName = o.getString("columnName");
+        _cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
+        
+        if (!o.isNull("query")) {
+            _query = o.getString("query"); 
+        }
+        
+        _mode = o.getString("mode");
+        _caseSensitive = o.getBoolean("caseSensitive");
+        if (_query != null) {
+            _query = _query.trim();
+            if (!_caseSensitive) {
+                _query = _query.toLowerCase();
+            }
+        }
+    }
 
-	public RowFilter getRowFilter() {
-		if (_query == null || _query.length() == 0) {
-			return null;
-		}
-		
-		Evaluable eval = new VariableExpr("value");
-		
-		if ("regex".equals(_mode)) {
-			return new ExpressionStringComparisonRowFilter(eval, _cellIndex) {
-				protected boolean checkValue(String s) {
-					return s.matches(_query);
-				};
-			};
-		} else {
-			return new ExpressionStringComparisonRowFilter(eval, _cellIndex) {
-				protected boolean checkValue(String s) {
-					return (_caseSensitive ? s : s.toLowerCase()).contains(_query);
-				};
-			};
-		}		
-	}
+    public RowFilter getRowFilter() {
+        if (_query == null || _query.length() == 0) {
+            return null;
+        }
+        
+        Evaluable eval = new VariableExpr("value");
+        
+        if ("regex".equals(_mode)) {
+            return new ExpressionStringComparisonRowFilter(eval, _cellIndex) {
+                protected boolean checkValue(String s) {
+                    return s.matches(_query);
+                };
+            };
+        } else {
+            return new ExpressionStringComparisonRowFilter(eval, _cellIndex) {
+                protected boolean checkValue(String s) {
+                    return (_caseSensitive ? s : s.toLowerCase()).contains(_query);
+                };
+            };
+        }        
+    }
 
-	public void computeChoices(Project project, FilteredRows filteredRows) {
-		// nothing to do
-	}
+    public void computeChoices(Project project, FilteredRows filteredRows) {
+        // nothing to do
+    }
 }

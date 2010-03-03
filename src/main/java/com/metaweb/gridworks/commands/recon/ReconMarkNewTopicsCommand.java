@@ -9,15 +9,15 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.operations.ReconMarkNewTopicsOperation;
 
 public class ReconMarkNewTopicsCommand extends EngineDependentCommand {
-	
-	@Override
-	protected AbstractOperation createOperation(HttpServletRequest request,
-			JSONObject engineConfig) throws Exception {
-		
-		return new ReconMarkNewTopicsOperation(
-			engineConfig, 
-			request.getParameter("columnName"),
-			"true".equals(request.getParameter("shareNewTopics"))
-		);
-	}
+    
+    @Override
+    protected AbstractOperation createOperation(HttpServletRequest request,
+            JSONObject engineConfig) throws Exception {
+        
+        return new ReconMarkNewTopicsOperation(
+            engineConfig, 
+            request.getParameter("columnName"),
+            "true".equals(request.getParameter("shareNewTopics"))
+        );
+    }
 }

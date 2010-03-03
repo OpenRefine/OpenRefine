@@ -14,26 +14,26 @@ import com.metaweb.gridworks.operations.MultiValuedCellJoinOperation;
 import com.metaweb.gridworks.process.Process;
 
 public class JoinMultiValueCellsCommand extends Command {
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		try {
-			Project project = getProject(request);
-			
-			String columnName = request.getParameter("columnName");
-			String keyColumnName = request.getParameter("keyColumnName");
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            Project project = getProject(request);
+            
+            String columnName = request.getParameter("columnName");
+            String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
-			
-			AbstractOperation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
-			Process process = op.createProcess(project, new Properties());
-			
-			boolean done = project.processManager.queueProcess(process);
-			
-			respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
-			
-		} catch (Exception e) {
-			respondException(response, e);
-		}
-	}
+            
+            AbstractOperation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
+            Process process = op.createProcess(project, new Properties());
+            
+            boolean done = project.processManager.queueProcess(process);
+            
+            respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
+            
+        } catch (Exception e) {
+            respondException(response, e);
+        }
+    }
 }

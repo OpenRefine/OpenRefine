@@ -23,19 +23,19 @@ public class ColumnAdditionChange extends ColumnChange {
 
     public void apply(Project project) {
         synchronized (project) {
-        	if (_newCellIndex < 0) {
-        		_newCellIndex = project.columnModel.allocateNewCellIndex();
-        	}
-        	
+            if (_newCellIndex < 0) {
+                _newCellIndex = project.columnModel.allocateNewCellIndex();
+            }
+            
             Column column = new Column(_newCellIndex, _headerLabel);
             
             project.columnModel.columns.add(_columnIndex, column);
             try {
-	            for (CellAtRow cell : _newCells) {
-            		project.rows.get(cell.row).setCell(_newCellIndex, cell.cell);
-	            }
+                for (CellAtRow cell : _newCells) {
+                    project.rows.get(cell.row).setCell(_newCellIndex, cell.cell);
+                }
             } catch (Exception e) {
-            	e.printStackTrace();
+                e.printStackTrace();
             }
             project.columnModel.update();
             project.recomputeRowContextDependencies();
@@ -45,8 +45,8 @@ public class ColumnAdditionChange extends ColumnChange {
     public void revert(Project project) {
         synchronized (project) {
             for (CellAtRow cell : _newCells) {
-            	Row row = project.rows.get(cell.row);
-        		row.setCell(_newCellIndex, null);
+                Row row = project.rows.get(cell.row);
+                row.setCell(_newCellIndex, null);
             }
             
             project.columnModel.columns.remove(_columnIndex);

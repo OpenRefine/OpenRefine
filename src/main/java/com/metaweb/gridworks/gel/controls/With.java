@@ -34,23 +34,23 @@ public class With implements Control {
             
             return args[2].evaluate(bindings);
         } finally {
-        	if (oldValue != null) {
-        		bindings.put(name, oldValue);
-        	} else {
-        		bindings.remove(name);
-        	}
+            if (oldValue != null) {
+                bindings.put(name, oldValue);
+            } else {
+                bindings.remove(name);
+            }
         }
     }
     
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
-	
-		writer.object();
-		writer.key("description"); writer.value(
-			"Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result"
-		);
-		writer.key("params"); writer.value("expression o, variable v, expression e");
-		writer.key("returns"); writer.value("Depends on actual arguments");
-		writer.endObject();
-	}
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value(
+            "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result"
+        );
+        writer.key("params"); writer.value("expression o, variable v, expression e");
+        writer.key("returns"); writer.value("Depends on actual arguments");
+        writer.endObject();
+    }
 }

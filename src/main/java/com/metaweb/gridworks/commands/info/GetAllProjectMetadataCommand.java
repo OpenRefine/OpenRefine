@@ -16,30 +16,30 @@ import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
 
 public class GetAllProjectMetadataCommand extends Command {
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		try {
-			response.setCharacterEncoding("UTF-8");
-	    	response.setHeader("Content-Type", "application/json");
-	    	
-			JSONWriter writer = new JSONWriter(response.getWriter());
-			Properties options = new Properties();
-			
-			writer.object();
-			
-			writer.key("projects"); writer.object();
-			
-			Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
-			for (Long id : m.keySet()) {
-				writer.key(id.toString());
-				m.get(id).write(writer, options);
-			}
-			writer.endObject();
-			writer.endObject();
-		} catch (JSONException e) {
-			respondException(response, e);
-		}
-	}
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
+            
+            JSONWriter writer = new JSONWriter(response.getWriter());
+            Properties options = new Properties();
+            
+            writer.object();
+            
+            writer.key("projects"); writer.object();
+            
+            Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
+            for (Long id : m.keySet()) {
+                writer.key(id.toString());
+                m.get(id).write(writer, options);
+            }
+            writer.endObject();
+            writer.endObject();
+        } catch (JSONException e) {
+            respondException(response, e);
+        }
+    }
 }

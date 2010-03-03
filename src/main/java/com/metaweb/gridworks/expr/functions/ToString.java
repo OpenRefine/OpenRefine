@@ -11,8 +11,8 @@ import com.metaweb.gridworks.gel.Function;
 
 public class ToString implements Function {
 
-	public Object call(Properties bindings, Object[] args) {
-		if (args.length >= 1) {
+    public Object call(Properties bindings, Object[] args) {
+        if (args.length >= 1) {
             Object o1 = args[0];
             if (o1 != null) {
                 if (o1 instanceof Calendar) {
@@ -27,18 +27,18 @@ public class ToString implements Function {
                     return (o1 instanceof String) ? o1 : o1.toString();
                 }
             }
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
-	
-		writer.object();
-		writer.key("description"); writer.value("Returns o converted to a string");
-		writer.key("params"); writer.value("o, string format (optional)");
-		writer.key("returns"); writer.value("string");
-		writer.endObject();
-	}
+    
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value("Returns o converted to a string");
+        writer.key("params"); writer.value("o, string format (optional)");
+        writer.key("returns"); writer.value("string");
+        writer.endObject();
+    }
 }

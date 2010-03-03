@@ -17,24 +17,24 @@ abstract public class ReconConfig implements Serializable, Jsonizable {
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {
         String mode = obj.getString("mode");
         if ("heuristic".equals(mode)) {
-        	return HeuristicReconConfig.reconstruct(obj);
+            return HeuristicReconConfig.reconstruct(obj);
         } else if ("strict".equals(mode)) {
-        	return StrictReconConfig.reconstruct(obj);
+            return StrictReconConfig.reconstruct(obj);
         }
         return null;
     }
     
     abstract public int getBatchSize();
     
-	abstract public String getBriefDescription(Project project, String columnName);
-	
-	abstract public ReconJob createJob(
-		Project 	project, 
-		int 		rowIndex, 
-		Row 		row,
-		String		columnName,
-		Cell		cell
-	);
+    abstract public String getBriefDescription(Project project, String columnName);
     
-	abstract public List<Recon> batchRecon(List<ReconJob> jobs);
+    abstract public ReconJob createJob(
+        Project     project, 
+        int         rowIndex, 
+        Row         row,
+        String        columnName,
+        Cell        cell
+    );
+    
+    abstract public List<Recon> batchRecon(List<ReconJob> jobs);
 }

@@ -12,59 +12,59 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
 
 public class Row implements Serializable, HasFields, Jsonizable {
-	private static final long serialVersionUID = -689264211730915507L;
-	
-	public boolean		       flagged;
-	public boolean		       starred;
-	final public List<Cell>    cells;
-	
-	transient public int			recordIndex; // -1 for rows that are not main record rows
-	transient public List<Integer> 	contextRows;
-	transient public int[] 			contextRowSlots;
-	transient public int[] 			contextCellSlots;
-	
-	public Row(int cellCount) {
-		cells = new ArrayList<Cell>(cellCount);
-	}
-	
-	public Row dup() {
-	    Row row = new Row(cells.size());
-	    row.flagged = flagged;
-	    row.starred = starred;
-	    row.cells.addAll(cells);
-	    return row;
-	}
-	
-	public Object getField(String name, Properties bindings) {
-		if ("flagged".equals(name)) {
-			return flagged;
-		} else if ("starred".equals(name)) {
-			return starred;
-		} else if ("cells".equals(name)) {
-			return new Cells();
-		} else if ("index".equals(name)) {
-			return bindings.get("rowIndex");
-		}
-		return null;
-	}
-	
-	public boolean isEmpty() {
-	    for (Cell cell : cells) {
-	        if (cell != null && cell.value != null && !isValueBlank(cell.value)) {
-	            return false;
-	        }
-	    }
-	    return true;
-	}
-	
-	public Cell getCell(int cellIndex) {
+    private static final long serialVersionUID = -689264211730915507L;
+    
+    public boolean               flagged;
+    public boolean               starred;
+    final public List<Cell>    cells;
+    
+    transient public int            recordIndex; // -1 for rows that are not main record rows
+    transient public List<Integer>     contextRows;
+    transient public int[]             contextRowSlots;
+    transient public int[]             contextCellSlots;
+    
+    public Row(int cellCount) {
+        cells = new ArrayList<Cell>(cellCount);
+    }
+    
+    public Row dup() {
+        Row row = new Row(cells.size());
+        row.flagged = flagged;
+        row.starred = starred;
+        row.cells.addAll(cells);
+        return row;
+    }
+    
+    public Object getField(String name, Properties bindings) {
+        if ("flagged".equals(name)) {
+            return flagged;
+        } else if ("starred".equals(name)) {
+            return starred;
+        } else if ("cells".equals(name)) {
+            return new Cells();
+        } else if ("index".equals(name)) {
+            return bindings.get("rowIndex");
+        }
+        return null;
+    }
+    
+    public boolean isEmpty() {
+        for (Cell cell : cells) {
+            if (cell != null && cell.value != null && !isValueBlank(cell.value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public Cell getCell(int cellIndex) {
         if (cellIndex < cells.size()) {
             return cells.get(cellIndex);
         } else {
             return null;
         }
-	}
-	
+    }
+    
     public Object getCellValue(int cellIndex) {
         if (cellIndex < cells.size()) {
             Cell cell = cells.get(cellIndex);
@@ -83,66 +83,66 @@ public class Row implements Serializable, HasFields, Jsonizable {
         return value == null || !(value instanceof String) || ((String) value).trim().length() == 0;
     }
     
-	public void setCell(int cellIndex, Cell cell) {
-		if (cellIndex < cells.size()) {
-			cells.set(cellIndex, cell);
-		} else {
-			while (cellIndex > cells.size()) {
-				cells.add(null);
-			}
-			cells.add(cell);
-		}
-	}
-	
-	public class Cells implements HasFields {
-		private Cells() {};
+    public void setCell(int cellIndex, Cell cell) {
+        if (cellIndex < cells.size()) {
+            cells.set(cellIndex, cell);
+        } else {
+            while (cellIndex > cells.size()) {
+                cells.add(null);
+            }
+            cells.add(cell);
+        }
+    }
+    
+    public class Cells implements HasFields {
+        private Cells() {};
 
-		public Object getField(String name, Properties bindings) {
-			Project project = (Project) bindings.get("project");
-			Column column = project.columnModel.getColumnByName(name);
-			if (column != null) {
-			    int cellIndex = column.getCellIndex();
-				return getCell(cellIndex);
-			}
-			return null;
-		}
-		
-	}
+        public Object getField(String name, Properties bindings) {
+            Project project = (Project) bindings.get("project");
+            Column column = project.columnModel.getColumnByName(name);
+            if (column != null) {
+                int cellIndex = column.getCellIndex();
+                return getCell(cellIndex);
+            }
+            return null;
+        }
+        
+    }
 
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		
-		writer.object();
-		writer.key("flagged"); writer.value(flagged);
-		writer.key("starred"); writer.value(starred);
-		
-		writer.key("cells"); writer.array();
-		for (Cell cell : cells) {
-			if (cell != null) {
-				cell.write(writer, options);
-			} else {
-				writer.value(null);
-			}
-		}
-		writer.endArray();
-		
-		if (recordIndex >= 0) {
-			writer.key("j"); writer.value(recordIndex);
-		}
-		
-		if (options.containsKey("rowIndex")) {
-			writer.key("i"); writer.value(options.get("rowIndex"));
-		}
-		if (options.containsKey("extra")) {
-			Properties extra = (Properties) options.get("extra");
-			if (extra != null) {
-				for (Object key : extra.keySet()) {
-					writer.key((String) key);
-					writer.value(extra.get(key));
-				}
-			}
-		}
-		
-		writer.endObject();
-	}
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        
+        writer.object();
+        writer.key("flagged"); writer.value(flagged);
+        writer.key("starred"); writer.value(starred);
+        
+        writer.key("cells"); writer.array();
+        for (Cell cell : cells) {
+            if (cell != null) {
+                cell.write(writer, options);
+            } else {
+                writer.value(null);
+            }
+        }
+        writer.endArray();
+        
+        if (recordIndex >= 0) {
+            writer.key("j"); writer.value(recordIndex);
+        }
+        
+        if (options.containsKey("rowIndex")) {
+            writer.key("i"); writer.value(options.get("rowIndex"));
+        }
+        if (options.containsKey("extra")) {
+            Properties extra = (Properties) options.get("extra");
+            if (extra != null) {
+                for (Object key : extra.keySet()) {
+                    writer.key((String) key);
+                    writer.value(extra.get(key));
+                }
+            }
+        }
+        
+        writer.endObject();
+    }
 }

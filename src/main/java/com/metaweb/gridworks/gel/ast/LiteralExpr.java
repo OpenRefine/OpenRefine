@@ -7,17 +7,17 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.expr.Evaluable;
 
 public class LiteralExpr implements Evaluable {
-	final protected Object _value;
-	
-	public LiteralExpr(Object value) {
-		_value = value;
-	}
-	                          
-	public Object evaluate(Properties bindings) {
-		return _value;
-	}
+    final protected Object _value;
+    
+    public LiteralExpr(Object value) {
+        _value = value;
+    }
+                              
+    public Object evaluate(Properties bindings) {
+        return _value;
+    }
 
-	public String toString() {
-		return _value instanceof String ? JSONObject.quote((String) _value) : _value.toString();
-	}
+    public String toString() {
+        return _value instanceof String ? JSONObject.quote((String) _value) : _value.toString();
+    }
 }

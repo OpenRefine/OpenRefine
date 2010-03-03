@@ -35,9 +35,9 @@ public class JSObject extends Properties {
                 writeObject(writer, value);
                 
                 if (e.hasMoreElements()) {
-                	writer.println(",");
+                    writer.println(",");
                 } else {
-                	writer.println();
+                    writer.println();
                 }
             }
         }
@@ -47,16 +47,16 @@ public class JSObject extends Properties {
     
     @SuppressWarnings("unchecked")
     static public void writeCollection(IndentWriter writer, Collection c) throws IOException, JSONException {
-    	writer.println("[");
-    	writer.indent();
+        writer.println("[");
+        writer.indent();
         {
             Iterator i = c.iterator();
             while (i.hasNext()) {
                 writeObject(writer, i.next());
                 if (i.hasNext()) {
-                	writer.println(",");
+                    writer.println(",");
                 } else {
-                	writer.println();
+                    writer.println();
                 }
             }
         }
@@ -68,39 +68,39 @@ public class JSObject extends Properties {
         writer.println("{");
         writer.indent();
         {
-        	String[] names = JSONObject.getNames(no);
-			for (int i = 0; i < names.length; i++) {
-				String name = names[i];
-				Object value = no.get(name);
-				
-				writer.print("'");
+            String[] names = JSONObject.getNames(no);
+            for (int i = 0; i < names.length; i++) {
+                String name = names[i];
+                Object value = no.get(name);
+                
+                writer.print("'");
                 writer.print(name + "' : ");
                 writeObject(writer, value);
                 
                 if (i < names.length - 1) {
-                	writer.println(",");
+                    writer.println(",");
                 } else {
-                	writer.println();
+                    writer.println();
                 }
-			}
+            }
         }
         writer.unindent();
         writer.print("}");
     }
     
     static public void writeJSONArray(IndentWriter writer, JSONArray na) throws IOException, JSONException {
-    	writer.println("[");
-    	writer.indent();
+        writer.println("[");
+        writer.indent();
         {
-			int count = na.length();
-			for (int i = 0; i < count; i++) {
-				Object element = na.get(i);
-				
+            int count = na.length();
+            for (int i = 0; i < count; i++) {
+                Object element = na.get(i);
+                
                 writeObject(writer, element);
                 if (i < count - 1) {
-                	writer.println(",");
+                    writer.println(",");
                 } else {
-                	writer.println();
+                    writer.println();
                 }
             }
         }
@@ -110,24 +110,24 @@ public class JSObject extends Properties {
     
     @SuppressWarnings("unchecked")
     static public void writeObject(IndentWriter writer, Object o) throws IOException, JSONException {
-	    if (o == null) {
-	    	writer.print("null");
-	    } else if (o instanceof Boolean) {
-        	writer.print(((Boolean) o).booleanValue() ? "true" : "false");
-	    } else if (o instanceof Number) {
-        	writer.print(((Number) o).toString());
-        	
+        if (o == null) {
+            writer.print("null");
+        } else if (o instanceof Boolean) {
+            writer.print(((Boolean) o).booleanValue() ? "true" : "false");
+        } else if (o instanceof Number) {
+            writer.print(((Number) o).toString());
+            
         } else if (o instanceof Collection) {
-        	writeCollection(writer, (Collection) o);
+            writeCollection(writer, (Collection) o);
         } else if (o instanceof JSONArray) {
-        	writeJSONArray(writer, (JSONArray) o);
+            writeJSONArray(writer, (JSONArray) o);
         } else if (o instanceof JSObject) {
             writeJSObject(writer, (JSObject) o);
         } else if (o instanceof JSONObject) {
             writeJSONObject(writer, (JSONObject) o);
             
         } else {
-        	writer.print("\"" + StringEscapeUtils.escapeJavaScript(o.toString()) + "\"");
+            writer.print("\"" + StringEscapeUtils.escapeJavaScript(o.toString()) + "\"");
         }
     }
 }

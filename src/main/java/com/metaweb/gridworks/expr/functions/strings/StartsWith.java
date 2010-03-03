@@ -11,23 +11,23 @@ import com.metaweb.gridworks.gel.Function;
 
 public class StartsWith implements Function {
 
-	public Object call(Properties bindings, Object[] args) {
-		if (args.length == 2) {
-			Object s1 = args[0];
-			Object s2 = args[1];
-			if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof String) {
-				return ((String) s1).startsWith((String) s2);
-			}
-		}
+    public Object call(Properties bindings, Object[] args) {
+        if (args.length == 2) {
+            Object s1 = args[0];
+            Object s2 = args[1];
+            if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof String) {
+                return ((String) s1).startsWith((String) s2);
+            }
+        }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
-	}
-	public void write(JSONWriter writer, Properties options)
-		throws JSONException {
-	
-		writer.object();
-		writer.key("description"); writer.value("Returns whether s starts with sub");
-		writer.key("params"); writer.value("string s, string sub");
-		writer.key("returns"); writer.value("boolean");
-		writer.endObject();
-	}
+    }
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value("Returns whether s starts with sub");
+        writer.key("params"); writer.value("string s, string sub");
+        writer.key("returns"); writer.value("boolean");
+        writer.endObject();
+    }
 }

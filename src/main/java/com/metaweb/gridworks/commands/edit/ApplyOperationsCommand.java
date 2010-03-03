@@ -19,55 +19,55 @@ import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.process.Process;
 
 public class ApplyOperationsCommand extends Command {
-	
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		Project project = getProject(request);
-		String jsonString = request.getParameter("operations");
-		try {
-			JSONArray a = jsonStringToArray(jsonString);
-			int count = a.length();
-			for (int i = 0; i < count; i++) {
-				JSONObject obj = a.getJSONObject(i);
-				
-				reconstructOperation(project, obj);
-			}
+    
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        Project project = getProject(request);
+        String jsonString = request.getParameter("operations");
+        try {
+            JSONArray a = jsonStringToArray(jsonString);
+            int count = a.length();
+            for (int i = 0; i < count; i++) {
+                JSONObject obj = a.getJSONObject(i);
+                
+                reconstructOperation(project, obj);
+            }
 
-			if (project.processManager.hasPending()) {
-				respond(response, "{ \"code\" : \"pending\" }");
-			} else {
-				respond(response, "{ \"code\" : \"ok\" }");
-			}
-		} catch (JSONException e) {
-			respondException(response, e);
-		}
-	}
-	
-	protected void reconstructOperation(Project project, JSONObject obj) {
-		try {
-			String op = obj.getString("op");
-			
-			Class<? extends AbstractOperation> klass = OperationRegistry.s_opNameToClass.get(op);
-			if (klass == null) {
-			    return;
-			}
-			
-			Method reconstruct = klass.getMethod("reconstruct", Project.class, JSONObject.class);
-			if (reconstruct == null) {
-			    return;
-			}
-			
-			AbstractOperation operation = (AbstractOperation) reconstruct.invoke(null, project, obj);
+            if (project.processManager.hasPending()) {
+                respond(response, "{ \"code\" : \"pending\" }");
+            } else {
+                respond(response, "{ \"code\" : \"ok\" }");
+            }
+        } catch (JSONException e) {
+            respondException(response, e);
+        }
+    }
+    
+    protected void reconstructOperation(Project project, JSONObject obj) {
+        try {
+            String op = obj.getString("op");
+            
+            Class<? extends AbstractOperation> klass = OperationRegistry.s_opNameToClass.get(op);
+            if (klass == null) {
+                return;
+            }
+            
+            Method reconstruct = klass.getMethod("reconstruct", Project.class, JSONObject.class);
+            if (reconstruct == null) {
+                return;
+            }
+            
+            AbstractOperation operation = (AbstractOperation) reconstruct.invoke(null, project, obj);
             if (operation != null) {
                 Process process = operation.createProcess(project, new Properties());
                 
                 project.processManager.queueProcess(process);
             }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
 }

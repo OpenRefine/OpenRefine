@@ -8,28 +8,28 @@ import com.metaweb.gridworks.protograph.FreebaseTopicNode;
 import com.metaweb.gridworks.protograph.ValueNode;
 
 public interface TransposedNodeFactory {
-	public TransposedNode transposeAnonymousNode(
-		TransposedNode parentNode, 
-		FreebaseProperty property, 
-		AnonymousNode node
-	);
-	
-	public TransposedNode transposeCellNode(
-		TransposedNode parentNode, 
-		FreebaseProperty property, 
-		CellNode node, 
-		Cell cell
-	);
-	
-	public TransposedNode transposeValueNode(
-		TransposedNode parentNode, 
-		FreebaseProperty property, 
-		ValueNode node
-	);
-	
-	public TransposedNode transposeTopicNode(
-		TransposedNode parentNode, 
-		FreebaseProperty property, 
-		FreebaseTopicNode node
-	);
+    public TransposedNode transposeAnonymousNode(
+        TransposedNode parentNode, 
+        FreebaseProperty property, 
+        AnonymousNode node
+    );
+    
+    public TransposedNode transposeCellNode(
+        TransposedNode parentNode, 
+        FreebaseProperty property, 
+        CellNode node, 
+        Cell cell
+    );
+    
+    public TransposedNode transposeValueNode(
+        TransposedNode parentNode, 
+        FreebaseProperty property, 
+        ValueNode node
+    );
+    
+    public TransposedNode transposeTopicNode(
+        TransposedNode parentNode, 
+        FreebaseProperty property, 
+        FreebaseTopicNode node
+    );
 }

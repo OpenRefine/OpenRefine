@@ -10,20 +10,20 @@ import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 
 public class CancelProcessesCommand extends Command {
-	
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		try {
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
             Project project = getProject(request);
             project.processManager.cancelAll();
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             response.getWriter().write("{ \"code\" : \"ok\" }");
-		} catch (Exception e) {
-			respondException(response, e);
-		}
-	}
+        } catch (Exception e) {
+            respondException(response, e);
+        }
+    }
 }

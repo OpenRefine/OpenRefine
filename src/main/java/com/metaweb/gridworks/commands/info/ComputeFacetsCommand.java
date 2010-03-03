@@ -11,19 +11,19 @@ import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 
 public class ComputeFacetsCommand extends Command {
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		try {
-			Project project = getProject(request);
-			Engine engine = getEngine(request, project);
-			
-			engine.computeFacets();
-			
-			respondJSON(response, engine);
-		} catch (Exception e) {
-			respondException(response, e);
-		}
-	}
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            Project project = getProject(request);
+            Engine engine = getEngine(request, project);
+            
+            engine.computeFacets();
+            
+            respondJSON(response, engine);
+        } catch (Exception e) {
+            respondException(response, e);
+        }
+    }
 }

@@ -1,5 +1,5 @@
 package com.metaweb.gridworks.model.recon;
 
 abstract public class ReconJob {
-	abstract public int getKey();
+    abstract public int getKey();
 }
