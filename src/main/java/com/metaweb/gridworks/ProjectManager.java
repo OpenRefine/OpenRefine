@@ -81,6 +81,8 @@ public class ProjectManager implements Serializable {
     }
     
     static protected ProjectManager load(File file) {
+    	Gridworks.log("Loading project metadata from " + file.getAbsolutePath());
+    	
         ProjectManager pm = null;
         FileInputStream fis = null;
         ObjectInputStream in = null;
@@ -198,6 +200,8 @@ public class ProjectManager implements Serializable {
     }
     
     public void save() {
+    	Gridworks.log("Saving project metadata ...");
+    	
         File file = new File(_dir, "projects");
         
         FileOutputStream fos = null;
@@ -226,6 +230,7 @@ public class ProjectManager implements Serializable {
     }
     
     public void saveAllProjects() {
+    	Gridworks.log("Saving all projects ...");
         for (Project project : _projects.values()) {
         	try {
         		saveProject(project);

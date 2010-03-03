@@ -20,8 +20,15 @@ import com.metaweb.gridworks.model.changes.CellChange;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
     private static final long serialVersionUID = -7698202759999537298L;
+    
+    static public enum OnError {
+    	KeepOriginal,
+    	SetToBlank,
+    	StoreError
+    }
 
     final protected String _expression;
+    final protected OnError _onError;
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
@@ -29,13 +36,34 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         return new TextTransformOperation(
             engineConfig,
             obj.getString("columnName"),
-            obj.getString("expression")
+            obj.getString("expression"),
+            stringToOnError(obj.getString("onError"))
         );
     }
     
-    public TextTransformOperation(JSONObject engineConfig, String columnName, String expression) {
+    static public OnError stringToOnError(String s) {
+    	if ("set-to-blank".equalsIgnoreCase(s)) {
+    		return OnError.SetToBlank;
+    	} else if ("store-error".equalsIgnoreCase(s)) {
+    		return OnError.StoreError;
+    	} else {
+    		return OnError.KeepOriginal;
+    	}
+    }
+    static public String onErrorToString(OnError onError) {
+    	if (onError == OnError.SetToBlank) {
+    		return "set-to-blank";
+    	} else if (onError == OnError.StoreError) {
+    		return "store-error";
+    	} else {
+    		return "keep-original";
+    	}
+    }
+    
+    public TextTransformOperation(JSONObject engineConfig, String columnName, String expression, OnError onError) {
         super(engineConfig, columnName, true);
         _expression = expression;
+        _onError = onError;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -47,6 +75,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         writer.key("engineConfig"); writer.value(getEngineConfig());
         writer.key("columnName"); writer.value(_columnName);
         writer.key("expression"); writer.value(_expression);
+        writer.key("onError"); writer.value(onErrorToString(_onError));
         writer.endObject();
     }
 
@@ -83,12 +112,21 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             
             public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
                 Cell cell = row.getCell(cellIndex);
+                Object oldValue = cell != null ? cell.value : null;
 
                 ExpressionUtils.bind(bindings, row, rowIndex, cell);
                 
-                Object v = eval.evaluate(bindings);
-                if ((cell != null && cell.value != null) || v != null) {
-                    Cell newCell = new Cell(v, (cell != null) ? cell.recon : null);
+                Object newValue = eval.evaluate(bindings);
+                if (ExpressionUtils.isError(newValue)) {
+                	if (_onError == OnError.KeepOriginal) {
+                		return false;
+                	} else if (_onError == OnError.SetToBlank) {
+                		newValue = null;
+                	}
+                }
+                
+                if (!ExpressionUtils.sameValue(oldValue, newValue)) {
+                    Cell newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
                 
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);

@@ -16,7 +16,12 @@ public class DoTextTransformCommand extends EngineDependentCommand {
         
         String columnName = request.getParameter("columnName");
         String expression = request.getParameter("expression");
+        String onError = request.getParameter("onError");
         
-        return new TextTransformOperation(engineConfig, columnName, expression);
+        return new TextTransformOperation(
+        	engineConfig, 
+        	columnName, 
+        	expression, 
+        	TextTransformOperation.stringToOnError(onError));
     }
 }

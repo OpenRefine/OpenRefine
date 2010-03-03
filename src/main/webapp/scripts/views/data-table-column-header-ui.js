@@ -59,15 +59,15 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             submenu: [
                 {
                     label: "To Titlecase",
-                    click: function() { self._doTextTransform("toTitlecase(value)"); }
+                    click: function() { self._doTextTransform("toTitlecase(value)", "store-blank"); }
                 },
                 {
                     label: "To Uppercase",
-                    click: function() { self._doTextTransform("toUppercase(value)"); }
+                    click: function() { self._doTextTransform("toUppercase(value)", "store-blank"); }
                 },
                 {
                     label: "To Lowercase",
-                    click: function() { self._doTextTransform("toLowercase(value)"); }
+                    click: function() { self._doTextTransform("toLowercase(value)", "store-blank"); }
                 },
                 {
                     label: "Custom Transform ...",
@@ -399,10 +399,10 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
     );
 };
 
-DataTableColumnHeaderUI.prototype._doTextTransform = function(expression) {
+DataTableColumnHeaderUI.prototype._doTextTransform = function(expression, onError) {
     Gridworks.postProcess(
         "do-text-transform",
-        { columnName: this._column.headerLabel, expression: expression },
+        { columnName: this._column.headerLabel, expression: expression, onError: onError },
         null,
         { cellsChanged: true }
     );
@@ -410,13 +410,54 @@ DataTableColumnHeaderUI.prototype._doTextTransform = function(expression) {
 
 DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
     var self = this;
-    DataTableView.promptExpressionOnVisibleRows(
-        this._column,
-        "Custom Transform on " + this._column.headerLabel, 
-        "value",
-        function(expression) {
-            self._doTextTransform(expression);
-        }
+    var frame = DialogSystem.createDialog();
+    frame.width("700px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Custom text transform on column " + this._column.headerLabel).appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    body.html(ExpressionPreviewDialog.generateWidgetHtml());
+    var bodyElmts = DOM.bind(body);
+    
+    footer.html(
+        '<table class="expression-preview-layout">' +
+            '<tr>' +
+                '<td align="left">' +
+                    'On error ' +
+                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="set-to-blank" checked /> set to blank ' +
+                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="store-error" /> store error ' +
+                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="keep-original" /> keep original' +
+                '</td>' +
+                '<td align="right">' +
+                    '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+                    '<button bind="cancelButton">Cancel</button>' +
+                '</td>' +
+            '</tr>' +
+        '</table>');
+    var footerElmts = DOM.bind(footer);
+        
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    footerElmts.okButton.click(function() {
+        self._doTextTransform(
+            previewWidget.getExpression(true),
+            $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value
+        );
+        dismiss();
+    })
+    footerElmts.cancelButton.click(dismiss);
+    
+    var o = DataTableView.sampleVisibleRows(this._column);
+    var previewWidget = new ExpressionPreviewDialog.Widget(
+        bodyElmts, 
+        this._column.cellIndex,
+        o.rowIndices,
+        o.values,
+        "value"
     );
 };
 
