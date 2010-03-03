@@ -1,9 +1,38 @@
+table.expression-preview-layout {
+    border-collapse: collapse;
+    width: 100%;
+}
+table.expression-preview-layout > tbody > tr > td {
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+table.expression-preview-layout > tbody > tr > td:last-child {
+    padding-right: 0px;
+}
+table.expression-preview-layout > tbody > tr:last-child > td {
+    padding-bottom: 0px;
+}
+
+.expression-preview-layout .ui-tabs .ui-tabs-nav li a {
+    padding: 0.15em 1em;
+}
+
+textarea.expression-preview-code {
+    font-family: monospace;
+    height: 5em;
+    width: 100%;
+}
+
+.expression-preview-error-container {
+    color: red;
+}
+
 #expression-preview-tabs-preview, #expression-preview-tabs-help {
     padding: 7px;
 }
 
 .expression-preview-container {
-    height: 300px;
+    height: 200px;
     padding: 5px;
     overflow: auto;
 }
@@ -24,7 +53,7 @@ td.expression-preview-heading {
 }
 
 .expression-preview-help-container {
-    height: 300px;
+    height: 200px;
     padding: 5px;
     overflow: auto;
 }

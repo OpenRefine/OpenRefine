@@ -324,7 +324,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     ], elmt);
 };
 
-DataTableView.promptExpressionOnVisibleRows = function(column, title, expression, onDone) {
+DataTableView.sampleVisibleRows = function(column) {
     var rowIndices = [];
     var values = [];
     
@@ -344,12 +344,21 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
         values.push(v);
     }
     
+    return {
+        rowIndices: rowIndices,
+        values: values
+    };
+};
+
+DataTableView.promptExpressionOnVisibleRows = function(column, title, expression, onDone) {
+    var o = DataTableView.sampleVisibleRows(column);
+    
     var self = this;
     new ExpressionPreviewDialog(
         title,
         column.cellIndex, 
-        rowIndices, 
-        values,
+        o.rowIndices, 
+        o.values,
         expression,
         onDone
     );

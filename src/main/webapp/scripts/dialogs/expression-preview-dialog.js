@@ -1,17 +1,6 @@
 function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expression, onDone) {
-    this._cellIndex = cellIndex;
-    this._rowIndices = rowIndices;
-    this._values = values;
-    this._results = null;
-    
-    this._expression = expression;
     this._onDone = onDone;
-    
-    this._timerID = null;
-    this._createDialog(title);
-}
 
-ExpressionPreviewDialog.prototype._createDialog = function(title) {
     var self = this;
     var frame = DialogSystem.createDialog();
     frame.width("700px");
@@ -19,54 +8,105 @@ ExpressionPreviewDialog.prototype._createDialog = function(title) {
     var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    var html = $(ExpressionPreviewDialog.generateWidgetHtml()).appendTo(body);
     
-    var html = $(
-        '<div class="dialog-body">' +
-            '<p>Expression: <input bind="expressionInput" /></p>' +
-            '<div id="expression-preview-tabs">' +
-                '<ul>' +
-                    '<li><a href="#expression-preview-tabs-preview">Preview</a></li>' +
-                    '<li><a href="#expression-preview-tabs-help">Help</a></li>' +
-                '</ul>' +
-                '<div id="expression-preview-tabs-preview">' +
-                    '<div class="expression-preview-container" bind="previewContainer"></div>' +
-                '</div>' +
-                '<div id="expression-preview-tabs-help" style="display: none;">' +
-                    '<div class="expression-preview-help-container" bind="helpTabBody"></div>' +
-                '</div>' +
-            '</div>' +
-        '</div>'
-    ).appendTo(body);
-
     this._elmts = DOM.bind(html);
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
-        self._onDone(self._expression);
+        self._onDone(self._previewWidget.expression);
     }).appendTo(footer);
     
     $('<button></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
     
-    this._elmts.expressionInput
-        .width("400px")
-        .attr("value", this._expression)
-        .keyup(function(){
-            self._scheduleUpdate();
-        })
-        .focus();
-    
     this._level = DialogSystem.showDialog(frame);
+    this._previewWidget = new ExpressionPreviewDialog.Widget(
+        this._elmts, 
+        cellIndex,
+        rowIndices,
+        values,
+        expression
+    );
+};
+
+ExpressionPreviewDialog.generateWidgetHtml = function() {
+    return '<table class="expression-preview-layout">' +
+            '<tr>' +
+                '<td>Expression</td>' +
+                '<td>Language</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td rowspan="2"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></td>' +
+                '<td width="150">' +
+                    '<select bind="expressionPreviewLanguageSelect">' +
+                        '<option value="gel">Native expression language</option>' +
+                        '<option value="jython">Jython</option>' +
+                        '<option value="clojure">Clojure</option>' +
+                    '</select>' +
+                '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td class="expression-preview-error-container" bind="expressionPreviewErrorContainer" width="150"></td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td colspan="2">' +
+                    '<div id="expression-preview-tabs">' +
+                        '<ul>' +
+                            '<li><a href="#expression-preview-tabs-preview">Preview</a></li>' +
+                            '<li><a href="#expression-preview-tabs-history">History</a></li>' +
+                            '<li><a href="#expression-preview-tabs-help">Help</a></li>' +
+                        '</ul>' +
+                        '<div id="expression-preview-tabs-preview">' +
+                            '<div class="expression-preview-container" bind="expressionPreviewPreviewContainer"></div>' +
+                        '</div>' +
+                        '<div id="expression-preview-tabs-history">' +
+                            '<div class="expression-preview-container" bind="expressionPreviewHistoryContainer"></div>' +
+                        '</div>' +
+                        '<div id="expression-preview-tabs-help" style="display: none;">' +
+                            '<div class="expression-preview-help-container" bind="expressionPreviewHelpTabBody"></div>' +
+                        '</div>' +
+                    '</div>' +
+                '</td>' +
+            '</tr>' +
+        '</table>';
+};
+
+ExpressionPreviewDialog.Widget = function(
+    elmts, 
+    cellIndex,
+    rowIndices,
+    values,
+    expression
+) {
+    this._elmts = elmts;
+    this._cellIndex = cellIndex;
+    this._rowIndices = rowIndices;
+    this._values = values;
+    this.expression = expression;
+    
+    this._results = null;
+    this._timerID = null;
+    
     $("#expression-preview-tabs").tabs();
     $("#expression-preview-tabs-preview").css("display", "");
     $("#expression-preview-tabs-help").css("display", "");
         
+    var self = this;
+    this._elmts.expressionPreviewTextarea
+        .attr("value", this.expression)
+        .keyup(function(){
+            self._scheduleUpdate();
+        })
+        .select()
+        .focus();
+    
     this._update();
     this._renderHelpTab();
 };
 
-ExpressionPreviewDialog.prototype._renderHelpTab = function() {
+ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
     var self = this;
     $.getJSON(
         "/command/get-expression-language-info",
@@ -78,8 +118,8 @@ ExpressionPreviewDialog.prototype._renderHelpTab = function() {
     );
 };
 
-ExpressionPreviewDialog.prototype._renderHelp = function(data) {
-    var elmt = this._elmts.helpTabBody.empty();
+ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
+    var elmt = this._elmts.expressionPreviewHelpTabBody.empty();
     
     $('<h3></h3>').text("Variables").appendTo(elmt);
     var varTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
@@ -147,7 +187,7 @@ ExpressionPreviewDialog.prototype._renderHelp = function(data) {
     renderEntries(controlTable, data.controls);
 };
 
-ExpressionPreviewDialog.prototype._scheduleUpdate = function() {
+ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
     if (this._timerID != null) {
         window.clearTimeout(this._timerID);
     }
@@ -155,9 +195,9 @@ ExpressionPreviewDialog.prototype._scheduleUpdate = function() {
     this._timerID = window.setTimeout(function() { self._update(); }, 300);
 };
 
-ExpressionPreviewDialog.prototype._update = function() {
+ExpressionPreviewDialog.Widget.prototype._update = function() {
     var self = this;
-    var expression = this._expression = $.trim(this._elmts.expressionInput[0].value);
+    var expression = this.expression = $.trim(this._elmts.expressionPreviewTextarea[0].value);
     
     $.post(
         "/command/preview-expression?" + $.param({ project: theProject.id, expression: expression, cellIndex: this._cellIndex }), 
@@ -176,8 +216,8 @@ ExpressionPreviewDialog.prototype._update = function() {
     );
 };
 
-ExpressionPreviewDialog.prototype._renderPreview = function(expression, data) {
-    var container = this._elmts.previewContainer.empty();
+ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, data) {
+    var container = this._elmts.expressionPreviewPreviewContainer.empty();
     var table = $('<table width="100%"></table>').appendTo(container)[0];
     
     var tr = table.insertRow(0);
@@ -201,6 +241,13 @@ ExpressionPreviewDialog.prototype._renderPreview = function(expression, data) {
         }
     };
     
+    if (this._results != null) {
+        this._elmts.expressionPreviewErrorContainer.empty();
+    } else {
+        var message = (data.type == "parser") ? data.message : "Internal error";
+        this._elmts.expressionPreviewErrorContainer.empty().text(message);
+    }
+    
     for (var i = 0; i < this._values.length; i++) {
         var tr = table.insertRow(table.rows.length);
         
@@ -212,11 +259,6 @@ ExpressionPreviewDialog.prototype._renderPreview = function(expression, data) {
         if (this._results != null) {
             var v = this._results[i];
             renderValue(tdValue, v);
-        } else {
-            // error
-            
-            var message = (data.type == "parser") ? data.message : "internal error";
-            $('<span></span>').text(message).addClass("expression-preview-special-value").appendTo(tdValue);
         }
     }
 };
