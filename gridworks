@@ -32,10 +32,13 @@ where [options] include:
 
   -w <path> path to the webapp
      default: src/main/webapp
-     
-  -d enable JVM debugging (on port 8000)
+
+  -d <path> path to the data directory
+     default: OS dependent
+          
+  --debug enable JVM debugging (on port 8000)
        
-  -x enable JMX monitoring (for jconsole)
+  --jmx enable JMX monitoring (for jconsole)
   
 and <action> is one of
 
@@ -89,7 +92,8 @@ ant_prepare() {
 }
 
 ant() {
-    ant_prepare    
+    ant_prepare   
+    echo $NUM_VERSION 
     $ANT -f build.xml -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Djava.options="$JAVA_OPTIONS" $1 || exit 1
 }
 
@@ -114,7 +118,7 @@ get_version() {
         fail "Must specify a version number"
     fi
     
-    NUM_VERSION=`echo $VERSION | sed 's/\a//g'`
+    NUM_VERSION=`echo $VERSION | sed 's/[a-zA-Z]//g'`
 }
     
 make_exe() {
@@ -182,10 +186,18 @@ run() {
         ant build
         echo ""
     fi
+
+    if [ "$SYSTEM" == 'Darwin' ] ; then
+        OPTS="-Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns $OPTS"
+    fi
+    
+    if [ "$GRIDWORKS_DATA_DIR" != "" ] ; then
+        OPTS="-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR $OPTS"
+    fi
     
     CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
 
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS -Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns com.metaweb.gridworks.Gridworks"
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
   
     echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
@@ -230,8 +242,9 @@ while [ $# -ne 0 ] ; do
     -p) shift; GRIDWORKS_PORT="$1"; shift; continue;;
     -i) shift; GRIDWORKS_HOST="$1"; shift; continue;;
     -w) shift; GRIDWORKS_WEBAPP="$1"; shift; continue;;
-    -d) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
-    -x) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
+    -d) shift; GRIDWORKS_DATA_DIR="$1"; shift; continue;;
+    --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
+    --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
     *) break;;
   esac

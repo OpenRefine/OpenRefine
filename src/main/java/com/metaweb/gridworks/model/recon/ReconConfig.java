@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.model.recon;
 
-import java.io.Serializable; 
+import java.io.Serializable;
 import java.util.List;
 
 import org.json.JSONObject;

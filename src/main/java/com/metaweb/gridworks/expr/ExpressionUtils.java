@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.expr;
 
-import java.util.Properties; 
+import java.util.Properties;
 
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;

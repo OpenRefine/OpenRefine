@@ -140,7 +140,7 @@ goto usage
 
 :doRun
 set CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*"
-"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% com.metaweb.gridworks.Gridworks
+"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=lib/native/windows com.metaweb.gridworks.Gridworks
 goto end
 
 :doAnt

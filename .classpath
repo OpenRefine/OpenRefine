@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/cos-20081226.jar" sourcepath="lib-src/cos-20081226-sources.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
+	<classpathentry kind="lib" path="lib/jdatapath-alpha2.jar" sourcepath="lib-src/jdatapath-alpha2-sources.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

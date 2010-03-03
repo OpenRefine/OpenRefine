@@ -15,10 +15,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
+import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
@@ -33,8 +32,6 @@ import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
 
 public class CreateProjectCommand extends Command {
-
-    private final static Logger logger = Logger.getLogger("gridworks");
 
     @Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -131,7 +128,7 @@ public class CreateProjectCommand extends Command {
                         CharsetMatch charsetMatch = detector.setText(enforceMarking(filePart.getInputStream())).detect();
                         options.setProperty("encoding", charsetMatch.getName());
                         options.setProperty("encoding_confidence", Integer.toString(charsetMatch.getConfidence()));
-                        logger.info("Best encoding guess: " + charsetMatch.getName() + " [confidence: " + charsetMatch.getConfidence() + "]");
+                        Gridworks.log("Best encoding guess: " + charsetMatch.getName() + " [confidence: " + charsetMatch.getConfidence() + "]");
                         Reader reader = charsetMatch.getReader();
                         try {
                             importer.read(charsetMatch.getReader(), project, options, skip, limit);

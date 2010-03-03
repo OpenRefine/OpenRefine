@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.gel.controls;
 
-import java.util.Properties; 
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;

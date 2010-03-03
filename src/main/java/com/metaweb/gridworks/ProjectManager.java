@@ -10,10 +10,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.codeberry.jdatapath.DataPath;
+import com.codeberry.jdatapath.JDataPathSystem;
 import com.metaweb.gridworks.model.Project;
 
 public class ProjectManager implements Serializable {
-	private static final long serialVersionUID = -2967415873336723962L;
+	
+    private static final long serialVersionUID = -2967415873336723962L;
 	
 	protected File _dir;
 	protected Map<Long, ProjectMetadata> _projectsMetadata;
@@ -22,16 +25,55 @@ public class ProjectManager implements Serializable {
 	
 	static public ProjectManager singleton;
 	
-	static public void initialize(File dir) {
+	static public void initialize() {
 		if (singleton == null) {
+		    File dir = getProjectLocation();
+		    Gridworks.log("Using data directory: " + dir.getAbsolutePath());
 			File file = new File(dir, "projects");
 			if (file.exists()) {
 				singleton = load(file);
-			}
-			if (singleton == null) {
+			} else {
 				singleton = new ProjectManager(dir);
 			}
 		}
+	}
+	
+	static protected File getProjectLocation() {
+	    String data_dir = Configurations.get("gridworks.data_dir");
+	    if (data_dir != null) {
+	        return new File(data_dir);
+	    }
+	    
+	    String os = Configurations.get("os.name").toLowerCase();
+	    if (os.contains("windows")) {
+	        // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
+	        // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
+	        // so we're using a library that uses JNI to ask directly the win32 APIs, 
+	        // it's not elegant but it's the safest bet
+	        DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
+            File data = new File(localDataPath.getPath());
+            data.mkdirs();
+            return data;	       
+	    } else if (os.contains("mac os x")) {
+	        // on macosx, use "~/Library/Application Support"
+	        String home = System.getProperty("user.home");
+            String data_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks"; 
+            File data = new File(data_home);
+            data.mkdirs();
+            return data;
+	    } else { // most likely a UNIX flavor
+	        // start with the XDG environment
+	        // see http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+            String data_home = System.getenv("XDG_DATA_HOME");
+            if (data_home == null) { // if not found, default back to ~/.local/share
+                String home = System.getProperty("user.home");
+                if (home == null) home = ".";
+                data_home = home + "/.local/share";
+            }
+            File data = new File(data_home + "/gridworks");
+            data.mkdirs();
+            return data;
+	    }
 	}
 	
 	static protected ProjectManager load(File file) {

@@ -1,6 +1,5 @@
 package com.metaweb.gridworks;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,10 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.commands.edit.AddColumnCommand;
@@ -30,17 +25,17 @@ import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.info.ExportRowsCommand;
 import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
-import com.metaweb.gridworks.commands.info.GetModelsCommand;
 import com.metaweb.gridworks.commands.info.GetHistoryCommand;
+import com.metaweb.gridworks.commands.info.GetModelsCommand;
 import com.metaweb.gridworks.commands.info.GetOperationsCommand;
 import com.metaweb.gridworks.commands.info.GetProcessesCommand;
 import com.metaweb.gridworks.commands.info.GetProjectMetadataCommand;
 import com.metaweb.gridworks.commands.info.GetRowsCommand;
-import com.metaweb.gridworks.commands.recon.ReconMarkNewTopicsCommand;
-import com.metaweb.gridworks.commands.recon.ReconMatchBestCandidatesCommand;
 import com.metaweb.gridworks.commands.recon.ReconDiscardJudgmentsCommand;
 import com.metaweb.gridworks.commands.recon.ReconJudgeOneCellCommand;
 import com.metaweb.gridworks.commands.recon.ReconJudgeSimilarCellsCommand;
+import com.metaweb.gridworks.commands.recon.ReconMarkNewTopicsCommand;
+import com.metaweb.gridworks.commands.recon.ReconMatchBestCandidatesCommand;
 import com.metaweb.gridworks.commands.recon.ReconMatchSpecificTopicCommand;
 import com.metaweb.gridworks.commands.recon.ReconcileCommand;
 import com.metaweb.gridworks.commands.util.CancelProcessesCommand;
@@ -50,6 +45,7 @@ import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
 import com.metaweb.gridworks.commands.util.PreviewProtographCommand;
 
 public class GridworksServlet extends HttpServlet {
+    
 	private static final long serialVersionUID = 2386057901503517403L;
 	
 	static protected Map<String, Command> _commands = new HashMap<String, Command>();
@@ -116,7 +112,7 @@ public class GridworksServlet extends HttpServlet {
 	}
 	
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ProjectManager.initialize(new File("./data"));
+		ProjectManager.initialize();
 		
     	String commandName = request.getPathInfo().substring(1);
     	Command command = _commands.get(commandName);
@@ -126,7 +122,7 @@ public class GridworksServlet extends HttpServlet {
     }
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ProjectManager.initialize(new File("./data"));
+		ProjectManager.initialize();
 		
     	String commandName = request.getPathInfo().substring(1);
     	Command command = _commands.get(commandName);
@@ -135,13 +131,4 @@ public class GridworksServlet extends HttpServlet {
     	}
     }
     
-    static public JSONObject evaluateJsonStringToObject(String s) throws JSONException {
-    	JSONTokener t = new JSONTokener(s);
-    	JSONObject o = (JSONObject) t.nextValue();
-    	return o;
-    }
-    
-    protected String encodeString(String s) {
-    	return s.replace("\"", "\\\"");
-    }
 }
