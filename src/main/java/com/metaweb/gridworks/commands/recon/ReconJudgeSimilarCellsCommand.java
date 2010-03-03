@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
+import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Recon.Judgment;
@@ -15,7 +16,7 @@ public class ReconJudgeSimilarCellsCommand extends EngineDependentCommand {
 
     @Override
     protected AbstractOperation createOperation(
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
+            Project project, HttpServletRequest request, JSONObject engineConfig) throws Exception {
         
         String columnName = request.getParameter("columnName");
         String similarValue = request.getParameter("similarValue");

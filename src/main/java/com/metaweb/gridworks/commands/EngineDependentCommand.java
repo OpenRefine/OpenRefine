@@ -21,7 +21,7 @@ abstract public class EngineDependentCommand extends Command {
         try {
             Project project = getProject(request);
             
-            AbstractOperation op = createOperation(request, getEngineConfig(request));
+            AbstractOperation op = createOperation(project, request, getEngineConfig(request));
             Process process = op.createProcess(project, new Properties());
             
             boolean done = project.processManager.queueProcess(process);
@@ -34,5 +34,5 @@ abstract public class EngineDependentCommand extends Command {
     }
     
     abstract protected AbstractOperation createOperation(
-            HttpServletRequest request, JSONObject engineConfig) throws Exception;
+            Project project, HttpServletRequest request, JSONObject engineConfig) throws Exception;
 }

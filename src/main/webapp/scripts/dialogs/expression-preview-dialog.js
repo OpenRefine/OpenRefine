@@ -14,7 +14,7 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
-        self._onDone(self._previewWidget.expression);
+        self._onDone(self._previewWidget.getExpression(true));
     }).appendTo(footer);
     
     $('<button></button>').text("Cancel").click(function() {
@@ -103,7 +103,26 @@ ExpressionPreviewDialog.Widget = function(
         .focus();
     
     this._update();
+    this._renderExpressionHistoryTab();
     this._renderHelpTab();
+};
+
+ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
+    var s = $.trim(this.expression || "");
+    if (s.length == 0) {
+        return null;
+    }
+    if (commit) {
+        $.post(
+            "/command/log-expression?" + $.param({ project: theProject.id, expression: s }),
+            null,
+            function(data) {
+            },
+            "json"
+        );
+    }
+    
+    return s;
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
@@ -185,6 +204,48 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
     $('<h3></h3>').text("Controls").appendTo(elmt);
     var controlTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
     renderEntries(controlTable, data.controls);
+};
+
+ExpressionPreviewDialog.Widget.prototype._renderExpressionHistoryTab = function() {
+    var self = this;
+    $.getJSON(
+        "/command/get-expression-history?" + $.param({ project: theProject.id }),
+        null,
+        function(data) {
+            self._renderExpressionHistory(data);
+        },
+        "json"
+    );
+};
+
+ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(data) {
+    var self = this;
+    var elmt = this._elmts.expressionPreviewHistoryContainer.empty();
+    
+    var table = $(
+        '<table width="100%" cellspacing="5">' +
+            '<tr><th>Expression</th><th>From</th><th></th></tr>' +
+        '</table>'
+    ).appendTo(elmt)[0];
+    
+    var renderEntry = function(entry) {
+        var tr = table.insertRow(table.rows.length);
+        
+        $(tr.insertCell(0)).text(entry.code);
+        $(tr.insertCell(1)).text(entry.global ? "Other projects" : "This project");
+        
+        $('<a href="javascript:{}">Re-use</a>').appendTo(tr.insertCell(2)).click(function() {
+            self._elmts.expressionPreviewTextarea[0].value = entry.code;
+            self._elmts.expressionPreviewTextarea.select().focus();
+            self._update();
+            $("#expression-preview-tabs").tabs('option', 'selected', 0);
+        });
+    };
+    
+    for (var i = 0; i < data.expressions.length; i++) {
+        var entry = data.expressions[i];
+        renderEntry(entry);
+    }
 };
 
 ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {

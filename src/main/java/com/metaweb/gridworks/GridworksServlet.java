@@ -25,6 +25,7 @@ import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.info.ExportRowsCommand;
 import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
+import com.metaweb.gridworks.commands.info.GetExpressionHistoryCommand;
 import com.metaweb.gridworks.commands.info.GetHistoryCommand;
 import com.metaweb.gridworks.commands.info.GetModelsCommand;
 import com.metaweb.gridworks.commands.info.GetOperationsCommand;
@@ -41,6 +42,7 @@ import com.metaweb.gridworks.commands.recon.ReconcileCommand;
 import com.metaweb.gridworks.commands.util.CancelProcessesCommand;
 import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
 import com.metaweb.gridworks.commands.util.GuessTypesOfColumnCommand;
+import com.metaweb.gridworks.commands.util.LogExpressionCommand;
 import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
 import com.metaweb.gridworks.commands.util.PreviewProtographCommand;
 
@@ -91,6 +93,9 @@ public class GridworksServlet extends HttpServlet {
         
         _commands.put("preview-expression", new PreviewExpressionCommand());
         _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());
+        _commands.put("get-expression-history", new GetExpressionHistoryCommand());
+        _commands.put("log-expression", new LogExpressionCommand());
+        
         _commands.put("preview-protograph", new PreviewProtographCommand());
         _commands.put("guess-types-of-column", new GuessTypesOfColumnCommand());
     }

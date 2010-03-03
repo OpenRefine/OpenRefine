@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.metaweb.gridworks.ProjectManager;
+import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.History;
 import com.metaweb.gridworks.process.ProcessManager;
@@ -30,6 +32,10 @@ public class Project implements Serializable {
         history = new History(this);
         
         internalInitialize();
+    }
+    
+    public ProjectMetadata getMetadata() {
+    	return ProjectManager.singleton.getProjectMetadata(id);
     }
     
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

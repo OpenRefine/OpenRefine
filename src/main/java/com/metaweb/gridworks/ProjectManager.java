@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.codeberry.jdatapath.DataPath;
@@ -17,9 +19,11 @@ import com.metaweb.gridworks.model.Project;
 public class ProjectManager implements Serializable {
     
     private static final long serialVersionUID = -2967415873336723962L;
+    private static final int s_expressionHistoryMax = 100; // last n expressions used across all projects
     
     protected File _dir;
     protected Map<Long, ProjectMetadata> _projectsMetadata;
+    protected List<String> 				 _expressions;
     
     transient protected Map<Long, Project> _projects;
     
@@ -111,6 +115,7 @@ public class ProjectManager implements Serializable {
         _dir.mkdirs();
         
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
+        _expressions = new LinkedList<String>();
         
         internalInitialize();
     }
@@ -180,6 +185,18 @@ public class ProjectManager implements Serializable {
         }
     }
     
+    public void addLatestExpression(String s) {
+    	_expressions.remove(s);
+    	_expressions.add(0, s);
+    	while (_expressions.size() > s_expressionHistoryMax) {
+    		_expressions.remove(_expressions.size() - 1);
+    	}
+    }
+    
+    public List<String> getExpressions() {
+    	return _expressions;
+    }
+    
     public void save() {
         File file = new File(_dir, "projects");
         
@@ -210,7 +227,11 @@ public class ProjectManager implements Serializable {
     
     public void saveAllProjects() {
         for (Project project : _projects.values()) {
-            saveProject(project);
+        	try {
+        		saveProject(project);
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
         }
     }
     

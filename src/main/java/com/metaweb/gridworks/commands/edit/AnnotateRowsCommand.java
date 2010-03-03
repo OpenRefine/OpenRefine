@@ -6,13 +6,14 @@ import org.json.JSONObject;
 
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
+import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.operations.RowStarOperation;
 
 public class AnnotateRowsCommand extends EngineDependentCommand {
     
     @Override
-    protected AbstractOperation createOperation(HttpServletRequest request,
-            JSONObject engineConfig) throws Exception {
+    protected AbstractOperation createOperation(Project project,
+            HttpServletRequest request, JSONObject engineConfig) throws Exception {
         
         String starredString = request.getParameter("starred");
         if (starredString != null) {
