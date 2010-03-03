@@ -56,6 +56,15 @@ public class ProcessManager implements Jsonizable {
 		update();
 	}
 	
+	public void cancelAll() {
+		for (Process p : _processes) {
+			if (!p.isImmediate() && p.isRunning()) {
+				p.cancel();
+			}
+		}
+		_processes.clear();
+	}
+	
 	protected void update() {
 		while (_processes.size() > 0) {
 			Process p = _processes.get(0);

@@ -43,6 +43,7 @@ import com.metaweb.gridworks.commands.recon.ReconJudgeOneCellCommand;
 import com.metaweb.gridworks.commands.recon.ReconJudgeSimilarCellsCommand;
 import com.metaweb.gridworks.commands.recon.ReconMatchSpecificTopicCommand;
 import com.metaweb.gridworks.commands.recon.ReconcileCommand;
+import com.metaweb.gridworks.commands.util.CancelProcessesCommand;
 import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
 import com.metaweb.gridworks.commands.util.GuessTypesOfColumnCommand;
 import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
@@ -68,6 +69,7 @@ public class GridworksServlet extends HttpServlet {
 		
 		_commands.put("undo-redo", new UndoRedoCommand());
 		_commands.put("apply-operations", new ApplyOperationsCommand());
+		_commands.put("cancel-processes", new CancelProcessesCommand());
 		
 		_commands.put("compute-facets", new ComputeFacetsCommand());
 		_commands.put("do-text-transform", new DoTextTransformCommand());
