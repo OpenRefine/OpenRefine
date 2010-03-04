@@ -17,6 +17,8 @@ import com.metaweb.gridworks.expr.functions.arrays.Sort;
 import com.metaweb.gridworks.expr.functions.booleans.And;
 import com.metaweb.gridworks.expr.functions.booleans.Not;
 import com.metaweb.gridworks.expr.functions.booleans.Or;
+import com.metaweb.gridworks.expr.functions.date.Inc;
+import com.metaweb.gridworks.expr.functions.date.Now;
 import com.metaweb.gridworks.expr.functions.math.Ceil;
 import com.metaweb.gridworks.expr.functions.math.Exp;
 import com.metaweb.gridworks.expr.functions.math.Floor;
@@ -144,6 +146,9 @@ public class ControlFunctionRegistry {
         registerFunction("join", new Join());
         registerFunction("reverse", new Reverse());
         registerFunction("sort", new Sort());
+
+        registerFunction("now", new Now());
+        registerFunction("inc", new Inc());
         
         registerFunction("round", new Round());
         registerFunction("floor", new Floor());
