@@ -2,6 +2,7 @@ package com.metaweb.gridworks.importers;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -131,7 +132,7 @@ public class ExcelImporter implements Importer {
                         cellType = cell.getCachedFormulaResultType();
                     }
                     
-                    Object value = null;
+                    Serializable value = null;
                     if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
                         value = cell.getBooleanCellValue();
                     } else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {

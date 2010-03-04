@@ -1,12 +1,14 @@
 package com.metaweb.gridworks.importers;
 
+import java.io.Serializable;
+
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Row;
 
 public class ImporterUtilities {
 
-    static public Object parseCellValue(String text) {
+    static public Serializable parseCellValue(String text) {
         if (text.length() > 0) {
             if (text.length() > 1 && text.startsWith("\"") && text.endsWith("\"")) {
                 return text.substring(1, text.length() - 1);
@@ -52,7 +54,7 @@ public class ImporterUtilities {
                 }
             }
             
-            Object value = parseCellValue(text);
+            Serializable value = parseCellValue(text);
             if (ExpressionUtils.isNonBlankData(value)) {
                 row.cells.add(new Cell(value, null));
                 hasData = true;
@@ -71,7 +73,7 @@ public class ImporterUtilities {
         for (int c = 0; c < cells.length; c++) {
             String text = cells[c];
             
-            Object value = parseCellValue(text);
+            Serializable value = parseCellValue(text);
             if (ExpressionUtils.isNonBlankData(value)) {
                 row.cells.add(new Cell(value, null));
                 hasData = true;

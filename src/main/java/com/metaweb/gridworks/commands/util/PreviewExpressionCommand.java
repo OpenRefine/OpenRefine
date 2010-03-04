@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.commands.util;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -78,8 +79,8 @@ public class PreviewExpressionCommand extends Command {
                             result = eval.evaluate(bindings);
                             
                             if (repeat) {
-                                for (int r = 0; r < repeatCount; r++) {
-                                    Cell newCell = new Cell(result, (cell != null) ? cell.recon : null);
+                                for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
+                                    Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
                                     ExpressionUtils.bind(bindings, row, rowIndex, newCell);
                                     
                                     Object newResult = eval.evaluate(bindings);
@@ -87,9 +88,9 @@ public class PreviewExpressionCommand extends Command {
                                         break;
                                     } else if (ExpressionUtils.sameValue(result, newResult)) {
                                         break;
+                                    } else {
+                                        result = newResult;
                                     }
-                                    
-                                    result = newResult;
                                 }
                             }
                         } catch (Exception e) {

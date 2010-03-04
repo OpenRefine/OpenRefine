@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.operations;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -140,7 +141,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 
                 ExpressionUtils.bind(bindings, row, rowIndex, cell);
                 
-                Object v = eval.evaluate(bindings);
+                Serializable v = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                 if (ExpressionUtils.isError(v)) {
                     if (_onError == OnError.SetToBlank) {
                         return false;

@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.operations;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Properties;
 
@@ -125,7 +126,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
                 ExpressionUtils.bind(bindings, row, rowIndex, cell);
                 
-                Object newValue = eval.evaluate(bindings);
+                Serializable newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                 if (ExpressionUtils.isError(newValue)) {
                 	if (_onError == OnError.KeepOriginal) {
                 		return false;
@@ -141,7 +142,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                         for (int i = 0; i < _repeatCount; i++) {
                             ExpressionUtils.bind(bindings, row, rowIndex, newCell);
                             
-                            newValue = eval.evaluate(bindings);
+                            newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                             if (ExpressionUtils.isError(newValue)) {
                                 break;
                             } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {

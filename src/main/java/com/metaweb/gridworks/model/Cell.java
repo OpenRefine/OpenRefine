@@ -14,10 +14,10 @@ import com.metaweb.gridworks.expr.HasFields;
 public class Cell implements Serializable, HasFields, Jsonizable {
     private static final long serialVersionUID = -5891067829205458102L;
     
-    final public Object value;
-    final public Recon  recon;
+    final public Serializable   value;
+    final public Recon          recon;
     
-    public Cell(Object value, Recon recon) {
+    public Cell(Serializable value, Recon recon) {
         this.value = value;
         this.recon = recon;
     }

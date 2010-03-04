@@ -34,9 +34,9 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
         private static final long serialVersionUID = -4799990738910328002L;
         
         final public List<String>     from;
-        final public Object            to;
+        final public Serializable     to;
         
-        public Edit(List<String> from, Object to) {
+        public Edit(List<String> from, Serializable to) {
             this.from = from;
             this.to = to;
         }
@@ -82,7 +82,7 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
                 from.add(fromA.getString(j));
             }
         
-            edits.add(new Edit(from, editO.get("to")));
+            edits.add(new Edit(from, editO.getString("to")));
         }
         
         return edits;
@@ -129,7 +129,7 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
         
-        Map<String, Object> fromTo = new HashMap<String, Object>();
+        Map<String, Serializable> fromTo = new HashMap<String, Serializable>();
         for (Edit edit : _edits) {
             for (String s : edit.from) {
                 fromTo.put(s, edit.to);
@@ -137,14 +137,19 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
         }
         
         return new RowVisitor() {
-            int                 cellIndex;
-            Properties             bindings;
-            List<CellChange>     cellChanges;
-            Evaluable             eval;
-            Map<String, Object> fromTo;
+            int                         cellIndex;
+            Properties                  bindings;
+            List<CellChange>            cellChanges;
+            Evaluable                   eval;
+            Map<String, Serializable>   fromTo;
             
             public RowVisitor init(
-                    int cellIndex, Properties bindings, List<CellChange> cellChanges, Evaluable eval, Map<String, Object> fromTo) {
+                int cellIndex, 
+                Properties bindings, 
+                List<CellChange> cellChanges, 
+                Evaluable eval, 
+                Map<String, Serializable> fromTo
+            ) {
                 this.cellIndex = cellIndex;
                 this.bindings = bindings;
                 this.cellChanges = cellChanges;
@@ -161,7 +166,7 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
                 Object v = eval.evaluate(bindings);
                 if (v != null) {
                     String from = v.toString();
-                    Object to = fromTo.get(from);
+                    Serializable to = fromTo.get(from);
                     if (to != null) {
                         Cell newCell = new Cell(to, (cell != null) ? cell.recon : null);
                         CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);

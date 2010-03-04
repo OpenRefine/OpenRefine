@@ -1,5 +1,8 @@
 package com.metaweb.gridworks.expr;
 
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import com.metaweb.gridworks.model.Cell;
@@ -66,5 +69,21 @@ public class ExpressionUtils {
     	} else {
     		return v1.equals(v2);
     	}
+    }
+    
+    static public boolean isStorable(Object v) {
+        return v == null ||
+            v instanceof Number ||
+            v instanceof String ||
+            v instanceof Boolean ||
+            v instanceof Date ||
+            v instanceof Calendar ||
+            v instanceof EvalError;
+    }
+    
+    static public Serializable wrapStorable(Object v) {
+        return isStorable(v) ? 
+            (Serializable) v : 
+            new EvalError(v.getClass().getSimpleName() + " value not storable");
     }
 }
