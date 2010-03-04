@@ -52,7 +52,7 @@ TextSearchFacet.prototype._initializeUI = function() {
     var bodyDiv = $('<div></div>').addClass("facet-text-body").appendTo(container);
     
     var input = $('<input />').appendTo(bodyDiv);
-    input.keypress(function(evt) {
+    input.keyup(function(evt) {
         self._query = this.value;
         self._scheduleUpdate();
     });
