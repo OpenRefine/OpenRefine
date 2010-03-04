@@ -92,6 +92,17 @@ ExpressionPreviewDialog.Widget = function(
     $("#expression-preview-tabs").tabs();
     $("#expression-preview-tabs-history").css("display", "");
     $("#expression-preview-tabs-help").css("display", "");
+    
+    var language = "gel";
+    var colon = expression.indexOf(":");
+    if (colon > 0) {
+        var l = expression.substring(0, colon);
+        if (l == "gel" || l == "jython" || l == "clojure") {
+            expression = expression.substring(colon + 1);
+            language = l;
+        }
+    }
+    this._elmts.expressionPreviewLanguageSelect[0].value = language;
         
     var self = this;
     this._elmts.expressionPreviewTextarea
@@ -112,6 +123,8 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     if (s.length == 0) {
         return null;
     }
+    
+    s = this._getLanguage() + ":" + s;
     if (commit) {
         $.post(
             "/command/log-expression?" + $.param({ project: theProject.id, expression: s }),
@@ -124,6 +137,10 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     
     return s;
 };
+
+ExpressionPreviewDialog.Widget.prototype._getLanguage = function() {
+    return this._elmts.expressionPreviewLanguageSelect[0].value;
+}
 
 ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
     var self = this;
@@ -261,7 +278,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     var expression = this.expression = $.trim(this._elmts.expressionPreviewTextarea[0].value);
     var params = {
         project: theProject.id,
-        expression: expression,
+        expression: this._getLanguage() + ":" + expression,
         cellIndex: this._cellIndex
     };
     this._prepareUpdate(params);
