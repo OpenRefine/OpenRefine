@@ -34,6 +34,7 @@ import com.metaweb.gridworks.expr.functions.strings.Fingerprint;
 import com.metaweb.gridworks.expr.functions.strings.IndexOf;
 import com.metaweb.gridworks.expr.functions.strings.LastIndexOf;
 import com.metaweb.gridworks.expr.functions.strings.MD5;
+import com.metaweb.gridworks.expr.functions.strings.NGramFingerprint;
 import com.metaweb.gridworks.expr.functions.strings.Partition;
 import com.metaweb.gridworks.expr.functions.strings.Phonetic;
 import com.metaweb.gridworks.expr.functions.strings.RPartition;
@@ -131,6 +132,7 @@ public class ControlFunctionRegistry {
         registerFunction("diff", new Diff());
         registerFunction("chomp", new Diff());
         registerFunction("fingerprint", new Fingerprint());
+        registerFunction("ngramFingerprint", new NGramFingerprint());
         registerFunction("phonetic", new Phonetic());
         registerFunction("reinterpret", new Reinterpret());
         
