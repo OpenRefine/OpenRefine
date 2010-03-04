@@ -289,13 +289,13 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
     var renderValue = function(td, v) {
         if (v !== null && v !== undefined) {
             if ($.isArray(v)) {
-                td.html(JSON.stringify(v));
+                td.text(JSON.stringify(v));
             } else if ($.isPlainObject(v)) {
                 $('<span></span>').addClass("expression-preview-special-value").text("Error: " + v.message).appendTo(td);
             } else if (typeof v === "string" && v.length == 0) {
                 $('<span>empty string</span>').addClass("expression-preview-special-value").appendTo(td);
             } else {
-                td.html(v.toString());
+                td.text(v.toString());
             }
         } else {
             $('<span>null</span>').addClass("expression-preview-special-value").appendTo(td);
