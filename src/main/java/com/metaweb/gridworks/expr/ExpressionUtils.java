@@ -28,7 +28,11 @@ public class ExpressionUtils {
             bindings.remove("value");
         } else {
             bindings.put("cell", cell);
-            bindings.put("value", cell.value);
+            if (cell.value == null) {
+                bindings.remove("value");
+            } else {
+                bindings.put("value", cell.value);
+            }
         }
     }
     
