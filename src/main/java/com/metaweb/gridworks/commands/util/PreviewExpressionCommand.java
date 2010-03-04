@@ -39,6 +39,16 @@ public class PreviewExpressionCommand extends Command {
                 return;
             }
             
+            boolean repeat = "true".equals(request.getParameter("repeat"));
+            int repeatCount = 10;
+            if (repeat) {
+                String repeatCountString = request.getParameter("repeatCount");
+                try {
+                    repeatCount = Math.max(Math.min(Integer.parseInt(repeatCountString), 10), 0);
+                } catch (Exception e) {
+                }
+            }
+            
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             
@@ -63,10 +73,25 @@ public class PreviewExpressionCommand extends Command {
                         Row row = project.rows.get(rowIndex);
                         Cell cell = row.getCell(cellIndex);
                             
-                        ExpressionUtils.bind(bindings, row, rowIndex, cell);
-                        
                         try {
+                            ExpressionUtils.bind(bindings, row, rowIndex, cell);
                             result = eval.evaluate(bindings);
+                            
+                            if (repeat) {
+                                for (int r = 0; r < repeatCount; r++) {
+                                    Cell newCell = new Cell(result, (cell != null) ? cell.recon : null);
+                                    ExpressionUtils.bind(bindings, row, rowIndex, newCell);
+                                    
+                                    Object newResult = eval.evaluate(bindings);
+                                    if (ExpressionUtils.isError(newResult)) {
+                                        break;
+                                    } else if (ExpressionUtils.sameValue(result, newResult)) {
+                                        break;
+                                    }
+                                    
+                                    result = newResult;
+                                }
+                            }
                         } catch (Exception e) {
                             // ignore
                         }

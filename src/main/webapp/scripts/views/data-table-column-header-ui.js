@@ -479,6 +479,13 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
         o.values,
         "value"
     );
+    previewWidget._prepareUpdate = function(params) {
+        params.repeat = bodyElmts.repeatCheckbox[0].checked;
+        params.repeatCount = bodyElmts.repeatCountInput[0].value;
+    };
+    bodyElmts.repeatCheckbox.click(function() {
+        previewWidget.update();
+    });
 };
 
 DataTableColumnHeaderUI.prototype._doReconcile = function() {

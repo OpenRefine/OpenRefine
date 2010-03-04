@@ -102,7 +102,7 @@ ExpressionPreviewDialog.Widget = function(
         .select()
         .focus();
     
-    this._update();
+    this.update();
     this._renderExpressionHistoryTab();
     this._renderHelpTab();
 };
@@ -237,7 +237,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
         $('<a href="javascript:{}">Re-use</a>').appendTo(tr.insertCell(2)).click(function() {
             self._elmts.expressionPreviewTextarea[0].value = entry.code;
             self._elmts.expressionPreviewTextarea.select().focus();
-            self._update();
+            self.update();
             $("#expression-preview-tabs").tabs('option', 'selected', 0);
         });
     };
@@ -253,15 +253,21 @@ ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
         window.clearTimeout(this._timerID);
     }
     var self = this;
-    this._timerID = window.setTimeout(function() { self._update(); }, 300);
+    this._timerID = window.setTimeout(function() { self.update(); }, 300);
 };
 
-ExpressionPreviewDialog.Widget.prototype._update = function() {
+ExpressionPreviewDialog.Widget.prototype.update = function() {
     var self = this;
     var expression = this.expression = $.trim(this._elmts.expressionPreviewTextarea[0].value);
+    var params = {
+        project: theProject.id,
+        expression: expression,
+        cellIndex: this._cellIndex
+    };
+    this._prepareUpdate(params);
     
     $.post(
-        "/command/preview-expression?" + $.param({ project: theProject.id, expression: expression, cellIndex: this._cellIndex }), 
+        "/command/preview-expression?" + $.param(params), 
         {
             rowIndices: JSON.stringify(this._rowIndices) 
         },
@@ -275,6 +281,9 @@ ExpressionPreviewDialog.Widget.prototype._update = function() {
         },
         "json"
     );
+};
+
+ExpressionPreviewDialog.Widget.prototype._prepareUpdate = function(params) {
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, data) {
