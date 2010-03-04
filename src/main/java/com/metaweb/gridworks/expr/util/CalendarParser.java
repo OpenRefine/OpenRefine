@@ -741,7 +741,7 @@ public class CalendarParser {
 
         Object result;
         try {
-            result = method.invoke((Object) null, (Object) null);
+            result = method.invoke((Object) null);
         } catch (IllegalAccessException iae) {
             return null;
         } catch (InvocationTargetException ite) {
@@ -766,8 +766,7 @@ public class CalendarParser {
             for (int j = 0; j < tmpList.length; j++) {
                 final int len = tmpList[j].length();
                 if ((len > 2 && Character.isUpperCase(tmpList[j].charAt(1)))
-                        && (len != 7 || !Character
-                                .isDigit(tmpList[j].charAt(3)))) {
+                        && (len != 7 || !Character.isDigit(tmpList[j].charAt(3)))) {
                     if (finalList == null) {
                         numSaved++;
                     } else {
