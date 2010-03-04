@@ -110,7 +110,7 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
     for (var i = this._facets.length - 1;i >= 0; i--) {
         if (this._facets[i].facet === facet) {
             this._facets[i].elmt.remove();
-            this._facets.splice(i, 1);console.log("removed");
+            this._facets.splice(i, 1);
             break;
         }
     }

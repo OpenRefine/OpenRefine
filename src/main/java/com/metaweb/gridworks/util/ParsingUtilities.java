@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class ParsingUtilities {
-    static public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    static public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     
     static public String inputStreamToString(InputStream is) throws IOException {
         Reader reader = new InputStreamReader(is, "UTF-8");

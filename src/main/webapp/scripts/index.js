@@ -33,7 +33,7 @@ function renderProjects(data) {
         if (data.projects.hasOwnProperty(n)) {
             var project = data.projects[n];
             project.id = n;
-            project.date = new Date(project.modified);
+            project.date = Date.parseExact(project.modified, "yyyy-MM-ddTHH:mm:ssZ");
             projects.push(project);
         }
     }
