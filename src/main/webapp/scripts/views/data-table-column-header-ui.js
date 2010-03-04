@@ -605,27 +605,71 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
 
 DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
     var self = this;
-    DataTableView.promptExpressionOnVisibleRows(
-        this._column,
-        "Add Column Based on Column " + this._column.headerLabel, 
-        initialExpression,
-        function(expression) {
-            var headerLabel = window.prompt("Enter header label for new column:");
-            if (headerLabel != null) {
-                Gridworks.postProcess(
-                    "add-column", 
-                    {
-                        baseColumnName: self._column.headerLabel, 
-                        expression: expression, 
-                        headerLabel: headerLabel, 
-                        columnInsertIndex: self._columnIndex + 1 
-                    },
-                    null,
-                    { modelsChanged: true }
-                );
-            }
-        }
+    var frame = DialogSystem.createDialog();
+    frame.width("700px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Add Column Based on Column " + this._column.headerLabel).appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    body.html(
+        '<table class="expression-preview-layout" cols="2">' +
+            '<tr>' +
+                '<td width="1%" style="white-space: pre;">' +
+                    'New column name' +
+                '</td>' +
+                '<td>' +
+                    '<input bind="columnNameInput" size="40" />' +
+                '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td colspan="2">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
+            '</tr>' +
+        '</table>'
     );
+    var bodyElmts = DOM.bind(body);
+    
+    footer.html(
+        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+        '<button bind="cancelButton">Cancel</button>'
+    );
+    var footerElmts = DOM.bind(footer);
+        
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    footerElmts.okButton.click(function() {
+        var columnName = $.trim(bodyElmts.columnNameInput[0].value);
+        if (columnName.length == 0) {
+            alert("You must enter a column name.");
+            return;
+        }
+        
+        Gridworks.postProcess(
+            "add-column", 
+            {
+                baseColumnName: self._column.headerLabel, 
+                expression: previewWidget.getExpression(true), 
+                headerLabel: columnName, 
+                columnInsertIndex: self._columnIndex + 1 
+            },
+            null,
+            { modelsChanged: true }
+        );
+        dismiss();
+    })
+    footerElmts.cancelButton.click(dismiss);
+    
+    var o = DataTableView.sampleVisibleRows(this._column);
+    var previewWidget = new ExpressionPreviewDialog.Widget(
+        bodyElmts, 
+        this._column.cellIndex,
+        o.rowIndices,
+        o.values,
+        "value"
+    );    
 };
 
 DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {

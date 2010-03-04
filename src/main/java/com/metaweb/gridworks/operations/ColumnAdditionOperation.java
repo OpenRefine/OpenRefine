@@ -136,7 +136,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 ExpressionUtils.bind(bindings, row, rowIndex, cell);
                 
                 Object v = eval.evaluate(bindings);
-                if (v != null) {
+                if (ExpressionUtils.isNonBlankData(v)) {
                     Cell newCell = new Cell(v, null);
                 
                     cellsAtRows.add(new CellAtRow(rowIndex, newCell));
