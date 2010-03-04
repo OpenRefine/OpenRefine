@@ -24,7 +24,7 @@ public class Unescape implements Function {
                 if ("html".equals(mode)) {
                     return StringEscapeUtils.unescapeHtml(s);
                 } else if ("xml".equals(mode)) {
-                    return StringEscapeUtils.unescapeHtml(s);
+                    return StringEscapeUtils.unescapeXml(s);
                 } else if ("csv".equals(mode)) {
                     return StringEscapeUtils.unescapeCsv(s);
                 } else if ("javascript".equals(mode)) {
