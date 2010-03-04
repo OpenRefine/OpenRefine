@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.browsing.facets;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,8 +19,9 @@ public class TextSearchFacet implements Facet {
     protected String     _columnName;
     protected int        _cellIndex;
     protected String     _query;
+    protected Pattern    _pattern;
     
-    protected String    _mode;
+    protected String     _mode;
     protected boolean    _caseSensitive;
     
     public TextSearchFacet() {
@@ -50,14 +52,26 @@ public class TextSearchFacet implements Facet {
         _caseSensitive = o.getBoolean("caseSensitive");
         if (_query != null) {
             _query = _query.trim();
-            if (!_caseSensitive) {
-                _query = _query.toLowerCase();
+            if (_query.length() > 0) {
+                if (!_caseSensitive) {
+                    _query = _query.toLowerCase();
+                }
+                
+                if ("regex".equals(_mode)) {
+                    try {
+                        _pattern = Pattern.compile(_query);
+                    } catch (java.util.regex.PatternSyntaxException e) {
+                        //e.printStackTrace();
+                    }
+                }
             }
         }
     }
 
     public RowFilter getRowFilter() {
         if (_query == null || _query.length() == 0) {
+            return null;
+        } else if ("regex".equals(_mode) && _pattern == null) {
             return null;
         }
         
@@ -66,7 +80,7 @@ public class TextSearchFacet implements Facet {
         if ("regex".equals(_mode)) {
             return new ExpressionStringComparisonRowFilter(eval, _cellIndex) {
                 protected boolean checkValue(String s) {
-                    return s.matches(_query);
+                    return _pattern.matcher(s).find();
                 };
             };
         } else {

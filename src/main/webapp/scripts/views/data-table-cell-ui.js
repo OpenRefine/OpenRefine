@@ -20,11 +20,11 @@ DataTableCellUI.prototype._render = function() {
     } else if ("e" in cell) {
         $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
     } else if (!("r" in cell) || cell.r == null) {
-        $(divContent).html(cell.v);
+        $(divContent).text(cell.v);
     } else {
         var r = cell.r;
         if (r.j == "new") {
-            $(divContent).html(cell.v + " (new topic)");
+            $(divContent).text(cell.v + " (new topic)");
             
             $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}">re-match</a>')
@@ -47,7 +47,7 @@ DataTableCellUI.prototype._render = function() {
                     self._doRematch();
                 });
         } else {
-            $(divContent).html(cell.v);
+            $(divContent).text(cell.v);
             
             if (this._dataTableView._showRecon) {
                 var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContent);
