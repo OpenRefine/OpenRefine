@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
@@ -14,6 +17,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class ParsingUtilities {
+    static public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    
     static public String inputStreamToString(InputStream is) throws IOException {
         Reader reader = new InputStreamReader(is, "UTF-8");
         try {
@@ -63,6 +68,18 @@ public class ParsingUtilities {
             return s; // should not happen
         } catch (DecoderException e) {
             return s; // should not happen
+        }
+    }
+    
+    static public String dateToString(Date d) {
+        return s_sdf.format(d);
+    }
+    
+    static public Date stringToDate(String s) {
+        try {
+            return s_sdf.parse(s);
+        } catch (ParseException e) {
+            return null;
         }
     }
 }
