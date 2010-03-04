@@ -17,6 +17,8 @@ licenses/apache2.0.LICENSE.txt
     poi-ooxml
     poi-ooxml-schemas
     jdatapath
+    calendar-parser (package com.metaweb.gridworks.expr.util)
+    bzip2 (package org.apache.tools.bzip2)
  
 licenses/secondstring.LICENSE.txt (BSD family)
     secondstring
@@ -25,11 +27,14 @@ licenses/dom4j.LICENSE.txt (BSD family)
     dom4j
     
 licenses/simile.LICENSE.txt (BSD family)
-    vicino
+    vicino (package edu.mit.simile.vicino)
 
 licenses/arithcode.LICENSE.txt (BSD family)
     arithcode
    
+licenses/protobuf.LICENSE.txt (BSD family) 
+    protobuf
+    
 licenses/icu4j.LICENSE.txt (MIT family)
     icu4j
    
