@@ -14,8 +14,17 @@ MenuBar.prototype._initializeUI = function() {
     
     this._createTopLevelMenuItem("Data Set", [
         {
-            label: "Export Filtered Rows",
-            click: function() { self._doExportRows(); }
+            "label": "Export Filtered Rows",
+            "submenu": [
+                {
+                    "label": "Tab-Separated Value",
+                    "click": function() { self._doExportRows("tsv", "tsv"); }
+                },
+                {
+                    "label": "Tripleloader",
+                    "click": function() { self._doExportRows("tripleloader", "txt"); }
+                }
+            ]
         }
     ]);
     this._createTopLevelMenuItem("Schemas", [
@@ -123,17 +132,25 @@ MenuBar.prototype._deactivateMenu = function() {
     this._mode = "inactive";
 };
 
-MenuBar.prototype._doExportRows = function() {
+MenuBar.prototype._doExportRows = function(format, ext) {
     var form = document.createElement("form");
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-rows?project=" + theProject.id)
+        .attr("action", "/command/export-rows/gridworks_" + theProject.id + "." + ext)
         .attr("target", "gridworks-export");
 
     $('<input />')
         .attr("name", "engine")
         .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
+        .appendTo(form);
+    $('<input />')
+        .attr("name", "project")
+        .attr("value", theProject.id)
+        .appendTo(form);
+    $('<input />')
+        .attr("name", "format")
+        .attr("value", format)
         .appendTo(form);
     
     document.body.appendChild(form);

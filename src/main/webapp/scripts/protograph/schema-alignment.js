@@ -166,6 +166,7 @@ SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
             "save-protograph",
             {},
             { protograph: JSON.stringify(protograph) },
+            {},
             {   
                 onDone: function() {
                     DialogSystem.dismissUntil(self._level - 1);

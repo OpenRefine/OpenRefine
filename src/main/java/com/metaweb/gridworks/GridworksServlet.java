@@ -119,8 +119,7 @@ public class GridworksServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ProjectManager.initialize();
         
-        String commandName = request.getPathInfo().substring(1);
-        Command command = _commands.get(commandName);
+        Command command = _commands.get(getCommandName(request));
         if (command != null) {
             command.doPost(request, response);
         }
@@ -129,11 +128,15 @@ public class GridworksServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ProjectManager.initialize();
         
-        String commandName = request.getPathInfo().substring(1);
-        Command command = _commands.get(commandName);
+        Command command = _commands.get(getCommandName(request));
         if (command != null) {
             command.doGet(request, response);
         }
     }
     
+    protected String getCommandName(HttpServletRequest request) {
+        String commandName = request.getPathInfo().substring(1);
+        int slash = commandName.indexOf('/');
+        return slash > 0 ? commandName.substring(0, slash) : commandName;
+    }
 }

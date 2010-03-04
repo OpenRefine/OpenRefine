@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.commands.util;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +36,14 @@ public class PreviewProtographCommand extends Command {
             sb.append("{ ");
             
             {
-                TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory();
+                StringWriter stringWriter = new StringWriter();
+                TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory(stringWriter);
                 
                 Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory);
+                nodeFactory.flush();
                 
                 sb.append("\"tripleloader\" : ");
-                sb.append(JSONObject.quote(nodeFactory.getLoad()));
+                sb.append(JSONObject.quote(stringWriter.toString()));
             }
             
             {
