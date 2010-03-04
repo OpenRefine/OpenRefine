@@ -1,4 +1,45 @@
 /*
  *  (c) Copyright 2010 Metaweb Technologies, Inc. All rights reserved.
- *
  */
+
+See the 'licenses' directory for a list of the licenses for the libraries we depend on,
+ordered here by license:
+
+licenses/apache2.0.LICENSE.txt
+    jetty
+    jetty-util
+    servlet-api
+    commons-lang
+    commons-codec
+    log4j
+    xmlbeans
+    poi
+    poi-ooxml
+    poi-ooxml-schemas
+    jdatapath
+ 
+licenses/secondstring.LICENSE.txt (BSD family)
+    secondstring
+
+licenses/dom4j.LICENSE.txt (BSD family)
+    dom4j
+    
+licenses/simile.LICENSE.txt (BSD family)
+    vicino
+
+licenses/arithcode.LICENSE.txt (BSD family)
+    arithcode
+   
+licenses/icu4j.LICENSE.txt (MIT family)
+    icu4j
+   
+licenses/slf4j.LICENSE.txt (MIT family)
+    slf4j-api
+    slf4j-log4j12
+    jcl-over-slf4j
+
+licenses/json.LICENSE.txt (MIT family)    
+    json
+    
+licenses/cos.LICENSE.txt
+    cos
