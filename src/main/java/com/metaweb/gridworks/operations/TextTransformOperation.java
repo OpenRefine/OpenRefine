@@ -27,8 +27,10 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     	StoreError
     }
 
-    final protected String _expression;
+    final protected String  _expression;
     final protected OnError _onError;
+    final protected boolean _repeat;
+    final protected int     _repeatCount;
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
@@ -37,7 +39,9 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             engineConfig,
             obj.getString("columnName"),
             obj.getString("expression"),
-            stringToOnError(obj.getString("onError"))
+            stringToOnError(obj.getString("onError")),
+            obj.getBoolean("repeat"),
+            obj.getInt("repeatCount")
         );
     }
     
@@ -60,10 +64,19 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     	}
     }
     
-    public TextTransformOperation(JSONObject engineConfig, String columnName, String expression, OnError onError) {
+    public TextTransformOperation(
+            JSONObject engineConfig, 
+            String columnName, 
+            String expression, 
+            OnError onError,
+            boolean repeat,
+            int repeatCount
+        ) {
         super(engineConfig, columnName, true);
         _expression = expression;
         _onError = onError;
+        _repeat = repeat;
+        _repeatCount = repeatCount;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -76,6 +89,8 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         writer.key("columnName"); writer.value(_columnName);
         writer.key("expression"); writer.value(_expression);
         writer.key("onError"); writer.value(onErrorToString(_onError));
+        writer.key("repeat"); writer.value(_repeat);
+        writer.key("repeatCount"); writer.value(_repeatCount);
         writer.endObject();
     }
 
@@ -127,6 +142,21 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                 
                 if (!ExpressionUtils.sameValue(oldValue, newValue)) {
                     Cell newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
+                    
+                    if (_repeat) {
+                        for (int i = 0; i < _repeatCount; i++) {
+                            ExpressionUtils.bind(bindings, row, rowIndex, newCell);
+                            
+                            newValue = eval.evaluate(bindings);
+                            if (ExpressionUtils.isError(newValue)) {
+                                break;
+                            } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
+                                break;
+                            }
+                            
+                            newCell = new Cell(newValue, newCell.recon);
+                        }
+                    }
                 
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);

@@ -59,15 +59,15 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             submenu: [
                 {
                     label: "To Titlecase",
-                    click: function() { self._doTextTransform("toTitlecase(value)", "store-blank"); }
+                    click: function() { self._doTextTransform("toTitlecase(value)", "store-blank", false, ""); }
                 },
                 {
                     label: "To Uppercase",
-                    click: function() { self._doTextTransform("toUppercase(value)", "store-blank"); }
+                    click: function() { self._doTextTransform("toUppercase(value)", "store-blank", false, ""); }
                 },
                 {
                     label: "To Lowercase",
-                    click: function() { self._doTextTransform("toLowercase(value)", "store-blank"); }
+                    click: function() { self._doTextTransform("toLowercase(value)", "store-blank", false, ""); }
                 },
                 {
                     label: "Custom Transform ...",
@@ -399,10 +399,16 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
     );
 };
 
-DataTableColumnHeaderUI.prototype._doTextTransform = function(expression, onError) {
+DataTableColumnHeaderUI.prototype._doTextTransform = function(expression, onError, repeat, repeatCount) {
     Gridworks.postProcess(
         "do-text-transform",
-        { columnName: this._column.headerLabel, expression: expression, onError: onError },
+        {
+            columnName: this._column.headerLabel, 
+            expression: expression, 
+            onError: onError,
+            repeat: repeat,
+            repeatCount: repeatCount
+        },
         null,
         { cellsChanged: true }
     );
@@ -417,24 +423,36 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    body.html(ExpressionPreviewDialog.generateWidgetHtml());
+    body.html(
+        '<table class="expression-preview-layout">' +
+            '<tr>' +
+                '<td colspan="4">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
+            '</tr>' +
+            '<tr style="white-space: pre;">' +
+                '<td width="1%">' +
+                    'On error' +
+                '</td>' +
+                '<td>' +
+                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="set-to-blank" checked /> set to blank<br/>' +
+                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="store-error" /> store error<br/>' +
+                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="keep-original" /> keep original' +
+                '</td>' +
+                '<td width="1%">' +
+                    '<input type="checkbox" bind="repeatCheckbox" />' +
+                '</td>' +
+                '<td>' +
+                    'Re-transform until no change<br/>' +
+                    'up to <input bind="repeatCountInput" value="10" size="3" /> times' +
+                '</td>' +
+            '</tr>' +
+        '</table>'
+    );
     var bodyElmts = DOM.bind(body);
     
     footer.html(
-        '<table class="expression-preview-layout">' +
-            '<tr>' +
-                '<td align="left">' +
-                    'On error ' +
-                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="set-to-blank" checked /> set to blank ' +
-                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="store-error" /> store error ' +
-                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="keep-original" /> keep original' +
-                '</td>' +
-                '<td align="right">' +
-                    '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-                    '<button bind="cancelButton">Cancel</button>' +
-                '</td>' +
-            '</tr>' +
-        '</table>');
+        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+        '<button bind="cancelButton">Cancel</button>'
+    );
     var footerElmts = DOM.bind(footer);
         
     var level = DialogSystem.showDialog(frame);
@@ -445,7 +463,9 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
     footerElmts.okButton.click(function() {
         self._doTextTransform(
             previewWidget.getExpression(true),
-            $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value
+            $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
+            bodyElmts.repeatCheckbox[0].checked,
+            bodyElmts.repeatCountInput[0].value
         );
         dismiss();
     })

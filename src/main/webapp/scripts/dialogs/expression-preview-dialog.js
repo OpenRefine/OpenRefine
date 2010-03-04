@@ -32,7 +32,7 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
 };
 
 ExpressionPreviewDialog.generateWidgetHtml = function() {
-    return '<table class="expression-preview-layout">' +
+    return '<table class="expression-preview-layout" rows="4" cols="2">' +
             '<tr>' +
                 '<td>Expression</td>' +
                 '<td>Language</td>' +
@@ -48,7 +48,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
                 '</td>' +
             '</tr>' +
             '<tr>' +
-                '<td class="expression-preview-error-container" bind="expressionPreviewErrorContainer" width="150"></td>' +
+                '<td class="expression-preview-error-container" bind="expressionPreviewErrorContainer" width="150" style="vertical-align: top;"></td>' +
             '</tr>' +
             '<tr>' +
                 '<td colspan="2">' +
@@ -61,7 +61,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
                         '<div id="expression-preview-tabs-preview">' +
                             '<div class="expression-preview-container" bind="expressionPreviewPreviewContainer"></div>' +
                         '</div>' +
-                        '<div id="expression-preview-tabs-history">' +
+                        '<div id="expression-preview-tabs-history" style="display: none;">' +
                             '<div class="expression-preview-container" bind="expressionPreviewHistoryContainer"></div>' +
                         '</div>' +
                         '<div id="expression-preview-tabs-help" style="display: none;">' +
@@ -90,7 +90,7 @@ ExpressionPreviewDialog.Widget = function(
     this._timerID = null;
     
     $("#expression-preview-tabs").tabs();
-    $("#expression-preview-tabs-preview").css("display", "");
+    $("#expression-preview-tabs-history").css("display", "");
     $("#expression-preview-tabs-help").css("display", "");
         
     var self = this;

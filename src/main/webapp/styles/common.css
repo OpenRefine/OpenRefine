@@ -14,7 +14,11 @@ table {
 }
 
 tr, td {
-    vertical-align: top;
+    vertical-align: baseline;
+}
+
+input {
+    vertical-align: middle;
 }
 
 #header {
