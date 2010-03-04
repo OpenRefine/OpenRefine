@@ -27,8 +27,9 @@ import com.metaweb.gridworks.model.changes.ColumnAdditionChange;
 public class ColumnAdditionOperation extends EngineDependentOperation {
     private static final long serialVersionUID = -5672677479629932356L;
 
-    final protected String    _baseColumnName;
+    final protected String     _baseColumnName;
     final protected String     _expression;
+    final protected OnError    _onError;
     
     final protected String     _headerLabel;
     final protected int        _columnInsertIndex;
@@ -40,6 +41,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             engineConfig,
             obj.getString("baseColumnName"),
             obj.getString("expression"),
+            TextTransformOperation.stringToOnError(obj.getString("onError")),
             obj.getString("headerLabel"),
             obj.getInt("columnInsertIndex")
         );
@@ -47,15 +49,17 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     
     public ColumnAdditionOperation(
         JSONObject     engineConfig,
-        String        baseColumnName,
+        String         baseColumnName,
         String         expression,
+        OnError        onError,
         String         headerLabel, 
-        int         columnInsertIndex 
+        int            columnInsertIndex 
     ) {
         super(engineConfig);
         
         _baseColumnName = baseColumnName;
         _expression = expression;
+        _onError = onError;
         
         _headerLabel = headerLabel;
         _columnInsertIndex = columnInsertIndex;
@@ -72,6 +76,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
         writer.key("baseColumnName"); writer.value(_baseColumnName);
         writer.key("expression"); writer.value(_expression);
+        writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
         writer.endObject();
     }
 
@@ -136,7 +141,15 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 ExpressionUtils.bind(bindings, row, rowIndex, cell);
                 
                 Object v = eval.evaluate(bindings);
-                if (ExpressionUtils.isNonBlankData(v)) {
+                if (ExpressionUtils.isError(v)) {
+                    if (_onError == OnError.SetToBlank) {
+                        return false;
+                    } else if (_onError == OnError.KeepOriginal) {
+                        v = cell != null ? cell.value : null;
+                    }
+                }
+                
+                if (v != null) {
                     Cell newCell = new Cell(v, null);
                 
                     cellsAtRows.add(new CellAtRow(rowIndex, newCell));

@@ -21,12 +21,6 @@ import com.metaweb.gridworks.model.changes.CellChange;
 public class TextTransformOperation extends EngineDependentMassCellOperation {
     private static final long serialVersionUID = -7698202759999537298L;
     
-    static public enum OnError {
-    	KeepOriginal,
-    	SetToBlank,
-    	StoreError
-    }
-
     final protected String  _expression;
     final protected OnError _onError;
     final protected boolean _repeat;

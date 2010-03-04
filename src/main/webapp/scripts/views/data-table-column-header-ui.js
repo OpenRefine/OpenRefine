@@ -623,6 +623,16 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
                 '</td>' +
             '</tr>' +
             '<tr>' +
+                '<td width="1%" style="white-space: pre;">' +
+                    'On error' +
+                '</td>' +
+                '<td>' +
+                    '<input type="radio" name="create-column-dialog-onerror-choice" value="set-to-blank" checked /> set to blank ' +
+                    '<input type="radio" name="create-column-dialog-onerror-choice" value="store-error" /> store error ' +
+                    '<input type="radio" name="create-column-dialog-onerror-choice" value="keep-original" /> keep original' +
+                '</td>' +
+            '</tr>' +
+            '<tr>' +
                 '<td colspan="2">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
             '</tr>' +
         '</table>'
@@ -653,7 +663,8 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
                 baseColumnName: self._column.headerLabel, 
                 expression: previewWidget.getExpression(true), 
                 headerLabel: columnName, 
-                columnInsertIndex: self._columnIndex + 1 
+                columnInsertIndex: self._columnIndex + 1,
+                onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value
             },
             null,
             { modelsChanged: true }
