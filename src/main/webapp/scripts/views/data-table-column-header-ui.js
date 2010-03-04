@@ -170,6 +170,33 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             }
                         );
                     }
+                },
+                {},
+                {
+                    label: "By Error",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : self._column.headerLabel + ": Error?",
+                                "columnName" : self._column.headerLabel, 
+                                "expression" : "isError(value)"
+                            }
+                        );
+                    }
+                },
+                {
+                    label: "By Blank",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : self._column.headerLabel + ": Blank?",
+                                "columnName" : self._column.headerLabel, 
+                                "expression" : "isBlank(value)"
+                            }
+                        );
+                    }
                 }
             ]
         },

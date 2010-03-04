@@ -57,6 +57,7 @@ import com.metaweb.gridworks.gel.controls.ForEach;
 import com.metaweb.gridworks.gel.controls.ForNonBlank;
 import com.metaweb.gridworks.gel.controls.If;
 import com.metaweb.gridworks.gel.controls.IsBlank;
+import com.metaweb.gridworks.gel.controls.IsError;
 import com.metaweb.gridworks.gel.controls.IsNonBlank;
 import com.metaweb.gridworks.gel.controls.IsNotNull;
 import com.metaweb.gridworks.gel.controls.IsNull;
@@ -169,5 +170,6 @@ public class ControlFunctionRegistry {
         registerControl("isBlank", new IsBlank());
         registerControl("isNonBlank", new IsNonBlank());
         registerControl("isNumeric", new IsNumeric());
+        registerControl("isError", new IsError());
     }
 }
