@@ -47,6 +47,8 @@ and <action> is one of
    
    make_dmg <version> ........ Make MacOSX DMG distribution
    make_exe <version> ........ Make Windows EXE distribution
+
+   generate .................. Generate Protocol Buffer code      
    
    clean ..................... Clean compiled classes
    distclean ................. Remove all generated files
@@ -60,6 +62,9 @@ add_option() {
 }
 
 OPTS="$GRIDWORKS_OPTS"
+
+# Normalize the current directory
+cd `dirname $0`
 
 SYSTEM=`uname`
 
@@ -82,12 +87,14 @@ ant_prepare() {
     
     ANT=`which ant`
     if [ "$ANT" = "" ] ; then
-        ANT_TAR=`find thirdparty | grep apache-ant | grep -v svn`
+        cd thirdparty
+        ANT_TAR=`ls | grep apache-ant | grep tar.gz | grep -v svn`
         ANT_DIR=`echo $ANT_TAR | sed 's/.tar.gz//'`
         if [ ! -d $ANT_DIR ] ; then
-            tar xzf $ANT_TAR -C $GRIDWORKS_BUILD_DIR || exit 1
+            tar xzf $ANT_TAR -C . || exit 1
         fi
-        ANT="$ANT_DIR/bin/ant"
+        ANT="`pwd`/$ANT_DIR/bin/ant"
+        cd ..
     fi
 }
 
@@ -104,11 +111,30 @@ dist_prepare() {
 }
        
 launch4j_prepare() {
-    LAUNCH4J_TAR=`find thirdparty | grep launch4j | grep -v svn`
+    cd thirdparty
+    LAUNCH4J_TAR=`ls | grep launch4j | grep tar.gz | grep -v svn`
     LAUNCH4J_DIR="thirdparty/launch4j"
     if [ ! -d "$LAUNCH4J_DIR" ] ; then
         tar xzf $LAUNCH4J_TAR -C thirdparty || exit 1
     fi
+    cd ..
+}
+
+protobuf_prepare() {
+    cd thirdparty
+    PROTOBUF_TAR=`ls | grep protobuf | grep tar.gz | grep -v svn`
+    PROTOBUF_DIR=`echo $PROTOBUF_TAR | sed 's/.tar.gz//'`
+    PROTOC="`pwd`/$PROTOBUF_DIR/bin/protoc"
+    if [ ! -f $PROTOC ] ; then
+        tar xzf $PROTOBUF_TAR -C . || exit 1
+        cd $PROTOBUF_DIR
+        ./configure --prefix=`pwd`
+        make
+        make install
+        cd ..
+    fi
+    PROTOC="`pwd`/$PROTOBUF_DIR/bin/protoc"
+    cd ..
 }
 
 get_version() {
@@ -179,6 +205,17 @@ make_dmg() {
     hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION.dmg"
     hdiutil internet-enable -yes "$GRIDWORKS_DIST_DIR/gridworks-$VERSION.dmg"
     rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+}
+
+generate() {
+    protobuf_prepare
+
+    PROTO_SRC_DIR="src/main/proto"
+    JAVA_SRC_DIR="src/main/java"
+    
+    for i in `find $PROTO_SRC_DIR -name \*.proto` ; do
+        $PROTOC -I=$PROTO_SRC_DIR --java_out=$JAVA_SRC_DIR $i
+    done    
 }
 
 run() {
@@ -289,6 +326,10 @@ fi
 # ----- Respond to the action given --------------------------------------------
 
 case "$ACTION" in
+
+  generate) 
+    generate;;
+    
   build)
     ant build;;
 
