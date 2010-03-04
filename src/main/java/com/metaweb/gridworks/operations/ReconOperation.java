@@ -214,22 +214,24 @@ public class ReconOperation extends EngineDependentOperation {
                 }
             }
             
-            Change reconChange = new ReconChange(
-                cellChanges, 
-                _columnName, 
-                _reconConfig,
-                null
-            );
-            
-            HistoryEntry historyEntry = new HistoryEntry(
-                _project, 
-                _description, 
-                ReconOperation.this, 
-                reconChange
-            );
-            
-            _project.history.addEntry(historyEntry);
-            _project.processManager.onDoneProcess(this);
+            if (!_canceled) {
+                Change reconChange = new ReconChange(
+                    cellChanges, 
+                    _columnName, 
+                    _reconConfig,
+                    null
+                );
+                
+                HistoryEntry historyEntry = new HistoryEntry(
+                    _project, 
+                    _description, 
+                    ReconOperation.this, 
+                    reconChange
+                );
+                
+                _project.history.addEntry(historyEntry);
+                _project.processManager.onDoneProcess(this);
+            }
         }
     }
 }

@@ -33,6 +33,15 @@ ProcessWidget.prototype.update = function(updateOptions, onDone) {
     );
 };
 
+ProcessWidget.prototype._cancelAll = function() {
+    $.post(
+        "/command/cancel-processes?" + $.param({ project: theProject.id }), 
+        null,
+        function(o) {},
+        "json"
+    );
+};
+
 ProcessWidget.prototype._render = function() {
     var self = this;
     
@@ -43,14 +52,23 @@ ProcessWidget.prototype._render = function() {
     } else {
         this._div.show();
         
-        var bodyDiv = $('<div></div>').addClass("process-panel-inner").appendTo(this._div);
-        $('<img src="images/small-spinner.gif" />')
-            .css("float", "right")
-            .css("margin-left", "10px")
-            .css("margin-bottom", "10px")
-            .css("opacity", "0.3")
-            .appendTo(bodyDiv);
+        var innerDiv = $('<div></div>').addClass("process-panel-inner").appendTo(this._div);
         
+        var headDiv = $('<div></div>').addClass("process-panel-head").appendTo(innerDiv);
+        $('<img src="images/small-spinner.gif" />')
+            .css("margin-right", "3px")
+            .css("opacity", "0.3")
+            .appendTo(headDiv);
+        $('<a href="javascript:{}"></a>')
+            .addClass("action")
+            .text("cancel all")
+            .click(function() {
+                self._cancelAll();
+                $(this).text("canceling all processes...").unbind();
+            })
+            .appendTo(headDiv);
+            
+        var bodyDiv = $('<div></div>').addClass("process-panel-body").appendTo(innerDiv);
         var renderProcess = function(process) {
             var div = $('<div></div>').addClass("process-panel-entry").appendTo(bodyDiv);
             

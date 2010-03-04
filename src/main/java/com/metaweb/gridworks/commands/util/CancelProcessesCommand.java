@@ -12,7 +12,7 @@ import com.metaweb.gridworks.model.Project;
 public class CancelProcessesCommand extends Command {
     
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         try {
