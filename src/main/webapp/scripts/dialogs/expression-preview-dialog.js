@@ -103,6 +103,7 @@ ExpressionPreviewDialog.Widget = function(
         }
     }
     this._elmts.expressionPreviewLanguageSelect[0].value = language;
+    this._elmts.expressionPreviewLanguageSelect.bind("change", function() { self.update(); });
         
     var self = this;
     this._elmts.expressionPreviewTextarea
@@ -241,21 +242,27 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
     
     var table = $(
         '<table width="100%" cellspacing="5">' +
-            '<tr><th>Expression</th><th>From</th><th></th></tr>' +
+            '<tr><th>Expression</th><th>Language</th><th>From</th><th></th></tr>' +
         '</table>'
     ).appendTo(elmt)[0];
     
     var renderEntry = function(entry) {
         var tr = table.insertRow(table.rows.length);
+        var o = Scripting.parse(entry.code);
         
-        $(tr.insertCell(0)).text(entry.code);
-        $(tr.insertCell(1)).text(entry.global ? "Other projects" : "This project");
+        $(tr.insertCell(0)).text(o.expression);
+        $(tr.insertCell(1)).text(o.language);
+        $(tr.insertCell(2)).text(entry.global ? "Other projects" : "This project");
         
-        $('<a href="javascript:{}">Re-use</a>').appendTo(tr.insertCell(2)).click(function() {
-            self._elmts.expressionPreviewTextarea[0].value = entry.code;
-            self._elmts.expressionPreviewTextarea.select().focus();
-            self.update();
+        $('<a href="javascript:{}">Re-use</a>').appendTo(tr.insertCell(3)).click(function() {
+            self._elmts.expressionPreviewTextarea[0].value = o.expression;
+            self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
+            
             $("#expression-preview-tabs").tabs('option', 'selected', 0);
+            
+            self._elmts.expressionPreviewTextarea.select().focus();
+            
+            self.update();
         });
     };
     
