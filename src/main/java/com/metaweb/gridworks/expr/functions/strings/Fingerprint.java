@@ -1,7 +1,8 @@
 package com.metaweb.gridworks.expr.functions.strings;
 
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,9 +23,17 @@ public class Fingerprint implements Function {
             s = s.toLowerCase(); // then lowercase it
             s = alphanum.matcher(s).replaceAll(""); // then remove all punctuation and control chars
             String[] frags = StringUtils.split(s); // split by whitespace
-            Arrays.sort(frags); // sort the fragments
-            return StringUtils.join(frags," "); // rejoin them with a single space between them 
-            
+            TreeSet<String> set = new TreeSet<String>();
+            for (String ss : frags) {
+                set.add(ss); // order fragments and dedupe
+            }
+            StringBuffer b = new StringBuffer();
+            Iterator<String> i = set.iterator();
+            while (i.hasNext()) {
+                b.append(i.next());
+                b.append(' ');
+            }
+            return b.toString(); // join ordered fragments back together
         }
         return null;
     }
