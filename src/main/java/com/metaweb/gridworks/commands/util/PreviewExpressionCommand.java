@@ -2,6 +2,7 @@ package com.metaweb.gridworks.commands.util;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ import com.metaweb.gridworks.expr.ParsingException;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class PreviewExpressionCommand extends Command {
     
@@ -103,8 +105,16 @@ public class PreviewExpressionCommand extends Command {
                         writer.key("message"); writer.value(((EvalError) result).message);
                         writer.endObject();
                     } else {
-                        if (result != null && result instanceof HasFields) {
-                            result = "[object " + result.getClass().getSimpleName() + "]";
+                        if (result != null) {
+                            if (result instanceof HasFields) {
+                                result = "[object " + result.getClass().getSimpleName() + "]";
+                            } else if (result instanceof Calendar) {
+                                Calendar c = (Calendar) result;
+                                
+                                result = "[object " + 
+                                    result.getClass().getSimpleName() + " " + 
+                                    ParsingUtilities.dateToString(c.getTime()) +"]";
+                            }
                         }
                         writer.value(result);
                     }

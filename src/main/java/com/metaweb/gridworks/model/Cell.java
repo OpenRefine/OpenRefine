@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.model;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -10,6 +11,7 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class Cell implements Serializable, HasFields, Jsonizable {
     private static final long serialVersionUID = -5891067829205458102L;
@@ -38,7 +40,11 @@ public class Cell implements Serializable, HasFields, Jsonizable {
             writer.value(((EvalError) value).message);
         } else {
             writer.key("v");
-            writer.value(value);
+            if (value != null && value instanceof Calendar) {
+                writer.value(ParsingUtilities.dateToString(((Calendar) value).getTime()));
+            } else {
+                writer.value(value);
+            }
         }
         
         if (recon != null) {
