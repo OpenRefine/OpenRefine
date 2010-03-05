@@ -165,6 +165,7 @@ a.data-table-star-off {
 
 table.data-table-cell-edit-layout {
     width: 100%;
+    white-space: pre;
 }
 table.data-table-cell-edit-layout td {
     padding: 5px;
