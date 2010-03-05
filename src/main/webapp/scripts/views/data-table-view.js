@@ -85,8 +85,7 @@ DataTableView.prototype.render = function() {
     var table = document.createElement("table");
     $(table)
         .attr("cellspacing", "0")
-        .addClass("data-table")
-        .appendTo(tableDiv);
+        .addClass("data-table");
     
     var columns = theProject.columnModel.columns;
     var columnGroups = theProject.columnModel.columnGroups;
@@ -258,6 +257,11 @@ DataTableView.prototype.render = function() {
         }
         renderRow(tr, r, row, even);
     }
+    
+    /*
+     *  Finally, inject the table into the DOM
+     */
+    $(table).appendTo(tableDiv);
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {

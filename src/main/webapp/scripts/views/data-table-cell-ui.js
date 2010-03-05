@@ -233,7 +233,7 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, column
         { columnStatsChanged: columnStatsChanged },
         {
             onDone: function(o) {
-                self._cell = data.cell;
+                self._cell = o.cell;
                 self._render();
             }
         }
