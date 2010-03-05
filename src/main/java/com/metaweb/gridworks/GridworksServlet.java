@@ -19,6 +19,7 @@ import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
 import com.metaweb.gridworks.commands.edit.FacetBasedEditCommand;
 import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
+import com.metaweb.gridworks.commands.edit.DeleteProjectCommand;
 import com.metaweb.gridworks.commands.edit.SaveProtographCommand;
 import com.metaweb.gridworks.commands.edit.SplitMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
@@ -58,6 +59,8 @@ public class GridworksServlet extends HttpServlet {
         
         _commands.put("get-project-metadata", new GetProjectMetadataCommand());
         _commands.put("get-all-project-metadata", new GetAllProjectMetadataCommand());
+
+        _commands.put("delete-project", new DeleteProjectCommand());
         
         _commands.put("get-models", new GetModelsCommand());
         _commands.put("get-rows", new GetRowsCommand());

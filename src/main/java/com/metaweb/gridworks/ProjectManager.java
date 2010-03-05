@@ -307,4 +307,16 @@ public class ProjectManager implements Serializable {
             }
         }
     }
+
+    public boolean deleteProject(Project project) {
+        File file = new File(_dir, project.id + ".project");
+        if (file.exists()) {
+            _projects.remove(project.id);
+            _projectsMetadata.remove(project.id);
+            boolean result = file.delete();
+            save();
+            return result;
+        }
+        return false;
+    }
 }

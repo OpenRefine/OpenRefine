@@ -45,19 +45,36 @@ function renderProjects(data) {
 
         $('<h2></h2>').text("Projects").appendTo(container);
 
-        var table = $('<table><tr><td></td><td>last modified</td></tr></table>')
-            .attr("cellspacing", "5")
-            .appendTo(container)[0];
+        var table = $('<table><tr><td></td><td>last modified</td><td></td></tr></table>').attr("cellspacing", "5")[0];
 
         for (var i = 0; i < projects.length; i++) {
             var project = projects[i];
             var tr = table.insertRow(table.rows.length);
             var td0 = tr.insertCell(0);
             var td1 = tr.insertCell(1);
+            var td2 = tr.insertCell(2);
         
             $('<a></a>').text(project.name).attr("href", "/project.html?project=" + project.id).appendTo(td0);
             $('<span></span>').text(formatDate(project.date)).appendTo(td1);
+            $('<a></a>').attr("title","Delete this project").attr("href","").html("<img src='/images/close.png' />").click(function() {
+                if (window.confirm("Are you sure you want to delete this project?")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/command/delete-project",
+                        data: { "project" : project.id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data && typeof data['code'] != 'undefined' && data.code == "ok") {
+                                window.location.reload()
+                            }
+                        }
+                    });                    
+                }
+                return false;
+            }).appendTo(td2);
         }
+        
+        $(table).appendTo(container);
     }
 }
 
