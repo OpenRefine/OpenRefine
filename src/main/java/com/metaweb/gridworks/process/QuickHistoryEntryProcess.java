@@ -47,6 +47,7 @@ abstract public class QuickHistoryEntryProcess extends Process {
             throws JSONException {
         
         writer.object();
+        writer.key("id"); writer.value(hashCode());
         writer.key("description"); writer.value(_historyEntry != null ? _historyEntry.description : _briefDescription);
         writer.key("immediate"); writer.value(true);
         writer.key("status"); writer.value(_done ? "done" : "pending");

@@ -98,10 +98,10 @@ public class ReconOperation extends EngineDependentOperation {
     }
     
     public class ReconProcess extends LongRunningProcess implements Runnable {
-        final protected Project        _project;
-        final protected JSONObject    _engineConfig;
-        protected List<ReconEntry>     _entries;
-        protected int                _cellIndex;
+        final protected Project     _project;
+        final protected JSONObject  _engineConfig;
+        protected List<ReconEntry>  _entries;
+        protected int               _cellIndex;
         
         public ReconProcess(
             Project project, 
@@ -111,6 +111,46 @@ public class ReconOperation extends EngineDependentOperation {
             super(description);
             _project = project;
             _engineConfig = engineConfig;
+        }
+        
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            
+            writer.object();
+            writer.key("id"); writer.value(hashCode());
+            writer.key("description"); writer.value(_description);
+            writer.key("immediate"); writer.value(false);
+            writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));
+            writer.key("progress"); writer.value(_progress);
+            writer.key("onDone");
+                writer.array();
+                    writer.object();
+                        writer.key("action"); writer.value("createFacet");
+                        writer.key("facetType"); writer.value("list");
+                        writer.key("facetConfig");
+                            writer.object();
+                                writer.key("name"); writer.value(_columnName + ": judgment");
+                                writer.key("columnName"); writer.value(_columnName);
+                                writer.key("expression"); writer.value("cell.recon.judgment");
+                            writer.endObject();
+                        writer.key("facetOptions");
+                            writer.object();
+                                writer.key("scroll"); writer.value(false);
+                            writer.endObject();
+                    writer.endObject();
+                    writer.object();
+                        writer.key("action"); writer.value("createFacet");
+                        writer.key("facetType"); writer.value("range");
+                        writer.key("facetConfig");
+                            writer.object();
+                                writer.key("name"); writer.value(_columnName + ": best candidate's score");
+                                writer.key("columnName"); writer.value(_columnName);
+                                writer.key("expression"); writer.value("cell.recon.best.score");
+                                writer.key("mode"); writer.value("range");
+                            writer.endObject();
+                    writer.endObject();
+                writer.endArray();
+            writer.endObject();
         }
         
         protected Runnable getRunnable() {

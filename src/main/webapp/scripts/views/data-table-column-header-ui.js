@@ -311,7 +311,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : self._column.headerLabel + ": best candidate's relevance score",
+                                "name" : self._column.headerLabel + ": best candidate's score",
                                 "columnName" : self._column.headerLabel, 
                                 "expression" : "cell.recon.best.score",
                                 "mode" : "range"

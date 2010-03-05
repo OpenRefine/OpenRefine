@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 abstract public class LongRunningProcess extends Process {
-    final protected String         _description;
+    final protected String       _description;
     protected ProcessManager     _manager;
     protected Thread             _thread;
     protected int                _progress; // out of 100
@@ -27,6 +27,7 @@ abstract public class LongRunningProcess extends Process {
             throws JSONException {
         
         writer.object();
+        writer.key("id"); writer.value(hashCode());
         writer.key("description"); writer.value(_description);
         writer.key("immediate"); writer.value(false);
         writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));

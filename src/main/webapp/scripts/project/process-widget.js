@@ -27,27 +27,31 @@ ProcessWidget.prototype.update = function(updateOptions, onDone) {
     Ajax.chainGetJSON(
         "/command/get-processes?" + $.param({ project: theProject.id }), null,
         function(data) {
-            self._data = data;
-            self._render();
+            self._render(data);
         }
     );
 };
 
 ProcessWidget.prototype._cancelAll = function() {
+    var self = this;
     $.post(
         "/command/cancel-processes?" + $.param({ project: theProject.id }), 
         null,
-        function(o) {},
+        function(o) {
+            self._data = null;
+            self._runOnDones();
+        },
         "json"
     );
 };
 
-ProcessWidget.prototype._render = function() {
+ProcessWidget.prototype._render = function(newData) {
     var self = this;
+    var newProcessMap = {};
     
     this._div.empty();
     
-    if (this._data.processes.length == 0) {
+    if (newData.processes.length == 0) {
         this._div.hide();
     } else {
         this._div.show();
@@ -64,6 +68,7 @@ ProcessWidget.prototype._render = function() {
             .text("cancel all")
             .click(function() {
                 self._cancelAll();
+                
                 $(this).text("canceling all processes...").unbind();
             })
             .appendTo(headDiv);
@@ -79,11 +84,26 @@ ProcessWidget.prototype._render = function() {
             }
         };
         
-        var processes = this._data.processes;
+        var processes = newData.processes;
         for (var i = 0; i < processes.length; i++) {
-            renderProcess(processes[i]);
+            var process = processes[i];
+            renderProcess(process);
+            if ("onDone" in process) {
+                newProcessMap[process.id] = process;
+            }
         }
     }
+    
+    if ((this._data) && this._data.processes.length > 0) {
+        var oldProcesses = this._data.processes;
+        for (var i = 0; i < oldProcesses.length; i++) {
+            var process = oldProcesses[i];
+            if ("onDone" in process && !(process.id in newProcessMap)) {
+                this._perform(process.onDone);
+            }
+        }
+    }
+    this._data = newData;
     
     if (this._data.processes.length > 0 && this._timerID == null) {
         this._timerID = window.setTimeout(function() {
@@ -91,21 +111,41 @@ ProcessWidget.prototype._render = function() {
             self.update();
         }, 500);
     } else {
-    
-        var updateOptions = this._updateOptions;
-        var onDones = this._onDones;
-        
-        this._updateOptions = {};
-        this._onDones = [];
-        
-        Gridworks.update(updateOptions, function() {
-            for (var i = 0; i < onDones.length; i++) {
-                try {
-                    onDones[i]();
-                } catch (e) {
-                    Gridworks.reportException(e);
-                }
-            }
-        });
+        this._runOnDones();
     }
+};
+
+ProcessWidget.prototype._perform = function(jobs) {
+    for (var i = 0; i < jobs.length; i++) {
+        var job = jobs[i];
+        if (job.action == "createFacet") {
+            try {
+                ui.browsingEngine.addFacet(
+                    job.facetType,
+                    job.facetConfig,
+                    job.facetOptions
+                );
+            } catch (e) {
+                //
+            }
+        }
+    }
+};
+
+ProcessWidget.prototype._runOnDones = function() {
+    var updateOptions = this._updateOptions;
+    var onDones = this._onDones;
+    
+    this._updateOptions = {};
+    this._onDones = [];
+    
+    Gridworks.update(updateOptions, function() {
+        for (var i = 0; i < onDones.length; i++) {
+            try {
+                onDones[i]();
+            } catch (e) {
+                Gridworks.reportException(e);
+            }
+        }
+    });
 };
