@@ -109,12 +109,13 @@ ListFacet.prototype.render = function() {
             self._remove();
         }).prependTo(headerDiv);
     
-    var bodyDiv = $('<div></div>').addClass("facet-body").appendTo(container);
+    var bodyDiv = $('<div></div>').addClass("facet-body");
     if (!("scroll" in this._options) || this._options.scroll) {
         bodyDiv.addClass("facet-body-scrollable");
     }
     
     if (this._data == null) {
+        bodyDiv.appendTo(container);
         bodyDiv.html("Loading...");
     } else {
         var selectionCount = this._selection.length
@@ -185,6 +186,7 @@ ListFacet.prototype.render = function() {
             renderChoice(this._errorChoice, "(error)");
         }
         
+        bodyDiv.appendTo(container);
         bodyDiv[0].scrollTop = scrollTop;
         
         var footerDiv = $('<div></div>').addClass("facet-footer").appendTo(container);
