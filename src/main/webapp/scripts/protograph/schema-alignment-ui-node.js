@@ -435,7 +435,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         
     elmts.anonymousNodeTypeInput
         .bind("focus", function() { elmts.radioNodeTypeAnonymous[0].checked = true; })
-        .suggest({ type: "/type/type" });
+        .suggestT({ type: "/type/type" });
         
     elmts.topicNodeTypeInput
         .bind("focus", function() { elmts.radioNodeTypeTopic[0].checked = true; })
@@ -459,7 +459,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             elmts.radioNodeTypeCellAs[0].checked = true;
             elmts.radioNodeTypeCellAsTopic[0].checked = true; 
         })
-        .suggest({ type: "/type/type" });
+        .suggestT({ type: "/type/type" });
         
     elmts.cellAsValueTypeSelect
         .bind("focus", function() {

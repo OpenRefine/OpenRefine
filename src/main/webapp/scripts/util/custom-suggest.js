@@ -3,6 +3,9 @@
     response: $.suggest.suggest.prototype.response
   };
 
+  /*
+   *  Property suggest
+   */
   $.suggest(
     "suggestP",
     $.extend(
@@ -60,6 +63,52 @@
         true,
         {},
         $.suggest.suggest.defaults, {
+            css: { pane: "fbs-pane fbs-pane-property" }
+        }
+      )
+    }
+  );
+  
+  /*
+   *  Type suggest
+   */
+  $.suggest(
+    "suggestT",
+    $.extend(
+      true,
+      {},
+      $.suggest.suggest.prototype, 
+      {
+        create_item: function(data, response_data) {
+            var css = this.options.css;
+
+            var li =  $("<li>").addClass(css.item);
+
+            var name = $("<div>")
+                .addClass(css.item_name)
+                .append(
+                    $("<label>")
+                        .append($.suggest.strongify(data.name || data.guid, response_data.prefix)));
+
+            data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
+            li.append(name);
+
+            name.prepend($("<div>").addClass(css.item_type).text(data.id));
+            
+            return li;
+        }
+      }
+    )
+  );
+  
+  $.extend(
+    $.suggest.suggestT, 
+    {
+      defaults: $.extend(
+        true,
+        {},
+        $.suggest.suggest.defaults, {
+            css: { pane: "fbs-pane fbs-pane-type" }
         }
       )
     }

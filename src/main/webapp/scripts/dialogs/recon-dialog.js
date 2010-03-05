@@ -171,8 +171,10 @@ ReconDialog.prototype._populateDialog = function() {
 };
 
 ReconDialog.prototype._wireEvents = function() {
+    var self = this;
+    
     this._elmts.heuristicTypeInput
-        .suggest({ type : '/type/type' })
+        .suggestT({ type : '/type/type' })
         .bind("fb-select", function(e, data) {
             $('input[name="recon-dialog-type-choice"][value=""]').attr("checked", "true");
             

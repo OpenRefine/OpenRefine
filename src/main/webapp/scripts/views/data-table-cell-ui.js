@@ -288,7 +288,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(id, elmt) {
 DataTableCellUI.prototype._startEdit = function(elmt) {
     self = this;
     
-    var menu = MenuSystem.createMenu().width("300px");
+    var menu = MenuSystem.createMenu().width("350px");
     menu.html(
         '<textarea class="data-table-cell-edit-editor" bind="textarea" />' +
         '<table class="data-table-cell-edit-layout">' +
@@ -308,7 +308,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     var elmts = DOM.bind(menu);
     
     MenuSystem.showMenu(menu, function(){});
-    MenuSystem.positionMenuLeftRight(menu, $(elmt));
+    MenuSystem.positionMenuLeftRight(menu, $(this._td));
     
     var commit = function() {
         var type = $('input["data-table-cell-edit-type"]:checked')[0].value;
