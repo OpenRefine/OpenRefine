@@ -7,6 +7,7 @@ body {
     font-size: 120%;
     margin: 0;
     padding: 0;
+    background: #eee;
 }
 
 table {
@@ -22,27 +23,30 @@ input {
 }
 
 #header {
-    padding: 5px 20px;
-    background: #666;
-    color: #eee;
+    background: url(../images/metaweb-sprite-vertical.png) repeat-x scroll 0 0 #025B8D;
+    border-bottom: 1px solid #FCE166;
+    color: #FFFFFF;
+    height: 47px;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: relative;
 }
-#header .app-path-section {
-    font-weight: bold;
+#logo {
+    display: block;
+    padding: 13px 0;
 }
-#header a.app-path-section {
-    text-decoration: none;
-    color: #eee;
+#footer {
+    font-size: 80%;
+    margin: 10px;
+    color: #888;
+    text-align: center;
 }
-#header a.app-path-section:hover {
-    text-decoration: underline;
-}
-
-#header h1 {
-    margin: 0;
+#footer a {
+    color: #448;
 }
 
 #body {
-    padding: 20px;
+    background: white;
 }
 
 a.action {

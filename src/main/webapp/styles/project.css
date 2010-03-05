@@ -1,3 +1,7 @@
+#body {
+    padding: 20px;
+}
+
 #loading-message {
     text-align: center;
     font-size: 300%;
@@ -6,3 +10,26 @@
     font-style: italic;
 }
 
+#logo {
+    padding: 13px 0;
+    padding-right: 13px;
+    border-right: 1px solid #ccc;
+    float: left;
+}
+#path {
+    position: absolute;
+    top: 50%;
+    left: 170px;
+    margin-top: -0.5em;
+    line-height: 1em;
+}
+#path .app-path-section {
+    font-weight: bold;
+}
+#path a.app-path-section {
+    text-decoration: none;
+    color: #eee;
+}
+#path a.app-path-section:hover {
+    text-decoration: underline;
+}

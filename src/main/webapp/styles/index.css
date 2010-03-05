@@ -1,16 +1,83 @@
-#projects {
-    float:right;
-    margin: 20px;
-    border: 1px solid #ccc;
-    background: #fffee0;
-    padding: 20px;
+#body-empty, #body-nonempty {
     display: none;
 }
 
-#file-upload-form > table > tbody > tr > td {
-    vertical-align: baseline;
+#body-template {
+    display: none;
+}
+#body-empty, #body-nonempty {
+    width: 800px;
+    padding: 100px 0;
+    margin: auto;
+}
+#body-empty > table, #body-nonempty > table {
+    width: 100%;
+    border-collapse: collapse:
+}
+#body-empty > table > tbody > tr > td, #body-nonempty > table > tbody > tr > td {
+    padding: 20px;
+    vertical-align: middle;
+}
+#body-empty-logo-container, #body-nonempty-logo-container {
+    width: 1%;
+    white-space: pre;
+    font-size: 400%;
+}
+#body-empty-create-project-panel-container, #body-nonempty-create-project-panel-container {
+    border-left: 3px solid #eee;
 }
 
-#submit-container {
-    padding: 20px 0px;
+#body-nonempty {
+    width: 1000px;
+}
+#body-nonempty-logo-container {
+    font-size: 300%;
+}
+
+#body-nonempty-projects-container {
+    border-left: 3px solid #eee;
+}
+
+#create-project-panel-layout {
+    width: 100%;
+    border-collapse: collapse;
+}
+#create-project-panel-layout > tbody > tr > td {
+    padding-right: 7px;
+    padding-bottom: 7px;
+}
+#create-project-panel-layout > tbody > tr > td:last-child {
+    padding-right: 0px;
+}
+#create-project-panel-layout > tbody > tr:last-child > td {
+    padding-bottom: 0px;
+}
+
+#projects {
+    white-space: pre;
+}
+#projects h1 {
+    margin: 0;
+    margin-bottom: 1em;
+    font-size: 120%;
+    color: #aaa
+}
+#projects a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #004;
+}
+#projects a:hover {
+    text-decoration: underline;
+    color: #008;
+}
+.project {
+    margin: 0.25em 0;
+}
+.delete-project {
+    margin-right: 0.5em;
+}
+.last-modified {
+    margin: 0 0.25em;
+    color: #aaa;
 }
