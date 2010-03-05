@@ -50,14 +50,14 @@ public class NumericBinIndex {
             return;
         }
         
-        double diff = getMax() - getMin();
+        double diff = _max - _min;
         _step = 1;
         if (diff > 10) {
-            while (getStep() * 100 < diff) {
+            while (_step * 100 < diff) {
                 _step *= 10;
             }
         } else {
-            while (getStep() * 100 > diff) {
+            while (_step * 100 > diff) {
                 _step /= 10;
             }
         }
@@ -65,7 +65,7 @@ public class NumericBinIndex {
         _min = (Math.floor(_min / _step) * _step);
         _max = (Math.ceil(_max / _step) * _step);
         
-        int binCount = 1 + (int) Math.ceil((getMax() - getMin()) / getStep());
+        int binCount = 1 + (int) Math.ceil((_max - _min) / _step);
         if (binCount > 100) {
             _step *= 2;
             binCount = Math.round((1 + binCount) / 2);
@@ -95,8 +95,10 @@ public class NumericBinIndex {
     }
 
     protected void processValue(double v, List<Double> allValues) {
-        _min = Math.min(getMin(), v);
-        _max = Math.max(getMax(), v);
-        allValues.add(v);
+        if (!Double.isInfinite(v)) {
+            _min = Math.min(_min, v);
+            _max = Math.max(_max, v);
+            allValues.add(v);
+        }
     }
 }
