@@ -112,7 +112,7 @@ Gridworks.createUpdateFunction = function(options, onFinallyDone) {
     if (options["everythingChanged"] || options["modelsChanged"] || options["columnStatsChanged"]) {
         pushFunction(Gridworks.reinitializeProjectData);
     }
-    if (options["everythingChanged"] || options["modelsChanged"] || options["rowsChanged"] || options["cellsChanged"] || options["engineChanged"]) {
+    if (options["everythingChanged"] || options["modelsChanged"] || options["rowsChanged"] || options["rowMetadataChanged"] || options["cellsChanged"] || options["engineChanged"]) {
         pushFunction(function(onDone) {
             ui.dataTableView.update(onDone);
         });

@@ -9,9 +9,9 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class ExpressionEqualRowFilter implements RowFilter {
-    final protected Evaluable        _evaluable;
+    final protected Evaluable       _evaluable;
     final protected int             _cellIndex;
-    final protected Object[]         _matches;
+    final protected Object[]        _matches;
     final protected boolean         _selectBlank;
     final protected boolean         _selectError;
     
@@ -24,7 +24,8 @@ public class ExpressionEqualRowFilter implements RowFilter {
     }
 
     public boolean filterRow(Project project, int rowIndex, Row row) {
-        Cell cell = row.getCell(_cellIndex);
+        Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
+        
         Properties bindings = ExpressionUtils.createBindings(project);
         ExpressionUtils.bind(bindings, row, rowIndex, cell);
         

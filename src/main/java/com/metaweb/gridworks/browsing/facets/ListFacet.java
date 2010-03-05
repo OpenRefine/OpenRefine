@@ -72,7 +72,12 @@ public class ListFacet implements Facet {
         _name = o.getString("name");
         _expression = o.getString("expression");
         _columnName = o.getString("columnName");
-        _cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
+        
+        if (_columnName.length() > 0) {
+        	_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
+        } else {
+        	_cellIndex = -1;
+        }
         
         _eval = MetaParser.parse(_expression);
         _selection.clear();

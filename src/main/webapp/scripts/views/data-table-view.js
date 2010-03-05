@@ -154,10 +154,12 @@ DataTableView.prototype.render = function() {
             renderColumnGroups(nextLayer, []);
         }
     };
+    /*
     renderColumnGroups(
         columnGroups, 
         [ theProject.columnModel.keyCellIndex ]
     );
+    */
     
     /*------------------------------------------------------------
      *  Column Headers with Menus
@@ -294,38 +296,65 @@ DataTableView.prototype._onClickLastPage = function(elmt, evt) {
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     self = this;
     MenuSystem.createAndShowStandardMenu([
-        {
-            label: "Collapse All Columns",
-            click: function() {
-                for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                    theProject.columnModel.columns[i].collapsed = true;
+        {   label: "Edit",
+            submenu: [
+                {
+                    label: "Star Rows",
+                    click: function() {
+                        Gridworks.postProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
+                    }
+                },
+                {
+                    label: "Unstar Rows",
+                    click: function() {
+                        Gridworks.postProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
+                    }
                 }
-                self.render();
-            }
+            ]
         },
-        {
-            label: "Expand All Columns",
-            click: function() {
-                for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                    theProject.columnModel.columns[i].collapsed = false;
+        {   label: "Filter",
+            submenu: [
+                {
+                    label: "By Star",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : "Starred Rows",
+                                "columnName" : "", 
+                                "expression" : "row.starred"
+                            },
+                            {
+                                "scroll" : false
+                            }
+                        );
+                    }
                 }
-                self.render();
-            }
+            ]
         },
-        {},
-        {
-            label: "Star Rows",
-            click: function() {
-                Gridworks.postProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
-            }
-        },
-        {
-            label: "Unstar Rows",
-            click: function() {
-                Gridworks.postProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
-            }
+        {   label: "View",
+            submenu: [
+                {
+                    label: "Collapse All Columns",
+                    click: function() {
+                        for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+                            theProject.columnModel.columns[i].collapsed = true;
+                        }
+                        self.render();
+                    }
+                },
+                {
+                    label: "Expand All Columns",
+                    click: function() {
+                        for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+                            theProject.columnModel.columns[i].collapsed = false;
+                        }
+                        self.render();
+                    }
+                }
+            ]
         }
-    ], elmt);
+    ], elmt, { width: "80px", horizontal: false });
 };
 
 DataTableView.sampleVisibleRows = function(column) {
