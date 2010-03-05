@@ -61,12 +61,12 @@ a.history-entry:hover {
 .history-past a.history-entry:hover{
     padding: 11px 5px 2px 5px;
     border-top: 2px solid red;
-    background: url(../images/up-arrow.png) top center no-repeat;
+    background: url(../../images/up-arrow.png) top center no-repeat;
 }
 .history-future a.history-entry:hover{
     padding: 2px 5px 11px 5px;
     border-bottom: 2px solid red;
-    background: url(../images/down-arrow.png) bottom center no-repeat;
+    background: url(../../images/down-arrow.png) bottom center no-repeat;
 }
 
 .history-future a.history-entry {

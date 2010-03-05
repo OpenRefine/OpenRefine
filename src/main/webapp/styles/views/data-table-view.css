@@ -120,7 +120,7 @@ a.data-table-recon-match {
     display: block;
     width: 16px;
     height: 16px;
-    background-image: url('../images/checks-map.png');
+    background-image: url('../../images/checks-map.png');
     background-repeat: no-repeat;
     background-position: -17px 0px;
     text-decoration: none;
@@ -136,7 +136,7 @@ a.data-table-recon-match-similar {
     display: block;
     width: 16px;
     height: 16px;
-    background-image: url('../images/checks-map.png');
+    background-image: url('../../images/checks-map.png');
     background-repeat: no-repeat;
     background-position: -17px -17px;
     text-decoration: none;
@@ -152,7 +152,7 @@ a.data-table-star-on, a.data-table-star-off {
     display: block;
     width: 16px;
     height: 16px;
-    background-image: url('../images/star-flag-map.png');
+    background-image: url('../../images/star-flag-map.png');
     background-repeat: no-repeat;
     text-decoration: none;
 }
