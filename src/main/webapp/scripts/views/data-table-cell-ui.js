@@ -12,21 +12,31 @@ DataTableCellUI.prototype._render = function() {
     var self = this;
     var cell = this._cell;
     
-    $(this._td).empty();
-    var divContent = $('<div></div>').appendTo(this._td);
+    var divContent = $('<div/>')
+        .addClass("data-table-cell-content");
+        
+    var editLink = $('<a href="javascript:{}" />')
+        .addClass("data-table-cell-edit")
+        .text("edit")
+        .appendTo(divContent)
+        .click(function() { self._startEdit(this); });
+        
+    $(this._td).empty()
+        .unbind()
+        .mouseenter(function() { editLink.css("visibility", "visible"); })
+        .mouseleave(function() { editLink.css("visibility", "hidden"); });
     
     if (cell == null || ("v" in cell && cell.v == null)) {
-        $(divContent).html("&nbsp;");
+        $('<span>').html("&nbsp;").appendTo(divContent);
     } else if ("e" in cell) {
         $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
     } else if (!("r" in cell) || cell.r == null) {
-        $(divContent).text(cell.v);
+        $('<span>').text(cell.v).appendTo(divContent);
     } else {
         var r = cell.r;
         if (r.j == "new") {
-            $(divContent).text(cell.v + " (new topic)");
+            $('<span>').text(cell.v + " (new topic) ").appendTo(divContent);
             
-            $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}">re-match</a>')
                 .addClass("data-table-recon-action")
                 .appendTo(divContent).click(function(evt) {
@@ -35,19 +45,21 @@ DataTableCellUI.prototype._render = function() {
         } else if (r.j == "matched" && "m" in r && r.m != null) {
             var match = cell.r.m;
             $('<a></a>')
+                .text(match.name)
                 .attr("href", "http://www.freebase.com/view" + match.id)
                 .attr("target", "_blank")
-                .text(match.name)
                 .appendTo(divContent);
                 
             $('<span> </span>').appendTo(divContent);
-            $('<a href="javascript:{}">re-match</a>')
+            $('<a href="javascript:{}"></a>')
+                .text("re-match")
                 .addClass("data-table-recon-action")
-                .appendTo(divContent).click(function(evt) {
+                .appendTo(divContent)
+                .click(function(evt) {
                     self._doRematch();
                 });
         } else {
-            $(divContent).text(cell.v);
+            $('<span>').text(cell.v).appendTo(divContent);
             
             if (this._dataTableView._showRecon) {
                 var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContent);
@@ -118,6 +130,8 @@ DataTableCellUI.prototype._render = function() {
             }
         }
     }
+    
+    divContent.appendTo(this._td)
 };
 
 DataTableCellUI.prototype._doRematch = function() {
@@ -269,4 +283,88 @@ DataTableCellUI.prototype._previewCandidateTopic = function(id, elmt) {
     
     MenuSystem.showMenu(fakeMenu, function(){});
     MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
+};
+
+DataTableCellUI.prototype._startEdit = function(elmt) {
+    self = this;
+    
+    var menu = MenuSystem.createMenu().width("300px");
+    menu.html(
+        '<textarea class="data-table-cell-edit-editor" bind="textarea" />' +
+        '<table class="data-table-cell-edit-layout">' +
+            '<tr>' +
+                '<td>' +
+                    '<input type="radio" name="data-table-cell-edit-type" value="text" checked /> text ' +
+                    '<input type="radio" name="data-table-cell-edit-type" value="number" /> number ' +
+                    '<input type="radio" name="data-table-cell-edit-type" value="boolean" /> boolean' +
+                    '<input type="radio" name="data-table-cell-edit-type" value="date" /> date' +
+                '</td>' +
+                '<td width="1%">' +
+                    '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+                '</td>' +
+            '</tr>' +
+        '</table>'
+    );
+    var elmts = DOM.bind(menu);
+    
+    MenuSystem.showMenu(menu, function(){});
+    MenuSystem.positionMenuLeftRight(menu, $(elmt));
+    
+    var commit = function() {
+        var type = $('input["data-table-cell-edit-type"]:checked')[0].value;
+        var text = elmts.textarea[0].value;
+        var value = text;
+        
+        if (type == "number") {
+            value = parseFloat(text);
+            if (isNaN(value)) {
+                alert("Not a valid number.");
+                return;
+            }
+        } else if (type == "boolean") {
+            value = ("true" == text);
+        } else if (type == "date") {
+            value = Date.parse(text);
+            if (value == null) {
+                alert("Not a valid date.");
+                return;
+            }
+            value = value.toString("yyyy-MM-ddTHH:mm:ssZ");
+        }
+        
+        MenuSystem.dismissAll();
+        
+        var params = {
+            row: self._rowIndex,
+            cell: self._cellIndex,
+            value: value,
+            type: type
+        };
+        
+        Gridworks.postProcess(
+            "edit-one-cell", 
+            params, 
+            null,
+            {},
+            {
+                onDone: function(o) {
+                    self._cell = o.cell;
+                    self._render();
+                }
+            }
+        );
+    };
+    
+    elmts.okButton.click(commit);
+    elmts.textarea
+        .text(this._cell == null || ("v" in this._cell && this._cell.v == null) ? "" : this._cell.v)
+        .keydown(function(evt) {
+            if (evt.keyCode == 13) {
+                commit();
+            } else if (evt.keyCode == 27) {
+                MenuSystem.dismissAll();
+            }
+        })
+        .select()
+        .focus();
 };

@@ -59,6 +59,25 @@ img.column-header-menu {
     margin: 1em 0;
 }
 
+div.data-table-cell-content {
+    position: relative;
+}
+a.data-table-cell-edit {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 2px 4px;
+    font-size: 80%;
+    font-weight: bold;
+    text-decoration: none;
+    background: #aaf;
+    color: #eee;
+    visibility: hidden;
+}
+a.data-table-cell-edit:hover {
+    background: #88f;
+    color: white;
+}
 
 .data-table-error {
     color: red;
@@ -142,4 +161,19 @@ a.data-table-star-on {
 }
 a.data-table-star-off {
     background-position: -17px 0px;
+}
+
+table.data-table-cell-edit-layout {
+    width: 100%;
+}
+table.data-table-cell-edit-layout td {
+    padding: 5px;
+}
+
+textarea.data-table-cell-edit-editor {
+    display: block;
+    width: 92%;
+    padding: 2%;
+    margin: 2%;
+    height: 3em;
 }

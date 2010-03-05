@@ -16,6 +16,7 @@ import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
 import com.metaweb.gridworks.commands.edit.ApplyOperationsCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
+import com.metaweb.gridworks.commands.edit.EditOneCellCommand;
 import com.metaweb.gridworks.commands.edit.FacetBasedEditCommand;
 import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
@@ -75,6 +76,7 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("compute-facets", new ComputeFacetsCommand());
         _commands.put("do-text-transform", new DoTextTransformCommand());
         _commands.put("facet-based-edit", new FacetBasedEditCommand());
+        _commands.put("edit-one-cell", new EditOneCellCommand());
         
         _commands.put("add-column", new AddColumnCommand());
         _commands.put("remove-column", new RemoveColumnCommand());

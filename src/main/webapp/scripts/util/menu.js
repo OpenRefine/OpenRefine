@@ -21,8 +21,6 @@ MenuSystem.showMenu = function(elmt, onDismiss) {
     
     var level = MenuSystem._layers.length;
     
-    elmt.click(MenuSystem.dismissAll);
-    
     return level;
 };
 
@@ -53,14 +51,38 @@ MenuSystem.createMenuItem = function() {
 
 MenuSystem.positionMenuAboveBelow = function(menu, elmt) {
     var offset = elmt.offset();
-    menu.css("left", offset.left + "px")
-        .css("top", (offset.top + elmt.outerHeight()) + "px");
+    var windowWidth = $(document.body).innerWidth();
+    var windowHeight = $(document.body).innerHeight();
+    
+    if (offset.top + elmt.outerHeight() - document.body.scrollTop + menu.outerHeight() > windowHeight - 10) {
+        menu.css("top", (offset.top - menu.outerHeight()) + "px");
+    } else {
+        menu.css("top", (offset.top + elmt.outerHeight()) + "px");
+    }
+    
+    if (offset.left - document.body.scrollLeft + menu.outerWidth() > windowWidth - 10) {
+        menu.css("left", (offset.left + elmt.outerWidth() - menu.outerWidth()) + "px");
+    } else {
+        menu.css("left", offset.left + "px");
+    }
 };
 
 MenuSystem.positionMenuLeftRight = function(menu, elmt) {
     var offset = elmt.offset();
-    menu.css("top", offset.top + "px")
-        .css("left", (offset.left + elmt.outerWidth()) + "px");
+    var windowWidth = $(document.body).innerWidth();
+    var windowHeight = $(document.body).innerHeight();
+    
+    if (offset.top - document.body.scrollTop + menu.outerHeight() > windowHeight - 10) {
+        menu.css("top", (offset.top + elmt.outerHeight() - menu.outerHeight()) + "px");
+    } else {
+        menu.css("top", offset.top + "px");
+    }
+    
+    if (offset.left + elmt.outerWidth() - document.body.scrollLeft + menu.outerWidth() > windowWidth - 10) {
+        menu.css("left", (offset.left - menu.outerWidth()) + "px");
+    } else {
+        menu.css("left", (offset.left + elmt.outerWidth()) + "px");
+    }
 };
 
 MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
@@ -100,7 +122,10 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
                     );
                 });
             } else {
-                menuItem.html(item.label).click(item.click);
+                menuItem.html(item.label).click(function(evt) {
+                    item.click.call(this, evt);
+                    MenuSystem.dismissAll();
+                });
                 if ("tooltip" in item) {
                     menuItem.attr("title", item.tooltip);
                 }

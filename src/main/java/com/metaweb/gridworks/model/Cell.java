@@ -2,6 +2,7 @@ package com.metaweb.gridworks.model;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -40,10 +41,16 @@ public class Cell implements Serializable, HasFields, Jsonizable {
             writer.value(((EvalError) value).message);
         } else {
             writer.key("v");
-            if (value != null && value instanceof Calendar) {
-                writer.value(ParsingUtilities.dateToString(((Calendar) value).getTime()));
+            if (value != null) {
+                if (value instanceof Calendar) {
+                    writer.value(ParsingUtilities.dateToString(((Calendar) value).getTime()));
+                } else if (value instanceof Date) {
+                    writer.value(ParsingUtilities.dateToString((Date) value));
+                } else {
+                    writer.value(value);
+                }
             } else {
-                writer.value(value);
+                writer.value(null);
             }
         }
         
