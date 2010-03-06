@@ -21,7 +21,7 @@ public abstract class Clusterer implements Jsonizable {
 
         String colname = o.getString("column");
         for (Column column : project.columnModel.columns) {
-            if (column.getHeaderLabel().equals(colname)) {
+            if (column.getName().equals(colname)) {
                 _colindex = column.getCellIndex();
             }
         }
