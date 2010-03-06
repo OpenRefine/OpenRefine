@@ -87,10 +87,30 @@ public class ReconChange extends MassCellChange {
     }
     
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("newReconConfig="); _newReconConfig.save(writer); writer.write('\n'); 
-        writer.write("newReconStats="); _newReconStats.save(writer); writer.write('\n'); 
-        writer.write("oldReconConfig="); _oldReconConfig.save(writer); writer.write('\n'); 
-        writer.write("oldReconStats="); _oldReconStats.save(writer); writer.write('\n'); 
+        writer.write("newReconConfig="); 
+        if (_newReconConfig != null) {
+            _newReconConfig.save(writer); 
+        }
+        writer.write('\n');
+        
+        writer.write("newReconStats=");
+        if (_newReconStats != null) {
+            _newReconStats.save(writer);
+        }
+        writer.write('\n');
+        
+        writer.write("oldReconConfig=");
+        if (_oldReconConfig != null) {
+            _oldReconConfig.save(writer); 
+        }
+        writer.write('\n');
+        
+        writer.write("oldReconStats=");
+        if (_oldReconStats != null) {
+            _oldReconStats.save(writer); 
+        }
+        writer.write('\n');
+        
         super.save(writer, options);
     }
     
@@ -111,13 +131,21 @@ public class ReconChange extends MassCellChange {
             String value = line.substring(equal + 1);
             
             if ("newReconConfig".equals(field)) {
-                newReconConfig = ReconConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                if (value.length() > 0) {
+                    newReconConfig = ReconConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                }
             } else if ("newReconStats".equals(field)) {
-                newReconStats = ReconStats.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                if (value.length() > 0) {
+                    newReconStats = ReconStats.load(ParsingUtilities.evaluateJsonStringToObject(value));
+                }
             } else if ("oldReconConfig".equals(field)) {
-                oldReconConfig = ReconConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                if (value.length() > 0) {
+                    oldReconConfig = ReconConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                }
             } else if ("oldReconStats".equals(field)) {
-                oldReconStats = ReconStats.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                if (value.length() > 0) {
+                    oldReconStats = ReconStats.load(ParsingUtilities.evaluateJsonStringToObject(value));
+                }
             } else if ("commonColumnName".equals(field)) {
                 commonColumnName = value;
             } else if ("cellChangeCount".equals(field)) {

@@ -118,7 +118,7 @@ public class Column implements Serializable, Jsonizable {
             column._reconConfig = ReconConfig.reconstruct(obj.getJSONObject("reconConfig"));
         }
         if (obj.has("reconStats")) {
-            column._reconStats = ReconStats.reconstruct(obj.getJSONObject("reconStats"));
+            column._reconStats = ReconStats.load(obj.getJSONObject("reconStats"));
         }
         
         return column;

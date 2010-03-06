@@ -15,7 +15,7 @@ import com.metaweb.gridworks.model.Recon.Judgment;
 public class ReconStats implements Serializable, Jsonizable {
     private static final long serialVersionUID = -4831409797104437854L;
 
-    static public ReconStats reconstruct(JSONObject obj) throws Exception {
+    static public ReconStats load(JSONObject obj) throws Exception {
         return new ReconStats(
                 obj.getInt("nonBlanks"),
                 obj.getInt("newTopics"),

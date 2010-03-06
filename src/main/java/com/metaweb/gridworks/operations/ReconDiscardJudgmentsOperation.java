@@ -72,17 +72,16 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
             }
             
             public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
-                if (cellIndex < row.cells.size()) {
-                    Cell cell = row.cells.get(cellIndex);
-                    if (cell.recon != null) {
-                        Recon recon = cell.recon.dup();
-                        recon.judgment = Judgment.None;
-    
-                        Cell newCell = new Cell(cell.value, recon);
-                        
-                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                        cellChanges.add(cellChange);
-                    }
+                Cell cell = row.getCell(cellIndex);
+                if (cell != null && cell.recon != null) {
+                    Recon recon = cell.recon.dup();
+                    recon.judgment = Judgment.None;
+                    recon.match = null;
+
+                    Cell newCell = new Cell(cell.value, recon);
+                    
+                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+                    cellChanges.add(cellChange);
                 }
                 return false;
             }

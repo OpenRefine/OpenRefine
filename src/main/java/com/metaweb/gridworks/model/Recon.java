@@ -82,8 +82,10 @@ public class Recon implements Serializable, HasFields, Jsonizable {
         if (candidates != null) {
             r.candidates = new ArrayList<ReconCandidate>(candidates);
         }
+        
         r.judgment = judgment;
         r.match = match;
+        
         return r;
     }
     

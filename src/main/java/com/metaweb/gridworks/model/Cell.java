@@ -75,7 +75,7 @@ public class Cell implements Serializable, HasFields, Jsonizable {
     }
     
     static public Cell load(String s) throws Exception {
-        return load(ParsingUtilities.evaluateJsonStringToObject(s));
+        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s));
     }
     
     static public Cell load(JSONObject obj) throws Exception {

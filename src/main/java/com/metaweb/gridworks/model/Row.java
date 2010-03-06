@@ -162,8 +162,10 @@ public class Row implements Serializable, HasFields, Jsonizable {
     }
     
     static public Row load(String s) throws Exception {
-        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
-        
+        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s));
+    }
+    
+    static public Row load(JSONObject obj) throws Exception {
         JSONArray a = obj.getJSONArray("cells");
         int count = a.length();
         
