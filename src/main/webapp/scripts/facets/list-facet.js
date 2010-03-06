@@ -214,15 +214,7 @@ ListFacet.prototype.render = function() {
 };
 
 ListFacet.prototype._doEdit = function() {
-    var entries = [];
-    for (var i = 0; i < this._data.choices.length; i++) {
-        var choice = this._data.choices[i];
-        entries.push({
-            v: choice.v,
-            c: choice.c
-        });
-    }
-    new FacetBasedEditDialog(this._config.columnName, this._config.expression, entries);
+    new FacetBasedEditDialog(this._config.columnName, this._config.expression);
 };
 
 ListFacet.prototype._select = function(choice, only) {

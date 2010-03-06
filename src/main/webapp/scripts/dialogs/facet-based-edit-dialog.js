@@ -1,7 +1,6 @@
-function FacetBasedEditDialog(columnName, expression, entries) {
+function FacetBasedEditDialog(columnName, expression) {
     this._columnName = columnName;
     this._expression = expression;
-    this._entries = entries;
     this._method = "binning";
     this._function = "fingerprint";
     this._params = {};
@@ -49,6 +48,8 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                     '<div id="ngram-fingerprint-params" class="function-params hidden">' +
                       'Ngram Size: <input type="text" value="1" bind="ngramSize">' +
                     '</div>' + 
+                '</td>' +
+                '<td bind="resultSummary" align="right">' +
                 '</td>' +
             '</tr></table></div>' +
             '<div bind="tableContainer" class="facet-based-edit-dialog-table-container"></div>' +
@@ -105,21 +106,24 @@ FacetBasedEditDialog.prototype._createDialog = function() {
 
 FacetBasedEditDialog.prototype._renderTable = function() {
     var self = this;
-    var container = this._elmts.tableContainer;
     
+    var container = this._elmts.tableContainer;
     var table = $('<table></table>').addClass("facet-based-edit-dialog-entry-table")[0];
     
     var trHead = table.insertRow(table.rows.length);
     trHead.className = "header";
-    $(trHead.insertCell(0)).text("Current facet choices");
-    $(trHead.insertCell(1)).text("Edit?");
-    $(trHead.insertCell(2)).text("New cell value");
+    $(trHead.insertCell(0)).text("Cluster size");
+    $(trHead.insertCell(1)).text("Facet choices in Cluster");
+    $(trHead.insertCell(2)).text("Edit?");
+    $(trHead.insertCell(3)).text("New cell value");
     
     var renderCluster = function(cluster) {
         var tr = table.insertRow(table.rows.length);
         tr.className = table.rows.length % 2 == 0 ? "odd" : "even";
         
-        var ul = $(tr.insertCell(0));
+        $(tr.insertCell(0)).text(cluster.choices.length);
+        
+        var ul = $(tr.insertCell(1));
         var choices = cluster.choices;
         for (var c = 0; c < choices.length; c++) {
             var choice = choices[c];
@@ -129,7 +133,7 @@ FacetBasedEditDialog.prototype._renderTable = function() {
         }
         
         var editCheck = $('<input type="checkbox" />')
-            .appendTo(tr.insertCell(1))
+            .appendTo(tr.insertCell(2))
             .click(function() {
                 cluster.edit = !cluster.edit;
             });
@@ -139,7 +143,7 @@ FacetBasedEditDialog.prototype._renderTable = function() {
         
         var input = $('<input size="55" />')
             .attr("value", cluster.value)
-            .appendTo(tr.insertCell(2))
+            .appendTo(tr.insertCell(3))
             .keyup(function() {
                 cluster.value = this.value;
             });
@@ -149,6 +153,8 @@ FacetBasedEditDialog.prototype._renderTable = function() {
     }
     
     container.empty().append(table);
+    
+    this._elmts.resultSummary.text(this._clusters.length + " clusters found.");
 };
 
 FacetBasedEditDialog.prototype._cluster = function() {
@@ -157,6 +163,8 @@ FacetBasedEditDialog.prototype._cluster = function() {
     var container = this._elmts.tableContainer.html(
         '<div style="margin: 1em; font-size: 130%; color: #888;">Loading... <img src="/images/small-spinner.gif"></div>'
     );
+    
+    this._elmts.resultSummary.empty();
 
     $.post(
         "/command/compute-clusters?" + $.param({ project: theProject.id }),

@@ -81,6 +81,11 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {
                     label: "Join Multi-Valued Cells ...",
                     click: function() { self._doJoinMultiValueCells(); }
+                },
+                {},
+                {
+                    label: "Cluster & Edit ...",
+                    click: function() { new FacetBasedEditDialog(self._column.name, "value"); }
                 }
             ]
         },
