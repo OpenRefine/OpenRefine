@@ -17,7 +17,7 @@ public class AddColumnCommand extends EngineDependentCommand {
         
         String baseColumnName = request.getParameter("baseColumnName");
         String expression = request.getParameter("expression");
-        String headerLabel = request.getParameter("headerLabel");
+        String newColumnName = request.getParameter("newColumnName");
         int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));
         String onError = request.getParameter("onError");
         
@@ -26,7 +26,7 @@ public class AddColumnCommand extends EngineDependentCommand {
             baseColumnName, 
             expression,
             TextTransformOperation.stringToOnError(onError),
-            headerLabel,
+            newColumnName,
             columnInsertIndex
         );
     }

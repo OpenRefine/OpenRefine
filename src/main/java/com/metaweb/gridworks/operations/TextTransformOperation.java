@@ -97,7 +97,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             List<CellChange> cellChanges) {
         
         return "Text transform on " + cellChanges.size() + 
-            " cells in column " + column.getHeaderLabel() + ": " + _expression;
+            " cells in column " + column.getName() + ": " + _expression;
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {

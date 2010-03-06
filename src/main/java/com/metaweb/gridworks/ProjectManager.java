@@ -31,7 +31,7 @@ public class ProjectManager implements Serializable {
     private static final long serialVersionUID = -2967415873336723962L;
     private static final int s_expressionHistoryMax = 100; // last n expressions used across all projects
     
-    protected File _dir;
+    protected File _workspaceDir;
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected List<String> 				 _expressions;
     
@@ -92,16 +92,24 @@ public class ProjectManager implements Serializable {
     }
     
     private ProjectManager(File dir) {
-        _dir = dir;
-        _dir.mkdirs();
+        _workspaceDir = dir;
+        _workspaceDir.mkdirs();
         
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _expressions = new LinkedList<String>();
         _projects = new HashMap<Long, Project>();
     }
     
-    public File getDataDir() {
-        return _dir;
+    public File getWorkspaceDir() {
+        return _workspaceDir;
+    }
+    
+    public File getProjectDir(long projectID) {
+        File dir = new File(_workspaceDir, projectID + ".project");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        return dir;
     }
     
     public void registerProject(Project project, ProjectMetadata projectMetadata) {
@@ -121,7 +129,7 @@ public class ProjectManager implements Serializable {
         if (_projects.containsKey(id)) {
             return _projects.get(id);
         } else {
-            File file = new File(_dir, id + ".project");
+            File file = new File(getProjectDir(id), "raw-data");
             
             Project project = null;
             FileInputStream fis = null;
@@ -171,7 +179,7 @@ public class ProjectManager implements Serializable {
     public void save() {
     	Gridworks.log("Saving project metadata ...");
     	
-    	File tempFile = new File(_dir, "projects.json.temp");
+    	File tempFile = new File(_workspaceDir, "projects.json.temp");
     	try {
             saveToFile(tempFile);
         } catch (Exception e) {
@@ -181,8 +189,8 @@ public class ProjectManager implements Serializable {
             return;
         }
     	
-        File file = new File(_dir, "projects.json");
-        File oldFile = new File(_dir, "projects.json.old");
+        File file = new File(_workspaceDir, "projects.json");
+        File oldFile = new File(_workspaceDir, "projects.json.old");
         
         if (file.exists()) {
             file.renameTo(oldFile);
@@ -281,7 +289,7 @@ public class ProjectManager implements Serializable {
     }
     
     protected void saveProject(Project project) {
-        File file = new File(_dir, project.id + ".project");
+        File file = new File(getProjectDir(project.id), "raw-data");
         
         FileOutputStream fos = null;
         ObjectOutputStream out = null;
@@ -313,7 +321,7 @@ public class ProjectManager implements Serializable {
 	        _projects.remove(project.id);
 	        _projectsMetadata.remove(project.id);
 	        
-	        File file = new File(_dir, project.id + ".project");
+	        File file = new File(getProjectDir(project.id), "raw-data");
 	        if (file.exists()) {
 	            file.delete();
 	        }

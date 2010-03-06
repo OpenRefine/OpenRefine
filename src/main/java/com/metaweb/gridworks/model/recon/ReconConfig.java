@@ -1,9 +1,13 @@
 package com.metaweb.gridworks.model.recon;
 
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.List;
+import java.util.Properties;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.model.Cell;
@@ -37,4 +41,13 @@ abstract public class ReconConfig implements Serializable, Jsonizable {
     );
     
     abstract public List<Recon> batchRecon(List<ReconJob> jobs);
+    
+    public void save(Writer writer) {
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        try {
+            write(jsonWriter, new Properties());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

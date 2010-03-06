@@ -32,7 +32,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _expression;
     final protected OnError    _onError;
     
-    final protected String     _headerLabel;
+    final protected String     _newColumnName;
     final protected int        _columnInsertIndex;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
@@ -43,7 +43,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             obj.getString("baseColumnName"),
             obj.getString("expression"),
             TextTransformOperation.stringToOnError(obj.getString("onError")),
-            obj.getString("headerLabel"),
+            obj.getString("newColumnName"),
             obj.getInt("columnInsertIndex")
         );
     }
@@ -53,7 +53,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         String         baseColumnName,
         String         expression,
         OnError        onError,
-        String         headerLabel, 
+        String         newColumnName, 
         int            columnInsertIndex 
     ) {
         super(engineConfig);
@@ -62,7 +62,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         _expression = expression;
         _onError = onError;
         
-        _headerLabel = headerLabel;
+        _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
     }
 
@@ -73,7 +73,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("headerLabel"); writer.value(_headerLabel);
+        writer.key("newColumnName"); writer.value(_newColumnName);
         writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
         writer.key("baseColumnName"); writer.value(_baseColumnName);
         writer.key("expression"); writer.value(_expression);
@@ -82,15 +82,15 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     }
 
     protected String getBriefDescription(Project project) {
-        return "Create column " + _headerLabel + 
+        return "Create column " + _newColumnName + 
             " at index " + _columnInsertIndex + 
             " based on column " + _baseColumnName + 
             " using expression " + _expression;
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _headerLabel + 
-            " based on column " + column.getHeaderLabel() + 
+        return "Create new column " + _newColumnName + 
+            " based on column " + column.getName() + 
             " by filling " + cellsAtRows.size() +
             " rows with " + _expression;
     }
@@ -110,7 +110,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         
         String description = createDescription(column, cellsAtRows);
         
-        Change change = new ColumnAdditionChange(_headerLabel, _columnInsertIndex, cellsAtRows);
+        Change change = new ColumnAdditionChange(_newColumnName, _columnInsertIndex, cellsAtRows);
         
         return new HistoryEntry(
             project, description, this, change);

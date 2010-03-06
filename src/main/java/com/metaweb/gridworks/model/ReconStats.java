@@ -1,9 +1,11 @@
 package com.metaweb.gridworks.model;
 
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.Properties;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
@@ -13,6 +15,14 @@ import com.metaweb.gridworks.model.Recon.Judgment;
 public class ReconStats implements Serializable, Jsonizable {
     private static final long serialVersionUID = -4831409797104437854L;
 
+    static public ReconStats reconstruct(JSONObject obj) throws Exception {
+        return new ReconStats(
+                obj.getInt("nonBlanks"),
+                obj.getInt("newTopics"),
+                obj.getInt("matchedTopics")
+        );
+    }
+    
     final public int    nonBlanks;
     final public int    newTopics;
     final public int    matchedTopics;
@@ -54,5 +64,14 @@ public class ReconStats implements Serializable, Jsonizable {
         }
         
         return new ReconStats(nonBlanks, newTopics, matchedTopics);
+    }
+    
+    public void save(Writer writer) {
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        try {
+            write(jsonWriter, new Properties());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

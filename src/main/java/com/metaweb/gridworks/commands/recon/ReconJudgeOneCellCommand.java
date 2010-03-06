@@ -118,7 +118,7 @@ public class ReconJudgeOneCellCommand extends Command {
             
             String cellDescription = 
                 "single cell on row " + (rowIndex + 1) + 
-                ", column " + column.getHeaderLabel() + 
+                ", column " + column.getName() + 
                 ", containing \"" + cell.value + "\"";
             
             String description = null;
@@ -166,7 +166,7 @@ public class ReconJudgeOneCellCommand extends Command {
             
             Change change = new ReconChange(
                 new CellChange(rowIndex, cellIndex, cell, newCell), 
-                column.getHeaderLabel(), 
+                column.getName(), 
                 column.getReconConfig(),
                 stats
             );

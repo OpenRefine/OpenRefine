@@ -3,16 +3,20 @@
  */
 package com.metaweb.gridworks.model.changes;
 
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
 import java.util.List;
+import java.util.Properties;
 
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.ReconStats;
 import com.metaweb.gridworks.model.recon.ReconConfig;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class ReconChange extends MassCellChange {
-    private static final long serialVersionUID = 7048806528587330543L;
-    
     final protected ReconConfig _newReconConfig;
     protected ReconStats _newReconStats;
     
@@ -20,10 +24,21 @@ public class ReconChange extends MassCellChange {
     protected ReconStats _oldReconStats;
     
     public ReconChange(
-        List<CellChange>     cellChanges,
-        String                 commonColumnName,
+        List<CellChange>    cellChanges,
+        String              commonColumnName,
         ReconConfig         newReconConfig,
-        ReconStats            newReconStats // can be null
+        ReconStats          newReconStats // can be null
+    ) {
+        super(cellChanges, commonColumnName, false);
+        _newReconConfig = newReconConfig;
+        _newReconStats = newReconStats;
+    }
+    
+    public ReconChange(
+        CellChange[]    cellChanges,
+        String          commonColumnName,
+        ReconConfig     newReconConfig,
+        ReconStats      newReconStats // can be null
     ) {
         super(cellChanges, commonColumnName, false);
         _newReconConfig = newReconConfig;
@@ -69,5 +84,58 @@ public class ReconChange extends MassCellChange {
             column.setReconConfig(_oldReconConfig);
             column.setReconStats(_oldReconStats);
         }
+    }
+    
+    public void save(Writer writer, Properties options) throws IOException {
+        writer.write("newReconConfig="); _newReconConfig.save(writer); writer.write('\n'); 
+        writer.write("newReconStats="); _newReconStats.save(writer); writer.write('\n'); 
+        writer.write("oldReconConfig="); _oldReconConfig.save(writer); writer.write('\n'); 
+        writer.write("oldReconStats="); _oldReconStats.save(writer); writer.write('\n'); 
+        super.save(writer, options);
+    }
+    
+    static public Change load(LineNumberReader reader) throws Exception {
+        ReconConfig newReconConfig = null;
+        ReconStats newReconStats = null;
+        ReconConfig oldReconConfig = null;
+        ReconStats oldReconStats = null;
+        
+        String commonColumnName = null;
+        CellChange[] cellChanges = null;
+        
+        String line;
+        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
+            int equal = line.indexOf('=');
+            
+            CharSequence field = line.subSequence(0, equal);
+            String value = line.substring(equal + 1);
+            
+            if ("newReconConfig".equals(field)) {
+                newReconConfig = ReconConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+            } else if ("newReconStats".equals(field)) {
+                newReconStats = ReconStats.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+            } else if ("oldReconConfig".equals(field)) {
+                oldReconConfig = ReconConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+            } else if ("oldReconStats".equals(field)) {
+                oldReconStats = ReconStats.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+            } else if ("commonColumnName".equals(field)) {
+                commonColumnName = value;
+            } else if ("cellChangeCount".equals(field)) {
+                int cellChangeCount = Integer.parseInt(value);
+                
+                cellChanges = new CellChange[cellChangeCount];
+                for (int i = 0; i < cellChangeCount; i++) {
+                    cellChanges[i] = CellChange.load(reader);
+                }
+            }
+        }
+        
+        ReconChange change = new ReconChange(
+                cellChanges, commonColumnName, newReconConfig, newReconStats);
+        
+        change._oldReconConfig = oldReconConfig;
+        change._oldReconStats = oldReconStats;
+        
+        return change;
     }
 }

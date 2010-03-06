@@ -49,7 +49,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
     
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new MassCellChange(
-            cellChanges, column.getHeaderLabel(), _updateRowContextDependencies);
+            cellChanges, column.getName(), _updateRowContextDependencies);
     }
     
     abstract protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception;

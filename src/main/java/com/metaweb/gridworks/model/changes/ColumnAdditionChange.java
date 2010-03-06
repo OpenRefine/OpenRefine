@@ -1,21 +1,25 @@
 package com.metaweb.gridworks.model.changes;
 
+import java.io.IOException; 
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class ColumnAdditionChange extends ColumnChange {
-    private static final long serialVersionUID = -3938837464064526052L;
-    
-    final protected String          _headerLabel;
+    final protected String          _columnName;
     final protected int             _columnIndex;
     final protected CellAtRow[]     _newCells;
     protected int                   _newCellIndex = -1;
     
-    public ColumnAdditionChange(String headerLabel, int columnIndex, List<CellAtRow> newCells) {
-        _headerLabel = headerLabel;
+    public ColumnAdditionChange(String columnName, int columnIndex, List<CellAtRow> newCells) {
+        _columnName = columnName;
         _columnIndex = columnIndex;
         _newCells = new CellAtRow[newCells.size()];
         newCells.toArray(_newCells);
@@ -27,7 +31,7 @@ public class ColumnAdditionChange extends ColumnChange {
                 _newCellIndex = project.columnModel.allocateNewCellIndex();
             }
             
-            Column column = new Column(_newCellIndex, _headerLabel);
+            Column column = new Column(_newCellIndex, _columnName);
             
             project.columnModel.columns.add(_columnIndex, column);
             try {
@@ -56,4 +60,48 @@ public class ColumnAdditionChange extends ColumnChange {
         }
     }
 
+    public void save(Writer writer, Properties options) throws IOException {
+        writer.write("columnName="); writer.write(_columnName); writer.write('\n');
+        writer.write("columnIndex="); writer.write(Integer.toString(_columnIndex)); writer.write('\n');
+        writer.write("newCellIndex="); writer.write(Integer.toString(_newCellIndex)); writer.write('\n');
+        writer.write("newCellCount="); writer.write(Integer.toString(_newCells.length)); writer.write('\n');
+        for (CellAtRow c : _newCells) {
+            c.save(writer, options);
+            writer.write('\n');
+        }
+        writer.write("/ec/\n"); // end of change marker
+    }
+    
+    static public Change load(LineNumberReader reader) throws Exception {
+        String columnName = null;
+        int columnIndex = -1;
+        int newCellIndex = -1;
+        List<CellAtRow> newCells = null;
+        
+        String line;
+        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
+            int equal = line.indexOf('=');
+            CharSequence field = line.subSequence(0, equal);
+            
+            if ("columnName".equals(field)) {
+                columnName = line.substring(equal + 1);
+            } else if ("columnIndex".equals(field)) {
+                columnIndex = Integer.parseInt(line.substring(equal + 1));
+            } else if ("newCellIndex".equals(field)) {
+                newCellIndex = Integer.parseInt(line.substring(equal + 1));
+            } else if ("newCellCount".equals(field)) {
+                int newCellCount = Integer.parseInt(line.substring(equal + 1));
+                
+                newCells = new ArrayList<CellAtRow>(newCellCount);
+                for (int i = 0; i < newCellCount; i++) {
+                    newCells.add(CellAtRow.load(line = reader.readLine()));
+                }
+            }
+        }
+        
+        ColumnAdditionChange change = new ColumnAdditionChange(columnName, columnIndex, newCells);
+        change._newCellIndex = newCellIndex;
+        
+        return change;
+    }
 }

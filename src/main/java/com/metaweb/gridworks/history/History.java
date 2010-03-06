@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.history;
 
+import java.io.LineNumberReader;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +18,20 @@ import com.metaweb.gridworks.model.Project;
 public class History implements Serializable, Jsonizable {
     private static final long serialVersionUID = -1529783362243627391L;
     
+    static public Change readOneChange(LineNumberReader reader) throws Exception {
+        String className = reader.readLine();
+        Class<? extends Change> klass = getChangeClass(className);
+        
+        Method load = klass.getMethod("load", LineNumberReader.class);
+        
+        return (Change) load.invoke(null, reader);
+    }
+    
+    @SuppressWarnings("unchecked")
+    static public Class<? extends Change> getChangeClass(String className) throws ClassNotFoundException {
+        return (Class<? extends Change>) Class.forName(className);
+    }
+    
     protected long                 _projectID;
     protected List<HistoryEntry> _pastEntries;
     protected List<HistoryEntry> _futureEntries;
@@ -30,11 +46,11 @@ public class History implements Serializable, Jsonizable {
         for (HistoryEntry entry2 : _futureEntries) {
             entry2.delete();
         }
-        _futureEntries.clear();
-        
-        _pastEntries.add(entry);
         
         entry.apply(ProjectManager.singleton.getProject(_projectID));
+        _pastEntries.add(entry);
+        _futureEntries.clear();
+        
         setModified();
     }
     
@@ -89,11 +105,13 @@ public class History implements Serializable, Jsonizable {
         Project project = ProjectManager.singleton.getProject(_projectID);
         
         while (times > 0 && _pastEntries.size() > 0) {
-            HistoryEntry entry = _pastEntries.remove(_pastEntries.size() - 1);
-            times--;
+            HistoryEntry entry = _pastEntries.get(_pastEntries.size() - 1);
             
             entry.revert(project);
             
+            times--;
+            
+            _pastEntries.remove(_pastEntries.size() - 1);
             _futureEntries.add(0, entry);
         }
         setModified();
@@ -103,12 +121,14 @@ public class History implements Serializable, Jsonizable {
         Project project = ProjectManager.singleton.getProject(_projectID);
         
         while (times > 0 && _futureEntries.size() > 0) {
-            HistoryEntry entry = _futureEntries.remove(0);
-            times--;
+            HistoryEntry entry = _futureEntries.get(0);
             
             entry.apply(project);
             
+            times--;
+            
             _pastEntries.add(entry);
+            _futureEntries.remove(0);
         }
         setModified();
     }

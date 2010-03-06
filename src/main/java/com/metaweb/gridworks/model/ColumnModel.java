@@ -79,7 +79,7 @@ public class ColumnModel implements Serializable, Jsonizable {
         writer.endArray();
         
         writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
-        writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getHeaderLabel());
+        writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getName());
         writer.key("columnGroups");
         writer.array();
         for (ColumnGroup g : _rootColumnGroups) {
@@ -134,7 +134,7 @@ public class ColumnModel implements Serializable, Jsonizable {
         _cellIndexToColumn = new HashMap<Integer, Column>();
         
         for (Column column : columns) {
-            _nameToColumn.put(column.getHeaderLabel(), column);
+            _nameToColumn.put(column.getName(), column);
             _cellIndexToColumn.put(column.getCellIndex(), column);
         }
     }

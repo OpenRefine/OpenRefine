@@ -1,13 +1,17 @@
 package com.metaweb.gridworks.model.changes;
 
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.Properties;
+
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class ColumnRemovalChange extends ColumnChange {
-    private static final long serialVersionUID = -3587865920553490108L;
-
     final protected int     _oldColumnIndex;
     protected Column        _oldColumn;
     protected CellAtRow[]   _oldCells;
@@ -53,4 +57,45 @@ public class ColumnRemovalChange extends ColumnChange {
         }
     }
 
+    public void save(Writer writer, Properties options) throws IOException {
+        writer.write("oldColumnIndex="); writer.write(Integer.toString(_oldColumnIndex)); writer.write('\n');
+        writer.write("oldColumn="); _oldColumn.save(writer); writer.write('\n');
+        writer.write("oldCellCount="); writer.write(Integer.toString(_oldCells.length)); writer.write('\n');
+        for (CellAtRow c : _oldCells) {
+            c.save(writer, options);
+            writer.write('\n');
+        }
+        writer.write("/ec/\n"); // end of change marker
+    }
+    
+    static public Change load(LineNumberReader reader) throws Exception {
+        int oldColumnIndex = -1;
+        Column oldColumn = null;
+        CellAtRow[] oldCells = null;
+        
+        String line;
+        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
+            int equal = line.indexOf('=');
+            CharSequence field = line.subSequence(0, equal);
+            
+            if ("oldColumnIndex".equals(field)) {
+                oldColumnIndex = Integer.parseInt(line.substring(equal + 1));
+            } else if ("oldColumn".equals(field)) {
+                oldColumn = Column.load(line.substring(equal + 1));
+            } else if ("oldCellCount".equals(field)) {
+                int oldCellCount = Integer.parseInt(line.substring(equal + 1));
+                
+                oldCells = new CellAtRow[oldCellCount];
+                for (int i = 0; i < oldCellCount; i++) {
+                    oldCells[i] = CellAtRow.load(line = reader.readLine());
+                }
+            }
+        }
+        
+        ColumnRemovalChange change = new ColumnRemovalChange(oldColumnIndex);
+        change._oldColumn = oldColumn;
+        change._oldCells = oldCells;
+        
+        return change;
+    }
 }

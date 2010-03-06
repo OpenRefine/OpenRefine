@@ -1,27 +1,31 @@
 package com.metaweb.gridworks.model;
 
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class Row implements Serializable, HasFields, Jsonizable {
     private static final long serialVersionUID = -689264211730915507L;
     
-    public boolean               flagged;
-    public boolean               starred;
+    public boolean             flagged;
+    public boolean             starred;
     final public List<Cell>    cells;
     
-    transient public int            recordIndex; // -1 for rows that are not main record rows
-    transient public List<Integer>     contextRows;
-    transient public int[]             contextRowSlots;
-    transient public int[]             contextCellSlots;
+    transient public int            recordIndex = -1; // -1 for rows that are not main record rows
+    transient public List<Integer>  contextRows;
+    transient public int[]          contextRowSlots;
+    transient public int[]          contextCellSlots;
     
     public Row(int cellCount) {
         cells = new ArrayList<Cell>(cellCount);
@@ -126,23 +130,59 @@ public class Row implements Serializable, HasFields, Jsonizable {
         }
         writer.endArray();
         
-        if (recordIndex >= 0) {
-            writer.key("j"); writer.value(recordIndex);
-        }
-        
-        if (options.containsKey("rowIndex")) {
-            writer.key("i"); writer.value(options.get("rowIndex"));
-        }
-        if (options.containsKey("extra")) {
-            Properties extra = (Properties) options.get("extra");
-            if (extra != null) {
-                for (Object key : extra.keySet()) {
-                    writer.key((String) key);
-                    writer.value(extra.get(key));
+        if (!"save".equals(options.getProperty("mode"))) {
+            if (recordIndex >= 0) {
+                writer.key("j"); writer.value(recordIndex);
+            }
+            
+            if (options.containsKey("rowIndex")) {
+                writer.key("i"); writer.value(options.get("rowIndex"));
+            }
+            if (options.containsKey("extra")) {
+                Properties extra = (Properties) options.get("extra");
+                if (extra != null) {
+                    for (Object key : extra.keySet()) {
+                        writer.key((String) key);
+                        writer.value(extra.get(key));
+                    }
                 }
             }
         }
         
         writer.endObject();
+    }
+    
+    public void save(Writer writer) {
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        try {
+            write(jsonWriter, new Properties());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    static public Row load(String s) throws Exception {
+        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
+        
+        JSONArray a = obj.getJSONArray("cells");
+        int count = a.length();
+        
+        Row row = new Row(count);
+        for (int i = 0; i < count; i++) {
+            if (!a.isNull(i)) {
+                JSONObject o = a.getJSONObject(i);
+                
+                row.setCell(i, Cell.load(o));
+            }
+        }
+        
+        if (obj.has("starred")) {
+            row.starred = obj.getBoolean("starred");
+        }
+        if (obj.has("flagged")) {
+            row.flagged = obj.getBoolean("flagged");
+        }
+        
+        return row;
     }
 }

@@ -226,10 +226,10 @@ SchemaAlignmentDialog.UINode.prototype._showColumnPopupMenu = function(elmt) {
     var columns = theProject.columnModel.columns;
     var createColumnMenuItem = function(index) {
         menu.push({
-            label: columns[index].headerLabel,
+            label: columns[index].name,
             click: function() {
                 self._node.nodeType = "cell-as-topic";
-                self._node.columnName = columns[index].headerLabel;
+                self._node.columnName = columns[index].name;
                 self._showExpandable();
                 self._renderMain();
             }
@@ -403,7 +403,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         
         var radio = $('<input />')
             .attr("type", "radio")
-            .attr("value", column.headerLabel)
+            .attr("value", column.name)
             .attr("name", "schema-align-node-dialog-column")
             .appendTo(tr.insertCell(0))
             .click(function() {
@@ -422,11 +422,11 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             
         if ((!("columnName" in self._node) || self._node.columnName == null) && columnIndex == 0) {
             radio.attr("checked", "true");
-        } else if (column.headerLabel == self._node.columnName) {
+        } else if (column.name == self._node.columnName) {
             radio.attr("checked", "true");
         }
             
-        $('<span></span>').text(column.headerLabel).appendTo(tr.insertCell(1));
+        $('<span></span>').text(column.name).appendTo(tr.insertCell(1));
     };
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {

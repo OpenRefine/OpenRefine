@@ -18,7 +18,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
     var headerLeft = headerTableRow.insertCell(0);
     var headerRight = headerTableRow.insertCell(1);
     
-    $('<span></span>').html(this._column.headerLabel).appendTo(headerLeft);
+    $('<span></span>').html(this._column.name).appendTo(headerLeft);
     
     $(headerRight).attr("width", "1%");
     $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(headerRight).click(function() {
@@ -108,8 +108,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.headerLabel,
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name,
+                                "columnName" : self._column.name, 
                                 "expression" : "value"
                             }
                         );
@@ -126,8 +126,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : self._column.headerLabel,
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name,
+                                "columnName" : self._column.name, 
                                 "expression" : "value",
                                 "mode" : "range",
                                 "min" : 0,
@@ -149,8 +149,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "text", 
                             {
-                                "name" : self._column.headerLabel,
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name,
+                                "columnName" : self._column.name, 
                                 "mode" : "text",
                                 "caseSensitive" : false
                             }
@@ -163,8 +163,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "text", 
                             {
-                                "name" : self._column.headerLabel + " (regex)",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + " (regex)",
+                                "columnName" : self._column.name, 
                                 "mode" : "regex",
                                 "caseSensitive" : true
                             }
@@ -178,8 +178,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.headerLabel + ": Error?",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": Error?",
+                                "columnName" : self._column.name, 
                                 "expression" : "isError(value)"
                             }
                         );
@@ -191,8 +191,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.headerLabel + ": Blank?",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": Blank?",
+                                "columnName" : self._column.name, 
                                 "expression" : "isBlank(value)"
                             }
                         );
@@ -294,8 +294,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.headerLabel + ": judgment",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": judgment",
+                                "columnName" : self._column.name, 
                                 "expression" : "cell.recon.judgment"
                             },
                             {
@@ -311,8 +311,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : self._column.headerLabel + ": best candidate's score",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": best candidate's score",
+                                "columnName" : self._column.name, 
                                 "expression" : "cell.recon.best.score",
                                 "mode" : "range"
                             },
@@ -327,8 +327,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.headerLabel + ": best candidate's type match",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": best candidate's type match",
+                                "columnName" : self._column.name, 
                                 "expression" : "cell.recon.features.typeMatch"
                             },
                             {
@@ -343,8 +343,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.headerLabel + ": best candidate's name match",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": best candidate's name match",
+                                "columnName" : self._column.name, 
                                 "expression" : "cell.recon.features.nameMatch"
                             },
                             {
@@ -360,8 +360,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : self._column.headerLabel + ": best candidate's name edit distance",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": best candidate's name edit distance",
+                                "columnName" : self._column.name, 
                                 "expression" : "cell.recon.features.nameLevenshtein",
                                 "mode" : "range"
                             },
@@ -376,8 +376,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : self._column.headerLabel + ": best candidate's name word similarity",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": best candidate's name word similarity",
+                                "columnName" : self._column.name, 
                                 "expression" : "cell.recon.features.nameWordDistance",
                                 "mode" : "range"
                             },
@@ -393,8 +393,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.headerLabel + ": best candidate's types",
-                                "columnName" : self._column.headerLabel, 
+                                "name" : self._column.name + ": best candidate's types",
+                                "columnName" : self._column.name, 
                                 "expression" : "cell.recon.best.type"
                             }
                         );
@@ -409,12 +409,12 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
     var self = this;
     DataTableView.promptExpressionOnVisibleRows(
         this._column,
-        (type == "list" ? "Custom Facet on column " : "Custom Numeric Facet on column") + this._column.headerLabel, 
+        (type == "list" ? "Custom Facet on column " : "Custom Numeric Facet on column") + this._column.name, 
         expression,
         function(expression) {
             var config = {
-                "name" : self._column.headerLabel + ": " + expression,
-                "columnName" : self._column.headerLabel, 
+                "name" : self._column.name + ": " + expression,
+                "columnName" : self._column.name, 
                 "expression" : expression
             };
             if (type == "range") {
@@ -430,7 +430,7 @@ DataTableColumnHeaderUI.prototype._doTextTransform = function(expression, onErro
     Gridworks.postProcess(
         "do-text-transform",
         {
-            columnName: this._column.headerLabel, 
+            columnName: this._column.name, 
             expression: expression, 
             onError: onError,
             repeat: repeat,
@@ -446,7 +446,7 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
     var frame = DialogSystem.createDialog();
     frame.width("700px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Custom text transform on column " + this._column.headerLabel).appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Custom text transform on column " + this._column.name).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -519,7 +519,7 @@ DataTableColumnHeaderUI.prototype._doReconcile = function() {
     var self = this;
     var dismissBusy = DialogSystem.showBusy();
     $.post(
-        "/command/guess-types-of-column?" + $.param({ project: theProject.id, columnName: this._column.headerLabel }), 
+        "/command/guess-types-of-column?" + $.param({ project: theProject.id, columnName: this._column.name }), 
         null,
         function(data) {
             if (data.code != "ok") {
@@ -575,7 +575,7 @@ DataTableColumnHeaderUI.prototype._doReconcile = function() {
 DataTableColumnHeaderUI.prototype._doReconDiscardJudgments = function() {
     Gridworks.postProcess(
         "recon-discard-judgments",
-        { columnName: this._column.headerLabel },
+        { columnName: this._column.name },
         null,
         { cellsChanged: true, columnStatsChanged: true }
     );
@@ -584,7 +584,7 @@ DataTableColumnHeaderUI.prototype._doReconDiscardJudgments = function() {
 DataTableColumnHeaderUI.prototype._doReconMatchBestCandidates = function() {
     Gridworks.postProcess(
         "recon-match-best-candidates",
-        { columnName: this._column.headerLabel },
+        { columnName: this._column.name },
         null,
         { cellsChanged: true, columnStatsChanged: true }
     );
@@ -593,7 +593,7 @@ DataTableColumnHeaderUI.prototype._doReconMatchBestCandidates = function() {
 DataTableColumnHeaderUI.prototype._doReconMarkNewTopics = function(shareNewTopics) {
     Gridworks.postProcess(
         "recon-mark-new-topics",
-        { columnName: this._column.headerLabel, shareNewTopics: shareNewTopics },
+        { columnName: this._column.name, shareNewTopics: shareNewTopics },
         null,
         { cellsChanged: true, columnStatsChanged: true }
     );
@@ -616,7 +616,7 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
         Gridworks.postProcess(
             "recon-match-specific-topic-to-cells",
             {
-                columnName: self._column.headerLabel,
+                columnName: self._column.name,
                 topicID: data.id,
                 topicGUID: data.guid,
                 topicName: data.name,
@@ -642,7 +642,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
     var frame = DialogSystem.createDialog();
     frame.width("700px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Add Column Based on Column " + this._column.headerLabel).appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Add Column Based on Column " + this._column.name).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -694,9 +694,9 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
         Gridworks.postProcess(
             "add-column", 
             {
-                baseColumnName: self._column.headerLabel, 
+                baseColumnName: self._column.name, 
                 expression: previewWidget.getExpression(true), 
-                headerLabel: columnName, 
+                newColumnName: columnName, 
                 columnInsertIndex: self._columnIndex + 1,
                 onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value
             },
@@ -721,7 +721,7 @@ DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {
     Gridworks.postProcess(
         "remove-column", 
         {
-            columnName: this._column.headerLabel
+            columnName: this._column.name
         },
         null,
         { modelsChanged: true }
@@ -734,7 +734,7 @@ DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
         Gridworks.postProcess(
             "join-multi-value-cells", 
             {
-                columnName: this._column.headerLabel,
+                columnName: this._column.name,
                 keyColumnName: theProject.columnModel.keyColumnName,
                 separator: separator
             },
@@ -750,7 +750,7 @@ DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
         Gridworks.postProcess(
             "split-multi-value-cells", 
             {
-                columnName: this._column.headerLabel,
+                columnName: this._column.name,
                 keyColumnName: theProject.columnModel.keyColumnName,
                 separator: separator,
                 mode: "plain"

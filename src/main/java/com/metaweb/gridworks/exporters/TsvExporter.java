@@ -25,7 +25,7 @@ public class TsvExporter implements Exporter {
             } else {
                 writer.write("\t");
             }
-            writer.write(column.getHeaderLabel());
+            writer.write(column.getName());
         }
         writer.write("\n");
         

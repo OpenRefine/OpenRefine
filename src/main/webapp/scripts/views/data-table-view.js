@@ -179,7 +179,7 @@ DataTableView.prototype.render = function() {
         $(td).addClass("column-header");
         
         if (column.collapsed) {
-            $(td).html("&nbsp;").attr("title", column.headerLabel).click(function(evt) {
+            $(td).html("&nbsp;").attr("title", column.name).click(function(evt) {
                 column.collapsed = false;
                 self.render();
             });

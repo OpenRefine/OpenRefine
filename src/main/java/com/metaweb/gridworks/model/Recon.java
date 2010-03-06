@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
@@ -59,13 +61,17 @@ public class Recon implements Serializable, HasFields, Jsonizable {
     }
     
     final public long            id;
-    public Object[]             features = new Object[Feature_max];
-    public List<ReconCandidate> candidates;
-    public Judgment                judgment = Judgment.None;
+    public Object[]              features = new Object[Feature_max];
+    public List<ReconCandidate>  candidates;
+    public Judgment              judgment = Judgment.None;
     public ReconCandidate        match = null;
     
     public Recon() {
         id = System.currentTimeMillis() * 1000000 + Math.round(Math.random() * 1000000);
+    }
+    
+    protected Recon(long id) {
+        this.id = id;
     }
     
     public Recon dup() {
@@ -150,8 +156,8 @@ public class Recon implements Serializable, HasFields, Jsonizable {
             throws JSONException {
         
         writer.object();
-        writer.key("j");
-        writer.value(judgmentToString());
+        writer.key("id"); writer.value(id);
+        writer.key("j"); writer.value(judgmentToString());
         
         if (match != null) {
             writer.key("m");
@@ -166,6 +172,51 @@ public class Recon implements Serializable, HasFields, Jsonizable {
             writer.endArray();
         }
         
+        if ("save".equals(options.getProperty("mode"))) {
+            writer.key("f");
+                writer.array();
+                for (Object o : features) {
+                    writer.value(o);
+                }
+                writer.endArray();
+        }
+        
         writer.endObject();
     }
+    
+    static public Recon load(JSONObject obj) throws Exception {
+        if (obj == null) {
+            return null;
+        }
+        
+        Recon recon = new Recon(obj.getLong("id"));
+        
+        if (obj.has("j")) {
+            recon.judgment = stringToJudgment(obj.getString("j"));
+        }
+        if (obj.has("m")) {
+            recon.match = ReconCandidate.load(obj.getJSONObject("m"));
+        }
+        if (obj.has("c")) {
+            JSONArray a = obj.getJSONArray("c");
+            int count = a.length();
+            
+            for (int i = 0; i < count; i++) {
+                recon.addCandidate(ReconCandidate.load(a.getJSONObject(i)));
+            }
+        }
+        if (obj.has("f")) {
+            JSONArray a = obj.getJSONArray("f");
+            int count = a.length();
+            
+            for (int i = 0; i < count && i < Feature_max; i++) {
+                if (!a.isNull(i)) {
+                    recon.features[i] = a.get(i);
+                }
+            }
+        }
+        
+        return recon;
+    }
+
 }

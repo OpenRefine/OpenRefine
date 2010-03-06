@@ -55,7 +55,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
             List<CellChange> cellChanges) {
         
         return "Match each of " + cellChanges.size() + 
-            " cells to its best candidate in column " + column.getHeaderLabel();
+            " cells to its best candidate in column " + column.getName();
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {

@@ -1,15 +1,20 @@
 package com.metaweb.gridworks.history;
 
-import java.io.File;
+import java.io.File; 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -56,12 +61,23 @@ public class HistoryEntry implements Serializable, Jsonizable {
         if (_change == null) {
             loadChange();
         }
-        _change.apply(project);
         
-        // When a change is applied, it can hang on to old data (in order to be able
-        // to revert later). Hence, we need to save the change out.
-        
-        saveChange();
+        synchronized (project) {
+            _change.apply(project);
+            
+            // When a change is applied, it can hang on to old data (in order to be able
+            // to revert later). Hence, we need to save the change out.
+            
+            try {
+                saveChange();
+            } catch (IOException e) {
+                e.printStackTrace();
+                
+                _change.revert(project);
+                
+                throw new RuntimeException("Failed to apply change", e);
+            }
+        }
     }
     
     public void revert(Project project) {
@@ -72,75 +88,79 @@ public class HistoryEntry implements Serializable, Jsonizable {
     }
     
     public void delete() {
-        File file = getFile();
+        File file = getChangeFile();
         if (file.exists()) {
             file.delete();
         }
     }
     
     protected void loadChange() {
-        File file = getFile();
+        File changeFile = getChangeFile();
         
-        FileInputStream fis = null;
-        ObjectInputStream in = null;
         try {
-            fis = new FileInputStream(file);
-            in = new ObjectInputStream(fis);
-            
-            _change = (Change) in.readObject();
-        } catch(IOException e) {
-            e.printStackTrace();
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception e) {
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (Exception e) {
-                }
-            }
+            loadChange(changeFile);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load change file " + changeFile.getAbsolutePath(), e);
         }
     }
     
-    protected void saveChange() {
-        File file = getFile();
-        
-        FileOutputStream fos = null;
-        ObjectOutputStream out = null;
+    protected void loadChange(File file) throws Exception {
+        ZipInputStream in = new ZipInputStream(new FileInputStream(file));
         try {
-            fos = new FileOutputStream(file);
-            out = new ObjectOutputStream(fos);
+            ZipEntry entry = in.getNextEntry();
             
-            out.writeObject(_change);
-            out.flush();
-        } catch(IOException e) {
-            e.printStackTrace();
+            assert "change.txt".equals(entry.getName());
+            
+            LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
+            try {
+                _change = History.readOneChange(reader);
+            } finally {
+                reader.close();
+            }
         } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception e) {
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (Exception e) {
-                }
-            }
+            in.close();
         }
     }
     
-    protected File getFile() {
-        File dir = new File(ProjectManager.singleton.getDataDir(), projectID + ".history");
+    protected void saveChange() throws IOException {
+        File changeFile = getChangeFile();
+        if (!(changeFile.exists())) {
+            saveChange(changeFile);
+        }
+    }
+    
+    protected void saveChange(File file) throws IOException {
+        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
+        try {
+            out.putNextEntry(new ZipEntry("change.txt"));
+            try {
+                Writer writer = new OutputStreamWriter(out);
+                try {
+                    Properties options = new Properties();
+                    options.setProperty("mode", "save");
+                    
+                    writer.write(_change.getClass().getName()); writer.write('\n');
+                        
+                    _change.save(writer, options);
+                } finally {
+                    writer.flush();
+                }
+            } finally {
+                out.closeEntry();
+            }
+        } finally {
+            out.close();
+        }
+    }
+    
+    protected File getChangeFile() {
+        return new File(getHistoryDir(), id + ".change.zip");
+    }
+    
+    protected File getHistoryDir() {
+        File dir = new File(ProjectManager.singleton.getProjectDir(projectID), "history");
         dir.mkdirs();
         
-        return new File(dir, id + ".entry");
+        return dir;
     }
 }

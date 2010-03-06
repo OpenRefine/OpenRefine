@@ -89,7 +89,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         return "Match specific topic " + 
             match.topicName + " (" + 
             match.topicID + ") to " + cellChanges.size() + 
-            " cells in column " + column.getHeaderLabel();
+            " cells in column " + column.getName();
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {

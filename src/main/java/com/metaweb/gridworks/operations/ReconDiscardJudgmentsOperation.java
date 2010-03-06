@@ -55,7 +55,7 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
             List<CellChange> cellChanges) {
         
         return "Discard recon judgments for " + cellChanges.size() + 
-            " cells in column " + column.getHeaderLabel();
+            " cells in column " + column.getName();
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {

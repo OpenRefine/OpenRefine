@@ -176,7 +176,7 @@ DataTableCellUI.prototype._doJudgment = function(judgment, params) {
 
 DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params) {
     params = params || {};
-    params.columnName = Gridworks.cellIndexToColumn(this._cellIndex).headerLabel;
+    params.columnName = Gridworks.cellIndexToColumn(this._cellIndex).name;
     params.similarValue = this._cell.v;
     params.judgment = judgment;
     
@@ -215,7 +215,7 @@ DataTableCellUI.prototype._searchForMatch = function() {
             };
             if (checkSimilar[0].checked) {
                 params.similarValue = self._cell.v;
-                params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).headerLabel;
+                params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
                 
                 self._postProcessSeveralCells("recon-judge-similar-cells", params, true);
             } else {

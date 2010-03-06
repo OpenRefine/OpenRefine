@@ -170,5 +170,4 @@ public class GuidBasedReconConfig extends StrictReconConfig {
         
         return recons;
     }
-
 }

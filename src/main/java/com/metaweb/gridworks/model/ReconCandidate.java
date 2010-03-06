@@ -4,19 +4,21 @@ import java.io.Serializable;
 import java.util.Properties;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
+import com.metaweb.gridworks.util.JSONUtilities;
 
 public class ReconCandidate implements Serializable, HasFields, Jsonizable {
     private static final long serialVersionUID = -8013997214978715606L;
     
     final public String     topicID;
     final public String     topicGUID;
-    final public String        topicName;
-    final public String[]     typeIDs;
-    final public double        score;
+    final public String     topicName;
+    final public String[]   typeIDs;
+    final public double     score;
     
     public ReconCandidate(String topicID, String topicGUID, String topicName, String[] typeIDs, double score) {
         this.topicID = topicID;
@@ -56,5 +58,20 @@ public class ReconCandidate implements Serializable, HasFields, Jsonizable {
         writer.endArray();
         
         writer.endObject();
+    }
+    
+    static public ReconCandidate load(JSONObject obj) throws Exception {
+        if (obj == null) {
+            return null;
+        }
+        
+        ReconCandidate candidate = new ReconCandidate(
+            obj.getString("id"),
+            obj.getString("guid"),
+            obj.getString("name"),
+            JSONUtilities.getStringArray(obj, "types"),
+            obj.getDouble("score")
+        );
+        return candidate;
     }
 }

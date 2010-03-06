@@ -28,7 +28,7 @@ ReconDialog.prototype._createDialog = function() {
     var frame = DialogSystem.createDialog();
     frame.width("800px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Reconcile column " + this._column.headerLabel).appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Reconcile column " + this._column.name).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -156,9 +156,9 @@ ReconDialog.prototype._populateDialog = function() {
         var td0 = tr.insertCell(0);
         var td1 = tr.insertCell(1);
         
-        $(td0).html(column.headerLabel);
+        $(td0).html(column.name);
         $('<input size="15" name="recon-dialog-heuristic-property" />')
-            .attr("columnName", column.headerLabel)
+            .attr("columnName", column.name)
             .appendTo(td1);
     }
     var columns = theProject.columnModel.columns;
@@ -246,7 +246,7 @@ ReconDialog.prototype._onDoHeuristic = function() {
             "reconcile",
             {},
             {
-                columnName: this._column.headerLabel,
+                columnName: this._column.name,
                 config: JSON.stringify({
                     mode: "heuristic",
                     service: $('input[name="recon-dialog-heuristic-service"]:checked')[0].value,
@@ -291,7 +291,7 @@ ReconDialog.prototype._onDoStrict = function() {
         }
     
         bodyParams = {
-            columnName: this._column.headerLabel,
+            columnName: this._column.name,
             config: JSON.stringify({
                 mode: "strict",
                 match: "key",
@@ -300,7 +300,7 @@ ReconDialog.prototype._onDoStrict = function() {
         };
     } else if (match == "id") {
         bodyParams = {
-            columnName: this._column.headerLabel,
+            columnName: this._column.name,
             config: JSON.stringify({
                 mode: "strict",
                 match: "id"
@@ -308,7 +308,7 @@ ReconDialog.prototype._onDoStrict = function() {
         };
     } else if (match == "guid") {
         bodyParams = {
-            columnName: this._column.headerLabel,
+            columnName: this._column.name,
             config: JSON.stringify({
                 mode: "strict",
                 match: "guid"

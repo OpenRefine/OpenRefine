@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.commands.edit;
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -11,13 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.commands.Command;
-import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 import com.metaweb.gridworks.util.ParsingUtilities;
@@ -104,7 +102,7 @@ public class EditOneCellCommand extends Command {
             
             String description = 
                 "Edit single cell on row " + (rowIndex + 1) + 
-                ", column " + column.getHeaderLabel();
+                ", column " + column.getName();
 
             Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
                 

@@ -120,7 +120,7 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
             List<CellChange> cellChanges) {
         
         return "Facet-based edit " + cellChanges.size() + 
-            " cells in column " + column.getHeaderLabel();
+            " cells in column " + column.getName();
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {

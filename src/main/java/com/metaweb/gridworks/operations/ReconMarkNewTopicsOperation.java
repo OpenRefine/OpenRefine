@@ -64,7 +64,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
             List<CellChange> cellChanges) {
         
         return "Mark to create new topics for " + cellChanges.size() + 
-            " cells in column " + column.getHeaderLabel() +
+            " cells in column " + column.getName() +
             (_shareNewTopics ? 
                 ", one topic for each group of similar cells" : 
                 ", one topic for each cell");

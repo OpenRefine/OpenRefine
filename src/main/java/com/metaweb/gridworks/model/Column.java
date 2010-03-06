@@ -1,30 +1,33 @@
 package com.metaweb.gridworks.model;
 
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.model.recon.ReconConfig;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class Column implements Serializable, Jsonizable {
     private static final long serialVersionUID = -1063342490951563563L;
     
-    final private int        _cellIndex;
-    final private String    _originalHeaderLabel;
-    private String            _headerLabel;
+    final private int       _cellIndex;
+    final private String    _originalName;
+    private String          _name;
     private ReconConfig     _reconConfig;
-    private ReconStats        _reconStats;
+    private ReconStats      _reconStats;
     
     transient protected Map<String, Object> _precomputes;
     
-    public Column(int cellIndex, String headerLabel) {
+    public Column(int cellIndex, String originalName) {
         _cellIndex = cellIndex;
-        _originalHeaderLabel = _headerLabel = headerLabel;
+        _originalName = _name = originalName;
     }
     
     public int getCellIndex() {
@@ -32,15 +35,15 @@ public class Column implements Serializable, Jsonizable {
     }
 
     public String getOriginalHeaderLabel() {
-        return _originalHeaderLabel;
+        return _originalName;
     }
     
-    public void setHeaderLabel(String headerLabel) {
-        this._headerLabel = headerLabel;
+    public void setName(String name) {
+        this._name = name;
     }
 
-    public String getHeaderLabel() {
-        return _headerLabel;
+    public String getName() {
+        return _name;
     }
 
     public void setReconConfig(ReconConfig config) {
@@ -63,8 +66,9 @@ public class Column implements Serializable, Jsonizable {
             throws JSONException {
         
         writer.object();
-        writer.key("cellIndex"); writer.value(getCellIndex());
-        writer.key("headerLabel"); writer.value(getHeaderLabel());
+        writer.key("cellIndex"); writer.value(_cellIndex);
+        writer.key("originalName"); writer.value(_originalName);
+        writer.key("name"); writer.value(_name);
         if (_reconConfig != null) {
             writer.key("reconConfig");
             _reconConfig.write(writer, options);
@@ -94,5 +98,29 @@ public class Column implements Serializable, Jsonizable {
             _precomputes = new HashMap<String, Object>();
         }
         _precomputes.put(key, value);
+    }
+    
+    public void save(Writer writer) {
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        try {
+            write(jsonWriter, new Properties());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    static public Column load(String s) throws Exception {
+        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
+        Column column = new Column(obj.getInt("cellIndex"), obj.getString("originalName"));
+        
+        column._name = obj.getString("name");
+        if (obj.has("reconConfig")) {
+            column._reconConfig = ReconConfig.reconstruct(obj.getJSONObject("reconConfig"));
+        }
+        if (obj.has("reconStats")) {
+            column._reconStats = ReconStats.reconstruct(obj.getJSONObject("reconStats"));
+        }
+        
+        return column;
     }
 }

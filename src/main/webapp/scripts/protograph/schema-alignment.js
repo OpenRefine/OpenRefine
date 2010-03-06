@@ -30,7 +30,7 @@ SchemaAlignment.autoAlign = function() {
         var queries = {};
         for (var i = 0; i < candidates.length; i++) {
             var candidate = candidates[i];
-            var name = SchemaAlignment._cleanName(candidate.column.headerLabel);
+            var name = SchemaAlignment._cleanName(candidate.column.name);
             var key = "t" + i + ":search";
             queries[key] = {
                 "query" : name,
@@ -98,7 +98,7 @@ SchemaAlignment.createNewRootNode = function() {
         var column = columns[i];
         var target = {
             nodeType: "cell-as-topic",
-            columnName: column.headerLabel,
+            columnName: column.name,
             createForNoReconMatch: true
         };
         if ("reconConfig" in column && column.reconConfig != null) {
@@ -108,7 +108,7 @@ SchemaAlignment.createNewRootNode = function() {
             };
         }
         
-        if (column.headerLabel == theProject.columnModel.keyColumnName) {
+        if (column.name == theProject.columnModel.keyColumnName) {
             rootNode = target;
         } else {
             links.push({
