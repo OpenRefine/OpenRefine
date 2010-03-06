@@ -95,8 +95,9 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     //this._elmts.clusterButton.click(function() { self._cluster(); });
     //this._elmts.unclusterButton.click(function() { self._uncluster(); });
     
-    $('<button></button>').text("OK").click(function() { self._onOK(); }).appendTo(footer);
-    $('<button></button>').text("Cancel").click(function() { self._dismiss(); }).appendTo(footer);
+    $('<button></button>').text("Apply & Re-Cluster").click(function() { self._onApplyReCluster(); }).appendTo(footer);
+    $('<button></button>').text("Apply & Close").click(function() { self._onApplyClose(); }).appendTo(footer);
+    $('<button></button>').text("Close").click(function() { self._dismiss(); }).appendTo(footer);
     
     this._level = DialogSystem.showDialog(frame);
     
@@ -193,7 +194,21 @@ FacetBasedEditDialog.prototype._cluster = function() {
     );
 }
 
-FacetBasedEditDialog.prototype._onOK = function() {
+FacetBasedEditDialog.prototype._onApplyClose = function() {
+    var self = this;        
+    this._apply(function() {
+        self._dismiss();
+    });
+};
+
+FacetBasedEditDialog.prototype._onApplyReCluster = function() {
+    var self = this;        
+    this._apply(function() {
+        self._cluster();
+    });
+};
+
+FacetBasedEditDialog.prototype._apply = function(onDone) {
     var edits = [];
     for (var i = 0; i < this._clusters.length; i++) {
         var cluster = this._clusters[i];
@@ -219,10 +234,14 @@ FacetBasedEditDialog.prototype._onOK = function() {
                 expression: this._expression,
                 edits: JSON.stringify(edits)
             },
-            { cellsChanged: true }
+            { cellsChanged: true },
+            {
+                onError: function(o) {
+                    alert("Error: " + o.message);
+                },
+                onDone: onDone
+            }
         );
-        
-        this._dismiss();
     } else {
         alert("You must check some Edit? checkboxes for your edits to be applied.");
     }
