@@ -5,11 +5,11 @@ import com.wcohen.ss.api.StringDistance;
 
 import edu.mit.simile.vicino.Distance;
 
-public class LevensteinDistance implements Distance {
+public class LevenshteinDistance implements Distance {
 
     StringDistance distance;
 
-    public LevensteinDistance() {
+    public LevenshteinDistance() {
         this.distance = new Levenstein();
     }
 

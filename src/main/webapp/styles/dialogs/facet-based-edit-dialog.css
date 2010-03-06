@@ -14,7 +14,7 @@ table.facet-based-edit-dialog-main-layout > tbody > tr:last-child > td {
 }
 
 .facet-based-edit-dialog-table-container {
-    height: 450px;
+    height: 500px;
     overflow: auto;
     border: 1px solid #aaa;
 }
@@ -42,5 +42,14 @@ table.facet-based-edit-dialog-entry-table > tbody > tr.even > td {
 }
 
 table.facet-based-edit-dialog-entry-table input {
-    border: none;
+    border: 1px solid #ccc;
+    padding: 0 0.1em;
+}
+
+.facet-based-edit-dialog-controls {
+    margin-bottom: 0.5em;
+}
+
+.facet-based-edit-dialog-controls td {
+    padding-right: 0.5em;
 }

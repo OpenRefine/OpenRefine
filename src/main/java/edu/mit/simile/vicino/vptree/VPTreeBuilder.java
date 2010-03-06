@@ -2,8 +2,14 @@ package edu.mit.simile.vicino.vptree;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+
+import com.metaweb.gridworks.Gridworks;
 
 import edu.mit.simile.vicino.Distance;
 
@@ -17,9 +23,10 @@ public class VPTreeBuilder {
 
     private Random generator = new Random(System.currentTimeMillis());
 
-    private VPTree tree;
     private final Distance distance;
 
+    private Set<Node> nodes = new HashSet<Node>();
+    
     /**
      * Defines a VPTree Builder for a specific distance.
      * 
@@ -29,20 +36,47 @@ public class VPTreeBuilder {
         this.distance = distance;
     }
 
-    public VPTree buildVPTree(Collection<? extends Serializable> col) {
-        Node nodes[] = new Node[col.size()];
-        Iterator<? extends Serializable> i = col.iterator();
-        int counter = 0;
-        while (i.hasNext()) {
-            Serializable s = (Serializable) i.next();
-            nodes[counter++] = new Node(s);
-        }
+    public void populate(Serializable s) {
+        nodes.add(new Node(s));
+    }
 
-        tree = new VPTree();
-        tree.setRoot(addNode(nodes, 0, nodes.length - 1));
+    public VPTree buildVPTree() {
+        Node[] nodes_array = this.nodes.toArray(new Node[this.nodes.size()]);
+        Gridworks.log("building tree with nodes: " + nodes_array.length);
+        VPTree tree = new VPTree();
+        tree.setRoot(addNode(nodes_array, 0, nodes_array.length - 1));
+        Gridworks.log("tree built");
         return tree;
     }
 
+    public VPTree buildVPTree(Collection<? extends Serializable> values) {
+        reset();
+        for (Serializable s : values) {
+            populate(s);
+        }
+        return buildVPTree();
+    }
+    
+    public void reset() {
+        this.nodes.clear();
+    }
+    
+    public Map<Serializable,List<? extends Serializable>> getClusters(float radius) {
+        VPTree tree = buildVPTree();
+        VPTreeSeeker seeker = new VPTreeSeeker(distance,tree);
+        
+        Map<Serializable,List<? extends Serializable>> map = new HashMap<Serializable,List<? extends Serializable>>();
+        for (Node n : nodes) {
+            Serializable s = n.get();
+            Gridworks.log(" find results for: " + s);
+            List<? extends Serializable> results = seeker.range(s, radius);
+            Gridworks.log("  found: " + results.size());
+            map.put(s, results);
+        }
+        
+        return map;
+    }
+    
     private TNode addNode(Node nodes[], int begin, int end) {
 
         int delta = end - begin;

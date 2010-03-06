@@ -2,6 +2,9 @@ function FacetBasedEditDialog(columnName, expression, entries) {
     this._columnName = columnName;
     this._expression = expression;
     this._entries = entries;
+    this._method = "binning";
+    this._function = "fingerprint";
+    this._params = {};
     
     this._createDialog();
     this._cluster();
@@ -10,7 +13,7 @@ function FacetBasedEditDialog(columnName, expression, entries) {
 FacetBasedEditDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
-    frame.width("800px");
+    frame.width("900px");
     
     var header = $('<div></div>').addClass("dialog-header").text("Facet-based edit of column " + this._columnName).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
@@ -18,17 +21,78 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     
     var html = $(
         '<div>' +
+            '<div class="facet-based-edit-dialog-controls"><table><tr>' +
+                '<td>' +
+                    'Method: <select bind="methodSelector">' +
+                        '<option selected="true">key collision</option>' +
+                        '<option>nearest neightbor</option>' +
+                    '</select>' +
+                '</td>' +
+                '<td>' +
+                    '<div id="binning-controls">Keying Function: <select bind="keyingFunctionSelector">' +
+                        '<option selected="true">fingerprint</option>' +
+                        '<option>ngram-fingerprint</option>' +
+                        '<option>double-metaphone</option>' +
+                        '<option>metaphone</option>' +
+                        '<option>soundex</option>' +
+                    '</select></div>' +
+                    '<div id="knn-controls" class="hidden">Distance Function: <select bind="distanceFunctionSelector">' +
+                        '<option selected="true">levenshtein</option>' +
+                        '<option>jaro</option>' +
+                        '<option>jaccard</option>' +
+                        '<option>gzip</option>' +
+                        '<option>bzip2</option>' +
+                        '<option>PPM</option>' +
+                    '</select></div>' +
+                '</td>' +
+                '<td>' +
+                    '<div id="ngram-fingerprint-params" class="function-params hidden">' +
+                      'Ngram Size: <input type="text" value="1" bind="ngramSize">' +
+                    '</div>' + 
+                '</td>' +
+            '</tr></table></div>' +
             '<div bind="tableContainer" class="facet-based-edit-dialog-table-container"></div>' +
-            '<div class="facet-based-edit-dialog-controls">' +
-                '<button bind="clusterButton">Cluster</button> ' +
-                '<button bind="unclusterButton">Un-cluster</button> ' +
-            '</div>' +
         '</div>'
     ).appendTo(body);
     
     this._elmts = DOM.bind(html);
-    this._elmts.clusterButton.click(function() { self._cluster(); });
-    this._elmts.unclusterButton.click(function() { self._uncluster(); });
+
+    this._elmts.methodSelector.change(function() {
+        var selection = $(this).find("option:selected").text();
+        if (selection == 'key collision') {
+            body.find("#binning-controls").show();
+            body.find("#knn-controls").hide();
+            self._method = "binning";
+            self._elmts.keyingFunctionSelector.change();
+        } else if (selection = 'nearest neightbor') {
+            body.find("#binning-controls").hide();
+            body.find("#knn-controls").show();
+            self._method = "knn";
+            self._elmts.distanceFunctionSelector.change();
+        }
+    });
+
+    var changer = function() {
+        self._function = $(this).find("option:selected").text();
+        $(".function-params").hide();
+        $("#" + self._function + "-params").show();
+        self._cluster();
+    };
+    
+    this._elmts.keyingFunctionSelector.change(changer);
+    this._elmts.distanceFunctionSelector.change(changer);
+    
+    this._elmts.ngramSize.change(function() {
+        try {
+            self._params = { "ngram-size" : parseInt($(this).val()) };
+            self._cluster();
+        } catch (e) {
+            alert("ngram size must be a number");
+        }
+    });
+
+    //this._elmts.clusterButton.click(function() { self._cluster(); });
+    //this._elmts.unclusterButton.click(function() { self._uncluster(); });
     
     $('<button></button>').text("OK").click(function() { self._onOK(); }).appendTo(footer);
     $('<button></button>').text("Cancel").click(function() { self._dismiss(); }).appendTo(footer);
@@ -41,9 +105,9 @@ FacetBasedEditDialog.prototype._createDialog = function() {
 
 FacetBasedEditDialog.prototype._renderTable = function() {
     var self = this;
-    var container = this._elmts.tableContainer.empty();
+    var container = this._elmts.tableContainer;
     
-    var table = $('<table></table>').addClass("facet-based-edit-dialog-entry-table").appendTo(container)[0];
+    var table = $('<table></table>').addClass("facet-based-edit-dialog-entry-table")[0];
     
     var trHead = table.insertRow(table.rows.length);
     trHead.className = "header";
@@ -60,7 +124,7 @@ FacetBasedEditDialog.prototype._renderTable = function() {
         for (var c = 0; c < choices.length; c++) {
             var choice = choices[c];
             var li = $('<li>').appendTo(ul);
-            $('<span>').text(choice.v.l).appendTo(li);
+            $('<span>').text(choice.v).appendTo(li);
             $('<span>').text(" (" + choice.c + ")").appendTo(li);
         }
         
@@ -73,7 +137,7 @@ FacetBasedEditDialog.prototype._renderTable = function() {
             editCheck.attr("checked", "true");
         }
         
-        var input = $('<input size="35" />')
+        var input = $('<input size="55" />')
             .attr("value", cluster.value)
             .appendTo(tr.insertCell(2))
             .keyup(function() {
@@ -83,65 +147,43 @@ FacetBasedEditDialog.prototype._renderTable = function() {
     for (var i = 0; i < this._clusters.length; i++) {
         renderCluster(this._clusters[i]);
     }
+    
+    container.empty().append(table);
 };
 
 FacetBasedEditDialog.prototype._cluster = function() {
-    var clusters = [];
-    var map = {};
-    $.each(this._entries, function() {
-        var choice = {
-            v: this.v,
-            c: this.c
-        };
-        
-        var s = this.v.l.toLowerCase().replace(/\W/g, ' ').replace(/\s+/g, ' ').split(" ").sort().join(" ");
-        if (s in map) {
-            map[s].choices.push(choice);
-        } else {
-            map[s] = {
-                edit: false,
-                choices: [ choice ]
-            };
-            clusters.push(map[s]);
-        }
-    });
+    var self = this;
     
-    $.each(clusters, function() {
-        if (this.choices.length > 1) {
-            this.choices.sort(function(a, b) {
-                var c = b.c - a.c;
-                return c != 0 ? c : a.v.l.localeCompare(b.v.l);
-            });
-            this.edit = true;
-        }
-        this.value = this.choices[0].v.l;
-    });
-    clusters.sort(function(a, b) {
-        var c = b.choices.length - a.choices.length;
-        return c != 0 ? c : a.value.localeCompare(b.value);
-    });
-    
-    this._clusters = clusters;
-    this._renderTable();
-};
+    var container = this._elmts.tableContainer.html(
+        '<div style="margin: 1em; font-size: 130%; color: #888;">Loading... <img src="/images/small-spinner.gif"></div>'
+    );
 
-FacetBasedEditDialog.prototype._uncluster = function() {
-    var clusters = [];
-    $.each(this._entries, function() {
-        var cluster = {
-            edit: false,
-            choices: [{
-                v: this.v,
-                c: this.c
-            }],
-            value: this.v.l
-        };
-        clusters.push(cluster);
-    });
-    
-    this._clusters = clusters;
-    this._renderTable();
-};
+    $.post(
+        "/command/compute-clusters?" + $.param({ project: theProject.id }),
+        { 
+            engine: JSON.stringify(ui.browsingEngine.getJSON()), 
+            clusterer: JSON.stringify({ 
+                'type' : this._method, 
+                'function' : this._function,
+                'column' : this._columnName,
+                'params' : this._params
+            }) 
+        },
+        function(data) {
+            var clusters = [];
+            $.each(data, function() {
+                clusters.push({
+                    edit: true,
+                    choices: this,
+                    value: this[0].v
+                });
+            });
+            self._clusters = clusters;
+            self._renderTable();
+        },
+        "json"
+    );
+}
 
 FacetBasedEditDialog.prototype._onOK = function() {
     var edits = [];
@@ -150,7 +192,7 @@ FacetBasedEditDialog.prototype._onOK = function() {
         if (cluster.edit) {
             var values = [];
             for (var j = 0; j < cluster.choices.length; j++) {
-                values.push(cluster.choices[j].v.v);
+                values.push(cluster.choices[j].v);
             }
             
             edits.push({

@@ -1,20 +1,20 @@
 package com.metaweb.gridworks.expr.functions.strings;
 
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.clustering.binning.Keyer;
+import com.metaweb.gridworks.clustering.binning.NGramFingerprintKeyer;
 import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.gel.ControlFunctionRegistry;
 import com.metaweb.gridworks.gel.Function;
 
 public class NGramFingerprint implements Function {
 
-    static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}|\\p{Space}");
+    static Keyer ngram_fingerprint = new NGramFingerprintKeyer();
     
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 || args.length == 2) {
@@ -24,16 +24,8 @@ public class NGramFingerprint implements Function {
                     ngram_size = (args[1] instanceof Number) ? ((Number) args[1]).intValue() : Integer.parseInt(args[1].toString());
                 }
                 Object o = args[0];
-                String s = (o instanceof String) ? (String) o : o.toString(); 
-                s = s.toLowerCase(); // then lowercase it
-                s = alphanum.matcher(s).replaceAll(""); // then remove all punctuation and control chars
-                TreeSet<String> set = ngram_split(s,ngram_size);
-                StringBuffer b = new StringBuffer();
-                Iterator<String> i = set.iterator();
-                while (i.hasNext()) {
-                    b.append(i.next());
-                }
-                return b.toString(); // join ordered fragments back together
+                String s = (o instanceof String) ? (String) o : o.toString();
+                return ngram_fingerprint.key(s,ngram_size);
             }
             return null;
         }

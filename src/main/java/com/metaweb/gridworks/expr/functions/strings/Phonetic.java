@@ -2,21 +2,21 @@ package com.metaweb.gridworks.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.apache.commons.codec.language.DoubleMetaphone;
-import org.apache.commons.codec.language.Metaphone;
-import org.apache.commons.codec.language.Soundex;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.clustering.binning.DoubleMetaphoneKeyer;
+import com.metaweb.gridworks.clustering.binning.MetaphoneKeyer;
+import com.metaweb.gridworks.clustering.binning.SoundexKeyer;
 import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.gel.ControlFunctionRegistry;
 import com.metaweb.gridworks.gel.Function;
 
 public class Phonetic implements Function {
 
-    private DoubleMetaphone metaphone2 = new DoubleMetaphone();
-    private Metaphone metaphone = new Metaphone();
-    private Soundex soundex = new Soundex();
+    static private DoubleMetaphoneKeyer metaphone2 = new DoubleMetaphoneKeyer();
+    static private MetaphoneKeyer metaphone = new MetaphoneKeyer();
+    static private SoundexKeyer soundex = new SoundexKeyer();
 
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2) {
@@ -26,11 +26,11 @@ public class Phonetic implements Function {
                 String str = (o1 instanceof String) ? (String) o1 : o1.toString();
                 String encoding = ((String) o2).toLowerCase();
                 if ("doublemetaphone".equals(encoding)) {
-                    return metaphone2.doubleMetaphone(str);
+                    return metaphone2.key(str);
                 } else if ("metaphone".equals(encoding)) {
-                    return metaphone.metaphone(str);
+                    return metaphone.key(str);
                 } else if ("soundex".equals(encoding)) {
-                    return soundex.soundex(str);
+                    return soundex.key(str);
                 } else {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " doesn't know how to handle the '" + encoding + "' encoding.");
                 }

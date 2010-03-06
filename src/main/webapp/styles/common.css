@@ -75,3 +75,7 @@ img {
 .fbs-pane, .fbs-flyout-pane {
     z-index: 2000;
 }
+
+.hidden {
+    display: none;
+}

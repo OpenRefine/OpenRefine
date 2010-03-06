@@ -15,15 +15,16 @@ import com.metaweb.gridworks.commands.edit.AnnotateOneRowCommand;
 import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
 import com.metaweb.gridworks.commands.edit.ApplyOperationsCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
+import com.metaweb.gridworks.commands.edit.DeleteProjectCommand;
 import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
 import com.metaweb.gridworks.commands.edit.EditOneCellCommand;
 import com.metaweb.gridworks.commands.edit.FacetBasedEditCommand;
 import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
-import com.metaweb.gridworks.commands.edit.DeleteProjectCommand;
 import com.metaweb.gridworks.commands.edit.SaveProtographCommand;
 import com.metaweb.gridworks.commands.edit.SplitMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
+import com.metaweb.gridworks.commands.info.ComputeClustersCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.info.ExportRowsCommand;
 import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
@@ -74,6 +75,7 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("cancel-processes", new CancelProcessesCommand());
         
         _commands.put("compute-facets", new ComputeFacetsCommand());
+        _commands.put("compute-clusters", new ComputeClustersCommand());
         _commands.put("do-text-transform", new DoTextTransformCommand());
         _commands.put("facet-based-edit", new FacetBasedEditCommand());
         _commands.put("edit-one-cell", new EditOneCellCommand());

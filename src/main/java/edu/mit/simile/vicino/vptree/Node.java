@@ -39,4 +39,12 @@ public class Node implements Serializable {
     public String toString() {
         return obj.toString();
     }
+    
+    public boolean equals(Object n) {
+        if (n instanceof Node) {
+            return ((Node) n).get().equals(this.obj);
+        } else {
+            return false;
+        }
+    }
 }

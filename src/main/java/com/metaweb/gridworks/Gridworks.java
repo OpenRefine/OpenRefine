@@ -69,6 +69,14 @@ public class Gridworks extends Server {
     public static void log(String message) {
         logger.info(message);
     }
+
+    public static void error(String message, Throwable t) {
+        logger.error(message, t);
+    }
+
+    public static void warn(String message) {
+        logger.warn(message);
+    }
     
     /* -------------- Gridworks HTTP server ----------------- */
     

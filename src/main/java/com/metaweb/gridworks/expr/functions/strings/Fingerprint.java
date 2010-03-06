@@ -1,39 +1,23 @@
 package com.metaweb.gridworks.expr.functions.strings;
 
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.clustering.binning.FingerprintKeyer;
+import com.metaweb.gridworks.clustering.binning.Keyer;
 import com.metaweb.gridworks.gel.Function;
 
 public class Fingerprint implements Function {
 
-    static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}");
-    
+    static Keyer fingerprint = new FingerprintKeyer();
+
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
-            String s = (o instanceof String) ? (String) o : o.toString(); 
-            s = s.trim(); // first off, remove whitespace around the string
-            s = s.toLowerCase(); // then lowercase it
-            s = alphanum.matcher(s).replaceAll(""); // then remove all punctuation and control chars
-            String[] frags = StringUtils.split(s); // split by whitespace
-            TreeSet<String> set = new TreeSet<String>();
-            for (String ss : frags) {
-                set.add(ss); // order fragments and dedupe
-            }
-            StringBuffer b = new StringBuffer();
-            Iterator<String> i = set.iterator();
-            while (i.hasNext()) {
-                b.append(i.next());
-                b.append(' ');
-            }
-            return b.toString(); // join ordered fragments back together
+            String s = (o instanceof String) ? (String) o : o.toString();
+            return fingerprint.key(s);
         }
         return null;
     }
