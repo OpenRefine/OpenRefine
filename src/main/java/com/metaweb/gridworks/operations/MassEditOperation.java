@@ -23,8 +23,9 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellChange;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
+public class MassEditOperation extends EngineDependentMassCellOperation {
     private static final long serialVersionUID = -7698202759999537298L;
 
     final protected String         _expression;
@@ -59,7 +60,7 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
-        return new FacetBasedEditOperation(
+        return new MassEditOperation(
             engineConfig,
             obj.getString("columnName"),
             obj.getString("expression"),
@@ -82,13 +83,21 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
                 from.add(fromA.getString(j));
             }
         
-            edits.add(new Edit(from, editO.getString("to")));
+            Serializable to = (Serializable) editO.get("to");
+            if (editO.has("type")) {
+                String type = editO.getString("type");
+                if ("date".equals(type)) {
+                    to = ParsingUtilities.stringToDate((String) to);
+                }
+            }
+
+            edits.add(new Edit(from, to));
         }
         
         return edits;
     }
     
-    public FacetBasedEditOperation(JSONObject engineConfig, String columnName, String expression, List<Edit> edits) {
+    public MassEditOperation(JSONObject engineConfig, String columnName, String expression, List<Edit> edits) {
         super(engineConfig, columnName, true);
         _expression = expression;
         _edits = edits;
@@ -113,13 +122,13 @@ public class FacetBasedEditOperation extends EngineDependentMassCellOperation {
     }
 
     protected String getBriefDescription(Project project) {
-        return "Facet-based edit cells in column " + _columnName;
+        return "Mass edit cells in column " + _columnName;
     }
 
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Facet-based edit " + cellChanges.size() + 
+        return "Mass edit " + cellChanges.size() + 
             " cells in column " + column.getName();
     }
 

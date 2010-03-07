@@ -227,7 +227,7 @@ FacetBasedEditDialog.prototype._apply = function(onDone) {
     
     if (edits.length > 0) {
         Gridworks.postProcess(
-            "facet-based-edit",
+            "mass-edit",
             {},
             {
                 columnName: this._columnName,

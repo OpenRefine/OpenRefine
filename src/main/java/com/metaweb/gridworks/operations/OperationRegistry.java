@@ -35,5 +35,6 @@ public abstract class OperationRegistry {
         
         register("save-protograph", SaveProtographOperation.class);
         register("text-transform", TextTransformOperation.class);
+        register("mass-edit", MassEditOperation.class);
     }
 }

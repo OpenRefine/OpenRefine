@@ -7,10 +7,10 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.operations.FacetBasedEditOperation;
+import com.metaweb.gridworks.operations.MassEditOperation;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class FacetBasedEditCommand extends EngineDependentCommand {
+public class MassEditCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, JSONObject engineConfig) throws Exception {
@@ -19,11 +19,11 @@ public class FacetBasedEditCommand extends EngineDependentCommand {
         String expression = request.getParameter("expression");
         String editsString = request.getParameter("edits");
         
-        return new FacetBasedEditOperation(
+        return new MassEditOperation(
             engineConfig,
             columnName,
             expression,
-            FacetBasedEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString))
+            MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString))
         );
     }
 }

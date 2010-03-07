@@ -9,7 +9,7 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.operations.TextTransformOperation;
 
-public class DoTextTransformCommand extends EngineDependentCommand {
+public class TextTransformCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, JSONObject engineConfig) throws Exception {

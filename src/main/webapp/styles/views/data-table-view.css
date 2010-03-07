@@ -167,14 +167,20 @@ table.data-table-cell-edit-layout {
     width: 100%;
     white-space: pre;
 }
-table.data-table-cell-edit-layout td {
-    padding: 5px;
+table.data-table-cell-edit-layout > tbody > tr > td {
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+table.data-table-cell-edit-layout > tbody > tr > td:last-child {
+    padding-right: 0px;
+}
+table.data-table-cell-edit-layout > tbody > tr:last-child > td {
+    padding-bottom: 0px;
 }
 
 textarea.data-table-cell-edit-editor {
     display: block;
-    width: 92%;
+    width: 96%;
     padding: 2%;
-    margin: 2%;
     height: 3em;
 }

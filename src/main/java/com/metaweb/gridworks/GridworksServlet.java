@@ -16,9 +16,9 @@ import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
 import com.metaweb.gridworks.commands.edit.ApplyOperationsCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DeleteProjectCommand;
-import com.metaweb.gridworks.commands.edit.DoTextTransformCommand;
+import com.metaweb.gridworks.commands.edit.TextTransformCommand;
 import com.metaweb.gridworks.commands.edit.EditOneCellCommand;
-import com.metaweb.gridworks.commands.edit.FacetBasedEditCommand;
+import com.metaweb.gridworks.commands.edit.MassEditCommand;
 import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
 import com.metaweb.gridworks.commands.edit.SaveProtographCommand;
@@ -76,14 +76,15 @@ public class GridworksServlet extends HttpServlet {
         
         _commands.put("compute-facets", new ComputeFacetsCommand());
         _commands.put("compute-clusters", new ComputeClustersCommand());
-        _commands.put("do-text-transform", new DoTextTransformCommand());
-        _commands.put("facet-based-edit", new FacetBasedEditCommand());
+        
         _commands.put("edit-one-cell", new EditOneCellCommand());
+        _commands.put("text-transform", new TextTransformCommand());
+        _commands.put("mass-edit", new MassEditCommand());
+        _commands.put("join-multi-value-cells", new JoinMultiValueCellsCommand());
+        _commands.put("split-multi-value-cells", new SplitMultiValueCellsCommand());
         
         _commands.put("add-column", new AddColumnCommand());
         _commands.put("remove-column", new RemoveColumnCommand());
-        _commands.put("join-multi-value-cells", new JoinMultiValueCellsCommand());
-        _commands.put("split-multi-value-cells", new SplitMultiValueCellsCommand());
         
         _commands.put("reconcile", new ReconcileCommand());
         _commands.put("recon-match-best-candidates", new ReconMatchBestCandidatesCommand());

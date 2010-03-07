@@ -288,16 +288,31 @@ DataTableCellUI.prototype._previewCandidateTopic = function(id, elmt) {
 DataTableCellUI.prototype._startEdit = function(elmt) {
     self = this;
     
+    var originalContent = this._cell == null || ("v" in this._cell && this._cell.v == null) ? "" : this._cell.v;
+    
     var menu = MenuSystem.createMenu().width("350px");
     menu.html(
-        '<textarea class="data-table-cell-edit-editor" bind="textarea" />' +
         '<table class="data-table-cell-edit-layout">' +
             '<tr>' +
+                '<td colspan="4">' +
+                    '<textarea class="data-table-cell-edit-editor" bind="textarea" />' +
+                '</td>' +
+            '</tr>' +
+            '<tr>' +
                 '<td>' +
-                    '<input type="radio" name="data-table-cell-edit-type" value="text" checked /> text ' +
-                    '<input type="radio" name="data-table-cell-edit-type" value="number" /> number ' +
-                    '<input type="radio" name="data-table-cell-edit-type" value="boolean" /> boolean' +
-                    '<input type="radio" name="data-table-cell-edit-type" value="date" /> date' +
+                    '<select bind="typeSelect">' +
+                        '<option value="text">text</option>' +
+                        '<option value="number">number</option>' +
+                        '<option value="boolean">boolean</option>' +
+                        '<option value="date">date</option>' +
+                    '</select>' +
+                '</td>' +
+                '<td width="1%">' +
+                    '<input type="checkbox" bind="applyOthersCheckbox" />' +
+                '</td>' +
+                '<td>' +
+                    'apply to other cells with<br/>' +
+                    'same original content' +
                 '</td>' +
                 '<td width="1%">' +
                     '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
@@ -311,7 +326,9 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     MenuSystem.positionMenuLeftRight(menu, $(this._td));
     
     var commit = function() {
-        var type = $('input["data-table-cell-edit-type"]:checked')[0].value;
+        var type = elmts.typeSelect[0].value;
+        var applyOthers = elmts.applyOthersCheckbox[0].checked;
+        
         var text = elmts.textarea[0].value;
         var value = text;
         
@@ -334,30 +351,45 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         
         MenuSystem.dismissAll();
         
-        var params = {
-            row: self._rowIndex,
-            cell: self._cellIndex,
-            value: value,
-            type: type
-        };
-        
-        Gridworks.postProcess(
-            "edit-one-cell", 
-            params, 
-            null,
-            {},
-            {
-                onDone: function(o) {
-                    self._cell = o.cell;
-                    self._render();
+        if (applyOthers) {
+            Gridworks.postProcess(
+                "mass-edit",
+                {},
+                {
+                    columnName: Gridworks.cellIndexToColumn(self._cellIndex).name,
+                    expression: "value",
+                    edits: JSON.stringify([{
+                        from: [ originalContent ],
+                        to: value,
+                        type: type
+                    }])
+                },
+                { cellsChanged: true }
+            );            
+        } else {
+            Gridworks.postProcess(
+                "edit-one-cell", 
+                {
+                    row: self._rowIndex,
+                    cell: self._cellIndex,
+                    value: value,
+                    type: type
+                }, 
+                null,
+                {},
+                {
+                    onDone: function(o) {
+                        self._cell = o.cell;
+                        self._render();
+                    }
                 }
-            }
-        );
+            );
+        }
     };
     
     elmts.okButton.click(commit);
     elmts.textarea
-        .text(this._cell == null || ("v" in this._cell && this._cell.v == null) ? "" : this._cell.v)
+        .text(originalContent)
         .keydown(function(evt) {
             if (evt.keyCode == 13) {
                 commit();

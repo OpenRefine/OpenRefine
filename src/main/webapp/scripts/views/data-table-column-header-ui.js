@@ -433,7 +433,7 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
 
 DataTableColumnHeaderUI.prototype._doTextTransform = function(expression, onError, repeat, repeatCount) {
     Gridworks.postProcess(
-        "do-text-transform",
+        "text-transform",
         {
             columnName: this._column.name, 
             expression: expression, 
