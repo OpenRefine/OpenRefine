@@ -84,9 +84,9 @@ public class Cell implements Serializable, HasFields, Jsonizable {
         
         if (obj.has("e")) {
             value = new EvalError(obj.getString("e"));
-        } else if (obj.has("v")) {
+        } else if (obj.has("v") && !obj.isNull("v")) {
             value = (Serializable) obj.get("v");
-            if (obj.has("t")) {
+            if (obj.has("t") && !obj.isNull("t")) {
                 String type = obj.getString("t");
                 if ("date".equals(type)) {
                     value = ParsingUtilities.stringToDate((String) value); 
@@ -94,7 +94,7 @@ public class Cell implements Serializable, HasFields, Jsonizable {
             }
         }
         
-        if (obj.has("r")) {
+        if (obj.has("r") && !obj.isNull("r")) {
             recon = Recon.load(obj.getJSONObject("r"));
         }
         
