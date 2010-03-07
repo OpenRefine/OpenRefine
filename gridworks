@@ -48,8 +48,6 @@ and <action> is one of
    make_dmg <version> ........ Make MacOSX DMG distribution
    make_exe <version> ........ Make Windows EXE distribution
 
-   generate .................. Generate Protocol Buffer code      
-   
    clean ..................... Clean compiled classes
    distclean ................. Remove all generated files
                 
@@ -207,17 +205,6 @@ make_dmg() {
     rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
 }
 
-generate() {
-    protobuf_prepare
-
-    PROTO_SRC_DIR="src/main/proto"
-    JAVA_SRC_DIR="src/main/java"
-    
-    for i in `find $PROTO_SRC_DIR -name \*.proto` ; do
-        $PROTOC -I=$PROTO_SRC_DIR --java_out=$JAVA_SRC_DIR $i
-    done    
-}
-
 run() {
     if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
         ant build
@@ -327,9 +314,6 @@ fi
 
 case "$ACTION" in
 
-  generate) 
-    generate;;
-    
   build)
     ant build;;
 
