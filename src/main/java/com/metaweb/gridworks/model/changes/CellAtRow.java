@@ -1,14 +1,12 @@
 package com.metaweb.gridworks.model.changes;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.Properties;
 
 import com.metaweb.gridworks.model.Cell;
 
 public class CellAtRow {
-    private static final long serialVersionUID = 7280920621006690944L;
 
     final public int    row;
     final public Cell   cell;

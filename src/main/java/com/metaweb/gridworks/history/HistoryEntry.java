@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.Date;
 import java.util.Properties;
@@ -25,9 +24,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class HistoryEntry implements Serializable, Jsonizable {
-    private static final long serialVersionUID = 532766467813930262L;
-    
+public class HistoryEntry implements Jsonizable {
     final public long                id;
     final public long                projectID;
     final public String              description;

@@ -1,7 +1,5 @@
 package com.metaweb.gridworks.model;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,11 +70,6 @@ public class ColumnGroup implements Jsonizable {
             obj.getInt("columnSpan"),
             obj.getInt("keyColumnIndex")
         );
-    }
-    
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        internalInitialize();
     }
     
     protected void internalInitialize() {
