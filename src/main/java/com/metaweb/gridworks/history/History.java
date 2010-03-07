@@ -1,7 +1,8 @@
 package com.metaweb.gridworks.history;
 
+import java.io.IOException;
 import java.io.LineNumberReader;
-import java.io.Serializable;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -11,14 +12,15 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.model.Project;
 
-public class History implements Serializable, Jsonizable {
-    private static final long serialVersionUID = -1529783362243627391L;
-    
+public class History implements Jsonizable {
     static public Change readOneChange(LineNumberReader reader) throws Exception {
+        /* String version = */ reader.readLine();
+        
         String className = reader.readLine();
         Class<? extends Change> klass = getChangeClass(className);
         
@@ -27,12 +29,22 @@ public class History implements Serializable, Jsonizable {
         return (Change) load.invoke(null, reader);
     }
     
+    static public void writeOneChange(Writer writer, Change change) throws Exception {
+        writer.write(Gridworks.s_version); writer.write('\n');
+        writer.write(change.getClass().getName()); writer.write('\n');
+            
+        Properties options = new Properties();
+        options.setProperty("mode", "save");
+        
+        change.save(writer, options);
+    }
+    
     @SuppressWarnings("unchecked")
     static public Class<? extends Change> getChangeClass(String className) throws ClassNotFoundException {
         return (Class<? extends Change>) Class.forName(className);
     }
     
-    protected long                 _projectID;
+    protected long               _projectID;
     protected List<HistoryEntry> _pastEntries;
     protected List<HistoryEntry> _futureEntries;
     
@@ -151,5 +163,42 @@ public class History implements Serializable, Jsonizable {
         writer.endArray();
         
         writer.endObject();
+    }
+    
+    public void save(Writer writer, Properties options) throws IOException {
+        writer.write("pastEntryCount="); writer.write(Integer.toString(_pastEntries.size())); writer.write('\n');
+        for (HistoryEntry entry : _pastEntries) {
+            entry.save(writer, options); writer.write('\n');
+        }
+        
+        writer.write("futureEntryCount="); writer.write(Integer.toString(_futureEntries.size())); writer.write('\n');
+        for (HistoryEntry entry : _futureEntries) {
+            entry.save(writer, options); writer.write('\n');
+        }
+        
+        writer.write("/e/\n");
+    }
+    
+    public void load(Project project, LineNumberReader reader) throws Exception {
+        String line;
+        while ((line = reader.readLine()) != null && !"/e/".equals(line)) {
+            int equal = line.indexOf('=');
+            CharSequence field = line.subSequence(0, equal);
+            String value = line.substring(equal + 1);
+            
+            if ("pastEntryCount".equals(field)) {
+                int count = Integer.parseInt(value);
+                
+                for (int i = 0; i < count; i++) {
+                    _pastEntries.add(HistoryEntry.load(project, reader.readLine()));
+                }
+            } else if ("futureEntryCount".equals(field)) {
+                int count = Integer.parseInt(value);
+                
+                for (int i = 0; i < count; i++) {
+                    _futureEntries.add(HistoryEntry.load(project, reader.readLine()));
+                }
+            }
+        }
     }
 }

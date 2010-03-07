@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.protograph;
 
-import java.io.Serializable;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -8,9 +7,7 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 
-public class FreebaseTopic implements Serializable, Jsonizable {
-    private static final long serialVersionUID = -3427885694129112432L;
-    
+public class FreebaseTopic implements Jsonizable {
     final public String id;
     final public String name;
     

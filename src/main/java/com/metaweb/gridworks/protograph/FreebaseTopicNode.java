@@ -8,8 +8,6 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class FreebaseTopicNode implements Node, NodeWithLinks {
-    private static final long serialVersionUID = 8418548867745587387L;
-
     final public FreebaseTopic topic;
     final public List<Link> links = new LinkedList<Link>();
     

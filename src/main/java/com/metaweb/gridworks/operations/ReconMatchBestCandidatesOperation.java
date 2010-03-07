@@ -20,8 +20,6 @@ import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
 
 public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
-    private static final long serialVersionUID = 5393888241057341155L;
-    
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         String columnName = obj.getString("columnName");

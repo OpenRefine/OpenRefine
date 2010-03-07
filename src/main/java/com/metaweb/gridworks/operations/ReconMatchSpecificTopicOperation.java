@@ -22,8 +22,6 @@ import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
 
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
-    private static final long serialVersionUID = -5205694623711144436L;
-    
     final protected ReconCandidate match;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {

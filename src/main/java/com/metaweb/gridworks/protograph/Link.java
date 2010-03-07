@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.protograph;
 
-import java.io.Serializable;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -8,9 +7,7 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 
-public class Link implements Serializable, Jsonizable {
-    private static final long serialVersionUID = 2908086768260322876L;
-    
+public class Link implements Jsonizable {
     final public FreebaseProperty     property;
     final public Node                target;
     

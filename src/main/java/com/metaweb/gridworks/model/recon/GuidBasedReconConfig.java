@@ -24,8 +24,6 @@ import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class GuidBasedReconConfig extends StrictReconConfig {
-    private static final long serialVersionUID = 1857895989346775294L;
-
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {
         return new GuidBasedReconConfig();
     }

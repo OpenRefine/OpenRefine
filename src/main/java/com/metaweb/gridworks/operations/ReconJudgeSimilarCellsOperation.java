@@ -25,12 +25,10 @@ import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
 
 public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOperation {
-    private static final long serialVersionUID = -5205694623711144436L;
-    
-    final protected String             _similarValue;
+    final protected String           _similarValue;
     final protected Judgment         _judgment;
-    final protected ReconCandidate     _match;
-    final protected boolean            _shareNewTopics;
+    final protected ReconCandidate   _match;
+    final protected boolean          _shareNewTopics;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");

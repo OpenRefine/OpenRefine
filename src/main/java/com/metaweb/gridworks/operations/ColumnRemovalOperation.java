@@ -14,8 +14,6 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.changes.ColumnRemovalChange;
 
 public class ColumnRemovalOperation extends AbstractOperation {
-    private static final long serialVersionUID = 8422079695048733734L;
-    
     final protected String _columnName;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {

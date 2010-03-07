@@ -6,8 +6,6 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class ValueNode implements Node {
-    private static final long serialVersionUID = -5626883493437735688L;
-    
     final public Object value;
     final public String    valueType;
     final public String lang;

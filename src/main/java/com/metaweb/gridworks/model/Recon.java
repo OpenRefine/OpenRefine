@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,9 +14,7 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
  
-public class Recon implements Serializable, HasFields, Jsonizable {
-    private static final long serialVersionUID = 8906257833709315762L;
-    
+public class Recon implements HasFields, Jsonizable {
     static public enum Judgment {
         None,
         Matched,

@@ -8,10 +8,8 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class CellTopicNode extends CellNode implements NodeWithLinks {
-    private static final long serialVersionUID = 1684854896739592911L;
-    
     final public boolean        createForNoReconMatch;
-    final public FreebaseType     type;
+    final public FreebaseType   type;
     final public List<Link>     links = new LinkedList<Link>();
 
     public CellTopicNode(

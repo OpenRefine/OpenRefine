@@ -8,8 +8,6 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class AnonymousNode implements Node, NodeWithLinks {
-    private static final long serialVersionUID = -6956243664838720646L;
-    
     final public FreebaseType type;
     final public List<Link>     links = new LinkedList<Link>();
     

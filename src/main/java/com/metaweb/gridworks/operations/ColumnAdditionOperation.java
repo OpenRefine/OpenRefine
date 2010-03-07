@@ -26,8 +26,6 @@ import com.metaweb.gridworks.model.changes.CellAtRow;
 import com.metaweb.gridworks.model.changes.ColumnAdditionChange;
 
 public class ColumnAdditionOperation extends EngineDependentOperation {
-    private static final long serialVersionUID = -5672677479629932356L;
-
     final protected String     _baseColumnName;
     final protected String     _expression;
     final protected OnError    _onError;

@@ -1,19 +1,13 @@
 package com.metaweb.gridworks;
 
 import java.io.File; 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,12 +20,11 @@ import com.codeberry.jdatapath.JDataPathSystem;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
 
-public class ProjectManager implements Serializable {
+public class ProjectManager {
     
-    private static final long serialVersionUID = -2967415873336723962L;
     private static final int s_expressionHistoryMax = 100; // last n expressions used across all projects
     
-    protected File _workspaceDir;
+    protected File                       _workspaceDir;
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected List<String> 				 _expressions;
     
@@ -44,12 +37,7 @@ public class ProjectManager implements Serializable {
             File dir = getProjectLocation();
             Gridworks.log("Using data directory: " + dir.getAbsolutePath());
             
-            if (dir.exists()) {
-                singleton = load(dir);
-            }
-            if (singleton == null) {
-                singleton = new ProjectManager(dir);
-            }
+            singleton = new ProjectManager(dir);
         }
     }
     
@@ -98,18 +86,24 @@ public class ProjectManager implements Serializable {
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _expressions = new LinkedList<String>();
         _projects = new HashMap<Long, Project>();
+        
+        load();
     }
     
     public File getWorkspaceDir() {
         return _workspaceDir;
     }
     
-    public File getProjectDir(long projectID) {
-        File dir = new File(_workspaceDir, projectID + ".project");
+    static public File getProjectDir(File workspaceDir, long projectID) {
+        File dir = new File(workspaceDir, projectID + ".project");
         if (!dir.exists()) {
             dir.mkdir();
         }
         return dir;
+    }
+    
+    public File getProjectDir(long projectID) {
+        return getProjectDir(_workspaceDir, projectID);
     }
     
     public void registerProject(Project project, ProjectMetadata projectMetadata) {
@@ -129,34 +123,7 @@ public class ProjectManager implements Serializable {
         if (_projects.containsKey(id)) {
             return _projects.get(id);
         } else {
-            File file = new File(getProjectDir(id), "raw-data");
-            
-            Project project = null;
-            FileInputStream fis = null;
-            ObjectInputStream in = null;
-            try {
-                fis = new FileInputStream(file);
-                in = new ObjectInputStream(fis);
-                
-                project = (Project) in.readObject();
-            } catch(IOException e) {
-                e.printStackTrace();
-            } catch(ClassNotFoundException e) {
-                e.printStackTrace();
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (Exception e) {
-                    }
-                }
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (Exception e) {
-                    }
-                }
-            }
+            Project project = Project.load(getProjectDir(id), id);
             
             _projects.put(id, project);
             
@@ -177,20 +144,20 @@ public class ProjectManager implements Serializable {
     }
     
     public void save() {
-    	Gridworks.log("Saving project metadata ...");
+    	Gridworks.log("Saving all projects' metadata ...");
     	
-    	File tempFile = new File(_workspaceDir, "projects.json.temp");
+    	File tempFile = new File(_workspaceDir, "workspace.temp.json");
     	try {
             saveToFile(tempFile);
         } catch (Exception e) {
             e.printStackTrace();
             
-            Gridworks.log("Failed to save project");
+            Gridworks.log("Failed to save projects' metadata.");
             return;
         }
     	
-        File file = new File(_workspaceDir, "projects.json");
-        File oldFile = new File(_workspaceDir, "projects.json.old");
+        File file = new File(_workspaceDir, "workspace.json");
+        File oldFile = new File(_workspaceDir, "workspace.old.json");
         
         if (file.exists()) {
             file.renameTo(oldFile);
@@ -201,25 +168,25 @@ public class ProjectManager implements Serializable {
             oldFile.delete();
         }
         
-        Gridworks.log("Project metadata saved.");
+        Gridworks.log("All projects' metadata saved.");
     }
     
-    public void saveToFile(File file) throws IOException, JSONException {
+    protected void saveToFile(File file) throws IOException, JSONException {
         FileWriter writer = new FileWriter(file);
         try {
             JSONWriter jsonWriter = new JSONWriter(writer);
-            Properties options = new Properties();
-            options.setProperty("mode", "save");
-            
             jsonWriter.object();
-            jsonWriter.key("projectMetadata");
+            jsonWriter.key("projectIDs");
                 jsonWriter.array();
                 for (Long id : _projectsMetadata.keySet()) {
-                    jsonWriter.object();
-                    jsonWriter.key("id"); jsonWriter.value(id);
-                    jsonWriter.key("metadata"); _projectsMetadata.get(id).write(jsonWriter, options);
-                    jsonWriter.endObject();
-                    writer.write('\n');
+                    jsonWriter.value(id);
+                    
+                    ProjectMetadata metadata = _projectsMetadata.get(id);
+                    try {
+                        metadata.save(getProjectDir(id));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 jsonWriter.endArray();
                 writer.write('\n');
@@ -231,106 +198,78 @@ public class ProjectManager implements Serializable {
         }
     }
     
-    static protected ProjectManager load(File dir) {
-        try {
-            return loadFromFile(new File(dir, "projects.json"));
-        } catch (Exception e) {
+    public void saveAllProjects() {
+        Gridworks.log("Saving all projects ...");
+        for (Project project : _projects.values()) {
+            try {
+                project.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        
-        try {
-            return loadFromFile(new File(dir, "projects.json.temp"));
-        } catch (Exception e) {
-        }
-        
-        try {
-            return loadFromFile(new File(dir, "projects.json.old"));
-        } catch (Exception e) {
-        }
-        
-        return null;
     }
     
-    static protected ProjectManager loadFromFile(File file) throws IOException, JSONException {
+    public void deleteProject(Project project) {
+        if (_projectsMetadata.containsKey(project.id)) {
+            _projectsMetadata.remove(project.id);
+        }
+        if (_projects.containsKey(project.id)) {
+            _projects.remove(project.id);
+        }
+        
+        File dir = getProjectDir(project.id);
+        if (dir.exists()) {
+            dir.delete();
+        }
+        
+        save();
+    }
+    
+    protected void load() {
+        try {
+            loadFromFile(new File(_workspaceDir, "workspace.json"));
+            return;
+        } catch (Exception e) {
+        }
+        
+        try {
+            loadFromFile(new File(_workspaceDir, "workspace.temp.json"));
+            return;
+        } catch (Exception e) {
+        }
+        
+        try {
+            loadFromFile(new File(_workspaceDir, "workspace.old.json"));
+            return;
+        } catch (Exception e) {
+        }
+    }
+    
+    protected void loadFromFile(File file) throws IOException, JSONException {
         Gridworks.log("Loading project metadata from " + file.getAbsolutePath());
+        
+        _projectsMetadata.clear();
+        _expressions.clear();
         
         FileReader reader = new FileReader(file);
         try {
             JSONTokener tokener = new JSONTokener(reader);
-            ProjectManager pm = new ProjectManager(file.getParentFile());
-            
             JSONObject obj = (JSONObject) tokener.nextValue();
             
-            JSONArray a = obj.getJSONArray("projectMetadata");
+            JSONArray a = obj.getJSONArray("projectIDs");
             int count = a.length();
             for (int i = 0; i < count; i++) {
-                JSONObject obj2 = a.getJSONObject(i);
+                long id = a.getLong(i);
                 
-                long id = obj2.getLong("id");
-                pm._projectsMetadata.put(id, ProjectMetadata.loadFromJSON(obj2.getJSONObject("metadata")));
+                File projectDir = getProjectDir(id);
+                ProjectMetadata metadata = ProjectMetadata.load(projectDir);
+                
+                _projectsMetadata.put(id, metadata);
             }
             
-            JSONUtilities.getStringList(obj, "expressions", pm._expressions);
-            
-            return pm;
+            JSONUtilities.getStringList(obj, "expressions", _expressions);
         } finally {
             reader.close();
         }
-    }
-    
-    public void saveAllProjects() {
-    	Gridworks.log("Saving all projects ...");
-        for (Project project : _projects.values()) {
-        	try {
-        		saveProject(project);
-        	} catch (Exception e) {
-        		e.printStackTrace();
-        	}
-        }
-    }
-    
-    protected void saveProject(Project project) {
-        File file = new File(getProjectDir(project.id), "raw-data");
-        
-        FileOutputStream fos = null;
-        ObjectOutputStream out = null;
-        try {
-            fos = new FileOutputStream(file);
-            out = new ObjectOutputStream(fos);
-            out.writeObject(project);
-            out.flush();
-        } catch(IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception e) {
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (Exception e) {
-                }
-            }
-        }
-    }
-
-    public boolean deleteProject(Project project) {
-    	if (_projectsMetadata.containsKey(project.id)) {
-	        _projects.remove(project.id);
-	        _projectsMetadata.remove(project.id);
-	        
-	        File file = new File(getProjectDir(project.id), "raw-data");
-	        if (file.exists()) {
-	            file.delete();
-	        }
-	        
-	        save();
-	        
-	        return true;
-    	} else {
-    		return false;
-    	}
     }
 }

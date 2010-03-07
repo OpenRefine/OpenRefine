@@ -25,8 +25,6 @@ import com.metaweb.gridworks.protograph.FreebaseTopic;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class KeyBasedReconConfig extends StrictReconConfig {
-    private static final long serialVersionUID = 2363754609522023900L;
-    
     final public FreebaseTopic namespace;
     
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {

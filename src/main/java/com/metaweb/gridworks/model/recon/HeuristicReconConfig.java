@@ -1,7 +1,6 @@
 package com.metaweb.gridworks.model.recon;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -28,11 +27,7 @@ import com.metaweb.gridworks.protograph.FreebaseProperty;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class HeuristicReconConfig extends ReconConfig {
-    private static final long serialVersionUID = 423145327938373362L;
-    
-    static public class ColumnDetail implements Serializable {
-        private static final long serialVersionUID = -8996704822460155543L;
-        
+    static public class ColumnDetail {
         final public String columnName;
         final public FreebaseProperty property;
         
@@ -85,10 +80,10 @@ public class HeuristicReconConfig extends ReconConfig {
         }
     }
     
-    final public String        service; // either "recon" or "relevance"
+    final public String     service; // either "recon" or "relevance"
     final public String     typeID;
     final public String     typeName;
-    final public boolean     autoMatch;
+    final public boolean    autoMatch;
     final public List<ColumnDetail> columnDetails;
     
     public HeuristicReconConfig(

@@ -16,8 +16,6 @@ import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.MassCellChange;
 
 abstract public class EngineDependentMassCellOperation extends EngineDependentOperation {
-    private static final long serialVersionUID = -8962461328087299452L;
-    
     final protected String    _columnName;
     final protected boolean _updateRowContextDependencies;
     

@@ -1,5 +1,10 @@
 package com.metaweb.gridworks;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +12,7 @@ import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.util.JSONUtilities;
@@ -23,21 +29,6 @@ public class ProjectMetadata implements Jsonizable {
     private String         _encoding;
     private int            _encodingConfidence;
     private List<String>   _expressions = new LinkedList<String>();
-    
-    static public ProjectMetadata loadFromJSON(JSONObject obj) {
-        ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getDate(obj, "modified", new Date()));
-        
-        pm._modified = JSONUtilities.getDate(obj, "modified", new Date());
-        pm._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
-        pm._password = JSONUtilities.getString(obj, "password", "");
-        
-        pm._encoding = JSONUtilities.getString(obj, "encoding", "");
-        pm._encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
-        
-        JSONUtilities.getStringList(obj, "expressions", pm._expressions);
-        
-        return pm;
-    }
     
     protected ProjectMetadata(Date date) {
         _created = date;
@@ -64,6 +55,90 @@ public class ProjectMetadata implements Jsonizable {
             writer.key("expressions"); JSONUtilities.writeStringList(writer, _expressions);
         }
         writer.endObject();
+    }
+    
+    public void save(File dir) throws Exception {
+        File tempFile = new File(dir, "metadata.temp.json");
+        try {
+            saveToFile(tempFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            
+            Gridworks.log("Failed to save project metadata");
+            return;
+        }
+        
+        File file = new File(dir, "metadata.json");
+        File oldFile = new File(dir, "metadata.old.json");
+        
+        if (file.exists()) {
+            file.renameTo(oldFile);
+        }
+        
+        tempFile.renameTo(file);
+        if (oldFile.exists()) {
+            oldFile.delete();
+        }
+    }
+    
+    protected void saveToFile(File file) throws Exception {
+        Writer writer = new OutputStreamWriter(new FileOutputStream(file));
+        try {
+            Properties options = new Properties();
+            options.setProperty("mode", "save");
+            
+            JSONWriter jsonWriter = new JSONWriter(writer);
+            
+            write(jsonWriter, options);
+        } finally {
+            writer.close();
+        }
+    }
+    
+    static public ProjectMetadata load(File dir) {
+        try {
+            return loadFromFile(new File(dir, "metadata.json"));
+        } catch (Exception e) {
+        }
+        
+        try {
+            return loadFromFile(new File(dir, "metadata.temp.json"));
+        } catch (Exception e) {
+        }
+        
+        try {
+            return loadFromFile(new File(dir, "metadata.old.json"));
+        } catch (Exception e) {
+        }
+        
+        return null;
+    }
+    
+    static protected ProjectMetadata loadFromFile(File file) throws Exception {
+        FileReader reader = new FileReader(file);
+        try {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject obj = (JSONObject) tokener.nextValue();
+            
+            return loadFromJSON(obj);
+        } finally {
+            reader.close();
+        }
+    }
+    
+    static protected ProjectMetadata loadFromJSON(JSONObject obj) {
+        ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getDate(obj, "modified", new Date()));
+        
+        pm._modified = JSONUtilities.getDate(obj, "modified", new Date());
+        pm._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
+        pm._password = JSONUtilities.getString(obj, "password", "");
+        
+        pm._encoding = JSONUtilities.getString(obj, "encoding", "");
+        pm._encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
+        
+        JSONUtilities.getStringList(obj, "expressions", pm._expressions);
+        
+        return pm;
     }
     
     public Date getCreated() {

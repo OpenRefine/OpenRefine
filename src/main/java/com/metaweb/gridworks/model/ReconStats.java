@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.model;
 
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.Properties;
 
@@ -12,9 +11,7 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Recon.Judgment;
 
-public class ReconStats implements Serializable, Jsonizable {
-    private static final long serialVersionUID = -4831409797104437854L;
-
+public class ReconStats implements Jsonizable {
     static public ReconStats load(JSONObject obj) throws Exception {
         return new ReconStats(
                 obj.getInt("nonBlanks"),

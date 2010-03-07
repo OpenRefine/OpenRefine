@@ -18,11 +18,9 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.MassRowChange;
 
 public class MultiValuedCellJoinOperation extends AbstractOperation {
-    private static final long serialVersionUID = 3134524625206033285L;
-    
     final protected String    _columnName;
     final protected String    _keyColumnName;
-    final protected String  _separator;
+    final protected String    _separator;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         return new MultiValuedCellJoinOperation(

@@ -18,10 +18,8 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.MassRowChange;
 
 public class MultiValuedCellSplitOperation extends AbstractOperation {
-    private static final long serialVersionUID = 8217930220439070322L;
-    
-    final protected String    _columnName;
-    final protected String    _keyColumnName;
+    final protected String  _columnName;
+    final protected String  _keyColumnName;
     final protected String  _separator;
     final protected String  _mode;
 

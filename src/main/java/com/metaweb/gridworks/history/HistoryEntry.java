@@ -3,13 +3,11 @@ package com.metaweb.gridworks.history;
 import java.io.File; 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -17,20 +15,23 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.operations.OperationRegistry;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class HistoryEntry implements Serializable, Jsonizable {
     private static final long serialVersionUID = 532766467813930262L;
     
-    final public long                 id;
-    final public long                 projectID;
-    final public String                description;
-    final public AbstractOperation    operation;
+    final public long                id;
+    final public long                projectID;
+    final public String              description;
+    final public AbstractOperation   operation;
     final public Date                time;
     
     transient protected Change _change;
@@ -45,15 +46,24 @@ public class HistoryEntry implements Serializable, Jsonizable {
         _change = change;
     }
     
+    protected HistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time) {
+        this.id = id;
+        this.projectID = projectID;
+        this.description = description;
+        this.operation = operation;
+        this.time = time;
+    }
+    
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
-        
-        SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
         
         writer.object();
         writer.key("id"); writer.value(id);
         writer.key("description"); writer.value(description);
-        writer.key("time"); writer.value(sdf.format(time));
+        writer.key("time"); writer.value(ParsingUtilities.dateToString(time));
+        if ("save".equals(options.getProperty("mode")) && operation != null) {
+            writer.key("operation"); operation.write(writer, options);
+        }
         writer.endObject();
     }
     
@@ -70,7 +80,7 @@ public class HistoryEntry implements Serializable, Jsonizable {
             
             try {
                 saveChange();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 
                 _change.revert(project);
@@ -93,6 +103,33 @@ public class HistoryEntry implements Serializable, Jsonizable {
             file.delete();
         }
     }
+    
+    public void save(Writer writer, Properties options) {
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        try {
+            write(jsonWriter, options);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    static public HistoryEntry load(Project project, String s) throws Exception {
+        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
+        
+        AbstractOperation operation = null;
+        if (obj.has("operation") && !obj.isNull("operation")) {
+            operation = OperationRegistry.reconstruct(project, obj.getJSONObject("operation"));
+        }
+        
+        return new HistoryEntry(
+            obj.getLong("id"),
+            project.id,
+            obj.getString("description"),
+            operation,
+            ParsingUtilities.stringToDate(obj.getString("time"))
+        );
+    }
+
     
     protected void loadChange() {
         File changeFile = getChangeFile();
@@ -122,26 +159,21 @@ public class HistoryEntry implements Serializable, Jsonizable {
         }
     }
     
-    protected void saveChange() throws IOException {
+    protected void saveChange() throws Exception {
         File changeFile = getChangeFile();
         if (!(changeFile.exists())) {
             saveChange(changeFile);
         }
     }
     
-    protected void saveChange(File file) throws IOException {
+    protected void saveChange(File file) throws Exception {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
         try {
             out.putNextEntry(new ZipEntry("change.txt"));
             try {
                 Writer writer = new OutputStreamWriter(out);
                 try {
-                    Properties options = new Properties();
-                    options.setProperty("mode", "save");
-                    
-                    writer.write(_change.getClass().getName()); writer.write('\n');
-                        
-                    _change.save(writer, options);
+                    History.writeOneChange(writer, _change);
                 } finally {
                     writer.flush();
                 }

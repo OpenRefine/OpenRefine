@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.model;
 
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,9 +13,7 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.model.recon.ReconConfig;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class Column implements Serializable, Jsonizable {
-    private static final long serialVersionUID = -1063342490951563563L;
-    
+public class Column implements Jsonizable {
     final private int       _cellIndex;
     final private String    _originalName;
     private String          _name;

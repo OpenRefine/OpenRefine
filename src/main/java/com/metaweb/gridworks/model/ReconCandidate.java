@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.model;
 
-import java.io.Serializable;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -11,9 +10,7 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.util.JSONUtilities;
 
-public class ReconCandidate implements Serializable, HasFields, Jsonizable {
-    private static final long serialVersionUID = -8013997214978715606L;
-    
+public class ReconCandidate implements HasFields, Jsonizable {
     final public String     topicID;
     final public String     topicGUID;
     final public String     topicName;

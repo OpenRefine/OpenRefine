@@ -27,7 +27,8 @@ import com.metaweb.util.signal.SignalHandler;
 import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
 public class Gridworks extends Server {
-
+    final static public String s_version = "1.0";
+    
     private static Logger root = Logger.getRootLogger();
     private static Logger logger = Logger.getLogger("com.metaweb.gridworks");
     

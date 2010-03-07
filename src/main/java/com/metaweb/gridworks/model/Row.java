@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.model;
 
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +14,7 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class Row implements Serializable, HasFields, Jsonizable {
-    private static final long serialVersionUID = -689264211730915507L;
-    
+public class Row implements HasFields, Jsonizable {
     public boolean             flagged;
     public boolean             starred;
     final public List<Cell>    cells;

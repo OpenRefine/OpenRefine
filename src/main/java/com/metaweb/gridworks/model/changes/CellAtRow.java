@@ -7,7 +7,7 @@ import java.util.Properties;
 
 import com.metaweb.gridworks.model.Cell;
 
-public class CellAtRow implements Serializable {
+public class CellAtRow {
     private static final long serialVersionUID = 7280920621006690944L;
 
     final public int    row;

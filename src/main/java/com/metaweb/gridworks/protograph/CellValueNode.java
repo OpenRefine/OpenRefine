@@ -6,8 +6,6 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class CellValueNode extends CellNode {
-    private static final long serialVersionUID = 7311884925532708576L;
-    
     final public String        valueType;
     final public String     lang;
 

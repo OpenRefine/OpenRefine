@@ -15,9 +15,9 @@ public class DeleteProjectCommand extends Command {
             throws ServletException, IOException {
         
         try {
-            boolean result = ProjectManager.singleton.deleteProject(getProject(request));
-                        
-            respond(response, "{ \"code\" : " + (result ? "\"ok\"" : "\"error\"") + " }");
+            ProjectManager.singleton.deleteProject(getProject(request));
+            
+            respond(response, "{ \"code\" : \"ok\" }");
             
         } catch (Exception e) {
             respondException(response, e);

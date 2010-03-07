@@ -6,8 +6,6 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class CellKeyNode extends CellNode {
-    private static final long serialVersionUID = 1684854896739592911L;
-    
     final public FreebaseTopic    namespace;
 
     public CellKeyNode(

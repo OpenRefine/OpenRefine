@@ -1,8 +1,8 @@
 package com.metaweb.gridworks.model;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
+import java.io.LineNumberReader;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,18 +16,16 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 
-public class ColumnModel implements Serializable, Jsonizable {
-    private static final long serialVersionUID = 7679639795211544511L;
+public class ColumnModel implements Jsonizable {
+    final public List<Column>      columns = new LinkedList<Column>();
+    final public List<ColumnGroup> columnGroups = new LinkedList<ColumnGroup>();
     
-    final public List<Column>         columns = new LinkedList<Column>();
-    final public List<ColumnGroup>     columnGroups = new LinkedList<ColumnGroup>();
+    private int _maxCellIndex;
+    private int _keyColumnIndex;
     
-    private int                    _maxCellIndex;
-    private int                    _keyColumnIndex;
-    
-    transient protected Map<String, Column>     _nameToColumn;
-    transient protected Map<Integer, Column>     _cellIndexToColumn;
-    transient protected List<ColumnGroup>        _rootColumnGroups;
+    transient protected Map<String, Column>  _nameToColumn;
+    transient protected Map<Integer, Column> _cellIndexToColumn;
+    transient protected List<ColumnGroup>    _rootColumnGroups;
     
     public ColumnModel() {
         internalInitialize();
@@ -90,11 +88,52 @@ public class ColumnModel implements Serializable, Jsonizable {
         writer.endObject();
     }
     
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        internalInitialize();
+    public void save(Writer writer, Properties options) throws IOException {
+        writer.write("maxCellIndex="); writer.write(Integer.toString(_maxCellIndex)); writer.write('\n');
+        writer.write("keyColumnIndex="); writer.write(Integer.toString(_keyColumnIndex)); writer.write('\n');
+
+        writer.write("columnCount="); writer.write(Integer.toString(columns.size())); writer.write('\n');
+        for (Column column : columns) {
+            column.save(writer); writer.write('\n');
+        }
+        
+        writer.write("columnGroupCount="); writer.write(Integer.toString(columnGroups.size())); writer.write('\n');
+        for (ColumnGroup group : columnGroups) {
+            group.save(writer); writer.write('\n');
+        }
+        
+        writer.write("/e/\n");
     }
 
+    public void load(LineNumberReader reader) throws Exception {
+        String line;
+        while ((line = reader.readLine()) != null && !"/e/".equals(line)) {
+            int equal = line.indexOf('=');
+            CharSequence field = line.subSequence(0, equal);
+            String value = line.substring(equal + 1);
+            
+            if ("maxCellIndex".equals(field)) {
+                _maxCellIndex = Integer.parseInt(value);
+            } else if ("keyColumnIndex".equals(field)) {
+                _keyColumnIndex = Integer.parseInt(value);
+            } else if ("columnCount".equals(field)) {
+                int count = Integer.parseInt(value);
+                
+                for (int i = 0; i < count; i++) {
+                    columns.add(Column.load(reader.readLine()));
+                }
+            } else if ("columnGroupCount".equals(field)) {
+                int count = Integer.parseInt(value);
+                
+                for (int i = 0; i < count; i++) {
+                    columnGroups.add(ColumnGroup.load(reader.readLine()));
+                }
+            }
+        }
+        
+        internalInitialize();
+    }
+    
     protected void internalInitialize() {
         generateMaps();
         

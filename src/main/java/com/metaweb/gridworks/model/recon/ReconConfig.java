@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.model.recon;
 
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
@@ -15,9 +14,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
 
-abstract public class ReconConfig implements Serializable, Jsonizable {
-    private static final long serialVersionUID = -4831409797104437854L;
-    
+abstract public class ReconConfig implements Jsonizable {
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {
         String mode = obj.getString("mode");
         if ("heuristic".equals(mode)) {

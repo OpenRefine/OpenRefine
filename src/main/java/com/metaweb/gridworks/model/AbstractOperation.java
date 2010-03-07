@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.model;
 
-import java.io.Serializable;
 import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -14,9 +13,7 @@ import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
  *  An abstract operation can be applied to different but similar
  *  projects.
  */
-abstract public class AbstractOperation implements Serializable, Jsonizable {
-    private static final long serialVersionUID = 3916055862440019600L;
-
+abstract public class AbstractOperation implements Jsonizable {
     public Process createProcess(Project project, Properties options) throws Exception {
         return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
             @Override

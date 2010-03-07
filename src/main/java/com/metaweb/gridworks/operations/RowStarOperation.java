@@ -20,8 +20,6 @@ import com.metaweb.gridworks.model.changes.MassChange;
 import com.metaweb.gridworks.model.changes.RowStarChange;
 
 public class RowStarOperation extends EngineDependentOperation {
-    private static final long serialVersionUID = 7047630960948704761L;
-    
     final protected boolean _starred;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {

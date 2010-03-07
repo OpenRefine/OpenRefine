@@ -1,7 +1,6 @@
 package com.metaweb.gridworks.commands.edit;
 
- import java.io.IOException;
-import java.lang.reflect.Method;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -46,28 +45,15 @@ public class ApplyOperationsCommand extends Command {
     }
     
     protected void reconstructOperation(Project project, JSONObject obj) {
-        try {
-            String op = obj.getString("op");
-            
-            Class<? extends AbstractOperation> klass = OperationRegistry.s_opNameToClass.get(op);
-            if (klass == null) {
-                return;
-            }
-            
-            Method reconstruct = klass.getMethod("reconstruct", Project.class, JSONObject.class);
-            if (reconstruct == null) {
-                return;
-            }
-            
-            AbstractOperation operation = (AbstractOperation) reconstruct.invoke(null, project, obj);
-            if (operation != null) {
+        AbstractOperation operation = OperationRegistry.reconstruct(project, obj);
+        if (operation != null) {
+            try {
                 Process process = operation.createProcess(project, new Properties());
                 
                 project.processManager.queueProcess(process);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        
     }
 }

@@ -16,9 +16,7 @@ import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class Cell implements Serializable, HasFields, Jsonizable {
-    private static final long serialVersionUID = -5891067829205458102L;
-    
+public class Cell implements HasFields, Jsonizable {
     final public Serializable   value;
     final public Recon          recon;
     

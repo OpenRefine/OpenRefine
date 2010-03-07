@@ -26,14 +26,10 @@ import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class MassEditOperation extends EngineDependentMassCellOperation {
-    private static final long serialVersionUID = -7698202759999537298L;
-
     final protected String         _expression;
     final protected List<Edit>     _edits;
     
-    static public class Edit implements Serializable, Jsonizable {
-        private static final long serialVersionUID = -4799990738910328002L;
-        
+    static public class Edit implements Jsonizable {
         final public List<String>     from;
         final public Serializable     to;
         

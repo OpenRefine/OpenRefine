@@ -17,8 +17,6 @@ import com.metaweb.gridworks.protograph.Protograph;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class SaveProtographOperation extends AbstractOperation {
-    private static final long serialVersionUID = 3134524625206033285L;
-    
     final protected Protograph _protograph;
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {

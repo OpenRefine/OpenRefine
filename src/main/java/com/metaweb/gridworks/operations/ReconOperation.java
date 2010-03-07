@@ -30,8 +30,6 @@ import com.metaweb.gridworks.process.LongRunningProcess;
 import com.metaweb.gridworks.process.Process;
 
 public class ReconOperation extends EngineDependentOperation {
-    private static final long serialVersionUID = 838795186905314865L;
-    
     final protected String        _columnName;
     final protected ReconConfig _reconConfig;
     
