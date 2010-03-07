@@ -14,7 +14,6 @@
 	<classpathentry kind="lib" path="lib/arithcode-1.1.jar" sourcepath="lib-src/arithcode-1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jdatapath-alpha2.jar" sourcepath="lib-src/jdatapath-alpha2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/secondstring-20100303.jar" sourcepath="lib-src/secondstring-20100303-sources.jar"/>
-	<classpathentry kind="lib" path="lib/protobuf-2.3.0.jar" sourcepath="lib-src/protobuf-2.3.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
