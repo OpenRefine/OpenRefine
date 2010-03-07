@@ -16,17 +16,23 @@ import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.util.JSONUtilities;
 
 public class ListFacet implements Facet {
     protected List<NominalFacetChoice> _selection = new LinkedList<NominalFacetChoice>();
+    
+    // If true, then facet won't show the blank and error choices
+    protected boolean _omitBlank;
+    protected boolean _omitError;
+    
     protected boolean _selectBlank;
     protected boolean _selectError;
     
     protected String     _name;
     protected String     _expression;
-    protected String    _columnName;
+    protected String     _columnName;
     protected int        _cellIndex;
-    protected Evaluable _eval;
+    protected Evaluable  _eval;
     
     // computed
     protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
@@ -50,14 +56,14 @@ public class ListFacet implements Facet {
         }
         writer.endArray();
         
-        if (_selectBlank || _blankCount > 0) {
+        if (!_omitBlank && (_selectBlank || _blankCount > 0)) {
             writer.key("blankChoice");
             writer.object();
             writer.key("s"); writer.value(_selectBlank);
             writer.key("c"); writer.value(_blankCount);
             writer.endObject();
         }
-        if (_selectError || _errorCount > 0) {
+        if (!_omitError && (_selectError || _errorCount > 0)) {
             writer.key("errorChoice");
             writer.object();
             writer.key("s"); writer.value(_selectError);
@@ -98,12 +104,11 @@ public class ListFacet implements Facet {
             _selection.add(nominalFacetChoice);
         }
         
-        if (o.has("selectBlank")) {
-            _selectBlank = o.getBoolean("selectBlank");
-        }
-        if (o.has("selectError")) {
-            _selectError = o.getBoolean("selectError");
-        }
+        _omitBlank = JSONUtilities.getBoolean(o, "omitBlank", false);
+        _omitError = JSONUtilities.getBoolean(o, "omitError", false);
+        
+        _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", false);
+        _selectError = JSONUtilities.getBoolean(o, "selectError", false);
     }
 
     public RowFilter getRowFilter() {

@@ -301,7 +301,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             {
                                 "name" : self._column.name + ": judgment",
                                 "columnName" : self._column.name, 
-                                "expression" : "cell.recon.judgment"
+                                "expression" : "cell.recon.judgment",
+                                "omitError" : true
                             },
                             {
                                 "scroll" : false
@@ -334,7 +335,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             {
                                 "name" : self._column.name + ": best candidate's type match",
                                 "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.typeMatch"
+                                "expression" : "cell.recon.features.typeMatch",
+                                "omitError" : true
                             },
                             {
                                 "scroll" : false
@@ -350,7 +352,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             {
                                 "name" : self._column.name + ": best candidate's name match",
                                 "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.nameMatch"
+                                "expression" : "cell.recon.features.nameMatch",
+                                "omitError" : true
                             },
                             {
                                 "scroll" : false
@@ -400,7 +403,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             {
                                 "name" : self._column.name + ": best candidate's types",
                                 "columnName" : self._column.name, 
-                                "expression" : "cell.recon.best.type"
+                                "expression" : "cell.recon.best.type",
+                                "omitError" : true
                             }
                         );
                     }

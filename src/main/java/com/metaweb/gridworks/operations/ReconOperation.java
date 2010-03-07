@@ -30,7 +30,7 @@ import com.metaweb.gridworks.process.LongRunningProcess;
 import com.metaweb.gridworks.process.Process;
 
 public class ReconOperation extends EngineDependentOperation {
-    final protected String        _columnName;
+    final protected String      _columnName;
     final protected ReconConfig _reconConfig;
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
@@ -130,6 +130,7 @@ public class ReconOperation extends EngineDependentOperation {
                                 writer.key("name"); writer.value(_columnName + ": judgment");
                                 writer.key("columnName"); writer.value(_columnName);
                                 writer.key("expression"); writer.value("cell.recon.judgment");
+                                writer.key("omitError"); writer.value(true);
                             writer.endObject();
                         writer.key("facetOptions");
                             writer.object();

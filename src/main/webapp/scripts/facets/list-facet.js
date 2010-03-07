@@ -38,6 +38,8 @@ ListFacet.prototype.getJSON = function() {
         name: this._config.name,
         columnName: this._config.columnName,
         expression: this._config.expression,
+        omitBlank: "omitBlank" in this._config ? this._config.omitBlank : false,
+        omitError: "omitError" in this._config ? this._config.omitError : false,
         selection: [],
         selectBlank: this._blankChoice != null && this._blankChoice.s,
         selectError: this._errorChoice != null && this._errorChoice.s
