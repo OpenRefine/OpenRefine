@@ -40,11 +40,19 @@ public class Node implements Serializable {
         return obj.toString();
     }
     
-    public boolean equals(Object n) {
-        if (n instanceof Node) {
-            return ((Node) n).get().equals(this.obj);
-        } else {
-            return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
+        if (o instanceof Node) {
+            return ((Node) o).get().equals(this.obj);
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return this.obj.hashCode();
     }
 }

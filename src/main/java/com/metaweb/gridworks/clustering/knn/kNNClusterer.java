@@ -60,10 +60,10 @@ public class kNNClusterer extends Clusterer {
             _config = o;
             _treeBuilder = new VPTreeBuilder(_distance);
             try {
-                _radius = (float) o.getDouble("radius");
+                _radius = (float) o.getJSONObject("params").getDouble("radius");
             } catch (JSONException e) {
                 Gridworks.warn("No radius found, using default");
-                _radius = 1.0f;
+                _radius = 0.1f;
             }
         }
         

@@ -14,7 +14,7 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     var frame = DialogSystem.createDialog();
     frame.width("900px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Facet-based edit of column " + this._columnName).appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Cluster & Edit column " + this._columnName).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -28,14 +28,14 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                     '</select>' +
                 '</td>' +
                 '<td>' +
-                    '<div id="binning-controls">Keying Function: <select bind="keyingFunctionSelector">' +
+                    '<div class="binning-controls">Keying Function: <select bind="keyingFunctionSelector">' +
                         '<option selected="true">fingerprint</option>' +
                         '<option>ngram-fingerprint</option>' +
                         '<option>double-metaphone</option>' +
                         '<option>metaphone</option>' +
                         '<option>soundex</option>' +
                     '</select></div>' +
-                    '<div id="knn-controls" class="hidden">Distance Function: <select bind="distanceFunctionSelector">' +
+                    '<div class="knn-controls hidden">Distance Function: <select bind="distanceFunctionSelector">' +
                         '<option selected="true">levenshtein</option>' +
                         '<option>jaro</option>' +
                         '<option>jaccard</option>' +
@@ -47,6 +47,9 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                 '<td>' +
                     '<div id="ngram-fingerprint-params" class="function-params hidden">' +
                       'Ngram Size: <input type="text" value="1" bind="ngramSize">' +
+                    '</div>' + 
+                    '<div class="knn-controls hidden">' +
+                        'Radius: <input type="text" value="0.1" bind="radius">' +
                     '</div>' + 
                 '</td>' +
                 '<td bind="resultSummary" align="right">' +
@@ -61,13 +64,13 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     this._elmts.methodSelector.change(function() {
         var selection = $(this).find("option:selected").text();
         if (selection == 'key collision') {
-            body.find("#binning-controls").show();
-            body.find("#knn-controls").hide();
+            body.find(".binning-controls").show();
+            body.find(".knn-controls").hide();
             self._method = "binning";
             self._elmts.keyingFunctionSelector.change();
         } else if (selection = 'nearest neightbor') {
-            body.find("#binning-controls").hide();
-            body.find("#knn-controls").show();
+            body.find(".binning-controls").hide();
+            body.find(".knn-controls").show();
             self._method = "knn";
             self._elmts.distanceFunctionSelector.change();
         }
@@ -92,6 +95,15 @@ FacetBasedEditDialog.prototype._createDialog = function() {
         }
     });
 
+    this._elmts.radius.change(function() {
+        try {
+            self._params = { "radius" : parseFloat($(this).val()) };
+            self._cluster();
+        } catch (e) {
+            alert("radius must be a number");
+        }
+    });
+    
     //this._elmts.clusterButton.click(function() { self._cluster(); });
     //this._elmts.unclusterButton.click(function() { self._uncluster(); });
     

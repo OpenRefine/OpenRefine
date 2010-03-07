@@ -42,10 +42,9 @@ public class VPTreeBuilder {
 
     public VPTree buildVPTree() {
         Node[] nodes_array = this.nodes.toArray(new Node[this.nodes.size()]);
-        Gridworks.log("building tree with nodes: " + nodes_array.length);
         VPTree tree = new VPTree();
         tree.setRoot(addNode(nodes_array, 0, nodes_array.length - 1));
-        Gridworks.log("tree built");
+        Gridworks.log("Built vptree with " + nodes_array.length + " nodes");
         return tree;
     }
 
@@ -68,9 +67,7 @@ public class VPTreeBuilder {
         Map<Serializable,List<? extends Serializable>> map = new HashMap<Serializable,List<? extends Serializable>>();
         for (Node n : nodes) {
             Serializable s = n.get();
-            Gridworks.log(" find results for: " + s);
             List<? extends Serializable> results = seeker.range(s, radius);
-            Gridworks.log("  found: " + results.size());
             map.put(s, results);
         }
         
