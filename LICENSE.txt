@@ -31,10 +31,7 @@ licenses/simile.LICENSE.txt (BSD family)
 
 licenses/arithcode.LICENSE.txt (BSD family)
     arithcode
-   
-licenses/protobuf.LICENSE.txt (BSD family) 
-    protobuf
-    
+       
 licenses/icu4j.LICENSE.txt (MIT family)
     icu4j
    
