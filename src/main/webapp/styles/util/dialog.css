@@ -28,9 +28,10 @@
 }
 
 .dialog-header {
-    background: #ccc;
+    background: #3B8700;
     padding: 5px 10px;
     font-weight: bold;
+    color: white;
 }
 
 .dialog-body {

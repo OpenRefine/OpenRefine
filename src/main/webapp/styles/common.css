@@ -1,10 +1,10 @@
 html {
     font-size: 62.5%;
-    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
 }
 
 body {
-    font-size: 12px;
+    font-size: 120%;
     margin: 0;
     padding: 0;
     background: #eee;
@@ -78,4 +78,9 @@ img {
 
 .hidden {
     display: none;
+}
+
+.ui-widget-header {
+    background-image: none;
+    background-color: #ccc;
 }
