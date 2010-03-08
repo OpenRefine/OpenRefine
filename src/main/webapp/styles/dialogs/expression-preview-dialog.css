@@ -20,7 +20,11 @@ table.expression-preview-layout > tbody > tr:last-child > td {
 textarea.expression-preview-code {
     font-family: monospace;
     height: 5em;
-    width: 100%;
+    margin: 0;
+    padding: 2%;
+    width: 96%;
+    border: 1px solid #aaa;
+    vertical-align: top;
 }
 
 .expression-preview-error-container {

@@ -39,7 +39,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
             '</tr>' +
             '<tr>' +
                 '<td rowspan="2"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></td>' +
-                '<td width="150">' +
+                '<td width="150" height="1">' +
                     '<select bind="expressionPreviewLanguageSelect">' +
                         '<option value="gel">Native expression language</option>' +
                         '<option value="jython">Jython</option>' +
