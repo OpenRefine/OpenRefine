@@ -309,10 +309,12 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
     elmts.textarea
         .text(originalContent)
         .keydown(function(evt) {
-            if (evt.keyCode == 13) {
-                commit();
-            } else if (evt.keyCode == 27) {
-                MenuSystem.dismissAll();
+            if (!evt.shiftKey) {
+                if (evt.keyCode == 13) {
+                    commit();
+                } else if (evt.keyCode == 27) {
+                    MenuSystem.dismissAll();
+                }
             }
         })
         .select()

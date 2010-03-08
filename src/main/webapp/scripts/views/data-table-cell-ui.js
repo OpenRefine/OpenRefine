@@ -396,13 +396,15 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     elmts.textarea
         .text(originalContent)
         .keydown(function(evt) {
-            if (evt.keyCode == 13) {
-                if (evt.ctrlKey) {
-                    elmts.applyOthersCheckbox[0].checked = true;
+            if (!evt.shiftKey) {
+                if (evt.keyCode == 13) {
+                    if (evt.ctrlKey) {
+                        elmts.applyOthersCheckbox[0].checked = true;
+                    }
+                    commit();
+                } else if (evt.keyCode == 27) {
+                    MenuSystem.dismissAll();
                 }
-                commit();
-            } else if (evt.keyCode == 27) {
-                MenuSystem.dismissAll();
             }
         })
         .select()
