@@ -89,6 +89,19 @@ a.facet-choice-link:hover {
     color: #88a;
 }
 
+a.facet-choice-edit {
+    margin-left: 0.5em;
+    font-size: 80%;
+    text-decoration: none;
+    color: #aac;
+    visibility: hidden;
+}
+
+a.facet-choice-edit:hover {
+    text-decoration: underline;
+    color: #88a;
+}
+
 img.facet-choice-link {
     text-align: baseline;
     cursor: pointer;
@@ -124,3 +137,4 @@ img.facet-choice-link {
 .facet-text-body input {
     width: 98%;
 }
+

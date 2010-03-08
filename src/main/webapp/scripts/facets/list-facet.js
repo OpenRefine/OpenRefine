@@ -133,6 +133,7 @@ ListFacet.prototype.render = function() {
             );
         }
         
+        var renderEdit = this._config.expression == "value";
         var renderChoice = function(choice, customLabel) {
             var label = customLabel || choice.v.l;
             var count = choice.c;
@@ -170,11 +171,25 @@ ListFacet.prototype.render = function() {
                 a.click(selectOnly);
                 
                 // include link
-                $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("include").click(select).appendTo(choiceDiv);
+                $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("include").click(select).prependTo(choiceDiv);
             } else {
                 a.click(select);
             }
             
+            if (renderEdit && customLabel === undefined) {
+                // edit link
+                var editLink = $('<a href="javascript:{}"></a>').addClass("facet-choice-edit").text("edit").click(function() {
+                    self._editChoice(choice, choiceDiv);
+                }).appendTo(choiceDiv);
+                
+                choiceDiv
+                    .mouseenter(function() {
+                        editLink.css("visibility", "visible");
+                    })
+                    .mouseleave(function() {
+                        editLink.css("visibility", "hidden");
+                    });
+            }
         };
         
         var choices = this._data.choices;
@@ -208,15 +223,104 @@ ListFacet.prototype.render = function() {
             }).appendTo(footerDiv);
         }
         
-        $('<span>').html(" &bull; ").appendTo(footerDiv);
-        $('<a href="javascript:{}"></a>').addClass("action").text("edit").click(function() {
-            self._doEdit();
-        }).appendTo(footerDiv);
+        if (this._config.expression == "value") {
+            $('<span>').html(" &bull; ").appendTo(footerDiv);
+            $('<a href="javascript:{}"></a>').addClass("action").text("cluster").click(function() {
+                self._doEdit();
+            }).appendTo(footerDiv);
+        }
     }
 };
 
 ListFacet.prototype._doEdit = function() {
     new FacetBasedEditDialog(this._config.columnName, this._config.expression);
+};
+
+ListFacet.prototype._editChoice = function(choice, choiceDiv) {
+    var self = this;
+    
+    var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
+    menu.html(
+        '<table class="data-table-cell-editor-layout">' +
+            '<tr>' +
+                '<td colspan="3">' +
+                    '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
+                '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td width="1%" align="center">' +
+                    '<button bind="okButton">Apply</button><br/>' +
+                    '<span class="data-table-cell-editor-key">Enter</span>' +
+                '</td>' +
+                '<td width="1%" align="center">' +
+                    '<button bind="cancelButton">Cancel</button><br/>' +
+                    '<span class="data-table-cell-editor-key">Esc</span>' +
+                '</td>' +
+                '<td>' +
+                '</td>' +
+            '</tr>' +
+        '</table>'
+    );
+    var elmts = DOM.bind(menu);
+    
+    MenuSystem.showMenu(menu, function(){});
+    MenuSystem.positionMenuLeftRight(menu, choiceDiv);
+    
+    var originalContent = choice.v.v;
+    var commit = function() {
+        var text = elmts.textarea[0].value;
+        
+        MenuSystem.dismissAll();
+        
+        Gridworks.postProcess(
+            "mass-edit",
+            {},
+            {
+                columnName: self._config.columnName,
+                expression: "value",
+                edits: JSON.stringify([{
+                    from: [ originalContent ],
+                    to: text
+                }])
+            },
+            { cellsChanged: true },
+            {
+                onDone: function(o) {
+                    var selection = [];
+                    var gotSelection = false;
+                    for (var i = 0; i < self._selection.length; i++) {
+                        var choice = self._selection[i];
+                        if (choice.v.v == originalContent) {
+                            if (gotSelection) {
+                                continue;
+                            }
+                            choice.v.v = text;
+                            gotSelection = true; // eliminate duplicated selections due to changing one selected choice to another
+                        }
+                        selection.push(choice);
+                    }
+                    self._selection = selection;
+                }
+            }
+        );            
+    };
+    
+    elmts.okButton.click(commit);
+    elmts.textarea
+        .text(originalContent)
+        .keydown(function(evt) {
+            if (evt.keyCode == 13) {
+                commit();
+            } else if (evt.keyCode == 27) {
+                MenuSystem.dismissAll();
+            }
+        })
+        .select()
+        .focus();
+        
+    elmts.cancelButton.click(function() {
+        MenuSystem.dismissAll();
+    });
 };
 
 ListFacet.prototype._select = function(choice, only) {
