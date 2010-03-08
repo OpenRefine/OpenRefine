@@ -210,7 +210,7 @@ public class ProjectManager {
                 oldFile.delete();
             }
             
-            Gridworks.log("Saved workspace.");
+            //Gridworks.log("Saved workspace.");
         }
     }
     

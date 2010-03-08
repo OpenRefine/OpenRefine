@@ -163,24 +163,33 @@ a.data-table-star-off {
     background-position: -17px 0px;
 }
 
-table.data-table-cell-edit-layout {
+.data-table-cell-editor {
+    border: 1px solid #ccc;
+    padding: 5px;
+    background: #fffee0;
+}
+table.data-table-cell-editor-layout {
     width: 100%;
     white-space: pre;
 }
-table.data-table-cell-edit-layout > tbody > tr > td {
-    padding-right: 5px;
-    padding-bottom: 5px;
+table.data-table-cell-editor-layout > tbody > tr > td {
+    padding-right: 3px;
+    padding-bottom: 3px;
 }
-table.data-table-cell-edit-layout > tbody > tr > td:last-child {
+table.data-table-cell-editor-layout > tbody > tr > td:last-child {
     padding-right: 0px;
 }
-table.data-table-cell-edit-layout > tbody > tr:last-child > td {
+table.data-table-cell-editor-layout > tbody > tr:last-child > td {
     padding-bottom: 0px;
 }
 
-textarea.data-table-cell-edit-editor {
+textarea.data-table-cell-editor-editor {
     display: block;
     width: 96%;
     padding: 2%;
     height: 3em;
+}
+
+span.data-table-cell-editor-key {
+    color: #aaa;
 }

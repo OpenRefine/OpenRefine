@@ -290,15 +290,23 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     
     var originalContent = this._cell == null || ("v" in this._cell && this._cell.v == null) ? "" : this._cell.v;
     
-    var menu = MenuSystem.createMenu().width("350px");
+    var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
     menu.html(
-        '<table class="data-table-cell-edit-layout">' +
+        '<table class="data-table-cell-editor-layout">' +
             '<tr>' +
-                '<td colspan="4">' +
-                    '<textarea class="data-table-cell-edit-editor" bind="textarea" />' +
+                '<td colspan="5">' +
+                    '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
                 '</td>' +
             '</tr>' +
             '<tr>' +
+                '<td width="1%" align="center">' +
+                    '<button bind="okButton">Apply</button><br/>' +
+                    '<span class="data-table-cell-editor-key">Enter</span>' +
+                '</td>' +
+                '<td width="1%" align="center">' +
+                    '<button bind="cancelButton">Cancel</button><br/>' +
+                    '<span class="data-table-cell-editor-key">Esc</span>' +
+                '</td>' +
                 '<td>' +
                     '<select bind="typeSelect">' +
                         '<option value="text">text</option>' +
@@ -312,10 +320,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
                 '</td>' +
                 '<td>' +
                     'apply to other cells with<br/>' +
-                    'same original content' +
-                '</td>' +
-                '<td width="1%">' +
-                    '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+                    'same content <span class="data-table-cell-editor-key">(Ctrl-Enter)</span>' +
                 '</td>' +
             '</tr>' +
         '</table>'
@@ -392,6 +397,9 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         .text(originalContent)
         .keydown(function(evt) {
             if (evt.keyCode == 13) {
+                if (evt.ctrlKey) {
+                    elmts.applyOthersCheckbox[0].checked = true;
+                }
                 commit();
             } else if (evt.keyCode == 27) {
                 MenuSystem.dismissAll();
@@ -399,4 +407,8 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         })
         .select()
         .focus();
+        
+    elmts.cancelButton.click(function() {
+        MenuSystem.dismissAll();
+    });
 };
