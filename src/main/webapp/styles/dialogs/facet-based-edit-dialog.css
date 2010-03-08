@@ -46,10 +46,34 @@ table.facet-based-edit-dialog-entry-table input {
     padding: 0 0.1em;
 }
 
+.facet-based-edit-dialog-entry-count {
+    color: #aaa;
+    margin-left: 0.5em;
+}
+
 .facet-based-edit-dialog-controls {
     margin-bottom: 0.5em;
 }
 
 .facet-based-edit-dialog-controls td {
     padding-right: 0.5em;
+}
+
+
+.facet-based-edit-dialog-facet {
+    margin-bottom: 1em;
+}
+.facet-based-edit-dialog-facet-header {
+    font-weight: bold;
+}
+.facet-based-edit-dialog-facet-histogram {
+    margin: 10px 5px 5px 5px;
+    height: 52px;
+}
+.facet-based-edit-dialog-facet-slider {
+    margin: 5px;
+}
+.facet-based-edit-dialog-facet-selection {
+    text-align: center;
+    color: #888;
 }
