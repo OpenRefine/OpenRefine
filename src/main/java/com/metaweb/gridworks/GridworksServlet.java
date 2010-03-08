@@ -3,6 +3,8 @@ package com.metaweb.gridworks;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -54,6 +56,7 @@ public class GridworksServlet extends HttpServlet {
     private static final long serialVersionUID = 2386057901503517403L;
     
     static protected Map<String, Command> _commands = new HashMap<String, Command>();
+    static protected Timer _timer = new Timer();
     
     static {
         _commands.put("create-project-from-upload", new CreateProjectCommand());
@@ -111,13 +114,26 @@ public class GridworksServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
+        
+        ProjectManager.initialize();
+        
+        long period = 1000 * 60 * 5; // 5 minutes
+        _timer.scheduleAtFixedRate(new TimerTask() {
+            
+            @Override
+            public void run() {
+                ProjectManager.singleton.save(false);
+            }
+        }, period, period);
     }
     
     @Override
     public void destroy() {
+        _timer.cancel();
+        _timer = null;
+        
         if (ProjectManager.singleton != null) {
-            ProjectManager.singleton.saveAllProjects();
-            ProjectManager.singleton.save();
+            ProjectManager.singleton.save(true);
             ProjectManager.singleton = null;
         }
         
@@ -125,8 +141,6 @@ public class GridworksServlet extends HttpServlet {
     }
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ProjectManager.initialize();
-        
         Command command = _commands.get(getCommandName(request));
         if (command != null) {
             command.doPost(request, response);
@@ -134,8 +148,6 @@ public class GridworksServlet extends HttpServlet {
     }
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ProjectManager.initialize();
-        
         Command command = _commands.get(getCommandName(request));
         if (command != null) {
             command.doGet(request, response);

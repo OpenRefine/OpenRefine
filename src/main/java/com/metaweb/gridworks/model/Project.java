@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -34,18 +35,17 @@ public class Project {
     
     public Protograph            protograph;
     
-    transient public ProcessManager processManager;
+    transient public ProcessManager processManager = new ProcessManager();
+    transient public Date lastSave = new Date();
     
     public Project() {
         id = System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
         history = new History(this);
-        processManager = new ProcessManager();
     }
     
     protected Project(long id) {
         this.id = id;
         this.history = new History(this);
-        this.processManager = new ProcessManager();
     }
     
     public ProjectMetadata getMetadata() {
@@ -53,33 +53,35 @@ public class Project {
     }
     
     public void save() {
-        Gridworks.log("Saving project " + id + " ...");
-        
-        File dir = ProjectManager.singleton.getProjectDir(id);
-        
-        File tempFile = new File(dir, "data.temp.zip");
-        try {
-            saveToFile(tempFile);
-        } catch (Exception e) {
-            e.printStackTrace();
+        synchronized (this) {
+            File dir = ProjectManager.singleton.getProjectDir(id);
             
-            Gridworks.log("Failed to save project data");
-            return;
+            File tempFile = new File(dir, "data.temp.zip");
+            try {
+                saveToFile(tempFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+                
+                Gridworks.log("Failed to save project " + id);
+                return;
+            }
+            
+            File file = new File(dir, "data.zip");
+            File oldFile = new File(dir, "data.old.zip");
+            
+            if (file.exists()) {
+                file.renameTo(oldFile);
+            }
+            
+            tempFile.renameTo(file);
+            if (oldFile.exists()) {
+                oldFile.delete();
+            }
+            
+            lastSave = new Date();
+            
+            Gridworks.log("Saved project " + id + ".");
         }
-        
-        File file = new File(dir, "data.zip");
-        File oldFile = new File(dir, "data.old.zip");
-        
-        if (file.exists()) {
-            file.renameTo(oldFile);
-        }
-        
-        tempFile.renameTo(file);
-        if (oldFile.exists()) {
-            oldFile.delete();
-        }
-        
-        Gridworks.log("Project saved.");
     }
     
     protected void saveToFile(File file) throws Exception {

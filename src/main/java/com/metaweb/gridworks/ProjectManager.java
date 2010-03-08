@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,14 +32,14 @@ public class ProjectManager {
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected List<String> 				 _expressions;
     
-    transient protected Map<Long, Project> _projects;
+    transient protected Map<Long, Project>  _projects;
     
     static public ProjectManager singleton;
     
     static public void initialize() {
         if (singleton == null) {
             File dir = getProjectLocation();
-            Gridworks.log("Using data directory: " + dir.getAbsolutePath());
+            Gridworks.log("Using workspace directory: " + dir.getAbsolutePath());
             
             singleton = new ProjectManager(dir);
         }
@@ -107,8 +111,10 @@ public class ProjectManager {
     }
     
     public void registerProject(Project project, ProjectMetadata projectMetadata) {
-        _projects.put(project.id, project);
-        _projectsMetadata.put(project.id, projectMetadata);
+        synchronized (this) {
+            _projects.put(project.id, project);
+            _projectsMetadata.put(project.id, projectMetadata);
+        }
     }
     
     public ProjectMetadata getProjectMetadata(long id) {
@@ -143,32 +149,37 @@ public class ProjectManager {
     	return _expressions;
     }
     
-    public void save() {
-    	Gridworks.log("Saving all projects' metadata ...");
-    	
-    	File tempFile = new File(_workspaceDir, "workspace.temp.json");
-    	try {
-            saveToFile(tempFile);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void save(boolean allModified) {
+        saveProjects(allModified);
+        saveWorkspace();
+    }
+    
+    protected void saveWorkspace() {
+        synchronized (this) {
+        	File tempFile = new File(_workspaceDir, "workspace.temp.json");
+        	try {
+                saveToFile(tempFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+                
+                Gridworks.log("Failed to save workspace.");
+                return;
+            }
+        	
+            File file = new File(_workspaceDir, "workspace.json");
+            File oldFile = new File(_workspaceDir, "workspace.old.json");
             
-            Gridworks.log("Failed to save projects' metadata.");
-            return;
+            if (file.exists()) {
+                file.renameTo(oldFile);
+            }
+            
+            tempFile.renameTo(file);
+            if (oldFile.exists()) {
+                oldFile.delete();
+            }
+            
+            Gridworks.log("Saved workspace.");
         }
-    	
-        File file = new File(_workspaceDir, "workspace.json");
-        File oldFile = new File(_workspaceDir, "workspace.old.json");
-        
-        if (file.exists()) {
-            file.renameTo(oldFile);
-        }
-        
-        tempFile.renameTo(file);
-        if (oldFile.exists()) {
-            oldFile.delete();
-        }
-        
-        Gridworks.log("All projects' metadata saved.");
     }
     
     protected void saveToFile(File file) throws IOException, JSONException {
@@ -198,31 +209,91 @@ public class ProjectManager {
         }
     }
     
-    public void saveAllProjects() {
-        Gridworks.log("Saving all projects ...");
-        for (Project project : _projects.values()) {
-            try {
-                project.save();
-            } catch (Exception e) {
-                e.printStackTrace();
+    static protected class SaveRecord {
+        final Project project;
+        final long overdue;
+        
+        SaveRecord(Project project, long overdue) {
+            this.project = project;
+            this.overdue = overdue;
+        }
+    }
+    
+    protected void saveProjects(boolean allModified) {
+        List<SaveRecord> records = new ArrayList<SaveRecord>();
+        Date now = new Date();
+        
+        synchronized (this) {
+            for (long id : _projectsMetadata.keySet()) {
+                ProjectMetadata metadata = _projectsMetadata.get(id);
+                Project project = _projects.get(id);
+                
+                if (project != null) {
+                    boolean hasUnsavedChanges = metadata.getModified().getTime() > project.lastSave.getTime();
+                    
+                    if (hasUnsavedChanges) {
+                        long msecsOverdue = now.getTime() - project.lastSave.getTime();
+                        
+                        records.add(new SaveRecord(project, msecsOverdue));
+                        
+                    } else if (now.getTime() - project.lastSave.getTime() > 1000 * 60 * 60) {
+                        /*
+                         *  It's been 1 hour since the project was last saved and it hasn't
+                         *  been modified. We can safely remove it from the cache to save some memory.
+                         */
+                        _projects.remove(id);
+                    }
+                }
+            }
+        }
+        
+        if (records.size() > 0) {
+            Collections.sort(records, new Comparator<SaveRecord>() {
+                public int compare(SaveRecord o1, SaveRecord o2) {
+                    if (o1.overdue < o2.overdue) {
+                        return 1;
+                    } else if (o1.overdue > o2.overdue) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            
+            Gridworks.log(allModified ?
+                "Saving all modified projects ..." :
+                "Saving some modified projects ..."
+            );
+            
+            for (int i = 0; 
+                 i < records.size() && 
+                    (allModified || (new Date().getTime() - now.getTime() < 30000)); i++) {
+                
+                try {
+                    records.get(i).project.save();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
     
     public void deleteProject(Project project) {
-        if (_projectsMetadata.containsKey(project.id)) {
-            _projectsMetadata.remove(project.id);
-        }
-        if (_projects.containsKey(project.id)) {
-            _projects.remove(project.id);
+        synchronized (this) {
+            if (_projectsMetadata.containsKey(project.id)) {
+                _projectsMetadata.remove(project.id);
+            }
+            if (_projects.containsKey(project.id)) {
+                _projects.remove(project.id);
+            }
+            
+            File dir = getProjectDir(project.id);
+            if (dir.exists()) {
+                dir.delete();
+            }
         }
         
-        File dir = getProjectDir(project.id);
-        if (dir.exists()) {
-            dir.delete();
-        }
-        
-        save();
+        saveWorkspace();
     }
     
     protected void load() {
@@ -246,7 +317,7 @@ public class ProjectManager {
     }
     
     protected void loadFromFile(File file) throws IOException, JSONException {
-        Gridworks.log("Loading project metadata from " + file.getAbsolutePath());
+        Gridworks.log("Loading workspace from " + file.getAbsolutePath());
         
         _projectsMetadata.clear();
         _expressions.clear();
