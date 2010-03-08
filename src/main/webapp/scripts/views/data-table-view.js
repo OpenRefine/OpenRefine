@@ -2,8 +2,20 @@ function DataTableView(div) {
     this._div = div;
     this._pageSize = 20;
     this._showRecon = true;
+    
+    this._initializeUI();
     this._showRows(0);
 }
+
+DataTableView.prototype._initializeUI = function() {
+    this._div.addClass("view-panel");
+    
+    var self = this;
+    $(window).resize(function() {
+        var dataTableContainer = self._div.find(".data-table-container");
+        dataTableContainer.hide().width(self._div.width() + "px").show();
+    });
+};
 
 DataTableView.prototype.update = function(onDone) {
     this._showRows(0, onDone);

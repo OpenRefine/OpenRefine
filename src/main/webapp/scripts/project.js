@@ -55,11 +55,9 @@ function initializeUI(uiState) {
     body.append(table);
     
     var tr = table.insertRow(0);
-    
     var tdLeft = tr.insertCell(0);
     var tdRight = tr.insertCell(1);
-    tdLeft.setAttribute("width", "82%");
-    tdRight.setAttribute("width", "18%");
+    tdRight.setAttribute("width", "250");
     
     ui.viewPanel = $('<div></div>').appendTo(tdLeft);
     ui.facetPanel = $('<div></div>').appendTo(tdRight);
