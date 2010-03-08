@@ -144,7 +144,7 @@ set CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*"
 goto end
 
 :doAnt
-ant -f build.xml -Dbuild.dir="%GRIDWORKS_BUILD_DI%" -Ddist.dir="%GRIDWORKS_DIST_DIR%" -Dversion="%VERSION%" %ACTION%
+ant -f build.xml -Dbuild.dir="%GRIDWORKS_BUILD_DIR%" -Ddist.dir="%GRIDWORKS_DIST_DIR%" -Dversion="%VERSION%" %ACTION%
 goto end
 
 :end

@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="lib/secondstring-20100303.jar" sourcepath="lib-src/secondstring-20100303-sources.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
+	<classpathentry kind="lib" path="lib/apache-tools-tar.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -12,7 +12,7 @@ MenuBar.prototype._initializeUI = function() {
 
     var self = this;
     
-    this._createTopLevelMenuItem("Data Set", [
+    this._createTopLevelMenuItem("Project", [
         {
             "label": "Export Filtered Rows",
             "submenu": [
@@ -25,6 +25,10 @@ MenuBar.prototype._initializeUI = function() {
                     "click": function() { self._doExportRows("tripleloader", "txt"); }
                 }
             ]
+        },
+        {
+            "label": "Export Project",
+            "click": function() { self._exportProject(); }
         }
     ]);
     this._createTopLevelMenuItem("Schemas", [
@@ -158,6 +162,27 @@ MenuBar.prototype._doExportRows = function(format, ext) {
     window.open("about:blank", "gridworks-export");
     form.submit();
     
+    document.body.removeChild(form);
+};
+
+MenuBar.prototype._exportProject = function() {
+    var name = theProject.metadata.name.replace(/\W/g, ' ').replace(/\s+/g, '-');
+    var form = document.createElement("form");
+    $(form)
+        .css("display", "none")
+        .attr("method", "post")
+        .attr("action", "/command/export-project/" + name + ".gridworks.tar")
+        .attr("target", "gridworks-export"); 
+    $('<input />')
+        .attr("name", "project")
+        .attr("value", theProject.id)
+        .appendTo(form);
+        
+    document.body.appendChild(form);
+
+    window.open("about:blank", "gridworks-export");
+    form.submit();
+
     document.body.removeChild(form);
 };
 

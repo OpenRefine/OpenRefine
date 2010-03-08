@@ -38,7 +38,7 @@ public class CreateProjectCommand extends Command {
             throws ServletException, IOException {
         
         try {
-            Properties options = parseUrlParameters(request);
+            Properties options = ParsingUtilities.parseUrlParameters(request);
             Project project = new Project();
             
             internalImport(request, project, options);
@@ -58,27 +58,6 @@ public class CreateProjectCommand extends Command {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-    
-    protected Properties parseUrlParameters(HttpServletRequest request) {
-        Properties options = new Properties();
-        
-        String query = request.getQueryString();
-        if (query != null) {
-            if (query.startsWith("?")) {
-                query = query.substring(1);
-            }
-            
-            String[] pairs = query.split("&");
-            for (String pairString : pairs) {
-                int equal = pairString.indexOf('=');
-                String name = equal >= 0 ? pairString.substring(0, equal) : "";
-                String value = equal >= 0 ? ParsingUtilities.decode(pairString.substring(equal + 1)) : "";
-                
-                options.put(name, value);
-            }
-        }
-        return options;
     }
     
     protected void internalImport(

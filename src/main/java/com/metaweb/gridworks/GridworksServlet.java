@@ -18,6 +18,8 @@ import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
 import com.metaweb.gridworks.commands.edit.ApplyOperationsCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DeleteProjectCommand;
+import com.metaweb.gridworks.commands.edit.ExportProjectCommand;
+import com.metaweb.gridworks.commands.edit.ImportProjectCommand;
 import com.metaweb.gridworks.commands.edit.TextTransformCommand;
 import com.metaweb.gridworks.commands.edit.EditOneCellCommand;
 import com.metaweb.gridworks.commands.edit.MassEditCommand;
@@ -60,6 +62,8 @@ public class GridworksServlet extends HttpServlet {
     
     static {
         _commands.put("create-project-from-upload", new CreateProjectCommand());
+        _commands.put("import-project", new ImportProjectCommand());
+        _commands.put("export-project", new ExportProjectCommand());
         _commands.put("export-rows", new ExportRowsCommand());
         
         _commands.put("get-project-metadata", new GetProjectMetadataCommand());

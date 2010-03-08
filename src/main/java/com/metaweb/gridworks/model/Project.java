@@ -38,8 +38,12 @@ public class Project {
     transient public ProcessManager processManager = new ProcessManager();
     transient public Date lastSave = new Date();
     
+    static public long generateID() {
+        return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
+    }
+    
     public Project() {
-        id = System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
+        id = generateID();
         history = new History(this);
     }
     

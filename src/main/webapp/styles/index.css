@@ -53,6 +53,11 @@
     padding-bottom: 0px;
 }
 
+#create-project-panel h1 {
+    font-size: 120%;
+    margin: 1em 0;
+}
+
 #projects {
     white-space: pre;
 }

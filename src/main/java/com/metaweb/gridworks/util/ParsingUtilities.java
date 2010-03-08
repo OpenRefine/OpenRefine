@@ -8,6 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
@@ -18,6 +21,27 @@ import org.json.JSONTokener;
 
 public class ParsingUtilities {
     static public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    
+    static public Properties parseUrlParameters(HttpServletRequest request) {
+        Properties options = new Properties();
+        
+        String query = request.getQueryString();
+        if (query != null) {
+            if (query.startsWith("?")) {
+                query = query.substring(1);
+            }
+            
+            String[] pairs = query.split("&");
+            for (String pairString : pairs) {
+                int equal = pairString.indexOf('=');
+                String name = equal >= 0 ? pairString.substring(0, equal) : "";
+                String value = equal >= 0 ? ParsingUtilities.decode(pairString.substring(equal + 1)) : "";
+                
+                options.put(name, value);
+            }
+        }
+        return options;
+    }
     
     static public String inputStreamToString(InputStream is) throws IOException {
         Reader reader = new InputStreamReader(is, "UTF-8");

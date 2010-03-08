@@ -117,6 +117,38 @@ public class ProjectManager {
         }
     }
     
+    public void importProject(long projectID) {
+        synchronized (this) {
+            ProjectMetadata metadata = ProjectMetadata.load(getProjectDir(projectID));
+        
+            _projectsMetadata.put(projectID, metadata);
+        }
+    }
+    
+    public void ensureProjectSaved(long id) {
+        synchronized (this) {
+            File projectDir = getProjectDir(id);
+            
+            ProjectMetadata metadata = _projectsMetadata.get(id);
+            if (metadata != null) {
+                try {
+                    metadata.save(projectDir);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            Project project = _projects.get(id);
+            if (project != null && metadata.getModified().after(project.lastSave)) {
+                try {
+                    project.save();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
     public ProjectMetadata getProjectMetadata(long id) {
         return _projectsMetadata.get(id);
     }
