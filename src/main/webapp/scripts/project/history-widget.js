@@ -128,13 +128,17 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
         "The following JSON code encodes the operations you have done that can be abstracted. " + 
         "You can copy and save it in order to apply the same operations in the future.").appendTo(body);
         
-    var table = $('<table width="100%" cellspacing="0" cellpadding="0"><tr></tr></table>').appendTo(body)[0];
+    var table = $('<table width="100%" cellspacing="0" cellpadding="0"><tr></tr></table>')
+        .addClass("extract-operation-dialog-layout")
+        .appendTo(body)[0];
+    
     var leftColumn = table.rows[0].insertCell(0);
     var rightColumn = table.rows[0].insertCell(1);
     $(leftColumn).width("50%");
     $(rightColumn).width("50%").css("padding-left", "20px");
     
-    var entryDiv = $('<div>').height("400px").css("overflow", "auto").appendTo(leftColumn);
+    var entryDiv = $('<div>').addClass("extract-operation-dialog-entries").appendTo(leftColumn);
+    
     var entryTable = $('<table cellspacing="5"></table>').appendTo(entryDiv)[0];
     var createEntry = function(entry) {
         var tr = entryTable.insertRow(entryTable.rows.length);
@@ -161,10 +165,7 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
         
     var textarea = $('<textarea />')
         .attr("wrap", "off")
-        .css("white-space", "pre")
-        .css("font-family", "monospace")
-        .width("100%")
-        .height("400px")
+        .addClass("extract-operation-dialog-textarea")
         .appendTo(rightColumn);
     var updateJson = function() {
         var a = [];

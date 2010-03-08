@@ -85,3 +85,21 @@ a.history-entry:hover {
     color: white;
     text-decoration: none;
 }
+
+table.extract-operation-dialog-layout td {
+    vertical-align: top;
+}
+.extract-operation-dialog-entries {
+    height: 400px;
+    overflow: auto;
+}
+textarea.extract-operation-dialog-textarea {
+    display: block;
+    margin: 0;
+    vertical-align: top;
+    white-space: pre;
+    font-family: monospace;
+    padding: 2%;
+    width: 96%;
+    height: 400px;
+}
