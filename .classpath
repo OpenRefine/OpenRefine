@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="tests/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/servlet-api-2.5.jar" sourcepath="lib-src/servlet-api-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-6.1.22.jar" sourcepath="lib-src/jetty-6.1.22-sources.jar"/>
@@ -17,5 +18,6 @@
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/apache-tools-tar.jar"/>
+	<classpathentry kind="lib" path="tests/lib/junit-4.8.1.jar" sourcepath="tests/lib-src/junit-4.8.1-sources.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

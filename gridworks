@@ -44,6 +44,8 @@ and <action> is one of
 
    build ..................... Build Gridworks      
    run ....................... Run Gridworks
+
+   test ...................... Test Gridworks      
    
    make_dmg <version> ........ Make MacOSX DMG distribution
    make_exe <version> ........ Make Windows EXE distribution
@@ -205,6 +207,30 @@ make_dmg() {
     rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
 }
 
+test() {
+    if [ ! -d $GRIDWORKS_TEST_DIR/classes ] ; then
+        ant build_tests
+        echo ""
+    fi
+    
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_TEST_DIR/classes:$GRIDWORKS_TEST_DIR/lib/*:$GRIDWORKS_LIB_DIR/*"
+
+    if [ "$1" == "" ] ; then
+        cd $GRIDWORKS_TEST_DIR/classes
+        TESTS=`find . -name '*.class' | sed s@/@.@g | sed s@.class@@ | sed s@..@@`
+        cd ../..
+    else 
+        TESTS=$1
+    fi
+    
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.junit.runner.JUnitCore $TESTS"
+    
+    echo "$RUN_CMD"
+    echo ""
+    
+    exec $RUN_CMD
+}
+
 run() {
     if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
         ant build
@@ -279,7 +305,7 @@ ACTION=$1; shift
 # ----- Verify and Set Required Environment Variables -------------------------
 
 if [ "$JAVA_OPTIONS" == "" ] ; then
-  JAVA_OPTIONS="-Xms256M -Xmx1024M -XX:+UseLargePages -XX:+UseParallelGC"
+  JAVA_OPTIONS="-Xms256M -Xmx1024M -XX:+UseParallelGC"
 fi
 add_option "$JAVA_OPTIONS"
 
@@ -297,6 +323,10 @@ if [ "$GRIDWORKS_WEBAPP" == "" ] ; then
     GRIDWORKS_WEBAPP="src/main/webapp"
 fi
 add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
+
+if [ "$GRIDWORKS_TEST_DIR" == "" ] ; then
+    GRIDWORKS_TEST_DIR="tests"
+fi
 
 if [ "$GRIDWORKS_BUILD_DIR" == "" ] ; then
     GRIDWORKS_BUILD_DIR="build"
@@ -325,6 +355,9 @@ case "$ACTION" in
 
   distclean)
     ant distclean;;
+
+  test) 
+    test $1;;  
 
   run) 
     run;;  

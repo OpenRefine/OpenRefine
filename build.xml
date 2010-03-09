@@ -24,8 +24,10 @@
     <property name="graphics.dir" value="${basedir}/src/graphics" />
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="tools.dir" value="${basedir}/thirdparty" />
+    <property name="tests.dir" value="${basedir}/tests" />
     
     <property name="classes.dir" value="${build.dir}/classes" />
+    <property name="tests_classes.dir" value="${tests.dir}/classes" />
     <property name="bundle.dir" value="${build.dir}/bundle" />
     <property name="exe.dir" value="${build.dir}/exe" />
     
@@ -34,11 +36,25 @@
             <include name="**/*.jar" />
         </fileset>
     </path>
+
+    <path id="tests.class.path">
+        <path refid="class.path"/>
+        <fileset dir="${tests.dir}/lib">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
             
     <target name="build">
         <mkdir dir="${classes.dir}" />
-        <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="true" includeAntRuntime="no">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="class.path" />
+        </javac>
+    </target>
+
+    <target name="build_tests" depends="build">
+        <mkdir dir="${tests_classes.dir}" />
+        <javac srcdir="${tests.dir}/src" destdir="${tests_classes.dir}" debug="true" includeAntRuntime="no">
+            <classpath refid="tests.class.path" />
         </javac>
     </target>
 
@@ -137,6 +153,7 @@
     <target name="clean">
         <delete file="${build.dir}/gridworks.jar" />
         <delete dir="${classes.dir}" />
+        <delete dir="${tests_classes.dir}" />
     </target>
 
     <target name="distclean">
