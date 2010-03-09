@@ -6,7 +6,6 @@ function RangeFacet(div, config, options) {
     this._from = ("from" in this._config) ? this._config.from : null;
     this._to = ("to" in this._config) ? this._config.to : null;
     
-    this._timerID = null;
     this._error = false;
     this._initializedUI = false;
 }
@@ -99,13 +98,17 @@ RangeFacet.prototype._initializeUI = function() {
             self._sliderDiv.slider("values", 1, self._to);
         }
         self._setRangeIndicators();
-        self._scheduleUpdate();
+        self._updateRest();
     }).prependTo(headerDiv);
     
-    var removeButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("remove").click(function() {
-        self._remove();
-    }).prependTo(headerDiv);
-
+    var removeButton = $('<img>')
+        .attr("src", "images/close.png")
+        .attr("title", "Remove this facet")
+        .addClass("facet-choice-link")
+        .click(function() {
+            self._remove();
+        }).prependTo(headerDiv);
+        
     var bodyDiv = $('<div></div>').addClass("facet-range-body").appendTo(container);
     
     if (this._error) {
@@ -129,14 +132,14 @@ RangeFacet.prototype._initializeUI = function() {
             self._to = ui.values[1];
         }
         self._setRangeIndicators();
-        self._scheduleUpdate();
+        self._updateRest();
     };
     var sliderConfig = {
         range: "max",
         min: this._config.min,
         max: this._config.max,
         value: 2,
-        slide: onSlide
+        stop: onSlide
     };
     if ("step" in this._config) {
         sliderConfig.step = this._config.step;
@@ -262,16 +265,6 @@ RangeFacet.prototype._remove = function() {
     this._div = null;
     this._config = null;
     this._data = null;
-};
-
-RangeFacet.prototype._scheduleUpdate = function() {
-    if (this._timerID == null) {
-        var self = this;
-        this._timerID = window.setTimeout(function() {
-            self._timerID = null;
-            self._updateRest();
-        }, 300);
-    }
 };
 
 RangeFacet.prototype._updateRest = function() {
