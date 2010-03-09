@@ -166,7 +166,9 @@ public class ProjectMetadata implements Jsonizable {
     }
     
     public void setEncodingConfidence(String confidence) {
-        this.setEncodingConfidence(Integer.parseInt(confidence));
+    	if (confidence != null) {
+    		this.setEncodingConfidence(Integer.parseInt(confidence));
+    	}
     }
 
     public int getEncodingConfidence() {
