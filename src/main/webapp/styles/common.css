@@ -84,3 +84,17 @@ img {
     background-image: none;
     background-color: #ccc;
 }
+
+.ui-widget-content a.ui-state-default.ui-slider-handle {
+    background: url(../images/slider-left-bracket.png) no-repeat bottom left;
+    border: none;
+    top: -10px;
+}
+.ui-widget-content a.ui-state-default.ui-slider-handle:last-child {
+    background: url(../images/slider-right-bracket.png) no-repeat bottom right;
+    border: none;
+    top: -10px;
+}
+.ui-slider .ui-slider-handle {
+    height: 32px;
+}
