@@ -2,10 +2,12 @@ package com.metaweb.gridworks.gel;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ParsingException;
 import com.metaweb.gridworks.gel.Scanner.NumberToken;
+import com.metaweb.gridworks.gel.Scanner.RegexToken;
 import com.metaweb.gridworks.gel.Scanner.Token;
 import com.metaweb.gridworks.gel.Scanner.TokenType;
 import com.metaweb.gridworks.gel.ast.ControlCallExpr;
@@ -26,7 +28,7 @@ public class Parser {
     
     public Parser(String s, int from, int to) throws ParsingException {
         _scanner = new Scanner(s, from, to);
-        _token = _scanner.next();
+        _token = _scanner.next(true);
         
         _root = parseExpression();
     }
@@ -35,8 +37,8 @@ public class Parser {
         return _root;
     }
     
-    protected void next() {
-        _token = _scanner.next();
+    protected void next(boolean regexPossible) {
+        _token = _scanner.next(regexPossible);
     }
     
     protected ParsingException makeException(String desc) {
@@ -54,7 +56,7 @@ public class Parser {
             
             String op = _token.text;
             
-            next();
+            next(true);
             
             Evaluable sub2 = parseSubExpression();
             
@@ -73,7 +75,7 @@ public class Parser {
             
             String op = _token.text;
             
-            next();
+            next(true);
             
             Evaluable sub2 = parseSubExpression();
             
@@ -92,7 +94,7 @@ public class Parser {
             
             String op = _token.text;
             
-            next();
+            next(true);
             
             Evaluable factor2 = parseFactor();
             
@@ -111,22 +113,27 @@ public class Parser {
         
         if (_token.type == TokenType.String) {
             eval = new LiteralExpr(_token.text);
-            next();
+            next(false);
+        } else if (_token.type == TokenType.Regex) {
+            RegexToken t = (RegexToken) _token;
+            
+            eval = new LiteralExpr(Pattern.compile(_token.text, t.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0));
+            next(false);
         } else if (_token.type == TokenType.Number) {
             eval = new LiteralExpr(((NumberToken)_token).value);
-            next();
+            next(false);
         } else if (_token.type == TokenType.Operator && _token.text.equals("-")) { // unary minus?
-            next();
+            next(true);
             
             if (_token != null && _token.type == TokenType.Number) {
                 eval = new LiteralExpr(-((NumberToken)_token).value);
-                next();
+                next(false);
             } else {
                 throw makeException("Bad negative number");
             }
         } else if (_token.type == TokenType.Identifier) {
             String text = _token.text;
-            next();
+            next(false);
             
             if (_token == null || _token.type != TokenType.Delimiter || !_token.text.equals("(")) {
                 eval = new VariableExpr(text);
@@ -137,7 +144,7 @@ public class Parser {
                     throw makeException("Unknown function or control named " + text);
                 }
                 
-                next(); // swallow (
+                next(true); // swallow (
                 
                 List<Evaluable> args = parseExpressionList(")");
                 
@@ -153,12 +160,12 @@ public class Parser {
                 }
             }
         } else if (_token.type == TokenType.Delimiter && _token.text.equals("(")) {
-            next();
+            next(true);
             
             eval = parseExpression();
             
             if (_token != null && _token.type == TokenType.Delimiter && _token.text.equals(")")) {
-                next();
+                next(false);
             } else {
                 throw makeException("Missing )");
             }
@@ -168,17 +175,17 @@ public class Parser {
         
         while (_token != null) {
             if (_token.type == TokenType.Operator && _token.text.equals(".")) {
-                next(); // swallow .
+                next(false); // swallow .
                 
                 if (_token == null || _token.type != TokenType.Identifier) {
                     throw makeException("Missing function name");
                 }
                 
                 String identifier = _token.text;
-                next();
+                next(false);
                 
                 if (_token != null && _token.type == TokenType.Delimiter && _token.text.equals("(")) {
-                    next(); // swallow (
+                    next(true); // swallow (
                     
                     Function f = ControlFunctionRegistry.getFunction(identifier);
                     if (f == null) {
@@ -193,7 +200,7 @@ public class Parser {
                     eval = new FieldAccessorExpr(eval, identifier);
                 }
             } else if (_token.type == TokenType.Delimiter && _token.text.equals("[")) {
-                next(); // swallow [
+                next(true); // swallow [
                 
                 List<Evaluable> args = parseExpressionList("]");
                 args.add(0, eval);
@@ -219,7 +226,7 @@ public class Parser {
                 l.add(eval);
                 
                 if (_token != null && _token.type == TokenType.Delimiter && _token.text.equals(",")) {
-                    next(); // swallow comma, loop back for more
+                    next(true); // swallow comma, loop back for more
                 } else {
                     break;
                 }
@@ -227,7 +234,7 @@ public class Parser {
         }
         
         if (_token != null && _token.type == TokenType.Delimiter && _token.text.equals(closingDelimiter)) {
-            next(); // swallow closing delimiter
+            next(false); // swallow closing delimiter
         } else {
             throw makeException("Missing " + closingDelimiter);
         }

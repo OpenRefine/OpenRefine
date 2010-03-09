@@ -55,55 +55,6 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     self = this;
     MenuSystem.createAndShowStandardMenu([
         {
-            label: "Edit Cells",
-            submenu: [
-                {
-                    label: "To Titlecase",
-                    click: function() { self._doTextTransform("toTitlecase(value)", "store-blank", false, ""); }
-                },
-                {
-                    label: "To Uppercase",
-                    click: function() { self._doTextTransform("toUppercase(value)", "store-blank", false, ""); }
-                },
-                {
-                    label: "To Lowercase",
-                    click: function() { self._doTextTransform("toLowercase(value)", "store-blank", false, ""); }
-                },
-                {
-                    label: "Custom Transform ...",
-                    click: function() { self._doTextTransformPrompt(); }
-                },
-                {},
-                {
-                    label: "Split Multi-Valued Cells ...",
-                    click: function() { self._doSplitMultiValueCells(); }
-                },
-                {
-                    label: "Join Multi-Valued Cells ...",
-                    click: function() { self._doJoinMultiValueCells(); }
-                },
-                {},
-                {
-                    label: "Cluster & Edit ...",
-                    click: function() { new FacetBasedEditDialog(self._column.name, "value"); }
-                }
-            ]
-        },
-        {
-            label: "Edit Column",
-            submenu: [
-                {
-                    label: "Add Column Based on This Column ...",
-                    click: function() { self._doAddColumn("value"); }
-                },
-                {
-                    label: "Remove This Column",
-                    click: function() { self._doRemoveColumn(); }
-                },
-            ]
-        },
-        {},
-        {
             label: "Filter",
             tooltip: "Filter rows by this column's cell content or characteristics",
             submenu: [
@@ -124,6 +75,24 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     label: "Custom Text Facet ...",
                     click: function() { self._doFilterByExpressionPrompt("value", "list"); }
                 },
+                {
+                    label: "Common Text Facets",
+                    submenu: [
+                        {
+                            label: "Word Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name + " value.split(' ')",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "value.split(' ')"
+                                    }
+                                );
+                            }
+                        }
+                    ]
+                },
                 {},
                 {
                     label: "Numeric Facet",
@@ -134,11 +103,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "expression" : "value",
-                                "mode" : "range",
-                                "min" : 0,
-                                "max" : 1
-                            },
-                            {
+                                "mode" : "range"
                             }
                         );
                     }
@@ -146,6 +111,53 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {
                     label: "Custom Numeric Facet ...",
                     click: function() { self._doFilterByExpressionPrompt("value", "range"); }
+                },
+                {
+                    label: "Common Numeric Facets",
+                    submenu: [
+                        {
+                            label: "Text Length Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name + ": value.length()",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "value.length()",
+                                        "mode" : "range"
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "Log of Text Length Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name + ": value.length().log()",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "value.length().log()",
+                                        "mode" : "range"
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "Unicode Char-code Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name + ": value.unicode()",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "value.unicode()",
+                                        "mode" : "range"
+                                    }
+                                );
+                            }
+                        }
+                    ]
                 },
                 {},
                 {
@@ -205,6 +217,70 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 }
             ]
         },
+        {},
+        {
+            label: "Edit Cells",
+            submenu: [
+                {
+                    label: "Transform ...",
+                    click: function() { self._doTextTransformPrompt(); }
+                },
+                {
+                    label: "Common Transforms",
+                    submenu: [
+                        {
+                            label: "Unescape HTML entities",
+                            click: function() { self._doTextTransform("value.unescape('html')", "store-blank", true, 10); }
+                        },
+                        {
+                            label: "Collapse whitespace",
+                            click: function() { self._doTextTransform("value.replaceRegexp('\\s+', ' ')", "store-blank", false, ""); }
+                        },
+                        {},
+                        {
+                            label: "To Titlecase",
+                            click: function() { self._doTextTransform("toTitlecase(value)", "store-blank", false, ""); }
+                        },
+                        {
+                            label: "To Uppercase",
+                            click: function() { self._doTextTransform("toUppercase(value)", "store-blank", false, ""); }
+                        },
+                        {
+                            label: "To Lowercase",
+                            click: function() { self._doTextTransform("toLowercase(value)", "store-blank", false, ""); }
+                        }
+                    ]
+                },
+                {},
+                {
+                    label: "Split Multi-Valued Cells ...",
+                    click: function() { self._doSplitMultiValueCells(); }
+                },
+                {
+                    label: "Join Multi-Valued Cells ...",
+                    click: function() { self._doJoinMultiValueCells(); }
+                },
+                {},
+                {
+                    label: "Cluster & Edit ...",
+                    click: function() { new FacetBasedEditDialog(self._column.name, "value"); }
+                }
+            ]
+        },
+        {
+            label: "Edit Column",
+            submenu: [
+                {
+                    label: "Add Column Based on This Column ...",
+                    click: function() { self._doAddColumn("value"); }
+                },
+                {
+                    label: "Remove This Column",
+                    click: function() { self._doRemoveColumn(); }
+                },
+            ]
+        },
+        {},
         {
             label: "View",
             tooltip: "Collapse/expand columns to make viewing the data more convenient",

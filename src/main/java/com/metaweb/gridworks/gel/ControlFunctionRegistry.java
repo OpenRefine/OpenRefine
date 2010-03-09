@@ -43,7 +43,6 @@ import com.metaweb.gridworks.expr.functions.strings.RPartition;
 import com.metaweb.gridworks.expr.functions.strings.Reinterpret;
 import com.metaweb.gridworks.expr.functions.strings.Replace;
 import com.metaweb.gridworks.expr.functions.strings.ReplaceChars;
-import com.metaweb.gridworks.expr.functions.strings.ReplaceRegexp;
 import com.metaweb.gridworks.expr.functions.strings.SHA1;
 import com.metaweb.gridworks.expr.functions.strings.Split;
 import com.metaweb.gridworks.expr.functions.strings.SplitByCharType;
@@ -117,7 +116,6 @@ public class ControlFunctionRegistry {
         registerFunction("slice", new Slice());
         registerFunction("substring", new Slice());
         registerFunction("replace", new Replace());
-        registerFunction("replaceRegexp", new ReplaceRegexp());
         registerFunction("replaceChars", new ReplaceChars());
         registerFunction("split", new Split());
         registerFunction("splitByCharType", new SplitByCharType());

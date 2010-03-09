@@ -322,7 +322,10 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
     var renderValue = function(td, v) {
         if (v !== null && v !== undefined) {
             if ($.isArray(v)) {
-                td.text(JSON.stringify(v));
+                var a = [];
+                $.each(v, function() { a.push(JSON.stringify(this)); });
+                
+                td.text("[ " + a.join(", ") + " ]");
             } else if ($.isPlainObject(v)) {
                 $('<span></span>').addClass("expression-preview-special-value").text("Error: " + v.message).appendTo(td);
             } else if (typeof v === "string" && v.length == 0) {

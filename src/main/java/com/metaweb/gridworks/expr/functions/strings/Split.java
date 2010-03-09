@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.expr.functions.strings;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -15,11 +16,17 @@ public class Split implements Function {
         if (args.length == 2) {
             Object v = args[0];
             Object split = args[1];
-            if (v != null && split != null && split instanceof String) {
-                return (v instanceof String ? (String) v : v.toString()).split((String) split);
+            if (v != null && split != null) {
+                String str = (v instanceof String ? (String) v : v.toString());
+                if (split instanceof String) {
+                    return str.split((String) split);
+                } else if (split instanceof Pattern) {
+                    Pattern pattern = (Pattern) split;
+                    return pattern.split(str);
+                }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings, or 1 string and 1 regex");
     }
     
     public void write(JSONWriter writer, Properties options)
@@ -27,7 +34,7 @@ public class Split implements Function {
     
         writer.object();
         writer.key("description"); writer.value("Returns the array of strings obtained by splitting s with separator sep");
-        writer.key("params"); writer.value("string s, string sep");
+        writer.key("params"); writer.value("string s, string or regex sep");
         writer.key("returns"); writer.value("array");
         writer.endObject();
     }

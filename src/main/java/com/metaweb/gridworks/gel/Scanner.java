@@ -7,7 +7,8 @@ public class Scanner {
         Operator,
         Identifier,
         Number,
-        String
+        String,
+        Regex
     }
     
     static public class Token {
@@ -42,6 +43,15 @@ public class Scanner {
         }
     }
     
+    static public class RegexToken extends Token {
+        final public boolean caseInsensitive;
+        
+        public RegexToken(int start, int end, String text, boolean caseInsensitive) {
+            super(start, end, TokenType.Regex, text);
+            this.caseInsensitive = caseInsensitive;
+        }
+    }
+    
     protected String     _text;
     protected int        _index;
     protected int        _limit;
@@ -60,7 +70,7 @@ public class Scanner {
         return _index;
     }
     
-    public Token next() {
+    public Token next(boolean regexPossible) {
         // skip whitespace
         while (_index < _limit && Character.isWhitespace(_text.charAt(_index))) {
             _index++;
@@ -148,6 +158,46 @@ public class Scanner {
                 TokenType.Identifier, 
                 _text.substring(start, _index)
             );
+        } else if (c == '/' && regexPossible) {
+            /*
+             *  Regex literal
+             */
+            StringBuffer sb = new StringBuffer();
+            
+            _index++; // skip opening delimiter
+            
+            while (_index < _limit) {
+                c = _text.charAt(_index);
+                if (c == '/') {
+                    _index++; // skip closing delimiter
+                    
+                    boolean caseInsensitive = false;
+                    if (_index < _limit && _text.charAt(_index) == 'i') {
+                        caseInsensitive = true;
+                        _index++;
+                    }
+                    
+                    return new RegexToken(
+                        start, 
+                        _index, 
+                        sb.toString(),
+                        caseInsensitive
+                    );
+                } else if (c == '\\') {
+                    sb.append(c);
+                    
+                    _index++; // skip escaping marker
+                    if (_index < _limit) {
+                        sb.append(_text.charAt(_index));
+                    }
+                } else {
+                    sb.append(c);
+                }
+                _index++;
+            }
+            
+            detail = "Regex not properly closed";
+            // fall through
         } else if ("+-*/.".indexOf(c) >= 0) { // operator
             _index++;
             
