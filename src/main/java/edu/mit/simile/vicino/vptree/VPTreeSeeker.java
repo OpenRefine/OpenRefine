@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.mit.simile.vicino.Distance;
+import edu.mit.simile.vicino.distances.Distance;
 
 /**
  * @author Paolo Ciccarese
@@ -19,11 +19,11 @@ public class VPTreeSeeker {
         this.tree = tree;
     }
 
-    public List<? extends Serializable> range(Serializable query, float range) {
+    public List<Serializable> range(Serializable query, double range) {
         return rangeTraversal(query, range, tree.getRoot(), new ArrayList<Serializable>());
     }
 
-    private List<Serializable> rangeTraversal(Serializable query, float range, TNode tNode, List<Serializable> results) {
+    private List<Serializable> rangeTraversal(Serializable query, double range, TNode tNode, List<Serializable> results) {
 
         if (tNode != null) {
             double distance = this.distance.d(query.toString(), tNode.get().toString());

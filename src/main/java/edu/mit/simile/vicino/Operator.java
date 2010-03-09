@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.mit.simile.vicino.distances.Distance;
+
 public class Operator {
 
     static void log(String msg) {

@@ -28,8 +28,8 @@ import com.wcohen.ss.api.Token;
 import com.wcohen.ss.tokens.NGramTokenizer;
 import com.wcohen.ss.tokens.SimpleTokenizer;
 
-import edu.mit.simile.vicino.Distance;
 import edu.mit.simile.vicino.distances.BZip2Distance;
+import edu.mit.simile.vicino.distances.Distance;
 import edu.mit.simile.vicino.distances.GZipDistance;
 import edu.mit.simile.vicino.distances.JaccardDistance;
 import edu.mit.simile.vicino.distances.JaroDistance;
@@ -63,17 +63,17 @@ public class kNNClusterer extends Clusterer {
         Distance _distance;
         JSONObject _config;
         VPTreeBuilder _treeBuilder;
-        float _radius;
+        double _radius = 1.0f;
         
         public VPTreeClusteringRowVisitor(Distance d, JSONObject o) {
             _distance = d;
             _config = o;
             _treeBuilder = new VPTreeBuilder(_distance);
             try {
-                _radius = (float) o.getJSONObject("params").getDouble("radius");
+                JSONObject params = o.getJSONObject("params");
+                _radius = params.getDouble("radius");
             } catch (JSONException e) {
-                Gridworks.warn("No radius found, using default");
-                _radius = 0.1f;
+                Gridworks.warn("No parameters found, using defaults");
             }
         }
         
@@ -87,7 +87,7 @@ public class kNNClusterer extends Clusterer {
             return false;
         }
         
-        public Map<Serializable,List<? extends Serializable>> getClusters() {
+        public Map<Serializable,List<Serializable>> getClusters() {
             return _treeBuilder.getClusters(_radius);
         }
     }
@@ -96,7 +96,8 @@ public class kNNClusterer extends Clusterer {
 
         Distance _distance;
         JSONObject _config;
-        float _radius;
+        double _radius = 1.0d;
+        int _blockingNgramSize = 6;
         HashSet<String> _data;
         
         public BlockingClusteringRowVisitor(Distance d, JSONObject o) {
@@ -104,10 +105,11 @@ public class kNNClusterer extends Clusterer {
             _config = o;
             _data = new HashSet<String>();
             try {
-                _radius = (float) o.getJSONObject("params").getDouble("radius");
+                JSONObject params = o.getJSONObject("params");
+                _radius = params.getDouble("radius");
+                _blockingNgramSize = params.getInt("blocking-ngram-size");
             } catch (JSONException e) {
-                Gridworks.warn("No radius found, using default");
-                _radius = 0.1f;
+                Gridworks.warn("No parameters found, using defaults");
             }
         }
         
@@ -122,7 +124,7 @@ public class kNNClusterer extends Clusterer {
         }
         
         public Map<Serializable,Set<Serializable>> getClusters() {
-            NGramTokenizer tokenizer = new NGramTokenizer(4,4,false,SimpleTokenizer.DEFAULT_TOKENIZER);
+            NGramTokenizer tokenizer = new NGramTokenizer(_blockingNgramSize,_blockingNgramSize,false,SimpleTokenizer.DEFAULT_TOKENIZER);
 
             Map<String,List<String>> blocks = new HashMap<String,List<String>>();
             
@@ -148,9 +150,10 @@ public class kNNClusterer extends Clusterer {
                 for (String a : list) {
                     for (String b : list) {
                         if (a == b) continue;
+                        if (clusters.containsKey(a) && clusters.get(a).contains(b)) continue;
+                        if (clusters.containsKey(b) && clusters.get(b).contains(a)) continue;
                         double d = _distance.d(a,b);
-                        if (d <= _radius) {
-                            System.out.println(a + " | " + b + ": " + d);
+                        if (d <= _radius || _radius < 0) {
                             Set<Serializable> l = null; 
                             if (!clusters.containsKey(a)) {
                                 l = new TreeSet<Serializable>();
@@ -165,6 +168,7 @@ public class kNNClusterer extends Clusterer {
                 }
             }
             
+            Gridworks.log("Calculated " + _distance.getCount() + " distances");
             return clusters;
         }
     }

@@ -54,7 +54,8 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                           'Ngram Size: <input type="text" value="1" bind="ngramSize" size="3">' +
                         '</div>' + 
                         '<div class="knn-controls hidden">' +
-                            'Radius: <input type="text" value="0.1" bind="radius" size="3">' +
+                            '<span style="margin-right: 1em">Radius: <input type="text" value="1.0" bind="radius" size="3"></span>' +
+                            '<span>Block Chars: <input type="text" value="6" bind="ngramBlock" size="3"></span>' +
                         '</div>' + 
                     '</td>' +
                     '<td bind="resultSummary" align="right">' +
@@ -109,6 +110,15 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     this._elmts.radius.change(function() {
         try {
             self._params = { "radius" : parseFloat($(this).val()) };
+            self._cluster();
+        } catch (e) {
+            alert("radius must be a number");
+        }
+    });
+
+    this._elmts.ngramBlock.change(function() {
+        try {
+            self._params = { "blocking-ngram-size" : parseInt($(this).val()) };
             self._cluster();
         } catch (e) {
             alert("radius must be a number");

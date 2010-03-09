@@ -2,6 +2,8 @@ package edu.mit.simile.vicino;
 
 import java.util.List;
 
+import edu.mit.simile.vicino.distances.Distance;
+
 public class Tester extends Operator {
 
     public static void main(String[] args) throws Exception {

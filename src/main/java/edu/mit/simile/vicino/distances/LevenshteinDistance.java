@@ -3,9 +3,7 @@ package edu.mit.simile.vicino.distances;
 import com.wcohen.ss.Levenstein;
 import com.wcohen.ss.api.StringDistance;
 
-import edu.mit.simile.vicino.Distance;
-
-public class LevenshteinDistance implements Distance {
+public class LevenshteinDistance extends MetricDistance {
 
     StringDistance distance;
 
@@ -13,7 +11,7 @@ public class LevenshteinDistance implements Distance {
         this.distance = new Levenstein();
     }
 
-    public double d(String x, String y) {
+    public double d2(String x, String y) {
         return Math.abs(this.distance.score(x, y));
     }
 

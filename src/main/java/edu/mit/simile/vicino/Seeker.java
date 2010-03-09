@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.mit.simile.vicino.distances.Distance;
 import edu.mit.simile.vicino.vptree.VPTree;
 import edu.mit.simile.vicino.vptree.VPTreeBuilder;
 import edu.mit.simile.vicino.vptree.VPTreeSeeker;

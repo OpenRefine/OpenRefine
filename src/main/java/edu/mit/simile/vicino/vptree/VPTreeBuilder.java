@@ -11,7 +11,7 @@ import java.util.Set;
 
 import com.metaweb.gridworks.Gridworks;
 
-import edu.mit.simile.vicino.Distance;
+import edu.mit.simile.vicino.distances.Distance;
 
 /**
  * @author Paolo Ciccarese
@@ -60,14 +60,14 @@ public class VPTreeBuilder {
         this.nodes.clear();
     }
     
-    public Map<Serializable,List<? extends Serializable>> getClusters(float radius) {
+    public Map<Serializable,List<Serializable>> getClusters(double radius) {
         VPTree tree = buildVPTree();
         VPTreeSeeker seeker = new VPTreeSeeker(distance,tree);
         
-        Map<Serializable,List<? extends Serializable>> map = new HashMap<Serializable,List<? extends Serializable>>();
+        Map<Serializable,List<Serializable>> map = new HashMap<Serializable,List<Serializable>>();
         for (Node n : nodes) {
             Serializable s = n.get();
-            List<? extends Serializable> results = seeker.range(s, radius);
+            List<Serializable> results = seeker.range(s, radius);
             map.put(s, results);
         }
         

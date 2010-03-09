@@ -1,8 +1,7 @@
 package edu.mit.simile.vicino.distances;
 
-import edu.mit.simile.vicino.Distance;
 
-public abstract class MetricDistance implements Distance {
+public abstract class MetricDistance extends Distance {
 
     /*
      * public float d(String x,String y) { 
@@ -15,9 +14,11 @@ public abstract class MetricDistance implements Distance {
      */
 
     public double d(String x, String y) {
-        return d2(x, y);
+        double result = d2(x, y);
+        counter += 1;
+        return result;
     }
-
+    
     abstract double d2(String x, String y);
 
 }

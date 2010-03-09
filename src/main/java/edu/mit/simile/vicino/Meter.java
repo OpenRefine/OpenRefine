@@ -1,5 +1,7 @@
 package edu.mit.simile.vicino;
 
+import edu.mit.simile.vicino.distances.Distance;
+
 public class Meter extends Operator {
 
     public static void main(String[] args) throws Exception {

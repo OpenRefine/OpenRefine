@@ -28,7 +28,7 @@ public class BinningClusterer extends Clusterer {
     
     static protected Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
 
-    List<Map<Object,Integer>> _clusters;
+    List<Map<String,Integer>> _clusters;
      
     static {
         _keyers.put("fingerprint", new FingerprintKeyer());
@@ -44,7 +44,7 @@ public class BinningClusterer extends Clusterer {
         Object[] _params;
         JSONObject _config;
         
-        Map<String,Map<Object,Integer>> _map = new HashMap<String,Map<Object,Integer>>();
+        Map<String,Map<String,Integer>> _map = new HashMap<String,Map<String,Integer>>();
         
         public BinningRowVisitor(Keyer k, JSONObject o) {
             _keyer = k;
@@ -63,18 +63,18 @@ public class BinningClusterer extends Clusterer {
         public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
             Cell cell = row.cells.get(_colindex);
             if (cell != null && cell.value != null) {
-                Object v = cell.value;
+                String v = cell.value.toString();
                 String s = (v instanceof String) ? ((String) v) : v.toString();
                 String key = _keyer.key(s,_params);
                 if (_map.containsKey(key)) {
-                    Map<Object,Integer> m = _map.get(key);
+                    Map<String,Integer> m = _map.get(key);
                     if (m.containsKey(v)) {
                         m.put(v, m.get(v) + 1);
                     } else {
                         m.put(v,1);
                     }
                 } else {
-                    Map<Object,Integer> m = new TreeMap<Object,Integer>();
+                    Map<String,Integer> m = new TreeMap<String,Integer>();
                     m.put(v,0);
                     _map.put(key, m);
                 }
@@ -82,13 +82,13 @@ public class BinningClusterer extends Clusterer {
             return false;
         }
         
-        public Map<String,Map<Object,Integer>> getMap() {
+        public Map<String,Map<String,Integer>> getMap() {
             return _map;
         }
     }
             
-    public class SizeComparator implements Comparator<Map<Object,Integer>> {
-        public int compare(Map<Object,Integer> o1, Map<Object,Integer> o2) {
+    public class SizeComparator implements Comparator<Map<String,Integer>> {
+        public int compare(Map<String,Integer> o1, Map<String,Integer> o2) {
             int s1 = o1.size();
             int s2 = o2.size();
             if (o1 == o2) {
@@ -107,8 +107,8 @@ public class BinningClusterer extends Clusterer {
         }
     }
 
-    public class EntriesComparator implements Comparator<Entry<Object,Integer>> {
-        public int compare(Entry<Object,Integer> o1, Entry<Object,Integer> o2) {
+    public class EntriesComparator implements Comparator<Entry<String,Integer>> {
+        public int compare(Entry<String,Integer> o1, Entry<String,Integer> o2) {
             return o2.getValue() - o1.getValue();
         }
     }
@@ -123,8 +123,8 @@ public class BinningClusterer extends Clusterer {
         FilteredRows filteredRows = engine.getAllFilteredRows(true);
         filteredRows.accept(_project, visitor);
      
-        Map<String,Map<Object,Integer>> map = visitor.getMap();
-        _clusters = new ArrayList<Map<Object,Integer>>(map.values());
+        Map<String,Map<String,Integer>> map = visitor.getMap();
+        _clusters = new ArrayList<Map<String,Integer>>(map.values());
         Collections.sort(_clusters, new SizeComparator());
     }
     
@@ -132,12 +132,12 @@ public class BinningClusterer extends Clusterer {
         EntriesComparator c = new EntriesComparator();
         
         writer.array();        
-        for (Map<Object,Integer> m : _clusters) {
+        for (Map<String,Integer> m : _clusters) {
             if (m.size() > 1) {
                 writer.array();        
-                List<Entry<Object,Integer>> entries = new ArrayList<Entry<Object,Integer>>(m.entrySet());
+                List<Entry<String,Integer>> entries = new ArrayList<Entry<String,Integer>>(m.entrySet());
                 Collections.sort(entries,c);
-                for (Entry<Object,Integer> e : entries) {
+                for (Entry<String,Integer> e : entries) {
                     writer.object();
                     writer.key("v"); writer.value(e.getKey());
                     writer.key("c"); writer.value(e.getValue());
