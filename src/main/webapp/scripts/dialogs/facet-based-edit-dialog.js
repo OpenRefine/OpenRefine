@@ -413,7 +413,7 @@ FacetBasedEditDialog.Facet = function(dialog, title, property, elmt, clusters) {
             min: this._min,
             max: this._max,
             values: [ this._from, this._to ],
-            slide: function(evt, ui) {
+            stop: function(evt, ui) {
                 self._from = ui.values[0];
                 self._to = ui.values[1];
                 self._setRangeIndicators();
