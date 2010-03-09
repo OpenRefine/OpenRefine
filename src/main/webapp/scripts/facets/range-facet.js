@@ -132,6 +132,8 @@ RangeFacet.prototype._initializeUI = function() {
             self._to = ui.values[1];
         }
         self._setRangeIndicators();
+    };
+    var onStop = function() {
         self._updateRest();
     };
     var sliderConfig = {
@@ -139,7 +141,8 @@ RangeFacet.prototype._initializeUI = function() {
         min: this._config.min,
         max: this._config.max,
         value: 2,
-        stop: onSlide
+        stop: onStop,
+        slide: onSlide
     };
     if ("step" in this._config) {
         sliderConfig.step = this._config.step;
