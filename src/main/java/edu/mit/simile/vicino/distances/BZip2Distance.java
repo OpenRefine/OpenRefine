@@ -9,7 +9,7 @@ public class BZip2Distance extends PseudoMetricDistance {
 
     public double d2(String x, String y) {
         String str = x + y;
-        float result = 0.0f;
+        double result = 0.0f;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(str.length());
             CBZip2OutputStream os = new CBZip2OutputStream(baos);

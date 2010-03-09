@@ -10,7 +10,7 @@ public class PPMDistance extends PseudoMetricDistance {
 
     public double d2(String x, String y) {
         String str = x + y;
-        float result = 0.0f;
+        double result = 0.0f;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(str.length());
             ArithCodeOutputStream os = new ArithCodeOutputStream(baos,new PPMModel(8));

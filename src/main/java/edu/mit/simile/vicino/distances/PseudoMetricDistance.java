@@ -9,9 +9,8 @@ public abstract class PseudoMetricDistance implements Distance {
         double cyy = d2(y, y);
         double cxy = d2(x, y);
         double cyx = d2(y, x);
-        double result1 = (cxy + cyx) / (cxx + cyy) - 1.0d;
-        return result1;
+        return (cxy + cyx) / (cxx + cyy) - 1.0d;
     }
-
+    
     protected abstract double d2(String x, String y);
 }
