@@ -14,7 +14,7 @@ public class LevenshteinDistance implements Distance {
     }
 
     public double d(String x, String y) {
-        return this.distance.score(x, y);
+        return Math.abs(this.distance.score(x, y));
     }
 
 }

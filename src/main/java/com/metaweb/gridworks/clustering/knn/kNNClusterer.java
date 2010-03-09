@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +24,9 @@ import com.metaweb.gridworks.clustering.Clusterer;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.wcohen.ss.expt.ClusterNGramBlocker;
-import com.wcohen.ss.expt.MatchData;
-import com.wcohen.ss.expt.Blocker.Pair;
+import com.wcohen.ss.api.Token;
+import com.wcohen.ss.tokens.NGramTokenizer;
+import com.wcohen.ss.tokens.SimpleTokenizer;
 
 import edu.mit.simile.vicino.Distance;
 import edu.mit.simile.vicino.distances.BZip2Distance;
@@ -43,7 +45,7 @@ public class kNNClusterer extends Clusterer {
     
     static protected Map<String, Distance> _distances = new HashMap<String, Distance>();
 
-    List<List<Serializable>> _clusters;
+    ArrayList<Set<Serializable>> _clusters;
     
     static {
         _distances.put("levenshtein", new LevenshteinDistance());
@@ -94,15 +96,13 @@ public class kNNClusterer extends Clusterer {
 
         Distance _distance;
         JSONObject _config;
-        MatchData _data;
         float _radius;
-        HashSet<String> _set;
+        HashSet<String> _data;
         
         public BlockingClusteringRowVisitor(Distance d, JSONObject o) {
             _distance = d;
             _config = o;
-            _data = new MatchData();
-            _set = new HashSet<String>();
+            _data = new HashSet<String>();
             try {
                 _radius = (float) o.getJSONObject("params").getDouble("radius");
             } catch (JSONException e) {
@@ -116,41 +116,61 @@ public class kNNClusterer extends Clusterer {
             if (cell != null && cell.value != null) {
                 Object v = cell.value;
                 String s = (v instanceof String) ? ((String) v) : v.toString().intern();
-                if (!_set.contains(s)) {
-                    _set.add(s);
-                    _data.addInstance("", "", s);
-                }
+                _data.add(s);
             }
             return false;
         }
         
-        public Map<Serializable,List<Serializable>> getClusters() {
-            Map<Serializable,List<Serializable>> map = new HashMap<Serializable,List<Serializable>>();
-            ClusterNGramBlocker blocker = new ClusterNGramBlocker();
-            blocker.block(_data);
-            for (int i = 0; i < blocker.numCorrectPairs(); i++) {
-                Pair p = blocker.getPair(i);
-                String a = p.getA().unwrap();
-                String b = p.getB().unwrap();
-                List<Serializable> l = null; 
-                if (!map.containsKey(a)) {
-                    l = new ArrayList<Serializable>(); 
-                    map.put(a, l);
-                } else {
-                    l = map.get(a);
-                }
-                double d = _distance.d(a,b);
-                System.out.println(a + " | " + b + ": " + d);
-                if (d <= _radius) {
-                    l.add(b);
+        public Map<Serializable,Set<Serializable>> getClusters() {
+            NGramTokenizer tokenizer = new NGramTokenizer(4,4,false,SimpleTokenizer.DEFAULT_TOKENIZER);
+
+            Map<String,List<String>> blocks = new HashMap<String,List<String>>();
+            
+            for (String s : _data) {
+                Token[] tokens = tokenizer.tokenize(s);
+                for (Token t : tokens) {
+                    String ss = t.getValue();
+                    List<String> l = null;
+                    if (!blocks.containsKey(ss)) {
+                        l = new ArrayList<String>(); 
+                        blocks.put(ss, l);
+                    } else {
+                        l = blocks.get(ss);
+                    }
+                    l.add(s);
                 }
             }
-            return map;
+
+            Map<Serializable,Set<Serializable>> clusters = new HashMap<Serializable,Set<Serializable>>();
+            
+            for (List<String> list : blocks.values()) {
+                if (list.size() < 2) continue;
+                for (String a : list) {
+                    for (String b : list) {
+                        if (a == b) continue;
+                        double d = _distance.d(a,b);
+                        if (d <= _radius) {
+                            System.out.println(a + " | " + b + ": " + d);
+                            Set<Serializable> l = null; 
+                            if (!clusters.containsKey(a)) {
+                                l = new TreeSet<Serializable>();
+                                l.add(a);
+                                clusters.put(a, l);
+                            } else {
+                                l = clusters.get(a);
+                            }
+                            l.add(b);
+                        }
+                    }
+                }
+            }
+            
+            return clusters;
         }
     }
     
-    public class SizeComparator implements Comparator<List<Serializable>> {
-        public int compare(List<Serializable> o1, List<Serializable> o2) {
+    public class SizeComparator implements Comparator<Set<Serializable>> {
+        public int compare(Set<Serializable> o1, Set<Serializable> o2) {
             return o2.size() - o1.size();
         }
     }
@@ -166,14 +186,14 @@ public class kNNClusterer extends Clusterer {
         FilteredRows filteredRows = engine.getAllFilteredRows(true);
         filteredRows.accept(_project, visitor);
      
-        Map<Serializable,List<Serializable>> clusters = visitor.getClusters();
-        _clusters = new ArrayList<List<Serializable>>(clusters.values());
+        Map<Serializable,Set<Serializable>> clusters = visitor.getClusters();
+        _clusters = new ArrayList<Set<Serializable>>(clusters.values());
         Collections.sort(_clusters, new SizeComparator());
     }
     
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.array();        
-        for (List<Serializable> m : _clusters) {
+        for (Set<Serializable> m : _clusters) {
             if (m.size() > 1) {
                 writer.array();        
                 for (Serializable s : m) {
