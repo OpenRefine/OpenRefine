@@ -55,7 +55,7 @@ public class BinningClusterer extends Clusterer {
                     _params = new Object[1];
                     _params[0] = size;
                 } catch (JSONException e) {
-                    //Gridworks.warn("no ngram size specified, using default");
+                    //Gridworks.warn("No params specified, using default");
                 }
             }
         }

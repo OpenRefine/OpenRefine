@@ -9,7 +9,7 @@ public class NGramFingerprintKeyer extends Keyer {
     static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}|\\p{Space}");
     
     public String key(String s, Object... o) {
-        int ngram_size = 1;
+        int ngram_size = 2;
         if (o != null && o.length > 0 && o[0] instanceof Number) {
             ngram_size = (Integer) o[0];
         }

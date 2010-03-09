@@ -18,7 +18,14 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     
     var header = $('<div></div>').addClass("dialog-header").text("Cluster & Edit column " + this._columnName).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    var footer = $(
+        '<div class="dialog-footer">' +
+           '<table width="100%"><tr>' +
+             '<td class="left" style="text-align: left"></td>' + 
+             '<td class="right" style="text-align: right"></td>' +
+           '</tr></table>' +
+        '</div>'
+    ).appendTo(frame);
     
     var html = $(
         '<div>' +
@@ -51,7 +58,7 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                     '</td>' +
                     '<td>' +
                         '<div id="ngram-fingerprint-params" class="function-params hidden">' +
-                          'Ngram Size: <input type="text" value="1" bind="ngramSize" size="3">' +
+                          'Ngram Size: <input type="text" value="2" bind="ngramSize" size="3">' +
                         '</div>' + 
                         '<div class="knn-controls hidden">' +
                             '<span style="margin-right: 1em">Radius: <input type="text" value="1.0" bind="radius" size="3"></span>' +
@@ -127,10 +134,15 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     
     //this._elmts.clusterButton.click(function() { self._cluster(); });
     //this._elmts.unclusterButton.click(function() { self._uncluster(); });
+
+    var left_footer = footer.find(".left");    
+    $('<button></button>').text("Select All").click(function() { self._selectAll(); }).appendTo(left_footer);
+    $('<button></button>').text("Deselect All").click(function() { self._deselectAll(); }).appendTo(left_footer);
     
-    $('<button></button>').text("Apply & Re-Cluster").click(function() { self._onApplyReCluster(); }).appendTo(footer);
-    $('<button></button>').text("Apply & Close").click(function() { self._onApplyClose(); }).appendTo(footer);
-    $('<button></button>').text("Close").click(function() { self._dismiss(); }).appendTo(footer);
+    var right_footer = footer.find(".right");    
+    $('<button></button>').text("Apply & Re-Cluster").click(function() { self._onApplyReCluster(); }).appendTo(right_footer);
+    $('<button></button>').text("Apply & Close").click(function() { self._onApplyClose(); }).appendTo(right_footer);
+    $('<button></button>').text("Close").click(function() { self._dismiss(); }).appendTo(right_footer);
     
     this._level = DialogSystem.showDialog(frame);
     
@@ -175,7 +187,7 @@ FacetBasedEditDialog.prototype._renderTable = function(clusters) {
         
         var editCheck = $('<input type="checkbox" />')
             .appendTo(tr.insertCell(3))
-            .click(function() {
+            .change(function() {
                 cluster.edit = !cluster.edit;
             });
         if (cluster.edit) {
@@ -195,10 +207,10 @@ FacetBasedEditDialog.prototype._renderTable = function(clusters) {
     
     container.empty().append(table);
     
-    this._elmts.resultSummary.text(
+    this._elmts.resultSummary.html(
         (clusters.length === this._clusters.length) ?
-            (this._clusters.length + " clusters found.") :
-            (clusters.length + " clusters filtered from " + this._clusters.length + " total.")
+            ("<b>" + this._clusters.length + "</b> cluster" + ((this._clusters.length != 1) ? "s" : "") + " found") :
+            ("<b>" + clusters.length + "</b> cluster" + ((clusters.length != 1) ? "s" : "") + " filtered from <b>" + this._clusters.length + "</b> total")
     );
 };
 
@@ -206,7 +218,7 @@ FacetBasedEditDialog.prototype._cluster = function() {
     var self = this;
     
     var container = this._elmts.tableContainer.html(
-        '<div style="margin: 1em; font-size: 130%; color: #888;">Loading... <img src="/images/small-spinner.gif"></div>'
+        '<div style="margin: 1em; font-size: 130%; color: #888;">Clustering... <img src="/images/small-spinner.gif"></div>'
     );
     
     this._elmts.resultSummary.empty();
@@ -233,7 +245,7 @@ FacetBasedEditDialog.prototype._updateData = function(data) {
     var clusters = [];
     $.each(data, function() {
         var cluster = {
-            edit: true,
+            edit: false,
             choices: this,
             value: this[0].v,
             size: this.length
@@ -260,6 +272,14 @@ FacetBasedEditDialog.prototype._updateData = function(data) {
     
     this._resetFacets();
     this._updateAll();
+};
+
+FacetBasedEditDialog.prototype._selectAll = function() {
+    $(".facet-based-edit-dialog-entry-table input:not(:checked)").attr('checked', true).change();
+};
+
+FacetBasedEditDialog.prototype._deselectAll = function() {
+    $(".facet-based-edit-dialog-entry-table input:checked").attr('checked', false).change();
 };
 
 FacetBasedEditDialog.prototype._onApplyClose = function() {
