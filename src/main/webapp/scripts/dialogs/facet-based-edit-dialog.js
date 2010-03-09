@@ -373,7 +373,7 @@ FacetBasedEditDialog.Facet = function(dialog, title, property, elmt, clusters) {
     this._max = max;
     if (min >= max) {
         this._step = 0;
-        this._bins = [];
+        this._baseBins = [];
     } else {
         var diff = max - min;
         
