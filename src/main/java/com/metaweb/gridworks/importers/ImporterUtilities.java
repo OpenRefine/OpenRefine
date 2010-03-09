@@ -35,14 +35,31 @@ public class ImporterUtilities {
             String text = null;
             
             if (line.charAt(start) == '"') {
-                int next = line.indexOf('"', start + 1);
-                if (next < 0) {
-                    text = line.substring(start);
-                    start = line.length();
-                } else {
-                    text = line.substring(start, next + 1);
-                    start = next + 2;
-                }
+            	StringBuffer sb = new StringBuffer();
+            	
+            	start++; // skip over "
+            	while (start < line.length()) {
+	                int quote = line.indexOf('"', start);
+	                if (quote < 0) {
+	                	sb.append(line.substring(start));
+	                	start = line.length();
+	                	break;
+	                } else {
+	                	if (quote < line.length() - 1 && line.charAt(quote + 1) == '"') {
+	                		sb.append(line.substring(start, quote + 1)); // include " as well
+	                		start = quote + 2;
+	                	} else {
+	                		sb.append(line.substring(start, quote));
+	                		start = quote + 1;
+	                		if (start < line.length() && line.charAt(start) == ',') {
+	                			start++; // skip ,
+	                		}
+	                		break;
+	                	}
+	                }
+            	}
+            	
+                text = sb.toString();
             } else {
                 int next = line.indexOf(',', start);
                 if (next < 0) {
