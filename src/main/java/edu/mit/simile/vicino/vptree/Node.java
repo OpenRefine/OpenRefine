@@ -13,7 +13,7 @@ public class Node implements Serializable {
     private static final long serialVersionUID = -2077473220894258550L;
 
     private final Serializable obj;
-    private float distance;
+    private double distance;
 
     public Node(Serializable obj, int i) {
         this.obj = obj;
@@ -28,11 +28,11 @@ public class Node implements Serializable {
         return this.obj;
     }
 
-    public void setDistance(float distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 
-    public float getDistance() {
+    public double getDistance() {
         return distance;
     }
 

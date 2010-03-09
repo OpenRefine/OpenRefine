@@ -27,6 +27,8 @@ import edu.mit.simile.vicino.distances.BZip2Distance;
 import edu.mit.simile.vicino.distances.GZipDistance;
 import edu.mit.simile.vicino.distances.JaccardDistance;
 import edu.mit.simile.vicino.distances.JaroDistance;
+import edu.mit.simile.vicino.distances.JaroWinklerDistance;
+import edu.mit.simile.vicino.distances.JaroWinklerTFIDFDistance;
 import edu.mit.simile.vicino.distances.LevenshteinDistance;
 import edu.mit.simile.vicino.distances.PPMDistance;
 import edu.mit.simile.vicino.vptree.VPTreeBuilder;
@@ -41,8 +43,10 @@ public class kNNClusterer extends Clusterer {
     
     static {
         _distances.put("levenshtein", new LevenshteinDistance());
-        _distances.put("jaro", new JaroDistance());
         _distances.put("jaccard", new JaccardDistance());
+        _distances.put("jaro", new JaroDistance());
+        _distances.put("jaro-winkler", new JaroWinklerDistance());
+        _distances.put("jaro-winkler-tfidf", new JaroWinklerTFIDFDistance());
         _distances.put("gzip", new GZipDistance());
         _distances.put("bzip2", new BZip2Distance());
         _distances.put("ppm", new PPMDistance());

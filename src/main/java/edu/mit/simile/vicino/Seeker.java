@@ -27,8 +27,7 @@ public class Seeker extends Operator {
         VPTreeSeeker seeker = new VPTreeSeeker(d, tree);
 
         log("type a string|range then hit return:");
-        BufferedReader input = new BufferedReader(new InputStreamReader(
-                System.in));
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         String line = null;
         while ((line = input.readLine()) != null) {
             int index = line.indexOf('|');

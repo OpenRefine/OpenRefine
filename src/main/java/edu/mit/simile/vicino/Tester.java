@@ -12,7 +12,7 @@ public class Tester extends Operator {
         long start = System.currentTimeMillis();
 
         int size = strings.size();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size * size * size; i++) {
             String x = (String) strings.get((int) (Math.random() * size));
             String y = (String) strings.get((int) (Math.random() * size));
             String z = (String) strings.get((int) (Math.random() * size));
@@ -31,20 +31,14 @@ public class Tester extends Operator {
     }
 
     static boolean metric(String x, String y, String z, Distance d) {
-        float dxx = d.d(x, x);
+        double dxx = d.d(x, x);
         boolean identity = (dxx == 0.0f);
-        float dxy = d.d(x, y);
-        float dyx = d.d(y, x);
+        double dxy = d.d(x, y);
+        double dyx = d.d(y, x);
         boolean simmetrical = (dxy == dyx);
-        float dxz = d.d(x, z);
-        float dyz = d.d(y, z);
+        double dxz = d.d(x, z);
+        double dyz = d.d(y, z);
         boolean triangular = (dxz <= dxy + dyz);
         return (identity && simmetrical && triangular);
-    }
-
-    static Distance getDistance(String distance) throws Exception {
-        return (Distance) Class.forName(
-                "edu.mit.simile.vicino.distances." + distance + "Distance")
-                .newInstance();
     }
 }

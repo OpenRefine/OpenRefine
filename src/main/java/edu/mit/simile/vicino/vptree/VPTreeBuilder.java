@@ -117,7 +117,7 @@ public class VPTreeBuilder {
         for (int i = begin; i <= end; i++) {
             Object x = pivot.get();
             Object y = nodes[i].get();
-            float d = (x == y) ? 0.0f : distance.d(x.toString(), y.toString());
+            double d = (x == y) ? 0.0d : distance.d(x.toString(), y.toString());
             nodes[i].setDistance(d);
         }
     }

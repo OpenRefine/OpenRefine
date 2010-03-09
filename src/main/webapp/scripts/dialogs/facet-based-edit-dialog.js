@@ -40,8 +40,10 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                         '</select></div>' +
                         '<div class="knn-controls hidden">Distance Function: <select bind="distanceFunctionSelector">' +
                             '<option selected="true">levenshtein</option>' +
-                            '<option>jaro</option>' +
                             '<option>jaccard</option>' +
+                            '<option>jaro</option>' +
+                            '<option>jaro-winkler</option>' +
+                            '<option>jaro-winkler-TFIDF</option>' +
                             '<option>gzip</option>' +
                             '<option>bzip2</option>' +
                             '<option>PPM</option>' +

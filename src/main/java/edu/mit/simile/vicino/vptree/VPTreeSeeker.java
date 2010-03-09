@@ -19,14 +19,14 @@ public class VPTreeSeeker {
         this.tree = tree;
     }
 
-    public List<? extends Serializable> range(Object query, float range) {
+    public List<? extends Serializable> range(Serializable query, float range) {
         return rangeTraversal(query, range, tree.getRoot(), new ArrayList<Serializable>());
     }
 
-    private List<Serializable> rangeTraversal(Object query, float range, TNode tNode, List<Serializable> results) {
+    private List<Serializable> rangeTraversal(Serializable query, float range, TNode tNode, List<Serializable> results) {
 
         if (tNode != null) {
-            float distance = this.distance.d(query.toString(), tNode.toString());
+            double distance = this.distance.d(query.toString(), tNode.get().toString());
 
             if (distance < range) {
                 results.add(tNode.get());

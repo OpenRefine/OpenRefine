@@ -6,7 +6,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class GZipDistance extends PseudoMetricDistance {
 
-    public float d2(String x, String y) {
+    public double d2(String x, String y) {
         String str = x + y;
         float result = 0.0f;
         try {

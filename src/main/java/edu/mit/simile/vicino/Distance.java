@@ -2,6 +2,6 @@ package edu.mit.simile.vicino;
 
 public interface Distance {
 
-    public float d(String x, String y);
+    public double d(String x, String y);
 
 }
