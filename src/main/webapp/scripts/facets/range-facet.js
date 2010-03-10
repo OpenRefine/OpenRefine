@@ -5,9 +5,9 @@ function RangeFacet(div, config, options) {
     
     this._from = ("from" in this._config) ? this._config.from : null;
     this._to = ("to" in this._config) ? this._config.to : null;
-    this._selectNonNumeric = true;
-    this._selectBlank = true;
-    this._selectError = true;
+    this._selectNonNumeric = ("selectNonNumeric" in this._config) ? this._config.selectNonNumeric : true;
+    this._selectBlank = ("selectBlank" in this._config) ? this._config.selectBlank : true;
+    this._selectError = ("selectError" in this._config) ? this._config.selectError : true;
     
     this._nonNumericCount = 0;
     this._blankCount = 0;
