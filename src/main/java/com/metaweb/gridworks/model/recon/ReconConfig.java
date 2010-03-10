@@ -33,7 +33,7 @@ abstract public class ReconConfig implements Jsonizable {
         Project     project, 
         int         rowIndex, 
         Row         row,
-        String        columnName,
+        String      columnName,
         Cell        cell
     );
     

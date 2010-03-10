@@ -79,7 +79,7 @@ MenuSystem.positionMenuLeftRight = function(menu, elmt) {
     }
     
     if (offset.left + elmt.outerWidth() - document.body.scrollLeft + menu.outerWidth() > windowWidth - 10) {
-        menu.css("left", (offset.left - menu.outerWidth()) + "px");
+        menu.css("left", Math.max(10, offset.left - menu.outerWidth()) + "px");
     } else {
         menu.css("left", (offset.left + elmt.outerWidth()) + "px");
     }

@@ -151,9 +151,20 @@ public class HeuristicReconConfig extends ReconConfig {
                     jsonWriter.key("/type/object/type"); jsonWriter.value(typeID);
                     
                     for (ColumnDetail c : columnDetails) {
-                        int cellIndex = project.columnModel.getColumnByName(c.columnName).getCellIndex();
+                        int detailCellIndex = project.columnModel.getColumnByName(c.columnName).getCellIndex();
                         
-                        Cell cell2 = row.getCell(cellIndex);
+                        Cell cell2 = row.getCell(detailCellIndex);
+                        if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) {
+                            int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
+                            if (cellIndex < row.contextRowSlots.length) {
+                                int contextRowIndex = row.contextRowSlots[cellIndex];
+                                if (contextRowIndex >= 0 && contextRowIndex < project.rows.size()) {
+                                    Row row2 = project.rows.get(contextRowIndex);
+                                    
+                                    cell2 = row2.getCell(detailCellIndex);
+                                }
+                            }
+                        }
                         if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
                             jsonWriter.key(c.property.id);
                             
@@ -293,7 +304,7 @@ public class HeuristicReconConfig extends ReconConfig {
                     
                     recon.setFeature(Recon.Feature_typeMatch, false);
                     for (String typeID : candidate.typeIDs) {
-                        if (typeID.equals(typeID)) {
+                        if (this.typeID.equals(typeID)) {
                             recon.setFeature(Recon.Feature_typeMatch, true);
                             if (autoMatch && score >= 100) {
                                 recon.match = candidate;
@@ -392,7 +403,7 @@ public class HeuristicReconConfig extends ReconConfig {
                     
                     recon.setFeature(Recon.Feature_typeMatch, false);
                     for (String typeID : candidate.typeIDs) {
-                        if (typeID.equals(typeID)) {
+                        if (this.typeID.equals(typeID)) {
                             recon.setFeature(Recon.Feature_typeMatch, true);
                             if (autoMatch && 
                                 (score > 0.6 ||
