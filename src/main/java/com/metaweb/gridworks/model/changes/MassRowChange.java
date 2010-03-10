@@ -41,12 +41,12 @@ public class MassRowChange implements Change {
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("newRowCount="); writer.write(Integer.toString(_newRows.size())); writer.write('\n');
         for (Row row : _newRows) {
-            row.save(writer);
+            row.save(writer, options);
             writer.write('\n');
         }
         writer.write("oldRowCount="); writer.write(Integer.toString(_oldRows.size())); writer.write('\n');
         for (Row row : _oldRows) {
-            row.save(writer);
+            row.save(writer, options);
             writer.write('\n');
         }
         writer.write("/ec/\n"); // end of change marker

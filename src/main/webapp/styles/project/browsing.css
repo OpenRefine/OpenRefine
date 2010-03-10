@@ -125,7 +125,7 @@ img.facet-choice-link {
 .facet-range-slider {
 }
 .facet-range-status {
-    margin-top: 10px;
+    margin: 10px 0;
     text-align: center;
     color: #aaa;
 }

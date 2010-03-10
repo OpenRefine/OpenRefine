@@ -5,6 +5,13 @@ function RangeFacet(div, config, options) {
     
     this._from = ("from" in this._config) ? this._config.from : null;
     this._to = ("to" in this._config) ? this._config.to : null;
+    this._selectNonNumeric = true;
+    this._selectBlank = true;
+    this._selectError = true;
+    
+    this._nonNumericCount = 0;
+    this._blankCount = 0;
+    this._errorCount = 0;
     
     this._error = false;
     this._initializedUI = false;
@@ -23,6 +30,9 @@ RangeFacet.prototype._setDefaults = function() {
         this._to = this._config.max;
     }
     
+    this._selectNonNumeric = true;
+    this._selectBlank = true;
+    this._selectError = true;
 };
 
 RangeFacet.reconstruct = function(div, uiState) {
@@ -45,7 +55,10 @@ RangeFacet.prototype.getJSON = function() {
         name: this._config.name,
         mode: this._config.mode,
         expression: this._config.expression,
-        columnName: this._config.columnName
+        columnName: this._config.columnName,
+        selectNonNumeric: this._selectNonNumeric,
+        selectBlank: this._selectBlank,
+        selectError: this._selectError
     };
     
     if (this._config.mode == "min" || this._config.mode == "range") {
@@ -63,6 +76,10 @@ RangeFacet.prototype.getJSON = function() {
 };
 
 RangeFacet.prototype.hasSelection = function() {
+    if (!this._selectNonNumeric || !this._selectBlank || !this._selectError) {
+        return true;
+    }
+    
     switch (this._config.mode) {
     case "min":
         return this._from != null && (!this._initializedUI || this._from > this._config.min);
@@ -97,6 +114,10 @@ RangeFacet.prototype._initializeUI = function() {
             self._sliderDiv.slider("values", 0, self._from);
             self._sliderDiv.slider("values", 1, self._to);
         }
+        self._selectNonNumeric = true;
+        self._selectBlank = true;
+        self._selectError = true;
+        
         self._setRangeIndicators();
         self._updateRest();
     }).prependTo(headerDiv);
@@ -118,6 +139,7 @@ RangeFacet.prototype._initializeUI = function() {
     this._histogramDiv = $('<div></div>').addClass("facet-range-histogram").appendTo(bodyDiv);
     this._sliderDiv = $('<div></div>').addClass("facet-range-slider").appendTo(bodyDiv);
     this._statusDiv = $('<div></div>').addClass("facet-range-status").appendTo(bodyDiv);
+    this._otherChoicesDiv = $('<div></div>').addClass("facet-range-other-choices").appendTo(bodyDiv);
     
     var onSlide = function(event, ui) {
         switch (self._config.mode) {
@@ -164,6 +186,56 @@ RangeFacet.prototype._initializeUI = function() {
     
     this._sliderDiv.slider(sliderConfig);
     this._setRangeIndicators();
+    this._renderOtherChoices();
+};
+
+RangeFacet.prototype._renderOtherChoices = function() {
+    var self = this;
+    var container = this._otherChoicesDiv.empty();
+    
+    var table = $('<table>').attr("cellpadding", "0").attr("cellspacing", "1").css("white-space", "pre").appendTo(container)[0];
+    var tr0 = table.insertRow(0);
+    var tr1 = table.insertRow(1);
+    
+    var td00 = $(tr0.insertCell(0)).attr("width", "1%");
+    var nonNumericCheck = $('<input type="checkbox" />').appendTo(td00).change(function() {
+        self._selectNonNumeric = !self._selectNonNumeric;
+        self._updateRest();
+    });
+    if (this._selectNonNumeric) {
+        nonNumericCheck[0].checked = true;
+    }
+    
+    var td01 = $(tr0.insertCell(1)).attr("colspan", "3");
+    $('<span>').text("Non-numeric ").addClass("facet-choice-label").appendTo(td01);
+    $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(td01);
+    
+    var td10 = $(tr1.insertCell(0)).attr("width", "1%");
+    var blankCheck = $('<input type="checkbox" />').appendTo(td10).change(function() {
+        self._selectBlank = !self._selectBlank;
+        self._updateRest();
+    });
+    if (this._selectBlank) {
+        blankCheck[0].checked = true;
+    }
+    
+    var td11 = $(tr1.insertCell(1));
+    $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(td11);
+    $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(td11);
+    
+    var td12 = $(tr1.insertCell(2)).attr("width", "1%");
+    var errorCheck = $('<input type="checkbox" />').appendTo(td12).change(function() {
+        self._selectError = !self._selectError;
+        self._updateRest();
+    });
+    if (this._selectError) {
+        errorCheck[0].checked = true;
+    }
+    
+    var td13 = $(tr1.insertCell(3));
+    $('<span>').text("Error ").addClass("facet-choice-label").appendTo(td13);
+    $('<span>').text(this._errorCount).addClass("facet-choice-count").appendTo(td13);
+    
 };
 
 RangeFacet.prototype._setRangeIndicators = function() {
@@ -178,6 +250,7 @@ RangeFacet.prototype._setRangeIndicators = function() {
     default:
         text = this._from + " to " + this._to;
     }
+    
     this._statusDiv.text(text);
 };
 
@@ -204,6 +277,10 @@ RangeFacet.prototype.updateState = function(data) {
                 this._to = data.max;
             }
         }
+        
+        this._nonNumericCount = data.nonNumericCount;
+        this._blankCount = data.blankCount;
+        this._errorCount = data.errorCount;
     } else {
         this._error = true;
     }
@@ -255,6 +332,7 @@ RangeFacet.prototype.render = function() {
     }
     
     this._setRangeIndicators();
+    this._renderOtherChoices();
 };
 
 RangeFacet.prototype._reset = function() {

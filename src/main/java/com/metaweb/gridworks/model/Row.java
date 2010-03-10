@@ -149,10 +149,10 @@ public class Row implements HasFields, Jsonizable {
         writer.endObject();
     }
     
-    public void save(Writer writer) {
+    public void save(Writer writer, Properties options) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
+            write(jsonWriter, options);
         } catch (JSONException e) {
             e.printStackTrace();
         }

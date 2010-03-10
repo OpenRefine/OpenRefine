@@ -10,11 +10,15 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class ExpressionNumericRowBinner implements RowVisitor {
-    final protected Evaluable         _evaluable;
+    final protected Evaluable       _evaluable;
     final protected int             _cellIndex;
-    final protected NumericBinIndex    _index;
+    final protected NumericBinIndex _index;
     
     final public int[] bins;
+    
+    public int nonNumericCount;
+    public int blankCount;
+    public int errorCount;
     
     public ExpressionNumericRowBinner(Evaluable evaluable, int cellIndex, NumericBinIndex index) {
         _evaluable = evaluable;
@@ -30,26 +34,32 @@ public class ExpressionNumericRowBinner implements RowVisitor {
         ExpressionUtils.bind(bindings, row, rowIndex, cell);
         
         Object value = _evaluable.evaluate(bindings);
-        if (value != null) {
-            if (value.getClass().isArray()) {
-                Object[] a = (Object[]) value;
-                for (Object v : a) {
-                    processValue(v);
-                }
-            } else {
-                processValue(value);
+        if (value != null && value.getClass().isArray()) {
+            Object[] a = (Object[]) value;
+            for (Object v : a) {
+                processValue(v);
             }
+        } else {
+            processValue(value);
         }
         return false;
     }
     
     protected void processValue(Object value) {
-        if (value instanceof Number) {
-            double d = ((Number) value).doubleValue();
-            
-            int bin = (int) Math.round((d - _index.getMin()) / _index.getStep());
-            
-            bins[bin]++;
+        if (ExpressionUtils.isError(value)) {
+            errorCount++;
+        } else if (ExpressionUtils.isNonBlankData(value)) {
+            if (value instanceof Number) {
+                double d = ((Number) value).doubleValue();
+                
+                int bin = (int) Math.round((d - _index.getMin()) / _index.getStep());
+                
+                bins[bin]++;
+            } else {
+                nonNumericCount++;
+            }
+        } else {
+            blankCount++;
         }
     }
 }

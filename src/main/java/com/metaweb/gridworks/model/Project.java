@@ -121,7 +121,7 @@ public class Project {
         
         writer.write("rowCount="); writer.write(Integer.toString(rows.size())); writer.write('\n');
         for (Row row : rows) {
-            row.save(writer); writer.write('\n');
+            row.save(writer, options); writer.write('\n');
         }
     }
     

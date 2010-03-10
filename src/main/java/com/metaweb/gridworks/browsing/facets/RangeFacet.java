@@ -13,24 +13,31 @@ import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.util.JSONUtilities;
 
 public class RangeFacet implements Facet {
     protected String     _name;
     protected String     _expression;
     protected String     _columnName;
     protected int        _cellIndex;
-    protected Evaluable _eval;
+    protected Evaluable  _eval;
     
     protected String    _mode;
     protected double    _min;
     protected double    _max;
     protected double    _step;
-    protected int[]        _baseBins;
-    protected int[]        _bins;
+    protected int[]     _baseBins;
+    protected int[]     _bins;
+    protected int       _nonNumericCount;
+    protected int       _blankCount;
+    protected int       _errorCount;
     
     protected double    _from;
     protected double    _to;
-    protected boolean    _selected;
+    protected boolean   _selected;
+    protected boolean   _selectNonNumeric;
+    protected boolean   _selectBlank;
+    protected boolean   _selectError;
     
     public RangeFacet() {
     }
@@ -71,6 +78,10 @@ public class RangeFacet implements Facet {
             }
         }
         
+        writer.key("nonNumericCount"); writer.value(_nonNumericCount);
+        writer.key("blankCount"); writer.value(_blankCount);
+        writer.key("errorCount"); writer.value(_errorCount);
+        
         writer.endObject();
     }
 
@@ -100,24 +111,32 @@ public class RangeFacet implements Facet {
                 _selected = true;
             }
         }
+        
+        _selectNonNumeric = JSONUtilities.getBoolean(o, "selectNonNumeric", true);
+        _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", true);
+        _selectError = JSONUtilities.getBoolean(o, "selectError", true);
+        
+        if (!_selectNonNumeric || !_selectBlank || !_selectError) {
+            _selected = true;
+        }
     }
 
     public RowFilter getRowFilter() {
         if (_selected) {
             if ("min".equals(_mode)) {
-                return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
+                return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex, _selectNonNumeric, _selectBlank, _selectError) {
                     protected boolean checkValue(double d) {
                         return d >= _from;
                     };
                 };
             } else if ("max".equals(_mode)) {
-                return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
+                return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex, _selectNonNumeric, _selectBlank, _selectError) {
                     protected boolean checkValue(double d) {
                         return d <= _to;
                     };
                 };
             } else {
-                return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex) {
+                return new ExpressionNumberComparisonRowFilter(_eval, _cellIndex, _selectNonNumeric, _selectBlank, _selectError) {
                     protected boolean checkValue(double d) {
                         return d >= _from && d <= _to;
                     };
@@ -157,5 +176,8 @@ public class RangeFacet implements Facet {
         filteredRows.accept(project, binner);
         
         _bins = binner.bins;
+        _nonNumericCount = binner.nonNumericCount;
+        _blankCount = binner.blankCount;
+        _errorCount = binner.errorCount;
     }
 }
