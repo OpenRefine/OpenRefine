@@ -16,6 +16,7 @@ public class ExpressionNumericRowBinner implements RowVisitor {
     
     final public int[] bins;
     
+    public int numericCount;
     public int nonNumericCount;
     public int blankCount;
     public int errorCount;
@@ -50,6 +51,8 @@ public class ExpressionNumericRowBinner implements RowVisitor {
             errorCount++;
         } else if (ExpressionUtils.isNonBlankData(value)) {
             if (value instanceof Number) {
+                numericCount++;
+                
                 double d = ((Number) value).doubleValue();
                 
                 int bin = (int) Math.round((d - _index.getMin()) / _index.getStep());

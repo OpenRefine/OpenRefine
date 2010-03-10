@@ -11,6 +11,7 @@ import com.metaweb.gridworks.model.Row;
 abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     final protected Evaluable  _evaluable;
     final protected int        _cellIndex;
+    final protected boolean _selectNumeric;
     final protected boolean _selectNonNumeric;
     final protected boolean _selectBlank;
     final protected boolean _selectError;
@@ -18,12 +19,14 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     public ExpressionNumberComparisonRowFilter(
         Evaluable evaluable, 
         int cellIndex,
+        boolean selectNumeric,
         boolean selectNonNumeric,
         boolean selectBlank,
         boolean selectError
     ) {
         _evaluable = evaluable;
         _cellIndex = cellIndex;
+        _selectNumeric = selectNumeric;
         _selectNonNumeric = selectNonNumeric;
         _selectBlank = selectBlank;
         _selectError = selectError;
@@ -56,7 +59,7 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
             return _selectError;
         } else if (ExpressionUtils.isNonBlankData(v)) {
             if (v instanceof Number) {
-                return checkValue(((Number) v).doubleValue());
+                return _selectNumeric && checkValue(((Number) v).doubleValue());
             } else {
                 return _selectNonNumeric;
             }

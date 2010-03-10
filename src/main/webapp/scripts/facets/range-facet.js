@@ -5,10 +5,13 @@ function RangeFacet(div, config, options) {
     
     this._from = ("from" in this._config) ? this._config.from : null;
     this._to = ("to" in this._config) ? this._config.to : null;
+    
+    this._selectNumeric = ("selectNumeric" in this._config) ? this._config.selectNumeric : true;
     this._selectNonNumeric = ("selectNonNumeric" in this._config) ? this._config.selectNonNumeric : true;
     this._selectBlank = ("selectBlank" in this._config) ? this._config.selectBlank : true;
     this._selectError = ("selectError" in this._config) ? this._config.selectError : true;
     
+    this._numericCount = 0;
     this._nonNumericCount = 0;
     this._blankCount = 0;
     this._errorCount = 0;
@@ -30,6 +33,7 @@ RangeFacet.prototype._setDefaults = function() {
         this._to = this._config.max;
     }
     
+    this._selectNumeric = true;
     this._selectNonNumeric = true;
     this._selectBlank = true;
     this._selectError = true;
@@ -56,6 +60,7 @@ RangeFacet.prototype.getJSON = function() {
         mode: this._config.mode,
         expression: this._config.expression,
         columnName: this._config.columnName,
+        selectNumeric: this._selectNumeric,
         selectNonNumeric: this._selectNonNumeric,
         selectBlank: this._selectBlank,
         selectError: this._selectError
@@ -76,7 +81,7 @@ RangeFacet.prototype.getJSON = function() {
 };
 
 RangeFacet.prototype.hasSelection = function() {
-    if (!this._selectNonNumeric || !this._selectBlank || !this._selectError) {
+    if (!this._selectNumeric || !this._selectNonNumeric || !this._selectBlank || !this._selectError) {
         return true;
     }
     
@@ -114,6 +119,7 @@ RangeFacet.prototype._initializeUI = function() {
             self._sliderDiv.slider("values", 0, self._from);
             self._sliderDiv.slider("values", 1, self._to);
         }
+        self._selectNumeric = true;
         self._selectNonNumeric = true;
         self._selectBlank = true;
         self._selectError = true;
@@ -156,6 +162,7 @@ RangeFacet.prototype._initializeUI = function() {
         self._setRangeIndicators();
     };
     var onStop = function() {
+        self._selectNumeric = true;
         self._updateRest();
     };
     var sliderConfig = {
@@ -198,7 +205,20 @@ RangeFacet.prototype._renderOtherChoices = function() {
     var tr1 = table.insertRow(1);
     
     var td00 = $(tr0.insertCell(0)).attr("width", "1%");
-    var nonNumericCheck = $('<input type="checkbox" />').appendTo(td00).change(function() {
+    var numericCheck = $('<input type="checkbox" />').appendTo(td00).change(function() {
+        self._selectNumeric = !self._selectNumeric;
+        self._updateRest();
+    });
+    if (this._selectNumeric) {
+        numericCheck[0].checked = true;
+    }
+    
+    var td01 = $(tr0.insertCell(1));
+    $('<span>').text("Numeric ").addClass("facet-choice-label").appendTo(td01);
+    $('<span>').text(this._numericCount).addClass("facet-choice-count").appendTo(td01);
+    
+    var td02 = $(tr0.insertCell(2)).attr("width", "1%");
+    var nonNumericCheck = $('<input type="checkbox" />').appendTo(td02).change(function() {
         self._selectNonNumeric = !self._selectNonNumeric;
         self._updateRest();
     });
@@ -206,9 +226,9 @@ RangeFacet.prototype._renderOtherChoices = function() {
         nonNumericCheck[0].checked = true;
     }
     
-    var td01 = $(tr0.insertCell(1)).attr("colspan", "3");
-    $('<span>').text("Non-numeric ").addClass("facet-choice-label").appendTo(td01);
-    $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(td01);
+    var td03 = $(tr0.insertCell(3));
+    $('<span>').text("Non-numeric ").addClass("facet-choice-label").appendTo(td03);
+    $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(td03);
     
     var td10 = $(tr1.insertCell(0)).attr("width", "1%");
     var blankCheck = $('<input type="checkbox" />').appendTo(td10).change(function() {
@@ -278,6 +298,7 @@ RangeFacet.prototype.updateState = function(data) {
             }
         }
         
+        this._numericCount = data.numericCount;
         this._nonNumericCount = data.nonNumericCount;
         this._blankCount = data.blankCount;
         this._errorCount = data.errorCount;
