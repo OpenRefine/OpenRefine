@@ -24,7 +24,15 @@ DataTableView.prototype.update = function(onDone) {
 
 DataTableView.prototype.render = function() {
     var self = this;
-    var container = this._div.empty();
+    var container = this._div;
+    
+    var scrollLeft = 0;
+    var oldTableDiv = container.find(".data-table-container");
+    if (oldTableDiv.length > 0) {
+        scrollLeft = oldTableDiv[0].scrollLeft;
+    }
+    
+    container.empty();
     
     var divSummary = $('<div></div>').addClass("viewPanel-summary").appendTo(container);
     
@@ -277,6 +285,8 @@ DataTableView.prototype.render = function() {
      *  Finally, inject the table into the DOM
      */
     $(table).appendTo(tableDiv);
+    
+    tableDiv[0].scrollLeft = scrollLeft;
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
