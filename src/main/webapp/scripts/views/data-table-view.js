@@ -2,6 +2,7 @@ function DataTableView(div) {
     this._div = div;
     this._pageSize = 20;
     this._showRecon = true;
+    this._collapsedColumnNames = {};
     
     this._initializeUI();
     this._showRows(0);
@@ -190,9 +191,9 @@ DataTableView.prototype.render = function() {
         var td = trHead.insertCell(trHead.cells.length);
         $(td).addClass("column-header");
         
-        if (column.collapsed) {
+        if (column.name in self._collapsedColumnNames) {
             $(td).html("&nbsp;").attr("title", column.name).click(function(evt) {
-                column.collapsed = false;
+                delete self._collapsedColumnNames[column.name]
                 self.render();
             });
         } else {
@@ -253,7 +254,7 @@ DataTableView.prototype.render = function() {
         for (var i = 0; i < columns.length; i++) {
             var column = columns[i];
             var td = tr.insertCell(tr.cells.length);
-            if (column.collapsed) {
+            if (column.name in self._collapsedColumnNames) {
                 td.innerHTML = "&nbsp;";
             } else {
                 var cell = (column.cellIndex < cells.length) ? cells[column.cellIndex] : null;

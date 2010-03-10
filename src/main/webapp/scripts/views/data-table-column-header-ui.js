@@ -288,17 +288,28 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {
                     label: "Collapse This Column",
                     click: function() {
-                        theProject.columnModel.columns[self._columnIndex].collapsed = true;
+                        self._dataTableView._collapsedColumnNames[self._column.name] = true;
                         self._dataTableView.render();
                     }
                 },
                 {
                     label: "Collapse All Other Columns",
                     click: function() {
+                        var collapsedColumnNames = {}
                         for (var i = 0; i < theProject.columnModel.columns.length; i++) {
                             if (i != self._columnIndex) {
-                                theProject.columnModel.columns[i].collapsed = true;
+                                collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
                             }
+                        }
+                        self._dataTableView._collapsedColumnNames = collapsedColumnNames;
+                        self._dataTableView.render();
+                    }
+                },
+                {
+                    label: "Collapse All Columns To Left",
+                    click: function() {
+                        for (var i = 0; i < self._columnIndex; i++) {
+                            self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
                         }
                         self._dataTableView.render();
                     }
@@ -307,7 +318,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     label: "Collapse All Columns To Right",
                     click: function() {
                         for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
-                            theProject.columnModel.columns[i].collapsed = true;
+                            self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
                         }
                         self._dataTableView.render();
                     }
