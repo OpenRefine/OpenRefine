@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -52,6 +53,7 @@ public class BinningClusterer extends Clusterer {
             if (k instanceof NGramFingerprintKeyer) {
                 try {
                     int size = _config.getJSONObject("params").getInt("ngram-size");
+                    Gridworks.log("Using ngram size: " + size);
                     _params = new Object[1];
                     _params[0] = size;
                 } catch (JSONException e) {

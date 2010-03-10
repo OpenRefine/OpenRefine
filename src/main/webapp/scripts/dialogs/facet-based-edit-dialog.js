@@ -29,7 +29,7 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     
     var html = $(
         '<div>' +
-            '<div class="facet-based-edit-dialog-controls"><table width="100%">' +
+            '<div class=""><table width="100%">' +
                 '<tr>' +
                     '<td>' +
                         'Method: <select bind="methodSelector">' +
@@ -58,11 +58,11 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                     '</td>' +
                     '<td>' +
                         '<div id="ngram-fingerprint-params" class="function-params hidden">' +
-                          'Ngram Size: <input type="text" value="2" bind="ngramSize" size="3">' +
+                          'Ngram Size: <input type="text" value="2" bind="ngramSize" name="ngram-size" size="3" class="param" datatype="int">' +
                         '</div>' + 
                         '<div class="knn-controls hidden">' +
-                            '<span style="margin-right: 1em">Radius: <input type="text" value="1.0" bind="radius" size="3"></span>' +
-                            '<span>Block Chars: <input type="text" value="6" bind="ngramBlock" size="3"></span>' +
+                            '<span style="margin-right: 1em">Radius: <input type="text" value="1.0" bind="radius" name="radius" size="3" class="param" datatype="float"></span>' +
+                            '<span>Block Chars: <input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="3" class="param" datatype="int"></span>' +
                         '</div>' + 
                     '</td>' +
                     '<td bind="resultSummary" align="right">' +
@@ -99,42 +99,33 @@ FacetBasedEditDialog.prototype._createDialog = function() {
         self._function = $(this).find("option:selected").text();
         $(".function-params").hide();
         $("#" + self._function + "-params").show();
-        self._cluster();
+        params_changer();
     };
     
     this._elmts.keyingFunctionSelector.change(changer);
     this._elmts.distanceFunctionSelector.change(changer);
     
-    this._elmts.ngramSize.change(function() {
-        try {
-            self._params = { "ngram-size" : parseInt($(this).val()) };
-            self._cluster();
-        } catch (e) {
-            alert("ngram size must be a number");
-        }
-    });
-
-    this._elmts.radius.change(function() {
-        try {
-            self._params = { "radius" : parseFloat($(this).val()) };
-            self._cluster();
-        } catch (e) {
-            alert("radius must be a number");
-        }
-    });
-
-    this._elmts.ngramBlock.change(function() {
-        try {
-            self._params = { "blocking-ngram-size" : parseInt($(this).val()) };
-            self._cluster();
-        } catch (e) {
-            alert("radius must be a number");
-        }
-    });
+    var params_changer = function() {
+        self._params = {};
+        $(".dialog-body input.param:visible").each(function() {
+            var e = $(this);
+            var name = e.attr('name');
+            var datatype = e.attr('datatype') || 'string';
+            var value = e.val(); 
+            if (datatype == 'int') {
+                value = parseInt(value);
+            } else if (datatype == 'float') {
+                value = parseFloat(value);
+            }   
+            self._params[name] = value;
+        });
+        self._cluster();
+    };
     
-    //this._elmts.clusterButton.click(function() { self._cluster(); });
-    //this._elmts.unclusterButton.click(function() { self._uncluster(); });
-
+    this._elmts.ngramSize.change(params_changer);
+    this._elmts.radius.change(params_changer);
+    this._elmts.ngramBlock.change(params_changer);
+    
     var left_footer = footer.find(".left");    
     $('<button></button>').text("Select All").click(function() { self._selectAll(); }).appendTo(left_footer);
     $('<button></button>').text("Deselect All").click(function() { self._deselectAll(); }).appendTo(left_footer);

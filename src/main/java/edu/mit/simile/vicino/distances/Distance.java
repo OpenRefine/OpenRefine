@@ -8,6 +8,10 @@ public abstract class Distance {
         return counter;
     }
     
+    public void resetCounter() {
+        counter = 0;
+    }
+    
     public abstract double d(String x, String y);
 
 }

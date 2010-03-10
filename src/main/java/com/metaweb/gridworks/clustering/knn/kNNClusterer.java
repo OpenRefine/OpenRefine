@@ -107,7 +107,9 @@ public class kNNClusterer extends Clusterer {
             try {
                 JSONObject params = o.getJSONObject("params");
                 _radius = params.getDouble("radius");
+                Gridworks.warn("Use radius: " + _radius);
                 _blockingNgramSize = params.getInt("blocking-ngram-size");
+                Gridworks.warn("Use blocking ngram size: " + _blockingNgramSize);
             } catch (JSONException e) {
                 Gridworks.warn("No parameters found, using defaults");
             }
@@ -143,10 +145,13 @@ public class kNNClusterer extends Clusterer {
                 }
             }
 
+            int block_count = 0;
+            
             Map<Serializable,Set<Serializable>> clusters = new HashMap<Serializable,Set<Serializable>>();
             
             for (List<String> list : blocks.values()) {
                 if (list.size() < 2) continue;
+                block_count++;
                 for (String a : list) {
                     for (String b : list) {
                         if (a == b) continue;
@@ -168,7 +173,8 @@ public class kNNClusterer extends Clusterer {
                 }
             }
             
-            Gridworks.log("Calculated " + _distance.getCount() + " distances");
+            Gridworks.log("Calculated " + _distance.getCount() + " distances in " + block_count + " blocks.");
+            _distance.resetCounter();
             return clusters;
         }
     }
