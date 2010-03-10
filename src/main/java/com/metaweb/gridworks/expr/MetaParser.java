@@ -1,5 +1,10 @@
 package com.metaweb.gridworks.expr;
 
+import java.io.StringReader;
+import java.util.Properties;
+
+import clojure.lang.IFn;
+
 import com.metaweb.gridworks.gel.Parser;
 
 abstract public class MetaParser {
@@ -29,19 +34,17 @@ abstract public class MetaParser {
     }
     
     static protected Evaluable parseJython(String s) throws ParsingException {
-        return null;
+        return new JythonEvaluable(s);
     }
     
     static protected Evaluable parseClojure(String s) throws ParsingException {
-        
-        /*
         try {
             IFn fn = (IFn) clojure.lang.Compiler.load(new StringReader(
-                    "(fn [value row cells] " + s + ")"
+                "(fn [value cell cells row rowIndex] " + s + ")"
             ));
             
             return new Evaluable() {
-                final private IFn _fn;
+                private IFn _fn;
                 
                 public Evaluable init(IFn fn) {
                     _fn = fn;
@@ -51,9 +54,11 @@ abstract public class MetaParser {
                 public Object evaluate(Properties bindings) {
                     try {
                         return _fn.invoke(
-                            bindings.get("value"), 
-                            bindings.get("row"), 
-                            bindings.get("cells")
+                            bindings.get("value"),
+                            bindings.get("cell"),
+                            bindings.get("cells"),
+                            bindings.get("row"),
+                            bindings.get("rowIndex")
                         );
                     } catch (Exception e) {
                         return new EvalError(e.getMessage());
@@ -61,9 +66,7 @@ abstract public class MetaParser {
                 }
             }.init(fn);
         } catch (Exception e) {
-            return new ParsingException(e);
+            throw new ParsingException(e.getMessage());
         }
-        */
-        return null;
     }
 }
