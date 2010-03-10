@@ -24,10 +24,14 @@ public class CellChange implements Change {
 
     public void apply(Project project) {
         project.rows.get(row).setCell(cellIndex, newCell);
+        
+        project.columnModel.getColumnByCellIndex(cellIndex).clearPrecomputes();
     }
 
     public void revert(Project project) {
         project.rows.get(row).setCell(cellIndex, oldCell);
+        
+        project.columnModel.getColumnByCellIndex(cellIndex).clearPrecomputes();
     }
     
     public void save(Writer writer, Properties options) throws IOException {
