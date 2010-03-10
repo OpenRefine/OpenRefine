@@ -77,7 +77,7 @@ public class BinningClusterer extends Clusterer {
                     }
                 } else {
                     Map<String,Integer> m = new TreeMap<String,Integer>();
-                    m.put(v,0);
+                    m.put(v,1);
                     _map.put(key, m);
                 }
             }

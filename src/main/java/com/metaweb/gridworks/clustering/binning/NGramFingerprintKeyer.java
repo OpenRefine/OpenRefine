@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-public class NGramFingerprintKeyer extends Keyer {
+public class NGramFingerprintKeyer extends FingerprintKeyer {
 
     static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}|\\p{Space}");
     
@@ -18,10 +18,10 @@ public class NGramFingerprintKeyer extends Keyer {
         TreeSet<String> set = ngram_split(s,ngram_size);
         StringBuffer b = new StringBuffer();
         Iterator<String> i = set.iterator();
-        while (i.hasNext()) {
+        while (i.hasNext()) { // join ordered fragments back together
             b.append(i.next());
         }
-        return b.toString(); // join ordered fragments back together
+        return asciify(b.toString()); // find ASCII equivalent to characters 
     }
 
     protected TreeSet<String> ngram_split(String s, int size) {

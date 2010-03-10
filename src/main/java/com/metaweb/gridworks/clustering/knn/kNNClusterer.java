@@ -25,7 +25,6 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.wcohen.ss.api.Token;
-import com.wcohen.ss.tokens.NGramTokenizer;
 import com.wcohen.ss.tokens.SimpleTokenizer;
 
 import edu.mit.simile.vicino.distances.BZip2Distance;
@@ -146,7 +145,7 @@ public class kNNClusterer extends Clusterer {
             }
 
             int block_count = 0;
-            
+                        
             Map<Serializable,Set<Serializable>> clusters = new HashMap<Serializable,Set<Serializable>>();
             
             for (List<String> list : blocks.values()) {

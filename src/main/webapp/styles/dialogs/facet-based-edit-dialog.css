@@ -46,6 +46,14 @@ table.facet-based-edit-dialog-entry-table input {
     padding: 0 0.1em;
 }
 
+table.facet-based-edit-dialog-entry-table a {
+	text-decoration: none;
+}
+
+table.facet-based-edit-dialog-entry-table a:hover {
+	text-decoration: underline
+}
+
 .facet-based-edit-dialog-entry-count {
     color: #aaa;
     margin-left: 0.5em;

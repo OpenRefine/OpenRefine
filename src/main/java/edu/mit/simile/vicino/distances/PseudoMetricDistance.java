@@ -9,7 +9,7 @@ public abstract class PseudoMetricDistance extends Distance {
         double cxy = d2(x, y);
         double cyx = d2(y, x);
         counter += 4;
-        return (cxy + cyx) / (cxx + cyy) - 1.0d;
+        return 10.0d * ((cxy + cyx) / (cxx + cyy) - 1.0d);
     }
     
     protected abstract double d2(String x, String y);

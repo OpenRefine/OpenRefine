@@ -16,7 +16,7 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     var frame = DialogSystem.createDialog();
     frame.width("900px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Cluster & Edit column " + this._columnName).appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text('Cluster & Edit column "' + this._columnName + '"').appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $(
         '<div class="dialog-footer">' +
@@ -42,17 +42,9 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                             '<option selected="true">fingerprint</option>' +
                             '<option>ngram-fingerprint</option>' +
                             '<option>double-metaphone</option>' +
-                            '<option>metaphone</option>' +
-                            '<option>soundex</option>' +
                         '</select></div>' +
                         '<div class="knn-controls hidden">Distance Function: <select bind="distanceFunctionSelector">' +
                             '<option selected="true">levenshtein</option>' +
-                            '<option>jaccard</option>' +
-                            '<option>jaro</option>' +
-                            '<option>jaro-winkler</option>' +
-                            '<option>jaro-winkler-TFIDF</option>' +
-                            '<option>gzip</option>' +
-                            '<option>bzip2</option>' +
                             '<option>PPM</option>' +
                         '</select></div>' +
                     '</td>' +
@@ -152,7 +144,7 @@ FacetBasedEditDialog.prototype._renderTable = function(clusters) {
     $(trHead.insertCell(0)).text("Cluster Size");
     $(trHead.insertCell(1)).text("Row Count");
     $(trHead.insertCell(2)).text("Values in Cluster");
-    $(trHead.insertCell(3)).text("Edit?");
+    $(trHead.insertCell(3)).text("Merge?");
     $(trHead.insertCell(4)).text("New Cell Value");
     
     var renderCluster = function(cluster) {
@@ -169,9 +161,13 @@ FacetBasedEditDialog.prototype._renderTable = function(clusters) {
         for (var c = 0; c < choices.length; c++) {
             var choice = choices[c];
             var li = $('<li>').appendTo(ul);
-            $('<span>').text(choice.v).appendTo(li);
+            $('<a href="abcd" title="Use this value"></a>').text(choice.v).click(function() {
+                var parent = $(this).closest("tr");
+                parent.find("input[type='text']").val($(this).text());
+                parent.find("input:not(:checked)").attr('checked', true).change();
+                return false;
+            }).appendTo(li);
             $('<span>').text("(" + choice.c + " rows)").addClass("facet-based-edit-dialog-entry-count").appendTo(li);
-            
             rowCount += choice.c;
         }
         $(tr.insertCell(2)).append(ul);
