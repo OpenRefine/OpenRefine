@@ -46,13 +46,81 @@
       $.suggest.suggest.prototype, 
       {
         request: function(val, start) {
-            var self = this,
-                o = this.options;
-
             if (this.ac_xhr) {
                 this.ac_xhr.abort();
                 this.ac_xhr = null;
             }
+            
+            if (val.charAt(0) == '/') {
+                this.request_mqlread(val, start);
+            } else {
+                this.request_relevance(val, start);
+            }
+        },
+        
+        request_mqlread: function(val, start) {
+            var self = this;
+            var o = this.options;
+            
+            var query  = [{
+                "id" : val,
+                "name" : null,
+                "guid" : null,
+                "x:type" : "/type/property"
+            }];
+            var data = {
+                query: JSON.stringify({ query: query })
+            };
+            
+            var baseUrl = "http://api.freebase.com/api/service/mqlread";
+            var url = baseUrl + "?" + $.param(data),
+            
+            cached = $.suggest.cache[url];
+            if (cached) {
+                this.response(cached, start ? start : -1, true);
+                return;
+            }
+            
+            clearTimeout(this.request.timeout);
+            this.request.timeout =
+                setTimeout(function() {
+                    self.ac_xhr = $.ajax({
+                        url: baseUrl,
+                        data: data,
+                        beforeSend: function() {
+                            var calls = self.input.data("request.count.suggest") || 0;
+                            if (!calls) {
+                                self.trackEvent(self.name, "start_session");
+                            }
+                            calls += 1;
+                            self.trackEvent(self.name, "request", "count", calls);
+                            self.input.data("request.count.suggest", calls);
+                        },
+                        success: function(r) {
+                            r.prefix = val; // we need this so that the rest of suggest wouldn't error out
+                            if (!("result" in r)) {
+                                r.result = [];
+                            }
+                            self.response(r, start ? start : -1);
+                        },
+                        error: function(xhr) {
+                            self.trackEvent(self.name, "request", "error", {url:this.url, response: xhr ? xhr.responseText : ''});
+                        },
+                        complete: function(xhr) {
+                            if (xhr) {
+                                self.trackEvent(self.name, "request", "tid", xhr.getResponseHeader("X-Metaweb-TID"));
+                            }
+                        },
+                        dataType: "jsonp",
+                        cache: true
+                    });
+                }, o.xhr_delay);
+        },
+        
+        request_relevance: function(val, start) {
+            var self = this;
+            var o = this.options;
+                
             var data = {
                 query: val
             };
@@ -61,7 +129,7 @@
             }
 
             $.extend(data, o.ac_param);
-            $.extend(data, { limit: 50 });
+            $.extend(data, { limit: 100 });
 
             var baseUrl = "http://api.freebase.com/api/service/search";
             var url = baseUrl + "?" + $.param(data),
@@ -146,9 +214,8 @@
             var name = $("<div>")
                 .addClass(css.item_name)
                 .append(
-                    $("<label>")
-                        .append($.suggest.strongify(data.name || data.guid, response_data.prefix)));
-
+                    $("<label>").append($.suggest.strongify(data.name || data.guid, response_data.prefix)));
+            
             data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
             li.append(name);
 
