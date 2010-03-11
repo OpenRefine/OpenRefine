@@ -1,11 +1,10 @@
 function onLoad() {
-    $("#upload-file-button").click(onClickUploadFileButton);
-    
     $.getJSON(
         "/command/get-all-project-metadata",
         null,
         function(data) {
             renderProjects(data);
+            $("#upload-file-button").click(onClickUploadFileButton);
         },
         "json"
     );
@@ -13,7 +12,8 @@ function onLoad() {
 $(onLoad);
 
 function onClickUploadFileButton(evt) {
-    if ($("#project-name-input")[0].value.trim().length == 0) {
+    var projectName = $("#project-name-input")[0].value;
+    if ($.trim(projectName).length == 0) {
         window.alert("You must specify a project name.");
         
         evt.preventDefault();
@@ -86,8 +86,6 @@ function renderProjects(data) {
         for (var i = 0; i < projects.length; i++) {
             renderProject(projects[i]);
         }
-        
-        $(table).appendTo(container);
     }
 }
 
