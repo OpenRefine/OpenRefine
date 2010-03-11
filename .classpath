@@ -19,5 +19,7 @@
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/apache-tools-tar.jar"/>
 	<classpathentry kind="lib" path="tests/lib/junit-4.8.1.jar" sourcepath="tests/lib-src/junit-4.8.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jython-2.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/clojure-1.1.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

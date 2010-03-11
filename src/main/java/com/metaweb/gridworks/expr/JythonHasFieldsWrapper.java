@@ -7,7 +7,9 @@ import org.python.core.PyString;
 
 
 public class JythonHasFieldsWrapper extends PyObject {
-	public HasFields  _obj;
+    private static final long serialVersionUID = -1275353513262385099L;
+    
+    public HasFields  _obj;
 	private Properties _bindings;
 	
 	public JythonHasFieldsWrapper(HasFields obj, Properties bindings) {

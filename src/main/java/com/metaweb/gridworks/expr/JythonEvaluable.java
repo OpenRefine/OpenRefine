@@ -1,56 +1,88 @@
 package com.metaweb.gridworks.expr;
 
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import org.python.core.PyException;
+import org.python.core.PyNone;
+import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
 public class JythonEvaluable implements Evaluable {
-
-	private String _code;
-	private static final String _functionName = "temp";
+	private static final String s_functionName = "___temp___";
+	
     private static PythonInterpreter _engine = new PythonInterpreter();
-
 
     public JythonEvaluable(String s) {
     	// indent and create a function out of the code
     	String[] lines = s.split("\r\n|\r|\n");
-    	StringBuilder function = new StringBuilder();
-    	function.append("def " + _functionName + "():");
+    	
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("def " + s_functionName + "():");
     	for (int i = 0; i < lines.length; i++) {
-    		function.append("\n    " + lines[i]);    		
+    		sb.append("\n  " + lines[i]);    		
     	}
-    	_code = function.toString();
+    	
+        _engine.exec(sb.toString());
     }
     
 	public Object evaluate(Properties bindings) {
 		try {
-			for (Enumeration<Object> e = bindings.keys() ; e.hasMoreElements() ;) {
-				Object k = e.nextElement();
+		    for (Object key : bindings.keySet()) {
+		        String k = (String) key;
 				Object v = bindings.get(k);
-				if (v instanceof HasFields) {
-					_engine.set((String)k, new JythonHasFieldsWrapper((HasFields) v, bindings));
-				} else {
-					_engine.set((String) k, v);
-				}
+				
+				_engine.set(
+				    k,
+				    (v instanceof HasFields) ?
+				        new JythonHasFieldsWrapper((HasFields) v, bindings) :
+			            v
+			    );
 			}
-			_engine.exec(_code);
 			
-			Object result = _engine.eval(_functionName + "()");
+			Object result = _engine.eval(s_functionName + "()");
 
-			// unwrap the underlying Java objects
-			if (result instanceof JythonObjectWrapper) {
-		        result = ((JythonObjectWrapper) result)._obj;
-			} else if (result instanceof JythonHasFieldsWrapper) {
-	            result = ((JythonHasFieldsWrapper) result)._obj;
-			}
-			
-			return result;
+			return unwrap(result);
 		} catch (PyException e) {
 			return new EvalError(e.toString());
 		}
 	}
-
+	
+	protected Object unwrap(Object result) {
+        if (result != null) {
+            if (result instanceof JythonObjectWrapper) {
+                return ((JythonObjectWrapper) result)._obj;
+            } else if (result instanceof JythonHasFieldsWrapper) {
+                return ((JythonHasFieldsWrapper) result)._obj;
+            } else if (result instanceof PyString) {
+                return ((PyString) result).asString();
+            } else if (result instanceof PyObject) {
+                return unwrap((PyObject) result);
+            }
+        }
+        
+        return result;	    
+	}
+	
+	protected Object unwrap(PyObject po) {
+	    if (po instanceof PyNone) {
+	        return null;
+	    } else if (po.isNumberType()) {
+            return po.asDouble();
+        } else if (po.isSequenceType()) {
+            Iterator<PyObject> i = po.asIterable().iterator();
+            
+            List<Object> list = new ArrayList<Object>();
+            while (i.hasNext()) {
+                list.add(unwrap(i.next()));
+            }
+            
+            return list.toArray();
+        } else {
+            return po;
+        }
+	}
 }
