@@ -97,7 +97,7 @@ public class HeuristicReconConfig extends ReconConfig {
         this.typeID = typeID;
         this.typeName = typeName;
         this.autoMatch = autoMatch;
-        this.columnDetails = new ArrayList<ColumnDetail>();
+        this.columnDetails = columnDetails;
     }
 
     public void write(JSONWriter writer, Properties options)
