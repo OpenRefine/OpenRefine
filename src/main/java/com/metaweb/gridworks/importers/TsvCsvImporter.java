@@ -62,7 +62,7 @@ public class TsvCsvImporter implements Importer {
                         
                         if (skip <= 0 || rowsWithData > skip) {
                             project.rows.add(row);
-                            project.columnModel.setMaxCellIndex(Math.max(project.columnModel.getMaxCellIndex(), row.cells.size()));
+                            project.columnModel.setMaxCellIndex(row.cells.size());
                             
                             if (limit > 0 && project.rows.size() >= limit) {
                                 break;

@@ -155,6 +155,8 @@ public class ExcelImporter implements Importer {
                     
                     if (skip <= 0 || rowsWithData > skip) {
                         project.rows.add(newRow);
+                        project.columnModel.setMaxCellIndex(newRow.cells.size());
+                        
                         if (limit > 0 && project.rows.size() >= limit) {
                             break;
                         }
