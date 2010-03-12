@@ -170,7 +170,7 @@ public class ReconOperation extends EngineDependentOperation {
             
             FilteredRows filteredRows = engine.getAllFilteredRows(false);
             filteredRows.accept(_project, new RowVisitor() {
-                public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+                public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                     if (_cellIndex < row.cells.size()) {
                         Cell cell = row.cells.get(_cellIndex);
                         if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {

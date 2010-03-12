@@ -159,7 +159,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(_cellIndex);
                 if (cell != null && 
                     ExpressionUtils.isNonBlankData(cell.value) && 

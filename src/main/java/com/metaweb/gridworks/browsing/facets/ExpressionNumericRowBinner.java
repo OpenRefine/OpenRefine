@@ -28,7 +28,7 @@ public class ExpressionNumericRowBinner implements RowVisitor {
         bins = new int[_index.getBins().length];
     }
     
-    public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+    public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
         Cell cell = row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings(project);

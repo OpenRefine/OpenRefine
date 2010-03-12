@@ -20,17 +20,18 @@ import com.metaweb.gridworks.model.Project;
 public class Engine implements Jsonizable {
     protected Project         _project;
     protected List<Facet>     _facets = new LinkedList<Facet>();
+    protected boolean		  _includeDependent;
     
     public Engine(Project project) {
         _project  = project;
     }
     
-    public FilteredRows getAllFilteredRows(boolean contextual) {
-        return getFilteredRows(null, contextual);
+    public FilteredRows getAllFilteredRows(boolean includeContextual) {
+        return getFilteredRows(null, includeContextual);
     }
 
-    public FilteredRows getFilteredRows(Facet except, boolean contextual) {
-        ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows(contextual);
+    public FilteredRows getFilteredRows(Facet except, boolean includeContextual) {
+        ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows(includeContextual, _includeDependent);
         for (Facet facet : _facets) {
             if (facet != except) {
                 RowFilter rowFilter = facet.getRowFilter();
@@ -64,6 +65,10 @@ public class Engine implements Jsonizable {
                 _facets.add(facet);
             }
         }
+        
+        if (o.has("includeDependent") && !o.isNull("includeDependent")) {
+        	_includeDependent = o.getBoolean("includeDependent");
+        }
     }
     
     public void computeFacets() throws JSONException {
@@ -78,11 +83,13 @@ public class Engine implements Jsonizable {
             throws JSONException {
         
         writer.object();
-        writer.key("facets"); writer.array();
-        for (Facet facet : _facets) {
-            facet.write(writer, options);
-        }
-        writer.endArray();
+        writer.key("facets");
+	        writer.array();
+	        for (Facet facet : _facets) {
+	            facet.write(writer, options);
+	        }
+	        writer.endArray();
+        writer.key("includeDependent"); writer.value(_includeDependent);
         writer.endObject();
     }
 }

@@ -38,7 +38,7 @@ public class TsvExporter implements Exporter {
                     return this;
                 }
                 
-                public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+                public boolean visit(Project project, int rowIndex, Row row, boolean contextual, boolean includeDependent) {
                     boolean first = true;
                     try {
                         for (Column column : project.columnModel.columns) {

@@ -121,10 +121,10 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         Properties bindings = ExpressionUtils.createBindings(project);
         
         return new RowVisitor() {
-            int                 cellIndex;
-            Properties             bindings;
-            List<CellAtRow>     cellsAtRows;
-            Evaluable             eval;
+            int              cellIndex;
+            Properties       bindings;
+            List<CellAtRow>  cellsAtRows;
+            Evaluable        eval;
             
             public RowVisitor init(int cellIndex, Properties bindings, List<CellAtRow> cellsAtRows, Evaluable eval) {
                 this.cellIndex = cellIndex;
@@ -134,7 +134,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
 
                 ExpressionUtils.bind(bindings, row, rowIndex, cell);

@@ -118,7 +118,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
                 Object oldValue = cell != null ? cell.value : null;
 

@@ -42,7 +42,10 @@ BrowsingEngine.prototype._initializeUI = function() {
     
     this._div.html(
         '<div class="browsing-panel-indicator" bind="indicator"><img src="images/small-spinner.gif" /> refreshing facets ...</div>' +
-        '<div class="browsing-panel-controls" bind="controls"><a href="javascript:{}" bind="refreshLink">refresh facets</a></div>' +
+        '<div class="browsing-panel-controls" bind="controls">' +
+            '<input type="checkbox" bind="includeDependentRowsCheck" /> show dependent rows &bull; ' +
+            '<a href="javascript:{}" bind="refreshLink">refresh</a></div>' +
+        '</div>' +
         '<ul bind="facets" class="facets-container"></ul>'
     );
     this._elmts = DOM.bind(this._div);
@@ -53,6 +56,10 @@ BrowsingEngine.prototype._initializeUI = function() {
         }
     });
     this._elmts.facets.disableSelection();
+    
+    this._elmts.includeDependentRowsCheck.change(function() {
+        Gridworks.update({ engineChanged: true });
+    });
     
     this._elmts.refreshLink.click(function() { self.update(); });
 };
@@ -73,7 +80,10 @@ BrowsingEngine.prototype._updateFacetOrder = function() {
 };
 
 BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets) {
-    var a = { facets: [] };
+    var a = {
+        facets: [],
+        includeDependent: this._elmts.includeDependentRowsCheck[0].checked
+    };
     for (var i = 0; i < this._facets.length; i++) {
         var facet = this._facets[i];
         if (keepUnrestrictedFacets || facet.facet.hasSelection()) {

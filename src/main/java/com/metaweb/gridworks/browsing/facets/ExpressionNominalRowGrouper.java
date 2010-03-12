@@ -25,7 +25,7 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
         _cellIndex = cellIndex;
     }
     
-    public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+    public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings(project);

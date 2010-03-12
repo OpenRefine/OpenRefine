@@ -53,7 +53,7 @@ public class GetRowsCommand extends Command {
                     }
                     
                     @Override
-                    public boolean internalVisit(int rowIndex, Row row, boolean contextual) {
+                    public boolean internalVisit(int rowIndex, Row row, boolean contextual, boolean includeDependent) {
                         try {
                             if (contextual) {
                                 options.put("extra", extra);
@@ -99,19 +99,19 @@ public class GetRowsCommand extends Command {
             this.limit = limit;
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
             boolean r = false;
             
             if (total >= start && total < start + limit) {
-                r = internalVisit(rowIndex, row, contextual);
+                r = internalVisit(rowIndex, row, includeContextual, includeDependent);
             }
-            if (!contextual) {
+            if (!includeContextual) {
                 total++;
             }
             return r;
         }
         
-        protected boolean internalVisit(int rowIndex, Row row, boolean contextual) {
+        protected boolean internalVisit(int rowIndex, Row row, boolean contextual, boolean includeDependent) {
             return false;
         }
     }

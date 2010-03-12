@@ -76,7 +76,7 @@ public class kNNClusterer extends Clusterer {
             }
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
             Cell cell = row.cells.get(_colindex);
             if (cell != null && cell.value != null) {
                 Object v = cell.value;
@@ -114,7 +114,7 @@ public class kNNClusterer extends Clusterer {
             }
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
                 Object v = cell.value;
