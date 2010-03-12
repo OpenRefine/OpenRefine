@@ -3,6 +3,13 @@ package edu.mit.simile.vicino.vptree;
 public class NodeSorter {
 
     /**
+     * Sorts and array of objects.
+     */
+    public void sort(Node nodes[]) {
+        NodeSorter.sort(nodes, 0, nodes.length - 1);
+    }
+    
+    /**
      * Sort array of Objects using the QuickSort algorithm.
      * 
      * @param s
@@ -83,12 +90,5 @@ public class NodeSorter {
 
         sort(nodes, lo, left);
         sort(nodes, left + 1, hi);
-    }
-
-    /**
-     * Sorts and array of objects.
-     */
-    public void sort(Node nodes[]) {
-        NodeSorter.sort(nodes, 0, nodes.length - 1);
     }
 }

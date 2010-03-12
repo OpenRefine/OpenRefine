@@ -256,6 +256,22 @@ run() {
 
     exec $RUN_CMD
 }
+
+execute() {
+    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
+        ant build
+        echo ""
+    fi
+    
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
+
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS $*"
+  
+    echo "$RUN_CMD"
+    echo ""
+
+    exec $RUN_CMD $*
+}
     
 # ----- We called without arguments print the usage -------------
 
@@ -361,6 +377,9 @@ case "$ACTION" in
 
   run) 
     run;;  
+
+  execute) 
+    execute $*;;  
     
   make_dmg)
     make_dmg $1;;

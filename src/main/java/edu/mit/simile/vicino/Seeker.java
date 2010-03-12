@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import edu.mit.simile.vicino.distances.Distance;
 import edu.mit.simile.vicino.vptree.VPTree;
@@ -35,9 +36,9 @@ public class Seeker extends Operator {
             String query = line.substring(0, index);
             float range = Float.parseFloat(line.substring(index + 1));
             long start = System.currentTimeMillis();
-            List<? extends Serializable> results = seeker.range(query, range);
+            Set<Serializable> results = seeker.range(query, range);
             long stop = System.currentTimeMillis();
-            Iterator<? extends Serializable> j = results.iterator();
+            Iterator<Serializable> j = results.iterator();
             if (j.hasNext()) {
                 while (j.hasNext()) {
                     String r = (String) j.next();
