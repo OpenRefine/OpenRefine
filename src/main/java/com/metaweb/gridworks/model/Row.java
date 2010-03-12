@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
@@ -45,6 +46,12 @@ public class Row implements HasFields, Jsonizable {
             return new Cells();
         } else if ("index".equals(name)) {
             return bindings.get("rowIndex");
+        } else if ("record".equals(name)) {
+        	int rowIndex = (Integer) bindings.get("rowIndex");
+        	int recordRowIndex = (contextRows != null && contextRows.size() > 0) ?
+        			contextRows.get(0) : rowIndex;
+        	
+            return new Record(recordRowIndex, rowIndex);
         }
         return null;
     }
@@ -95,21 +102,6 @@ public class Row implements HasFields, Jsonizable {
         }
     }
     
-    public class Cells implements HasFields {
-        private Cells() {};
-
-        public Object getField(String name, Properties bindings) {
-            Project project = (Project) bindings.get("project");
-            Column column = project.columnModel.getColumnByName(name);
-            if (column != null) {
-                int cellIndex = column.getCellIndex();
-                return getCell(cellIndex);
-            }
-            return null;
-        }
-        
-    }
-
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -183,5 +175,83 @@ public class Row implements HasFields, Jsonizable {
         }
         
         return row;
+    }
+    
+    protected class Cells implements HasFields {
+        public Object getField(String name, Properties bindings) {
+            Project project = (Project) bindings.get("project");
+            Column column = project.columnModel.getColumnByName(name);
+            if (column != null) {
+                int cellIndex = column.getCellIndex();
+                return getCell(cellIndex);
+            }
+            return null;
+        }
+        
+    }
+    
+    protected class Record implements HasFields {
+    	final int _recordRowIndex;
+    	final int _currentRowIndex;
+    	
+    	protected Record(int recordRowIndex, int currentRowIndex) {
+    		_recordRowIndex = recordRowIndex;
+    		_currentRowIndex = currentRowIndex;
+    	}
+
+		public Object getField(String name, Properties bindings) {
+	        if ("cells".equals(name)) {
+	            return new RecordCells(_recordRowIndex);
+	        }
+			return null;
+		}
+    }
+    
+    protected class RecordCells implements HasFields {
+    	final int _recordRowIndex;
+    	
+    	protected RecordCells(int recordRowIndex) {
+    		_recordRowIndex = recordRowIndex;
+    	}
+    	
+		public Object getField(String name, Properties bindings) {
+            Project project = (Project) bindings.get("project");
+            Column column = project.columnModel.getColumnByName(name);
+            if (column != null) {
+            	Row recordRow = project.rows.get(_recordRowIndex);
+                int cellIndex = column.getCellIndex();
+                
+                CellTuple cells = new CellTuple();
+                
+            	int recordIndex = recordRow.recordIndex;
+            	int count = project.rows.size();
+            	for (int r = _recordRowIndex; r < count; r++) {
+            		Row row = project.rows.get(r);
+            		if (row.recordIndex > recordIndex) {
+            			break;
+            		}
+            		
+            		Cell cell = row.getCell(cellIndex);
+            		if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+            			cells.add(cell);
+            		}
+            	}
+            	
+                return cells;
+            }
+            return null;
+		}
+    }
+    
+    protected class CellTuple extends ArrayList<Cell> implements HasFields {
+		private static final long serialVersionUID = -651032866647686293L;
+
+		public Object getField(String name, Properties bindings) {
+			Object[] r = new Object[this.size()];
+			for (int i = 0; i < r.length; i++) {
+				r[i] = this.get(i).getField(name, bindings);
+			}
+			return r;
+		}
     }
 }
