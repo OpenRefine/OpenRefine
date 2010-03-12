@@ -147,9 +147,14 @@ public class Scanner {
             detail = "String not properly closed";
             // fall through
             
-        } else if (Character.isLetter(c)) { // identifier
-            while (_index < _limit && Character.isLetterOrDigit(_text.charAt(_index))) {
-                _index++;
+        } else if (Character.isLetter(c) || c == '_') { // identifier
+            while (_index < _limit) {
+            	char c1 = _text.charAt(_index);
+            	if (c1 == '_' || Character.isLetterOrDigit(c1)) {
+            		_index++;
+            	} else {
+            		break;
+            	}
             }
             
             return new Token(
