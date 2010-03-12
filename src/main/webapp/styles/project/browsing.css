@@ -37,6 +37,10 @@ li.facet-container {
     border: 1px solid #ccc;
     padding: 1px;
 }
+.facet-body-message {
+    margin: 1em;
+    color: #f88;
+}
 .facet-body-scrollable {
     height: 20em;
     overflow: auto;
@@ -112,6 +116,10 @@ img.facet-choice-link {
 .facet-range-body {
     border: 1px solid #ccc;
     padding: 15px;
+}
+.facet-range-message {
+    margin: 1em;
+    color: #f88;
 }
 .facet-range-histogram {
     margin: 10px 4px;

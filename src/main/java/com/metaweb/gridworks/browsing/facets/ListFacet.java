@@ -15,6 +15,8 @@ import com.metaweb.gridworks.browsing.filters.ExpressionEqualRowFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
+import com.metaweb.gridworks.expr.ParsingException;
+import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
 
@@ -31,8 +33,10 @@ public class ListFacet implements Facet {
     protected String     _name;
     protected String     _expression;
     protected String     _columnName;
+    
     protected int        _cellIndex;
     protected Evaluable  _eval;
+    protected String     _errorMessage;
     
     // computed
     protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
@@ -50,25 +54,31 @@ public class ListFacet implements Facet {
         writer.key("expression"); writer.value(_expression);
         writer.key("columnName"); writer.value(_columnName);
         
-        writer.key("choices"); writer.array();
-        for (NominalFacetChoice choice : _choices) {
-            choice.write(writer, options);
-        }
-        writer.endArray();
-        
-        if (!_omitBlank && (_selectBlank || _blankCount > 0)) {
-            writer.key("blankChoice");
-            writer.object();
-            writer.key("s"); writer.value(_selectBlank);
-            writer.key("c"); writer.value(_blankCount);
-            writer.endObject();
-        }
-        if (!_omitError && (_selectError || _errorCount > 0)) {
-            writer.key("errorChoice");
-            writer.object();
-            writer.key("s"); writer.value(_selectError);
-            writer.key("c"); writer.value(_errorCount);
-            writer.endObject();
+        if (_errorMessage != null) {
+            writer.key("error"); writer.value(_errorMessage);
+        } else if (_choices.size() > 2000) {
+            writer.key("error"); writer.value("Too many choices.");
+        } else {
+            writer.key("choices"); writer.array();
+            for (NominalFacetChoice choice : _choices) {
+                choice.write(writer, options);
+            }
+            writer.endArray();
+            
+            if (!_omitBlank && (_selectBlank || _blankCount > 0)) {
+                writer.key("blankChoice");
+                writer.object();
+                writer.key("s"); writer.value(_selectBlank);
+                writer.key("c"); writer.value(_blankCount);
+                writer.endObject();
+            }
+            if (!_omitError && (_selectError || _errorCount > 0)) {
+                writer.key("errorChoice");
+                writer.object();
+                writer.key("s"); writer.value(_selectError);
+                writer.key("c"); writer.value(_errorCount);
+                writer.endObject();
+            }
         }
         
         writer.endObject();
@@ -80,12 +90,22 @@ public class ListFacet implements Facet {
         _columnName = o.getString("columnName");
         
         if (_columnName.length() > 0) {
-        	_cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
+            Column column = project.columnModel.getColumnByName(_columnName);
+            if (column != null) {
+                _cellIndex = column.getCellIndex();
+            } else {
+                _errorMessage = "No column named " + _columnName;
+            }
         } else {
         	_cellIndex = -1;
         }
         
-        _eval = MetaParser.parse(_expression);
+        try {
+            _eval = MetaParser.parse(_expression);
+        } catch (ParsingException e) {
+            _errorMessage = e.getMessage();
+        }
+        
         _selection.clear();
         
         JSONArray a = o.getJSONArray("selection");
@@ -112,31 +132,42 @@ public class ListFacet implements Facet {
     }
 
     public RowFilter getRowFilter() {
-        return _selection.size() == 0 && !_selectBlank && !_selectError ? null :
-            new ExpressionEqualRowFilter(_eval, _cellIndex, createMatches(), _selectBlank, _selectError);
+        return 
+            _eval == null || 
+            _errorMessage != null ||
+            (_selection.size() == 0 && !_selectBlank && !_selectError) ? 
+                null :
+                new ExpressionEqualRowFilter(
+                    _eval, 
+                    _cellIndex, 
+                    createMatches(), 
+                    _selectBlank, 
+                    _selectError);
     }
 
     public void computeChoices(Project project, FilteredRows filteredRows) {
-        ExpressionNominalRowGrouper grouper = 
-            new ExpressionNominalRowGrouper(_eval, _cellIndex);
-        
-        filteredRows.accept(project, grouper);
-        
-        _choices.clear();
-        _choices.addAll(grouper.choices.values());
-        
-        for (NominalFacetChoice choice : _selection) {
-            String valueString = choice.decoratedValue.value.toString();
-            if (grouper.choices.containsKey(valueString)) {
-                grouper.choices.get(valueString).selected = true;
-            } else {
-                choice.count = 0;
-                _choices.add(choice);
+        if (_eval != null && _errorMessage == null) {
+            ExpressionNominalRowGrouper grouper = 
+                new ExpressionNominalRowGrouper(_eval, _cellIndex);
+            
+            filteredRows.accept(project, grouper);
+            
+            _choices.clear();
+            _choices.addAll(grouper.choices.values());
+            
+            for (NominalFacetChoice choice : _selection) {
+                String valueString = choice.decoratedValue.value.toString();
+                if (grouper.choices.containsKey(valueString)) {
+                    grouper.choices.get(valueString).selected = true;
+                } else {
+                    choice.count = 0;
+                    _choices.add(choice);
+                }
             }
+            
+            _blankCount = grouper.blankCount;
+            _errorCount = grouper.errorCount;
         }
-        
-        _blankCount = grouper.blankCount;
-        _errorCount = grouper.errorCount;
     }
     
     protected Object[] createMatches() {

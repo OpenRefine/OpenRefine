@@ -138,14 +138,11 @@ RangeFacet.prototype._initializeUI = function() {
         
     var bodyDiv = $('<div></div>').addClass("facet-range-body").appendTo(container);
     
-    if (this._error) {
-        return;
-    }
-    
-    this._histogramDiv = $('<div></div>').addClass("facet-range-histogram").appendTo(bodyDiv);
-    this._sliderDiv = $('<div></div>').addClass("facet-range-slider").appendTo(bodyDiv);
-    this._statusDiv = $('<div></div>').addClass("facet-range-status").appendTo(bodyDiv);
-    this._otherChoicesDiv = $('<div></div>').addClass("facet-range-other-choices").appendTo(bodyDiv);
+    this._messageDiv = $('<div>').text("Loading...").addClass("facet-range-message").appendTo(bodyDiv);
+    this._histogramDiv = $('<div>').addClass("facet-range-histogram").appendTo(bodyDiv);
+    this._sliderDiv = $('<div>').addClass("facet-range-slider").appendTo(bodyDiv);
+    this._statusDiv = $('<div>').addClass("facet-range-status").appendTo(bodyDiv);
+    this._otherChoicesDiv = $('<div>').addClass("facet-range-other-choices").appendTo(bodyDiv);
     
     var onSlide = function(event, ui) {
         switch (self._config.mode) {
@@ -166,34 +163,27 @@ RangeFacet.prototype._initializeUI = function() {
         self._updateRest();
     };
     var sliderConfig = {
-        range: "max",
         min: this._config.min,
         max: this._config.max,
-        value: 2,
         stop: onStop,
         slide: onSlide
     };
-    if ("step" in this._config) {
-        sliderConfig.step = this._config.step;
-    }
         
     switch (this._config.mode) {
     case "min":
         sliderConfig.range = "max";
-        sliderConfig.value = this._from;
+        sliderConfig.value = this._config.min;
         break;
     case "max":
         sliderConfig.range = "min";
-        sliderConfig.value = this._to;
+        sliderConfig.value = this._config.max;
         break;
     default:
         sliderConfig.range = true;
-        sliderConfig.values = [ this._from, this._to ];
+        sliderConfig.values = [ this._config.min, this._config.max ];
     }
     
     this._sliderDiv.slider(sliderConfig);
-    this._setRangeIndicators();
-    this._renderOtherChoices();
 };
 
 RangeFacet.prototype._renderOtherChoices = function() {
@@ -276,6 +266,8 @@ RangeFacet.prototype._setRangeIndicators = function() {
 
 RangeFacet.prototype.updateState = function(data) {
     if ("min" in data && "max" in data) {
+        this._error = false;
+        
         this._config.min = data.min;
         this._config.max = data.max;
         this._config.step = data.step;
@@ -304,6 +296,7 @@ RangeFacet.prototype.updateState = function(data) {
         this._errorCount = data.errorCount;
     } else {
         this._error = true;
+        this._errorMessage = "error" in data ? data.error : "Unknown error.";
     }
     
     this.render();
@@ -314,9 +307,21 @@ RangeFacet.prototype.render = function() {
         this._initializeUI();
         this._initializedUI = true;
     }
+    
     if (this._error) {
+        this._messageDiv.text(this._errorMessage).show();
+        this._sliderDiv.hide();
+        this._histogramDiv.hide();
+        this._statusDiv.hide();
+        this._otherChoicesDiv.hide();
         return;
     }
+    
+    this._messageDiv.hide();
+    this._sliderDiv.show();
+    this._histogramDiv.show();
+    this._statusDiv.show();
+    this._otherChoicesDiv.show();
     
     this._sliderDiv.slider("option", "min", this._config.min);
     this._sliderDiv.slider("option", "max", this._config.max);

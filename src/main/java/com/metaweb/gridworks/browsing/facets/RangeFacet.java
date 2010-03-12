@@ -11,6 +11,7 @@ import com.metaweb.gridworks.browsing.filters.ExpressionNumberComparisonRowFilte
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
+import com.metaweb.gridworks.expr.ParsingException;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
@@ -19,8 +20,10 @@ public class RangeFacet implements Facet {
     protected String     _name;
     protected String     _expression;
     protected String     _columnName;
+    
     protected int        _cellIndex;
     protected Evaluable  _eval;
+    protected String     _errorMessage;
     
     protected String    _mode;
     protected double    _min;
@@ -53,38 +56,41 @@ public class RangeFacet implements Facet {
         writer.key("columnName"); writer.value(_columnName);
         writer.key("mode"); writer.value(_mode);
         
-        if (!Double.isInfinite(_min) && !Double.isInfinite(_max)) {
-            writer.key("min"); writer.value(_min);
-            writer.key("max"); writer.value(_max);
-            writer.key("step"); writer.value(_step);
-            
-            writer.key("bins"); writer.array();
-            for (int b : _bins) {
-                writer.value(b);
+        if (_errorMessage != null) {
+            writer.key("error"); writer.value(_errorMessage);
+        } else {
+            if (!Double.isInfinite(_min) && !Double.isInfinite(_max)) {
+                writer.key("min"); writer.value(_min);
+                writer.key("max"); writer.value(_max);
+                writer.key("step"); writer.value(_step);
+                
+                writer.key("bins"); writer.array();
+                for (int b : _bins) {
+                    writer.value(b);
+                }
+                writer.endArray();
+                
+                writer.key("baseBins"); writer.array();
+                for (int b : _baseBins) {
+                    writer.value(b);
+                }
+                writer.endArray();
+                
+                if ("min".equals(_mode)) {
+                    writer.key("from"); writer.value(_from);
+                } else if ("max".equals(_mode)) {
+                    writer.key("to"); writer.value(_to);
+                } else {
+                    writer.key("from"); writer.value(_from);
+                    writer.key("to"); writer.value(_to);
+                }
             }
-            writer.endArray();
             
-            writer.key("baseBins"); writer.array();
-            for (int b : _baseBins) {
-                writer.value(b);
-            }
-            writer.endArray();
-            
-            if ("min".equals(_mode)) {
-                writer.key("from"); writer.value(_from);
-            } else if ("max".equals(_mode)) {
-                writer.key("to"); writer.value(_to);
-            } else {
-                writer.key("from"); writer.value(_from);
-                writer.key("to"); writer.value(_to);
-            }
+            writer.key("numericCount"); writer.value(_numericCount);
+            writer.key("nonNumericCount"); writer.value(_nonNumericCount);
+            writer.key("blankCount"); writer.value(_blankCount);
+            writer.key("errorCount"); writer.value(_errorCount);
         }
-        
-        writer.key("numericCount"); writer.value(_numericCount);
-        writer.key("nonNumericCount"); writer.value(_nonNumericCount);
-        writer.key("blankCount"); writer.value(_blankCount);
-        writer.key("errorCount"); writer.value(_errorCount);
-        
         writer.endObject();
     }
 
@@ -92,9 +98,23 @@ public class RangeFacet implements Facet {
         _name = o.getString("name");
         _expression = o.getString("expression");
         _columnName = o.getString("columnName");
-        _cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
         
-        _eval = MetaParser.parse(_expression);
+        if (_columnName.length() > 0) {
+            Column column = project.columnModel.getColumnByName(_columnName);
+            if (column != null) {
+                _cellIndex = column.getCellIndex();
+            } else {
+                _errorMessage = "No column named " + _columnName;
+            }
+        } else {
+            _cellIndex = -1;
+        }
+        
+        try {
+            _eval = MetaParser.parse(_expression);
+        } catch (ParsingException e) {
+            _errorMessage = e.getMessage();
+        }
         
         _mode = o.getString("mode");
         if ("min".equals(_mode)) {
@@ -126,7 +146,7 @@ public class RangeFacet implements Facet {
     }
 
     public RowFilter getRowFilter() {
-        if (_selected) {
+        if (_eval != null && _errorMessage == null && _selected) {
             if ("min".equals(_mode)) {
                 return new ExpressionNumberComparisonRowFilter(
                         _eval, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
@@ -158,37 +178,39 @@ public class RangeFacet implements Facet {
     }
 
     public void computeChoices(Project project, FilteredRows filteredRows) {
-        Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
-        
-        String key = "numeric-bin:" + _expression;
-        NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
-        if (index == null) {
-            index = new NumericBinIndex(project, _cellIndex, _eval);
-            column.setPrecompute(key, index);
+        if (_eval != null && _errorMessage == null) {
+            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+            
+            String key = "numeric-bin:" + _expression;
+            NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+            if (index == null) {
+                index = new NumericBinIndex(project, _cellIndex, _eval);
+                column.setPrecompute(key, index);
+            }
+            
+            _min = index.getMin();
+            _max = index.getMax();
+            _step = index.getStep();
+            _baseBins = index.getBins();
+            
+            if (_selected) {
+                _from = Math.max(_from, _min);
+                _to = Math.min(_to, _max);
+            } else {
+                _from = _min;
+                _to = _max;
+            }
+            
+            ExpressionNumericRowBinner binner = 
+                new ExpressionNumericRowBinner(_eval, _cellIndex, index);
+            
+            filteredRows.accept(project, binner);
+            
+            _bins = binner.bins;
+            _numericCount = binner.numericCount;
+            _nonNumericCount = binner.nonNumericCount;
+            _blankCount = binner.blankCount;
+            _errorCount = binner.errorCount;
         }
-        
-        _min = index.getMin();
-        _max = index.getMax();
-        _step = index.getStep();
-        _baseBins = index.getBins();
-        
-        if (_selected) {
-            _from = Math.max(_from, _min);
-            _to = Math.min(_to, _max);
-        } else {
-            _from = _min;
-            _to = _max;
-        }
-        
-        ExpressionNumericRowBinner binner = 
-            new ExpressionNumericRowBinner(_eval, _cellIndex, index);
-        
-        filteredRows.accept(project, binner);
-        
-        _bins = binner.bins;
-        _numericCount = binner.numericCount;
-        _nonNumericCount = binner.nonNumericCount;
-        _blankCount = binner.blankCount;
-        _errorCount = binner.errorCount;
     }
 }

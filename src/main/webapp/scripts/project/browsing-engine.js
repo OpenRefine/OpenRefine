@@ -119,8 +119,17 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
     var update = facet.hasSelection();
     for (var i = this._facets.length - 1;i >= 0; i--) {
         if (this._facets[i].facet === facet) {
-            this._facets[i].elmt.remove();
+            var elmt = this._facets[i].elmt;
             this._facets.splice(i, 1);
+            
+            // This makes really big facet disappear right away. If you just call remove()
+            // then it takes a while for all the event handlers to get unwired, and the UI
+            // appear frozen.
+            elmt.hide();
+            window.setTimeout(function() {
+                elmt.remove();
+            }, 300);
+            
             break;
         }
     }

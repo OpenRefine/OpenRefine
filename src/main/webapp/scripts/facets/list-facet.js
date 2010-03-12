@@ -62,19 +62,21 @@ ListFacet.prototype.hasSelection = function() {
 ListFacet.prototype.updateState = function(data) {
     this._data = data;
     
-    var selection = [];
-    var choices = data.choices;
-    for (var i = 0; i < choices.length; i++) {
-        var choice = choices[i];
-        if (choice.s) {
-            selection.push(choice);
+    if ("choices" in data) {
+        var selection = [];
+        var choices = data.choices;
+        for (var i = 0; i < choices.length; i++) {
+            var choice = choices[i];
+            if (choice.s) {
+                selection.push(choice);
+            }
         }
-    }
-    this._selection = selection;
-    this._reSortChoices();
+        this._selection = selection;
+        this._reSortChoices();
     
-    this._blankChoice = data.blankChoice || null;
-    this._errorChoice = data.errorChoice || null;
+        this._blankChoice = data.blankChoice || null;
+        this._errorChoice = data.errorChoice || null;
+    }
     
     this.render();
 };
@@ -117,8 +119,11 @@ ListFacet.prototype.render = function() {
     }
     
     if (this._data == null) {
+        $('<div>').text("Loading...").addClass("facet-body-message").appendTo(bodyDiv);
         bodyDiv.appendTo(container);
-        bodyDiv.html("Loading...");
+    } else if ("error" in this._data) {
+        $('<div>').text(this._data.error).addClass("facet-body-message").appendTo(bodyDiv);
+        bodyDiv.appendTo(container);
     } else {
         var selectionCount = this._selection.length
             + (this._blankChoice != null && this._blankChoice.s ? 1 : 0)

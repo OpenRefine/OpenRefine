@@ -106,7 +106,7 @@ public class Parser {
     
     protected Evaluable parseFactor() throws ParsingException {
         if (_token == null) {
-            throw makeException("Expression ends too early");
+            throw makeException("Expecting something more at end of expression");
         }
         
         Evaluable eval = null;
@@ -170,7 +170,7 @@ public class Parser {
                 throw makeException("Missing )");
             }
         } else {
-            throw makeException("Missing number, string, identifier, or parenthesized expression");
+            throw makeException("Missing number, string, identifier, regex, or parenthesized expression");
         }
         
         while (_token != null) {
