@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,8 +45,10 @@ public class kNNClusterer extends Clusterer {
     
     static protected Map<String, Distance> _distances = new HashMap<String, Distance>();
 
-    ArrayList<Set<Serializable>> _clusters;
-    
+    List<Set<Serializable>> _clusters;
+
+    Map<Serializable, Integer> _counts = new HashMap<Serializable, Integer>();
+
     static {
         _distances.put("levenshtein", new LevenshteinDistance());
         _distances.put("jaccard", new JaccardDistance());
@@ -82,6 +85,7 @@ public class kNNClusterer extends Clusterer {
                 Object v = cell.value;
                 String s = (v instanceof String) ? ((String) v) : v.toString();
                 _treeBuilder.populate(s);
+                count(s);
             }
             return false;
         }
@@ -120,6 +124,7 @@ public class kNNClusterer extends Clusterer {
                 Object v = cell.value;
                 String s = (v instanceof String) ? ((String) v) : v.toString().intern();
                 _data.add(s);
+                count(s);
             }
             return false;
         }
@@ -183,6 +188,12 @@ public class kNNClusterer extends Clusterer {
             return o2.size() - o1.size();
         }
     }
+
+    public class ValuesComparator implements Comparator<Entry<Serializable,Integer>> {
+        public int compare(Entry<Serializable,Integer> o1, Entry<Serializable,Integer> o2) {
+            return o2.getValue() - o1.getValue();
+        }
+    }
     
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         super.initializeFromJSON(project, o);
@@ -204,16 +215,30 @@ public class kNNClusterer extends Clusterer {
         writer.array();        
         for (Set<Serializable> m : _clusters) {
             if (m.size() > 1) {
-                writer.array();        
+                Map<Serializable,Integer> internal_counts = new HashMap<Serializable,Integer>();
                 for (Serializable s : m) {
+                    internal_counts.put(s,_counts.get(s));
+                }
+                List<Entry<Serializable,Integer>> values = new ArrayList<Entry<Serializable,Integer>>(internal_counts.entrySet());
+                Collections.sort(values, new ValuesComparator());
+                writer.array();        
+                for (Entry<Serializable,Integer> e : values) {
                     writer.object();
-                    writer.key("v"); writer.value(s);
-                    writer.key("c"); writer.value(1);
+                    writer.key("v"); writer.value(e.getKey());
+                    writer.key("c"); writer.value(e.getValue());
                     writer.endObject();
                 }
                 writer.endArray();
             }
         }
         writer.endArray();
+    }
+    
+    private void count(Serializable s) {
+        if (_counts.containsKey(s)) {
+            _counts.put(s, _counts.get(s) + 1);
+        } else {
+            _counts.put(s, 1);
+        }
     }
 }
