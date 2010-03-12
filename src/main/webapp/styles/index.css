@@ -38,21 +38,6 @@
     border-left: 3px solid #eee;
 }
 
-#create-project-panel-layout {
-    width: 100%;
-    border-collapse: collapse;
-}
-#create-project-panel-layout > tbody > tr > td {
-    padding-right: 7px;
-    padding-bottom: 7px;
-}
-#create-project-panel-layout > tbody > tr > td:last-child {
-    padding-right: 0px;
-}
-#create-project-panel-layout > tbody > tr:last-child > td {
-    padding-bottom: 0px;
-}
-
 #create-project-panel h1 {
     font-size: 120%;
     margin: 1em 0;

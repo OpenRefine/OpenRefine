@@ -292,7 +292,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     
     var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
     menu.html(
-        '<table class="data-table-cell-editor-layout">' +
+        '<table class="grid-layout layout-tighest layout-full data-table-cell-editor-layout">' +
             '<tr>' +
                 '<td colspan="5">' +
                     '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +

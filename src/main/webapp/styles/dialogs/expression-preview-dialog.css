@@ -1,18 +1,3 @@
-table.expression-preview-layout {
-    border-collapse: collapse;
-    width: 100%;
-}
-table.expression-preview-layout > tbody > tr > td {
-    padding-right: 5px;
-    padding-bottom: 5px;
-}
-table.expression-preview-layout > tbody > tr > td:last-child {
-    padding-right: 0px;
-}
-table.expression-preview-layout > tbody > tr:last-child > td {
-    padding-bottom: 0px;
-}
-
 .expression-preview-layout .ui-tabs .ui-tabs-nav li a {
     padding: 0.15em 1em;
 }

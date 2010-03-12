@@ -39,7 +39,7 @@ ReconDialog.prototype._createDialog = function() {
                 '<li><a href="#recon-dialog-tabs-strict">Strict</a></li>' +
             '</ul>' +
             '<div id="recon-dialog-tabs-heuristic">' +
-                '<table class="recon-dialog-main-layout" width="100%">' +
+                '<table class="grid-layout layout-normal layout-full">' +
                     '<tr>' +
                         '<td>Reconcile each cell to a Freebase topic of type:</td>' +
                         '<td>Also use relevant details from other columns:</td>' +
@@ -73,13 +73,13 @@ ReconDialog.prototype._createDialog = function() {
             '</div>' +
             '<div id="recon-dialog-tabs-strict" style="display: none;">' +
                 '<p>Each cell contains:</p>' +
-                '<table class="recon-dialog-main-layout">' +
+                '<table class="grid-layout layout-normal layout-full">' +
                     '<tr><td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="id" checked /></td><td>a Freebase ID, e.g., /en/solar_system</td></tr>' +
                     '<tr><td><input type="radio" name="recon-dialog-strict-choice" value="guid" /></td><td>a Freebase GUID, e.g., #9202a8c04000641f80000000000354ae</td></tr>' +
                     '<tr>' +
                         '<td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="key" /></td>' +
                         '<td>' +
-                            '<table class="recon-dialog-inner-layout">' +
+                            '<table class="grid-layout layout-tighter layout-full">' +
                                 '<tr><td colspan="2">a Freebase key in</td></tr>' +
                                 '<tr>' +
                                     '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="/wikipedia/en" nsName="Wikipedia EN" checked /></td>' +
@@ -117,7 +117,7 @@ ReconDialog.prototype._populateDialog = function() {
     /*
      *  Populate types in heuristic tab
      */
-    var typeTable = $('<table></table>').addClass("recon-dialog-inner-layout").appendTo(this._elmts.heuristicTypeContainer)[0];
+    var typeTable = $('<table></table>').addClass("grid-layout layout-tighter").appendTo(this._elmts.heuristicTypeContainer)[0];
     var createTypeChoice = function(type, check) {
         var tr = typeTable.insertRow(typeTable.rows.length);
         var td0 = tr.insertCell(0);
@@ -149,7 +149,7 @@ ReconDialog.prototype._populateDialog = function() {
         '<table>' +
             '<tr><th>Column</th><th>Freebase property</th></tr>' +
         '</table>'
-    ).addClass("recon-dialog-inner-layout").appendTo(this._elmts.heuristicDetailContainer)[0];
+    ).addClass("grid-layout layout-tighter").appendTo(this._elmts.heuristicDetailContainer)[0];
     
     function renderDetailColumn(column) {
         var tr = heuristicDetailTable.insertRow(heuristicDetailTable.rows.length);

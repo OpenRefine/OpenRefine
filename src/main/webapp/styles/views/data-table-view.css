@@ -171,18 +171,7 @@ a.data-table-star-off {
     background: #fffee0;
 }
 table.data-table-cell-editor-layout {
-    width: 100%;
     white-space: pre;
-}
-table.data-table-cell-editor-layout > tbody > tr > td {
-    padding-right: 3px;
-    padding-bottom: 3px;
-}
-table.data-table-cell-editor-layout > tbody > tr > td:last-child {
-    padding-right: 0px;
-}
-table.data-table-cell-editor-layout > tbody > tr:last-child > td {
-    padding-bottom: 0px;
 }
 
 textarea.data-table-cell-editor-editor {

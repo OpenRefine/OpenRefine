@@ -32,7 +32,7 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
 };
 
 ExpressionPreviewDialog.generateWidgetHtml = function() {
-    return '<table class="expression-preview-layout" rows="4" cols="2">' +
+    return '<table class="grid-layout layout-tighter layout-full" rows="4" cols="2">' +
             '<tr>' +
                 '<td>Expression</td>' +
                 '<td>Language</td>' +

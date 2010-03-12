@@ -265,10 +265,10 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         '<option value="/type/datetime">date/time</option>';
     
     var html = $(
-        '<table class="schema-align-node-dialog-layout">' +
+        '<table class="grid-layout layout-normal layout-full">' +
             '<tr>' +
                 '<td>' +
-                    '<table class="schema-align-node-dialog-layout2">' +
+                    '<table class="grid-layout layout-tight">' +
                         '<tr>' +
                             '<td>' +
                                 '<div class="schema-align-node-dialog-node-type">' +
@@ -278,11 +278,11 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                         '</tr>' +
                         '<tr>' +
                             '<td>' +
-                                '<table class="schema-align-node-dialog-layout2">' +
+                                '<table class="grid-layout layout-tight">' +
                                     '<tr>' +
                                         '<td><div class="schema-alignment-node-dialog-column-list" bind="divColumns"></div></td>' +
                                         '<td>' +
-                                            '<table class="schema-align-node-dialog-layout2" cols="4">' +
+                                            '<table class="grid-layout layout-tight" cols="4">' +
                                                 '<tr>' +
                                                     '<td colspan="4">The cell\'s content is used ...</td>' +
                                                 '</tr>' +
@@ -336,7 +336,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                 '</td>' +
                 
                 '<td>' +
-                    '<table class="schema-align-node-dialog-layout2">' +
+                    '<table class="grid-layout layout-tight">' +
                         '<tr>' +
                             '<td colspan="3">' +
                                 '<div class="schema-align-node-dialog-node-type">' +
