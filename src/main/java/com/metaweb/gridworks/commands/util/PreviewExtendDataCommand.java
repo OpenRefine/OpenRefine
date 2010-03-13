@@ -70,6 +70,7 @@ public class PreviewExtendDataCommand extends Command {
             
             JSONWriter writer = new JSONWriter(response.getWriter());
             writer.object();
+            writer.key("code"); writer.value("ok");
             writer.key("columns");
                 writer.array();
                 for (String name : job.columnNames) {

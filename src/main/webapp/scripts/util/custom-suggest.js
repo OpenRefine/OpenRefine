@@ -66,7 +66,8 @@
                 "id" : val,
                 "name" : null,
                 "guid" : null,
-                "x:type" : "/type/property"
+                "x:type" : "/type/property",
+                "/type/property/expected_type" : null
             }];
             var data = {
                 query: JSON.stringify({ query: query })
@@ -122,7 +123,12 @@
             var o = this.options;
                 
             var data = {
-                query: val
+                query: val,
+                mql_output: JSON.stringify([{
+                    "id" : null,
+                    "name" : null,
+                    "/type/property/expected_type" : null
+                }])
             };
             if (start) {
                 data.start = start;

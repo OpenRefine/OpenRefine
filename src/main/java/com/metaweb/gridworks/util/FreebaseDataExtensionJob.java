@@ -76,7 +76,7 @@ public class FreebaseDataExtensionJob {
     protected FreebaseDataExtensionJob.DataExtension collectResult(JSONObject obj) throws JSONException {
         List<Object[]> rows = new ArrayList<Object[]>();
         
-        collectResult(rows, extension, obj, 0, 0);
+        collectResult(rows, extension.getJSONArray("properties"), obj, 0, 0);
         
         Object[][] data = new Object[rows.size()][columnCount];
         rows.toArray(data);
@@ -157,16 +157,18 @@ public class FreebaseDataExtensionJob {
                         storeCell(rows, startRowIndex2++, startColumnIndex2++, o);
                     }
                     
-                    int[] rowcol = collectResult(
-                        rows,
-                        extNode.getJSONArray("properties"),
-                        o,
-                        startRowIndex,
-                        startColumnIndex2
-                    );
-                    
-                    startRowIndex = rowcol[0];
-                    maxColIndex = Math.max(maxColIndex, rowcol[1]);
+                    if (hasSubProperties) {
+                        int[] rowcol = collectResult(
+                            rows,
+                            extNode.getJSONArray("properties"),
+                            o,
+                            startRowIndex,
+                            startColumnIndex2
+                        );
+                        
+                        startRowIndex = rowcol[0];
+                        maxColIndex = Math.max(maxColIndex, rowcol[1]);
+                    }
                 }
                 
                 return new int[] { startRowIndex, maxColIndex };
@@ -210,6 +212,7 @@ static protected InputStream doPost(URL url, String name, String load) throws IO
     URLConnection connection = url.openConnection();
     connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
     connection.setConnectTimeout(5000);
+    connection.setDoOutput(true);
     
     DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
     try {
@@ -242,7 +245,7 @@ static protected void formulateQuery(Set<String> guids, JSONObject node, Writer 
                 }
                 jsonWriter.endArray();
                 
-            formulateQueryNode(node, jsonWriter);
+            formulateQueryNode(node.getJSONArray("properties"), jsonWriter);
         
         jsonWriter.endObject();
         jsonWriter.endArray();
@@ -270,18 +273,21 @@ static protected void formulateQueryNode(JSONObject node, JSONWriter writer) thr
                 }
                 
                 if (hasSubProperties) {
-                    JSONArray a = node.getJSONArray("properties");
-                    int l = a.length();
-                    
-                    for (int i = 0; i < l; i++) {
-                        formulateQueryNode(a.getJSONObject(i), writer);
-                    }
+                    formulateQueryNode(node.getJSONArray("properties"), writer);
                 }
             }
             writer.endObject();
         }
     }
     writer.endArray();
+}
+
+static protected void formulateQueryNode(JSONArray propertiesA, JSONWriter writer) throws JSONException {
+    int l = propertiesA.length();
+    
+    for (int i = 0; i < l; i++) {
+        formulateQueryNode(propertiesA.getJSONObject(i), writer);
+    }
 }
 
 static protected int countColumns(JSONObject obj, List<String> columnNames) throws JSONException {

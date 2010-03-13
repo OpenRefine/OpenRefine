@@ -822,7 +822,7 @@ DataTableColumnHeaderUI.prototype._doAddColumnFromFreebase = function() {
     var o = DataTableView.sampleVisibleRows(this._column);
     
     new ExtendDataPreviewDialog(
-        this._column.name, 
+        this._column, 
         o.rowIndices, 
         function() {}
     );
