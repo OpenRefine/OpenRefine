@@ -238,7 +238,7 @@ ListFacet.prototype.render = function() {
 };
 
 ListFacet.prototype._doEdit = function() {
-    new FacetBasedEditDialog(this._config.columnName, this._config.expression);
+    new ClusteringDialog(this._config.columnName, this._config.expression);
 };
 
 ListFacet.prototype._editChoice = function(choice, choiceDiv) {

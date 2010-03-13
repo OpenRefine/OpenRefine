@@ -263,7 +263,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {},
                 {
                     label: "Cluster & Edit ...",
-                    click: function() { new FacetBasedEditDialog(self._column.name, "value"); }
+                    click: function() { new ClusteringDialog(self._column.name, "value"); }
                 }
             ]
         },

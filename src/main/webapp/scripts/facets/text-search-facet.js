@@ -45,10 +45,14 @@ TextSearchFacet.prototype._initializeUI = function() {
     var headerDiv = $('<div></div>').addClass("facet-title").appendTo(container);
     $('<span></span>').text(this._config.name).appendTo(headerDiv);
     
-    var removeButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("remove").click(function() {
-        self._remove();
-    }).prependTo(headerDiv);
-    
+    var removeButton = $('<img>')
+        .attr("src", "images/close.png")
+        .attr("title", "Remove this facet")
+        .addClass("facet-choice-link")
+        .click(function() {
+            self._remove();
+        }).prependTo(headerDiv);
+        
     var bodyDiv = $('<div></div>').addClass("facet-text-body").appendTo(container);
     
     var input = $('<input />').appendTo(bodyDiv);

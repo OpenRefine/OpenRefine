@@ -1,0 +1,72 @@
+.clustering-dialog-table-container {
+    height: 500px;
+    overflow: auto;
+    border: 1px solid #aaa;
+}
+
+table.clustering-dialog-entry-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.clustering-dialog-entry-table > tbody > tr.header {
+    background: #ccc;
+    font-weight: bold;
+}
+
+table.clustering-dialog-entry-table > tbody > tr > td {
+    padding: 2px 5px;
+}
+
+table.clustering-dialog-entry-table > tbody > tr.odd > td {
+    background: #eee;
+}
+
+table.clustering-dialog-entry-table > tbody > tr.even > td {
+    background: white;
+}
+
+table.clustering-dialog-entry-table input {
+    border: 1px solid #ccc;
+    padding: 0 0.1em;
+}
+
+table.clustering-dialog-entry-table a {
+	text-decoration: none;
+}
+
+table.clustering-dialog-entry-table a:hover {
+	text-decoration: underline
+}
+
+.clustering-dialog-entry-count {
+    color: #aaa;
+    margin-left: 0.5em;
+}
+
+.clustering-dialog-controls {
+    margin-bottom: 0.5em;
+}
+
+.clustering-dialog-controls td {
+    padding-right: 0.5em;
+}
+
+
+.clustering-dialog-facet {
+    margin-bottom: 1em;
+}
+.clustering-dialog-facet-header {
+    font-weight: bold;
+}
+.clustering-dialog-facet-histogram {
+    margin: 10px 8px 5px 8px;
+    height: 52px;
+}
+.clustering-dialog-facet-slider {
+    margin: 5px;
+}
+.clustering-dialog-facet-selection {
+    text-align: center;
+    color: #888;
+}

@@ -1,4 +1,4 @@
-function FacetBasedEditDialog(columnName, expression) {
+function ClusteringDialog(columnName, expression) {
     this._columnName = columnName;
     this._expression = expression;
     this._method = "binning";
@@ -11,7 +11,7 @@ function FacetBasedEditDialog(columnName, expression) {
     this._cluster();
 }
 
-FacetBasedEditDialog.prototype._createDialog = function() {
+ClusteringDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     frame.width("900px");
@@ -62,7 +62,7 @@ FacetBasedEditDialog.prototype._createDialog = function() {
                 '</tr>' +
                 '<tr>' +
                     '<td colspan="3">' +
-                        '<div bind="tableContainer" class="facet-based-edit-dialog-table-container"></div>' +
+                        '<div bind="tableContainer" class="clustering-dialog-table-container"></div>' +
                     '</td>' +
                     '<td bind="facetContainer" width="200"></td>' +
                 '</tr>' +
@@ -133,75 +133,85 @@ FacetBasedEditDialog.prototype._createDialog = function() {
     $("#recon-dialog-tabs-strict").css("display", "");
 };
 
-FacetBasedEditDialog.prototype._renderTable = function(clusters) {
+ClusteringDialog.prototype._renderTable = function(clusters) {
     var self = this;
     
     var container = this._elmts.tableContainer;
-    var table = $('<table></table>').addClass("facet-based-edit-dialog-entry-table")[0];
     
-    var trHead = table.insertRow(table.rows.length);
-    trHead.className = "header";
-    $(trHead.insertCell(0)).text("Cluster Size");
-    $(trHead.insertCell(1)).text("Row Count");
-    $(trHead.insertCell(2)).text("Values in Cluster");
-    $(trHead.insertCell(3)).text("Merge?");
-    $(trHead.insertCell(4)).text("New Cell Value");
-    
-    var renderCluster = function(cluster) {
-        var tr = table.insertRow(table.rows.length);
-        tr.className = table.rows.length % 2 == 0 ? "odd" : "even";
+    if (clusters.length > 0) {
+        var table = $('<table></table>').addClass("clustering-dialog-entry-table")[0];
         
-        $(tr.insertCell(0)).text(cluster.choices.length);
+        var trHead = table.insertRow(table.rows.length);
+        trHead.className = "header";
+        $(trHead.insertCell(0)).text("Cluster Size");
+        $(trHead.insertCell(1)).text("Row Count");
+        $(trHead.insertCell(2)).text("Values in Cluster");
+        $(trHead.insertCell(3)).text("Merge?");
+        $(trHead.insertCell(4)).text("New Cell Value");
+
+        var renderCluster = function(cluster) {
+            var tr = table.insertRow(table.rows.length);
+            tr.className = table.rows.length % 2 == 0 ? "odd" : "even";
+            
+            $(tr.insertCell(0)).text(cluster.choices.length);
+            
+            $(tr.insertCell(1)).text(cluster.rowCount);
+            
+            var ul = $('<ul></ul>');
+            var choices = cluster.choices;
+            var rowCount = 0;
+            for (var c = 0; c < choices.length; c++) {
+                var choice = choices[c];
+                var li = $('<li></li>');
+                $('<a href="javascript:{}" title="Use this value"></a>').text(choice.v).click(function() {
+                    var parent = $(this).closest("tr");
+                    parent.find("input[type='text']").val($(this).text());
+                    parent.find("input:not(:checked)").attr('checked', true).change();
+                    return false;
+                }).appendTo(li);
+                $('<span></span>').text("(" + choice.c + " rows)").addClass("clustering-dialog-entry-count").appendTo(li);
+                rowCount += choice.c;
+                li.appendTo(ul);
+            }
+            $(tr.insertCell(2)).append(ul);
+            
+            var editCheck = $('<input type="checkbox" />')
+                .change(function() {
+                    cluster.edit = !cluster.edit;
+                }).appendTo(tr.insertCell(3));
+
+            if (cluster.edit) {
+                editCheck.attr("checked", "true");
+            }
+            
+            var input = $('<input size="25" />')
+                .attr("value", cluster.value)
+                .keyup(function() {
+                    cluster.value = this.value;
+                }).appendTo(tr.insertCell(4));
+        };
         
-        $(tr.insertCell(1)).text(cluster.rowCount);
-        
-        var ul = $('<ul>');
-        var choices = cluster.choices;
-        var rowCount = 0;
-        for (var c = 0; c < choices.length; c++) {
-            var choice = choices[c];
-            var li = $('<li>').appendTo(ul);
-            $('<a href="abcd" title="Use this value"></a>').text(choice.v).click(function() {
-                var parent = $(this).closest("tr");
-                parent.find("input[type='text']").val($(this).text());
-                parent.find("input:not(:checked)").attr('checked', true).change();
-                return false;
-            }).appendTo(li);
-            $('<span>').text("(" + choice.c + " rows)").addClass("facet-based-edit-dialog-entry-count").appendTo(li);
-            rowCount += choice.c;
+        for (var i = 0; i < clusters.length; i++) {
+            renderCluster(clusters[i]);
         }
-        $(tr.insertCell(2)).append(ul);
         
-        var editCheck = $('<input type="checkbox" />')
-            .appendTo(tr.insertCell(3))
-            .change(function() {
-                cluster.edit = !cluster.edit;
-            });
-        if (cluster.edit) {
-            editCheck.attr("checked", "true");
-        }
+        container.empty().append(table);
         
-        var input = $('<input size="25" />')
-            .attr("value", cluster.value)
-            .appendTo(tr.insertCell(4))
-            .keyup(function() {
-                cluster.value = this.value;
-            });
-    };
-    for (var i = 0; i < clusters.length; i++) {
-        renderCluster(clusters[i]);
+        this._elmts.resultSummary.html(
+            (clusters.length === this._clusters.length) ?
+                ("<b>" + this._clusters.length + "</b> cluster" + ((this._clusters.length != 1) ? "s" : "") + " found") :
+                ("<b>" + clusters.length + "</b> cluster" + ((clusters.length != 1) ? "s" : "") + " filtered from <b>" + this._clusters.length + "</b> total")
+        );
+        
+    } else {
+        container.html(
+            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">No clusters were found with the selected method</div><div style="padding-top: 1em; font-size: 110%; color: #888;">Try selecting another method above or changing its parameters</div></div>'
+        );
     }
     
-    container.empty().append(table);
-    
-    this._elmts.resultSummary.html(
-        (clusters.length === this._clusters.length) ?
-            ("<b>" + this._clusters.length + "</b> cluster" + ((this._clusters.length != 1) ? "s" : "") + " found") :
-            ("<b>" + clusters.length + "</b> cluster" + ((clusters.length != 1) ? "s" : "") + " filtered from <b>" + this._clusters.length + "</b> total")
-    );
 };
 
-FacetBasedEditDialog.prototype._cluster = function() {
+ClusteringDialog.prototype._cluster = function() {
     var self = this;
     
     var container = this._elmts.tableContainer.html(
@@ -228,7 +238,7 @@ FacetBasedEditDialog.prototype._cluster = function() {
     );
 }
 
-FacetBasedEditDialog.prototype._updateData = function(data) {
+ClusteringDialog.prototype._updateData = function(data) {
     var clusters = [];
     $.each(data, function() {
         var cluster = {
@@ -261,29 +271,29 @@ FacetBasedEditDialog.prototype._updateData = function(data) {
     this._updateAll();
 };
 
-FacetBasedEditDialog.prototype._selectAll = function() {
-    $(".facet-based-edit-dialog-entry-table input:not(:checked)").attr('checked', true).change();
+ClusteringDialog.prototype._selectAll = function() {
+    $(".clustering-dialog-entry-table input:not(:checked)").attr('checked', true).change();
 };
 
-FacetBasedEditDialog.prototype._deselectAll = function() {
-    $(".facet-based-edit-dialog-entry-table input:checked").attr('checked', false).change();
+ClusteringDialog.prototype._deselectAll = function() {
+    $(".clustering-dialog-entry-table input:checked").attr('checked', false).change();
 };
 
-FacetBasedEditDialog.prototype._onApplyClose = function() {
+ClusteringDialog.prototype._onApplyClose = function() {
     var self = this;        
     this._apply(function() {
         self._dismiss();
     });
 };
 
-FacetBasedEditDialog.prototype._onApplyReCluster = function() {
+ClusteringDialog.prototype._onApplyReCluster = function() {
     var self = this;        
     this._apply(function() {
         self._cluster();
     });
 };
 
-FacetBasedEditDialog.prototype._apply = function(onDone) {
+ClusteringDialog.prototype._apply = function(onDone) {
     var clusters = this._getRestrictedClusters();
     var edits = [];
     for (var i = 0; i < clusters.length; i++) {
@@ -323,15 +333,15 @@ FacetBasedEditDialog.prototype._apply = function(onDone) {
     }
 };
 
-FacetBasedEditDialog.prototype._dismiss = function() {
+ClusteringDialog.prototype._dismiss = function() {
     DialogSystem.dismissUntil(this._level - 1);
 };
 
-FacetBasedEditDialog.prototype._getBaseClusters = function() {
+ClusteringDialog.prototype._getBaseClusters = function() {
     return [].concat(this._clusters);
 };
 
-FacetBasedEditDialog.prototype._getRestrictedClusters = function(except) {
+ClusteringDialog.prototype._getRestrictedClusters = function(except) {
     var clusters = this._getBaseClusters();
     for (var i = 0; i < this._facets.length; i++) {
         var facet = this._facets[i].facet;
@@ -342,7 +352,7 @@ FacetBasedEditDialog.prototype._getRestrictedClusters = function(except) {
     return clusters;
 };
 
-FacetBasedEditDialog.prototype._updateAll = function() {
+ClusteringDialog.prototype._updateAll = function() {
     for (var i = 0; i < this._facets.length; i++) {
         var facet = this._facets[i].facet;
         var clusters = this._getRestrictedClusters(facet);
@@ -351,7 +361,7 @@ FacetBasedEditDialog.prototype._updateAll = function() {
     this._renderTable(this._getRestrictedClusters());
 };
 
-FacetBasedEditDialog.prototype._resetFacets = function() {
+ClusteringDialog.prototype._resetFacets = function() {
     for (var i = 0; i < this._facets.length; i++) {
         var r = this._facets[i];
         r.facet.dispose();
@@ -365,15 +375,15 @@ FacetBasedEditDialog.prototype._resetFacets = function() {
     this._createFacet("Value Length Variance", "variance");
 };
 
-FacetBasedEditDialog.prototype._createFacet = function(title, property) {
+ClusteringDialog.prototype._createFacet = function(title, property) {
     var elmt = $('<div>').appendTo(this._elmts.facetContainer);
     this._facets.push({
         elmt: elmt,
-        facet: new FacetBasedEditDialog.Facet(this, title, property, elmt, this._getBaseClusters())
+        facet: new ClusteringDialog.Facet(this, title, property, elmt, this._getBaseClusters())
     });
 };
 
-FacetBasedEditDialog.Facet = function(dialog, title, property, elmt, clusters) {
+ClusteringDialog.Facet = function(dialog, title, property, elmt, clusters) {
     this._dialog = dialog;
     this._property = property;
     
@@ -419,12 +429,12 @@ FacetBasedEditDialog.Facet = function(dialog, title, property, elmt, clusters) {
         this._from = this._min;
         this._to = this._max;
         
-        elmt.addClass("facet-based-edit-dialog-facet");
+        elmt.addClass("clustering-dialog-facet");
         var html = $(
-            '<div class="facet-based-edit-dialog-facet-header">' + title + '</div>' +
-            '<div class="facet-based-edit-dialog-facet-histogram" bind="histogramContainer"></div>' +
-            '<div class="facet-based-edit-dialog-facet-slider" bind="slider"></div>' +
-            '<div class="facet-based-edit-dialog-facet-selection" bind="selectionContainer"></div>'
+            '<div class="clustering-dialog-facet-header">' + title + '</div>' +
+            '<div class="clustering-dialog-facet-histogram" bind="histogramContainer"></div>' +
+            '<div class="clustering-dialog-facet-slider" bind="slider"></div>' +
+            '<div class="clustering-dialog-facet-selection" bind="selectionContainer"></div>'
         ).appendTo(elmt);
         
         this._elmts = DOM.bind(html);
@@ -443,10 +453,10 @@ FacetBasedEditDialog.Facet = function(dialog, title, property, elmt, clusters) {
     }
 };
 
-FacetBasedEditDialog.Facet.prototype.dispose = function() {
+ClusteringDialog.Facet.prototype.dispose = function() {
 };
 
-FacetBasedEditDialog.Facet.prototype.restrict = function(clusters) {
+ClusteringDialog.Facet.prototype.restrict = function(clusters) {
     if (this._baseBins.length == 0 || (this._from == this._min && this._to == this._max)) {
         return clusters;
     }
@@ -462,7 +472,7 @@ FacetBasedEditDialog.Facet.prototype.restrict = function(clusters) {
     return clusters2;
 };
 
-FacetBasedEditDialog.Facet.prototype.update = function(clusters) {
+ClusteringDialog.Facet.prototype.update = function(clusters) {
     if (this._baseBins.length == 0) {
         return;
     }
@@ -494,11 +504,11 @@ FacetBasedEditDialog.Facet.prototype.update = function(clusters) {
     ).appendTo(this._elmts.histogramContainer);
 };
 
-FacetBasedEditDialog.Facet.prototype._setRangeIndicators = function() {
+ClusteringDialog.Facet.prototype._setRangeIndicators = function() {
     this._elmts.selectionContainer.text(this._from + " to " + this._to);
 };
 
-FacetBasedEditDialog.Facet.prototype._computeDistribution = function(clusters) {
+ClusteringDialog.Facet.prototype._computeDistribution = function(clusters) {
     var bins = [];
     for (var b = 0; b < this._binCount; b++) {
         bins.push(0);
