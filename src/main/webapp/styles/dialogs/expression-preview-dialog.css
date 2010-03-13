@@ -1,14 +1,10 @@
-.expression-preview-layout .ui-tabs .ui-tabs-nav li a {
+#expression-preview-tabs .ui-tabs-nav li a {
     padding: 0.15em 1em;
 }
 
 textarea.expression-preview-code {
     font-family: monospace;
     height: 5em;
-    margin: 0;
-    padding: 2%;
-    width: 96%;
-    border: 1px solid #aaa;
     vertical-align: top;
 }
 

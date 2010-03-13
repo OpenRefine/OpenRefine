@@ -18,52 +18,74 @@ tr, td {
     vertical-align: baseline;
 }
 
-table.grid-layout {
-    border-collapse: collapse;
+div.grid-layout > table {
+    border-collapse: separate;
 }
-table.grid-layout.layout-full {
+div.grid-layout.layout-full table {
     width: 100%;
 }
-table.grid-layout > tbody > tr > th {
+div.grid-layout > table > tbody > tr > th, div.grid-layout > table > tbody > tr > td {
+    padding: 0px;
     text-align: left;
-    vertical-align: baseline;
+    vertical-align: top;
 }
-table.grid-layout > tbody > tr > td {
-    vertical-align: baseline;
+div.grid-layout.layout-normal {
+    margin: -10px;
 }
-table.grid-layout > tbody > tr > td:last-child {
-    border-right: 0px;
-}
-table.grid-layout > tbody > tr:last-child > td {
-    border-bottom: 0px;
-}
-table.grid-layout.layout-normal > tbody > tr > td {
-    padding-right: 10px;
-    padding-bottom: 10px;
-}
-table.grid-layout.layout-tight > tbody > tr > td {
-    padding-right: 7px;
-    padding-bottom: 7px;
-}
-table.grid-layout.layout-tighter > tbody > tr > td {
-    padding-right: 5px;
-    padding-bottom: 5px;
-}
-table.grid-layout.layout-tightest > tbody > tr > td {
-    padding-right: 3px;
-    padding-bottom: 3px;
-}
-table.grid-layout.layout-loose > tbody > tr > td {
-    padding-right: 15px;
-    padding-bottom: 15px;
-}
-table.grid-layout.layout-looser > tbody > tr > td {
-    padding-right: 20px;
-    padding-bottom: 20px;
+div.grid-layout.layout-normal > table {
+    border-spacing: 10px;
 }
 
-input {
-    vertical-align: middle;
+div.grid-layout.layout-tight {
+    margin: -7px;
+}
+div.grid-layout.layout-tight > table {
+    border-spacing: 7px;
+}
+
+div.grid-layout.layout-tighter {
+    margin: -5px;
+}
+div.grid-layout.layout-tighter > table {
+    border-spacing: 5px;
+}
+
+div.grid-layout.layout-tightest {
+    margin: -3px;
+}
+div.grid-layout.layout-tightest > table {
+    border-spacing: 3px;
+}
+
+div.grid-layout.layout-loose {
+    margin: -15px;
+}
+div.grid-layout.layout-loose > table {
+    border-spacing: 15px;
+}
+
+div.grid-layout.layout-looser {
+    margin: -20px;
+}
+div.grid-layout.layout-looser > table {
+    border-spacing: 20px;
+}
+
+input[type="checkbox"], input[type="radio"] {
+    vertical-align: baseline;
+}
+
+div.input-container {
+    padding: 3px;
+}
+div.input-container > input, div.input-container > textarea {
+    display: block;
+    width: 100%;
+    padding: 2px;
+    border: 1px inset;
+    margin-left: -3px;
+    margin-top: -3px;
+    vertical-align: top;
 }
 
 a.action {

@@ -39,7 +39,7 @@ ReconDialog.prototype._createDialog = function() {
                 '<li><a href="#recon-dialog-tabs-strict">Strict</a></li>' +
             '</ul>' +
             '<div id="recon-dialog-tabs-heuristic">' +
-                '<table class="grid-layout layout-normal layout-full">' +
+                '<div class="grid-layout layout-normal layout-full"><table>' +
                     '<tr>' +
                         '<td>Reconcile each cell to a Freebase topic of type:</td>' +
                         '<td>Also use relevant details from other columns:</td>' +
@@ -69,17 +69,17 @@ ReconDialog.prototype._createDialog = function() {
                             '<input type="radio" name="recon-dialog-heuristic-service" value="relevance" /> relevance service ' +
                         '</td>' +
                     '</tr>' +
-                '</table>' +
+                '</table></div>' +
             '</div>' +
             '<div id="recon-dialog-tabs-strict" style="display: none;">' +
                 '<p>Each cell contains:</p>' +
-                '<table class="grid-layout layout-normal layout-full">' +
+                '<div class="grid-layout layout-normal layout-full"><table>' +
                     '<tr><td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="id" checked /></td><td>a Freebase ID, e.g., /en/solar_system</td></tr>' +
                     '<tr><td><input type="radio" name="recon-dialog-strict-choice" value="guid" /></td><td>a Freebase GUID, e.g., #9202a8c04000641f80000000000354ae</td></tr>' +
                     '<tr>' +
                         '<td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="key" /></td>' +
                         '<td>' +
-                            '<table class="grid-layout layout-tighter layout-full">' +
+                            '<div class="grid-layout layout-tighter layout-full"><table>' +
                                 '<tr><td colspan="2">a Freebase key in</td></tr>' +
                                 '<tr>' +
                                     '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="/wikipedia/en" nsName="Wikipedia EN" checked /></td>' +
@@ -89,10 +89,10 @@ ReconDialog.prototype._createDialog = function() {
                                     '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="other" /></td>' +
                                     '<td>this namespace: <input bind="strictNamespaceInput" /></td>' +
                                 '</tr>' +
-                            '</table>' +
+                            '</table></div>' +
                         '</td>' +
                     '</tr>' +
-                '</table>' +
+                '</table></div>' +
             '</div>' +
         '</div>'
     ).appendTo(body);
@@ -117,7 +117,8 @@ ReconDialog.prototype._populateDialog = function() {
     /*
      *  Populate types in heuristic tab
      */
-    var typeTable = $('<table></table>').addClass("grid-layout layout-tighter").appendTo(this._elmts.heuristicTypeContainer)[0];
+    var typeTableContainer = $('<div>').addClass("grid-layout layout-tighter").appendTo(this._elmts.heuristicTypeContainer);
+    var typeTable = $('<table></table>').appendTo(typeTableContainer)[0];
     var createTypeChoice = function(type, check) {
         var tr = typeTable.insertRow(typeTable.rows.length);
         var td0 = tr.insertCell(0);
@@ -145,11 +146,15 @@ ReconDialog.prototype._populateDialog = function() {
     /*
      *  Populate properties in heuristic tab
      */
+    var heuristicDetailTableContainer = $('<div>')
+        .addClass("grid-layout layout-tighter")
+        .appendTo(this._elmts.heuristicDetailContainer);
+        
     var heuristicDetailTable = $(
         '<table>' +
             '<tr><th>Column</th><th>Freebase property</th></tr>' +
         '</table>'
-    ).addClass("grid-layout layout-tighter").appendTo(this._elmts.heuristicDetailContainer)[0];
+    ).appendTo(heuristicDetailTableContainer)[0];
     
     function renderDetailColumn(column) {
         var tr = heuristicDetailTable.insertRow(heuristicDetailTable.rows.length);

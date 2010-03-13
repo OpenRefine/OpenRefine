@@ -51,6 +51,7 @@ import com.metaweb.gridworks.commands.util.GetExpressionLanguageInfoCommand;
 import com.metaweb.gridworks.commands.util.GuessTypesOfColumnCommand;
 import com.metaweb.gridworks.commands.util.LogExpressionCommand;
 import com.metaweb.gridworks.commands.util.PreviewExpressionCommand;
+import com.metaweb.gridworks.commands.util.PreviewExtendDataCommand;
 import com.metaweb.gridworks.commands.util.PreviewProtographCommand;
 
 public class GridworksServlet extends HttpServlet {
@@ -106,12 +107,14 @@ public class GridworksServlet extends HttpServlet {
         
         _commands.put("save-protograph", new SaveProtographCommand());
         
-        _commands.put("preview-expression", new PreviewExpressionCommand());
         _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());
         _commands.put("get-expression-history", new GetExpressionHistoryCommand());
         _commands.put("log-expression", new LogExpressionCommand());
         
+        _commands.put("preview-expression", new PreviewExpressionCommand());
+        _commands.put("preview-extend-data", new PreviewExtendDataCommand());
         _commands.put("preview-protograph", new PreviewProtographCommand());
+        
         _commands.put("guess-types-of-column", new GuessTypesOfColumnCommand());
     }
 

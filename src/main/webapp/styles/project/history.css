@@ -86,20 +86,14 @@ a.history-entry:hover {
     text-decoration: none;
 }
 
-table.extract-operation-dialog-layout td {
-    vertical-align: top;
-}
 .extract-operation-dialog-entries {
     height: 400px;
+    padding: 2px;
+    border: 1px inset;
     overflow: auto;
 }
-textarea.extract-operation-dialog-textarea {
-    display: block;
-    margin: 0;
-    vertical-align: top;
+textarea.history-operation-json {
     white-space: pre;
     font-family: monospace;
-    padding: 2%;
-    width: 96%;
     height: 400px;
 }

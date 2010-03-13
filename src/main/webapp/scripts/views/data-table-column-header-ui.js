@@ -275,6 +275,11 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     click: function() { self._doAddColumn("value"); }
                 },
                 {
+                    label: "Add Columns From Freebase ...",
+                    click: function() { self._doAddColumnFromFreebase(); }
+                },
+                {},
+                {
                     label: "Remove This Column",
                     click: function() { self._doRemoveColumn(); }
                 },
@@ -547,7 +552,7 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     body.html(
-        '<table class="expression-preview-layout">' +
+        '<div class="grid-layout layout-tight layout-full"><table>' +
             '<tr>' +
                 '<td colspan="4">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
             '</tr>' +
@@ -743,7 +748,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     body.html(
-        '<table class="expression-preview-layout" cols="2">' +
+        '<div class="grid-layout layout-normal layout-full"><table cols="2">' +
             '<tr>' +
                 '<td width="1%" style="white-space: pre;">' +
                     'New column name' +
@@ -765,7 +770,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
             '<tr>' +
                 '<td colspan="2">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
             '</tr>' +
-        '</table>'
+        '</table></div>'
     );
     var bodyElmts = DOM.bind(body);
     
@@ -811,6 +816,16 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
         o.values,
         "value"
     );    
+};
+
+DataTableColumnHeaderUI.prototype._doAddColumnFromFreebase = function() {
+    var o = DataTableView.sampleVisibleRows(this._column);
+    
+    new ExtendDataPreviewDialog(
+        this._column.name, 
+        o.rowIndices, 
+        function() {}
+    );
 };
 
 DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {

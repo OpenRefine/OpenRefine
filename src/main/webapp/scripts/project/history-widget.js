@@ -124,22 +124,26 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    $('<p></p>').text(
-        "The following JSON code encodes the operations you have done that can be abstracted. " + 
-        "You can copy and save it in order to apply the same operations in the future.").appendTo(body);
+    var html = $(
+        '<div class="grid-layout layout-normal layout-full"><table>' +
+            '<tr><td colspan="2">' +
+                'The following JSON code encodes the operations you have done that can be abstracted. ' +
+                'You can copy and save it in order to apply the same operations in the future.' +
+            '</td></tr>' +
+            '<tr>' +
+                '<td width="50%">' +
+                    '<div class="extract-operation-dialog-entries"><table cellspacing="5" bind="entryTable"></table></div>' +
+                '</td>' +
+                '<td width="50%">' +
+                    '<div class="input-container"><textarea wrap="off" class="history-operation-json" bind="textarea" /></div>' +
+                '</td>' +
+            '</tr>' +
+        '</table></div>'
+    ).appendTo(body);
+    
+    var elmts = DOM.bind(html);
         
-    var table = $('<table width="100%" cellspacing="0" cellpadding="0"><tr></tr></table>')
-        .addClass("extract-operation-dialog-layout")
-        .appendTo(body)[0];
-    
-    var leftColumn = table.rows[0].insertCell(0);
-    var rightColumn = table.rows[0].insertCell(1);
-    $(leftColumn).width("50%");
-    $(rightColumn).width("50%").css("padding-left", "20px");
-    
-    var entryDiv = $('<div>').addClass("extract-operation-dialog-entries").appendTo(leftColumn);
-    
-    var entryTable = $('<table cellspacing="5"></table>').appendTo(entryDiv)[0];
+    var entryTable = elmts.entryTable[0];
     var createEntry = function(entry) {
         var tr = entryTable.insertRow(entryTable.rows.length);
         var td0 = tr.insertCell(0);
@@ -162,11 +166,7 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     for (var i = 0; i < json.entries.length; i++) {
         createEntry(json.entries[i]);
     }
-        
-    var textarea = $('<textarea />')
-        .attr("wrap", "off")
-        .addClass("extract-operation-dialog-textarea")
-        .appendTo(rightColumn);
+    
     var updateJson = function() {
         var a = [];
         for (var i = 0; i < json.entries.length; i++) {
@@ -175,7 +175,7 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
                 a.push(entry.operation);
             }
         }
-        textarea.text(JSON.stringify(a, null, 2));
+        elmts.textarea.text(JSON.stringify(a, null, 2));
     };
     updateJson();
     
@@ -188,7 +188,7 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     textarea[0].select();
 };
 
-HistoryWidget.prototype._showApplyOperationsDialog = function(json) {
+HistoryWidget.prototype._showApplyOperationsDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     frame.width("800px");
@@ -197,21 +197,22 @@ HistoryWidget.prototype._showApplyOperationsDialog = function(json) {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    $('<p></p>').text(
-        "Paste the JSON code encoding the operations to perform.").appendTo(body);
-        
-    var textarea = $('<textarea />')
-        .attr("wrap", "off")
-        .css("white-space", "pre")
-        .css("font-family", "monospace")
-        .width("100%")
-        .height("400px")
-        .appendTo(body);
-    textarea.text(JSON.stringify(json, null, 2));
+    var html = $(
+        '<div class="grid-layout layout-normal layout-full"><table>' +
+            '<tr><td>' +
+                'Paste the JSON code encoding the operations to perform.' +
+            '</td></tr>' +
+            '<tr><td>' +
+                '<div class="input-container"><textarea wrap="off" bind="textarea" class="history-operation-json" /></div>' +
+            '</td></tr>' +
+        '</table></div>'
+    ).appendTo(body);
+    
+    var elmts = DOM.bind(html);
     
     $('<button></button>').text("Apply").click(function() {
         try {
-            var json = JSON.parse(textarea[0].value);
+            var json = JSON.parse(elmts.textarea[0].value);
         } catch (e) {
             alert("The JSON you pasted is invalid.");
             return;

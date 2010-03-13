@@ -32,13 +32,13 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
 };
 
 ExpressionPreviewDialog.generateWidgetHtml = function() {
-    return '<table class="grid-layout layout-tighter layout-full" rows="4" cols="2">' +
+    return '<div class="grid-layout layout-tight layout-full"><table rows="4" cols="2">' +
             '<tr>' +
                 '<td>Expression</td>' +
                 '<td>Language</td>' +
             '</tr>' +
             '<tr>' +
-                '<td rowspan="2"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></td>' +
+                '<td rowspan="2"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></div></td>' +
                 '<td width="150" height="1">' +
                     '<select bind="expressionPreviewLanguageSelect">' +
                         '<option value="gel">Native expression language</option>' +
@@ -70,7 +70,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
                     '</div>' +
                 '</td>' +
             '</tr>' +
-        '</table>';
+        '</table></div>';
 };
 
 ExpressionPreviewDialog.Widget = function(

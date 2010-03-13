@@ -1,0 +1,19 @@
+.extend-data-preview-dialog .suggested-property-container {
+    border: 1px solid #aaa;
+    padding: 10px;
+    overflow: auto;
+    height: 100%;
+}
+
+.extend-data-preview-dialog input.property-suggest {
+    display: block;
+    padding: 2%;
+    width: 96%;
+}
+
+.extend-data-preview-dialog .preview-container {
+    border: 1px solid #aaa;
+    padding: 10px;
+    overflow: auto;
+    height: 100%;
+}
