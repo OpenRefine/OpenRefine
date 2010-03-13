@@ -11,6 +11,7 @@ import com.metaweb.gridworks.expr.functions.Slice;
 import com.metaweb.gridworks.expr.functions.ToDate;
 import com.metaweb.gridworks.expr.functions.ToNumber;
 import com.metaweb.gridworks.expr.functions.ToString;
+import com.metaweb.gridworks.expr.functions.Type;
 import com.metaweb.gridworks.expr.functions.arrays.Join;
 import com.metaweb.gridworks.expr.functions.arrays.Reverse;
 import com.metaweb.gridworks.expr.functions.arrays.Sort;
@@ -104,6 +105,8 @@ public class ControlFunctionRegistry {
     }
 
     static {
+        registerFunction("type", new Type());
+        
         registerFunction("toString", new ToString());
         registerFunction("toNumber", new ToNumber());
         registerFunction("toDate", new ToDate());

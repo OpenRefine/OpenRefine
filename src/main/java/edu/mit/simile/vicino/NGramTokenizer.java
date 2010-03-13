@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.clustering.knn;
+package edu.mit.simile.vicino;
 
 import java.util.ArrayList;
 import java.util.Iterator;
