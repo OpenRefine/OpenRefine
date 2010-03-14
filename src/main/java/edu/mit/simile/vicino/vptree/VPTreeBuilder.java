@@ -80,12 +80,14 @@ public class VPTreeBuilder {
             return null;
         }
                 
-        TNode vpNode = new TNode(nodes[begin + getRandomIndex(delta)].get());
+        Node randomNode = nodes[begin + getRandomIndex(delta)];
+        TNode vpNode = new TNode(randomNode.get());
     
         if (DEBUG) System.out.println("\nvp-node: " + vpNode.get().toString());
         
         calculateDistances (vpNode , nodes, begin, end);
         orderDistances (nodes, begin, end);
+        fixVantagPoint (randomNode , nodes, begin, end);
         
         if (DEBUG) {
             for (int i = begin; i <= end; i++) {
@@ -124,6 +126,19 @@ public class VPTreeBuilder {
             Serializable y = nodes[i].get();
             double d = (x == y) ? 0.0d : distance.d(x.toString(), y.toString());
             nodes[i].setDistance(d);
+        }
+    }
+    
+    private void fixVantagPoint (Node pivot, Node nodes[], int begin, int end) {
+        for (int i = begin; i < end; i++) {
+            if (nodes[i] == pivot) {
+                if (i > begin) {
+                    Node tmp = nodes[begin];
+                    nodes[begin] = pivot;
+                    nodes[i] = tmp;
+                    break;
+                } 
+            }
         }
     }
     
