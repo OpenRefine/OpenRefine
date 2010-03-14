@@ -819,13 +819,17 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
 };
 
 DataTableColumnHeaderUI.prototype._doAddColumnFromFreebase = function() {
-    var o = DataTableView.sampleVisibleRows(this._column);
+    if ("reconConfig" in this._column && "type" in this._column.reconConfig) {
+        var o = DataTableView.sampleVisibleRows(this._column);
     
-    new ExtendDataPreviewDialog(
-        this._column, 
-        o.rowIndices, 
-        function() {}
-    );
+        new ExtendDataPreviewDialog(
+            this._column, 
+            o.rowIndices, 
+            function() {}
+        );
+    } else {
+        alert("This column has not been reconciled yet.");
+    }
 };
 
 DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {

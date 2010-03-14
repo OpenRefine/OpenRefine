@@ -5,7 +5,7 @@ function ExtendDataPreviewDialog(column, rowIndices, onDone) {
     this._extension = { properties: [] };
 
     var self = this;
-    var frame = DialogSystem.createDialog();
+    var frame = this._frame = DialogSystem.createDialog();
     frame.width("900px").addClass("extend-data-preview-dialog");
     
     var header = $('<div></div>').addClass("dialog-header").text("Add Columns from Freebase Based on Column " + column.name).appendTo(frame);
@@ -25,7 +25,7 @@ function ExtendDataPreviewDialog(column, rowIndices, onDone) {
                 '<td height="1">Suggested Properties</td>' +
             '</tr>' +
             '<tr>' +
-                '<td height="99%"><div class="suggested-property-container"></div></td>' +
+                '<td height="99%"><div class="suggested-property-container" bind="suggestedPropertyContainer"></div></td>' +
             '</tr>' +
         '</table></div>'
     ).appendTo(body);
@@ -41,16 +41,100 @@ function ExtendDataPreviewDialog(column, rowIndices, onDone) {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
     
-    this._level = DialogSystem.showDialog(frame);
+    ExtendDataPreviewDialog.getAllProperties(column.reconConfig.type.id, function(properties) {
+        self._show(properties);
+    });
+};
+
+ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
+    var query = {
+        id : typeID,
+        type : "/type/type",
+        "/freebase/type_hints/included_types" : [{
+            optional: true,
+            properties : [{
+                id : null,
+                name : null,
+                "/type/property/expected_type" : {
+                    id : null,
+                    "/freebase/type_hints/mediator" : []
+                },
+                sort : "name"
+            }]
+        }],
+        properties : [{
+            id : null,
+            name : null,
+            "/type/property/expected_type" : {
+                id : null,
+                "/freebase/type_hints/mediator" : []
+            },
+            sort : "name"
+        }]
+    };
+    
+    var allProperties = [];
+    var processProperty = function(property) {
+        var expectedType = property["/type/property/expected_type"];
+        if (expectedType["/freebase/type_hints/mediator"].length > 0 && expectedType["/freebase/type_hints/mediator"][0]) {
+            
+        } else {
+            allProperties.push({
+                id : property.id,
+                name : property.name,
+                expected : expectedType.id
+            });
+        }
+    };
+    var processProperties = function(properties) {
+        $.each(properties, function() { processProperty(this); });
+    };
+    
+    $.getJSON(
+        "http://api.freebase.com/api/service/mqlread?query=" + escape(JSON.stringify({ query : query })) + "&callback=?",
+        null,
+        function(o) {
+            if ("result" in o) {
+                processProperties(o.result.properties);
+                $.each(o.result["/freebase/type_hints/included_types"], function() {
+                    processProperties(this.properties);
+                })
+                
+                onDone(allProperties);
+            } else {
+                onDone([]);
+            }
+        },
+        "jsonp"
+    );    
+};
+
+ExtendDataPreviewDialog.prototype._show = function(properties) {
+    this._level = DialogSystem.showDialog(this._frame);
+    
+    var self = this;
+    var container = this._elmts.suggestedPropertyContainer;
+    var renderSuggestedProperty = function(property) {
+        var div = $('<div>').addClass("suggested-property").appendTo(container);
+        $('<a>').attr("href", "javascript:{}").text(property.name).appendTo(div).click(function() {
+            self._addProperty(property);
+        });
+    };
+    for (var i = 0; i < properties.length; i++) {
+        renderSuggestedProperty(properties[i]);
+    }
     
     var suggestConfig = {
-        type: '/type/property'
+        type: '/type/property',
+        schema: this._column.reconConfig.type.id
     };
-    if ("reconConfig" in column) {
-        suggestConfig.schema = column.reconConfig.type.id;
-    }    
+    
     this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-        self._addProperty(data);
+        self._addProperty({
+            id : data.id,
+            name: data.name,
+            expected: data["/type/property/expected_type"]
+        });
     });
 };
 
@@ -77,11 +161,7 @@ ExtendDataPreviewDialog.prototype._update = function() {
 };
 
 ExtendDataPreviewDialog.prototype._addProperty = function(p) {
-    this._extension.properties.push({
-        id : p.id,
-        name: p.name,
-        expected: p["/type/property/expected_type"]
-    });
+    this._extension.properties.push(p);
     this._update();
 };
 
@@ -93,6 +173,12 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
     }
     
     var table = $('<table>')[0];
+    var trHead = table.insertRow(table.rows.length);
+    $(trHead.insertCell(trHead.cells.length)).text(this._column.name);
+    
+    for (var c = 0; c < data.columns.length; c++) {
+        $(trHead.insertCell(trHead.cells.length)).text(data.columns[c]);
+    }
     
     for (var r = 0; r < data.rows.length; r++) {
         var tr = table.insertRow(table.rows.length);

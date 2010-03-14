@@ -1,8 +1,12 @@
 .extend-data-preview-dialog .suggested-property-container {
     border: 1px solid #aaa;
-    padding: 10px;
+    padding: 5px;
     overflow: auto;
     height: 100%;
+}
+
+.extend-data-preview-dialog .suggested-property {
+    padding: 5px;
 }
 
 .extend-data-preview-dialog input.property-suggest {
@@ -13,7 +17,15 @@
 
 .extend-data-preview-dialog .preview-container {
     border: 1px solid #aaa;
-    padding: 10px;
     overflow: auto;
     height: 100%;
+}
+
+.extend-data-preview-dialog .preview-container table {
+    border-collapse: collapse;
+}
+
+.extend-data-preview-dialog .preview-container td {
+    padding: 3px 5px;
+    border-bottom: 1px solid #ddd;
 }

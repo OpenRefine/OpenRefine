@@ -47,8 +47,7 @@ public class FreebaseDataExtensionJob {
         StringWriter writer = new StringWriter();
         formulateQuery(guids, extension, writer);
         
-        URL url = new URL("http://api.freebase.com/api/service/mqlread");
-        InputStream is = doPost(url, "query", writer.toString());
+        InputStream is = doMqlRead(writer.toString());
         try {
             String s = ParsingUtilities.inputStreamToString(is);
             JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
@@ -143,7 +142,7 @@ public class FreebaseDataExtensionJob {
             boolean hasSubProperties = (extNode.has("properties") && !extNode.isNull("properties")); 
             boolean isOwnColumn = !hasSubProperties || (extNode.has("included") && extNode.getBoolean("included"));
             
-            if (a != null) {
+            if (a != null && a.length() > 0) {
                 int maxColIndex = startColumnIndex;
                 
                 int l = a.length();
@@ -166,16 +165,19 @@ public class FreebaseDataExtensionJob {
                             startColumnIndex2
                         );
                         
-                        startRowIndex = rowcol[0];
-                        maxColIndex = Math.max(maxColIndex, rowcol[1]);
+                        startRowIndex2 = rowcol[0];
+                        startColumnIndex2 = rowcol[1];
                     }
+                    
+                    startRowIndex = startRowIndex2;
+                    maxColIndex = Math.max(maxColIndex, startColumnIndex2);
                 }
                 
                 return new int[] { startRowIndex, maxColIndex };
             } else {
                 return new int[] {
                     startRowIndex,
-                    countColumns(extNode, null)
+                    startColumnIndex + countColumns(extNode, null)
                 };
             }
         }
@@ -208,109 +210,112 @@ public class FreebaseDataExtensionJob {
     }
 
 
-static protected InputStream doPost(URL url, String name, String load) throws IOException {
-    URLConnection connection = url.openConnection();
-    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-    connection.setConnectTimeout(5000);
-    connection.setDoOutput(true);
-    
-    DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-    try {
-        String data = name + "=" + ParsingUtilities.encode(load);
+    static protected InputStream doMqlRead(String query) throws IOException {
+        URL url = new URL("http://api.freebase.com/api/service/mqlread");
+
+        URLConnection connection = url.openConnection();
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setConnectTimeout(5000);
+        connection.setDoOutput(true);
         
-        dos.writeBytes(data);
-    } finally {
-        dos.flush();
-        dos.close();
+        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+        try {
+            String body = "extended=1&query=" + ParsingUtilities.encode(query);
+            
+            dos.writeBytes(body);
+        } finally {
+            dos.flush();
+            dos.close();
+        }
+        
+        connection.connect();
+        
+        return connection.getInputStream();
     }
     
-    connection.connect();
-    
-    return connection.getInputStream();
-}
-
-static protected void formulateQuery(Set<String> guids, JSONObject node, Writer writer) throws JSONException {
-    JSONWriter jsonWriter = new JSONWriter(writer);
-    
-    jsonWriter.object();
-    jsonWriter.key("query");
-        jsonWriter.array();
+    static protected void formulateQuery(Set<String> guids, JSONObject node, Writer writer) throws JSONException {
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        
         jsonWriter.object();
-        
-            jsonWriter.key("guid"); jsonWriter.value(null);
-            jsonWriter.key("guid|=");
-                jsonWriter.array();
-                for (String guid : guids) {
-                    jsonWriter.value(guid);
-                }
-                jsonWriter.endArray();
-                
-            formulateQueryNode(node.getJSONArray("properties"), jsonWriter);
-        
-        jsonWriter.endObject();
-        jsonWriter.endArray();
-    jsonWriter.endObject();
-}
-
-static protected void formulateQueryNode(JSONObject node, JSONWriter writer) throws JSONException {
-    String propertyID = node.getString("id");
-    String expectedTypeID = node.getString("expected");
-    
-    writer.key(propertyID);
-    writer.array();
-    {
-        if (!expectedTypeID.startsWith("/type/")) { // not literal
-            writer.object();
-            writer.key("limit"); writer.value(10);
-            {
-                boolean hasSubProperties = (node.has("properties") && !node.isNull("properties")); 
+        jsonWriter.key("query");
+            jsonWriter.array();
+            jsonWriter.object();
+            
+                jsonWriter.key("guid"); jsonWriter.value(null);
+                jsonWriter.key("guid|=");
+                    jsonWriter.array();
+                    for (String guid : guids) {
+                        jsonWriter.value(guid);
+                    }
+                    jsonWriter.endArray();
                     
-                if (!hasSubProperties || (node.has("included") && node.getBoolean("included"))) {
-                    writer.key("name"); writer.value(null);
-                    writer.key("id"); writer.value(null);
-                    writer.key("guid"); writer.value(null);
-                    writer.key("type"); writer.array(); writer.endArray();
-                }
-                
-                if (hasSubProperties) {
-                    formulateQueryNode(node.getJSONArray("properties"), writer);
-                }
-            }
-            writer.endObject();
-        }
+                formulateQueryNode(node.getJSONArray("properties"), jsonWriter);
+            
+            jsonWriter.endObject();
+            jsonWriter.endArray();
+        jsonWriter.endObject();
     }
-    writer.endArray();
-}
-
-static protected void formulateQueryNode(JSONArray propertiesA, JSONWriter writer) throws JSONException {
-    int l = propertiesA.length();
     
-    for (int i = 0; i < l; i++) {
-        formulateQueryNode(propertiesA.getJSONObject(i), writer);
-    }
-}
-
-static protected int countColumns(JSONObject obj, List<String> columnNames) throws JSONException {
-    if (obj.has("properties") && !obj.isNull("properties")) {
-        boolean included = (obj.has("included") && obj.getBoolean("included"));
-        if (included && columnNames != null) {
-            columnNames.add(obj.getString("name"));
+    static protected void formulateQueryNode(JSONObject node, JSONWriter writer) throws JSONException {
+        String propertyID = node.getString("id");
+        String expectedTypeID = node.getString("expected");
+        
+        writer.key(propertyID);
+        writer.array();
+        {
+            if (!expectedTypeID.startsWith("/type/")) { // not literal
+                writer.object();
+                writer.key("limit"); writer.value(10);
+                writer.key("optional"); writer.value(true);
+                {
+                    boolean hasSubProperties = (node.has("properties") && !node.isNull("properties")); 
+                        
+                    if (!hasSubProperties || (node.has("included") && node.getBoolean("included"))) {
+                        writer.key("name"); writer.value(null);
+                        writer.key("id"); writer.value(null);
+                        writer.key("guid"); writer.value(null);
+                        writer.key("type"); writer.array(); writer.endArray();
+                    }
+                    
+                    if (hasSubProperties) {
+                        formulateQueryNode(node.getJSONArray("properties"), writer);
+                    }
+                }
+                writer.endObject();
+            }
         }
-        return (included ? 1 : 0) + countColumns(obj.getJSONArray("properties"), columnNames);
-    } else {
-        if (columnNames != null) {
-            columnNames.add(obj.getString("name"));
+        writer.endArray();
+    }
+    
+    static protected void formulateQueryNode(JSONArray propertiesA, JSONWriter writer) throws JSONException {
+        int l = propertiesA.length();
+        
+        for (int i = 0; i < l; i++) {
+            formulateQueryNode(propertiesA.getJSONObject(i), writer);
         }
-        return 1;
     }
-}
-
-static protected int countColumns(JSONArray a, List<String> columnNames) throws JSONException {
-    int c = 0;
-    int l = a.length();
-    for (int i = 0; i < l; i++) {
-        c += countColumns(a.getJSONObject(i), columnNames);
+    
+    static protected int countColumns(JSONObject obj, List<String> columnNames) throws JSONException {
+        if (obj.has("properties") && !obj.isNull("properties")) {
+            boolean included = (obj.has("included") && obj.getBoolean("included"));
+            if (included && columnNames != null) {
+                columnNames.add(obj.getString("name"));
+            }
+            return (included ? 1 : 0) + countColumns(obj.getJSONArray("properties"), columnNames);
+        } else {
+            if (columnNames != null) {
+                columnNames.add(obj.getString("name"));
+            }
+            return 1;
+        }
     }
-    return c;
-}
+    
+    static protected int countColumns(JSONArray a, List<String> columnNames) throws JSONException {
+        int c = 0;
+        int l = a.length();
+        for (int i = 0; i < l; i++) {
+            c += countColumns(a.getJSONObject(i), columnNames);
+        }
+        return c;
+    }
 }
