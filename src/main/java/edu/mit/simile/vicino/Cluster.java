@@ -44,7 +44,7 @@ public class Cluster extends Operator {
         
         log("VPTree found " + vptree_clusters.size() + " in " + vptree_elapsed + " ms with " + vptree_distances + " distances\n");
         log("NGram  found " + ngram_clusters.size() + " in " + ngram_elapsed + " ms with " + ngram_distances + " distances\n");
-        
+                
         if (vptree_clusters.size() > ngram_clusters.size()) {
             log("VPTree clusterer found these clusters the other method couldn't: ");
             diff(vptree_clusters,ngram_clusters);
@@ -52,6 +52,8 @@ public class Cluster extends Operator {
             log("NGram clusterer found these clusters the other method couldn't: ");
             diff(ngram_clusters,vptree_clusters);
         }
+        
+        System.exit(0);
     }
     
     private void diff(List<Set<Serializable>> more, List<Set<Serializable>> base) {
@@ -63,11 +65,15 @@ public class Cluster extends Operator {
         
         for (Set<Serializable> s : more) {
             if (!holder.contains(s)) {
-                for (Serializable ss : s) {
-                    log(ss.toString());
-                }
-                log("");
+                printCluster(s);
             }
         }
+    }
+    
+    private void printCluster(Set<Serializable> cluster) {
+        for (Serializable s : cluster) {
+            log(s.toString());
+        }
+        log("");
     }
 }
