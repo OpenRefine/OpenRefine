@@ -28,46 +28,44 @@ ClusteringDialog.prototype._createDialog = function() {
     ).appendTo(frame);
     
     var html = $(
-        '<div>' +
-            '<div class=""><table width="100%">' +
-                '<tr>' +
-                    '<td>' +
-                        'Method: <select bind="methodSelector">' +
-                            '<option selected="true">key collision</option>' +
-                            '<option>nearest neightbor</option>' +
-                        '</select>' +
-                    '</td>' +
-                    '<td>' +
-                        '<div class="binning-controls">Keying Function: <select bind="keyingFunctionSelector">' +
-                            '<option selected="true">fingerprint</option>' +
-                            '<option>ngram-fingerprint</option>' +
-                            '<option>double-metaphone</option>' +
-                        '</select></div>' +
-                        '<div class="knn-controls hidden">Distance Function: <select bind="distanceFunctionSelector">' +
-                            '<option selected="true">levenshtein</option>' +
-                            '<option>PPM</option>' +
-                        '</select></div>' +
-                    '</td>' +
-                    '<td>' +
-                        '<div id="ngram-fingerprint-params" class="function-params hidden">' +
-                          'Ngram Size: <input type="text" value="2" bind="ngramSize" name="ngram-size" size="3" class="param" datatype="int">' +
-                        '</div>' + 
-                        '<div class="knn-controls hidden">' +
-                            '<span style="margin-right: 1em">Radius: <input type="text" value="1.0" bind="radius" name="radius" size="3" class="param" datatype="float"></span>' +
-                            '<span>Block Chars: <input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="3" class="param" datatype="int"></span>' +
-                        '</div>' + 
-                    '</td>' +
-                    '<td bind="resultSummary" align="right">' +
-                    '</td>' +
-                '</tr>' +
-                '<tr>' +
-                    '<td colspan="3">' +
-                        '<div bind="tableContainer" class="clustering-dialog-table-container"></div>' +
-                    '</td>' +
-                    '<td bind="facetContainer" width="200"></td>' +
-                '</tr>' +
-            '</table></div>' +
-        '</div>'
+        '<div class="grid-layout layout-normal layout-full"><table>' +
+            '<tr>' +
+                '<td>' +
+                    'Method: <select bind="methodSelector">' +
+                        '<option selected="true">key collision</option>' +
+                        '<option>nearest neightbor</option>' +
+                    '</select>' +
+                '</td>' +
+                '<td>' +
+                    '<div class="binning-controls">Keying Function: <select bind="keyingFunctionSelector">' +
+                        '<option selected="true">fingerprint</option>' +
+                        '<option>ngram-fingerprint</option>' +
+                        '<option>double-metaphone</option>' +
+                    '</select></div>' +
+                    '<div class="knn-controls hidden">Distance Function: <select bind="distanceFunctionSelector">' +
+                        '<option selected="true">levenshtein</option>' +
+                        '<option>PPM</option>' +
+                    '</select></div>' +
+                '</td>' +
+                '<td>' +
+                    '<div id="ngram-fingerprint-params" class="function-params hidden">' +
+                      'Ngram Size: <input type="text" value="2" bind="ngramSize" name="ngram-size" size="3" class="param" datatype="int">' +
+                    '</div>' + 
+                    '<div class="knn-controls hidden">' +
+                        '<span style="margin-right: 1em">Radius: <input type="text" value="1.0" bind="radius" name="radius" size="3" class="param" datatype="float"></span>' +
+                        '<span>Block Chars: <input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="3" class="param" datatype="int"></span>' +
+                    '</div>' + 
+                '</td>' +
+                '<td bind="resultSummary" align="right">' +
+                '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td colspan="3">' +
+                    '<div bind="tableContainer" class="clustering-dialog-table-container"></div>' +
+                '</td>' +
+                '<td bind="facetContainer" width="200"></td>' +
+            '</tr>' +
+        '</table></div>'
     ).appendTo(body);
     
     this._elmts = DOM.bind(html);
