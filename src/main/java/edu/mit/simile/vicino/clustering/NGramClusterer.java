@@ -11,7 +11,6 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import com.wcohen.ss.api.Token;
-import com.wcohen.ss.tokens.SimpleTokenizer;
 
 import edu.mit.simile.vicino.NGramTokenizer;
 import edu.mit.simile.vicino.distances.Distance;
@@ -24,7 +23,7 @@ public class NGramClusterer extends Clusterer {
     Map<String,Set<String>> blocks = new HashMap<String,Set<String>>();
     
     public NGramClusterer(Distance d, int blockSize) {
-        _tokenizer = new NGramTokenizer(blockSize,blockSize,false,SimpleTokenizer.DEFAULT_TOKENIZER);
+        _tokenizer = new NGramTokenizer(blockSize);
         _distance = d;
     }
     

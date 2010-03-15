@@ -1,6 +1,7 @@
 package edu.mit.simile.vicino;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,20 +43,31 @@ public class Cluster extends Operator {
         distance.resetCounter();
         
         log("VPTree found " + vptree_clusters.size() + " in " + vptree_elapsed + " ms with " + vptree_distances + " distances\n");
-        for (Set<Serializable> s : vptree_clusters) {
-            for (Serializable ss : s) {
-                log(" " + ss);
-            }
-            log("");
-        }
-
         log("NGram  found " + ngram_clusters.size() + " in " + ngram_elapsed + " ms with " + ngram_distances + " distances\n");
-        for (Set<Serializable> s : ngram_clusters) {
-            for (Serializable ss : s) {
-                log(" " + ss);
-            }
-            log("");
+        
+        if (vptree_clusters.size() > ngram_clusters.size()) {
+            log("VPTree clusterer found these clusters the other method couldn't: ");
+            diff(vptree_clusters,ngram_clusters);
+        } else if (ngram_clusters.size() > vptree_clusters.size()) {
+            log("NGram clusterer found these clusters the other method couldn't: ");
+            diff(ngram_clusters,vptree_clusters);
+        }
+    }
+    
+    private void diff(List<Set<Serializable>> more, List<Set<Serializable>> base) {
+        Set<Set<Serializable>> holder = new HashSet<Set<Serializable>>(base.size());
+        
+        for (Set<Serializable> s : base) {
+            holder.add(s);
         }
         
+        for (Set<Serializable> s : more) {
+            if (!holder.contains(s)) {
+                for (Serializable ss : s) {
+                    log(ss.toString());
+                }
+                log("");
+            }
+        }
     }
 }

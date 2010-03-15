@@ -30,6 +30,7 @@ public class VPTreeClusterer extends Clusterer {
     
     public List<Set<Serializable>> getClusters(double radius) {
         VPTree tree = _treeBuilder.buildVPTree();
+        System.out.println("distances after the tree: " + _distance.getCount());
         Set<Node> nodes = _treeBuilder.getNodes();
         
         VPTreeSeeker seeker = new VPTreeSeeker(_distance,tree);

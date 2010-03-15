@@ -3,58 +3,92 @@ package edu.mit.simile.vicino;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import com.wcohen.ss.api.Token;
 import com.wcohen.ss.api.Tokenizer;
-import com.wcohen.ss.tokens.BasicToken;
-import com.wcohen.ss.tokens.SimpleTokenizer;
 
-/**
- * Wraps another tokenizer, and adds all computes all ngrams of
- * characters from a single token produced by the inner tokenizer.
- */
 public class NGramTokenizer implements Tokenizer {
 
-    private int minNGramSize;
-    private int maxNGramSize;
-    private boolean keepOldTokens;
-    private Tokenizer innerTokenizer; 
-    
-    public static NGramTokenizer DEFAULT_TOKENIZER = new NGramTokenizer(3,5,true,SimpleTokenizer.DEFAULT_TOKENIZER);
+    private int ngram_size;
 
-    public NGramTokenizer(int minNGramSize,int maxNGramSize,boolean keepOldTokens,Tokenizer innerTokenizer) {
-        this.minNGramSize = minNGramSize;
-        this.maxNGramSize = maxNGramSize;
-        this.keepOldTokens = keepOldTokens;
-        this.innerTokenizer = innerTokenizer;
+    public NGramTokenizer(int ngram_size) {
+        this.ngram_size = ngram_size;
     }
 
-    public Token[] tokenize(String input) {
-        Token[] initialTokens = innerTokenizer.tokenize(input);
+    public Token[] tokenize(String str) {
+        str = normalize(str);
         List<Token> tokens = new ArrayList<Token>();
-        for (int i = 0; i < initialTokens.length; i++) {
-            String str = initialTokens[i].getValue();
-            if (keepOldTokens) tokens.add( intern(str) );
-            for (int lo = 0; lo < str.length(); lo++) {
-                for (int len = minNGramSize; len <= maxNGramSize; len++) {
-                    if (lo + len < str.length()) {
-                        tokens.add(innerTokenizer.intern(str.substring(lo,lo+len))); 
-                    }
-                }
+        for (int i = 0; i < str.length(); i++) {
+            int index = i + ngram_size;
+            if (index <= str.length()) {
+                tokens.add(intern(str.substring(i,index))); 
             }
         }
         return (Token[]) tokens.toArray(new BasicToken[tokens.size()]);
     }
-    
-    public Token intern(String s) { 
-        return innerTokenizer.intern(s); 
-    }
-    
-    public Iterator<Token> tokenIterator() { 
-        return innerTokenizer.tokenIterator(); 
-    }
 
-    public int maxTokenIndex() { 
-        return innerTokenizer.maxTokenIndex(); 
+    static final Pattern extra = Pattern.compile("\\p{Cntrl}|\\p{Punct}");
+    static final Pattern whitespace = Pattern.compile("\\p{Space}+");
+
+    private String normalize(String s) {
+        s = s.trim();
+        s = extra.matcher(s).replaceAll("");
+        s = whitespace.matcher(s).replaceAll(" ");
+        s = s.toLowerCase();
+        return s.intern();
+    }
+     
+    private int nextId = 0;
+    private Map<String, Token> tokMap = new TreeMap<String, Token>();
+    
+    public Token intern(String s) {
+        s = s.toLowerCase().intern();
+        Token tok = tokMap.get(s);
+        if (tok == null) {
+            tok = new BasicToken(++nextId, s);
+            tokMap.put(s, tok);
+        }
+        return tok;
+    }
+    
+    public Iterator<Token> tokenIterator() {
+        return tokMap.values().iterator();
+    }
+    
+    public int maxTokenIndex() {
+        return nextId;
+    }
+    
+    public class BasicToken implements Token, Comparable<Token> {
+        private final int index;
+        private final String value;
+    
+        BasicToken(int index, String value) {
+            this.index = index;
+            this.value = value;
+        }
+    
+        public String getValue() {
+            return value;
+        }
+    
+        public int getIndex() {
+            return index;
+        }
+    
+        public int compareTo(Token t) {
+            return index - t.getIndex();
+        }
+    
+        public int hashCode() {
+            return value.hashCode();
+        }
+    
+        public String toString() {
+            return "[token#" + getIndex() + ":" + getValue() + "]";
+        }
     }
 }

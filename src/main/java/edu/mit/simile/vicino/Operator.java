@@ -2,8 +2,9 @@ package edu.mit.simile.vicino;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,30 +21,27 @@ public class Operator {
     }
 
     static List<String> getStrings(String fileName) throws IOException {
-        ArrayList<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<String>();
 
         File file = new File(fileName);
         if (file.isDirectory()) {
             File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                BufferedReader input = new BufferedReader(new FileReader(files[i]));
-                StringBuffer b = new StringBuffer();
-                String line;
-                while ((line = input.readLine()) != null) {
-                    b.append(line.trim());
-                }
-                input.close();
-                strings.add(b.toString());
+            for (File f : files) {
+                getStrings(f, strings);
             }
         } else {
-            BufferedReader input = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = input.readLine()) != null) {
-                strings.add(line.trim());
-            }
-            input.close();
+            getStrings(file, strings);
         }
 
         return strings;
+    }
+    
+    static void getStrings(File file, List<String> strings) throws IOException {
+        BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+        String line;
+        while ((line = input.readLine()) != null) {
+            strings.add(line.trim().intern());
+        }
+        input.close();
     }
 }
