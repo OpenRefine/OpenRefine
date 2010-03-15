@@ -48,36 +48,37 @@ function ExtendDataPreviewDialog(column, rowIndices, onDone) {
 
 ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
     var query = {
-        id : typeID,
-        type : "/type/type",
+        "id" : typeID,
+        "type" : "/type/type",
         "/freebase/type_hints/included_types" : [{
-            optional: true,
-            properties : [{
-                id : null,
-                name : null,
+            "optional" : true,
+            "properties" : [{
+                "id" : null,
+                "name" : null,
                 "/type/property/expected_type" : {
-                    id : null,
+                    "id" : null,
                     "/freebase/type_hints/mediator" : []
                 },
-                sort : "name"
+                "sort" : "name"
             }]
         }],
-        properties : [{
-            id : null,
-            name : null,
+        "properties" : [{
+            "id" : null,
+            "name" : null,
             "/type/property/expected_type" : {
-                id : null,
+                "id" : null,
                 "/freebase/type_hints/mediator" : []
             },
-            sort : "name"
+            "sort" : "name"
         }]
     };
     
     var allProperties = [];
-    var processProperty = function(property) {
+    var cvtProperties = [];
+    var processProperty = function(property, parent) {
         var expectedType = property["/type/property/expected_type"];
         if (expectedType["/freebase/type_hints/mediator"].length > 0 && expectedType["/freebase/type_hints/mediator"][0]) {
-            
+            cvtProperties.push(property);
         } else {
             allProperties.push({
                 id : property.id,
@@ -86,24 +87,88 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
             });
         }
     };
-    var processProperties = function(properties) {
-        $.each(properties, function() { processProperty(this); });
+    var processProperties = function(properties, parent) {
+        $.each(properties, function() { processProperty(this, parent); });
     };
     
     $.getJSON(
         "http://api.freebase.com/api/service/mqlread?query=" + escape(JSON.stringify({ query : query })) + "&callback=?",
         null,
         function(o) {
-            if ("result" in o) {
-                processProperties(o.result.properties);
-                $.each(o.result["/freebase/type_hints/included_types"], function() {
-                    processProperties(this.properties);
-                })
-                
-                onDone(allProperties);
-            } else {
+            if (!("result" in o)) {
                 onDone([]);
+                return;
             }
+            
+            processProperties(o.result.properties);
+            $.each(o.result["/freebase/type_hints/included_types"], function() {
+                processProperties(this.properties, null);
+            })
+            
+            if (cvtProperties.length == 0) {
+                onDone(allProperties);
+                return;
+            }
+            
+            var expectedTypeToProperties = [];
+            var expectedTypeIDs = [];
+            $.each(cvtProperties, function() {
+                var expected = this["/type/property/expected_type"];
+                if (expected.id in expectedTypeToProperties) {
+                    expectedTypeToProperties[expected.id].push(this);
+                } else {
+                    expectedTypeToProperties[expected.id] = [ this ];
+                    expectedTypeIDs.push(expected.id);
+                }
+            });
+            
+            var query2 = [{
+                "id|=" : expectedTypeIDs,
+                "id" : null,
+                "type" : "/type/type",
+                "properties" : [{
+                    "id" : null,
+                    "name" : null,
+                    "/type/property/expected_type" : {
+                        id : null,
+                        "/freebase/type_hints/mediator" : []
+                    },
+                    "sort" : "name"
+                }]
+            }];
+            
+            $.getJSON(
+                "http://api.freebase.com/api/service/mqlread?query=" + escape(JSON.stringify({ query : query2 })) + "&callback=?",
+                null,
+                function(o2) {
+                    if ("result" in o2) {
+                        var processCVTProperty = function(parentProperty, properties) {
+                            $.each(properties, function() {
+                                allProperties.push({
+                                    id : parentProperty.id,
+                                    name : parentProperty.name,
+                                    expected : parentProperty["/type/property/expected_type"].id,
+                                    properties: [{
+                                        id : this.id,
+                                        name : this.name,
+                                        expected : this["/type/property/expected_type"].id
+                                    }]
+                                });
+                            });
+                        };
+                        var processCVTProperties = function(parentProperties, properties) {
+                            $.each(parentProperties, function() { processCVTProperty(this, properties); });
+                        };
+                        
+                        $.each(o2.result, function() {
+                            processCVTProperties(expectedTypeToProperties[this.id], this.properties);
+                        });
+                    }
+                    
+                    onDone(allProperties);
+                },
+                "jsonp"
+            );
         },
         "jsonp"
     );    
@@ -115,8 +180,10 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
     var self = this;
     var container = this._elmts.suggestedPropertyContainer;
     var renderSuggestedProperty = function(property) {
+        var label = ("properties" in property) ? (property.name + " &raquo; " + property.properties[0].name) : property.name;
         var div = $('<div>').addClass("suggested-property").appendTo(container);
-        $('<a>').attr("href", "javascript:{}").text(property.name).appendTo(div).click(function() {
+        
+        $('<a>').attr("href", "javascript:{}").html(label).appendTo(div).click(function() {
             self._addProperty(property);
         });
     };
@@ -236,8 +303,7 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
     var trHead = table.insertRow(table.rows.length);
     $('<th>').appendTo(trHead).text(this._column.name);
     
-    for (var c = 0; c < data.columns.length; c++) {
-        var column = data.columns[c];
+    var renderColumnHeader = function(column) {
         var th = $('<th>').appendTo(trHead);
         
         $('<span>').html(column.names.join(" &raquo; ")).appendTo(th);
@@ -247,6 +313,9 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
             .click(function() {
                 self._removeProperty(column.path);
             }).appendTo(th);
+    };
+    for (var c = 0; c < data.columns.length; c++) {
+        renderColumnHeader(data.columns[c]);
     }
     
     for (var r = 0; r < data.rows.length; r++) {
