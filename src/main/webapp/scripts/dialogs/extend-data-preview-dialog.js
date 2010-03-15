@@ -161,11 +161,71 @@ ExtendDataPreviewDialog.prototype._update = function() {
 };
 
 ExtendDataPreviewDialog.prototype._addProperty = function(p) {
-    this._extension.properties.push(p);
+    var addSeveralToList = function(properties, oldProperties) {
+        for (var i = 0; i < properties.length; i++) {
+            addToList(properties[i], oldProperties);
+        }
+    };
+    var addToList = function(property, oldProperties) {
+        for (var i = 0; i < oldProperties.length; i++) {
+            var oldProperty = oldProperties[i];
+            if (oldProperty.id == property.id) {
+                if ("included" in property) {
+                    oldProperty.included = "included" in oldProperty ? 
+                        (oldProperty.included || property.included) : 
+                        property.included;
+                }
+                
+                if ("properties" in property) {
+                    if ("properties" in oldProperty) {
+                        addSeveralToList(property.properties, oldProperty.properties);
+                    } else {
+                        oldProperty.properties = property.properties;
+                    }
+                }
+                return;
+            }
+        }
+        
+        oldProperties.push(property);
+    };
+    
+    addToList(p, this._extension.properties);
+    
+    this._update();
+};
+
+ExtendDataPreviewDialog.prototype._removeProperty = function(path) {
+    var removeFromList = function(path, index, properties) {
+        var id = path[index];
+        
+        for (var i = properties.length - 1; i >= 0; i--) {
+            var property = properties[i];
+            if (property.id == id) {
+                if (index === path.length - 1) {
+                    if ("included" in property) {
+                        delete property.included;
+                    }
+                } else if ("properties" in property && property.properties.length > 0) {
+                    removeFromList(path, index + 1, property.properties);
+                }
+                
+                if (!("properties" in property) || property.properties.length === 0) {
+                    properties.splice(i, 1);
+                }
+                
+                return;
+            }
+        }
+    };
+    
+    removeFromList(path, 0, this._extension.properties);
+    
     this._update();
 };
 
 ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
+    var self = this;
     var container = this._elmts.previewContainer.empty();
     if (data.code == "error") {
         container.text("Error.");
@@ -174,10 +234,19 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
     
     var table = $('<table>')[0];
     var trHead = table.insertRow(table.rows.length);
-    $(trHead.insertCell(trHead.cells.length)).text(this._column.name);
+    $('<th>').appendTo(trHead).text(this._column.name);
     
     for (var c = 0; c < data.columns.length; c++) {
-        $(trHead.insertCell(trHead.cells.length)).text(data.columns[c]);
+        var column = data.columns[c];
+        var th = $('<th>').appendTo(trHead);
+        
+        $('<span>').html(column.names.join(" &raquo; ")).appendTo(th);
+        $('<img>')
+            .attr("src", "images/close.png")
+            .attr("title", "Remove this column")
+            .click(function() {
+                self._removeProperty(column.path);
+            }).appendTo(th);
     }
     
     for (var r = 0; r < data.rows.length; r++) {

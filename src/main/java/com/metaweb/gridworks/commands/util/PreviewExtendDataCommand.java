@@ -21,6 +21,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob;
+import com.metaweb.gridworks.util.FreebaseDataExtensionJob.ColumnInfo;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob.DataExtension;
 
 public class PreviewExtendDataCommand extends Command {
@@ -73,8 +74,21 @@ public class PreviewExtendDataCommand extends Command {
             writer.key("code"); writer.value("ok");
             writer.key("columns");
                 writer.array();
-                for (String name : job.columnNames) {
-                    writer.value(name);
+                for (ColumnInfo info : job.columns) {
+                	writer.object();
+                    writer.key("names");
+	                	writer.array();
+	                	for (String name : info.names) {
+	                		writer.value(name);
+	                	}
+	                	writer.endArray();
+                    writer.key("path");
+                    	writer.array();
+                    	for (String id : info.path) {
+                    		writer.value(id);
+                    	}
+                    	writer.endArray();
+                    writer.endObject();
                 }
                 writer.endArray();
             

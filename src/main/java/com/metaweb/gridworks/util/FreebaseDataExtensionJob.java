@@ -33,14 +33,24 @@ public class FreebaseDataExtensionJob {
         }
     }
     
-    final public JSONObject     extension;
-    final public int            columnCount;
-    final public List<String>   columnNames = new ArrayList<String>();
+    static public class ColumnInfo {
+    	final public List<String> names;
+    	final public List<String> path;
+    	
+    	protected ColumnInfo(List<String> names, List<String> path) {
+    		this.names = names;
+    		this.path = path;
+    	}
+    }
+    
+    final public JSONObject     	extension;
+    final public int            	columnCount;
+    final public List<ColumnInfo>   columns = new ArrayList<ColumnInfo>();
     
     public FreebaseDataExtensionJob(JSONObject obj) throws JSONException {
         this.extension = obj;
         this.columnCount = (obj.has("properties") && !obj.isNull("properties")) ?
-                countColumns(obj.getJSONArray("properties"), columnNames) : 0;
+                countColumns(obj.getJSONArray("properties"), columns, new ArrayList<String>(), new ArrayList<String>()) : 0;
     }
     
     public Map<String, FreebaseDataExtensionJob.DataExtension> extend(Set<String> guids) throws Exception {
@@ -177,7 +187,7 @@ public class FreebaseDataExtensionJob {
             } else {
                 return new int[] {
                     startRowIndex,
-                    startColumnIndex + countColumns(extNode, null)
+                    startColumnIndex + countColumns(extNode, null, new ArrayList<String>(), new ArrayList<String>())
                 };
             }
         }
@@ -295,26 +305,40 @@ public class FreebaseDataExtensionJob {
         }
     }
     
-    static protected int countColumns(JSONObject obj, List<String> columnNames) throws JSONException {
+    static protected int countColumns(JSONObject obj, List<ColumnInfo> columns, List<String> names, List<String> path) throws JSONException {
+    	String name = obj.getString("name");
+    	
+    	List<String> names2 = null;
+    	List<String> path2 = null;
+    	if (columns != null) {
+    		names2 = new ArrayList<String>(names);
+    		names2.add(name);
+    		
+    		path2 = new ArrayList<String>(path);
+    		path2.add(obj.getString("id"));
+    	}
+    	
         if (obj.has("properties") && !obj.isNull("properties")) {
             boolean included = (obj.has("included") && obj.getBoolean("included"));
-            if (included && columnNames != null) {
-                columnNames.add(obj.getString("name"));
+            if (included && columns != null) {
+                columns.add(new ColumnInfo(names2, path2));
             }
-            return (included ? 1 : 0) + countColumns(obj.getJSONArray("properties"), columnNames);
+            
+            return (included ? 1 : 0) + 
+            	countColumns(obj.getJSONArray("properties"), columns, names2, path2);
         } else {
-            if (columnNames != null) {
-                columnNames.add(obj.getString("name"));
+            if (columns != null) {
+                columns.add(new ColumnInfo(names2, path2));
             }
             return 1;
         }
     }
     
-    static protected int countColumns(JSONArray a, List<String> columnNames) throws JSONException {
+    static protected int countColumns(JSONArray a, List<ColumnInfo> columns, List<String> names, List<String> path) throws JSONException {
         int c = 0;
         int l = a.length();
         for (int i = 0; i < l; i++) {
-            c += countColumns(a.getJSONObject(i), columnNames);
+            c += countColumns(a.getJSONObject(i), columns, names, path);
         }
         return c;
     }
