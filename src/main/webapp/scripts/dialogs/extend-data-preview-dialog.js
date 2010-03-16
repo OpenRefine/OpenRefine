@@ -1,5 +1,6 @@
-function ExtendDataPreviewDialog(column, rowIndices, onDone) {
+function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
     this._column = column;
+    this._columnIndex = columnIndex;
     this._rowIndices = rowIndices;
     this._onDone = onDone;
     this._extension = { properties: [] };
@@ -33,15 +34,21 @@ function ExtendDataPreviewDialog(column, rowIndices, onDone) {
     this._elmts = DOM.bind(html);
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
-        DialogSystem.dismissUntil(self._level - 1);
-        self._onDone(self._previewWidget.getExpression(true));
+        if (self._extension.properties.length === 0) {
+            alert("Please add some properties first.");
+        } else {
+            DialogSystem.dismissUntil(self._level - 1);
+            self._onDone(self._extension);
+        }
     }).appendTo(footer);
     
     $('<button></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
     
+    var dismissBusy = DialogSystem.showBusy();
     ExtendDataPreviewDialog.getAllProperties(column.reconConfig.type.id, function(properties) {
+        dismissBusy();
         self._show(properties);
     });
 };

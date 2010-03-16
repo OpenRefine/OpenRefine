@@ -19,6 +19,7 @@ import com.metaweb.gridworks.commands.edit.ApplyOperationsCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DeleteProjectCommand;
 import com.metaweb.gridworks.commands.edit.ExportProjectCommand;
+import com.metaweb.gridworks.commands.edit.ExtendDataCommand;
 import com.metaweb.gridworks.commands.edit.ImportProjectCommand;
 import com.metaweb.gridworks.commands.edit.TextTransformCommand;
 import com.metaweb.gridworks.commands.edit.EditOneCellCommand;
@@ -93,6 +94,7 @@ public class GridworksServlet extends HttpServlet {
         
         _commands.put("add-column", new AddColumnCommand());
         _commands.put("remove-column", new RemoveColumnCommand());
+        _commands.put("extend-data", new ExtendDataCommand());
         
         _commands.put("reconcile", new ReconcileCommand());
         _commands.put("recon-match-best-candidates", new ReconMatchBestCandidatesCommand());

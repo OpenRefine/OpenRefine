@@ -28,7 +28,7 @@ public class FreebaseDataExtensionJob {
     static public class DataExtension {
         final public Object[][] data;
         
-        protected DataExtension(Object[][] data) {
+        public DataExtension(Object[][] data) {
             this.data = data;
         }
     }
