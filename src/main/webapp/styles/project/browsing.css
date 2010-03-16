@@ -28,7 +28,9 @@ li.facet-container {
 }
 
 .facet-title {
-    padding: 5px;
+    border: 1px solid #ccc;
+    border-bottom: 0px;
+    padding: 3px 5px;
     background: #eee;
     font-weight: bold;
     cursor: move;

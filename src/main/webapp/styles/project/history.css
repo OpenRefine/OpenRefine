@@ -3,22 +3,24 @@
     top: -1px;
     right: 20px;
     width: 250px;
-    background: #fffee0;
-    border: 1px solid #666;
+    background: #fff;
     z-index: 10;
 }
 .history-panel h3 {
     margin: 0;
     padding: 3px;
     background: #aaa;
-    color: #eee;
+    color: #fff;
+    border-bottom: 1px solid #b8b8b8;
     font-size: 100%;
     text-align: center;
+    border: 1px solid #666;
 }
 .history-panel-body {
-    padding: 2px;
-    height: 50px;
+    height: 60px;
     overflow: hidden;
+    border-left: 1px solid #888;
+    border-right: 1px solid #888;
 }
 .history-panel-body.history-panel-body-expanded {
     height: 300px;
@@ -33,9 +35,9 @@
     padding-bottom: 3px;
 }
 .history-now {
-    padding: 1px;
-    background: #f88;
-    color: white;
+    padding: 0 0 2px 0;
+    background: #a9e9fb;
+    color: black;
     font-size: 80%;
     text-align: center;
     font-variant: small-caps;
@@ -76,10 +78,15 @@ a.history-entry:hover {
 .history-panel-footer {
     margin: 0;
     padding: 3px;
-    background: #aaa;
-    color: #eee;
-    font-size: 80%;
+    background: #b8b8b8;
+    color: #fff;
+    font-size: 90%;
+    border: 1px solid #888;
     text-align: center;
+    -moz-border-radius-bottomleft: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-radius-bottomright: 6px;
+    -webkit-border-bottom-right-radius: 6px;    
 }
 .history-panel-footer a {
     color: white;

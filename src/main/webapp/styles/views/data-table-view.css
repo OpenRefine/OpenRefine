@@ -10,16 +10,16 @@ table.data-table {
 
 table.data-table > tbody > tr > td {
     padding: 2px 5px;
-    border-top: 1px solid white;
     border-right: 1px solid white;
 }
 
 table.data-table > tbody > tr.odd > td {
-    border-top: 1px solid #ddd;
 }
 
 table.data-table > tbody > tr.even > td {
-    background: #ddd;
+    border-top: 1px solid #ddd;
+    background: #eee;
+    border-bottom: 1px solid #ddd;
 }
 
 table.data-table > tbody > tr.contextual > td > div {

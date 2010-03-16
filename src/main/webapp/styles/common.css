@@ -139,9 +139,8 @@ img {
 }
 
 #header {
-    background: url(../images/metaweb-sprite-vertical.png) repeat-x scroll 0 0 #025B8D;
-    border-bottom: 1px solid #FCE166;
-    color: #FFFFFF;
+    background-color: #ddd;
+    border-bottom: 1px solid #bbb;    
     height: 47px;
     padding-left: 20px;
     padding-right: 20px;
@@ -153,9 +152,10 @@ img {
 }
 #footer {
     font-size: 80%;
-    margin: 10px;
-    color: #888;
+    padding: 1em;
+    color: #666;
     text-align: center;
+    border-top: 1px solid #ccc;
 }
 #footer a {
     color: #448;

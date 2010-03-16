@@ -28,7 +28,7 @@
 }
 #path a.app-path-section {
     text-decoration: none;
-    color: #eee;
+    color: #333;
 }
 #path a.app-path-section:hover {
     text-decoration: underline;

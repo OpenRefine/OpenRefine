@@ -2,6 +2,7 @@
     padding: 5px 10px;
     background: #eee;
     position: relative;
+    border-bottom: 1px solid #CCCCCC;    
 }
 
 .menu-bar-inner {
