@@ -154,6 +154,20 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             $(tr.insertCell(0)).text(cluster.choices.length);
             
             $(tr.insertCell(1)).text(cluster.rowCount);
+
+            var facet = {
+                "c": {
+                    "type":"list",
+                    "name": self._columnName,
+                    "columnName": self._columnName,
+                    "expression":"value"
+                },
+                "o":{
+                    "sort":"name"
+                },
+                "s":[
+                ]
+            };
             
             var ul = $('<ul></ul>');
             var choices = cluster.choices;
@@ -169,9 +183,36 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 }).appendTo(li);
                 $('<span></span>').text("(" + choice.c + " rows)").addClass("clustering-dialog-entry-count").appendTo(li);
                 rowCount += choice.c;
+                facet.s[c] = {
+                    "v": {
+                        "v":choice.v,
+                        "l":choice.v
+                    }
+                };
                 li.appendTo(ul);
             }
-            $(tr.insertCell(2)).append(ul);
+            
+            var params = [
+                "project=" + escape(theProject.id),
+                "ui=" + escape(JSON.stringify({
+                    "facets" : [ facet ]
+                }))
+            ];
+            var url = "project.html?" + params.join("&");
+                            
+            var div = $('<div></div>').addClass("clustering-dialog-value-focus");
+            
+            var browseLink = $('<a target="_new" title="Browse only these values">Browse this cluster</a>')
+                .addClass("clustering-dialog-browse-focus")
+                .attr("href",url)
+                .css("visibility","hidden")
+                .appendTo(div);
+
+            $(tr.insertCell(2))
+                .mouseenter(function() { browseLink.css("visibility", "visible"); })
+                .mouseleave(function() { browseLink.css("visibility", "hidden"); })
+                .append(ul)
+                .append(div);
             
             var editCheck = $('<input type="checkbox" />')
                 .change(function() {

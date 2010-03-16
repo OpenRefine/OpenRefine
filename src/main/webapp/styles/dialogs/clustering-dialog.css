@@ -35,6 +35,10 @@ table.clustering-dialog-entry-table a {
 	text-decoration: none;
 }
 
+table.clustering-dialog-entry-table ul {
+	margin: 1em 0em 0em 0em;
+}
+
 table.clustering-dialog-entry-table a:hover {
 	text-decoration: underline
 }
@@ -69,4 +73,13 @@ table.clustering-dialog-entry-table a:hover {
 .clustering-dialog-facet-selection {
     text-align: center;
     color: #888;
+}
+
+.clustering-dialog-value-focus {
+	text-align: right;
+    font-size: 80%;
+}
+.clustering-dialog-value-focus a {
+    text-decoration: none;
+    visibility: hidden;
 }
