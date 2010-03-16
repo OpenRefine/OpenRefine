@@ -55,7 +55,9 @@ public class CreateProjectCommand extends Command {
             
             redirect(response, "/project.html?project=" + project.id);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+            redirect(response, "/error.html?redirect=index.html&msg=" +
+                ParsingUtilities.encode("Failed to import file: " + e.getLocalizedMessage())
+            );
             e.printStackTrace();
         }
     }

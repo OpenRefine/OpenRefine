@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <title>Error - Gridworks</title>
+    <link rel="stylesheet" href="styles/common.css" />
+    <link rel="stylesheet" href="styles/error.css" />
+    
+    <script type="text/javascript" src="externals/jquery-1.4.1.min.js"></script>
+    <script type="text/javascript" src="scripts/util/url.js"></script>
+    <script>
+      $(function() {
+        var params = URL.getParameters();
+        
+        $("#message").text(params.msg.replace(/\+/g, ' '));
+        
+        window.setTimeout(function() {
+          document.location.href = params.redirect;
+        }, 20000);
+      });
+    </script>
+</head>
+<body>
+    <div id="header">
+        <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
+        <div id="path"><a class="app-path-section" href="./index.html">Gridworks</a></div>
+    </div>
+    
+    <div id="body">
+      <h1>Oops, something went wrong!</h1>
+      <p id="message"></p>
+      <p>Redirecting you back to <a href="index.html">Gridworks' home page</a> in 20 seconds ...</p>
+    </div>
+
+    <div id="footer">
+        <a href="about.html">About Freebase Gridworks</a>
+        &bull; 
+        &copy; 2010 <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>
+    </div>
+</body>
+</html>
