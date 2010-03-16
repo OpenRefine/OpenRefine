@@ -139,16 +139,17 @@ img {
 }
 
 #header {
-    background-color: #ddd;
+    background: url(../images/freebase-tools-sprite-vertical.png) repeat-x scroll 0 0 #F2F2F2;
     border-bottom: 1px solid #bbb;    
-    height: 47px;
+    height: 32px;
     padding-left: 20px;
     padding-right: 20px;
+    padding-bottom: 1px;
     position: relative;
 }
 #logo {
     display: block;
-    padding: 13px 0;
+    padding: 7px 0;
 }
 #footer {
     font-size: 80%;

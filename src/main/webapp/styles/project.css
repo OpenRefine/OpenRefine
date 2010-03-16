@@ -11,9 +11,10 @@
 }
 
 #logo {
-    padding: 13px 0;
+    padding: 7px 0;
     padding-right: 13px;
-    border-right: 1px solid #ccc;
+    height: 32px;
+    border-right: 1px solid #ddd;
     float: left;
 }
 #path {

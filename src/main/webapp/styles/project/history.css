@@ -35,10 +35,11 @@
     padding-bottom: 3px;
 }
 .history-now {
-    padding: 0 0 2px 0;
+    padding: 3px 0;
     background: #a9e9fb;
-    color: black;
+    color: white;
     font-size: 80%;
+    text-transform: uppercase;
     text-align: center;
     font-variant: small-caps;
     font-weight: bold;

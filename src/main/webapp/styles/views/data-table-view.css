@@ -14,12 +14,14 @@ table.data-table > tbody > tr > td {
 }
 
 table.data-table > tbody > tr.odd > td {
+    border-top: 1px solid #eee;
+    border-right: 1px solid #eee;
 }
 
 table.data-table > tbody > tr.even > td {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid white;
+    border-right: 1px solid white;
     background: #eee;
-    border-bottom: 1px solid #ddd;
 }
 
 table.data-table > tbody > tr.contextual > td > div {
@@ -30,10 +32,10 @@ table.data-table > tbody > tr.record.contextual > td {
 }
 
 table.data-table td.column-header {
-    background: #ddd;
+    background: #e8e8e8;
     cursor: pointer;
     padding: 5px 5px;
-    border-bottom: 2px solid #aaa;
+    border-bottom: 1px solid #ccc;
     white-space: pre;
     font-weight: bold;
 }
