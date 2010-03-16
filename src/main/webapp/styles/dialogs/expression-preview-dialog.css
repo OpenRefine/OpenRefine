@@ -12,8 +12,8 @@ textarea.expression-preview-code {
     color: red;
 }
 
-#expression-preview-tabs-preview, #expression-preview-tabs-help {
-    padding: 7px;
+#expression-preview-tabs-preview, #expression-preview-tabs-help, #expression-preview-tabs-history {
+    padding: 5px;
 }
 
 .expression-preview-container {

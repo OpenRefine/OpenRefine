@@ -9,28 +9,3 @@
     margin: 1in;
     font-style: italic;
 }
-
-#logo {
-    padding: 7px 0;
-    padding-right: 13px;
-    height: 32px;
-    border-right: 1px solid #ddd;
-    float: left;
-}
-#path {
-    position: absolute;
-    top: 50%;
-    left: 170px;
-    margin-top: -0.5em;
-    line-height: 1em;
-}
-#path .app-path-section {
-    font-weight: bold;
-}
-#path a.app-path-section {
-    text-decoration: none;
-    color: #333;
-}
-#path a.app-path-section:hover {
-    text-decoration: underline;
-}

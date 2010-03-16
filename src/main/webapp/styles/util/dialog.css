@@ -7,7 +7,7 @@
     width: 100%;
     height: 100%;
     background: black;
-    opacity: 0.3;
+    opacity: 0.4;
 }
 
 .dialog-container {
@@ -28,7 +28,7 @@
 }
 
 .dialog-header {
-    background: #3B8700;
+    background: #404859;
     padding: 5px 10px;
     font-weight: bold;
     color: white;
