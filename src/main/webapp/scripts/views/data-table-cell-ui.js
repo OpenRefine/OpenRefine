@@ -37,7 +37,8 @@ DataTableCellUI.prototype._render = function() {
         if (r.j == "new") {
             $('<span>').text(cell.v + " (new topic) ").appendTo(divContent);
             
-            $('<a href="javascript:{}">re-match</a>')
+            $('<a href="javascript:{}"></a>')
+                .text("re\u2011match")
                 .addClass("data-table-recon-action")
                 .appendTo(divContent).click(function(evt) {
                     self._doRematch();
@@ -52,7 +53,7 @@ DataTableCellUI.prototype._render = function() {
                 
             $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}"></a>')
-                .text("re-match")
+                .text("re\u2011match")
                 .addClass("data-table-recon-action")
                 .appendTo(divContent)
                 .click(function(evt) {
