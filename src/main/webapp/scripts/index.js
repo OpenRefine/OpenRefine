@@ -94,10 +94,10 @@ function formatDate(d) {
     var today = Date.today();
     var tomorrow = Date.today().add({ days: 1 });
     if (d.between(today, tomorrow)) {
-        return "Today " + d.toString("HH:mm");
+        return "Today " + d.toString("h:mm tt");
     } else if (d.between(yesterday, today)) {
-        return "Yesterday " + d.toString("HH:mm");
+        return "Yesterday " + d.toString("h:mm tt");
     } else {
-        return d.toString("M-ddd-yyyy");
+        return d.toString("ddd, MMM d, yyyy");
     }
 }
