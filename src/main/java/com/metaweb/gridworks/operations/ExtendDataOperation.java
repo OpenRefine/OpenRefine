@@ -26,6 +26,7 @@ import com.metaweb.gridworks.model.changes.CellAtRow;
 import com.metaweb.gridworks.model.changes.DataExtensionChange;
 import com.metaweb.gridworks.process.LongRunningProcess;
 import com.metaweb.gridworks.process.Process;
+import com.metaweb.gridworks.protograph.FreebaseType;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob.ColumnInfo;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob.DataExtension;
@@ -221,6 +222,11 @@ public class ExtendDataOperation extends EngineDependentOperation {
             		columnNames.add(StringUtils.join(info.names, " - "));
             	}
             	
+                List<FreebaseType> columnTypes = new ArrayList<FreebaseType>();
+                for (ColumnInfo info : _job.columns) {
+                    columnTypes.add(info.expectedType);
+                }
+            	
                 HistoryEntry historyEntry = new HistoryEntry(
                     _project, 
                     _description, 
@@ -229,6 +235,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     	_baseColumnName,
                     	_columnInsertIndex,
                     	columnNames,
+                    	columnTypes,
                     	rowIndices,
                     	dataExtensions)
                 );

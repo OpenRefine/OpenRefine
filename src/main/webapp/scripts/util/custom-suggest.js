@@ -127,7 +127,7 @@
                 mql_output: JSON.stringify([{
                     "id" : null,
                     "name" : null,
-                    "/type/property/expected_type" : null
+                    "/type/property/expected_type" : { "id" : null, "name" : null }
                 }])
             };
             if (start) {

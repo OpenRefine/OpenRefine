@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.model.ReconCandidate;
+import com.metaweb.gridworks.protograph.FreebaseType;
 
 public class FreebaseDataExtensionJob {
     static public class DataExtension {
@@ -36,10 +37,12 @@ public class FreebaseDataExtensionJob {
     static public class ColumnInfo {
     	final public List<String> names;
     	final public List<String> path;
+    	final public FreebaseType expectedType;
     	
-    	protected ColumnInfo(List<String> names, List<String> path) {
+    	protected ColumnInfo(List<String> names, List<String> path, FreebaseType expectedType) {
     		this.names = names;
     		this.path = path;
+    		this.expectedType = expectedType;
     	}
     }
     
@@ -130,7 +133,7 @@ public class FreebaseDataExtensionJob {
         int             startColumnIndex
     ) throws JSONException {
         String propertyID = extNode.getString("id");
-        String expectedTypeID = extNode.getString("expected");
+        String expectedTypeID = extNode.getJSONObject("expected").getString("id");
         
         JSONArray a = resultNode != null && resultNode.has(propertyID) && !resultNode.isNull(propertyID) ?
             resultNode.getJSONArray(propertyID) : null;
@@ -268,7 +271,7 @@ public class FreebaseDataExtensionJob {
     
     static protected void formulateQueryNode(JSONObject node, JSONWriter writer) throws JSONException {
         String propertyID = node.getString("id");
-        String expectedTypeID = node.getString("expected");
+        String expectedTypeID = node.getJSONObject("expected").getString("id");
         
         writer.key(propertyID);
         writer.array();
@@ -321,14 +324,20 @@ public class FreebaseDataExtensionJob {
         if (obj.has("properties") && !obj.isNull("properties")) {
             boolean included = (obj.has("included") && obj.getBoolean("included"));
             if (included && columns != null) {
-                columns.add(new ColumnInfo(names2, path2));
+                JSONObject expected = obj.getJSONObject("expected");
+                
+                columns.add(new ColumnInfo(names2, path2, 
+                    new FreebaseType(expected.getString("id"), expected.getString("name"))));
             }
             
             return (included ? 1 : 0) + 
             	countColumns(obj.getJSONArray("properties"), columns, names2, path2);
         } else {
             if (columns != null) {
-                columns.add(new ColumnInfo(names2, path2));
+                JSONObject expected = obj.getJSONObject("expected");
+                
+                columns.add(new ColumnInfo(names2, path2,
+                    new FreebaseType(expected.getString("id"), expected.getString("name"))));
             }
             return 1;
         }

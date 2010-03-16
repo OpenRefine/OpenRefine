@@ -64,6 +64,7 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
                 "name" : null,
                 "/type/property/expected_type" : {
                     "id" : null,
+                    "name" : null,
                     "/freebase/type_hints/mediator" : []
                 },
                 "sort" : "name"
@@ -74,6 +75,7 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
             "name" : null,
             "/type/property/expected_type" : {
                 "id" : null,
+                "name" : null,
                 "/freebase/type_hints/mediator" : []
             },
             "sort" : "name"
@@ -90,7 +92,10 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
             allProperties.push({
                 id : property.id,
                 name : property.name,
-                expected : expectedType.id
+                expected : {
+                    id : expectedType.id,
+                    name : expectedType.name
+                }
             });
         }
     };
@@ -137,7 +142,8 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
                     "id" : null,
                     "name" : null,
                     "/type/property/expected_type" : {
-                        id : null,
+                        "id" : null,
+                        "name" : null,
                         "/freebase/type_hints/mediator" : []
                     },
                     "sort" : "name"
@@ -150,15 +156,24 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
                 function(o2) {
                     if ("result" in o2) {
                         var processCVTProperty = function(parentProperty, properties) {
+                            var parentExpected = parentProperty["/type/property/expected_type"];
+                            
                             $.each(properties, function() {
+                                var expected = this["/type/property/expected_type"];
                                 allProperties.push({
                                     id : parentProperty.id,
                                     name : parentProperty.name,
-                                    expected : parentProperty["/type/property/expected_type"].id,
+                                    expected : {
+                                        id : parentExpected.id,
+                                        name : parentExpected.name
+                                    },
                                     properties: [{
                                         id : this.id,
                                         name : this.name,
-                                        expected : this["/type/property/expected_type"].id
+                                        expected : {
+                                            id : expected.id,
+                                            name : expected.name
+                                        }
                                     }]
                                 });
                             });
@@ -204,10 +219,14 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
     };
     
     this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
+        var expected = data["/type/property/expected_type"];
         self._addProperty({
             id : data.id,
             name: data.name,
-            expected: data["/type/property/expected_type"]
+            expected: {
+                id: expected.id,
+                name: expected.name
+            }
         });
     });
 };

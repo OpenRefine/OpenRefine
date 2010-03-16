@@ -19,14 +19,21 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
+import com.metaweb.gridworks.model.ReconStats;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
+import com.metaweb.gridworks.model.recon.DataExtensionReconConfig;
+import com.metaweb.gridworks.protograph.FreebaseType;
+import com.metaweb.gridworks.util.ParsingUtilities;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob.DataExtension;
 
 public class DataExtensionChange implements Change {
 	final protected String				_baseColumnName;
 	final protected int		  			_columnInsertIndex;
+	
 	final protected List<String>        _columnNames;
+	final protected List<FreebaseType>  _columnTypes;
+	
     final protected List<Integer> 		_rowIndices;
     final protected List<DataExtension> _dataExtensions;
     
@@ -38,20 +45,27 @@ public class DataExtensionChange implements Change {
 		String baseColumnName, 
 		int columnInsertIndex, 
 		List<String> columnNames,
+		List<FreebaseType> columnTypes,
 		List<Integer> rowIndices,
 		List<DataExtension> dataExtensions
 	) {
     	_baseColumnName = baseColumnName;
     	_columnInsertIndex = columnInsertIndex;
+    	
     	_columnNames = columnNames;
+    	_columnTypes = columnTypes;
+    	
         _rowIndices = rowIndices;
         _dataExtensions = dataExtensions;
     }
 
     protected DataExtensionChange(
 		String 				baseColumnName, 
-		int 				columnInsertIndex, 
+		int 				columnInsertIndex,
+		
 		List<String> 		columnNames,
+        List<FreebaseType> columnTypes,
+        
 		List<Integer> 		rowIndices,
 		List<DataExtension> dataExtensions,
 		int 				firstNewCellIndex,
@@ -60,7 +74,10 @@ public class DataExtensionChange implements Change {
 	) {
     	_baseColumnName = baseColumnName;
     	_columnInsertIndex = columnInsertIndex;
+    	
     	_columnNames = columnNames;
+        _columnTypes = columnTypes;
+        
         _rowIndices = rowIndices;
         _dataExtensions = dataExtensions;
         
@@ -140,9 +157,12 @@ public class DataExtensionChange implements Change {
             
             for (int i = 0; i < _columnNames.size(); i++) {
             	String name = _columnNames.get(i);
+            	int cellIndex = _firstNewCellIndex + i;
             	
-            	Column column = new Column(_firstNewCellIndex + i, name);
-            
+            	Column column = new Column(cellIndex, name);
+            	column.setReconConfig(new DataExtensionReconConfig(_columnTypes.get(i)));
+            	column.setReconStats(ReconStats.create(project, cellIndex));
+            	
             	project.columnModel.columns.add(_columnInsertIndex + i, column);
             }
             
@@ -194,6 +214,17 @@ public class DataExtensionChange implements Change {
         for (String name : _columnNames) {
         	writer.write(name); writer.write('\n');
         }
+        writer.write("columnTypeCount="); writer.write(Integer.toString(_columnTypes.size())); writer.write('\n');
+        for (FreebaseType type : _columnTypes) {
+            try {
+                JSONWriter jsonWriter = new JSONWriter(writer);
+                
+                type.write(jsonWriter, options);
+            } catch (JSONException e) {
+                // ???
+            }
+            writer.write('\n');
+        }
         writer.write("rowIndexCount="); writer.write(Integer.toString(_rowIndices.size())); writer.write('\n');
         for (Integer rowIndex : _rowIndices) {
         	writer.write(rowIndex.toString()); writer.write('\n');
@@ -201,17 +232,22 @@ public class DataExtensionChange implements Change {
         writer.write("dataExtensionCount="); writer.write(Integer.toString(_dataExtensions.size())); writer.write('\n');
         for (DataExtension dataExtension : _dataExtensions) {
             writer.write(Integer.toString(dataExtension.data.length)); writer.write('\n');
+            
             for (Object[] values : dataExtension.data) {
             	for (Object value : values) {
-            		try {
-	            		JSONWriter jsonWriter = new JSONWriter(writer);
-	            		if (value instanceof ReconCandidate) {
-	            			((ReconCandidate) value).write(jsonWriter, options);
-	            		} else {
-	            			jsonWriter.value(value);
-	            		}
-            		} catch (JSONException e) {
-            			// ???
+            	    if (value == null) {
+            	        writer.write("null");
+            	    } else if (value instanceof ReconCandidate) {
+                        try {
+                            JSONWriter jsonWriter = new JSONWriter(writer);
+                            ((ReconCandidate) value).write(jsonWriter, options);
+                        } catch (JSONException e) {
+                            // ???
+                        }
+            		} else if (value instanceof String) {
+            			writer.write(JSONObject.quote((String) value));
+            		} else {
+            		    writer.write(value.toString());
             		}
             		writer.write('\n');
             	}
@@ -236,12 +272,17 @@ public class DataExtensionChange implements Change {
     static public Change load(LineNumberReader reader) throws Exception {
     	String baseColumnName = null;
     	int columnInsertIndex = -1;
-    	int firstNewCellIndex = -1;
+    	
     	List<String> columnNames = null;
+    	List<FreebaseType> columnTypes = null;
+    	
     	List<Integer> rowIndices = null;
     	List<DataExtension> dataExtensions = null;
+    	
         List<Row> oldRows = null;
         List<Row> newRows = null;
+        
+        int firstNewCellIndex = -1;
         
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -271,6 +312,14 @@ public class DataExtensionChange implements Change {
                     line = reader.readLine();
                     columnNames.add(line);
                 }
+            } else if ("columnTypeCount".equals(field)) {
+                int count = Integer.parseInt(value);
+                
+                columnTypes = new ArrayList<FreebaseType>(count);
+                for (int i = 0; i < count; i++) {
+                    line = reader.readLine();
+                    columnTypes.add(FreebaseType.load(ParsingUtilities.evaluateJsonStringToObject(line)));
+                }
             } else if ("dataExtensionCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
@@ -289,10 +338,12 @@ public class DataExtensionChange implements Change {
                             JSONTokener t = new JSONTokener(line);
                             Object o = t.nextValue();
                             
-                            if (o instanceof JSONObject) {
-                            	row[c] = ReconCandidate.load((JSONObject) o);
-                            } else {
-                            	row[c] = o;
+                            if (o != JSONObject.NULL) {
+                                if (o instanceof JSONObject) {
+                                	row[c] = ReconCandidate.load((JSONObject) o);
+                                } else {
+                                	row[c] = o;
+                                }
                             }
                     	}
                     	
@@ -325,6 +376,7 @@ public class DataExtensionChange implements Change {
     		baseColumnName, 
     		columnInsertIndex, 
     		columnNames,
+    		columnTypes,
     		rowIndices,
     		dataExtensions,
     		firstNewCellIndex,

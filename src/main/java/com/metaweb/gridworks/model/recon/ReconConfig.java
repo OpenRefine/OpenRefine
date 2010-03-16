@@ -21,6 +21,8 @@ abstract public class ReconConfig implements Jsonizable {
             return HeuristicReconConfig.reconstruct(obj);
         } else if ("strict".equals(mode)) {
             return StrictReconConfig.reconstruct(obj);
+        } else if ("extend".equals(mode)) {
+            return DataExtensionReconConfig.reconstruct(obj);
         }
         return null;
     }
