@@ -27,7 +27,7 @@ public class ReconCandidate implements HasFields, Jsonizable {
     
     public Object getField(String name, Properties bindings) {
         if ("id".equals(name)) {
-            return topicName;
+            return topicID;
         } else if ("guid".equals(name)) {
             return topicGUID;
         } else if ("name".equals(name)) {
