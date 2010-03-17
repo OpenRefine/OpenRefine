@@ -53,14 +53,38 @@ public class ProjectManager {
         
         String os = Configurations.get("os.name").toLowerCase();
         if (os.contains("windows")) {
-            // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
-            // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
-            // so we're using a library that uses JNI to ask directly the win32 APIs, 
-            // it's not elegant but it's the safest bet
-            DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
-            File data = new File(localDataPath.getPath());
-            data.mkdirs();
-            return data;           
+        	try {
+	            // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
+	            // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
+	            // so we're using a library that uses JNI to ask directly the win32 APIs, 
+	            // it's not elegant but it's the safest bet
+	            DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
+	            File data = new File(localDataPath.getPath());
+	            data.mkdirs();
+	            return data;
+        	} catch (Error e) {
+        		Gridworks.log("Failed to use jdatapath to detect user data path. Resorting to environment variables.");
+        		
+        		String appData = System.getenv("APPDATA");
+        		File parentDir = null;
+        		if (appData != null && appData.length() > 0) {
+        			parentDir = new File(appData);
+        		} else {
+        			String userProfile = System.getenv("USERPROFILE");
+        			if (userProfile != null && userProfile.length() > 0) {
+        				parentDir = new File(userProfile);
+        			}
+        		}
+        		
+        		if (parentDir == null) {
+        			parentDir = new File(".");
+        		}
+        		
+        		File data = new File(parentDir, "Gridworks");
+        		data.mkdirs();
+        		
+        		return data;
+        	}
         } else if (os.contains("mac os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
