@@ -248,7 +248,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     
     frame.width("800px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Protograph Node").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Schema Skeleton Node").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
