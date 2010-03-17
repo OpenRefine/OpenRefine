@@ -193,19 +193,20 @@ DataTableCellUI.prototype._searchForMatch = function() {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    $('<p></p>').text("Search Freebase for topic to match " + this._cell.v).appendTo(body);
+    var html = $(
+        '<div class="grid-layout layout-normal layout-full"><table>' +
+            '<tr><td colspan="2">Search Freebase for topic to match ' + this._cell.v + '</td></tr>' +
+            '<tr>' +
+                '<td><input bind="input" /></td>' +
+                '<td><input type="checkbox" checked="true" bind="checkSimilar" /> Match other cells with same content</td>' +
+            '</tr>' +
+        '</table></div>'
+    ).appendTo(body);
     
-    var input = $('<input />').attr("value", this._cell.v).appendTo($('<p></p>').appendTo(body));
+    var elmts = DOM.bind(html);
+    
     var match = null;
-    input.suggest({}).bind("fb-select", function(e, data) {
-        match = data;
-    });
-    
-    var pSimilar = $('<p></p>').appendTo(body);
-    var checkSimilar = $('<input type="checkbox" checked="true" />').appendTo(pSimilar);
-    $('<span>').text(" Match other cells with the same content as well").appendTo(pSimilar);
-    
-    $('<button></button>').text("Match").click(function() {
+    var commit = function() {
         if (match != null) {
             var params = {
                 judgment: "matched",
@@ -214,7 +215,7 @@ DataTableCellUI.prototype._searchForMatch = function() {
                 topicName: match.name,
                 types: $.map(match.type, function(elmt) { return elmt.id; }).join(",")
             };
-            if (checkSimilar[0].checked) {
+            if (elmts.checkSimilar[0].checked) {
                 params.similarValue = self._cell.v;
                 params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
                 
@@ -228,14 +229,24 @@ DataTableCellUI.prototype._searchForMatch = function() {
         
             DialogSystem.dismissUntil(level - 1);
         }
-    }).appendTo(footer);
+    };
     
+    $('<button></button>').text("Match").click(commit).appendTo(footer);
     $('<button></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
     var level = DialogSystem.showDialog(frame);
-    input.focus().data("suggest").textchange();
+    
+    elmts.input
+        .attr("value", this._cell.v)
+        .suggest({})
+        .bind("fb-select", function(e, data) {
+            match = data;
+            commit();
+        })
+        .focus()
+        .data("suggest").textchange();
 };
 
 DataTableCellUI.prototype._postProcessOneCell = function(command, params, columnStatsChanged) {
