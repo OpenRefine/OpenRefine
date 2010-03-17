@@ -305,6 +305,7 @@ fi
 
 while [ $# -ne 0 ] ; do
   case "$1" in
+    -h) usage;;
     -p) shift; GRIDWORKS_PORT="$1"; shift; continue;;
     -i) shift; GRIDWORKS_HOST="$1"; shift; continue;;
     -w) shift; GRIDWORKS_WEBAPP="$1"; shift; continue;;
