@@ -30,6 +30,7 @@
     <property name="tests_classes.dir" value="${tests.dir}/classes" />
     <property name="bundle.dir" value="${build.dir}/bundle" />
     <property name="exe.dir" value="${build.dir}/exe" />
+    <property name="cli.dir" value="${build.dir}/cli" />
     
     <path id="class.path">
         <fileset dir="${lib.dir}">
@@ -149,7 +150,50 @@
         </copy>
         <zip destfile="${dist.dir}/gridworks-${version}.zip" basedir="${exe.dir}"/>                
 	</target>
+	
+  <target name="cli" depends="jar">
+    <mkdir dir="${cli.dir}"/>
 
+    <copy todir="${cli.dir}/lib">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </copy>
+    <copy todir="${cli.dir}/lib/native/windows">
+        <fileset dir="${lib.dir}/native/windows">
+            <include name="*.dll"/>
+        </fileset>
+    </copy>
+
+    <copy todir="${cli.dir}/build/classes">
+        <fileset dir="${build.dir}/classes">
+            <include name="**"/>
+        </fileset>
+    </copy>
+    <copy todir="${cli.dir}/src/main/webapp">
+        <fileset dir="${basedir}/src/main/webapp">
+            <include name="**/*"/>
+        </fileset>
+    </copy>
+    <copy todir="${cli.dir}/thirdparty">
+        <fileset dir="${basedir}/thirdparty">
+            <include name="**/*"/>
+        </fileset>
+    </copy>
+    <copy todir="${cli.dir}/licenses">
+        <fileset dir="${basedir}/licenses">
+            <include name="**/*"/>
+        </fileset>
+    </copy>
+    <copy file="${basedir}/gridworks" tofile="${cli.dir}/gridworks"/>
+    <copy file="${basedir}/gridworks.bat" tofile="${cli.dir}/gridworks.bat"/>
+    <copy file="${basedir}/build.xml" tofile="${cli.dir}/build.xml"/>
+    <copy file="${basedir}/LICENSE.txt" tofile="${cli.dir}/LICENSE.txt"/>
+    <copy file="${basedir}/README.txt" tofile="${cli.dir}/README.txt"/>
+
+    <zip destfile="${dist.dir}/gridworks-${version}-cli.zip" basedir="${cli.dir}"/>
+	</target>
+	
     <target name="clean">
         <delete file="${build.dir}/gridworks.jar" />
         <delete dir="${classes.dir}" />

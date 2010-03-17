@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -15,9 +16,9 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
-public class TsvExporter implements Exporter {
+public class HtmlTableExporter implements Exporter {
     public String getContentType() {
-        return "text/plain";
+        return "text/html";
     }
     
     public boolean takeWriter() {
@@ -30,16 +31,23 @@ public class TsvExporter implements Exporter {
     }
     
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
-        boolean first = true;
-        for (Column column : project.columnModel.columns) {
-            if (first) {
-                first = false;
-            } else {
-                writer.write("\t");
+        writer.write("<html>\n");
+        writer.write("<head><title>"); 
+            writer.write(ProjectManager.singleton.getProjectMetadata(project.id).getName());
+            writer.write("</title></head>\n");
+        
+        writer.write("<body>\n");
+        writer.write("<table>\n");
+        
+        writer.write("<tr>");
+        {
+            for (Column column : project.columnModel.columns) {
+                writer.write("<th>");
+                writer.write(column.getName());
+                writer.write("</th>");
             }
-            writer.write(column.getName());
         }
-        writer.write("\n");
+        writer.write("</tr>\n");
         
         {
             RowVisitor visitor = new RowVisitor() {
@@ -51,14 +59,11 @@ public class TsvExporter implements Exporter {
                 }
                 
                 public boolean visit(Project project, int rowIndex, Row row, boolean contextual, boolean includeDependent) {
-                    boolean first = true;
                     try {
+                        writer.write("<tr>");
+                        
                         for (Column column : project.columnModel.columns) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                writer.write("\t");
-                            }
+                            writer.write("<td>");
                             
                             int cellIndex = column.getCellIndex();
                             if (cellIndex < row.cells.size()) {
@@ -68,8 +73,11 @@ public class TsvExporter implements Exporter {
                                     writer.write(v instanceof String ? ((String) v) : v.toString());
                                 }
                             }
+                            
+                            writer.write("</td>");
                         }
-                        writer.write("\n");
+                        
+                        writer.write("</tr>\n");
                     } catch (IOException e) {
                         // ignore
                     }
@@ -80,6 +88,10 @@ public class TsvExporter implements Exporter {
             FilteredRows filteredRows = engine.getAllFilteredRows(true);
             filteredRows.accept(project, visitor);
         }
+        
+        writer.write("</table>\n");
+        writer.write("</body>\n");
+        writer.write("</html>\n");
     }
 
 }

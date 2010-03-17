@@ -21,6 +21,15 @@ MenuBar.prototype._initializeUI = function() {
                     "click": function() { self._doExportRows("tsv", "tsv"); }
                 },
                 {
+                    "label": "HTML Table",
+                    "click": function() { self._doExportRows("html", "html"); }
+                },
+                {
+                    "label": "Excel",
+                    "click": function() { self._doExportRows("xls", "xls"); }
+                },
+                {},
+                {
                     "label": "Tripleloader",
                     "click": function() { self._doExportRows("tripleloader", "txt"); }
                 }
@@ -137,11 +146,12 @@ MenuBar.prototype._deactivateMenu = function() {
 };
 
 MenuBar.prototype._doExportRows = function(format, ext) {
+    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
     var form = document.createElement("form");
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-rows/gridworks_" + theProject.id + "." + ext)
+        .attr("action", "/command/export-rows/" + name + "." + ext)
         .attr("target", "gridworks-export");
 
     $('<input />')
@@ -166,7 +176,7 @@ MenuBar.prototype._doExportRows = function(format, ext) {
 };
 
 MenuBar.prototype._exportProject = function() {
-    var name = theProject.metadata.name.replace(/\W/g, ' ').replace(/\s+/g, '-');
+    var name = $(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
     var form = document.createElement("form");
     $(form)
         .css("display", "none")

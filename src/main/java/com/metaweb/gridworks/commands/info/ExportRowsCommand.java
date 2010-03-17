@@ -11,8 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.exporters.Exporter;
+import com.metaweb.gridworks.exporters.HtmlTableExporter;
 import com.metaweb.gridworks.exporters.TripleloaderExporter;
 import com.metaweb.gridworks.exporters.TsvExporter;
+import com.metaweb.gridworks.exporters.XlsExporter;
 import com.metaweb.gridworks.model.Project;
 
 public class ExportRowsCommand extends Command {
@@ -25,11 +27,14 @@ public class ExportRowsCommand extends Command {
             Engine engine = getEngine(request, project);
             String format = request.getParameter("format");
             
-            PrintWriter writer = response.getWriter();
             
             Exporter exporter = null;
             if ("tripleloader".equalsIgnoreCase(format)) {
                 exporter = new TripleloaderExporter();
+            } else if ("html".equalsIgnoreCase(format)) {
+                exporter = new HtmlTableExporter();
+            } else if ("xls".equalsIgnoreCase(format)) {
+                exporter = new XlsExporter();
             } else {
                 exporter = new TsvExporter();
             }
@@ -37,8 +42,12 @@ public class ExportRowsCommand extends Command {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", exporter.getContentType());
             
-            exporter.export(project, new Properties(), engine, writer);
-
+            if (exporter.takeWriter()) {
+                PrintWriter writer = response.getWriter();
+                exporter.export(project, new Properties(), engine, writer);
+            } else {
+                exporter.export(project, new Properties(), engine, response.getOutputStream());
+            }
         } catch (Exception e) {
             respondException(response, e);
         }

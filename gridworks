@@ -49,6 +49,8 @@ and <action> is one of
    
    make_dmg <version> ........ Make MacOSX DMG distribution
    make_exe <version> ........ Make Windows EXE distribution
+   make_cli <version> ........ Make zip distribution to be run at command line
+   make_all <version> ........ Make all distributions
 
    clean ..................... Clean compiled classes
    distclean ................. Remove all generated files
@@ -146,7 +148,13 @@ get_version() {
     
     NUM_VERSION=`echo $VERSION | sed 's/[a-zA-Z]//g'`
 }
-    
+
+make_all() {
+    make_dmg $1
+    make_exe $1
+    make_cli $1
+}
+
 make_exe() {
     check_macosx
     dist_prepare
@@ -154,6 +162,15 @@ make_exe() {
     get_version $1
     
     ant exe
+}
+
+make_cli() {
+    check_macosx
+    dist_prepare
+    launch4j_prepare
+    get_version $1
+    
+    ant cli
 }
     
 make_dmg() {
@@ -387,6 +404,12 @@ case "$ACTION" in
 
   make_exe)
     make_exe $1;;
+    
+  make_cli)
+    make_cli $1;;
+    
+  make_all)
+    make_all $1;;
       
   *)
     usage; ;;
