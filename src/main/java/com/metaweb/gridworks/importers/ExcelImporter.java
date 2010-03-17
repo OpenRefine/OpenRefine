@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.importers;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
@@ -39,10 +40,19 @@ public class ExcelImporter implements Importer {
     public void read(InputStream inputStream, Project project,
             Properties options, int skip, int limit) throws Exception {
         
-        Workbook wb = _xmlBased ? 
+        Workbook wb = null;
+        try {
+            wb = _xmlBased ? 
                 new XSSFWorkbook(inputStream) : 
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
-                
+        } catch (IOException e) {
+            throw new IOException(
+                "Attempted to parse file as Excel file but failed. " +
+                "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
+                e
+            );
+        }
+        
         Sheet sheet = wb.getSheetAt(0);
 
         int firstRow = sheet.getFirstRowNum();
