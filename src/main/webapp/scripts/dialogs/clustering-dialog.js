@@ -477,6 +477,9 @@ ClusteringDialog.Facet = function(dialog, title, property, elmt, clusters) {
         ).appendTo(elmt);
         
         this._elmts = DOM.bind(html);
+        
+        this._histogram = new HistogramWidget(this._elmts.histogramContainer, { binColors: [ "#aaaaff", "#000088" ] });
+
         this._elmts.slider.slider({
             min: this._min,
             max: this._max,
@@ -517,30 +520,13 @@ ClusteringDialog.Facet.prototype.update = function(clusters) {
     }
     
     var bins = this._computeDistribution(clusters);
-    
-    var max = 0;
-    for (var i = 0; i < this._baseBins.length; i++) {
-        max = Math.max(max, this._baseBins[i]);
-    }
-    
-    var values = [];
-    var diffs = [];
-    for (var i = 0; i < this._baseBins.length; i++) {
-        var v = Math.ceil(100 * bins[i] / max);
-        var diff = Math.ceil(100 * this._baseBins[i] / max) - v;
-        
-        values.push(v == 0 ? 0 : Math.max(2, v)); // use min 2 to make sure something shows up
-        diffs.push(diff == 0 ? 0 : Math.max(2, diff));
-    }
-        
-    this._elmts.histogramContainer.empty();
-    $('<img />').attr("src", 
-        "http://chart.apis.google.com/chart?" + [
-            "chs=" + this._elmts.histogramContainer[0].offsetWidth + "x50",
-            "cht=bvs&chbh=r,0&chco=000088,aaaaff",
-            "chd=t:" + values.join(",") + "|" + diffs.join(",")
-        ].join("&")
-    ).appendTo(this._elmts.histogramContainer);
+
+    this._histogram.update(
+        this._min, 
+        this._max, 
+        this._step, 
+        [ this._baseBins, bins ]
+    );
 };
 
 ClusteringDialog.Facet.prototype._setRangeIndicators = function() {

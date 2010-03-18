@@ -1,0 +1,9 @@
+.histogram-widget {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.histogram-widget canvas {
+    width: 100%;
+}

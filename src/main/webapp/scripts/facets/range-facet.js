@@ -144,6 +144,8 @@ RangeFacet.prototype._initializeUI = function() {
     this._statusDiv = $('<div>').addClass("facet-range-status").appendTo(bodyDiv);
     this._otherChoicesDiv = $('<div>').addClass("facet-range-other-choices").appendTo(bodyDiv);
     
+    this._histogram = new HistogramWidget(this._histogramDiv, { binColors: [ "#aaaaff", "#000088" ] });
+    
     var onSlide = function(event, ui) {
         switch (self._config.mode) {
         case "min":
@@ -327,35 +329,12 @@ RangeFacet.prototype.render = function() {
     this._sliderDiv.slider("option", "max", this._config.max);
     this._sliderDiv.slider("option", "step", this._config.step);
     
-    var max = 0;
-    for (var i = 0; i < this._baseBins.length; i++) {
-        max = Math.max(max, this._baseBins[i]);
-    }
-    
-    if (max == 0) {
-        this._histogramDiv.hide();
-    } else {
-        var values = [];
-        var diffs = [];
-        
-        for (var i = 0; i < this._baseBins.length; i++) {
-            var v = Math.ceil(100 * this._bins[i] / max);
-            var diff = Math.ceil(100 * this._baseBins[i] / max) - v;
-            
-            values.push(v == 0 ? 0 : Math.max(2, v)); // use min 2 to make sure something shows up
-            diffs.push(diff == 0 ? 0 : Math.max(2, diff));
-        }
-        
-        this._histogramDiv.empty().show();
-        $('<img />').attr("src", 
-            "http://chart.apis.google.com/chart?" + [
-                "chs=" + this._histogramDiv[0].offsetWidth + "x50",
-                //"cht=ls&chm=o,ff6600,0,-1,3&chls=0", // use for line plot
-                "cht=bvs&chbh=r,0&chco=000088,aaaaff", // use for histogram
-                "chd=t:" + values.join(",") + "|" + diffs.join(",")
-            ].join("&")
-        ).appendTo(this._histogramDiv);
-    }
+    this._histogram.update(
+        this._config.min, 
+        this._config.max, 
+        this._config.step, 
+        [ this._baseBins, this._bins ]
+    );
     
     this._setRangeIndicators();
     this._renderOtherChoices();

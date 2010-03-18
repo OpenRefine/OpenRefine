@@ -128,11 +128,6 @@ img.facet-choice-link {
     margin: 10px 4px;
     overflow: hidden;
 }
-.facet-range-histogram img {
-    height: 50px;
-    position: relative;
-    left: -2px;
-}
 .facet-range-slider {
 }
 .facet-range-status {
