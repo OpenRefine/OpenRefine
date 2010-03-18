@@ -120,6 +120,20 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     label: "Common Numeric Facets",
                     submenu: [
                         {
+                            label: "Numeric Log Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name + ": value.log()",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "value.log()",
+                                        "mode" : "range"
+                                    }
+                                );
+                            }
+                        },
+                        {
                             label: "Text Length Facet",
                             click: function() {
                                 ui.browsingEngine.addFacet(

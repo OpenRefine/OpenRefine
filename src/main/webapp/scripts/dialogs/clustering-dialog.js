@@ -462,6 +462,10 @@ ClusteringDialog.Facet = function(dialog, title, property, elmt, clusters) {
         if (this._binCount > 100) {
             this._step *= 2;
             this._binCount = Math.round((1 + this._binCount) / 2);
+        } else if (this._binCount < 3) {
+            this._step /= 2;
+            this._binCount *= 2;
+            this._max = (Math.ceil(this._max / this._step) * this._step);
         }
         this._baseBins = this._computeDistribution(clusters);
         
@@ -478,12 +482,17 @@ ClusteringDialog.Facet = function(dialog, title, property, elmt, clusters) {
         
         this._elmts = DOM.bind(html);
         
-        this._histogram = new HistogramWidget(this._elmts.histogramContainer, { binColors: [ "#aaaaff", "#000088" ] });
+        this._histogram = new HistogramWidget(this._elmts.histogramContainer, { binColors: [ "#ccccff", "#6666ff" ] });
 
         this._elmts.slider.slider({
             min: this._min,
             max: this._max,
             values: [ this._from, this._to ],
+            slide: function(evt, ui) {
+                self._from = ui.values[0];
+                self._to = ui.values[1];
+                self._setRangeIndicators();
+            },
             stop: function(evt, ui) {
                 self._from = ui.values[0];
                 self._to = ui.values[1];
@@ -525,11 +534,14 @@ ClusteringDialog.Facet.prototype.update = function(clusters) {
         this._min, 
         this._max, 
         this._step, 
-        [ this._baseBins, bins ]
+        [ this._baseBins, bins ],
+        this._from,
+        this._to
     );
 };
 
 ClusteringDialog.Facet.prototype._setRangeIndicators = function() {
+    this._histogram.highlight(this._from, this._to);
     this._elmts.selectionContainer.text(this._from + " to " + this._to);
 };
 

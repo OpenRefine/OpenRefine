@@ -14,7 +14,7 @@ HistogramWidget.prototype.highlight = function(from, to) {
     this._update();
 };
 
-HistogramWidget.prototype.update = function(min, max, step, binMatrix) {
+HistogramWidget.prototype.update = function(min, max, step, binMatrix, from, to) {
     if (typeof min == "undefined" || typeof binMatrix == "undefined" || binMatrix.length === 0 || binMatrix[0].length === 0) {
         this._range = null;
         this._binMatrix = null;
@@ -33,6 +33,10 @@ HistogramWidget.prototype.update = function(min, max, step, binMatrix) {
             }
         }
         
+        if (typeof from != "undefined" && typeof to != "undefined") {
+            this._highlight = { from: from, to: to };
+        }
+        
         this._update();
     }
 };
@@ -40,8 +44,8 @@ HistogramWidget.prototype.update = function(min, max, step, binMatrix) {
 HistogramWidget.prototype._update = function() {
     if (this._binMatrix != null) {
         if (this._highlight != null) {
-            this._highlight.from = Math.max(this._highlight.from, min);
-            this._highlight.to = Math.min(this._highlight.to, max);
+            this._highlight.from = Math.max(this._highlight.from, this._range.min);
+            this._highlight.to = Math.min(this._highlight.to, this._range.max);
         }
         
         this._elmt.show();
@@ -73,12 +77,16 @@ HistogramWidget.prototype._render = function() {
     
     var canvas = this._elmts.canvas[0];
     var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     ctx.save();
     ctx.translate(0, canvas.height);
     ctx.scale(1, -1);
     
+        var stepPixels = canvas.width / this._binMatrix[0].length;
+        var stepScale = stepPixels / this._range.step;
+        
         /*
          *  Draw axis
          */
@@ -93,7 +101,6 @@ HistogramWidget.prototype._render = function() {
         /*
          *  Draw bins
          */
-        var stepPixels = canvas.width / this._binMatrix[0].length;
         var makeColor = function(i) {
             var n = Math.floor(15 * (self._binMatrix.length - i) / self._binMatrix.length);
             var h = n.toString(16);
@@ -104,11 +111,14 @@ HistogramWidget.prototype._render = function() {
             ctx.lineWidth = 0;
             ctx.fillStyle = color;
             for (var c = 0; c < row.length; c++) {
-                var value = row[c];
-                if (value > 0) {
+                var x = self._range.min + c * self._range.step;
+                var y = row[c];
+                if (y > 0) {
                     var left = c * stepPixels;
-                    var height = Math.ceil(value * canvas.height / self._peak);
-                    ctx.fillRect(left, 0, Math.ceil(stepPixels), height);
+                    var width = Math.ceil(stepPixels);
+                    var height = Math.ceil(y * canvas.height / self._peak);
+                    
+                    ctx.fillRect(left, 0, width, height);
                 }
             }
             ctx.restore();
@@ -121,6 +131,30 @@ HistogramWidget.prototype._render = function() {
                     makeColor(r)
             );
         }
-    
+        
+        /*
+         *  Draw highlight
+         */
+        if (this._highlight != null) {
+            ctx.fillStyle = "rgba(192,192,192, 0.5)";
+            ctx.globalCompositeOperation = "source-over";
+            if (this._highlight.from > this._range.min) {
+                ctx.fillRect(
+                    0,
+                    0,
+                    (this._highlight.from - this._range.min) * stepScale,
+                    canvas.height
+                );
+            }
+            if (this._highlight.to < this._range.max) {
+                ctx.fillRect(
+                    (this._highlight.to - this._range.min) * stepScale,
+                    0,
+                    canvas.width - (this._highlight.to - this._range.min) * stepScale,
+                    canvas.height
+                );
+            }
+        }
+        
     ctx.restore();
 };

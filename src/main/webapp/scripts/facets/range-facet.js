@@ -144,7 +144,7 @@ RangeFacet.prototype._initializeUI = function() {
     this._statusDiv = $('<div>').addClass("facet-range-status").appendTo(bodyDiv);
     this._otherChoicesDiv = $('<div>').addClass("facet-range-other-choices").appendTo(bodyDiv);
     
-    this._histogram = new HistogramWidget(this._histogramDiv, { binColors: [ "#aaaaff", "#000088" ] });
+    this._histogram = new HistogramWidget(this._histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
     
     var onSlide = function(event, ui) {
         switch (self._config.mode) {
@@ -264,6 +264,7 @@ RangeFacet.prototype._setRangeIndicators = function() {
     }
     
     this._statusDiv.text(text);
+    this._histogram.highlight(this._from, this._to);
 };
 
 RangeFacet.prototype.updateState = function(data) {
@@ -333,7 +334,9 @@ RangeFacet.prototype.render = function() {
         this._config.min, 
         this._config.max, 
         this._config.step, 
-        [ this._baseBins, this._bins ]
+        [ this._baseBins, this._bins ],
+        this._from,
+        this._to
     );
     
     this._setRangeIndicators();

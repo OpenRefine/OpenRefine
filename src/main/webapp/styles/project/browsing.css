@@ -125,11 +125,17 @@ img.facet-choice-link {
     color: #f88;
 }
 .facet-range-histogram {
-    margin: 10px 4px;
+    margin: 10px 0px;
     overflow: hidden;
 }
-.facet-range-slider {
+.facet-range-slider.ui-corner-all {
+    border-bottom-left-radius: 0px 0px;
+    border-bottom-right-radius: 0px 0px;
+    border-top-left-radius: 0px 0px;
+    border-top-right-radius: 0px 0px;
 }
+
+
 .facet-range-status {
     margin: 10px 0;
     text-align: center;
