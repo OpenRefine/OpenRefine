@@ -9,19 +9,23 @@ function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td) {
 
 DataTableColumnHeaderUI.prototype._render = function() {
     var self = this;
-    var td = this._td;
     
-    var headerTable = document.createElement("table");
-    $(headerTable).addClass("column-header-layout").attr("cellspacing", "0").attr("cellpadding", "0").attr("width", "100%").appendTo(td);
+    var html = $(
+        '<table class="column-header-layout">' +
+            '<tr>' +
+                '<td bind="nameContainer"></td>' +
+                '<td width="1%">' +
+                    '<a class="column-header-menu" bind="dropdownMenu">&nbsp;</a>' +
+                '</td>' +
+            '</tr>' +
+        '</table>' +
+        '<div style="display:none;" bind="reconStatsContainer"></div>'
+    ).appendTo(this._td);
     
-    var headerTableRow = headerTable.insertRow(0);
-    var headerLeft = headerTableRow.insertCell(0);
-    var headerRight = headerTableRow.insertCell(1);
+    var elmts = DOM.bind(html);
     
-    $('<span></span>').html(this._column.name).appendTo(headerLeft);
-    
-    $(headerRight).attr("width", "1%");
-    $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(headerRight).click(function() {
+    elmts.nameContainer.text(this._column.name);
+    elmts.dropdownMenu.click(function() {
         self._createMenuForColumnHeader(this);
     });
     
@@ -31,20 +35,20 @@ DataTableColumnHeaderUI.prototype._render = function() {
             var newPercent = Math.ceil(100 * stats.newTopics / stats.nonBlanks);
             var matchPercent = Math.ceil(100 * stats.matchedTopics / stats.nonBlanks);
             var unreconciledPercent = Math.ceil(100 * (stats.nonBlanks - stats.matchedTopics - stats.newTopics) / stats.nonBlanks);
+            var title = matchPercent + "% matched, " + newPercent + "% new, " + unreconciledPercent + "% to be reconciled";
             
             var whole = $('<div>')
-                .height("3px")
-                .css("background", "#333")
-                .css("position", "relative")
-                .attr("title", matchPercent + "% matched, " + newPercent + "% new, " + unreconciledPercent + "% to be reconciled")
-                .width("100%")
-                .appendTo(td);
+                .addClass("column-header-recon-stats-bar")
+                .attr("title", title)
+                .appendTo(elmts.reconStatsContainer.show());
             
-            $('<div>').height("100%").css("background", "white").css("position", "absolute")
+            $('<div>')
+                .addClass("column-header-recon-stats-blanks")
                 .width(Math.round((stats.newTopics + stats.matchedTopics) * 100 / stats.nonBlanks) + "%")
                 .appendTo(whole);
                 
-            $('<div>').height("100%").css("background", "#6d6").css("position", "absolute")
+            $('<div>')
+                .addClass("column-header-recon-stats-matched")
                 .width(Math.round(stats.matchedTopics * 100 / stats.nonBlanks) + "%")
                 .appendTo(whole);
         }

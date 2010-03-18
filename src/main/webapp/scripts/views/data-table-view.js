@@ -188,10 +188,18 @@ DataTableView.prototype.render = function() {
      */
     
     var trHead = table.insertRow(table.rows.length);
-    
-    var tdHeadIndex = trHead.insertCell(trHead.cells.length);
-    $(tdHeadIndex).attr("colspan", "2").addClass("column-header");
-    $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(tdHeadIndex).click(function() {
+    DOM.bind(
+        $(trHead.insertCell(trHead.cells.length))
+            .attr("colspan", "2")
+            .addClass("column-header")
+            .html(
+                '<table class="column-header-layout"><tr><td>&nbsp;</td>' +
+                    '<td width="1%">' +
+                        '<a class="column-header-menu" bind="dropdownMenu">&nbsp;</a>' +
+                    '</td>' +
+                '</tr></table>'
+            )
+    ).dropdownMenu.click(function() {
         self._createMenuForAllColumns(this);
     });
     

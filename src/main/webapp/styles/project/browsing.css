@@ -31,6 +31,7 @@ li.facet-container {
     border: 1px solid #ccc;
     border-bottom: 0px;
     padding: 3px 5px;
+    padding-right: 2px;
     background: #eee;
     font-weight: bold;
     cursor: move;
@@ -111,7 +112,7 @@ a.facet-choice-edit:hover {
 img.facet-choice-link {
     text-align: baseline;
     cursor: pointer;
-    margin: 0 2px;
+    margin-left: 2px;
     float: right;
 }
 

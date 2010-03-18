@@ -40,16 +40,45 @@ table.data-table td.column-header {
     font-weight: bold;
 }
 
+table.column-header-layout {
+    border-collapse: collapse;
+    width: 100%;
+}
 table.column-header-layout td {
     padding: 0px;
     font-weight: bold;
 }
-
-img.column-header-menu {
-    position: relative;
-    top: -5px;
-    left: 5px;
+a.column-header-menu {
+    display: block;
+    margin-left: 5px;
+    width: 19px;
+    height: 19px;
+    background-image: url(../../images/menu-dropdown.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
 }
+a.column-header-menu:hover {
+    background-position: -19px 0px;
+}
+.column-header-recon-stats-bar {
+    margin-top: 5px;
+    height: 3px;
+    max-height: 3px;
+    background: #333;
+    position: relative;
+    width: 100%;
+}
+.column-header-recon-stats-blanks {
+    position: absolute;
+    height: 100%;
+    background: white;
+}
+.column-header-recon-stats-matched {
+    position: absolute;
+    height: 100%;
+    background: #6d6;
+}
+
 
 .viewPanel-summary {
 }
