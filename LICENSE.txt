@@ -2,23 +2,28 @@
  *  (c) Copyright 2010 Metaweb Technologies, Inc. All rights reserved.
  */
 
+/*
+ *  External Licenses
+ */
+
 See the 'licenses' directory for a list of the licenses for the libraries we depend on,
 ordered here by license:
 
 licenses/apache2.0.LICENSE.txt
-    jetty
-    jetty-util
-    servlet-api
+    ant (package org.apache.tools.tar)
+    bzip2 (package org.apache.tools.bzip2)
+    calendar-parser (package com.metaweb.gridworks.expr.util)
     commons-lang
     commons-codec
+    jdatapath
+    jetty
+    jetty-util
     log4j
-    xmlbeans
     poi
     poi-ooxml
     poi-ooxml-schemas
-    jdatapath
-    calendar-parser (package com.metaweb.gridworks.expr.util)
-    bzip2 (package org.apache.tools.bzip2)
+    servlet-api
+    xmlbeans
  
 licenses/secondstring.LICENSE.txt (BSD family)
     secondstring
