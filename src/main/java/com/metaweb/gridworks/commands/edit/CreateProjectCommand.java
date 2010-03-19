@@ -1,12 +1,12 @@
 package com.metaweb.gridworks.commands.edit;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
@@ -67,12 +67,7 @@ public class CreateProjectCommand extends Command {
         Project                project,
         Properties            options
     ) throws Exception {
-        MultipartParser parser = null;
-        try {
-            parser = new MultipartParser(request, 20 * 1024 * 1024);
-        } catch (Exception e) {
-            // silent
-        }
+        MultipartParser parser = new MultipartParser(request, 1024 * 1024 * 1024);
         
         if (parser != null) {
             Part part = null;
@@ -100,24 +95,56 @@ public class CreateProjectCommand extends Command {
                 
                 if (part.isFile()) {
                     FilePart filePart = (FilePart) part;
+                    BufferedInputStream inputStream = new BufferedInputStream(filePart.getInputStream());
                     
                     Importer importer = guessImporter(options, null, filePart.getFileName());
                     
                     if (importer.takesReader()) {
+                        /*
+                         * NOTE(SM): The ICU4J char detection code requires the input stream to support mark/reset. 
+                         * Unfortunately, not all ServletInputStream implementations are marking, so we need do 
+                         * this memory-expensive wrapping to make it work. It's far from ideal but I don't have 
+                         * a more efficient solution.
+                         */
+                    	byte[] bytes = new byte[1024 * 4];
+                    	{
+                    		inputStream.mark(bytes.length);
+                    		inputStream.read(bytes);
+                    		inputStream.reset();
+                    	}
+                    	
                         CharsetDetector detector = new CharsetDetector();
                         detector.setDeclaredEncoding("utf8"); // the content on the web is encoded in UTF-8 so assume that
-                        CharsetMatch charsetMatch = detector.setText(enforceMarking(filePart.getInputStream())).detect();
-                        options.setProperty("encoding", charsetMatch.getName());
-                        options.setProperty("encoding_confidence", Integer.toString(charsetMatch.getConfidence()));
-                        Gridworks.log("Best encoding guess: " + charsetMatch.getName() + " [confidence: " + charsetMatch.getConfidence() + "]");
-                        Reader reader = charsetMatch.getReader();
+                        
+                        Reader reader = null;
+                        CharsetMatch[] charsetMatches = detector.setText(bytes).detectAll();
+                        for (CharsetMatch charsetMatch : charsetMatches) {
+                        	try {
+                        		reader = new InputStreamReader(inputStream, charsetMatch.getName());
+                        		
+                                options.setProperty("encoding", charsetMatch.getName());
+                                options.setProperty("encoding_confidence", Integer.toString(charsetMatch.getConfidence()));
+                                
+                                Gridworks.log(
+                                	"Best encoding guess: " + 
+                                	charsetMatch.getName() + 
+                                	" [confidence: " + charsetMatch.getConfidence() + "]");
+                                
+                                break;
+                        	} catch (UnsupportedEncodingException e) {
+                        		// silent
+                        	}
+                        }
+                        
+                        if (reader == null) {
+                        	reader = new InputStreamReader(inputStream); // all else has failed
+                        }
                         try {
-                            importer.read(charsetMatch.getReader(), project, options, skip, limit);
+                            importer.read(reader, project, options, skip, limit);
                         } finally {
                             reader.close();
                         }
                     } else {
-                        InputStream inputStream = filePart.getInputStream();
                         try {
                             importer.read(inputStream, project, options, skip, limit);
                         } finally {
@@ -224,29 +251,4 @@ public class CreateProjectCommand extends Command {
         
         return new TsvCsvImporter();
     }
-
-    /*
-     * NOTE(SM): The ICU4J char detection code requires the input stream to support mark/reset. Unfortunately, not
-     * all ServletInputStream implementations are marking, so we need do this memory-expensive wrapping to make
-     * it work. It's far from ideal but I don't have a more efficient solution.
-     */
-    private static InputStream enforceMarking(InputStream input) throws IOException {
-        if (input.markSupported()) {
-            return input;
-        } else {
-            ByteArrayOutputStream output = new ByteArrayOutputStream(64 * 1024);
-            
-            byte[] buffer = new byte[1024 * 4];
-            long count = 0;
-            int n = 0;
-            while (-1 != (n = input.read(buffer))) {
-                output.write(buffer, 0, n);
-                count += n;
-            }
-            input.close();
-            
-            return new ByteArrayInputStream(output.toByteArray());
-        }
-    }
-    
 }
