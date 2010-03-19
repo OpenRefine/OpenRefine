@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.python.core.Py;
 import org.python.core.PyException;
+import org.python.core.PyFunction;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -21,7 +23,7 @@ public class JythonEvaluable implements Evaluable {
     	String[] lines = s.split("\r\n|\r|\n");
     	
     	StringBuffer sb = new StringBuffer();
-    	sb.append("def " + s_functionName + "():");
+    	sb.append("def " + s_functionName + "(value, cell, cells, row, rowIndex):");
     	for (int i = 0; i < lines.length; i++) {
     		sb.append("\n  " + lines[i]);    		
     	}
@@ -31,19 +33,16 @@ public class JythonEvaluable implements Evaluable {
     
 	public Object evaluate(Properties bindings) {
 		try {
-		    for (Object key : bindings.keySet()) {
-		        String k = (String) key;
-				Object v = bindings.get(k);
-				
-				_engine.set(
-				    k,
-				    (v instanceof HasFields) ?
-				        new JythonHasFieldsWrapper((HasFields) v, bindings) :
-			            v
-			    );
-			}
-			
-			Object result = _engine.eval(s_functionName + "()");
+		    // call the temporary PyFunction directly
+			Object result = ((PyFunction)_engine.get(s_functionName)).__call__(
+                new PyObject[] {
+                    Py.java2py( bindings.get("value") ),
+                    new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
+                    new JythonHasFieldsWrapper((HasFields) bindings.get("cells"), bindings),
+                    new JythonHasFieldsWrapper((HasFields) bindings.get("row"), bindings),
+                    Py.java2py( bindings.get("rowIndex") )
+                }
+			);
 
 			return unwrap(result);
 		} catch (PyException e) {
