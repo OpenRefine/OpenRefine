@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -18,7 +19,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
+import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.model.Recon.Judgment;
 
 public class ExcelImporter implements Importer {
     final protected boolean _xmlBased;
@@ -155,7 +159,39 @@ public class ExcelImporter implements Importer {
                     }
                     
                     if (value != null) {
-                        newRow.setCell(c, new Cell(value, null));
+                        Recon recon = null;
+                        
+                        Hyperlink hyperlink = cell.getHyperlink();
+                        if (hyperlink != null) {
+                            String url = hyperlink.getAddress();
+                            
+                            if (url.startsWith("http://") || 
+                                url.startsWith("https://")) {
+                                
+                                final String sig = "freebase.com/view";
+                                
+                                int i = url.indexOf(sig);
+                                if (i > 0) {
+                                    String id = url.substring(i + sig.length());
+                                    
+                                    int q = id.indexOf('?');
+                                    if (q > 0) {
+                                        id = id.substring(0, q);
+                                    }
+                                    int h = id.indexOf('#');
+                                    if (h > 0) {
+                                        id = id.substring(0, h);
+                                    }
+                                    
+                                    recon = new Recon();
+                                    recon.judgment = Judgment.Matched;
+                                    recon.match = new ReconCandidate(id, "", value.toString(), new String[0], 100);
+                                    recon.addCandidate(recon.match);
+                                }
+                            }
+                        }
+                        
+                        newRow.setCell(c, new Cell(value, recon));
                         hasData = true;
                     }
                 }

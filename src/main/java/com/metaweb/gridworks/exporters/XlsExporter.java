@@ -76,26 +76,29 @@ public class XlsExporter implements Exporter {
                         int cellIndex = column.getCellIndex();
                         if (cellIndex < row.cells.size()) {
                             Cell cell = row.cells.get(cellIndex);
-                            if (cell != null && cell.value != null) {
-                                Object v = cell.value;
-                                if (v instanceof Number) {
-                                    c.setCellValue(((Number) v).doubleValue());
-                                } else if (v instanceof Boolean) {
-                                    c.setCellValue(((Boolean) v).booleanValue());
-                                } else if (v instanceof Date) {
-                                    c.setCellValue((Date) v);
-                                } else if (v instanceof Calendar) {
-                                    c.setCellValue((Calendar) v);
-                                } else if (v instanceof String) {
-                                    c.setCellValue((String) v);
-                                }
-                                
+                            if (cell != null) {
                                 if (cell.recon != null && cell.recon.match != null) {
+                                    c.setCellValue(cell.recon.match.topicName);
+                                    
                                     HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
                                     hl.setLabel(cell.recon.match.topicName);
                                     hl.setAddress("http://www.freebase.com/view" + cell.recon.match.topicID);
                                     
                                     c.setHyperlink(hl);
+                                } else if (cell.value != null) {
+                                    Object v = cell.value;
+                                    
+                                    if (v instanceof Number) {
+                                        c.setCellValue(((Number) v).doubleValue());
+                                    } else if (v instanceof Boolean) {
+                                        c.setCellValue(((Boolean) v).booleanValue());
+                                    } else if (v instanceof Date) {
+                                        c.setCellValue((Date) v);
+                                    } else if (v instanceof Calendar) {
+                                        c.setCellValue((Calendar) v);
+                                    } else if (v instanceof String) {
+                                        c.setCellValue((String) v);
+                                    }
                                 }
                             }
                         }
