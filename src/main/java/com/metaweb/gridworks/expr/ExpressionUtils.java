@@ -2,7 +2,9 @@ package com.metaweb.gridworks.expr;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import com.metaweb.gridworks.model.Cell;
@@ -85,5 +87,15 @@ public class ExpressionUtils {
         return isStorable(v) ? 
             (Serializable) v : 
             new EvalError(v.getClass().getSimpleName() + " value not storable");
+    }
+    
+    @SuppressWarnings("unchecked")
+	static public List<Object> toObjectList(Object v) {
+    	return (List<Object>) v;
+    }
+    
+    @SuppressWarnings("unchecked")
+	static public Collection<Object> toObjectCollection(Object v) {
+    	return (Collection<Object>) v;
     }
 }

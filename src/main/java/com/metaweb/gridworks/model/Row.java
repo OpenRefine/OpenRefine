@@ -52,6 +52,10 @@ public class Row implements HasFields, Jsonizable {
         			contextRows.get(0) : rowIndex;
         	
             return new Record(recordRowIndex, rowIndex);
+        } else if ("columnNames".equals(name)) {
+        	Project project = (Project) bindings.get("project");
+        	
+        	return project.columnModel.getColumnNames();
         }
         return null;
     }

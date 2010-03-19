@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.expr.functions;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -23,7 +24,7 @@ public class Type implements Function {
                     return "date";
                 } else if (v instanceof Number) {
                     return "number";
-                } else if (v.getClass().isArray()) {
+                } else if (v.getClass().isArray() || v instanceof List<?>) {
                     return "array";
                 } else {
                     return v.getClass().getName();

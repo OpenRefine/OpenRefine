@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.expr.functions;
 
+import java.util.Collection;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -19,6 +20,8 @@ public class Length implements Function {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
                     return a.length;
+                } else if (v instanceof Collection<?>) {
+                	return ((Collection<?>) v).size();
                 } else {
                     String s = (v instanceof String ? (String) v : v.toString());
                     return s.length();

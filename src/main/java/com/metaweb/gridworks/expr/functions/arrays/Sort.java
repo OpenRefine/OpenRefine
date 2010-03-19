@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.expr.functions.arrays;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -12,18 +14,25 @@ import com.metaweb.gridworks.gel.Function;
 
 public class Sort implements Function {
 
-    public Object call(Properties bindings, Object[] args) {
+	@SuppressWarnings("unchecked")
+	public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
             
-            
-            if (v != null && v.getClass().isArray()) {
-                Object[] a = (Object[]) v;
-                Object[] r = a.clone();
-                
-                Arrays.sort(r, 0, r.length);
-                
-                return r;
+            if (v != null) {
+            	if (v.getClass().isArray()) {
+	                Object[] a = (Object[]) v;
+	                Object[] r = a.clone();
+	                
+	                Arrays.sort(r, 0, r.length);
+	                
+	                return r;
+            	} else if (v instanceof List<?>) {
+            		List<? extends Comparable> a = (List<? extends Comparable>) v;
+            		Collections.sort(a);
+            		
+            		return a;
+            	}
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");

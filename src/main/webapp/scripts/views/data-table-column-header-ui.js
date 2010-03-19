@@ -134,6 +134,21 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                             }
                         },
                         {
+                            label: "1-bounded Numeric Log Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name + ": log(max(1, value))",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "log(max(1, value))",
+                                        "mode" : "range"
+                                    }
+                                );
+                            }
+                        },
+                        {},
+                        {
                             label: "Text Length Facet",
                             click: function() {
                                 ui.browsingEngine.addFacet(

@@ -30,6 +30,7 @@ import com.metaweb.gridworks.expr.functions.math.Min;
 import com.metaweb.gridworks.expr.functions.math.Mod;
 import com.metaweb.gridworks.expr.functions.math.Pow;
 import com.metaweb.gridworks.expr.functions.math.Round;
+import com.metaweb.gridworks.expr.functions.math.Sum;
 import com.metaweb.gridworks.expr.functions.strings.Contains;
 import com.metaweb.gridworks.expr.functions.strings.Diff;
 import com.metaweb.gridworks.expr.functions.strings.EndsWith;
@@ -161,6 +162,7 @@ public class ControlFunctionRegistry {
         registerFunction("ln", new Ln());
         registerFunction("pow", new Pow());
         registerFunction("exp", new Exp());
+        registerFunction("sum", new Sum());
         
         registerFunction("and", new And());
         registerFunction("or", new Or());

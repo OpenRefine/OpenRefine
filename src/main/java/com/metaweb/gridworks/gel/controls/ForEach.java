@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.gel.controls;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -28,7 +30,7 @@ public class ForEach implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (o == null || !o.getClass().isArray()) {
+        } else if (o == null || (!o.getClass().isArray() && !(o instanceof Iterable<?>))) {
             return new EvalError("First argument to forEach is not an array");
         }
         
@@ -36,17 +38,36 @@ public class ForEach implements Control {
         
         Object oldValue = bindings.get(name);
         try {
-            Object[] values = (Object[]) o;
-    
-            List<Object> results = new ArrayList<Object>(values.length);
-            for (Object v : values) {
-                bindings.put(name, v);
-                
-                Object r = args[2].evaluate(bindings);
-                
-                results.add(r);
-            }
+            List<Object> results = null;
             
+        	if (o.getClass().isArray()) {
+	            Object[] values = (Object[]) o;
+	    
+	            results = new ArrayList<Object>(values.length);
+	            for (Object v : values) {
+	                bindings.put(name, v);
+	                
+	                Object r = args[2].evaluate(bindings);
+	                
+	                results.add(r);
+	            }
+        	} else {
+	            results = o instanceof Collection<?> ?
+	            		new ArrayList<Object>(ExpressionUtils.toObjectCollection(o).size()) : 
+            			new ArrayList<Object>();
+	            
+        		Iterator<Object> i = ExpressionUtils.toObjectCollection(o).iterator();
+        		while (i.hasNext()) {
+        			Object v = i.next();
+        			
+	                bindings.put(name, v);
+	                
+	                Object r = args[2].evaluate(bindings);
+	                
+	                results.add(r);
+        		}
+        	}
+        	
             return results.toArray(); 
         } finally {
             if (oldValue != null) {
