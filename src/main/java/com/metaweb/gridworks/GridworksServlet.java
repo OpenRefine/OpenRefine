@@ -60,6 +60,8 @@ public class GridworksServlet extends HttpServlet {
     private static final long serialVersionUID = 2386057901503517403L;
     
     static protected Map<String, Command> _commands = new HashMap<String, Command>();
+    
+    // timer for periodically saving projects
     static protected Timer _timer = new Timer();
     
     static {
@@ -128,21 +130,22 @@ public class GridworksServlet extends HttpServlet {
         
         long period = 1000 * 60 * 5; // 5 minutes
         _timer.scheduleAtFixedRate(new TimerTask() {
-            
             @Override
             public void run() {
-                ProjectManager.singleton.save(false);
+                ProjectManager.singleton.save(false); // quick, potentially incomplete save
             }
         }, period, period);
     }
     
     @Override
     public void destroy() {
-        _timer.cancel();
-        _timer = null;
-        
+        // cancel automatic periodic saving and force a complete save. 
+        if (_timer != null) {
+            _timer.cancel();
+            _timer = null;
+        }
         if (ProjectManager.singleton != null) {
-            ProjectManager.singleton.save(true);
+            ProjectManager.singleton.save(true); // complete save
             ProjectManager.singleton = null;
         }
         
@@ -164,6 +167,11 @@ public class GridworksServlet extends HttpServlet {
     }
     
     protected String getCommandName(HttpServletRequest request) {
+        /*
+         *  Remove extraneous path segments that might be there for other purposes,
+         *  e.g., for /export-rows/filename.ext, export-rows is the command while
+         *  filename.ext is only for the browser to prompt a convenient filename. 
+         */
         String commandName = request.getPathInfo().substring(1);
         int slash = commandName.indexOf('/');
         return slash > 0 ? commandName.substring(0, slash) : commandName;

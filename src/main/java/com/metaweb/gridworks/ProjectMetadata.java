@@ -57,8 +57,8 @@ public class ProjectMetadata implements Jsonizable {
         writer.endObject();
     }
     
-    public void save(File dir) throws Exception {
-        File tempFile = new File(dir, "metadata.temp.json");
+    public void save(File projectDir) throws Exception {
+        File tempFile = new File(projectDir, "metadata.temp.json");
         try {
             saveToFile(tempFile);
         } catch (Exception e) {
@@ -68,8 +68,8 @@ public class ProjectMetadata implements Jsonizable {
             return;
         }
         
-        File file = new File(dir, "metadata.json");
-        File oldFile = new File(dir, "metadata.old.json");
+        File file = new File(projectDir, "metadata.json");
+        File oldFile = new File(projectDir, "metadata.old.json");
         
         if (file.exists()) {
             file.renameTo(oldFile);
@@ -81,8 +81,8 @@ public class ProjectMetadata implements Jsonizable {
         }
     }
     
-    protected void saveToFile(File file) throws Exception {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(file));
+    protected void saveToFile(File metadataFile) throws Exception {
+        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
         try {
             Properties options = new Properties();
             options.setProperty("mode", "save");
@@ -95,27 +95,27 @@ public class ProjectMetadata implements Jsonizable {
         }
     }
     
-    static public ProjectMetadata load(File dir) {
+    static public ProjectMetadata load(File projectDir) {
         try {
-            return loadFromFile(new File(dir, "metadata.json"));
+            return loadFromFile(new File(projectDir, "metadata.json"));
         } catch (Exception e) {
         }
         
         try {
-            return loadFromFile(new File(dir, "metadata.temp.json"));
+            return loadFromFile(new File(projectDir, "metadata.temp.json"));
         } catch (Exception e) {
         }
         
         try {
-            return loadFromFile(new File(dir, "metadata.old.json"));
+            return loadFromFile(new File(projectDir, "metadata.old.json"));
         } catch (Exception e) {
         }
         
         return null;
     }
     
-    static protected ProjectMetadata loadFromFile(File file) throws Exception {
-        FileReader reader = new FileReader(file);
+    static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
+        FileReader reader = new FileReader(metadataFile);
         try {
             JSONTokener tokener = new JSONTokener(reader);
             JSONObject obj = (JSONObject) tokener.nextValue();

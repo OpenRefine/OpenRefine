@@ -26,13 +26,20 @@ import com.metaweb.gridworks.util.JSONUtilities;
 
 public class ProjectManager {
     
-    private static final int s_expressionHistoryMax = 100; // last n expressions used across all projects
+    // last n expressions used across all projects
+    static protected final int s_expressionHistoryMax = 100;
     
     protected File                       _workspaceDir;
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected List<String> 				 _expressions;
     
-    transient protected Map<Long, Project>  _projects;
+    /**
+     *  While each project's metadata is loaded completely at start-up, each project's raw data 
+     *  is loaded only when the project is accessed by the user. This is because project
+     *  metadata is tiny compared to raw project data. This hash map from project ID to project
+     *  is more like a last accessed-last out cache.
+     */
+    transient protected Map<Long, Project> _projects;
     
     static public ProjectManager singleton;
     
@@ -57,25 +64,37 @@ public class ProjectManager {
 	            // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
 	            // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
 	            // so we're using a library that uses JNI to ask directly the win32 APIs, 
-	            // it's not elegant but it's the safest bet
+	            // it's not elegant but it's the safest bet.
+        	    
 	            DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
 	            File data = new File(localDataPath.getPath());
 	            data.mkdirs();
 	            return data;
         	} catch (Error e) {
-        		Gridworks.log("Failed to use jdatapath to detect user data path. Resorting to environment variables.");
+        	    /*
+        	     *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
+        	     *  we include is compiled for 32-bit. In this case, we just have to dig up
+        	     *  environment variables and try our best to find a user-specific path.
+        	     */
+        	    
+        		Gridworks.log(
+        		    "Failed to use jdatapath to detect user data path. " +
+        		    "Resorting to environment variables.");
         		
-        		String appData = System.getenv("APPDATA");
-        		File parentDir = null;
-        		if (appData != null && appData.length() > 0) {
-        			parentDir = new File(appData);
-        		} else {
-        			String userProfile = System.getenv("USERPROFILE");
-        			if (userProfile != null && userProfile.length() > 0) {
-        				parentDir = new File(userProfile);
-        			}
-        		}
-        		
+                File parentDir = null;
+                {
+            		String appData = System.getenv("APPDATA"); 
+            		if (appData != null && appData.length() > 0) {
+                        // e.g., C:\Users\[userid]\AppData\Roaming
+            			parentDir = new File(appData);
+            		} else {
+            			String userProfile = System.getenv("USERPROFILE");
+            			if (userProfile != null && userProfile.length() > 0) {
+            			    // e.g., C:\Users\[userid]
+            				parentDir = new File(userProfile);
+            			}
+            		}
+                }
         		if (parentDir == null) {
         			parentDir = new File(".");
         		}
@@ -141,6 +160,12 @@ public class ProjectManager {
         }
     }
     
+    /**
+     * Import an external project that has been received as a .tar file, expanded, and 
+     * copied into our workspace directory.
+     * 
+     * @param projectID
+     */
     public void importProject(long projectID) {
         synchronized (this) {
             ProjectMetadata metadata = ProjectMetadata.load(getProjectDir(projectID));
@@ -149,6 +174,12 @@ public class ProjectManager {
         }
     }
     
+    /**
+     * Make sure that a project's metadata and data are saved to file. For example, 
+     * this method is called before the project is exported to a .tar file.
+     * 
+     * @param id
+     */
     public void ensureProjectSaved(long id) {
         synchronized (this) {
             File projectDir = getProjectDir(id);
@@ -182,23 +213,27 @@ public class ProjectManager {
     }
     
     public Project getProject(long id) {
-        if (_projects.containsKey(id)) {
-            return _projects.get(id);
-        } else {
-            Project project = Project.load(getProjectDir(id), id);
-            
-            _projects.put(id, project);
-            
-            return project;
+        synchronized (this) {
+            if (_projects.containsKey(id)) {
+                return _projects.get(id);
+            } else {
+                Project project = Project.load(getProjectDir(id), id);
+                
+                _projects.put(id, project);
+                
+                return project;
+            }
         }
     }
     
     public void addLatestExpression(String s) {
-    	_expressions.remove(s);
-    	_expressions.add(0, s);
-    	while (_expressions.size() > s_expressionHistoryMax) {
-    		_expressions.remove(_expressions.size() - 1);
-    	}
+        synchronized (this) {
+        	_expressions.remove(s);
+        	_expressions.add(0, s);
+        	while (_expressions.size() > s_expressionHistoryMax) {
+        		_expressions.remove(_expressions.size() - 1);
+        	}
+        }
     }
     
     public List<String> getExpressions() {
@@ -210,6 +245,10 @@ public class ProjectManager {
         saveWorkspace();
     }
     
+    /**
+     * Save the workspace's data out to file in a safe way: save to a temporary file first
+     * and rename it to the real file.
+     */
     protected void saveWorkspace() {
         synchronized (this) {
         	File tempFile = new File(_workspaceDir, "workspace.temp.json");
@@ -265,6 +304,10 @@ public class ProjectManager {
         }
     }
     
+    /**
+     * A utility class to prioritize projects for saving, depending on how long ago
+     * they have been changed but have not been saved.
+     */
     static protected class SaveRecord {
         final Project project;
         final long overdue;
@@ -275,9 +318,14 @@ public class ProjectManager {
         }
     }
     
+    static protected final int s_projectFlushDelay = 1000 * 60 * 60; // 1 hour
+    static protected final int s_quickSaveTimeout = 1000 * 30; // 30 secs
+    
     protected void saveProjects(boolean allModified) {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
         Date now = new Date();
+        
+        boolean gc = false;
         
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
@@ -285,19 +333,22 @@ public class ProjectManager {
                 Project project = _projects.get(id);
                 
                 if (project != null) {
-                    boolean hasUnsavedChanges = metadata.getModified().getTime() > project.lastSave.getTime();
+                    boolean hasUnsavedChanges = 
+                        metadata.getModified().getTime() > project.lastSave.getTime();
                     
                     if (hasUnsavedChanges) {
                         long msecsOverdue = now.getTime() - project.lastSave.getTime();
                         
                         records.add(new SaveRecord(project, msecsOverdue));
                         
-                    } else if (now.getTime() - project.lastSave.getTime() > 1000 * 60 * 60) {
+                    } else if (now.getTime() - project.lastSave.getTime() > s_projectFlushDelay) {
                         /*
-                         *  It's been 1 hour since the project was last saved and it hasn't
-                         *  been modified. We can safely remove it from the cache to save some memory.
+                         *  It's been a while since the project was last saved and it hasn't been
+                         *  modified. We can safely remove it from the cache to save some memory.
                          */
                         _projects.remove(id);
+                        
+                        gc = true;
                     }
                 }
             }
@@ -323,7 +374,8 @@ public class ProjectManager {
             
             for (int i = 0; 
                  i < records.size() && 
-                    (allModified || (new Date().getTime() - now.getTime() < 30000)); i++) {
+                    (allModified || (new Date().getTime() - now.getTime() < s_quickSaveTimeout));
+                 i++) {
                 
                 try {
                     records.get(i).project.save();
@@ -331,6 +383,10 @@ public class ProjectManager {
                     e.printStackTrace();
                 }
             }
+        }
+        
+        if (gc) {
+            System.gc();
         }
     }
     
