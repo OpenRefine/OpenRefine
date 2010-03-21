@@ -3,6 +3,7 @@ package com.metaweb.gridworks.commands.util;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.commands.Command;
@@ -55,7 +57,7 @@ public class PreviewExpressionCommand extends Command {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             
-            JSONArray rowIndices = jsonStringToArray(rowIndicesString);
+            JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
             int length = rowIndices.length();
             
             JSONWriter writer = new JSONWriter(response.getWriter());
@@ -100,23 +102,20 @@ public class PreviewExpressionCommand extends Command {
                         }
                     }
                     
-                    if (ExpressionUtils.isError(result)) {
-                        writer.object();
-                        writer.key("message"); writer.value(((EvalError) result).message);
-                        writer.endObject();
-                    } else {
-                        if (result != null) {
-                            if (result instanceof HasFields) {
-                                result = "[object " + result.getClass().getSimpleName() + "]";
-                            } else if (result instanceof Calendar) {
-                                Calendar c = (Calendar) result;
-                                
-                                result = "[object " + 
-                                    result.getClass().getSimpleName() + " " + 
-                                    ParsingUtilities.dateToString(c.getTime()) +"]";
+                    if (result != null && (result.getClass().isArray() || result instanceof List<?>)) {
+                        writer.array();
+                        if (result.getClass().isArray()) {
+                            for (Object v : (Object[]) result) {
+                                writeValue(writer, v);
+                            }
+                        } else {
+                            for (Object v : ExpressionUtils.toObjectList(result)) {
+                                writeValue(writer, v);
                             }
                         }
-                        writer.value(result);
+                        writer.endArray();
+                    } else {
+                        writeValue(writer, result);
                     }
                 }
                 writer.endArray();
@@ -133,6 +132,27 @@ public class PreviewExpressionCommand extends Command {
             writer.endObject();
         } catch (Exception e) {
             respondException(response, e);
+        }
+    }
+    
+    static protected void writeValue(JSONWriter writer, Object v) throws JSONException {
+        if (ExpressionUtils.isError(v)) {
+            writer.object();
+            writer.key("message"); writer.value(((EvalError) v).message);
+            writer.endObject();
+        } else {
+            if (v != null) {
+                if (v instanceof HasFields) {
+                    v = "[object " + v.getClass().getSimpleName() + "]";
+                } else if (v instanceof Calendar) {
+                    Calendar c = (Calendar) v;
+                    
+                    v = "[object " + 
+                        v.getClass().getSimpleName() + " " + 
+                        ParsingUtilities.dateToString(c.getTime()) +"]";
+                }
+            }
+            writer.value(v);
         }
     }
 }

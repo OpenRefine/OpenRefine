@@ -61,6 +61,10 @@ public class ReconJudgeOneCellCommand extends Command {
             
             boolean done = project.processManager.queueProcess(process);
             if (done) {
+                /*
+                 * If the process is done, write back the cell's data so that the
+                 * client side can update its UI right away.
+                 */
                 JSONWriter writer = new JSONWriter(response.getWriter());
                 writer.object();
                 writer.key("code"); writer.value("ok");

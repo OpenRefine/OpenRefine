@@ -2,6 +2,8 @@ package com.metaweb.gridworks.commands.info;
 
  import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -18,7 +20,13 @@ import com.metaweb.gridworks.exporters.XlsExporter;
 import com.metaweb.gridworks.model.Project;
 
 public class ExportRowsCommand extends Command {
-
+    static protected Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();
+    static {
+        s_formatToExporter.put("tripleloader", new TripleloaderExporter());
+        s_formatToExporter.put("html", new HtmlTableExporter());
+        s_formatToExporter.put("xls", new XlsExporter());
+    }
+    
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
@@ -27,15 +35,8 @@ public class ExportRowsCommand extends Command {
             Engine engine = getEngine(request, project);
             String format = request.getParameter("format");
             
-            
-            Exporter exporter = null;
-            if ("tripleloader".equalsIgnoreCase(format)) {
-                exporter = new TripleloaderExporter();
-            } else if ("html".equalsIgnoreCase(format)) {
-                exporter = new HtmlTableExporter();
-            } else if ("xls".equalsIgnoreCase(format)) {
-                exporter = new XlsExporter();
-            } else {
+            Exporter exporter = s_formatToExporter.get(format.toLowerCase());
+            if (exporter == null){
                 exporter = new TsvExporter();
             }
             

@@ -55,6 +55,10 @@ public class EditOneCellCommand extends Command {
             
             boolean done = project.processManager.queueProcess(process);
             if (done) {
+                /*
+                 * If the operation has been done, return the new cell's data
+                 * so the client side can update the cell's rendering right away.
+                 */
                 JSONWriter writer = new JSONWriter(response.getWriter());
                 writer.object();
                 writer.key("code"); writer.value("ok");

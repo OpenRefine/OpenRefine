@@ -57,7 +57,7 @@ public class ImportProjectCommand extends Command {
     ) throws Exception {
         MultipartParser parser = null;
         try {
-            parser = new MultipartParser(request, 20 * 1024 * 1024);
+            parser = new MultipartParser(request, 1024 * 1024 * 1024);
         } catch (Exception e) {
             // silent
         }

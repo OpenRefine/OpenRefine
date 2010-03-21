@@ -29,14 +29,15 @@ public class GetAllProjectMetadataCommand extends Command {
             
             writer.object();
             
-            writer.key("projects"); writer.object();
-            
-            Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
-            for (Long id : m.keySet()) {
-                writer.key(id.toString());
-                m.get(id).write(writer, options);
-            }
-            writer.endObject();
+            writer.key("projects");
+                writer.object();
+                Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
+                for (Long id : m.keySet()) {
+                    writer.key(id.toString());
+                    m.get(id).write(writer, options);
+                }
+                writer.endObject();
+                
             writer.endObject();
         } catch (JSONException e) {
             respondException(response, e);

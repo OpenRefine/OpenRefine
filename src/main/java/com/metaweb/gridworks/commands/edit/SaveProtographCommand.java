@@ -15,6 +15,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.operations.SaveProtographOperation;
 import com.metaweb.gridworks.process.Process;
 import com.metaweb.gridworks.protograph.Protograph;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class SaveProtographCommand extends Command {
     @Override
@@ -25,7 +26,7 @@ public class SaveProtographCommand extends Command {
             Project project = getProject(request);
             
             String jsonString = request.getParameter("protograph");
-            JSONObject json = jsonStringToObject(jsonString);
+            JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
             Protograph protograph = Protograph.reconstruct(json);
             
             AbstractOperation op = new SaveProtographOperation(protograph);

@@ -187,7 +187,7 @@ MenuBar.prototype._doExportRows = function(format, ext) {
 };
 
 MenuBar.prototype._exportProject = function() {
-    var name = $(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
     var form = document.createElement("form");
     $(form)
         .css("display", "none")

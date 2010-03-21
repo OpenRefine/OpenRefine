@@ -16,6 +16,7 @@ import com.metaweb.gridworks.protograph.Protograph;
 import com.metaweb.gridworks.protograph.transpose.MqlreadLikeTransposedNodeFactory;
 import com.metaweb.gridworks.protograph.transpose.Transposer;
 import com.metaweb.gridworks.protograph.transpose.TripleLoaderTransposedNodeFactory;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class PreviewProtographCommand extends Command {
     @Override
@@ -29,7 +30,7 @@ public class PreviewProtographCommand extends Command {
             response.setHeader("Content-Type", "application/json");
             
             String jsonString = request.getParameter("protograph");
-            JSONObject json = jsonStringToObject(jsonString);
+            JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
             Protograph protograph = Protograph.reconstruct(json);
             
             StringBuffer sb = new StringBuffer();

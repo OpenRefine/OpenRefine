@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.EvalError;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.gel.ControlFunctionRegistry;
 import com.metaweb.gridworks.gel.Function;
 
@@ -33,7 +34,7 @@ public class Join implements Function {
 	                    }
 	                }
                 } else {
-	                for (Object o : (List<Object>) v) {
+	                for (Object o : ExpressionUtils.toObjectList(v)) {
 	                    if (o != null) {
 	                        if (sb.length() > 0) {
 	                            sb.append(separator);

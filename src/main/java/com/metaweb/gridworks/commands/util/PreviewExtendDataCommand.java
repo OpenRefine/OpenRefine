@@ -21,6 +21,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob;
+import com.metaweb.gridworks.util.ParsingUtilities;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob.ColumnInfo;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob.DataExtension;
 
@@ -41,9 +42,9 @@ public class PreviewExtendDataCommand extends Command {
             }
             
             String jsonString = request.getParameter("extension");
-            JSONObject json = jsonStringToObject(jsonString);
+            JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
             
-            JSONArray rowIndices = jsonStringToArray(rowIndicesString);
+            JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
             int length = rowIndices.length();
             int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
             

@@ -38,8 +38,8 @@ public class GetRowsCommand extends Command {
             
             {
                 RowAccumulator acc = new RowAccumulator(start, limit) {
-                    JSONWriter    writer;
-                    Properties    options;
+                    JSONWriter  writer;
+                    Properties  options;
                     Properties  extra;
                     
                     public RowAccumulator init(JSONWriter writer, Properties options) {
@@ -53,8 +53,13 @@ public class GetRowsCommand extends Command {
                     }
                     
                     @Override
-                    public boolean internalVisit(int rowIndex, Row row, boolean contextual, boolean includeDependent) {
+                    public boolean internalVisit(int rowIndex, Row row, boolean contextual, boolean dependent) {
                         try {
+                            /*
+                             * Whatever that's in the "extra" field will be written out
+                             * by the row as well. This is how we can customize what the row
+                             * writes, in a limited way.
+                             */
                             if (contextual) {
                                 options.put("extra", extra);
                             } else {
@@ -99,19 +104,19 @@ public class GetRowsCommand extends Command {
             this.limit = limit;
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+        public boolean visit(Project project, int rowIndex, Row row, boolean contextual, boolean dependent) {
             boolean r = false;
             
             if (total >= start && total < start + limit) {
-                r = internalVisit(rowIndex, row, includeContextual, includeDependent);
+                r = internalVisit(rowIndex, row, contextual, dependent);
             }
-            if (!includeContextual) {
+            if (!contextual) {
                 total++;
             }
             return r;
         }
         
-        protected boolean internalVisit(int rowIndex, Row row, boolean contextual, boolean includeDependent) {
+        protected boolean internalVisit(int rowIndex, Row row, boolean contextual, boolean dependent) {
             return false;
         }
     }

@@ -30,7 +30,7 @@ public class AnnotateOneRowCommand extends Command {
             String starredString = request.getParameter("starred");
             if (starredString != null) {
                 boolean starred = "true".endsWith(starredString);
-                String description = starred ? "Star row " + rowIndex : "Unstar row " + rowIndex; 
+                String description = (starred ? "Star row " : "Unstar row ") + (rowIndex + 1); 
 
                 StarOneRowProcess process = new StarOneRowProcess(
                     project, 
@@ -76,7 +76,7 @@ public class AnnotateOneRowCommand extends Command {
         protected HistoryEntry createHistoryEntry() throws Exception {
             return new HistoryEntry(
                 _project, 
-                starred ? "Star row " + rowIndex : "Unstar row " + rowIndex, 
+                (starred ? "Star row " : "Unstar row ") + (rowIndex + 1), 
                 null, 
                 new RowStarChange(rowIndex, starred)
             );

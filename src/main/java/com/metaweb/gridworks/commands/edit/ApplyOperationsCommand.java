@@ -16,6 +16,7 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.process.Process;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class ApplyOperationsCommand extends Command {
     
@@ -26,7 +27,7 @@ public class ApplyOperationsCommand extends Command {
         Project project = getProject(request);
         String jsonString = request.getParameter("operations");
         try {
-            JSONArray a = jsonStringToArray(jsonString);
+            JSONArray a = ParsingUtilities.evaluateJsonStringToArray(jsonString);
             int count = a.length();
             for (int i = 0; i < count; i++) {
                 JSONObject obj = a.getJSONObject(i);
