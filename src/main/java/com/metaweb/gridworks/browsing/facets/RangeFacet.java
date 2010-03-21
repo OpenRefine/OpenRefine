@@ -17,32 +17,44 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
 
 public class RangeFacet implements Facet {
-    protected String     _name;
-    protected String     _expression;
-    protected String     _columnName;
+    /*
+     * Configuration, from the client side
+     */
+    protected String     _name;       // name of facet
+    protected String     _expression; // expression to compute numeric value(s) per row
+    protected String     _columnName; // column to base expression on, if any
+    protected String     _mode;       // "range", "min", "max"
     
+    protected double    _from; // the numeric selection
+    protected double    _to;
+    
+    protected boolean   _selectNumeric; // whether the numeric selection applies, default true
+    protected boolean   _selectNonNumeric;
+    protected boolean   _selectBlank;
+    protected boolean   _selectError;
+    
+    /*
+     * Derived configuration data
+     */
     protected int        _cellIndex;
     protected Evaluable  _eval;
     protected String     _errorMessage;
+    protected boolean    _selected; // false if we're certain that all rows will match
+                                    // and there isn't any filtering to do
     
-    protected String    _mode;
+    /*
+     * Computed data, to return to the client side
+     */
     protected double    _min;
     protected double    _max;
     protected double    _step;
     protected int[]     _baseBins;
     protected int[]     _bins;
+    
     protected int       _numericCount;
     protected int       _nonNumericCount;
     protected int       _blankCount;
     protected int       _errorCount;
-    
-    protected double    _from;
-    protected double    _to;
-    protected boolean   _selected;
-    protected boolean   _selectNumeric;
-    protected boolean   _selectNonNumeric;
-    protected boolean   _selectBlank;
-    protected boolean   _selectError;
     
     public RangeFacet() {
     }

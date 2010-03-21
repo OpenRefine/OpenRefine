@@ -21,24 +21,31 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
 
 public class ListFacet implements Facet {
-    protected List<NominalFacetChoice> _selection = new LinkedList<NominalFacetChoice>();
+    /*
+     * Configuration
+     */
+    protected String     _name;
+    protected String     _expression;
+    protected String     _columnName;
     
     // If true, then facet won't show the blank and error choices
     protected boolean _omitBlank;
     protected boolean _omitError;
     
+    protected List<NominalFacetChoice> _selection = new LinkedList<NominalFacetChoice>();
     protected boolean _selectBlank;
     protected boolean _selectError;
     
-    protected String     _name;
-    protected String     _expression;
-    protected String     _columnName;
-    
+    /*
+     * Derived configuration
+     */
     protected int        _cellIndex;
     protected Evaluable  _eval;
     protected String     _errorMessage;
     
-    // computed
+    /*
+     * Computed results
+     */
     protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
     protected int _blankCount;
     protected int _errorCount;
@@ -157,9 +164,20 @@ public class ListFacet implements Facet {
             
             for (NominalFacetChoice choice : _selection) {
                 String valueString = choice.decoratedValue.value.toString();
+                
                 if (grouper.choices.containsKey(valueString)) {
                     grouper.choices.get(valueString).selected = true;
                 } else {
+                    /*
+                     *  A selected choice can have zero count if it is selected together
+                     *  with other choices, and some other facets' constraints eliminate
+                     *  all rows projected to this choice altogether. For example, if you
+                     *  select both "car" and "bicycle" in the "type of vehicle" facet, and
+                     *  then constrain the "wheels" facet to more than 2, then the "bicycle"
+                     *  choice now has zero count even if it's still selected. The grouper 
+                     *  won't be able to detect the "bicycle" choice, so we need to inject
+                     *  that choice into the choice list ourselves.
+                     */
                     choice.count = 0;
                     _choices.add(choice);
                 }

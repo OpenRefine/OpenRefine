@@ -8,6 +8,10 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.browsing.DecoratedValue;
 
+/**
+ * Store a facet choice that has a decorated value, a count of matched rows,
+ * and a flag of whether it has been selected.
+ */
 public class NominalFacetChoice implements Jsonizable {
     final public DecoratedValue    decoratedValue;
     public int                    count;

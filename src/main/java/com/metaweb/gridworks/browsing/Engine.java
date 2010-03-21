@@ -17,6 +17,9 @@ import com.metaweb.gridworks.browsing.facets.TextSearchFacet;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.model.Project;
 
+/**
+ * Faceted browsing engine.
+ */
 public class Engine implements Jsonizable {
     protected Project         _project;
     protected List<Facet>     _facets = new LinkedList<Facet>();

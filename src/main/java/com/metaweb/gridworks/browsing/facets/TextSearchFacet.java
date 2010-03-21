@@ -15,14 +15,20 @@ import com.metaweb.gridworks.gel.ast.VariableExpr;
 import com.metaweb.gridworks.model.Project;
 
 public class TextSearchFacet implements Facet {
+    /*
+     *  Configuration
+     */
     protected String     _name;
     protected String     _columnName;
-    protected int        _cellIndex;
     protected String     _query;
-    protected Pattern    _pattern;
-    
     protected String     _mode;
     protected boolean    _caseSensitive;
+    
+    /*
+     *  Derived configuration
+     */
+    protected int        _cellIndex;
+    protected Pattern    _pattern;
     
     public TextSearchFacet() {
     }
@@ -42,6 +48,7 @@ public class TextSearchFacet implements Facet {
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         _name = o.getString("name");
         _columnName = o.getString("columnName");
+        
         _cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
         
         if (!o.isNull("query")) {

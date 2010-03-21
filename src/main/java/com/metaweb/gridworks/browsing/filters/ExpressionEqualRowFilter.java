@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.browsing.filters;
 
+import java.util.Collection;
 import java.util.Properties;
 
 import com.metaweb.gridworks.expr.Evaluable;
@@ -8,14 +9,28 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
+/**
+ * Judge if a row matches by evaluating a given expression on the row, based on a particular
+ * column, and checking the result. It's a match if the result is any one of a given list of 
+ * values, or if the result is blank or error and we want blank or error values. 
+ */
 public class ExpressionEqualRowFilter implements RowFilter {
-    final protected Evaluable       _evaluable;
-    final protected int             _cellIndex;
+    final protected Evaluable       _evaluable; // the expression to evaluate
+    final protected int             _cellIndex; // the expression is based on this column;
+                                                // -1 if based on no column in particular,
+                                                // for expression such as "row.starred".
+    
     final protected Object[]        _matches;
     final protected boolean         _selectBlank;
     final protected boolean         _selectError;
     
-    public ExpressionEqualRowFilter(Evaluable evaluable, int cellIndex, Object[] matches, boolean selectBlank, boolean selectError) {
+    public ExpressionEqualRowFilter(
+        Evaluable evaluable, 
+        int cellIndex, 
+        Object[] matches, 
+        boolean selectBlank, 
+        boolean selectError
+    ) {
         _evaluable = evaluable;
         _cellIndex = cellIndex;
         _matches = matches;
@@ -30,17 +45,26 @@ public class ExpressionEqualRowFilter implements RowFilter {
         ExpressionUtils.bind(bindings, row, rowIndex, cell);
         
         Object value = _evaluable.evaluate(bindings);
-        if (value != null && value.getClass().isArray()) {
-            Object[] a = (Object[]) value;
-            for (Object v : a) {
-                if (testValue(v)) {
-                    return true;
+        if (value != null) {
+            if (value.getClass().isArray()) {
+                Object[] a = (Object[]) value;
+                for (Object v : a) {
+                    if (testValue(v)) {
+                        return true;
+                    }
                 }
-            }
-        } else {
-            return testValue(value);
+                return false;
+            } else if (value instanceof Collection<?>) {
+                for (Object v : ExpressionUtils.toObjectCollection(value)) {
+                    if (testValue(v)) {
+                        return true;
+                    }
+                }
+                return false;
+            } // else, fall through
         }
-        return false;
+        
+        return testValue(value);
     }
     
     protected boolean testValue(Object v) {

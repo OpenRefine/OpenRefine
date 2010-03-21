@@ -7,9 +7,16 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 
+/**
+ * Store a value and its text label, in case the value is not a string itself.
+ * For instance, if a value is a date, then its label can be one particular
+ * rendering of that date.
+ * 
+ * Facet choices that are presented to the user as text are stored as decorated values.
+ */
 public class DecoratedValue implements Jsonizable {
     final public Object value;
-    final public String    label;
+    final public String label;
     
     public DecoratedValue(Object value, String label) {
         this.value = value;

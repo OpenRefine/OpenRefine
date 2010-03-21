@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.browsing.facets;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -10,6 +11,16 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
+/**
+ * A utility class for computing the base bins that form the base histograms of 
+ * numeric range facets. It evaluates an expression on all the rows of a project to
+ * get numeric values, determines how many bins to distribute those values in, and 
+ * bins the rows accordingly.
+ * 
+ * This class processes all rows rather than just the filtered rows because it
+ * needs to compute the base bins of a numeric range facet, which remain unchanged 
+ * as the user interacts with the facet.
+ */
 public class NumericBinIndex {
     private double _min;
     private double _max;
@@ -34,6 +45,12 @@ public class NumericBinIndex {
                 if (value.getClass().isArray()) {
                     Object[] a = (Object[]) value;
                     for (Object v : a) {
+                        if (v instanceof Number) {
+                            processValue(((Number) v).doubleValue(), allValues);
+                        }
+                    }
+                } else if (value instanceof Collection<?>) {
+                    for (Object v : ExpressionUtils.toObjectCollection(value)) {
                         if (v instanceof Number) {
                             processValue(((Number) v).doubleValue(), allValues);
                         }
