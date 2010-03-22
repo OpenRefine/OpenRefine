@@ -14,8 +14,8 @@ public class Scanner {
     static public class Token {
         final public int        start;
         final public int        end;
-        final public TokenType    type;
-        final public String        text;
+        final public TokenType  type;
+        final public String     text;
         
         Token(int start, int end, TokenType type, String text) {
             this.start = start;
@@ -26,7 +26,7 @@ public class Scanner {
     }
     
     static public class ErrorToken extends Token {
-        final public String        detail; // error detail
+        final public String detail; // error detail
         
         public ErrorToken(int start, int end, String text, String detail) {
             super(start, end, TokenType.Error, text);
@@ -52,9 +52,9 @@ public class Scanner {
         }
     }
     
-    protected String     _text;
-    protected int        _index;
-    protected int        _limit;
+    protected String     _text;  // input text to tokenize
+    protected int        _index; // index of the next character to process
+    protected int        _limit; // process up to this index
     
     public Scanner(String s) {
         this(s, 0, s.length());
@@ -70,6 +70,16 @@ public class Scanner {
         return _index;
     }
     
+    /**
+     * The regexPossible flag is used by the parser to hint the scanner what to do
+     * when it encounters a slash. Since the divide operator / and the opening 
+     * delimiter of a regex literal are the same, but divide operators and regex
+     * literals can't occur at the same place in an expression, this flag is a cheap
+     * way to distinguish the two without having to look ahead.
+     * 
+     * @param regexPossible
+     * @return
+     */
     public Token next(boolean regexPossible) {
         // skip whitespace
         while (_index < _limit && Character.isWhitespace(_text.charAt(_index))) {

@@ -18,7 +18,7 @@ import com.metaweb.gridworks.gel.ast.OperatorCallExpr;
 import com.metaweb.gridworks.gel.ast.VariableExpr;
 
 public class Parser {
-    protected Scanner     _scanner;
+    protected Scanner   _scanner;
     protected Token     _token;
     protected Evaluable _root;
     
@@ -47,6 +47,10 @@ public class Parser {
         return new ParsingException("Parsing error at offset " + index + ": " + desc);
     }
     
+    /**
+     *  <expression> := <sub-expression>
+     *                | <expression> [ "<" "<=" ">" ">=" "==" "!=" ] <sub-expression>
+     */
     protected Evaluable parseExpression() throws ParsingException {
         Evaluable sub = parseSubExpression();
         
@@ -66,6 +70,10 @@ public class Parser {
         return sub;
     }
     
+    /**
+     *  <sub-expression> := <term>
+     *                    | <sub-expression> [ "+" "-" ] <term>
+     */
     protected Evaluable parseSubExpression() throws ParsingException {
         Evaluable sub = parseTerm();
         
@@ -85,6 +93,10 @@ public class Parser {
         return sub;
     }
     
+    /**
+     *  <term> := <factor>
+     *          | <term> [ "*" "/" ] <factor>
+     */
     protected Evaluable parseTerm() throws ParsingException {
         Evaluable factor = parseFactor();
         
@@ -104,6 +116,17 @@ public class Parser {
         return factor;
     }
     
+    /**
+     *  <term> := <term-start> ( <path-segment> )* 
+     *  <term-start> :=
+     *      <string> | <number> | - <number> | <regex> | <identifier> |
+     *      <identifier> ( <expression-list> )
+     *      
+     *  <path-segment> := "[" <expression-list> "]"
+     *                  | "." <identifier>
+     *                  | "." <identifier> "(" <expression-list> ")"
+     *  
+     */
     protected Evaluable parseFactor() throws ParsingException {
         if (_token == null) {
             throw makeException("Expecting something more at end of expression");
@@ -214,6 +237,11 @@ public class Parser {
         return eval;
     }
     
+    /**
+     *  <expression-list> := <empty>
+     *                     | <expression> ( "," <expression> )*
+     *  
+     */
     protected List<Evaluable> parseExpressionList(String closingDelimiter) throws ParsingException {
         List<Evaluable> l = new LinkedList<Evaluable>();
         

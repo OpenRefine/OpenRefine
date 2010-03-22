@@ -21,7 +21,7 @@ public class If implements Control {
     public Object call(Properties bindings, Evaluable[] args) {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
-            return o;
+            return o; // bubble the error up
         } else if (ExpressionUtils.isTrue(o)) {
             return args[1].evaluate(bindings);
         } else {

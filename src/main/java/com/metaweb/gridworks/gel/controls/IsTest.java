@@ -27,10 +27,7 @@ abstract class IsTest implements Control {
         throws JSONException {
     
         writer.object();
-        writer.key("description"); writer.value(
-            "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
-            "Otherwise, evaluates expression eFalse and returns that result instead."
-        );
+        writer.key("description"); writer.value(getDescription());
         writer.key("params"); writer.value("expression o");
         writer.key("returns"); writer.value("boolean");
         writer.endObject();

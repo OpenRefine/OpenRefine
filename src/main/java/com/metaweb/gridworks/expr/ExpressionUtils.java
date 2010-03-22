@@ -91,6 +91,18 @@ public class ExpressionUtils {
             new EvalError(v.getClass().getSimpleName() + " value not storable");
     }
     
+    static public boolean isArray(Object v) {
+        return v != null && v.getClass().isArray();
+    }
+    
+    static public boolean isArrayOrCollection(Object v) {
+        return v != null && (v.getClass().isArray() || v instanceof Collection<?>);
+    }
+    
+    static public boolean isArrayOrList(Object v) {
+        return v != null && (v.getClass().isArray() || v instanceof List<?>);
+    }
+    
     @SuppressWarnings("unchecked")
     static public List<Object> toObjectList(Object v) {
         return (List<Object>) v;
