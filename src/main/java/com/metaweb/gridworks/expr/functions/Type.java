@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.expr.functions;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -20,18 +21,21 @@ public class Type implements Function {
             if (v != null) {
                 if (v instanceof String) {
                     return "string";
-                } else if (v instanceof Calendar) {
+                } else if (v instanceof Calendar || v instanceof Date) {
                     return "date";
                 } else if (v instanceof Number) {
                     return "number";
                 } else if (v.getClass().isArray() || v instanceof List<?>) {
                     return "array";
+                } else if (v instanceof EvalError) {
+                    return "error";
                 } else {
                     return v.getClass().getName();
                 }
             }
+            return "undefined";
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a parameter");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
     }
 
     public void write(JSONWriter writer, Properties options)

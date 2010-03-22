@@ -19,10 +19,10 @@ public class Slice implements Function {
             
             if (v != null && from != null && from instanceof Number && (to == null || to instanceof Number)) {
                 if (v.getClass().isArray() || v instanceof List<?>) {
-                	int length = v.getClass().isArray() ? 
-                    		((Object[]) v).length :
-                    		ExpressionUtils.toObjectList(v).size();
-                    		
+                    int length = v.getClass().isArray() ? 
+                            ((Object[]) v).length :
+                            ExpressionUtils.toObjectList(v).size();
+                    
                     int start = ((Number) from).intValue();
                     int end = to != null && to instanceof Number ? 
                             ((Number) to).intValue() : length;
@@ -37,15 +37,15 @@ public class Slice implements Function {
                     }
                     end = Math.min(length, Math.max(start, end));
                     
-                	if (v.getClass().isArray()) {
+                    if (v.getClass().isArray()) {
                         Object[] a2 = new Object[end - start];
                         
                         System.arraycopy((Object[]) v, start, a2, 0, end - start);
                         
                         return a2;
-                	} else {
-                		return ExpressionUtils.toObjectList(v).subList(start, end);
-                	}
+                    } else {
+                        return ExpressionUtils.toObjectList(v).subList(start, end);
+                    }
                 } else {
                     String s = (v instanceof String ? (String) v : v.toString());
                     

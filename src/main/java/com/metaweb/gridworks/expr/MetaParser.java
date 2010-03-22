@@ -8,6 +8,15 @@ import clojure.lang.IFn;
 import com.metaweb.gridworks.gel.Parser;
 
 abstract public class MetaParser {
+    /**
+     * Parse an expression that might have a language prefix into an Evaluable.
+     * Expressions without valid prefixes or without any prefix are assumed to be
+     * GEL expressions.
+     * 
+     * @param s
+     * @return
+     * @throws ParsingException
+     */
     static public Evaluable parse(String s) throws ParsingException {
         String language = "gel";
         

@@ -19,22 +19,22 @@ public class JythonEvaluable implements Evaluable {
     private static PythonInterpreter _engine = new PythonInterpreter();
 
     public JythonEvaluable(String s) {
-    	// indent and create a function out of the code
-    	String[] lines = s.split("\r\n|\r|\n");
-    	
-    	StringBuffer sb = new StringBuffer();
-    	sb.append("def " + s_functionName + "(value, cell, cells, row, rowIndex):");
-    	for (int i = 0; i < lines.length; i++) {
-    		sb.append("\n  " + lines[i]);    		
-    	}
-    	
+        // indent and create a function out of the code
+        String[] lines = s.split("\r\n|\r|\n");
+        
+        StringBuffer sb = new StringBuffer();
+        sb.append("def " + s_functionName + "(value, cell, cells, row, rowIndex):");
+        for (int i = 0; i < lines.length; i++) {
+            sb.append("\n  " + lines[i]);
+        }
+
         _engine.exec(sb.toString());
     }
     
-	public Object evaluate(Properties bindings) {
-		try {
-		    // call the temporary PyFunction directly
-			Object result = ((PyFunction)_engine.get(s_functionName)).__call__(
+    public Object evaluate(Properties bindings) {
+        try {
+            // call the temporary PyFunction directly
+            Object result = ((PyFunction)_engine.get(s_functionName)).__call__(
                 new PyObject[] {
                     Py.java2py( bindings.get("value") ),
                     new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
@@ -42,15 +42,15 @@ public class JythonEvaluable implements Evaluable {
                     new JythonHasFieldsWrapper((HasFields) bindings.get("row"), bindings),
                     Py.java2py( bindings.get("rowIndex") )
                 }
-			);
+            );
 
-			return unwrap(result);
-		} catch (PyException e) {
-			return new EvalError(e.toString());
-		}
-	}
-	
-	protected Object unwrap(Object result) {
+            return unwrap(result);
+        } catch (PyException e) {
+            return new EvalError(e.toString());
+        }
+    }
+    
+    protected Object unwrap(Object result) {
         if (result != null) {
             if (result instanceof JythonObjectWrapper) {
                 return ((JythonObjectWrapper) result)._obj;
@@ -64,12 +64,12 @@ public class JythonEvaluable implements Evaluable {
         }
         
         return result;	    
-	}
-	
-	protected Object unwrap(PyObject po) {
-	    if (po instanceof PyNone) {
-	        return null;
-	    } else if (po.isNumberType()) {
+    }
+    
+    protected Object unwrap(PyObject po) {
+        if (po instanceof PyNone) {
+            return null;
+        } else if (po.isNumberType()) {
             return po.asDouble();
         } else if (po.isSequenceType()) {
             Iterator<PyObject> i = po.asIterable().iterator();
@@ -83,5 +83,5 @@ public class JythonEvaluable implements Evaluable {
         } else {
             return po;
         }
-	}
+    }
 }

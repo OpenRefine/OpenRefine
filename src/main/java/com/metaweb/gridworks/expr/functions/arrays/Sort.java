@@ -20,19 +20,19 @@ public class Sort implements Function {
             Object v = args[0];
             
             if (v != null) {
-            	if (v.getClass().isArray()) {
-	                Object[] a = (Object[]) v;
-	                Object[] r = a.clone();
-	                
-	                Arrays.sort(r, 0, r.length);
-	                
-	                return r;
-            	} else if (v instanceof List<?>) {
-            		List<? extends Comparable> a = (List<? extends Comparable>) v;
-            		Collections.sort(a);
-            		
-            		return a;
-            	}
+                if (v.getClass().isArray()) {
+                    Object[] a = (Object[]) v;
+                    Object[] r = a.clone();
+                    
+                    Arrays.sort(r, 0, r.length);
+                    
+                    return r;
+                } else if (v instanceof List<?>) {
+                    List<? extends Comparable> a = (List<? extends Comparable>) v;
+                    Collections.sort(a);
+                    
+                    return a;
+                }
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");

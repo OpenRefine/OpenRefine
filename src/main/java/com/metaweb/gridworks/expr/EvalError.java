@@ -8,6 +8,12 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 
+/**
+ * An error that occurs during the evaluation of an Evaluable. Errors are values, too
+ * because they can be stored in cells just like strings, numbers, etc. Errors are not
+ * thrown because an error might occupy just one element in an array and doesn't need
+ * to make the whole array erroneous.
+ */
 public class EvalError implements Serializable, Jsonizable {
     private static final long serialVersionUID = -102681220092874080L;
     

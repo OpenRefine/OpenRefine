@@ -18,28 +18,28 @@ public class Sum implements Function {
             Object v = args[0];
             
             if (v != null && (v.getClass().isArray() || v instanceof List<?>)) {
-            	int length = v.getClass().isArray() ? 
-                		((Object[]) v).length :
-                		ExpressionUtils.toObjectList(v).size();
+                int length = v.getClass().isArray() ? 
+                        ((Object[]) v).length :
+                        ExpressionUtils.toObjectList(v).size();
                 
                 double total = 0;
                 
                 if (v.getClass().isArray()) {
-	                Object[] a = (Object[]) v;
-	                for (int i = 0; i < length; i++) {
-	                    Object n = a[length - i - 1];
-	                    if (n instanceof Number) {
-	                    	total += ((Number) n).doubleValue();
-	                    }
-	                }
+                    Object[] a = (Object[]) v;
+                    for (int i = 0; i < length; i++) {
+                        Object n = a[length - i - 1];
+                        if (n instanceof Number) {
+                            total += ((Number) n).doubleValue();
+                        }
+                    }
                 } else {
-                	List<Object> a = ExpressionUtils.toObjectList(v);
-	                for (int i = 0; i < length; i++) {
-	                    Object n = a.get(length - i - 1);
-	                    if (n instanceof Number) {
-	                    	total += ((Number) n).doubleValue();
-	                    }
-	                }
+                    List<Object> a = ExpressionUtils.toObjectList(v);
+                    for (int i = 0; i < length; i++) {
+                        Object n = a.get(length - i - 1);
+                        if (n instanceof Number) {
+                            total += ((Number) n).doubleValue();
+                        }
+                    }
                 }
                 return total;
             }
