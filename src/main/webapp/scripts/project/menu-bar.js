@@ -3,6 +3,9 @@ function MenuBar(div) {
     this._initializeUI();
 }
 
+MenuBar.prototype.resize = function() {
+};
+
 MenuBar.prototype._initializeUI = function() {
     this._mode = "inactive";
     this._menuItemRecords = [];

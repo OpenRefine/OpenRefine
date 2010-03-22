@@ -1,11 +1,39 @@
 #body {
-    padding: 20px;
+    padding: 0;
+    margin: 0;
 }
 
 #loading-message {
     text-align: center;
     font-size: 300%;
     color: #faa;
-    margin: 1in;
+    padding: 1in;
     font-style: italic;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: 1000;
+    background: #eee;
+}
+
+.menu-bar-container {
+    position: fixed;
+    left: 0px;
+    width: 100%;
+}
+
+.view-panel {
+    position: fixed;
+    background: white;
+    overflow: hidden;
+}
+
+.facet-panel {
+    position: fixed;
+    background: white;
+    overflow: auto;
 }

@@ -51,8 +51,8 @@ MenuSystem.createMenuItem = function() {
 
 MenuSystem.positionMenuAboveBelow = function(menu, elmt) {
     var offset = elmt.offset();
-    var windowWidth = $(document.body).innerWidth();
-    var windowHeight = $(document.body).innerHeight();
+    var windowWidth = $(window).width();
+    var windowHeight = $(window).height();
     
     if (offset.top + elmt.outerHeight() - document.body.scrollTop + menu.outerHeight() > windowHeight - 10) {
         menu.css("top", (offset.top - menu.outerHeight()) + "px");
@@ -69,8 +69,8 @@ MenuSystem.positionMenuAboveBelow = function(menu, elmt) {
 
 MenuSystem.positionMenuLeftRight = function(menu, elmt) {
     var offset = elmt.offset();
-    var windowWidth = $(document.body).innerWidth();
-    var windowHeight = $(document.body).innerHeight();
+    var windowWidth = $(window).width();
+    var windowHeight = $(window).height();
     
     if (offset.top - document.body.scrollTop + menu.outerHeight() > windowHeight - 10) {
         menu.css("top", (offset.top + elmt.outerHeight() - menu.outerHeight()) + "px");

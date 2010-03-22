@@ -1,11 +1,12 @@
-.view-panel {
-}
 .data-table-container {
     border: 1px solid #ccc;
-    overflow-x: auto;
+    overflow: auto;
 }
 
 table.data-table {
+    margin: 0px;
+    padding: 0px;
+    border-collapse: collapse;
 }
 
 table.data-table > tbody > tr > td {
@@ -81,6 +82,7 @@ a.column-header-menu:hover {
 
 
 .viewPanel-summary {
+    margin: 1em 2em 0em 2em;
 }
 .viewPanel-summary-row-count {
     font-size: 150%;
@@ -89,7 +91,9 @@ a.column-header-menu:hover {
 
 .viewPanel-pagingControls {
     text-align: center;
-    margin: 1em 0;
+}
+.viewPanel-pagingControls td {
+    padding: 1em 2em;
 }
 
 div.data-table-cell-content {

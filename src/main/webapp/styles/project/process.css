@@ -1,8 +1,9 @@
 .process-panel {
-    position: absolute;
+    position: fixed;
     top: -1px;
     width: 100%;
     text-align: center;
+    z-index: 1000;
 }
 
 .process-panel-inner {

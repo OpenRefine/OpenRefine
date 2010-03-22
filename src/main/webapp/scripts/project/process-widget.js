@@ -9,6 +9,9 @@ function ProcessWidget(div) {
     this.update({});
 }
 
+ProcessWidget.prototype.resize = function() {
+};
+
 ProcessWidget.prototype.update = function(updateOptions, onDone) {
     for (var n in updateOptions) {
         if (updateOptions.hasOwnProperty(n)) {

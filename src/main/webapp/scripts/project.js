@@ -48,28 +48,60 @@ function initializeUI(uiState) {
         })
         .appendTo(path);
     
-    var body = $("#body").empty();
+    var body = $("#body").empty().html(
+        '<div bind="viewPanel" class="view-panel"></div>' +
+        '<div bind="facetPanel" class="facet-panel"></div>' +
+        '<div bind="historyPanel" class="history-panel"></div>' +
+        '<div bind="processPanel" class="process-panel"></div>' +
+        '<div class="menu-bar-container" bind="menuBarContainer"><div bind="menuBarPanel" class="menu-bar"></div></div>'
+    );
+    ui = DOM.bind(body);
     
-    var table = document.createElement("table");
-    $(table).attr("cellspacing", 20).css("width", "100%");
-    body.append(table);
+    ui.menuBarContainer.css("top", $("#header").outerHeight() + "px");
+    ui.menuBar = new MenuBar(ui.menuBarPanel); // construct the menu first so we can resize everything else
     
-    var tr = table.insertRow(0);
-    var tdLeft = tr.insertCell(0);
-    var tdRight = tr.insertCell(1);
-    tdRight.setAttribute("width", "250");
-    
-    ui.viewPanel = $('<div></div>').appendTo(tdLeft);
-    ui.facetPanel = $('<div></div>').appendTo(tdRight);
-    ui.historyPanel = $('<div></div>').addClass("history-panel").appendTo(document.body);
-    ui.processPanel = $('<div></div>').addClass("process-panel").appendTo(document.body);
-    ui.menuBarPanel = $('<div></div>'); $("#header").after(ui.menuBarPanel);
-    
+    resize();
+
     ui.browsingEngine = new BrowsingEngine(ui.facetPanel, uiState.facets || []);
     ui.processWidget = new ProcessWidget(ui.processPanel);
     ui.historyWidget = new HistoryWidget(ui.historyPanel);
     ui.dataTableView = new DataTableView(ui.viewPanel);
-    ui.menuBar = new MenuBar(ui.menuBarPanel);
+    
+    $(window).bind("resize", resizeAll);
+}
+
+function resize() {
+    var header = $("#header");
+    var footer = $("#footer");
+    
+    ui.menuBarContainer.css("top", header.outerHeight() + "px");
+
+    var facetPanelWidth = 250;
+    var width = $(window).width();
+    var top = ui.menuBarContainer.offset().top + ui.menuBarContainer.outerHeight();
+    var height = footer.offset().top - top;
+    
+    ui.viewPanel
+        .css("top", top + "px")
+        .css("height", height + "px")
+        .css("left", "0px")
+        .css("width", (width - facetPanelWidth) + "px");
+        
+    ui.facetPanel
+        .css("top", top + "px")
+        .css("height", height + "px")
+        .css("left", (width - facetPanelWidth) + "px")
+        .css("width", facetPanelWidth + "px");
+}
+
+function resizeAll() {
+    resize();
+    
+    ui.menuBar.resize();
+    ui.browsingEngine.resize();
+    ui.processWidget.resize();
+    ui.historyWidget.resize();
+    ui.dataTableView.resize();
 }
 
 Gridworks.reinitializeProjectData = function(f) {

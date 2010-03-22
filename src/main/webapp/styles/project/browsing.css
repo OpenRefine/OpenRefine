@@ -1,21 +1,18 @@
-.browsing-panel {
-}
 .browsing-panel-indicator {
-    clear: both;
     display: none;
-    margin: 1em;
+    margin: 0 1em;
+    margin-top: 50px;
     text-align: center;
 }
 .browsing-panel-controls {
-    clear: both;
     display: none;
-    margin: 1em;
+    margin: 0 1em;
+    margin-top: 50px;
     text-align: center;
 }
 
 ul.facets-container {
-    margin: 0;
-    padding: 0;
+    padding: 0 1em;
 }
 
 li.facet-container {

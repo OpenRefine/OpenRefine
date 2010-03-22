@@ -3,6 +3,9 @@ function HistoryWidget(div) {
     this.update();
 }
 
+HistoryWidget.prototype.resize = function() {
+};
+
 HistoryWidget.prototype.update = function(onDone) {
     var self = this;
     Ajax.chainGetJSON(

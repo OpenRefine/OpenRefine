@@ -28,6 +28,9 @@ function BrowsingEngine(div, facetConfigs) {
     }
 }
 
+BrowsingEngine.prototype.resize = function() {
+};
+
 BrowsingEngine.prototype.getFacetUIStates = function() {
     var f = [];
     for (var i = 0; i < this._facets.length; i++) {
