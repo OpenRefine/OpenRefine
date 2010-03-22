@@ -172,7 +172,7 @@ public class RangeFacet implements Facet {
                         _eval, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                     
                     protected boolean checkValue(double d) {
-                        return d <= _to;
+                        return d < _to;
                     };
                 };
             } else {
@@ -180,7 +180,7 @@ public class RangeFacet implements Facet {
                         _eval, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                     
                     protected boolean checkValue(double d) {
-                        return d >= _from && d <= _to;
+                        return d >= _from && d < _to;
                     };
                 };
             }        

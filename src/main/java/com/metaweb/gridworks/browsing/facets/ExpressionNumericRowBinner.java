@@ -73,7 +73,7 @@ public class ExpressionNumericRowBinner implements RowVisitor {
                 
                 double d = ((Number) value).doubleValue();
                 
-                int bin = (int) Math.round((d - _index.getMin()) / _index.getStep());
+                int bin = (int) Math.floor((d - _index.getMin()) / _index.getStep());
                 
                 bins[bin]++;
             } else {

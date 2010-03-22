@@ -62,12 +62,16 @@ public class NumericBinIndex {
         }
         
         if (_min >= _max) {
-            _step = 0;
+            _step = 1;
+            _min = 0;
+            _max = _step;
             _bins = new int[1];
+            
             return;
         }
         
         double diff = _max - _min;
+        
         _step = 1;
         if (diff > 10) {
             while (_step * 100 < diff) {
@@ -79,18 +83,24 @@ public class NumericBinIndex {
             }
         }
         
+        double originalMax = _max;
         _min = (Math.floor(_min / _step) * _step);
         _max = (Math.ceil(_max / _step) * _step);
         
-        int binCount = 1 + (int) Math.ceil((_max - _min) / _step);
+        int binCount = (int) ((_max - _min) / _step);
         if (binCount > 100) {
             _step *= 2;
             binCount = Math.round((1 + binCount) / 2);
         }
         
+        if (_max <= originalMax) {
+        	_max += _step;
+        	binCount++;
+        }
+        
         _bins = new int[binCount];
         for (double d : allValues) {
-            int bin = (int) Math.round((d - _min) / _step);
+            int bin = (int) Math.floor((d - _min) / _step);
             _bins[bin]++;
         }
     }
