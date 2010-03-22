@@ -213,7 +213,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "text", 
                             {
-                                "name" : self._column.name + " (regex)",
+                                "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "mode" : "regex",
                                 "caseSensitive" : true
