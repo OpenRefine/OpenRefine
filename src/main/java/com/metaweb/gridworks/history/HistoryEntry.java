@@ -24,13 +24,20 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
+/**
+ * This is the metadata of a Change. It's small, so we can load it in order to
+ * obtain information about a change without actually loading the change.
+ */
 public class HistoryEntry implements Jsonizable {
-    final public long                id;
-    final public long                projectID;
-    final public String              description;
-    final public AbstractOperation   operation;
-    final public Date                time;
+    final public long   id;
+    final public long   projectID;
+    final public String description;
+    final public Date   time;
     
+    // the abstract operation, if any, that results in the change
+    final public AbstractOperation operation; 
+    
+    // the actual change, loaded on demand
     transient protected Change _change;
     
     public HistoryEntry(Project project, String description, AbstractOperation operation, Change change) {

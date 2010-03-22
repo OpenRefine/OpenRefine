@@ -9,10 +9,14 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.process.Process;
 import com.metaweb.gridworks.process.ProcessManager;
 
+/**
+ * The process for undoing or redoing. This involves calling apply() and revert()
+ * on changes.
+ */
 public class HistoryProcess extends Process {
     final protected Project _project;
-    final protected long     _lastDoneID;
-    final protected String    _description;
+    final protected long    _lastDoneID;
+    final protected String  _description;
     
     protected boolean _done = false;
 
