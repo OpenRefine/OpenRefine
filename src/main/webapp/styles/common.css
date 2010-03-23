@@ -190,7 +190,7 @@ img {
 
 #footer {
     font-size: 80%;
-    padding: 1em;
+    padding: 1em 0;
     color: #666;
     text-align: center;
     border-top: 1px solid #ccc;

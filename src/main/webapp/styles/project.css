@@ -19,9 +19,19 @@ body {
     position: fixed;
     bottom: 0px;
     left: 0px;
-    width: 100%;
     z-index: 1000;
-    background: #eee;
+    padding: 0.5em 0;
+    width: 100%;
+    border-top: none;
+    background: #ccc;
+    color: #888;
+}
+#footer a {
+    color: #66c;
+    text-decoration: none;
+}
+#footer a:hover {
+    text-decoration: underline;
 }
 
 .menu-bar-container {
