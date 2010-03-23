@@ -48,11 +48,14 @@ public class ReconCandidate implements HasFields, Jsonizable {
         writer.key("guid"); writer.value(topicGUID);
         writer.key("name"); writer.value(topicName);
         writer.key("score"); writer.value(score);
-        writer.key("types"); writer.array();
-        for (String typeID : typeIDs) {
-            writer.value(typeID);
+        
+        if (!options.containsKey("reconCandidateOmitTypes")) {
+	        writer.key("types"); writer.array();
+	        for (String typeID : typeIDs) {
+	            writer.value(typeID);
+	        }
+	        writer.endArray();
         }
-        writer.endArray();
         
         writer.endObject();
     }
