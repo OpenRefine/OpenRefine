@@ -92,6 +92,11 @@ function resize() {
         .css("height", height + "px")
         .css("left", (width - facetPanelWidth) + "px")
         .css("width", facetPanelWidth + "px");
+        
+    var processPanelWidth = 400;
+    ui.processPanel
+        .css("width", processPanelWidth + "px")
+        .css("left", Math.floor((width - processPanelWidth) / 2) + "px");
 }
 
 function resizeAll() {

@@ -1,21 +1,18 @@
 .process-panel {
     position: fixed;
-    top: -1px;
-    width: 100%;
-    text-align: center;
+    top: 0px;
     z-index: 1000;
-}
-
-.process-panel-inner {
-    border: 1px solid #aaa;
-    width: 500px;
-    margin: 0 auto;
-    text-align: left;
     background: #fffee0;
+    border: 1px solid #aaa;
+    border-top: none;
     -moz-border-radius-bottomleft: 10px;
     -webkit-border-bottom-left-radius: 10px;
     -moz-border-radius-bottomright: 10px;
     -webkit-border-bottom-right-radius: 10px;    
+}
+
+.process-panel-inner {
+    padding-bottom: 10px;
 }
 
 .process-panel-head {
