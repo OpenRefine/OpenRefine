@@ -49,6 +49,12 @@
     margin-left: 5px;
 }
 
+.dialog-busy-frame {
+    width: 300px;
+    border: none;
+    -moz-border-radiust: 25px;
+    -webkit-border-radius: 25px;
+}
 .dialog-busy-body {
     margin: 1em;
     text-align: center;

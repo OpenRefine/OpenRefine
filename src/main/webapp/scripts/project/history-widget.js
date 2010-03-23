@@ -24,14 +24,67 @@ HistoryWidget.prototype.update = function(onDone) {
 HistoryWidget.prototype._render = function() {
     var self = this;
     
-    this._div.empty();
-    this._div.unbind();
+    var collapsedMessage = 
+        (this._data.past.length == 0 ? 
+            "" : 
+            (this._data.past.length == 1 ? "1 change - " : (this._data.past.length + " changes - "))
+        ) + 'hover to see';
     
-    $('<h3>Undo/Redo History</h3>').appendTo(this._div);
+    this._div
+        .empty()
+        .unbind()
+        .html(
+            '<h3>Undo/Redo History</h3>' +
+            '<div class="history-panel-body-collapsed" bind="bodyCollapsedDiv">' +
+                collapsedMessage +
+            '</div>' +
+            '<div class="history-panel-body" bind="bodyDiv">' +
+                '<div class="history-past" bind="pastDiv"></div>' +
+                '<div class="history-now" bind="nowDiv">done upto here</div>' +
+                '<div class="history-future" bind="futureDiv"></div>' +
+            '</div>' +
+            '<div class="history-panel-body-controls" bind="bodyControlsDiv"><a href="javascript:{}" bind="rollUpLink">roll up</a></div>' +
+            '<div class="history-panel-footer">' +
+                '<a href="javascript:{}" bind="extractLink">extract</a> &bull; ' +
+                '<a href="javascript:{}" bind="applyLink">apply</a>' +
+            '</div>'
+        );
     
-    var bodyDiv = $('<div></div>').addClass("history-panel-body").appendTo(this._div);
-    bodyDiv.mouseenter(function(evt) {
-        bodyDiv.addClass("history-panel-body-expanded");
+    var elmts = DOM.bind(this._div);
+    
+    var renderEntry = function(container, entry, lastDoneID, title) {
+        var a = $('<a href="javascript:{}"></a>').appendTo(container);
+        a.addClass("history-entry").html(entry.description).attr("title", title).click(function(evt) {
+            return self._onClickHistoryEntry(evt, entry, lastDoneID);
+        });
+        return a;
+    };
+    
+    if (this._data.past.length == 0) {
+        elmts.pastDiv.html('<div class="history-panel-message">No change to undo</div>');
+    } else {
+        for (var i = 0; i < this._data.past.length; i++) {
+            var entry = this._data.past[i];
+            renderEntry(elmts.pastDiv, entry, i == 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
+        }
+    }
+    
+    if (this._data.future.length == 0) {
+        elmts.futureDiv.html('<div class="history-panel-message">No change to redo</div>');
+    } else {
+        for (var i = 0; i < this._data.future.length; i++) {
+            var entry = this._data.future[i];
+            renderEntry(elmts.futureDiv, entry, entry.id, "Redo to here");
+        }
+    }
+    
+    elmts.extractLink.click(function() { self._extractOperations(); });
+    elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
+    
+    elmts.bodyCollapsedDiv.mouseenter(function(evt) {
+        elmts.bodyCollapsedDiv.hide();
+        elmts.bodyDiv.show();
+        elmts.bodyControlsDiv.show();
     });
     
     this._div.mouseenter(function(evt) {
@@ -42,55 +95,23 @@ HistoryWidget.prototype._render = function() {
     }).mouseleave(function(evt) {
         self._timerID = window.setTimeout(function() {
             self._timerID = null;
-            bodyDiv.removeClass("history-panel-body-expanded");
-            autoscroll();
+            elmts.bodyCollapsedDiv.show();
+            elmts.bodyDiv.hide();
+            elmts.bodyControlsDiv.hide();
         }, 1000);
     });
     
-    var renderEntry = function(container, entry, lastDoneID, title) {
-        var a = $('<a href="javascript:{}"></a>').appendTo(container);
-        a.addClass("history-entry").html(entry.description).attr("title", title).click(function(evt) {
-            return self._onClickHistoryEntry(evt, entry, lastDoneID);
-        });
-        return a;
-    };
-    
-    var divPast = $('<div></div>').addClass("history-past").appendTo(bodyDiv);
-    if (this._data.past.length == 0) {
-        $('<div></div>').addClass("history-panel-message").text("No change to undo").appendTo(divPast);
-    } else {
-        for (var i = 0; i < this._data.past.length; i++) {
-            var entry = this._data.past[i];
-            renderEntry(divPast, entry, i == 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
+    elmts.rollUpLink.click(function(evt) {
+        if (self._timerID != null) {
+            window.clearTimeout(self._timerID);
+            self._timerID = null;
         }
-    }
-    
-    var divNow = $('<div></div>').text("done upto here").addClass("history-now").appendTo(bodyDiv);
-    
-    var divFuture = $('<div></div>').addClass("history-future").appendTo(bodyDiv);
-    if (this._data.future.length == 0) {
-        $('<div></div>').addClass("history-panel-message").text("No change to redo").appendTo(divFuture);
-    } else {
-        for (var i = 0; i < this._data.future.length; i++) {
-            var entry = this._data.future[i];
-            renderEntry(divFuture, entry, entry.id, "Redo to here");
-        }
-    }
-    
-    var autoscroll = function() {
-        bodyDiv[0].scrollTop = divNow[0].offsetTop + divNow[0].offsetHeight - bodyDiv[0].offsetHeight;
-    };
-    autoscroll();
-    
-    
-    var footerDiv = $('<div></div>').addClass("history-panel-footer").appendTo(this._div);
-    $('<a href="javascript:{}"></a>').text("extract").appendTo(footerDiv).click(function() {
-        self._extractOperations();
+        elmts.bodyCollapsedDiv.show();
+        elmts.bodyDiv.hide();
+        elmts.bodyControlsDiv.hide();
     });
-    $('<span> &bull; </span>').appendTo(footerDiv);
-    $('<a href="javascript:{}"></a>').text("apply").appendTo(footerDiv).click(function() {
-        self._showApplyOperationsDialog();
-    });
+    
+    elmts.bodyDiv[0].scrollTop = elmts.nowDiv[0].offsetTop + elmts.nowDiv[0].offsetHeight - elmts.bodyDiv[0].offsetHeight;
 };
 
 HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
