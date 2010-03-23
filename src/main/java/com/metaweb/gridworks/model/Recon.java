@@ -154,6 +154,8 @@ public class Recon implements HasFields, Jsonizable {
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
+    	boolean saveMode = "save".equals(options.getProperty("mode"));
+    	
         writer.object();
         writer.key("id"); writer.value(id);
         writer.key("j"); writer.value(judgmentToString());
@@ -161,7 +163,8 @@ public class Recon implements HasFields, Jsonizable {
         if (match != null) {
             writer.key("m");
             match.write(writer, options);
-        } else {
+        }
+        if (match == null || saveMode) {
             writer.key("c"); writer.array();
             if (candidates != null) {
                 for (ReconCandidate c : candidates) {
@@ -171,7 +174,7 @@ public class Recon implements HasFields, Jsonizable {
             writer.endArray();
         }
         
-        if ("save".equals(options.getProperty("mode"))) {
+        if (saveMode) {
             writer.key("f");
                 writer.array();
                 for (Object o : features) {
