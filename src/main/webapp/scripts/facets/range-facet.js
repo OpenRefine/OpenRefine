@@ -20,23 +20,28 @@ function RangeFacet(div, config, options) {
     this._initializedUI = false;
 }
 
-RangeFacet.prototype._setDefaults = function() {
+RangeFacet.prototype.reset = function() {
     switch (this._config.mode) {
     case "min":
         this._from = this._config.min;
+        this._sliderDiv.slider("value", this._from);
         break;
     case "max":
         this._to = this._config.max;
+        this._sliderDiv.slider("value", this._to);
         break;
     default:
         this._from = this._config.min;
         this._to = this._config.max;
+        this._sliderDiv.slider("values", 0, this._from);
+        this._sliderDiv.slider("values", 1, this._to);
     }
-    
     this._selectNumeric = true;
     this._selectNonNumeric = true;
     this._selectBlank = true;
     this._selectError = true;
+    
+    this._setRangeIndicators();
 };
 
 RangeFacet.reconstruct = function(div, uiState) {
@@ -104,27 +109,7 @@ RangeFacet.prototype._initializeUI = function() {
     $('<span></span>').text(this._config.name).appendTo(headerDiv);
     
     var resetButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("reset").click(function() {
-        switch (self._config.mode) {
-        case "min":
-            self._from = self._config.min;
-            self._sliderDiv.slider("value", self._from);
-            break;
-        case "max":
-            self._to = self._config.max;
-            self._sliderDiv.slider("value", self._to);
-            break;
-        default:
-            self._from = self._config.min;
-            self._to = self._config.max;
-            self._sliderDiv.slider("values", 0, self._from);
-            self._sliderDiv.slider("values", 1, self._to);
-        }
-        self._selectNumeric = true;
-        self._selectNonNumeric = true;
-        self._selectBlank = true;
-        self._selectError = true;
-        
-        self._setRangeIndicators();
+        self.reset();
         self._updateRest();
     }).prependTo(headerDiv);
     
@@ -353,11 +338,6 @@ RangeFacet.prototype.render = function() {
     
     this._setRangeIndicators();
     this._renderOtherChoices();
-};
-
-RangeFacet.prototype._reset = function() {
-    this._setDefaults();
-    this._updateRest();
 };
 
 RangeFacet.prototype._remove = function() {

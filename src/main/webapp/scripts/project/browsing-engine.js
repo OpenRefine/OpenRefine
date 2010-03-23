@@ -44,10 +44,16 @@ BrowsingEngine.prototype._initializeUI = function() {
     var self = this;
     
     this._div.html(
-        '<div class="browsing-panel-indicator" bind="indicator"><img src="images/small-spinner.gif" /> refreshing facets ...</div>' +
-        '<div class="browsing-panel-controls" bind="controls">' +
-            '<input type="checkbox" bind="includeDependentRowsCheck" /> show dependent rows &bull; ' +
-            '<a href="javascript:{}" bind="refreshLink">refresh</a></div>' +
+        '<div class="browsing-panel-header">' +
+            '<div class="browsing-panel-indicator" bind="indicator"><img src="images/small-spinner.gif" /> refreshing facets ...</div>' +
+            '<div class="browsing-panel-controls" bind="controls">' +
+                '<p>' +
+                    '<a href="javascript:{}" bind="refreshLink" title="Make sure all facets are up-to-date">refresh</a> &bull; ' +
+                    '<a href="javascript:{}" bind="resetLink" title="Clear selection in all facets">reset</a> &bull; ' +
+                    '<a href="javascript:{}" bind="removeLink" title="Remove all facets">remove</a> all facets' +
+                '</p>' +
+                '<p><input type="checkbox" class="inline" bind="includeDependentRowsCheck" /> show dependent rows</p>' +
+            '</div>' +
         '</div>' +
         '<ul bind="facets" class="facets-container"></ul>'
     );
@@ -65,6 +71,8 @@ BrowsingEngine.prototype._initializeUI = function() {
     });
     
     this._elmts.refreshLink.click(function() { self.update(); });
+    this._elmts.resetLink.click(function() { self.reset(); });
+    this._elmts.removeLink.click(function() { self.remove(); });
 };
 
 BrowsingEngine.prototype._updateFacetOrder = function() {
@@ -169,4 +177,29 @@ BrowsingEngine.prototype.update = function(onDone) {
         },
         "json"
     );
+};
+
+BrowsingEngine.prototype.reset = function() {
+    for (var i = 0; i < this._facets.length; i++) {
+        this._facets[i].facet.reset();
+    }
+    
+    Gridworks.update({ engineChanged: true });
+};
+
+BrowsingEngine.prototype.remove = function() {
+    var oldFacets = this._facets;
+    
+    this._facets = [];
+    
+    for (var i = 0; i < oldFacets.length; i++) {
+        oldFacets[i].elmt.hide();
+    }
+    window.setTimeout(function() {
+        for (var i = 0; i < oldFacets.length; i++) {
+            oldFacets[i].elmt.remove();
+        }
+    }, 300);
+    
+    Gridworks.update({ engineChanged: true });
 };

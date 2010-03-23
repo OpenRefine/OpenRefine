@@ -1,14 +1,15 @@
-.browsing-panel-indicator {
-    display: none;
+.browsing-panel-header {
     margin: 0 1em;
     margin-top: 50px;
+    height: 5em;
     text-align: center;
+}
+
+.browsing-panel-indicator {
+    display: none;
 }
 .browsing-panel-controls {
     display: none;
-    margin: 0 1em;
-    margin-top: 50px;
-    text-align: center;
 }
 
 ul.facets-container {

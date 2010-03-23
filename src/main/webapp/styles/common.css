@@ -74,6 +74,9 @@ div.grid-layout.layout-looser > table {
 input[type="checkbox"], input[type="radio"] {
     vertical-align: baseline;
 }
+input.inline {
+    vertical-align: middle;
+}
 
 div.input-container {
     padding: 3px;

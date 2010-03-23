@@ -20,6 +20,12 @@ ListFacet.reconstruct = function(div, uiState) {
     return new ListFacet(div, uiState.c, uiState.o, uiState.s);
 };
 
+ListFacet.prototype.reset = function() {
+    this._selection = [];
+    this._blankChoice = null;
+    this._errorChoice = null;
+};
+
 ListFacet.prototype.getUIState = function() {
     var json = {
         c: this.getJSON(),

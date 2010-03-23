@@ -13,6 +13,11 @@ TextSearchFacet.reconstruct = function(div, uiState) {
     return new TextSearchFacet(div, uiState.c, uiState.o);
 };
 
+TextSearchFacet.prototype.reset = function() {
+    this._query = null;
+    this._div.find(".input-container input").each(function() { this.value = ""; });
+};
+
 TextSearchFacet.prototype.getUIState = function() {
     var json = {
         c: this.getJSON(),
