@@ -29,6 +29,7 @@ public class GetRowsCommand extends Command {
             int start = Math.min(project.rows.size(), Math.max(0, getIntegerParameter(request, "start", 0)));
             int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
             Properties options = new Properties();
+            options.put("reconCandidateOmitTypes", true);
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
