@@ -1,3 +1,8 @@
+var GridworksVersion = {
+    description: "Gridworks 1.0 beta 2 (rolling update)",
+    date: "2010-03-22"
+};
+
 function onLoad() {
     $.getJSON(
         "/command/get-all-project-metadata",
@@ -8,6 +13,14 @@ function onLoad() {
         },
         "json"
     );
+    
+    var thisVersion = Date.parseExact(GridworksVersion.date, "yyyy-MM-dd");
+    var latestVersion = Date.parseExact(GridworksReleases.releases[0].date, "yyyy-MM-dd");
+    if (thisVersion.getTime() < latestVersion.getTime()) {
+        $('<div id="version-message">' +
+            'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
+          '</div>').appendTo(document.body)
+    }
 }
 $(onLoad);
 
