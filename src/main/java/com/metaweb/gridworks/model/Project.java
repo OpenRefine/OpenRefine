@@ -178,6 +178,7 @@ public class Project {
         /* String version = */ reader.readLine();
         
         Project project = new Project(id);
+        int maxCellCount = 0;
         
         String line;
         while ((line = reader.readLine()) != null) {
@@ -195,11 +196,15 @@ public class Project {
                 int count = Integer.parseInt(value);
                 
                 for (int i = 0; i < count; i++) {
-                    project.rows.add(Row.load(reader.readLine()));
+                	Row row = Row.load(reader.readLine());
+                    project.rows.add(row);
+                    
+                    maxCellCount = Math.max(maxCellCount, row.cells.size());
                 }
             }
         }
         
+        project.columnModel.setMaxCellIndex(maxCellCount - 1);
         project.recomputeRowContextDependencies();
         
         return project;
