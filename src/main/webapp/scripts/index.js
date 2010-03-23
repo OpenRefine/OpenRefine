@@ -1,6 +1,6 @@
 var GridworksVersion = {
     description: "Gridworks 1.0 beta 2 (rolling update)",
-    date: "2010-03-22"
+    date: "2010-03-23"
 };
 
 function onLoad() {
