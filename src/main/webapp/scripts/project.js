@@ -36,17 +36,16 @@ function initializeUI(uiState) {
     document.title = theProject.metadata.name + " - Gridworks";
     
     var path = $("#path");
-    $('<span></span>').text(theProject.metadata.name).addClass("app-path-section").appendTo(path);
-    $('<span></span>').text(" project").appendTo(path);
     
-    $('<span>').html(" &raquo; ").appendTo(path);
-    $('<a href="javascript:{}"></a>')
-        .addClass("app-path-section")
-        .text("current view")
+    $('<span class="app-path-section">' +
+        '<a href="#">' + theProject.metadata.name + '</a> project' +
+        '</span>').appendTo(path);
+    
+    $('<a href="javascript:{}">current view</a>')
         .mouseenter(function() {
             this.href = Gridworks.getPermanentLink();
         })
-        .appendTo(path);
+        .appendTo($('<span class="app-path-section"></span>').appendTo(path));
     
     var body = $("#body").empty().html(
         '<div bind="viewPanel" class="view-panel"></div>' +

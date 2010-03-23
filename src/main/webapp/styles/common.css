@@ -159,6 +159,7 @@ img {
     padding-right: 20px;
     padding-bottom: 1px;
     position: relative;
+    overflow: hidden;
 }
 #logo {
     padding: 7px 0;
@@ -171,12 +172,15 @@ img {
     top: 50%;
     margin-top: -0.5em;
     line-height: 1em;
-    left: 85px;
+    left: 75px;
+    height: 31px;
 }
 #path .app-path-section {
-    font-weight: bold;
+    background: url(../images/path-delimiter.png) no-repeat center right;
+    padding: 18px 20px 20px 10px;
 }
-#path a.app-path-section {
+#path .app-path-section a {
+    font-weight: bold;
     text-decoration: none;
     color: #333;
 }
