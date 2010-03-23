@@ -18,7 +18,9 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
+import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.process.Process;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 /**
@@ -113,6 +115,26 @@ public abstract class Command {
             }
         }
         return null;
+    }
+    
+    static protected void performProcessAndRespond(
+		HttpServletRequest request, 
+		HttpServletResponse response,
+		Project project,
+		Process process
+	) throws Exception {
+        HistoryEntry historyEntry = project.processManager.queueProcess(process);
+        if (historyEntry != null) {
+            JSONWriter writer = new JSONWriter(response.getWriter());
+            Properties options = new Properties();
+            
+            writer.object();
+            writer.key("code"); writer.value("ok");
+            writer.key("historyEntry"); historyEntry.write(writer, options);
+            writer.endObject();
+        } else {
+        	respond(response, "{ \"code\" : \"pending\" }");
+        }
     }
     
     static protected void respond(HttpServletResponse response, String content) 

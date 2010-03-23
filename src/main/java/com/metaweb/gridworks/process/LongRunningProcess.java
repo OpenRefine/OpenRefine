@@ -5,6 +5,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.history.HistoryEntry;
+
 abstract public class LongRunningProcess extends Process {
     final protected String       _description;
     protected ProcessManager     _manager;
@@ -51,7 +53,7 @@ abstract public class LongRunningProcess extends Process {
     }
 
     @Override
-    public void performImmediate() {
+    public HistoryEntry performImmediate() {
         throw new RuntimeException("Not an immediate process");
     }
 

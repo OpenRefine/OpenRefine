@@ -7,11 +7,15 @@
 }
 
 .process-panel-inner {
-    border: 1px solid #ccc;
+    border: 1px solid #aaa;
     width: 500px;
     margin: 0 auto;
     text-align: left;
     background: #fffee0;
+    -moz-border-radius-bottomleft: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -webkit-border-bottom-right-radius: 10px;    
 }
 
 .process-panel-head {
@@ -21,6 +25,12 @@
 
 .process-panel-body {
     max-height: 70px;
+    overflow: auto;
+    padding: 10px;
+}
+
+.process-panel-undo {
+    max-height: 50px;
     overflow: auto;
     padding: 10px;
 }

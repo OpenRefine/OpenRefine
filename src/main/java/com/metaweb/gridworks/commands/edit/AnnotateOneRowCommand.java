@@ -6,8 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONWriter;
-
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Project;
@@ -39,16 +37,7 @@ public class AnnotateOneRowCommand extends Command {
                     starred
                 );
                 
-                boolean done = project.processManager.queueProcess(process);
-                if (done) {
-                    JSONWriter writer = new JSONWriter(response.getWriter());
-                    
-                    writer.object();
-                    writer.key("code"); writer.value("ok");
-                    writer.endObject();
-                } else {
-                    respond(response, "{ \"code\" : \"pending\" }");
-                }
+                performProcessAndRespond(request, response, project, process);
             } else {
                 respond(response, "{ \"code\" : \"error\", \"message\" : \"invalid command parameters\" }");
             }

@@ -40,9 +40,11 @@ public class HistoryProcess extends Process {
         return true;
     }
 
-    public void performImmediate() {
+    public HistoryEntry performImmediate() {
         _project.history.undoRedo(_lastDoneID);
         _done = true;
+        
+        return null;
     }
 
     public void startPerforming(ProcessManager manager) {

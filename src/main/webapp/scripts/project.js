@@ -215,6 +215,10 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
             
             if (o.code == "ok") {
                 Gridworks.update(updateOptions, callbacks["onFinallyDone"]);
+                
+                if ("historyEntry" in o) {
+                    ui.processWidget.showUndo(o.historyEntry);
+                }
             } else if (o.code == "pending") {
                 if ("onPending" in callbacks) {
                     try {

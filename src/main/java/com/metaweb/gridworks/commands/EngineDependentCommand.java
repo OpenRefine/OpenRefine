@@ -45,10 +45,7 @@ abstract public class EngineDependentCommand extends Command {
             AbstractOperation op = createOperation(project, request, getEngineConfig(request));
             Process process = op.createProcess(project, new Properties());
             
-            boolean done = project.processManager.queueProcess(process);
-            
-            respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
-            
+            performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);
         }

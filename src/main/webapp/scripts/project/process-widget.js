@@ -5,6 +5,21 @@ function ProcessWidget(div) {
     
     this._updateOptions = {};
     this._onDones = [];
+    this._latestHistoryEntry = null;
+    
+    var self = this;
+    $(window).keypress(function(evt) {
+        if (evt.ctrlKey || evt.metaKey) {
+            var t = evt.target;
+            if (t) {
+                var tagName = t.tagName.toLowerCase();
+                if (tagName == "textarea" || tagName == "input") {
+                    return;
+                }
+            }
+            self.undo();
+        }
+    });
     
     this.update({});
 }
@@ -13,6 +28,8 @@ ProcessWidget.prototype.resize = function() {
 };
 
 ProcessWidget.prototype.update = function(updateOptions, onDone) {
+    this._latestHistoryEntry = null;
+    
     for (var n in updateOptions) {
         if (updateOptions.hasOwnProperty(n)) {
             this._updateOptions[n] = updateOptions[n];
@@ -30,9 +47,37 @@ ProcessWidget.prototype.update = function(updateOptions, onDone) {
     Ajax.chainGetJSON(
         "/command/get-processes?" + $.param({ project: theProject.id }), null,
         function(data) {
+            self._latestHistoryEntry = null;
             self._render(data);
         }
     );
+};
+
+ProcessWidget.prototype.showUndo = function(historyEntry) {
+    var self = this;
+    
+    this._latestHistoryEntry = historyEntry;
+
+    this._div.empty().show().html(
+        '<div class="process-panel-inner"><div class="process-panel-undo">' +
+            '<a href="javascript:{}" bind="undo">Undo</a> <span bind="description"></span>' +
+        '</div></div>'
+    );
+    var elmts = DOM.bind(this._div);
+    
+    elmts.description.text(historyEntry.description);
+    elmts.undo.click(function() { self.undo() });
+};
+
+ProcessWidget.prototype.undo = function() {
+    if (this._latestHistoryEntry != null) {
+        Gridworks.postProcess(
+            "undo-redo",
+            { undoID: this._latestHistoryEntry.id },
+            null,
+            { everythingChanged: true }
+        );
+    }
 };
 
 ProcessWidget.prototype._cancelAll = function() {
