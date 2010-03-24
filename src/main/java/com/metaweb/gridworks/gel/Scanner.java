@@ -146,7 +146,18 @@ public class Scanner {
                 } else if (c == '\\') {
                     _index++; // skip escaping marker
                     if (_index < _limit) {
-                        sb.append(_text.charAt(_index));
+                    	char c2 = _text.charAt(_index);
+                    	if (c2 == 't') {
+                    		sb.append('\t');
+                    	} else if (c2 == 'n') {
+                    		sb.append('\n');
+                    	} else if (c2 == 'r') {
+                    		sb.append('\r');
+                    	} else if (c2 == '\\') {
+                    		sb.append('\\');
+                    	} else {
+                    		sb.append(c2);
+                    	}
                     }
                 } else {
                     sb.append(c);
