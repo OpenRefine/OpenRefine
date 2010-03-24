@@ -32,6 +32,7 @@ import com.metaweb.gridworks.expr.functions.math.Pow;
 import com.metaweb.gridworks.expr.functions.math.Round;
 import com.metaweb.gridworks.expr.functions.math.Sum;
 import com.metaweb.gridworks.expr.functions.strings.Contains;
+import com.metaweb.gridworks.expr.functions.strings.SplitByLengths;
 import com.metaweb.gridworks.expr.functions.strings.Diff;
 import com.metaweb.gridworks.expr.functions.strings.EndsWith;
 import com.metaweb.gridworks.expr.functions.strings.Fingerprint;
@@ -123,6 +124,7 @@ public class ControlFunctionRegistry {
         registerFunction("replaceChars", new ReplaceChars());
         registerFunction("split", new Split());
         registerFunction("splitByCharType", new SplitByCharType());
+        registerFunction("splitByLengths", new SplitByLengths());
         registerFunction("partition", new Partition());
         registerFunction("rpartition", new RPartition());
         registerFunction("trim", new Trim());
