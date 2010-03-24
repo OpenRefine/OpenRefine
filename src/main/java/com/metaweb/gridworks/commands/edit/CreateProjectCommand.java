@@ -24,6 +24,7 @@ import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.importers.ExcelImporter;
 import com.metaweb.gridworks.importers.Importer;
 import com.metaweb.gridworks.importers.TsvCsvImporter;
+import com.metaweb.gridworks.importers.XmlImporter;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.ParsingUtilities;
 import com.oreilly.servlet.multipart.FilePart;
@@ -301,6 +302,11 @@ public class CreateProjectCommand extends Command {
                 return new ExcelImporter(false); 
             } else if (fileName.endsWith(".xlsx")) {
                 return new ExcelImporter(true); 
+            } else if (
+                    fileName.endsWith(".xml") ||
+                    fileName.endsWith(".rss")
+                ) {
+                return new XmlImporter(); 
             }
         }
         
