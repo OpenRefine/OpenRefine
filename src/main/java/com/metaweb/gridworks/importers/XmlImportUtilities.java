@@ -263,11 +263,13 @@ public class XmlImportUtilities {
         while (parser.hasNext()) {
             int eventType = parser.next();
             if (eventType == XMLStreamConstants.START_ELEMENT) {
+                ImportColumnGroup thisColumnGroup = getColumnGroup(project, columnGroup, parser.getLocalName());
+                
                 int attributeCount = parser.getAttributeCount();
                 for (int i = 0; i < attributeCount; i++) {
                     addCell(
                         project, 
-                        columnGroup, 
+                        thisColumnGroup, 
                         record, 
                         parser.getAttributeLocalName(i),
                         parser.getAttributeValue(i),
@@ -278,7 +280,7 @@ public class XmlImportUtilities {
                 processSubRecord(
                     project,
                     parser,
-                    getColumnGroup(project, columnGroup, parser.getLocalName()),
+                    thisColumnGroup,
                     record
                 );
             } else if (eventType == XMLStreamConstants.CDATA || 
