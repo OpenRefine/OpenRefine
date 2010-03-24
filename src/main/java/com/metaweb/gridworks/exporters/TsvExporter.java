@@ -17,7 +17,7 @@ import com.metaweb.gridworks.model.Row;
 
 public class TsvExporter implements Exporter {
     public String getContentType() {
-        return "text/plain";
+        return "application/x-unknown";
     }
     
     public boolean takeWriter() {
