@@ -17,6 +17,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import com.metaweb.gridworks.model.Cell;
+import com.metaweb.gridworks.model.ColumnGroup;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Column;
@@ -27,21 +28,95 @@ public class XmlImportUtilities {
         int count;
     }
     
-    static public class ImportColumnGroup {
+    static protected abstract class ImportVertical {
         public String name = "";
+        public int nonBlankCount;
         
-        public Map<String, ImportColumnGroup> subgroups = new HashMap<String, ImportColumnGroup>();
-        public Map<String, ImportColumn> columns = new HashMap<String, ImportColumn>();
+        abstract void tabulate();
     }
     
-    static public class ImportColumn {
+    static public class ImportColumnGroup extends ImportVertical {
+        public Map<String, ImportColumnGroup> subgroups = new HashMap<String, ImportColumnGroup>();
+        public Map<String, ImportColumn> columns = new HashMap<String, ImportColumn>();
+        
+        @Override
+        void tabulate() {
+            for (ImportColumn c : columns.values()) {
+                c.tabulate();
+                nonBlankCount = Math.max(nonBlankCount, c.nonBlankCount);
+            }
+            for (ImportColumnGroup g : subgroups.values()) {
+                g.tabulate();
+                nonBlankCount = Math.max(nonBlankCount, g.nonBlankCount);
+            }
+        }
+    }
+    
+    static public class ImportColumn extends ImportVertical {
         public int cellIndex;
-        public String name;
+        public boolean blankOnFirstRow;
+
+        @Override
+        void tabulate() {
+            // already done the tabulation elsewhere
+        }
     }
     
     static public class ImportRecord {
         List<List<Cell>> rows = new LinkedList<List<Cell>>();
         List<Integer> columnEmptyRowIndices = new ArrayList<Integer>();
+    }
+    
+    static public String[] detectPathFromTag(InputStream inputStream, String tag) {
+        List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
+        
+        try {
+            XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            
+            while (parser.hasNext()) {
+                int eventType = parser.next();
+                if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    List<String> path = detectRecordElement(parser, tag);
+                    if (path != null) {
+                        String[] path2 = new String[path.size()];
+                        
+                        path.toArray(path2);
+                        
+                        return path2;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // silent
+            // e.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    static protected List<String> detectRecordElement(XMLStreamReader parser, String tag) throws XMLStreamException {
+        String localName = parser.getLocalName();
+        String fullName = composeName(parser.getPrefix(), localName);
+        if (tag.equals(parser.getLocalName()) || tag.equals(fullName)) {
+            List<String> path = new LinkedList<String>();
+            path.add(localName);
+            
+            return path;
+        }
+        
+        while (parser.hasNext()) {
+            int eventType = parser.next();
+            if (eventType == XMLStreamConstants.END_ELEMENT) {
+                break;
+            } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                List<String> path = detectRecordElement(parser, tag);
+                if (path != null) {
+                    path.add(0, localName);
+                    return path;
+                }
+            }
+        }
+        return null;
     }
     
     static public String[] detectRecordElement(InputStream inputStream) {
@@ -77,19 +152,30 @@ public class XmlImportUtilities {
     }
     
     static protected RecordElementCandidate detectRecordElement(XMLStreamReader parser, String[] path) {
-        List<RecordElementCandidate> candidateList = new ArrayList<RecordElementCandidate>();
+        List<RecordElementCandidate> descendantCandidates = new ArrayList<RecordElementCandidate>();
         
-        Map<String, Integer> candidates = new HashMap<String, Integer>();
+        Map<String, Integer> immediateChildCandidateMap = new HashMap<String, Integer>();
+        int textNodeCount = 0;
+        int childElementNodeCount = 0;
         
         try {
             while (parser.hasNext()) {
                 int eventType = parser.next();
                 if (eventType == XMLStreamConstants.END_ELEMENT) {
                     break;
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                    if (parser.getText().trim().length() > 0) {
+                        textNodeCount++;
+                    }
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    childElementNodeCount++;
+                    
                     String tagName = parser.getLocalName();
                     
-                    candidates.put(tagName, candidates.containsKey(tagName) ? candidates.get(tagName) + 1 : 1);
+                    immediateChildCandidateMap.put(
+                        tagName, 
+                        immediateChildCandidateMap.containsKey(tagName) ? 
+                                immediateChildCandidateMap.get(tagName) + 1 : 1);
                     
                     String[] path2 = new String[path.length + 1];
                     System.arraycopy(path, 0, path2, 0, path.length);
@@ -97,7 +183,7 @@ public class XmlImportUtilities {
                     
                     RecordElementCandidate c = detectRecordElement(parser, path2);
                     if (c != null) {
-                        candidateList.add(c);
+                        descendantCandidates.add(c);
                     }
                 }
             }
@@ -106,9 +192,14 @@ public class XmlImportUtilities {
             // e.printStackTrace();
         }
         
-        if (candidates.size() > 0) {
-            List<RecordElementCandidate> ourCandidateList = new ArrayList<RecordElementCandidate>(candidates.size());
-            for (Entry<String, Integer> entry : candidates.entrySet()) {
+        if (textNodeCount > 0 && childElementNodeCount > 0) {
+            // This is a mixed element
+            return null;
+        }
+        
+        if (immediateChildCandidateMap.size() > 0) {
+            List<RecordElementCandidate> immediateChildCandidates = new ArrayList<RecordElementCandidate>(immediateChildCandidateMap.size());
+            for (Entry<String, Integer> entry : immediateChildCandidateMap.entrySet()) {
                 int count = entry.getValue();
                 if (count > 1) {
                     String[] path2 = new String[path.length + 1];
@@ -118,26 +209,32 @@ public class XmlImportUtilities {
                     RecordElementCandidate candidate = new RecordElementCandidate();
                     candidate.path = path2;
                     candidate.count = count;
-                    ourCandidateList.add(candidate);
+                    immediateChildCandidates.add(candidate);
                 }
             }
             
-            if (ourCandidateList.size() > 0) {
-                sortRecordElementCandidates(ourCandidateList);
+            if (immediateChildCandidates.size() > 0 && immediateChildCandidates.size() < 5) {
+                // There are some promising immediate child elements, but not many, 
+                // that can serve as record elements.
                 
-                RecordElementCandidate ourCandidate = ourCandidateList.get(0);
-                if (ourCandidate.count > 10) {
+                sortRecordElementCandidates(immediateChildCandidates);
+                
+                RecordElementCandidate ourCandidate = immediateChildCandidates.get(0);
+                if (ourCandidate.count / immediateChildCandidates.size() > 5) {
                     return ourCandidate;
                 }
                 
-                candidateList.add(ourCandidate);
+                descendantCandidates.add(ourCandidate);
             }
         }
         
-        if (candidateList.size() > 0) {
-            sortRecordElementCandidates(candidateList);
+        if (descendantCandidates.size() > 0) {
+            sortRecordElementCandidates(descendantCandidates);
             
-            return candidateList.get(0);
+            RecordElementCandidate candidate = descendantCandidates.get(0);
+            if (candidate.count / descendantCandidates.size() > 5) {
+                return candidate;
+            }
         }
         
         return null;
@@ -175,13 +272,43 @@ public class XmlImportUtilities {
         Project project, 
         ImportColumnGroup columnGroup
     ) {
-        for (ImportColumn c : columnGroup.columns.values()) {
+        int startColumnIndex = project.columnModel.columns.size();
+        
+        List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
+        Collections.sort(columns, new Comparator<ImportColumn>() {
+            public int compare(ImportColumn o1, ImportColumn o2) {
+                if (o1.blankOnFirstRow != o2.blankOnFirstRow) {
+                    return o1.blankOnFirstRow ? 1 : -1;
+                }
+                
+                int c = o2.nonBlankCount - o1.nonBlankCount;
+                return c != 0 ? c : (o1.name.length() - o2.name.length());
+            }
+        });
+        
+        for (int i = 0; i < columns.size(); i++) {
+            ImportColumn c = columns.get(i);
+            
             Column column = new com.metaweb.gridworks.model.Column(c.cellIndex, c.name);
             project.columnModel.columns.add(column);
         }
         
-        for (ImportColumnGroup g : columnGroup.subgroups.values()) {
+        List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());
+        Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
+            public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
+                int c = o2.nonBlankCount - o1.nonBlankCount;
+                return c != 0 ? c : (o1.name.length() - o2.name.length());
+            }
+        });
+        
+        for (ImportColumnGroup g : subgroups) {
             createColumnsFromImport(project, g);
+        }
+        
+        int endColumnIndex = project.columnModel.columns.size();
+        int span = endColumnIndex - startColumnIndex;
+        if (span > 1 && span < project.columnModel.columns.size()) {
+            project.columnModel.addColumnGroup(startColumnIndex, span, startColumnIndex);
         }
     }
     
@@ -231,18 +358,24 @@ public class XmlImportUtilities {
         
         processSubRecord(project, parser, rootColumnGroup, record);
         
-        for (List<Cell> row : record.rows) {
-            Row realRow = new Row(row.size());
-            
-            for (int c = 0; c < row.size(); c++) {
-                Cell cell = row.get(c);
-                if (cell != null) {
-                    realRow.setCell(c, cell);
+        if (record.rows.size() > 0) {
+            for (List<Cell> row : record.rows) {
+                Row realRow = new Row(row.size());
+                
+                for (int c = 0; c < row.size(); c++) {
+                    Cell cell = row.get(c);
+                    if (cell != null) {
+                        realRow.setCell(c, cell);
+                    }
                 }
+                
+                project.rows.add(realRow);
             }
-            
-            project.rows.add(realRow);
         }
+    }
+    
+    static protected String composeName(String prefix, String localName) {
+        return prefix != null && prefix.length() > 0 ? (prefix + ":" + localName) : localName;
     }
     
     static protected void processSubRecord(
@@ -251,8 +384,13 @@ public class XmlImportUtilities {
         ImportColumnGroup columnGroup,
         ImportRecord record
     ) throws XMLStreamException {
+        ImportColumnGroup thisColumnGroup = getColumnGroup(
+                project, 
+                columnGroup, 
+                composeName(parser.getPrefix(), parser.getLocalName()));
+        
         int commonStartingRowIndex = 0;
-        for (ImportColumn column : columnGroup.columns.values()) {
+        for (ImportColumn column : thisColumnGroup.columns.values()) {
             if (column.cellIndex < record.columnEmptyRowIndices.size()) {
                 commonStartingRowIndex = Math.max(
                         commonStartingRowIndex, 
@@ -260,41 +398,56 @@ public class XmlImportUtilities {
             }
         }
         
+        int attributeCount = parser.getAttributeCount();
+        for (int i = 0; i < attributeCount; i++) {
+            String text = parser.getAttributeValue(i).trim();
+            if (text.length() > 0) {
+                addCell(
+                    project, 
+                    thisColumnGroup, 
+                    record, 
+                    composeName(parser.getAttributePrefix(i), parser.getAttributeLocalName(i)),
+                    text,
+                    commonStartingRowIndex
+                );
+            }
+        }
+        
         while (parser.hasNext()) {
             int eventType = parser.next();
             if (eventType == XMLStreamConstants.START_ELEMENT) {
-                ImportColumnGroup thisColumnGroup = getColumnGroup(project, columnGroup, parser.getLocalName());
-                
-                int attributeCount = parser.getAttributeCount();
-                for (int i = 0; i < attributeCount; i++) {
-                    addCell(
-                        project, 
-                        thisColumnGroup, 
-                        record, 
-                        parser.getAttributeLocalName(i),
-                        parser.getAttributeValue(i),
-                        commonStartingRowIndex
-                    );
-                }
-                
                 processSubRecord(
                     project,
                     parser,
                     thisColumnGroup,
                     record
                 );
-            } else if (eventType == XMLStreamConstants.CDATA || 
+            } else if (//eventType == XMLStreamConstants.CDATA || 
                         eventType == XMLStreamConstants.CHARACTERS) {
-                addCell(
-                    project, 
-                    columnGroup, 
-                    record, 
-                    null,
-                    parser.getText(),
-                    commonStartingRowIndex
-                );
+                String text = parser.getText().trim();
+                if (text.length() > 0) {
+                    addCell(
+                        project, 
+                        thisColumnGroup, 
+                        record, 
+                        null,
+                        parser.getText(),
+                        commonStartingRowIndex
+                    );
+                }
             } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                 break;
+            }
+        }
+        
+        if (commonStartingRowIndex < record.rows.size()) {
+            List<Cell> startingRow = record.rows.get(commonStartingRowIndex);
+            
+            for (ImportColumn c : thisColumnGroup.columns.values()) {
+                int cellIndex = c.cellIndex;
+                if (cellIndex >= startingRow.size() || startingRow.get(cellIndex) == null) {
+                    c.blankOnFirstRow = true;
+                }
             }
         }
     }
@@ -304,12 +457,14 @@ public class XmlImportUtilities {
         ImportColumnGroup columnGroup,
         ImportRecord record,
         String columnLocalName,
-        Serializable value,
+        String text,
         int commonStaringRowIndex
     ) {
-        if (value == null || (value instanceof String && ((String) value).isEmpty())) {
+        if (text == null || ((String) text).isEmpty()) {
             return;
         }
+        
+        Serializable value = ImporterUtilities.parseCellValue(text);
         
         ImportColumn column = getColumn(project, columnGroup, columnLocalName);
         int cellIndex = column.cellIndex;
@@ -331,6 +486,8 @@ public class XmlImportUtilities {
         row.set(cellIndex, new Cell(value, null));
         
         record.columnEmptyRowIndices.set(cellIndex, rowIndex + 1);
+        
+        column.nonBlankCount++;
     }
     
     static protected ImportColumn getColumn(

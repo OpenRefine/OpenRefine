@@ -161,7 +161,9 @@ DataTableView.prototype._renderDataTable = function(table) {
                     
                     c += (columnGroup.columnSpan - 1);
                     
-                    nextLayer = nextLayer.concat(columnGroup.subgroups);
+                    if ("subgroups" in columnGroup) {
+                        nextLayer = nextLayer.concat(columnGroup.subgroups);
+                    }
                 }
             }
         }
@@ -172,12 +174,13 @@ DataTableView.prototype._renderDataTable = function(table) {
             renderColumnGroups(nextLayer, []);
         }
     };
-    /*
-    renderColumnGroups(
-        columnGroups, 
-        [ theProject.columnModel.keyCellIndex ]
-    );
-    */
+    
+    if (columnGroups.length > 0) {
+        renderColumnGroups(
+            columnGroups, 
+            [ theProject.columnModel.keyCellIndex ]
+        );
+    }    
     
     /*------------------------------------------------------------
      *  Column Headers with Menus

@@ -23,9 +23,13 @@ public class XmlImporter implements Importer {
         throw new NotImplementedException();
     }
 
-    public void read(InputStream inputStream, Project project,
-            Properties options, int skip, int limit) throws Exception {
-        
+    public void read(
+        InputStream inputStream, 
+        Project project,
+        Properties options, 
+        int skip, 
+        int limit
+    ) throws Exception {
         BufferedInputStream bis = new BufferedInputStream(inputStream);
         
         String[] recordPath = null;
@@ -36,14 +40,22 @@ public class XmlImporter implements Importer {
             int c = bis.read(buffer);
             bis.reset();
             
-            recordPath = XmlImportUtilities.detectRecordElement(
-                    new ByteArrayInputStream(buffer, 0, c));
+            if (options.containsKey("importer-record-tag")) {
+                recordPath = XmlImportUtilities.detectPathFromTag(
+                        new ByteArrayInputStream(buffer, 0, c), 
+                        options.getProperty("importer-record-tag"));
+            } else {
+                recordPath = XmlImportUtilities.detectRecordElement(
+                        new ByteArrayInputStream(buffer, 0, c));
+            }
         }
         
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         
         XmlImportUtilities.importXml(bis, project, recordPath, rootColumnGroup);
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
+        
+        project.columnModel.update();
     }
     
 }
