@@ -17,10 +17,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import com.metaweb.gridworks.model.Cell;
-import com.metaweb.gridworks.model.ColumnGroup;
+import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.model.Column;
 
 public class XmlImportUtilities {
     static protected class RecordElementCandidate {
@@ -68,7 +67,7 @@ public class XmlImportUtilities {
     }
     
     static public String[] detectPathFromTag(InputStream inputStream, String tag) {
-        List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
+        //List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
         
         try {
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
