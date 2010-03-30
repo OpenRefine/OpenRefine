@@ -10,10 +10,11 @@
     | NOTE: this script expects the 'build.dir' and 'dist.dir' properties to be set 
     | when invoking it. This is done like this
     |
-    |   ant -f build.xml -Dbuild.dir="/path/to/build/dir" -Ddist.dir="/path/to/dist/dir"
+    |   ant -f build.xml -Dbuild.dir="/path/to/build/dir" -Ddist.dir="/path/to/dist/dir" -Drevision="r3934"
     |
-    | the 'gridworks' shell script does this and it's meant to be the way to invoke ant,
-    | so running this script directly in ant is not suggested.
+    | Basically, this build file is designed to be invoked by the 'gridworks' shell 
+    | script (this makes it easy to integrate into nightly-build and continuous 
+    | integration systems).
     +-->
 
 <project name="gridworks" default="build" basedir=".">
@@ -30,7 +31,8 @@
     <property name="tests_classes.dir" value="${tests.dir}/classes" />
     <property name="bundle.dir" value="${build.dir}/bundle" />
     <property name="exe.dir" value="${build.dir}/exe" />
-    <property name="cli.dir" value="${build.dir}/cli" />
+    <property name="cli.name" value="gridworks-${version}" />
+    <property name="cli.dir" value="${build.dir}/cli/${cli.name}" />
     
     <path id="class.path">
         <fileset dir="${lib.dir}">
@@ -100,16 +102,16 @@
     
     <target name="exe" depends="jar">
         <mkdir dir="${exe.dir}"/>
-		<taskdef 
-		      name="launch4j" 
-		      classname="net.sf.launch4j.ant.Launch4jTask" 
-		      classpath="${tools.dir}/launch4j/launch4j.jar:${tools.dir}/launch4j/lib/xstream.jar" 
-	    />
+        <taskdef 
+            name="launch4j" 
+            classname="net.sf.launch4j.ant.Launch4jTask" 
+            classpath="${tools.dir}/launch4j/launch4j.jar:${tools.dir}/launch4j/lib/xstream.jar" 
+        />
         <launch4j>
           <config 
                headerType="console" 
                outfile="${exe.dir}/Gridworks.exe" 
-               jarPath="lib/gridworks-${version}.jar" 
+               jarPath="lib/gridworks-${version}-${revision}.jar" 
                dontWrapJar="true"
                icon="${graphics.dir}/icon/gridworks.ico">
             <classPath mainClass="com.metaweb.gridworks.Gridworks">
@@ -142,58 +144,66 @@
                 <include name="*.dll"/>
             </fileset>
         </copy>
-        <copy file="${build.dir}/gridworks.jar" tofile="${exe.dir}/lib/gridworks-${version}.jar"/>
+        <copy file="${build.dir}/gridworks.jar" tofile="${exe.dir}/lib/gridworks-${version}-${revision}.jar"/>
         <copy todir="${exe.dir}/webapp">
             <fileset dir="${basedir}/src/main/webapp">
                 <include name="**/*"/>
             </fileset>
         </copy>
-        <zip destfile="${dist.dir}/gridworks-${version}.zip" basedir="${exe.dir}"/>                
-	</target>
-	
-  <target name="cli" depends="jar">
-    <mkdir dir="${cli.dir}"/>
+        <zip destfile="${dist.dir}/gridworks-${version}-${revision}.zip" basedir="${exe.dir}"/>                
+    </target>
+    
+    <target name="cli" depends="jar">
+        <mkdir dir="${cli.dir}"/>
+    
+        <copy todir="${cli.dir}/lib">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${cli.dir}/lib/native/windows">
+            <fileset dir="${lib.dir}/native/windows">
+                <include name="*.dll"/>
+            </fileset>
+        </copy>
 
-    <copy todir="${cli.dir}/lib">
-        <fileset dir="${lib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
-    </copy>
-    <copy todir="${cli.dir}/lib/native/windows">
-        <fileset dir="${lib.dir}/native/windows">
-            <include name="*.dll"/>
-        </fileset>
-    </copy>
+        <copy file="${build.dir}/gridworks.jar" tofile="${cli.dir}/lib/gridworks-${version}-${revision}.jar"/>
+    
+        <copy todir="${cli.dir}/src/main/webapp">
+            <fileset dir="${basedir}/src/main/webapp">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <copy todir="${cli.dir}/licenses">
+            <fileset dir="${basedir}/licenses">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <copy file="${basedir}/gridworks.ini" tofile="${cli.dir}/gridworks.ini"/>
+        <copy file="${basedir}/gridworks.bat" tofile="${cli.dir}/gridworks.bat"/>
+        <copy file="${basedir}/LICENSE.txt" tofile="${cli.dir}/LICENSE.txt"/>
+        <copy file="${basedir}/README.txt" tofile="${cli.dir}/README.txt"/>
 
-    <copy todir="${cli.dir}/build/classes">
-        <fileset dir="${build.dir}/classes">
-            <include name="**"/>
-        </fileset>
-    </copy>
-    <copy todir="${cli.dir}/src/main/webapp">
-        <fileset dir="${basedir}/src/main/webapp">
-            <include name="**/*"/>
-        </fileset>
-    </copy>
-    <copy todir="${cli.dir}/thirdparty">
-        <fileset dir="${basedir}/thirdparty">
-            <include name="**/*"/>
-        </fileset>
-    </copy>
-    <copy todir="${cli.dir}/licenses">
-        <fileset dir="${basedir}/licenses">
-            <include name="**/*"/>
-        </fileset>
-    </copy>
-    <copy file="${basedir}/gridworks" tofile="${cli.dir}/gridworks"/>
-    <copy file="${basedir}/gridworks.bat" tofile="${cli.dir}/gridworks.bat"/>
-    <copy file="${basedir}/build.xml" tofile="${cli.dir}/build.xml"/>
-    <copy file="${basedir}/LICENSE.txt" tofile="${cli.dir}/LICENSE.txt"/>
-    <copy file="${basedir}/README.txt" tofile="${cli.dir}/README.txt"/>
+        <delete file="${cli.dir}/gridworks"/>
+    
+        <zip destfile="${dist.dir}/gridworks-${version}-${revision}-cli.zip" basedir="${cli.dir}"/>
 
-    <zip destfile="${dist.dir}/gridworks-${version}-cli.zip" basedir="${cli.dir}"/>
-	</target>
-	
+        <delete file="${cli.dir}/gridworks.bat"/>
+        <delete dir="${cli.dir}/lib/native/windows"/>
+
+        <copy file="${basedir}/gridworks" tofile="${cli.dir}/gridworks"/>
+        
+        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/gridworks-${version}-${revision}.tar.gz">
+           <tarfileset dir="${cli.dir}/.." filemode="755">
+               <include name="${cli.name}/gridworks"/>
+           </tarfileset>        
+           <tarfileset dir="${cli.dir}/..">
+               <include name="${cli.name}/**"/>
+               <exclude name="${cli.name}/gridworks"/>
+           </tarfileset>        
+        </tar>
+    </target>
+
     <target name="clean">
         <delete file="${build.dir}/gridworks.jar" />
         <delete dir="${classes.dir}" />

@@ -33,6 +33,9 @@ echo     default src\main\webapp
 echo.
 echo  /d enable JVM debugging (on port 8000)
 echo.
+echo  /m <memory> max memory heap size to use
+echo     default: 1024M
+echo.
 echo  /x enable JMX monitoring (for jconsole and friends)
 echo.
 echo and <action> is one of
@@ -53,10 +56,22 @@ goto end
 
 if not "%JAVA_HOME%" == "" goto gotJavaHome
 echo You must set JAVA_HOME to point at your Java Development Kit installation
+echo.
+echo If you don't know how to do this, follow the instructions at 
+echo.
+echo   http://bit.ly/1c2gkR
+echo.
+
 goto fail
 :gotJavaHome
 
-set OPTS=%GRIDWORKS_OPTS%
+rem --- Read ini file --------------------------------------------
+
+set OPTS=
+
+for /f "tokens=1,2 delims==" %%a in (gridworks.ini) do ( 
+    set %%a=%%b 
+) 
 
 rem --- Argument parsing --------------------------------------------
 
@@ -67,6 +82,7 @@ if ""%1"" == ""/p"" goto arg-p
 if ""%1"" == ""/i"" goto arg-i
 if ""%1"" == ""/w"" goto arg-w
 if ""%1"" == ""/d"" goto arg-d
+if ""%1"" == ""/m"" goto arg-m
 if ""%1"" == ""/x"" goto arg-x
 goto endArgumentParsing
 
@@ -80,6 +96,10 @@ goto shift2loop
 
 :arg-w
 set GRIDWORKS_WEBAPP=%2
+goto shift2loop
+
+:arg-m
+set GRIDWORKS_MEMORY=%2
 goto shift2loop
 
 :arg-d
@@ -100,9 +120,14 @@ goto loop
 rem --- Fold in Environment Vars --------------------------------------------
 
 if not "%JAVA_OPTIONS%" == "" goto gotJavaOptions
-set JAVA_OPTIONS=-Xms256M -Xmx1024M -XX:+UseLargePages -XX:+UseParallelGC
+set JAVA_OPTIONS=
 :gotJavaOptions
 set OPTS=%OPTS% %JAVA_OPTIONS%
+
+if not "%GRIDWORKS_MEMORY%" == "" goto gotMemory
+set GRIDWORKS_MEMORY=1024M
+:gotMemory
+set OPTS=%OPTS% -Xms256M -Xmx%GRIDWORKS_MEMORY%
 
 if not "%GRIDWORKS_PORT%" == "" goto gotPort
 set GRIDWORKS_PORT=3333
@@ -140,11 +165,24 @@ goto usage
 
 :doRun
 set CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*"
+echo %OPTS%
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=lib/native/windows com.metaweb.gridworks.Gridworks
 goto end
 
 :doAnt
-ant -f build.xml -Dbuild.dir="%GRIDWORKS_BUILD_DIR%" -Ddist.dir="%GRIDWORKS_DIST_DIR%" -Dversion="%VERSION%" %ACTION%
+if not "%ANT_HOME%" == "" goto gotAntHome
+echo You must have Apache Ant installed and the ANT_HOME environment variable to point to it
+echo.
+echo You can find a copy of ant in the "\thirdparty" folder or download it from
+echo.
+echo   http://ant.apache.org/
+echo.
+echo If you don't know how to set environment variables, follow the instructions at 
+echo.
+echo   http://bit.ly/1c2gkR
+echo.
+:gotAntHome
+"%ANT_HOME%\bin\ant.bat" -f build.xml -Dbuild.dir="%GRIDWORKS_BUILD_DIR%" %ACTION%
 goto end
 
 :end
