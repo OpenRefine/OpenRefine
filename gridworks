@@ -143,12 +143,9 @@ get_revision() {
 }
 
 dist() {
-    get_revision
-    get_version $1
-
-    #make_dmg $1
-    #make_exe $1
-    #make_cli $1
+    make_dmg $1
+    make_exe $1
+    make_cli $1
     
     echo "Distributions were built."
     echo 
@@ -159,7 +156,7 @@ dist() {
     echo "with"
     echo 
     echo "  {"
-    echo "    description: \"Gridworks $VERSION\","
+    echo "    description: \"Gridworks ${VERSION}\","
     echo "    version: \"${VERSION}\","
     echo "    revision: \"${REVISION}\""
     echo "  },"
@@ -262,7 +259,9 @@ test() {
 
 run() {
     if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
-        if [ `ls $GRIDWORKS_LIB_DIR | grep gridworks` == "" ] ; then
+        is_jar=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
+        echo "\"$is_jar\""
+        if [ "$is_jar" == "" ] ; then
             ant build
             echo ""
         fi
