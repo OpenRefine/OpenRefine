@@ -52,9 +52,9 @@ and <action> is one of
 
    test ...................... Test Gridworks      
    
-   make_dmg <version> ........ Make MacOSX DMG distribution
-   make_exe <version> ........ Make Windows EXE distribution
-   make_cli <version> ........ Make distributions to be run at command line
+   mac_dist <version> ........ Make MacOSX binary distribution
+   windows_dist <version> .... Make Windows binary distribution
+   linux_dist <version> ...... Make Linux binary distribution
 
    dist <version> ............ Make all distributions
 
@@ -143,13 +143,13 @@ get_revision() {
 }
 
 dist() {
-    make_dmg $1
-    make_exe $1
-    make_cli $1
+    mac_dist $1
+    windows_dist $1
+    linux_dist $1
     
-    echo "Distributions were built."
+    echo "All distributions were built and are located at $GRIDWORKS_DIST_DIR"
     echo 
-    echo "Upload them, then prepend the GridworksReleases array at"
+    echo "Upload them to the distibution site, then prepend the GridworksReleases array at"
     echo
     echo "   http://acre.freebase.com/#app=/user/dfhuynh/labs-site&file=gridworks.js"
     echo
@@ -163,42 +163,41 @@ dist() {
     echo
 }
 
-make_exe() {
+windows_dist() {
     check_macosx
     dist_prepare
     launch4j_prepare
     get_version $1
     get_revision
     
-    ant exe
+    ant windows
 }
 
-make_cli() {
+linux_dist() {
     dist_prepare
     get_version $1
     get_revision
     
-    ant cli
+    ant linux
 }
     
-make_dmg() {
+mac_dist() {
     check_macosx
     dist_prepare
     get_version $1
     get_revision
     
-    ant bundle
+    ant mac
 
-    mkdir "$GRIDWORKS_BUILD_DIR/bundle/.background"
-    cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/bundle/.background/dmg_background.png"
+    mkdir -p "$GRIDWORKS_BUILD_DIR/mac/.background"
+    cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/mac/.background/dmg_background.png"
     
     SIZE=30
     
     TITLE="Gridworks $VERSION"
     echo "Building MacOSX DMG for $TITLE"
-    hdiutil create -srcfolder "$GRIDWORKS_BUILD_DIR/bundle" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
-    DEVICE=$(hdiutil attach -readwrite -noverify -noautoopen "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}')
-    hdiutil attach "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    hdiutil create -srcfolder "$GRIDWORKS_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    hdiutil attach -readwrite -noverify -noautoopen "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
     
     echo '
        tell application "Finder"
@@ -224,10 +223,8 @@ make_dmg() {
        end tell
     ' | osascript    
     
-    chmod -Rf go-w /Volumes/Gridworks
     sync
     sync
-    hdiutil detach $DEVICE
     hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
     hdiutil internet-enable -yes "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
     rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
@@ -260,7 +257,6 @@ test() {
 run() {
     if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
         is_jar=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
-        echo "\"$is_jar\""
         if [ "$is_jar" == "" ] ; then
             ant build
             echo ""
@@ -305,10 +301,6 @@ execute() {
     
 # -------------------------- script -----------------------------
     
-# ----- We called without arguments print the usage -------------
-
-[ $# -gt 0 ] || usage
-
 # ----- Normalize the current directory -------------------------
 
 cd `dirname $0`
@@ -366,6 +358,10 @@ done
 
 ACTION=$1; shift
 
+if [ "$ACTION" == "" ]; then
+    ACTION="run"
+fi
+
 # ----- Verify and Set Required Environment Variables -------------------------
 
 if [ "$JAVA_OPTIONS" == "" ] ; then
@@ -416,9 +412,6 @@ case "$ACTION" in
   build)
     ant build;;
 
-  bundle)
-    ant bundle;;
-
   clean)
     ant clean;;
 
@@ -434,14 +427,14 @@ case "$ACTION" in
   execute) 
     execute $*;;  
     
-  make_dmg)
-    make_dmg $1;;
+  mac_dist)
+    mac_dist $1;;
 
-  make_exe)
-    make_exe $1;;
+  windows_dist)
+    windows_dist $1;;
     
-  make_cli)
-    make_cli $1;;
+  linux_dist)
+    linux_dist $1;;
     
   dist)
     dist $1;;
