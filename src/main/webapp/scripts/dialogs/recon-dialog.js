@@ -65,8 +65,8 @@ ReconDialog.prototype._createDialog = function() {
                         '</td>' +
                         '<td>' +
                             'Use ' +
-                            '<input type="radio" name="recon-dialog-heuristic-service" value="recon" checked /> recon service ' +
-                            '<input type="radio" name="recon-dialog-heuristic-service" value="relevance" /> relevance service ' +
+                            '<input type="radio" name="recon-dialog-heuristic-service" value="relevance" checked="" /> relevance service ' +
+                            '<input type="radio" name="recon-dialog-heuristic-service" value="recon" /> recon service ' +
                         '</td>' +
                     '</tr>' +
                 '</table></div>' +
@@ -179,7 +179,7 @@ ReconDialog.prototype._wireEvents = function() {
     var self = this;
     
     this._elmts.heuristicTypeInput
-        .suggestT({ type : '/type/type' })
+        .suggest({ type : '/type/type' })
         .bind("fb-select", function(e, data) {
             $('input[name="recon-dialog-type-choice"][value=""]').attr("checked", "true");
             
@@ -199,10 +199,12 @@ ReconDialog.prototype._wireEvents = function() {
 ReconDialog.prototype._rewirePropertySuggests = function(schema) {
     var inputs = $('input[name="recon-dialog-heuristic-property"]');
     
-    inputs.suggestP({
-            type: '/type/property',
-            schema: schema || "/common/topic"
-        });
+    inputs.suggest({
+        type: '/type/property',
+        schema: schema || "/common/topic"
+    }).bind("fb-select", function(e, data) {
+        $('input[name="recon-dialog-heuristic-service"][value="recon"]').attr("checked", "true"); 
+    });
 };
 
 ReconDialog.prototype._onOK = function() {
