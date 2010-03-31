@@ -29,7 +29,8 @@ function onClickUploadFileButton(evt) {
         $("#file-upload-form").attr("action", 
             "/command/create-project-from-upload?" + [
                 "skip=" + $("#skip-input")[0].value,
-                "limit=" + $("#limit-input")[0].value
+                "limit=" + $("#limit-input")[0].value,
+                "separator=" + $("#separator-input")[0].value
             ].join("&"));
     }
 }

@@ -6,7 +6,11 @@ import java.io.Reader;
 import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 
+import com.metaweb.gridworks.importers.parsers.CSVRowParser;
+import com.metaweb.gridworks.importers.parsers.RowParser;
+import com.metaweb.gridworks.importers.parsers.SeparatorRowParser;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
@@ -18,10 +22,11 @@ public class TsvCsvImporter implements Importer {
         
         LineNumberReader lnReader = new LineNumberReader(reader);
         try {
-            String         sep = null; // auto-detect TSV or CSV
-            String         line = null;
+            String      sep = options.getProperty("separator"); // auto-detect if not present
+            String      line = null;
             boolean     first = true;
             int         cellCount = 1;
+            RowParser   parser = (sep == null || (sep.length() == 0)) ? null : new SeparatorRowParser(sep);
             
             int rowsWithData = 0;
             while ((line = lnReader.readLine()) != null) {
@@ -29,18 +34,20 @@ public class TsvCsvImporter implements Importer {
                     continue;
                 }
                 
-                if (sep == null) {
+                if (parser == null) {
                     int tab = line.indexOf('\t');
                     if (tab >= 0) {
                         sep = "\t";
+                        parser = new SeparatorRowParser(sep);
                     } else {
                         sep = ",";
+                        parser = new CSVRowParser();
                     }
                 }
                 
                 if (first) {
-                    String[] cells = line.split(sep);
-                    
+                    String[] cells = StringUtils.splitPreserveAllTokens(line, sep);
+                                        
                     first = false;
                     for (int c = 0; c < cells.length; c++) {
                         String cell = cells[c];
@@ -57,7 +64,7 @@ public class TsvCsvImporter implements Importer {
                 } else {
                     Row row = new Row(cellCount);
                     
-                    if ((sep.charAt(0) == ',') ? ImporterUtilities.parseCSVIntoRow(row, line) : ImporterUtilities.parseTSVIntoRow(row, line)) {
+                    if (parser.parseRow(row, line)) {
                         rowsWithData++;
                         
                         if (skip <= 0 || rowsWithData > skip) {

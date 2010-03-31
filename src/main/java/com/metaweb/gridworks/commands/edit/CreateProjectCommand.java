@@ -209,7 +209,7 @@ public class CreateProjectCommand extends Command {
             }
             
             CharsetDetector detector = new CharsetDetector();
-            detector.setDeclaredEncoding("utf8"); // the content on the web is encoded in UTF-8 so assume that
+            detector.setDeclaredEncoding("utf8"); // most of the content on the web is encoded in UTF-8 so start with that
             
             Reader reader = null;
             CharsetMatch[] charsetMatches = detector.setText(bytes).detectAll();
