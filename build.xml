@@ -23,12 +23,14 @@
 
     <property name="src.dir" value="${basedir}/src/main/java" />
     <property name="graphics.dir" value="${basedir}/src/graphics" />
+    <property name="conf.dir" value="${basedir}/src/conf" />
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="tools.dir" value="${basedir}/thirdparty" />
     <property name="tests.dir" value="${basedir}/tests" />
     
     <property name="classes.dir" value="${build.dir}/classes" />
     <property name="tests_classes.dir" value="${tests.dir}/classes" />
+    <property name="webapp.dir" value="${build.dir}/webapp" />
     <property name="bundle.dir" value="${build.dir}/bundle" />
     <property name="exe.dir" value="${build.dir}/exe" />
     <property name="cli.name" value="gridworks-${version}" />
@@ -64,14 +66,31 @@
     <target name="jar" depends="build">
         <jar destfile="${build.dir}/gridworks.jar" basedir="${classes.dir}"/>
     </target>
+
+    <target name="prepare_webapp">
+        <mkdir dir="${webapp.dir}" />
+        
+        <copy todir="${webapp.dir}">
+            <fileset dir="${basedir}/src/main/webapp">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        
+        <replace file="${webapp.dir}/scripts/version.js">
+            <replacefilter token="$VERSION" value="${version}"/>
+            <replacefilter token="$REVISION" value="${revision}"/>
+        </replace>
+    </target>
     
-    <target name="bundle" depends="jar">
+    <target name="bundle" depends="jar, prepare_webapp">
         <taskdef 
             name="jarbundler" 
             classname="net.sourceforge.jarbundler.JarBundler" 
             classpath="${tools.dir}/jarbundler-2.1.0.jar" 
         />
+        
         <mkdir dir="${bundle.dir}"/>
+        
         <jarbundler 
                 dir="${bundle.dir}"
                 name="Gridworks"
@@ -94,13 +113,13 @@
                 <include name="**/*.jar" />
             </jarfileset>
             <jarfilelist dir="${build.dir}" files="gridworks.jar" />
-            <resourcefileset dir="${basedir}/src/main/">
-                <include name="webapp/**" />
+            <resourcefileset dir="${webapp.dir}">
+                <include name="**" />
             </resourcefileset>
         </jarbundler>
     </target>
     
-    <target name="exe" depends="jar">
+    <target name="exe" depends="jar, prepare_webapp">
         <mkdir dir="${exe.dir}"/>
         <taskdef 
             name="launch4j" 
@@ -117,7 +136,7 @@
             <classPath mainClass="com.metaweb.gridworks.Gridworks">
                 <cp>lib/*.jar</cp>
             </classPath>
-            <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapPercent="10" maxHeapPercent="80">
+            <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
                 <opt>-Djava.library.path=lib/native/windows</opt>
             </jre>
             <versionInfo
@@ -145,15 +164,26 @@
             </fileset>
         </copy>
         <copy file="${build.dir}/gridworks.jar" tofile="${exe.dir}/lib/gridworks-${version}-${revision}.jar"/>
-        <copy todir="${exe.dir}/webapp">
-            <fileset dir="${basedir}/src/main/webapp">
-                <include name="**/*"/>
+        <copy todir="${exe.dir}/src/main/webapp">
+            <fileset dir="${webapp.dir}">
+                <include name="**"/>
             </fileset>
         </copy>
+
+        <copy todir="${cli.dir}/licenses">
+            <fileset dir="${basedir}/licenses">
+                <include name="**"/>
+            </fileset>
+        </copy>
+
+        <copy file="${conf.dir}/gridworks.l4j.ini" tofile="${exe.dir}/gridworks.l4j.ini"/>
+        <copy file="${basedir}/README.txt" tofile="${exe.dir}/README.txt"/>
+        <copy file="${basedir}/LICENSE.txt" tofile="${exe.dir}/LICENSE.txt"/>
+        
         <zip destfile="${dist.dir}/gridworks-${version}-${revision}.zip" basedir="${exe.dir}"/>                
     </target>
     
-    <target name="cli" depends="jar">
+    <target name="cli" depends="jar, prepare_webapp">
         <mkdir dir="${cli.dir}"/>
     
         <copy todir="${cli.dir}/lib">
@@ -170,13 +200,13 @@
         <copy file="${build.dir}/gridworks.jar" tofile="${cli.dir}/lib/gridworks-${version}-${revision}.jar"/>
     
         <copy todir="${cli.dir}/src/main/webapp">
-            <fileset dir="${basedir}/src/main/webapp">
-                <include name="**/*"/>
+            <fileset dir="${webapp.dir}">
+                <include name="**"/>
             </fileset>
         </copy>
         <copy todir="${cli.dir}/licenses">
             <fileset dir="${basedir}/licenses">
-                <include name="**/*"/>
+                <include name="**"/>
             </fileset>
         </copy>
         <copy file="${basedir}/gridworks.ini" tofile="${cli.dir}/gridworks.ini"/>

@@ -1,8 +1,3 @@
-var GridworksVersion = {
-    description: "Gridworks 1.0 beta 2 (rolling update)",
-    date: "2010-03-23"
-};
-
 function onLoad() {
     $.getJSON(
         "/command/get-all-project-metadata",
@@ -14,14 +9,13 @@ function onLoad() {
         "json"
     );
     
-    var thisVersion = Date.parseExact(GridworksVersion.date, "yyyy-MM-dd");
-    var latestVersion = Date.parseExact(GridworksReleases.releases[0].date, "yyyy-MM-dd");
-    if (thisVersion.getTime() < latestVersion.getTime()) {
+    if (isThereNewRelease()) {
         $('<div id="version-message">' +
             'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
           '</div>').appendTo(document.body)
     }
 }
+
 $(onLoad);
 
 function onClickUploadFileButton(evt) {
@@ -113,4 +107,21 @@ function formatDate(d) {
     } else {
         return d.toString("ddd, MMM d, yyyy");
     }
+}
+
+function isThereNewRelease() {
+    var thisRevision = GridworksVersion.revision;
+    
+    var revision_pattern = /r([0-9]+)/;
+    
+    if (!revision_pattern.test(thisRevision)) { // probably "trunk"
+        return false;
+    }
+
+    var latestRevision = GridworksReleases.releases[0].revision;
+    
+    var thisRev = parseInt(revision_pattern.exec(thisRevision)[1]);
+    var latestRev = parseInt(revision_pattern.exec(GridworksReleases.releases[0].revision)[1]);
+    
+    return latestRev > thisRev;
 }

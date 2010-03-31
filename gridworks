@@ -115,7 +115,7 @@ launch4j_prepare() {
     LAUNCH4J_TAR=`ls | grep launch4j | grep tar.gz | grep -v svn`
     LAUNCH4J_DIR="launch4j"
     if [ ! -d "$LAUNCH4J_DIR" ] ; then
-        tar xzf $LAUNCH4J_TAR -C thirdparty || exit 1
+        tar xzf $LAUNCH4J_TAR || exit 1
     fi
     cd ..
 }
@@ -143,9 +143,27 @@ get_revision() {
 }
 
 dist() {
-    make_dmg $1
-    make_exe $1
-    make_cli $1
+    get_revision
+    get_version $1
+
+    #make_dmg $1
+    #make_exe $1
+    #make_cli $1
+    
+    echo "Distributions were built."
+    echo 
+    echo "Upload them, then prepend the GridworksReleases array at"
+    echo
+    echo "   http://acre.freebase.com/#app=/user/dfhuynh/labs-site&file=gridworks.js"
+    echo
+    echo "with"
+    echo 
+    echo "  {"
+    echo "    description: \"Gridworks $VERSION\","
+    echo "    version: \"${VERSION}\","
+    echo "    revision: \"${REVISION}\""
+    echo "  },"
+    echo
 }
 
 make_exe() {
@@ -156,9 +174,6 @@ make_exe() {
     get_revision
     
     ant exe
-
-    echo ""
-    echo "Built exe ZIP for version $VERSION-$REVISION"
 }
 
 make_cli() {
@@ -167,9 +182,6 @@ make_cli() {
     get_revision
     
     ant cli
-    
-    echo ""
-    echo "Built cli ZIP for version $VERSION-$REVISION"
 }
     
 make_dmg() {
@@ -219,12 +231,9 @@ make_dmg() {
     sync
     sync
     hdiutil detach $DEVICE
-    hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION.dmg"
+    hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
     hdiutil internet-enable -yes "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
     rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
-    
-    echo ""
-    echo "Built DMG for version $VERSION-$REVISION"
 }
 
 test() {
