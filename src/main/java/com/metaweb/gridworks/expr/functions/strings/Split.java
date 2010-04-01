@@ -3,6 +3,7 @@ package com.metaweb.gridworks.expr.functions.strings;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -19,7 +20,7 @@ public class Split implements Function {
             if (v != null && split != null) {
                 String str = (v instanceof String ? (String) v : v.toString());
                 if (split instanceof String) {
-                    return str.split((String) split);
+                    return StringUtils.splitByWholeSeparator(str, (String) split);
                 } else if (split instanceof Pattern) {
                     Pattern pattern = (Pattern) split;
                     return pattern.split(str);
