@@ -100,8 +100,11 @@ public class ColumnModel implements Jsonizable {
         }
         writer.endArray();
         
-        writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
-        writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getName());
+        if (columns.size() > 0) {
+            writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
+            writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getName());
+        }
+        
         writer.key("columnGroups");
         writer.array();
         for (ColumnGroup g : _rootColumnGroups) {
