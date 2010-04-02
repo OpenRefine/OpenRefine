@@ -305,6 +305,7 @@ public class CreateProjectCommand extends Command {
             } else if (
                     fileName.endsWith(".xml") ||
                     fileName.endsWith(".rdf") ||
+                    fileName.endsWith(".atom") ||
                     fileName.endsWith(".rss")
                 ) {
                 return new XmlImporter(); 
