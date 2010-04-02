@@ -37,6 +37,7 @@ import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 public class Gridworks {
     
     static private String version;
+    static private File tempDir;
     
     private static Logger root = Logger.getRootLogger();
     private static Logger logger = Logger.getLogger("com.metaweb.gridworks");
@@ -65,6 +66,10 @@ public class Gridworks {
         return version;
     }
     
+    public static File getTempFile(String name) {
+        return new File(tempDir, name);
+    }
+    
     public static void main(String[] args) throws Exception  {
         
         // tell jetty to use SLF4J for logging instead of its own stuff
@@ -84,6 +89,9 @@ public class Gridworks {
         jetty_logger.setLevel(Level.WARN);
 
         version = Configurations.get("gridworks.version","trunk");
+
+        tempDir = new File(Configurations.get("gridworks.temp","temp"));
+        if (!tempDir.exists()) tempDir.mkdirs();
         
         Gridworks gridworks = new Gridworks();
         

@@ -1,6 +1,9 @@
 package com.metaweb.gridworks.commands.edit;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,11 +12,23 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
+import java.util.zip.GZIPInputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tools.bzip2.CBZip2InputStream;
+import org.apache.tools.tar.TarEntry;
+import org.apache.tools.tar.TarInputStream;
 
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
@@ -91,7 +106,9 @@ public class CreateProjectCommand extends Command {
             while ((part = parser.readNextPart()) != null) {
                 
                 if (part.isFile()) {
-                    internalImportFilePart((FilePart) part, project, options);
+                    
+                    FilePart filePart = (FilePart) part;
+                    internalImportFile(project, options, filePart.getFileName(), filePart.getInputStream());
                     
                 } else if (part.isParam()) {
                     ParamPart paramPart = (ParamPart) part;
@@ -118,15 +135,120 @@ public class CreateProjectCommand extends Command {
         }
     }
     
-    protected void internalImportFilePart(
-        FilePart    filePart,
+    protected void internalImportFile(
         Project     project,
-        Properties  options
+        Properties  options,
+        String    fileName,
+        InputStream inputStream
     ) throws Exception {
-        
-        Importer importer = guessImporter(options, null, filePart.getFileName());
-        
-        internalInvokeImporter(project, importer, options, filePart.getInputStream(), null);
+                
+        if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tar.bz2")) {
+            // first, save the file on disk, since we need two passes and we might 
+            // not have enough memory to keep it all in there
+            File file = save(inputStream);
+            
+            // in the first pass, gather statistics about what files are in there
+            // unfortunately, we have to rely on files extensions, which is horrible but
+            // better than nothing
+            BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
+            InputStream is = (fileName.endsWith(".tar.gz")) ? new GZIPInputStream(stream): new CBZip2InputStream(stream);
+            TarInputStream tis = new TarInputStream(is);
+            HashMap<String,Integer> ext_map = new HashMap<String,Integer>();
+            while (true) {
+                TarEntry entry = tis.getNextEntry();
+                if (entry == null) break;
+                if (!entry.isDirectory()) {
+                    String name = entry.getName();
+                    String ext = getExtension(name)[1];
+                    if (ext_map.containsKey(ext)) {
+                        ext_map.put(ext, ext_map.get(ext) + 1);
+                    } else {
+                        ext_map.put(ext, 1);
+                    }
+                }
+            }
+            stream.close();
+
+            // sort extensions by how often they appear
+            List<Entry<String,Integer>> values = new ArrayList<Entry<String,Integer>>(ext_map.entrySet());
+            Collections.sort(values, new ValuesComparator());
+
+            if (values.size() == 0) {
+                throw new RuntimeException("The archive contains no files.");
+            }
+            
+            // this will contain the set of extensions we'll load from the archive
+            HashSet<String> exts = new HashSet<String>();
+            
+            // find the extension that is most frequent or those who share the highest frequency value
+            Entry<String,Integer> most_frequent = values.get(0);
+            Entry<String,Integer> second_most_frequent = values.get(1);
+            if (most_frequent.getValue() > second_most_frequent.getValue()) { // we have a winner
+                exts.add(most_frequent.getKey());
+            } else { // multiple extensions have the same frequency
+                int winning_frequency = most_frequent.getValue();
+                for (Entry<String,Integer> e : values) {
+                    if (e.getValue() == winning_frequency) {
+                        exts.add(e.getKey());
+                    }
+                }
+            }
+            Gridworks.log("Most frequent extensions: " + exts.toString());
+            
+            
+        } else if (fileName.endsWith(".zip")) {
+            
+        } else if (fileName.endsWith(".gz")) {
+            String[] frags = getExtension(fileName);
+            internalImportFile(project, options, frags[0], new GZIPInputStream(inputStream));
+        } else if (fileName.endsWith(".bz2")) {
+            String[] frags = getExtension(fileName);
+            internalImportFile(project, options, frags[0], new CBZip2InputStream(inputStream));
+        } else {
+            load(project, options, fileName, inputStream);
+        }
+    }
+
+    public class ValuesComparator implements Comparator<Entry<String,Integer>> {
+        public int compare(Entry<String,Integer> o1, Entry<String,Integer> o2) {
+            return o2.getValue() - o1.getValue();
+        }
+    }
+    
+    private void load(Project project, Properties options, String fileName, InputStream inputStream) throws Exception {
+        Importer importer = guessImporter(options, null, fileName);
+        internalInvokeImporter(project, importer, options, inputStream, null);
+        inputStream.close();
+    }
+
+    private File save(InputStream is) throws IOException {
+        File temp = Gridworks.getTempFile(Long.toString(System.currentTimeMillis()));
+        temp.deleteOnExit();
+        copy(is,temp);
+        is.close();
+        return temp;
+    }
+    
+    private String[] getExtension(String filename) {
+        String[] result = new String[2];
+        int ext_index = filename.lastIndexOf(".");
+        result[0] = (ext_index == -1) ? filename : filename.substring(0,ext_index);
+        result[1] = (ext_index == -1) ? "" : filename.substring(ext_index + 1);
+        return result;
+    }
+    
+    private static long copy(InputStream input, File file) throws IOException {
+        FileOutputStream output = new FileOutputStream(file);
+        byte[] buffer = new byte[4 * 1024];
+        long count = 0;
+        int n = 0;
+        while (-1 != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+            count += n;
+        }
+        output.close();
+        input.close();
+        return count;
     }
     
     protected void internalImportURL(
@@ -237,17 +359,9 @@ public class CreateProjectCommand extends Command {
                         new InputStreamReader(inputStream);
             }
             
-            try {
-                importer.read(reader, project, options, skip, limit);
-            } finally {
-                reader.close();
-            }
+            importer.read(reader, project, options, skip, limit);
         } else {
-            try {
-                importer.read(inputStream, project, options, skip, limit);
-            } finally {
-                inputStream.close();
-            }
+            importer.read(inputStream, project, options, skip, limit);
         }        
     }
     
@@ -295,6 +409,12 @@ public class CreateProjectCommand extends Command {
                 return new ExcelImporter(false);
             } else if("application/x-xls".equals(contentType)) {
                 return new ExcelImporter(true); 
+            } else if("application/xml".equals(contentType) ||
+                      "text/xml".equals(contentType) ||
+                      "application/rss+xml".equals(contentType) ||
+                      "application/atom+xml".equals(contentType) ||
+                      "application/rdf+xml".equals(contentType)) {
+                return new XmlImporter();
             }
         } else if (fileName != null) {
             fileName = fileName.toLowerCase();

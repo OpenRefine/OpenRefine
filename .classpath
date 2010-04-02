@@ -15,11 +15,12 @@
 	<classpathentry kind="lib" path="lib/arithcode-1.1.jar" sourcepath="lib-src/arithcode-1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jdatapath-alpha2.jar" sourcepath="lib-src/jdatapath-alpha2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/secondstring-20100303.jar" sourcepath="lib-src/secondstring-20100303-sources.jar"/>
+	<classpathentry kind="lib" path="lib/ant-tools-1.8.0.jar" sourcepath="lib-src/ant-tools-1.8.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/vicino-1.1.jar" sourcepath="lib-src/vicino-1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
-	<classpathentry kind="lib" path="lib/apache-tools-tar.jar"/>
-	<classpathentry kind="lib" path="tests/lib/junit-4.8.1.jar" sourcepath="tests/lib-src/junit-4.8.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jython-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/clojure-1.1.0.jar"/>
+	<classpathentry kind="lib" path="tests/lib/junit-4.8.1.jar" sourcepath="tests/lib-src/junit-4.8.1-sources.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

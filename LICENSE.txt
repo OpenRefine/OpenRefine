@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Metaweb Technologies, Inc. All rights reserved.
+ * Copyright (c) 2010 Metaweb Technologies, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,9 @@ See the 'licenses' directory for a list of the licenses for the libraries we dep
 ordered here by license:
 
 licenses/apache2.0.LICENSE.txt
-    ant (package org.apache.tools.tar)
-    bzip2 (package org.apache.tools.bzip2)
     calendar-parser (package com.metaweb.gridworks.expr.util)
+    ant-tools 
+    bzip2
     commons-lang
     commons-codec
     jdatapath
@@ -58,7 +58,7 @@ licenses/dom4j.LICENSE.txt (BSD family)
     dom4j
     
 licenses/simile.LICENSE.txt (BSD family)
-    vicino (package edu.mit.simile.vicino)
+    vicino
 
 licenses/arithcode.LICENSE.txt (BSD family)
     arithcode
