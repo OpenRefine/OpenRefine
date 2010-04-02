@@ -1,8 +1,12 @@
 package com.metaweb.gridworks;
 
 import java.awt.Desktop;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +14,11 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.ConsoleAppender;
@@ -47,6 +56,10 @@ public class Gridworks {
     public static void warn(String message) {
         logger.warn(message);
     }
+
+    public static void warn(String message, Throwable t) {
+        logger.warn(message, t);
+    }
     
     public static String getVersion() {
         return version;
@@ -57,6 +70,10 @@ public class Gridworks {
         // tell jetty to use SLF4J for logging instead of its own stuff
         System.setProperty("VERBOSE","false");
         System.setProperty("org.mortbay.log.class","org.mortbay.log.Slf4jLog");
+
+        // tell macosx to keep the menu associated with the screen
+        System.setProperty("apple.laf.useScreenMenuBar", "true");  
+        System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode", "false"); 
 
         // initialize the log4j system
         Appender console = new ConsoleAppender(new IndentingLayout());
@@ -202,12 +219,65 @@ class GridworksServer extends Server {
 
 /* -------------- Gridworks Client ----------------- */
 
-class GridworksClient {
+class GridworksClient extends JFrame implements ActionListener {
     
+    private static final long serialVersionUID = 7886547342175227132L;
+
+    public static boolean MACOSX = (System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
+    
+    private URI uri;
+    
+    @SuppressWarnings("unchecked")
     public void init(String host, int port) throws Exception {
-        URI starting_url = new URI("http://" + host + ":" + port + "/");
-        Desktop.getDesktop().browse(starting_url); 
+
+        uri = new URI("http://" + host + ":" + port + "/");
+
+        if (MACOSX) {
+
+            // for more info on the code found here that is macosx-specific see:
+            //  http://developer.apple.com/mac/library/documentation/Java/Conceptual/Java14Development/07-NativePlatformIntegration/NativePlatformIntegration.html
+            //  http://developer.apple.com/mac/library/releasenotes/CrossPlatform/JavaSnowLeopardUpdate1LeopardUpdate6RN/NewandNoteworthy/NewandNoteworthy.html
+
+            JMenuBar mb = new JMenuBar(); 
+            JMenu m = new JMenu("Open");
+            JMenuItem mi = new JMenuItem("Open New Gridworks Window...");
+            mi.addActionListener(this);
+            m.add(mi);
+            mb.add(m);
+
+            Class applicationClass = Class.forName("com.apple.eawt.Application"); 
+            Object macOSXApplication = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
+            Method setDefaultMenuBar = applicationClass.getDeclaredMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
+            setDefaultMenuBar.invoke(macOSXApplication, new Object[] { mb });
+           
+            // FIXME(SM): this part below doesn't seem to work, I get a NPE but I have *no* idea why, suggestions?
+            
+//            PopupMenu dockMenu = new PopupMenu("dock");
+//            MenuItem mmi = new MenuItem("Open new Gridworks Window...");
+//            mmi.addActionListener(this);
+//            dockMenu.add(mmi);
+//            this.add(dockMenu);
+//
+//            Method setDockMenu = applicationClass.getDeclaredMethod("setDockMenu", new Class[] { PopupMenu.class });
+//            setDockMenu.invoke(macOSXApplication, new Object[] { dockMenu });
+        }
         
+        openBrowser();
+    }
+    
+    public void actionPerformed(ActionEvent e) { 
+      String item = e.getActionCommand(); 
+      if (item.startsWith("Open")) {
+          openBrowser();
+      }
+    } 
+    
+    private void openBrowser() {
+        try {
+            Desktop.getDesktop().browse(uri); 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
