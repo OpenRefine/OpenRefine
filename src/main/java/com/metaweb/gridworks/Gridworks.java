@@ -19,18 +19,38 @@ import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.log.Log;
 import org.mortbay.util.Scanner;
 
 import com.metaweb.util.logging.IndentingLayout;
 import com.metaweb.util.signal.SignalHandler;
 import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
-public class Gridworks extends Server {
-    final static public String s_version = "1.0";
+public class Gridworks {
+    
+    static private String version;
     
     private static Logger root = Logger.getRootLogger();
     private static Logger logger = Logger.getLogger("com.metaweb.gridworks");
+
+    public static void log(String message) {
+        logger.info(message);
+    }
+
+    public static void info(String message) {
+        logger.info(message);
+    }
+    
+    public static void error(String message, Throwable t) {
+        logger.error(message, t);
+    }
+
+    public static void warn(String message) {
+        logger.warn(message);
+    }
+    
+    public static String getVersion() {
+        return version;
+    }
     
     public static void main(String[] args) throws Exception  {
         
@@ -45,46 +65,37 @@ public class Gridworks extends Server {
 
         Logger jetty_logger = Logger.getLogger("org.mortbay.log");
         jetty_logger.setLevel(Level.WARN);
+
+        version = Configurations.get("gridworks.version","trunk");
         
-        // get main configurations
+        Gridworks gridworks = new Gridworks();
+        
+        gridworks.init(args);
+    }
+
+    public void init(String[] args) throws Exception {
+
         int port = Configurations.getInteger("gridworks.port",3333);
         String host = Configurations.get("gridworks.host","127.0.0.1");
         
-        // create acre's server (which is a thin wrapper around Jetty) 
-        Gridworks server = new Gridworks(host,port);
+        GridworksServer server = new GridworksServer();
+        server.init(host,port);
 
+        GridworksClient client = new GridworksClient();
+        client.init(host,port);
+        
         // hook up the signal handlers
         new ShutdownSignalHandler("TERM", server);
-        
-        // start the server
-        server.start();
-
-        // start the browser
-        URI starting_url = new URI("http://" + host + ":" + port + "/");
-        Desktop.getDesktop().browse(starting_url); 
-
-        // join this thread
-        server.join();
     }
+}
 
-    public static void log(String message) {
-        logger.info(message);
-    }
+/* -------------- Gridworks Server ----------------- */
 
-    public static void error(String message, Throwable t) {
-        logger.error(message, t);
-    }
-
-    public static void warn(String message) {
-        logger.warn(message);
-    }
-    
-    /* -------------- Gridworks HTTP server ----------------- */
+class GridworksServer extends Server {
     
     private ThreadPoolExecutor threadPool;
     
-    public Gridworks(String host, int port) throws Exception  {
-
+    public void init(String host, int port) throws Exception {
         int maxThreads = Configurations.getInteger("gridworks.queue.size", 10);
         int maxQueue = Configurations.getInteger("gridworks.queue.max_size", 50);
         long keepAliveTime = Configurations.getInteger("gridworks.queue.idle_time", 60);
@@ -103,15 +114,16 @@ public class Gridworks extends Server {
         this.addConnector(connector);
 
         final File contextRoot = new File(Configurations.get("gridworks.webapp","webapp"));
+        final File classRoot = new File(Configurations.get("gridworks.classes","build/classes"));
         final String contextPath = Configurations.get("gridworks.context_path","/");
 
         File webXml = new File(contextRoot, "WEB-INF/web.xml");
         if (!webXml.isFile()) {
-            Log.warn("Warning: Failed to find web application. Could not find 'web.xml' at '" + webXml.getAbsolutePath() + "'");
+            Gridworks.warn("Warning: Failed to find web application. Could not find 'web.xml' at '" + webXml.getAbsolutePath() + "'");
             System.exit(-1);
         }
 
-        Log.info("Initializing context: '" + contextPath + "' from '" + contextRoot.getAbsolutePath() + "'");
+        Gridworks.info("Initializing context: '" + contextPath + "' from '" + contextRoot.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(contextRoot.getAbsolutePath(), contextPath);
         //context.setCopyWebDir(false);
         //context.setDefaultsDescriptor(null);
@@ -122,10 +134,12 @@ public class Gridworks extends Server {
 
         // Enable context autoreloading
         if (Configurations.getBoolean("gridworks.autoreloading",false)) {
-            scanForUpdates(contextRoot, context);
+            scanForUpdates(contextRoot, classRoot, context);
         }
+        
+        this.start();
     }
-
+    
     @Override
     protected void doStop() throws Exception {    
         try {
@@ -138,15 +152,15 @@ public class Gridworks extends Server {
             // ignore
         }
     }
-    
-    private void scanForUpdates(final File contextRoot, final WebAppContext context) {
+        
+    private void scanForUpdates(final File contextRoot, final File classRoot, final WebAppContext context) {
         List<File> scanList = new ArrayList<File>();
 
         scanList.add(new File(contextRoot, "WEB-INF/web.xml"));
         findFiles(".class", new File(contextRoot, "WEB-INF"), scanList);
-        findFiles(".js", new File(contextRoot, "WEB-INF"), scanList);
+        findFiles(".class", classRoot, scanList);
 
-        Log.info("Starting autoreloading scanner...");
+        Gridworks.info("Starting autoreloading scanner... [class dir: " + classRoot.getAbsolutePath() + "]");
 
         Scanner scanner = new Scanner();
         scanner.setScanInterval(Configurations.getInteger("gridworks.scanner.period",1));
@@ -157,10 +171,10 @@ public class Gridworks extends Server {
             @SuppressWarnings("unchecked")
             public void filesChanged(List changedFiles) {
                 try {
-                    Log.info("Stopping context: " + contextRoot.getAbsolutePath());
+                    Gridworks.info("Stopping context: " + contextRoot.getAbsolutePath());
                     context.stop();
 
-                    Log.info("Starting context: " + contextRoot.getAbsolutePath());
+                    Gridworks.info("Starting context: " + contextRoot.getAbsolutePath());
                     context.start();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
@@ -170,8 +184,8 @@ public class Gridworks extends Server {
 
         scanner.start();
     }
-
-    static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
+    
+    private void findFiles(final String extension, File baseDir, final Collection<File> found) {
         baseDir.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
                 if (pathname.isDirectory()) {
@@ -183,21 +197,32 @@ public class Gridworks extends Server {
             }
         });
     }
-
-}
     
+}
+
+/* -------------- Gridworks Client ----------------- */
+
+class GridworksClient {
+    
+    public void init(String host, int port) throws Exception {
+        URI starting_url = new URI("http://" + host + ":" + port + "/");
+        Desktop.getDesktop().browse(starting_url); 
+        
+    }
+}
+
 class ShutdownSignalHandler extends SignalHandler {
     
-    private Gridworks _server;
+    private Server _server;
 
-    public ShutdownSignalHandler(String sigName, Gridworks server) {
+    public ShutdownSignalHandler(String sigName, Server server) {
         super(sigName);
         this._server = server;
     }
 
     public boolean handle(String signame) {
 
-        System.err.println("Received Signal: " + signame);
+        //System.err.println("Received Signal: " + signame);
         
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections

@@ -103,7 +103,7 @@
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
                 jvmversion="1.6+"
                 bundleid="com.metaweb.gridworks.Gridworks"
-                vmoptions="${java.options}"
+                vmoptions="-Dgridworks.version=${revision} ${java.options}"
                 antialiasedgraphics="true"
                 antialiasedtext="true"
                 liveresize="true"
@@ -138,7 +138,7 @@
                 <cp>lib/*.jar</cp>
             </classPath>
             <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
-                <opt>-Djava.library.path=lib/native/windows</opt>
+                <opt>-Djava.library.path=lib/native/windows -Dgridworks.version=${revision}</opt>
             </jre>
             <versionInfo
                 fileVersion="${num_version}.0.0"

@@ -37,7 +37,7 @@ public class History implements Jsonizable {
     }
     
     static public void writeOneChange(Writer writer, Change change) throws Exception {
-        writer.write(Gridworks.s_version); writer.write('\n');
+        writer.write(Gridworks.getVersion()); writer.write('\n');
         writer.write(change.getClass().getName()); writer.write('\n');
             
         Properties options = new Properties();

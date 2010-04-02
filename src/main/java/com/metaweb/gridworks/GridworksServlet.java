@@ -62,7 +62,7 @@ public class GridworksServlet extends HttpServlet {
     static protected Map<String, Command> _commands = new HashMap<String, Command>();
     
     // timer for periodically saving projects
-    static protected Timer _timer = new Timer();
+    static protected Timer _timer;
     
     static {
         _commands.put("create-project-from-upload", new CreateProjectCommand());
@@ -127,6 +127,10 @@ public class GridworksServlet extends HttpServlet {
         super.init();
         
         ProjectManager.initialize();
+        
+        if (_timer == null) {
+            _timer = new Timer();            
+        }
         
         long period = 1000 * 60 * 5; // 5 minutes
         _timer.scheduleAtFixedRate(new TimerTask() {

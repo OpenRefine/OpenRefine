@@ -111,7 +111,7 @@ public class Project {
     }
     
     protected void saveToWriter(Writer writer, Properties options) throws IOException {
-        writer.write(Gridworks.s_version); writer.write('\n');
+        writer.write(Gridworks.getVersion()); writer.write('\n');
         
         writer.write("columnModel=\n"); columnModel.save(writer, options);
         writer.write("history=\n"); history.save(writer, options);
