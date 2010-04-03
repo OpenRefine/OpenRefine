@@ -36,7 +36,7 @@ import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
 public class Gridworks {
     
-    static private String version;
+    static private final String version = "1.0a";
     static private File tempDir;
     
     private static Logger root = Logger.getRootLogger();
@@ -87,8 +87,6 @@ public class Gridworks {
 
         Logger jetty_logger = Logger.getLogger("org.mortbay.log");
         jetty_logger.setLevel(Level.WARN);
-
-        version = Configurations.get("gridworks.version","trunk");
 
         tempDir = new File(Configurations.get("gridworks.temp","temp"));
         if (!tempDir.exists()) tempDir.mkdirs();
