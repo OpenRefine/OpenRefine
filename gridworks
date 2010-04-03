@@ -40,10 +40,7 @@ where [options] include:
 
   -m <memory> max memory heap size to use
      default: 1024M
-          
-  -a autoreload if class files change
-     default: false
-     
+               
   --debug enable JVM debugging (on port 8000)
        
   --jmx enable JMX monitoring (for jconsole and jvisualvm)
@@ -267,18 +264,22 @@ run() {
             echo ""
         fi
     fi
+    
+    if [ -d $GRIDWORKS_BUILD_DIR/classes ] ; then
+        add_option "-Dgridworks.autoreloading=true"
+    fi
 
     if [ "$SYSTEM" == 'Darwin' ] ; then
-        OPTS="-Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns $OPTS"
+        add_option "-Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns"
     fi
     
     if [ "$GRIDWORKS_DATA_DIR" != "" ] ; then
-        OPTS="-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR $OPTS"
+        add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
     
     get_revision
     
-    OPTS="-Dgridworks.version=$REVISION $OPTS"
+    add_option "-Dgridworks.version=$REVISION"
     
     CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
 
@@ -358,7 +359,6 @@ while [ $# -ne 0 ] ; do
     -w) shift; GRIDWORKS_WEBAPP="$1"; shift; continue;;
     -d) shift; GRIDWORKS_DATA_DIR="$1"; shift; continue;;
     -m) shift; GRIDWORKS_MEMORY="$1"; shift; continue;;
-    -a) shift; add_option '-Dgridworks.autoreloading=true'; continue;;
     --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
