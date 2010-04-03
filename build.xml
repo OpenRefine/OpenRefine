@@ -22,13 +22,15 @@
     <property environment="env"/>
 
     <property name="src.dir" value="${basedir}/src/main/java" />
+    <property name="server.src.dir" value="${basedir}/src/server/java" />
     <property name="graphics.dir" value="${basedir}/src/graphics" />
     <property name="conf.dir" value="${basedir}/src/conf" />
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="tools.dir" value="${basedir}/thirdparty" />
     <property name="tests.dir" value="${basedir}/tests" />
     
-    <property name="classes.dir" value="${build.dir}/classes" />
+    <property name="server_classes.dir" value="${build.dir}/classes" />
+    <property name="webapp_classes.dir" value="${basedir}/src/main/webapp/WEB-INF/classes" />
     <property name="tests_classes.dir" value="${tests.dir}/classes" />
     <property name="webapp.name" value="webapp" />
     <property name="webapp.dir" value="${build.dir}/${webapp.name}" />
@@ -43,17 +45,29 @@
         </fileset>
     </path>
 
+    <path id="webapp.class.path">
+        <pathelement path="${server_classes.dir}"/>
+        <path refid="class.path"/>
+    </path>
+
     <path id="tests.class.path">
         <path refid="class.path"/>
         <fileset dir="${tests.dir}/lib">
             <include name="**/*.jar" />
         </fileset>
     </path>
-            
-    <target name="build">
-        <mkdir dir="${classes.dir}" />
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" includeAntRuntime="no">
+
+    <target name="build_server">
+        <mkdir dir="${server_classes.dir}" />
+        <javac srcdir="${server.src.dir}" destdir="${server_classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="class.path" />
+        </javac>
+    </target>
+            
+    <target name="build" depends="build_server">
+        <mkdir dir="${webapp_classes.dir}" />
+        <javac srcdir="${src.dir}" destdir="${webapp_classes.dir}" debug="true" includeAntRuntime="no">
+            <classpath refid="webapp.class.path" />
         </javac>
     </target>
 
@@ -65,7 +79,8 @@
     </target>
 
     <target name="jar" depends="build">
-        <jar destfile="${build.dir}/gridworks.jar" basedir="${classes.dir}"/>
+        <jar destfile="${build.dir}/gridworks.jar" basedir="${webapp_classes.dir}"/>
+        <jar destfile="${build.dir}/gridworks-server.jar" basedir="${server_classes.dir}"/>
     </target>
 
     <target name="prepare_webapp">
@@ -74,6 +89,7 @@
         <copy todir="${webapp.dir}">
             <fileset dir="${basedir}/src/main/webapp">
                 <include name="**/*"/>
+                <exclude name="WEB-INF/classes/**"/>
             </fileset>
         </copy>
         
@@ -114,6 +130,7 @@
                 <include name="**/*.jar" />
             </jarfileset>
             <jarfilelist dir="${build.dir}" files="gridworks.jar" />
+            <jarfilelist dir="${build.dir}" files="gridworks-server.jar" />
             <resourcefileset dir="${webapp.dir}/..">
                 <include name="${webapp.name}/**" />
             </resourcefileset>
@@ -165,6 +182,7 @@
             </fileset>
         </copy>
         <copy file="${build.dir}/gridworks.jar" tofile="${windows.dir}/lib/gridworks-${version}-${revision}.jar"/>
+        <copy file="${build.dir}/gridworks-server.jar" tofile="${windows.dir}/lib/gridworks-server-${version}-${revision}.jar"/>
         <copy todir="${windows.dir}/webapp">
             <fileset dir="${webapp.dir}">
                 <include name="**"/>
@@ -195,6 +213,7 @@
         </copy>
 
         <copy file="${build.dir}/gridworks.jar" tofile="${linux.dir}/lib/gridworks-${version}-${revision}.jar"/>
+        <copy file="${build.dir}/gridworks-server.jar" tofile="${linux.dir}/lib/gridworks-server-${version}-${revision}.jar"/>
     
         <copy todir="${linux.dir}/src/main/webapp">
             <fileset dir="${webapp.dir}">
@@ -211,6 +230,8 @@
         <copy file="${basedir}/README.txt" tofile="${linux.dir}/README.txt"/>
         <copy file="${basedir}/gridworks" tofile="${linux.dir}/gridworks"/>
         
+        <echo file="${linux.dir}/.revision" append="false">${revision}</echo>
+        
         <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/gridworks-${version}-${revision}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
                <include name="${linux.name}/gridworks"/>
@@ -224,11 +245,12 @@
 
     <target name="clean">
         <delete file="${build.dir}/gridworks.jar" />
-        <delete dir="${classes.dir}" />
+        <delete dir="${server_classes.dir}" />
+        <delete dir="${webapp_classes.dir}" />
         <delete dir="${tests_classes.dir}" />
     </target>
 
-    <target name="distclean">
+    <target name="distclean" depends="clean">
         <delete dir="${build.dir}" />
         <delete dir="${dist.dir}" />
     </target>

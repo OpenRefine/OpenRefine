@@ -138,6 +138,8 @@ get_revision() {
         INFO=`svn info`
     elif [ -d ".git" ]; then
         INFO=`git svn info`
+    elif [ -f ".revision" ]; then
+        REVISION=`cat .revision`
     else
         error "cannot obtain revision, exiting!"
     fi

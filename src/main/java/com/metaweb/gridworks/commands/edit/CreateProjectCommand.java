@@ -193,7 +193,7 @@ public class CreateProjectCommand extends Command {
                     }
                 }
             }
-            Gridworks.log("Most frequent extensions: " + exts.toString());
+            Gridworks.log("**** Most frequent extensions: " + exts.toString());
             
             
         } else if (fileName.endsWith(".zip")) {

@@ -127,7 +127,7 @@ public class GridworksServlet extends HttpServlet {
         super.init();
         
         ProjectManager.initialize();
-        
+                
         if (_timer == null) {
             _timer = new Timer();            
         }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/server/java"/>
 	<classpathentry kind="src" path="tests/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/servlet-api-2.5.jar" sourcepath="lib-src/servlet-api-2.5-sources.jar"/>
@@ -22,5 +23,5 @@
 	<classpathentry kind="lib" path="lib/jython-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/clojure-1.1.0.jar"/>
 	<classpathentry kind="lib" path="tests/lib/junit-4.8.1.jar" sourcepath="tests/lib-src/junit-4.8.1-sources.jar"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="output" path="src/main/webapp/WEB-INF/classes"/>
 </classpath>

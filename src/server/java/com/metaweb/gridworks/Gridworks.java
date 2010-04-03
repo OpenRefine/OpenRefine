@@ -139,7 +139,6 @@ class GridworksServer extends Server {
         this.addConnector(connector);
 
         final File contextRoot = new File(Configurations.get("gridworks.webapp","webapp"));
-        final File classRoot = new File(Configurations.get("gridworks.classes","build/classes"));
         final String contextPath = Configurations.get("gridworks.context_path","/");
 
         File webXml = new File(contextRoot, "WEB-INF/web.xml");
@@ -159,7 +158,7 @@ class GridworksServer extends Server {
 
         // Enable context autoreloading
         if (Configurations.getBoolean("gridworks.autoreloading",false)) {
-            scanForUpdates(contextRoot, classRoot, context);
+            scanForUpdates(contextRoot, context);
         }
         
         this.start();
@@ -178,14 +177,13 @@ class GridworksServer extends Server {
         }
     }
         
-    private void scanForUpdates(final File contextRoot, final File classRoot, final WebAppContext context) {
+    private void scanForUpdates(final File contextRoot, final WebAppContext context) {
         List<File> scanList = new ArrayList<File>();
 
         scanList.add(new File(contextRoot, "WEB-INF/web.xml"));
-        findFiles(".class", new File(contextRoot, "WEB-INF"), scanList);
-        findFiles(".class", classRoot, scanList);
+        findFiles(".class", new File(contextRoot, "WEB-INF/classes"), scanList);
 
-        Gridworks.info("Starting autoreloading scanner... [class dir: " + classRoot.getAbsolutePath() + "]");
+        Gridworks.info("Starting autoreloading scanner... ");
 
         Scanner scanner = new Scanner();
         scanner.setScanInterval(Configurations.getInteger("gridworks.scanner.period",1));
