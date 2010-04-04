@@ -21,65 +21,61 @@ public class TsvCsvImporter implements Importer {
             throws Exception {
         
         LineNumberReader lnReader = new LineNumberReader(reader);
-        try {
-            String      sep = options.getProperty("separator"); // auto-detect if not present
-            String      line = null;
-            boolean     first = true;
-            int         cellCount = 1;
-            RowParser   parser = (sep == null || (sep.length() == 0)) ? null : new SeparatorRowParser(sep);
+        String      sep = options.getProperty("separator"); // auto-detect if not present
+        String      line = null;
+        boolean     first = true;
+        int         cellCount = 1;
+        RowParser   parser = (sep == null || (sep.length() == 0)) ? null : new SeparatorRowParser(sep);
+        
+        int rowsWithData = 0;
+        while ((line = lnReader.readLine()) != null) {
+            if (line.trim().length() == 0) {
+                continue;
+            }
             
-            int rowsWithData = 0;
-            while ((line = lnReader.readLine()) != null) {
-                if (line.trim().length() == 0) {
-                    continue;
-                }
-                
-                if (parser == null) {
-                    int tab = line.indexOf('\t');
-                    if (tab >= 0) {
-                        sep = "\t";
-                        parser = new SeparatorRowParser(sep);
-                    } else {
-                        sep = ",";
-                        parser = new CSVRowParser();
-                    }
-                }
-                
-                if (first) {
-                    String[] cells = StringUtils.splitPreserveAllTokens(line, sep);
-                                        
-                    first = false;
-                    for (int c = 0; c < cells.length; c++) {
-                        String cell = cells[c];
-                        if (cell.startsWith("\"") && cell.endsWith("\"")) {
-                            cell = cell.substring(1, cell.length() - 1);
-                        }
-                        
-                        Column column = new Column(c, cell);
-                        
-                        project.columnModel.columns.add(column);
-                    }
-                    
-                    cellCount = cells.length;
+            if (parser == null) {
+                int tab = line.indexOf('\t');
+                if (tab >= 0) {
+                    sep = "\t";
+                    parser = new SeparatorRowParser(sep);
                 } else {
-                    Row row = new Row(cellCount);
+                    sep = ",";
+                    parser = new CSVRowParser();
+                }
+            }
+            
+            if (first) {
+                String[] cells = StringUtils.splitPreserveAllTokens(line, sep);
+                                    
+                first = false;
+                for (int c = 0; c < cells.length; c++) {
+                    String cell = cells[c];
+                    if (cell.startsWith("\"") && cell.endsWith("\"")) {
+                        cell = cell.substring(1, cell.length() - 1);
+                    }
                     
-                    if (parser.parseRow(row, line)) {
-                        rowsWithData++;
+                    Column column = new Column(c, cell);
+                    
+                    project.columnModel.columns.add(column);
+                }
+                
+                cellCount = cells.length;
+            } else {
+                Row row = new Row(cellCount);
+                
+                if (parser.parseRow(row, line)) {
+                    rowsWithData++;
+                    
+                    if (skip <= 0 || rowsWithData > skip) {
+                        project.rows.add(row);
+                        project.columnModel.setMaxCellIndex(row.cells.size());
                         
-                        if (skip <= 0 || rowsWithData > skip) {
-                            project.rows.add(row);
-                            project.columnModel.setMaxCellIndex(row.cells.size());
-                            
-                            if (limit > 0 && project.rows.size() >= limit) {
-                                break;
-                            }
+                        if (limit > 0 && project.rows.size() >= limit) {
+                            break;
                         }
                     }
                 }
             }
-        } finally {
-            lnReader.close();
         }
     }
 

@@ -380,7 +380,7 @@ fi
 add_option "$JAVA_OPTIONS"
 
 if [ "$GRIDWORKS_MEMORY" == "" ] ; then
-    GRIDWORKS_MEMORY="1024M"
+    GRIDWORKS_MEMORY="3072M"
 fi
 add_option "-Xms256M -Xmx$GRIDWORKS_MEMORY"
 

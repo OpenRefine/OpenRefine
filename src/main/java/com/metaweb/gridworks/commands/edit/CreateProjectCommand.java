@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,9 +19,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -108,7 +112,13 @@ public class CreateProjectCommand extends Command {
                 if (part.isFile()) {
                     
                     FilePart filePart = (FilePart) part;
-                    internalImportFile(project, options, filePart.getFileName(), filePart.getInputStream());
+                    InputStream stream = filePart.getInputStream();
+                    String name = filePart.getFileName().toLowerCase();
+                    try {
+                        internalImportFile(project, options, name, stream);
+                    } finally {
+                        stream.close();
+                    }
                     
                 } else if (part.isParam()) {
                     ParamPart paramPart = (ParamPart) part;
@@ -134,6 +144,25 @@ public class CreateProjectCommand extends Command {
             }
         }
     }
+        
+    class SafeInputStream extends FilterInputStream {
+        public SafeInputStream(InputStream stream) {
+            super(stream);
+        }
+               
+        @Override
+        public void close() {
+            // some libraries attempt to close the input stream while they can't 
+            // read anymore from it... unfortunately this behavior prevents 
+            // the zip input stream from functioning correctly so we just have
+            // to ignore those close() calls and just close it ourselves
+            // forcefully later
+        }
+        
+        public void reallyClose() throws IOException {
+            super.close();
+        }
+    }
     
     protected void internalImportFile(
         Project     project,
@@ -141,8 +170,11 @@ public class CreateProjectCommand extends Command {
         String    fileName,
         InputStream inputStream
     ) throws Exception {
-                
-        if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tar.bz2")) {
+
+        Gridworks.info("Importing " + fileName + "");
+        
+        if (fileName.endsWith(".zip") || fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || fileName.endsWith(".tar.bz2")) {
+
             // first, save the file on disk, since we need two passes and we might 
             // not have enough memory to keep it all in there
             File file = save(inputStream);
@@ -150,24 +182,33 @@ public class CreateProjectCommand extends Command {
             // in the first pass, gather statistics about what files are in there
             // unfortunately, we have to rely on files extensions, which is horrible but
             // better than nothing
-            BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
-            InputStream is = (fileName.endsWith(".tar.gz")) ? new GZIPInputStream(stream): new CBZip2InputStream(stream);
-            TarInputStream tis = new TarInputStream(is);
             HashMap<String,Integer> ext_map = new HashMap<String,Integer>();
-            while (true) {
-                TarEntry entry = tis.getNextEntry();
-                if (entry == null) break;
-                if (!entry.isDirectory()) {
-                    String name = entry.getName();
-                    String ext = getExtension(name)[1];
-                    if (ext_map.containsKey(ext)) {
-                        ext_map.put(ext, ext_map.get(ext) + 1);
-                    } else {
-                        ext_map.put(ext, 1);
+
+            InputStream is = getStream(fileName, new FileInputStream(file));
+            
+            // NOTE(SM): unfortunately, java.io does not provide any generalized class for 
+            // archive-like input streams so while both TarInputStream and ZipInputStream 
+            // behave precisely the same, there is no polymorphic behavior so we have
+            // to treat each instance explicitly... one of those times you wish you had
+            // closures
+            if (is instanceof TarInputStream) {
+                TarInputStream tis = (TarInputStream) is;
+                TarEntry te;
+                while ((te = tis.getNextEntry()) != null) {
+                    if (!te.isDirectory()) {
+                        mapExtension(te.getName(),ext_map);
+                    }
+                }
+            } else if (is instanceof ZipInputStream) {
+                ZipInputStream zis = (ZipInputStream) is;
+                ZipEntry ze;
+                while ((ze = zis.getNextEntry()) != null) {
+                    if (!ze.isDirectory()) {
+                        mapExtension(ze.getName(),ext_map);
                     }
                 }
             }
-            stream.close();
+            is.close();
 
             // sort extensions by how often they appear
             List<Entry<String,Integer>> values = new ArrayList<Entry<String,Integer>>(ext_map.entrySet());
@@ -193,17 +234,42 @@ public class CreateProjectCommand extends Command {
                     }
                 }
             }
-            Gridworks.log("**** Most frequent extensions: " + exts.toString());
-            
-            
-        } else if (fileName.endsWith(".zip")) {
-            
+            Gridworks.log("Most frequent extensions: " + exts.toString());
+
+            // second pass, load the data for real
+            is = getStream(fileName, new FileInputStream(file));
+            SafeInputStream sis = new SafeInputStream(is);
+            if (is instanceof TarInputStream) {
+                TarInputStream tis = (TarInputStream) is;
+                TarEntry te;
+                while ((te = tis.getNextEntry()) != null) {
+                    if (!te.isDirectory()) {
+                        String name = te.getName();
+                        String ext = getExtension(name)[1];
+                        if (exts.contains(ext)) {
+                            internalImportFile(project, options, name, sis);
+                        }
+                    }
+                }
+            } else if (is instanceof ZipInputStream) {
+                ZipInputStream zis = (ZipInputStream) is;
+                ZipEntry ze;
+                while ((ze = zis.getNextEntry()) != null) {
+                    if (!ze.isDirectory()) {
+                        String name = ze.getName();
+                        String ext = getExtension(name)[1];
+                        if (exts.contains(ext)) {
+                            internalImportFile(project, options, name, sis);
+                        }
+                    }
+                }
+            }
+            sis.reallyClose();
+
         } else if (fileName.endsWith(".gz")) {
-            String[] frags = getExtension(fileName);
-            internalImportFile(project, options, frags[0], new GZIPInputStream(inputStream));
+            internalImportFile(project, options, getExtension(fileName)[0], new GZIPInputStream(inputStream));
         } else if (fileName.endsWith(".bz2")) {
-            String[] frags = getExtension(fileName);
-            internalImportFile(project, options, frags[0], new CBZip2InputStream(inputStream));
+            internalImportFile(project, options, getExtension(fileName)[0], new CBZip2InputStream(inputStream));
         } else {
             load(project, options, fileName, inputStream);
         }
@@ -218,7 +284,6 @@ public class CreateProjectCommand extends Command {
     private void load(Project project, Properties options, String fileName, InputStream inputStream) throws Exception {
         Importer importer = guessImporter(options, null, fileName);
         internalInvokeImporter(project, importer, options, inputStream, null);
-        inputStream.close();
     }
 
     private File save(InputStream is) throws IOException {
@@ -227,6 +292,27 @@ public class CreateProjectCommand extends Command {
         copy(is,temp);
         is.close();
         return temp;
+    }
+    
+    private void mapExtension(String name, Map<String,Integer> ext_map) {
+        String ext = getExtension(name)[1];
+        if (ext_map.containsKey(ext)) {
+            ext_map.put(ext, ext_map.get(ext) + 1);
+        } else {
+            ext_map.put(ext, 1);
+        }
+    }
+
+    private InputStream getStream(String fileName, InputStream is) throws IOException {
+        if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) { 
+            return new TarInputStream(new GZIPInputStream(is));
+        } else if (fileName.endsWith(".tar.bz2")) {
+            return new TarInputStream(new CBZip2InputStream(is));
+        } else if (fileName.endsWith(".zip")) {
+            return new ZipInputStream(is);
+        } else {
+            return null;
+        }
     }
     
     private String[] getExtension(String filename) {
@@ -296,39 +382,21 @@ public class CreateProjectCommand extends Command {
         String      encoding
     ) throws Exception {
         
-        int limit = -1;
-        int skip = 0;
-        
-        if (options.containsKey("limit")) {
-            String s = options.getProperty("limit");
-            try {
-                limit = Integer.parseInt(s);
-            } catch (Exception e) {
-            }
-        }
-        if (options.containsKey("skip")) {
-            String s = options.getProperty("skip");
-            try {
-                skip = Integer.parseInt(s);
-            } catch (Exception e) {
-            }
-        }
-        
-        BufferedInputStream inputStream = new BufferedInputStream(rawInputStream);
-        
+        int limit = getIntegerOption("limit",options,-1);
+        int skip = getIntegerOption("skip",options,0);
+                
         if (importer.takesReader()) {
-            /*
-             * NOTE(SM): The ICU4J char detection code requires the input stream to support mark/reset. 
-             * Unfortunately, not all ServletInputStream implementations are marking, so we need do 
-             * this memory-expensive wrapping to make it work. It's far from ideal but I don't have 
-             * a more efficient solution.
-             */
+
+            BufferedInputStream inputStream = new BufferedInputStream(rawInputStream);
+            
+            // NOTE(SM): The ICU4J char detection code requires the input stream to support mark/reset. 
+            // Unfortunately, not all ServletInputStream implementations are marking, so we need do 
+            // this memory-expensive wrapping to make it work. It's far from ideal but I don't have 
+            // a more efficient solution.
             byte[] bytes = new byte[1024 * 4];
-            {
-                inputStream.mark(bytes.length);
-                inputStream.read(bytes);
-                inputStream.reset();
-            }
+            inputStream.mark(bytes.length);
+            inputStream.read(bytes);
+            inputStream.reset();
             
             CharsetDetector detector = new CharsetDetector();
             detector.setDeclaredEncoding("utf8"); // most of the content on the web is encoded in UTF-8 so start with that
@@ -361,7 +429,7 @@ public class CreateProjectCommand extends Command {
             
             importer.read(reader, project, options, skip, limit);
         } else {
-            importer.read(inputStream, project, options, skip, limit);
+            importer.read(rawInputStream, project, options, skip, limit);
         }        
     }
     
@@ -372,23 +440,8 @@ public class CreateProjectCommand extends Command {
         Reader      reader
     ) throws Exception {
         
-        int limit = -1;
-        int skip = 0;
-        
-        if (options.containsKey("limit")) {
-            String s = options.getProperty("limit");
-            try {
-                limit = Integer.parseInt(s);
-            } catch (Exception e) {
-            }
-        }
-        if (options.containsKey("skip")) {
-            String s = options.getProperty("skip");
-            try {
-                skip = Integer.parseInt(s);
-            } catch (Exception e) {
-            }
-        }
+        int limit = getIntegerOption("limit",options,-1);
+        int skip = getIntegerOption("skip",options,0);
         
         importer.read(reader, project, options, skip, limit);
     }
@@ -433,5 +486,17 @@ public class CreateProjectCommand extends Command {
         }
         
         return new TsvCsvImporter();
+    }
+    
+    private int getIntegerOption(String name, Properties options, int def) {
+        int value = def;
+        if (options.containsKey(name)) {
+            String s = options.getProperty(name);
+            try {
+                value = Integer.parseInt(s);
+            } catch (Exception e) {
+            }
+        }
+        return value;
     }
 }
