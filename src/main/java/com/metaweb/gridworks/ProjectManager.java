@@ -43,7 +43,7 @@ public class ProjectManager {
     
     static public ProjectManager singleton;
     
-    static public void initialize() {
+    static public synchronized void initialize() {
         if (singleton == null) {
             File dir = getProjectLocation();
             Gridworks.log("Using workspace directory: " + dir.getAbsolutePath());
@@ -325,8 +325,6 @@ public class ProjectManager {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
         Date now = new Date();
         
-        boolean gc = false;
-        
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
                 ProjectMetadata metadata = _projectsMetadata.get(id);
@@ -347,8 +345,6 @@ public class ProjectManager {
                          *  modified. We can safely remove it from the cache to save some memory.
                          */
                         _projects.remove(id);
-                        
-                        gc = true;
                     }
                 }
             }
@@ -383,10 +379,6 @@ public class ProjectManager {
                     e.printStackTrace();
                 }
             }
-        }
-        
-        if (gc) {
-            System.gc();
         }
     }
     

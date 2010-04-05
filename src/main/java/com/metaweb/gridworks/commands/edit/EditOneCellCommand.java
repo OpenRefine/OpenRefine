@@ -75,7 +75,7 @@ public class EditOneCellCommand extends Command {
         }
     }
     
-    protected class EditOneCellProcess extends QuickHistoryEntryProcess {
+    protected static class EditOneCellProcess extends QuickHistoryEntryProcess {
         final int rowIndex;
         final int cellIndex;
         final Serializable value;

@@ -44,6 +44,7 @@ public class ChangeSequence implements Change {
     
     static public Change load(LineNumberReader reader) throws Exception {
         String line = reader.readLine();
+        if (line == null) line = "";
         int equal = line.indexOf('=');
         
         assert "count".equals(line.substring(0, equal));

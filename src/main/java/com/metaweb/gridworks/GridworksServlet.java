@@ -59,7 +59,7 @@ public class GridworksServlet extends HttpServlet {
     
     private static final long serialVersionUID = 2386057901503517403L;
     
-    static protected Map<String, Command> _commands = new HashMap<String, Command>();
+    static final protected Map<String, Command> _commands = new HashMap<String, Command>();
     
     // timer for periodically saving projects
     static protected Timer _timer;

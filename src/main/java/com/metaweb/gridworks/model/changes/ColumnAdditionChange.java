@@ -94,7 +94,10 @@ public class ColumnAdditionChange extends ColumnChange {
                 
                 newCells = new ArrayList<CellAtRow>(newCellCount);
                 for (int i = 0; i < newCellCount; i++) {
-                    newCells.add(CellAtRow.load(line = reader.readLine()));
+                    line = reader.readLine();
+                    if (line != null) {
+                        newCells.add(CellAtRow.load(line));
+                    }
                 }
             }
         }

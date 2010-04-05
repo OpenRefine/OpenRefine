@@ -10,8 +10,9 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 
 public abstract class OperationRegistry {
-    static public Map<String, Class<? extends AbstractOperation>> s_opNameToClass;
-    static public Map<Class<? extends AbstractOperation>, String> s_opClassToName;
+
+    static final public Map<String, Class<? extends AbstractOperation>> s_opNameToClass = new HashMap<String, Class<? extends AbstractOperation>>();
+    static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName = new HashMap<Class<? extends AbstractOperation>, String>();
     
     static protected void register(String name, Class<? extends AbstractOperation> klass) {
         s_opNameToClass.put(name, klass);
@@ -19,9 +20,6 @@ public abstract class OperationRegistry {
     }
     
     static {
-        s_opNameToClass = new HashMap<String, Class<? extends AbstractOperation>>();
-        s_opClassToName = new HashMap<Class<? extends AbstractOperation>, String>();
-        
         register("recon", ReconOperation.class);
         register("recon-mark-new-topics", ReconMarkNewTopicsOperation.class);
         register("recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);

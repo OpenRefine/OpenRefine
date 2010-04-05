@@ -81,13 +81,13 @@ public class ReconJudgeOneCellCommand extends Command {
         }
     }
     
-    protected class JudgeOneCellProcess extends QuickHistoryEntryProcess {
+    protected static class JudgeOneCellProcess extends QuickHistoryEntryProcess {
+
         final int rowIndex;
         final int cellIndex;
         final Judgment judgment;
         final ReconCandidate match;
         Cell newCell;
-        
         
         JudgeOneCellProcess(
             Project project, 

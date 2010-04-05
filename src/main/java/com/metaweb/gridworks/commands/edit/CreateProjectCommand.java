@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -145,7 +146,7 @@ public class CreateProjectCommand extends Command {
         }
     }
         
-    class SafeInputStream extends FilterInputStream {
+    static class SafeInputStream extends FilterInputStream {
         public SafeInputStream(InputStream stream) {
             super(stream);
         }
@@ -191,24 +192,29 @@ public class CreateProjectCommand extends Command {
             // behave precisely the same, there is no polymorphic behavior so we have
             // to treat each instance explicitly... one of those times you wish you had
             // closures
-            if (is instanceof TarInputStream) {
-                TarInputStream tis = (TarInputStream) is;
-                TarEntry te;
-                while ((te = tis.getNextEntry()) != null) {
-                    if (!te.isDirectory()) {
-                        mapExtension(te.getName(),ext_map);
+            try {
+                if (is instanceof TarInputStream) {
+                    TarInputStream tis = (TarInputStream) is;
+                    TarEntry te;
+                    while ((te = tis.getNextEntry()) != null) {
+                        if (!te.isDirectory()) {
+                            mapExtension(te.getName(),ext_map);
+                        }
+                    }
+                } else if (is instanceof ZipInputStream) {
+                    ZipInputStream zis = (ZipInputStream) is;
+                    ZipEntry ze;
+                    while ((ze = zis.getNextEntry()) != null) {
+                        if (!ze.isDirectory()) {
+                            mapExtension(ze.getName(),ext_map);
+                        }
                     }
                 }
-            } else if (is instanceof ZipInputStream) {
-                ZipInputStream zis = (ZipInputStream) is;
-                ZipEntry ze;
-                while ((ze = zis.getNextEntry()) != null) {
-                    if (!ze.isDirectory()) {
-                        mapExtension(ze.getName(),ext_map);
-                    }
-                }
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException e) {}
             }
-            is.close();
 
             // sort extensions by how often they appear
             List<Entry<String,Integer>> values = new ArrayList<Entry<String,Integer>>(ext_map.entrySet());
@@ -239,32 +245,37 @@ public class CreateProjectCommand extends Command {
             // second pass, load the data for real
             is = getStream(fileName, new FileInputStream(file));
             SafeInputStream sis = new SafeInputStream(is);
-            if (is instanceof TarInputStream) {
-                TarInputStream tis = (TarInputStream) is;
-                TarEntry te;
-                while ((te = tis.getNextEntry()) != null) {
-                    if (!te.isDirectory()) {
-                        String name = te.getName();
-                        String ext = getExtension(name)[1];
-                        if (exts.contains(ext)) {
-                            internalImportFile(project, options, name, sis);
+            try {
+                if (is instanceof TarInputStream) {
+                    TarInputStream tis = (TarInputStream) is;
+                    TarEntry te;
+                    while ((te = tis.getNextEntry()) != null) {
+                        if (!te.isDirectory()) {
+                            String name = te.getName();
+                            String ext = getExtension(name)[1];
+                            if (exts.contains(ext)) {
+                                internalImportFile(project, options, name, sis);
+                            }
+                        }
+                    }
+                } else if (is instanceof ZipInputStream) {
+                    ZipInputStream zis = (ZipInputStream) is;
+                    ZipEntry ze;
+                    while ((ze = zis.getNextEntry()) != null) {
+                        if (!ze.isDirectory()) {
+                            String name = ze.getName();
+                            String ext = getExtension(name)[1];
+                            if (exts.contains(ext)) {
+                                internalImportFile(project, options, name, sis);
+                            }
                         }
                     }
                 }
-            } else if (is instanceof ZipInputStream) {
-                ZipInputStream zis = (ZipInputStream) is;
-                ZipEntry ze;
-                while ((ze = zis.getNextEntry()) != null) {
-                    if (!ze.isDirectory()) {
-                        String name = ze.getName();
-                        String ext = getExtension(name)[1];
-                        if (exts.contains(ext)) {
-                            internalImportFile(project, options, name, sis);
-                        }
-                    }
-                }
+            } finally {
+                try {
+                    sis.reallyClose();
+                } catch (IOException e) {}
             }
-            sis.reallyClose();
 
         } else if (fileName.endsWith(".gz")) {
             internalImportFile(project, options, getExtension(fileName)[0], new GZIPInputStream(inputStream));
@@ -275,7 +286,9 @@ public class CreateProjectCommand extends Command {
         }
     }
 
-    public class ValuesComparator implements Comparator<Entry<String,Integer>> {
+    public static class ValuesComparator implements Comparator<Entry<String,Integer>>, Serializable {
+        private static final long serialVersionUID = 8845863616149837657L;
+
         public int compare(Entry<String,Integer> o1, Entry<String,Integer> o2) {
             return o2.getValue() - o1.getValue();
         }
@@ -308,10 +321,8 @@ public class CreateProjectCommand extends Command {
             return new TarInputStream(new GZIPInputStream(is));
         } else if (fileName.endsWith(".tar.bz2")) {
             return new TarInputStream(new CBZip2InputStream(is));
-        } else if (fileName.endsWith(".zip")) {
-            return new ZipInputStream(is);
         } else {
-            return null;
+            return new ZipInputStream(is);
         }
     }
     
@@ -328,12 +339,19 @@ public class CreateProjectCommand extends Command {
         byte[] buffer = new byte[4 * 1024];
         long count = 0;
         int n = 0;
-        while (-1 != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
-            count += n;
+        try {
+            while (-1 != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+                count += n;
+            }
+        } finally {
+            try {
+                output.close();
+            } catch (IOException e) {}
+            try {
+                input.close();
+            } catch (IOException e) {}
         }
-        output.close();
-        input.close();
         return count;
     }
     

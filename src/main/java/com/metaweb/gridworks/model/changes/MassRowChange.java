@@ -67,7 +67,9 @@ public class MassRowChange implements Change {
                 oldRows = new ArrayList<Row>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    oldRows.add(Row.load(line));
+                    if (line != null) {
+                        oldRows.add(Row.load(line));
+                    }
                 }
             } else if ("newRowCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
@@ -75,10 +77,11 @@ public class MassRowChange implements Change {
                 newRows = new ArrayList<Row>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    newRows.add(Row.load(line));
+                    if (line != null) {
+                        newRows.add(Row.load(line));
+                    }
                 }
             }
-
         }
         
         MassRowChange change = new MassRowChange(newRows);

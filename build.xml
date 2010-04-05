@@ -26,7 +26,6 @@
     <property name="graphics.dir" value="${basedir}/src/graphics" />
     <property name="conf.dir" value="${basedir}/src/conf" />
     <property name="lib.dir" value="${basedir}/lib" />
-    <property name="tools.dir" value="${basedir}/thirdparty" />
     <property name="tests.dir" value="${basedir}/tests" />
     
     <property name="server_classes.dir" value="${build.dir}/classes" />
@@ -100,7 +99,7 @@
         <taskdef 
             name="jarbundler" 
             classname="net.sourceforge.jarbundler.JarBundler" 
-            classpath="${tools.dir}/jarbundler-2.1.0.jar" 
+            classpath="${jarbundler.dir}/jarbundler-2.1.0.jar" 
         />
         
         <mkdir dir="${mac.dir}"/>
@@ -138,7 +137,7 @@
         <taskdef 
             name="launch4j" 
             classname="net.sf.launch4j.ant.Launch4jTask" 
-            classpath="${tools.dir}/launch4j/launch4j.jar:${tools.dir}/launch4j/lib/xstream.jar" 
+            classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" 
         />
         <launch4j>
           <config 
@@ -224,8 +223,6 @@
         <copy file="${basedir}/README.txt" tofile="${linux.dir}/README.txt"/>
         <copy file="${basedir}/gridworks" tofile="${linux.dir}/gridworks"/>
         
-        <echo file="${linux.dir}/.revision" append="false">${revision}</echo>
-        
         <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/gridworks-${version}-${revision}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
                <include name="${linux.name}/gridworks"/>
@@ -235,6 +232,19 @@
                <exclude name="${linux.name}/gridworks"/>
            </tarfileset>        
         </tar>
+    </target>
+
+    <target name="findbugs" depends="build">
+        <taskdef 
+            name="findbugs" 
+            classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+            classpath="${findbugs.dir}/lib/findbugs-ant.jar" 
+        />
+        <findbugs jvmargs="-Xmx1024m" home="${findbugs.dir}" output="html" outputFile="${build.dir}/gridworks-findbugs.html" >
+          <auxClasspath refid="class.path" />
+          <sourcePath path="${src.dir}" />
+          <class location="${webapp_classes.dir}" />
+        </findbugs>        
     </target>
 
     <target name="clean">

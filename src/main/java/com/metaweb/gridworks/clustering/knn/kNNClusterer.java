@@ -41,7 +41,7 @@ public class kNNClusterer extends Clusterer {
 
     private Distance _distance;
     
-    static protected Map<String, Distance> _distances = new HashMap<String, Distance>();
+    static final protected Map<String, Distance> _distances = new HashMap<String, Distance>();
 
     List<Set<Serializable>> _clusters;
 
@@ -148,7 +148,8 @@ public class kNNClusterer extends Clusterer {
         _clusters = visitor.getClusters();
     }
 
-    public class ValuesComparator implements Comparator<Entry<Serializable,Integer>> {
+    public static class ValuesComparator implements Comparator<Entry<Serializable,Integer>>, Serializable {
+        private static final long serialVersionUID = 204469656070583155L;
         public int compare(Entry<Serializable,Integer> o1, Entry<Serializable,Integer> o2) {
             return o2.getValue() - o1.getValue();
         }

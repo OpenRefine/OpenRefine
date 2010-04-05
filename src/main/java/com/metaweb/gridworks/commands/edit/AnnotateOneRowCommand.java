@@ -46,7 +46,7 @@ public class AnnotateOneRowCommand extends Command {
         }
     }
     
-    protected class StarOneRowProcess extends QuickHistoryEntryProcess {
+    protected static class StarOneRowProcess extends QuickHistoryEntryProcess {
         final int rowIndex;
         final boolean starred;
         

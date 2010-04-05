@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.clustering.binning;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,7 +28,7 @@ public class BinningClusterer extends Clusterer {
 
     private Keyer _keyer;
     
-    static protected Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
+    static final protected Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
 
     List<Map<String,Integer>> _clusters;
      
@@ -65,19 +66,19 @@ public class BinningClusterer extends Clusterer {
         public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
-                String v = cell.value.toString();
+                Object v = cell.value;
                 String s = (v instanceof String) ? ((String) v) : v.toString();
                 String key = _keyer.key(s,_params);
                 if (_map.containsKey(key)) {
                     Map<String,Integer> m = _map.get(key);
-                    if (m.containsKey(v)) {
-                        m.put(v, m.get(v) + 1);
+                    if (m.containsKey(s)) {
+                        m.put(s, m.get(s) + 1);
                     } else {
-                        m.put(v,1);
+                        m.put(s,1);
                     }
                 } else {
                     Map<String,Integer> m = new TreeMap<String,Integer>();
-                    m.put(v,1);
+                    m.put(s,1);
                     _map.put(key, m);
                 }
             }
@@ -89,7 +90,8 @@ public class BinningClusterer extends Clusterer {
         }
     }
             
-    public class SizeComparator implements Comparator<Map<String,Integer>> {
+    public static class SizeComparator implements Comparator<Map<String,Integer>>, Serializable {
+        private static final long serialVersionUID = -1390696157208674054L;
         public int compare(Map<String,Integer> o1, Map<String,Integer> o2) {
             int s1 = o1.size();
             int s2 = o2.size();
@@ -109,7 +111,8 @@ public class BinningClusterer extends Clusterer {
         }
     }
 
-    public class EntriesComparator implements Comparator<Entry<String,Integer>> {
+    public static class EntriesComparator implements Comparator<Entry<String,Integer>>, Serializable {
+        private static final long serialVersionUID = 2763378036791777964L;
         public int compare(Entry<String,Integer> o1, Entry<String,Integer> o2) {
             return o2.getValue() - o1.getValue();
         }

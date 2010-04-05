@@ -87,7 +87,10 @@ public class ColumnRemovalChange extends ColumnChange {
                 
                 oldCells = new CellAtRow[oldCellCount];
                 for (int i = 0; i < oldCellCount; i++) {
-                    oldCells[i] = CellAtRow.load(line = reader.readLine());
+                    line = reader.readLine();
+                    if (line != null) {
+                        oldCells[i] = CellAtRow.load(line);
+                    }
                 }
             }
         }

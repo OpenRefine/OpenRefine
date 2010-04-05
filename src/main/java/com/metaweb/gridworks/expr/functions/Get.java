@@ -16,7 +16,7 @@ public class Get implements Function {
         if (args.length > 1 && args.length <= 3) {
             Object v = args[0];
             Object from = args[1];
-            Object to = args.length == 3 ? args[2] : null;
+            Object to = (args.length == 3) ? args[2] : null;
             
             if (v != null && from != null) {
                 if (v instanceof HasFields) {
@@ -42,8 +42,7 @@ public class Get implements Function {
                                         ((Object[]) v)[start] :
                                         ExpressionUtils.toObjectList(v).get(start));
                             } else {
-                                int end = to != null && to instanceof Number ? 
-                                        ((Number) to).intValue() : length;
+                                int end = (to != null && to instanceof Number) ? ((Number) to).intValue() : length;
                                             
                                 if (end < 0) {
                                     end = length + end;
@@ -63,7 +62,7 @@ public class Get implements Function {
                                 }
                             }
                         } else {
-                            String s = (v instanceof String ? (String) v : v.toString());
+                            String s = (v instanceof String) ? (String) v : v.toString();
                             
                             int start = ((Number) from).intValue();
                             if (start < 0) {

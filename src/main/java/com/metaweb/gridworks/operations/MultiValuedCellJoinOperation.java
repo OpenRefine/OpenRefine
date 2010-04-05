@@ -64,7 +64,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         int cellIndex = column.getCellIndex();
         
         Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
-        if (column == null) {
+        if (keyColumn == null) {
             throw new Exception("No key column named " + _keyColumnName);
         }
         int keyCellIndex = keyColumn.getCellIndex();

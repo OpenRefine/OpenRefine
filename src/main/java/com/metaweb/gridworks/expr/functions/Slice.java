@@ -15,7 +15,7 @@ public class Slice implements Function {
         if (args.length > 1 && args.length <= 3) {
             Object v = args[0];
             Object from = args[1];
-            Object to = args.length == 3 ? args[2] : null;
+            Object to = (args.length == 3) ? args[2] : null;
             
             if (v != null && from != null && from instanceof Number && (to == null || to instanceof Number)) {
                 if (v.getClass().isArray() || v instanceof List<?>) {
@@ -24,8 +24,7 @@ public class Slice implements Function {
                             ExpressionUtils.toObjectList(v).size();
                     
                     int start = ((Number) from).intValue();
-                    int end = to != null && to instanceof Number ? 
-                            ((Number) to).intValue() : length;
+                    int end = (to != null && to instanceof Number) ? ((Number) to).intValue() : length;
                                 
                     if (start < 0) {
                         start = length + start;
@@ -47,7 +46,7 @@ public class Slice implements Function {
                         return ExpressionUtils.toObjectList(v).subList(start, end);
                     }
                 } else {
-                    String s = (v instanceof String ? (String) v : v.toString());
+                    String s = (v instanceof String) ? (String) v : v.toString();
                     
                     int start = ((Number) from).intValue();
                     if (start < 0) {

@@ -20,7 +20,9 @@ import com.metaweb.gridworks.exporters.XlsExporter;
 import com.metaweb.gridworks.model.Project;
 
 public class ExportRowsCommand extends Command {
-    static protected Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();
+    
+    static final protected Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();
+    
     static {
         s_formatToExporter.put("tripleloader", new TripleloaderExporter());
         s_formatToExporter.put("html", new HtmlTableExporter());

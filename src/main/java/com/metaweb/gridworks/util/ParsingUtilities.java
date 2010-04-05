@@ -20,7 +20,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class ParsingUtilities {
-    static public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    static final public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();

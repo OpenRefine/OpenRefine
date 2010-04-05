@@ -265,8 +265,6 @@ public class HeuristicReconConfig extends ReconConfig {
             e.printStackTrace();
         }
         
-        System.gc();
-        
         return recons;
     }
 
@@ -361,8 +359,6 @@ public class HeuristicReconConfig extends ReconConfig {
             recons.add(recon);
         }
         
-        System.gc();
-        
         return recons;
     }
 
@@ -441,9 +437,8 @@ public class HeuristicReconConfig extends ReconConfig {
         return common / longWords.size();
     }
     
-    static protected Set<String> s_stopWords;
+    static final protected Set<String> s_stopWords = new HashSet<String>();
     static {
-        s_stopWords = new HashSet<String>();
         s_stopWords.add("the");
         s_stopWords.add("a");
         s_stopWords.add("and");

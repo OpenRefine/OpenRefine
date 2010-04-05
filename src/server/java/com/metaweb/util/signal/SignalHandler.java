@@ -8,7 +8,7 @@ public abstract class SignalHandler {
         try {
             _wrapper = new SignalHandlerWrapper(signalName, this);
         } catch (Throwable e) {
-            new java.lang.RuntimeException("Signal handling facilities are not available in this JVM.");
+            throw new java.lang.RuntimeException("Signal handling facilities are not available in this JVM.");
         }
     }
         

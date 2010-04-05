@@ -4,7 +4,7 @@
 #               Gridworks Control System                 #
 ##########################################################
 
-# -------------- functions ------------------------------------
+# -------------- utility functions ----------------------
 
 fail () {
    cat <<EOF
@@ -50,7 +50,8 @@ and <action> is one of
    build ..................... Build Gridworks      
    run ....................... Run Gridworks
 
-   test ...................... Test Gridworks      
+   test ...................... Test Gridworks 
+   findbugs .................. Run Findbugs against Gridworks     
    
    mac_dist <version> ........ Make MacOSX binary distribution
    windows_dist <version> .... Make Windows binary distribution
@@ -66,7 +67,7 @@ EOF
 }
                 
 add_option() {
-  OPTS="$OPTS $1"
+    OPTS="$OPTS $1"
 }
                 
 load_configs() {
@@ -79,45 +80,6 @@ check_macosx() {
     if [ "$SYSTEM" != 'Darwin' ] ; then
         error "This action can only run on MacOSX"
     fi
-}
-    
-ant_prepare() {
-    if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
-        mkdir $GRIDWORKS_BUILD_DIR || exit 1
-    fi
-    
-    ANT=`which ant`
-    if [ "$ANT" = "" ] ; then
-        cd thirdparty
-        ANT_TAR=`ls | grep apache-ant | grep tar.gz | grep -v svn`
-        ANT_DIR=`echo $ANT_TAR | sed 's/.tar.gz//'`
-        if [ ! -d $ANT_DIR ] ; then
-            tar xzf $ANT_TAR -C . || exit 1
-        fi
-        ANT="`pwd`/$ANT_DIR/bin/ant"
-        cd ..
-    fi
-}
-
-ant() {
-    ant_prepare   
-    $ANT -f build.xml -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || exit 1
-}
-
-dist_prepare() {
-    if [ ! -d $GRIDWORKS_DIST_DIR ] ; then 
-        mkdir $GRIDWORKS_DIST_DIR || exit 1
-    fi
-}
-       
-launch4j_prepare() {
-    cd thirdparty
-    LAUNCH4J_TAR=`ls | grep launch4j | grep tar.gz | grep -v svn`
-    LAUNCH4J_DIR="launch4j"
-    if [ ! -d "$LAUNCH4J_DIR" ] ; then
-        tar xzf $LAUNCH4J_TAR || exit 1
-    fi
-    cd ..
 }
 
 get_version() {
@@ -135,14 +97,130 @@ get_revision() {
         INFO=`svn info`
     elif [ -d ".git" ]; then
         INFO=`git svn info`
-    elif [ -f ".revision" ]; then
-        REVISION=`cat .revision`
     else
         error "cannot obtain revision, exiting!"
     fi
 
     REVISION=`echo $INFO | sed 's/.*Revision: /r/' | sed 's/ .*//'`
 }
+
+get_url_file() {
+    return `echo $1 | sed 's|.*/||'`
+}
+    
+download() {
+    URL=$1
+    DEST=$2
+    
+    if [ `which curl` == "" ] && [ `which wget` == "" ]; then
+        error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
+    fi
+    
+    if [ `which curl` != "" ] ; then
+        curl -o $DEST $URL || exit 1
+    fi
+    
+    if [ `which wget` != "" ] ; then
+        wget -O $DEST $URL || exit 1
+    fi
+}
+
+# ----------------------------------------------------------------------------------------------
+
+build_prepare() {
+    if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
+        mkdir $GRIDWORKS_BUILD_DIR || exit 1
+    fi
+}
+
+dist_prepare() {
+    if [ ! -d $GRIDWORKS_DIST_DIR ] ; then 
+        mkdir $GRIDWORKS_DIST_DIR || exit 1
+    fi
+}
+
+tools_prepare() {
+    if [ ! -d $GRIDWORKS_TOOLS_DIR ] ; then 
+        mkdir $GRIDWORKS_TOOLS_DIR || exit 1
+    fi
+}
+            
+ant_prepare() {
+    ANT_URL="http://www.apache.org/dist/ant/binaries/apache-ant-1.8.0-bin.tar.gz"
+    ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
+    ANT_DIR="apache-ant-1.8.0"
+    
+    ANT=`which ant`
+    if [ $ANT == "" ] ; then
+        if [ $ANT_HOME == "" ] ; then
+            cd $GRIDWORKS_TOOLS_DIR
+            if [ ! -f $ANT_FILE ] ; then
+                download $ANT_URL $ANT_FILE
+            fi
+            if [ ! -d $ANT_DIR ] ; then
+                tar xzf $ANT_FILE -C . || exit 1
+            fi
+            export ANT_HOME="`pwd`/$ANT_DIR"
+            cd ..
+        fi
+        ANT="$ANT_HOME/bin/ant"
+    fi
+}
+
+launch4j_prepare() {
+    LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-macosx.tgz"
+    LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
+    LAUNCH4J_DIR="launch4j"
+    
+    cd $GRIDWORKS_TOOLS_DIR
+    if [ ! -f "$LAUNCH4J_FILE" ] ; then
+        download $LAUNCH4J_URL $LAUNCH4J_FILE
+    fi
+    if [ ! -d "$LAUNCH4J_DIR" ] ; then
+        tar xzf $LAUNCH4J_FILE || exit 1
+    fi
+    cd ..
+}
+    
+jarbundler_prepare() {
+    JARBUNDLER_URL="http://www.informagen.com/JarBundler/dist/jarbundler.tar.gz"
+    JARBUNDLER_FILE=`echo $JARBUNDLER_URL | sed 's|.*/||'`
+    JARBUNDLER_DIR="jarbundler-2.1.0"
+
+    cd $GRIDWORKS_TOOLS_DIR
+    if [ ! -f "$JARBUNDLER_FILE" ] ; then
+        download $JARBUNDLER_URL $JARBUNDLER_FILE
+    fi
+    if [ ! -d "$JARBUNDLER_DIR" ] ; then
+        tar xzf $JARBUNDLER_FILE || exit 1
+    fi
+    cd ..
+}
+   
+findbugs_prepare() {
+    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/1.3.9/findbugs-1.3.9.tar.gz"
+    FINDBUGS_FILE=`echo $FINDBUGS_URL | sed 's|.*/||'`
+    FINDBUGS_DIR="findbugs-1.3.9"
+
+    cd $GRIDWORKS_TOOLS_DIR
+    if [ ! -f "$FINDBUGS_FILE" ] ; then
+        download $FINDBUGS_URL $FINDBUGS_FILE
+    fi
+    if [ ! -d "$FINDBUGS_DIR" ] ; then
+        tar xzf $FINDBUGS_FILE || exit 1
+    fi
+    cd ..
+}
+   
+# ----------------------------------------------------------------------------------------------
+
+ant() {
+    ant_prepare   
+    #export ANT_OPTS="-Xmx1024M"
+    $ANT -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || exit 1
+}
+
+# ----------------------------------------------------------------------------------------------
 
 dist() {
     mac_dist $1
@@ -172,6 +250,7 @@ windows_dist() {
     get_version $1
     get_revision
     
+    ANT_PARAMS="-Dlaunch4j.dir=${GRIDWORKS_TOOLS_DIR}/${LAUNCH4J_DIR}"
     ant windows
 }
 
@@ -186,9 +265,11 @@ linux_dist() {
 mac_dist() {
     check_macosx
     dist_prepare
+    jarbundler_prepare
     get_version $1
     get_revision
     
+    ANT_PARAMS="-Djarbundler.dir=${GRIDWORKS_TOOLS_DIR}/${JARBUNDLER_DIR}"
     ant mac
 
     mkdir -p "$GRIDWORKS_BUILD_DIR/mac/.background"
@@ -276,11 +357,7 @@ run() {
     if [ "$GRIDWORKS_DATA_DIR" != "" ] ; then
         add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
-    
-    get_revision
-    
-    add_option "-Dgridworks.version=$REVISION"
-    
+        
     CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
@@ -309,6 +386,13 @@ execute() {
     exec $RUN_CMD $*
 }
     
+findbugs() {
+    findbugs_prepare
+    
+    ANT_PARAMS="-Dfindbugs.dir=${GRIDWORKS_TOOLS_DIR}/${FINDBUGS_DIR}"
+    ant findbugs
+}    
+
 # -------------------------- script -----------------------------
     
 # ----- Normalize the current directory -------------------------
@@ -336,7 +420,7 @@ if [ ! -z "$JAVA_HOME" ] ; then
 else 
     JAVA=`which java`
     if [ -z "$JAVA" ] ; then
-        if [ "$SYSTEM" = 'Darwin' ] ; then
+        if [ "$SYSTEM" == 'Darwin' ] ; then
             JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Home
         else
             error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
@@ -411,6 +495,10 @@ if [ "$GRIDWORKS_LIB_DIR" == "" ] ; then
     GRIDWORKS_LIB_DIR="lib"
 fi
 
+if [ "$GRIDWORKS_TOOLS_DIR" == "" ] ; then
+    GRIDWORKS_TOOLS_DIR="tools"
+fi
+
 if [ "$GRIDWORKS_DIST_DIR" == "" ] ; then
     GRIDWORKS_DIST_DIR="dist"
 fi
@@ -418,38 +506,16 @@ fi
 # ----- Respond to the action given --------------------------------------------
 
 case "$ACTION" in
-
-  build)
-    ant build;;
-
-  clean)
-    ant clean;;
-
-  distclean)
-    ant distclean;;
-
-  test) 
-    test $1;;  
-
-  run) 
-    run;;  
-
-  execute) 
-    execute $*;;  
-    
-  mac_dist)
-    mac_dist $1;;
-
-  windows_dist)
-    windows_dist $1;;
-    
-  linux_dist)
-    linux_dist $1;;
-    
-  dist)
-    dist $1;;
-      
-  *)
-    usage; ;;
-    
+  build) build_prepare; ant build;;
+  clean) ant clean;;
+  distclean) ant distclean;;
+  test) test $1;;  
+  findbugs) findbugs;;  
+  run) run;;  
+  execute) execute $*;;  
+  mac_dist) mac_dist $1;;
+  windows_dist) windows_dist $1;;
+  linux_dist) linux_dist $1;;
+  dist) dist $1;;
+  *) usage; ;;
 esac

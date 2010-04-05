@@ -15,6 +15,7 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
  
 public class Recon implements HasFields, Jsonizable {
+    
     static public enum Judgment {
         None,
         Matched,
@@ -41,16 +42,14 @@ public class Recon implements HasFields, Jsonizable {
         }
     }
     
-    
-    static public int Feature_typeMatch = 0;
-    static public int Feature_nameMatch = 1;
-    static public int Feature_nameLevenshtein = 2;
-    static public int Feature_nameWordDistance = 3;
-    static public int Feature_max = 4;
+    static final public int Feature_typeMatch = 0;
+    static final public int Feature_nameMatch = 1;
+    static final public int Feature_nameLevenshtein = 2;
+    static final public int Feature_nameWordDistance = 3;
+    static final public int Feature_max = 4;
 
-    static protected Map<String, Integer> s_featureMap;
+    static final protected Map<String, Integer> s_featureMap = new HashMap<String, Integer>();
     static {
-        s_featureMap = new HashMap<String, Integer>();
         s_featureMap.put("typeMatch", Feature_typeMatch);
         s_featureMap.put("nameMatch", Feature_nameMatch);
         s_featureMap.put("nameLevenshtein", Feature_nameLevenshtein);

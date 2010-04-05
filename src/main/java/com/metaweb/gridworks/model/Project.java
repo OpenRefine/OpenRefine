@@ -196,10 +196,12 @@ public class Project {
                 int count = Integer.parseInt(value);
                 
                 for (int i = 0; i < count; i++) {
-                	Row row = Row.load(reader.readLine());
-                    project.rows.add(row);
-                    
-                    maxCellCount = Math.max(maxCellCount, row.cells.size());
+                    line = reader.readLine();
+                    if (line != null) {
+                    	Row row = Row.load(line);
+                        project.rows.add(row);
+                        maxCellCount = Math.max(maxCellCount, row.cells.size());
+                    }
                 }
             }
         }

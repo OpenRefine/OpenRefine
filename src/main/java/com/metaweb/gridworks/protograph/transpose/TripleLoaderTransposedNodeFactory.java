@@ -90,13 +90,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     }
     
     protected class AnonymousTransposedNode extends TransposedNodeWithChildren {
-        AnonymousNode node;
         
-        protected AnonymousTransposedNode(
-            AnonymousNode node
-        ) {
-            this.node = node;
-        }
+        protected AnonymousTransposedNode(AnonymousNode node) { }
         
         public String write(String subject, String predicate) {
             if (children.size() == 0 || subject == null) {
@@ -116,7 +111,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                         sb.append(", ");
                     }
                     sb.append("\"" + properties.get(i).id + "\": ");
-                    sb.append(s instanceof String ? JSONObject.quote(s) : s.toString());
+                    sb.append(JSONObject.quote(s));
                 }
             }
             sb.append(" }");

@@ -4,6 +4,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -134,9 +135,9 @@ public class Row implements HasFields, Jsonizable {
             if (options.containsKey("extra")) {
                 Properties extra = (Properties) options.get("extra");
                 if (extra != null) {
-                    for (Object key : extra.keySet()) {
-                        writer.key((String) key);
-                        writer.value(extra.get(key));
+                    for (Entry<Object,Object> e : extra.entrySet()) {
+                        writer.key((String) e.getKey());
+                        writer.value(e.getValue());
                     }
                 }
             }
@@ -194,7 +195,7 @@ public class Row implements HasFields, Jsonizable {
         
     }
     
-    protected class Record implements HasFields {
+    protected static class Record implements HasFields {
     	final int _recordRowIndex;
     	final int _currentRowIndex;
     	
@@ -211,7 +212,7 @@ public class Row implements HasFields, Jsonizable {
 		}
     }
     
-    protected class RecordCells implements HasFields {
+    protected static class RecordCells implements HasFields {
     	final int _recordRowIndex;
     	
     	protected RecordCells(int recordRowIndex) {
@@ -247,8 +248,9 @@ public class Row implements HasFields, Jsonizable {
 		}
     }
     
-    protected class CellTuple extends ArrayList<Cell> implements HasFields {
-		private static final long serialVersionUID = -651032866647686293L;
+    protected static class CellTuple extends ArrayList<Cell> implements HasFields {
+
+        private static final long serialVersionUID = -651032866647686293L;
 
 		public Object getField(String name, Properties bindings) {
 			Object[] r = new Object[this.size()];

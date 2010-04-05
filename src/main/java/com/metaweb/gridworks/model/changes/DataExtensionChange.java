@@ -302,7 +302,9 @@ public class DataExtensionChange implements Change {
                 rowIndices = new ArrayList<Integer>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    rowIndices.add(Integer.parseInt(line));
+                    if (line != null) {
+                        rowIndices.add(Integer.parseInt(line));
+                    }
                 }
             } else if ("columnNameCount".equals(field)) {
                 int count = Integer.parseInt(value);
@@ -310,7 +312,9 @@ public class DataExtensionChange implements Change {
                 columnNames = new ArrayList<String>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    columnNames.add(line);
+                    if (line != null) {
+                        columnNames.add(line);
+                    }
                 }
             } else if ("columnTypeCount".equals(field)) {
                 int count = Integer.parseInt(value);
@@ -326,6 +330,8 @@ public class DataExtensionChange implements Change {
                 dataExtensions = new ArrayList<DataExtension>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
+                    
+                    if (line == null) continue;
                     
                     int rowCount = Integer.parseInt(line);
                     Object[][] data = new Object[rowCount][];
@@ -358,7 +364,9 @@ public class DataExtensionChange implements Change {
                 oldRows = new ArrayList<Row>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    oldRows.add(Row.load(line));
+                    if (line != null) {
+                        oldRows.add(Row.load(line));
+                    }
                 }
             } else if ("newRowCount".equals(field)) {
                 int count = Integer.parseInt(value);
@@ -366,7 +374,9 @@ public class DataExtensionChange implements Change {
                 newRows = new ArrayList<Row>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    newRows.add(Row.load(line));
+                    if (line != null) {
+                        newRows.add(Row.load(line));
+                    }
                 }
             }
 
