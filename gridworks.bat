@@ -125,7 +125,7 @@ set JAVA_OPTIONS=
 set OPTS=%OPTS% %JAVA_OPTIONS%
 
 if not "%GRIDWORKS_MEMORY%" == "" goto gotMemory
-set GRIDWORKS_MEMORY=3072M
+set GRIDWORKS_MEMORY=1024M
 :gotMemory
 set OPTS=%OPTS% -Xms256M -Xmx%GRIDWORKS_MEMORY%
 
@@ -170,7 +170,7 @@ goto end
 if not "%ANT_HOME%" == "" goto gotAntHome
 echo You must have Apache Ant installed and the ANT_HOME environment variable to point to it
 echo.
-echo You can find a copy of ant in the "\thirdparty" folder or download it from
+echo You can download it from
 echo.
 echo   http://ant.apache.org/
 echo.
