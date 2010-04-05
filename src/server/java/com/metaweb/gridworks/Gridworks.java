@@ -160,6 +160,7 @@ class GridworksServer extends Server {
         }
         
         this.start();
+        this.join();
     }
     
     @Override
