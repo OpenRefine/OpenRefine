@@ -228,15 +228,19 @@ public class CreateProjectCommand extends Command {
             HashSet<String> exts = new HashSet<String>();
             
             // find the extension that is most frequent or those who share the highest frequency value
-            Entry<String,Integer> most_frequent = values.get(0);
-            Entry<String,Integer> second_most_frequent = values.get(1);
-            if (most_frequent.getValue() > second_most_frequent.getValue()) { // we have a winner
-                exts.add(most_frequent.getKey());
-            } else { // multiple extensions have the same frequency
-                int winning_frequency = most_frequent.getValue();
-                for (Entry<String,Integer> e : values) {
-                    if (e.getValue() == winning_frequency) {
-                        exts.add(e.getKey());
+            if (values.size() == 1) {
+                exts.add(values.get(0).getKey());
+            } else {
+                Entry<String,Integer> most_frequent = values.get(0);
+                Entry<String,Integer> second_most_frequent = values.get(1);
+                if (most_frequent.getValue() > second_most_frequent.getValue()) { // we have a winner
+                    exts.add(most_frequent.getKey());
+                } else { // multiple extensions have the same frequency
+                    int winning_frequency = most_frequent.getValue();
+                    for (Entry<String,Integer> e : values) {
+                        if (e.getValue() == winning_frequency) {
+                            exts.add(e.getKey());
+                        }
                     }
                 }
             }
