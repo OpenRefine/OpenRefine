@@ -109,6 +109,8 @@ public class Gridworks {
         
         // hook up the signal handlers
         new ShutdownSignalHandler("TERM", server);
+        
+        server.join();
     }
 }
 
@@ -160,7 +162,6 @@ class GridworksServer extends Server {
         }
         
         this.start();
-        this.join();
     }
     
     @Override
