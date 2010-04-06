@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -106,8 +108,19 @@ public class ExcelImporter implements Importer {
         /*
          *  Create columns
          */
+        Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
         for (int c = 0; c < nonBlankIndices.size(); c++) {
-            Column column = new Column(c, nonBlankHeaderStrings.get(c));
+        	String cell = nonBlankHeaderStrings.get(c);
+            if (nameToIndex.containsKey(cell)) {
+            	int index = nameToIndex.get(cell);
+            	nameToIndex.put(cell, index + 1);
+            	
+            	cell = cell.contains(" ") ? (cell + " " + index) : (cell + index);
+            } else {
+            	nameToIndex.put(cell, 2);
+            }
+            
+            Column column = new Column(c, cell);
             project.columnModel.columns.add(column);
         }
         

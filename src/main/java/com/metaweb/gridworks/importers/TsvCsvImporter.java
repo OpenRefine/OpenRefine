@@ -3,6 +3,8 @@ package com.metaweb.gridworks.importers;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -46,12 +48,22 @@ public class TsvCsvImporter implements Importer {
             
             if (first) {
                 String[] cells = StringUtils.splitPreserveAllTokens(line, sep);
+                Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
                                     
                 first = false;
                 for (int c = 0; c < cells.length; c++) {
                     String cell = cells[c];
                     if (cell.startsWith("\"") && cell.endsWith("\"")) {
                         cell = cell.substring(1, cell.length() - 1);
+                    }
+                    
+                    if (nameToIndex.containsKey(cell)) {
+                    	int index = nameToIndex.get(cell);
+                    	nameToIndex.put(cell, index + 1);
+                    	
+                    	cell = cell.contains(" ") ? (cell + " " + index) : (cell + index);
+                    } else {
+                    	nameToIndex.put(cell, 2);
                     }
                     
                     Column column = new Column(c, cell);
