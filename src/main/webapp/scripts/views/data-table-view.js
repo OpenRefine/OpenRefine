@@ -333,6 +333,13 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                     click: function() {
                         Gridworks.postProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
                     }
+                },
+                {},
+                {
+                    label: "Remove Visible Rows",
+                    click: function() {
+                        Gridworks.postProcess("remove-rows", {}, null, { rowMetadataChanged: true });
+                    }
                 }
             ]
         },

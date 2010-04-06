@@ -21,6 +21,7 @@ import com.metaweb.gridworks.commands.edit.DeleteProjectCommand;
 import com.metaweb.gridworks.commands.edit.ExportProjectCommand;
 import com.metaweb.gridworks.commands.edit.ExtendDataCommand;
 import com.metaweb.gridworks.commands.edit.ImportProjectCommand;
+import com.metaweb.gridworks.commands.edit.RemoveRowsCommand;
 import com.metaweb.gridworks.commands.edit.RenameColumnCommand;
 import com.metaweb.gridworks.commands.edit.TextTransformCommand;
 import com.metaweb.gridworks.commands.edit.EditOneCellCommand;
@@ -110,6 +111,7 @@ public class GridworksServlet extends HttpServlet {
         
         _commands.put("annotate-one-row", new AnnotateOneRowCommand());
         _commands.put("annotate-rows", new AnnotateRowsCommand());
+        _commands.put("remove-rows", new RemoveRowsCommand());
         
         _commands.put("save-protograph", new SaveProtographCommand());
         
