@@ -119,10 +119,8 @@ download() {
     fi
     
     if [ "$CURL" != "" ] ; then
-        curl -o -L $DEST $URL || exit 1
-    fi
-    
-    if [ "$WGET" != "" ] ; then
+        curl -L -o $DEST $URL || exit 1
+    elif [ "$WGET" != "" ] ; then
         wget -O $DEST $URL || exit 1
     fi
 }
