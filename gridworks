@@ -114,15 +114,15 @@ download() {
     CURL="`which curl`"
     WGET="`which wget`"
     
-    if [ $CURL == "" ] && [ $WGET == "" ]; then
+    if [ "$CURL" == "" ] && [ "$WGET" == "" ]; then
         error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
     fi
     
-    if [ $CURL != "" ] ; then
+    if [ "$CURL" != "" ] ; then
         curl -o $DEST $URL || exit 1
     fi
     
-    if [ $WGET != "" ] ; then
+    if [ "$WGET" != "" ] ; then
         wget -O $DEST $URL || exit 1
     fi
 }
