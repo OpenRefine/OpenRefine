@@ -140,8 +140,13 @@ public class Parser {
         } else if (_token.type == TokenType.Regex) {
             RegexToken t = (RegexToken) _token;
             
-            eval = new LiteralExpr(Pattern.compile(_token.text, t.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0));
-            next(false);
+            try {
+                Pattern pattern = Pattern.compile(_token.text, t.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+                eval = new LiteralExpr(pattern);
+                next(false);
+            } catch (Exception e) {
+                throw makeException("Bad regular expression (" + e.getMessage() + ")");
+            }
         } else if (_token.type == TokenType.Number) {
             eval = new LiteralExpr(((NumberToken)_token).value);
             next(false);
