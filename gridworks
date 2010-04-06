@@ -119,12 +119,27 @@ download() {
     fi
     
     if [ "$CURL" != "" ] ; then
-        curl -o $DEST $URL || exit 1
+        curl -o -L $DEST $URL || exit 1
     fi
     
     if [ "$WGET" != "" ] ; then
         wget -O $DEST $URL || exit 1
     fi
+}
+
+tool_download() {
+    URL=$1
+    FILE=$2
+    DIR=$3
+    
+    cd $GRIDWORKS_TOOLS_DIR
+    if [ ! -f "$FILE" ] ; then
+        download $URL $FILE
+    fi
+    if [ ! -d "$DIR" ] ; then
+        tar xzf $FILE || exit 1
+    fi
+    cd ..
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -176,14 +191,7 @@ launch4j_prepare() {
     LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
     LAUNCH4J_DIR="launch4j"
     
-    cd $GRIDWORKS_TOOLS_DIR
-    if [ ! -f "$LAUNCH4J_FILE" ] ; then
-        download $LAUNCH4J_URL $LAUNCH4J_FILE
-    fi
-    if [ ! -d "$LAUNCH4J_DIR" ] ; then
-        tar xzf $LAUNCH4J_FILE || exit 1
-    fi
-    cd ..
+    tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
 }
     
 jarbundler_prepare() {
@@ -193,16 +201,19 @@ jarbundler_prepare() {
     JARBUNDLER_FILE=`echo $JARBUNDLER_URL | sed 's|.*/||'`
     JARBUNDLER_DIR="jarbundler-2.1.0"
 
-    cd $GRIDWORKS_TOOLS_DIR
-    if [ ! -f "$JARBUNDLER_FILE" ] ; then
-        download $JARBUNDLER_URL $JARBUNDLER_FILE
-    fi
-    if [ ! -d "$JARBUNDLER_DIR" ] ; then
-        tar xzf $JARBUNDLER_FILE || exit 1
-    fi
-    cd ..
+    tool_download $JARBUNDLER_URL $JARBUNDLER_FILE $JARBUNDLER_DIR
 }
    
+windmill_prepare() {
+    tools_prepare
+
+    WINDMILL_URL="http://github.com/windmill/windmill/tarball/1.3beta2"
+    WINDMILL_FILE="windmill-1.3beta2.tar.gz"
+    WINDMILL_DIR="windmill-1.3beta2"
+
+    tool_download $WINDMILL_URL $WINDMILL_FILE $WINDMILL_DIR
+}
+
 findbugs_prepare() {
     tools_prepare
     
