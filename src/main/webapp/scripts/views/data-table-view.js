@@ -362,7 +362,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                     label: "Collapse All Columns",
                     click: function() {
                         for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                            theProject.columnModel.columns[i].collapsed = true;
+                            self._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
                         }
                         self.render();
                     }
@@ -370,9 +370,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 {
                     label: "Expand All Columns",
                     click: function() {
-                        for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                            theProject.columnModel.columns[i].collapsed = false;
-                        }
+                        self._collapsedColumnNames = [];
                         self.render();
                     }
                 }
