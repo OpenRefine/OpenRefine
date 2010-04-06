@@ -195,7 +195,7 @@ MenuBar.prototype._exportProject = function() {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-project/" + name + ".gridworks.tar")
+        .attr("action", "/command/export-project/" + name + ".gridworks.tar.gz")
         .attr("target", "gridworks-export"); 
     $('<input />')
         .attr("name", "project")

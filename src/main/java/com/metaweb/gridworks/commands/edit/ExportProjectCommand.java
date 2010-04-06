@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,11 +27,11 @@ public class ExportProjectCommand extends Command {
             Project project = getProject(request);
             ProjectManager.singleton.ensureProjectSaved(project.id);
             
-            response.setHeader("Content-Type", "application/x-tar");
+            response.setHeader("Content-Type", "application/x-gzip");
             
             OutputStream os = response.getOutputStream();
             try {
-                tarToOutputStream(
+            	gzipTarToOutputStream(
                     ProjectManager.singleton.getProjectDir(project.id),
                     os
                 );
@@ -39,6 +40,15 @@ public class ExportProjectCommand extends Command {
             }
         } catch (Exception e) {
             respondException(response, e);
+        }
+    }
+    
+    protected void gzipTarToOutputStream(File dir, OutputStream os) throws IOException {
+    	GZIPOutputStream gos = new GZIPOutputStream(os);
+        try {
+        	tarToOutputStream(dir, gos);
+        } finally {
+            gos.close();
         }
     }
     

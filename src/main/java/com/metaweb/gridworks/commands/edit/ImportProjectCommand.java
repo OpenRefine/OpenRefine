@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
+import java.util.zip.GZIPInputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -71,7 +72,11 @@ public class ImportProjectCommand extends Command {
                     FilePart filePart = (FilePart) part;
                     InputStream inputStream = filePart.getInputStream();
                     try {
-                        internalImportInputStream(projectID, inputStream);
+                        internalImportInputStream(
+                        	projectID, 
+                        	inputStream, 
+                        	!filePart.getFileName().endsWith(".tar")
+                        );
                     } finally {
                         inputStream.close();
                     }
@@ -117,17 +122,22 @@ public class ImportProjectCommand extends Command {
         }
         
         try {
-            internalImportInputStream(projectID, inputStream);
+            internalImportInputStream(projectID, inputStream, !urlString.endsWith(".tar"));
         } finally {
             inputStream.close();
         }
     }
     
-    protected void internalImportInputStream(long projectID, InputStream inputStream) throws IOException {
+    protected void internalImportInputStream(long projectID, InputStream inputStream, boolean gziped) throws IOException {
         File destDir = ProjectManager.singleton.getProjectDir(projectID);
         destDir.mkdirs();
         
-        untar(destDir, inputStream);
+        if (gziped) {
+        	GZIPInputStream gis = new GZIPInputStream(inputStream);
+        	untar(destDir, gis);
+        } else {
+        	untar(destDir, inputStream);
+        }
     }
     
     protected void untar(File destDir, InputStream inputStream) throws IOException {
