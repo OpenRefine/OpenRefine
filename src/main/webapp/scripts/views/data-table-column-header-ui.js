@@ -313,9 +313,13 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 },
                 {},
                 {
+                    label: "Rename This Column",
+                    click: function() { self._doRenameColumn(); }
+                },
+                {
                     label: "Remove This Column",
                     click: function() { self._doRemoveColumn(); }
-                },
+                }
             ]
         },
         {},
@@ -887,6 +891,21 @@ DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {
         null,
         { modelsChanged: true }
     );
+};
+
+DataTableColumnHeaderUI.prototype._doRenameColumn = function() {
+    var newColumnName = window.prompt("Enter new column name", this._column.name);
+    if (newColumnName != null) {
+        Gridworks.postProcess(
+            "rename-column", 
+            {
+                oldColumnName: this._column.name,
+                newColumnName: newColumnName
+            },
+            null,
+            { modelsChanged: true }
+        );
+    }
 };
 
 DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
