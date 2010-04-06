@@ -139,6 +139,10 @@ public class Recon implements HasFields, Jsonizable {
         return null;
     }
     
+    public boolean fieldAlsoHasFields(String name) {
+        return "match".equals(name) || "best".equals(name);
+    }
+    
     protected String judgmentToString() {
         return judgmentToString(judgment);
     }
@@ -147,6 +151,10 @@ public class Recon implements HasFields, Jsonizable {
         public Object getField(String name, Properties bindings) {
             int index = s_featureMap.get(name);
             return index < features.length ? features[index] : null;
+        }
+
+        public boolean fieldAlsoHasFields(String name) {
+            return false;
         }
     }
 

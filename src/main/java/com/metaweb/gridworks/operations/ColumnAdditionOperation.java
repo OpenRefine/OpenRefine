@@ -137,7 +137,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
 
-                ExpressionUtils.bind(bindings, row, rowIndex, cell);
+                ExpressionUtils.bind(bindings, row, rowIndex, _baseColumnName, cell);
                 
                 Serializable v = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                 if (ExpressionUtils.isError(v)) {

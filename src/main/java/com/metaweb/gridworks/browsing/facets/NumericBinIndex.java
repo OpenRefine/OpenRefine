@@ -27,7 +27,7 @@ public class NumericBinIndex {
     private double _step;
     private int[]  _bins;
     
-    public NumericBinIndex(Project project, int cellIndex, Evaluable eval) {
+    public NumericBinIndex(Project project, String columnName, int cellIndex, Evaluable eval) {
         Properties bindings = ExpressionUtils.createBindings(project);
         
         _min = Double.POSITIVE_INFINITY;
@@ -38,7 +38,7 @@ public class NumericBinIndex {
             Row row = project.rows.get(i);
             Cell cell = row.getCell(cellIndex);
 
-            ExpressionUtils.bind(bindings, row, i, cell);
+            ExpressionUtils.bind(bindings, row, i, columnName, cell);
             
             Object value = eval.evaluate(bindings);
             if (value != null) {

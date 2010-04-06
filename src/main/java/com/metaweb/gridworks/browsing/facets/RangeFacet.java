@@ -161,7 +161,7 @@ public class RangeFacet implements Facet {
         if (_eval != null && _errorMessage == null && _selected) {
             if ("min".equals(_mode)) {
                 return new ExpressionNumberComparisonRowFilter(
-                        _eval, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+                        _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                     
                     protected boolean checkValue(double d) {
                         return d >= _from;
@@ -169,7 +169,7 @@ public class RangeFacet implements Facet {
                 };
             } else if ("max".equals(_mode)) {
                 return new ExpressionNumberComparisonRowFilter(
-                        _eval, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+                        _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                     
                     protected boolean checkValue(double d) {
                         return d < _to;
@@ -177,7 +177,7 @@ public class RangeFacet implements Facet {
                 };
             } else {
                 return new ExpressionNumberComparisonRowFilter(
-                        _eval, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+                        _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                     
                     protected boolean checkValue(double d) {
                         return d >= _from && d < _to;
@@ -196,7 +196,7 @@ public class RangeFacet implements Facet {
             String key = "numeric-bin:" + _expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
-                index = new NumericBinIndex(project, _cellIndex, _eval);
+                index = new NumericBinIndex(project, _columnName, _cellIndex, _eval);
                 column.setPrecompute(key, index);
             }
             
@@ -214,7 +214,7 @@ public class RangeFacet implements Facet {
             }
             
             ExpressionNumericRowBinner binner = 
-                new ExpressionNumericRowBinner(_eval, _cellIndex, index);
+                new ExpressionNumericRowBinner(_eval, _columnName, _cellIndex, index);
             
             filteredRows.accept(project, binner);
             

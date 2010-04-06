@@ -17,6 +17,7 @@ import com.metaweb.gridworks.model.Row;
  */
 abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     final protected Evaluable  _evaluable;
+    final protected String     _columnName;
     final protected int        _cellIndex;
     final protected boolean _selectNumeric;
     final protected boolean _selectNonNumeric;
@@ -24,7 +25,8 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     final protected boolean _selectError;
     
     public ExpressionNumberComparisonRowFilter(
-        Evaluable evaluable, 
+        Evaluable evaluable,
+        String columnName,
         int cellIndex,
         boolean selectNumeric,
         boolean selectNonNumeric,
@@ -32,6 +34,7 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
         boolean selectError
     ) {
         _evaluable = evaluable;
+        _columnName = columnName;
         _cellIndex = cellIndex;
         _selectNumeric = selectNumeric;
         _selectNonNumeric = selectNonNumeric;
@@ -43,7 +46,7 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings(project);
-        ExpressionUtils.bind(bindings, row, rowIndex, cell);
+        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {

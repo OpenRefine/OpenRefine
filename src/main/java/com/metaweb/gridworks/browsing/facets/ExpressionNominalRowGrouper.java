@@ -22,6 +22,7 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
      * Configuration
      */
     final protected Evaluable   _evaluable;
+    final protected String      _columnName;
     final protected int         _cellIndex;
     
     /*
@@ -31,8 +32,9 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
     public int blankCount = 0;
     public int errorCount = 0;
     
-    public ExpressionNominalRowGrouper(Evaluable evaluable, int cellIndex) {
+    public ExpressionNominalRowGrouper(Evaluable evaluable, String columnName, int cellIndex) {
         _evaluable = evaluable;
+        _columnName = columnName;
         _cellIndex = cellIndex;
     }
     
@@ -40,7 +42,7 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings(project);
-        ExpressionUtils.bind(bindings, row, rowIndex, cell);
+        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {

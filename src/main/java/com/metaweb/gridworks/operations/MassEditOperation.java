@@ -166,7 +166,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
 
-                ExpressionUtils.bind(bindings, row, rowIndex, cell);
+                ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
                 
                 Object v = eval.evaluate(bindings);
                 if (v != null) {

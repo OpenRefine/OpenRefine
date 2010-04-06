@@ -8,4 +8,6 @@ import java.util.Properties;
  */
 public interface HasFields {
     public Object getField(String name, Properties bindings);
+    
+    public boolean fieldAlsoHasFields(String name);
 }

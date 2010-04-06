@@ -3,6 +3,7 @@ package com.metaweb.gridworks.commands.util;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.commands.Command;
@@ -21,6 +23,8 @@ import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.expr.ParsingException;
+import com.metaweb.gridworks.expr.WrappedCell;
+import com.metaweb.gridworks.expr.WrappedRow;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
@@ -36,6 +40,7 @@ public class PreviewExpressionCommand extends Command {
             Project project = getProject(request);
             
             int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
+            String columnName = project.columnModel.getColumnByCellIndex(cellIndex).getName();
             
             String expression = request.getParameter("expression");
             String rowIndicesString = request.getParameter("rowIndices");
@@ -79,13 +84,13 @@ public class PreviewExpressionCommand extends Command {
                         Cell cell = row.getCell(cellIndex);
                             
                         try {
-                            ExpressionUtils.bind(bindings, row, rowIndex, cell);
+                            ExpressionUtils.bind(bindings, row, rowIndex, columnName, cell);
                             result = eval.evaluate(bindings);
                             
                             if (repeat) {
                                 for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
                                     Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
-                                    ExpressionUtils.bind(bindings, row, rowIndex, newCell);
+                                    ExpressionUtils.bind(bindings, row, rowIndex, columnName, newCell);
                                     
                                     Object newResult = eval.evaluate(bindings);
                                     if (ExpressionUtils.isError(newResult)) {
@@ -102,20 +107,18 @@ public class PreviewExpressionCommand extends Command {
                         }
                     }
                     
-                    if (result != null && (result.getClass().isArray() || result instanceof List<?>)) {
-                        writer.array();
-                        if (result.getClass().isArray()) {
-                            for (Object v : (Object[]) result) {
-                                writeValue(writer, v);
-                            }
-                        } else {
-                            for (Object v : ExpressionUtils.toObjectList(result)) {
-                                writeValue(writer, v);
-                            }
-                        }
-                        writer.endArray();
+                    if (result == null) {
+                        writer.value(null);
+                    } else if (ExpressionUtils.isError(result)) {
+                        writer.object();
+                        writer.key("message"); writer.value(((EvalError) result).message);
+                        writer.endObject();
                     } else {
-                        writeValue(writer, result);
+                        StringBuffer sb = new StringBuffer();
+                        
+                        writeValue(sb, result, false);
+                        
+                        writer.value(sb.toString());
                     }
                 }
                 writer.endArray();
@@ -135,24 +138,57 @@ public class PreviewExpressionCommand extends Command {
         }
     }
     
-    static protected void writeValue(JSONWriter writer, Object v) throws JSONException {
+    static protected void writeValue(StringBuffer sb, Object v, boolean quote) throws JSONException {
         if (ExpressionUtils.isError(v)) {
-            writer.object();
-            writer.key("message"); writer.value(((EvalError) v).message);
-            writer.endObject();
+            sb.append("[error: " + ((EvalError) v).message + "]");
         } else {
-            if (v != null) {
-                if (v instanceof HasFields) {
-                    v = "[object " + v.getClass().getSimpleName() + "]";
+            if (v == null) {
+                sb.append("null");
+            } else {
+                if (v instanceof WrappedCell) {
+                    sb.append("[object Cell]");
+                } else if (v instanceof WrappedRow) {
+                    sb.append("[object Row]");
+                } else if (ExpressionUtils.isArray(v)) {
+                    Object[] a = (Object[]) v;
+                    sb.append("[ ");
+                    for (int i = 0; i < a.length; i++) {
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        writeValue(sb, a[i], true);
+                    }
+                    sb.append(" ]");
+                } else if (ExpressionUtils.isArrayOrList(v)) {
+                    List<Object> list = ExpressionUtils.toObjectList(v);
+                    sb.append("[ ");
+                    for (int i = 0; i < list.size(); i++) {
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        writeValue(sb, list.get(i), true);
+                    }
+                    sb.append(" ]");
+                } else if (v instanceof HasFields) {
+                    sb.append("[object " + v.getClass().getSimpleName() + "]");
                 } else if (v instanceof Calendar) {
                     Calendar c = (Calendar) v;
                     
-                    v = "[object " + 
-                        v.getClass().getSimpleName() + " " + 
-                        ParsingUtilities.dateToString(c.getTime()) +"]";
+                    sb.append("[date " + 
+                        ParsingUtilities.dateToString(c.getTime()) +"]");
+                } else if (v instanceof Date) {
+                    sb.append("[date " + 
+                            ParsingUtilities.dateToString((Date) v) +"]");
+                } else if (v instanceof String) {
+                    if (quote) {
+                        sb.append(JSONObject.quote((String) v));
+                    } else {
+                        sb.append((String) v);
+                    }
+                } else {
+                    sb.append(v.toString());
                 }
             }
-            writer.value(v);
         }
     }
 }

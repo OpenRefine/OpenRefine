@@ -146,6 +146,7 @@ public class ListFacet implements Facet {
                 null :
                 new ExpressionEqualRowFilter(
                     _eval, 
+                    _columnName,
                     _cellIndex, 
                     createMatches(), 
                     _selectBlank, 
@@ -155,7 +156,7 @@ public class ListFacet implements Facet {
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             ExpressionNominalRowGrouper grouper = 
-                new ExpressionNominalRowGrouper(_eval, _cellIndex);
+                new ExpressionNominalRowGrouper(_eval, _columnName, _cellIndex);
             
             filteredRows.accept(project, grouper);
             

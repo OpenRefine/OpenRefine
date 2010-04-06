@@ -85,13 +85,13 @@ public class TextSearchFacet implements Facet {
         Evaluable eval = new VariableExpr("value");
         
         if ("regex".equals(_mode)) {
-            return new ExpressionStringComparisonRowFilter(eval, _cellIndex) {
+            return new ExpressionStringComparisonRowFilter(eval, _columnName, _cellIndex) {
                 protected boolean checkValue(String s) {
                     return _pattern.matcher(s).find();
                 };
             };
         } else {
-            return new ExpressionStringComparisonRowFilter(eval, _cellIndex) {
+            return new ExpressionStringComparisonRowFilter(eval, _columnName, _cellIndex) {
                 protected boolean checkValue(String s) {
                     return (_caseSensitive ? s : s.toLowerCase()).contains(_query);
                 };

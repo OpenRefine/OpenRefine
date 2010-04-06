@@ -122,7 +122,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                 Cell cell = row.getCell(cellIndex);
                 Object oldValue = cell != null ? cell.value : null;
 
-                ExpressionUtils.bind(bindings, row, rowIndex, cell);
+                ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
                 
                 Serializable newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                 if (ExpressionUtils.isError(newValue)) {
@@ -138,7 +138,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                     
                     if (_repeat) {
                         for (int i = 0; i < _repeatCount; i++) {
-                            ExpressionUtils.bind(bindings, row, rowIndex, newCell);
+                            ExpressionUtils.bind(bindings, row, rowIndex, _columnName, newCell);
                             
                             newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                             if (ExpressionUtils.isError(newValue)) {

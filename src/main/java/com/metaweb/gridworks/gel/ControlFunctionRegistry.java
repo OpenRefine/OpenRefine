@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.metaweb.gridworks.expr.functions.Cross;
 import com.metaweb.gridworks.expr.functions.Get;
 import com.metaweb.gridworks.expr.functions.Length;
 import com.metaweb.gridworks.expr.functions.Slice;
@@ -169,6 +170,8 @@ public class ControlFunctionRegistry {
         registerFunction("and", new And());
         registerFunction("or", new Or());
         registerFunction("not", new Not());
+        
+        registerFunction("cross", new Cross());
 
         registerControl("if", new If());
         registerControl("with", new With());

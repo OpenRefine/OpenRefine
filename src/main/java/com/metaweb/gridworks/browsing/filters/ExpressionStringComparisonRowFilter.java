@@ -14,10 +14,12 @@ import com.metaweb.gridworks.model.Row;
  */
 abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
     final protected Evaluable _evaluable;
+    final protected String    _columnName;
     final protected int       _cellIndex;
     
-    public ExpressionStringComparisonRowFilter(Evaluable evaluable, int cellIndex) {
+    public ExpressionStringComparisonRowFilter(Evaluable evaluable, String columnName, int cellIndex) {
         _evaluable = evaluable;
+        _columnName = columnName;
         _cellIndex = cellIndex;
     }
 
@@ -25,7 +27,7 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
         
         Properties bindings = ExpressionUtils.createBindings(project);
-        ExpressionUtils.bind(bindings, row, rowIndex, cell);
+        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {

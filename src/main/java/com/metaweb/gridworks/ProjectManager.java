@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +41,11 @@ public class ProjectManager {
      *  is more like a last accessed-last out cache.
      */
     transient protected Map<Long, Project> _projects;
+    
+    /**
+     *  What caches the joins between projects.
+     */
+    transient protected InterProjectModel _interProjectModel = new InterProjectModel(); 
     
     static public ProjectManager singleton;
     
@@ -137,6 +143,10 @@ public class ProjectManager {
         load();
     }
     
+    public InterProjectModel getInterProjectModel() {
+        return _interProjectModel;
+    }
+    
     public File getWorkspaceDir() {
         return _workspaceDir;
     }
@@ -206,6 +216,24 @@ public class ProjectManager {
     
     public ProjectMetadata getProjectMetadata(long id) {
         return _projectsMetadata.get(id);
+    }
+    
+    public ProjectMetadata getProjectMetadata(String name) {
+        for (ProjectMetadata pm : _projectsMetadata.values()) {
+            if (pm.getName().equals(name)) {
+                return pm;
+            }
+        }
+        return null;
+    }
+    
+    public long getProjectID(String name) {
+        for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
+            if (entry.getValue().getName().equals(name)) {
+                return entry.getKey();
+            }
+        }
+        return -1;
     }
     
     public Map<Long, ProjectMetadata> getAllProjectMetadata() {

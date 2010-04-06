@@ -16,6 +16,8 @@ import com.metaweb.gridworks.model.Row;
  */
 public class ExpressionEqualRowFilter implements RowFilter {
     final protected Evaluable       _evaluable; // the expression to evaluate
+    
+    final protected String          _columnName;
     final protected int             _cellIndex; // the expression is based on this column;
                                                 // -1 if based on no column in particular,
                                                 // for expression such as "row.starred".
@@ -25,13 +27,15 @@ public class ExpressionEqualRowFilter implements RowFilter {
     final protected boolean         _selectError;
     
     public ExpressionEqualRowFilter(
-        Evaluable evaluable, 
+        Evaluable evaluable,
+        String columnName,
         int cellIndex, 
         Object[] matches, 
         boolean selectBlank, 
         boolean selectError
     ) {
         _evaluable = evaluable;
+        _columnName = columnName;
         _cellIndex = cellIndex;
         _matches = matches;
         _selectBlank = selectBlank;
@@ -42,7 +46,7 @@ public class ExpressionEqualRowFilter implements RowFilter {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
         
         Properties bindings = ExpressionUtils.createBindings(project);
-        ExpressionUtils.bind(bindings, row, rowIndex, cell);
+        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {

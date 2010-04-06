@@ -19,6 +19,7 @@ public class ExpressionNumericRowBinner implements RowVisitor {
      * Configuration
      */
     final protected Evaluable       _evaluable;
+    final protected String          _columnName;
     final protected int             _cellIndex;
     final protected NumericBinIndex _index;     // base bins
     
@@ -31,8 +32,9 @@ public class ExpressionNumericRowBinner implements RowVisitor {
     public int blankCount;
     public int errorCount;
     
-    public ExpressionNumericRowBinner(Evaluable evaluable, int cellIndex, NumericBinIndex index) {
+    public ExpressionNumericRowBinner(Evaluable evaluable, String columnName, int cellIndex, NumericBinIndex index) {
         _evaluable = evaluable;
+        _columnName = columnName;
         _cellIndex = cellIndex;
         _index = index;
         bins = new int[_index.getBins().length];
@@ -42,7 +44,7 @@ public class ExpressionNumericRowBinner implements RowVisitor {
         Cell cell = row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings(project);
-        ExpressionUtils.bind(bindings, row, rowIndex, cell);
+        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {

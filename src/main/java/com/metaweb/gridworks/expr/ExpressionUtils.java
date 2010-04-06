@@ -23,16 +23,22 @@ public class ExpressionUtils {
         return bindings;
     }
     
-    static public void bind(Properties bindings, Row row, int rowIndex, Cell cell) {
-        bindings.put("row", row);
+    static public void bind(Properties bindings, Row row, int rowIndex, String columnName, Cell cell) {
+        Project project = (Project) bindings.get("project");
+        
         bindings.put("rowIndex", rowIndex);
-        bindings.put("cells", row.getField("cells", bindings));
+        bindings.put("row", new WrappedRow(project, rowIndex, row));
+        bindings.put("cells", new CellTuple(project, row));
+        
+        if (columnName != null) {
+            bindings.put("columnName", columnName);
+        }
         
         if (cell == null) {
             bindings.remove("cell");
             bindings.remove("value");
         } else {
-            bindings.put("cell", cell);
+            bindings.put("cell", new WrappedCell(project, columnName, cell));
             if (cell.value == null) {
                 bindings.remove("value");
             } else {

@@ -33,6 +33,10 @@ public class Cell implements HasFields, Jsonizable {
         }
         return null;
     }
+    
+    public boolean fieldAlsoHasFields(String name) {
+        return "recon".equals(name);
+    }
 
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();

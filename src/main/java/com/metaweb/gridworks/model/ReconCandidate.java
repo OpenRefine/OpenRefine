@@ -39,6 +39,10 @@ public class ReconCandidate implements HasFields, Jsonizable {
         }
         return null;
     }
+    
+    public boolean fieldAlsoHasFields(String name) {
+        return false;
+    }
 
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
