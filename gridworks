@@ -168,6 +168,8 @@ ant_prepare() {
 }
 
 launch4j_prepare() {
+    tools_prepare
+    
     LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-macosx.tgz"
     LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
     LAUNCH4J_DIR="launch4j"
@@ -183,6 +185,8 @@ launch4j_prepare() {
 }
     
 jarbundler_prepare() {
+    tools_prepare
+    
     JARBUNDLER_URL="http://www.informagen.com/JarBundler/dist/jarbundler.tar.gz"
     JARBUNDLER_FILE=`echo $JARBUNDLER_URL | sed 's|.*/||'`
     JARBUNDLER_DIR="jarbundler-2.1.0"
@@ -198,6 +202,8 @@ jarbundler_prepare() {
 }
    
 findbugs_prepare() {
+    tools_prepare
+    
     FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/1.3.9/findbugs-1.3.9.tar.gz"
     FINDBUGS_FILE=`echo $FINDBUGS_URL | sed 's|.*/||'`
     FINDBUGS_DIR="findbugs-1.3.9"
@@ -216,7 +222,9 @@ findbugs_prepare() {
 
 ant() {
     ant_prepare   
+    
     #export ANT_OPTS="-Xmx1024M"
+    
     $ANT -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || exit 1
 }
 
