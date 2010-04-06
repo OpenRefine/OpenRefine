@@ -111,16 +111,18 @@ get_url_file() {
 download() {
     URL=$1
     DEST=$2
+    CURL="`which curl`"
+    WGET="`which wget`"
     
-    if [ `which curl` == "" ] && [ `which wget` == "" ]; then
+    if [ $CURL == "" ] && [ $WGET == "" ]; then
         error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
     fi
     
-    if [ `which curl` != "" ] ; then
+    if [ $CURL != "" ] ; then
         curl -o $DEST $URL || exit 1
     fi
     
-    if [ `which wget` != "" ] ; then
+    if [ $WGET != "" ] ; then
         wget -O $DEST $URL || exit 1
     fi
 }
