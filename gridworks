@@ -175,7 +175,7 @@ tool_download() {
         download $URL $FILE
     fi
     if [ ! -d "$DIR" ] ; then
-        if [ "`echo $FILE | sed 's@.*.tar.gz$@@'`" == "" ] ; then
+        if [ "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" == "" ] ; then
             tar xzf $FILE || error "Error while expanding $FILE"
         fi
         if [ "`echo $FILE | sed 's@.*.zip$@@'`" == "" ] ; then
@@ -344,9 +344,10 @@ dist() {
 windows_dist() {
     check_macosx
     dist_prepare
-    launch4j_prepare
     get_version $1
     get_revision
+
+    launch4j_prepare
     
     ANT_PARAMS="-Dlaunch4j.dir=${GRIDWORKS_TOOLS_DIR}/${LAUNCH4J_DIR}"
     ant windows
@@ -363,9 +364,10 @@ linux_dist() {
 mac_dist() {
     check_macosx
     dist_prepare
-    jarbundler_prepare
     get_version $1
     get_revision
+
+    jarbundler_prepare
     
     ANT_PARAMS="-Djarbundler.dir=${GRIDWORKS_TOOLS_DIR}/${JARBUNDLER_DIR}"
     ant mac
