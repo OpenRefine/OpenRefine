@@ -411,7 +411,7 @@ mac_dist() {
     
     sync
     sync
-    hdiutil detach $DEVICE || error "Error while detaching $DEVICE"
+    hdiutil detach $DEVICE
     
     if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ] ; then
         rm "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
