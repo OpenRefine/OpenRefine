@@ -19,6 +19,11 @@ error() {
     exit 1
 }
 
+warn() {
+    echo "$1"
+    exit 0
+}
+
 usage() {
     cat <<EOF
 Usage: $0 [options] <action>
@@ -82,6 +87,37 @@ check_macosx() {
     fi
 }
 
+check_downloaders() {
+    CURL="`which curl`"
+    WGET="`which wget`"
+    
+    if [ "$CURL" == "" ] && [ "$WGET" == "" ]; then
+        error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
+    fi
+}
+    
+check_python() {
+    PYTHON="`which python`"
+    if [ "$PYTHON" == "" ] ; then
+        error "This action requires you to have 'python' installed. You can download it for free at http://www.python.org/"
+    fi
+    PYTHON_VERSION="`python --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
+    if [ "$PYTHON_VERSION" != "2.5" ] && [ "$PYTHON_VERSION" != "2.6" ] ; then
+        error "This action requires python version 2.5.x or 2.6.x. You can download it for free at http://www.python.org/"
+    fi
+}
+
+check_running() {
+    check_downloaders
+    URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/"
+    
+    if [ "$CURL" != "" ] ; then
+        NOT_RUNNING=`curl -s $URL > /dev/null || echo not_running`
+    elif [ "$WGET" != "" ] ; then
+        NOT_RUNNING=`wget -q -O - $URL > /dev/null || echo not_running`
+    fi    
+}
+
 get_version() {
     VERSION=$1        
     
@@ -103,25 +139,17 @@ get_revision() {
 
     REVISION=`echo $INFO | sed 's/.*Revision: /r/' | sed 's/ .*//'`
 }
-
-get_url_file() {
-    return `echo $1 | sed 's|.*/||'`
-}
     
 download() {
     URL=$1
     DEST=$2
-    CURL="`which curl`"
-    WGET="`which wget`"
     
-    if [ "$CURL" == "" ] && [ "$WGET" == "" ]; then
-        error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
-    fi
+    check_downloaders
     
     if [ "$CURL" != "" ] ; then
-        curl -L -o $DEST $URL || exit 1
+        curl -L -o $DEST $URL || exit "Error while downloading $URL"
     elif [ "$WGET" != "" ] ; then
-        wget -O $DEST $URL || exit 1
+        wget -O $DEST $URL || error "Error while downloading $URL"
     fi
 }
 
@@ -135,28 +163,42 @@ tool_download() {
         download $URL $FILE
     fi
     if [ ! -d "$DIR" ] ; then
-        tar xzf $FILE || exit 1
+        tar xzf $FILE || error "Error while expanding $FILE"
     fi
     cd ..
+}
+
+load_data() {
+    FILE=$1
+    NAME=$2
+    URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/command/create-project-from-upload"
+    CURL="`which curl`"
+    
+    if [ "$CURL" == "" ] ; then
+        error "We need 'curl' present in PATH to upload data to gridworks."
+    else
+        curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to Gridworks"
+        echo "Loaded $FILE as $NAME"
+    fi
 }
 
 # ----------------------------------------------------------------------------------------------
 
 build_prepare() {
     if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
-        mkdir $GRIDWORKS_BUILD_DIR || exit 1
+        mkdir $GRIDWORKS_BUILD_DIR || error "Error while making directory $GRIDWORKS_BUILD_DIR"
     fi
 }
 
 dist_prepare() {
     if [ ! -d $GRIDWORKS_DIST_DIR ] ; then 
-        mkdir $GRIDWORKS_DIST_DIR || exit 1
+        mkdir $GRIDWORKS_DIST_DIR || error "Error while making directory $GRIDWORKS_DIST_DIR"
     fi
 }
 
 tools_prepare() {
     if [ ! -d $GRIDWORKS_TOOLS_DIR ] ; then 
-        mkdir $GRIDWORKS_TOOLS_DIR || exit 1
+        mkdir $GRIDWORKS_TOOLS_DIR || error "Error while making directory $GRIDWORKS_TOOLS_DIR"
     fi
 }
             
@@ -173,7 +215,7 @@ ant_prepare() {
                 download $ANT_URL $ANT_FILE
             fi
             if [ ! -d $ANT_DIR ] ; then
-                tar xzf $ANT_FILE -C . || exit 1
+                tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
             fi
             export ANT_HOME="`pwd`/$ANT_DIR"
             cd ..
@@ -203,13 +245,29 @@ jarbundler_prepare() {
 }
    
 windmill_prepare() {
-    tools_prepare
-
-    WINDMILL_URL="http://github.com/windmill/windmill/tarball/1.3beta2"
-    WINDMILL_FILE="windmill-1.3beta2.tar.gz"
-    WINDMILL_DIR="windmill-1.3beta2"
-
-    tool_download $WINDMILL_URL $WINDMILL_FILE $WINDMILL_DIR
+    WINDMILL="`which windmill`"
+    if [ "$WINDMILL" == "" ] ; then
+        check_python
+        tools_prepare
+    
+        WINDMILL_URL="http://github.com/windmill/windmill/tarball/1.3beta2"
+        WINDMILL_FILE="windmill-1.3beta2.tar.gz"
+        WINDMILL_DIR="windmill-1.3beta2"
+    
+        tool_download $WINDMILL_URL $WINDMILL_FILE $WINDMILL_DIR
+        
+        WINDMILL="$GRIDWORKS_TOOLS_DIR/windmill"
+        if [ ! -f $WINDMILL ] ; then
+            cd $GRIDWORKS_TOOLS_DIR
+            WINDMILL_SRC=`find . -type d -depth 1 | grep windmill`
+            cd $WINDMILL_SRC
+            echo "About to install Windmill with 'sudo', you might be asked to input your admin password"
+            WINDMILL=`sudo python setup.py develop | grep 'Installing windmill script to' | sed 's|.* /|/|'`/windmill
+            cd ..
+            ln -s $WINDMILL windmill
+            cd ..
+        fi
+    fi    
 }
 
 findbugs_prepare() {
@@ -229,7 +287,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    $ANT -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || exit 1
+    $ANT -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -282,7 +340,7 @@ mac_dist() {
     get_revision
     
     ANT_PARAMS="-Djarbundler.dir=${GRIDWORKS_TOOLS_DIR}/${JARBUNDLER_DIR}"
-    ant mac || exit 1
+    ant mac
 
     mkdir -p "$GRIDWORKS_BUILD_DIR/mac/.background"
     cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/mac/.background/dmg_background.png"
@@ -297,7 +355,7 @@ mac_dist() {
     echo "Building MacOSX DMG for $TITLE"
     hdiutil create -srcfolder "$GRIDWORKS_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" || error "can't create empty DMG"
     DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}'`
-    hdiutil attach "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    hdiutil attach "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" || error "Can't attach temp DMG"
     
     echo '
        tell application "Finder"
@@ -321,11 +379,11 @@ mac_dist() {
             eject
          end tell
        end tell
-    ' | osascript || error "error running applescript"
+    ' | osascript || error "Error running applescript"
     
     sync
     sync
-    hdiutil detach $DEVICE
+    hdiutil detach $DEVICE || error "Error while detaching $DEVICE"
     
     if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ] ; then
         rm "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
@@ -338,12 +396,36 @@ mac_dist() {
 }
 
 test() {
-    ui_test $1 
     server_test $1
+    ui_test $1 
 }
 
 ui_test() {
     windmill_prepare
+    
+    GRIDWORKS_DATA_DIR="${GRIDWORKS_TEST_DIR}/temp"
+    
+    add_option "-Dgridworks.headless=true"
+    
+    run fork
+    
+    echo "Waiting for Gridworks to load..."
+    sleep 5
+    echo "... proceed with the tests."
+    echo ""
+    
+    load_data "$GRIDWORKS_TEST_DIR/data/food.csv" "Food"
+    sleep 3
+    echo ""
+    
+    echo "Starting Windmill..."
+    $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ test=$GRIDWORKS_TEST_DIR/windmill exit > /dev/null
+    
+    echo ""
+    echo "Killing Gridworks"
+    kill -9 $GRIDWORKS_PID
+    echo "Cleaning up"
+    rm -rf $GRIDWORKS_DATA_DIR
 }
 
 server_test() {
@@ -364,19 +446,27 @@ server_test() {
     
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.junit.runner.JUnitCore $TESTS"
     
-    echo "$RUN_CMD"
-    echo ""
+    #echo "$RUN_CMD"
+    #echo ""
     
-    exec $RUN_CMD
+    $RUN_CMD || error "Failed passing server tests"
 }
 
 run() {
+    FORK=$1
+    
     if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
         is_jar=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
         if [ "$is_jar" == "" ] ; then
             ant build
             echo ""
         fi
+    fi
+    
+    check_running
+    
+    if [ "$NOT_RUNNING" == "" ] ; then
+        warn "Gridworks is already running."
     fi
     
     if [ -d $GRIDWORKS_BUILD_DIR/classes ] ; then
@@ -394,13 +484,19 @@ run() {
     CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
+
+    #echo "$RUN_CMD"
+    #echo ""
   
     echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
-    #echo "$RUN_CMD"
-    #echo ""
 
-    exec $RUN_CMD
+    if [ "$FORK" == "" ] ; then
+        exec "$RUN_CMD"
+    else
+        sh -c "$RUN_CMD" &
+        GRIDWORKS_PID="$!"
+    fi
 }
 
 execute() {
@@ -413,8 +509,8 @@ execute() {
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS $*"
   
-    echo "$RUN_CMD"
-    echo ""
+    #echo "$RUN_CMD"
+    #echo ""
 
     exec $RUN_CMD $*
 }

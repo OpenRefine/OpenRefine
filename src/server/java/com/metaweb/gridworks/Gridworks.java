@@ -104,8 +104,11 @@ public class Gridworks {
         GridworksServer server = new GridworksServer();
         server.init(host,port);
 
-        GridworksClient client = new GridworksClient();
-        client.init(host,port);
+        boolean headless = Configurations.getBoolean("gridworks.headless",false);
+        if (!headless) {
+            GridworksClient client = new GridworksClient();
+            client.init(host,port);
+        }
         
         // hook up the signal handlers
         new ShutdownSignalHandler("TERM", server);
