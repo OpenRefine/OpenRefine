@@ -45,6 +45,8 @@
    - David Huynh <david@metaweb.com>
    - Stefano Mazzocchi <stefano@metaweb.com>
    - Vishal Talwar <vishal@metaweb.com> 
+   - Jeff Fry <jfry@metaweb.com>
+   - Will Moffat <willmoffat@metaweb.com>
   
      
 
