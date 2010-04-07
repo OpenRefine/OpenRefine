@@ -347,17 +347,17 @@ ui_test() {
 }
 
 server_test() {
-    if [ ! -d $GRIDWORKS_TEST_DIR/classes ] ; then
+    if [ ! -d $GRIDWORKS_TEST_DIR/java/classes ] ; then
         ant build_tests
         echo ""
     fi
     
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_TEST_DIR/classes:$GRIDWORKS_TEST_DIR/lib/*:$GRIDWORKS_LIB_DIR/*"
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_WEBAPP/WEB-INF/classes:$GRIDWORKS_TEST_DIR/java/classes:$GRIDWORKS_TEST_DIR/java/lib/*:$GRIDWORKS_LIB_DIR/*:$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
 
     if [ "$1" == "" ] ; then
-        cd $GRIDWORKS_TEST_DIR/classes
+        cd $GRIDWORKS_TEST_DIR/java/classes
         TESTS=`find . -name '*.class' | sed s@/@.@g | sed s@.class@@ | sed s@..@@`
-        cd ../..
+        cd ../../..
     else 
         TESTS=$1
     fi
