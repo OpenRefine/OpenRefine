@@ -326,8 +326,14 @@ mac_dist() {
     sync
     sync
     hdiutil detach $DEVICE
+    
+    if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ] ; then
+        rm "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
+    fi
+    
     hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
     hdiutil internet-enable -yes "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
+    
     rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
 }
 
