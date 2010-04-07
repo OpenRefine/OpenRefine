@@ -164,7 +164,11 @@ Gridworks.update = function(options, onFinallyDone) {
     var done = false;
     var dismissBusy = null;
     
+    Gridworks.setAjaxInProgress();
+    
     Gridworks.createUpdateFunction(options, function() {
+        Gridworks.clearAjaxInProgress();
+        
         done = true;
         if (dismissBusy) {
             dismissBusy();
@@ -199,6 +203,8 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
         if (dismissBusy) {
             dismissBusy();
         }
+        
+        Gridworks.clearAjaxInProgress();
         
         if (o.code == "error") {
             if ("onError" in callbacks) {
@@ -236,6 +242,8 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
         }
     }
     
+    Gridworks.setAjaxInProgress();
+    
     $.post(
         "/command/" + command + "?" + $.param(params),
         body,
@@ -248,6 +256,14 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
             dismissBusy = DialogSystem.showBusy();
         }
     }, 500);
+};
+
+Gridworks.setAjaxInProgress = function() {
+    $(document.body).attr("ajax_in_progress", "true");
+};
+
+Gridworks.clearAjaxInProgress = function() {
+    $(document.body).attr("ajax_in_progress", "false");
 };
 
 /*
