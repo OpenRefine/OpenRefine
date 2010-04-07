@@ -293,6 +293,23 @@
         </cpd>
     </target>    
 
+    <target name="jslint" depends="prepare_reports">
+        <path id="jslint.path">
+            <fileset dir="${jslint.dir}" includes="*.jar"/>
+        </path>    
+        <taskdef 
+            name="jslint"
+            classname="com.googlecode.jslint4java.ant.JSLintTask"
+            classpathref="jslint.path" 
+        />
+        <jslint>
+            <formatter type="plain" destfile="${reports.dir}/jslint.txt" />
+            <fileset dir="${basedir}/src/main/webapp/scripts">
+              <include name="**/*.js" />
+            </fileset>
+        </jslint>        
+    </target>    
+
     <target name="clean">
         <delete file="${build.dir}/gridworks.jar" />
         <delete dir="${server_classes.dir}" />
