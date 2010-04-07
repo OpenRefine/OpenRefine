@@ -175,7 +175,7 @@ tool_download() {
         download $URL $FILE
     fi
     if [ ! -d "$DIR" ] ; then
-        if [ "`echo $FILE | sed 's@.*.(tar.gz|tgz)$@@'`" == "" ] ; then
+        if [ "`echo $FILE | sed 's@.*.tar.gz$@@'`" == "" ] ; then
             tar xzf $FILE || error "Error while expanding $FILE"
         fi
         if [ "`echo $FILE | sed 's@.*.zip$@@'`" == "" ] ; then
