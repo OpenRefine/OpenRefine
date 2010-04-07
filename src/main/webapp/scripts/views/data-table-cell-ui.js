@@ -208,26 +208,41 @@ DataTableCellUI.prototype._searchForMatch = function() {
     var match = null;
     var commit = function() {
         if (match != null) {
-            var params = {
-                judgment: "matched",
-                topicID: match.id,
-                topicGUID: match.guid,
-                topicName: match.name,
-                types: $.map(match.type, function(elmt) { return elmt.id; }).join(",")
+            var query = {
+                "id" : match.id,
+                "type" : []
             };
-            if (elmts.checkSimilar[0].checked) {
-                params.similarValue = self._cell.v;
-                params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
-                
-                self._postProcessSeveralCells("recon-judge-similar-cells", params, true);
-            } else {
-                params.row = self._rowIndex;
-                params.cell = self._cellIndex;
-                
-                self._postProcessOneCell("recon-judge-one-cell", params, true);
-            }
-        
-            DialogSystem.dismissUntil(level - 1);
+            var baseUrl = "http://api.freebase.com/api/service/mqlread";
+            var url = baseUrl + "?" + $.param({ query: JSON.stringify({ query: query }) }) + "&callback=?";
+            
+            $.getJSON(
+                url,
+                null,
+                function(o) {
+                    var types = "result" in o ? o.result.type : [];
+                    var params = {
+                        judgment: "matched",
+                        topicID: match.id,
+                        topicGUID: match.guid,
+                        topicName: match.name,
+                        types: $.map(types, function(elmt) { return elmt.id; }).join(",")
+                    };
+                    if (elmts.checkSimilar[0].checked) {
+                        params.similarValue = self._cell.v;
+                        params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
+
+                        self._postProcessSeveralCells("recon-judge-similar-cells", params, true);
+                    } else {
+                        params.row = self._rowIndex;
+                        params.cell = self._cellIndex;
+
+                        self._postProcessOneCell("recon-judge-one-cell", params, true);
+                    }
+
+                    DialogSystem.dismissUntil(level - 1);
+                },
+                "jsonp"
+            );
         }
     };
     

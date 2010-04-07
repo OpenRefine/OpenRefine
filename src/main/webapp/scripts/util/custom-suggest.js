@@ -9,7 +9,7 @@
         schemaPrefixes.push(includedTypes[i] + "/");
     }
     
-    var results = data.result;
+    var results = "result" in data ? data.result : [];
     var entries1 = [];
     var entries2 = [];
     
