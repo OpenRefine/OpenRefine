@@ -450,6 +450,8 @@ test() {
 }
 
 ui_test() {
+    INTERACTIVE=$1
+    
     windmill_prepare
     
     GRIDWORKS_DATA_DIR="${GRIDWORKS_TEST_DIR}/temp"
@@ -468,7 +470,12 @@ ui_test() {
     echo ""
     
     echo "Starting Windmill..."
-    $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ test=$GRIDWORKS_TEST_DIR/windmill exit > /dev/null
+    if [ "$INTERACTIVE" == "" ] ; then
+        $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ test=$GRIDWORKS_TEST_DIR/windmill/python exit > /dev/null
+        #$WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/windmill/js exit > /dev/null
+    else
+        $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ > /dev/null
+    fi
     
     echo ""
     echo "Killing Gridworks"
