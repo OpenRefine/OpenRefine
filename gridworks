@@ -175,11 +175,12 @@ tool_download() {
         download $URL $FILE
     fi
     if [ ! -d "$DIR" ] ; then
-        if [ `echo $FILE | sed 's|.*.(tar.gz|tgz)$||'` == "" ] ; then
+        if [ "`echo $FILE | sed 's@.*.(tar.gz|tgz)$@@'`" == "" ] ; then
             tar xzf $FILE || error "Error while expanding $FILE"
-        elif [ `echo $FILE | sed 's|.*.zip$||'` == "" ] ; then
+        fi
+        if [ "`echo $FILE | sed 's@.*.zip$@@'`" == "" ] ; then
             check_unzip
-            $UNZIP $FILE || error "Error while expanding $FILE"
+            $UNZIP -q $FILE || error "Error while expanding $FILE"
         fi
     fi
     cd ..
