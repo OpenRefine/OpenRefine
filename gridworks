@@ -53,15 +53,19 @@ where [options] include:
 and <action> is one of
 
    build ..................... Build Gridworks      
-   run ....................... Run Gridworks
+   run ....................... Run Gridworks [default]
 
-   test ...................... Test Gridworks 
+   test ...................... Run all Gridworks tests
+   server_test ............... Run only the server tests
+   ui_test ................... Run only the UI tests
+   
    findbugs .................. Run Findbugs against Gridworks     
+   pmd ....................... Run PMD against Gridworks     
+   cpd ....................... Run Copy/Paste Detection against Gridworks     
    
    mac_dist <version> ........ Make MacOSX binary distribution
    windows_dist <version> .... Make Windows binary distribution
    linux_dist <version> ...... Make Linux binary distribution
-
    dist <version> ............ Make all distributions
 
    clean ..................... Clean compiled classes
@@ -93,6 +97,14 @@ check_downloaders() {
     
     if [ "$CURL" == "" ] && [ "$WGET" == "" ]; then
         error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
+    fi
+}
+
+check_unzip() {
+    UNZIP="`which unzip`"
+    
+    if [ "$UNZIP" == "" ] ; then
+        error "We need 'unzip' present in PATH to expand external dependencies."
     fi
 }
     
@@ -163,7 +175,12 @@ tool_download() {
         download $URL $FILE
     fi
     if [ ! -d "$DIR" ] ; then
-        tar xzf $FILE || error "Error while expanding $FILE"
+        if [ `echo $FILE | sed 's|.*.(tar.gz|tgz)$||'` == "" ] ; then
+            tar xzf $FILE || error "Error while expanding $FILE"
+        elif [ `echo $FILE | sed 's|.*.zip$||'` == "" ] ; then
+            check_unzip
+            $UNZIP $FILE || error "Error while expanding $FILE"
+        fi
     fi
     cd ..
 }
@@ -279,7 +296,17 @@ findbugs_prepare() {
 
     tool_download $FINDBUGS_URL $FINDBUGS_FILE $FINDBUGS_DIR
 }
-   
+
+pmd_prepare() {
+    tools_prepare
+    
+    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/4.2.5/pmd-bin-4.2.5.zip"
+    PMD_FILE="pmd-bin-4.2.5.zip"
+    PMD_DIR="pmd-4.2.5"
+
+    tool_download $PMD_URL $PMD_FILE $PMD_DIR
+}
+      
 # ----------------------------------------------------------------------------------------------
 
 ant() {
@@ -492,7 +519,7 @@ run() {
     echo ""
 
     if [ "$FORK" == "" ] ; then
-        exec "$RUN_CMD"
+        exec $RUN_CMD
     else
         sh -c "$RUN_CMD" &
         GRIDWORKS_PID="$!"
@@ -520,6 +547,20 @@ findbugs() {
     
     ANT_PARAMS="-Dfindbugs.dir=${GRIDWORKS_TOOLS_DIR}/${FINDBUGS_DIR}"
     ant findbugs
+}    
+
+pmd() {
+    pmd_prepare
+    
+    ANT_PARAMS="-Dpmd.dir=${GRIDWORKS_TOOLS_DIR}/${PMD_DIR}"
+    ant pmd
+}    
+
+cpd() {
+    pmd_prepare
+    
+    ANT_PARAMS="-Dpmd.dir=${GRIDWORKS_TOOLS_DIR}/${PMD_DIR}"
+    ant cpd
 }    
 
 # -------------------------- script -----------------------------
@@ -642,6 +683,8 @@ case "$ACTION" in
   ui_test) ui_test $1;;  
   server_test) server_test $1;;  
   findbugs) findbugs;;  
+  pmd) pmd;;  
+  cpd) cpd;;  
   run) run;;  
   execute) execute $*;;  
   mac_dist) mac_dist $1;;

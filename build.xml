@@ -29,6 +29,7 @@
     <property name="tests.dir" value="${basedir}/tests/java" />
     <property name="tools.dir" value="${basedir}/tools" />
     
+    <property name="reports.dir" value="${build.dir}/reports" />
     <property name="server_classes.dir" value="${build.dir}/classes" />
     <property name="webapp_classes.dir" value="${basedir}/src/main/webapp/WEB-INF/classes" />
     <property name="tests_classes.dir" value="${tests.dir}/classes" />
@@ -235,18 +236,62 @@
         </tar>
     </target>
 
-    <target name="findbugs" depends="build">
+    <target name="prepare_reports">
+        <mkdir dir="${reports.dir}" />
+    </target>
+
+    <target name="findbugs" depends="build,prepare_reports">
         <taskdef 
             name="findbugs" 
             classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
             classpath="${findbugs.dir}/lib/findbugs-ant.jar" 
         />
-        <findbugs jvmargs="-Xmx1024m" home="${findbugs.dir}" output="html" outputFile="${build.dir}/gridworks-findbugs.html" >
+        <findbugs jvmargs="-Xmx1024m" home="${findbugs.dir}" output="html" outputFile="${reports.dir}/findbugs.html" >
           <auxClasspath refid="class.path" />
           <sourcePath path="${src.dir}" />
           <class location="${webapp_classes.dir}" />
         </findbugs>        
     </target>
+    
+    <target name="pmd" depends="prepare_reports">
+        <path id="pmd.path">
+            <fileset dir="${pmd.dir}/lib" includes="*.jar"/>
+        </path>    
+        <taskdef 
+            name="pmd" 
+            classname="net.sourceforge.pmd.ant.PMDTask"
+            classpathref="pmd.path" 
+        />
+        <pmd targetjdk="1.6" encoding="UTF-8">
+            <ruleset>basic</ruleset>        
+            <formatter type="html" toFile="${reports.dir}/pmd.html" toConsole="true"/>
+            <fileset dir="${server.src.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </pmd>
+    </target>    
+
+    <target name="cpd" depends="prepare_reports">
+        <path id="pmd.path">
+            <fileset dir="${pmd.dir}/lib" includes="*.jar"/>
+        </path>    
+        <taskdef 
+            name="cpd" 
+            classname="net.sourceforge.pmd.cpd.CPDTask"
+            classpathref="pmd.path" 
+        />
+        <cpd minimumTokenCount="100" outputFile="${reports.dir}/cpd.txt" encoding="UTF-8">
+            <fileset dir="${server.src.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </cpd>
+    </target>    
 
     <target name="clean">
         <delete file="${build.dir}/gridworks.jar" />
