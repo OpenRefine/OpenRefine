@@ -27,6 +27,7 @@
     <property name="conf.dir" value="${basedir}/src/conf" />
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="tests.dir" value="${basedir}/tests" />
+    <property name="tools.dir" value="${basedir}/tools" />
     
     <property name="server_classes.dir" value="${build.dir}/classes" />
     <property name="webapp_classes.dir" value="${basedir}/src/main/webapp/WEB-INF/classes" />
@@ -257,6 +258,7 @@
     <target name="distclean" depends="clean">
         <delete dir="${build.dir}" />
         <delete dir="${dist.dir}" />
+        <delete dir="${tools.dir}" />
     </target>
 
 </project>
