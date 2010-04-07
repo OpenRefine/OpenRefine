@@ -172,18 +172,18 @@ tool_download() {
     DIR=$3
     
     cd $GRIDWORKS_TOOLS_DIR
-    if [ ! -f "$FILE" ] ; then
-        download $URL $FILE
-    fi
-    if [ ! -d "$DIR" ] ; then
-        if [ "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" == "" ] ; then
-            tar xzf $FILE || error "Error while expanding $FILE"
+        if [ ! -f "$FILE" ] ; then
+            download $URL $FILE
         fi
-        if [ "`echo $FILE | sed 's@.*.zip$@@'`" == "" ] ; then
-            check_unzip
-            $UNZIP -q $FILE || error "Error while expanding $FILE"
+        if [ ! -d "$DIR" ] ; then
+            if [ "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" == "" ] ; then
+                tar xzf $FILE || error "Error while expanding $FILE"
+            fi
+            if [ "`echo $FILE | sed 's@.*.zip$@@'`" == "" ] ; then
+                check_unzip
+                $UNZIP -q $FILE || error "Error while expanding $FILE"
+            fi
         fi
-    fi
     cd ..
 }
 
@@ -230,13 +230,13 @@ ant_prepare() {
     if [ $ANT == "" ] ; then
         if [ $ANT_HOME == "" ] ; then
             cd $GRIDWORKS_TOOLS_DIR
-            if [ ! -f $ANT_FILE ] ; then
-                download $ANT_URL $ANT_FILE
-            fi
-            if [ ! -d $ANT_DIR ] ; then
-                tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
-            fi
-            export ANT_HOME="`pwd`/$ANT_DIR"
+                if [ ! -f $ANT_FILE ] ; then
+                    download $ANT_URL $ANT_FILE
+                fi
+                if [ ! -d $ANT_DIR ] ; then
+                    tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
+                fi
+                export ANT_HOME="`pwd`/$ANT_DIR"
             cd ..
         fi
         ANT="$ANT_HOME/bin/ant"
@@ -263,28 +263,35 @@ jarbundler_prepare() {
     tool_download $JARBUNDLER_URL $JARBUNDLER_FILE $JARBUNDLER_DIR
 }
    
+virtualenv_prepare() {
+    check_python
+
+    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.4.6.tar.gz"
+    VIRTUALENV_FILE="virtualenv-1.4.6.tar.gz"
+    VIRTUALENV_DIR="virtualenv-1.4.6"
+
+    tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
+    
+    if [ ! -d "$GRIDWORKS_TOOLS_DIR/python" ] ; then
+        $PYTHON $GRIDWORKS_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $GRIDWORKS_TOOLS_DIR/python
+    fi
+    
+    PYTHON_HOME="`pwd`/$GRIDWORKS_TOOLS_DIR/python"
+    PYTHON="$PYTHON_HOME/bin/python"
+    PYTHON_INSTALL="$PYTHON_HOME/bin/easy_install"
+}
+    
 windmill_prepare() {
     WINDMILL="`which windmill`"
     if [ "$WINDMILL" == "" ] ; then
         check_python
         tools_prepare
-    
-        WINDMILL_URL="http://github.com/windmill/windmill/tarball/1.3beta2"
-        WINDMILL_FILE="windmill-1.3beta2.tar.gz"
-        WINDMILL_DIR="windmill-1.3beta2"
-    
-        tool_download $WINDMILL_URL $WINDMILL_FILE $WINDMILL_DIR
-        
+
         WINDMILL="$GRIDWORKS_TOOLS_DIR/windmill"
         if [ ! -f $WINDMILL ] ; then
-            cd $GRIDWORKS_TOOLS_DIR
-            WINDMILL_SRC=`find . -type d -depth 1 | grep windmill`
-            cd $WINDMILL_SRC
-            echo "About to install Windmill with 'sudo', you might be asked to input your admin password"
-            WINDMILL=`sudo python setup.py develop | grep 'Installing windmill script to' | sed 's|.* /|/|'`/windmill
-            cd ..
-            ln -s $WINDMILL windmill
-            cd ..
+            virtualenv_prepare
+            $PYTHON_INSTALL windmill
+            ln -s $PYTHON_HOME/bin/windmill $GRIDWORKS_TOOLS_DIR/windmill
         fi
     fi    
 }
@@ -702,8 +709,11 @@ case "$ACTION" in
   clean) ant clean;;
   distclean) ant distclean;;
   test) test $1;;  
+  tests) test $1;;  
   ui_test) ui_test $1;;  
+  ui_tests) ui_test $1;;  
   server_test) server_test $1;;  
+  server_tests) server_test $1;;  
   findbugs) findbugs;;  
   pmd) pmd;;  
   cpd) cpd;;  
