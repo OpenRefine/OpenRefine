@@ -28,6 +28,7 @@ import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
+import org.mortbay.log.Log;
 import org.mortbay.util.Scanner;
 
 import com.metaweb.util.logging.IndentingLayout;
@@ -106,8 +107,12 @@ public class Gridworks {
 
         boolean headless = Configurations.getBoolean("gridworks.headless",false);
         if (!headless) {
-            GridworksClient client = new GridworksClient();
-            client.init(host,port);
+            try {
+                GridworksClient client = new GridworksClient();
+                client.init(host,port);
+            } catch (Exception e) {
+                Log.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Gridworks.");
+            }
         }
         
         // hook up the signal handlers
