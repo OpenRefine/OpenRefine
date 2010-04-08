@@ -26,7 +26,7 @@ DataTableCellUI.prototype._render = function() {
         .mouseenter(function() { editLink.css("visibility", "visible"); })
         .mouseleave(function() { editLink.css("visibility", "hidden"); });
     
-    if (!cell || ("v" in cell && cell.v == null)) {
+    if (!cell || ("v" in cell && cell.v === null)) {
         $('<span>').html("&nbsp;").appendTo(divContent);
     } else if ("e" in cell) {
         $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
@@ -315,7 +315,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(id, elmt) {
 DataTableCellUI.prototype._startEdit = function(elmt) {
     self = this;
     
-    var originalContent = !this._cell || ("v" in this._cell && this._cell.v == null) ? "" : this._cell.v;
+    var originalContent = !this._cell || ("v" in this._cell && this._cell.v === null) ? "" : this._cell.v;
     
     var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
     menu.html(

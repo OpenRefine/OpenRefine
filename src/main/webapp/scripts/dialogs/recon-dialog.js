@@ -140,7 +140,7 @@ ReconDialog.prototype._populateDialog = function() {
         $(td1).html(type.name + '<br/><span class="recon-dialog-type-id">' + type.id + '</span>');
     };
     for (var i = 0; i < this._types.length; i++) {
-        createTypeChoice(this._types[i], i == 0);
+        createTypeChoice(this._types[i], i === 0);
     }
     
     /*
@@ -209,7 +209,7 @@ ReconDialog.prototype._rewirePropertySuggests = function(schema) {
 
 ReconDialog.prototype._onOK = function() {
     var tab = $("#recon-dialog-tabs").tabs('option', 'selected');
-    if (tab == 0) {
+    if (tab === 0) {
         this._onDoHeuristic();
     } else {
         this._onDoStrict();

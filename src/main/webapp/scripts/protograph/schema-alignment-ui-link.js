@@ -359,7 +359,7 @@ SchemaAlignmentDialog.UILink.prototype._configureTarget = function() {
                     id: expected_type.id,
                     name: expected_type.name
                 };
-                if (expected_type["/freebase/type_hints/mediator"] == true) {
+                if (expected_type["/freebase/type_hints/mediator"] === true) {
                     self._link.target.nodeType = "anonymous";
                 } else if (expected_type.id == "/type/key") {
                     self._link.target.nodeType = "cell-as-key";

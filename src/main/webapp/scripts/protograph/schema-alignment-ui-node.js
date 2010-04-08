@@ -420,7 +420,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                 }
             });
             
-        if ((!("columnName" in self._node) || !self._node.columnName) && columnIndex == 0) {
+        if ((!("columnName" in self._node) || !self._node.columnName) && columnIndex === 0) {
             radio.attr("checked", "true");
         } else if (column.name == self._node.columnName) {
             radio.attr("checked", "true");

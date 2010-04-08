@@ -65,7 +65,7 @@ HistoryWidget.prototype._render = function() {
     } else {
         for (var i = 0; i < this._data.past.length; i++) {
             var entry = this._data.past[i];
-            renderEntry(elmts.pastDiv, entry, i == 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
+            renderEntry(elmts.pastDiv, entry, i === 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
         }
     }
     
