@@ -38,7 +38,7 @@ BrowsingEngine.prototype.getFacetUIStates = function() {
         f.push(facet.facet.getUIState());
     }
     return f;
-}
+};
 
 BrowsingEngine.prototype._initializeUI = function() {
     var self = this;

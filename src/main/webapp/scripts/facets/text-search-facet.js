@@ -25,7 +25,7 @@ TextSearchFacet.prototype.getUIState = function() {
     };
     
     return json;
-}
+};
 
 TextSearchFacet.prototype.getJSON = function() {
     var o = {

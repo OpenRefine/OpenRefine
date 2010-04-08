@@ -6,7 +6,7 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
     this._td = td;
     
     this._render();
-};
+}
 
 DataTableCellUI.prototype._render = function() {
     var self = this;
@@ -132,7 +132,7 @@ DataTableCellUI.prototype._render = function() {
         }
     }
     
-    divContent.appendTo(this._td)
+    divContent.appendTo(this._td);
 };
 
 DataTableCellUI.prototype._doRematch = function() {

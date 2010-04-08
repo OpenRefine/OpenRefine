@@ -44,7 +44,7 @@ SchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentUINo
 };
 
 SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
-    $(this._tdMain).empty()
+    $(this._tdMain).empty();
     
     var label = this._link.property != null ? this._link.property.id : "property?";
     
@@ -109,7 +109,7 @@ SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
             
             var suggestions = SchemaAlignmentDialog.UILink._rankProperties(outgoing, incoming, sourceTypeID, targetTypeID, targetTypeName);
             self._showPropertySuggestPopup(elmt, suggestions);
-        };
+        }
         
         var cotypes = [];
         function doCoTypes() {
@@ -125,7 +125,7 @@ SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
                     doCoTypes
                 );
             }
-        };
+        }
         
         SchemaAlignmentDialog.UILink._getPropertiesOfType(
             sourceTypeID,
@@ -186,7 +186,7 @@ SchemaAlignmentDialog.UILink._rankProperties = function(outgoing, incoming, sour
             
             return score;
         };
-    };
+    }
     
     var typeScorer;
     if (targetTypeID === null) {

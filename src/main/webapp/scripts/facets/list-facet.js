@@ -36,7 +36,7 @@ ListFacet.prototype.getUIState = function() {
     delete json.c.selection;
     
     return json;
-}
+};
 
 ListFacet.prototype.getJSON = function() {
     var o = {
@@ -49,7 +49,7 @@ ListFacet.prototype.getJSON = function() {
         selection: [],
         selectBlank: this._blankChoice != null && this._blankChoice.s,
         selectError: this._errorChoice != null && this._errorChoice.s
-    }
+    };
     for (var i = 0; i < this._selection.length; i++) {
         var choice = {
             v: cloneDeep(this._selection[i].v)

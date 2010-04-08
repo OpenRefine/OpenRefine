@@ -29,7 +29,7 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
         values,
         expression
     );
-};
+}
 
 ExpressionPreviewDialog.generateWidgetHtml = function() {
     return '<div class="grid-layout layout-tight layout-full"><table rows="4" cols="2">' +
@@ -141,7 +141,7 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
 
 ExpressionPreviewDialog.Widget.prototype._getLanguage = function() {
     return this._elmts.expressionPreviewLanguageSelect[0].value;
-}
+};
 
 ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
     var self = this;

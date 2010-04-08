@@ -55,7 +55,7 @@ RangeFacet.prototype.getUIState = function() {
     };
     
     return json;
-}
+};
 
 
 RangeFacet.prototype.getJSON = function() {

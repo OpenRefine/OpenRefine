@@ -337,7 +337,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {
                     label: "Collapse All Other Columns",
                     click: function() {
-                        var collapsedColumnNames = {}
+                        var collapsedColumnNames = {};
                         for (var i = 0; i < theProject.columnModel.columns.length; i++) {
                             if (i != self._columnIndex) {
                                 collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
@@ -633,7 +633,7 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
             bodyElmts.repeatCountInput[0].value
         );
         dismiss();
-    })
+    });
     footerElmts.cancelButton.click(dismiss);
     
     var o = DataTableView.sampleVisibleRows(this._column);
@@ -842,7 +842,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
             { modelsChanged: true }
         );
         dismiss();
-    })
+    });
     footerElmts.cancelButton.click(dismiss);
     
     var o = DataTableView.sampleVisibleRows(this._column);

@@ -87,7 +87,7 @@ DataTableView.prototype._renderPagingControls = function(table) {
     var sizes = [ 5, 10, 15, 20, 25, 50 ];
     var renderPageSize = function(index) {
         var pageSize = sizes[index];
-        var a = $('<a href="javascript:{}"></a>').appendTo(pagingControls1)
+        var a = $('<a href="javascript:{}"></a>').appendTo(pagingControls1);
         if (pageSize == self._pageSize) {
             a.text("[" + pageSize + "]").addClass("inaction");
         } else {
@@ -209,7 +209,7 @@ DataTableView.prototype._renderDataTable = function(table) {
         
         if (column.name in self._collapsedColumnNames) {
             $(td).html("&nbsp;").attr("title", column.name).click(function(evt) {
-                delete self._collapsedColumnNames[column.name]
+                delete self._collapsedColumnNames[column.name];
                 self.render();
             });
         } else {

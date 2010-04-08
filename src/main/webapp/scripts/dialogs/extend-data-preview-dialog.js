@@ -51,7 +51,7 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
         dismissBusy();
         self._show(properties);
     });
-};
+}
 
 ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
     var query = {
@@ -115,7 +115,7 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
             processProperties(o.result.properties);
             $.each(o.result["/freebase/type_hints/included_types"], function() {
                 processProperties(this.properties, null);
-            })
+            });
             
             if (cvtProperties.length == 0) {
                 onDone(allProperties);
@@ -247,7 +247,7 @@ ExtendDataPreviewDialog.prototype._update = function() {
             extension: JSON.stringify(this._extension)
         },
         function(data) {
-            self._renderPreview(data)
+            self._renderPreview(data);
         },
         "json"
     );
@@ -362,4 +362,4 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
     }
     
     container.append(table);
-}
+};

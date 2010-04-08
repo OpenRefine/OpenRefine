@@ -81,14 +81,14 @@ SchemaAlignment._batchSearch = function(queries, onDone) {
     
     args.push(function() {
         onDone(result);
-    })
+    });
     
     Ajax.chainGetJSON.apply(null, args);
 };
 
 SchemaAlignment._cleanName = function(s) {
     return s.replace(/\W/g, " ").replace(/\s+/g, " ").toLowerCase();
-}
+};
 
 SchemaAlignment.createNewRootNode = function() {
     var rootNode = null;
@@ -136,7 +136,7 @@ function SchemaAlignmentDialog(protograph, onDone) {
     this._nodeUIs = [];
     this._createDialog();
     this.preview();
-};
+}
 
 SchemaAlignmentDialog.prototype._createDialog = function() {
     var self = this;

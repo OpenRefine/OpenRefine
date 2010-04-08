@@ -12,7 +12,7 @@ function onLoad() {
     if (isThereNewRelease()) {
         $('<div id="version-message">' +
             'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
-          '</div>').appendTo(document.body)
+          '</div>').appendTo(document.body);
     }
 }
 
@@ -79,7 +79,7 @@ function renderProjects(data) {
                             dataType: "json",
                             success: function (data) {
                                 if (data && typeof data['code'] != 'undefined' && data.code == "ok") {
-                                    window.location.reload()
+                                    window.location.reload();
                                 }
                             }
                         });                    

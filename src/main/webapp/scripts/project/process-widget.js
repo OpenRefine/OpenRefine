@@ -66,8 +66,8 @@ ProcessWidget.prototype.showUndo = function(historyEntry) {
     var elmts = DOM.bind(this._div);
     
     elmts.description.text(historyEntry.description);
-    elmts.undo.click(function() { self.undo() });
-    elmts.close.click(function() { $(".process-panel-inner").hide() });
+    elmts.undo.click(function() { self.undo(); });
+    elmts.close.click(function() { $(".process-panel-inner").hide(); });
 };
 
 ProcessWidget.prototype.undo = function() {

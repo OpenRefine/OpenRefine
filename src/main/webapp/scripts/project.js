@@ -125,7 +125,7 @@ Gridworks.reinitializeProjectData = function(f) {
         },
         f
     );
-}
+};
 
 /*
  *  Utility state functions
