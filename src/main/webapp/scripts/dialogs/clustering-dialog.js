@@ -77,7 +77,7 @@ ClusteringDialog.prototype._createDialog = function() {
             body.find(".knn-controls").hide();
             self._method = "binning";
             self._elmts.keyingFunctionSelector.change();
-        } else if (selection = 'nearest neightbor') {
+        } else if (selection === 'nearest neightbor') {
             body.find(".binning-controls").hide();
             body.find(".knn-controls").show();
             self._method = "knn";
@@ -103,7 +103,7 @@ ClusteringDialog.prototype._createDialog = function() {
             var datatype = e.attr('datatype') || 'string';
             var value = e.val(); 
             if (datatype == 'int') {
-                value = parseInt(value);
+                value = parseInt(value,10);
             } else if (datatype == 'float') {
                 value = parseFloat(value);
             }   
@@ -149,7 +149,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
         var renderCluster = function(cluster) {
             var tr = table.insertRow(table.rows.length);
-            tr.className = table.rows.length % 2 == 0 ? "odd" : "even";
+            tr.className = table.rows.length % 2 === 0 ? "odd" : "even";
             
             $(tr.insertCell(0)).text(cluster.choices.length);
             
@@ -172,15 +172,16 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             var ul = $('<ul></ul>');
             var choices = cluster.choices;
             var rowCount = 0;
+            var onClick = function() {
+              var parent = $(this).closest("tr");
+              parent.find("input[type='text']").val($(this).text());
+              parent.find("input:not(:checked)").attr('checked', true).change();
+              return false;
+            };
             for (var c = 0; c < choices.length; c++) {
                 var choice = choices[c];
                 var li = $('<li></li>');
-                $('<a href="javascript:{}" title="Use this value"></a>').text(choice.v).click(function() {
-                    var parent = $(this).closest("tr");
-                    parent.find("input[type='text']").val($(this).text());
-                    parent.find("input:not(:checked)").attr('checked', true).change();
-                    return false;
-                }).appendTo(li);
+                $('<a href="javascript:{}" title="Use this value"></a>').text(choice.v).click(onClick).appendTo(li);
                 $('<span></span>').text("(" + choice.c + " rows)").addClass("clustering-dialog-entry-count").appendTo(li);
                 rowCount += choice.c;
                 facet.s[c] = {
@@ -275,7 +276,7 @@ ClusteringDialog.prototype._cluster = function() {
         },
         "json"
     );
-}
+};
 
 ClusteringDialog.prototype._updateData = function(data) {
     var clusters = [];
@@ -508,7 +509,7 @@ ClusteringDialog.Facet.prototype.dispose = function() {
 };
 
 ClusteringDialog.Facet.prototype.restrict = function(clusters) {
-    if (this._baseBins.length == 0 || (this._from == this._min && this._to == this._max)) {
+    if (!this._baseBins.length || (this._from == this._min && this._to == this._max)) {
         return clusters;
     }
     
@@ -524,7 +525,7 @@ ClusteringDialog.Facet.prototype.restrict = function(clusters) {
 };
 
 ClusteringDialog.Facet.prototype.update = function(clusters) {
-    if (this._baseBins.length == 0) {
+    if (!this._baseBins.length) {
         return;
     }
     
