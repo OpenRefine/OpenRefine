@@ -24,19 +24,13 @@ HistoryWidget.prototype.update = function(onDone) {
 HistoryWidget.prototype._render = function() {
     var self = this;
     
-    var collapsedMessage = 
-        (!this._data.past.length ? 
-            "" : 
-            (this._data.past.length == 1 ? "1 change - " : (this._data.past.length + " changes - "))
-        ) + 'hover to see';
-    
     this._div
         .empty()
         .unbind()
         .html(
             '<h3>Undo/Redo History</h3>' +
             '<div class="history-panel-body-collapsed" bind="bodyCollapsedDiv">' +
-                collapsedMessage +
+                '<a href="javascript:{}" bind="expandLink"></a>' +
             '</div>' +
             '<div class="history-panel-body" bind="bodyDiv">' +
                 '<div class="history-past" bind="pastDiv"></div>' +
@@ -51,6 +45,16 @@ HistoryWidget.prototype._render = function() {
         );
     
     var elmts = DOM.bind(this._div);
+    
+    if (!this._data.past.length) {
+        if (!this._data.future.length) {
+            elmts.expandLink.text("No change");
+        } else {
+            elmts.expandLink.text(this._data.future.length === 1 ? "1 change to redo" : (this._data.future.length + " changes to redo"));
+        }
+    } else {
+        elmts.expandLink.text(this._data.past.length === 1 ? "1 change" : (this._data.past.length + " changes done"));
+    }
     
     var renderEntry = function(container, entry, lastDoneID, title) {
         var a = $('<a href="javascript:{}"></a>').appendTo(container);
@@ -80,32 +84,12 @@ HistoryWidget.prototype._render = function() {
     
     elmts.extractLink.click(function() { self._extractOperations(); });
     elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
-    
-    elmts.bodyCollapsedDiv.mouseenter(function(evt) {
+    elmts.expandLink.click(function() {
         elmts.bodyCollapsedDiv.hide();
         elmts.bodyDiv.show();
         elmts.bodyControlsDiv.show();
     });
-    
-    this._div.mouseenter(function(evt) {
-        if (self._timerID != null) {
-            window.clearTimeout(self._timerID);
-            self._timerID = null;
-        }
-    }).mouseleave(function(evt) {
-        self._timerID = window.setTimeout(function() {
-            self._timerID = null;
-            elmts.bodyCollapsedDiv.show();
-            elmts.bodyDiv.hide();
-            elmts.bodyControlsDiv.hide();
-        }, 1000);
-    });
-    
     elmts.rollUpLink.click(function(evt) {
-        if (self._timerID != null) {
-            window.clearTimeout(self._timerID);
-            self._timerID = null;
-        }
         elmts.bodyCollapsedDiv.show();
         elmts.bodyDiv.hide();
         elmts.bodyControlsDiv.hide();
