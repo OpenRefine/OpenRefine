@@ -69,14 +69,10 @@ public class CellChange implements Change {
                 row = Integer.parseInt(value);
             } else if ("cell".equals(field)) {
                 cellIndex = Integer.parseInt(value);
-            } else if ("new".equals(field)) {
-                if (value.length() > 0) {
-                    newCell = Cell.load(value);
-                }
-            } else if ("old".equals(field)) {
-                if (value.length() > 0) {
-                    oldCell = Cell.load(value);
-                }
+            } else if ("new".equals(field) && value.length() > 0) {
+                newCell = Cell.load(value);
+            } else if ("old".equals(field) && value.length() > 0) {
+                oldCell = Cell.load(value);
             }
         }
         

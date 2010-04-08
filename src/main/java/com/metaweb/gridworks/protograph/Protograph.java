@@ -81,21 +81,19 @@ public class Protograph implements Jsonizable {
             node = new AnonymousNode(reconstructType(o.getJSONObject("type")));
         }
         
-        if (node != null) {
-            if (node instanceof NodeWithLinks && o.has("links")) {
-                NodeWithLinks node2 = (NodeWithLinks) node;
+        if (node != null && node instanceof NodeWithLinks && o.has("links")) {
+            NodeWithLinks node2 = (NodeWithLinks) node;
+            
+            JSONArray links = o.getJSONArray("links");
+            int linkCount = links.length();
+            
+            for (int j = 0; j < linkCount; j++) {
+                JSONObject oLink = links.getJSONObject(j);
                 
-                JSONArray links = o.getJSONArray("links");
-                int linkCount = links.length();
-                
-                for (int j = 0; j < linkCount; j++) {
-                    JSONObject oLink = links.getJSONObject(j);
-                    
-                    node2.addLink(new Link(
-                        reconstructProperty(oLink.getJSONObject("property")),
-                        reconstructNode(oLink.getJSONObject("target"))
-                    ));
-                }
+                node2.addLink(new Link(
+                    reconstructProperty(oLink.getJSONObject("property")),
+                    reconstructNode(oLink.getJSONObject("target"))
+                ));
             }
         }
         
@@ -123,9 +121,7 @@ public class Protograph implements Jsonizable {
         );
     }
 
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
+    public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("rootNodes"); writer.array();
         

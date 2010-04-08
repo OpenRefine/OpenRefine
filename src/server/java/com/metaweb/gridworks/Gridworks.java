@@ -37,7 +37,10 @@ import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
 public class Gridworks {
     
-    static private final String version = "1.0a";
+    static private final String VERSION = "1.0a";
+    static private final String DEFAULT_HOST = "127.0.0.1";
+    static private final int DEFAULT_PORT = 3333;
+    
     static private File tempDir;
     
     private static Logger root = Logger.getRootLogger();
@@ -64,7 +67,7 @@ public class Gridworks {
     }
     
     public static String getVersion() {
-        return version;
+        return VERSION;
     }
     
     public static File getTempFile(String name) {
@@ -99,8 +102,8 @@ public class Gridworks {
 
     public void init(String[] args) throws Exception {
 
-        int port = Configurations.getInteger("gridworks.port",3333);
-        String host = Configurations.get("gridworks.host","127.0.0.1");
+        int port = Configurations.getInteger("gridworks.port",DEFAULT_PORT);
+        String host = Configurations.get("gridworks.host",DEFAULT_HOST);
         
         GridworksServer server = new GridworksServer();
         server.init(host,port);

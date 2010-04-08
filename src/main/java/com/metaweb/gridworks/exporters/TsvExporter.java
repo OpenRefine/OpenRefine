@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Properties;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -26,7 +24,7 @@ public class TsvExporter implements Exporter {
     
     public void export(Project project, Properties options, Engine engine,
             OutputStream outputStream) throws IOException {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented");
     }
     
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {

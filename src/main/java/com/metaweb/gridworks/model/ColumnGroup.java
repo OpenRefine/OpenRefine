@@ -36,14 +36,12 @@ public class ColumnGroup implements Jsonizable {
         writer.key("columnSpan"); writer.value(columnSpan);
         writer.key("keyColumnIndex"); writer.value(keyColumnIndex);
         
-        if (!"save".equals(options.get("mode"))) {
-            if (subgroups != null && subgroups.size() > 0) {
-                writer.key("subgroups"); writer.array();
-                for (ColumnGroup g : subgroups) {
-                    g.write(writer, options);
-                }
-                writer.endArray();
+        if (!"save".equals(options.get("mode")) && (subgroups != null) && (subgroups.size() > 0)) {
+            writer.key("subgroups"); writer.array();
+            for (ColumnGroup g : subgroups) {
+                g.write(writer, options);
             }
+            writer.endArray();
         }
         writer.endObject();
     }

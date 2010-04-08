@@ -55,11 +55,10 @@ public class Transposer {
             Column column = project.columnModel.getColumnByName(node2.columnName);
             Cell cell = row.getCell(column.getCellIndex());
             if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                if (node2 instanceof CellTopicNode) {
-                    if (!((CellTopicNode) node2).createForNoReconMatch && 
-                        (cell.recon == null || cell.recon.judgment == Judgment.None)) {
+                if (node2 instanceof CellTopicNode && 
+                    !((CellTopicNode) node2).createForNoReconMatch && 
+                    (cell.recon == null || cell.recon.judgment == Judgment.None)) {
                         return;
-                    }
                 }
                 
                 context.count++;

@@ -12,8 +12,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
@@ -33,7 +31,7 @@ public class XlsExporter implements Exporter {
     }
     
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented");
     }
     
     public void export(Project project, Properties options, Engine engine,

@@ -25,9 +25,7 @@ public class SaveProtographOperation extends AbstractOperation {
         );
     }
     
-    public SaveProtographOperation(
-        Protograph protograph
-    ) {
+    public SaveProtographOperation(Protograph protograph) {
         _protograph = protograph;
     }
 
@@ -55,8 +53,8 @@ public class SaveProtographOperation extends AbstractOperation {
     }
 
     static public class ProtographChange implements Change {
-        final protected Protograph     _newProtograph;
-        protected Protograph        _oldProtograph;
+        final protected Protograph _newProtograph;
+        protected Protograph _oldProtograph;
         
         public ProtographChange(Protograph protograph) {
             _newProtograph = protograph;
@@ -91,16 +89,11 @@ public class SaveProtographOperation extends AbstractOperation {
                 CharSequence field = line.subSequence(0, equal);
                 String value = line.substring(equal + 1);
                 
-                if ("oldProtograph".equals(field)) {
-                    if (value.length() > 0) {
-                        oldProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
-                    }
-                } else if ("newProtograph".equals(field)) {
-                    if (value.length() > 0) {
-                        newProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
-                    }
+                if ("oldProtograph".equals(field) && value.length() > 0) {
+                    oldProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                } else if ("newProtograph".equals(field) && value.length() > 0) {
+                    newProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
                 }
-
             }
             
             ProtographChange change = new ProtographChange(newProtograph);

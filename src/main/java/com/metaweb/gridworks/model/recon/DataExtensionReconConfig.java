@@ -7,8 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
@@ -36,13 +34,12 @@ public class DataExtensionReconConfig extends StrictReconConfig {
     @Override
     public ReconJob createJob(Project project, int rowIndex, Row row,
             String columnName, Cell cell) {
-        
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public int getBatchSize() {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented");
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -56,12 +53,12 @@ public class DataExtensionReconConfig extends StrictReconConfig {
     
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs) {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public String getBriefDescription(Project project, String columnName) {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented");
     }
 
 }

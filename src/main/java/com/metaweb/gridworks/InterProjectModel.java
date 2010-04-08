@@ -110,10 +110,8 @@ public class InterProjectModel {
         
         for (Row fromRow : fromProject.rows) {
             Object value = fromRow.getCellValue(fromColumn.getCellIndex());
-            if (ExpressionUtils.isNonBlankData(value)) {
-                if (!join.valueToRowIndices.containsKey(value)) {
-                    join.valueToRowIndices.put(value, new ArrayList<Integer>());
-                }
+            if (ExpressionUtils.isNonBlankData(value) && !join.valueToRowIndices.containsKey(value)) {
+                join.valueToRowIndices.put(value, new ArrayList<Integer>());
             }
         }
         
@@ -122,10 +120,8 @@ public class InterProjectModel {
             Row toRow = toProject.rows.get(r);
             
             Object value = toRow.getCellValue(toColumn.getCellIndex());
-            if (ExpressionUtils.isNonBlankData(value)) {
-                if (join.valueToRowIndices.containsKey(value)) {
-                    join.valueToRowIndices.get(value).add(r);
-                }
+            if (ExpressionUtils.isNonBlankData(value) && join.valueToRowIndices.containsKey(value)) {
+                join.valueToRowIndices.get(value).add(r);
             }
         }
     }

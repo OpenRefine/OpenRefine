@@ -49,16 +49,15 @@ public class ConjunctiveFilteredRows implements FilteredRows {
             	// and this row is a dependent row since it's not a record row
             	row.recordIndex < 0 &&
             	row.contextRows != null &&
-            	row.contextRows.size() > 0
-            ) {
+            	row.contextRows.size() > 0 &&
             	
-            	if (row.contextRows.get(0) == lastRecordRowAcceptedRowIndex) {
-            	    // this row depends on the last previously matched record row,
-            	    // so we visit it as well as a dependent row
-            	    
-                    visitor.visit(project, rowIndex, row, false, true);
-                    lastVisitedRowRowIndex = rowIndex;
-            	}
+            	row.contextRows.get(0) == lastRecordRowAcceptedRowIndex
+            ) {
+        	    // this row depends on the last previously matched record row,
+        	    // so we visit it as well as a dependent row
+        	    
+                visitor.visit(project, rowIndex, row, false, true);
+                lastVisitedRowRowIndex = rowIndex;
             }
         }
     }
