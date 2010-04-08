@@ -186,14 +186,16 @@ Gridworks.update = function(options, onFinallyDone) {
 };
 
 Gridworks.postProcess = function(command, params, body, updateOptions, callbacks) {
+    updateOptions = updateOptions || {};
+    callbacks = callbacks || {};
+    
     params = params || {};
     params.project = theProject.id;
     
     body = body || {};
-    body.engine = JSON.stringify(ui.browsingEngine.getJSON());
-    
-    updateOptions = updateOptions || {};
-    callbacks = callbacks || {};
+    if (!("includeEngine" in updateOptions) || updateOptions.includeEngine) {
+        body.engine = JSON.stringify(ui.browsingEngine.getJSON());
+    }
     
     var done = false;
     var dismissBusy = null;

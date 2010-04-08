@@ -294,7 +294,10 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
                     to: text
                 }])
             },
-            { cellsChanged: true },
+            {
+                includeEngine: false, // we're really changing all rows, not just the visible ones
+                cellsChanged: true
+            },
             {
                 onDone: function(o) {
                     var selection = [];

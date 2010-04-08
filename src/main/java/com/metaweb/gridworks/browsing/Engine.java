@@ -47,28 +47,34 @@ public class Engine implements Jsonizable {
     }
     
     public void initializeFromJSON(JSONObject o) throws Exception {
-        JSONArray a = o.getJSONArray("facets");
-        int length = a.length();
-        
-        for (int i = 0; i < length; i++) {
-            JSONObject fo = a.getJSONObject(i);
-            String type = fo.has("type") ? fo.getString("type") : "list";
-            
-            Facet facet = null;
-            if ("list".equals(type)) {
-                facet = new ListFacet();
-            } else if ("range".equals(type)) {
-                facet = new RangeFacet();
-            } else if ("text".equals(type)) {
-                facet = new TextSearchFacet();
-            }
-            
-            if (facet != null) {
-                facet.initializeFromJSON(_project, fo);
-                _facets.add(facet);
-            }
-        }
-        
+    	if (o == null) {
+    		return;
+    	}
+    	
+    	if (o.has("facets") && !o.isNull("facets")) {
+	        JSONArray a = o.getJSONArray("facets");
+	        int length = a.length();
+	        
+	        for (int i = 0; i < length; i++) {
+	            JSONObject fo = a.getJSONObject(i);
+	            String type = fo.has("type") ? fo.getString("type") : "list";
+	            
+	            Facet facet = null;
+	            if ("list".equals(type)) {
+	                facet = new ListFacet();
+	            } else if ("range".equals(type)) {
+	                facet = new RangeFacet();
+	            } else if ("text".equals(type)) {
+	                facet = new TextSearchFacet();
+	            }
+	            
+	            if (facet != null) {
+	                facet.initializeFromJSON(_project, fo);
+	                _facets.add(facet);
+	            }
+	        }
+    	}
+    	
         if (o.has("includeDependent") && !o.isNull("includeDependent")) {
         	_includeDependent = o.getBoolean("includeDependent");
         }
