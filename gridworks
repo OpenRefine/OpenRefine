@@ -87,7 +87,7 @@ load_configs() {
 }
     
 check_macosx() {
-    if [ "$SYSTEM" != 'Darwin' ] ; then
+    if [ "$SYSTEM" != 'Darwin' ]; then
         error "This action can only run on MacOSX"
     fi
 }
@@ -104,18 +104,18 @@ check_downloaders() {
 check_unzip() {
     UNZIP="`which unzip`"
     
-    if [ -z "$UNZIP" ] ; then
+    if [ -z "$UNZIP" ]; then
         error "We need 'unzip' present in PATH to expand external dependencies."
     fi
 }
     
 check_python() {
     PYTHON="`which python`"
-    if [ -z "$PYTHON" ] ; then
+    if [ -z "$PYTHON" ]; then
         error "This action requires you to have 'python' installed. You can download it for free at http://www.python.org/"
     fi
     PYTHON_VERSION="`python --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
-    if [ "$PYTHON_VERSION" != "2.5"  -a   "$PYTHON_VERSION" != "2.6" ] ; then
+    if [ "$PYTHON_VERSION" != "2.5"  -a   "$PYTHON_VERSION" != "2.6" ]; then
         error "This action requires python version 2.5.x or 2.6.x. You can download it for free at http://www.python.org/"
     fi
 }
@@ -124,9 +124,9 @@ check_running() {
     check_downloaders
     URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/"
     
-    if [ "$CURL" ] ; then
+    if [ "$CURL" ]; then
         NOT_RUNNING=`curl -s $URL > /dev/null || echo not_running`
-    elif [ "$WGET" ] ; then
+    elif [ "$WGET" ]; then
         NOT_RUNNING=`wget -q -O - $URL > /dev/null || echo not_running`
     fi    
 }
@@ -134,7 +134,7 @@ check_running() {
 get_version() {
     VERSION="$1"
     
-    if [ -z "$VERSION" ] ; then
+    if [ -z "$VERSION" ]; then
         fail "Must specify a version number"
     fi
     
@@ -159,9 +159,9 @@ download() {
     
     check_downloaders
     
-    if [ "$CURL" ] ; then
+    if [ "$CURL" ]; then
         curl -L -o $DEST $URL || exit "Error while downloading $URL"
-    elif [ "$WGET" ] ; then
+    elif [ "$WGET" ]; then
         wget -O $DEST $URL || error "Error while downloading $URL"
     fi
 }
@@ -172,14 +172,14 @@ tool_download() {
     DIR=$3
     
     cd $GRIDWORKS_TOOLS_DIR
-        if [ ! -f "$FILE" ] ; then
+        if [ ! -f "$FILE" ]; then
             download $URL $FILE
         fi
-        if [ ! -d "$DIR" ] ; then
-            if [ -z "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" ] ; then
+        if [ ! -d "$DIR" ]; then
+            if [ -z "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" ]; then
                 tar xzf $FILE || error "Error while expanding $FILE"
             fi
-            if [ -z "`echo $FILE | sed 's@.*.zip$@@'`" ] ; then
+            if [ -z "`echo $FILE | sed 's@.*.zip$@@'`" ]; then
                 check_unzip
                 $UNZIP -q $FILE || error "Error while expanding $FILE"
             fi
@@ -193,7 +193,7 @@ load_data() {
     URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/command/create-project-from-upload"
     CURL="`which curl`"
     
-    if [ -z "$CURL" ] ; then
+    if [ -z "$CURL" ]; then
         error "We need 'curl' present in PATH to upload data to gridworks."
     else
         curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to Gridworks"
@@ -204,19 +204,19 @@ load_data() {
 # ----------------------------------------------------------------------------------------------
 
 build_prepare() {
-    if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
+    if [ ! -d $GRIDWORKS_BUILD_DIR ]; then 
         mkdir $GRIDWORKS_BUILD_DIR || error "Error while making directory $GRIDWORKS_BUILD_DIR"
     fi
 }
 
 dist_prepare() {
-    if [ ! -d $GRIDWORKS_DIST_DIR ] ; then 
+    if [ ! -d $GRIDWORKS_DIST_DIR ]; then 
         mkdir $GRIDWORKS_DIST_DIR || error "Error while making directory $GRIDWORKS_DIST_DIR"
     fi
 }
 
 tools_prepare() {
-    if [ ! -d $GRIDWORKS_TOOLS_DIR ] ; then 
+    if [ ! -d $GRIDWORKS_TOOLS_DIR ]; then 
         mkdir $GRIDWORKS_TOOLS_DIR || error "Error while making directory $GRIDWORKS_TOOLS_DIR"
     fi
 }
@@ -227,13 +227,13 @@ ant_prepare() {
     ANT_DIR="apache-ant-1.8.0"
     
     ANT=`which ant`
-    if [ -z "$ANT" ] ; then
-        if [ -z "$ANT_HOME" ] ; then
+    if [ -z "$ANT" ]; then
+        if [ -z "$ANT_HOME" ]; then
             cd $GRIDWORKS_TOOLS_DIR
-                if [ ! -f "$ANT_FILE" ] ; then
+                if [ ! -f "$ANT_FILE" ]; then
                     download $ANT_URL $ANT_FILE
                 fi
-                if [ ! -d "$ANT_DIR" ] ; then
+                if [ ! -d "$ANT_DIR" ]; then
                     tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
                 fi
                 export ANT_HOME="`pwd`/$ANT_DIR"
@@ -272,7 +272,7 @@ virtualenv_prepare() {
 
     tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
     
-    if [ ! -d "$GRIDWORKS_TOOLS_DIR/python" ] ; then
+    if [ ! -d "$GRIDWORKS_TOOLS_DIR/python" ]; then
         $PYTHON $GRIDWORKS_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $GRIDWORKS_TOOLS_DIR/python
     fi
     
@@ -283,12 +283,12 @@ virtualenv_prepare() {
     
 windmill_prepare() {
     WINDMILL="`which windmill`"
-    if [ -z "$WINDMILL" ] ; then
+    if [ -z "$WINDMILL" ]; then
         check_python
         tools_prepare
 
         WINDMILL="$GRIDWORKS_TOOLS_DIR/windmill"
-        if [ ! -f "$WINDMILL" ] ; then
+        if [ ! -f "$WINDMILL" ]; then
             virtualenv_prepare
             $PYTHON_INSTALL windmill
             ln -s $PYTHON_HOME/bin/windmill $GRIDWORKS_TOOLS_DIR/windmill
@@ -396,7 +396,7 @@ mac_dist() {
     
     SIZE=30
     
-    if [ -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" ] ; then
+    if [ -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" ]; then
         rm "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
     fi
     
@@ -434,7 +434,7 @@ mac_dist() {
     sync
     hdiutil detach $DEVICE
     
-    if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ] ; then
+    if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ]; then
         rm "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
     fi
     
@@ -470,7 +470,7 @@ ui_test() {
     echo ""
     
     echo "Starting Windmill..."
-    if [ -z "$INTERACTIVE" ] ; then
+    if [ -z "$INTERACTIVE" ]; then
         $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ test=$GRIDWORKS_TEST_DIR/windmill/python exit > /dev/null
         #$WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/windmill/js exit > /dev/null
     else
@@ -485,14 +485,14 @@ ui_test() {
 }
 
 server_test() {
-    if [ ! -d "$GRIDWORKS_TEST_DIR/java/classes" ] ; then
+    if [ ! -d "$GRIDWORKS_TEST_DIR/java/classes" ]; then
         ant build_tests
         echo ""
     fi
     
     CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_WEBAPP/WEB-INF/classes:$GRIDWORKS_TEST_DIR/java/classes:$GRIDWORKS_TEST_DIR/java/lib/*:$GRIDWORKS_LIB_DIR/*:$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
 
-    if [ -z "$1" ] ; then
+    if [ -z "$1" ]; then
         cd $GRIDWORKS_TEST_DIR/java/classes
         TESTS=`find . -name '*.class' | sed s@/@.@g | sed s@.class@@ | sed s@..@@`
         cd ../../..
@@ -511,9 +511,9 @@ server_test() {
 run() {
     FORK=$1
     
-    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
+    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ]; then
         IS_JAR=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
-        if [ -z "$IS_JAR" ] ; then
+        if [ -z "$IS_JAR" ]; then
             ant build
             echo ""
         fi
@@ -521,19 +521,19 @@ run() {
     
     check_running
     
-    if [ -z "$NOT_RUNNING" ] ; then
+    if [ -z "$NOT_RUNNING" ]; then
         warn "Gridworks is already running."
     fi
     
-    if [ -d $GRIDWORKS_BUILD_DIR/classes ] ; then
+    if [ -d $GRIDWORKS_BUILD_DIR/classes ]; then
         add_option "-Dgridworks.autoreloading=true"
     fi
 
-    if [ "$SYSTEM" = 'Darwin' ] ; then
+    if [ "$SYSTEM" = 'Darwin' ]; then
         add_option "-Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns"
     fi
     
-    if [ "$GRIDWORKS_DATA_DIR" ] ; then
+    if [ "$GRIDWORKS_DATA_DIR" ]; then
         add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
         
@@ -547,7 +547,7 @@ run() {
     echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
 
-    if [ -z "$FORK" ] ; then
+    if [ -z "$FORK" ]; then
         exec $RUN_CMD
     else
         sh -c "$RUN_CMD" &
@@ -556,7 +556,7 @@ run() {
 }
 
 execute() {
-    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
+    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ]; then
         ant build
         echo ""
     fi
@@ -611,7 +611,7 @@ OPTS=""
 
 SYSTEM=`uname`
 
-if [ "$SYSTEM" = "Darwin"  -a   "$JAVA_HOME" = "" ] ; then
+if [ "$SYSTEM" = "Darwin"  -a   "$JAVA_HOME" = "" ]; then
     export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
 fi
 
@@ -621,12 +621,12 @@ load_configs gridworks.ini
 
 # ----- Make sure there is an appropriate java environment is available -------------
     
-if [ "$JAVA_HOME" ] ; then
+if [ "$JAVA_HOME" ]; then
     JAVA="$JAVA_HOME/bin/java"
 else 
     JAVA=`which java`
-    if [ -z "$JAVA" ] ; then
-        if [ "$SYSTEM" = 'Darwin' ] ; then
+    if [ -z "$JAVA" ]; then
+        if [ "$SYSTEM" = 'Darwin' ]; then
             JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Home
         else
             error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
@@ -635,7 +635,7 @@ else
 fi
 
 JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1.6`
-if [ -z "$JAVA_VERSION" ] ; then
+if [ -z "$JAVA_VERSION" ]; then
     error "Gridworks requires java version 6 or later."
 fi
 
@@ -656,7 +656,9 @@ while [ $# -ne 0 ] ; do
   esac
 done
 
-ACTION=$1; shift
+if [ $# -ne 0 ]; then
+    ACTION=$1; shift
+fi
 
 if [ -z "$ACTION" ]; then
     ACTION="run"
@@ -664,48 +666,48 @@ fi
 
 # ----- Verify and Set Required Environment Variables -------------------------
 
-if [ -z "$JAVA_OPTIONS" ] ; then
+if [ -z "$JAVA_OPTIONS" ]; then
   JAVA_OPTIONS=""
 fi
 add_option "$JAVA_OPTIONS"
 
-if [ -z "$GRIDWORKS_MEMORY" ] ; then
+if [ -z "$GRIDWORKS_MEMORY" ]; then
     GRIDWORKS_MEMORY="1024M"
 fi
 add_option "-Xms256M -Xmx$GRIDWORKS_MEMORY"
 
-if [ -z "$GRIDWORKS_PORT" ] ; then
+if [ -z "$GRIDWORKS_PORT" ]; then
     GRIDWORKS_PORT="3333"
 fi
 add_option "-Dgridworks.port=$GRIDWORKS_PORT"
 
-if [ -z "$GRIDWORKS_HOST" ] ; then
+if [ -z "$GRIDWORKS_HOST" ]; then
     GRIDWORKS_HOST="127.0.0.1"
 fi
 add_option "-Dgridworks.host=$GRIDWORKS_HOST"
 
-if [ -z "$GRIDWORKS_WEBAPP" ] ; then
+if [ -z "$GRIDWORKS_WEBAPP" ]; then
     GRIDWORKS_WEBAPP="src/main/webapp"
 fi
 add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
 
-if [ -z "$GRIDWORKS_TEST_DIR" ] ; then
+if [ -z "$GRIDWORKS_TEST_DIR" ]; then
     GRIDWORKS_TEST_DIR="tests"
 fi
 
-if [ -z "$GRIDWORKS_BUILD_DIR" ] ; then
+if [ -z "$GRIDWORKS_BUILD_DIR" ]; then
     GRIDWORKS_BUILD_DIR="build"
 fi
 
-if [ -z "$GRIDWORKS_LIB_DIR" ] ; then
+if [ -z "$GRIDWORKS_LIB_DIR" ]; then
     GRIDWORKS_LIB_DIR="lib"
 fi
 
-if [ -z "$GRIDWORKS_TOOLS_DIR" ] ; then
+if [ -z "$GRIDWORKS_TOOLS_DIR" ]; then
     GRIDWORKS_TOOLS_DIR="tools"
 fi
 
-if [ -z "$GRIDWORKS_DIST_DIR" ] ; then
+if [ -z "$GRIDWORKS_DIST_DIR" ]; then
     GRIDWORKS_DIST_DIR="dist"
 fi
 
