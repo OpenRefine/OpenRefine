@@ -4,7 +4,7 @@ MenuSystem = {
 };
 
 MenuSystem.showMenu = function(elmt, onDismiss) {
-    if (MenuSystem._overlay == null) {
+    if (!MenuSystem._overlay) {
         MenuSystem._overlay = $('<div>&nbsp;</div>')
             .addClass("menu-overlay")
             .appendTo(document.body)

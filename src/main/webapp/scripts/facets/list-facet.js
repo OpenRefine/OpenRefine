@@ -124,7 +124,7 @@ ListFacet.prototype.render = function() {
         bodyDiv.addClass("facet-body-scrollable");
     }
     
-    if (this._data == null) {
+    if (!this._data) {
         $('<div>').text("Loading...").addClass("facet-body-message").appendTo(bodyDiv);
         bodyDiv.appendTo(container);
     } else if ("error" in this._data) {

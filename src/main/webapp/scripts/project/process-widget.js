@@ -100,7 +100,7 @@ ProcessWidget.prototype._render = function(newData) {
     
     this._div.empty();
     
-    if (newData.processes.length == 0) {
+    if (!newData.processes.length) {
         this._div.hide();
     } else {
         this._div.show();
@@ -154,7 +154,7 @@ ProcessWidget.prototype._render = function(newData) {
     }
     this._data = newData;
     
-    if (this._data.processes.length > 0 && this._timerID == null) {
+    if (this._data.processes.length && !this._timerID) {
         this._timerID = window.setTimeout(function() {
             self._timerID = null;
             self.update();

@@ -117,7 +117,7 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
                 processProperties(this.properties, null);
             });
             
-            if (cvtProperties.length == 0) {
+            if (!cvtProperties.length) {
                 onDone(allProperties);
                 return;
             }

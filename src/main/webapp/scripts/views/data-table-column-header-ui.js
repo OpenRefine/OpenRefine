@@ -667,7 +667,7 @@ DataTableColumnHeaderUI.prototype._doReconcile = function() {
                 data.types = data.types.slice(0, 20);
                 
                 var ids = $.map(data.types, function(elmt) { return elmt.id; });
-                if (ids.length == 0) {
+                if (!ids.length) {
                     dismissBusy();
                     new ReconDialog(self._column, []);
                 } else {
@@ -824,7 +824,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
     
     footerElmts.okButton.click(function() {
         var columnName = $.trim(bodyElmts.columnNameInput[0].value);
-        if (columnName.length == 0) {
+        if (!columnName.length) {
             alert("You must enter a column name.");
             return;
         }

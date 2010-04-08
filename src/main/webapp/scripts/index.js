@@ -20,7 +20,7 @@ $(onLoad);
 
 function onClickUploadFileButton(evt) {
     var projectName = $("#project-name-input")[0].value;
-    if ($.trim(projectName).length == 0) {
+    if (! $.trim(projectName).length) {
         window.alert("You must specify a project name.");
         
         evt.preventDefault();
@@ -46,7 +46,7 @@ function renderProjects(data) {
         }
     }
     
-    if (projects.length == 0) {
+    if (!projects.length) {
         $('#body-empty').show();
         $('#create-project-panel').remove().appendTo($('#body-empty-create-project-panel-container'));
     } else {

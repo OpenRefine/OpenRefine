@@ -129,7 +129,7 @@ function SchemaAlignmentDialog(protograph, onDone) {
     this._originalProtograph = protograph || { rootNodes: [] };
     this._protograph = cloneDeep(this._originalProtograph); // this is what can be munched on
     
-    if (this._protograph.rootNodes.length == 0) {
+    if (!this._protograph.rootNodes.length) {
         this._protograph.rootNodes.push(SchemaAlignment.createNewRootNode());
     }
     

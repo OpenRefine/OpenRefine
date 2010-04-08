@@ -149,7 +149,7 @@ MenuBar.prototype._deactivateMenu = function() {
 };
 
 MenuBar.prototype._doExportTripleloader = function() {
-    if (theProject.protograph == null) {
+    if (!theProject.protograph) {
         alert(
             "You haven't done any schema alignment yet,\nso there is no triple to export.\n\n" +
             "Use the Schemas > Edit Schema Alignment Skeleton...\ncommand to align your data with Freebase schemas first."

@@ -25,7 +25,7 @@ HistoryWidget.prototype._render = function() {
     var self = this;
     
     var collapsedMessage = 
-        (this._data.past.length == 0 ? 
+        (!this._data.past.length ? 
             "" : 
             (this._data.past.length == 1 ? "1 change - " : (this._data.past.length + " changes - "))
         ) + 'hover to see';
@@ -60,7 +60,7 @@ HistoryWidget.prototype._render = function() {
         return a;
     };
     
-    if (this._data.past.length == 0) {
+    if (!this._data.past.length) {
         elmts.pastDiv.html('<div class="history-panel-message">No change to undo</div>');
     } else {
         for (var i = 0; i < this._data.past.length; i++) {
@@ -69,7 +69,7 @@ HistoryWidget.prototype._render = function() {
         }
     }
     
-    if (this._data.future.length == 0) {
+    if (!this._data.future.length) {
         elmts.futureDiv.html('<div class="history-panel-message">No change to redo</div>');
     } else {
         for (var i = 0; i < this._data.future.length; i++) {

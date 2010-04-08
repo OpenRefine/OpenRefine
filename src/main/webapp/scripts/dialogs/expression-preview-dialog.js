@@ -121,7 +121,7 @@ ExpressionPreviewDialog.Widget = function(
 
 ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     var s = $.trim(this.expression || "");
-    if (s.length == 0) {
+    if (!s.length) {
         return null;
     }
     

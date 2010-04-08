@@ -108,7 +108,7 @@ TextSearchFacet.prototype._remove = function() {
 };
 
 TextSearchFacet.prototype._scheduleUpdate = function() {
-    if (this._timerID == null) {
+    if (!this._timerID) {
         var self = this;
         this._timerID = window.setTimeout(function() {
             self._timerID = null;

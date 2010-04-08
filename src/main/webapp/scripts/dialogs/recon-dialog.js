@@ -231,7 +231,7 @@ ReconDialog.prototype._onDoHeuristic = function() {
         };
     }
     
-    if (type == null)  {
+    if (!type)  {
         alert("Please specify a type.");
     } else {
         var columnDetails = [];
@@ -282,7 +282,7 @@ ReconDialog.prototype._onDoStrict = function() {
         
         if (namespaceChoice.value == "other") {
             var suggest = this._elmts.strictNamespaceInput.data("data.suggest");
-            if (suggest == null) {
+            if (!suggest) {
                 alert("Please specify a namespace.");
                 return;
             }

@@ -420,7 +420,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                 }
             });
             
-        if ((!("columnName" in self._node) || self._node.columnName == null) && columnIndex == 0) {
+        if ((!("columnName" in self._node) || !self._node.columnName) && columnIndex == 0) {
             radio.attr("checked", "true");
         } else if (column.name == self._node.columnName) {
             radio.attr("checked", "true");
@@ -597,7 +597,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             };
         } else if (node.nodeType == "value") {
             node.value = $.trim(elmts.valueNodeTypeValueInput[0].value);
-            if (node.value.length == 0) {
+            if (!node.value.length) {
                 alert("Please specify the value to use.");
                 return null;
             }
@@ -635,7 +635,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
     var getLinks = false;
     
     if (this._node.nodeType.match(/^cell-as-/)) {
-        if (!("columnName" in this._node) || this._node.columnName == null) {
+        if (!("columnName" in this._node) || !this._node.columnName) {
             return null;
         }
             
@@ -655,7 +655,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
                 lang: "lang" in this._node ? this._node.lang : "/lang/en"
             };
         } else if (this._node.nodeType == "cell-as-key") {
-            if (!("namespace" in this._node) || this._node.namespace == null) {
+            if (!("namespace" in this._node) || !this._node.namespace) {
                 return null;
             }
             result = {
@@ -665,7 +665,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
             };
         }
     } else if (this._node.nodeType == "topic") {
-        if (!("topic" in this._node) || this._node.topic == null) {
+        if (!("topic" in this._node) || !this._node.topic) {
             return null;
         }
         result = {
@@ -674,7 +674,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
         };
         getLinks = true;
     } else if (this._node.nodeType == "value") {
-        if (!("value" in this._node) || this._node.value == null) {
+        if (!("value" in this._node) || !this._node.value) {
             return null;
         }
         result = {
@@ -684,7 +684,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
             lang: "lang" in this._node ? this._node.lang : "/lang/en"
         };
     } else if (this._node.nodeType == "anonymous") {
-        if (!("type" in this._node) || this._node.type == null) {
+        if (!("type" in this._node) || !this._node.type) {
             return null;
         }
         result = {
@@ -694,7 +694,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
         getLinks = true;
     }
     
-    if (result == null) {
+    if (!result) {
         return null;
     }
     if (getLinks) {
