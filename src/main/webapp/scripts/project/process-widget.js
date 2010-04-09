@@ -39,7 +39,7 @@ ProcessWidget.prototype.update = function(updateOptions, onDone) {
         this._onDones.push(onDone);
     }
     
-    if (this._timerID != null) {
+    if (this._timerID !== null) {
         return;
     }
     
@@ -71,7 +71,7 @@ ProcessWidget.prototype.showUndo = function(historyEntry) {
 };
 
 ProcessWidget.prototype.undo = function() {
-    if (this._latestHistoryEntry != null) {
+    if (this._latestHistoryEntry !== null) {
         Gridworks.postProcess(
             "undo-redo",
             { undoID: this._latestHistoryEntry.id },

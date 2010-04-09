@@ -46,7 +46,7 @@ SchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentUINo
 SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
     $(this._tdMain).empty();
     
-    var label = this._link.property != null ? this._link.property.id : "property?";
+    var label = this._link.property !== null ? this._link.property.id : "property?";
     
     var self = this;
     
@@ -93,10 +93,10 @@ SchemaAlignmentDialog.UILink.prototype._renderDetails = function() {
 
 SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
     var sourceTypeID = this._parentUINode.getExpectedType();
-    var targetTypeID = "type" in this._link.target && this._link.target.type != null ? this._link.target.type.id : null;
+    var targetTypeID = "type" in this._link.target && this._link.target.type !== null ? this._link.target.type.id : null;
     var targetTypeName = "columnName" in this._link.target ? this._link.target.columnName : null;
     
-    if (sourceTypeID != null) {
+    if (sourceTypeID !== null) {
         var self = this;
         var dismissBusy = DialogSystem.showBusy();
         
@@ -299,7 +299,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     var suggestOptions = {
         type : '/type/property'
     };
-    if (this._link.target != null && "type" in this._link.target && this._link.target.type != null) {
+    if (this._link.target !== null && "type" in this._link.target && this._link.target.type !== null) {
         /*
         suggestOptions.mql_filter = [{
             "/type/property/expected_type" : {
@@ -309,7 +309,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
         */
     } else {
         var sourceTypeID = this._parentUINode.getExpectedType();
-        if (sourceTypeID != null) {
+        if (sourceTypeID !== null) {
             suggestOptions.schema = sourceTypeID;
         }
     }
@@ -319,11 +319,11 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
 };
 
 SchemaAlignmentDialog.UILink.prototype.getJSON = function() {
-    if ("property" in this._link && this._link.property != null &&
-        "target" in this._link && this._link.target != null) {
+    if ("property" in this._link && this._link.property !== null &&
+        "target" in this._link && this._link.target !== null) {
         
         var targetJSON = this._targetUI.getJSON();
-        if (targetJSON != null) {
+        if (targetJSON !== null) {
             return {
                 property: cloneDeep(this._link.property),
                 target: targetJSON

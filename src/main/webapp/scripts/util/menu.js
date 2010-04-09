@@ -26,7 +26,7 @@ MenuSystem.showMenu = function(elmt, onDismiss) {
 
 MenuSystem.dismissAll = function() {
     MenuSystem.dismissUntil(0);
-    if (MenuSystem._overlay != null) {
+    if (MenuSystem._overlay !== null) {
         MenuSystem._overlay.remove();
         MenuSystem._overlay = null;
     }

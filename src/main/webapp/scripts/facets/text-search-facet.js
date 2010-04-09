@@ -40,7 +40,7 @@ TextSearchFacet.prototype.getJSON = function() {
 };
 
 TextSearchFacet.prototype.hasSelection = function() {
-    return this._query != null;
+    return this._query !== null;
 };
 
 TextSearchFacet.prototype._initializeUI = function() {
@@ -70,13 +70,13 @@ TextSearchFacet.prototype._initializeUI = function() {
     
     elmts.caseSensitiveCheckbox.bind("change", function() {
         self._config.caseSensitive = this.checked;
-        if (self._query != null && self._query.length > 0) {
+        if (self._query !== null && self._query.length > 0) {
             self._scheduleUpdate();
         }
     });
     elmts.regexCheckbox.bind("change", function() {
         self._config.mode = this.checked ? "regex" : "text";
-        if (self._query != null && self._query.length > 0) {
+        if (self._query !== null && self._query.length > 0) {
             self._scheduleUpdate();
         }
     });

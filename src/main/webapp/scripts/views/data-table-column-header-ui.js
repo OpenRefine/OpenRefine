@@ -895,7 +895,7 @@ DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {
 
 DataTableColumnHeaderUI.prototype._doRenameColumn = function() {
     var newColumnName = window.prompt("Enter new column name", this._column.name);
-    if (newColumnName != null) {
+    if (newColumnName !== null) {
         Gridworks.postProcess(
             "rename-column", 
             {
@@ -910,7 +910,7 @@ DataTableColumnHeaderUI.prototype._doRenameColumn = function() {
 
 DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
     var separator = window.prompt("Enter separator to use between values", ", ");
-    if (separator != null) {
+    if (separator !== null) {
         Gridworks.postProcess(
             "join-multi-value-cells", 
             {
@@ -926,7 +926,7 @@ DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
 
 DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
     var separator = window.prompt("What separator currently separates the values?", ",");
-    if (separator != null) {
+    if (separator !== null) {
         Gridworks.postProcess(
             "split-multi-value-cells", 
             {

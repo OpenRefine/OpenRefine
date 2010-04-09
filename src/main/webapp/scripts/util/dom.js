@@ -12,7 +12,7 @@ DOM.bind = function(elmt) {
 
 DOM._bindDOMElement = function(elmt, map) {
     var bind = elmt.getAttribute("bind");
-    if (bind != null && bind.length > 0) {
+    if (bind !== null && bind.length > 0) {
         map[bind] = $(elmt);
         elmt.removeAttribute("bind");
     }
@@ -24,7 +24,7 @@ DOM._bindDOMElement = function(elmt, map) {
 
 DOM._bindDOMChildren = function(elmt, map) {
     var node = elmt.firstChild;
-    while (node != null) {
+    while (node !== null) {
         var node2 = node.nextSibling;
         if (node.nodeType == 1) {
             DOM._bindDOMElement(node, map);

@@ -399,7 +399,7 @@ DataTableView.sampleVisibleRows = function(column) {
         var v = null;
         if (column.cellIndex < row.cells.length) {
             var cell = row.cells[column.cellIndex];
-            if (cell != null) {
+            if (cell !== null) {
                 v = cell.v;
             }
         }

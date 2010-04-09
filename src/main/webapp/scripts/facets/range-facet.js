@@ -72,12 +72,12 @@ RangeFacet.prototype.getJSON = function() {
     };
     
     if (this._config.mode == "min" || this._config.mode == "range") {
-        if (this._from != null) {
+        if (this._from !== null) {
             o.from = this._from;
         }
     }
     if (this._config.mode == "max" || this._config.mode == "range") {
-        if (this._to != null) {
+        if (this._to !== null) {
             o.to = this._to;
         }
     }
@@ -92,12 +92,12 @@ RangeFacet.prototype.hasSelection = function() {
     
     switch (this._config.mode) {
     case "min":
-        return this._from != null && (!this._initializedUI || this._from > this._config.min);
+        return this._from !== null && (!this._initializedUI || this._from > this._config.min);
     case "max":
-        return this._to != null && (!this._initializedUI || this._to < this._config.max);
+        return this._to !== null && (!this._initializedUI || this._to < this._config.max);
     default:
-        return (this._from != null && (!this._initializedUI || this._from > this._config.min)) ||
-            (this._to != null && (!this._initializedUI || this._to < this._config.max));
+        return (this._from !== null && (!this._initializedUI || this._from > this._config.min)) ||
+            (this._to !== null && (!this._initializedUI || this._to < this._config.max));
     }
 };
 

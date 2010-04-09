@@ -43,7 +43,7 @@ DataTableCellUI.prototype._render = function() {
                 .appendTo(divContent).click(function(evt) {
                     self._doRematch();
                 });
-        } else if (r.j == "matched" && "m" in r && r.m != null) {
+        } else if (r.j == "matched" && "m" in r && r.m !== null) {
             var match = cell.r.m;
             $('<a></a>')
                 .text(match.name)
@@ -207,7 +207,7 @@ DataTableCellUI.prototype._searchForMatch = function() {
     
     var match = null;
     var commit = function() {
-        if (match != null) {
+        if (match !== null) {
             var query = {
                 "id" : match.id,
                 "type" : []

@@ -351,7 +351,7 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
         for (var c = 0; c < row.length; c++) {
             var td = tr.insertCell(tr.cells.length);
             var cell = row[c];
-            if (cell != null) {
+            if (cell !== null) {
                 if ($.isPlainObject(cell)) {
                     $('<a>').attr("href", "http://www.freebase.com/view" + cell.id).text(cell.name).appendTo(td);
                 } else {

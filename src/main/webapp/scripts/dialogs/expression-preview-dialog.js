@@ -274,7 +274,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
 };
 
 ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
-    if (this._timerID != null) {
+    if (this._timerID !== null) {
         window.clearTimeout(this._timerID);
     }
     var self = this;
@@ -332,7 +332,7 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
         }
     };
     
-    if (this._results != null) {
+    if (this._results !== null) {
         this._elmts.expressionPreviewErrorContainer.empty();
     } else {
         var message = (data.type == "parser") ? data.message : "Internal error";
@@ -347,7 +347,7 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
         renderValue($(tr.insertCell(1)), this._values[i]);
         
         var tdValue = $(tr.insertCell(2));
-        if (this._results != null) {
+        if (this._results !== null) {
             var v = this._results[i];
             renderValue(tdValue, v);
         }

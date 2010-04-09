@@ -224,7 +224,7 @@ ReconDialog.prototype._onDoHeuristic = function() {
     var type = this._elmts.heuristicTypeInput.data("data.suggest");
 
     var choices = $('input[name="recon-dialog-type-choice"]:checked');
-    if (choices != null && choices.length > 0 && choices[0].value != "") {
+    if (choices !== null && choices.length > 0 && choices[0].value != "") {
         type = {
             id: choices[0].value,
             name: choices.attr("typeName")
@@ -238,7 +238,7 @@ ReconDialog.prototype._onDoHeuristic = function() {
         var propertyInputs = $('input[name="recon-dialog-heuristic-property"]');
         $.each(propertyInputs, function() {
             var property = $(this).data("data.suggest");
-            if (property != null) {
+            if (property !== null) {
                 columnDetails.push({
                     column: this.getAttribute("columnName"),
                     property: {

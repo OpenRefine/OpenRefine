@@ -10,7 +10,7 @@ SchemaAlignment.autoAlign = function() {
     
     for (var c = 0; c < columns.length; c++) {
         var column = columns[c];
-        var typed = "reconConfig" in column && column.reconConfig != null;
+        var typed = "reconConfig" in column && column.reconConfig !== null;
         var candidate = {
             status: "unbound",
             typed: typed,
@@ -101,7 +101,7 @@ SchemaAlignment.createNewRootNode = function() {
             columnName: column.name,
             createForNoReconMatch: true
         };
-        if ("reconConfig" in column && column.reconConfig != null) {
+        if ("reconConfig" in column && column.reconConfig !== null) {
             target.type = {
                 id: column.reconConfig.type.id,
                 name: column.reconConfig.type.name
@@ -239,7 +239,7 @@ SchemaAlignmentDialog.prototype.getJSON = function() {
     var rootNodes = [];
     for (var i = 0; i < this._nodeUIs.length; i++) {
         var node = this._nodeUIs[i].getJSON();
-        if (node != null) {
+        if (node !== null) {
             rootNodes.push(node);
         }
     }

@@ -42,8 +42,8 @@ HistogramWidget.prototype.update = function(min, max, step, binMatrix, from, to)
 };
 
 HistogramWidget.prototype._update = function() {
-    if (this._binMatrix != null) {
-        if (this._highlight != null) {
+    if (this._binMatrix !== null) {
+        if (this._highlight !== null) {
             this._highlight.from = Math.max(this._highlight.from, this._range.min);
             this._highlight.to = Math.min(this._highlight.to, this._range.max);
         }
@@ -135,7 +135,7 @@ HistogramWidget.prototype._render = function() {
         /*
          *  Draw highlight
          */
-        if (this._highlight != null) {
+        if (this._highlight !== null) {
             ctx.fillStyle = "rgba(192,192,192, 0.5)";
             ctx.globalCompositeOperation = "source-over";
             if (this._highlight.from > this._range.min) {

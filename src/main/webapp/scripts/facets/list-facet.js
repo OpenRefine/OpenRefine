@@ -47,8 +47,8 @@ ListFacet.prototype.getJSON = function() {
         omitBlank: "omitBlank" in this._config ? this._config.omitBlank : false,
         omitError: "omitError" in this._config ? this._config.omitError : false,
         selection: [],
-        selectBlank: this._blankChoice != null && this._blankChoice.s,
-        selectError: this._errorChoice != null && this._errorChoice.s
+        selectBlank: this._blankChoice !== null && this._blankChoice.s,
+        selectError: this._errorChoice !== null && this._errorChoice.s
     };
     for (var i = 0; i < this._selection.length; i++) {
         var choice = {
@@ -61,8 +61,8 @@ ListFacet.prototype.getJSON = function() {
 
 ListFacet.prototype.hasSelection = function() {
     return this._selection.length > 0 || 
-        (this._blankChoice != null && this._blankChoice.s) || 
-        (this._errorChoice != null && this._errorChoice.s);
+        (this._blankChoice !== null && this._blankChoice.s) || 
+        (this._errorChoice !== null && this._errorChoice.s);
 };
 
 ListFacet.prototype.updateState = function(data) {
@@ -132,8 +132,8 @@ ListFacet.prototype.render = function() {
         bodyDiv.appendTo(container);
     } else {
         var selectionCount = this._selection.length
-            + (this._blankChoice != null && this._blankChoice.s ? 1 : 0)
-            + (this._errorChoice != null && this._errorChoice.s ? 1 : 0);
+            + (this._blankChoice !== null && this._blankChoice.s ? 1 : 0)
+            + (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
             
         if (selectionCount > 0) {
             var reset = function() {
@@ -207,10 +207,10 @@ ListFacet.prototype.render = function() {
         for (var i = 0; i < choices.length; i++) {
             renderChoice(choices[i]);
         }
-        if (this._blankChoice != null) {
+        if (this._blankChoice !== null) {
             renderChoice(this._blankChoice, "(blank)");
         }
-        if (this._errorChoice != null) {
+        if (this._errorChoice !== null) {
             renderChoice(this._errorChoice, "(error)");
         }
         
@@ -342,10 +342,10 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
 ListFacet.prototype._select = function(choice, only) {
     if (only) {
         this._selection = [];
-        if (this._blankChoice != null) {
+        if (this._blankChoice !== null) {
             this._blankChoice.s = false;
         }
-        if (this._errorChoice != null) {
+        if (this._errorChoice !== null) {
             this._errorChoice.s = false;
         }
     }

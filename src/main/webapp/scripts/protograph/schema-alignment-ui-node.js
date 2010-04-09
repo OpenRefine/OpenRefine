@@ -152,7 +152,7 @@ SchemaAlignmentDialog.UINode.prototype._renderDetails = function() {
 
     this._tableLinks = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._expandedDetailDiv)[0];
     
-    if ("links" in this._node && this._node.links != null) {
+    if ("links" in this._node && this._node.links !== null) {
         for (var i = 0; i < this._node.links.length; i++) {
             this._linkUIs.push(new SchemaAlignmentDialog.UILink(
                 this._dialog, 
@@ -614,7 +614,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         var node = getResultJSON();
-        if (node != null) {
+        if (node !== null) {
             DialogSystem.dismissUntil(level - 1);
             
             self._node = node;
@@ -701,7 +701,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
         var links = [];
         for (var i = 0; i < this._linkUIs.length; i++) {
             var link = this._linkUIs[i].getJSON();
-            if (link != null) {
+            if (link !== null) {
                 links.push(link);
             }
         }
