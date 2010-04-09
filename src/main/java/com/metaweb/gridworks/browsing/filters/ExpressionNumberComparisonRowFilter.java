@@ -76,7 +76,12 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
             return _selectError;
         } else if (ExpressionUtils.isNonBlankData(v)) {
             if (v instanceof Number) {
-                return _selectNumeric && checkValue(((Number) v).doubleValue());
+                double d = ((Number) v).doubleValue();
+                if (Double.isInfinite(d) || Double.isNaN(d)) {
+                    return _selectError;
+                } else {
+                    return _selectNumeric && checkValue(d);
+                }
             } else {
                 return _selectNonNumeric;
             }

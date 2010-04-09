@@ -71,13 +71,16 @@ public class ExpressionNumericRowBinner implements RowVisitor {
             errorCount++;
         } else if (ExpressionUtils.isNonBlankData(value)) {
             if (value instanceof Number) {
-                numericCount++;
-                
                 double d = ((Number) value).doubleValue();
-                
-                int bin = (int) Math.floor((d - _index.getMin()) / _index.getStep());
-                
-                bins[bin]++;
+                if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                    numericCount++;
+                    
+                    int bin = (int) Math.floor((d - _index.getMin()) / _index.getStep());
+                    
+                    bins[bin]++;
+                } else {
+                    errorCount++;
+                }
             } else {
                 nonNumericCount++;
             }
