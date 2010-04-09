@@ -270,6 +270,9 @@
             <fileset dir="${src.dir}">
                 <include name="**/*.java"/>
             </fileset>
+            <fileset dir="${tests.dir}">
+                <include name="**/*.java"/>
+            </fileset>
         </pmd>
     </target>    
 
