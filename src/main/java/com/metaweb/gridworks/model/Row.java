@@ -3,6 +3,7 @@ package com.metaweb.gridworks.model;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
@@ -152,11 +153,11 @@ public class Row implements HasFields, Jsonizable {
         }
     }
     
-    static public Row load(String s) throws Exception {
-        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s));
+    static public Row load(String s, Map<Long, Recon> reconCache) throws Exception {
+        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s), reconCache);
     }
     
-    static public Row load(JSONObject obj) throws Exception {
+    static public Row load(JSONObject obj, Map<Long, Recon> reconCache) throws Exception {
         JSONArray a = obj.getJSONArray("cells");
         int count = a.length();
         
@@ -165,7 +166,7 @@ public class Row implements HasFields, Jsonizable {
             if (!a.isNull(i)) {
                 JSONObject o = a.getJSONObject(i);
                 
-                row.setCell(i, Cell.load(o));
+                row.setCell(i, Cell.load(o, reconCache));
             }
         }
         

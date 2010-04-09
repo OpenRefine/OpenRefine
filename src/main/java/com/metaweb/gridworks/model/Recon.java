@@ -193,12 +193,17 @@ public class Recon implements HasFields, Jsonizable {
         writer.endObject();
     }
     
-    static public Recon load(JSONObject obj) throws Exception {
+    static public Recon load(JSONObject obj, Map<Long, Recon> reconCache) throws Exception {
         if (obj == null) {
             return null;
         }
         
-        Recon recon = new Recon(obj.getLong("id"));
+        long id = obj.getLong("id");
+        if (reconCache.containsKey(id)) {
+            return reconCache.get(id);
+        }
+        
+        Recon recon = new Recon(id);
         
         if (obj.has("j")) {
             recon.judgment = stringToJudgment(obj.getString("j"));
@@ -224,6 +229,8 @@ public class Recon implements HasFields, Jsonizable {
                 }
             }
         }
+        
+        reconCache.put(id, recon);
         
         return recon;
     }

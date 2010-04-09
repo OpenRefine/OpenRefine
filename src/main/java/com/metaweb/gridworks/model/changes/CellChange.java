@@ -3,11 +3,13 @@ package com.metaweb.gridworks.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
 
 public class CellChange implements Change {
     final public int     row;
@@ -53,7 +55,7 @@ public class CellChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public CellChange load(LineNumberReader reader) throws Exception {
+    static public CellChange load(LineNumberReader reader, Map<Long, Recon> reconCache) throws Exception {
         int row = -1;
         int cellIndex = -1;
         Cell oldCell = null;
@@ -70,9 +72,9 @@ public class CellChange implements Change {
             } else if ("cell".equals(field)) {
                 cellIndex = Integer.parseInt(value);
             } else if ("new".equals(field) && value.length() > 0) {
-                newCell = Cell.load(value);
+                newCell = Cell.load(value, reconCache);
             } else if ("old".equals(field) && value.length() > 0) {
-                oldCell = Cell.load(value);
+                oldCell = Cell.load(value, reconCache);
             }
         }
         

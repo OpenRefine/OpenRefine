@@ -6,12 +6,15 @@ package com.metaweb.gridworks.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconStats;
 import com.metaweb.gridworks.model.recon.ReconConfig;
 import com.metaweb.gridworks.util.ParsingUtilities;
@@ -155,9 +158,11 @@ public class ReconChange extends MassCellChange {
             } else if ("cellChangeCount".equals(field)) {
                 int cellChangeCount = Integer.parseInt(value);
                 
+                Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
+                
                 cellChanges = new CellChange[cellChangeCount];
                 for (int i = 0; i < cellChangeCount; i++) {
-                    cellChanges[i] = CellChange.load(reader);
+                    cellChanges[i] = CellChange.load(reader, reconCache);
                 }
             }
         }

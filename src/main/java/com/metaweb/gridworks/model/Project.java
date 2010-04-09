@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -195,10 +197,11 @@ public class Project {
             } else if ("rowCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
+                Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                    	Row row = Row.load(line);
+                    	Row row = Row.load(line, reconCache);
                         project.rows.add(row);
                         maxCellCount = Math.max(maxCellCount, row.cells.size());
                     }

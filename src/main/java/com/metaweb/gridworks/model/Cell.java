@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -76,11 +77,11 @@ public class Cell implements HasFields, Jsonizable {
         }
     }
     
-    static public Cell load(String s) throws Exception {
-        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s));
+    static public Cell load(String s, Map<Long, Recon> reconCache) throws Exception {
+        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s), reconCache);
     }
     
-    static public Cell load(JSONObject obj) throws Exception {
+    static public Cell load(JSONObject obj, Map<Long, Recon> reconCache) throws Exception {
         Serializable value = null;
         Recon recon = null;
         
@@ -97,7 +98,7 @@ public class Cell implements HasFields, Jsonizable {
         }
         
         if (obj.has("r") && !obj.isNull("r")) {
-            recon = Recon.load(obj.getJSONObject("r"));
+            recon = Recon.load(obj.getJSONObject("r"), reconCache);
         }
         
         return new Cell(value, recon);

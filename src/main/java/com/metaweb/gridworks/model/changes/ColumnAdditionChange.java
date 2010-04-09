@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
 
 public class ColumnAdditionChange extends ColumnChange {
@@ -92,11 +95,13 @@ public class ColumnAdditionChange extends ColumnChange {
             } else if ("newCellCount".equals(field)) {
                 int newCellCount = Integer.parseInt(line.substring(equal + 1));
                 
+                Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
+                
                 newCells = new ArrayList<CellAtRow>(newCellCount);
                 for (int i = 0; i < newCellCount; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newCells.add(CellAtRow.load(line));
+                        newCells.add(CellAtRow.load(line, reconCache));
                     }
                 }
             }

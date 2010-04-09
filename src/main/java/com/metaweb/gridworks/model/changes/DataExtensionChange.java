@@ -5,7 +5,9 @@ import java.io.LineNumberReader;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -284,6 +286,8 @@ public class DataExtensionChange implements Change {
         
         int firstNewCellIndex = -1;
         
+        Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
+        
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
@@ -365,7 +369,7 @@ public class DataExtensionChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldRows.add(Row.load(line));
+                        oldRows.add(Row.load(line, reconCache));
                     }
                 }
             } else if ("newRowCount".equals(field)) {
@@ -375,7 +379,7 @@ public class DataExtensionChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newRows.add(Row.load(line));
+                        newRows.add(Row.load(line, reconCache));
                     }
                 }
             }

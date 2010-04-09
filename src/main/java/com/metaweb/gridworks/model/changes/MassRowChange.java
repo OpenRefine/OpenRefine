@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
 
 public class MassRowChange implements Change {
@@ -56,6 +59,8 @@ public class MassRowChange implements Change {
         List<Row> oldRows = null;
         List<Row> newRows = null;
         
+        Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
+        
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
@@ -68,7 +73,7 @@ public class MassRowChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldRows.add(Row.load(line));
+                        oldRows.add(Row.load(line, reconCache));
                     }
                 }
             } else if ("newRowCount".equals(field)) {
@@ -78,7 +83,7 @@ public class MassRowChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newRows.add(Row.load(line));
+                        newRows.add(Row.load(line, reconCache));
                     }
                 }
             }

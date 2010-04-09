@@ -3,12 +3,15 @@ package com.metaweb.gridworks.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
 
 public class ColumnRemovalChange extends ColumnChange {
@@ -85,11 +88,13 @@ public class ColumnRemovalChange extends ColumnChange {
             } else if ("oldCellCount".equals(field)) {
                 int oldCellCount = Integer.parseInt(line.substring(equal + 1));
                 
+                Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
+                
                 oldCells = new CellAtRow[oldCellCount];
                 for (int i = 0; i < oldCellCount; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldCells[i] = CellAtRow.load(line);
+                        oldCells[i] = CellAtRow.load(line, reconCache);
                     }
                 }
             }
