@@ -34,8 +34,11 @@ public class GetAllProjectMetadataCommand extends Command {
                 writer.object();
                 Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
                 for (Entry<Long,ProjectMetadata> e : m.entrySet()) {
-                    writer.key(e.getKey().toString());
-                    e.getValue().write(writer, options);
+                    ProjectMetadata pm = e.getValue();
+                    if (pm != null) {
+                        writer.key(e.getKey().toString());
+                        e.getValue().write(writer, options);
+                    }
                 }
                 writer.endObject();
                 

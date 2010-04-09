@@ -176,11 +176,15 @@ public class ProjectManager {
      * 
      * @param projectID
      */
-    public void importProject(long projectID) {
+    public boolean importProject(long projectID) {
         synchronized (this) {
             ProjectMetadata metadata = ProjectMetadata.load(getProjectDir(projectID));
-        
-            _projectsMetadata.put(projectID, metadata);
+            if (metadata != null) {
+                _projectsMetadata.put(projectID, metadata);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
     
@@ -313,13 +317,15 @@ public class ProjectManager {
             jsonWriter.key("projectIDs");
                 jsonWriter.array();
                 for (Long id : _projectsMetadata.keySet()) {
-                    jsonWriter.value(id);
-                    
                     ProjectMetadata metadata = _projectsMetadata.get(id);
-                    try {
-                        metadata.save(getProjectDir(id));
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (metadata != null) {
+                        jsonWriter.value(id);
+                        
+                        try {
+                            metadata.save(getProjectDir(id));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 jsonWriter.endArray();

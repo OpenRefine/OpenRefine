@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
+import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.ProjectManager;
+import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.ParsingUtilities;
@@ -33,19 +35,29 @@ public class ImportProjectCommand extends Command {
         
         try {
             Properties options = ParsingUtilities.parseUrlParameters(request);
+            
             long projectID = Project.generateID();
+            Gridworks.log("Importing existing project using new ID " + projectID);
             
             internalImport(request, options, projectID);
 
             ProjectManager.singleton.importProject(projectID);
-            if (options.containsKey("project-name")) {
-                String projectName = options.getProperty("project-name");
-                if (projectName != null && projectName.length() > 0) {
-                    ProjectManager.singleton.getProjectMetadata(projectID).setName(projectName);
-                }
-            }
             
-            redirect(response, "/project.html?project=" + projectID);
+            ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(projectID);
+            if (pm != null) {
+                if (options.containsKey("project-name")) {
+                    String projectName = options.getProperty("project-name");
+                    if (projectName != null && projectName.length() > 0) {
+                        pm.setName(projectName);
+                    }
+                }
+                
+                redirect(response, "/project.html?project=" + projectID);
+            } else {
+                redirect(response, "/error.html?redirect=index.html&msg=" +
+                    ParsingUtilities.encode("Failed to import project")
+                );
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
