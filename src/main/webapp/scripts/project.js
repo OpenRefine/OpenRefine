@@ -14,7 +14,7 @@ function onLoad() {
     var params = URL.getParameters();
     if ("project" in params) {
         theProject = {
-            id: parseInt(params.project)
+            id: parseInt(params.project,10)
         };
         
         var uiState = {};
@@ -143,10 +143,10 @@ Gridworks.createUpdateFunction = function(options, onFinallyDone) {
     pushFunction(function(onDone) {
         ui.historyWidget.update(onDone);
     });
-    if (options["everythingChanged"] || options["modelsChanged"] || options["columnStatsChanged"]) {
+    if (options.everythingChanged || options.modelsChanged || options.columnStatsChanged) {
         pushFunction(Gridworks.reinitializeProjectData);
     }
-    if (options["everythingChanged"] || options["modelsChanged"] || options["rowsChanged"] || options["rowMetadataChanged"] || options["cellsChanged"] || options["engineChanged"]) {
+    if (options.everythingChanged || options.modelsChanged || options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged) {
         pushFunction(function(onDone) {
             ui.dataTableView.update(onDone);
         });
@@ -211,7 +211,7 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
         if (o.code == "error") {
             if ("onError" in callbacks) {
                 try {
-                    callbacks["onError"](o);
+                    callbacks.onError(o);
                 } catch (e) {
                     Gridworks.reportException(e);
                 }
@@ -219,14 +219,14 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
         } else {
             if ("onDone" in callbacks) {
                 try {
-                    callbacks["onDone"](o);
+                    callbacks.onDone(o);
                 } catch (e) {
                     Gridworks.reportException(e);
                 }
             }
             
             if (o.code == "ok") {
-                Gridworks.update(updateOptions, callbacks["onFinallyDone"]);
+                Gridworks.update(updateOptions, callbacks.onFinallyDone);
                 
                 if ("historyEntry" in o) {
                     ui.processWidget.showUndo(o.historyEntry);
@@ -234,12 +234,12 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
             } else if (o.code == "pending") {
                 if ("onPending" in callbacks) {
                     try {
-                        callbacks["onPending"](o);
+                        callbacks.onPending(o);
                     } catch (e) {
                         Gridworks.reportException(e);
                     }
                 }
-                ui.processWidget.update(updateOptions, callbacks["onFinallyDone"]);
+                ui.processWidget.update(updateOptions, callbacks.onFinallyDone);
             }
         }
     }

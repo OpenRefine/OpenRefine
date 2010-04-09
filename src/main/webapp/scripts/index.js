@@ -78,7 +78,7 @@ function renderProjects(data) {
                             data: { "project" : project.id },
                             dataType: "json",
                             success: function (data) {
-                                if (data && typeof data['code'] != 'undefined' && data.code == "ok") {
+                                if (data && typeof data.code != 'undefined' && data.code == "ok") {
                                     window.location.reload();
                                 }
                             }
@@ -121,8 +121,8 @@ function isThereNewRelease() {
 
     var latestRevision = GridworksReleases.releases[0].revision;
     
-    var thisRev = parseInt(revision_pattern.exec(thisRevision)[1]);
-    var latestRev = parseInt(revision_pattern.exec(GridworksReleases.releases[0].revision)[1]);
+    var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
+    var latestRev = parseInt(revision_pattern.exec(GridworksReleases.releases[0].revision)[1],10);
     
     return latestRev > thisRev;
 }
