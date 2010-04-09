@@ -10,65 +10,6 @@ Gridworks.reportException = function(e) {
     }
 };
 
-function onLoad() {
-    var params = URL.getParameters();
-    if ("project" in params) {
-        theProject = {
-            id: parseInt(params.project,10)
-        };
-        
-        var uiState = {};
-        if ("ui" in params) {
-            try {
-                uiState = JSON.parse(params.ui);
-            } catch (e) {
-            }
-        }
-        
-        Gridworks.reinitializeProjectData(function() {
-            initializeUI(uiState);
-        });
-    }
-}
-$(onLoad);
-
-function initializeUI(uiState) {
-    document.title = theProject.metadata.name + " - Gridworks";
-    
-    var path = $("#path");
-    
-    $('<span class="app-path-section">' +
-        '<a href="#">' + theProject.metadata.name + '</a> project' +
-        '</span>').appendTo(path);
-    
-    $('<a href="javascript:{}">current view</a>')
-        .mouseenter(function() {
-            this.href = Gridworks.getPermanentLink();
-        })
-        .appendTo($('<span class="app-path-section"></span>').appendTo(path));
-    
-    var body = $("#body").empty().html(
-        '<div bind="viewPanel" class="view-panel"></div>' +
-        '<div bind="facetPanel" class="facet-panel"></div>' +
-        '<div bind="historyPanel" class="history-panel"></div>' +
-        '<div bind="processPanel" class="process-panel"></div>' +
-        '<div class="menu-bar-container" bind="menuBarContainer"><div bind="menuBarPanel" class="menu-bar"></div></div>'
-    );
-    ui = DOM.bind(body);
-    
-    ui.menuBarContainer.css("top", $("#header").outerHeight() + "px");
-    ui.menuBar = new MenuBar(ui.menuBarPanel); // construct the menu first so we can resize everything else
-    
-    resize();
-
-    ui.browsingEngine = new BrowsingEngine(ui.facetPanel, uiState.facets || []);
-    ui.processWidget = new ProcessWidget(ui.processPanel);
-    ui.historyWidget = new HistoryWidget(ui.historyPanel);
-    ui.dataTableView = new DataTableView(ui.viewPanel);
-    
-    $(window).bind("resize", resizeAll);
-}
-
 function resize() {
     var header = $("#header");
     var footer = $("#footer");
@@ -106,6 +47,43 @@ function resizeAll() {
     ui.processWidget.resize();
     ui.historyWidget.resize();
     ui.dataTableView.resize();
+}
+
+function initializeUI(uiState) {
+    document.title = theProject.metadata.name + " - Gridworks";
+    
+    var path = $("#path");
+    
+    $('<span class="app-path-section">' +
+        '<a href="#">' + theProject.metadata.name + '</a> project' +
+        '</span>').appendTo(path);
+    
+    $('<a href="javascript:{}">current view</a>')
+        .mouseenter(function() {
+            this.href = Gridworks.getPermanentLink();
+        })
+        .appendTo($('<span class="app-path-section"></span>').appendTo(path));
+    
+    var body = $("#body").empty().html(
+        '<div bind="viewPanel" class="view-panel"></div>' +
+        '<div bind="facetPanel" class="facet-panel"></div>' +
+        '<div bind="historyPanel" class="history-panel"></div>' +
+        '<div bind="processPanel" class="process-panel"></div>' +
+        '<div class="menu-bar-container" bind="menuBarContainer"><div bind="menuBarPanel" class="menu-bar"></div></div>'
+    );
+    ui = DOM.bind(body);
+    
+    ui.menuBarContainer.css("top", $("#header").outerHeight() + "px");
+    ui.menuBar = new MenuBar(ui.menuBarPanel); // construct the menu first so we can resize everything else
+    
+    resize();
+
+    ui.browsingEngine = new BrowsingEngine(ui.facetPanel, uiState.facets || []);
+    ui.processWidget = new ProcessWidget(ui.processPanel);
+    ui.historyWidget = new HistoryWidget(ui.historyPanel);
+    ui.dataTableView = new DataTableView(ui.viewPanel);
+    
+    $(window).bind("resize", resizeAll);
 }
 
 Gridworks.reinitializeProjectData = function(f) {
@@ -306,3 +284,30 @@ Gridworks.getPermanentLink = function() {
     ];
     return "project.html?" + params.join("&");
 };
+
+/*
+ * Loader
+ */
+
+function onLoad() {
+    var params = URL.getParameters();
+    if ("project" in params) {
+        theProject = {
+            id: parseInt(params.project,10)
+        };
+        
+        var uiState = {};
+        if ("ui" in params) {
+            try {
+                uiState = JSON.parse(params.ui);
+            } catch (e) {
+            }
+        }
+        
+        Gridworks.reinitializeProjectData(function() {
+            initializeUI(uiState);
+        });
+    }
+}
+
+$(onLoad);

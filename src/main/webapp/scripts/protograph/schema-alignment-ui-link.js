@@ -275,8 +275,10 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
         self._configureTarget();
     };
     
+    var divSearch;
+    
     if (suggestions.length > 0) {
-        var divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search2").html('<div>Search for a property or pick one below</div>').appendTo(menu);
+        divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search2").html('<div>Search for a property or pick one below</div>').appendTo(menu);
         
         function createSuggestion(suggestion) {
             var menuItem = MenuSystem.createMenuItem().appendTo(menu);
@@ -289,7 +291,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
             createSuggestion(suggestions[i]);
         }
     } else {
-        var divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search").html('<div>Search for a property</div>').appendTo(menu);
+        divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search").html('<div>Search for a property</div>').appendTo(menu);
     }
     var input = $('<input />').appendTo($('<div>').appendTo(divSearch));
     

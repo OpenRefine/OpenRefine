@@ -131,9 +131,9 @@ ListFacet.prototype.render = function() {
         $('<div>').text(this._data.error).addClass("facet-body-message").appendTo(bodyDiv);
         bodyDiv.appendTo(container);
     } else {
-        var selectionCount = this._selection.length
-            + (this._blankChoice !== null && this._blankChoice.s ? 1 : 0)
-            + (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
+        var selectionCount = this._selection.length +
+              (this._blankChoice !== null && this._blankChoice.s ? 1 : 0) +
+              (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
             
         if (selectionCount > 0) {
             var reset = function() {

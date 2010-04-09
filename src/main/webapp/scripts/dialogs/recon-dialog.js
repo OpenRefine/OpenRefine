@@ -14,10 +14,12 @@ function ReconDialog(column, types) {
         delete defaultTypes[this.id];
     });
     for (var id in defaultTypes) {
-        this._types.push({
-            id: id,
-            name: defaultTypes[id].name
-        });
+        if (defaultTypes.hasOwnProperty(id)) {
+            this._types.push({
+                id: id,
+                name: defaultTypes[id].name
+            });
+        }
     }
     
     this._createDialog();

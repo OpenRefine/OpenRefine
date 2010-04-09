@@ -131,6 +131,7 @@ DataTableView.prototype._renderDataTable = function(table) {
             }
         }
     };
+    
     var renderColumnGroups = function(groups, keys) {
         var nextLayer = [];
         
@@ -143,8 +144,8 @@ DataTableView.prototype._renderDataTable = function(table) {
                 var foundGroup = false;
                 
                 for (var g = 0; g < groups.length; g++) {
-                    var columnGroup = groups[g];
-                    if (columnGroup.startColumnIndex == c) {
+                    var cg = groups[g];
+                    if (cg.startColumnIndex == c) {
                         foundGroup = true;
                         break;
                     }

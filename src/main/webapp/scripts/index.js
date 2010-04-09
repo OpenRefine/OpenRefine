@@ -1,23 +1,3 @@
-function onLoad() {
-    $.getJSON(
-        "/command/get-all-project-metadata",
-        null,
-        function(data) {
-            renderProjects(data);
-            $("#upload-file-button").click(onClickUploadFileButton);
-        },
-        "json"
-    );
-    
-    if (isThereNewRelease()) {
-        $('<div id="version-message">' +
-            'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
-          '</div>').appendTo(document.body);
-    }
-}
-
-$(onLoad);
-
 function onClickUploadFileButton(evt) {
     var projectName = $("#project-name-input")[0].value;
     if (! $.trim(projectName).length) {
@@ -33,6 +13,36 @@ function onClickUploadFileButton(evt) {
                 "separator=" + $("#separator-input")[0].value
             ].join("&"));
     }
+}
+
+function formatDate(d) {
+    var yesterday = Date.today().add({ days: -1 });
+    var today = Date.today();
+    var tomorrow = Date.today().add({ days: 1 });
+    if (d.between(today, tomorrow)) {
+        return "Today " + d.toString("h:mm tt");
+    } else if (d.between(yesterday, today)) {
+        return "Yesterday " + d.toString("h:mm tt");
+    } else {
+        return d.toString("ddd, MMM d, yyyy");
+    }
+}
+
+function isThereNewRelease() {
+    var thisRevision = GridworksVersion.revision;
+    
+    var revision_pattern = /r([0-9]+)/;
+    
+    if (!revision_pattern.test(thisRevision)) { // probably "trunk"
+        return false;
+    }
+
+    var latestRevision = GridworksReleases.releases[0].revision;
+    
+    var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
+    var latestRev = parseInt(revision_pattern.exec(GridworksReleases.releases[0].revision)[1],10);
+    
+    return latestRev > thisRev;
 }
 
 function renderProjects(data) {
@@ -97,32 +107,22 @@ function renderProjects(data) {
     }
 }
 
-function formatDate(d) {
-    var yesterday = Date.today().add({ days: -1 });
-    var today = Date.today();
-    var tomorrow = Date.today().add({ days: 1 });
-    if (d.between(today, tomorrow)) {
-        return "Today " + d.toString("h:mm tt");
-    } else if (d.between(yesterday, today)) {
-        return "Yesterday " + d.toString("h:mm tt");
-    } else {
-        return d.toString("ddd, MMM d, yyyy");
+function onLoad() {
+    $.getJSON(
+        "/command/get-all-project-metadata",
+        null,
+        function(data) {
+            renderProjects(data);
+            $("#upload-file-button").click(onClickUploadFileButton);
+        },
+        "json"
+    );
+    
+    if (isThereNewRelease()) {
+        $('<div id="version-message">' +
+            'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
+          '</div>').appendTo(document.body);
     }
 }
 
-function isThereNewRelease() {
-    var thisRevision = GridworksVersion.revision;
-    
-    var revision_pattern = /r([0-9]+)/;
-    
-    if (!revision_pattern.test(thisRevision)) { // probably "trunk"
-        return false;
-    }
-
-    var latestRevision = GridworksReleases.releases[0].revision;
-    
-    var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
-    var latestRev = parseInt(revision_pattern.exec(GridworksReleases.releases[0].revision)[1],10);
-    
-    return latestRev > thisRev;
-}
+$(onLoad);

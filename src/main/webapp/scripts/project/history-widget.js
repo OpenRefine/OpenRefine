@@ -219,8 +219,10 @@ HistoryWidget.prototype._showApplyOperationsDialog = function() {
     var elmts = DOM.bind(html);
     
     $('<button></button>').text("Apply").click(function() {
+        var json;
+        
         try {
-            var json = JSON.parse(elmts.textarea[0].value);
+            json = JSON.parse(elmts.textarea[0].value);
         } catch (e) {
             alert("The JSON you pasted is invalid.");
             return;
