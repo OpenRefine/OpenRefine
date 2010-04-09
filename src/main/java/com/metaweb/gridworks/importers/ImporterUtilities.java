@@ -16,7 +16,10 @@ public class ImporterUtilities {
             }
         
             try {
-                return Double.parseDouble(text);
+                double d = Double.parseDouble(text);
+                if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                    return d;
+                }
             } catch (NumberFormatException e) {
             }
         }

@@ -5,13 +5,23 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.gel.Function;
 
 public class ToNumber implements Function {
 
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
-            return args[0] instanceof Number ? args[0] : Double.parseDouble(args[0].toString());
+            if (args[0] instanceof Number) {
+                return args[0];
+            } else {
+                String s = args[0].toString();
+                try {
+                    return Double.parseDouble(s);
+                } catch (NumberFormatException e) {
+                    return new EvalError("Cannot parse to number");
+                }
+            }
         }
         return null;
     }
