@@ -25,6 +25,8 @@ public class Engine implements Jsonizable {
     protected List<Facet>     _facets = new LinkedList<Facet>();
     protected boolean		  _includeDependent;
     
+    public final static String INCLUDE_DEPENDENT = "includeDependent";
+    
     public Engine(Project project) {
         _project  = project;
     }
@@ -75,11 +77,11 @@ public class Engine implements Jsonizable {
 	        }
     	}
     	
-        if (o.has("includeDependent") && !o.isNull("includeDependent")) {
-        	_includeDependent = o.getBoolean("includeDependent");
+        if (o.has(INCLUDE_DEPENDENT) && !o.isNull(INCLUDE_DEPENDENT)) {
+        	_includeDependent = o.getBoolean(INCLUDE_DEPENDENT);
         }
     }
-    
+        
     public void computeFacets() throws JSONException {
         for (Facet facet : _facets) {
             FilteredRows filteredRows = getFilteredRows(facet, false);
@@ -98,7 +100,7 @@ public class Engine implements Jsonizable {
 	            facet.write(writer, options);
 	        }
 	        writer.endArray();
-        writer.key("includeDependent"); writer.value(_includeDependent);
+        writer.key(INCLUDE_DEPENDENT); writer.value(_includeDependent);
         writer.endObject();
     }
 }

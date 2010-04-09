@@ -20,6 +20,8 @@ public class HistoryProcess extends Process {
     
     protected boolean _done = false;
 
+    private final static String WARN = "Not a long-running process";
+    
     public HistoryProcess(Project project, long lastDoneID) {
         _project = project;
         _lastDoneID = lastDoneID;
@@ -33,7 +35,7 @@ public class HistoryProcess extends Process {
     }
     
     public void cancel() {
-        throw new RuntimeException("Not a long-running process");
+        throw new RuntimeException(WARN);
     }
 
     public boolean isImmediate() {
@@ -48,7 +50,7 @@ public class HistoryProcess extends Process {
     }
 
     public void startPerforming(ProcessManager manager) {
-        throw new RuntimeException("Not a long-running process");
+        throw new RuntimeException(WARN);
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -62,10 +64,10 @@ public class HistoryProcess extends Process {
     }
 
     public boolean isDone() {
-        throw new RuntimeException("Not a long-running process");
+        throw new RuntimeException(WARN);
     }
 
     public boolean isRunning() {
-        throw new RuntimeException("Not a long-running process");
+        throw new RuntimeException(WARN);
     }
 }

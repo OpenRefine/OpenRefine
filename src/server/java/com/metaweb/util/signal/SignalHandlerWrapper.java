@@ -1,22 +1,25 @@
 package com.metaweb.util.signal;
 
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
+
 /*
  * This class allows our own SignalHandler class to fail more gracefully 
  * in case the "sun.misc.Signal*" classes are not found in the current jvm.
  */
-final class SignalHandlerWrapper implements sun.misc.SignalHandler {
+final class SignalHandlerWrapper implements SignalHandler {
 
-    private final sun.misc.SignalHandler existingHandler;
+    private transient final SignalHandler existingHandler;
 
-    private final SignalHandler handler;
+    private transient final AbstractSignalHandler handler;
 
-    SignalHandlerWrapper(String signalName, SignalHandler handler) {
+    SignalHandlerWrapper(final String signalName, final AbstractSignalHandler handler) {
         this.handler = handler;
-        sun.misc.Signal signal = new sun.misc.Signal(signalName);
-        existingHandler = sun.misc.Signal.handle(signal, this);
+        final Signal signal = new Signal(signalName);
+        existingHandler = Signal.handle(signal, this);
     }
 
-    public void handle(sun.misc.Signal sig) {
+    public void handle(final Signal sig) {
         if (handler.handle(sig.getName()) && (existingHandler != null)) {
             existingHandler.handle(sig);
         }

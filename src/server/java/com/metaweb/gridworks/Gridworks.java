@@ -32,7 +32,7 @@ import org.mortbay.log.Log;
 import org.mortbay.util.Scanner;
 
 import com.metaweb.util.logging.IndentingLayout;
-import com.metaweb.util.signal.SignalHandler;
+import com.metaweb.util.signal.AbstractSignalHandler;
 import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
 public class Gridworks {
@@ -298,7 +298,7 @@ class GridworksClient extends JFrame implements ActionListener {
     }
 }
 
-class ShutdownSignalHandler extends SignalHandler {
+class ShutdownSignalHandler extends AbstractSignalHandler {
     
     private Server _server;
 

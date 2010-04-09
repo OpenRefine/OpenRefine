@@ -33,7 +33,7 @@ public class PreviewProtographCommand extends Command {
             JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
             Protograph protograph = Protograph.reconstruct(json);
             
-            StringBuffer sb = new StringBuffer();
+            StringBuffer sb = new StringBuffer(2048);
             sb.append("{ ");
             
             {

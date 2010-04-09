@@ -22,10 +22,13 @@ public class JythonEvaluable implements Evaluable {
         // indent and create a function out of the code
         String[] lines = s.split("\r\n|\r|\n");
         
-        StringBuffer sb = new StringBuffer();
-        sb.append("def " + s_functionName + "(value, cell, cells, row, rowIndex):");
+        StringBuffer sb = new StringBuffer(1024);
+        sb.append("def ");
+        sb.append(s_functionName);
+        sb.append("(value, cell, cells, row, rowIndex):");
         for (int i = 0; i < lines.length; i++) {
-            sb.append("\n  " + lines[i]);
+            sb.append("\n  ");
+            sb.append(lines[i]);
         }
 
         _engine.exec(sb.toString());

@@ -16,6 +16,8 @@ import com.metaweb.gridworks.protograph.FreebaseType;
 public class DataExtensionReconConfig extends StrictReconConfig {
     final public FreebaseType type;
     
+    private final static String WARN = "Not implemented";
+    
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {
         JSONObject type = obj.getJSONObject("type");
         
@@ -34,17 +36,15 @@ public class DataExtensionReconConfig extends StrictReconConfig {
     @Override
     public ReconJob createJob(Project project, int rowIndex, Row row,
             String columnName, Cell cell) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException(WARN);
     }
 
     @Override
     public int getBatchSize() {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException(WARN);
     }
 
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
+    public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("mode"); writer.value("extend");
         writer.key("type"); type.write(writer, options); 
@@ -53,12 +53,11 @@ public class DataExtensionReconConfig extends StrictReconConfig {
     
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException(WARN);
     }
 
     @Override
     public String getBriefDescription(Project project, String columnName) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException(WARN);
     }
-
 }

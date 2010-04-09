@@ -26,6 +26,9 @@ public class Row implements HasFields, Jsonizable {
     transient public int[]          contextRowSlots;
     transient public int[]          contextCellSlots;
     
+    private static final String FLAGGED = "flagged";
+    private static final String STARRED = "starred";
+    
     public Row(int cellCount) {
         cells = new ArrayList<Cell>(cellCount);
     }
@@ -39,9 +42,9 @@ public class Row implements HasFields, Jsonizable {
     }
     
     public Object getField(String name, Properties bindings) {
-        if ("flagged".equals(name)) {
+        if (FLAGGED.equals(name)) {
             return flagged;
-        } else if ("starred".equals(name)) {
+        } else if (STARRED.equals(name)) {
             return starred;
         }
         return null;
@@ -105,8 +108,8 @@ public class Row implements HasFields, Jsonizable {
             throws JSONException {
         
         writer.object();
-        writer.key("flagged"); writer.value(flagged);
-        writer.key("starred"); writer.value(starred);
+        writer.key(FLAGGED); writer.value(flagged);
+        writer.key(STARRED); writer.value(starred);
         
         writer.key("cells"); writer.array();
         for (Cell cell : cells) {
@@ -166,11 +169,11 @@ public class Row implements HasFields, Jsonizable {
             }
         }
         
-        if (obj.has("starred")) {
-            row.starred = obj.getBoolean("starred");
+        if (obj.has(STARRED)) {
+            row.starred = obj.getBoolean(STARRED);
         }
-        if (obj.has("flagged")) {
-            row.flagged = obj.getBoolean("flagged");
+        if (obj.has(FLAGGED)) {
+            row.flagged = obj.getBoolean(FLAGGED);
         }
         
         return row;

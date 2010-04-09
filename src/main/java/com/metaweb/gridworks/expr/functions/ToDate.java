@@ -18,6 +18,7 @@ public class ToDate implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 0) {
             // missing value, can this happen?
+            return null;
         }
         if (!(args[0] instanceof String)) {
             // ignore cell values that aren't strings

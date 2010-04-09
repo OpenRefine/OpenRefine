@@ -48,7 +48,6 @@ public class IndentingLayout extends Layout {
     protected static final int CONTEXT_SIZE = 25;
     protected static final long MAX_DELTA = 10000;
 
-    protected final StringBuffer buf = new StringBuffer(256);
     protected Calendar calendar = Calendar.getInstance();
     protected long previousTime = 0;
     protected int indentation = 0;
@@ -67,7 +66,7 @@ public class IndentingLayout extends Layout {
         if ((leader == '<') && (secondLeader == ' ') && (this.indentation > 0)) this.indentation--;
 
         // Reset buf
-        buf.setLength(0);
+        StringBuffer buf = new StringBuffer(256);
 
         Date date = new Date();
         long now = date.getTime();
@@ -134,7 +133,7 @@ public class IndentingLayout extends Layout {
 
     private void pad(StringBuffer buffer, int pads, char padchar) {
         for (int i = 0; i < pads; i++) {
-            buf.append(padchar);
+            buffer.append(padchar);
         }
     }
 

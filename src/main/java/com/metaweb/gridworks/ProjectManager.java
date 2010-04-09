@@ -1,6 +1,6 @@
 package com.metaweb.gridworks;
 
-import java.io.File; 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -429,50 +429,50 @@ public class ProjectManager {
     }
     
     protected void load() {
-        try {
-            loadFromFile(new File(_workspaceDir, "workspace.json"));
-            return;
-        } catch (Exception e) {
-        }
-        
-        try {
-            loadFromFile(new File(_workspaceDir, "workspace.temp.json"));
-            return;
-        } catch (Exception e) {
-        }
-        
-        try {
-            loadFromFile(new File(_workspaceDir, "workspace.old.json"));
-            return;
-        } catch (Exception e) {
-        }
+        if (loadFromFile(new File(_workspaceDir, "workspace.json"))) return;
+        if (loadFromFile(new File(_workspaceDir, "workspace.temp.json"))) return;
+        if (loadFromFile(new File(_workspaceDir, "workspace.old.json"))) return;
     }
     
-    protected void loadFromFile(File file) throws IOException, JSONException {
+    protected boolean loadFromFile(File file) {
         Gridworks.log("Loading workspace from " + file.getAbsolutePath());
         
         _projectsMetadata.clear();
         _expressions.clear();
         
-        FileReader reader = new FileReader(file);
-        try {
-            JSONTokener tokener = new JSONTokener(reader);
-            JSONObject obj = (JSONObject) tokener.nextValue();
-            
-            JSONArray a = obj.getJSONArray("projectIDs");
-            int count = a.length();
-            for (int i = 0; i < count; i++) {
-                long id = a.getLong(i);
+        if (file.exists() || file.canRead()) {
+            FileReader reader = null;
+            try {
+                reader = new FileReader(file);
+                JSONTokener tokener = new JSONTokener(reader);
+                JSONObject obj = (JSONObject) tokener.nextValue();
                 
-                File projectDir = getProjectDir(id);
-                ProjectMetadata metadata = ProjectMetadata.load(projectDir);
+                JSONArray a = obj.getJSONArray("projectIDs");
+                int count = a.length();
+                for (int i = 0; i < count; i++) {
+                    long id = a.getLong(i);
+                    
+                    File projectDir = getProjectDir(id);
+                    ProjectMetadata metadata = ProjectMetadata.load(projectDir);
+                    
+                    _projectsMetadata.put(id, metadata);
+                }
                 
-                _projectsMetadata.put(id, metadata);
+                JSONUtilities.getStringList(obj, "expressions", _expressions);
+                return true;
+            } catch (JSONException e) {
+                Gridworks.warn("Error reading " + file, e);
+            } catch (IOException e) {
+                Gridworks.warn("Error reading " + file, e);
+            } finally {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    Gridworks.warn("Exception closing file",e);
+                }
             }
-            
-            JSONUtilities.getStringList(obj, "expressions", _expressions);
-        } finally {
-            reader.close();
         }
+        
+        return false;
     }
 }

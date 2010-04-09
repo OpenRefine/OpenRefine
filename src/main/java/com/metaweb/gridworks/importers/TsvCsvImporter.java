@@ -31,7 +31,7 @@ public class TsvCsvImporter implements Importer {
         
         int rowsWithData = 0;
         while ((line = lnReader.readLine()) != null) {
-            if (line.trim().length() == 0) {
+            if (StringUtils.isBlank(line)) {
                 continue;
             }
             

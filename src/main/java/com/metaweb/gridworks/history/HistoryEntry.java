@@ -40,6 +40,8 @@ public class HistoryEntry implements Jsonizable {
     // the actual change, loaded on demand
     transient protected Change _change;
     
+    private final static String OPERATION = "operation";
+    
     public HistoryEntry(Project project, String description, AbstractOperation operation, Change change) {
         this.id = Math.round(Math.random() * 1000000) + System.currentTimeMillis();
         this.projectID = project.id;
@@ -66,7 +68,7 @@ public class HistoryEntry implements Jsonizable {
         writer.key("description"); writer.value(description);
         writer.key("time"); writer.value(ParsingUtilities.dateToString(time));
         if ("save".equals(options.getProperty("mode")) && operation != null) {
-            writer.key("operation"); operation.write(writer, options);
+            writer.key(OPERATION); operation.write(writer, options);
         }
         writer.endObject();
     }
@@ -121,8 +123,8 @@ public class HistoryEntry implements Jsonizable {
         JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
         
         AbstractOperation operation = null;
-        if (obj.has("operation") && !obj.isNull("operation")) {
-            operation = OperationRegistry.reconstruct(project, obj.getJSONObject("operation"));
+        if (obj.has(OPERATION) && !obj.isNull(OPERATION)) {
+            operation = OperationRegistry.reconstruct(project, obj.getJSONObject(OPERATION));
         }
         
         return new HistoryEntry(

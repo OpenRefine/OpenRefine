@@ -576,6 +576,8 @@ findbugs() {
     
     ANT_PARAMS="-Dfindbugs.dir=${GRIDWORKS_TOOLS_DIR}/${FINDBUGS_DIR}"
     ant findbugs
+    
+    open "$GRIDWORKS_BUILD_DIR/reports/findbugs.html"
 }    
 
 pmd() {
@@ -583,6 +585,8 @@ pmd() {
     
     ANT_PARAMS="-Dpmd.dir=${GRIDWORKS_TOOLS_DIR}/${PMD_DIR}"
     ant pmd
+    
+    open "$GRIDWORKS_BUILD_DIR/reports/pmd.html"
 }    
 
 cpd() {
@@ -590,6 +594,8 @@ cpd() {
     
     ANT_PARAMS="-Dpmd.dir=${GRIDWORKS_TOOLS_DIR}/${PMD_DIR}"
     ant cpd
+
+    open "$GRIDWORKS_BUILD_DIR/reports/cpd.txt"
 }    
 
 jslint() {
@@ -597,6 +603,8 @@ jslint() {
 
     ANT_PARAMS="-Djslint.dir=${GRIDWORKS_TOOLS_DIR}/${JSLINT_DIR}"
     ant jslint
+
+    open "$GRIDWORKS_BUILD_DIR/reports/jslint.txt"
 }
 
 # -------------------------- script -----------------------------

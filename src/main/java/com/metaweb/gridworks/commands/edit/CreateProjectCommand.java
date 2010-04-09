@@ -332,7 +332,7 @@ public class CreateProjectCommand extends Command {
     
     private String[] getExtension(String filename) {
         String[] result = new String[2];
-        int ext_index = filename.lastIndexOf(".");
+        int ext_index = filename.lastIndexOf('.');
         result[0] = (ext_index == -1) ? filename : filename.substring(0,ext_index);
         result[1] = (ext_index == -1) ? "" : filename.substring(ext_index + 1);
         return result;

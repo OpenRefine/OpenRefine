@@ -21,6 +21,14 @@ import com.metaweb.gridworks.protograph.ValueNode;
 public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
     protected List<JSONObject> rootObjects = new LinkedList<JSONObject>();
     
+    private static final String TYPE = "type";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String CREATE = "create";
+    private static final String VALUE = "value";
+    private static final String CONNECT = "connect";
+    private static final String LANG = "connect";
+    
     public JSONArray getJSON() {
         return new JSONArray(rootObjects);
     }
@@ -58,9 +66,9 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
             if (obj == null) {
                 obj = new JSONObject();
                 try {
-                    obj.put("type", this.node.type.id);
-                    obj.put("id", (String) null);
-                    obj.put("create", "unconditional");
+                    obj.put(TYPE, this.node.type.id);
+                    obj.put(ID, (String) null);
+                    obj.put(CREATE, "unconditional");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -89,12 +97,12 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
                     if (cell.recon != null && 
                         cell.recon.judgment == Recon.Judgment.Matched &&
                         cell.recon.match != null) {
-                        obj.put("id", cell.recon.match.topicID);
+                        obj.put(ID, cell.recon.match.topicID);
                     } else {
-                        obj.put("id", (String) null);
-                        obj.put("name", cell.value.toString());
-                        obj.put("type", node.type.id);
-                        obj.put("create", "unless_exists");
+                        obj.put(ID, (String) null);
+                        obj.put(NAME, cell.value.toString());
+                        obj.put(TYPE, node.type.id);
+                        obj.put(CREATE, "unless_exists");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -118,13 +126,13 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
             if (obj == null) {
                 obj = new JSONObject();
                 try {
-                    obj.put("value", cell.value.toString());
-                    obj.put("type", node.valueType);
+                    obj.put(VALUE, cell.value.toString());
+                    obj.put(TYPE, node.valueType);
                     if ("/type/text".equals(node.lang)) {
-                        obj.put("lang", node.lang);
+                        obj.put(LANG, node.lang);
                     }
                     
-                    obj.put("connect", "insert");
+                    obj.put(CONNECT, "insert");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -147,13 +155,13 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
             if (obj == null) {
                 obj = new JSONObject();
                 try {
-                    obj.put("value", cell.value.toString());
+                    obj.put(VALUE, cell.value.toString());
                     
                     JSONObject nsObj = new JSONObject();
-                    nsObj.put("id", node.namespace.id);
+                    nsObj.put(ID, node.namespace.id);
                     
                     obj.put("namespace", nsObj);
-                    obj.put("connect", "insert");
+                    obj.put(CONNECT, "insert");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -174,7 +182,7 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
             if (obj == null) {
                 obj = new JSONObject();
                 try {
-                    obj.put("id", node.topic.id);
+                    obj.put(ID, node.topic.id);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -195,13 +203,13 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
             if (obj == null) {
                 obj = new JSONObject();
                 try {
-                    obj.put("value", node.value);
-                    obj.put("type", node.valueType);
+                    obj.put(VALUE, node.value);
+                    obj.put(TYPE, node.valueType);
                     if ("/type/text".equals(node.lang)) {
-                        obj.put("lang", node.lang);
+                        obj.put(LANG, node.lang);
                     }
                     
-                    obj.put("connect", "insert");
+                    obj.put(CONNECT, "insert");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

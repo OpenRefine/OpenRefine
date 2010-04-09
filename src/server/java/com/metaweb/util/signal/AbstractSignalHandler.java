@@ -1,14 +1,12 @@
 package com.metaweb.util.signal;
 
-public abstract class SignalHandler {
+public abstract class AbstractSignalHandler {
 
-    SignalHandlerWrapper _wrapper;
-    
-    public SignalHandler(String signalName) {
+    public AbstractSignalHandler(final String signalName) {
         try {
-            _wrapper = new SignalHandlerWrapper(signalName, this);
+            new SignalHandlerWrapper(signalName, this);
         } catch (Throwable e) {
-            throw new java.lang.RuntimeException("Signal handling facilities are not available in this JVM.");
+            throw new java.lang.RuntimeException("Signal handling facilities are not available in this JVM.", e);
         }
     }
         

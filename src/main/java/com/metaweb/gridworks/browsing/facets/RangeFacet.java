@@ -23,7 +23,7 @@ public class RangeFacet implements Facet {
     protected String     _name;       // name of facet
     protected String     _expression; // expression to compute numeric value(s) per row
     protected String     _columnName; // column to base expression on, if any
-    protected String     _mode;       // "range", "min", "max"
+    protected String     _mode;       // "range", MIN, MAX
     
     protected double    _from; // the numeric selection
     protected double    _to;
@@ -59,6 +59,11 @@ public class RangeFacet implements Facet {
     public RangeFacet() {
     }
 
+    private static final String MIN = "min";
+    private static final String MAX = "max";
+    private static final String TO = "to";
+    private static final String FROM = "from";
+    
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -72,8 +77,8 @@ public class RangeFacet implements Facet {
             writer.key("error"); writer.value(_errorMessage);
         } else {
             if (!Double.isInfinite(_min) && !Double.isInfinite(_max)) {
-                writer.key("min"); writer.value(_min);
-                writer.key("max"); writer.value(_max);
+                writer.key(MIN); writer.value(_min);
+                writer.key(MAX); writer.value(_max);
                 writer.key("step"); writer.value(_step);
                 
                 writer.key("bins"); writer.array();
@@ -88,13 +93,13 @@ public class RangeFacet implements Facet {
                 }
                 writer.endArray();
                 
-                if ("min".equals(_mode)) {
-                    writer.key("from"); writer.value(_from);
-                } else if ("max".equals(_mode)) {
-                    writer.key("to"); writer.value(_to);
+                if (MIN.equals(_mode)) {
+                    writer.key(FROM); writer.value(_from);
+                } else if (MAX.equals(_mode)) {
+                    writer.key(TO); writer.value(_to);
                 } else {
-                    writer.key("from"); writer.value(_from);
-                    writer.key("to"); writer.value(_to);
+                    writer.key(FROM); writer.value(_from);
+                    writer.key(TO); writer.value(_to);
                 }
             }
             
@@ -129,20 +134,20 @@ public class RangeFacet implements Facet {
         }
         
         _mode = o.getString("mode");
-        if ("min".equals(_mode)) {
-            if (o.has("from")) {
-                _from = o.getDouble("from");
+        if (MIN.equals(_mode)) {
+            if (o.has(FROM)) {
+                _from = o.getDouble(FROM);
                 _selected = true;
             }
-        } else if ("max".equals(_mode)) {
-            if (o.has("to")) {
-                _to = o.getDouble("to");
+        } else if (MAX.equals(_mode)) {
+            if (o.has(TO)) {
+                _to = o.getDouble(TO);
                 _selected = true;
             }
         } else {
-            if (o.has("from") && o.has("to")) {
-                _from = o.getDouble("from");
-                _to = o.getDouble("to");
+            if (o.has(FROM) && o.has(TO)) {
+                _from = o.getDouble(FROM);
+                _to = o.getDouble(TO);
                 _selected = true;
             }
         }
@@ -159,7 +164,7 @@ public class RangeFacet implements Facet {
 
     public RowFilter getRowFilter() {
         if (_eval != null && _errorMessage == null && _selected) {
-            if ("min".equals(_mode)) {
+            if (MIN.equals(_mode)) {
                 return new ExpressionNumberComparisonRowFilter(
                         _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                     
@@ -167,7 +172,7 @@ public class RangeFacet implements Facet {
                         return d >= _from;
                     };
                 };
-            } else if ("max".equals(_mode)) {
+            } else if (MAX.equals(_mode)) {
                 return new ExpressionNumberComparisonRowFilter(
                         _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                     

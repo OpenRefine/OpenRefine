@@ -222,7 +222,7 @@ public class HeuristicReconConfig extends ReconConfig {
             }
             jsonWriter.endObject();
             
-            StringBuffer sb = new StringBuffer();
+            StringBuffer sb = new StringBuffer(1024);
             sb.append("http://api.freebase.com/api/service/search?indent=1&queries=");
             sb.append(ParsingUtilities.encode(stringWriter.toString()));
             

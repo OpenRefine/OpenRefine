@@ -129,8 +129,9 @@ public class KeyBasedReconConfig extends StrictReconConfig {
                 query = stringWriter.toString();
             }
             
-            StringBuffer sb = new StringBuffer();
-            sb.append(s_mqlreadService + "?query=");
+            StringBuffer sb = new StringBuffer(1024);
+            sb.append(s_mqlreadService);
+            sb.append("?query=");
             sb.append(ParsingUtilities.encode(query));
             
             URL url = new URL(sb.toString());

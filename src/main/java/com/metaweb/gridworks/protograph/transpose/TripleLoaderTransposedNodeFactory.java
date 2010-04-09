@@ -91,7 +91,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     
     protected class AnonymousTransposedNode extends TransposedNodeWithChildren {
         
-        protected AnonymousTransposedNode(AnonymousNode node) { }
+        //protected AnonymousTransposedNode(AnonymousNode node) { }
         
         public String write(String subject, String predicate) {
             if (children.size() == 0 || subject == null) {
@@ -249,7 +249,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             FreebaseProperty property, 
             AnonymousNode node) {
         
-        WritingTransposedNode tnode = new AnonymousTransposedNode(node);
+        WritingTransposedNode tnode = new AnonymousTransposedNode();
         
         processTransposedNode(tnode, parentNode, property);
         

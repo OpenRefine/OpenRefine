@@ -262,8 +262,7 @@
             classname="net.sourceforge.pmd.ant.PMDTask"
             classpathref="pmd.path" 
         />
-        <pmd targetjdk="1.6" encoding="UTF-8">
-            <ruleset>basic</ruleset>        
+        <pmd rulesetfiles="${conf.dir}/pmd.rules.xml" targetjdk="1.6" encoding="UTF-8">
             <formatter type="html" toFile="${reports.dir}/pmd.html" toConsole="true"/>
             <fileset dir="${server.src.dir}">
                 <include name="**/*.java"/>
