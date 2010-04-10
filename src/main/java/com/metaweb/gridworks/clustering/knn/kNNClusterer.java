@@ -142,7 +142,7 @@ public class kNNClusterer extends Clusterer {
     public void computeClusters(Engine engine) {
         //VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
         BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance,_config);
-        FilteredRows filteredRows = engine.getAllFilteredRows(true);
+        FilteredRows filteredRows = engine.getAllFilteredRows(false);
         filteredRows.accept(_project, visitor);
      
         _clusters = visitor.getClusters();
