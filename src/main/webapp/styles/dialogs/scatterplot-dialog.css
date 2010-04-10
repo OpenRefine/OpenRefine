@@ -1,0 +1,19 @@
+.scatterplot-dialog-table-container {
+    height: 500px;
+    overflow: auto;
+    border: 1px solid #aaa;
+}
+
+table.scatterplot-matrix-table {
+    border-collapse: collapse;
+}
+
+table.scatterplot-matrix-table > tbody > tr > td {
+    padding: 2px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+table.scatterplot-matrix-table img.scatterplot {
+	border: 1px solid #eee;
+}

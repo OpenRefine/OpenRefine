@@ -62,6 +62,12 @@ MenuBar.prototype._initializeUI = function() {
             click: function() {}
         }
     ]);
+    this._createTopLevelMenuItem("Scatterplots", [
+         {
+             label: "Show scatterplot matrix ...",
+             click: function() { self._showScatterplotMatrix(); }
+         }
+     ]);
     
     this._wireAllMenuItemsInactive();
 };
@@ -216,4 +222,8 @@ MenuBar.prototype._doAutoSchemaAlignment = function() {
 
 MenuBar.prototype._doEditSchemaAlignment = function(reset) {
     new SchemaAlignmentDialog(reset ? null : theProject.protograph, function(newProtograph) {});
+};
+
+MenuBar.prototype._showScatterplotMatrix = function() {
+    new ScatterplotDialog();
 };

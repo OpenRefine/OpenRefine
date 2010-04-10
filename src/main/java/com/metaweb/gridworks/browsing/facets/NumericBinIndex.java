@@ -22,6 +22,9 @@ import com.metaweb.gridworks.model.Row;
  * as the user interacts with the facet.
  */
 public class NumericBinIndex {
+    
+    private int _total_count;
+    private int _number_count;
     private double _min;
     private double _max;
     private double _step;
@@ -45,21 +48,28 @@ public class NumericBinIndex {
                 if (value.getClass().isArray()) {
                     Object[] a = (Object[]) value;
                     for (Object v : a) {
+                        _total_count++;
                         if (v instanceof Number) {
                             processValue(((Number) v).doubleValue(), allValues);
                         }
                     }
                 } else if (value instanceof Collection<?>) {
                     for (Object v : ExpressionUtils.toObjectCollection(value)) {
+                        _total_count++;
                         if (v instanceof Number) {
                             processValue(((Number) v).doubleValue(), allValues);
                         }
                     }
-                } else if (value instanceof Number) {
-                    processValue(((Number) value).doubleValue(), allValues);
+                } else {
+                    _total_count++;
+                    if (value instanceof Number) {
+                        processValue(((Number) value).doubleValue(), allValues);
+                    }
                 }
             }
         }
+        
+        _number_count = allValues.size();
         
         if (_min >= _max) {
             _step = 1;
@@ -105,6 +115,14 @@ public class NumericBinIndex {
         }
     }
     
+    public boolean isNumeric() {
+        return _number_count > _total_count / 2;
+    }
+
+    public int getNumberCount() {
+        return _number_count;
+    }
+
     public double getMin() {
         return _min;
     }
