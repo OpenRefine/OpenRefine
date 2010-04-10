@@ -117,7 +117,7 @@
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
                 jvmversion="1.6+"
                 bundleid="com.metaweb.gridworks.Gridworks"
-                vmoptions="-Dgridworks.version=${revision} ${java.options}"
+                vmoptions="-Xms256M -Xmx1024M -Dgridworks.version=${revision}"
                 antialiasedgraphics="true"
                 antialiasedtext="true"
                 liveresize="true"
