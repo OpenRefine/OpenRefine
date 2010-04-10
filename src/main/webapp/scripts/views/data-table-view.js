@@ -142,10 +142,11 @@ DataTableView.prototype._renderDataTable = function(table) {
             
             for (var c = 0; c < columns.length; c++) {
                 var foundGroup = false;
+                var columnGroup;
                 
                 for (var g = 0; g < groups.length; g++) {
-                    var cg = groups[g];
-                    if (cg.startColumnIndex == c) {
+                    columnGroup = groups[g];
+                    if (columnGroup.startColumnIndex == c) {
                         foundGroup = true;
                         break;
                     }
