@@ -240,7 +240,7 @@ ReconDialog.prototype._onDoHeuristic = function() {
         var propertyInputs = $('input[name="recon-dialog-heuristic-property"]');
         $.each(propertyInputs, function() {
             var property = $(this).data("data.suggest");
-            if (property !== null) {
+            if (property && property.id) {
                 columnDetails.push({
                     column: this.getAttribute("columnName"),
                     property: {
