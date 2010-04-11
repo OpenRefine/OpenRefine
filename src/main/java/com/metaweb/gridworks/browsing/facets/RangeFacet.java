@@ -51,6 +51,11 @@ public class RangeFacet implements Facet {
     protected int[]     _baseBins;
     protected int[]     _bins;
     
+    protected int       _baseNumericCount;
+    protected int       _baseNonNumericCount;
+    protected int       _baseBlankCount;
+    protected int       _baseErrorCount;
+    
     protected int       _numericCount;
     protected int       _nonNumericCount;
     protected int       _blankCount;
@@ -102,6 +107,11 @@ public class RangeFacet implements Facet {
                     writer.key(TO); writer.value(_to);
                 }
             }
+            
+            writer.key("baseNumericCount"); writer.value(_baseNumericCount);
+            writer.key("baseNonNumericCount"); writer.value(_baseNonNumericCount);
+            writer.key("baseBlankCount"); writer.value(_baseBlankCount);
+            writer.key("baseErrorCount"); writer.value(_baseErrorCount);
             
             writer.key("numericCount"); writer.value(_numericCount);
             writer.key("nonNumericCount"); writer.value(_nonNumericCount);
@@ -209,6 +219,11 @@ public class RangeFacet implements Facet {
             _max = index.getMax();
             _step = index.getStep();
             _baseBins = index.getBins();
+            
+            _baseNumericCount = index.getNumericRowCount();
+            _baseNonNumericCount = index.getNonNumericRowCount();
+            _baseBlankCount = index.getBlankRowCount();
+            _baseErrorCount = index.getErrorRowCount();
             
             if (_selected) {
                 _from = Math.max(_from, _min);

@@ -32,6 +32,14 @@ public class ExpressionNumericRowBinner implements RowVisitor {
     public int blankCount;
     public int errorCount;
     
+    /*
+     * Scratchpad variables
+     */
+    private boolean rowHasError;
+    private boolean rowHasBlank;
+    private boolean rowHasNumeric;
+    private boolean rowHasNonNumeric;
+    
     public ExpressionNumericRowBinner(Evaluable evaluable, String columnName, int cellIndex, NumericBinIndex index) {
         _evaluable = evaluable;
         _columnName = columnName;
@@ -47,45 +55,70 @@ public class ExpressionNumericRowBinner implements RowVisitor {
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
+        
+        rowHasError = false;
+        rowHasBlank = false;
+        rowHasNumeric = false;
+        rowHasNonNumeric = false;
+        
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;
                 for (Object v : a) {
                     processValue(v);
                 }
+                updateCounts();
                 return false;
             } else if (value instanceof Collection<?>) {
                 for (Object v : ExpressionUtils.toObjectCollection(value)) {
                     processValue(v);
                 }
+                updateCounts();
                 return false;
             } // else, fall through
         }
         
         processValue(value);
+        updateCounts();
+        
         return false;
+    }
+    
+    protected void updateCounts() {
+        if (rowHasError) {
+            errorCount++;
+        }
+        if (rowHasBlank) {
+            blankCount++;
+        }
+        if (rowHasNumeric) {
+            numericCount++;
+        }
+        if (rowHasNonNumeric) {
+            nonNumericCount++;
+        }
     }
     
     protected void processValue(Object value) {
         if (ExpressionUtils.isError(value)) {
-            errorCount++;
+            rowHasError = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
             if (value instanceof Number) {
                 double d = ((Number) value).doubleValue();
                 if (!Double.isInfinite(d) && !Double.isNaN(d)) {
-                    numericCount++;
+                    rowHasNumeric = true;
                     
                     int bin = (int) Math.floor((d - _index.getMin()) / _index.getStep());
                     
                     bins[bin]++;
                 } else {
-                    errorCount++;
+                    rowHasError = true;
                 }
             } else {
-                nonNumericCount++;
+                rowHasNonNumeric = true;
             }
         } else {
-            blankCount++;
+            rowHasBlank = true;
         }
     }
 }

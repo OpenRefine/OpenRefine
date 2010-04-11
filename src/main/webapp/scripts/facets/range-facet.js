@@ -11,6 +11,11 @@ function RangeFacet(div, config, options) {
     this._selectBlank = ("selectBlank" in this._config) ? this._config.selectBlank : true;
     this._selectError = ("selectError" in this._config) ? this._config.selectError : true;
     
+    this._baseNumericCount = 0;
+    this._baseNonNumericCount = 0;
+    this._baseBlankCount = 0;
+    this._baseErrorCount = 0;
+    
     this._numericCount = 0;
     this._nonNumericCount = 0;
     this._blankCount = 0;
@@ -177,6 +182,10 @@ RangeFacet.prototype._renderOtherChoices = function() {
     var self = this;
     var container = this._otherChoicesDiv.empty();
     
+    if (this._baseNonNumericCount === 0 && this._baseBlankCount === 0 && this._baseErrorCount === 0) {
+        return;
+    }
+    
     var table = $('<table>').attr("cellpadding", "0").attr("cellspacing", "1").css("white-space", "pre").appendTo(container)[0];
     var tr0 = table.insertRow(0);
     var tr1 = table.insertRow(1);
@@ -185,6 +194,8 @@ RangeFacet.prototype._renderOtherChoices = function() {
      *  Numeric
      */
     var td00 = $(tr0.insertCell(0)).attr("width", "1%");
+    var td01 = $(tr0.insertCell(1));
+    
     var numericCheck = $('<input type="checkbox" />').appendTo(td00).change(function() {
         self._selectNumeric = !self._selectNumeric;
         self._updateRest();
@@ -193,7 +204,6 @@ RangeFacet.prototype._renderOtherChoices = function() {
         numericCheck[0].checked = true;
     }
     
-    var td01 = $(tr0.insertCell(1));
     $('<span>').text("Numeric ").addClass("facet-choice-label").appendTo(td01);
     $('<span>').text(this._numericCount).addClass("facet-choice-count").appendTo(td01);
     
@@ -201,50 +211,64 @@ RangeFacet.prototype._renderOtherChoices = function() {
      *  Blank
      */
     var td02 = $(tr0.insertCell(2)).attr("width", "1%");
-    var blankCheck = $('<input type="checkbox" />').appendTo(td02).change(function() {
-        self._selectBlank = !self._selectBlank;
-        self._updateRest();
-    });
-    if (this._selectBlank) {
-        blankCheck[0].checked = true;
-    }
-    
     var td03 = $(tr0.insertCell(3));
-    $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(td03);
-    $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(td03);
+    if (this._baseBlankCount === 0) {
+        td02.hide();
+        td03.hide();
+    } else {
+        var blankCheck = $('<input type="checkbox" />').appendTo(td02).change(function() {
+            self._selectBlank = !self._selectBlank;
+            self._updateRest();
+        });
+        if (this._selectBlank) {
+            blankCheck[0].checked = true;
+        }
+    
+        $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(td03);
+        $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(td03);
+    }
     
     /*
      *  Non-Numeric
      */
     var td10 = $(tr1.insertCell(0)).attr("width", "1%");
-    var nonNumericCheck = $('<input type="checkbox" />').appendTo(td10).change(function() {
-        self._selectNonNumeric = !self._selectNonNumeric;
-        self._updateRest();
-    });
-    if (this._selectNonNumeric) {
-        nonNumericCheck[0].checked = true;
-    }
-    
     var td11 = $(tr1.insertCell(1));
-    $('<span>').text("Non-numeric ").addClass("facet-choice-label").appendTo(td11);
-    $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(td11);
+    if (this._baseNonNumericCount === 0) {
+        td10.hide();
+        td11.hide();
+    } else {
+        var nonNumericCheck = $('<input type="checkbox" />').appendTo(td10).change(function() {
+            self._selectNonNumeric = !self._selectNonNumeric;
+            self._updateRest();
+        });
+        if (this._selectNonNumeric) {
+            nonNumericCheck[0].checked = true;
+        }
+    
+        $('<span>').text("Non-numeric ").addClass("facet-choice-label").appendTo(td11);
+        $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(td11);
+    }
     
     /*
      *  Error
      */
     var td12 = $(tr1.insertCell(2)).attr("width", "1%");
-    var errorCheck = $('<input type="checkbox" />').appendTo(td12).change(function() {
-        self._selectError = !self._selectError;
-        self._updateRest();
-    });
-    if (this._selectError) {
-        errorCheck[0].checked = true;
-    }
-    
     var td13 = $(tr1.insertCell(3));
-    $('<span>').text("Error ").addClass("facet-choice-label").appendTo(td13);
-    $('<span>').text(this._errorCount).addClass("facet-choice-count").appendTo(td13);
+    if (this._baseErrorCount === 0) {
+        td12.hide();
+        td13.hide();
+    } else {
+        var errorCheck = $('<input type="checkbox" />').appendTo(td12).change(function() {
+            self._selectError = !self._selectError;
+            self._updateRest();
+        });
+        if (this._selectError) {
+            errorCheck[0].checked = true;
+        }
     
+        $('<span>').text("Error ").addClass("facet-choice-label").appendTo(td13);
+        $('<span>').text(this._errorCount).addClass("facet-choice-count").appendTo(td13);
+    }
 };
 
 RangeFacet.prototype._setRangeIndicators = function() {
@@ -290,6 +314,11 @@ RangeFacet.prototype.updateState = function(data) {
             }
         }
         
+        this._baseNumericCount = data.baseNumericCount;
+        this._baseNonNumericCount = data.baseNonNumericCount;
+        this._baseBlankCount = data.baseBlankCount;
+        this._baseErrorCount = data.baseErrorCount;
+
         this._numericCount = data.numericCount;
         this._nonNumericCount = data.nonNumericCount;
         this._blankCount = data.blankCount;

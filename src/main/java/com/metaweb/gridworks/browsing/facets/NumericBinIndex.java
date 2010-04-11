@@ -23,12 +23,17 @@ import com.metaweb.gridworks.model.Row;
  */
 public class NumericBinIndex {
     
-    private int _total_count;
-    private int _number_count;
+    private int _totalValueCount;
+    private int _numbericValueCount;
     private double _min;
     private double _max;
     private double _step;
     private int[]  _bins;
+    
+    private int _numericRowCount;
+    private int _nonNumericRowCount;
+    private int _blankRowCount;
+    private int _errorRowCount;
     
     public NumericBinIndex(Project project, String columnName, int cellIndex, Evaluable eval) {
         Properties bindings = ExpressionUtils.createBindings(project);
@@ -44,32 +49,79 @@ public class NumericBinIndex {
             ExpressionUtils.bind(bindings, row, i, columnName, cell);
             
             Object value = eval.evaluate(bindings);
-            if (value != null) {
+            
+            boolean rowHasError = false;
+            boolean rowHasNonNumeric = false;
+            boolean rowHasNumeric = false;
+            boolean rowHasBlank = false;
+            
+            if (ExpressionUtils.isError(value)) {
+                rowHasError = true;
+            } else if (ExpressionUtils.isNonBlankData(value)) {
                 if (value.getClass().isArray()) {
                     Object[] a = (Object[]) value;
                     for (Object v : a) {
-                        _total_count++;
-                        if (v instanceof Number) {
-                            processValue(((Number) v).doubleValue(), allValues);
+                        _totalValueCount++;
+                        
+                        if (ExpressionUtils.isError(v)) {
+                            rowHasError = true;
+                        } else if (ExpressionUtils.isNonBlankData(v)) {
+                            if (v instanceof Number) {
+                                rowHasNumeric = true;
+                                processValue(((Number) v).doubleValue(), allValues);
+                            } else {
+                                rowHasNonNumeric = true;
+                            }
+                        } else {
+                            rowHasBlank = true;
                         }
                     }
                 } else if (value instanceof Collection<?>) {
                     for (Object v : ExpressionUtils.toObjectCollection(value)) {
-                        _total_count++;
-                        if (v instanceof Number) {
-                            processValue(((Number) v).doubleValue(), allValues);
+                        _totalValueCount++;
+                        
+                        if (ExpressionUtils.isError(v)) {
+                            rowHasError = true;
+                        } else if (ExpressionUtils.isNonBlankData(v)) {
+                            if (v instanceof Number) {
+                                rowHasNumeric = true;
+                                processValue(((Number) v).doubleValue(), allValues);
+                            } else {
+                                rowHasNonNumeric = true;
+                            }
+                        } else {
+                            rowHasBlank = true;
                         }
                     }
                 } else {
-                    _total_count++;
+                    _totalValueCount++;
+                    
                     if (value instanceof Number) {
+                        rowHasNumeric = true;
                         processValue(((Number) value).doubleValue(), allValues);
+                    } else {
+                        rowHasNonNumeric = true;
                     }
                 }
+            } else {
+                rowHasBlank = true;
+            }
+            
+            if (rowHasError) {
+                _errorRowCount++;
+            }
+            if (rowHasBlank) {
+                _blankRowCount++;
+            }
+            if (rowHasNumeric) {
+                _numericRowCount++;
+            }
+            if (rowHasNonNumeric) {
+                _nonNumericRowCount++;
             }
         }
         
-        _number_count = allValues.size();
+        _numbericValueCount = allValues.size();
         
         if (_min >= _max) {
             _step = 1;
@@ -116,11 +168,7 @@ public class NumericBinIndex {
     }
     
     public boolean isNumeric() {
-        return _number_count > _total_count / 2;
-    }
-
-    public int getNumberCount() {
-        return _number_count;
+        return _numbericValueCount > _totalValueCount / 2;
     }
 
     public double getMin() {
@@ -138,6 +186,22 @@ public class NumericBinIndex {
     public int[] getBins() {
         return _bins;
     }
+    
+    public int getNumericRowCount() {
+        return _numericRowCount;
+    }
+
+    public int getNonNumericRowCount() {
+        return _nonNumericRowCount;
+    }
+
+    public int getBlankRowCount() {
+        return _blankRowCount;
+    }
+
+    public int getErrorRowCount() {
+        return _errorRowCount;
+    }
 
     protected void processValue(double v, List<Double> allValues) {
         if (!Double.isInfinite(v) && !Double.isNaN(v)) {
@@ -146,4 +210,5 @@ public class NumericBinIndex {
             allValues.add(v);
         }
     }
+
 }
