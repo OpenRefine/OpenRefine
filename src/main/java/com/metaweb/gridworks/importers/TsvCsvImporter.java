@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -47,12 +48,12 @@ public class TsvCsvImporter implements Importer {
             }
             
             if (first) {
-                String[] cells = StringUtils.splitPreserveAllTokens(line, sep);
+                List<String> cells = parser.split(line);
                 Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
                                     
                 first = false;
-                for (int c = 0; c < cells.length; c++) {
-                    String cell = cells[c];
+                for (int c = 0; c < cells.size(); c++) {
+                    String cell = cells.get(c);
                     if (cell.startsWith("\"") && cell.endsWith("\"")) {
                         cell = cell.substring(1, cell.length() - 1);
                     }
@@ -71,7 +72,7 @@ public class TsvCsvImporter implements Importer {
                     project.columnModel.columns.add(column);
                 }
                 
-                cellCount = cells.length;
+                cellCount = cells.size();
             } else {
                 Row row = new Row(cellCount);
                 

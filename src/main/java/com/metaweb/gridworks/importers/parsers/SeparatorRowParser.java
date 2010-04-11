@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.importers.parsers;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -15,6 +17,17 @@ public class SeparatorRowParser extends RowParser {
     
     public SeparatorRowParser(String sep) {
         this.sep = sep;
+    }
+    
+    public List<String> split(String line) {
+        String[] cells = StringUtils.splitPreserveAllTokens(line, sep);
+        
+        List<String> results = new ArrayList<String>();
+        for (int c = 0; c < cells.length; c++) {
+            results.add(cells[c]);
+        }
+        
+        return results;
     }
     
     public boolean parseRow(Row row, String line) {

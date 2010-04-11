@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.importers.parsers;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.importers.ImporterUtilities;
@@ -8,9 +10,8 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Row;
 
 public class CSVRowParser extends RowParser {
-
-    public boolean parseRow(Row row, String line) {
-        boolean hasData = false;
+    public List<String> split(String line) {
+        List<String> results = new ArrayList<String>();
         
         int start = 0;
         while (start < line.length()) {
@@ -53,7 +54,19 @@ public class CSVRowParser extends RowParser {
                 }
             }
             
-            Serializable value = ImporterUtilities.parseCellValue(text);
+            results.add(text);
+        }
+        
+        return results;
+    }
+    
+    public boolean parseRow(Row row, String line) {
+        boolean hasData = false;
+        
+        List<String> strings = split(line);
+        for (String s : strings) {
+            Serializable value = ImporterUtilities.parseCellValue(s);
+            
             if (ExpressionUtils.isNonBlankData(value)) {
                 row.cells.add(new Cell(value, null));
                 hasData = true;
