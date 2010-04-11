@@ -56,6 +56,9 @@ public class DatePart implements Function {
             
             return s_daysOfWeek[r];
             
+        } else if ("time".equals(part)) {
+            return c.getTimeInMillis();
+            
         } else {
             return new EvalError("Date unit '" + part + "' not recognized.");
         }
