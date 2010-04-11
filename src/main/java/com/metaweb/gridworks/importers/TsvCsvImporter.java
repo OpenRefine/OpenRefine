@@ -20,9 +20,11 @@ import com.metaweb.gridworks.model.Row;
 
 public class TsvCsvImporter implements Importer {
 
-    public void read(Reader reader, Project project, Properties options, int skip, int limit)
-            throws Exception {
-        
+    public void read(Reader reader, Project project, Properties options) throws Exception {
+        int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
+        int skip = ImporterUtilities.getIntegerOption("skip",options,0);
+        boolean guessValueType = ImporterUtilities.getBooleanOption("guess-value-type", options, true);
+                
         LineNumberReader lnReader = new LineNumberReader(reader);
         String      sep = options.getProperty("separator"); // auto-detect if not present
         String      line = null;
@@ -76,7 +78,7 @@ public class TsvCsvImporter implements Importer {
             } else {
                 Row row = new Row(cellCount);
                 
-                if (parser.parseRow(row, line)) {
+                if (parser.parseRow(row, line, guessValueType)) {
                     rowsWithData++;
                     
                     if (skip <= 0 || rowsWithData > skip) {
@@ -92,9 +94,7 @@ public class TsvCsvImporter implements Importer {
         }
     }
 
-    public void read(InputStream inputStream, Project project,
-            Properties options, int skip, int limit) throws Exception {
-        
+    public void read(InputStream inputStream, Project project, Properties options) throws Exception {
         throw new NotImplementedException();
     }
 

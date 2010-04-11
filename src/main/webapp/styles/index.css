@@ -43,7 +43,7 @@
     margin: 2em 0 1em 0;
 }
 
-#import-project-panel-layout {
+table.import-project-panel-layout {
     white-space: pre;
 }
 

@@ -403,10 +403,6 @@ public class CreateProjectCommand extends Command {
         InputStream rawInputStream,
         String      encoding
     ) throws Exception {
-        
-        int limit = getIntegerOption("limit",options,-1);
-        int skip = getIntegerOption("skip",options,0);
-                
         if (importer.takesReader()) {
 
             BufferedInputStream inputStream = new BufferedInputStream(rawInputStream);
@@ -449,9 +445,9 @@ public class CreateProjectCommand extends Command {
                         new InputStreamReader(inputStream);
             }
             
-            importer.read(reader, project, options, skip, limit);
+            importer.read(reader, project, options);
         } else {
-            importer.read(rawInputStream, project, options, skip, limit);
+            importer.read(rawInputStream, project, options);
         }        
     }
     
@@ -461,11 +457,7 @@ public class CreateProjectCommand extends Command {
         Properties  options,
         Reader      reader
     ) throws Exception {
-        
-        int limit = getIntegerOption("limit",options,-1);
-        int skip = getIntegerOption("skip",options,0);
-        
-        importer.read(reader, project, options, skip, limit);
+        importer.read(reader, project, options);
     }
     
     protected Importer guessImporter(
@@ -508,17 +500,5 @@ public class CreateProjectCommand extends Command {
         }
         
         return new TsvCsvImporter();
-    }
-    
-    private int getIntegerOption(String name, Properties options, int def) {
-        int value = def;
-        if (options.containsKey(name)) {
-            String s = options.getProperty(name);
-            try {
-                value = Integer.parseInt(s);
-            } catch (Exception e) {
-            }
-        }
-        return value;
     }
 }

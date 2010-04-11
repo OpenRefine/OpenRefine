@@ -37,14 +37,13 @@ public class ExcelImporter implements Importer {
         return false;
     }
     
-    public void read(Reader reader, Project project, Properties options, int skip, int limit)
-            throws Exception {
-        
+    public void read(Reader reader, Project project, Properties options) throws Exception {
         throw new NotImplementedException();
     }
 
-    public void read(InputStream inputStream, Project project,
-            Properties options, int skip, int limit) throws Exception {
+    public void read(InputStream inputStream, Project project, Properties options) throws Exception {
+        int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
+        int skip = ImporterUtilities.getIntegerOption("skip",options,0);
         
         Workbook wb = null;
         try {

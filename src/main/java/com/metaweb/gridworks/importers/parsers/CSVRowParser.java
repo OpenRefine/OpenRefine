@@ -60,12 +60,12 @@ public class CSVRowParser extends RowParser {
         return results;
     }
     
-    public boolean parseRow(Row row, String line) {
+    public boolean parseRow(Row row, String line, boolean guessValueType) {
         boolean hasData = false;
         
         List<String> strings = split(line);
         for (String s : strings) {
-            Serializable value = ImporterUtilities.parseCellValue(s);
+            Serializable value = guessValueType ? ImporterUtilities.parseCellValue(s) : s;
             
             if (ExpressionUtils.isNonBlankData(value)) {
                 row.cells.add(new Cell(value, null));

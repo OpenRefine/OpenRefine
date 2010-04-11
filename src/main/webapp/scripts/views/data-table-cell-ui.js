@@ -275,6 +275,7 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, column
         {
             onDone: function(o) {
                 self._cell = o.cell;
+                self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
                 self._render();
             }
         }
@@ -412,6 +413,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
                 {
                     onDone: function(o) {
                         self._cell = o.cell;
+                        self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
                         self._render();
                     }
                 }

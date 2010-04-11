@@ -19,7 +19,7 @@ public class XmlImporter implements Importer {
         return false;
     }
 
-    public void read(Reader reader, Project project, Properties options, int skip, int limit)
+    public void read(Reader reader, Project project, Properties options)
             throws Exception {
         
         throw new NotImplementedException();
@@ -28,9 +28,7 @@ public class XmlImporter implements Importer {
     public void read(
         InputStream inputStream, 
         Project project,
-        Properties options, 
-        int skip, 
-        int limit
+        Properties options
     ) throws Exception {
         PushbackInputStream pis = new PushbackInputStream(inputStream,BUFFER_SIZE);
         

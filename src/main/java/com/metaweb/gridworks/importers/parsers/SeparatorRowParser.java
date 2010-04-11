@@ -30,14 +30,14 @@ public class SeparatorRowParser extends RowParser {
         return results;
     }
     
-    public boolean parseRow(Row row, String line) {
+    public boolean parseRow(Row row, String line, boolean guessValueType) {
         boolean hasData = false;
         
         String[] cells = StringUtils.splitPreserveAllTokens(line, sep);
         for (int c = 0; c < cells.length; c++) {
             String text = cells[c];
             
-            Serializable value = ImporterUtilities.parseCellValue(text);
+            Serializable value = guessValueType ? ImporterUtilities.parseCellValue(text) : text;
             if (ExpressionUtils.isNonBlankData(value)) {
                 row.cells.add(new Cell(value, null));
                 hasData = true;

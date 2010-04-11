@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.importers;
 
 import java.io.Serializable;
+import java.util.Properties;
 
 public class ImporterUtilities {
 
@@ -24,6 +25,30 @@ public class ImporterUtilities {
             }
         }
         return text;
+    }
+    
+    static public int getIntegerOption(String name, Properties options, int def) {
+        int value = def;
+        if (options.containsKey(name)) {
+            String s = options.getProperty(name);
+            try {
+                value = Integer.parseInt(s);
+            } catch (Exception e) {
+            }
+        }
+        return value;
+    }
+    
+    static public boolean getBooleanOption(String name, Properties options, boolean def) {
+        boolean value = def;
+        if (options.containsKey(name)) {
+            String s = options.getProperty(name);
+            try {
+                value = Boolean.parseBoolean(s);
+            } catch (Exception e) {
+            }
+        }
+        return value;
     }
 
 }

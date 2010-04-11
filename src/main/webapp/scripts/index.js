@@ -10,7 +10,8 @@ function onClickUploadFileButton(evt) {
             "/command/create-project-from-upload?" + [
                 "skip=" + $("#skip-input")[0].value,
                 "limit=" + $("#limit-input")[0].value,
-                "separator=" + $("#separator-input")[0].value
+                "separator=" + $("#separator-input")[0].value,
+                "guess-value-type=" + $("#guess-value-type-input")[0].checked
             ].join("&"));
     }
 }

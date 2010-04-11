@@ -388,6 +388,20 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     ], elmt, { width: "80px", horizontal: false });
 };
 
+DataTableView.prototype._updateCell = function(rowIndex, cellIndex, cell) {
+    var rows = theProject.rowModel.rows;
+    for (var r = 0; r < rows.length; r++) {
+        var row = rows[r];
+        if (row.i === rowIndex) {
+            while (cellIndex >= row.cells.length) {
+                row.cells.push(null);
+            }
+            row.cells[cellIndex] = cell;
+            break;
+        }
+    }
+};
+
 DataTableView.sampleVisibleRows = function(column) {
     var rowIndices = [];
     var values = [];
