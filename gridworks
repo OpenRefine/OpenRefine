@@ -619,32 +619,30 @@ OPTS=""
 
 SYSTEM=`uname`
 
-if [ "$SYSTEM" = "Darwin"  -a   "$JAVA_HOME" = "" ]; then
-    export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
-fi
-
 # ----- Load configurations -------------------------------------
 
 load_configs gridworks.ini
 
 # ----- Make sure there is an appropriate java environment is available -------------
-    
-if [ "$JAVA_HOME" ]; then
-    JAVA="$JAVA_HOME/bin/java"
-else 
-    JAVA=`which java`
-    if [ -z "$JAVA" ]; then
-        if [ "$SYSTEM" = 'Darwin' ]; then
-            JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Home
-        else
-            error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
+
+JAVA=`which java`
+if [ -z "$JAVA" ]; then
+    if [ "$JAVA_HOME" ]; then
+        JAVA="$JAVA_HOME/bin/java"
+        if [ ! -f "$JAVA" ] ; then
+            error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
         fi
+    elif [ "$SYSTEM" = 'Darwin' ]; then
+        JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
+        JAVA="$JAVA_HOME/bin/java"
+    else
+        error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
     fi
 fi
-
-JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1.6`
+    
+JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1\.6`
 if [ -z "$JAVA_VERSION" ]; then
-    error "Gridworks requires java version 6 or later."
+    error "Gridworks requires Java version 6 or later."
 fi
 
 # ----- Parse the command line args ------------------------------------------
