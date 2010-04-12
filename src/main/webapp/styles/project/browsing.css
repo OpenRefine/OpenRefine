@@ -1,6 +1,4 @@
 .browsing-panel-header {
-    margin: 0 1em;
-    margin-top: 50px;
     height: 5em;
     text-align: center;
 }
@@ -13,7 +11,8 @@
 }
 
 ul.facets-container {
-    padding: 0 1em;
+    padding: 0;
+    padding-right: 5px;
 }
 
 li.facet-container {
@@ -21,21 +20,22 @@ li.facet-container {
     clear: both;
     margin: 0;
     padding: 0;
-    margin-top: 1em;
+    margin-top: 10px;
     background: white;
+    border: 1px solid #ccc;
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
 }
 
 .facet-title {
-    border: 1px solid #ccc;
-    border-bottom: 0px;
     padding: 3px 5px;
     padding-right: 2px;
-    background: #eee;
     font-weight: bold;
     cursor: move;
 }
 .facet-body {
-    border: 1px solid #ccc;
     padding: 1px;
 }
 .facet-body-message {
@@ -115,7 +115,6 @@ img.facet-choice-link {
 }
 
 .facet-range-body {
-    border: 1px solid #ccc;
     padding: 15px;
 }
 .facet-range-message {

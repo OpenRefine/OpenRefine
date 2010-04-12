@@ -1,32 +1,4 @@
-.history-panel {
-    position: absolute;
-    top: -1px;
-    right: 20px;
-    width: 300px;
-    z-index: 10;
-}
-.history-panel h3 {
-    margin: 0;
-    padding: 3px;
-    background: #aaa;
-    color: #fff;
-    border-bottom: 1px solid #b8b8b8;
-    font-size: 100%;
-    text-align: center;
-    border: 1px solid #666;
-}
-
-.history-panel-body-collapsed {
-    border-left: 1px solid #888;
-    border-right: 1px solid #888;
-    background: #eee;
-    padding: 0.5em;
-    text-align: center;
-}
 .history-panel-body {
-    display: none;
-    border-left: 1px solid #888;
-    border-right: 1px solid #888;
     background: #fff;
     height: 400px;
     overflow: auto;

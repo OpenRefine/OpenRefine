@@ -45,9 +45,20 @@ body {
     background: white;
     overflow: hidden;
 }
-
-.facet-panel {
+.left-panel {
     position: fixed;
     background: white;
+    overflow: visible;
+    padding: 0px;
+}
+.left-panel .ui-tabs .ui-tabs-panel {
+    margin: 5px;
+    padding: 0px;
+}
+
+.facet-panel {
+    overflow: auto;
+}
+.history-panel {
     overflow: auto;
 }

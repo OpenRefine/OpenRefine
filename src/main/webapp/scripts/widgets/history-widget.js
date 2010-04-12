@@ -1,5 +1,6 @@
-function HistoryWidget(div) {
+function HistoryWidget(div, tabHeader) {
     this._div = div;
+    this._tabHeader = tabHeader;
     this.update();
 }
 
@@ -24,20 +25,17 @@ HistoryWidget.prototype.update = function(onDone) {
 HistoryWidget.prototype._render = function() {
     var self = this;
     
+    this._tabHeader.html("Undo/Redo " + this._data.past.length);
+    
     this._div
         .empty()
         .unbind()
         .html(
-            '<h3>Undo/Redo History</h3>' +
-            '<div class="history-panel-body-collapsed" bind="bodyCollapsedDiv">' +
-                '<a href="javascript:{}" bind="expandLink"></a>' +
-            '</div>' +
             '<div class="history-panel-body" bind="bodyDiv">' +
                 '<div class="history-past" bind="pastDiv"></div>' +
                 '<div class="history-now" bind="nowDiv">done upto here</div>' +
                 '<div class="history-future" bind="futureDiv"></div>' +
             '</div>' +
-            '<div class="history-panel-body-controls" bind="bodyControlsDiv"><a href="javascript:{}" bind="rollUpLink">roll up</a></div>' +
             '<div class="history-panel-footer">' +
                 '<a href="javascript:{}" bind="extractLink">extract</a> &bull; ' +
                 '<a href="javascript:{}" bind="applyLink">apply</a>' +
@@ -45,16 +43,6 @@ HistoryWidget.prototype._render = function() {
         );
     
     var elmts = DOM.bind(this._div);
-    
-    if (!this._data.past.length) {
-        if (!this._data.future.length) {
-            elmts.expandLink.text("No change");
-        } else {
-            elmts.expandLink.text(this._data.future.length === 1 ? "1 change to redo" : (this._data.future.length + " changes to redo"));
-        }
-    } else {
-        elmts.expandLink.text(this._data.past.length === 1 ? "1 change" : (this._data.past.length + " changes done"));
-    }
     
     var renderEntry = function(container, entry, lastDoneID, title) {
         var a = $('<a href="javascript:{}"></a>').appendTo(container);
@@ -84,17 +72,6 @@ HistoryWidget.prototype._render = function() {
     
     elmts.extractLink.click(function() { self._extractOperations(); });
     elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
-    elmts.expandLink.click(function() {
-        elmts.bodyCollapsedDiv.hide();
-        elmts.bodyDiv.show();
-        elmts.bodyControlsDiv.show();
-    });
-    elmts.rollUpLink.click(function(evt) {
-        elmts.bodyCollapsedDiv.show();
-        elmts.bodyDiv.hide();
-        elmts.bodyControlsDiv.hide();
-    });
-    
     elmts.bodyDiv[0].scrollTop = elmts.nowDiv[0].offsetTop + elmts.nowDiv[0].offsetHeight - elmts.bodyDiv[0].offsetHeight;
 };
 

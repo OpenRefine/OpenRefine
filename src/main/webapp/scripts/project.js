@@ -16,22 +16,27 @@ function resize() {
     
     ui.menuBarContainer.css("top", header.outerHeight() + "px");
 
-    var facetPanelWidth = 250;
+    var leftPanelWidth = 300;
+    var leftPanelMargin = 5;
     var width = $(window).width();
     var top = ui.menuBarContainer.offset().top + ui.menuBarContainer.outerHeight();
     var height = footer.offset().top - top;
     
     ui.viewPanel
         .css("top", top + "px")
+        .css("left", leftPanelWidth + "px")
         .css("height", height + "px")
-        .css("left", "0px")
-        .css("width", (width - facetPanelWidth) + "px");
+        .css("width", (width - leftPanelWidth) + "px");
+    
+    ui.leftPanel
+        .css("top", (top + leftPanelMargin) + "px")
+        .css("left", leftPanelMargin + "px")
+        .css("height", (height - 2 * leftPanelMargin) + "px")
+        .css("width", (leftPanelWidth - 2 * leftPanelMargin) + "px");
         
-    ui.facetPanel
-        .css("top", top + "px")
-        .css("height", height + "px")
-        .css("left", (width - facetPanelWidth) + "px")
-        .css("width", facetPanelWidth + "px");
+    var leftPanelTabsPaddings = ui.leftPanelTabs.outerHeight(true) - ui.leftPanelTabs.innerHeight();
+    ui.leftPanelTabs
+        .height(ui.leftPanel.height() - leftPanelTabsPaddings);
         
     var processPanelWidth = 400;
     ui.processPanel
@@ -39,8 +44,18 @@ function resize() {
         .css("left", Math.floor((width - processPanelWidth) / 2) + "px");
 }
 
+function resizeTabs() {
+    var totalHeight = ui.leftPanelTabs.innerHeight();
+    var headerHeight = ui.leftPanelTabs.find(".ui-tabs-nav").outerHeight(true);
+    var tabPanels = ui.leftPanelTabs.find(".ui-tabs-panel")
+    var paddings = tabPanels.outerHeight(true) - tabPanels.innerHeight();
+    
+    tabPanels.height(totalHeight - headerHeight - paddings);
+}
+
 function resizeAll() {
     resize();
+    resizeTabs();
     
     ui.menuBar.resize();
     ui.browsingEngine.resize();
@@ -66,9 +81,17 @@ function initializeUI(uiState) {
     
     var body = $("#body").empty().html(
         '<div bind="viewPanel" class="view-panel"></div>' +
-        '<div bind="facetPanel" class="facet-panel"></div>' +
-        '<div bind="historyPanel" class="history-panel"></div>' +
         '<div bind="processPanel" class="process-panel"></div>' +
+        '<div bind="leftPanel" class="left-panel">' +
+            '<div bind="leftPanelTabs">' +
+                '<ul>' +
+                    '<li><a href="#gridworks-tabs-facets">Facet/Filter</a></li>' +
+                    '<li><a href="#gridworks-tabs-history" bind="historyTabHeader">Undo/Redo</a></li>' +
+                '</ul>' +
+                '<div id="gridworks-tabs-facets" bind="facetPanel" class="facet-panel"></div>' +
+                '<div id="gridworks-tabs-history" bind="historyPanel" class="history-panel"></div>' +
+            '</div>' +
+        '</div>' +
         '<div class="menu-bar-container" bind="menuBarContainer"><div bind="menuBarPanel" class="menu-bar"></div></div>'
     );
     ui = DOM.bind(body);
@@ -76,11 +99,13 @@ function initializeUI(uiState) {
     ui.menuBarContainer.css("top", $("#header").outerHeight() + "px");
     ui.menuBar = new MenuBar(ui.menuBarPanel); // construct the menu first so we can resize everything else
     
+    ui.leftPanelTabs.tabs();
     resize();
-
+    resizeTabs();
+    
     ui.browsingEngine = new BrowsingEngine(ui.facetPanel, uiState.facets || []);
     ui.processWidget = new ProcessWidget(ui.processPanel);
-    ui.historyWidget = new HistoryWidget(ui.historyPanel);
+    ui.historyWidget = new HistoryWidget(ui.historyPanel, ui.historyTabHeader);
     ui.dataTableView = new DataTableView(ui.viewPanel);
     
     $(window).bind("resize", resizeAll);
