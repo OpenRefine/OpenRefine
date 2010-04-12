@@ -50,6 +50,7 @@ public class ScatterplotCharter {
         private static final double px = 0.5f;
 
         boolean process = true;
+        boolean smoothed = false;
         
         int width = 50;
         int height = 50;
@@ -68,7 +69,7 @@ public class ScatterplotCharter {
         
         BufferedImage image;
         Graphics2D g2;
-        
+               
         public DrawingRowVisitor(Project project, JSONObject o) throws JSONException {
             String col_x_name = o.getString("cx");
             Column column_x = project.columnModel.getColumnByName(col_x_name);
@@ -135,7 +136,7 @@ public class ScatterplotCharter {
                 {
                     double xv = ((Number) cellx.value).doubleValue();
                     double yv = ((Number) celly.value).doubleValue();
-                    
+                                        
                     double x = (xv - min_x) * w / max_x;
                     double y = (yv - min_y) * h / max_y;
                     g2.fill(new Rectangle2D.Double(x, y, px, px));

@@ -1,0 +1,9 @@
+.scatterplot-widget {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.scatterplot-widget canvas {
+    width: 100%;
+}

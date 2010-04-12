@@ -40,6 +40,7 @@ public class GetScatterplotCommand extends Command {
             
             //Gridworks.log("drawn scatterplot in " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
+            e.printStackTrace();
             respondException(response, e);
         }
     }

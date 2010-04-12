@@ -46,17 +46,37 @@ ScatterplotDialog.prototype._renderMatrix = function(columns) {
         for (var i = 0; i < columns.length; i++) {
             var tr = table.insertRow(table.rows.length);
             for (var j = 0; j < i; j++) {
-                var url = "/command/get-scatterplot?" + $.param({
+                var cx = columns[i];
+                var cy = columns[j];
+                var plotter_params = { 
+                    'cx' : cx.name, 
+                    'cy' : cy.name,
+                    'w' : 20,
+                    'h' : 20
+                };
+                var params = {
                     project: theProject.id,
                     engine: JSON.stringify(ui.browsingEngine.getJSON()), 
-                    plotter: JSON.stringify({ 
-                        'cx' : columns[i].name, 
-                        'cy' : columns[j].name,
-                        'w' : 20,
-                        'h' : 20
-                    }) 
+                    plotter: JSON.stringify(plotter_params) 
+                }                
+                var url = "/command/get-scatterplot?" + $.param(params);
+                var name = cx.name + '(x) vs. ' + cy.name + '(y)';
+                var cell = $(tr.insertCell(j));
+                var link = $('<a href="javascript:{}"></a>').attr("title",name).click(function() {
+                    ui.browsingEngine.addFacet(
+                        "scatterplot", 
+                        {
+                            "name" : name,
+                            "x_column" : cx.name, 
+                            "y_column" : cy.name, 
+                            "expression" : "value",
+                            "mode" : "scatterplot"
+                        }
+                    );
+                    //self._dismiss();
                 });
-                $(tr.insertCell(j)).html('<img class="scatterplot" title="' + columns[i].name + ' vs. ' + columns[j].name + '" src="' + url + '" />');
+                var plot = $('<img src="' + url + '" />').addClass("scatterplot").appendTo(link);
+                link.appendTo(cell);
             }
             $(tr.insertCell(i)).text(columns[i]);
             for (var j = i + 1; j < columns.length; j++) {

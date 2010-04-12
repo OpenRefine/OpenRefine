@@ -13,6 +13,7 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.browsing.facets.Facet;
 import com.metaweb.gridworks.browsing.facets.ListFacet;
 import com.metaweb.gridworks.browsing.facets.RangeFacet;
+import com.metaweb.gridworks.browsing.facets.ScatterplotFacet;
 import com.metaweb.gridworks.browsing.facets.TextSearchFacet;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.model.Project;
@@ -66,6 +67,8 @@ public class Engine implements Jsonizable {
 	                facet = new ListFacet();
 	            } else if ("range".equals(type)) {
 	                facet = new RangeFacet();
+                } else if ("scatterplot".equals(type)) {
+                    facet = new ScatterplotFacet();
 	            } else if ("text".equals(type)) {
 	                facet = new TextSearchFacet();
 	            }
