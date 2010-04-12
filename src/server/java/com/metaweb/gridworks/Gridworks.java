@@ -132,8 +132,8 @@ class GridworksServer extends Server {
     private ThreadPoolExecutor threadPool;
     
     public void init(String host, int port) throws Exception {
-        int maxThreads = Configurations.getInteger("gridworks.queue.size", 10);
-        int maxQueue = Configurations.getInteger("gridworks.queue.max_size", 50);
+        int maxThreads = Configurations.getInteger("gridworks.queue.size", 30);
+        int maxQueue = Configurations.getInteger("gridworks.queue.max_size", 300);
         long keepAliveTime = Configurations.getInteger("gridworks.queue.idle_time", 60);
 
         LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
