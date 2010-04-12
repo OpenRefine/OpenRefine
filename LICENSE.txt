@@ -41,6 +41,7 @@ licenses/apache2.0.LICENSE.txt
     bzip2
     commons-lang
     commons-codec
+    commons-math
     jdatapath
     jetty
     jetty-util

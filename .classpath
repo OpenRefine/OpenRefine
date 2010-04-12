@@ -18,6 +18,7 @@
 	<classpathentry kind="lib" path="lib/secondstring-20100303.jar" sourcepath="lib-src/secondstring-20100303-sources.jar"/>
 	<classpathentry kind="lib" path="lib/ant-tools-1.8.0.jar" sourcepath="lib-src/ant-tools-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/vicino-1.1.jar" sourcepath="lib-src/vicino-1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math-2.1.jar" sourcepath="lib-src/commons-math-2.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/jython-2.5.1.jar"/>
