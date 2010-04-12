@@ -751,20 +751,35 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
     
     input.suggest({}).bind("fb-select", function(e, data) {
-        Gridworks.postProcess(
-            "recon-match-specific-topic-to-cells",
-            {
-                columnName: self._column.name,
-                topicID: data.id,
-                topicGUID: data.guid,
-                topicName: data.name,
-                types: $.map(data.type, function(elmt) { return elmt.id; }).join(",")
-            },
-            null,
-            { cellsChanged: true, columnStatsChanged: true }
-        );
+        var query = {
+            "id" : data.id,
+            "type" : []
+        };
+        var baseUrl = "http://api.freebase.com/api/service/mqlread";
+        var url = baseUrl + "?" + $.param({ query: JSON.stringify({ query: query }) }) + "&callback=?";
         
-        DialogSystem.dismissUntil(level - 1);
+        $.getJSON(
+            url,
+            null,
+            function(o) {
+                var types = "result" in o ? o.result.type : [];
+                
+                Gridworks.postProcess(
+                    "recon-match-specific-topic-to-cells",
+                    {
+                        columnName: self._column.name,
+                        topicID: data.id,
+                        topicGUID: data.guid,
+                        topicName: data.name,
+                        types: types.join(",")
+                    },
+                    null,
+                    { cellsChanged: true, columnStatsChanged: true }
+                );
+        
+                DialogSystem.dismissUntil(level - 1);
+            }
+        );
     });
     
     $('<button></button>').text("Cancel").click(function() {

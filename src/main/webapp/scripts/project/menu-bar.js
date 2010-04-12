@@ -59,7 +59,7 @@ MenuBar.prototype._initializeUI = function() {
         {},
         {
             label: "Load into Freebase ...",
-            click: function() {}
+            click: function() { alert("Not implemented yet."); }
         }
     ]);
     this._createTopLevelMenuItem("Scatterplots", [
