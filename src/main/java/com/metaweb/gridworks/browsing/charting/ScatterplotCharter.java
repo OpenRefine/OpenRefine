@@ -30,8 +30,20 @@ import com.metaweb.gridworks.model.Row;
 
 public class ScatterplotCharter {
 
-    private static final Color COLOR = Color.black;
-
+    private static final int LIN = 0;
+    private static final int LOG = 1;
+    private static final int RADIAL = 2;
+    
+    private static int getAxisDim(String type) {
+        if ("log".equals(type)) {
+            return LOG;
+        } else if ("rad".equals(type) || "radial".equals(type)) {
+            return RADIAL;
+        } else {
+            return LIN;
+        }
+    }
+    
     public String getContentType() {
         return "image/png";
     }
@@ -47,23 +59,30 @@ public class ScatterplotCharter {
     
     class DrawingRowVisitor implements RowVisitor {
 
-        private static final double px = 0.5f;
-
         boolean process = true;
-        boolean smoothed = false;
         
-        int width = 50;
-        int height = 50;
-        
+        int width;
+        int height;
         int col_x;
         int col_y;
+        int dim;
+
         double w;
         double h;
         double min_x;
         double min_y;
         double max_x;
         double max_y;
-
+        double delta_x;
+        double delta_y;
+        double log_delta_x;
+        double log_delta_y;
+        double rx;
+        double ry;
+        double dot;
+        
+        Color color; 
+        
         NumericBinIndex index_x;
         NumericBinIndex index_y;
         
@@ -76,8 +95,8 @@ public class ScatterplotCharter {
             if (column_x != null) {
                 col_x = column_x.getCellIndex();
                 index_x = getBinIndex(project, column_x);
-                min_x = index_x.getMin() * 1.1d;
-                max_x = index_x.getMax() * 1.1d;
+                min_x = index_x.getMin();
+                max_x = index_x.getMax();
             }
 
             String col_y_name = o.getString("cy");
@@ -85,12 +104,30 @@ public class ScatterplotCharter {
             if (column_y != null) {
                 col_y = column_y.getCellIndex();
                 index_y = getBinIndex(project, column_y);
-                min_y = index_y.getMin() * 1.1d;
-                max_y = index_y.getMax() * 1.1d;
+                min_y = index_y.getMin();
+                max_y = index_y.getMax();
             }
             
-            width = o.getInt("w");
-            height = o.getInt("h");
+            width = (o.has("w")) ? o.getInt("w") : 20;
+            height = (o.has("h")) ? o.getInt("h") : 20;
+            
+            dot = (o.has("dot")) ? o.getDouble("dot") : 0.1d;
+            
+            dim = (o.has("dim")) ? getAxisDim(o.getString("dim")) : LIN;
+            
+            delta_x = max_x - min_x;
+            delta_y = max_y - min_y;
+            
+            if (dim == RADIAL) {
+                rx = (o.has("rx")) ? o.getDouble("rx") : 0.0d;
+                ry = (o.has("ry")) ? o.getDouble("ry") : 0.0d;
+            } else if (dim == LOG) {
+                log_delta_x = Math.log10(delta_x);
+                log_delta_y = Math.log10(delta_y);
+            }
+            
+            String color_str = (o.has("color")) ? o.getString("color") : "000000";
+            color = new Color(Integer.parseInt(color_str,16));            
             
             w = (double) width;
             h = (double) height;
@@ -103,8 +140,8 @@ public class ScatterplotCharter {
                 AffineTransform t = AffineTransform.getTranslateInstance(0,h);
                 t.concatenate(AffineTransform.getScaleInstance(1.0d, -1.0d));
                 g2.setTransform(t);
-                g2.setColor(COLOR);
-                g2.setPaint(COLOR);
+                g2.setColor(color);
+                g2.setPaint(color);
             } else {
                 image = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
                 process = false;
@@ -112,10 +149,11 @@ public class ScatterplotCharter {
         }
 
         private NumericBinIndex getBinIndex(Project project, Column column) {
-            String key = "numeric-bin:value";
+            String expression = "value";
+            String key = "numeric-bin:" + expression;
             Evaluable eval = null;
             try {
-                eval = MetaParser.parse("value");
+                eval = MetaParser.parse(expression);
             } catch (ParsingException e) {
                 // this should never happen
             }
@@ -137,9 +175,20 @@ public class ScatterplotCharter {
                     double xv = ((Number) cellx.value).doubleValue();
                     double yv = ((Number) celly.value).doubleValue();
                                         
-                    double x = (xv - min_x) * w / max_x;
-                    double y = (yv - min_y) * h / max_y;
-                    g2.fill(new Rectangle2D.Double(x, y, px, px));
+                    double x;
+                    double y;
+                    
+                    if (dim == LOG) {
+                        x = Math.log10(xv - min_x) * w / log_delta_x - dot / 2;
+                        y = Math.log10(yv - min_y) * h / log_delta_y - dot / 2;
+                    } else if (dim == RADIAL) {
+                        x = (xv - min_x) * w / delta_x - dot / 2;
+                        y = (yv - min_y) * h / delta_y - dot / 2;
+                    } else {
+                        x = (xv - min_x) * w / delta_x - dot / 2;
+                        y = (yv - min_y) * h / delta_y - dot / 2;
+                    }
+                    g2.fill(new Rectangle2D.Double(x, y, dot, dot));
                 }
             }
             

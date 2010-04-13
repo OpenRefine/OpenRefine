@@ -4,12 +4,15 @@
     border: 1px solid #aaa;
 }
 
+.clustering-dialog-controls {
+	margin-right: 2em;
+}
+	
 table.scatterplot-matrix-table {
     border-collapse: collapse;
 }
 
 table.scatterplot-matrix-table > tbody > tr > td {
-    padding: 2px;
     text-align: center;
     vertical-align: middle;
 }

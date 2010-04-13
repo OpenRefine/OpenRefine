@@ -1,11 +1,14 @@
 function ScatterplotDialog() {
     this._createDialog();
+    this._plot_method = "lin";
+    this._plot_size = 20;
+    this._dot_size = 0.1;
 }
 
 ScatterplotDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
-    frame.width("900px");
+    frame.width("1100px");
     
     var header = $('<div></div>').addClass("dialog-header").text('Scatterplot Matrix').appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
@@ -17,29 +20,75 @@ ScatterplotDialog.prototype._createDialog = function() {
            '</tr></table>' +
         '</div>'
     ).appendTo(frame);
-    
+        
     var html = $(
-        '<div class="grid-layout layout-normal">' +
-          '<div bind="tableContainer" class="scatterplot-dialog-table-container"></div>' +
-        '</div>'
+        '<div class="grid-layout layout-normal"><table width="100%">' +
+            '<tr>' +
+                '<td>' +
+                    '<span class="clustering-dialog-controls">Plot type: <select bind="plotSelector">' +
+                        '<option selected="true">linear</option>' +
+                        '<option>log-log</option>' +
+                    '</select></span>' +
+                    '<span class="clustering-dialog-controls">Plot Size: <input bind="plotSize" type="test" size="2" value="20"> px</span>' +
+                    '<span class="clustering-dialog-controls">Dot Size: <input bind="dotSize" type="test" size="2" value="0.1"> px</span>' +
+                '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td>' +
+                    '<div bind="tableContainer" class="scatterplot-dialog-table-container"></div>' +
+                '</td>' +
+            '</tr>' +
+        '</table></div>'
     ).appendTo(body);
     
+    
     this._elmts = DOM.bind(html);
+    
+    this._elmts.plotSelector.change(function() {
+        var selection = $(this).find("option:selected").text();
+        if (selection == 'linear') {
+            self._plot_method = "lin";
+        } else if (selection === 'log-log') {
+            self._plot_method = "log";
+        }
+        self._renderMatrix();
+    });
+
+    this._elmts.plotSize.change(function() {
+        try {
+            self._plot_size = parseInt($(this).val())
+            self._renderMatrix();
+        } catch (e) {
+            alert("Must be a number");
+        }
+    });
+
+    this._elmts.dotSize.change(function() {
+        try {
+            self._dot_size = parseFloat($(this).val())
+            self._renderMatrix();
+        } catch (e) {
+            alert("Must be a number");
+        }
+    });
     
     var left_footer = footer.find(".left");    
     
     var right_footer = footer.find(".right");    
     $('<button></button>').text("Close").click(function() { self._dismiss(); }).appendTo(right_footer);
     
-    this._renderMatrix(theProject.columnModel.columns);
     this._level = DialogSystem.showDialog(frame);
+    this._renderMatrix();
 };
 
-ScatterplotDialog.prototype._renderMatrix = function(columns) {
+ScatterplotDialog.prototype._renderMatrix = function() {
     var self = this;
+    var columns = theProject.columnModel.columns;
     
-    var container = this._elmts.tableContainer;
-    
+    var container = this._elmts.tableContainer.html(
+        '<div style="margin: 1em; font-size: 130%; color: #888;">Processing... <img src="/images/small-spinner.gif"></div>'
+    );
+
     if (columns.length > 0) {
         var table = $('<table></table>').addClass("scatterplot-matrix-table")[0];
         
@@ -51,8 +100,10 @@ ScatterplotDialog.prototype._renderMatrix = function(columns) {
                 var plotter_params = { 
                     'cx' : cx.name, 
                     'cy' : cy.name,
-                    'w' : 20,
-                    'h' : 20
+                    'w' : self._plot_size,
+                    'h' : self._plot_size,
+                    'dot': self._dot_size,
+                    'dim': self._plot_method
                 };
                 var params = {
                     project: theProject.id,
