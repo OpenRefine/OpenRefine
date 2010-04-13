@@ -55,9 +55,9 @@ public class TsvCsvImporter implements Importer {
                                     
                 first = false;
                 for (int c = 0; c < cells.size(); c++) {
-                    String cell = cells.get(c);
+                    String cell = cells.get(c).trim();
                     if (cell.startsWith("\"") && cell.endsWith("\"")) {
-                        cell = cell.substring(1, cell.length() - 1);
+                        cell = cell.substring(1, cell.length() - 1).trim();
                     }
                     
                     if (nameToIndex.containsKey(cell)) {
