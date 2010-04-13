@@ -7,7 +7,7 @@ function HistoryWidget(div, tabHeader) {
 HistoryWidget.prototype.resize = function() {
     var body = this._div.find(".history-panel-body");
     var footer = this._div.find(".history-panel-footer");
-    console.log(this._div.height());
+    
     body.css("height", (this._div.height() - footer.innerHeight(true)) + "px");
 };
 

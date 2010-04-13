@@ -81,19 +81,16 @@ a.column-header-menu:hover {
 }
 
 
-.viewPanel-summary {
-    margin: 1em 2em 0em 2em;
-}
 .viewPanel-summary-row-count {
     font-size: 150%;
     font-weight: bold;
 }
-
-.viewPanel-pagingControls {
-    text-align: center;
+table.viewPanel-header {
+    border-collapse: collapse;
+    width: 100%;
 }
-.viewPanel-pagingControls td {
-    padding: 1em 2em;
+table.viewPanel-header td {
+    padding: 1em 1em 1em 0;
 }
 
 div.data-table-cell-content {
