@@ -167,6 +167,26 @@ ListFacet.prototype.render = function() {
                 self._deselect(choice);
             };
             
+            if (renderEdit && customLabel === undefined) {
+                // edit link
+                var editLink = $('<a href="javascript:{}"></a>')
+                    .addClass("facet-choice-link")
+                    .text("edit")
+                    .css("visibility", "hidden")
+                    .click(function() {
+                        self._editChoice(choice, choiceDiv);
+                    })
+                    .prependTo(choiceDiv);
+                
+                choiceDiv
+                    .mouseenter(function() {
+                        editLink.css("visibility", "visible");
+                    })
+                    .mouseleave(function() {
+                        editLink.css("visibility", "hidden");
+                    });
+            }
+            
             if (choice.s) { // selected
                 if (selectionCount > 1) {
                     // select only
@@ -176,30 +196,33 @@ ListFacet.prototype.render = function() {
                     a.click(deselect);
                 }
                 
-                // remove link
-                $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("remove").click(deselect).prependTo(choiceDiv);
+                // exclude link
+                $('<a href="javascript:{}"></a>')
+                    .addClass("facet-choice-link")
+                    .text("exclude")
+                    .click(deselect)
+                    .prependTo(choiceDiv);
+                    
             } else if (selectionCount > 0) {
                 a.click(selectOnly);
                 
                 // include link
-                $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("include").click(select).prependTo(choiceDiv);
-            } else {
-                a.click(select);
-            }
-            
-            if (renderEdit && customLabel === undefined) {
-                // edit link
-                var editLink = $('<a href="javascript:{}"></a>').addClass("facet-choice-edit").text("edit").click(function() {
-                    self._editChoice(choice, choiceDiv);
-                }).appendTo(choiceDiv);
-                
+                var includeLink = $('<a href="javascript:{}"></a>')
+                    .addClass("facet-choice-link")
+                    .text("include")
+                    .css("visibility", "hidden")
+                    .click(select)
+                    .prependTo(choiceDiv);
+                    
                 choiceDiv
                     .mouseenter(function() {
-                        editLink.css("visibility", "visible");
+                        includeLink.css("visibility", "visible");
                     })
                     .mouseleave(function() {
-                        editLink.css("visibility", "hidden");
+                        includeLink.css("visibility", "hidden");
                     });
+            } else {
+                a.click(select);
             }
         };
         

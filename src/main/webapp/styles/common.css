@@ -1,10 +1,10 @@
 html {
     font-size: 62.5%;
-    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 body {
-    font-size: 120%;
+    font-size: 11px;
     margin: 0;
     padding: 0;
     background: #eee;
@@ -23,6 +23,7 @@ div.grid-layout > table {
 }
 div.grid-layout.layout-full table {
     width: 100%;
+    max-width: 100% !important;
 }
 div.grid-layout > table > tbody > tr > th, div.grid-layout > table > tbody > tr > td {
     padding: 0px;

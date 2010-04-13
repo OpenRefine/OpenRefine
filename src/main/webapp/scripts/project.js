@@ -17,7 +17,7 @@ function resize() {
     ui.menuBarContainer.css("top", header.outerHeight() + "px");
 
     var leftPanelWidth = 300;
-    var leftPanelMargin = 5;
+    var leftPanelMargin = 7;
     var width = $(window).width();
     var top = ui.menuBarContainer.offset().top + ui.menuBarContainer.outerHeight();
     var height = footer.offset().top - top;
@@ -45,11 +45,10 @@ function resize() {
 }
 
 function resizeTabs() {
-    var totalHeight = ui.leftPanelTabs.innerHeight();
-    var headerHeight = ui.leftPanelTabs.find(".ui-tabs-nav").outerHeight(true);
+    var totalHeight = ui.leftPanelTabs.height();
+    var headerHeight = ui.leftPanelTabs.find(".ui-tabs-nav").innerHeight();
     var tabPanels = ui.leftPanelTabs.find(".ui-tabs-panel")
-    var paddings = tabPanels.outerHeight(true) - tabPanels.innerHeight();
-    
+    var paddings = tabPanels.innerHeight(true) - tabPanels.height();
     tabPanels.height(totalHeight - headerHeight - paddings);
 }
 

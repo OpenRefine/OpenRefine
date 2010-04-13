@@ -12,7 +12,6 @@
 
 ul.facets-container {
     padding: 0;
-    padding-right: 5px;
 }
 
 li.facet-container {
@@ -23,10 +22,10 @@ li.facet-container {
     margin-top: 10px;
     background: white;
     border: 1px solid #ccc;
-    border-bottom-left-radius: 5px 5px;
-    border-bottom-right-radius: 5px 5px;
-    border-top-left-radius: 5px 5px;
-    border-top-right-radius: 5px 5px;
+    
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;    
+    border-radius: 5px 5px;
 }
 
 .facet-title {
@@ -61,7 +60,7 @@ li.facet-container {
 }
 
 a.facet-choice-label {
-    margin-right: 0.5em;
+    margin-right: 0.25em;
     text-decoration: none;
     color: #004;
 }
@@ -72,37 +71,17 @@ a.facet-choice-label:hover {
 
 .facet-choice-count {
     color: #aaa;
-}
-.facet-choice-count:before {
-    content: "(";
-    color: #aaa;
-}
-.facet-choice-count:after {
-    content: ")";
-    color: #aaa;
+    font-size: 80%;
 }
 
 a.facet-choice-link {
-    margin-left: 1em;
+    margin-left: 0.5em;
     font-size: 80%;
     float: right;
     text-decoration: none;
     color: #aac;
 }
 a.facet-choice-link:hover {
-    text-decoration: underline;
-    color: #88a;
-}
-
-a.facet-choice-edit {
-    margin-left: 0.5em;
-    font-size: 80%;
-    text-decoration: none;
-    color: #aac;
-    visibility: hidden;
-}
-
-a.facet-choice-edit:hover {
     text-decoration: underline;
     color: #88a;
 }
