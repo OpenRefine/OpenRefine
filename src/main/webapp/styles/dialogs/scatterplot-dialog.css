@@ -1,6 +1,6 @@
 .scatterplot-dialog-table-container {
     height: 500px;
-    overflow: scroll;
+    overflow: auto;
     border: 1px solid #aaa;
 }
 

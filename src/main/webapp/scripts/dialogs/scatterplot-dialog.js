@@ -22,7 +22,7 @@ ScatterplotDialog.prototype._createDialog = function() {
     ).appendTo(frame);
         
     var html = $(
-        '<div class="grid-layout layout-normal layout-full"><table>' +
+        '<div class="grid-layout layout-normal"><table width="100%">' +
             '<tr>' +
                 '<td>' +
                     '<span class="clustering-dialog-controls">Plot type: <select bind="plotSelector">' +
@@ -136,15 +136,17 @@ ScatterplotDialog.prototype._renderMatrix = function() {
 
         for (var i = 0; i < columns.length; i++) {
             var tr = table.insertRow(table.rows.length);
-            for (var j = 0; j < i; j++) {
-                $(tr.insertCell(j)).append(createScatterplot(i,j));
-            }
-            
-            var tdColumnName = $(tr.insertCell(tr.cells.length));
+            var counter = 0;
+            var tdColumnName = $(tr.insertCell(counter++));
             tdColumnName
                 .text(columns[i].name)
-                .css("text-align", "left")
-                .attr("colspan", columns.length - i);
+                .css("text-align", "right")
+                .css("padding", "0em 0.5em")
+                .attr("colspan", i + 1);
+            for (var j = i + 1; j < columns.length; j++) {
+                $(tr.insertCell(counter++)).append(createScatterplot(i,j));
+            }
+            
         }
 
         var width = container.width();
