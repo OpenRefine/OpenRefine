@@ -42,6 +42,7 @@ licenses/apache2.0.LICENSE.txt
     commons-lang
     commons-codec
     commons-math
+    jackson
     jdatapath
     jetty
     jetty-util

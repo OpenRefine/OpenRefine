@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -102,5 +104,54 @@ public class Cell implements HasFields, Jsonizable {
         }
         
         return new Cell(value, recon);
+    }
+    
+    static public Cell loadStreaming(JsonParser jp, Map<Long, Recon> reconCache) throws Exception {
+        JsonToken t = jp.getCurrentToken();
+        if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
+            return null;
+        }
+        
+        Serializable value = null;
+        String type = null;
+        Recon recon = null;
+        
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = jp.getCurrentName();
+            jp.nextToken();
+            
+            if ("r".equals(fieldName)) {
+                recon = Recon.loadStreaming(jp, reconCache);
+            } else if ("e".equals(fieldName)) {
+                value = new EvalError(jp.getText());
+            } else if ("v".equals(fieldName)) {
+                JsonToken token = jp.getCurrentToken();
+            
+                if (token == JsonToken.VALUE_STRING) {
+                    value = jp.getText();
+                } else if (token == JsonToken.VALUE_NUMBER_INT) {
+                    value = jp.getIntValue();
+                } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
+                    value = jp.getFloatValue();
+                } else if (token == JsonToken.VALUE_TRUE) {
+                    value = true;
+                } else if (token == JsonToken.VALUE_FALSE) {
+                    value = false;
+                }
+            } else if ("t".equals(fieldName)) {
+                type = jp.getText();
+            }
+        }
+        
+        if (value != null) {
+            if (type != null) {
+                if ("date".equals(type)) {
+                    value = ParsingUtilities.stringToDate((String) value); 
+                }
+            }
+            return new Cell(value, recon);
+        } else {
+            return null;
+        }
     }
 }

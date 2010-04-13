@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -235,4 +237,72 @@ public class Recon implements HasFields, Jsonizable {
         return recon;
     }
 
+    static public Recon loadStreaming(JsonParser jp, Map<Long, Recon> reconCache) throws Exception {
+        JsonToken t = jp.getCurrentToken();
+        if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
+            return null;
+        }
+        
+        Recon recon = null;
+        boolean old = true;
+        
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = jp.getCurrentName();
+            jp.nextToken();
+            
+            if ("id".equals(fieldName)) {
+                long id = jp.getLongValue();
+                if (reconCache.containsKey(id)) {
+                    recon = reconCache.get(id);
+                } else {
+                    recon = new Recon(id);
+                    old = false;
+                }
+            } else if ("j".equals(fieldName)) {
+                recon.judgment = stringToJudgment(jp.getText());
+            } else if ("m".equals(fieldName)) {
+                if (jp.getCurrentToken() == JsonToken.START_OBJECT) {
+                    ReconCandidate match = ReconCandidate.loadStreaming(jp, reconCache);
+                    if (!old) {
+                        recon.match = match;
+                    }
+                }
+            } else if ("f".equals(fieldName)) {
+                if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
+                    return null;
+                }
+                
+                int feature = 0;
+                while (jp.nextToken() != JsonToken.END_ARRAY) {
+                    if (feature < recon.features.length && !old) {
+                        JsonToken token = jp.getCurrentToken();
+                        if (token == JsonToken.VALUE_STRING) {
+                            recon.features[feature++] = jp.getText();
+                        } else if (token == JsonToken.VALUE_NUMBER_INT) {
+                            recon.features[feature++] = jp.getIntValue();
+                        } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
+                            recon.features[feature++] = jp.getFloatValue();
+                        } else if (token == JsonToken.VALUE_FALSE) {
+                            recon.features[feature++] = false;
+                        } else if (token == JsonToken.VALUE_TRUE) {
+                            recon.features[feature++] = true;
+                        }
+                    }
+                }
+            } else if ("c".equals(fieldName)) {
+                if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
+                    return null;
+                }
+                
+                while (jp.nextToken() != JsonToken.END_ARRAY) {
+                    ReconCandidate rc = ReconCandidate.loadStreaming(jp, reconCache);
+                    if (rc != null && !old) {
+                        recon.addCandidate(rc);
+                    }
+                }
+            }
+        }
+        
+        return recon;
+    }
 }

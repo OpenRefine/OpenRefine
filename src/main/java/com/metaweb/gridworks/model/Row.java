@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +35,12 @@ public class Row implements HasFields, Jsonizable {
     
     public Row(int cellCount) {
         cells = new ArrayList<Cell>(cellCount);
+    }
+    
+    protected Row(List<Cell> cells, boolean flagged, boolean starred) {
+        this.cells = cells;
+        this.flagged = flagged;
+        this.starred = starred;
     }
     
     public Row dup() {
@@ -154,7 +163,9 @@ public class Row implements HasFields, Jsonizable {
     }
     
     static public Row load(String s, Map<Long, Recon> reconCache) throws Exception {
-        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s), reconCache);
+        return s.length() == 0 ? null : 
+            //load(ParsingUtilities.evaluateJsonStringToObject(s), reconCache);
+            loadStreaming(s, reconCache);
     }
     
     static public Row load(JSONObject obj, Map<Long, Recon> reconCache) throws Exception {
@@ -180,4 +191,39 @@ public class Row implements HasFields, Jsonizable {
         return row;
     }
     
+    static public Row loadStreaming(String s, Map<Long, Recon> reconCache) throws Exception {
+        JsonFactory jsonFactory = new JsonFactory(); 
+        JsonParser jp = jsonFactory.createJsonParser(s);
+        
+        if (jp.nextToken() != JsonToken.START_OBJECT) {
+            return null;
+        }
+        
+        List<Cell>  cells = new ArrayList<Cell>();
+        boolean     starred = false;
+        boolean     flagged = false;
+        
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = jp.getCurrentName();
+            jp.nextToken();
+            
+            if (STARRED.equals(fieldName)) {
+                starred = jp.getBooleanValue();
+            } else if (FLAGGED.equals(fieldName)) {
+                flagged = jp.getBooleanValue();
+            } else if ("cells".equals(fieldName)) {
+                if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
+                    return null;
+                }
+                
+                while (jp.nextToken() != JsonToken.END_ARRAY) {
+                    Cell cell = Cell.loadStreaming(jp, reconCache);
+                    
+                    cells.add(cell);
+                }
+            }
+        }
+        
+        return (cells.size() > 0) ? new Row(cells, flagged, starred) : null;
+    }
 }

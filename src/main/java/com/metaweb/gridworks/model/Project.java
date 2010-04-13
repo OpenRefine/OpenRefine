@@ -177,6 +177,8 @@ public class Project {
     }
     
     static protected Project loadFromReader(LineNumberReader reader, long id) throws Exception {
+        long start = System.currentTimeMillis();
+        
         /* String version = */ reader.readLine();
         
         Project project = new Project(id);
@@ -210,6 +212,13 @@ public class Project {
         }
         
         project.columnModel.setMaxCellIndex(maxCellCount - 1);
+        
+        Gridworks.log(
+            "Loaded project " + id + " from disk in " + 
+            (System.currentTimeMillis() - start) / 1000 + 
+            " sec(s)"
+        );
+        
         project.recomputeRowContextDependencies();
         
         return project;

@@ -417,23 +417,26 @@ public class ProjectManager {
     }
     
     public void deleteProject(Project project) {
+        deleteProject(project.id);
+    }
+    
+    public void deleteProject(long projectID) {
         synchronized (this) {
-            if (_projectsMetadata.containsKey(project.id)) {
-                _projectsMetadata.remove(project.id);
+            if (_projectsMetadata.containsKey(projectID)) {
+                _projectsMetadata.remove(projectID);
             }
-            if (_projects.containsKey(project.id)) {
-                _projects.remove(project.id);
+            if (_projects.containsKey(projectID)) {
+                _projects.remove(projectID);
             }
             
-            File dir = getProjectDir(project.id);
+            File dir = getProjectDir(projectID);
             if (dir.exists()) {
                 dir.delete();
             }
         }
         
         saveWorkspace();
-    }
-    
+    }    
     protected void load() {
         if (loadFromFile(new File(_workspaceDir, "workspace.json"))) return;
         if (loadFromFile(new File(_workspaceDir, "workspace.temp.json"))) return;
