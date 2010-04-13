@@ -107,12 +107,10 @@ body {
 .left-panel .ui-tabs .ui-tabs-panel {
     margin: 0px;
     padding: 7px;
+    border: 1px solid #DBE8EB;
     background: #DBE8EB;
-    
-    -moz-border-radius: 7px;
-    -webkit-border-radius: 7px;    
-    -moz-border-radius-topleft: 0px;
-    -webkit-border-top-left-radius: 0px;
+    -moz-border-radius-bottomleft: 7px;
+    -webkit-border-bottom-left-radius: 7px;
 }
 
 .facet-panel {

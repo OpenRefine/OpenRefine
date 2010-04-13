@@ -106,20 +106,19 @@ ListFacet.prototype.render = function() {
         scrollTop = this._div[0].childNodes[1].scrollTop;
     } catch (e) {
     }
-    var container = this._div.empty();
     
-    var headerDiv = $('<div></div>').addClass("facet-title").appendTo(container);
-    $('<span></span>').text(this._config.name).appendTo(headerDiv);
+    var container = this._div.empty().html(
+        '<div class="facet-title">' +
+            '<img src="images/close.png" title="Remove this facet" class="facet-choice-link" bind="removeButton"/>' +
+            '<span bind="titleSpan"></span>' +
+        '</div>'
+    );
+    var elmts = DOM.bind(container);
     
-    var removeButton = $('<img>')
-        .attr("src", "images/close.png")
-        .attr("title", "Remove this facet")
-        .addClass("facet-choice-link")
-        .click(function() {
-            self._remove();
-        }).prependTo(headerDiv);
+    elmts.titleSpan.text(this._config.name);
+    elmts.removeButton.click(function() { self._remove(); });
     
-    var bodyDiv = $('<div></div>').addClass("facet-body");
+    var bodyDiv = $('<div>').addClass("facet-body");
     if (!("scroll" in this._options) || this._options.scroll) {
         bodyDiv.addClass("facet-body-scrollable");
     }
@@ -127,23 +126,79 @@ ListFacet.prototype.render = function() {
     if (!this._data) {
         $('<div>').text("Loading...").addClass("facet-body-message").appendTo(bodyDiv);
         bodyDiv.appendTo(container);
+        
     } else if ("error" in this._data) {
         $('<div>').text(this._data.error).addClass("facet-body-message").appendTo(bodyDiv);
         bodyDiv.appendTo(container);
+        
     } else {
+        var choices = this._data.choices;
         var selectionCount = this._selection.length +
               (this._blankChoice !== null && this._blankChoice.s ? 1 : 0) +
               (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
             
-        if (selectionCount > 0) {
-            var reset = function() {
-                self._reset();
-            };
-            removeButton.after(
-                $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("reset").click(reset)
-            );
+        /*
+         *  Status
+         */
+        var statusDiv = $(
+            '<div class="facet-status"><div class="grid-layout layout-tightest layout-full">' +
+                '<table><tr>' +
+                    '<td>' + choices.length + ' choices</td>' +
+                    '<td width="1%"><a href="javascript:{}" class="action" bind="clusterLink">Cluster</a></td>' +
+                '</tr></table>' +
+            '</div></div>'
+        ).appendTo(container);
+        
+        var statusElmts = DOM.bind(statusDiv);
+        if (this._config.expression == "value") {
+            statusElmts.clusterLink.click(function() { self._doEdit(); });
+        } else {
+            statusElmts.clusterLink.hide();
         }
         
+        /*
+         *  Controls
+         */
+        var controlsDiv = $(
+            '<div class="facet-controls"><div class="grid-layout layout-tightest layout-full">' +
+                '<table><tr>' +
+                    '<td>Sort by ' +
+                        '<a href="javascript:{}" bind="sortByNameLink" class="facet-mode-link">Name</a> ' +
+                        '<a href="javascript:{}" bind="sortByCountLink" class="facet-mode-link">Count</a>' +
+                    '</td>' +
+                    '<td width="1%">' +
+                        '<a href="javascript:{}" class="action" bind="resetButton">Reset</a>' +
+                    '</td>' +
+                '</tr></table>' +
+            '</div></div>'
+        ).appendTo(container);
+        
+        var controlsElmts = DOM.bind(controlsDiv);
+        if (selectionCount > 0) {
+            controlsElmts.resetButton.click(function() { self._reset(); });
+        } else {
+            controlsElmts.resetButton.hide();
+        }
+        
+        if (this._options.sort == "name") {
+            controlsElmts.sortByNameLink.addClass("facet-mode-link-selected");
+            controlsElmts.sortByCountLink.click(function() {
+                self._options.sort = "count";
+                self._reSortChoices();
+                self.render();
+            });
+        } else {
+            controlsElmts.sortByCountLink.addClass("facet-mode-link-selected");
+            controlsElmts.sortByNameLink.click(function() {
+                self._options.sort = "name";
+                self._reSortChoices();
+                self.render();
+            });
+        }
+        
+        /*
+         *  Body
+         */
         var renderEdit = this._config.expression == "value";
         var renderChoice = function(choice, customLabel) {
             var label = customLabel || choice.v.l;
@@ -226,7 +281,6 @@ ListFacet.prototype.render = function() {
             }
         };
         
-        var choices = this._data.choices;
         for (var i = 0; i < choices.length; i++) {
             renderChoice(choices[i]);
         }
@@ -239,30 +293,6 @@ ListFacet.prototype.render = function() {
         
         bodyDiv.appendTo(container);
         bodyDiv[0].scrollTop = scrollTop;
-        
-        var footerDiv = $('<div></div>').addClass("facet-footer").appendTo(container);
-        
-        $('<span>').text(choices.length + " choices: ").appendTo(footerDiv);
-        if (this._options.sort == "name") {
-            $('<a href="javascript:{}"></a>').addClass("action").text("re-sort by count").click(function() {
-                self._options.sort = "count";
-                self._reSortChoices();
-                self.render();
-            }).appendTo(footerDiv);
-        } else {
-            $('<a href="javascript:{}"></a>').addClass("action").text("re-sort by name").click(function() {
-                self._options.sort = "name";
-                self._reSortChoices();
-                self.render();
-            }).appendTo(footerDiv);
-        }
-        
-        if (this._config.expression == "value") {
-            $('<span>').html(" &bull; ").appendTo(footerDiv);
-            $('<a href="javascript:{}"></a>').addClass("action").text("cluster").click(function() {
-                self._doEdit();
-            }).appendTo(footerDiv);
-        }
     }
 };
 
