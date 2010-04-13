@@ -84,77 +84,77 @@ HistogramWidget.prototype._render = function() {
     ctx.translate(0, canvas.height);
     ctx.scale(1, -1);
     
-        var stepPixels = canvas.width / this._binMatrix[0].length;
-        var stepScale = stepPixels / this._range.step;
-        
-        /*
-         *  Draw axis
-         */
-        ctx.save();
-        ctx.strokeStyle = "emptyBinColor" in options ? options.emptyBinColor : "#faa";
-        ctx.lineWidth = 1;
-        ctx.moveTo(0, 0);
-        ctx.lineTo(canvas.width, 0);
-        ctx.stroke();
-        ctx.restore();
+    var stepPixels = canvas.width / this._binMatrix[0].length;
+    var stepScale = stepPixels / this._range.step;
     
-        /*
-         *  Draw bins
-         */
-        var makeColor = function(i) {
-            var n = Math.floor(15 * (self._binMatrix.length - i) / self._binMatrix.length);
-            var h = n.toString(16);
-            return "#" + h + h + h;
-        };
-        var renderRow = function(row, color) {
-            ctx.save();
-            ctx.lineWidth = 0;
-            ctx.fillStyle = color;
-            for (var c = 0; c < row.length; c++) {
-                var x = self._range.min + c * self._range.step;
-                var y = row[c];
-                if (y > 0) {
-                    var left = c * stepPixels;
-                    var width = Math.ceil(stepPixels);
-                    var height = Math.ceil(y * canvas.height / self._peak);
-                    
-                    ctx.fillRect(left, 0, width, height);
-                }
+    /*
+     *  Draw axis
+     */
+    ctx.save();
+    ctx.strokeStyle = "emptyBinColor" in options ? options.emptyBinColor : "#faa";
+    ctx.lineWidth = 1;
+    ctx.moveTo(0, 0);
+    ctx.lineTo(canvas.width, 0);
+    ctx.stroke();
+    ctx.restore();
+
+    /*
+     *  Draw bins
+     */
+    var makeColor = function(i) {
+        var n = Math.floor(15 * (self._binMatrix.length - i) / self._binMatrix.length);
+        var h = n.toString(16);
+        return "#" + h + h + h;
+    };
+    var renderRow = function(row, color) {
+        ctx.save();
+        ctx.lineWidth = 0;
+        ctx.fillStyle = color;
+        for (var c = 0; c < row.length; c++) {
+            var x = self._range.min + c * self._range.step;
+            var y = row[c];
+            if (y > 0) {
+                var left = c * stepPixels;
+                var width = Math.ceil(stepPixels);
+                var height = Math.ceil(y * canvas.height / self._peak);
+                
+                ctx.fillRect(left, 0, width, height);
             }
-            ctx.restore();
-        };
-        for (var r = 0; r < this._binMatrix.length; r++) {
-            renderRow(
-                this._binMatrix[r], 
-                "binColors" in options && r < options.binColors.length ? 
-                    options.binColors[r] :
-                    makeColor(r)
+        }
+        ctx.restore();
+    };
+    for (var r = 0; r < this._binMatrix.length; r++) {
+        renderRow(
+            this._binMatrix[r], 
+            "binColors" in options && r < options.binColors.length ? 
+                options.binColors[r] :
+                makeColor(r)
+        );
+    }
+    
+    /*
+     *  Draw highlight
+     */
+    if (this._highlight !== null) {
+        ctx.fillStyle = "rgba(192,192,192, 0.5)";
+        ctx.globalCompositeOperation = "source-over";
+        if (this._highlight.from > this._range.min) {
+            ctx.fillRect(
+                0,
+                0,
+                (this._highlight.from - this._range.min) * stepScale,
+                canvas.height
             );
         }
-        
-        /*
-         *  Draw highlight
-         */
-        if (this._highlight !== null) {
-            ctx.fillStyle = "rgba(192,192,192, 0.5)";
-            ctx.globalCompositeOperation = "source-over";
-            if (this._highlight.from > this._range.min) {
-                ctx.fillRect(
-                    0,
-                    0,
-                    (this._highlight.from - this._range.min) * stepScale,
-                    canvas.height
-                );
-            }
-            if (this._highlight.to < this._range.max) {
-                ctx.fillRect(
-                    (this._highlight.to - this._range.min) * stepScale,
-                    0,
-                    canvas.width - (this._highlight.to - this._range.min) * stepScale,
-                    canvas.height
-                );
-            }
+        if (this._highlight.to < this._range.max) {
+            ctx.fillRect(
+                (this._highlight.to - this._range.min) * stepScale,
+                0,
+                canvas.width - (this._highlight.to - this._range.min) * stepScale,
+                canvas.height
+            );
         }
+    }
         
     ctx.restore();
 };

@@ -92,14 +92,28 @@ ScatterplotDialog.prototype._renderMatrix = function() {
     if (columns.length > 0) {
         var table = $('<table></table>').addClass("scatterplot-matrix-table")[0];
         
+        var wrap = function(element,cx,cy) {
+            return element.click(function() {
+                var options = {
+                    "name" : name,
+                    "x_columnName" : cx, 
+                    "y_columnName" : cy, 
+                    "x_expression" : "value",
+                    "y_expression" : "value",
+                };
+                ui.browsingEngine.addFacet("scatterplot",options);
+                //self._dismiss();
+            });
+        };
+        
         for (var i = 0; i < columns.length; i++) {
             var tr = table.insertRow(table.rows.length);
             for (var j = 0; j < i; j++) {
-                var cx = columns[i];
-                var cy = columns[j];
+                var cx = columns[i].name;
+                var cy = columns[j].name;
                 var plotter_params = { 
-                    'cx' : cx.name, 
-                    'cy' : cy.name,
+                    'cx' : cx, 
+                    'cy' : cy,
                     'w' : self._plot_size,
                     'h' : self._plot_size,
                     'dot': self._dot_size,
@@ -111,21 +125,9 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                     plotter: JSON.stringify(plotter_params) 
                 }                
                 var url = "/command/get-scatterplot?" + $.param(params);
-                var name = cx.name + '(x) vs. ' + cy.name + '(y)';
+                var name = cx + ' (x) vs. ' + cy + ' (y)';
                 var cell = $(tr.insertCell(j));
-                var link = $('<a href="javascript:{}"></a>').attr("title",name).click(function() {
-                    ui.browsingEngine.addFacet(
-                        "scatterplot", 
-                        {
-                            "name" : name,
-                            "x_column" : cx.name, 
-                            "y_column" : cy.name, 
-                            "expression" : "value",
-                            "mode" : "scatterplot"
-                        }
-                    );
-                    //self._dismiss();
-                });
+                var link = wrap($('<a href="javascript:{}"></a>').attr("title",name),cx,cy);
                 var plot = $('<img src="' + url + '" />').addClass("scatterplot").appendTo(link);
                 link.appendTo(cell);
             }

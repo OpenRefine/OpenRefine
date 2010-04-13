@@ -2,39 +2,37 @@ function ScatterplotWidget(elmt, options) {
     this._elmt = elmt;
     this._options = options;
     
+    this._plotter = { 
+        'cx' : options.x_column, 
+        'cy' : options.y_column,
+        'ye' : options.x_expression,
+        'ye' : options.x_expression,
+    };
+    
     this._range = null;
-    this._binMatrix = null;
     this._highlight = null;
     
     this._initializeUI();
 }
 
-ScatterplotWidget.prototype.highlight = function(from, to) {
-    this._highlight = { from: from, to: to };
+ScatterplotWidget.prototype.highlight = function(from_x, to_x, from_y, to_y) {
+    this._highlight = { from_x: from_x, to_x: to_x, from_y: from_y, to_y: to_y };
     this._update();
 };
 
-ScatterplotWidget.prototype.update = function(min, max, step, binMatrix, from, to) {
-    if (typeof min == "undefined" || typeof binMatrix == "undefined" || binMatrix.length === 0 || binMatrix[0].length === 0) {
+ScatterplotWidget.prototype.update = function(x_min, x_max, x_from, x_to, y_min, y_max, y_from, y_to) {
+    if (typeof x_min == "undefined" || typeof y_min == "undefined") {
         this._range = null;
-        this._binMatrix = null;
         this._highlight = null;
-        
+
         this._elmt.hide();
     } else {
-        this._range = { min: min, max: max, step: step };
-        this._binMatrix = binMatrix;
-        
-        this._peak = 0;
-        for (var r = 0; r < binMatrix.length; r++) {
-            var row = binMatrix[r];
-            for (var c = 0; c < row.length; c++) {
-                this._peak = Math.max(this._peak, row[c]);
-            }
-        }
-        
-        if (typeof from != "undefined" && typeof to != "undefined") {
-            this._highlight = { from: from, to: to };
+        this._range = { x_min: x_min, x_max: x_max, y_min: y_min, y_max: y_max };
+                
+        if (typeof from_x != "undefined" && typeof to_x != "undefined" && 
+            typeof from_y != "undefined" && typeof to_y != "undefined") 
+        {
+            this._highlight = { from_x: from_x, to_x: to_x, from_y: from_y, to_y: to_y };
         }
         
         this._update();
@@ -42,16 +40,16 @@ ScatterplotWidget.prototype.update = function(min, max, step, binMatrix, from, t
 };
 
 ScatterplotWidget.prototype._update = function() {
-    if (this._binMatrix !== null) {
-        if (this._highlight !== null) {
-            this._highlight.from = Math.max(this._highlight.from, this._range.min);
-            this._highlight.to = Math.min(this._highlight.to, this._range.max);
-        }
-        
-        this._elmt.show();
-        this._resize();
-        this._render();
+    if (this._highlight !== null) {
+        this._highlight.from_x = Math.max(this._highlight.from_x, this._range.min_x);
+        this._highlight.to_x = Math.min(this._highlight.to_x, this._range.max_x);
+        this._highlight.from_y = Math.max(this._highlight.from_y, this._range.min_y);
+        this._highlight.to_y = Math.min(this._highlight.to_y, this._range.max_y);
     }
+    
+    this._elmt.show();
+    this._resize();
+    this._render();
 };
 
 ScatterplotWidget.prototype._initializeUI = function() {
@@ -59,16 +57,16 @@ ScatterplotWidget.prototype._initializeUI = function() {
         .empty()
         .hide()
         .addClass("scatterplot-widget")
-        .html(
-            '<canvas bind="canvas"></canvas>'
-        );
+        .html('<canvas bind="canvas"></canvas>');
         
     this._elmts = DOM.bind(this._elmt);
 };
 
 ScatterplotWidget.prototype._resize = function() {
-    this._elmts.canvas.attr("height", "height" in this._options ? this._options.height : 50);
-    this._elmts.canvas.attr("width", this._elmts.canvas.width());
+    this._plotter.w = this._elmts.canvas.width();
+    this._plotter.h = ("height" in this._options) ? this._options.height : w;
+    this._elmts.canvas.attr("width", this._plotter.w);
+    this._elmts.canvas.attr("height", this._plotter.h);
 };
 
 ScatterplotWidget.prototype._render = function() {
@@ -79,82 +77,33 @@ ScatterplotWidget.prototype._render = function() {
     var ctx = canvas.getContext('2d');
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
     ctx.save();
-    ctx.translate(0, canvas.height);
-    ctx.scale(1, -1);
     
-        var stepPixels = canvas.width / this._binMatrix[0].length;
-        var stepScale = stepPixels / this._range.step;
-        
-        /*
-         *  Draw axis
-         */
-        ctx.save();
-        ctx.strokeStyle = "emptyBinColor" in options ? options.emptyBinColor : "#faa";
-        ctx.lineWidth = 1;
-        ctx.moveTo(0, 0);
-        ctx.lineTo(canvas.width, 0);
-        ctx.stroke();
-        ctx.restore();
-    
-        /*
-         *  Draw bins
-         */
-        var makeColor = function(i) {
-            var n = Math.floor(15 * (self._binMatrix.length - i) / self._binMatrix.length);
-            var h = n.toString(16);
-            return "#" + h + h + h;
-        };
-        var renderRow = function(row, color) {
-            ctx.save();
-            ctx.lineWidth = 0;
-            ctx.fillStyle = color;
-            for (var c = 0; c < row.length; c++) {
-                var x = self._range.min + c * self._range.step;
-                var y = row[c];
-                if (y > 0) {
-                    var left = c * stepPixels;
-                    var width = Math.ceil(stepPixels);
-                    var height = Math.ceil(y * canvas.height / self._peak);
-                    
-                    ctx.fillRect(left, 0, width, height);
-                }
-            }
+    var img = new Image();  
+    img.onload = function(){  
+        ctx.drawImage(img,0,0);  
+        var img2 = new Image();  
+        img2.onload = function(){  
+            ctx.drawImage(img2,0,0);
+            
+            ctx.translate(0, canvas.height);
+            ctx.scale(1, -1);
+
+            // draw something else
+            
             ctx.restore();
-        };
-        for (var r = 0; r < this._binMatrix.length; r++) {
-            renderRow(
-                this._binMatrix[r], 
-                "binColors" in options && r < options.binColors.length ? 
-                    options.binColors[r] :
-                    makeColor(r)
-            );
-        }
-        
-        /*
-         *  Draw highlight
-         */
-        if (this._highlight !== null) {
-            ctx.fillStyle = "rgba(192,192,192, 0.5)";
-            ctx.globalCompositeOperation = "source-over";
-            if (this._highlight.from > this._range.min) {
-                ctx.fillRect(
-                    0,
-                    0,
-                    (this._highlight.from - this._range.min) * stepScale,
-                    canvas.height
-                );
-            }
-            if (this._highlight.to < this._range.max) {
-                ctx.fillRect(
-                    (this._highlight.to - this._range.min) * stepScale,
-                    0,
-                    canvas.width - (this._highlight.to - this._range.min) * stepScale,
-                    canvas.height
-                );
-            }
-        }
-        
-    ctx.restore();
+        }  
+        img2.src = self._get_image_url(self._plotter) + "&color=000088&dot=0.3";  
+    }  
+    img.src = self._get_image_url(self._plotter) + "&color=000000&dot=0.2";  
+};
+
+ScatterplotWidget.prototype._get_image_url = function(o) {
+    var params = {
+        project: theProject.id,
+        engine: JSON.stringify(ui.browsingEngine.getJSON()), 
+        plotter: JSON.stringify(o) 
+    }                
+    return "/command/get-scatterplot?" + $.param(params);
 };

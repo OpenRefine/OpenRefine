@@ -29,15 +29,14 @@ ScatterplotFacet.prototype.getUIState = function() {
     return json;
 };
 
-
 ScatterplotFacet.prototype.getJSON = function() {
     var o = {
         type: "scatterplot",
         name: this._config.name,
-        mode: this._config.mode,
-        expression: this._config.expression,
-        x_column : this._config.x_column,
-        y_column : this._config.y_column,
+        x_columnName : this._config.x_columnName,
+        y_columnName : this._config.y_columnName,
+        x_expression: this._config.x_expression,
+        y_expression: this._config.y_expression,
     };
         
     return o;
@@ -72,40 +71,33 @@ ScatterplotFacet.prototype._initializeUI = function() {
     this._messageDiv = $('<div>').text("Loading...").addClass("facet-scatterplot-message").appendTo(bodyDiv);
     this._plotDiv = $('<div>').addClass("facet-scatterplot-plot").appendTo(bodyDiv);
     this._statusDiv = $('<div>').addClass("facet-scatterplot-status").appendTo(bodyDiv);
-    
-    this._plot = new ScatterplotWidget(this._plotDiv, { binColors: [ "#ccccff", "#6666ff" ] });
+        
+    this._plot = new ScatterplotWidget(this._plotDiv, this._config); 
 };
 
 ScatterplotFacet.prototype.updateState = function(data) {
-    if ("min" in data && "max" in data) {
+    if ("min_x" in data && "max_x" in data && "max_y" in data && "min_y" in data) {
         this._error = false;
         
-        this._config.min = data.min;
-        this._config.max = data.max;
-        this._config.step = data.step;
-        this._baseBins = data.baseBins;
-        this._bins = data.bins;
+        this._config.min_x = data.min_x;
+        this._config.max_x = data.max_x;
+        this._config.min_y = data.min_y;
+        this._config.max_y = data.max_y;
         
-        switch (this._config.mode) {
-        case "min":
-            this._from = Math.max(data.from, this._config.min);
-            break;
-        case "max":
-            this._to = Math.min(data.to, this._config.max);
-            break;
-        default:
-            this._from = Math.max(data.from, this._config.min);
-            if ("to" in data) {
-                this._to = Math.min(data.to, this._config.max);
-            } else {
-                this._to = data.max;
-            }
+        this._from_x = Math.max(data.from_x, this._config.min_x);
+        if ("to_x" in data) {
+            this._to_x = Math.min(data.to_x, this._config.max_x);
+        } else {
+            this._to_x = data.max_x;
+        }
+
+        this._from_y = Math.max(data.from_y, this._config.min_y);
+        if ("to_y" in data) {
+            this._to_y = Math.min(data.to_y, this._config.max_y);
+        } else {
+            this._to_y = data.max_y;
         }
         
-        this._numericCount = data.numericCount;
-        this._nonNumericCount = data.nonNumericCount;
-        this._blankCount = data.blankCount;
-        this._errorCount = data.errorCount;
     } else {
         this._error = true;
         this._errorMessage = "error" in data ? data.error : "Unknown error.";
@@ -122,10 +114,8 @@ ScatterplotFacet.prototype.render = function() {
     
     if (this._error) {
         this._messageDiv.text(this._errorMessage).show();
-        this._sliderDiv.hide();
-        this._histogramDiv.hide();
+        this._plotDiv.hide();
         this._statusDiv.hide();
-        this._otherChoicesDiv.hide();
         return;
     }
     
@@ -134,12 +124,14 @@ ScatterplotFacet.prototype.render = function() {
     this._statusDiv.show();
         
     this._plot.update(
-        this._config.min, 
-        this._config.max, 
-        this._config.step, 
-        [ this._baseBins, this._bins ],
-        this._from,
-        this._to
+        this._config.x_min, 
+        this._config.x_max, 
+        this._x_from,
+        this._x_to,
+        this._config.y_min, 
+        this._config.y_max, 
+        this._y_from,
+        this._y_to
     );
 };
 
@@ -148,7 +140,6 @@ ScatterplotFacet.prototype._remove = function() {
     
     this._div = null;
     this._config = null;
-    this._data = null;
 };
 
 ScatterplotFacet.prototype._updateRest = function() {
