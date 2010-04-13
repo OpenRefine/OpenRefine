@@ -8,9 +8,11 @@ function onClickUploadFileButton(evt) {
     } else {
         $("#file-upload-form").attr("action", 
             "/command/create-project-from-upload?" + [
+                "separator=" + $("#separator-input")[0].value,
+                "ignore=" + $("#ignore-input")[0].value,
+                "header-lines=" + $("#header-lines-input")[0].value,
                 "skip=" + $("#skip-input")[0].value,
                 "limit=" + $("#limit-input")[0].value,
-                "separator=" + $("#separator-input")[0].value,
                 "guess-value-type=" + $("#guess-value-type-input")[0].checked
             ].join("&"));
     }

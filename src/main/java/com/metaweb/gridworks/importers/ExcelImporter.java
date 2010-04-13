@@ -42,6 +42,7 @@ public class ExcelImporter implements Importer {
     }
 
     public void read(InputStream inputStream, Project project, Properties options) throws Exception {
+        int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
         int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
         int skip = ImporterUtilities.getIntegerOption("skip",options,0);
         
@@ -64,7 +65,7 @@ public class ExcelImporter implements Importer {
         int lastRow = sheet.getLastRowNum();
         int r = firstRow;
         
-        List<Integer>     nonBlankIndices = null;
+        List<Integer>    nonBlankIndices = null;
         List<String>     nonBlankHeaderStrings = null;
         
         /*
@@ -73,6 +74,9 @@ public class ExcelImporter implements Importer {
         for (; r <= lastRow; r++) {
             org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
+                continue;
+            } else if (ignoreLines > 0) {
+                ignoreLines--;
                 continue;
             }
             
