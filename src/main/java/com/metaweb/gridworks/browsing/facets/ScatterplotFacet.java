@@ -69,6 +69,8 @@ public class ScatterplotFacet implements Facet {
         writer.key("name"); writer.value(_name);
         writer.key("x_expression"); writer.value(_x_expression);
         writer.key("x_columnName"); writer.value(_x_columnName);
+        writer.key("y_expression"); writer.value(_y_expression);
+        writer.key("y_columnName"); writer.value(_y_columnName);
         
         if (_x_errorMessage != null) {
             writer.key("x_error"); writer.value(_x_errorMessage);
