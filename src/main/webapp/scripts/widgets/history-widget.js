@@ -5,6 +5,10 @@ function HistoryWidget(div, tabHeader) {
 }
 
 HistoryWidget.prototype.resize = function() {
+    var body = this._div.find(".history-panel-body");
+    var footer = this._div.find(".history-panel-footer");
+    console.log(this._div.height());
+    body.css("height", (this._div.height() - footer.innerHeight(true)) + "px");
 };
 
 HistoryWidget.prototype.update = function(onDone) {
@@ -36,7 +40,7 @@ HistoryWidget.prototype._render = function() {
                 '<div class="history-now" bind="nowDiv">done upto here</div>' +
                 '<div class="history-future" bind="futureDiv"></div>' +
             '</div>' +
-            '<div class="history-panel-footer">' +
+            '<div class="history-panel-footer" bind="footerDiv">' +
                 '<a href="javascript:{}" bind="extractLink">extract</a> &bull; ' +
                 '<a href="javascript:{}" bind="applyLink">apply</a>' +
             '</div>'
@@ -72,6 +76,9 @@ HistoryWidget.prototype._render = function() {
     
     elmts.extractLink.click(function() { self._extractOperations(); });
     elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
+    
+    this.resize();
+    
     elmts.bodyDiv[0].scrollTop = elmts.nowDiv[0].offsetTop + elmts.nowDiv[0].offsetHeight - elmts.bodyDiv[0].offsetHeight;
 };
 

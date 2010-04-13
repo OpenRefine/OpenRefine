@@ -98,7 +98,7 @@ function initializeUI(uiState) {
     ui.menuBarContainer.css("top", $("#header").outerHeight() + "px");
     ui.menuBar = new MenuBar(ui.menuBarPanel); // construct the menu first so we can resize everything else
     
-    ui.leftPanelTabs.tabs();
+    ui.leftPanelTabs.tabs({ selected: 0 });
     resize();
     resizeTabs();
     
@@ -106,6 +106,14 @@ function initializeUI(uiState) {
     ui.processWidget = new ProcessWidget(ui.processPanel);
     ui.historyWidget = new HistoryWidget(ui.historyPanel, ui.historyTabHeader);
     ui.dataTableView = new DataTableView(ui.viewPanel);
+    
+    ui.leftPanelTabs.bind('tabsshow', function(event, tabs) {
+        if (tabs.index === 0) {
+            ui.browsingEngine.resize();
+        } else if (tabs.index === 1) {
+            ui.historyWidget.resize();
+        }
+    });
     
     $(window).bind("resize", resizeAll);
 }

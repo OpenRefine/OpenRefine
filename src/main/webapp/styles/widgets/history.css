@@ -1,16 +1,6 @@
 .history-panel-body {
     background: #fff;
-    height: 400px;
     overflow: auto;
-}
-.history-panel-body-controls {
-    font-size: 80%;
-    padding: 0.5em;
-    text-align: center;
-    background: #eee;
-    border-left: 1px solid #888;
-    border-right: 1px solid #888;
-    display: none;
 }
 
 .history-panel-message {
@@ -65,20 +55,10 @@ a.history-entry:hover {
 }
 
 .history-panel-footer {
-    margin: 0;
     padding: 3px;
-    background: #b8b8b8;
-    color: #fff;
-    font-size: 90%;
-    border: 1px solid #888;
     text-align: center;
-    -moz-border-radius-bottomleft: 10px;
-    -webkit-border-bottom-left-radius: 10px;
-    -moz-border-radius-bottomright: 10px;
-    -webkit-border-bottom-right-radius: 10px;    
 }
 .history-panel-footer a {
-    color: white;
     text-decoration: none;
 }
 
