@@ -2,8 +2,11 @@
     margin: 0;
     padding: 0;
     position: relative;
+    text-align: left;
 }
 
 .scatterplot-widget canvas {
-    width: 100%;
+	width: 120px;
+	border: 1px solid #f0f0f0;
+	margin: 0.5em 0.8em;
 }

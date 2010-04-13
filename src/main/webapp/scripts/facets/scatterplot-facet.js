@@ -76,26 +76,26 @@ ScatterplotFacet.prototype._initializeUI = function() {
 };
 
 ScatterplotFacet.prototype.updateState = function(data) {
-    if ("min_x" in data && "max_x" in data && "max_y" in data && "min_y" in data) {
+    if ("x_min" in data && "x_max" in data && "x_max" in data && "x_min" in data) {
         this._error = false;
         
-        this._config.min_x = data.min_x;
-        this._config.max_x = data.max_x;
-        this._config.min_y = data.min_y;
-        this._config.max_y = data.max_y;
+        this._config.x_min = data.x_min;
+        this._config.x_max = data.x_max;
+        this._config.y_min = data.y_min;
+        this._config.y_max = data.y_max;
         
-        this._from_x = Math.max(data.from_x, this._config.min_x);
+        this._from_x = Math.max(data.from_x, this._config.x_min);
         if ("to_x" in data) {
-            this._to_x = Math.min(data.to_x, this._config.max_x);
+            this._to_x = Math.min(data.to_x, this._config.x_max);
         } else {
-            this._to_x = data.max_x;
+            this._to_x = data.x_max;
         }
 
-        this._from_y = Math.max(data.from_y, this._config.min_y);
+        this._from_y = Math.max(data.from_y, this._config.x_min);
         if ("to_y" in data) {
-            this._to_y = Math.min(data.to_y, this._config.max_y);
+            this._to_y = Math.min(data.to_y, this._config.x_max);
         } else {
-            this._to_y = data.max_y;
+            this._to_y = data.x_max;
         }
         
     } else {

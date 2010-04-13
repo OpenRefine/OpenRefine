@@ -3,10 +3,10 @@ function ScatterplotWidget(elmt, options) {
     this._options = options;
     
     this._plotter = { 
-        'cx' : options.x_column, 
-        'cy' : options.y_column,
-        'ye' : options.x_expression,
-        'ye' : options.x_expression,
+        'cx' : options.x_columnName, 
+        'cy' : options.y_columnName,
+        'xe' : options.x_expression,
+        'ye' : options.y_expression,
     };
     
     this._range = null;
@@ -41,9 +41,9 @@ ScatterplotWidget.prototype.update = function(x_min, x_max, x_from, x_to, y_min,
 
 ScatterplotWidget.prototype._update = function() {
     if (this._highlight !== null) {
-        this._highlight.from_x = Math.max(this._highlight.from_x, this._range.min_x);
+        this._highlight.from_x = Math.max(this._highlight.from_x, this._range.x_min);
         this._highlight.to_x = Math.min(this._highlight.to_x, this._range.max_x);
-        this._highlight.from_y = Math.max(this._highlight.from_y, this._range.min_y);
+        this._highlight.from_y = Math.max(this._highlight.from_y, this._range.y_min);
         this._highlight.to_y = Math.min(this._highlight.to_y, this._range.max_y);
     }
     
@@ -64,7 +64,7 @@ ScatterplotWidget.prototype._initializeUI = function() {
 
 ScatterplotWidget.prototype._resize = function() {
     this._plotter.w = this._elmts.canvas.width();
-    this._plotter.h = ("height" in this._options) ? this._options.height : w;
+    this._plotter.h = ("height" in this._options) ? this._options.height : this._plotter.w;
     this._elmts.canvas.attr("width", this._plotter.w);
     this._elmts.canvas.attr("height", this._plotter.h);
 };
@@ -81,22 +81,28 @@ ScatterplotWidget.prototype._render = function() {
     ctx.save();
     
     var img = new Image();  
-    img.onload = function(){  
-        ctx.drawImage(img,0,0);  
-        var img2 = new Image();  
-        img2.onload = function(){  
-            ctx.drawImage(img2,0,0);
-            
-            ctx.translate(0, canvas.height);
-            ctx.scale(1, -1);
-
-            // draw something else
-            
-            ctx.restore();
-        }  
-        img2.src = self._get_image_url(self._plotter) + "&color=000088&dot=0.3";  
+    img.onload = function(){
+        ctx.drawImage(img,0,0); 
+        if (self._highlight != null) {
+            var img2 = new Image();  
+            img2.onload = function(){  
+                ctx.drawImage(img2,0,0);
+                
+                ctx.translate(0, canvas.height);
+                ctx.scale(1, -1);
+    
+                // draw something else
+                
+                ctx.restore();
+            }  
+            self._plotter.dot = "0.4";
+            self._plotter.color = "000088";
+            img2.src = self._get_image_url(self._plotter);
+        }
     }  
-    img.src = self._get_image_url(self._plotter) + "&color=000000&dot=0.2";  
+    self._plotter.dot = "0.4";
+    self._plotter.color = "000000";
+    img.src = self._get_image_url(self._plotter);
 };
 
 ScatterplotWidget.prototype._get_image_url = function(o) {
