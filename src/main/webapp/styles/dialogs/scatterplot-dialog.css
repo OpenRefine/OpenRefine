@@ -1,13 +1,13 @@
 .scatterplot-dialog-table-container {
     height: 500px;
-    overflow: auto;
+    overflow: scroll;
     border: 1px solid #aaa;
 }
 
 .clustering-dialog-controls {
-	margin-right: 2em;
+    margin-right: 2em;
 }
-	
+
 table.scatterplot-matrix-table {
     border-collapse: collapse;
 }
@@ -18,5 +18,5 @@ table.scatterplot-matrix-table > tbody > tr > td {
 }
 
 table.scatterplot-matrix-table img.scatterplot {
-	border: 1px solid #eee;
+    border: 1px solid #eee;
 }

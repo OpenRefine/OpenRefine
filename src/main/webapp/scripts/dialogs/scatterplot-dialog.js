@@ -1,8 +1,8 @@
 function ScatterplotDialog() {
-    this._createDialog();
     this._plot_method = "lin";
     this._plot_size = 20;
     this._dot_size = 0.1;
+    this._createDialog();
 }
 
 ScatterplotDialog.prototype._createDialog = function() {
@@ -22,7 +22,7 @@ ScatterplotDialog.prototype._createDialog = function() {
     ).appendTo(frame);
         
     var html = $(
-        '<div class="grid-layout layout-normal"><table width="100%">' +
+        '<div class="grid-layout layout-normal layout-full"><table>' +
             '<tr>' +
                 '<td>' +
                     '<span class="clustering-dialog-controls">Plot type: <select bind="plotSelector">' +
@@ -92,53 +92,64 @@ ScatterplotDialog.prototype._renderMatrix = function() {
     if (columns.length > 0) {
         var table = $('<table></table>').addClass("scatterplot-matrix-table")[0];
         
-        var wrap = function(element,cx,cy) {
-            return element.click(function() {
-                var options = {
-                    "name" : name,
-                    "x_columnName" : cx, 
-                    "y_columnName" : cy, 
-                    "x_expression" : "value",
-                    "y_expression" : "value",
-                };
-                ui.browsingEngine.addFacet("scatterplot",options);
-                //self._dismiss();
-            });
+        var createScatterplot = function(i, j) {
+            var cx = columns[i].name;
+            var cy = columns[j].name;
+            
+            var name = cx + ' (x) vs. ' + cy + ' (y)';
+            var link = $('<a href="javascript:{}"></a>')
+                .attr("title", name)
+                .click(function() {
+                    var options = {
+                        "name" : name,
+                        "x_columnName" : cx, 
+                        "y_columnName" : cy, 
+                        "x_expression" : "value",
+                        "y_expression" : "value",
+                    };
+                    ui.browsingEngine.addFacet("scatterplot", options);
+                    //self._dismiss();
+                });
+                
+            var plotter_params = { 
+                'cx' : cx, 
+                'cy' : cy,
+                'w' : self._plot_size,
+                'h' : self._plot_size,
+                'dot': self._dot_size,
+                'dim': self._plot_method
+            };
+            var params = {
+                project: theProject.id,
+                engine: JSON.stringify(ui.browsingEngine.getJSON()), 
+                plotter: JSON.stringify(plotter_params) 
+            };
+            var url = "/command/get-scatterplot?" + $.param(params);
+            var plot = $('<img src="' + url + '" />')
+                .addClass("scatterplot")
+                .attr("width", self._plot_size)
+                .attr("height", self._plot_size)
+                .appendTo(link);
+            
+            return link;
         };
-        
+
         for (var i = 0; i < columns.length; i++) {
             var tr = table.insertRow(table.rows.length);
             for (var j = 0; j < i; j++) {
-                var cx = columns[i].name;
-                var cy = columns[j].name;
-                var plotter_params = { 
-                    'cx' : cx, 
-                    'cy' : cy,
-                    'w' : self._plot_size,
-                    'h' : self._plot_size,
-                    'dot': self._dot_size,
-                    'dim': self._plot_method
-                };
-                var params = {
-                    project: theProject.id,
-                    engine: JSON.stringify(ui.browsingEngine.getJSON()), 
-                    plotter: JSON.stringify(plotter_params) 
-                }                
-                var url = "/command/get-scatterplot?" + $.param(params);
-                var name = cx + ' (x) vs. ' + cy + ' (y)';
-                var cell = $(tr.insertCell(j));
-                var link = wrap($('<a href="javascript:{}"></a>').attr("title",name),cx,cy);
-                var plot = $('<img src="' + url + '" />').addClass("scatterplot").appendTo(link);
-                link.appendTo(cell);
+                $(tr.insertCell(j)).append(createScatterplot(i,j));
             }
-            $(tr.insertCell(i)).text(columns[i]);
-            for (var j = i + 1; j < columns.length; j++) {
-                $(tr.insertCell(j)).text(" ");
-            }
+            
+            var tdColumnName = $(tr.insertCell(tr.cells.length));
+            tdColumnName
+                .text(columns[i].name)
+                .css("text-align", "left")
+                .attr("colspan", columns.length - i);
         }
+
+        var width = container.width();
+        container.empty().css("width", width + "px").append(table);
         
-        container.empty().append(table);
-                
     } else {
         container.html(
             '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">There are no columns in this dataset</div></div>'
