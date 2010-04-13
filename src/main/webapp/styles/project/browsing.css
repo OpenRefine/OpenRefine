@@ -1,6 +1,5 @@
 .browsing-panel-header {
     height: 5em;
-    text-align: center;
 }
 
 .browsing-panel-indicator {
@@ -8,6 +7,19 @@
 }
 .browsing-panel-controls {
     display: none;
+}
+.browsing-panel-help {
+    padding: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+.browsing-panel-help h1 {
+    margin-top: 0px;
+    font-size: 150%;
+    font-weight: bold;
+    color: #888;
 }
 
 ul.facets-container {
