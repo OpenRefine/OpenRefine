@@ -87,7 +87,7 @@ load_configs() {
 }
     
 check_macosx() {
-    if $DARWIN ; then
+    if [ -z "$DARWIN" ] ; then
         error "This action can only run on MacOSX"
     fi
 }
