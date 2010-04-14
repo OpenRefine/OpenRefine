@@ -87,14 +87,14 @@ load_configs() {
 }
     
 check_macosx() {
-    if [ "$SYSTEM" != 'Darwin' ]; then
+    if $DARWIN ; then
         error "This action can only run on MacOSX"
     fi
 }
 
 check_downloaders() {
-    CURL="`which curl`"
-    WGET="`which wget`"
+    CURL="`which curl 2> /dev/null`"
+    WGET="`which wget 2> /dev/null`"
     
     if [ -z "$CURL"  -a   -z "$WGET" ]; then
         error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
@@ -102,7 +102,7 @@ check_downloaders() {
 }
 
 check_unzip() {
-    UNZIP="`which unzip`"
+    UNZIP="`which unzip 2> /dev/null`"
     
     if [ -z "$UNZIP" ]; then
         error "We need 'unzip' present in PATH to expand external dependencies."
@@ -110,9 +110,9 @@ check_unzip() {
 }
     
 check_python() {
-    PYTHON="`which python`"
+    PYTHON="`which python 2> /dev/null`"
     if [ -z "$PYTHON" ]; then
-        error "This action requires you to have 'python' installed. You can download it for free at http://www.python.org/"
+        error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
     fi
     PYTHON_VERSION="`python --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
     if [ "$PYTHON_VERSION" != "2.5"  -a   "$PYTHON_VERSION" != "2.6" ]; then
@@ -191,7 +191,7 @@ load_data() {
     FILE=$1
     NAME=$2
     URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/command/create-project-from-upload"
-    CURL="`which curl`"
+    CURL="`which curl 2> /dev/null`"
     
     if [ -z "$CURL" ]; then
         error "We need 'curl' present in PATH to upload data to gridworks."
@@ -222,11 +222,13 @@ tools_prepare() {
 }
             
 ant_prepare() {
+    tools_prepare
+
     ANT_URL="http://www.apache.org/dist/ant/binaries/apache-ant-1.8.0-bin.tar.gz"
     ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
     ANT_DIR="apache-ant-1.8.0"
     
-    ANT=`which ant`
+    ANT="`which ant 2> /dev/null`"
     if [ -z "$ANT" ]; then
         if [ -z "$ANT_HOME" ]; then
             cd $GRIDWORKS_TOOLS_DIR
@@ -237,6 +239,9 @@ ant_prepare() {
                     tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
                 fi
                 export ANT_HOME="`pwd`/$ANT_DIR"
+                if $CYGWIN ; then
+                    export ANT_HOME=`cygpath --unix "$ANT_HOME"`
+                fi
             cd ..
         fi
         ANT="$ANT_HOME/bin/ant"
@@ -272,26 +277,41 @@ virtualenv_prepare() {
 
     tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
     
-    if [ ! -d "$GRIDWORKS_TOOLS_DIR/python" ]; then
-        $PYTHON $GRIDWORKS_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $GRIDWORKS_TOOLS_DIR/python
+    PYTHON_LOCAL="$GRIDWORKS_TOOLS_DIR/python"
+    if $CYGWIN ; then
+        PYTHON_LOCAL="${PYTHON_LOCAL}_win"
     fi
     
-    PYTHON_HOME="`pwd`/$GRIDWORKS_TOOLS_DIR/python"
-    PYTHON="$PYTHON_HOME/bin/python"
-    PYTHON_INSTALL="$PYTHON_HOME/bin/easy_install"
+    if [ ! -d "$PYTHON_LOCAL" ]; then
+        $PYTHON $GRIDWORKS_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
+    fi
+    
+    PYTHON_HOME="`pwd`/$PYTHON_LOCAL"
+
+    if $CYGWIN ; then
+        PYTHON="$PYTHON_HOME/Scripts/python.exe"
+        PYTHON_INSTALL="$PYTHON_HOME/Scripts/easy_install.exe"
+    else 
+        PYTHON="$PYTHON_HOME/bin/python"
+        PYTHON_INSTALL="$PYTHON_HOME/bin/easy_install"
+    fi
 }
     
 windmill_prepare() {
-    WINDMILL="`which windmill`"
+    WINDMILL="`which windmill 2> /dev/null`"
     if [ -z "$WINDMILL" ]; then
         check_python
         tools_prepare
+        virtualenv_prepare
 
-        WINDMILL="$GRIDWORKS_TOOLS_DIR/windmill"
+        if $CYGWIN ; then
+            WINDMILL="$PYTHON_HOME/Scripts/windmill.exe"
+        else 
+            WINDMILL="$PYTHON_HOME/bin/windmill"
+        fi
+        
         if [ ! -f "$WINDMILL" ]; then
-            virtualenv_prepare
             $PYTHON_INSTALL windmill
-            ln -s $PYTHON_HOME/bin/windmill $GRIDWORKS_TOOLS_DIR/windmill
         fi
     fi    
 }
@@ -334,7 +354,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    $ANT -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
+    "$ANT" -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -462,6 +482,10 @@ ui_test() {
     
     echo "Waiting for Gridworks to load..."
     sleep 5
+    check_running
+    if [ ! -z "$NOT_RUNNING" ]; then
+        sleep 10
+    fi
     echo "... proceed with the tests."
     echo ""
     
@@ -490,7 +514,7 @@ server_test() {
         echo ""
     fi
     
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_WEBAPP/WEB-INF/classes:$GRIDWORKS_TEST_DIR/java/classes:$GRIDWORKS_TEST_DIR/java/lib/*:$GRIDWORKS_LIB_DIR/*:$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_WEBAPP/WEB-INF/classes${SEP}$GRIDWORKS_TEST_DIR/java/classes${SEP}$GRIDWORKS_TEST_DIR/java/lib/*${SEP}$GRIDWORKS_LIB_DIR/*${SEP}$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
 
     if [ -z "$1" ]; then
         cd $GRIDWORKS_TEST_DIR/java/classes
@@ -529,7 +553,7 @@ run() {
         add_option "-Dgridworks.autoreloading=true"
     fi
 
-    if [ "$SYSTEM" = 'Darwin' ]; then
+    if $DARWIN ; then
         add_option "-Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns"
     fi
     
@@ -537,12 +561,12 @@ run() {
         add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
         
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
 
     #echo "$RUN_CMD"
-    #echo ""
+    #cd tooecho ""
   
     echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
@@ -550,7 +574,7 @@ run() {
     if [ -z "$FORK" ]; then
         exec $RUN_CMD
     else
-        sh -c "$RUN_CMD" &
+        $RUN_CMD &
         GRIDWORKS_PID="$!"
     fi
 }
@@ -561,7 +585,7 @@ execute() {
         echo ""
     fi
     
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS $*"
   
@@ -617,7 +641,21 @@ cd `dirname $0`
 
 OPTS=""
 
+# ---- OS-specific support --------------------------------------
+
 SYSTEM=`uname`
+
+CYGWIN=false
+DARWIN=false
+case "$SYSTEM" in
+  CYGWIN*) CYGWIN=true ;;
+  Darwin*) DARWIN=true ;;
+esac
+
+SEP=":" 
+if $CYGWIN ; then
+    SEP=";" 
+fi
 
 # ----- Load configurations -------------------------------------
 
@@ -625,21 +663,22 @@ load_configs gridworks.ini
 
 # ----- Make sure there is an appropriate java environment is available -------------
 
-if [ "$SYSTEM" = 'Darwin' ] && [ -z "$JAVA_HOME" ]; then
-    # Mac OS X defaults to Java 5. So update JAVA_HOME unless the user manually set it.
-    export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
-    JAVA="$JAVA_HOME/bin/java"
-else
-    JAVA=`which java`
-    if [ -z "$JAVA" ]; then
-        if [ "$JAVA_HOME" ]; then
-            JAVA="$JAVA_HOME/bin/java"
-            if [ ! -f "$JAVA" ] ; then
-                error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
-            fi
-        else
-            error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
+if $DARWIN ; then
+    if [ -z "$JAVA_HOME" ]; then
+        # Mac OS X defaults to Java 5. So update JAVA_HOME unless the user manually set it.
+        export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
+    fi
+fi
+
+JAVA="`which java 2> /dev/null`"
+if [ -z "$JAVA" ]; then
+    if [ "$JAVA_HOME" ]; then
+        JAVA="$JAVA_HOME/bin/java"
+        if [ ! -f "$JAVA" ] ; then
+            error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
         fi
+    else
+        error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
     fi
 fi
 
