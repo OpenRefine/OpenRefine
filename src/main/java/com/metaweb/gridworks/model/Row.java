@@ -18,7 +18,6 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.CellTuple;
 import com.metaweb.gridworks.expr.HasFields;
-import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class Row implements HasFields, Jsonizable {
     public boolean             flagged;
