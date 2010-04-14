@@ -2,8 +2,8 @@ package com.metaweb.gridworks.expr;
 
 import java.util.Properties;
 
+import org.python.core.Py;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 
 public class JythonHasFieldsWrapper extends PyObject {
     private static final long serialVersionUID = -1275353513262385099L;
@@ -21,12 +21,12 @@ public class JythonHasFieldsWrapper extends PyObject {
         String k = (String) key.__tojava__(String.class);
         Object v = _obj.getField(k, _bindings);
         if (v != null) {
-            if (v instanceof HasFields) {
-                return new JythonHasFieldsWrapper((HasFields) v, _bindings);
-            } else if (v instanceof String) {
-                return new PyString((String) v);
-            } else if (v instanceof PyObject) {
+            if (v instanceof PyObject) {
                 return (PyObject) v;
+            } else if (v instanceof HasFields) {
+                return new JythonHasFieldsWrapper((HasFields) v, _bindings);
+            } else if (Py.getAdapter().canAdapt(v)) {
+                return Py.java2py(v);
             } else {
                 return new JythonObjectWrapper(v);
             }

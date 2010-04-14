@@ -49,7 +49,7 @@ public class JythonEvaluable implements Evaluable {
 
             return unwrap(result);
         } catch (PyException e) {
-            return new EvalError(e.toString());
+            return new EvalError(e.getMessage());
         }
     }
     
