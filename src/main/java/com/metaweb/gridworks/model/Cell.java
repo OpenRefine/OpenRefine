@@ -130,9 +130,9 @@ public class Cell implements HasFields, Jsonizable {
                 if (token == JsonToken.VALUE_STRING) {
                     value = jp.getText();
                 } else if (token == JsonToken.VALUE_NUMBER_INT) {
-                    value = jp.getIntValue();
+                    value = jp.getLongValue();
                 } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
-                    value = jp.getFloatValue();
+                    value = jp.getDoubleValue();
                 } else if (token == JsonToken.VALUE_TRUE) {
                     value = true;
                 } else if (token == JsonToken.VALUE_FALSE) {

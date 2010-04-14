@@ -54,7 +54,8 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     }
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        JSONObject engineConfig = obj.has("engineConfig") && !obj.isNull("engineConfig") ?
+                obj.getJSONObject("engineConfig") : null;
         
         return new MassEditOperation(
             engineConfig,
