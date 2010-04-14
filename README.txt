@@ -47,6 +47,7 @@
    - Vishal Talwar <vishal@metaweb.com> 
    - Jeff Fry <jfry@metaweb.com>
    - Will Moffat <willmoffat@metaweb.com>
+   - James Home <jh@metaweb.com>
   
      
 
