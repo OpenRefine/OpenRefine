@@ -37,6 +37,8 @@ ScatterplotFacet.prototype.getJSON = function() {
         y_columnName : this._config.y_columnName,
         x_expression: this._config.x_expression,
         y_expression: this._config.y_expression,
+        dot: this._config.dot,
+        dim: this._config.dim,
     };
         
     return o;

@@ -194,6 +194,13 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 },
                 {},
                 {
+                    label: "Scatterplot Facet",
+                    click: function() {
+                        new ScatterplotDialog(self._column.name);
+                    }
+                },
+                {},
+                {
                     label: "Text Search",
                     click: function() {
                         ui.browsingEngine.addFacet(

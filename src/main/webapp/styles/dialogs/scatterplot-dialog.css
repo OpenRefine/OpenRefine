@@ -17,6 +17,24 @@ table.scatterplot-matrix-table > tbody > tr > td {
     vertical-align: middle;
 }
 
-table.scatterplot-matrix-table img.scatterplot {
+table.scatterplot-matrix-table td.current_column {
+	font-weight: bold;
+	font-size: 105%;
+}
+
+table.scatterplot-matrix-table div.current_column {
+    background-color: #ffeeee;
+}
+
+table.scatterplot-matrix-table .column_header {
+	text-align: right;
+	padding: 0em 0.5em;
+}
+
+table.scatterplot-matrix-table .scatterplot img {
     border: 1px solid #eee;
+}
+
+table.scatterplot-matrix-table .scatterplot img.hover {
+    background-color: #eeffee;
 }

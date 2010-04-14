@@ -7,6 +7,8 @@ function ScatterplotWidget(elmt, options) {
         'cy' : options.y_columnName,
         'xe' : options.x_expression,
         'ye' : options.y_expression,
+        'dot': options.dot,
+        'dim': options.dim
     };
     
     this._range = null;
