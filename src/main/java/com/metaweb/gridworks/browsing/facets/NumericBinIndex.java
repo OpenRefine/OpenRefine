@@ -162,7 +162,7 @@ public class NumericBinIndex {
         
         _bins = new int[(int) Math.round(binCount)];
         for (double d : allValues) {
-            int bin = (int) Math.floor((d - _min) / _step);
+            int bin = Math.max((int) Math.floor((d - _min) / _step),0);
             _bins[bin]++;
         }
     }
