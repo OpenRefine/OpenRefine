@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -31,6 +30,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.util.Streams;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
@@ -47,10 +50,6 @@ import com.metaweb.gridworks.importers.TsvCsvImporter;
 import com.metaweb.gridworks.importers.XmlImporter;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.ParsingUtilities;
-import com.oreilly.servlet.multipart.FilePart;
-import com.oreilly.servlet.multipart.MultipartParser;
-import com.oreilly.servlet.multipart.ParamPart;
-import com.oreilly.servlet.multipart.Part;
 
 public class CreateProjectCommand extends Command {
 
@@ -66,7 +65,6 @@ public class CreateProjectCommand extends Command {
              * This is why we have to parse the URL for parameters ourselves.
              * Don't call request.getParameter() before calling internalImport().
              */
-            
             Properties options = ParsingUtilities.parseUrlParameters(request);
             
             Project project = new Project();
@@ -102,47 +100,40 @@ public class CreateProjectCommand extends Command {
         Project               project,
         Properties            options
     ) throws Exception {
-        MultipartParser parser = new MultipartParser(request, 1024 * 1024 * 1024);
+
+        ServletFileUpload upload = new ServletFileUpload();
+        String url = null;
         
-        if (parser != null) {
-            Part part = null;
-            String url = null;
-            
-            while ((part = parser.readNextPart()) != null) {
-                
-                if (part.isFile()) {
-                    
-                    FilePart filePart = (FilePart) part;
-                    InputStream stream = filePart.getInputStream();
-                    String name = filePart.getFileName().toLowerCase();
+        FileItemIterator iter = upload.getItemIterator(request);
+        while (iter.hasNext()) {
+            FileItemStream item = iter.next();
+            String name = item.getFieldName().toLowerCase();
+            InputStream stream = item.openStream();
+            if (item.isFormField()) {
+                if (name.equals("raw-text")) {
+                    Reader reader = new InputStreamReader(stream,"UTF-8");
                     try {
-                        internalImportFile(project, options, name, stream);
+                        internalInvokeImporter(project, new TsvCsvImporter(), options, reader);
                     } finally {
-                        stream.close();
+                        reader.close();
                     }
-                    
-                } else if (part.isParam()) {
-                    ParamPart paramPart = (ParamPart) part;
-                    String paramName = paramPart.getName();
-                    
-                    if (paramName.equals("raw-text")) {
-                        StringReader reader = new StringReader(paramPart.getStringValue());
-                        try {
-                            internalInvokeImporter(project, new TsvCsvImporter(), options, reader);
-                        } finally {
-                            reader.close();
-                        }
-                    } else if (paramName.equals("url")) {
-                        url = paramPart.getStringValue();
-                    } else {
-                        options.put(paramName, paramPart.getStringValue());
-                    }
+                } else if (name.equals("url")) {
+                    url = Streams.asString(stream);
+                } else {
+                    options.put(name, Streams.asString(stream));
+                }
+            } else {
+                String fileName = item.getName().toLowerCase();
+                try {
+                    internalImportFile(project, options, fileName, stream);
+                } finally {
+                    stream.close();
                 }
             }
-            
-            if (url != null && url.length() > 0) {
-                internalImportURL(request, project, options, url);
-            }
+        }        
+
+        if (url != null && url.length() > 0) {
+            internalImportURL(request, project, options, url);
         }
     }
         

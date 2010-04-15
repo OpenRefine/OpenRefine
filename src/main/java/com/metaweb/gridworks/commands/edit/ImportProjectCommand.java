@@ -13,6 +13,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.util.Streams;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 
@@ -22,10 +26,6 @@ import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.ParsingUtilities;
-import com.oreilly.servlet.multipart.FilePart;
-import com.oreilly.servlet.multipart.MultipartParser;
-import com.oreilly.servlet.multipart.ParamPart;
-import com.oreilly.servlet.multipart.Part;
 
 public class ImportProjectCommand extends Command {
 
@@ -68,44 +68,34 @@ public class ImportProjectCommand extends Command {
         Properties            options,
         long                  projectID
     ) throws Exception {
-        MultipartParser parser = null;
-        try {
-            parser = new MultipartParser(request, 1024 * 1024 * 1024);
-        } catch (Exception e) {
-            // silent
-        }
         
-        if (parser != null) {
-            Part part = null;
-            String url = null;
-            
-            while ((part = parser.readNextPart()) != null) {
-                if (part.isFile()) {
-                    FilePart filePart = (FilePart) part;
-                    InputStream inputStream = filePart.getInputStream();
-                    try {
-                        internalImportInputStream(
-                        	projectID, 
-                        	inputStream, 
-                        	!filePart.getFileName().endsWith(".tar")
-                        );
-                    } finally {
-                        inputStream.close();
-                    }
-                } else if (part.isParam()) {
-                    ParamPart paramPart = (ParamPart) part;
-                    String paramName = paramPart.getName();
-                    if (paramName.equals("url")) {
-                        url = paramPart.getStringValue();
-                    } else {
-                        options.put(paramName, paramPart.getStringValue());
-                    }
+        String url = null;
+        
+        ServletFileUpload upload = new ServletFileUpload();
+        
+        FileItemIterator iter = upload.getItemIterator(request);
+        while (iter.hasNext()) {
+            FileItemStream item = iter.next();
+            String name = item.getFieldName().toLowerCase();
+            InputStream stream = item.openStream();
+            if (item.isFormField()) {
+                if (name.equals("url")) {
+                    url = Streams.asString(stream);
+                } else {
+                    options.put(name, Streams.asString(stream));
+                }
+            } else {
+                String fileName = item.getName().toLowerCase();
+                try {
+                    internalImportInputStream(projectID, stream, !fileName.endsWith(".tar"));
+                } finally {
+                    stream.close();
                 }
             }
-            
-            if (url != null && url.length() > 0) {
-                internalImportURL(request, options, projectID, url);
-            }
+        }        
+
+        if (url != null && url.length() > 0) {
+            internalImportURL(request, options, projectID, url);
         }
     }
     

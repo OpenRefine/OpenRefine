@@ -3,38 +3,38 @@
  */
 
 .imgareaselect-border1 {
-	background: url(border-v.gif) repeat-y left top;
+	border: 1px solid red;
 }
 
 .imgareaselect-border2 {
-    background: url(border-h.gif) repeat-x left top;
+    border: 1px solid red;
 }
 
 .imgareaselect-border3 {
-    background: url(border-v.gif) repeat-y right top;
+    border: 1px solid red;
 }
 
 .imgareaselect-border4 {
-    background: url(border-h.gif) repeat-x left bottom;
+    border: 1px solid red;
 }
 
 .imgareaselect-border1, .imgareaselect-border2,
 .imgareaselect-border3, .imgareaselect-border4 {
-    opacity: 0.5;
-    filter: alpha(opacity=50);
+    opacity: 0.2;
+    filter: alpha(opacity=20);
 }
 
 .imgareaselect-handle {
     background-color: #fff;
     border: solid 1px #000;
-    opacity: 0.5;
-    filter: alpha(opacity=50);
+    opacity: 0.2;
+    filter: alpha(opacity=20);
 }
 
 .imgareaselect-outer {
     background-color: #000;
-    opacity: 0.5;
-    filter: alpha(opacity=50);
+    opacity: 0.2;
+    filter: alpha(opacity=20);
 }
 
 .imgareaselect-selection {  

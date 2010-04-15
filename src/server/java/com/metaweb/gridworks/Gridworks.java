@@ -40,6 +40,7 @@ public class Gridworks {
     static private final String VERSION = "1.0a";
     static private final String DEFAULT_HOST = "127.0.0.1";
     static private final int DEFAULT_PORT = 3333;
+    static private final int MAX_UPLOAD_SIZE = 1024 * 1024 * 1024;
     
     static private File tempDir;
     
@@ -73,7 +74,15 @@ public class Gridworks {
     public static File getTempFile(String name) {
         return new File(tempDir, name);
     }
+
+    public static File getTempDir() {
+        return tempDir;
+    }
     
+    public static int getMaxUploadSize() {
+        return Configurations.getInteger("gridworks.max_upload_size",MAX_UPLOAD_SIZE);
+    }
+
     public static void main(String[] args) throws Exception  {
         
         // tell jetty to use SLF4J for logging instead of its own stuff

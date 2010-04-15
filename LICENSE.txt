@@ -35,11 +35,15 @@
 See the 'licenses' directory for a list of the licenses for the libraries we depend on,
 ordered here by license:
 
+Apache License 2.0
+------------------
+
 licenses/apache2.0.LICENSE.txt
     calendar-parser (package com.metaweb.gridworks.expr.util)
     ant-tools 
     commons-lang
     commons-codec
+    commons-fileupload
     jackson
     jdatapath
     jetty
@@ -50,44 +54,47 @@ licenses/apache2.0.LICENSE.txt
     poi-ooxml-schemas
     servlet-api
     xmlbeans
+
+BSD
+---
     
-licenses/secondstring.LICENSE.txt (BSD family)
+licenses/secondstring.LICENSE.txt
     secondstring
 
-licenses/dom4j.LICENSE.txt (BSD family)
+licenses/dom4j.LICENSE.txt
     dom4j
     
-licenses/simile.LICENSE.txt (BSD family)
-    vicino
+licenses/simile.LICENSE.txt
+    simile vicino
 
-licenses/arithcode.LICENSE.txt (BSD family)
+licenses/arithcode.LICENSE.txt
     arithcode
 
-licenses/freebase_suggest.LICENSE.txt (BSD family)
+licenses/freebase_suggest.LICENSE.txt
     freebase_suggest
 
-licenses/jquery.LICENSE.txt (MIT)
+MIT
+---
+
+licenses/jquery.LICENSE.txt
     jquery
 
-licenses/jquery_ui.LICENSE.txt (MIT)
+licenses/jquery_ui.LICENSE.txt
     jquery_ui
 
-licenses/datejs.LICENSE.txt (MIT)
+licenses/datejs.LICENSE.txt
     datejs
 
-licenses/imgareaselect.LICENSE.txt (MIT)
+licenses/imgareaselect.LICENSE.txt
     imgareaselect
        
-licenses/slf4j.LICENSE.txt (MIT)
+licenses/slf4j.LICENSE.txt
     slf4j-api
     slf4j-log4j12
     jcl-over-slf4j
        
-licenses/icu4j.LICENSE.txt (MIT family)
+licenses/icu4j.LICENSE.txt
     icu4j
    
-licenses/json.LICENSE.txt (MIT family)    
+licenses/json.LICENSE.txt
     json
-    
-licenses/cos.LICENSE.txt
-    cos

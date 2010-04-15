@@ -73,7 +73,7 @@ ScatterplotFacet.prototype._initializeUI = function() {
     this._messageDiv = $('<div>').text("Loading...").addClass("facet-scatterplot-message").appendTo(bodyDiv);
     this._plotDiv = $('<div>').addClass("facet-scatterplot-plot").appendTo(bodyDiv);
     this._statusDiv = $('<div>').addClass("facet-scatterplot-status").appendTo(bodyDiv);
-        
+            
     this._plot = new ScatterplotWidget(this._plotDiv, this._config); 
 };
 

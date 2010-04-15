@@ -55,6 +55,8 @@ ScatterplotWidget.prototype._update = function() {
 };
 
 ScatterplotWidget.prototype._initializeUI = function() {
+    self = this;
+    
     this._elmt
         .empty()
         .hide()
@@ -62,6 +64,18 @@ ScatterplotWidget.prototype._initializeUI = function() {
         .html('<canvas bind="canvas"></canvas>');
         
     this._elmts = DOM.bind(this._elmt);
+    this._elmts.canvas.imgAreaSelect({ 
+        handles: false,
+        fadeSpeed: 70,
+        onSelectEnd: function(elmt, selection) {
+            self.highlight(
+                selection.x1,
+                selection.x2,
+                self._plotter.h - selection.y2,
+                self._plotter.h - selection.y1
+            );
+        }
+    });
 };
 
 ScatterplotWidget.prototype._resize = function() {
@@ -89,19 +103,15 @@ ScatterplotWidget.prototype._render = function() {
             var img2 = new Image();  
             img2.onload = function(){  
                 ctx.drawImage(img2,0,0);
-                
-                ctx.translate(0, canvas.height);
-                ctx.scale(1, -1);
-    
-                // draw something else
-                
                 ctx.restore();
             }  
             self._plotter.color = "000088";
+            console.log(self._plotter);
             img2.src = self._get_image_url(self._plotter);
         }
     }  
     self._plotter.color = "000000";
+    console.log(self._plotter);
     img.src = self._get_image_url(self._plotter);
 };
 
