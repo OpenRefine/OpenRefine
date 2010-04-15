@@ -431,12 +431,24 @@ public class ProjectManager {
             
             File dir = getProjectDir(projectID);
             if (dir.exists()) {
-                dir.delete();
+                deleteDir(dir);
             }
         }
         
         saveWorkspace();
-    }    
+    }
+    
+    static protected void deleteDir(File dir) {
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                deleteDir(file);
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
+    }
+    
     protected void load() {
         if (loadFromFile(new File(_workspaceDir, "workspace.json"))) return;
         if (loadFromFile(new File(_workspaceDir, "workspace.temp.json"))) return;
