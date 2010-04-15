@@ -74,7 +74,7 @@ ScatterplotDialog.prototype._createDialog = function() {
     var left_footer = footer.find(".left");    
     
     var right_footer = footer.find(".right");    
-    $('<button></button>').text("Close").click(function() { self._dismiss(); }).appendTo(right_footer);
+    $('<button></button>').text("Done").click(function() { self._dismiss(); }).appendTo(right_footer);
     
     this._level = DialogSystem.showDialog(frame);
     this._renderMatrix();
