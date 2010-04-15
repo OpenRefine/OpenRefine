@@ -23,6 +23,7 @@ public class GetScatterplotCommand extends Command {
         
         try {
             //long start = System.currentTimeMillis();
+            
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
             JSONObject conf = getJsonParameter(request,"plotter");
@@ -38,7 +39,7 @@ public class GetScatterplotCommand extends Command {
                 sos.close();
             }
             
-            //Gridworks.log("drawn scatterplot in " + (System.currentTimeMillis() - start) + "ms");
+            //Gridworks.log("Drawn scatterplot in " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);

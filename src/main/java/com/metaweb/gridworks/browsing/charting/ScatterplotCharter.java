@@ -32,13 +32,13 @@ public class ScatterplotCharter {
 
     private static final int LIN = 0;
     private static final int LOG = 1;
-    private static final int RADIAL = 2;
+    private static final int POLAR = 2;
     
     private static int getAxisDim(String type) {
         if ("log".equals(type)) {
             return LOG;
-        } else if ("rad".equals(type) || "radial".equals(type)) {
-            return RADIAL;
+        } else if ("pol".equals(type) || "polar".equals(type)) {
+            return POLAR;
         } else {
             return LIN;
         }
@@ -108,17 +108,17 @@ public class ScatterplotCharter {
                 max_y = index_y.getMax();
             }
             
-            width = (o.has("w")) ? o.getInt("w") : 20;
-            height = (o.has("h")) ? o.getInt("h") : 20;
+            width = (o.has("w")) ? o.getInt("w") : 50;
+            height = (o.has("h")) ? o.getInt("h") : 50;
             
-            dot = (o.has("dot")) ? o.getDouble("dot") : 0.1d;
-            
+            dot = (o.has("dot")) ? o.getDouble("dot") : 0.2d;
+                        
             dim = (o.has("dim")) ? getAxisDim(o.getString("dim")) : LIN;
             
             delta_x = max_x - min_x;
             delta_y = max_y - min_y;
             
-            if (dim == RADIAL) {
+            if (dim == POLAR) {
                 rx = (o.has("rx")) ? o.getDouble("rx") : 0.0d;
                 ry = (o.has("ry")) ? o.getDouble("ry") : 0.0d;
             } else if (dim == LOG) {
@@ -181,7 +181,7 @@ public class ScatterplotCharter {
                     if (dim == LOG) {
                         x = Math.log10(xv - min_x) * w / log_delta_x - dot / 2;
                         y = Math.log10(yv - min_y) * h / log_delta_y - dot / 2;
-                    } else if (dim == RADIAL) {
+                    } else if (dim == POLAR) {
                         x = (xv - min_x) * w / delta_x - dot / 2;
                         y = (yv - min_y) * h / delta_y - dot / 2;
                     } else {

@@ -97,12 +97,10 @@ ScatterplotWidget.prototype._render = function() {
                 
                 ctx.restore();
             }  
-            self._plotter.dot = "0.4";
             self._plotter.color = "000088";
             img2.src = self._get_image_url(self._plotter);
         }
     }  
-    self._plotter.dot = "0.4";
     self._plotter.color = "000000";
     img.src = self._get_image_url(self._plotter);
 };

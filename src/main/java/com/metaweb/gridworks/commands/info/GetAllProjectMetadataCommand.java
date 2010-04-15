@@ -29,7 +29,6 @@ public class GetAllProjectMetadataCommand extends Command {
             Properties options = new Properties();
             
             writer.object();
-            
             writer.key("projects");
                 writer.object();
                 Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
@@ -41,7 +40,6 @@ public class GetAllProjectMetadataCommand extends Command {
                     }
                 }
                 writer.endObject();
-                
             writer.endObject();
         } catch (JSONException e) {
             respondException(response, e);
