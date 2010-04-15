@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 import org.json.JSONException;
@@ -104,6 +105,17 @@ public class Cell implements HasFields, Jsonizable {
         }
         
         return new Cell(value, recon);
+    }
+    
+    static public Cell loadStreaming(String s, Map<Long, Recon> reconCache) throws Exception {
+        JsonFactory jsonFactory = new JsonFactory(); 
+        JsonParser jp = jsonFactory.createJsonParser(s);
+        
+        if (jp.nextToken() != JsonToken.START_OBJECT) {
+            return null;
+        }
+        
+        return loadStreaming(jp, reconCache);
     }
     
     static public Cell loadStreaming(JsonParser jp, Map<Long, Recon> reconCache) throws Exception {

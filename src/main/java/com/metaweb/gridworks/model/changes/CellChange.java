@@ -72,9 +72,9 @@ public class CellChange implements Change {
             } else if ("cell".equals(field)) {
                 cellIndex = Integer.parseInt(value);
             } else if ("new".equals(field) && value.length() > 0) {
-                newCell = Cell.load(value, reconCache);
+                newCell = Cell.loadStreaming(value, reconCache);
             } else if ("old".equals(field) && value.length() > 0) {
-                oldCell = Cell.load(value, reconCache);
+                oldCell = Cell.loadStreaming(value, reconCache);
             }
         }
         

@@ -157,10 +157,12 @@ public class ExtendDataOperation extends EngineDependentOperation {
             }.init(rowIndices));
         }
         
-        protected void extendRows(List<Integer> rowIndices, List<DataExtension> dataExtensions, int from, int to) {
+        protected int extendRows(List<Integer> rowIndices, List<DataExtension> dataExtensions, int from, int limit) {
             Set<String> guids = new HashSet<String>();
-        	for (int i = from; i < to; i++) {
-        		int index = rowIndices.get(i);
+            
+            int end;
+        	for (end = from; end < limit && guids.size() < 10; end++) {
+        		int index = rowIndices.get(end);
         		Row row = _project.rows.get(index);
         		Cell cell = row.getCell(_cellIndex);
         		
@@ -174,7 +176,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
 				map = new HashMap<String, DataExtension>();
 			}
 			
-        	for (int i = from; i < to; i++) {
+        	for (int i = from; i < end; i++) {
         		int index = rowIndices.get(i);
         		Row row = _project.rows.get(index);
         		Cell cell = row.getCell(_cellIndex);
@@ -186,6 +188,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
         			dataExtensions.add(null);
         		}
         	}
+        	
+        	return end;
         }
         
         public void run() {
@@ -201,9 +205,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             
             int start = 0;
             while (start < rowIndices.size()) {
-            	int end = Math.min(start + 20, rowIndices.size());
-            	
-            	extendRows(rowIndices, dataExtensions, start, end);
+            	int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size());
             	start = end;
             	
                 _progress = end * 100 / rowIndices.size();
