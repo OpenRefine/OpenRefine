@@ -7,8 +7,9 @@ function HistoryWidget(div, tabHeader) {
 HistoryWidget.prototype.resize = function() {
     var body = this._div.find(".history-panel-body");
     var footer = this._div.find(".history-panel-footer");
+    var bodyPaddings = body.outerHeight(true) - body.height();
     
-    body.css("height", (this._div.height() - footer.innerHeight(true)) + "px");
+    body.css("height", (this._div.height() - footer.outerHeight(true) - bodyPaddings) + "px");
 };
 
 HistoryWidget.prototype.update = function(onDone) {
@@ -35,6 +36,11 @@ HistoryWidget.prototype._render = function() {
         .empty()
         .unbind()
         .html(
+            '<div class="history-panel-help" bind="helpDiv">' +
+                '<h1>Don\'t worry ...</h1>' +
+                '<p>about making mistakes. Every change you make will be shown here, and you can undo changes at any point.</p>' +
+                '<p><a href="">Learn more &raquo;</a></p>' +
+            '</div>' +
             '<div class="history-panel-body" bind="bodyDiv">' +
                 '<div class="history-past" bind="pastDiv"></div>' +
                 '<div class="history-now" bind="nowDiv">done upto here</div>' +
@@ -56,22 +62,28 @@ HistoryWidget.prototype._render = function() {
         return a;
     };
     
-    if (!this._data.past.length) {
-        elmts.pastDiv.html('<div class="history-panel-message">No change to undo</div>');
-    } else {
-        for (var i = 0; i < this._data.past.length; i++) {
-            var entry = this._data.past[i];
-            renderEntry(elmts.pastDiv, entry, i === 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
+    if (this._data.past.length > 0 || this._data.future.length > 0) {
+        if (!this._data.past.length) {
+            elmts.pastDiv.html('<div class="history-panel-message">No change to undo</div>');
+        } else {
+            for (var i = 0; i < this._data.past.length; i++) {
+                var entry = this._data.past[i];
+                renderEntry(elmts.pastDiv, entry, i === 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
+            }
         }
-    }
     
-    if (!this._data.future.length) {
-        elmts.futureDiv.html('<div class="history-panel-message">No change to redo</div>');
-    } else {
-        for (var i = 0; i < this._data.future.length; i++) {
-            var entry = this._data.future[i];
-            renderEntry(elmts.futureDiv, entry, entry.id, "Redo to here");
+        if (!this._data.future.length) {
+            elmts.futureDiv.html('<div class="history-panel-message">No change to redo</div>');
+        } else {
+            for (var i = 0; i < this._data.future.length; i++) {
+                var entry = this._data.future[i];
+                renderEntry(elmts.futureDiv, entry, entry.id, "Redo to here");
+            }
         }
+        
+        elmts.helpDiv.hide();
+    } else {
+        elmts.bodyDiv.hide();
     }
     
     elmts.extractLink.click(function() { self._extractOperations(); });
@@ -79,7 +91,10 @@ HistoryWidget.prototype._render = function() {
     
     this.resize();
     
-    elmts.bodyDiv[0].scrollTop = elmts.nowDiv[0].offsetTop + elmts.nowDiv[0].offsetHeight - elmts.bodyDiv[0].offsetHeight;
+    elmts.bodyDiv[0].scrollTop = 
+        elmts.nowDiv[0].offsetTop + 
+        elmts.nowDiv[0].offsetHeight - 
+        elmts.bodyDiv[0].offsetHeight;
 };
 
 HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {

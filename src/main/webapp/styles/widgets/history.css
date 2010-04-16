@@ -1,3 +1,17 @@
+.history-panel-help {
+    padding: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+.history-panel-help h1 {
+    margin-top: 0px;
+    font-size: 150%;
+    font-weight: bold;
+    color: #888;
+}
+
 .history-panel-body {
     background: #fff;
     overflow: auto;

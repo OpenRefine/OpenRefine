@@ -45,11 +45,14 @@ function resize() {
 }
 
 function resizeTabs() {
-    var totalHeight = ui.leftPanelTabs.height();
-    var headerHeight = ui.leftPanelTabs.find(".ui-tabs-nav").innerHeight();
-    var tabPanels = ui.leftPanelTabs.find(".ui-tabs-panel")
-    var paddings = tabPanels.innerHeight(true) - tabPanels.height();
-    tabPanels.height(totalHeight - headerHeight - paddings);
+    var totalHeight = ui.leftPanel.height();
+    var headerHeight = ui.leftPanelTabs.find(".ui-tabs-nav").outerHeight(true);
+    
+    var visibleTabPanels = ui.leftPanelTabs.find(".ui-tabs-panel:not(.ui-tabs-hide)");
+    var paddings = visibleTabPanels.innerHeight(true) - visibleTabPanels.height();
+    
+    var allTabPanels = ui.leftPanelTabs.find(".ui-tabs-panel");
+    allTabPanels.height(totalHeight - headerHeight - paddings - 1);
 }
 
 function resizeAll() {

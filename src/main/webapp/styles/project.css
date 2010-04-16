@@ -48,7 +48,7 @@ body {
 .left-panel {
     position: fixed;
     background: white;
-    overflow: visible;
+    overflow: hidden;
     padding: 0px;
     font-size: 12px;
 }
@@ -111,6 +111,7 @@ body {
     background: #DBE8EB;
     -moz-border-radius-bottomleft: 7px;
     -webkit-border-bottom-left-radius: 7px;
+    overflow: hidden;
 }
 
 .facet-panel {
