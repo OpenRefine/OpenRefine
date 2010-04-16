@@ -46,6 +46,7 @@ import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.importers.ExcelImporter;
 import com.metaweb.gridworks.importers.Importer;
+import com.metaweb.gridworks.importers.MarcImporter;
 import com.metaweb.gridworks.importers.TsvCsvImporter;
 import com.metaweb.gridworks.importers.XmlImporter;
 import com.metaweb.gridworks.model.Project;
@@ -473,6 +474,8 @@ public class CreateProjectCommand extends Command {
                       "application/atom+xml".equals(contentType) ||
                       "application/rdf+xml".equals(contentType)) {
                 return new XmlImporter();
+            } else if ("application/marc".equals(contentType)) {
+                return new MarcImporter();
             }
         } else if (fileName != null) {
             fileName = fileName.toLowerCase();
@@ -487,6 +490,13 @@ public class CreateProjectCommand extends Command {
                     fileName.endsWith(".rss")
                 ) {
                 return new XmlImporter(); 
+            } else if (
+                    fileName.endsWith(".mrc") || 
+                    fileName.endsWith(".marc") || 
+                    fileName.contains(".mrc.") || 
+                    fileName.contains(".marc.")
+                ) {
+                return new MarcImporter();
             }
         }
         
