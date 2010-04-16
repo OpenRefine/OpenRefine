@@ -63,7 +63,14 @@ public class TsvExporter implements Exporter {
                                 Cell cell = row.cells.get(cellIndex);
                                 if (cell != null && cell.value != null) {
                                     Object v = cell.value;
-                                    writer.write(v instanceof String ? ((String) v) : v.toString());
+                                    String s = v instanceof String ? ((String) v) : v.toString();
+                                    
+                                    s = s.replace("\\", "\\\\")
+                                        .replace("\n", "\\n")
+                                        .replace("\r", "\\r")
+                                        .replace("\t", "\\t");
+                                    
+                                    writer.write(s);
                                 }
                             }
                         }
