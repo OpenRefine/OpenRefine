@@ -1,3 +1,19 @@
+.viewPanel-summary-row-count {
+    font-size: 150%;
+    font-weight: bold;
+}
+a.viewPanel-pagingControls-page {
+    margin: 0 2px;
+    padding: 2px 5px;
+    font-weight: bold;
+}
+a.viewPanel-pagingControls-page.inaction {
+    background: #aaa;
+    color: #eee;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
 .data-table-container {
     border: 1px solid #ccc;
     overflow: auto;
@@ -51,15 +67,15 @@ table.column-header-layout td {
 }
 a.column-header-menu {
     display: block;
-    margin-left: 5px;
-    width: 19px;
-    height: 19px;
+    margin-right: 5px;
+    width: 17px;
+    height: 23px;
     background-image: url(../../images/menu-dropdown.png);
     background-repeat: no-repeat;
     background-position: 0px 0px;
 }
 a.column-header-menu:hover {
-    background-position: -19px 0px;
+    background-position: -17px 0px;
 }
 .column-header-recon-stats-bar {
     margin-top: 5px;
@@ -80,11 +96,6 @@ a.column-header-menu:hover {
     background: #6d6;
 }
 
-
-.viewPanel-summary-row-count {
-    font-size: 150%;
-    font-weight: bold;
-}
 table.viewPanel-header {
     border-collapse: collapse;
     width: 100%;

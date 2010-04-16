@@ -57,7 +57,7 @@ DataTableView.prototype._renderSummaryText = function(elmt) {
         summaryText = from + ' to ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> rows';
     } else {
         summaryText = from + ' to ' + to + ' of <span class="viewPanel-summary-row-count">' + 
-            (theProject.rowModel.filtered) + '</span> rows (filtered from ' + (theProject.rowModel.total) + ' rows total)';
+            (theProject.rowModel.filtered) + '</span> matching rows (' + (theProject.rowModel.total) + ' total)';
     }
     $('<span>').html(summaryText).appendTo(elmt);
 };
@@ -89,9 +89,11 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     var sizes = [ 10, 20, 25, 50 ];
     var renderPageSize = function(index) {
         var pageSize = sizes[index];
-        var a = $('<a href="javascript:{}"></a>').appendTo(pageSizeControls);
+        var a = $('<a href="javascript:{}"></a>')
+            .addClass("viewPanel-pagingControls-page")
+            .appendTo(pageSizeControls);
         if (pageSize == self._pageSize) {
-            a.text("[" + pageSize + "]").addClass("inaction");
+            a.text(pageSize).addClass("inaction");
         } else {
             a.text(pageSize).addClass("action").click(function(evt) {
                 self._pageSize = pageSize;
@@ -198,10 +200,11 @@ DataTableView.prototype._renderDataTable = function(table) {
             .attr("colspan", "2")
             .addClass("column-header")
             .html(
-                '<table class="column-header-layout"><tr><td>&nbsp;</td>' +
+                '<table class="column-header-layout"><tr>' +
                     '<td width="1%">' +
                         '<a class="column-header-menu" bind="dropdownMenu">&nbsp;</a>' +
                     '</td>' +
+                    '<td>&nbsp;</td>' +
                 '</tr></table>'
             )
     ).dropdownMenu.click(function() {
@@ -325,7 +328,27 @@ DataTableView.prototype._onClickLastPage = function(elmt, evt) {
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     self = this;
     MenuSystem.createAndShowStandardMenu([
-        {   label: "Edit",
+        {   label: "Facet",
+            submenu: [
+                {
+                    label: "Facet by Star",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : "Starred Rows",
+                                "columnName" : "", 
+                                "expression" : "row.starred"
+                            },
+                            {
+                                "scroll" : false
+                            }
+                        );
+                    }
+                }
+            ]
+        },
+        {   label: "Edit Rows",
             submenu: [
                 {
                     label: "Star Rows",
@@ -341,29 +364,9 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 },
                 {},
                 {
-                    label: "Remove Visible Rows",
+                    label: "Remove Matching Rows",
                     click: function() {
                         Gridworks.postProcess("remove-rows", {}, null, { rowMetadataChanged: true });
-                    }
-                }
-            ]
-        },
-        {   label: "Filter",
-            submenu: [
-                {
-                    label: "By Star",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : "Starred Rows",
-                                "columnName" : "", 
-                                "expression" : "row.starred"
-                            },
-                            {
-                                "scroll" : false
-                            }
-                        );
                     }
                 }
             ]

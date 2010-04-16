@@ -13,10 +13,10 @@ DataTableColumnHeaderUI.prototype._render = function() {
     var html = $(
         '<table class="column-header-layout">' +
             '<tr>' +
-                '<td bind="nameContainer"></td>' +
                 '<td width="1%">' +
                     '<a class="column-header-menu" bind="dropdownMenu">&nbsp;</a>' +
                 '</td>' +
+                '<td bind="nameContainer"></td>' +
             '</tr>' +
         '</table>' +
         '<div style="display:none;" bind="reconStatsContainer"></div>'
@@ -59,8 +59,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     self = this;
     MenuSystem.createAndShowStandardMenu([
         {
-            label: "Filter",
-            tooltip: "Filter rows by this column's cell content or characteristics",
+            label: "Facet",
             submenu: [
                 {
                     label: "Text Facet",
@@ -76,29 +75,6 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     }
                 },
                 {
-                    label: "Custom Text Facet ...",
-                    click: function() { self._doFilterByExpressionPrompt("value", "list"); }
-                },
-                {
-                    label: "Common Text Facets",
-                    submenu: [
-                        {
-                            label: "Word Facet",
-                            click: function() {
-                                ui.browsingEngine.addFacet(
-                                    "list", 
-                                    {
-                                        "name" : self._column.name + " value.split(' ')",
-                                        "columnName" : self._column.name, 
-                                        "expression" : "value.split(' ')"
-                                    }
-                                );
-                            }
-                        }
-                    ]
-                },
-                {},
-                {
                     label: "Numeric Facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -113,12 +89,37 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     }
                 },
                 {
+                    label: "Scatterplot Facet",
+                    click: function() {
+                        new ScatterplotDialog(self._column.name);
+                    }
+                },
+                {},
+                {
+                    label: "Custom Text Facet ...",
+                    click: function() { self._doFilterByExpressionPrompt("value", "list"); }
+                },
+                {
                     label: "Custom Numeric Facet ...",
                     click: function() { self._doFilterByExpressionPrompt("value", "range"); }
                 },
                 {
-                    label: "Common Numeric Facets",
+                    label: "Customized Facets",
                     submenu: [
+                        {
+                            label: "Word Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name + " value.split(' ')",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "value.split(' ')"
+                                    }
+                                );
+                            }
+                        },
+                        {},
                         {
                             label: "Numeric Log Facet",
                             click: function() {
@@ -189,73 +190,51 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                     }
                                 );
                             }
+                        },
+                        {},
+                        {
+                            label: "Facet by Error",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name + ": Error?",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "isError(value)"
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "Facet by Blank",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name + ": Blank?",
+                                        "columnName" : self._column.name, 
+                                        "expression" : "isBlank(value)"
+                                    }
+                                );
+                            }
                         }
                     ]
-                },
-                {},
-                {
-                    label: "Scatterplot Facet",
-                    click: function() {
-                        new ScatterplotDialog(self._column.name);
-                    }
-                },
-                {},
-                {
-                    label: "Text Search",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "text", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "mode" : "text",
-                                "caseSensitive" : false
-                            }
-                        );
-                    }
-                },
-                {
-                    label: "Regular Expression Search",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "text", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "mode" : "regex",
-                                "caseSensitive" : true
-                            }
-                        );
-                    }
-                },
-                {},
-                {
-                    label: "By Error",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name + ": Error?",
-                                "columnName" : self._column.name, 
-                                "expression" : "isError(value)"
-                            }
-                        );
-                    }
-                },
-                {
-                    label: "By Blank",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name + ": Blank?",
-                                "columnName" : self._column.name, 
-                                "expression" : "isBlank(value)"
-                            }
-                        );
-                    }
                 }
             ]
+        },
+        {
+            label: "Text Filter",
+            click: function() {
+                ui.browsingEngine.addFacet(
+                    "text", 
+                    {
+                        "name" : self._column.name,
+                        "columnName" : self._column.name, 
+                        "mode" : "text",
+                        "caseSensitive" : false
+                    }
+                );
+            }
         },
         {},
         {
