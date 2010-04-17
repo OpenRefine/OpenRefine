@@ -34,7 +34,7 @@ ScatterplotFacet.prototype.getJSON = function() {
 };
 
 ScatterplotFacet.prototype.hasSelection = function() {
-    // TODO
+    return ("from_x" in this._config);
 };
 
 ScatterplotFacet.prototype._initializeUI = function() {
@@ -61,7 +61,7 @@ ScatterplotFacet.prototype._initializeUI = function() {
     
     var params = {
         project: theProject.id,
-        engine: JSON.stringify(ui.browsingEngine.getJSON()), 
+        engine: JSON.stringify(ui.browsingEngine.getJSON(false, this)), 
         plotter: JSON.stringify(this._config) 
     };
     var url = "/command/get-scatterplot?" + $.param(params);

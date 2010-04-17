@@ -67,7 +67,11 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
             if (vx instanceof Number && vy instanceof Number) {
                 double dx = ((Number) vx).doubleValue();
                 double dy = ((Number) vy).doubleValue();
-                return (!Double.isInfinite(dx) && !Double.isNaN(dx) && !Double.isInfinite(dy) && !Double.isNaN(dy) && checkValue(dx,dy));
+                return (!Double.isInfinite(dx) && 
+                        !Double.isNaN(dx) && 
+                        !Double.isInfinite(dy) && 
+                        !Double.isNaN(dy) && 
+                        checkValues(dx,dy));
             } else {
                 return false;
             }

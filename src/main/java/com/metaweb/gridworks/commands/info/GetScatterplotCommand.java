@@ -63,11 +63,6 @@ public class GetScatterplotCommand extends Command {
         double min_y = 0;
         double max_x = 0;
         double max_y = 0;
-
-        double from_x = 0;
-        double to_x = 0;
-        double from_y = 0;
-        double to_y = 0;
         
         int columnIndex_x = 0;
         int columnIndex_y = 0;
@@ -105,11 +100,6 @@ public class GetScatterplotCommand extends Command {
             Gridworks.warn("error parsing expression", e);
         }
         
-        if (o.has(ScatterplotFacet.FROM_X) && o.has(ScatterplotFacet.TO_X)) {
-            from_x = o.getDouble(ScatterplotFacet.FROM_X);
-            to_x = o.getDouble(ScatterplotFacet.TO_X);
-        }
-        
         String columnName_y = o.getString(ScatterplotFacet.Y_COLUMN_NAME);
         String expression_y = (o.has(ScatterplotFacet.Y_EXPRESSION)) ? o.getString(ScatterplotFacet.Y_EXPRESSION) : "value";
         
@@ -126,11 +116,6 @@ public class GetScatterplotCommand extends Command {
             eval_y = MetaParser.parse(expression_y);
         } catch (ParsingException e) {
             Gridworks.warn("error parsing expression", e);
-        }
-        
-        if (o.has(ScatterplotFacet.FROM_Y) && o.has(ScatterplotFacet.TO_Y)) {
-            from_y = o.getDouble(ScatterplotFacet.FROM_Y);
-            to_y = o.getDouble(ScatterplotFacet.TO_Y);
         }
         
         NumericBinIndex index_x = null;
@@ -157,8 +142,7 @@ public class GetScatterplotCommand extends Command {
         if (index_x != null && index_y != null && index_x.isNumeric() && index_y.isNumeric()) {
             ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
                     columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                    size, dim_x, dim_y, rotation, dot, color,
-                    from_x, from_y, to_x, to_y
+                    size, dim_x, dim_y, rotation, dot, color
                   );
             FilteredRows filteredRows = engine.getAllFilteredRows(false);
             filteredRows.accept(project, drawer);

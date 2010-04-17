@@ -166,6 +166,7 @@ public class ScatterplotFacet implements Facet {
         name = o.getString(NAME);
 
         size = (o.has(SIZE)) ? o.getInt(SIZE) : 100;
+        l = size;
 
         dot = (o.has(DOT)) ? o.getInt(DOT) : 0.5d;
         
@@ -184,6 +185,10 @@ public class ScatterplotFacet implements Facet {
             Column x_column = project.columnModel.getColumnByName(columnName_x);
             if (x_column != null) {
                 columnIndex_x = x_column.getCellIndex();
+                
+                NumericBinIndex index_x = ScatterplotFacet.getBinIndex(project, x_column, eval_x, expression_x);
+                min_x = index_x.getMin();
+                max_x = index_x.getMax();
             } else {
                 errorMessage_x = "No column named " + columnName_x;
             }
@@ -210,6 +215,10 @@ public class ScatterplotFacet implements Facet {
             Column y_column = project.columnModel.getColumnByName(columnName_y);
             if (y_column != null) {
                 columnIndex_y = y_column.getCellIndex();
+                
+                NumericBinIndex index_y = ScatterplotFacet.getBinIndex(project, y_column, eval_y, expression_y);
+                min_y = index_y.getMin();
+                max_y = index_y.getMax();
             } else {
                 errorMessage_y = "No column named " + columnName_y;
             }
@@ -239,8 +248,11 @@ public class ScatterplotFacet implements Facet {
                 protected boolean checkValues(double x, double y) {
                     Point2D.Double p = new Point2D.Double(x,y);
                     p = translateCoordinates(p, dim_x, dim_y, rotation, l, min_x, max_x, min_y, max_y);
+                    
                     boolean value = p.x >= from_x && p.x < to_x && p.y >= from_y && p.y < to_y;
-                    System.out.println(p + " " + value);
+                    
+                    //System.out.println(p + " " + value);
+                    
                     return value;
                 };
             };
@@ -283,8 +295,7 @@ public class ScatterplotFacet implements Facet {
                 if (index_x.isNumeric() && index_y.isNumeric()) {
                     ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
                       columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                      size, dim_x, dim_y, rotation, dot, color,
-                      from_x, from_y, to_x, to_y
+                      size, dim_x, dim_y, rotation, dot, color
                     );
                     filteredRows.accept(project, drawer);
                  

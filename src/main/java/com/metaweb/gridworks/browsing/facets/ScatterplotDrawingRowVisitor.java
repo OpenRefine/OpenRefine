@@ -27,11 +27,6 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
     double l;
     double dot;
 
-    double from_x;
-    double from_y;
-    double to_x;
-    double to_y;
-
     double min_x;
     double max_x;
     double min_y;
@@ -44,8 +39,7 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
     
     public ScatterplotDrawingRowVisitor(
             int col_x, int col_y, double min_x, double max_x, double min_y, double max_y,
-            int size, int dim_x, int dim_y, int rotation, double dot, Color color,
-            double from_x, double from_y, double to_x, double to_y)  
+            int size, int dim_x, int dim_y, int rotation, double dot, Color color)  
     {
         this.col_x = col_x;
         this.col_y = col_y;
@@ -59,10 +53,6 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
         this.dim_x = dim_x;
         this.dim_y = dim_y;
         this.rotation = rotation;
-        this.from_x = from_x;
-        this.from_y = from_y;
-        this.to_x = to_x;
-        this.to_y = to_y;
         
         l = (double) size;
 

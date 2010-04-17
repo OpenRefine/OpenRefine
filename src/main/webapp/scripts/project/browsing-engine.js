@@ -98,14 +98,14 @@ BrowsingEngine.prototype._updateFacetOrder = function() {
     this._facets = newFacets;
 };
 
-BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets) {
+BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
     var a = {
         facets: [],
         includeDependent: this._elmts.includeDependentRowsCheck[0].checked
     };
     for (var i = 0; i < this._facets.length; i++) {
         var facet = this._facets[i];
-        if (keepUnrestrictedFacets || facet.facet.hasSelection()) {
+        if ((keepUnrestrictedFacets || facet.facet.hasSelection()) && (facet.facet != except)) {
             a.facets.push(this._facets[i].facet.getJSON());
         }
     }

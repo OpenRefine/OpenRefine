@@ -39,11 +39,9 @@ public class Engine implements Jsonizable {
     public FilteredRows getFilteredRows(Facet except, boolean includeContextual) {
         ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows(includeContextual, _includeDependent);
         for (Facet facet : _facets) {
-            System.out.println("facet: " + facet);
             if (facet != except) {
                 RowFilter rowFilter = facet.getRowFilter();
                 if (rowFilter != null) {
-                    System.out.println(" rowFilter: " + rowFilter);
                     cfr.add(rowFilter);
                 }
             }
