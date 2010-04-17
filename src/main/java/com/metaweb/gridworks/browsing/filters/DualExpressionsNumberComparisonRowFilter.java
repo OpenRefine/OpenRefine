@@ -22,7 +22,7 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
     final protected String     _y_columnName;
     final protected int        _y_cellIndex;
         
-    public DualExpressionsNumberComparisonRowFilter(
+    public DualExpressionsNumberComparisonRowFilter (
         Evaluable x_evaluable,
         String x_columnName,
         int x_cellIndex,

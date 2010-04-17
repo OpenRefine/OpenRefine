@@ -25,11 +25,16 @@ ScatterplotDialog.prototype._createDialog = function() {
             '<tr>' +
                 '<td>' +
                     '<span class="clustering-dialog-controls">Plot type: <select bind="plotSelector">' +
-                        '<option selected="true">linear</option>' +
-                        '<option>log-log</option>' +
+                        '<option selected="true" value="lin">linear</option>' +
+                        '<option value="log">log-log</option>' +
                     '</select></span>' +
                     '<span class="clustering-dialog-controls">Plot Size: <input bind="plotSize" type="test" size="2" value=""> px</span>' +
                     '<span class="clustering-dialog-controls">Dot Size: <input bind="dotSize" type="test" size="2" value=""> px</span>' +
+                    '<span class="clustering-dialog-controls">Rotation: <select bind="rotationSelector">' +
+                    '<option selected="true" value="none">none</option>' +
+                    '<option value="cw">45° clockwise</option>' +
+                    '<option value="ccw">45° counter-clockwise</option>' +
+                '</select></span>' +
                 '</td>' +
             '</tr>' +
             '<tr>' +
@@ -44,15 +49,15 @@ ScatterplotDialog.prototype._createDialog = function() {
     this._elmts = DOM.bind(html);
     
     this._elmts.plotSelector.change(function() {
-        var selection = $(this).find("option:selected").text();
-        if (selection == 'linear') {
-            self._plot_method = "lin";
-        } else if (selection === 'log-log') {
-            self._plot_method = "log";
-        }
+        self._plot_method = $(this).find("option:selected").attr("value");
         self._renderMatrix();
     });
 
+    this._elmts.rotationSelector.change(function() {
+        self._rotation = $(this).find("option:selected").attr("value");
+        self._renderMatrix();
+    });
+    
     this._elmts.plotSize.change(function() {
         try {
             self._plot_size = parseInt($(this).val())
@@ -119,10 +124,11 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                 var plotter_params = { 
                     'cx' : cx, 
                     'cy' : cy,
-                    'w' : self._plot_size * 3,
-                    'h' : self._plot_size * 3,
+                    'l' : self._plot_size,
                     'dot': self._dot_size,
-                    'dim': self._plot_method
+                    'dim_x': self._plot_method,
+                    'dim_y': self._plot_method,
+                    'r': self._rotation
                 };
                 var params = {
                     project: theProject.id,
@@ -157,12 +163,15 @@ ScatterplotDialog.prototype._renderMatrix = function() {
             container.find("a").click(function() {
                 var options = {
                     "name" : $(this).attr("title"),
-                    "x_columnName" : $(this).attr("cx"), 
-                    "y_columnName" : $(this).attr("cy"), 
-                    "x_expression" : "value",
-                    "y_expression" : "value",
+                    "cx" : $(this).attr("cx"), 
+                    "cy" : $(this).attr("cy"), 
+                    "l" : 120,
+                    "ex" : "value",
+                    "ey" : "value",
                     "dot" : self._dot_size,
-                    "dim" : self._plot_method
+                    "dim_x" : self._plot_method,
+                    "dim_y" : self._plot_method,
+                    'r': self._rotation
                 };
                 ui.browsingEngine.addFacet("scatterplot", options);
                 //self._dismiss();
