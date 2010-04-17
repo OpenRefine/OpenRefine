@@ -14,7 +14,6 @@ import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
 import org.marc4j.marc.Record;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.model.Project;
 
 public class MarcImporter implements Importer {
