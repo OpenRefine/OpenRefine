@@ -1,12 +1,19 @@
 .browsing-panel-header {
     height: 5em;
+    position: relative;
 }
 
 .browsing-panel-indicator {
     display: none;
+    position: absolute;
+    width: 100%;
+    top: 0px;
 }
 .browsing-panel-controls {
     display: none;
+    position: absolute;
+    width: 100%;
+    top: 0px;
 }
 .browsing-panel-help {
     padding: 10px;

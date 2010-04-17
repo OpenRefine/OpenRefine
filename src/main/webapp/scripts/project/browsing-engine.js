@@ -164,8 +164,8 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
 BrowsingEngine.prototype.update = function(onDone) {
     var self = this;
     
-    this._elmts.controls.hide();
     this._elmts.indicator.show();
+    this._elmts.controls.hide();
     
     $.post(
         "/command/compute-facets?" + $.param({ project: theProject.id }),
@@ -179,8 +179,8 @@ BrowsingEngine.prototype.update = function(onDone) {
             
             self._elmts.indicator.hide();
             if (self._facets.length > 0) {
-                self._elmts.help.hide();
                 self._elmts.controls.show();
+                self._elmts.help.hide();
             } else {
                 self._elmts.help.show();
             }
