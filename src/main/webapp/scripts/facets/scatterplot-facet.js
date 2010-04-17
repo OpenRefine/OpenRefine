@@ -59,18 +59,23 @@ ScatterplotFacet.prototype._initializeUI = function() {
         
     var bodyDiv = $('<div></div>').addClass("facet-scatterplot-body").appendTo(container);
     
-    var params = {
-        project: theProject.id,
-        engine: JSON.stringify(ui.browsingEngine.getJSON(false, this)), 
-        plotter: JSON.stringify(this._config) 
-    };
-    var url = "/command/get-scatterplot?" + $.param(params);
-    
     this._messageDiv = $('<div>').text("Loading...").addClass("facet-scatterplot-message").appendTo(bodyDiv);
-    this._plotDiv = $('<div>').addClass("facet-scatterplot-plot").appendTo(bodyDiv);
+    
+    this._plotDiv = $('<div>')
+        .addClass("facet-scatterplot-plot")
+        .width(this._config.l + "px")
+        .height(this._config.l + "px")
+        .appendTo(bodyDiv);
+        
+    this._plotBaseImg = $('<img>')
+        .addClass("facet-scatterplot-image")
+        .attr("src", this._formulateImageUrl({}, "DDDDFF"))
+        .attr("width", this._config.l)
+        .attr("height", this._config.l)
+        .appendTo(this._plotDiv);
     this._plotImg = $('<img>')
         .addClass("facet-scatterplot-image")
-        .attr("src",url)
+        .attr("src", this._formulateCurrentImageUrl())
         .attr("width", this._config.l)
         .attr("height", this._config.l)
         .imgAreaSelect({ 
@@ -89,6 +94,20 @@ ScatterplotFacet.prototype._initializeUI = function() {
             }
         }).appendTo(this._plotDiv);
     this._statusDiv = $('<div>').addClass("facet-scatterplot-status").appendTo(bodyDiv);
+};
+
+ScatterplotFacet.prototype._formulateCurrentImageUrl = function() {
+    return this._formulateImageUrl(ui.browsingEngine.getJSON(false, this), "444488")
+};
+
+ScatterplotFacet.prototype._formulateImageUrl = function(engineConfig, color) {
+    this._config.color = color;
+    var params = {
+        project: theProject.id,
+        engine: JSON.stringify(engineConfig), 
+        plotter: JSON.stringify(this._config) 
+    };
+    return "/command/get-scatterplot?" + $.param(params);
 };
 
 ScatterplotFacet.prototype.updateState = function(data) {
@@ -137,6 +156,8 @@ ScatterplotFacet.prototype.render = function() {
     this._messageDiv.hide();
     this._plotDiv.show();
     this._statusDiv.show();
+    
+    this._plotImg.attr("src", this._formulateCurrentImageUrl());
 };
 
 ScatterplotFacet.prototype._remove = function() {
