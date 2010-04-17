@@ -55,7 +55,7 @@ $.imgAreaSelect = function (img, options) {
 
         scaleX, scaleY,
 
-        resizeMargin = 10,
+        resizeMargin = 6,
 
         resize,
 

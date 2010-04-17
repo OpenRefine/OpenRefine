@@ -12,7 +12,8 @@ ScatterplotFacet.prototype.reset = function() {
     delete this._config.from_y;
     delete this._config.to_x;
     delete this._config.to_y;
-    this._plotImg.imgAreaSelect({ hide : true});
+    this._plotAreaSelector.setOptions({ hide : true });
+    this._plotAreaSelector.update();
 };
 
 ScatterplotFacet.reconstruct = function(div, uiState) {
@@ -73,39 +74,55 @@ ScatterplotFacet.prototype._initializeUI = function() {
         
     this._plotBaseImg = $('<img>')
         .addClass("facet-scatterplot-image")
-        .attr("src", this._formulateImageUrl({}, "DDDDFF"))
+        .attr("src", this._formulateImageUrl({},{ color: "888888", dot : this._config.dot * 0.9 }))
         .attr("width", this._config.l)
         .attr("height", this._config.l)
         .appendTo(this._plotDiv);
+    
     this._plotImg = $('<img>')
         .addClass("facet-scatterplot-image")
-        .attr("src", this._formulateCurrentImageUrl())
+        .attr("src", this._formulateCurrentImageUrl({ color: "ff0000" }))
         .attr("width", this._config.l)
         .attr("height", this._config.l)
-        .imgAreaSelect({ 
-            handles: false,
-            fadeSpeed: 70,
-            onSelectEnd: function(elmt, selection) {
-                if (selection.height == 0 || selection.width == 0) {
-                    self.reset();
-                } else {
-                    self._config.from_x = selection.x1;
-                    self._config.to_x = selection.x2 - 2;
-                    self._config.from_y = self._config.l - selection.y2 + 2;
-                    self._config.to_y = self._config.l - selection.y1 - 1;
-                }
-                self._updateRest();
+        .appendTo(this._plotDiv);
+    
+    var ops = {
+        instance: true,        
+        handles: false,
+        fadeSpeed: 70,
+        onSelectEnd: function(elmt, selection) {
+            if (selection.height == 0 || selection.width == 0) {
+                self.reset();
+            } else {
+                self._config.from_x = selection.x1;
+                self._config.to_x = selection.x2 - 2;
+                self._config.from_y = self._config.l - selection.y2 + 2;
+                self._config.to_y = self._config.l - selection.y1 - 1;
             }
-        }).appendTo(this._plotDiv);
+            self._updateRest();
+        }
+    };
+
+    if (this.hasSelection()) {
+        ops.x1 = this._config.from_x;
+        ops.y1 = this._config.from_y;
+        ops.x2 = this._config.to_x;
+        ops.y2 = this._config.to_y;
+    }
+
+    this._plotAreaSelector = this._plotImg.imgAreaSelect(ops);
+    
     this._statusDiv = $('<div>').addClass("facet-scatterplot-status").appendTo(bodyDiv);
 };
 
-ScatterplotFacet.prototype._formulateCurrentImageUrl = function() {
-    return this._formulateImageUrl(ui.browsingEngine.getJSON(false, this), "444488")
+ScatterplotFacet.prototype._formulateCurrentImageUrl = function(conf) {
+    return this._formulateImageUrl(ui.browsingEngine.getJSON(false, this), conf);
 };
 
-ScatterplotFacet.prototype._formulateImageUrl = function(engineConfig, color) {
-    this._config.color = color;
+ScatterplotFacet.prototype._formulateImageUrl = function(engineConfig, conf) {
+    for (var p in conf) {
+        this._config[p] = conf[p];
+    }
     var params = {
         project: theProject.id,
         engine: JSON.stringify(engineConfig), 
@@ -161,7 +178,7 @@ ScatterplotFacet.prototype.render = function() {
     this._plotDiv.show();
     this._statusDiv.show();
     
-    this._plotImg.attr("src", this._formulateCurrentImageUrl());
+    this._plotImg.attr("src", this._formulateCurrentImageUrl({ color: "ff0000" }));
 };
 
 ScatterplotFacet.prototype._remove = function() {
