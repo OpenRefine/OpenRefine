@@ -140,16 +140,18 @@ BrowsingEngine.prototype._createFacetContainer = function() {
 BrowsingEngine.prototype.removeFacet = function(facet) {
     var update = facet.hasSelection();
     for (var i = this._facets.length - 1;i >= 0; i--) {
-        if (this._facets[i].facet === facet) {
-            var elmt = this._facets[i].elmt;
+        var facetRecord = this._facets[i];
+        if (facetRecord.facet === facet) {
             this._facets.splice(i, 1);
+            
+            facetRecord.facet.dispose();
             
             // This makes really big facet disappear right away. If you just call remove()
             // then it takes a while for all the event handlers to get unwired, and the UI
             // appear frozen.
-            elmt.hide();
+            facetRecord.elmt.hide();
             window.setTimeout(function() {
-                elmt.remove();
+                facetRecord.elmt.remove();
             }, 300);
             
             break;
@@ -207,7 +209,9 @@ BrowsingEngine.prototype.remove = function() {
     this._facets = [];
     
     for (var i = 0; i < oldFacets.length; i++) {
-        oldFacets[i].elmt.hide();
+        var facet = oldFacets[i];
+        facet.facet.dispose();
+        facet.elmt.hide();
     }
     window.setTimeout(function() {
         for (var i = 0; i < oldFacets.length; i++) {

@@ -13,6 +13,9 @@ TextSearchFacet.reconstruct = function(div, uiState) {
     return new TextSearchFacet(div, uiState.c, uiState.o);
 };
 
+TextSearchFacet.prototype.dispose = function() {
+};
+
 TextSearchFacet.prototype.reset = function() {
     this._query = null;
     this._div.find(".input-container input").each(function() { this.value = ""; });

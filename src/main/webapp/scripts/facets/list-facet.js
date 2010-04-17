@@ -20,6 +20,9 @@ ListFacet.reconstruct = function(div, uiState) {
     return new ListFacet(div, uiState.c, uiState.o, uiState.s);
 };
 
+ListFacet.prototype.dispose = function() {
+};
+
 ListFacet.prototype.reset = function() {
     this._selection = [];
     this._blankChoice = null;

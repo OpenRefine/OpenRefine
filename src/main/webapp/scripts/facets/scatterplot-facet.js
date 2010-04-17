@@ -19,6 +19,10 @@ ScatterplotFacet.reconstruct = function(div, uiState) {
     return new ScatterplotFacet(div, uiState.c, uiState.o);
 };
 
+ScatterplotFacet.prototype.dispose = function() {
+    this._plotImg.imgAreaSelect({ hide : true });
+};
+
 ScatterplotFacet.prototype.getUIState = function() {
     var json = {
         c: this.getJSON(),

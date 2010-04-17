@@ -53,6 +53,9 @@ RangeFacet.reconstruct = function(div, uiState) {
     return new RangeFacet(div, uiState.c, uiState.o);
 };
 
+RangeFacet.prototype.dispose = function() {
+};
+
 RangeFacet.prototype.getUIState = function() {
     var json = {
         c: this.getJSON(),
@@ -61,7 +64,6 @@ RangeFacet.prototype.getUIState = function() {
     
     return json;
 };
-
 
 RangeFacet.prototype.getJSON = function() {
     var o = {
