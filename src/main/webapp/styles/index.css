@@ -1,79 +1,79 @@
-#body-empty, #body-nonempty {
-    display: none;
+#body {
+    padding: 50px;
+    background: url("/images/gridworks-watermark.png") no-repeat -70px -70px;
+}
+#body > div.grid-layout > table > tbody > tr > th, 
+#body > div.grid-layout > table > tbody > tr > td {
+    vertical-align: top;
 }
 
-#body-template {
-    display: none;
+#top-panel {
+    margin-bottom: 15px;
 }
-#body-empty, #body-nonempty {
-    width: 800px;
-    padding: 100px 0;
-    margin: auto;
+#top-panel h1 {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
 }
-#body-empty > table, #body-nonempty > table {
-    width: 100%;
-    border-collapse: collapse:
-}
-#body-empty > table > tbody > tr > td, #body-nonempty > table > tbody > tr > td {
-    padding: 20px;
-    vertical-align: middle;
-}
-#body-empty-logo-container, #body-nonempty-logo-container {
-    width: 1%;
-    white-space: pre;
-    font-size: 400%;
-}
-#body-empty-create-project-panel-container, #body-nonempty-create-project-panel-container {
-    border-left: 3px solid #eee;
-}
-
-#body-nonempty {
-    width: 1000px;
-}
-#body-nonempty-logo-container {
-    font-size: 300%;
-}
-
-#body-nonempty-projects-container {
-    border-left: 3px solid #eee;
+#gridworks-info {
+    color: #aaa;
 }
 
 #create-project-panel h1 {
     font-size: 120%;
     margin: 2em 0 1em 0;
 }
-
-table.import-project-panel-layout {
-    white-space: pre;
+#projects-panel {
+    width: 400px;
 }
-
 #projects {
-    white-space: pre;
+    background: #DBE8EB;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    padding: 15px;
 }
 #projects h1 {
     margin: 0;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
+    padding: 0;
     font-size: 120%;
-    color: #aaa
 }
-#projects a {
+
+#projects-container {
+    border: 1px solid #C5D1D4;
+    background: white;
+    padding: 1px;
+    height: 30em;
+    overflow: auto;
+}
+#projects-container .message {
+    padding: 15px;
+    color: #aaa;
+    font-size: 150%;
+}
+#projects-container table {
+    border-collapse: collapse;
+    width: 100%;
+}
+#projects-container td, #projects-container th {
+    padding: 5px;
+    border-right: 1px solid white;
+    text-align: left;
+}
+#projects-container th {
+    background: #C5D1D4;
+}
+#projects-container tr.project.even {
+    background: #DBE8EB;
+}
+.project a {
     text-decoration: none;
     font-weight: bold;
     color: #004;
 }
-#projects a:hover {
+.project a:hover {
     text-decoration: underline;
     color: #008;
-}
-.project {
-    margin: 0.25em 0;
-}
-.delete-project {
-    margin-right: 0.5em;
-}
-.last-modified {
-    margin: 0 0.25em;
-    color: #aaa;
 }
 
 #version-message {

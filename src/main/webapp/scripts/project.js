@@ -85,7 +85,7 @@ function initializeUI(uiState) {
         '<div bind="viewPanel" class="view-panel"></div>' +
         '<div bind="processPanel" class="process-panel"></div>' +
         '<div bind="leftPanel" class="left-panel">' +
-            '<div bind="leftPanelTabs">' +
+            '<div bind="leftPanelTabs" class="gridworks-tabs">' +
                 '<ul>' +
                     '<li><a href="#gridworks-tabs-facets">Facet/Filter</a></li>' +
                     '<li><a href="#gridworks-tabs-history" bind="historyTabHeader">Undo/Redo</a></li>' +

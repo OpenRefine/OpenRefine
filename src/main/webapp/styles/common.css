@@ -7,7 +7,6 @@ body {
     font-size: 11px;
     margin: 0;
     padding: 0;
-    background: #eee;
 }
 
 table {
@@ -21,14 +20,14 @@ tr, td {
 div.grid-layout > table {
     border-collapse: separate;
 }
-div.grid-layout.layout-full table {
+div.grid-layout.layout-full > table {
     width: 100%;
     max-width: 100% !important;
 }
 div.grid-layout > table > tbody > tr > th, div.grid-layout > table > tbody > tr > td {
     padding: 0px;
     text-align: left;
-    vertical-align: top;
+    vertical-align: baseline;
 }
 div.grid-layout.layout-normal {
     margin: -10px;
@@ -92,12 +91,14 @@ div.input-container > input, div.input-container > textarea {
     vertical-align: top;
 }
 
-a.action {
+a.action, 
+a.quiet-link {
     margin: 0 3px;
     text-decoration: none;
     color: #448;
 }
-a.action:hover {
+a.action:hover, 
+a.quiet-link:hover {
     color: #88f;
 }
 
@@ -201,6 +202,5 @@ img {
 }
 
 #body {
-    background: white;
 }
 

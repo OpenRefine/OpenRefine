@@ -52,65 +52,12 @@ body {
     padding: 0px;
     font-size: 11px;
 }
-.left-panel .ui-tabs {
-    padding: 0;
-}
-.left-panel .ui-corner-all {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;    
-}
-.left-panel .ui-widget-content {
-    border: none;
-    background: none;
-    color: inherit;
-}
-.left-panel .ui-tabs .ui-tabs-nav {
-    padding: 0;
-}
-.left-panel .ui-tabs .ui-widget-header {
-    background: none;
-    border: none;
-}
-.left-panel .ui-tabs .ui-tabs-nav li a {
-    padding: 5px 10px;
-}
-.left-panel .ui-tabs .ui-tabs-nav li a span.count {
-    color: #888;
-    font-weight: normal;
-    font-size: 80%;
-}
-
-.left-panel .ui-tabs .ui-tabs-nav .ui-state-default, 
-.left-panel .ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-default {
-    background: #C5D1D4;
-}
-
-.left-panel .ui-tabs .ui-tabs-nav .ui-state-default a, 
-.left-panel .ui-tabs .ui-tabs-nav .ui-state-default a:link, 
-.left-panel .ui-tabs .ui-tabs-nav .ui-state-default a:visited {
-    color: black;
-}
-
-.left-panel .ui-tabs .ui-tabs-nav .ui-state-active, 
-.left-panel .ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-active {
-    background: #DBE8EB;
-    border: none;
-    color: black;
-}
-
-.left-panel .ui-tabs .ui-tabs-nav .ui-state-active a, 
-.left-panel .ui-tabs .ui-tabs-nav .ui-state-active a:link, 
-.left-panel .ui-tabs .ui-tabs-nav .ui-state-active a:visited {
-    color: black;
-}
-
-.left-panel .ui-tabs .ui-tabs-panel {
-    margin: 0px;
+.left-panel .gridworks-tabs.ui-tabs .ui-tabs-panel {
     padding: 7px;
-    border: 1px solid #DBE8EB;
-    background: #DBE8EB;
-    -moz-border-radius-bottomleft: 7px;
-    -webkit-border-bottom-left-radius: 7px;
+    -moz-border-radius-topright: 0px;
+    -webkit-border-top-right-radius: 0px;
+    -moz-border-radius-bottomright: 0px;
+    -webkit-border-bottom-right-radius: 0px;
     overflow: hidden;
 }
 

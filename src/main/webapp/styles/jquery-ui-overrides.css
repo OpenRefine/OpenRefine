@@ -1,0 +1,60 @@
+.gridworks-tabs.ui-tabs {
+    padding: 0;
+}
+.gridworks-tabs.ui-corner-all {
+}
+.gridworks-tabs.ui-widget-content {
+    border: none;
+    background: none;
+    color: inherit;
+}
+.gridworks-tabs.ui-tabs .ui-tabs-nav {
+    padding: 0;
+}
+.gridworks-tabs.ui-tabs .ui-widget-header {
+    background: none;
+    border: none;
+}
+.gridworks-tabs.ui-tabs .ui-tabs-nav li a {
+    padding: 5px 10px;
+}
+.gridworks-tabs.ui-tabs .ui-tabs-nav li a span.count {
+    color: #888;
+    font-weight: normal;
+    font-size: 80%;
+}
+
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-state-default, 
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-default {
+    background: #C5D1D4;
+}
+
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-state-default a, 
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-state-default a:link, 
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-state-default a:visited {
+    color: black;
+}
+
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-state-active, 
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-active {
+    background: #DBE8EB;
+    border: none;
+    color: black;
+}
+
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-state-active a, 
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-state-active a:link, 
+.gridworks-tabs.ui-tabs .ui-tabs-nav .ui-state-active a:visited {
+    color: black;
+}
+
+.gridworks-tabs.ui-tabs .ui-tabs-panel {
+    margin: 0px;
+    padding: 15px;
+    border: 1px solid #DBE8EB;
+    background: #DBE8EB;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    -moz-border-radius-topleft: 0px;
+    -webkit-border-top-left-radius: 0px;
+}

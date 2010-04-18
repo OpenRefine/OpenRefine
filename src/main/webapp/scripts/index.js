@@ -58,26 +58,37 @@ function renderProjects(data) {
             projects.push(project);
         }
     }
+    projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
     
+    var container = $("#projects-container").empty();
     if (!projects.length) {
-        $('#body-empty').show();
-        $('#create-project-panel').remove().appendTo($('#body-empty-create-project-panel-container'));
+        $('<div>')
+            .addClass("message")
+            .text("No existing project. Use form on left to create.")
+            .appendTo(container);
     } else {
-        $('#body-nonempty').show();
-        $('#create-project-panel').remove().appendTo($('#body-nonempty-create-project-panel-container'));
-
-        projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
-        if (projects.length > 10) {
-            $('#body-nonempty-logo-container').css("vertical-align", "top");
-            $('#body-nonempty-create-project-panel-container').css("vertical-align", "top");
-        }
-        
-        var container = $("#projects").empty().show();
-        $('<h1>').text("Projects").appendTo(container);
+        var table = $(
+            '<table><tr>' +
+                '<th>Project Name</th>' +
+                '<th>Last Modified</th>' +
+                '<th></th>' +
+            '</tr></table>'
+        ).appendTo(container)[0];
         
         var renderProject = function(project) {
-            var div = $('<div>').addClass("project").appendTo(container);
-        
+            var tr = table.insertRow(table.rows.length);
+            tr.className = "project " + (table.rows.length % 2 ? "even" : "odd");
+            
+            $('<a></a>')
+                .text(project.name)
+                .attr("href", "/project.html?project=" + project.id)
+                .appendTo(tr.insertCell(tr.cells.length));
+                
+            $('<span></span>')
+                .text(formatDate(project.date))
+                .addClass("last-modified")
+                .appendTo(tr.insertCell(tr.cells.length));
+            
             $('<a></a>')
                 .addClass("delete-project")
                 .attr("title","Delete this project")
@@ -92,35 +103,41 @@ function renderProjects(data) {
                             dataType: "json",
                             success: function (data) {
                                 if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                                    window.location.reload();
+                                    fetchProjects();
                                 }
                             }
                         });                    
                     }
                     return false;
-                }).appendTo(div);
-            
-            $('<a></a>').text(project.name).attr("href", "/project.html?project=" + project.id).appendTo(div);
-            $('<span></span>').text(formatDate(project.date)).addClass("last-modified").appendTo(div);
+                }).appendTo(tr.insertCell(tr.cells.length));
         };
-        
+    
         for (var i = 0; i < projects.length; i++) {
             renderProject(projects[i]);
         }
     }
 }
 
-function onLoad() {
+function fetchProjects() {
     $.getJSON(
         "/command/get-all-project-metadata",
         null,
         function(data) {
             renderProjects(data);
-            $("#upload-file-button").click(onClickUploadFileButton);
         },
         "json"
     );
+}
+
+function onLoad() {
+    fetchProjects();
     
+    $("#form-tabs").tabs();
+    $("#upload-file-button").click(onClickUploadFileButton);
+    
+    $("#gridworks-version").text(
+        GridworksVersion.version + "-" + GridworksVersion.revision
+    );
     if (isThereNewRelease()) {
         $('<div id="version-message">' +
             'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
