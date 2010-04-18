@@ -144,7 +144,7 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
 };
 
 BrowsingEngine.prototype._createFacetContainer = function() {
-    return $('<li></li>').addClass("facet-container").hide().appendTo(this._elmts.facets);
+    return $('<li></li>').addClass("facet-container").attr("id","facet-" + this._facets.length).hide().appendTo(this._elmts.facets);
 };
 
 BrowsingEngine.prototype.removeFacet = function(facet) {
