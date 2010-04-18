@@ -47,21 +47,31 @@ BrowsingEngine.prototype._initializeUI = function() {
     var self = this;
     
     this._div.html(
-        '<div class="browsing-panel-header">' +
-            '<div class="browsing-panel-help" bind="help">' +
-                '<h1>Explore data ...</h1>' +
-                '<p>by choosing a facet or filter method from the menus at the top of each column.</p>' +
-                '<p>Not sure how to get started? Watch this screencast.</p>' +
+        '<div class="browsing-panel-help" bind="help">' +
+            '<h1>Explore data ...</h1>' +
+            '<p>by choosing a facet or filter method from the menus at the top of each column.</p>' +
+            '<p>Not sure how to get started? Watch this screencast.</p>' +
+        '</div>' +
+        '<div class="browsing-panel-header" bind="header">' +
+            '<div class="browsing-panel-indicator" bind="indicator">' +
+                '<img src="images/small-spinner.gif" /> refreshing facets ...' +
             '</div>' +
-            '<div class="browsing-panel-indicator" bind="indicator"><img src="images/small-spinner.gif" /> refreshing facets ...</div>' +
-            '<div class="browsing-panel-controls" bind="controls">' +
-                '<p>' +
-                    '<a href="javascript:{}" bind="refreshLink" title="Make sure all facets are up-to-date">refresh</a> &bull; ' +
-                    '<a href="javascript:{}" bind="resetLink" title="Clear selection in all facets">reset</a> &bull; ' +
-                    '<a href="javascript:{}" bind="removeLink" title="Remove all facets">remove</a> all facets' +
-                '</p>' +
-                '<p><input type="checkbox" class="inline" bind="includeDependentRowsCheck" /> show dependent rows</p>' +
-            '</div>' +
+            '<div class="browsing-panel-controls" bind="controls"><div class="grid-layout layout-tightest layout-full"><table>' +
+                '<tr>' +
+                    '<td>' +
+                        '<a href="javascript:{}" bind="refreshLink" class="action" title="Make sure all facets are up-to-date">Refresh</a>' +
+                    '</td>' +
+                    '<td width="1%">' +
+                        '<a href="javascript:{}" bind="resetLink" class="action" title="Clear selection in all facets">Reset&nbsp;All</a>' +
+                    '</td>' +
+                    '<td width="1%">' +
+                        '<a href="javascript:{}" bind="removeLink" class="action" title="Remove all facets">Remove&nbsp;All</a>' +
+                    '</td>' +
+                '</tr>' +
+                '<tr bind="dependentRowControls">' +
+                    '<td colspan="3"><input type="checkbox" class="inline" bind="includeDependentRowsCheck" /> show dependent rows</td>' +
+                '</tr>' +
+            '</table></div></div>' +
         '</div>' +
         '<ul bind="facets" class="facets-container"></ul>'
     );
@@ -134,7 +144,7 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
 };
 
 BrowsingEngine.prototype._createFacetContainer = function() {
-    return $('<li></li>').addClass("facet-container").appendTo(this._elmts.facets);
+    return $('<li></li>').addClass("facet-container").hide().appendTo(this._elmts.facets);
 };
 
 BrowsingEngine.prototype.removeFacet = function(facet) {
@@ -166,8 +176,11 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
 BrowsingEngine.prototype.update = function(onDone) {
     var self = this;
     
-    this._elmts.indicator.show();
-    this._elmts.controls.hide();
+    this._elmts.help.hide();
+    
+    this._elmts.header.show();
+    this._elmts.controls.css("visibility", "hidden");
+    this._elmts.indicator.css("visibility", "visible");
     
     $.post(
         "/command/compute-facets?" + $.param({ project: theProject.id }),
@@ -179,10 +192,16 @@ BrowsingEngine.prototype.update = function(onDone) {
                 self._facets[i].facet.updateState(facetData[i]);
             }
             
-            self._elmts.indicator.hide();
+            self._elmts.indicator.css("visibility", "hidden");
             if (self._facets.length > 0) {
-                self._elmts.controls.show();
-                self._elmts.help.hide();
+                self._elmts.header.show();
+                self._elmts.controls.css("visibility", "visible");
+                
+                if (theProject.columnModel.hasDependentRows) {
+                    self._elmts.dependentRowControls.show();
+                } else {
+                    self._elmts.dependentRowControls.hide();
+                }
             } else {
                 self._elmts.help.show();
             }

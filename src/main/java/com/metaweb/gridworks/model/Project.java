@@ -297,7 +297,7 @@ public class Project {
                 }
             }
             
-            if (row.contextRowSlots != null) {
+            if (row.contextRowSlots != null && row.contextRowSlots.length > 0) {
                 row.recordIndex = -1;
                 row.contextRows = new ArrayList<Integer>();
                 for (int index : row.contextRowSlots) {
@@ -306,6 +306,8 @@ public class Project {
                     }
                 }
                 Collections.sort(row.contextRows);
+                
+                columnModel._hasDependentRows = true;
             } else {
                 row.recordIndex = recordIndex++;
             }

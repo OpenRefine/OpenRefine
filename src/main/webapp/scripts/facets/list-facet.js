@@ -110,7 +110,7 @@ ListFacet.prototype.render = function() {
     } catch (e) {
     }
     
-    var container = this._div.empty().html(
+    var container = this._div.empty().show().html(
         '<div class="facet-title">' +
             '<img src="images/close.png" title="Remove this facet" class="facet-choice-link" bind="removeButton"/>' +
             '<span bind="titleSpan"></span>' +

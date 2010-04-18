@@ -54,9 +54,9 @@ DataTableView.prototype._renderSummaryText = function(elmt) {
     var from = (theProject.rowModel.start + 1);
     var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
     if (theProject.rowModel.filtered == theProject.rowModel.total) {
-        summaryText = from + ' to ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> rows';
+        summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> rows';
     } else {
-        summaryText = from + ' to ' + to + ' of <span class="viewPanel-summary-row-count">' + 
+        summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + 
             (theProject.rowModel.filtered) + '</span> matching rows (' + (theProject.rowModel.total) + ' total)';
     }
     $('<span>').html(summaryText).appendTo(elmt);

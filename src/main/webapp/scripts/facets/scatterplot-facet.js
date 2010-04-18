@@ -44,7 +44,7 @@ ScatterplotFacet.prototype.hasSelection = function() {
 
 ScatterplotFacet.prototype._initializeUI = function() {
     var self = this;
-    var container = this._div.empty();
+    var container = this._div.empty().show();
     
     var headerDiv = $('<div></div>').addClass("facet-title").appendTo(container);
     $('<span></span>').text(this._config.name).appendTo(headerDiv);

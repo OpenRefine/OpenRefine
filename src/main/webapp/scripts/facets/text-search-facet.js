@@ -48,15 +48,17 @@ TextSearchFacet.prototype.hasSelection = function() {
 
 TextSearchFacet.prototype._initializeUI = function() {
     var self = this;
-    this._div.empty().html(
+    this._div.empty().show().html(
         '<div class="facet-title">' + 
             '<img bind="removeButton" src="images/close.png" title="Remove this facet" class="facet-choice-link" />' +
             '<span>' + this._config.name + '</span>' +
         '</div>' +
         '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
-            '<tr><td colspan="2"><div class="input-container"><input bind="input" /></div></td></tr>' +
-            '<tr><td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" /></td><td>case sensitive</td></tr>' +
-            '<tr><td width="1%"><input type="checkbox" bind="regexCheckbox" /></td><td>regular expression</td></tr>' +
+            '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
+            '<tr>' +
+                '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" /></td><td>case sensitive</td>' +
+                '<td width="1%"><input type="checkbox" bind="regexCheckbox" /></td><td>regular expression</td>' +
+            '</tr>' +
         '</table></div></div>'
     );
     

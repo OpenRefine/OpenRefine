@@ -1,20 +1,18 @@
 .browsing-panel-header {
-    height: 5em;
     position: relative;
+    display: none;
 }
 
 .browsing-panel-indicator {
-    display: none;
+    visibility: hidden;
     position: absolute;
     width: 100%;
     top: 0px;
 }
 .browsing-panel-controls {
-    display: none;
-    position: absolute;
-    width: 100%;
-    top: 0px;
+    visibility: hidden;
 }
+
 .browsing-panel-help {
     padding: 10px;
     background: white;
@@ -90,7 +88,7 @@ a.facet-mode-link.facet-mode-link-selected {
     color: #f88;
 }
 .facet-body-scrollable {
-    height: 20em;
+    height: 17em;
     overflow: auto;
 }
 
@@ -163,7 +161,6 @@ img.facet-choice-link {
 }
 
 .facet-text-body {
-    border: 1px solid #ccc;
     padding: 5px;
 }
 .facet-scatterplot-plot {
