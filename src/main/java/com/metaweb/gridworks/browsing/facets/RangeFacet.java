@@ -23,7 +23,6 @@ public class RangeFacet implements Facet {
     protected String     _name;       // name of facet
     protected String     _expression; // expression to compute numeric value(s) per row
     protected String     _columnName; // column to base expression on, if any
-    protected String     _mode;       // "range", MIN, MAX
     
     protected double    _from; // the numeric selection
     protected double    _to;
@@ -76,7 +75,6 @@ public class RangeFacet implements Facet {
         writer.key("name"); writer.value(_name);
         writer.key("expression"); writer.value(_expression);
         writer.key("columnName"); writer.value(_columnName);
-        writer.key("mode"); writer.value(_mode);
         
         if (_errorMessage != null) {
             writer.key("error"); writer.value(_errorMessage);
@@ -98,14 +96,8 @@ public class RangeFacet implements Facet {
                 }
                 writer.endArray();
                 
-                if (MIN.equals(_mode)) {
-                    writer.key(FROM); writer.value(_from);
-                } else if (MAX.equals(_mode)) {
-                    writer.key(TO); writer.value(_to);
-                } else {
-                    writer.key(FROM); writer.value(_from);
-                    writer.key(TO); writer.value(_to);
-                }
+                writer.key(FROM); writer.value(_from);
+                writer.key(TO); writer.value(_to);
             }
             
             writer.key("baseNumericCount"); writer.value(_baseNumericCount);
@@ -143,24 +135,9 @@ public class RangeFacet implements Facet {
             _errorMessage = e.getMessage();
         }
         
-        _mode = o.getString("mode");
-        if (MIN.equals(_mode)) {
-            if (o.has(FROM)) {
-                _from = o.getDouble(FROM);
-                _selected = true;
-            }
-        } else if (MAX.equals(_mode)) {
-            if (o.has(TO)) {
-                _to = o.getDouble(TO);
-                _selected = true;
-            }
-        } else {
-            if (o.has(FROM) && o.has(TO)) {
-                _from = o.getDouble(FROM);
-                _to = o.getDouble(TO);
-                _selected = true;
-            }
-        }
+        _from = o.getDouble(FROM);
+        _to = o.getDouble(TO);
+        _selected = true;
         
         _selectNumeric = JSONUtilities.getBoolean(o, "selectNumeric", true);
         _selectNonNumeric = JSONUtilities.getBoolean(o, "selectNonNumeric", true);
@@ -174,31 +151,13 @@ public class RangeFacet implements Facet {
 
     public RowFilter getRowFilter() {
         if (_eval != null && _errorMessage == null && _selected) {
-            if (MIN.equals(_mode)) {
-                return new ExpressionNumberComparisonRowFilter(
-                        _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
-                    
-                    protected boolean checkValue(double d) {
-                        return d >= _from;
-                    };
+            return new ExpressionNumberComparisonRowFilter(
+                    _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+                
+                protected boolean checkValue(double d) {
+                    return d >= _from && d < _to;
                 };
-            } else if (MAX.equals(_mode)) {
-                return new ExpressionNumberComparisonRowFilter(
-                        _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
-                    
-                    protected boolean checkValue(double d) {
-                        return d < _to;
-                    };
-                };
-            } else {
-                return new ExpressionNumberComparisonRowFilter(
-                        _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
-                    
-                    protected boolean checkValue(double d) {
-                        return d >= _from && d < _to;
-                    };
-                };
-            }        
+            };
         } else {
             return null;
         }

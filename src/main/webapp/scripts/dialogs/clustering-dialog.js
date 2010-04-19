@@ -476,31 +476,28 @@ ClusteringDialog.Facet = function(dialog, title, property, elmt, clusters) {
         elmt.addClass("clustering-dialog-facet");
         var html = $(
             '<div class="clustering-dialog-facet-header">' + title + '</div>' +
-            '<div class="clustering-dialog-facet-histogram" bind="histogramContainer"></div>' +
-            '<div class="clustering-dialog-facet-slider" bind="slider"></div>' +
+            '<div class="clustering-dialog-facet-slider" bind="sliderWidgetDiv">' +
+                '<div class="clustering-dialog-facet-histogram" bind="histogramContainer"></div>' +
+            '</div>' +
             '<div class="clustering-dialog-facet-selection" bind="selectionContainer"></div>'
         ).appendTo(elmt);
         
         this._elmts = DOM.bind(html);
         
         this._histogram = new HistogramWidget(this._elmts.histogramContainer, { binColors: [ "#ccccff", "#6666ff" ] });
-
-        this._elmts.slider.slider({
-            min: this._min,
-            max: this._max,
-            values: [ this._from, this._to ],
-            slide: function(evt, ui) {
-                self._from = ui.values[0];
-                self._to = ui.values[1];
-                self._setRangeIndicators();
-            },
-            stop: function(evt, ui) {
-                self._from = ui.values[0];
-                self._to = ui.values[1];
-                self._setRangeIndicators();
-                self._dialog._updateAll();
-            }
+        this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
+        
+        this._elmts.sliderWidgetDiv.bind("slide", function(evt, data) {
+            self._from = data.from;
+            self._to = data.to;
+            self._setRangeIndicators();
+        }).bind("stop", function(evt, data) {
+            self._from = data.from;
+            self._to = data.to;
+            self._setRangeIndicators();
+            self._dialog._updateAll();
         });
+
         this._setRangeIndicators();
     }
 };
@@ -531,19 +528,23 @@ ClusteringDialog.Facet.prototype.update = function(clusters) {
     
     var bins = this._computeDistribution(clusters);
 
+    this._sliderWidget.update(
+        this._min, 
+        this._max, 
+        this._step, 
+        this._from,
+        this._to
+    );
     this._histogram.update(
         this._min, 
         this._max, 
         this._step, 
-        [ this._baseBins, bins ],
-        this._from,
-        this._to
+        [ this._baseBins, bins ]
     );
 };
 
 ClusteringDialog.Facet.prototype._setRangeIndicators = function() {
-    this._histogram.highlight(this._from, this._to);
-    this._elmts.selectionContainer.text(this._from + " to " + this._to);
+    this._elmts.selectionContainer.html(this._from + " &mdash; " + this._to);
 };
 
 ClusteringDialog.Facet.prototype._computeDistribution = function(clusters) {

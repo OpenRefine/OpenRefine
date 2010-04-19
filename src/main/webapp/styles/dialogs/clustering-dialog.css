@@ -64,11 +64,10 @@ table.clustering-dialog-entry-table a:hover {
     font-weight: bold;
 }
 .clustering-dialog-facet-histogram {
-    margin: 10px;
     overflow: hidden;
 }
 .clustering-dialog-facet-slider {
-    margin: 5px 10px;
+    margin: 5px;
 }
 .clustering-dialog-facet-selection {
     text-align: center;

@@ -26,21 +26,16 @@ function RangeFacet(div, config, options) {
 }
 
 RangeFacet.prototype.reset = function() {
-    switch (this._config.mode) {
-    case "min":
-        this._from = this._config.min;
-        this._sliderDiv.slider("value", this._from);
-        break;
-    case "max":
-        this._to = this._config.max;
-        this._sliderDiv.slider("value", this._to);
-        break;
-    default:
-        this._from = this._config.min;
-        this._to = this._config.max;
-        this._sliderDiv.slider("values", 0, this._from);
-        this._sliderDiv.slider("values", 1, this._to);
-    }
+    this._from = this._config.min;
+    this._to = this._config.max;
+    this._sliderWidget.update(
+        this._config.min, 
+        this._config.max, 
+        this._config.step, 
+        this._from,
+        this._to
+    );
+        
     this._selectNumeric = true;
     this._selectNonNumeric = true;
     this._selectBlank = true;
@@ -69,7 +64,6 @@ RangeFacet.prototype.getJSON = function() {
     var o = {
         type: "range",
         name: this._config.name,
-        mode: this._config.mode,
         expression: this._config.expression,
         columnName: this._config.columnName,
         selectNumeric: this._selectNumeric,
@@ -78,15 +72,11 @@ RangeFacet.prototype.getJSON = function() {
         selectError: this._selectError
     };
     
-    if (this._config.mode == "min" || this._config.mode == "range") {
-        if (this._from !== null) {
-            o.from = this._from;
-        }
+    if (this._from !== null) {
+        o.from = this._from;
     }
-    if (this._config.mode == "max" || this._config.mode == "range") {
-        if (this._to !== null) {
-            o.to = this._to;
-        }
+    if (this._to !== null) {
+        o.to = this._to;
     }
     
     return o;
@@ -97,92 +87,59 @@ RangeFacet.prototype.hasSelection = function() {
         return true;
     }
     
-    switch (this._config.mode) {
-    case "min":
-        return this._from !== null && (!this._initializedUI || this._from > this._config.min);
-    case "max":
-        return this._to !== null && (!this._initializedUI || this._to < this._config.max);
-    default:
-        return (this._from !== null && (!this._initializedUI || this._from > this._config.min)) ||
-            (this._to !== null && (!this._initializedUI || this._to < this._config.max));
-    }
+    return (this._from !== null && (!this._initializedUI || this._from > this._config.min)) ||
+        (this._to !== null && (!this._initializedUI || this._to < this._config.max));
 };
 
 RangeFacet.prototype._initializeUI = function() {
     var self = this;
-    var container = this._div.empty().show();
+    this._div
+        .empty()
+        .show()
+        .html(
+            '<div class="facet-title" bind="headerDiv">' +
+                '<img src="images/close.png" class="facet-choice-link" title="Remove this facet" bind="removeButton" />' +
+                '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
+                '<span bind="facetTitle"></span>' +
+            '</div>' +
+            '<div class="facet-range-body">' +
+                '<div class="facet-range-message" bind="messageDiv">Loading...</div>' +
+                '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
+                    '<div class="facet-range-histogram" bind="histogramDiv"></div>' +
+                '</div>' +
+                '<div class="facet-range-status" bind="statusDiv"></div>' +
+                '<div class="facet-range-other-choices" bind="otherChoicesDiv"></div>' +
+            '</div>'
+        );
+    this._elmts = DOM.bind(this._div);
     
-    var headerDiv = $('<div></div>').addClass("facet-title").appendTo(container);
-    $('<span></span>').text(this._config.name).appendTo(headerDiv);
-    
-    var resetButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("reset").click(function() {
+    this._elmts.facetTitle.text(this._config.name);
+    this._elmts.resetButton.click(function() {
         self.reset();
         self._updateRest();
-    }).prependTo(headerDiv);
-    
-    var removeButton = $('<img>')
-        .attr("src", "images/close.png")
-        .attr("title", "Remove this facet")
-        .addClass("facet-choice-link")
-        .click(function() {
+    });
+    this._elmts.removeButton.click(function() {
             self._remove();
-        }).prependTo(headerDiv);
+        });
         
-    var bodyDiv = $('<div></div>').addClass("facet-range-body").appendTo(container);
+    this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
+    this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
     
-    this._messageDiv = $('<div>').text("Loading...").addClass("facet-range-message").appendTo(bodyDiv);
-    this._histogramDiv = $('<div>').addClass("facet-range-histogram").appendTo(bodyDiv);
-    this._sliderDiv = $('<div>').addClass("facet-range-slider").appendTo(bodyDiv);
-    this._statusDiv = $('<div>').addClass("facet-range-status").appendTo(bodyDiv);
-    this._otherChoicesDiv = $('<div>').addClass("facet-range-other-choices").appendTo(bodyDiv);
-    
-    this._histogram = new HistogramWidget(this._histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
-    
-    var onSlide = function(event, ui) {
-        switch (self._config.mode) {
-        case "min":
-            self._from = ui.value;
-            break;
-        case "max":
-            self._to = ui.value;
-            break;
-        default:
-            self._from = ui.values[0];
-            self._to = ui.values[1];
-        }
+    this._elmts.sliderWidgetDiv.bind("slide", function(evt, data) {
+        self._from = data.from;
+        self._to = data.to;
         self._setRangeIndicators();
-    };
-    var onStop = function() {
+    }).bind("stop", function(evt, data) {
+        self._from = data.from;
+        self._to = data.to;
         self._selectNumeric = true;
         self._updateRest();
-    };
-    var sliderConfig = {
-        min: this._config.min,
-        max: this._config.max,
-        stop: onStop,
-        slide: onSlide
-    };
-        
-    switch (this._config.mode) {
-    case "min":
-        sliderConfig.range = "max";
-        sliderConfig.value = this._config.min;
-        break;
-    case "max":
-        sliderConfig.range = "min";
-        sliderConfig.value = this._config.max;
-        break;
-    default:
-        sliderConfig.range = true;
-        sliderConfig.values = [ this._config.min, this._config.max ];
-    }
-    
-    this._sliderDiv.slider(sliderConfig);
+    });
 };
 
 RangeFacet.prototype._renderOtherChoices = function() {
     var self = this;
-    var container = this._otherChoicesDiv.empty();
+    var container = this._elmts.otherChoicesDiv.empty();
     
     if (this._baseNonNumericCount === 0 && this._baseBlankCount === 0 && this._baseErrorCount === 0) {
         return;
@@ -274,20 +231,7 @@ RangeFacet.prototype._renderOtherChoices = function() {
 };
 
 RangeFacet.prototype._setRangeIndicators = function() {
-    var text;
-    switch (this._config.mode) {
-    case "min":
-        text = "At least " + this._from;
-        break;
-    case "max":
-        text = "At most " + this._to;
-        break;
-    default:
-        text = this._from + " to " + this._to;
-    }
-    
-    this._statusDiv.text(text);
-    this._histogram.highlight(this._from, this._to);
+    this._elmts.statusDiv.html(this._from + " &mdash; " + this._to);
 };
 
 RangeFacet.prototype.updateState = function(data) {
@@ -340,31 +284,32 @@ RangeFacet.prototype.render = function() {
     }
     
     if (this._error) {
-        this._messageDiv.text(this._errorMessage).show();
-        this._sliderDiv.hide();
-        this._histogramDiv.hide();
-        this._statusDiv.hide();
-        this._otherChoicesDiv.hide();
+        this._elmts.messageDiv.text(this._errorMessage).show();
+        this._elmts.sliderWidgetDiv.hide();
+        this._elmts.histogramDiv.hide();
+        this._elmts.statusDiv.hide();
+        this._elmts.otherChoicesDiv.hide();
         return;
     }
     
-    this._messageDiv.hide();
-    this._sliderDiv.show();
-    this._histogramDiv.show();
-    this._statusDiv.show();
-    this._otherChoicesDiv.show();
+    this._elmts.messageDiv.hide();
+    this._elmts.sliderWidgetDiv.show();
+    this._elmts.histogramDiv.show();
+    this._elmts.statusDiv.show();
+    this._elmts.otherChoicesDiv.show();
     
-    this._sliderDiv.slider("option", "min", this._config.min);
-    this._sliderDiv.slider("option", "max", this._config.max);
-    this._sliderDiv.slider("option", "step", this._config.step);
-    
+    this._sliderWidget.update(
+        this._config.min, 
+        this._config.max, 
+        this._config.step, 
+        this._from,
+        this._to
+    );
     this._histogram.update(
         this._config.min, 
         this._config.max, 
         this._config.step, 
-        [ this._baseBins, this._bins ],
-        this._from,
-        this._to
+        [ this._baseBins, this._bins ]
     );
     
     this._setRangeIndicators();
