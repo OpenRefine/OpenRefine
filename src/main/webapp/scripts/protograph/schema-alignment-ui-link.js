@@ -104,50 +104,25 @@ SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
         var outgoing = [];
         var incoming = [];
         
-        function onDone() {
+        function onDone(properties) {
             dismissBusy();
             
-            var suggestions = SchemaAlignmentDialog.UILink._rankProperties(outgoing, incoming, sourceTypeID, targetTypeID, targetTypeName);
-            self._showPropertySuggestPopup(elmt, suggestions);
-        }
-        
-        var cotypes = [];
-        function doCoTypes() {
-            if (cotypes.length === 0) {
-                onDone();
-            } else {
-                var cotype = cotypes.pop();
-                SchemaAlignmentDialog.UILink._getPropertiesOfType(
-                    cotype.t,
-                    outgoing,
-                    incoming,
-                    cotype.c / instanceCount,
-                    doCoTypes
-                );
-            }
+            self._showPropertySuggestPopup(
+                elmt, 
+                SchemaAlignmentDialog.UILink._rankProperties(properties, sourceTypeID, targetTypeID, targetTypeName)
+            );
         }
         
         SchemaAlignmentDialog.UILink._getPropertiesOfType(
             sourceTypeID,
-            outgoing,
-            incoming,
-            1,
-            function(data) {
-                if ("result" in data) {
-                    instanceCount = data.result.count;
-                    if ("cotypes" in data.result) {
-                        cotypes = data.result.cotypes.slice(0, 3);
-                    }
-                }
-                doCoTypes();
-            }
+            onDone
         );
     } else {
         this._showPropertySuggestPopup(elmt, []);
     }
 };
 
-SchemaAlignmentDialog.UILink._rankProperties = function(outgoing, incoming, sourceTypeID, targetTypeID, targetTypeName) {
+SchemaAlignmentDialog.UILink._rankProperties = function(properties, sourceTypeID, targetTypeID, targetTypeName) {
     var nameScorer;
     if (targetTypeName === null) {
         nameScorer = function() { return 1; };
@@ -173,15 +148,18 @@ SchemaAlignmentDialog.UILink._rankProperties = function(outgoing, incoming, sour
             var score = nameScoreString(0, p.name);
             score = nameScoreStrings(score, p.alias);
             
+            if ("name2" in p) {
+                score = nameScoreString(score, p.name2);
+                score = nameScoreStrings(score, p.alias2);
+            }
+            
             if ("expects" in p && p.expects !== null) {
                 score = nameScoreString(score, p.expects.name);
                 score = nameScoreStrings(score, p.expects.alias);
-                if ("plural_names" in p.expects) {
-                    score = nameScoreStrings(score, p.expects.plural_names);
-                }
-                if ("plural_aliases" in p.expects) {
-                    score = nameScoreStrings(score, p.expects.plural_aliases);
-                }
+            }
+            if ("expects2" in p && p.expects2 !== null) {
+                score = nameScoreString(score, p.expects2.name);
+                score = nameScoreStrings(score, p.expects2.alias);
             }
             
             return score;
@@ -198,12 +176,11 @@ SchemaAlignmentDialog.UILink._rankProperties = function(outgoing, incoming, sour
     }
     
     var suggestions = [];
-    for (var i = 0; i < outgoing.length; i++) {
-        var p = outgoing[i];
+    for (var i = 0; i < properties.length; i++) {
+        var p = properties[i];
         p.score = p.weight * (0.5 * nameScorer(p) + 0.5 * typeScorer(p));
-        if (p.score > 0) {
-            suggestions.push(p);
-        }
+        
+        suggestions.push(p);
     }
     
     suggestions.sort(function(a, b) { return b.score - a.score; });
@@ -212,32 +189,25 @@ SchemaAlignmentDialog.UILink._rankProperties = function(outgoing, incoming, sour
     return suggestions;
 };
 
-SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, outgoing, incoming, weight, onDone) {
+SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, onDone) {
+    var done = false;
+    
     $.getJSON(
-        "http://api.sandbox-freebase.com/api/trans/schema_index/-" + typeID + "?callback=?",
+        "http://gridworks-helper.freebaseapps.com/get_properties_of_type?type=" + typeID + "&callback=?",
         null,
         function(data) {
-            if ("result" in data) {
-                var result = data.result;
-                if ("outgoing" in result) {
-                    for (var i = 0; i < result.outgoing.length; i++) {
-                        var p = result.outgoing[i];
-                        p.weight = weight;
-                        outgoing.push(p);
-                    }
-                }
-                if ("incoming" in result) {
-                    for (var i = 0; i < result.incoming.length; i++) {
-                        var p = result.incoming[i];
-                        p.weight = weight;
-                        incoming.push(p);
-                    }
-                }
-            }
-            onDone(data);
-        },
-        "jsonp"
+            if (done) return;
+            
+            onDone(data.properties || []);
+        }
     );
+    
+    window.setTimeout(function() {
+        if (done) return;
+        
+        done = true;
+        onDone([]);
+    }, 7000); // time to give up?
 };
 
 SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt, suggestions) {
@@ -248,17 +218,17 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     var commitProperty = function(p) {
         window.setTimeout(function() { MenuSystem.dismissAll(); }, 100);
         
-        if ("plies" in p && p.plies.length > 1) {
+        if ("id2" in p) {
             // self._targetUI.dispose();
             self._link.property = {
-                id: p.plies[0],
+                id: p.id,
                 name: p.name
             };
             self._link.target = {
                 nodeType: "anonymous",
                 links: [{
                     property: {
-                        id: p.plies[1],
+                        id: p.id2,
                         name: p.name2
                     },
                     target: self._link.target
