@@ -19,6 +19,10 @@
     color: #aaa;
 }
 
+#form-tabs > div {
+    height: 400px;
+}
+
 #create-project-panel h1 {
     font-size: 120%;
     margin: 2em 0 1em 0;

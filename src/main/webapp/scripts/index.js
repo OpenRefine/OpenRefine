@@ -134,6 +134,10 @@ function onLoad() {
     
     $("#form-tabs").tabs();
     $("#upload-file-button").click(onClickUploadFileButton);
+    $("#more-options-link").click(function() {
+        $("#more-options-controls").hide();
+        $("#more-options").show();
+    });
     
     $("#gridworks-version").text(
         GridworksVersion.version + "-" + GridworksVersion.revision
