@@ -135,9 +135,11 @@ public class RangeFacet implements Facet {
             _errorMessage = e.getMessage();
         }
         
-        _from = o.getDouble(FROM);
-        _to = o.getDouble(TO);
-        _selected = true;
+        if (o.has(FROM) || o.has(TO)) {
+            _from = o.has(FROM) ? o.getDouble(FROM) : _min;
+            _to = o.has(TO) ? o.getDouble(TO) : _max;
+            _selected = true;
+        }
         
         _selectNumeric = JSONUtilities.getBoolean(o, "selectNumeric", true);
         _selectNonNumeric = JSONUtilities.getBoolean(o, "selectNonNumeric", true);
