@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.common.usermodel.Hyperlink;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -166,7 +167,13 @@ public class ExcelImporter implements Importer {
                     if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
                         value = cell.getBooleanCellValue();
                     } else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {
-                        value = cell.getNumericCellValue();
+                        double d = cell.getNumericCellValue();
+                        
+                        if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                            value = HSSFDateUtil.getJavaDate(d);
+                        } else {
+                            value = d;
+                        }
                     } else {
                         String text = cell.getStringCellValue().trim();
                         if (text.length() > 0) {
