@@ -59,6 +59,21 @@ public class JSONUtilities {
         }
     }
     
+    static public int[] getIntArray(JSONObject obj, String key) {
+        try {
+            JSONArray a = obj.getJSONArray(key);
+            int[] r = new int[a.length()];
+            
+            for (int i = 0; i < r.length; i++) {
+                r[i] = a.getInt(i);
+            }
+            
+            return r;
+        } catch (JSONException e) {
+            return new int[0];
+        }
+    }
+    
     static public String[] getStringArray(JSONObject obj, String key) {
         try {
             JSONArray a = obj.getJSONArray(key);

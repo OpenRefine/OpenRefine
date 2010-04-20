@@ -81,6 +81,16 @@ public class ColumnModel implements Jsonizable {
         return _nameToColumn.get(name);
     }
     
+    public int getColumnIndexByName(String name) {
+        for (int i = 0; i < _columnNames.size(); i++) {
+            String s = _columnNames.get(i);
+            if (name.equals(s)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
     public Column getColumnByCellIndex(int cellIndex) {
         return _cellIndexToColumn.get(cellIndex);
     }

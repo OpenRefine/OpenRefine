@@ -290,6 +290,10 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             label: "Edit Column",
             submenu: [
                 {
+                    label: "Split into Several Columns",
+                    click: function() { self._doSplitColumn(); }
+                },
+                {
                     label: "Add Column Based on This Column ...",
                     click: function() { self._doAddColumn("value"); }
                 },
@@ -940,4 +944,138 @@ DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
             { rowsChanged: true }
         );
     }
+};
+
+DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    frame.width("600px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Split Column " + this._column.name + " into Several Columns").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    body.html(
+        '<div class="grid-layout layout-looser layout-full"><table><tr>' +
+            '<td>' +
+                '<div class="grid-layout layout-tighter"><table>' +
+                    '<tr>' +
+                        '<td colspan="3"><h3>How to Split Column</h3></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" /></td>' +
+                        '<td colspan="2">by separator</td>' +
+                    '</tr>' +
+                    '<tr><td></td>' +
+                        '<td>Separator</td>' +
+                        '<td style="white-space: pre;">' +
+                            '<input size="15" value="," bind="separatorInput" /> ' +
+                            '<input type="checkbox" bind="regexInput" /> regular expression' +
+                        '</td>' +
+                    '</tr>' +
+                    '<tr><td></td>' +
+                        '<td>Split into</td>' +
+                        '<td style="white-space: pre;"><input size="3" bind="maxColumnsInput" /> ' +
+                            'columns at most (leave blank for no limit)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td width="1%"><input type="radio" name="split-by-mode" value="lengths" /></td>' +
+                        '<td colspan="2">by field lengths</td>' +
+                    '</tr>' +
+                    '<tr><td></td>' +
+                        '<td colspan="2">' +
+                            '<textarea style="width: 100%;" bind="lengthsTextarea"></textarea>' +
+                        '</td>' +
+                    '</tr>' +
+                    '<tr><td></td>' +
+                        '<td colspan="2">' +
+                            'List of integers separated by commas, e.g., 5, 7, 15' +
+                        '</td>' +
+                    '</tr>' +
+                '</table></div>' +
+            '</td>' +
+            '<td>' +
+                '<div class="grid-layout layout-tighter"><table>' +
+                    '<tr>' +
+                        '<td colspan="3"><h3>After Splitting</h3></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td width="1%"><input type="checkbox" checked="true" bind="guessCellTypeInput" /></td>' +
+                        '<td colspan="2">Guess cell type</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td width="1%"><input type="checkbox" checked="true" bind="removeColumnInput" /></td>' +
+                        '<td colspan="2">Remove this column</td>' +
+                    '</tr>' +
+                '</table></div>' +
+            '</td>' +
+        '</table></div>'
+    );
+    var bodyElmts = DOM.bind(body);
+    
+    footer.html(
+        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+        '<button bind="cancelButton">Cancel</button>'
+    );
+    var footerElmts = DOM.bind(footer);
+        
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    footerElmts.okButton.click(function() {
+        var mode = $("input[name='split-by-mode']:checked")[0].value;
+        var config = {
+            columnName: self._column.name,
+            mode: mode,
+            guessCellType: bodyElmts.guessCellTypeInput[0].checked,
+            removeOriginalColumn: bodyElmts.removeColumnInput[0].checked
+        };
+        if (mode == "separator") {
+            config.separator = bodyElmts.separatorInput[0].value;
+            if (!(config.separator)) {
+                alert("Please specify a separator.");
+                return;
+            }
+
+            config.regex = bodyElmts.regexInput[0].checked;
+            
+            var s = bodyElmts.maxColumnsInput[0].value;
+            if (s) {
+                var n = parseInt(s);
+                if (!isNaN(n)) {
+                    config.maxColumns = n;
+                }
+            }
+        } else {
+            var s = "[" + bodyElmts.lengthsTextarea[0].value + "]";
+            try {
+                var a = JSON.parse(s);
+            } catch (e) {
+                alert("The given field lengths are not properly formatted.");
+                return;
+            }
+            
+            var lengths = [];
+            $.each(a, function(i,n) { if (typeof n == "number") lengths.push(n); });
+            
+            if (lengths.length == 0) {
+                alert("No field length is specified.");
+                return;
+            }
+            
+            config.fieldLengths = JSON.stringify(lengths);
+        }
+        
+        Gridworks.postProcess(
+            "split-column", 
+            config,
+            null,
+            { modelsChanged: true }
+        );
+        dismiss();
+    });
+    
+    footerElmts.cancelButton.click(dismiss);
 };

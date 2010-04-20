@@ -10,7 +10,6 @@ import com.metaweb.gridworks.gel.ControlFunctionRegistry;
 import com.metaweb.gridworks.gel.Function;
 
 public class SplitByLengths implements Function {
-
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2 && args[0] != null) {
             Object o = args[0];
