@@ -1,0 +1,2 @@
+class Foobar(object):
+    pass

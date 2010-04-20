@@ -1,0 +1,13 @@
+test_jbasic
+Basic Java Integration (test_jbasic.py)
+type conversions
+numbers
+strings
+arrays
+Enumerations
+create java objects
+call static methods
+call instance methods
+get/set fields
+get/set bean properties
+bean event properties

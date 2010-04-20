@@ -1,0 +1,8 @@
+grant codeBase "file:${python.home}/-" {
+  permission java.io.FilePermission "<<ALL FILES>>", "read,write";
+  permission java.lang.RuntimePermission "accessDeclaredMembers";
+  permission java.lang.RuntimePermission "createClassLoader";
+  permission java.lang.RuntimePermission "getProtectionDomain";
+  permission java.util.PropertyPermission "*", "read,write";
+};
+

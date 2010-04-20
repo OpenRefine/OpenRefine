@@ -1,0 +1,2 @@
+def spam():
+    print 'spam'

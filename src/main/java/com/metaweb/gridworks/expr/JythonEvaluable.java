@@ -79,7 +79,7 @@ public class JythonEvaluable implements Evaluable {
             
             List<Object> list = new ArrayList<Object>();
             while (i.hasNext()) {
-                list.add(unwrap(i.next()));
+                list.add(unwrap((Object) i.next()));
             }
             
             return list.toArray();

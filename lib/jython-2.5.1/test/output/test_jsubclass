@@ -1,0 +1,5 @@
+test_jsubclass
+Subclassing Java from Python (test_jsubclass.py)
+override methods
+pass subclass back to java
+invoke super's constructor
