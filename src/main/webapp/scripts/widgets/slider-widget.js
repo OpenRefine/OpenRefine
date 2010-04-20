@@ -11,6 +11,14 @@ function SliderWidget(elmt, options) {
     };
     this._drag = null;
     
+    var self = this;
+    this._mouseMoveHandler = function(evt) {
+        return self._onMouseMove(evt);
+    };
+    this._mouseUpHandler = function(evt) {
+        return self._onMouseUp(evt);
+    };
+    
     this._initializeUI();
     this._update();
 }
@@ -71,16 +79,23 @@ SliderWidget.prototype._onMouseDown = function(evt, part) {
         return;
     }
     
+    $(document).mousemove(this._mouseMoveHandler);
+    $(document).mouseup(this._mouseUpHandler);
+    
     this._drag = {
-        sureDrag: false
+        sureDrag: false,
+        overlay: $('<div>').addClass("slider-widget-overlay").appendTo(document.body)
     };
     if ("highlight" == part) {
         this._drag.elmt = this._highlightRect;
         this._drag.value = this._range.from;
+        $(this._drag.overlay).css("cursor", "move");
     } else if ("left" == part) {
         this._drag.elmt = this._leftBracket;
+        $(this._drag.overlay).css("cursor", "e-resize");
     } else if ("right" == part) {
         this._drag.elmt = this._rightBracket;
+        $(this._drag.overlay).css("cursor", "w-resize");
     }
     this._drag.what = part;
     this._drag.from = this._range.from;
@@ -96,10 +111,14 @@ SliderWidget.prototype._onMouseUp = function(evt) {
         return;
     }
     
+    $(document).unbind("mousemove", this._mouseMoveHandler);
+    $(document).unbind("mouseup", this._mouseUpHandler);
+    
     if (this._drag.sureDrag) {
         this._update();
         this._trigger("stop");
     }
+    this._drag.overlay.remove();
     this._drag = null;
 };
 
