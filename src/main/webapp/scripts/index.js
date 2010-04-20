@@ -8,6 +8,7 @@ function onClickUploadFileButton(evt) {
     } else {
         $("#file-upload-form").attr("action", 
             "/command/create-project-from-upload?" + [
+                "split-into-columns=" + $("#split-into-columns-input")[0].checked,
                 "separator=" + $("#separator-input")[0].value,
                 "ignore=" + $("#ignore-input")[0].value,
                 "header-lines=" + $("#header-lines-input")[0].value,

@@ -11,6 +11,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 
 import com.metaweb.gridworks.importers.parsers.CSVRowParser;
+import com.metaweb.gridworks.importers.parsers.NonSplitRowParser;
 import com.metaweb.gridworks.importers.parsers.RowParser;
 import com.metaweb.gridworks.importers.parsers.SeparatorRowParser;
 import com.metaweb.gridworks.model.Project;
@@ -18,6 +19,8 @@ import com.metaweb.gridworks.model.Row;
 
 public class TsvCsvImporter implements Importer {
     public void read(Reader reader, Project project, Properties options) throws Exception {
+        boolean splitIntoColumns = ImporterUtilities.getBooleanOption("split-into-columns", options, true);
+        
         String sep = options.getProperty("separator"); // auto-detect if not present
         int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
         int headerLines = ImporterUtilities.getIntegerOption("header-lines", options, 1);
@@ -29,7 +32,8 @@ public class TsvCsvImporter implements Importer {
         List<String> columnNames = new ArrayList<String>();
                 
         LineNumberReader lnReader = new LineNumberReader(reader);
-        RowParser parser = (sep == null || (sep.length() == 0)) ? null : new SeparatorRowParser(sep);
+        RowParser parser = (sep != null && sep.length() > 0 && splitIntoColumns) ? 
+                new SeparatorRowParser(sep) : null;
         
         String line = null;
         int rowsWithData = 0;
@@ -43,13 +47,17 @@ public class TsvCsvImporter implements Importer {
             }
             
             if (parser == null) {
-                int tab = line.indexOf('\t');
-                if (tab >= 0) {
-                    sep = "\t";
-                    parser = new SeparatorRowParser(sep);
+                if (splitIntoColumns) {
+                    int tab = line.indexOf('\t');
+                    if (tab >= 0) {
+                        sep = "\t";
+                        parser = new SeparatorRowParser(sep);
+                    } else {
+                        sep = ",";
+                        parser = new CSVRowParser();
+                    }
                 } else {
-                    sep = ",";
-                    parser = new CSVRowParser();
+                    parser = new NonSplitRowParser();
                 }
             }
             

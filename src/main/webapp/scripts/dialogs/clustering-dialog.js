@@ -33,7 +33,7 @@ ClusteringDialog.prototype._createDialog = function() {
                 '<td>' +
                     'Method: <select bind="methodSelector">' +
                         '<option selected="true">key collision</option>' +
-                        '<option>nearest neightbor</option>' +
+                        '<option>nearest neighbor</option>' +
                     '</select>' +
                 '</td>' +
                 '<td>' +
@@ -77,7 +77,7 @@ ClusteringDialog.prototype._createDialog = function() {
             body.find(".knn-controls").hide();
             self._method = "binning";
             self._elmts.keyingFunctionSelector.change();
-        } else if (selection === 'nearest neightbor') {
+        } else if (selection === 'nearest neighbor') {
             body.find(".binning-controls").hide();
             body.find(".knn-controls").show();
             self._method = "knn";
