@@ -1,6 +1,0 @@
-test_methods
-Bound and unbound methods (test_methods.py)
-unbound method equality
-method attributes
-unbound method invocation w/ explicit self
-"unbound" methods of builtin types

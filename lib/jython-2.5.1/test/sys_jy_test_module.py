@@ -1,2 +1,0 @@
-class Foobar(object):
-    pass
