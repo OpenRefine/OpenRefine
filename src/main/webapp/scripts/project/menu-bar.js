@@ -59,7 +59,7 @@ MenuBar.prototype._initializeUI = function() {
         {},
         {
             label: "Load into Freebase ...",
-            click: function() { alert("Not implemented yet."); }
+            click: function() { self._doLoadIntoFreebase(); }
         }
     ]);
     
@@ -216,4 +216,8 @@ MenuBar.prototype._doAutoSchemaAlignment = function() {
 
 MenuBar.prototype._doEditSchemaAlignment = function(reset) {
     new SchemaAlignmentDialog(reset ? null : theProject.protograph, function(newProtograph) {});
+};
+
+MenuBar.prototype._doLoadIntoFreebase = function() {
+    new FreebaseLoadingDialog();
 };

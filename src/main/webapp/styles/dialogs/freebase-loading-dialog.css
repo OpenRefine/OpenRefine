@@ -1,0 +1,8 @@
+.freebase-loading-tripleloader-data {
+    height: 500px;
+    overflow: auto;
+    border: 1px solid #aaa;
+    white-space: pre;
+    padding: 0.3em 0.5em 0.5em 0.5em;
+    font-family: monospace;
+}

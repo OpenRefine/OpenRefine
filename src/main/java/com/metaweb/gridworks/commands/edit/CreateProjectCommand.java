@@ -3,7 +3,6 @@ package com.metaweb.gridworks.commands.edit;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,6 +49,7 @@ import com.metaweb.gridworks.importers.MarcImporter;
 import com.metaweb.gridworks.importers.TsvCsvImporter;
 import com.metaweb.gridworks.importers.XmlImporter;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.util.IOUtils;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class CreateProjectCommand extends Command {
@@ -298,7 +298,7 @@ public class CreateProjectCommand extends Command {
     private File save(InputStream is) throws IOException {
         File temp = Gridworks.getTempFile(Long.toString(System.currentTimeMillis()));
         temp.deleteOnExit();
-        copy(is,temp);
+        IOUtils.copy(is,temp);
         is.close();
         return temp;
     }
@@ -328,27 +328,6 @@ public class CreateProjectCommand extends Command {
         result[0] = (ext_index == -1) ? filename : filename.substring(0,ext_index);
         result[1] = (ext_index == -1) ? "" : filename.substring(ext_index + 1);
         return result;
-    }
-    
-    private static long copy(InputStream input, File file) throws IOException {
-        FileOutputStream output = new FileOutputStream(file);
-        byte[] buffer = new byte[4 * 1024];
-        long count = 0;
-        int n = 0;
-        try {
-            while (-1 != (n = input.read(buffer))) {
-                output.write(buffer, 0, n);
-                count += n;
-            }
-        } finally {
-            try {
-                output.close();
-            } catch (IOException e) {}
-            try {
-                input.close();
-            } catch (IOException e) {}
-        }
-        return count;
     }
     
     protected void internalImportURL(

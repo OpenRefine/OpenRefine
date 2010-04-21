@@ -18,6 +18,10 @@
 	<classpathentry kind="lib" path="lib/secondstring-20100303.jar" sourcepath="lib-src/secondstring-20100303-sources.jar"/>
 	<classpathentry kind="lib" path="lib/ant-tools-1.8.0.jar" sourcepath="lib-src/ant-tools-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/vicino-1.1.jar" sourcepath="lib-src/vicino-1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.0.1.jar" sourcepath="lib-src/httpcore-4.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.0.1.jar" sourcepath="lib-src/httpclient-4.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/signpost-core-1.2.1.1.jar" sourcepath="lib-src/signpost-core-1.2.1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/signpost-commonshttp4-1.2.1.1.jar" sourcepath="lib-src/signpost-commonshttp4-1.2.1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/jython-2.5.1.jar"/>

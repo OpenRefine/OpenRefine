@@ -43,6 +43,8 @@ public class Gridworks {
     static private final int MAX_UPLOAD_SIZE = 1024 * 1024 * 1024;
     
     static private File tempDir;
+    static private int port;
+    static private String host;
     
     private static Logger root = Logger.getRootLogger();
     private static Logger logger = Logger.getLogger("com.metaweb.gridworks");
@@ -82,17 +84,24 @@ public class Gridworks {
     public static int getMaxUploadSize() {
         return Configurations.getInteger("gridworks.max_upload_size",MAX_UPLOAD_SIZE);
     }
-
+    
+    public static String getURL() {
+        return "http://" + Configurations.get("gridworks.host",DEFAULT_HOST) + ":" + Configurations.getInteger("gridworks.port",DEFAULT_PORT);
+    }
+    
     public static void main(String[] args) throws Exception  {
         
         // tell jetty to use SLF4J for logging instead of its own stuff
         System.setProperty("VERBOSE","false");
         System.setProperty("org.mortbay.log.class","org.mortbay.log.Slf4jLog");
-
+        
         // tell macosx to keep the menu associated with the screen
         System.setProperty("apple.laf.useScreenMenuBar", "true");  
         System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode", "false"); 
 
+        // tell the signpost library to log
+        System.setProperty("debug","true");
+                        
         // initialize the log4j system
         Appender console = new ConsoleAppender(new IndentingLayout());
         root.setLevel(Level.ALL);
@@ -103,7 +112,10 @@ public class Gridworks {
 
         tempDir = new File(Configurations.get("gridworks.temp","temp"));
         if (!tempDir.exists()) tempDir.mkdirs();
-        
+
+        port = Configurations.getInteger("gridworks.port",DEFAULT_PORT);
+        host = Configurations.get("gridworks.host",DEFAULT_HOST);
+
         Gridworks gridworks = new Gridworks();
         
         gridworks.init(args);
@@ -111,9 +123,6 @@ public class Gridworks {
 
     public void init(String[] args) throws Exception {
 
-        int port = Configurations.getInteger("gridworks.port",DEFAULT_PORT);
-        String host = Configurations.get("gridworks.host",DEFAULT_HOST);
-        
         GridworksServer server = new GridworksServer();
         server.init(host,port);
 

@@ -54,7 +54,15 @@ licenses/apache2.0.LICENSE.txt
     poi-ooxml-schemas
     servlet-api
     xmlbeans
+    signpost
+   
+LGPL
+----
 
+licenses/marj4j.LICENSE.txt
+    marc4j
+    
+     
 BSD
 ---
     
@@ -87,6 +95,9 @@ licenses/datejs.LICENSE.txt
 
 licenses/imgareaselect.LICENSE.txt
     imgareaselect
+
+licenses/blockui.LICENSE.txt
+    blockui
        
 licenses/slf4j.LICENSE.txt
     slf4j-api

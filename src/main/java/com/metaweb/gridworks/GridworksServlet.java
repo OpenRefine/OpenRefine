@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.metaweb.gridworks.commands.Command;
+import com.metaweb.gridworks.commands.auth.CheckAuthorizationCommand;
+import com.metaweb.gridworks.commands.auth.DeAuthorizeCommand;
+import com.metaweb.gridworks.commands.auth.AuthorizeCommand;
 import com.metaweb.gridworks.commands.edit.AddColumnCommand;
 import com.metaweb.gridworks.commands.edit.AnnotateOneRowCommand;
 import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
@@ -36,10 +39,10 @@ import com.metaweb.gridworks.commands.info.ComputeClustersCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.info.ExportRowsCommand;
 import com.metaweb.gridworks.commands.info.GetAllProjectMetadataCommand;
+import com.metaweb.gridworks.commands.info.GetColumnsInfoCommand;
 import com.metaweb.gridworks.commands.info.GetExpressionHistoryCommand;
 import com.metaweb.gridworks.commands.info.GetHistoryCommand;
 import com.metaweb.gridworks.commands.info.GetModelsCommand;
-import com.metaweb.gridworks.commands.info.GetColumnsInfoCommand;
 import com.metaweb.gridworks.commands.info.GetOperationsCommand;
 import com.metaweb.gridworks.commands.info.GetProcessesCommand;
 import com.metaweb.gridworks.commands.info.GetProjectMetadataCommand;
@@ -130,6 +133,10 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("preview-protograph", new PreviewProtographCommand());
         
         _commands.put("guess-types-of-column", new GuessTypesOfColumnCommand());
+        
+        _commands.put("check-authorization", new CheckAuthorizationCommand());
+        _commands.put("authorize", new AuthorizeCommand());
+        _commands.put("deauthorize", new DeAuthorizeCommand());
     }
 
     @Override
@@ -170,6 +177,8 @@ public class GridworksServlet extends HttpServlet {
         Command command = _commands.get(getCommandName(request));
         if (command != null) {
             command.doPost(request, response);
+        } else {
+            response.sendError(404);
         }
     }
     
@@ -177,6 +186,8 @@ public class GridworksServlet extends HttpServlet {
         Command command = _commands.get(getCommandName(request));
         if (command != null) {
             command.doGet(request, response);
+        } else {
+            response.sendError(404);
         }
     }
     
