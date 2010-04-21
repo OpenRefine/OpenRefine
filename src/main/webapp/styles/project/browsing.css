@@ -51,6 +51,12 @@ li.facet-container {
     font-weight: bold;
     cursor: move;
 }
+.facet-expression {
+    padding: 3px 5px;
+    font-family: monospace;
+    font-size: 11px;
+    background: #eee;
+}
 
 .facet-status {
     font-size: 90%;

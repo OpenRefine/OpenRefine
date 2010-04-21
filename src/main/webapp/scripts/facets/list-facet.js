@@ -110,6 +110,7 @@ ListFacet.prototype._initializeUI = function() {
             '<img src="images/close.png" title="Remove this facet" class="facet-choice-link" bind="removeButton"/>' +
             '<span bind="titleSpan"></span>' +
         '</div>' +
+        '<div class="facet-expression" bind="expressionDiv"></div>' +
         '<div class="facet-status" bind="statusDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
             '<table><tr>' +
                 '<td bind="choiceCountContainer"></td>' +
@@ -132,6 +133,7 @@ ListFacet.prototype._initializeUI = function() {
     this._elmts = DOM.bind(this._div);
     
     this._elmts.titleSpan.text(this._config.name);
+    this._elmts.expressionDiv.text(this._config.expression);
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.resetButton.click(function() { self._reset(); });
 
@@ -173,6 +175,9 @@ ListFacet.prototype._update = function(resetScroll) {
     }
     
     this._elmts.bodyDiv.empty();
+    if (!("scroll" in this._options) || this._options.scroll) {
+        this._elmts.bodyDiv.resizable();
+    }
     
     if (!this._data) {
         this._elmts.statusDiv.hide();

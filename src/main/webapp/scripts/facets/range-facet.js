@@ -102,6 +102,7 @@ RangeFacet.prototype._initializeUI = function() {
                 '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
                 '<span bind="facetTitle"></span>' +
             '</div>' +
+            '<div class="facet-expression" bind="expressionDiv"></div>' +
             '<div class="facet-range-body">' +
                 '<div class="facet-range-message" bind="messageDiv">Loading...</div>' +
                 '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
@@ -114,6 +115,8 @@ RangeFacet.prototype._initializeUI = function() {
     this._elmts = DOM.bind(this._div);
     
     this._elmts.facetTitle.text(this._config.name);
+    this._elmts.expressionDiv.text(this._config.expression);
+    
     this._elmts.resetButton.click(function() {
         self.reset();
         self._updateRest();

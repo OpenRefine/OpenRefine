@@ -112,7 +112,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "list", 
                                     {
-                                        "name" : self._column.name + " value.split(' ')",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "value.split(' ')"
                                     }
@@ -126,7 +126,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "range", 
                                     {
-                                        "name" : self._column.name + ": value.log()",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "value.log()",
                                         "mode" : "range"
@@ -140,7 +140,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "range", 
                                     {
-                                        "name" : self._column.name + ": log(max(1, value))",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "log(max(1, value))",
                                         "mode" : "range"
@@ -155,7 +155,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "range", 
                                     {
-                                        "name" : self._column.name + ": value.length()",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "value.length()",
                                         "mode" : "range"
@@ -169,7 +169,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "range", 
                                     {
-                                        "name" : self._column.name + ": value.length().log()",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "value.length().log()",
                                         "mode" : "range"
@@ -183,7 +183,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "range", 
                                     {
-                                        "name" : self._column.name + ": value.unicode()",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "value.unicode()",
                                         "mode" : "range"
@@ -198,7 +198,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "list", 
                                     {
-                                        "name" : self._column.name + ": Error?",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "isError(value)"
                                     }
@@ -211,7 +211,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "list", 
                                     {
-                                        "name" : self._column.name + ": Blank?",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "isBlank(value)"
                                     }
@@ -418,7 +418,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.name + ": judgment",
+                                "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "expression" : "cell.recon.judgment",
                                 "omitError" : true
@@ -436,7 +436,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : self._column.name + ": best candidate's score",
+                                "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "expression" : "cell.recon.best.score",
                                 "mode" : "range"
@@ -452,7 +452,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.name + ": best candidate's type match",
+                                "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "expression" : "cell.recon.features.typeMatch",
                                 "omitError" : true
@@ -469,7 +469,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.name + ": best candidate's name match",
+                                "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "expression" : "cell.recon.features.nameMatch",
                                 "omitError" : true
@@ -487,7 +487,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : self._column.name + ": best candidate's name edit distance",
+                                "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "expression" : "cell.recon.features.nameLevenshtein",
                                 "mode" : "range"
@@ -503,7 +503,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : self._column.name + ": best candidate's name word similarity",
+                                "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "expression" : "cell.recon.features.nameWordDistance",
                                 "mode" : "range"
@@ -520,7 +520,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : self._column.name + ": best candidate's types",
+                                "name" : self._column.name,
                                 "columnName" : self._column.name, 
                                 "expression" : "cell.recon.best.type",
                                 "omitError" : true
@@ -541,7 +541,7 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
         expression,
         function(expression) {
             var config = {
-                "name" : self._column.name + ": " + expression,
+                "name" : self._column.name,
                 "columnName" : self._column.name, 
                 "expression" : expression
             };
