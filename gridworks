@@ -759,10 +759,12 @@ if [ -z "$GRIDWORKS_DIST_DIR" ]; then
     GRIDWORKS_DIST_DIR="dist"
 fi
 
-if [ -z "$PYTHONPATH" ]; then
-    PYTHONPATH="$GRIDWORKS_LIB_DIR/jython-2.5.1/"
+if [ -z "$JYTHONPATH" ]; then
+    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython-2.5.1"
+else
+    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython-2.5.1/${SEP}$JYTHONPATH"
 fi
-add_option "-Dpython.path=$PYTHONPATH"
+add_option "-Dpython.path=$JYTHONPATH"
 
 # ----- Respond to the action given --------------------------------------------
 
