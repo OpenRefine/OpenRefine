@@ -166,6 +166,22 @@ ListFacet.prototype._initializeUI = function() {
 ListFacet.prototype._update = function(resetScroll) {
     var self = this;
     
+    if (!this._data) {
+        this._elmts.statusDiv.hide();
+        this._elmts.controlsDiv.hide();
+        this._elmts.bodyDiv.empty().append(
+            $('<div>').text("Loading...").addClass("facet-body-message"));
+            
+        return;
+    } else if ("error" in this._data) {
+        this._elmts.statusDiv.hide();
+        this._elmts.controlsDiv.hide();
+        this._elmts.bodyDiv.empty().append(
+            $('<div>').text(this._data.error).addClass("facet-body-message"));
+        
+        return;
+    }
+    
     var scrollTop = 0;
     if (!resetScroll) {
         try {
@@ -179,136 +195,143 @@ ListFacet.prototype._update = function(resetScroll) {
         this._elmts.bodyDiv.resizable();
     }
     
-    if (!this._data) {
-        this._elmts.statusDiv.hide();
-        this._elmts.controlsDiv.hide();
+    this._elmts.statusDiv.show();
+    this._elmts.controlsDiv.show();
     
-        $('<div>').text("Loading...").addClass("facet-body-message").appendTo(this._elmts.bodyDiv);
-    } else if ("error" in this._data) {
-        this._elmts.statusDiv.hide();
-        this._elmts.controlsDiv.hide();
-        
-        $('<div>').text(this._data.error).addClass("facet-body-message").appendTo(this._elmts.bodyDiv);
+    var choices = this._data.choices;
+    var selectionCount = this._selection.length +
+          (this._blankChoice !== null && this._blankChoice.s ? 1 : 0) +
+          (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
+          
+    this._elmts.choiceCountContainer.text(choices.length + " choices");
+    if (selectionCount > 0) {
+        this._elmts.resetButton.show();
     } else {
-        this._elmts.statusDiv.show();
-        this._elmts.controlsDiv.show();
-        
-        var choices = this._data.choices;
-        var selectionCount = this._selection.length +
-              (this._blankChoice !== null && this._blankChoice.s ? 1 : 0) +
-              (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
-              
-        this._elmts.choiceCountContainer.text(choices.length + " choices");
-        if (selectionCount > 0) {
-            this._elmts.resetButton.show();
-        } else {
-            this._elmts.resetButton.hide();
-        }
-        
-        if (this._options.sort == "name") {
-            this._elmts.sortByNameLink.addClass("facet-mode-link-selected");
-            this._elmts.sortByCountLink.removeClass("facet-mode-link-selected");
-        } else {
-            this._elmts.sortByNameLink.removeClass("facet-mode-link-selected");
-            this._elmts.sortByCountLink.addClass("facet-mode-link-selected");
-        }
-        
-        var choiceContainer = $('<div>');
-        
-        var renderEdit = this._config.expression == "value";
-        var renderChoice = function(choice, customLabel) {
-            var label = customLabel || choice.v.l;
-            var count = choice.c;
-            
-            var choiceDiv = $('<div></div>').addClass("facet-choice").appendTo(choiceContainer);
-            if (choice.s) {
-                choiceDiv.addClass("facet-choice-selected");
-            }
-            
-            var a = $('<a href="javascript:{}"></a>').addClass("facet-choice-label").text(label).appendTo(choiceDiv);
-            $('<span></span>').addClass("facet-choice-count").text(count).appendTo(choiceDiv);
-            
-            var select = function() {
-                self._select(choice, false);
-            };
-            var selectOnly = function() {
-                self._select(choice, true);
-            };
-            var deselect = function() {
-                self._deselect(choice);
-            };
-            
-            var editLink = $('<a href="javascript:{}"></a>')
-                .addClass("facet-choice-link")
-                .text("edit")
-                .css("visibility", "hidden")
-                .prependTo(choiceDiv);
-            
-            if (renderEdit && customLabel === undefined) {
-                editLink.click(function() {
-                    self._editChoice(choice, choiceDiv);
-                })
-                
-                choiceDiv
-                    .mouseenter(function() {
-                        editLink.css("visibility", "visible");
-                    })
-                    .mouseleave(function() {
-                        editLink.css("visibility", "hidden");
-                    });
-            }
-            
-            var includeExcludeLink = $('<a href="javascript:{}"></a>')
-                .addClass("facet-choice-link")
-                .text("include")
-                .css("visibility", "hidden")
-                .click(deselect)
-                .prependTo(choiceDiv);
-                    
-            if (choice.s) { // selected
-                if (selectionCount > 1) {
-                    // select only
-                    a.click(selectOnly);
-                } else {
-                    // deselect
-                    a.click(deselect);
-                }
-                
-                includeExcludeLink
-                    .text("exclude")
-                    .css("visibility", "visible")
-                    .click(deselect);
-                    
-            } else if (selectionCount > 0) {
-                a.click(selectOnly);
-                
-                includeExcludeLink.click(select);
-                    
-                choiceDiv
-                    .mouseenter(function() {
-                        includeExcludeLink.css("visibility", "visible");
-                    })
-                    .mouseleave(function() {
-                        includeExcludeLink.css("visibility", "hidden");
-                    });
-            } else {
-                a.click(select);
-            }
-        };
-        
-        for (var i = 0; i < choices.length; i++) {
-            renderChoice(choices[i]);
-        }
-        if (this._blankChoice !== null) {
-            renderChoice(this._blankChoice, "(blank)");
-        }
-        if (this._errorChoice !== null) {
-            renderChoice(this._errorChoice, "(error)");
-        }
-        
-        this._elmts.bodyDiv.append(choiceContainer);
-        this._elmts.bodyDiv[0].scrollTop = scrollTop;
+        this._elmts.resetButton.hide();
     }
+    
+    if (this._options.sort == "name") {
+        this._elmts.sortByNameLink.addClass("facet-mode-link-selected");
+        this._elmts.sortByCountLink.removeClass("facet-mode-link-selected");
+    } else {
+        this._elmts.sortByNameLink.removeClass("facet-mode-link-selected");
+        this._elmts.sortByCountLink.addClass("facet-mode-link-selected");
+    }
+    
+    var html = [];
+    var temp = $('<div>');
+    var encodeHtml = function(s) {
+        return temp.text(s).html();
+    };
+    
+    var renderEdit = this._config.expression == "value";
+    var renderChoice = function(index, choice, customLabel) {
+        var label = customLabel || choice.v.l;
+        var count = choice.c;
+        
+        html.push('<div class="facet-choice' + (choice.s ? ' facet-choice-selected' : '') + '" choiceIndex="' + index + '">');
+        
+            // include/exclude link
+            html.push(
+                '<a href="javascript:{}" class="facet-choice-link facet-choice-toggle" ' +
+                    'style="visibility: ' + (choice.s ? 'visible' : 'hidden') + '">' + 
+                    (choice.s ? 'exclude' : 'include') + 
+                '</a>'
+            );
+            
+            // edit link
+            if (renderEdit && customLabel === undefined) {
+                html.push('<a href="javascript:{}" class="facet-choice-link facet-choice-edit" style="visibility: hidden">edit</a>');
+            }
+            
+            html.push('<a href="javascript:{}" class="facet-choice-label">' + encodeHtml(label) + '</a>');
+            html.push('<span class="facet-choice-count">' + count + '</span>');
+            
+        html.push('</div>');
+    };
+    for (var i = 0; i < choices.length; i++) {
+        renderChoice(i, choices[i]);
+    }
+    if (this._blankChoice !== null) {
+        renderChoice(-1, this._blankChoice, "(blank)");
+    }
+    if (this._errorChoice !== null) {
+        renderChoice(-2, this._errorChoice, "(error)");
+    }
+    
+    this._elmts.bodyDiv.html(html.join(''));
+    this._elmts.bodyDiv[0].scrollTop = scrollTop;
+    
+    var getChoice = function(elmt) {
+        var index = parseInt(elmt.attr("choiceIndex"));
+        if (index == -1) {
+            return self._blankChoice;
+        } else if (index == -2) {
+            return self._errorChoice;
+        } else {
+            return choices[index];
+        }
+    };
+    var findChoice = function(elmt) {
+        return getChoice(elmt.closest('.facet-choice'));
+    };
+    var select = function(choice) {
+        self._select(choice, false);
+    };
+    var selectOnly = function(choice) {
+        self._select(choice, true);
+    };
+    var deselect = function(choice) {
+        self._deselect(choice);
+    };
+    
+    var wireEvents = function() {
+        var bodyDiv = self._elmts.bodyDiv;
+        bodyDiv.find('.facet-choice-label').click(function() {
+            var choice = findChoice($(this));
+            if (choice.s) {
+                if (selectionCount > 1) {
+                    selectOnly(choice);
+                } else {
+                    deselect(choice);
+                }
+            } else if (selectionCount > 0) {
+                selectOnly(choice);
+            } else {
+                select(choice);
+            }
+        });
+        bodyDiv.find('.facet-choice-edit').click(function() {
+            var choice = findChoice($(this));
+            self._editChoice(choice, $(this).closest('.facet-choice'));
+        });
+        
+        bodyDiv.find('.facet-choice').mouseenter(function() {
+            $(this).find('.facet-choice-edit').css("visibility", "visible");
+            
+            var choice = getChoice($(this));
+            if (!choice.s) {
+                $(this).find('.facet-choice-toggle').css("visibility", "visible");
+            }
+        }).mouseleave(function() {
+            $(this).find('.facet-choice-edit').css("visibility", "hidden");
+
+            var choice = getChoice($(this));
+            if (!choice.s) {
+                $(this).find('.facet-choice-toggle').css("visibility", "hidden");
+            }
+        });
+        
+        bodyDiv.find('.facet-choice-toggle').click(function() {
+            var choice = findChoice($(this));
+            if (choice.s) {
+                deselect(choice);
+            } else {
+                select(choice);
+            }
+        });
+    }
+    window.setTimeout(wireEvents, 100);
 };
 
 ListFacet.prototype._doEdit = function() {
