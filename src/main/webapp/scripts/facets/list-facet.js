@@ -13,7 +13,8 @@ function ListFacet(div, config, options, selection) {
     
     this._data = null;
     
-    this.render();
+    this._initializeUI();
+    this._update();
 }
 
 ListFacet.reconstruct = function(div, uiState) {
@@ -87,7 +88,7 @@ ListFacet.prototype.updateState = function(data) {
         this._errorChoice = data.errorChoice || null;
     }
     
-    this.render();
+    this._update();
 };
 
 ListFacet.prototype._reSortChoices = function() {
@@ -101,113 +102,120 @@ ListFacet.prototype._reSortChoices = function() {
     );
 };
 
-ListFacet.prototype.render = function() {
+ListFacet.prototype._initializeUI = function() {
     var self = this;
     
-    var scrollTop = 0;
-    try {
-        scrollTop = this._div[0].childNodes[1].scrollTop;
-    } catch (e) {
-    }
-    
-    var container = this._div.empty().show().html(
+    this._div.empty().show().html(
         '<div class="facet-title">' +
             '<img src="images/close.png" title="Remove this facet" class="facet-choice-link" bind="removeButton"/>' +
             '<span bind="titleSpan"></span>' +
-        '</div>'
+        '</div>' +
+        '<div class="facet-status" bind="statusDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
+            '<table><tr>' +
+                '<td bind="choiceCountContainer"></td>' +
+                '<td width="1%"><a href="javascript:{}" class="action" bind="clusterLink">Cluster</a></td>' +
+            '</tr></table>' +
+        '</div></div>' +
+        '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
+            '<table><tr>' +
+                '<td>Sort by ' +
+                    '<a href="javascript:{}" bind="sortByNameLink" class="facet-mode-link">Name</a> ' +
+                    '<a href="javascript:{}" bind="sortByCountLink" class="facet-mode-link">Count</a>' +
+                '</td>' +
+                '<td width="1%">' +
+                    '<a href="javascript:{}" class="action" bind="resetButton">Reset</a>' +
+                '</td>' +
+            '</tr></table>' +
+        '</div></div>' +
+        '<div class="facet-body" bind="bodyDiv"></div>'
     );
-    var elmts = DOM.bind(container);
+    this._elmts = DOM.bind(this._div);
     
-    elmts.titleSpan.text(this._config.name);
-    elmts.removeButton.click(function() { self._remove(); });
-    
-    var bodyDiv = $('<div>').addClass("facet-body");
-    if (!("scroll" in this._options) || this._options.scroll) {
-        bodyDiv.addClass("facet-body-scrollable");
+    this._elmts.titleSpan.text(this._config.name);
+    this._elmts.removeButton.click(function() { self._remove(); });
+    this._elmts.resetButton.click(function() { self._reset(); });
+
+    this._elmts.sortByCountLink.click(function() {
+        if (self._options.sort != "count") {
+            self._options.sort = "count";
+            self._reSortChoices();
+            self._update(true);
+        }
+    });
+    this._elmts.sortByNameLink.click(function() {
+        if (self._options.sort != "name") {
+            self._options.sort = "name";
+            self._reSortChoices();
+            self._update(true);
+        }
+    });
+        
+    if (this._config.expression == "value") {
+        this._elmts.clusterLink.click(function() { self._doEdit(); });
+    } else {
+        this._elmts.clusterLink.hide();
     }
     
+    if (!("scroll" in this._options) || this._options.scroll) {
+        this._elmts.bodyDiv.addClass("facet-body-scrollable");
+    }
+};
+
+ListFacet.prototype._update = function(resetScroll) {
+    var self = this;
+    
+    var scrollTop = 0;
+    if (!resetScroll) {
+        try {
+            scrollTop = this._elmts.bodyDiv[0].scrollTop;
+        } catch (e) {
+        }
+    }
+    
+    this._elmts.bodyDiv.empty();
+    
     if (!this._data) {
-        $('<div>').text("Loading...").addClass("facet-body-message").appendTo(bodyDiv);
-        bodyDiv.appendTo(container);
-        
+        this._elmts.statusDiv.hide();
+        this._elmts.controlsDiv.hide();
+    
+        $('<div>').text("Loading...").addClass("facet-body-message").appendTo(this._elmts.bodyDiv);
     } else if ("error" in this._data) {
-        $('<div>').text(this._data.error).addClass("facet-body-message").appendTo(bodyDiv);
-        bodyDiv.appendTo(container);
+        this._elmts.statusDiv.hide();
+        this._elmts.controlsDiv.hide();
         
+        $('<div>').text(this._data.error).addClass("facet-body-message").appendTo(this._elmts.bodyDiv);
     } else {
+        this._elmts.statusDiv.show();
+        this._elmts.controlsDiv.show();
+        
         var choices = this._data.choices;
         var selectionCount = this._selection.length +
               (this._blankChoice !== null && this._blankChoice.s ? 1 : 0) +
               (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
-            
-        /*
-         *  Status
-         */
-        var statusDiv = $(
-            '<div class="facet-status"><div class="grid-layout layout-tightest layout-full">' +
-                '<table><tr>' +
-                    '<td>' + choices.length + ' choices</td>' +
-                    '<td width="1%"><a href="javascript:{}" class="action" bind="clusterLink">Cluster</a></td>' +
-                '</tr></table>' +
-            '</div></div>'
-        ).appendTo(container);
-        
-        var statusElmts = DOM.bind(statusDiv);
-        if (this._config.expression == "value") {
-            statusElmts.clusterLink.click(function() { self._doEdit(); });
-        } else {
-            statusElmts.clusterLink.hide();
-        }
-        
-        /*
-         *  Controls
-         */
-        var controlsDiv = $(
-            '<div class="facet-controls"><div class="grid-layout layout-tightest layout-full">' +
-                '<table><tr>' +
-                    '<td>Sort by ' +
-                        '<a href="javascript:{}" bind="sortByNameLink" class="facet-mode-link">Name</a> ' +
-                        '<a href="javascript:{}" bind="sortByCountLink" class="facet-mode-link">Count</a>' +
-                    '</td>' +
-                    '<td width="1%">' +
-                        '<a href="javascript:{}" class="action" bind="resetButton">Reset</a>' +
-                    '</td>' +
-                '</tr></table>' +
-            '</div></div>'
-        ).appendTo(container);
-        
-        var controlsElmts = DOM.bind(controlsDiv);
+              
+        this._elmts.choiceCountContainer.text(choices.length + " choices");
         if (selectionCount > 0) {
-            controlsElmts.resetButton.click(function() { self._reset(); });
+            this._elmts.resetButton.show();
         } else {
-            controlsElmts.resetButton.hide();
+            this._elmts.resetButton.hide();
         }
         
         if (this._options.sort == "name") {
-            controlsElmts.sortByNameLink.addClass("facet-mode-link-selected");
-            controlsElmts.sortByCountLink.click(function() {
-                self._options.sort = "count";
-                self._reSortChoices();
-                self.render();
-            });
+            this._elmts.sortByNameLink.addClass("facet-mode-link-selected");
+            this._elmts.sortByCountLink.removeClass("facet-mode-link-selected");
         } else {
-            controlsElmts.sortByCountLink.addClass("facet-mode-link-selected");
-            controlsElmts.sortByNameLink.click(function() {
-                self._options.sort = "name";
-                self._reSortChoices();
-                self.render();
-            });
+            this._elmts.sortByNameLink.removeClass("facet-mode-link-selected");
+            this._elmts.sortByCountLink.addClass("facet-mode-link-selected");
         }
         
-        /*
-         *  Body
-         */
+        var choiceContainer = $('<div>');
+        
         var renderEdit = this._config.expression == "value";
         var renderChoice = function(choice, customLabel) {
             var label = customLabel || choice.v.l;
             var count = choice.c;
             
-            var choiceDiv = $('<div></div>').addClass("facet-choice").appendTo(bodyDiv);
+            var choiceDiv = $('<div></div>').addClass("facet-choice").appendTo(choiceContainer);
             if (choice.s) {
                 choiceDiv.addClass("facet-choice-selected");
             }
@@ -225,16 +233,16 @@ ListFacet.prototype.render = function() {
                 self._deselect(choice);
             };
             
+            var editLink = $('<a href="javascript:{}"></a>')
+                .addClass("facet-choice-link")
+                .text("edit")
+                .css("visibility", "hidden")
+                .prependTo(choiceDiv);
+            
             if (renderEdit && customLabel === undefined) {
-                // edit link
-                var editLink = $('<a href="javascript:{}"></a>')
-                    .addClass("facet-choice-link")
-                    .text("edit")
-                    .css("visibility", "hidden")
-                    .click(function() {
-                        self._editChoice(choice, choiceDiv);
-                    })
-                    .prependTo(choiceDiv);
+                editLink.click(function() {
+                    self._editChoice(choice, choiceDiv);
+                })
                 
                 choiceDiv
                     .mouseenter(function() {
@@ -245,6 +253,13 @@ ListFacet.prototype.render = function() {
                     });
             }
             
+            var includeExcludeLink = $('<a href="javascript:{}"></a>')
+                .addClass("facet-choice-link")
+                .text("include")
+                .css("visibility", "hidden")
+                .click(deselect)
+                .prependTo(choiceDiv);
+                    
             if (choice.s) { // selected
                 if (selectionCount > 1) {
                     // select only
@@ -254,30 +269,22 @@ ListFacet.prototype.render = function() {
                     a.click(deselect);
                 }
                 
-                // exclude link
-                $('<a href="javascript:{}"></a>')
-                    .addClass("facet-choice-link")
+                includeExcludeLink
                     .text("exclude")
-                    .click(deselect)
-                    .prependTo(choiceDiv);
+                    .css("visibility", "visible")
+                    .click(deselect);
                     
             } else if (selectionCount > 0) {
                 a.click(selectOnly);
                 
-                // include link
-                var includeLink = $('<a href="javascript:{}"></a>')
-                    .addClass("facet-choice-link")
-                    .text("include")
-                    .css("visibility", "hidden")
-                    .click(select)
-                    .prependTo(choiceDiv);
+                includeExcludeLink.click(select);
                     
                 choiceDiv
                     .mouseenter(function() {
-                        includeLink.css("visibility", "visible");
+                        includeExcludeLink.css("visibility", "visible");
                     })
                     .mouseleave(function() {
-                        includeLink.css("visibility", "hidden");
+                        includeExcludeLink.css("visibility", "hidden");
                     });
             } else {
                 a.click(select);
@@ -294,8 +301,8 @@ ListFacet.prototype.render = function() {
             renderChoice(this._errorChoice, "(error)");
         }
         
-        bodyDiv.appendTo(container);
-        bodyDiv[0].scrollTop = scrollTop;
+        this._elmts.bodyDiv.append(choiceContainer);
+        this._elmts.bodyDiv[0].scrollTop = scrollTop;
     }
 };
 
