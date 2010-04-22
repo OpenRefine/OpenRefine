@@ -101,7 +101,12 @@ public class Gridworks {
 
         // tell the signpost library to log
         System.setProperty("debug","true");
-                        
+            
+        // if not already set, make sure jython can find its python stuff
+        if (System.getProperty("python.path") == null) {
+            System.setProperty("python.path","lib/python");
+        }
+        
         // initialize the log4j system
         Appender console = new ConsoleAppender(new IndentingLayout());
         root.setLevel(Level.ALL);

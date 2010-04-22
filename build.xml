@@ -131,6 +131,9 @@
             <resourcefileset dir="${webapp.dir}/..">
                 <include name="${webapp.name}/**" />
             </resourcefileset>
+            <resourcefileset dir="${lib.dir}/..">
+                <include name="lib/jython/**" />
+            </resourcefileset>
         </jarbundler>
     </target>
     
@@ -179,6 +182,11 @@
             </fileset>
         </copy>
         <copy file="${build.dir}/gridworks.jar" tofile="${windows.dir}/lib/gridworks-${version}-${revision}.jar"/>
+        <copy todir="${windows.dir}/lib/jython">
+            <fileset dir="${lib.dir}/jython">
+                <include name="**"/>
+            </fileset>
+        </copy>
         <copy todir="${windows.dir}/webapp">
             <fileset dir="${webapp.dir}">
                 <include name="**"/>
@@ -209,7 +217,12 @@
         </copy>
 
         <copy file="${build.dir}/gridworks.jar" tofile="${linux.dir}/lib/gridworks-${version}-${revision}.jar"/>
-    
+
+        <copy todir="${linux.dir}/lib/jython">
+            <fileset dir="${lib.dir}/jython">
+                <include name="**"/>
+            </fileset>
+        </copy>
         <copy todir="${linux.dir}/src/main/webapp">
             <fileset dir="${webapp.dir}">
                 <include name="**"/>

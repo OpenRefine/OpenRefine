@@ -414,7 +414,7 @@ mac_dist() {
     mkdir -p "$GRIDWORKS_BUILD_DIR/mac/.background"
     cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/mac/.background/dmg_background.png"
     
-    SIZE=30
+    SIZE=40
     
     if [ -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" ]; then
         rm "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
@@ -760,9 +760,9 @@ if [ -z "$GRIDWORKS_DIST_DIR" ]; then
 fi
 
 if [ -z "$JYTHONPATH" ]; then
-    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython-2.5.1"
+    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython"
 else
-    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython-2.5.1/${SEP}$JYTHONPATH"
+    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython/${SEP}$JYTHONPATH"
 fi
 add_option "-Dpython.path=$JYTHONPATH"
 
