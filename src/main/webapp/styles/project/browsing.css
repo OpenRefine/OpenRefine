@@ -29,6 +29,7 @@
 
 ul.facets-container {
     padding: 0;
+    margin: 0;
 }
 
 li.facet-container {
@@ -36,7 +37,7 @@ li.facet-container {
     clear: both;
     margin: 0;
     padding: 0;
-    margin-top: 10px;
+    margin-top: 6px;
     background: white;
     border: 1px solid #bbb;
     
@@ -50,6 +51,7 @@ li.facet-container {
     padding-right: 2px;
     font-weight: bold;
     cursor: move;
+    border-bottom: 1px solid #ccc;
 }
 .facet-expression {
     padding: 3px 5px;
@@ -142,7 +144,7 @@ img.facet-choice-link {
 }
 
 .facet-range-body {
-    padding: 15px;
+    padding: 10px 5px 0px 5px;
 }
 .facet-range-message {
     margin: 1em;

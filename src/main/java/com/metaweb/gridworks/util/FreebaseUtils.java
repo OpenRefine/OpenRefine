@@ -85,6 +85,7 @@ public class FreebaseUtils {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
             HttpPost httpRequest = new HttpPost(FREEQ_URL);
+            httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
             httpRequest.setEntity(entity);
             
             HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));

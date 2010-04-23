@@ -26,7 +26,6 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
             format : "tripleloader" 
         },
         function(data) {
-            console.log(data);
             body.html(
                 '<div class="freebase-loading-tripleloader-data">' + data + '</div>' +
                 '<div class="freebase-loading-tripleloader-info">' +
