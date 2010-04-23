@@ -166,8 +166,8 @@ img.facet-choice-link {
     padding: 5px;
 }
 .facet-scatterplot-plot {
-    border: 1px solid #ddd;
-    margin: 0.5em 0.8em;
+    border: 1px solid #ccc;
+    margin: 5px 5px 5px 5px;
     position: relative;
 }
 .facet-scatterplot-image {

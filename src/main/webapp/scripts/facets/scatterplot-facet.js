@@ -1,5 +1,4 @@
 function ScatterplotFacet(div, config, options) {
-    console.log(div);
     this._div = div;
     this._config = config;
     this._options = options;
@@ -196,7 +195,7 @@ ScatterplotFacet.prototype._initializeUI = function() {
 };
 
 ScatterplotFacet.prototype._formulateCurrentImageUrl = function() {
-    return this._formulateImageUrl(ui.browsingEngine.getJSON(false, this), { color: "ff0000" });
+    return this._formulateImageUrl(ui.browsingEngine.getJSON(false, this), { color: "ff6a00" });
 };
 
 ScatterplotFacet.prototype._formulateBaseImageUrl = function() {

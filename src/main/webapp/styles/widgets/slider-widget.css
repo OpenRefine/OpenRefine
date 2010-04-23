@@ -22,7 +22,7 @@
 .slider-widget-highlight {
     position: absolute;
     padding: 1px 0px;
-    border: 1px solid #faa;
+    border: 1px solid #ff6a00;
     top: -2px;
     height: 100%;
     cursor: move;
@@ -34,12 +34,12 @@
     height: 100%;
 }
 .slider-widget-bracket.left {
-    background: url(../../images/slider-left-bracket.png) no-repeat center right;
+    background: url(../../images/slider-handle.png) no-repeat center right;
     margin-left: -14px;
     cursor: e-resize;
 }
 .slider-widget-bracket.right {
-    background: url(../../images/slider-right-bracket.png) no-repeat center left;
+    background: url(../../images/slider-handle.png) no-repeat center left;
     margin-left: 2px;
     cursor: w-resize;
 }
