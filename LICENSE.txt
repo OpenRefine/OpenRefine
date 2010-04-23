@@ -95,9 +95,6 @@ licenses/datejs.LICENSE.txt
 
 licenses/imgareaselect.LICENSE.txt
     imgareaselect
-
-licenses/blockui.LICENSE.txt
-    blockui
        
 licenses/slf4j.LICENSE.txt
     slf4j-api

@@ -19,8 +19,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
@@ -29,6 +30,8 @@ import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class ImportProjectCommand extends Command {
 
+    final static Logger logger = LoggerFactory.getLogger("import-project_command");
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,7 +40,7 @@ public class ImportProjectCommand extends Command {
             Properties options = ParsingUtilities.parseUrlParameters(request);
             
             long projectID = Project.generateID();
-            Gridworks.log("Importing existing project using new ID " + projectID);
+            logger.info("Importing existing project using new ID {}", projectID);
             
             internalImport(request, options, projectID);
 

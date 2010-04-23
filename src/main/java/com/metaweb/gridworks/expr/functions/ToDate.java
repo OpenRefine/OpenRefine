@@ -1,13 +1,12 @@
 package com.metaweb.gridworks.expr.functions;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import com.metaweb.gridworks.expr.util.CalendarParser;
 import com.metaweb.gridworks.expr.util.CalendarParserException;

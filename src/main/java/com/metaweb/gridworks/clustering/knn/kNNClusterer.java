@@ -15,8 +15,9 @@ import java.util.Map.Entry;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -47,6 +48,8 @@ public class kNNClusterer extends Clusterer {
 
     Map<Serializable, Integer> _counts = new HashMap<Serializable, Integer>();
 
+    final static Logger logger = LoggerFactory.getLogger("kNN_clusterer");
+    
     static {
         _distances.put("levenshtein", new LevenshteinDistance());
         _distances.put("jaccard", new JaccardDistance());
@@ -109,11 +112,11 @@ public class kNNClusterer extends Clusterer {
             try {
                 JSONObject params = o.getJSONObject("params");
                 _radius = params.getDouble("radius");
-                Gridworks.warn("Use radius: " + _radius);
+                logger.debug("Use radius: {}", _radius);
                 _blockingNgramSize = params.getInt("blocking-ngram-size");
-                Gridworks.warn("Use blocking ngram size: " + _blockingNgramSize);
+                logger.debug("Use blocking ngram size: {}",_blockingNgramSize);
             } catch (JSONException e) {
-                Gridworks.warn("No parameters found, using defaults");
+                logger.debug("No parameters found, using defaults");
             }
             _clusterer = new NGramClusterer(_distance, _blockingNgramSize);
         }

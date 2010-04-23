@@ -36,6 +36,8 @@ import org.apache.commons.fileupload.util.Streams;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
@@ -54,6 +56,8 @@ import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class CreateProjectCommand extends Command {
 
+    final static Logger logger = LoggerFactory.getLogger("create-project_command");
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -164,7 +168,7 @@ public class CreateProjectCommand extends Command {
         InputStream inputStream
     ) throws Exception {
 
-        Gridworks.info("Importing " + fileName + "");
+        logger.info("Importing '{}'", fileName);
         
         if (fileName.endsWith(".zip") || fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || fileName.endsWith(".tar.bz2")) {
 
@@ -236,7 +240,8 @@ public class CreateProjectCommand extends Command {
                     }
                 }
             }
-            Gridworks.log("Most frequent extensions: " + exts.toString());
+            
+            logger.info("Most frequent extensions: {}", exts.toString());
 
             // second pass, load the data for real
             is = getStream(fileName, new FileInputStream(file));
@@ -399,10 +404,7 @@ public class CreateProjectCommand extends Command {
                     options.setProperty("encoding", charsetMatch.getName());
                     options.setProperty("encoding_confidence", Integer.toString(charsetMatch.getConfidence()));
                     
-                    Gridworks.log(
-                        "Best encoding guess: " + 
-                        charsetMatch.getName() + 
-                        " [confidence: " + charsetMatch.getConfidence() + "]");
+                    logger.info("Best encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
                     
                     break;
                 } catch (UnsupportedEncodingException e) {

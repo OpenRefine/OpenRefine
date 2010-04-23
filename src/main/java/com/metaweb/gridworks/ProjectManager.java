@@ -19,6 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codeberry.jdatapath.DataPath;
 import com.codeberry.jdatapath.JDataPathSystem;
@@ -33,6 +35,8 @@ public class ProjectManager {
     protected File                       _workspaceDir;
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected List<String> 				 _expressions;
+    
+    final static Logger logger = LoggerFactory.getLogger("project_manager");
     
     /**
      *  While each project's metadata is loaded completely at start-up, each project's raw data 
@@ -52,7 +56,7 @@ public class ProjectManager {
     static public synchronized void initialize() {
         if (singleton == null) {
             File dir = getProjectLocation();
-            Gridworks.log("Using workspace directory: " + dir.getAbsolutePath());
+            logger.info("Using workspace directory: {}", dir.getAbsolutePath());
             
             singleton = new ProjectManager(dir);
         }
@@ -83,9 +87,7 @@ public class ProjectManager {
         	     *  environment variables and try our best to find a user-specific path.
         	     */
         	    
-        		Gridworks.log(
-        		    "Failed to use jdatapath to detect user data path. " +
-        		    "Resorting to environment variables.");
+        		logger.warn("Failed to use jdatapath to detect user data path: resorting to environment variables");
         		
                 File parentDir = null;
                 {
@@ -289,7 +291,7 @@ public class ProjectManager {
             } catch (Exception e) {
                 e.printStackTrace();
                 
-                Gridworks.log("Failed to save workspace.");
+                logger.warn("Failed to save workspace");
                 return;
             }
         	
@@ -305,7 +307,7 @@ public class ProjectManager {
                 oldFile.delete();
             }
             
-            //Gridworks.log("Saved workspace.");
+            logger.info("Saved workspace");
         }
     }
     
@@ -397,7 +399,7 @@ public class ProjectManager {
                 }
             });
             
-            Gridworks.log(allModified ?
+            logger.info(allModified ?
                 "Saving all modified projects ..." :
                 "Saving some modified projects ..."
             );
@@ -456,7 +458,7 @@ public class ProjectManager {
     }
     
     protected boolean loadFromFile(File file) {
-        Gridworks.log("Loading workspace from " + file.getAbsolutePath());
+        logger.info("Loading workspace: {}", file.getAbsolutePath());
         
         _projectsMetadata.clear();
         _expressions.clear();
@@ -482,14 +484,14 @@ public class ProjectManager {
                 JSONUtilities.getStringList(obj, "expressions", _expressions);
                 return true;
             } catch (JSONException e) {
-                Gridworks.warn("Error reading " + file, e);
+                logger.warn("Error reading file", e);
             } catch (IOException e) {
-                Gridworks.warn("Error reading " + file, e);
+                logger.warn("Error reading file", e);
             } finally {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    Gridworks.warn("Exception closing file",e);
+                    logger.warn("Exception closing file",e);
                 }
             }
         }

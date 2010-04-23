@@ -14,8 +14,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.filters.DualExpressionsNumberComparisonRowFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
@@ -108,6 +109,8 @@ public class ScatterplotFacet implements Facet {
     private static final boolean IMAGE_URI = false;
     
     public static String EMPTY_IMAGE;
+    
+    final static Logger logger = LoggerFactory.getLogger("scatterplot_facet");
     
     static {
         try {
@@ -302,7 +305,7 @@ public class ScatterplotFacet implements Facet {
                     try {
                         image = serializeImage(drawer.getImage());
                     } catch (IOException e) {
-                        Gridworks.warn("Exception caught while generating the image", e);
+                        logger.warn("Exception caught while generating the image", e);
                     }
                 } else {
                     image = EMPTY_IMAGE;
@@ -341,7 +344,7 @@ public class ScatterplotFacet implements Facet {
             try {
                 eval = MetaParser.parse(expression);
             } catch (ParsingException e) {
-                Gridworks.warn("Error parsing expression",e);
+                logger.warn("Error parsing expression",e);
             }
         }
         NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);

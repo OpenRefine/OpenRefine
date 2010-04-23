@@ -11,10 +11,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.metaweb.gridworks.commands.Command;
+import com.metaweb.gridworks.commands.auth.AuthorizeCommand;
 import com.metaweb.gridworks.commands.auth.CheckAuthorizationCommand;
 import com.metaweb.gridworks.commands.auth.DeAuthorizeCommand;
-import com.metaweb.gridworks.commands.auth.AuthorizeCommand;
 import com.metaweb.gridworks.commands.edit.AddColumnCommand;
 import com.metaweb.gridworks.commands.edit.AnnotateOneRowCommand;
 import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
@@ -35,6 +38,7 @@ import com.metaweb.gridworks.commands.edit.SplitColumnCommand;
 import com.metaweb.gridworks.commands.edit.SplitMultiValueCellsCommand;
 import com.metaweb.gridworks.commands.edit.TextTransformCommand;
 import com.metaweb.gridworks.commands.edit.UndoRedoCommand;
+import com.metaweb.gridworks.commands.edit.UploadDataCommand;
 import com.metaweb.gridworks.commands.info.ComputeClustersCommand;
 import com.metaweb.gridworks.commands.info.ComputeFacetsCommand;
 import com.metaweb.gridworks.commands.info.ExportRowsCommand;
@@ -71,6 +75,8 @@ public class GridworksServlet extends HttpServlet {
     
     // timer for periodically saving projects
     static protected Timer _timer;
+
+    final Logger logger = LoggerFactory.getLogger("servlet");
     
     static {
         _commands.put("create-project-from-upload", new CreateProjectCommand());
@@ -137,11 +143,14 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("check-authorization", new CheckAuthorizationCommand());
         _commands.put("authorize", new AuthorizeCommand());
         _commands.put("deauthorize", new DeAuthorizeCommand());
+
+        _commands.put("upload-data", new UploadDataCommand());
     }
 
     @Override
     public void init() throws ServletException {
         super.init();
+        logger.trace("> initialize");
         
         ProjectManager.initialize();
                 
@@ -156,10 +165,14 @@ public class GridworksServlet extends HttpServlet {
                 ProjectManager.singleton.save(false); // quick, potentially incomplete save
             }
         }, period, period);
+        
+        logger.trace("< initialize");
     }
     
     @Override
     public void destroy() {
+        logger.trace("> destroy");
+
         // cancel automatic periodic saving and force a complete save. 
         if (_timer != null) {
             _timer.cancel();
@@ -171,34 +184,41 @@ public class GridworksServlet extends HttpServlet {
         }
         
         super.destroy();
-    }
-    
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Command command = _commands.get(getCommandName(request));
-        if (command != null) {
-            command.doPost(request, response);
-        } else {
-            response.sendError(404);
-        }
+
+        logger.trace("< destroy");
     }
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Command command = _commands.get(getCommandName(request));
+        String commandName = getCommandName(request);
+        Command command = _commands.get(commandName);
         if (command != null) {
+            logger.trace("> GET {}", commandName);
             command.doGet(request, response);
+            logger.trace("< GET {}", commandName);
         } else {
             response.sendError(404);
         }
     }
     
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String commandName = getCommandName(request);
+        Command command = _commands.get(commandName);
+        if (command != null) {
+            logger.trace("> POST {}", commandName);
+            command.doPost(request, response);
+            logger.trace("< POST {}", commandName);
+        } else {
+            response.sendError(404);
+        }
+    }
+        
     protected String getCommandName(HttpServletRequest request) {
-        /*
-         *  Remove extraneous path segments that might be there for other purposes,
-         *  e.g., for /export-rows/filename.ext, export-rows is the command while
-         *  filename.ext is only for the browser to prompt a convenient filename. 
-         */
+        // Remove extraneous path segments that might be there for other purposes,
+        // e.g., for /export-rows/filename.ext, export-rows is the command while
+        // filename.ext is only for the browser to prompt a convenient filename. 
         String commandName = request.getPathInfo().substring(1);
         int slash = commandName.indexOf('/');
         return slash > 0 ? commandName.substring(0, slash) : commandName;
     }
 }
+

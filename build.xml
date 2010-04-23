@@ -59,6 +59,7 @@
         <javac srcdir="${server.src.dir}" destdir="${server_classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="class.path" />
         </javac>
+        <copy file="${conf.dir}/log4j.properties" tofile="${server_classes.dir}/log4j.properties"/>
     </target>
             
     <target name="build" depends="build_server">
@@ -68,6 +69,7 @@
             <src path="${src.dir}"/>
             <classpath refid="class.path" />
         </javac>
+        <copy file="${conf.dir}/log4j.properties" tofile="${webapp_classes.dir}/log4j.properties"/>
     </target>
 
     <target name="build_tests" depends="build">

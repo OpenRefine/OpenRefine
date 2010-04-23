@@ -7,8 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.clustering.Clusterer;
 import com.metaweb.gridworks.clustering.binning.BinningClusterer;
@@ -17,6 +18,8 @@ import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 
 public class ComputeClustersCommand extends Command {
+
+    final static Logger logger = LoggerFactory.getLogger("compute-clusters_command");
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -42,7 +45,7 @@ public class ComputeClustersCommand extends Command {
             clusterer.computeClusters(engine);
             
             respondJSON(response, clusterer);
-            Gridworks.log("computed clusters [" + type + "," + clusterer_conf.getString("function") + "] in " + (System.currentTimeMillis() - start) + "ms");
+            logger.info("computed clusters [{},{}] in {}ms", new Object[] { type, clusterer_conf.getString("function"), Long.toString(System.currentTimeMillis() - start) });
         } catch (Exception e) {
             respondException(response, e);
         }

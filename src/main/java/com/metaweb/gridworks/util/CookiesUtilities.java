@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CookiesUtilities {
 
+    public static final String DOMAIN = "127.0.0.1";
+    public static final String PATH = "/";
+    
     public static Cookie getCookie(HttpServletRequest request, String name) {
         if (name == null) throw new RuntimeException("cookie name cannot be null");
         Cookie cookie = null;
@@ -20,15 +23,20 @@ public class CookiesUtilities {
         return cookie;
     }
 
+    public static void setCookie(HttpServletResponse response, String name, String value, int max_age) {
+        Cookie c = new Cookie(name, value);
+        c.setDomain(DOMAIN);
+        c.setPath(PATH);
+        c.setMaxAge(max_age);
+        response.addCookie(c);            
+    }
+
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
-        Cookie cookie = getCookie(request, name);
-        if (cookie != null) {
-            Cookie delCookie = new Cookie(cookie.getName(), cookie.getValue());
-            delCookie.setDomain(cookie.getDomain());
-            delCookie.setPath(cookie.getPath());
-            delCookie.setMaxAge(0);
-            response.addCookie(delCookie);            
-        }
+        Cookie c = new Cookie(name, "");
+        c.setDomain(DOMAIN);
+        c.setPath(PATH);
+        c.setMaxAge(0);
+        response.addCookie(c);            
     }
     
 }

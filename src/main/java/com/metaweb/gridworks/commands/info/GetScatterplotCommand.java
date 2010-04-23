@@ -13,8 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.facets.NumericBinIndex;
@@ -29,6 +30,8 @@ import com.metaweb.gridworks.model.Project;
 
 public class GetScatterplotCommand extends Command {
 
+    final static Logger logger = LoggerFactory.getLogger("get-scatterplot_command");
+    
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
@@ -50,7 +53,7 @@ public class GetScatterplotCommand extends Command {
                 sos.close();
             }
             
-            Gridworks.log("Drawn scatterplot in " + (System.currentTimeMillis() - start) + "ms");
+            logger.info("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);
@@ -97,7 +100,7 @@ public class GetScatterplotCommand extends Command {
         try {
             eval_x = MetaParser.parse(expression_x);
         } catch (ParsingException e) {
-            Gridworks.warn("error parsing expression", e);
+            logger.warn("error parsing expression", e);
         }
         
         String columnName_y = o.getString(ScatterplotFacet.Y_COLUMN_NAME);
@@ -115,7 +118,7 @@ public class GetScatterplotCommand extends Command {
         try {
             eval_y = MetaParser.parse(expression_y);
         } catch (ParsingException e) {
-            Gridworks.warn("error parsing expression", e);
+            logger.warn("error parsing expression", e);
         }
         
         NumericBinIndex index_x = null;

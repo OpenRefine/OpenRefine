@@ -46,6 +46,9 @@ where [options] include:
   -m <memory> max memory heap size to use
      default: 1024M
                
+  -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
+     default: info
+  
   --debug enable JVM debugging (on port 8000)
        
   --jmx enable JMX monitoring (for jconsole and jvisualvm)
@@ -560,13 +563,13 @@ run() {
     if [ "$GRIDWORKS_DATA_DIR" ]; then
         add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
-        
+                
     CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
 
     #echo "$RUN_CMD"
-    #cd tooecho ""
+    #echo ""
   
     echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
@@ -697,6 +700,7 @@ while [ $# -ne 0 ] ; do
     -w) shift; GRIDWORKS_WEBAPP="$1"; shift; continue;;
     -d) shift; GRIDWORKS_DATA_DIR="$1"; shift; continue;;
     -m) shift; GRIDWORKS_MEMORY="$1"; shift; continue;;
+    -v) shift; GRIDWORKS_VERBOSITY="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
@@ -758,6 +762,11 @@ fi
 if [ -z "$GRIDWORKS_DIST_DIR" ]; then
     GRIDWORKS_DIST_DIR="dist"
 fi
+
+if [ -z "$GRIDWORKS_VERBOSITY" ]; then
+    GRIDWORKS_VERBOSITY="info"
+fi
+add_option "-Dgridworks.verbosity=$GRIDWORKS_VERBOSITY"
 
 if [ -z "$JYTHONPATH" ]; then
     JYTHONPATH="$GRIDWORKS_LIB_DIR/jython"

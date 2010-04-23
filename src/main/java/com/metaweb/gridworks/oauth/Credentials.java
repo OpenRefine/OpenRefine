@@ -25,6 +25,7 @@ public class Credentials {
         }
         
         public String getCookieName(Provider provider) {
+            if (provider == null) throw new RuntimeException("Provider can't be null");
             return provider.getHost() + "_" + postfix;
         }
     };
@@ -36,10 +37,8 @@ public class Credentials {
 
     public static void setCredentials(HttpServletResponse response, Credentials credentials, Type type, int max_age) {
         String name = type.getCookieName(credentials.getProvider());
-        Cookie c = new Cookie(name, credentials.toString());
-        c.setPath("/");
-        c.setMaxAge(max_age);
-        response.addCookie(c);            
+        String value = credentials.toString();
+        CookiesUtilities.setCookie(response, name, value, max_age);
     }
     
     public static void deleteCredentials(HttpServletRequest request, HttpServletResponse response, Provider provider, Type type) {
@@ -60,6 +59,8 @@ public class Credentials {
         if (token == null) throw new RuntimeException("Could not find " + TOKEN + " in auth credentials");
         this.secret = secret;
         if (secret == null) throw new RuntimeException("Could not find " + SECRET + " in auth credentials");
+        this.provider = provider;
+        if (provider == null) throw new RuntimeException("Provider can't be null");
     }
 
     public String getToken() {

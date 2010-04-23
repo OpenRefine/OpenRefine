@@ -14,8 +14,9 @@ import java.util.Map.Entry;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -30,6 +31,8 @@ public class BinningClusterer extends Clusterer {
     
     static final protected Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
 
+    final static Logger logger = LoggerFactory.getLogger("binning_clusterer");
+    
     List<Map<String,Integer>> _clusters;
      
     static {
@@ -54,7 +57,7 @@ public class BinningClusterer extends Clusterer {
             if (k instanceof NGramFingerprintKeyer) {
                 try {
                     int size = _config.getJSONObject("params").getInt("ngram-size");
-                    Gridworks.log("Using ngram size: " + size);
+                    logger.debug("Using ngram size: {}", size);
                     _params = new Object[1];
                     _params[0] = size;
                 } catch (JSONException e) {

@@ -20,6 +20,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
@@ -39,6 +42,8 @@ public class Project {
     
     transient public ProcessManager processManager = new ProcessManager();
     transient public Date lastSave = new Date();
+    
+    final static Logger logger = LoggerFactory.getLogger("project");
     
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
@@ -68,7 +73,7 @@ public class Project {
             } catch (Exception e) {
                 e.printStackTrace();
                 
-                Gridworks.log("Failed to save project " + id);
+                logger.warn("Failed to save project {}", id);
                 return;
             }
             
@@ -86,7 +91,7 @@ public class Project {
             
             lastSave = new Date();
             
-            Gridworks.log("Saved project " + id + ".");
+            logger.info("Saved project '{}'",id);
         }
     }
     
@@ -213,10 +218,8 @@ public class Project {
         
         project.columnModel.setMaxCellIndex(maxCellCount - 1);
         
-        Gridworks.log(
-            "Loaded project " + id + " from disk in " + 
-            (System.currentTimeMillis() - start) / 1000 + 
-            " sec(s)"
+        logger.info(
+            "Loaded project {} from disk in {} sec(s)",id,Long.toString((System.currentTimeMillis() - start) / 1000)
         );
         
         project.recomputeRowContextDependencies();

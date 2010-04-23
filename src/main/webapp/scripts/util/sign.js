@@ -56,27 +56,7 @@
                 
         return window.open(url, windowname || "", params_list.join(","));
       },
-      
-      block : function() {
-        if ($.blockUI) {
-          $.blockUI({ css: { 
-            border: 'none', 
-            padding: '15px', 
-            backgroundColor: '#000', 
-            '-webkit-border-radius': '10px', 
-            '-moz-border-radius': '10px', 
-            opacity: .5, 
-            color: '#fff' 
-          } }); 
-        }
-      },
-      
-      unblock : function() {
-        if ($.unblockUI) {
-          $.unblockUI();
-        }
-      },
-      
+                  
       signintize : function(cont) {
         $('.signedin').show();
         $('.signedout').hide();
@@ -87,33 +67,31 @@
       },
       
       signin : function(success, provider, width, height) {
-        var newwin = window.Sign.popup("/command/authorize?" + $.param({ "provider" : provider}), width, height);
+        var newwin = window.Sign.popup("/command/authorize/" + provider, width, height);
         
-        console.log(newwin);
-        
-        newwin.opener = window;
+        if (newwin !== null) {
+            newwin.opener = window;
+        }
         
         window.onauthorization = function() {
-          window.Sign.block();
           if (typeof success == 'undefined') {
             window.location.reload();
           } else {
             $.ajax({
-              url: "/command/check-authorization",
+              url: "/command/check-authorization/" + provider,
               dataType: "json",
               success: function(data) {
                 window.user = data;
                 window.Sign.signintize(success);
-                window.Sign.unblock();
               }
             });
           }
         };
         
-        if (window.focus) {
+        if (window.focus && newwin !== null) {
           newwin.focus();
-          console.log("focus");
         }
+        
         return false;
       },
       
@@ -124,17 +102,13 @@
       },
       
       signout : function(success,provider) {
-        window.Sign.block();
-        
         $.ajax({
-          url: "/command/deauthorize",
-          data: { "provider" : provider },
+          url: "/command/deauthorize/" + provider,
           success: function() {
             if (typeof success == 'undefined') {
               window.location.reload();
             } else {
               window.Sign.signoutize(success);
-              window.Sign.unblock();
             }
           }
         });

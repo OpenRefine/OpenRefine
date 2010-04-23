@@ -14,6 +14,8 @@ import org.apache.commons.lang.NotImplementedException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
@@ -28,6 +30,9 @@ import com.metaweb.gridworks.util.ParsingUtilities;
  * are AJAX calls.
  */
 public abstract class Command {
+    
+    final static protected Logger logger = LoggerFactory.getLogger("command");
+    
     public void doPost(HttpServletRequest request, HttpServletResponse response) 
         throws ServletException, IOException {
         
@@ -50,10 +55,7 @@ public abstract class Command {
      */
     static protected JSONObject getEngineConfig(HttpServletRequest request) throws Exception {
         String json = request.getParameter("engine");
-        if (json != null) {
-            return ParsingUtilities.evaluateJsonStringToObject(json);
-        }
-        return null;
+        return (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
     }
     
     /**
@@ -108,10 +110,9 @@ public abstract class Command {
         String value = request.getParameter(name);
         if (value != null) {
             try {
-                JSONObject o = ParsingUtilities.evaluateJsonStringToObject(value);
-                
-                return o;
+                return ParsingUtilities.evaluateJsonStringToObject(value);
             } catch (JSONException e) {
+                logger.warn("error getting json parameter",e);
             }
         }
         return null;
@@ -123,15 +124,22 @@ public abstract class Command {
 		Project project,
 		Process process
 	) throws Exception {
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        
         HistoryEntry historyEntry = project.processManager.queueProcess(process);
         if (historyEntry != null) {
-            JSONWriter writer = new JSONWriter(response.getWriter());
+            Writer w = response.getWriter();
+            JSONWriter writer = new JSONWriter(w);
             Properties options = new Properties();
             
             writer.object();
             writer.key("code"); writer.value("ok");
             writer.key("historyEntry"); historyEntry.write(writer, options);
             writer.endObject();
+            
+            w.flush();
+            w.close();
         } else {
         	respond(response, "{ \"code\" : \"pending\" }");
         }
@@ -140,8 +148,25 @@ public abstract class Command {
     static protected void respond(HttpServletResponse response, String content) 
         throws IOException {
         
+        response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write(content);
+        Writer w = response.getWriter();
+        w.write(content);
+        w.flush();
+        w.close();
+    }
+    
+    static protected void respond(HttpServletResponse response, String status, String message) 
+        throws IOException, JSONException {
+        
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        writer.object();
+        writer.key("status"); writer.value(status);
+        writer.key("message"); writer.value(message);
+        writer.endObject();
+        w.flush();
+        w.close();
     }
     
     static protected void respondJSON(HttpServletResponse response, Jsonizable o) 
@@ -157,15 +182,19 @@ public abstract class Command {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
         
-        JSONWriter writer = new JSONWriter(response.getWriter());
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
         
         o.write(writer, options);
+        w.flush();
+        w.close();
     }
     
     static protected void respondException(HttpServletResponse response, Exception e) 
         throws IOException {
         
-        e.printStackTrace();
+        logger.warn("Exception caught", e);
+
         try {
             JSONObject o = new JSONObject();
             o.put("code", "error");
@@ -179,6 +208,7 @@ public abstract class Command {
             
             o.put("stack", sw.toString());
             
+            response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             respond(response, o.toString());
         } catch (JSONException e1) {
@@ -187,12 +217,7 @@ public abstract class Command {
     }
     
     static protected void redirect(HttpServletResponse response, String url) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
-        
-        Writer writer = response.getWriter();
-        writer.write("<html><head>");
-        writer.write("<meta http-equiv=\"refresh\" content=\"1;url=" + url + "\">");
-        writer.write("</head><body></body></html>");
+        response.sendRedirect(url);
     }
     
 }

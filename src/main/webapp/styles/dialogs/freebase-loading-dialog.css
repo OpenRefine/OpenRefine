@@ -1,8 +1,34 @@
 .freebase-loading-tripleloader-data {
-    height: 500px;
+    height: 400px;
+    width: 99%;
     overflow: auto;
     border: 1px solid #aaa;
     white-space: pre;
     padding: 0.3em 0.5em 0.5em 0.5em;
     font-family: monospace;
+}
+
+.freebase-loading-tripleloader-message {
+    height: 500px;
+    overflow: auto;
+    border: 1px solid #aaa;
+    padding: 0.3em 0.5em 0.5em 0.5em;
+}
+    
+.freebase-loading-authorization {
+    margin: 0em 2em;
+    padding: 0.6em 0.8em;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
+}
+    
+.freebase-loading-tripleloader-info {
+    margin-top: 1em;
+}
+
+.freebase-loading-tripleloader-info textarea {
+    width: 99%;
+    height: 5em;
 }

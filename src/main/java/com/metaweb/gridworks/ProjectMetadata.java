@@ -14,6 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.util.JSONUtilities;
 import com.metaweb.gridworks.util.ParsingUtilities;
@@ -29,6 +31,8 @@ public class ProjectMetadata implements Jsonizable {
     private String         _encoding;
     private int            _encodingConfidence;
     private List<String>   _expressions = new LinkedList<String>();
+    
+    final Logger logger = LoggerFactory.getLogger("project_metadata");
     
     protected ProjectMetadata(Date date) {
         _created = date;
@@ -64,7 +68,7 @@ public class ProjectMetadata implements Jsonizable {
         } catch (Exception e) {
             e.printStackTrace();
             
-            Gridworks.log("Failed to save project metadata");
+            logger.warn("Failed to save project metadata");
             return;
         }
         

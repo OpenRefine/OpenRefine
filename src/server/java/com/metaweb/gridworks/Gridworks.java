@@ -20,18 +20,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.log.Log;
 import org.mortbay.util.Scanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.metaweb.util.logging.IndentingLayout;
 import com.metaweb.util.signal.AbstractSignalHandler;
 import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
@@ -45,29 +42,8 @@ public class Gridworks {
     static private File tempDir;
     static private int port;
     static private String host;
-    
-    private static Logger root = Logger.getRootLogger();
-    private static Logger logger = Logger.getLogger("com.metaweb.gridworks");
 
-    public static void log(String message) {
-        logger.info(message);
-    }
-
-    public static void info(String message) {
-        logger.info(message);
-    }
-    
-    public static void error(String message, Throwable t) {
-        logger.error(message, t);
-    }
-
-    public static void warn(String message) {
-        logger.warn(message);
-    }
-
-    public static void warn(String message, Throwable t) {
-        logger.warn(message, t);
-    }
+    final static Logger logger = LoggerFactory.getLogger("gridworks");
     
     public static String getVersion() {
         return VERSION;
@@ -100,20 +76,15 @@ public class Gridworks {
         System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode", "false"); 
 
         // tell the signpost library to log
-        System.setProperty("debug","true");
+        //System.setProperty("debug","true");
             
         // if not already set, make sure jython can find its python stuff
         if (System.getProperty("python.path") == null) {
             System.setProperty("python.path","lib/python");
         }
         
-        // initialize the log4j system
-        Appender console = new ConsoleAppender(new IndentingLayout());
-        root.setLevel(Level.ALL);
-        root.addAppender(console);
-
-        Logger jetty_logger = Logger.getLogger("org.mortbay.log");
-        jetty_logger.setLevel(Level.WARN);
+        // set the log verbosity level
+        org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("gridworks.verbosity","info")));
 
         tempDir = new File(Configurations.get("gridworks.temp","temp"));
         if (!tempDir.exists()) tempDir.mkdirs();
@@ -137,7 +108,7 @@ public class Gridworks {
                 GridworksClient client = new GridworksClient();
                 client.init(host,port);
             } catch (Exception e) {
-                Log.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Gridworks.");
+                logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Gridworks.");
             }
         }
         
@@ -152,6 +123,8 @@ public class Gridworks {
 
 class GridworksServer extends Server {
     
+    final static Logger logger = LoggerFactory.getLogger("gridworks_server");
+        
     private ThreadPoolExecutor threadPool;
     
     public void init(String host, int port) throws Exception {
@@ -177,11 +150,11 @@ class GridworksServer extends Server {
 
         File webXml = new File(contextRoot, "WEB-INF/web.xml");
         if (!webXml.isFile()) {
-            Gridworks.warn("Warning: Failed to find web application. Could not find 'web.xml' at '" + webXml.getAbsolutePath() + "'");
+            logger.warn("Warning: Failed to find web application. Could not find 'web.xml' at '" + webXml.getAbsolutePath() + "'");
             System.exit(-1);
         }
 
-        Gridworks.info("Initializing context: '" + contextPath + "' from '" + contextRoot.getAbsolutePath() + "'");
+        logger.info("Initializing context: '" + contextPath + "' from '" + contextRoot.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(contextRoot.getAbsolutePath(), contextPath);
         //context.setCopyWebDir(false);
         //context.setDefaultsDescriptor(null);
@@ -217,7 +190,7 @@ class GridworksServer extends Server {
         scanList.add(new File(contextRoot, "WEB-INF/web.xml"));
         findFiles(".class", new File(contextRoot, "WEB-INF/classes"), scanList);
 
-        Gridworks.info("Starting autoreloading scanner... ");
+        logger.info("Starting autoreloading scanner... ");
 
         Scanner scanner = new Scanner();
         scanner.setScanInterval(Configurations.getInteger("gridworks.scanner.period",1));
@@ -228,10 +201,10 @@ class GridworksServer extends Server {
             @SuppressWarnings("unchecked")
             public void filesChanged(List changedFiles) {
                 try {
-                    Gridworks.info("Stopping context: " + contextRoot.getAbsolutePath());
+                    logger.info("Stopping context: " + contextRoot.getAbsolutePath());
                     context.stop();
 
-                    Gridworks.info("Starting context: " + contextRoot.getAbsolutePath());
+                    logger.info("Starting context: " + contextRoot.getAbsolutePath());
                     context.start();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);

@@ -11,26 +11,28 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 
 import com.metaweb.gridworks.Gridworks;
+import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.oauth.Credentials;
 import com.metaweb.gridworks.oauth.OAuthUtilities;
 import com.metaweb.gridworks.oauth.Provider;
 
-public class AuthorizeCommand  extends AuthorizationCommand {
+public class AuthorizeCommand  extends Command {
     
     private static final String OAUTH_VERIFIER_PARAM = "oauth_verifier";
     
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // get the provider from the request
+        Provider provider = OAuthUtilities.getProvider(request);
+
         try {
             
-            // get the provider from the request
-            Provider provider = getProvider(request);
-
             // see if the request comes with access credentials
             Credentials access_credentials = Credentials.getCredentials(request, provider, Credentials.Type.ACCESS);
                                     
             // prepare the continuation URL that the OAuth provider will redirect the user to
             // (we need to make sure this URL points back to this code or the dance will never complete)
-            String callbackURL = Gridworks.getURL() + "/command/authorize";
+            String callbackURL = Gridworks.getURL() + "/command/authorize/" + provider.getHost();
             
             if (access_credentials == null) {
                 // access credentials are not available so we need to check 
@@ -39,7 +41,7 @@ public class AuthorizeCommand  extends AuthorizationCommand {
                 // get the request token credentials
                 Credentials request_credentials = Credentials.getCredentials(request, provider, Credentials.Type.REQUEST);
 
-                OAuthConsumer consumer = OAuthUtilities.getConsumer(provider);
+                OAuthConsumer consumer = OAuthUtilities.getConsumer(request_credentials, provider);
                 OAuthProvider pp = OAuthUtilities.getOAuthProvider(provider);
                 
                 if (request_credentials == null) {
@@ -70,7 +72,7 @@ public class AuthorizeCommand  extends AuthorizationCommand {
                     String verificationCode = request.getParameter(OAUTH_VERIFIER_PARAM);
                     
                     pp.retrieveAccessToken(consumer, verificationCode);
-                    
+
                     access_credentials = new Credentials(consumer.getToken(), consumer.getTokenSecret(), provider);
 
                     // no matter the result, we need to remove the request token
@@ -95,6 +97,8 @@ public class AuthorizeCommand  extends AuthorizationCommand {
                 finish(response);
             }
         } catch (Exception e) {
+            Credentials.deleteCredentials(request, response, provider, Credentials.Type.REQUEST);
+            Credentials.deleteCredentials(request, response, provider, Credentials.Type.ACCESS);
             respondException(response, e);
         }
     }

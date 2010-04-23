@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.model.changes;
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
