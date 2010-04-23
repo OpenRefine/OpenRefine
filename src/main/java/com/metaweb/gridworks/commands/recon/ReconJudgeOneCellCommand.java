@@ -23,6 +23,7 @@ import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
+import com.metaweb.gridworks.util.Pool;
 
 public class ReconJudgeOneCellCommand extends Command {
     @Override
@@ -66,12 +67,16 @@ public class ReconJudgeOneCellCommand extends Command {
                  * client side can update its UI right away.
                  */
                 JSONWriter writer = new JSONWriter(response.getWriter());
+                
+                Pool pool = new Pool();
                 Properties options = new Properties();
+                options.put("pool", pool);
                 
                 writer.object();
                 writer.key("code"); writer.value("ok");
                 writer.key("historyEntry"); historyEntry.write(writer, options);
                 writer.key("cell"); process.newCell.write(writer, options);
+                writer.key("pool"); pool.write(writer, options);
                 writer.endObject();
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");

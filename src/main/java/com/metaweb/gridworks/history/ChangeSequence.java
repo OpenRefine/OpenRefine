@@ -6,6 +6,7 @@ import java.io.Writer;
 import java.util.Properties;
 
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.util.Pool;
 
 public class ChangeSequence implements Change {
     final protected Change[] _changes;
@@ -42,7 +43,7 @@ public class ChangeSequence implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String line = reader.readLine();
         if (line == null) line = "";
         int equal = line.indexOf('=');
@@ -53,7 +54,7 @@ public class ChangeSequence implements Change {
         Change[] changes = new Change[count];
         
         for (int i = 0; i < count; i++) {
-            changes[i] = History.readOneChange(reader);
+            changes[i] = History.readOneChange(reader, pool);
         }
         
         line = reader.readLine();

@@ -3,16 +3,14 @@ package com.metaweb.gridworks.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.util.Pool;
 
 public class ColumnRemovalChange extends ColumnChange {
     final protected int     _oldColumnIndex;
@@ -71,7 +69,7 @@ public class ColumnRemovalChange extends ColumnChange {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         int oldColumnIndex = -1;
         Column oldColumn = null;
         CellAtRow[] oldCells = null;
@@ -88,13 +86,11 @@ public class ColumnRemovalChange extends ColumnChange {
             } else if ("oldCellCount".equals(field)) {
                 int oldCellCount = Integer.parseInt(line.substring(equal + 1));
                 
-                Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
-                
                 oldCells = new CellAtRow[oldCellCount];
                 for (int i = 0; i < oldCellCount; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldCells[i] = CellAtRow.load(line, reconCache);
+                        oldCells[i] = CellAtRow.load(line, pool);
                     }
                 }
             }

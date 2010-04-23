@@ -3,21 +3,19 @@ package com.metaweb.gridworks.model;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.CellTuple;
 import com.metaweb.gridworks.expr.HasFields;
+import com.metaweb.gridworks.util.Pool;
 
 public class Row implements HasFields, Jsonizable {
     public boolean             flagged;
@@ -161,36 +159,12 @@ public class Row implements HasFields, Jsonizable {
         }
     }
     
-    static public Row load(String s, Map<Long, Recon> reconCache) throws Exception {
+    static public Row load(String s, Pool pool) throws Exception {
         return s.length() == 0 ? null : 
-            //load(ParsingUtilities.evaluateJsonStringToObject(s), reconCache);
-            loadStreaming(s, reconCache);
+            loadStreaming(s, pool);
     }
     
-    static public Row load(JSONObject obj, Map<Long, Recon> reconCache) throws Exception {
-        JSONArray a = obj.getJSONArray("cells");
-        int count = a.length();
-        
-        Row row = new Row(count);
-        for (int i = 0; i < count; i++) {
-            if (!a.isNull(i)) {
-                JSONObject o = a.getJSONObject(i);
-                
-                row.setCell(i, Cell.load(o, reconCache));
-            }
-        }
-        
-        if (obj.has(STARRED)) {
-            row.starred = obj.getBoolean(STARRED);
-        }
-        if (obj.has(FLAGGED)) {
-            row.flagged = obj.getBoolean(FLAGGED);
-        }
-        
-        return row;
-    }
-    
-    static public Row loadStreaming(String s, Map<Long, Recon> reconCache) throws Exception {
+    static public Row loadStreaming(String s, Pool pool) throws Exception {
         JsonFactory jsonFactory = new JsonFactory(); 
         JsonParser jp = jsonFactory.createJsonParser(s);
         
@@ -216,7 +190,7 @@ public class Row implements HasFields, Jsonizable {
                 }
                 
                 while (jp.nextToken() != JsonToken.END_ARRAY) {
-                    Cell cell = Cell.loadStreaming(jp, reconCache);
+                    Cell cell = Cell.loadStreaming(jp, pool);
                     
                     cells.add(cell);
                 }

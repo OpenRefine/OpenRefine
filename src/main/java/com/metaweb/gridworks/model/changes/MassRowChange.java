@@ -4,15 +4,13 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.util.Pool;
 
 public class MassRowChange implements Change {
     final protected List<Row> _newRows;
@@ -55,11 +53,9 @@ public class MassRowChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         List<Row> oldRows = null;
         List<Row> newRows = null;
-        
-        Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
         
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -73,7 +69,7 @@ public class MassRowChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldRows.add(Row.load(line, reconCache));
+                        oldRows.add(Row.load(line, pool));
                     }
                 }
             } else if ("newRowCount".equals(field)) {
@@ -83,7 +79,7 @@ public class MassRowChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newRows.add(Row.load(line, reconCache));
+                        newRows.add(Row.load(line, pool));
                     }
                 }
             }

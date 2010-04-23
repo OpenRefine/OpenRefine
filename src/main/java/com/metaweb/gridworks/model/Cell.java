@@ -4,14 +4,12 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 import java.util.Properties;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
@@ -19,6 +17,7 @@ import com.metaweb.gridworks.expr.EvalError;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 
 public class Cell implements HasFields, Jsonizable {
     final public Serializable   value;
@@ -66,7 +65,10 @@ public class Cell implements HasFields, Jsonizable {
         
         if (recon != null) {
             writer.key("r");
-            recon.write(writer, options);
+            writer.value(Long.toString(recon.id));
+            
+            Pool pool = (Pool) options.get("pool");
+            pool.pool(recon);
         }
         writer.endObject();
     }
@@ -80,34 +82,7 @@ public class Cell implements HasFields, Jsonizable {
         }
     }
     
-    static public Cell load(String s, Map<Long, Recon> reconCache) throws Exception {
-        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s), reconCache);
-    }
-    
-    static public Cell load(JSONObject obj, Map<Long, Recon> reconCache) throws Exception {
-        Serializable value = null;
-        Recon recon = null;
-        
-        if (obj.has("e")) {
-            value = new EvalError(obj.getString("e"));
-        } else if (obj.has("v") && !obj.isNull("v")) {
-            value = (Serializable) obj.get("v");
-            if (obj.has("t") && !obj.isNull("t")) {
-                String type = obj.getString("t");
-                if ("date".equals(type)) {
-                    value = ParsingUtilities.stringToDate((String) value); 
-                }
-            }
-        }
-        
-        if (obj.has("r") && !obj.isNull("r")) {
-            recon = Recon.load(obj.getJSONObject("r"), reconCache);
-        }
-        
-        return new Cell(value, recon);
-    }
-    
-    static public Cell loadStreaming(String s, Map<Long, Recon> reconCache) throws Exception {
+    static public Cell loadStreaming(String s, Pool pool) throws Exception {
         JsonFactory jsonFactory = new JsonFactory(); 
         JsonParser jp = jsonFactory.createJsonParser(s);
         
@@ -115,10 +90,10 @@ public class Cell implements HasFields, Jsonizable {
             return null;
         }
         
-        return loadStreaming(jp, reconCache);
+        return loadStreaming(jp, pool);
     }
     
-    static public Cell loadStreaming(JsonParser jp, Map<Long, Recon> reconCache) throws Exception {
+    static public Cell loadStreaming(JsonParser jp, Pool pool) throws Exception {
         JsonToken t = jp.getCurrentToken();
         if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
             return null;
@@ -133,7 +108,14 @@ public class Cell implements HasFields, Jsonizable {
             jp.nextToken();
             
             if ("r".equals(fieldName)) {
-                recon = Recon.loadStreaming(jp, reconCache);
+                if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
+                    String reconID = jp.getText();
+                    
+                    recon = pool.getRecon(reconID);
+                } else {
+                    // legacy
+                    recon = Recon.loadStreaming(jp, pool);
+                }
             } else if ("e".equals(fieldName)) {
                 value = new EvalError(jp.getText());
             } else if ("v".equals(fieldName)) {

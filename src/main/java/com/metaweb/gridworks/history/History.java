@@ -1,7 +1,11 @@
 package com.metaweb.gridworks.history;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -16,6 +20,7 @@ import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.util.Pool;
 
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone.
@@ -25,23 +30,42 @@ import com.metaweb.gridworks.model.Project;
  * are only loaded into memory on demand.
  */
 public class History implements Jsonizable {
-    static public Change readOneChange(LineNumberReader reader) throws Exception {
+    static public Change readOneChange(InputStream in, Pool pool) throws Exception {
+        LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
+        try {
+            return readOneChange(reader, pool);
+        } finally {
+            reader.close();
+        }
+    }
+    
+    static public Change readOneChange(LineNumberReader reader, Pool pool) throws Exception {
         /* String version = */ reader.readLine();
         
         String className = reader.readLine();
         Class<? extends Change> klass = getChangeClass(className);
         
-        Method load = klass.getMethod("load", LineNumberReader.class);
+        Method load = klass.getMethod("load", LineNumberReader.class, Pool.class);
         
-        return (Change) load.invoke(null, reader);
+        return (Change) load.invoke(null, reader, pool);
     }
     
-    static public void writeOneChange(Writer writer, Change change) throws Exception {
+    static public void writeOneChange(OutputStream out, Change change, Pool pool) throws Exception {
+        Writer writer = new OutputStreamWriter(out);
+        try {
+            History.writeOneChange(writer, change, pool);
+        } finally {
+            writer.flush();
+        }
+    }
+    
+    static public void writeOneChange(Writer writer, Change change, Pool pool) throws Exception {
         writer.write(Gridworks.getVersion()); writer.write('\n');
         writer.write(change.getClass().getName()); writer.write('\n');
             
         Properties options = new Properties();
         options.setProperty("mode", "save");
+        options.put("pool", pool);
         
         change.save(writer, options);
     }

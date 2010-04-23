@@ -15,6 +15,7 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.protograph.Protograph;
 import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 
 public class SaveProtographOperation extends AbstractOperation {
     final protected Protograph _protograph;
@@ -79,7 +80,7 @@ public class SaveProtographOperation extends AbstractOperation {
             writer.write("/ec/\n"); // end of change marker
         }
         
-        static public Change load(LineNumberReader reader) throws Exception {
+        static public Change load(LineNumberReader reader, Pool pool) throws Exception {
             Protograph oldProtograph = null;
             Protograph newProtograph = null;
             

@@ -1,16 +1,13 @@
 package com.metaweb.gridworks.history;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Date;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.json.JSONException;
@@ -23,6 +20,7 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 
 /**
  * This is the metadata of a Change. It's small, so we can load it in order to
@@ -148,20 +146,19 @@ public class HistoryEntry implements Jsonizable {
     }
     
     protected void loadChange(File file) throws Exception {
-        ZipInputStream in = new ZipInputStream(new FileInputStream(file));
+        ZipFile zipFile = new ZipFile(file);
         try {
-            ZipEntry entry = in.getNextEntry();
+            Pool pool = new Pool();
+            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
+            if (poolEntry != null) {
+                pool.load(new InputStreamReader(
+                    zipFile.getInputStream(poolEntry)));
+            } // else, it's a legacy project file
             
-            assert "change.txt".equals(entry.getName());
-            
-            LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
-            try {
-                _change = History.readOneChange(reader);
-            } finally {
-                reader.close();
-            }
+            _change = History.readOneChange(
+                    zipFile.getInputStream(zipFile.getEntry("change.txt")), pool);
         } finally {
-            in.close();
+            zipFile.close();
         }
     }
     
@@ -175,14 +172,18 @@ public class HistoryEntry implements Jsonizable {
     protected void saveChange(File file) throws Exception {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
         try {
+            Pool pool = new Pool();
+            
             out.putNextEntry(new ZipEntry("change.txt"));
             try {
-                Writer writer = new OutputStreamWriter(out);
-                try {
-                    History.writeOneChange(writer, _change);
-                } finally {
-                    writer.flush();
-                }
+                History.writeOneChange(out, _change, pool);
+            } finally {
+                out.closeEntry();
+            }
+            
+            out.putNextEntry(new ZipEntry("pool.txt"));
+            try {
+                pool.save(out);
             } finally {
                 out.closeEntry();
             }

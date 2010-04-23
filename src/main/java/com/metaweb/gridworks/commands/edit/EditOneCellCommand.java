@@ -19,6 +19,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 
 public class EditOneCellCommand extends Command {
     @Override
@@ -60,12 +61,16 @@ public class EditOneCellCommand extends Command {
                  * so the client side can update the cell's rendering right away.
                  */
                 JSONWriter writer = new JSONWriter(response.getWriter());
+                
+                Pool pool = new Pool();
                 Properties options = new Properties();
+                options.put("pool", pool);
                 
                 writer.object();
                 writer.key("code"); writer.value("ok");
                 writer.key("historyEntry"); historyEntry.write(writer, options);
                 writer.key("cell"); process.newCell.write(writer, options);
+                writer.key("pool"); pool.write(writer, options);
                 writer.endObject();
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");

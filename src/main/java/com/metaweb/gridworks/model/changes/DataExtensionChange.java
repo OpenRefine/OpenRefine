@@ -5,14 +5,11 @@ import java.io.LineNumberReader;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.history.Change;
@@ -27,6 +24,7 @@ import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.recon.DataExtensionReconConfig;
 import com.metaweb.gridworks.protograph.FreebaseType;
 import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 import com.metaweb.gridworks.util.FreebaseDataExtensionJob.DataExtension;
 
 public class DataExtensionChange implements Change {
@@ -271,7 +269,7 @@ public class DataExtensionChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
     	String baseColumnName = null;
     	int columnInsertIndex = -1;
     	
@@ -285,8 +283,6 @@ public class DataExtensionChange implements Change {
         List<Row> newRows = null;
         
         int firstNewCellIndex = -1;
-        
-        Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
         
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -345,16 +341,7 @@ public class DataExtensionChange implements Change {
                     	for (int c = 0; c < columnNames.size(); c++) {
                     		line = reader.readLine();
                     		
-                            JSONTokener t = new JSONTokener(line);
-                            Object o = t.nextValue();
-                            
-                            if (o != JSONObject.NULL) {
-                                if (o instanceof JSONObject) {
-                                	row[c] = ReconCandidate.load((JSONObject) o);
-                                } else {
-                                	row[c] = o;
-                                }
-                            }
+                    		row[c] = ReconCandidate.loadStreaming(line);
                     	}
                     	
                     	data[r] = row;
@@ -369,7 +356,7 @@ public class DataExtensionChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldRows.add(Row.load(line, reconCache));
+                        oldRows.add(Row.load(line, pool));
                     }
                 }
             } else if ("newRowCount".equals(field)) {
@@ -379,7 +366,7 @@ public class DataExtensionChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newRows.add(Row.load(line, reconCache));
+                        newRows.add(Row.load(line, pool));
                     }
                 }
             }

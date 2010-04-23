@@ -4,15 +4,13 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.util.Pool;
 
 public class RowRemovalChange implements Change {
     final protected List<Integer> _rowIndices;
@@ -71,7 +69,7 @@ public class RowRemovalChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         List<Integer> rowIndices = null;
         List<Row> rows = null;
         
@@ -93,13 +91,11 @@ public class RowRemovalChange implements Change {
             } else if ("rowCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
-                
                 rows = new ArrayList<Row>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        rows.add(Row.load(line, reconCache));
+                        rows.add(Row.load(line, pool));
                     }
                 }
             }

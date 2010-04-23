@@ -2,18 +2,16 @@ package com.metaweb.gridworks.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
-import com.metaweb.gridworks.util.JSONUtilities;
 
 public class ReconCandidate implements HasFields, Jsonizable {
     final public String     topicID;
@@ -69,22 +67,17 @@ public class ReconCandidate implements HasFields, Jsonizable {
         writer.endObject();
     }
     
-    static public ReconCandidate load(JSONObject obj) throws Exception {
-        if (obj == null) {
+    static public ReconCandidate loadStreaming(String s) throws Exception {
+        JsonFactory jsonFactory = new JsonFactory(); 
+        JsonParser jp = jsonFactory.createJsonParser(s);
+        
+        if (jp.nextToken() != JsonToken.START_OBJECT) {
             return null;
         }
-        
-        ReconCandidate candidate = new ReconCandidate(
-            obj.getString("id"),
-            obj.getString("guid"),
-            obj.getString("name"),
-            JSONUtilities.getStringArray(obj, "types"),
-            obj.getDouble("score")
-        );
-        return candidate;
+        return loadStreaming(jp);
     }
     
-    static public ReconCandidate loadStreaming(JsonParser jp, Map<Long, Recon> reconCache) throws Exception {
+    static public ReconCandidate loadStreaming(JsonParser jp) throws Exception {
         JsonToken t = jp.getCurrentToken();
         if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
             return null;

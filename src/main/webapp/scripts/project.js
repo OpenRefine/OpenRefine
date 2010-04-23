@@ -296,12 +296,39 @@ Gridworks.cellIndexToColumn = function(cellIndex) {
     return null;
 };
 
+Gridworks.preparePool = function(pool) {
+    for (var id in pool.recons) {
+        var recon = pool.recons[id];
+        if (recon.m) {
+            recon.m = pool.reconCandidates[recon.m];
+        }
+        if (recon.c) {
+            for (var j = 0; j < recon.c.length; j++) {
+                recon.c[j] = pool.reconCandidates[recon.c[j]];
+            }
+        }
+    }
+};
+
 Gridworks.fetchRows = function(start, limit, onDone) {
     $.post(
         "/command/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }),
         { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
             theProject.rowModel = data;
+            
+            // Un-pool objects
+            Gridworks.preparePool(data.pool);
+            for (var r = 0; r < data.rows.length; r++) {
+                var row = data.rows[r];
+                for (var c = 0; c < row.cells.length; c++) {
+                    var cell = row.cells[c];
+                    if ((cell) && ("r" in cell)) {
+                        cell.r = data.pool.recons[cell.r];
+                    }
+                }
+            }
+            
             if (onDone) {
                 onDone();
             }

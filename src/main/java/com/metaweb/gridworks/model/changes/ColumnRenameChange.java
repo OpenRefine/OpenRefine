@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.util.Pool;
 
 public class ColumnRenameChange extends ColumnChange {
     final protected String _oldColumnName;
@@ -37,7 +38,7 @@ public class ColumnRenameChange extends ColumnChange {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String oldColumnName = null;
         String newColumnName = null;
         

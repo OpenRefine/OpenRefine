@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
+import com.metaweb.gridworks.util.Pool;
  
 public class Recon implements HasFields, Jsonizable {
     
@@ -171,13 +171,13 @@ public class Recon implements HasFields, Jsonizable {
         
         if (match != null) {
             writer.key("m");
-            match.write(writer, options);
+            writer.value(match.topicID);
         }
         if (match == null || saveMode) {
             writer.key("c"); writer.array();
             if (candidates != null) {
                 for (ReconCandidate c : candidates) {
-                    c.write(writer, options);
+                    writer.value(c.topicID);
                 }
             }
             writer.endArray();
@@ -195,56 +195,23 @@ public class Recon implements HasFields, Jsonizable {
         writer.endObject();
     }
     
-    static public Recon load(JSONObject obj, Map<Long, Recon> reconCache) throws Exception {
-        if (obj == null) {
+    static public Recon loadStreaming(String s, Pool pool) throws Exception {
+        JsonFactory jsonFactory = new JsonFactory(); 
+        JsonParser jp = jsonFactory.createJsonParser(s);
+        
+        if (jp.nextToken() != JsonToken.START_OBJECT) {
             return null;
         }
-        
-        long id = obj.getLong("id");
-        if (reconCache.containsKey(id)) {
-            return reconCache.get(id);
-        }
-        
-        Recon recon = new Recon(id);
-        
-        if (obj.has("j")) {
-            recon.judgment = stringToJudgment(obj.getString("j"));
-        }
-        if (obj.has("m")) {
-            recon.match = ReconCandidate.load(obj.getJSONObject("m"));
-        }
-        if (obj.has("c")) {
-            JSONArray a = obj.getJSONArray("c");
-            int count = a.length();
-            
-            for (int i = 0; i < count; i++) {
-                recon.addCandidate(ReconCandidate.load(a.getJSONObject(i)));
-            }
-        }
-        if (obj.has("f")) {
-            JSONArray a = obj.getJSONArray("f");
-            int count = a.length();
-            
-            for (int i = 0; i < count && i < Feature_max; i++) {
-                if (!a.isNull(i)) {
-                    recon.features[i] = a.get(i);
-                }
-            }
-        }
-        
-        reconCache.put(id, recon);
-        
-        return recon;
+        return loadStreaming(jp, pool);
     }
-
-    static public Recon loadStreaming(JsonParser jp, Map<Long, Recon> reconCache) throws Exception {
+    
+    static public Recon loadStreaming(JsonParser jp, Pool pool) throws Exception {
         JsonToken t = jp.getCurrentToken();
         if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
             return null;
         }
         
         Recon recon = null;
-        boolean old = true;
         
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jp.getCurrentName();
@@ -252,20 +219,17 @@ public class Recon implements HasFields, Jsonizable {
             
             if ("id".equals(fieldName)) {
                 long id = jp.getLongValue();
-                if (reconCache.containsKey(id)) {
-                    recon = reconCache.get(id);
-                } else {
-                    recon = new Recon(id);
-                    old = false;
-                }
+                recon = new Recon(id);
             } else if ("j".equals(fieldName)) {
                 recon.judgment = stringToJudgment(jp.getText());
             } else if ("m".equals(fieldName)) {
-                if (jp.getCurrentToken() == JsonToken.START_OBJECT) {
-                    ReconCandidate match = ReconCandidate.loadStreaming(jp, reconCache);
-                    if (!old) {
-                        recon.match = match;
-                    }
+                if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
+                    String candidateID = jp.getText();
+                    
+                    recon.match = pool.getReconCandidate(candidateID);
+                } else {
+                    // legacy
+                    recon.match = ReconCandidate.loadStreaming(jp);
                 }
             } else if ("f".equals(fieldName)) {
                 if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
@@ -274,7 +238,7 @@ public class Recon implements HasFields, Jsonizable {
                 
                 int feature = 0;
                 while (jp.nextToken() != JsonToken.END_ARRAY) {
-                    if (feature < recon.features.length && !old) {
+                    if (feature < recon.features.length) {
                         JsonToken token = jp.getCurrentToken();
                         if (token == JsonToken.VALUE_STRING) {
                             recon.features[feature++] = jp.getText();
@@ -295,9 +259,13 @@ public class Recon implements HasFields, Jsonizable {
                 }
                 
                 while (jp.nextToken() != JsonToken.END_ARRAY) {
-                    ReconCandidate rc = ReconCandidate.loadStreaming(jp, reconCache);
-                    if (rc != null && !old) {
-                        recon.addCandidate(rc);
+                    if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
+                        String candidateID = jp.getText();
+                    
+                        recon.addCandidate(pool.getReconCandidate(candidateID));
+                    } else {
+                        // legacy
+                        recon.addCandidate(ReconCandidate.loadStreaming(jp));
                     }
                 }
             }

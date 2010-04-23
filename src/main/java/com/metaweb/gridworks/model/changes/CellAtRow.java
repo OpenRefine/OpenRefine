@@ -2,11 +2,10 @@ package com.metaweb.gridworks.model.changes;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.model.Cell;
-import com.metaweb.gridworks.model.Recon;
+import com.metaweb.gridworks.util.Pool;
 
 public class CellAtRow {
 
@@ -26,10 +25,10 @@ public class CellAtRow {
         }
     }
     
-    static public CellAtRow load(String s, Map<Long, Recon> reconCache) throws Exception {
+    static public CellAtRow load(String s, Pool pool) throws Exception {
         int semicolon = s.indexOf(';');
         int row = Integer.parseInt(s.substring(0, semicolon));
-        Cell cell = semicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(semicolon + 1), reconCache) : null;
+        Cell cell = semicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(semicolon + 1), pool) : null;
         
         return new CellAtRow(row, cell);
     }

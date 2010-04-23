@@ -1,23 +1,21 @@
 package com.metaweb.gridworks.model;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.slf4j.Logger;
@@ -30,6 +28,7 @@ import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.History;
 import com.metaweb.gridworks.process.ProcessManager;
 import com.metaweb.gridworks.protograph.Protograph;
+import com.metaweb.gridworks.util.Pool;
 
 public class Project {
     final public long            id;
@@ -98,22 +97,36 @@ public class Project {
     protected void saveToFile(File file) throws Exception {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
         try {
+            Pool pool = new Pool();
+            
             out.putNextEntry(new ZipEntry("data.txt"));
             try {
-                Writer writer = new OutputStreamWriter(out);
-                try {
-                    Properties options = new Properties();
-                    options.setProperty("mode", "save");
-                    
-                    saveToWriter(writer, options);
-                } finally {
-                    writer.flush();
-                }
+                saveToOutputStream(out, pool);
+            } finally {
+                out.closeEntry();
+            }
+            
+            out.putNextEntry(new ZipEntry("pool.txt"));
+            try {
+                pool.save(out);
             } finally {
                 out.closeEntry();
             }
         } finally {
             out.close();
+        }
+    }
+    
+    protected void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
+        Writer writer = new OutputStreamWriter(out);
+        try {
+            Properties options = new Properties();
+            options.setProperty("mode", "save");
+            options.put("pool", pool);
+            
+            saveToWriter(writer, options);
+        } finally {
+            writer.flush();
         }
     }
     
@@ -163,25 +176,37 @@ public class Project {
         return null;
     }
     
-    static protected Project loadFromFile(File file, long id) throws Exception {
-        ZipInputStream in = new ZipInputStream(new FileInputStream(file));
+    static protected Project loadFromFile(
+        File file, 
+        long id
+    ) throws Exception {
+        ZipFile zipFile = new ZipFile(file);
         try {
-            ZipEntry entry = in.getNextEntry();
+            Pool pool = new Pool();
+            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
+            if (poolEntry != null) {
+                pool.load(new InputStreamReader(
+                    zipFile.getInputStream(poolEntry)));
+            } // else, it's a legacy project file
             
-            assert "data.txt".equals(entry.getName());
-            
-            LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
-            try {
-                return loadFromReader(reader, id);
-            } finally {
-                reader.close();
-            }
+            return loadFromReader(
+                new LineNumberReader(
+                    new InputStreamReader(
+                        zipFile.getInputStream(
+                            zipFile.getEntry("data.txt")))),
+                id,
+                pool
+            );
         } finally {
-            in.close();
+            zipFile.close();
         }
     }
     
-    static protected Project loadFromReader(LineNumberReader reader, long id) throws Exception {
+    static protected Project loadFromReader(
+        LineNumberReader reader, 
+        long id,
+        Pool pool
+    ) throws Exception {
         long start = System.currentTimeMillis();
         
         /* String version = */ reader.readLine();
@@ -204,11 +229,10 @@ public class Project {
             } else if ("rowCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                Map<Long, Recon> reconCache = new HashMap<Long, Recon>();
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                    	Row row = Row.load(line, reconCache);
+                    	Row row = Row.load(line, pool);
                         project.rows.add(row);
                         maxCellCount = Math.max(maxCellCount, row.cells.size());
                     }
