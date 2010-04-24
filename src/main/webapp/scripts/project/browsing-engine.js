@@ -27,7 +27,6 @@ function BrowsingEngine(div, facetConfigs) {
             
             this._facets.push({ elmt: elmt, facet: facet });
         }
-        this.resize();
         this.update();
     }
 }
@@ -218,6 +217,8 @@ BrowsingEngine.prototype.update = function(onDone) {
                 } else {
                     self._elmts.dependentRowControls.hide();
                 }
+                
+                self.resize();
             } else {
                 self._elmts.help.show();
             }
