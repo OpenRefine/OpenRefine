@@ -177,6 +177,12 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
             break;
         }
     }
+
+    for (var i = 0; i < this._facets.length; i++) {
+        if (typeof this._facets[i].facet.update == "function") {
+            this._facets[i].facet.update();
+        }
+    }
     
     if (update) {
         Gridworks.update({ engineChanged: true });

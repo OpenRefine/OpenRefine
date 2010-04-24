@@ -16,10 +16,10 @@
     border: none;
 }
 .gridworks-tabs.ui-tabs .ui-tabs-nav li a {
-    padding: 5px 10px;
+    padding: 4px 10px;
 }
 .gridworks-tabs.ui-tabs .ui-tabs-nav li a span.count {
-    color: #888;
+    color: #666;
     font-weight: normal;
     font-size: 80%;
 }

@@ -75,11 +75,10 @@ function initializeUI(uiState) {
         '<a href="#">' + theProject.metadata.name + '</a> project' +
         '</span>').appendTo(path);
     
-    $('<a href="javascript:{}">current view</a>')
+    $('<a href="javascript:{}" class="permalink">permalink</a>')
         .mouseenter(function() {
             this.href = Gridworks.getPermanentLink();
-        })
-        .appendTo($('<span class="app-path-section"></span>').appendTo(path));
+        }).appendTo(path);
     
     var body = $("#body").empty().html(
         '<div bind="viewPanel" class="view-panel"></div>' +

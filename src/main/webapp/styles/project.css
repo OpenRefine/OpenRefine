@@ -20,14 +20,14 @@ body {
     bottom: 0px;
     left: 0px;
     z-index: 1000;
-    padding: 0.5em 0;
+    padding: 0.4em 0em 0.5em 0em;
     width: 100%;
-    border-top: none;
-    background: #ccc;
-    color: #888;
+    background: #E8E8E8;
+    color: #666;
 }
 #footer a {
-    color: #66c;
+	font-weight: bold;
+    color: #333;
     text-decoration: none;
 }
 #footer a:hover {
@@ -54,10 +54,6 @@ body {
 }
 .left-panel .gridworks-tabs.ui-tabs .ui-tabs-panel {
     padding: 7px;
-    -moz-border-radius-topright: 0px;
-    -webkit-border-top-right-radius: 0px;
-    -moz-border-radius-bottomright: 0px;
-    -webkit-border-bottom-right-radius: 0px;
     overflow: hidden;
 }
 

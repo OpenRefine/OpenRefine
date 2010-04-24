@@ -129,6 +129,7 @@ a.facet-mode-link.facet-mode-link-selected {
 }
 .facet-choice-selected .facet-choice-label {
     font-weight: bold;
+    color: #ff6a00;
 }
 
 a.facet-choice-label {

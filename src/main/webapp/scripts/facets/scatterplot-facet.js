@@ -7,6 +7,10 @@ function ScatterplotFacet(div, config, options) {
     this._initializedUI = false;
 }
 
+ScatterplotFacet.prototype.update = function() {
+    this._plotAreaSelector.update();
+}
+
 ScatterplotFacet.prototype.reset = function() {
     delete this._config.from_x;
     delete this._config.from_y;

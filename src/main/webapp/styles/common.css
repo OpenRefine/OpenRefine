@@ -181,17 +181,22 @@ img {
     background: url(../images/path-delimiter.png) no-repeat center right;
     padding: 18px 20px 20px 10px;
 }
-#path .app-path-section a {
+#path a {
     font-weight: bold;
     text-decoration: none;
     color: #333;
 }
-#path a.app-path-section:hover {
+#path a:hover {
     text-decoration: underline;
 }
 
+#path a.permalink {
+    padding: 18px 20px 20px 10px;
+	color: #ff6a00;
+}
+
 #footer {
-    font-size: 80%;
+    font-size: 85%;
     padding: 1em 0;
     color: #666;
     text-align: center;

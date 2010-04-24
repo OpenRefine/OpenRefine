@@ -4,12 +4,13 @@
 }
 a.viewPanel-pagingControls-page {
     margin: 0 2px;
-    padding: 2px 5px;
+    padding: 2px 4px 3px 4px;
     font-weight: bold;
 }
 a.viewPanel-pagingControls-page.inaction {
-    background: #aaa;
-    color: #eee;
+    background: #f8f8f8;
+    color: #777;
+    border: 1px solid #ff6a00;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
 }
@@ -55,6 +56,10 @@ table.data-table td.column-header {
     border-bottom: 1px solid #ccc;
     white-space: pre;
     font-weight: bold;
+}
+
+table.data-table td.column-header td {
+	vertical-align: middle;
 }
 
 table.column-header-layout {
