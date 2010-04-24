@@ -81,25 +81,12 @@ li.facet-container {
 }
 .facet-controls {
     font-size: 90%;
-    padding: 5px 5px;
+    padding: 4px 5px 4px 5px;
     background: #F4F7FA;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ccc;
 }
-a.facet-mode-link {
-    text-decoration: none;
-    padding: 1px 3px 2px 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-}
-a.facet-mode-link:hover {
-    background: #f8f8f8;
-    color: #FF6A00;
-}
-a.facet-mode-link.facet-mode-link-selected {
-    background: #f8f8f8;
-    color: #FF6A00;
-    border: 1px solid #ccc;
+.facet-controls .ui-button-text {
+	padding: 0.1em 0.4em 0.2em;
 }
 
 .facet-body {

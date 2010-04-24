@@ -105,28 +105,23 @@ ListFacet.prototype._reSortChoices = function() {
 ListFacet.prototype._initializeUI = function() {
     var self = this;
     
+    var facet_id = this._div.attr("id");
+    
     this._div.empty().show().html(
         '<div class="facet-title">' +
             '<img src="images/close.png" title="Remove this facet" class="facet-choice-link" bind="removeButton"/>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
             '<span bind="titleSpan"></span>' +
         '</div>' +
         '<div class="facet-expression" bind="expressionDiv"></div>' +
-        '<div class="facet-status" bind="statusDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
-            '<table><tr>' +
-                '<td bind="choiceCountContainer"></td>' +
-                '<td width="1%"><a href="javascript:{}" class="action" bind="clusterLink">Cluster</a></td>' +
-            '</tr></table>' +
-        '</div></div>' +
         '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
             '<table><tr>' +
-                '<td>Sort by: ' +
-                    '<a href="javascript:{}" bind="sortByNameLink" class="facet-mode-link">Name</a> ' +
-                    '<a href="javascript:{}" bind="sortByCountLink" class="facet-mode-link">Count</a>' +
-                '</td>' +
-                '<td width="1%">' +
-                    '<a href="javascript:{}" class="action" bind="resetButton">Reset</a>' +
-                '</td>' +
+                '<td><span bind="sortGroup">Sort by: ' +
+                    '<input bind="sortByNameLink" type="radio" id="' + facet_id + '-name-sort" name="radio" checked="checked" /><label for="' + facet_id + '-name-sort">name</label>' +
+                    '<input bind="sortByCountLink" type="radio" id="' + facet_id + '-count-sort" name="radio" /><label for="' + facet_id + '-count-sort">count</label>' +
+                '</span></td>' +
+                '<td width="1%" nowrap=""><span bind="choiceCountContainer"></span> <button bind="clusterLink">cluster</button></td>' +
             '</tr></table>' +
         '</div></div>' +
         '<div class="facet-body" bind="bodyDiv">' +
@@ -158,8 +153,10 @@ ListFacet.prototype._initializeUI = function() {
         }
     });
         
+    this._elmts.sortGroup.buttonset();
+    
     if (this._config.expression == "value") {
-        this._elmts.clusterLink.click(function() { self._doEdit(); });
+        this._elmts.clusterLink.click(function() { self._doEdit(); }).button();
     } else {
         this._elmts.clusterLink.hide();
     }
@@ -180,14 +177,14 @@ ListFacet.prototype._update = function(resetScroll) {
     var self = this;
     
     if (!this._data) {
-        this._elmts.statusDiv.hide();
+        //this._elmts.statusDiv.hide();
         this._elmts.controlsDiv.hide();
         this._elmts.bodyInnerDiv.empty().append(
             $('<div>').text("Loading...").addClass("facet-body-message"));
             
         return;
     } else if ("error" in this._data) {
-        this._elmts.statusDiv.hide();
+        //this._elmts.statusDiv.hide();
         this._elmts.controlsDiv.hide();
         this._elmts.bodyInnerDiv.empty().append(
             $('<div>').text(this._data.error).addClass("facet-body-message"));
@@ -204,7 +201,7 @@ ListFacet.prototype._update = function(resetScroll) {
     }
     
     this._elmts.bodyInnerDiv.empty();
-    this._elmts.statusDiv.show();
+    //this._elmts.statusDiv.show();
     this._elmts.controlsDiv.show();
     
     var choices = this._data.choices;
