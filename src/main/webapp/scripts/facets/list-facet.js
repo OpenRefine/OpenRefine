@@ -119,7 +119,7 @@ ListFacet.prototype._initializeUI = function() {
         '</div></div>' +
         '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
             '<table><tr>' +
-                '<td>Sort by ' +
+                '<td>Sort by: ' +
                     '<a href="javascript:{}" bind="sortByNameLink" class="facet-mode-link">Name</a> ' +
                     '<a href="javascript:{}" bind="sortByCountLink" class="facet-mode-link">Count</a>' +
                 '</td>' +

@@ -36,7 +36,10 @@ public class FreebaseUtils {
     static final public String FREEBASE_HOST = "www.freebase.com";
     static final public String FREEBASE_SANDBOX_HOST = "www.sandbox-freebase.com";
     
-    static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/prod/";
+    //static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/prod/";
+    static final private String FREEQ_URL = "http://zucchini.dmz.sjc1.metaweb.com:5000/unittest";
+    
+    static final private String GRIDWORKS_ID = "/en/gridworks";
     
     private static String getUserInfoURL(String host) {
         return "http://" + host + "/api/service/user_info";
@@ -77,7 +80,7 @@ public class FreebaseUtils {
             List<NameValuePair> formparams = new ArrayList<NameValuePair>();
             formparams.add(new BasicNameValuePair("user", user_info.getString("username")));
             formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
-            formparams.add(new BasicNameValuePair("operator", "gridworks"));
+            formparams.add(new BasicNameValuePair("operator", GRIDWORKS_ID));
             formparams.add(new BasicNameValuePair("mdo_info", info));
             formparams.add(new BasicNameValuePair("graphport", provider.getHost().equals(FREEBASE_HOST) ? "otg" : "sandbox"));
             formparams.add(new BasicNameValuePair("payload", triples));

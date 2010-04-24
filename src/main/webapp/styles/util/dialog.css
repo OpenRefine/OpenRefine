@@ -52,14 +52,14 @@
 .dialog-busy-frame {
     width: 300px;
     border: none;
-    -moz-border-radiust: 25px;
-    -webkit-border-radius: 25px;
+    -moz-border-radiust: 15px;
+    -webkit-border-radius: 15px;
 }
 .dialog-busy-body {
     margin: 1em;
     text-align: center;
     font-size: 200%;
     font-weight: bold;
-    color: #faa;
+    color: #aaa;
 }
 
