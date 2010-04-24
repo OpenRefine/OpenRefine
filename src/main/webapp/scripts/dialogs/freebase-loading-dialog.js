@@ -104,7 +104,8 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
 FreebaseLoadingDialog.prototype._load = function() {
     var self = this;
     var freebase = self._elmts.freebase.attr("checked");
-    if (!freebase || (freebase && confirm("Are you sure this data is clean enough to enter Freebase?"))) {
+
+    var doLoad = function() {
         $.post("/command/upload-data", 
             {
                 project: theProject.id, 
@@ -138,6 +139,30 @@ FreebaseLoadingDialog.prototype._load = function() {
             },
             "json"
         );
+    };
+        
+    if (freebase) {
+        var dialog = $(
+            '<div id="freebase-confirmation-dialog" title="Are you sure?">' +
+                '<table><tr><td width="30%"><img src="/images/cop.png" width="150px"></td><td width="70%" style="text-align: center; vertical-align: middle; font-size: 120%">Are you sure this data is ready to be uplaoded into <a href="http://www.freebase.com/" target="_new">Freebase</a>?</td></tr></table>' +
+            '</div>'
+        ).dialog({
+            resizable: false,
+            width: 400,
+            height: 230,
+            modal: true,
+            buttons: {
+                'yes': function() {
+                    $(this).dialog('close');
+                    doLoad();
+                },
+                'cancel': function() {
+                    $(this).dialog('close');
+                }
+            }
+        });
+    } else {
+        doLoad();
     }
 }
 
