@@ -58,16 +58,16 @@ ProcessWidget.prototype.showUndo = function(historyEntry) {
     
     this._latestHistoryEntry = historyEntry;
 
-    this._div.empty().show().html(
+    this._div.empty().html(
         '<div class="process-panel-inner"><div class="process-panel-undo">' +
             '<a href="javascript:{}" bind="undo">Undo</a> <span bind="description"></span>' +
         '</div><div style="text-align: right; padding-right: 1em;"><a href="javascript:{}" bind="close">close</a></div></div>'
-    );
+    ).slideDown().delay(5000).slideUp(); ;
     var elmts = DOM.bind(this._div);
-    
+        
     elmts.description.text(historyEntry.description);
     elmts.undo.click(function() { self.undo(); });
-    elmts.close.click(function() { $(".process-panel-inner").hide(); });
+    elmts.close.click(function() { $(".process-panel-inner").slideUp(); });
 };
 
 ProcessWidget.prototype.undo = function() {
