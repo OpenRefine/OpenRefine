@@ -28,8 +28,10 @@
 }
 
 ul.facets-container {
-    padding: 0;
     margin: 0;
+    padding: 0;
+    padding-right: 2px;
+    overflow: auto;
 }
 
 li.facet-container {
@@ -95,11 +97,19 @@ a.facet-mode-link.facet-mode-link-selected {
     margin: 1em;
     color: #f88;
 }
-.facet-body-scrollable {
+.facet-body.facet-body-scrollable {
     height: 17em;
+    padding-bottom: 10px;
+    background: url(../../images/down-arrow.png) center bottom no-repeat;
+}
+.facet-body.facet-body-scrollable .ui-resizable-s {
+    bottom: -5px;
+    height: 15px;
+}
+.facet-body-scrollable .facet-body-inner {
+    height: 100%;
     overflow: auto;
 }
-
 
 .facet-choice {
     padding: 2px 5px;

@@ -27,11 +27,21 @@ function BrowsingEngine(div, facetConfigs) {
             
             this._facets.push({ elmt: elmt, facet: facet });
         }
+        this.resize();
         this.update();
     }
 }
 
 BrowsingEngine.prototype.resize = function() {
+    if (this._facets.length > 0) {
+        var header = this._div.find(".browsing-panel-header");
+        var body = this._div.find(".facets-container");
+        var bodyPaddings = body.outerHeight(true) - body.height();
+        
+        body.css("height", (this._div.height() - header.outerHeight(true) - bodyPaddings) + "px");
+        
+        this._elmts.facets.sortable("refresh");
+    }
 };
 
 BrowsingEngine.prototype.getFacetUIStates = function() {

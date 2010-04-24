@@ -128,7 +128,9 @@ ListFacet.prototype._initializeUI = function() {
                 '</td>' +
             '</tr></table>' +
         '</div></div>' +
-        '<div class="facet-body" bind="bodyDiv"></div>'
+        '<div class="facet-body" bind="bodyDiv">' +
+            '<div class="facet-body-inner" bind="bodyInnerDiv"></div>' +
+        '</div>'
     );
     this._elmts = DOM.bind(this._div);
     
@@ -160,6 +162,13 @@ ListFacet.prototype._initializeUI = function() {
     
     if (!("scroll" in this._options) || this._options.scroll) {
         this._elmts.bodyDiv.addClass("facet-body-scrollable");
+        this._elmts.bodyDiv.resizable({
+            minHeight: 30,
+            handles: 's',
+            stop: function(event, ui) {
+                event.target.style.width = "auto"; // don't force the width
+            }
+        });
     }
 };
 
@@ -169,14 +178,14 @@ ListFacet.prototype._update = function(resetScroll) {
     if (!this._data) {
         this._elmts.statusDiv.hide();
         this._elmts.controlsDiv.hide();
-        this._elmts.bodyDiv.empty().append(
+        this._elmts.bodyInnerDiv.empty().append(
             $('<div>').text("Loading...").addClass("facet-body-message"));
             
         return;
     } else if ("error" in this._data) {
         this._elmts.statusDiv.hide();
         this._elmts.controlsDiv.hide();
-        this._elmts.bodyDiv.empty().append(
+        this._elmts.bodyInnerDiv.empty().append(
             $('<div>').text(this._data.error).addClass("facet-body-message"));
         
         return;
@@ -185,16 +194,12 @@ ListFacet.prototype._update = function(resetScroll) {
     var scrollTop = 0;
     if (!resetScroll) {
         try {
-            scrollTop = this._elmts.bodyDiv[0].scrollTop;
+            scrollTop = this._elmts.bodyInnerDiv[0].scrollTop;
         } catch (e) {
         }
     }
     
-    this._elmts.bodyDiv.empty();
-    if (!("scroll" in this._options) || this._options.scroll) {
-        this._elmts.bodyDiv.resizable();
-    }
-    
+    this._elmts.bodyInnerDiv.empty();
     this._elmts.statusDiv.show();
     this._elmts.controlsDiv.show();
     
@@ -259,8 +264,8 @@ ListFacet.prototype._update = function(resetScroll) {
         renderChoice(-2, this._errorChoice, "(error)");
     }
     
-    this._elmts.bodyDiv.html(html.join(''));
-    this._elmts.bodyDiv[0].scrollTop = scrollTop;
+    this._elmts.bodyInnerDiv.html(html.join(''));
+    this._elmts.bodyInnerDiv[0].scrollTop = scrollTop;
     
     var getChoice = function(elmt) {
         var index = parseInt(elmt.attr("choiceIndex"));
@@ -286,8 +291,8 @@ ListFacet.prototype._update = function(resetScroll) {
     };
     
     var wireEvents = function() {
-        var bodyDiv = self._elmts.bodyDiv;
-        bodyDiv.find('.facet-choice-label').click(function() {
+        var bodyInnerDiv = self._elmts.bodyInnerDiv;
+        bodyInnerDiv.find('.facet-choice-label').click(function() {
             var choice = findChoice($(this));
             if (choice.s) {
                 if (selectionCount > 1) {
@@ -301,12 +306,12 @@ ListFacet.prototype._update = function(resetScroll) {
                 select(choice);
             }
         });
-        bodyDiv.find('.facet-choice-edit').click(function() {
+        bodyInnerDiv.find('.facet-choice-edit').click(function() {
             var choice = findChoice($(this));
             self._editChoice(choice, $(this).closest('.facet-choice'));
         });
         
-        bodyDiv.find('.facet-choice').mouseenter(function() {
+        bodyInnerDiv.find('.facet-choice').mouseenter(function() {
             $(this).find('.facet-choice-edit').css("visibility", "visible");
             
             var choice = getChoice($(this));
@@ -322,7 +327,7 @@ ListFacet.prototype._update = function(resetScroll) {
             }
         });
         
-        bodyDiv.find('.facet-choice-toggle').click(function() {
+        bodyInnerDiv.find('.facet-choice-toggle').click(function() {
             var choice = findChoice($(this));
             if (choice.s) {
                 deselect(choice);
