@@ -100,6 +100,7 @@ RangeFacet.prototype._initializeUI = function() {
             '<div class="facet-title" bind="headerDiv">' +
                 '<img src="images/close.png" class="facet-choice-link" title="Remove this facet" bind="removeButton" />' +
                 '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
+                '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
                 '<span bind="facetTitle"></span>' +
             '</div>' +
             '<div class="facet-expression" bind="expressionDiv"></div>' +
@@ -115,7 +116,12 @@ RangeFacet.prototype._initializeUI = function() {
     this._elmts = DOM.bind(this._div);
     
     this._elmts.facetTitle.text(this._config.name);
-    this._elmts.expressionDiv.text(this._config.expression).click(function() { self._editExpression(); });
+    this._elmts.changeButton.attr("title","Current Expression: " + this._config.expression).click(function() {
+        self._elmts.expressionDiv.slideToggle(100);
+    });
+    this._elmts.expressionDiv.text(this._config.expression).click(function() { 
+        self._editExpression(); 
+    }).hide();
     
     this._elmts.resetButton.click(function() {
         self.reset();

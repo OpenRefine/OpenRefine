@@ -108,6 +108,7 @@ ListFacet.prototype._initializeUI = function() {
     this._div.empty().show().html(
         '<div class="facet-title">' +
             '<img src="images/close.png" title="Remove this facet" class="facet-choice-link" bind="removeButton"/>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
             '<span bind="titleSpan"></span>' +
         '</div>' +
         '<div class="facet-expression" bind="expressionDiv"></div>' +
@@ -135,7 +136,10 @@ ListFacet.prototype._initializeUI = function() {
     this._elmts = DOM.bind(this._div);
     
     this._elmts.titleSpan.text(this._config.name);
-    this._elmts.expressionDiv.text(this._config.expression).click(function() { self._editExpression(); });
+    this._elmts.changeButton.attr("title","Current Expression: " + this._config.expression).click(function() {
+        self._elmts.expressionDiv.slideToggle(100);
+    });
+    this._elmts.expressionDiv.text(this._config.expression).hide().click(function() { self._editExpression(); });
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.resetButton.click(function() { self._reset(); });
 

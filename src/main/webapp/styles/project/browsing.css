@@ -71,7 +71,8 @@ li.facet-container {
     font-family: monospace;
     font-size: 11px;
     background: #eee;
-    cursor: pointer;
+    cursor: text;
+    border-bottom: 1px solid #ccc;
 }
 
 .facet-status {
