@@ -71,7 +71,7 @@ public class Row implements HasFields, Jsonizable {
     }
     
     public Cell getCell(int cellIndex) {
-        if (cellIndex < cells.size()) {
+        if (cellIndex >= 0 && cellIndex < cells.size()) {
             return cells.get(cellIndex);
         } else {
             return null;
@@ -79,7 +79,7 @@ public class Row implements HasFields, Jsonizable {
     }
     
     public Object getCellValue(int cellIndex) {
-        if (cellIndex < cells.size()) {
+        if (cellIndex >= 0 && cellIndex < cells.size()) {
             Cell cell = cells.get(cellIndex);
             if (cell != null) {
                 return cell.value;

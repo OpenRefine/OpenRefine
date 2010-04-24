@@ -40,7 +40,7 @@ public class PreviewExpressionCommand extends Command {
             Project project = getProject(request);
             
             int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
-            String columnName = project.columnModel.getColumnByCellIndex(cellIndex).getName();
+            String columnName = cellIndex < 0 ? "" : project.columnModel.getColumnByCellIndex(cellIndex).getName();
             
             String expression = request.getParameter("expression");
             String rowIndicesString = request.getParameter("rowIndices");

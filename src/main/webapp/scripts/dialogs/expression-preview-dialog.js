@@ -98,7 +98,7 @@ ExpressionPreviewDialog.Widget = function(
     if (colon > 0) {
         var l = expression.substring(0, colon);
         if (l == "gel" || l == "jython" || l == "clojure") {
-            expression = expression.substring(colon + 1);
+            this.expression = expression.substring(colon + 1);
             language = l;
         }
     }

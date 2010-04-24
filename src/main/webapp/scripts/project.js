@@ -295,6 +295,16 @@ Gridworks.cellIndexToColumn = function(cellIndex) {
     }
     return null;
 };
+Gridworks.columnNameToColumn = function(columnName) {
+    var columns = theProject.columnModel.columns;
+    for (var i = 0; i < columns.length; i++) {
+        var column = columns[i];
+        if (column.name == columnName) {
+            return column;
+        }
+    }
+    return null;
+};
 
 Gridworks.preparePool = function(pool) {
     for (var id in pool.recons) {

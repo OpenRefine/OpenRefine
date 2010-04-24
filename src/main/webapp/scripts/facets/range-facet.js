@@ -115,7 +115,7 @@ RangeFacet.prototype._initializeUI = function() {
     this._elmts = DOM.bind(this._div);
     
     this._elmts.facetTitle.text(this._config.name);
-    this._elmts.expressionDiv.text(this._config.expression);
+    this._elmts.expressionDiv.text(this._config.expression).click(function() { self._editExpression(); });
     
     this._elmts.resetButton.click(function() {
         self.reset();
@@ -329,4 +329,33 @@ RangeFacet.prototype._remove = function() {
 
 RangeFacet.prototype._updateRest = function() {
     Gridworks.update({ engineChanged: true });
+};
+
+RangeFacet.prototype._editExpression = function() {
+    var self = this;
+    var title = (this._config.columnName) ? 
+            ("Edit Facet's Expression based on Column " + this._config.columnName) : 
+            "Edit Facet's Expression"
+    
+    var column = Gridworks.columnNameToColumn(this._config.columnName);
+    var o = DataTableView.sampleVisibleRows(column);
+    
+    new ExpressionPreviewDialog(
+        title,
+        column ? column.cellIndex : -1, 
+        o.rowIndices,
+        o.values,
+        this._config.expression, 
+        function(expr) {
+            if (expr != self._config.expression) {
+                self._config.expression = expr;
+                self._elmts.expressionDiv.text(self._config.expression);
+                
+                self.reset();
+                self._from = null;
+                self._to = null;
+                self._updateRest();
+            }
+        }
+    );
 };

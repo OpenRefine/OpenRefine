@@ -60,6 +60,7 @@ li.facet-container {
     font-family: monospace;
     font-size: 11px;
     background: #eee;
+    cursor: pointer;
 }
 
 .facet-status {
