@@ -7,26 +7,26 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
 
     var self = this;
     var frame = this._frame = DialogSystem.createDialog();
-    frame.width("900px").addClass("extend-data-preview-dialog");
+    frame.width("1000px").addClass("extend-data-preview-dialog");
     
     var header = $('<div></div>').addClass("dialog-header").text("Add Columns from Freebase Based on Column " + column.name).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     var html = $(
-        '<div class="grid-layout layout-normal layout-full"><table style="height: 600px">' +
+        '<div class="grid-layout layout-normal layout-full"><table rows="4">' +
             '<tr>' +
-                '<td width="150" height="1">Add Property</td>' +
+                '<td width="300" height="1">Add Property</td>' +
                 '<td height="1">Preview</td>' +
             '</tr>' +
             '<tr>' +
-                '<td height="1"><div class="input-container"><input bind="addPropertyInput" /></div></td>' +
-                '<td height="100%" rowspan="3"><div class="preview-container" bind="previewContainer"></div></td>' +
+                '<td style="vertical-align: top;" height="1"><div class="input-container"><input bind="addPropertyInput" /></div></td>' +
+                '<td style="vertical-align: top;" rowspan="4"><div class="preview-container" bind="previewContainer"></div></td>' +
             '</tr>' +
             '<tr>' +
                 '<td height="1">Suggested Properties</td>' +
             '</tr>' +
             '<tr>' +
-                '<td height="99%"><div class="suggested-property-container" bind="suggestedPropertyContainer"></div></td>' +
+                '<td><div class="suggested-property-container" bind="suggestedPropertyContainer"></div></td>' +
             '</tr>' +
         '</table></div>'
     ).appendTo(body);
@@ -47,6 +47,7 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
     }).appendTo(footer);
     
     var dismissBusy = DialogSystem.showBusy();
+    
     ExtendDataPreviewDialog.getAllProperties(column.reconConfig.type.id, function(properties) {
         dismissBusy();
         self._show(properties);
@@ -198,6 +199,11 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
 
 ExtendDataPreviewDialog.prototype._show = function(properties) {
     this._level = DialogSystem.showDialog(this._frame);
+    
+    var n = this._elmts.suggestedPropertyContainer.offset().top +
+        this._elmts.suggestedPropertyContainer.outerHeight(true) -
+        this._elmts.addPropertyInput.offset().top;
+    this._elmts.previewContainer.height(Math.floor(n));
     
     var self = this;
     var container = this._elmts.suggestedPropertyContainer;
