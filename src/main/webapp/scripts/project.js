@@ -12,7 +12,6 @@ Gridworks.reportException = function(e) {
 
 function resize() {
     var header = $("#header");
-    var footer = $("#footer");
     
     ui.menuBarContainer.css("top", header.outerHeight() + "px");
 
@@ -20,7 +19,7 @@ function resize() {
     var leftPanelMargin = 7;
     var width = $(window).width();
     var top = ui.menuBarContainer.offset().top + ui.menuBarContainer.outerHeight();
-    var height = footer.offset().top - top;
+    var height = $(window).height() - top;
     
     ui.viewPanel
         .css("top", top + "px")
