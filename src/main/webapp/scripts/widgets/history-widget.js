@@ -138,10 +138,10 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
                 'You can copy and save it in order to apply the same operations in the future.' +
             '</td></tr>' +
             '<tr>' +
-                '<td width="50%">' +
+                '<td width="50%" style="vertical-align: top">' +
                     '<div class="extract-operation-dialog-entries"><table cellspacing="5" bind="entryTable"></table></div>' +
                 '</td>' +
-                '<td width="50%">' +
+                '<td width="50%" style="vertical-align: top">' +
                     '<div class="input-container"><textarea wrap="off" class="history-operation-json" bind="textarea" /></div>' +
                 '</td>' +
             '</tr>' +
