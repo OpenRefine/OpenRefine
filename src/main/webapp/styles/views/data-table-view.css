@@ -116,19 +116,21 @@ a.data-table-cell-edit {
     position: absolute;
     top: 0px;
     right: 0px;
-    padding: 2px 4px;
-    font-size: 80%;
-    font-weight: bold;
+    display: block;
+    width: 30px;
+    height: 16px;
     text-decoration: none;
-    background: #aaf;
-    color: #eee;
+    background-image: url(../../images/edit-map.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
     visibility: hidden;
 }
 a.data-table-cell-edit:hover {
-    background: #88f;
-    color: white;
+    background-position: -30px 0px;
 }
-
+.data-table-value-nonstring {
+    color: #880;
+}
 .data-table-error {
     color: red;
 }

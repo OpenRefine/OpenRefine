@@ -15,9 +15,9 @@ DataTableCellUI.prototype._render = function() {
     var divContent = $('<div/>')
         .addClass("data-table-cell-content");
         
-    var editLink = $('<a href="javascript:{}" />')
+    var editLink = $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-cell-edit")
-        .text("edit")
+        .attr("title", "edit this cell")
         .appendTo(divContent)
         .click(function() { self._startEdit(this); });
         
@@ -31,7 +31,10 @@ DataTableCellUI.prototype._render = function() {
     } else if ("e" in cell) {
         $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
     } else if (!("r" in cell) || !cell.r) {
-        $('<span>').text(cell.v).appendTo(divContent);
+        var span = $('<span>').text(cell.v).appendTo(divContent);
+        if (typeof cell.v !== "string") {
+            span.addClass("data-table-value-nonstring");
+        }
     } else {
         var r = cell.r;
         if (r.j == "new") {
