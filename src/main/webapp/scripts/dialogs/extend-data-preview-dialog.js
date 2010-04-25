@@ -17,10 +17,11 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
             '<tr>' +
                 '<td width="300" height="1">Add Property</td>' +
                 '<td height="1">Preview</td>' +
+                '<td height="1" width="1%"><button bind="resetButton">Reset</button></td>' +
             '</tr>' +
             '<tr>' +
                 '<td style="vertical-align: top;" height="1"><div class="input-container"><input bind="addPropertyInput" /></div></td>' +
-                '<td style="vertical-align: top;" rowspan="4"><div class="preview-container" bind="previewContainer"></div></td>' +
+                '<td style="vertical-align: top;" rowspan="3" colspan="2"><div class="preview-container" bind="previewContainer"></div></td>' +
             '</tr>' +
             '<tr>' +
                 '<td height="1">Suggested Properties</td>' +
@@ -32,6 +33,11 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
     ).appendTo(body);
     
     this._elmts = DOM.bind(html);
+    
+    this._elmts.resetButton.click(function() {
+        self._extension.properties = [];
+        self._update();
+    });
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         if (self._extension.properties.length === 0) {
@@ -55,146 +61,46 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
 }
 
 ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
-    var query = {
-        "id" : typeID,
-        "type" : "/type/type",
-        "/freebase/type_hints/included_types" : [{
-            "optional" : true,
-            "properties" : [{
-                "id" : null,
-                "name" : null,
-                "/type/property/expected_type" : {
-                    "id" : null,
-                    "name" : null,
-                    "/freebase/type_hints/mediator" : []
-                },
-                "sort" : "name"
-            }]
-        }],
-        "properties" : [{
-            "id" : null,
-            "name" : null,
-            "/type/property/expected_type" : {
-                "id" : null,
-                "name" : null,
-                "/freebase/type_hints/mediator" : []
-            },
-            "sort" : "name"
-        }]
-    };
-    
-    var allProperties = [];
-    var cvtProperties = [];
-    var processProperty = function(property, parent) {
-        var expectedType = property["/type/property/expected_type"];
-        if (expectedType["/freebase/type_hints/mediator"].length > 0 && expectedType["/freebase/type_hints/mediator"][0]) {
-            cvtProperties.push(property);
-        } else {
-            allProperties.push({
-                id : property.id,
-                name : property.name,
-                expected : {
-                    id : expectedType.id,
-                    name : expectedType.name
-                }
-            });
-        }
-    };
-    var processProperties = function(properties, parent) {
-        $.each(properties, function() { processProperty(this, parent); });
-    };
+    var done = false;
     
     $.getJSON(
-        "http://api.freebase.com/api/service/mqlread?query=" + escape(JSON.stringify({ query : query })) + "&callback=?",
+        "http://gridworks-helper.freebaseapps.com/get_properties_of_type?type=" + typeID + "&callback=?",
         null,
-        function(o) {
-            if (!("result" in o)) {
-                onDone([]);
-                return;
-            }
+        function(data) {
+            if (done) return;
+            done = true;
             
-            processProperties(o.result.properties);
-            $.each(o.result["/freebase/type_hints/included_types"], function() {
-                processProperties(this.properties, null);
-            });
-            
-            if (!cvtProperties.length) {
-                onDone(allProperties);
-                return;
-            }
-            
-            var expectedTypeToProperties = [];
-            var expectedTypeIDs = [];
-            $.each(cvtProperties, function() {
-                var expected = this["/type/property/expected_type"];
-                if (expected.id in expectedTypeToProperties) {
-                    expectedTypeToProperties[expected.id].push(this);
+            var allProperties = [];
+            for (var i = 0; i < data.properties.length; i++) {
+                var property = data.properties[i];
+                var property2 = {
+                    id: property.id,
+                    name: property.name
+                };
+                if ("id2" in property) {
+                    property2.expected = property.schema2;
+                    property2.properties = [{
+                        id: property.id2,
+                        name: property.name2,
+                        expected: property.expects
+                    }];
                 } else {
-                    expectedTypeToProperties[expected.id] = [ this ];
-                    expectedTypeIDs.push(expected.id);
+                    property2.expected = property.expects;
                 }
-            });
+                allProperties.push(property2);
+            }
+            allProperties.sort(function(a, b) { return a.name.localeCompare(b.name); });
             
-            var query2 = [{
-                "id|=" : expectedTypeIDs,
-                "id" : null,
-                "type" : "/type/type",
-                "properties" : [{
-                    "id" : null,
-                    "name" : null,
-                    "/type/property/expected_type" : {
-                        "id" : null,
-                        "name" : null,
-                        "/freebase/type_hints/mediator" : []
-                    },
-                    "sort" : "name"
-                }]
-            }];
-            
-            $.getJSON(
-                "http://api.freebase.com/api/service/mqlread?query=" + escape(JSON.stringify({ query : query2 })) + "&callback=?",
-                null,
-                function(o2) {
-                    if ("result" in o2) {
-                        var processCVTProperty = function(parentProperty, properties) {
-                            var parentExpected = parentProperty["/type/property/expected_type"];
-                            
-                            $.each(properties, function() {
-                                var expected = this["/type/property/expected_type"];
-                                allProperties.push({
-                                    id : parentProperty.id,
-                                    name : parentProperty.name,
-                                    expected : {
-                                        id : parentExpected.id,
-                                        name : parentExpected.name
-                                    },
-                                    properties: [{
-                                        id : this.id,
-                                        name : this.name,
-                                        expected : {
-                                            id : expected.id,
-                                            name : expected.name
-                                        }
-                                    }]
-                                });
-                            });
-                        };
-                        var processCVTProperties = function(parentProperties, properties) {
-                            $.each(parentProperties, function() { processCVTProperty(this, properties); });
-                        };
-                        
-                        $.each(o2.result, function() {
-                            processCVTProperties(expectedTypeToProperties[this.id], this.properties);
-                        });
-                    }
-                    
-                    onDone(allProperties);
-                },
-                "jsonp"
-            );
-        },
-        "jsonp"
-    );    
+            onDone(allProperties);
+        }
+    );
+    
+    window.setTimeout(function() {
+        if (done) return;
+        
+        done = true;
+        onDone([]);
+    }, 7000); // time to give up?
 };
 
 ExtendDataPreviewDialog.prototype._show = function(properties) {
@@ -203,6 +109,7 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
     var n = this._elmts.suggestedPropertyContainer.offset().top +
         this._elmts.suggestedPropertyContainer.outerHeight(true) -
         this._elmts.addPropertyInput.offset().top;
+        
     this._elmts.previewContainer.height(Math.floor(n));
     
     var self = this;
@@ -211,9 +118,13 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
         var label = ("properties" in property) ? (property.name + " &raquo; " + property.properties[0].name) : property.name;
         var div = $('<div>').addClass("suggested-property").appendTo(container);
         
-        $('<a>').attr("href", "javascript:{}").html(label).appendTo(div).click(function() {
-            self._addProperty(property);
-        });
+        $('<a>')
+            .attr("href", "javascript:{}")
+            .html(label)
+            .appendTo(div)
+            .click(function() {
+                self._addProperty(property);
+            });
     };
     for (var i = 0; i < properties.length; i++) {
         renderSuggestedProperty(properties[i]);
@@ -294,6 +205,64 @@ ExtendDataPreviewDialog.prototype._addProperty = function(p) {
     this._update();
 };
 
+ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
+    var self = this;
+    var container = this._elmts.previewContainer.empty();
+    if (data.code == "error") {
+        container.text("Error.");
+        return;
+    }
+    
+    var table = $('<table>')[0];
+    var trHead = table.insertRow(table.rows.length);
+    $('<th>').appendTo(trHead).text(this._column.name);
+    
+    var renderColumnHeader = function(column) {
+        var th = $('<th>').appendTo(trHead);
+        
+        $('<span>').html(column.names.join(" &raquo; ")).appendTo(th);
+        $('<br>').appendTo(th);
+        
+        $('<a href="javascript:{}"></a>')
+            .text("remove")
+            .addClass("action")
+            .attr("title", "Remove this column")
+            .click(function() {
+                self._removeProperty(column.path);
+            }).appendTo(th);
+            
+        $('<a href="javascript:{}"></a>')
+            .text("constrain")
+            .addClass("action")
+            .attr("title", "Add constraints to this column")
+            .click(function() {
+                self._constrainProperty(column.path);
+            }).appendTo(th);
+    };
+    for (var c = 0; c < data.columns.length; c++) {
+        renderColumnHeader(data.columns[c]);
+    }
+    
+    for (var r = 0; r < data.rows.length; r++) {
+        var tr = table.insertRow(table.rows.length);
+        var row = data.rows[r];
+        
+        for (var c = 0; c < row.length; c++) {
+            var td = tr.insertCell(tr.cells.length);
+            var cell = row[c];
+            if (cell !== null) {
+                if ($.isPlainObject(cell)) {
+                    $('<a>').attr("href", "http://www.freebase.com/view" + cell.id).text(cell.name).appendTo(td);
+                } else {
+                    $('<span>').text(cell).appendTo(td);
+                }
+            }
+        }
+    }
+    
+    container.append(table);
+};
+
 ExtendDataPreviewDialog.prototype._removeProperty = function(path) {
     var removeFromList = function(path, index, properties) {
         var id = path[index];
@@ -323,49 +292,95 @@ ExtendDataPreviewDialog.prototype._removeProperty = function(path) {
     this._update();
 };
 
-ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
-    var self = this;
-    var container = this._elmts.previewContainer.empty();
-    if (data.code == "error") {
-        container.text("Error.");
-        return;
-    }
-    
-    var table = $('<table>')[0];
-    var trHead = table.insertRow(table.rows.length);
-    $('<th>').appendTo(trHead).text(this._column.name);
-    
-    var renderColumnHeader = function(column) {
-        var th = $('<th>').appendTo(trHead);
+ExtendDataPreviewDialog.prototype._findProperty = function(path) {
+    var find = function(path, index, properties) {
+        var id = path[index];
         
-        $('<span>').html(column.names.join(" &raquo; ")).appendTo(th);
-        $('<img>')
-            .attr("src", "images/close.png")
-            .attr("title", "Remove this column")
-            .click(function() {
-                self._removeProperty(column.path);
-            }).appendTo(th);
-    };
-    for (var c = 0; c < data.columns.length; c++) {
-        renderColumnHeader(data.columns[c]);
-    }
-    
-    for (var r = 0; r < data.rows.length; r++) {
-        var tr = table.insertRow(table.rows.length);
-        var row = data.rows[r];
-        
-        for (var c = 0; c < row.length; c++) {
-            var td = tr.insertCell(tr.cells.length);
-            var cell = row[c];
-            if (cell !== null) {
-                if ($.isPlainObject(cell)) {
-                    $('<a>').attr("href", "http://www.freebase.com/view" + cell.id).text(cell.name).appendTo(td);
-                } else {
-                    $('<span>').text(cell).appendTo(td);
+        for (var i = properties.length - 1; i >= 0; i--) {
+            var property = properties[i];
+            if (property.id == id) {
+                if (index === path.length - 1) {
+                    return property;
+                } else if ("properties" in property && property.properties.length > 0) {
+                    return find(path, index + 1, property.properties);
                 }
+                break;
             }
         }
+        
+        return null;
+    };
+    
+    return find(path, 0, this._extension.properties);
+};
+
+ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
+    var self = this;
+    var property = this._findProperty(path);
+    
+    var frame = DialogSystem.createDialog();
+    frame.width("500px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Constrain " + path.join(" > ")).appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    body.html(
+        '<div class="grid-layout layout-normal layout-full"><table>' +
+            '<tr><td>' +
+                'Enter MQL query constraints as JSON' +
+            '</td></tr>' +
+            '<tr><td>' +
+                '<textarea style="width: 100%; height: 300px; font-family: monospace;" bind="textarea"></textarea>' +
+            '</td></tr>' +
+        '</table></div>'
+    );
+    var bodyElmts = DOM.bind(body);
+    
+    if ("constraints" in property) {
+        bodyElmts.textarea[0].value = JSON.stringify(property.constraints, null, 2);
+    } else {
+        bodyElmts.textarea[0].value = JSON.stringify({ "limit" : 10 }, null, 2);
     }
     
-    container.append(table);
+    footer.html(
+        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+        '<button bind="cancelButton">Cancel</button>'
+    );
+    var footerElmts = DOM.bind(footer);
+    
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    footerElmts.cancelButton.click(dismiss);
+    footerElmts.okButton.click(function() {
+        try {
+            var o = JSON.parse(bodyElmts.textarea[0].value);
+            if (o === undefined) {
+                alert("Please ensure that the JSON you enter is valid.");
+                return;
+            }
+            
+            if ($.isArray(o) && o.length == 1) {
+                o = o[0];
+            }
+            if (!$.isPlainObject(o)) {
+                alert("The JSON you enter must be an object, that is, it is of this form { ... }.")
+                return;
+            }
+            
+            property.constraints = o;
+            
+            dismiss();
+            
+            self._update();
+        } catch (e) {
+            //console.log(e);
+        }
+    });
+    
+    bodyElmts.textarea.focus();
 };
+

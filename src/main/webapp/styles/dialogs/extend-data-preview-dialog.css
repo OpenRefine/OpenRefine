@@ -27,6 +27,7 @@
 .extend-data-preview-dialog .preview-container td, .extend-data-preview-dialog .preview-container th {
     padding: 3px 5px;
     border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
 }
 
 .extend-data-preview-dialog .preview-container th img {

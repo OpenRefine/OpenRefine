@@ -60,7 +60,8 @@ public class FreebaseDataExtensionJob {
         StringWriter writer = new StringWriter();
         formulateQuery(guids, extension, writer);
         
-        InputStream is = doMqlRead(writer.toString());
+        String query = writer.toString();
+        InputStream is = doMqlRead(query);
         try {
             String s = ParsingUtilities.inputStreamToString(is);
             JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
@@ -160,16 +161,21 @@ public class FreebaseDataExtensionJob {
                 
                 int l = a.length();
                 for (int r = 0; r < l; r++) {
-                    JSONObject o = a.isNull(r) ? null : a.getJSONObject(r);
+                    Object v = a.isNull(r) ? null : a.get(r);
+                    JSONObject o = v != null && v instanceof JSONObject ? (JSONObject) v : null;
                     
                     int startColumnIndex2 = startColumnIndex;
                     int startRowIndex2 = startRowIndex;
                     
                     if (isOwnColumn) {
-                        storeCell(rows, startRowIndex2++, startColumnIndex2++, o);
+                        if (o != null) {
+                            storeCell(rows, startRowIndex2++, startColumnIndex2++, o);
+                        } else {
+                            storeCell(rows, startRowIndex2++, startColumnIndex2++, v);
+                        }
                     }
                     
-                    if (hasSubProperties) {
+                    if (hasSubProperties && o != null) {
                         int[] rowcol = collectResult(
                             rows,
                             extNode.getJSONArray("properties"),
@@ -278,8 +284,41 @@ public class FreebaseDataExtensionJob {
         {
             if (!expectedTypeID.startsWith("/type/")) { // not literal
                 writer.object();
-                writer.key("limit"); writer.value(10);
                 writer.key("optional"); writer.value(true);
+                
+                boolean hasLimit = false;
+                if (node.has("constraints") && !node.isNull("constraints")) {
+                    JSONObject constraints = node.getJSONObject("constraints");
+                    
+                    String[] names = JSONObject.getNames(constraints);
+                    for (String name : names) {
+                        Object value = constraints.get(name);
+                        if (name.equals("limit")) {
+                            hasLimit = true;
+                        }
+                        
+                        if (!name.contains(":") &&
+                            !name.equals("limit") &&
+                            !name.equals("optional") &&
+                            !name.equals("count") &&
+                            !name.equals("estimate-count") &&
+                            !name.equals("sort") &&
+                            !name.equals("return")) {
+                            
+                            if (name.startsWith("!")) {
+                                name = "!c:" + name.substring(1);
+                            } else {
+                                name = "c:" + name;
+                            }
+                        }
+                        writer.key(name);
+                        writer.value(value);
+                    }
+                }
+                if (!hasLimit) {
+                    writer.key("limit"); writer.value(10);
+                }
+                
                 {
                     boolean hasSubProperties = (node.has("properties") && !node.isNull("properties")); 
                         
