@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.expr;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +17,20 @@ import org.python.util.PythonInterpreter;
 public class JythonEvaluable implements Evaluable {
 	private static final String s_functionName = "___temp___";
 	
-    private static PythonInterpreter _engine = new PythonInterpreter();
+    private static PythonInterpreter _engine; 
+    static {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("mac os x")) {
+            File libPath = new File("lib/jython");
+            if (libPath.getAbsolutePath().contains("/Gridworks.app/Contents/Resources/")) {
+                Properties props = new Properties();
+                props.setProperty("python.path", libPath.getAbsolutePath());
+                
+                PythonInterpreter.initialize(System.getProperties(),props, new String[] { "" });
+            }
+        }
+        _engine = new PythonInterpreter();
+    }
 
     public JythonEvaluable(String s) {
         // indent and create a function out of the code
