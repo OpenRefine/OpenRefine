@@ -132,26 +132,6 @@ img {
     font-family: inherit;
     font-size: inherit;
 }
-.ui-widget-header {
-    background-image: none;
-    background-color: #ccc;
-}
-
-.ui-widget-content a.ui-state-default.ui-slider-handle {
-    background: url(../images/slider-left-bracket.png) no-repeat bottom left;
-    border: none;
-    margin-left: -12px;
-    top: -10px;
-}
-.ui-widget-content a.ui-state-default.ui-slider-handle:last-child {
-    background: url(../images/slider-right-bracket.png) no-repeat bottom right;
-    border: none;
-    margin-left: -2px;
-    top: -10px;
-}
-.ui-slider .ui-slider-handle {
-    height: 32px;
-}
 
 #header {
     background: url(../images/freebase-tools-sprite-vertical.png) repeat-x scroll 0 0 #F2F2F2;

@@ -144,7 +144,7 @@ FreebaseLoadingDialog.prototype._load = function() {
     if (freebase) {
         var dialog = $(
             '<div id="freebase-confirmation-dialog" title="Are you sure?">' +
-                '<table><tr><td width="30%"><img src="/images/cop.png" width="150px"></td><td width="70%" style="text-align: center; vertical-align: middle; font-size: 120%">Are you sure this data is ready to be uplaoded into <a href="http://www.freebase.com/" target="_new">Freebase</a>?</td></tr></table>' +
+                '<table><tr><td width="30%"><img src="/images/cop.png" width="140px"></td><td width="70%" style="text-align: center; vertical-align: middle; font-size: 120%">Are you sure this data is ready to be uploaded into <a href="http://www.freebase.com/" target="_new">Freebase</a>?</td></tr></table>' +
             '</div>'
         ).dialog({
             resizable: false,
