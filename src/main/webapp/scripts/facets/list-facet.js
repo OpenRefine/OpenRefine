@@ -109,19 +109,23 @@ ListFacet.prototype._initializeUI = function() {
     
     this._div.empty().show().html(
         '<div class="facet-title">' +
-            '<img src="images/close.png" title="Remove this facet" class="facet-choice-link" bind="removeButton"/>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
-            '<span bind="titleSpan"></span>' +
+            '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+                '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+                '<td>' +
+                    '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
+                    '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
+                    '<span bind="titleSpan"></span>' +
+                '</td>' +
+            '</tr></table></div>' +
         '</div>' +
         '<div class="facet-expression" bind="expressionDiv"></div>' +
         '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
             '<table><tr>' +
-                '<td><span bind="sortGroup">Sort by: ' +
+                '<td><span bind="choiceCountContainer"></span> <span bind="sortGroup">sorted by ' +
                     '<input bind="sortByNameLink" type="radio" id="' + facet_id + '-name-sort" name="radio" checked="checked" /><label for="' + facet_id + '-name-sort">name</label>' +
                     '<input bind="sortByCountLink" type="radio" id="' + facet_id + '-count-sort" name="radio" /><label for="' + facet_id + '-count-sort">count</label>' +
                 '</span></td>' +
-                '<td width="1%" nowrap=""><span bind="choiceCountContainer"></span> <button bind="clusterLink">cluster</button></td>' +
+                '<td width="1%" nowrap=""><button bind="clusterLink">cluster</button></td>' +
             '</tr></table>' +
         '</div></div>' +
         '<div class="facet-body" bind="bodyDiv">' +

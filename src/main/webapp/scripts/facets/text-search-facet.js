@@ -50,8 +50,12 @@ TextSearchFacet.prototype._initializeUI = function() {
     var self = this;
     this._div.empty().show().html(
         '<div class="facet-title">' + 
-            '<img bind="removeButton" src="images/close.png" title="Remove this facet" class="facet-choice-link" />' +
-            '<span>' + this._config.name + '</span>' +
+            '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+                '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+                '<td>' +
+                    '<span>' + this._config.name + '</span>' +
+                '</td>' +
+            '</tr></table></div>' +
         '</div>' +
         '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
             '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +

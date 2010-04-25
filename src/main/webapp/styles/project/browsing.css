@@ -61,11 +61,23 @@ li.facet-container {
 
 .facet-title {
     padding: 3px 5px;
-    padding-right: 2px;
     font-weight: bold;
     cursor: move;
     border-bottom: 1px solid #ccc;
 }
+a.facet-title-remove {
+    display: block;
+    width: 16px;
+    height: 16px;
+    text-decoration: none;
+    background-image: url(../../images/close-map.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+}
+a.facet-title-remove:hover {
+    background-position: -16px 0px;
+}
+
 .facet-expression {
     padding: 3px 5px;
     font-family: monospace;
@@ -100,7 +112,7 @@ li.facet-container {
 .facet-body.facet-body-scrollable {
     height: 17em;
     padding-bottom: 10px;
-    background: url(../../images/down-arrow.png) center bottom no-repeat;
+    background: url(../../images/facet-resize-handle.png) center bottom no-repeat;
 }
 .facet-body.facet-body-scrollable .ui-resizable-s {
     bottom: -5px;

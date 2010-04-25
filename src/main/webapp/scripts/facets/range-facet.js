@@ -98,10 +98,14 @@ RangeFacet.prototype._initializeUI = function() {
         .show()
         .html(
             '<div class="facet-title" bind="headerDiv">' +
-                '<img src="images/close.png" class="facet-choice-link" title="Remove this facet" bind="removeButton" />' +
-                '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
-                '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
-                '<span bind="facetTitle"></span>' +
+                '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+                    '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+                    '<td>' +
+                        '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
+                        '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
+                        '<span bind="facetTitle"></span>' +
+                    '</td>' +
+                '</tr></table></div>' +
             '</div>' +
             '<div class="facet-expression" bind="expressionDiv"></div>' +
             '<div class="facet-range-body">' +
