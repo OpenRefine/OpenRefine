@@ -19,15 +19,12 @@ public class JythonEvaluable implements Evaluable {
 	
     private static PythonInterpreter _engine; 
     static {
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("mac os x")) {
-            File libPath = new File("lib/jython");
-            if (libPath.getAbsolutePath().contains("/Gridworks.app/Contents/Resources/")) {
-                Properties props = new Properties();
-                props.setProperty("python.path", libPath.getAbsolutePath());
-                
-                PythonInterpreter.initialize(System.getProperties(),props, new String[] { "" });
-            }
+        File libPath = new File("lib/jython");
+        if (libPath.exists()) {
+            Properties props = new Properties();
+            props.setProperty("python.path", libPath.getAbsolutePath());
+            
+            PythonInterpreter.initialize(System.getProperties(),props, new String[] { "" });
         }
         _engine = new PythonInterpreter();
     }
