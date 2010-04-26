@@ -191,7 +191,7 @@ SchemaAlignmentDialog.prototype._constructBody = function(body) {
     '</p>').appendTo(body);
     
     $(
-        '<div id="schema-alignment-tabs">' +
+        '<div id="schema-alignment-tabs" class="gridworks-tabs">' +
             '<ul>' +
                 '<li><a href="#schema-alignment-tabs-protograph">Skeleton</a></li>' +
                 '<li><a href="#schema-alignment-tabs-preview-mqllike">MQL-like Preview</a></li>' +

@@ -35,7 +35,7 @@ ReconDialog.prototype._createDialog = function() {
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     var html = $(
-        '<div id="recon-dialog-tabs">' +
+        '<div id="recon-dialog-tabs" class="gridworks-tabs">' +
             '<ul>' +
                 '<li><a href="#recon-dialog-tabs-heuristic">Heuristic</a></li>' +
                 '<li><a href="#recon-dialog-tabs-strict">Strict</a></li>' +

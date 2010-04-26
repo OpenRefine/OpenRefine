@@ -52,7 +52,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
             '</tr>' +
             '<tr>' +
                 '<td colspan="2">' +
-                    '<div id="expression-preview-tabs">' +
+                    '<div id="expression-preview-tabs" class="gridworks-tabs">' +
                         '<ul>' +
                             '<li><a href="#expression-preview-tabs-preview">Preview</a></li>' +
                             '<li><a href="#expression-preview-tabs-history">History</a></li>' +
