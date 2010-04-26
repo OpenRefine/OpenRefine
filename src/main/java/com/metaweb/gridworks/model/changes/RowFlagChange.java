@@ -10,38 +10,38 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.util.Pool;
 
-public class RowStarChange implements Change {
+public class RowFlagChange implements Change {
     final int rowIndex;
-    final boolean newStarred;
-    Boolean oldStarred = null;
+    final boolean newFlagged;
+    Boolean oldFlagged = null;
     
-    public RowStarChange(int rowIndex, boolean newStarred) {
+    public RowFlagChange(int rowIndex, boolean newFlagged) {
         this.rowIndex = rowIndex;
-        this.newStarred = newStarred;
+        this.newFlagged = newFlagged;
     }
 
     public void apply(Project project) {
         Row row = project.rows.get(rowIndex);
-        if (oldStarred == null) {
-            oldStarred = row.starred;
+        if (oldFlagged == null) {
+            oldFlagged = row.flagged;
         }
-        row.starred = newStarred;
+        row.flagged = newFlagged;
     }
 
     public void revert(Project project) {
         Row row = project.rows.get(rowIndex);
         
-        row.starred = oldStarred;
+        row.flagged = oldFlagged;
     }
     
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("row="); writer.write(Integer.toString(rowIndex)); writer.write('\n');
-        writer.write("newStarred="); writer.write(Boolean.toString(newStarred)); writer.write('\n');
-        writer.write("oldStarred="); writer.write(Boolean.toString(oldStarred)); writer.write('\n');
+        writer.write("newFlagged="); writer.write(Boolean.toString(newFlagged)); writer.write('\n');
+        writer.write("oldFlagged="); writer.write(Boolean.toString(oldFlagged)); writer.write('\n');
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public RowStarChange load(LineNumberReader reader, Pool pool) throws Exception {
+    static public RowFlagChange load(LineNumberReader reader, Pool pool) throws Exception {
         int row = -1;
         boolean oldStarred = false;
         boolean newStarred = false;
@@ -54,15 +54,15 @@ public class RowStarChange implements Change {
             
             if ("row".equals(field)) {
                 row = Integer.parseInt(value);
-            } else if ("oldStarred".equals(field)) {
+            } else if ("oldFlagged".equals(field)) {
                 oldStarred = Boolean.parseBoolean(value);
-            } else if ("newStarred".equals(field)) {
+            } else if ("newFlagged".equals(field)) {
                 oldStarred = Boolean.parseBoolean(value);
             }
         }
         
-        RowStarChange change = new RowStarChange(row, newStarred);
-        change.oldStarred = oldStarred;
+        RowFlagChange change = new RowFlagChange(row, newStarred);
+        change.oldFlagged = oldStarred;
         
         return change;
     }

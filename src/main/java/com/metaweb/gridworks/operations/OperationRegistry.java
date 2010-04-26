@@ -38,6 +38,7 @@ public abstract class OperationRegistry {
         
         register("row-removal", RowRemovalOperation.class);
         register("row-star", RowStarOperation.class);
+        register("row-flag", RowFlagOperation.class);
         
         register("save-protograph", SaveProtographOperation.class);
         register("text-transform", TextTransformOperation.class);

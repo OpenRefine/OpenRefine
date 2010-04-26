@@ -38,9 +38,27 @@ public class AnnotateOneRowCommand extends Command {
                 );
                 
                 performProcessAndRespond(request, response, project, process);
-            } else {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"invalid command parameters\" }");
+                return;
             }
+
+            String flaggedString = request.getParameter("flagged");
+            if (flaggedString != null) {
+                boolean flagged = "true".endsWith(flaggedString);
+                String description = (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1); 
+
+                FlagOneRowProcess process = new FlagOneRowProcess(
+                    project, 
+                    description,
+                    rowIndex, 
+                    flagged
+                );
+                
+                performProcessAndRespond(request, response, project, process);
+                return;
+            }
+
+            respond(response, "{ \"code\" : \"error\", \"message\" : \"invalid command parameters\" }");
+            
         } catch (Exception e) {
             respondException(response, e);
         }
@@ -68,6 +86,31 @@ public class AnnotateOneRowCommand extends Command {
                 (starred ? "Star row " : "Unstar row ") + (rowIndex + 1), 
                 null, 
                 new RowStarChange(rowIndex, starred)
+            );
+        }
+    }
+    protected static class FlagOneRowProcess extends QuickHistoryEntryProcess {
+        final int rowIndex;
+        final boolean flagged;
+        
+        FlagOneRowProcess(
+            Project project, 
+            String briefDescription, 
+            int rowIndex, 
+            boolean flagged
+        ) {
+            super(project, briefDescription);
+            
+            this.rowIndex = rowIndex;
+            this.flagged = flagged;
+        }
+
+        protected HistoryEntry createHistoryEntry() throws Exception {
+            return new HistoryEntry(
+                _project, 
+                (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1), 
+                null, 
+                new RowStarChange(rowIndex, flagged)
             );
         }
     }

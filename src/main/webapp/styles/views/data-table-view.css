@@ -200,7 +200,7 @@ a.data-table-recon-match-similar:hover {
     background-position: 0px -17px;
 }
 
-a.data-table-star-on, a.data-table-star-off {
+a.data-table-star-on, a.data-table-star-off, a.data-table-flag-on, a.data-table-flag-off {
     display: block;
     width: 16px;
     height: 16px;
@@ -208,11 +208,17 @@ a.data-table-star-on, a.data-table-star-off {
     background-repeat: no-repeat;
     text-decoration: none;
 }
-a.data-table-star-on {
+a.data-table-star-on, a.data-table-star-off:hover {
     background-position: 0px 0px;
 }
-a.data-table-star-off {
+a.data-table-star-off, a.data-table-star-on:hover {
     background-position: -17px 0px;
+}
+a.data-table-flag-on, a.data-table-flag-off:hover {
+    background-position: 0px -17px;
+}
+a.data-table-flag-off, a.data-table-flag-on:hover {
+    background-position: -17px -17px;
 }
 
 .data-table-cell-editor {

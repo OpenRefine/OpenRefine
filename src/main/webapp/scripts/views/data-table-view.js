@@ -122,7 +122,8 @@ DataTableView.prototype._renderDataTable = function(table) {
         if (keys.length > 0) {
             var tr = table.insertRow(table.rows.length);
             tr.insertCell(0); // star
-            tr.insertCell(1); // row index
+            tr.insertCell(1); // flag
+            tr.insertCell(2); // row index
             
             for (var c = 0; c < columns.length; c++) {
                 var td = tr.insertCell(tr.cells.length);
@@ -143,7 +144,8 @@ DataTableView.prototype._renderDataTable = function(table) {
         if (groups.length > 0) {
             var tr = table.insertRow(table.rows.length);
             tr.insertCell(0); // star
-            tr.insertCell(1); // row index
+            tr.insertCell(1); // flag
+            tr.insertCell(2); // row index
             
             for (var c = 0; c < columns.length; c++) {
                 var foundGroup = false;
@@ -197,7 +199,7 @@ DataTableView.prototype._renderDataTable = function(table) {
     var trHead = table.insertRow(table.rows.length);
     DOM.bind(
         $(trHead.insertCell(trHead.cells.length))
-            .attr("colspan", "2")
+            .attr("colspan", "3")
             .addClass("column-header")
             .html(
                 '<table class="column-header-layout"><tr>' +
@@ -254,6 +256,27 @@ DataTableView.prototype._renderDataTable = function(table) {
                     {},
                     {   onDone: function(o) {
                             row.starred = newStarred;
+                            renderRow(tr, r, row, even);
+                        }
+                    },
+                    "json"
+                );
+            });
+
+        var tdFlag = tr.insertCell(tr.cells.length);
+        var flag = $('<a href="javascript:{}">&nbsp;</a>')
+            .addClass(row.flagged ? "data-table-flag-on" : "data-table-flag-off")
+            .appendTo(tdFlag)
+            .click(function() {
+                var newFlagged = !row.flagged;
+
+                Gridworks.postProcess(
+                    "annotate-one-row",
+                    { row: row.i, flagged: newFlagged },
+                    null,
+                    {},
+                    {   onDone: function(o) {
+                            row.flagged = newFlagged;
                             renderRow(tr, r, row, even);
                         }
                     },
@@ -345,6 +368,22 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                             }
                         );
                     }
+                },
+                {
+                    label: "Facet by Flag",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : "Flagged Rows",
+                                "columnName" : "", 
+                                "expression" : "row.flagged"
+                            },
+                            {
+                                "scroll" : false
+                            }
+                        );
+                    }
                 }
             ]
         },
@@ -364,7 +403,20 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 },
                 {},
                 {
-                    label: "Remove Matching Rows",
+                    label: "Flag Rows",
+                    click: function() {
+                        Gridworks.postProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
+                    }
+                },
+                {
+                    label: "Unflag Rows",
+                    click: function() {
+                        Gridworks.postProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
+                    }
+                },
+                {},
+                {
+                    label: "Remove All Matching Rows",
                     click: function() {
                         Gridworks.postProcess("remove-rows", {}, null, { rowMetadataChanged: true });
                     }

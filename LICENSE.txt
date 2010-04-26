@@ -106,3 +106,9 @@ licenses/icu4j.LICENSE.txt
    
 licenses/json.LICENSE.txt
     json
+
+Others
+------
+
+Flag icon
+    http://pixel-mixer.com/category/free-icons/
