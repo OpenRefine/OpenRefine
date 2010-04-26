@@ -43,8 +43,8 @@ public class RowFlagChange implements Change {
     
     static public RowFlagChange load(LineNumberReader reader, Pool pool) throws Exception {
         int row = -1;
-        boolean oldStarred = false;
-        boolean newStarred = false;
+        boolean oldFlagged = false;
+        boolean newFlagged = false;
         
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -55,14 +55,14 @@ public class RowFlagChange implements Change {
             if ("row".equals(field)) {
                 row = Integer.parseInt(value);
             } else if ("oldFlagged".equals(field)) {
-                oldStarred = Boolean.parseBoolean(value);
+                oldFlagged = Boolean.parseBoolean(value);
             } else if ("newFlagged".equals(field)) {
-                oldStarred = Boolean.parseBoolean(value);
+                oldFlagged = Boolean.parseBoolean(value);
             }
         }
         
-        RowFlagChange change = new RowFlagChange(row, newStarred);
-        change.oldFlagged = oldStarred;
+        RowFlagChange change = new RowFlagChange(row, newFlagged);
+        change.oldFlagged = oldFlagged;
         
         return change;
     }

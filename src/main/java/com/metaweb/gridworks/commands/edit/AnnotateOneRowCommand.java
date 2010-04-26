@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.changes.RowFlagChange;
 import com.metaweb.gridworks.model.changes.RowStarChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
@@ -110,7 +111,7 @@ public class AnnotateOneRowCommand extends Command {
                 _project, 
                 (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1), 
                 null, 
-                new RowStarChange(rowIndex, flagged)
+                new RowFlagChange(rowIndex, flagged)
             );
         }
     }
