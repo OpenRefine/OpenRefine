@@ -78,7 +78,7 @@ public class RowFlagOperation extends EngineDependentOperation {
             }
             
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
-                if (row.starred != _flagged) {
+                if (row.flagged != _flagged) {
                     RowFlagChange change = new RowFlagChange(rowIndex, _flagged);
                     
                     changes.add(change);
