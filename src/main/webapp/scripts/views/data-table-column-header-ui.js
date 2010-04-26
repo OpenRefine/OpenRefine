@@ -371,162 +371,167 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 },
                 {},
                 {
-                    label: "Match Each Cell to Its Best Candidate",
-                    tooltip: "Match each cell to its best candidate in this column for all current filtered rows",
-                    click: function() {
-                        self._doReconMatchBestCandidates();
-                    }
-                },
-                {
-                    label: "Create a New Topic for Each Cell",
-                    tooltip: "Mark to create one new topic for each cell in this column for all current filtered rows",
-                    click: function() {
-                        self._doReconMarkNewTopics(false);
-                    }
-                },
-                {
-                    label: "Create One New Topic for Similar Cells",
-                    tooltip: "Mark to create one new topic for each group of similar cells in this column for all current filtered rows",
-                    click: function() {
-                        self._doReconMarkNewTopics(true);
-                    }
-                },
-                {
-                    label: "Discard Reconciliation Judgments",
-                    tooltip: "Discard reconciliaton results in this column for all current filtered rows",
-                    click: function() {
-                        self._doReconDiscardJudgments();
-                    }
-                },
-                {},
-                {
-                    label: "Match Filtered Cells to ...",
-                    tooltip: "Search for a topic to match all filtered cells to",
-                    click: function() {
-                        self._doSearchToMatch();
-                    }
-                }
-            ]
-        },
-        {
-            label: "Reconcile Filter",
-            tooltip: "Match this column's cells to topics on Freebase",
-            submenu: [
-                {
-                    label: "By Judgment",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.judgment",
-                                "omitError" : true
-                            },
-                            {
-                                "scroll" : false
+                    label: "Facets",
+                    submenu: [
+                        {
+                            label: "By Judgment",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.judgment",
+                                        "omitError" : true
+                                    },
+                                    {
+                                        "scroll" : false
+                                    }
+                                );
                             }
-                        );
-                    }
-                },
-                {},
-                {
-                    label: "Best Candidate's Relevance Score",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "range", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.best.score",
-                                "mode" : "range"
-                            },
-                            {
+                        },
+                        {},
+                        {
+                            label: "Best Candidate's Relevance Score",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.best.score",
+                                        "mode" : "range"
+                                    },
+                                    {
+                                    }
+                                );
                             }
-                        );
-                    }
+                        },
+                        {
+                            label: "Best Candidate's Type Match",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.features.typeMatch",
+                                        "omitError" : true
+                                    },
+                                    {
+                                        "scroll" : false
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "Best Candidate's Name Match",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.features.nameMatch",
+                                        "omitError" : true
+                                    },
+                                    {
+                                        "scroll" : false
+                                    }
+                                );
+                            }
+                        },
+                        {},
+                        {
+                            label: "Best Candidate's Name Edit Distance",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.features.nameLevenshtein",
+                                        "mode" : "range"
+                                    },
+                                    {
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "Best Candidate's Name Word Similarity",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.features.nameWordDistance",
+                                        "mode" : "range"
+                                    },
+                                    {
+                                    }
+                                );
+                            }
+                        },
+                        {},
+                        {
+                            label: "Best Candidate's Types",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.best.type",
+                                        "omitError" : true
+                                    }
+                                );
+                            }
+                        }
+                    ]
                 },
                 {
-                    label: "Best Candidate's Type Match",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.typeMatch",
-                                "omitError" : true
-                            },
-                            {
-                                "scroll" : false
+                    label: "Actions",
+                    submenu: [
+                        {
+                            label: "Match Each Cell to Its Best Candidate",
+                            tooltip: "Match each cell to its best candidate in this column for all current filtered rows",
+                            click: function() {
+                                self._doReconMatchBestCandidates();
                             }
-                        );
-                    }
-                },
-                {
-                    label: "Best Candidate's Name Match",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.nameMatch",
-                                "omitError" : true
-                            },
-                            {
-                                "scroll" : false
+                        },
+                        {
+                            label: "Create a New Topic for Each Cell",
+                            tooltip: "Mark to create one new topic for each cell in this column for all current filtered rows",
+                            click: function() {
+                                self._doReconMarkNewTopics(false);
                             }
-                        );
-                    }
-                },
-                {},
-                {
-                    label: "Best Candidate's Name Edit Distance",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "range", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.nameLevenshtein",
-                                "mode" : "range"
-                            },
-                            {
+                        },
+                        {},
+                        {
+                            label: "Create One New Topic for Similar Cells",
+                            tooltip: "Mark to create one new topic for each group of similar cells in this column for all current filtered rows",
+                            click: function() {
+                                self._doReconMarkNewTopics(true);
                             }
-                        );
-                    }
-                },
-                {
-                    label: "Best Candidate's Name Word Similarity",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "range", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.nameWordDistance",
-                                "mode" : "range"
-                            },
-                            {
+                        },
+                        {
+                            label: "Match All Filtered Cells to ...",
+                            tooltip: "Search for a topic to match all filtered cells to",
+                            click: function() {
+                                self._doSearchToMatch();
                             }
-                        );
-                    }
-                },
-                {},
-                {
-                    label: "Best Candidate's Types",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.best.type",
-                                "omitError" : true
+                        },
+                        {},
+                        {
+                            label: "Discard Reconciliation Judgments",
+                            tooltip: "Discard reconciliaton judgments in this column for all current filtered rows",
+                            click: function() {
+                                self._doReconDiscardJudgments();
                             }
-                        );
-                    }
+                        }
+                    ]
                 }
             ]
         }
