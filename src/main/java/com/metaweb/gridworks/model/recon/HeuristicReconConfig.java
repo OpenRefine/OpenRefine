@@ -294,27 +294,32 @@ public class HeuristicReconConfig extends ReconConfig {
                     score
                 );
                 
-                // best match
-                if (i == 0) {
-                    recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
-                    recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
-                    recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
-                    
-                    recon.setFeature(Recon.Feature_typeMatch, false);
-                    for (String typeID : candidate.typeIDs) {
-                        if (this.typeID.equals(typeID)) {
-                            recon.setFeature(Recon.Feature_typeMatch, true);
-                            if (autoMatch && score >= 100) {
-                                recon.match = candidate;
-                                recon.judgment = Judgment.Matched;
-                            }
-                            break;
-                        }
-                    }
-                }
-                
                 recon.addCandidate(candidate);
                 count++;
+            }
+            
+            if (count > 0) {
+            	ReconCandidate candidate = recon.candidates.get(0);
+            	
+                recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
+                recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
+                recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
+                
+                recon.setFeature(Recon.Feature_typeMatch, false);
+                for (String typeID : candidate.typeIDs) {
+                    if (this.typeID.equals(typeID)) {
+                        recon.setFeature(Recon.Feature_typeMatch, true);
+                        if (autoMatch && candidate.score >= 100) {
+                        	if (count == 1 || 
+                        		candidate.score / recon.candidates.get(1).score >= 1.5) {
+                        		
+                        		recon.match = candidate;
+                        		recon.judgment = Judgment.Matched;
+                        	}
+                        }
+                        break;
+                    }
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -401,9 +406,7 @@ public class HeuristicReconConfig extends ReconConfig {
                     for (String typeID : candidate.typeIDs) {
                         if (this.typeID.equals(typeID)) {
                             recon.setFeature(Recon.Feature_typeMatch, true);
-                            if (autoMatch && 
-                                (score > 0.6 ||
-                                    (result.has("match") && result.getBoolean("match")))) {
+                            if (autoMatch && result.has("match") && result.getBoolean("match")) {
                                 recon.match = candidate;
                                 recon.judgment = Judgment.Matched;
                             }
