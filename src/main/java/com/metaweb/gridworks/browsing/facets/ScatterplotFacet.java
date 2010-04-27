@@ -254,8 +254,6 @@ public class ScatterplotFacet implements Facet {
                     
                     boolean value = p.x >= from_x && p.x < to_x && p.y >= from_y && p.y < to_y;
                     
-                    //System.out.println(p + " " + value);
-                    
                     return value;
                 };
             };

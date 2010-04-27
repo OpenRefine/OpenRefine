@@ -28,7 +28,6 @@ public class MQLWriteCommand extends Command {
             
             if (access_credentials != null) {
                 String query = request.getParameter("query");
-                System.out.println(query);
                 String result = FreebaseUtils.mqlwrite(access_credentials, provider, query);
                 response.getWriter().write(result);
             } else {    

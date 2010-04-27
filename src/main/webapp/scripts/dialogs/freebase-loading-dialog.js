@@ -48,6 +48,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                 DOM.bind(authorization).signout.click(function() {
                     self._signedin = false;
                     load_button.attr("disabled","disabled");
+                    $("#freebase-loading-graph-selector-freebase").attr("disabled","disabled").button("refresh");
                     Sign.signout(check_authorization,provider);
                 });
                 load_button.unbind().click(function() {
@@ -89,19 +90,20 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     };
     
     var make_topic = function(new_topic_id, topic_type, cont) {
-        var mql_query = {
+        var mql_query = [{
             "create": "unless_exists",
             "name":   new_topic_id,
-            "type":   topic_type,
+            "a:type": topic_type,
+            "b:type": "/common/topic"
             "id":     null,
             "guid":   null
-        };
+        }];
 
         $.post("/command/mqlwrite/" + provider, 
             { "query" : JSON.stringify(mql_query) }, 
             function(data) {
                 if ("status" in data && data.code == "/api/status/ok") {
-                    self._elmts.source_id.val(data.result.id);
+                    self._elmts.source_id.val(data.result[0].id);
                     if (typeof cont == "function") cont();
                 } else {
                     self._show_error("Error creating new topic", data);
@@ -125,7 +127,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                             '<p>Have you aligned it with the Freebase schemas yet?</p>' +
                         '</div>'
                     );
-
+                    self._elmts = DOM.bind(frame);
                     self._end();
                 } else {
                     body.html(
@@ -149,8 +151,9 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                     
                     self._elmts.source_id.suggest({
                         "type": "/dataworld/information_source",
-                        "soft": true,
                         "suggest_new": "Click here to add a new information source"
+                    }).bind("fb-select", function(e, data) {
+                        self._elmts.source_id.val(data.id);
                     }).bind("fb-select-new", function(e, val) {
                         make_topic(val, "/dataworld/information_source");
                     });
@@ -251,7 +254,7 @@ FreebaseLoadingDialog.prototype._show_error = function(msg, error) {
 
 FreebaseLoadingDialog.prototype._end = function() {
     var self = this;
-    self._elmts.load.text("Close").unbind().click(function() {
+    self._elmts.load.text("Close").removeAttr("disabled").unbind().click(function() {
         self._dismiss();
     });
     self._elmts.cancel.hide();
