@@ -256,6 +256,7 @@ public class HeuristicReconConfig extends ReconConfig {
                         recon = new Recon();
                     }
                     
+                    recon.service = "recon";
                     recons.add(recon);
                 }
             } finally {
@@ -314,7 +315,9 @@ public class HeuristicReconConfig extends ReconConfig {
                         		candidate.score / recon.candidates.get(1).score >= 1.5) {
                         		
                         		recon.match = candidate;
+                        		recon.matchRank = 0;
                         		recon.judgment = Judgment.Matched;
+                        		recon.judgmentAction = "auto";
                         	}
                         }
                         break;
@@ -361,6 +364,7 @@ public class HeuristicReconConfig extends ReconConfig {
             if (recon == null) {
                 recon = new Recon();
             }
+            recon.service = "recon";
             recons.add(recon);
         }
         
@@ -408,7 +412,9 @@ public class HeuristicReconConfig extends ReconConfig {
                             recon.setFeature(Recon.Feature_typeMatch, true);
                             if (autoMatch && result.has("match") && result.getBoolean("match")) {
                                 recon.match = candidate;
+                                recon.matchRank = 0;
                                 recon.judgment = Judgment.Matched;
+                                recon.judgmentAction = "auto";
                             }
                             break;
                         }

@@ -150,8 +150,9 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         
         return new RowVisitor() {
             int                 _cellIndex;
-            List<CellChange>     _cellChanges;
-            Map<String, Recon>  _sharedRecons = new HashMap<String, Recon>();
+            List<CellChange>    _cellChanges;
+            Recon				_sharedNewRecon = null;
+            Map<Long, Recon> 	_dupReconMap = new HashMap<Long, Recon>();
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
                 _cellIndex = cellIndex;
@@ -167,27 +168,47 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                     
                     Recon recon = null;
                     if (_judgment == Judgment.New && _shareNewTopics) {
-                        String s = cell.value.toString();
-                        if (_sharedRecons.containsKey(s)) {
-                            recon = _sharedRecons.get(s);
-                        } else {
-                            recon = new Recon();
-                            recon.judgment = Judgment.New;
-                            
-                            _sharedRecons.put(s, recon);
-                        }
+                    	if (_sharedNewRecon == null) {
+                    		_sharedNewRecon = new Recon();
+                    		_sharedNewRecon.judgment = Judgment.New;
+                    		_sharedNewRecon.judgmentBatchSize = 0;
+                    		_sharedNewRecon.judgmentAction = "similar";
+                    	}
+                    	_sharedNewRecon.judgmentBatchSize++;
+                    	
+                    	recon = _sharedNewRecon;
                     } else {
-                        recon = cell.recon == null ? new Recon() : cell.recon.dup();
-                        if (_judgment == Judgment.Matched) {
-                            recon.judgment = Recon.Judgment.Matched;
-                            recon.match = _match;
-                        } else if (_judgment == Judgment.New) {
-                            recon.judgment = Recon.Judgment.New;
-                            recon.match = null;
-                        } else if (_judgment == Judgment.None) {
-                            recon.judgment = Recon.Judgment.None;
-                            recon.match = null;
-                        }
+                    	if (_dupReconMap.containsKey(cell.recon.id)) {
+                    		recon = _dupReconMap.get(cell.recon.id);
+                    		recon.judgmentBatchSize++;
+                    	} else {
+                    		recon = cell.recon.dup();
+                    		recon.judgmentBatchSize = 1;
+                            recon.matchRank = -1;
+                            recon.judgmentAction = "similar";
+                    		
+                            if (_judgment == Judgment.Matched) {
+                                recon.judgment = Recon.Judgment.Matched;
+                                recon.match = _match;
+                                
+                                if (recon.candidates != null) {
+	                                for (int m = 0; m < recon.candidates.size(); m++) {
+	                                	if (recon.candidates.get(m).topicGUID.equals(_match.topicGUID)) {
+	                                		recon.matchRank = m;
+	                                		break;
+	                                	}
+	                                }
+                                }
+                            } else if (_judgment == Judgment.New) {
+                                recon.judgment = Recon.Judgment.New;
+                                recon.match = null;
+                            } else if (_judgment == Judgment.None) {
+                                recon.judgment = Recon.Judgment.None;
+                                recon.match = null;
+                            }
+                            
+                    		_dupReconMap.put(cell.recon.id, recon);
+                    	}
                     }
                     
                     Cell newCell = new Cell(cell.value, recon);

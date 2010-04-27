@@ -72,9 +72,10 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
-            int cellIndex;
-            List<CellChange> cellChanges;
-            Map<String, Recon>  _sharedRecons = new HashMap<String, Recon>();
+            int 				cellIndex;
+            List<CellChange> 	cellChanges;
+            Map<String, Recon>  sharedRecons = new HashMap<String, Recon>();
+            Map<Long, Recon> 	dupReconMap = new HashMap<Long, Recon>();
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
                 this.cellIndex = cellIndex;
@@ -88,18 +89,32 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                     Recon recon = null;
                     if (_shareNewTopics) {
                         String s = cell.value == null ? "" : cell.value.toString();
-                        if (_sharedRecons.containsKey(s)) {
-                            recon = _sharedRecons.get(s);
+                        if (sharedRecons.containsKey(s)) {
+                            recon = sharedRecons.get(s);
+                            recon.judgmentBatchSize++;
                         } else {
                             recon = new Recon();
                             recon.judgment = Judgment.New;
+                            recon.judgmentBatchSize = 1;
+	                        recon.judgmentAction = "mass";
                             
-                            _sharedRecons.put(s, recon);
+                            sharedRecons.put(s, recon);
                         }
                     } else {
-                        recon = cell.recon == null ? new Recon() : cell.recon.dup();
-                        recon.match = null;
-                        recon.judgment = Judgment.New;
+                    	long reconID = cell.recon == null ? 0 : cell.recon.id;
+                    	if (dupReconMap.containsKey(reconID)) {
+                    		recon = dupReconMap.get(reconID);
+                    		recon.judgmentBatchSize++;
+                    	} else {
+	                        recon = cell.recon == null ? new Recon() : cell.recon.dup();
+	                        recon.match = null;
+	                        recon.matchRank = -1;
+	                        recon.judgment = Judgment.New;
+	                        recon.judgmentBatchSize = 1;
+	                        recon.judgmentAction = "mass";
+	                        
+	                        dupReconMap.put(reconID, recon);
+                    	}
                     }
                     
                     Cell newCell = new Cell(cell.value, recon);

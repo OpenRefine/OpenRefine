@@ -167,8 +167,11 @@ public class KeyBasedReconConfig extends StrictReconConfig {
                     
                     Recon recon = new Recon();
                     recon.addCandidate(candidate);
-                    recon.match = candidate;
+                    recon.service = "mql";
                     recon.judgment = Judgment.Matched;
+                    recon.judgmentAction = "auto";
+                    recon.match = candidate;
+                    recon.matchRank = 0;
                     
                     keyToRecon.put(key, recon);
                 }

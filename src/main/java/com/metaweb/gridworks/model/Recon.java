@@ -60,9 +60,16 @@ public class Recon implements HasFields, Jsonizable {
     
     final public long            id;
     public Object[]              features = new Object[Feature_max];
+    public String				 service = "unknown";
     public List<ReconCandidate>  candidates;
+    
     public Judgment              judgment = Judgment.None;
+    public String				 judgmentAction = "unknown";
+    public long					 judgmentHistoryEntry = -1;
+    public int					 judgmentBatchSize = 0;
+    
     public ReconCandidate        match = null;
+    public int					 matchRank = -1;
     
     public Recon() {
         id = System.currentTimeMillis() * 1000000 + Math.round(Math.random() * 1000000);
@@ -81,8 +88,16 @@ public class Recon implements HasFields, Jsonizable {
             r.candidates = new ArrayList<ReconCandidate>(candidates);
         }
         
+        r.service = service;
+        
         r.judgment = judgment;
+        
+        r.judgmentAction = judgmentAction;
+        r.judgmentHistoryEntry = judgmentHistoryEntry;
+        r.judgmentBatchSize = judgmentBatchSize;
+        
         r.match = match;
+        r.matchRank = matchRank;
         
         return r;
     }
@@ -190,6 +205,15 @@ public class Recon implements HasFields, Jsonizable {
                     writer.value(o);
                 }
                 writer.endArray();
+                
+            writer.key("service"); writer.value(service);
+            writer.key("judgmentAction"); writer.value(judgmentAction);
+            writer.key("judgmentHistoryEntry"); writer.value(judgmentHistoryEntry);
+            writer.key("judgmentBatchSize"); writer.value(judgmentBatchSize);
+            
+            if (match != null) {
+            	writer.key("matchRank"); writer.value(matchRank);
+            }
         }
         
         writer.endObject();
@@ -268,6 +292,16 @@ public class Recon implements HasFields, Jsonizable {
                         recon.addCandidate(ReconCandidate.loadStreaming(jp));
                     }
                 }
+            } else if ("service".equals(fieldName)) {
+            	recon.service = jp.getText();
+            } else if ("judgmentAction".equals(fieldName)) {
+            	recon.judgmentAction = jp.getText();
+            } else if ("judgmentHistoryEntry".equals(fieldName)) {
+            	recon.judgmentHistoryEntry = jp.getLongValue();
+            } else if ("judgmentBatchSize".equals(fieldName)) {
+            	recon.judgmentBatchSize = jp.getIntValue();
+            } else if ("matchRank".equals(fieldName)) {
+            	recon.matchRank = jp.getIntValue();
             }
         }
         

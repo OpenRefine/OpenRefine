@@ -149,8 +149,11 @@ public class GuidBasedReconConfig extends StrictReconConfig {
                     
                     Recon recon = new Recon();
                     recon.addCandidate(candidate);
-                    recon.match = candidate;
+                    recon.service = "mql";
                     recon.judgment = Judgment.Matched;
+                    recon.judgmentAction = "auto";
+                    recon.match = candidate;
+                    recon.matchRank = 0;
                     
                     guidToRecon.put(guid, recon);
                 }

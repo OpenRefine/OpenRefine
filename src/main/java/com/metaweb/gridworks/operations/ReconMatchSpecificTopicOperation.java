@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.operations;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONArray;
@@ -96,6 +98,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         return new RowVisitor() {
             int cellIndex;
             List<CellChange> cellChanges;
+            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
                 this.cellIndex = cellIndex;
@@ -104,15 +107,29 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
             }
             
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
-                if (cellIndex < row.cells.size()) {
-                    Cell cell = row.cells.get(cellIndex);
-                    
+            	Cell cell = row.getCell(cellIndex);
+                if (cell != null) {
+                	long reconID = cell.recon != null ? cell.recon.id : 0;
+                	
+                	Recon newRecon;
+                	if (dupReconMap.containsKey(reconID)) {
+                		newRecon = dupReconMap.get(reconID);
+                		newRecon.judgmentBatchSize++;
+                	} else {
+                		newRecon = cell.recon != null ? cell.recon.dup() : new Recon();
+                        newRecon.match = match;
+                        newRecon.matchRank = -1;
+                        newRecon.judgment = Judgment.Matched;
+                        newRecon.judgmentAction = "mass";
+                		newRecon.judgmentBatchSize = 1;
+                		
+                		dupReconMap.put(reconID, newRecon);
+                	}
+                	
                     Cell newCell = new Cell(
                         cell.value,
-                        cell.recon != null ? cell.recon.dup() : new Recon()
+                        newRecon
                     );
-                    newCell.recon.match = match;
-                    newCell.recon.judgment = Judgment.Matched;
                     
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);

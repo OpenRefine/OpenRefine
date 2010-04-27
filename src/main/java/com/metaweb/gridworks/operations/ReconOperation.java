@@ -229,11 +229,13 @@ public class ReconOperation extends EngineDependentOperation {
                 List<Recon> recons = _reconConfig.batchRecon(jobs);
                 for (int j = i; j < to; j++) {
                     Recon recon = recons.get(j - i);
-                    if (recon == null) {
-                        recon = new Recon();
+                    List<ReconEntry> entries = groups.get(j).entries;
+                    
+                    if (recon != null) {
+                    	recon.judgmentBatchSize = entries.size();
                     }
                     
-                    for (ReconEntry entry : groups.get(j).entries) {
+                    for (ReconEntry entry : entries) {
                         Cell oldCell = entry.cell;
                         Cell newCell = new Cell(oldCell.value, recon);
                         

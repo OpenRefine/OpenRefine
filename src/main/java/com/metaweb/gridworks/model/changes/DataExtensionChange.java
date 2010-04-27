@@ -181,8 +181,12 @@ public class DataExtensionChange implements Change {
     			ReconCandidate rc = (ReconCandidate) value;
     			Recon recon = new Recon();
     			recon.addCandidate(rc);
+    			recon.service = "mql";
     			recon.match = rc;
+    			recon.matchRank = 0;
     			recon.judgment = Judgment.Matched;
+    			recon.judgmentAction = "auto";
+    			recon.judgmentBatchSize = 1;
     			
     			cell = new Cell(rc.topicName, recon);
     		} else {

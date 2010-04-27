@@ -132,6 +132,8 @@ public class ExcelImporter implements Importer {
          *  Now process the data rows
          */
         int rowsWithData = 0;
+        Map<String, Recon> reconMap = new HashMap<String, Recon>();
+        
         for (; r <= lastRow; r++) {
             org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
@@ -206,10 +208,22 @@ public class ExcelImporter implements Importer {
                                         id = id.substring(0, h);
                                     }
                                     
-                                    recon = new Recon();
-                                    recon.judgment = Judgment.Matched;
-                                    recon.match = new ReconCandidate(id, "", value.toString(), new String[0], 100);
-                                    recon.addCandidate(recon.match);
+                                    if (reconMap.containsKey(id)) {
+                                    	recon = reconMap.get(id);
+	                                    recon.judgmentBatchSize++;
+                                    } else {
+	                                    recon = new Recon();
+	                                    recon.service = "import";
+	                                    recon.match = new ReconCandidate(id, "", value.toString(), new String[0], 100);
+	                                    recon.matchRank = 0;
+	                                    recon.judgment = Judgment.Matched;
+	                                    recon.judgmentAction = "auto";
+	                                    recon.judgmentBatchSize = 1;
+	                                    recon.addCandidate(recon.match);
+	                                    
+	                                    reconMap.put(id, recon);
+                                    }
+                                    
                                 }
                             }
                         }

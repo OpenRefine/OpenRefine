@@ -37,7 +37,11 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
         List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
         
         FilteredRows filteredRows = engine.getAllFilteredRows(false);
-        filteredRows.accept(project, createRowVisitor(project, cellChanges));
+        try {
+        	filteredRows.accept(project, createRowVisitor(project, cellChanges));
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
         
         String description = createDescription(column, cellChanges);
         

@@ -153,8 +153,11 @@ public class IdBasedReconConfig extends StrictReconConfig {
                     
                     Recon recon = new Recon();
                     recon.addCandidate(candidate);
-                    recon.match = candidate;
+                    recon.service = "mql";
                     recon.judgment = Judgment.Matched;
+                    recon.judgmentAction = "auto";
+                    recon.match = candidate;
+                    recon.matchRank = 0;
                     
                     idToRecon.put(id, recon);
                 }

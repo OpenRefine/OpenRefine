@@ -134,16 +134,31 @@ public class ReconJudgeOneCellCommand extends Command {
                 ", containing \"" + cell.value + "\"";
             
             String description = null;
+            
+            newCell.recon.matchRank = -1;
+            newCell.recon.judgmentAction = "single";
+            newCell.recon.judgmentBatchSize = 1;
+            
             if (judgment == Judgment.None) {
                 newCell.recon.judgment = Recon.Judgment.None;
                 newCell.recon.match = null;
+                
                 description = "Discard recon judgment for " + cellDescription;
             } else if (judgment == Judgment.New) {
                 newCell.recon.judgment = Recon.Judgment.New;
+                newCell.recon.match = null;
+                
                 description = "Mark to create new topic for " + cellDescription;
             } else {
                 newCell.recon.judgment = Recon.Judgment.Matched;
                 newCell.recon.match = this.match;
+                
+                for (int m = 0; m < newCell.recon.candidates.size(); m++) {
+                	if (newCell.recon.candidates.get(m).topicGUID.equals(this.match.topicGUID)) {
+                		newCell.recon.matchRank = m;
+                		break;
+                	}
+                }
                 
                 description = "Match " + this.match.topicName +
                     " (" + match.topicID + ") to " + 
