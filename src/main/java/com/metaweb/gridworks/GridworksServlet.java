@@ -18,6 +18,7 @@ import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.commands.auth.AuthorizeCommand;
 import com.metaweb.gridworks.commands.auth.CheckAuthorizationCommand;
 import com.metaweb.gridworks.commands.auth.DeAuthorizeCommand;
+import com.metaweb.gridworks.commands.auth.GetUserBadgesCommand;
 import com.metaweb.gridworks.commands.edit.AddColumnCommand;
 import com.metaweb.gridworks.commands.edit.AnnotateOneRowCommand;
 import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
@@ -145,6 +146,7 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("check-authorization", new CheckAuthorizationCommand());
         _commands.put("authorize", new AuthorizeCommand());
         _commands.put("deauthorize", new DeAuthorizeCommand());
+        _commands.put("user-badges", new GetUserBadgesCommand());
 
         _commands.put("upload-data", new UploadDataCommand());
         _commands.put("mqlread", new MQLReadCommand());

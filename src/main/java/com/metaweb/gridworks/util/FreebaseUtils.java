@@ -23,6 +23,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,6 +76,47 @@ public class FreebaseUtils {
         return EntityUtils.toString(httpResponse.getEntity());
     }
 
+    public static String getUserBadges(Provider provider, String user_id)
+    throws ClientProtocolException, IOException, JSONException {
+
+        String query = "{" +
+          "'id' : '" + user_id + "'," +
+          "'!/type/usergroup/member' : [{" +
+            "'id' : null," +
+            "'key' : [{" +
+              "'namespace' : null" +
+            "}]" +
+          "}]" +
+        "}".replace("'", "\"");
+
+        return mqlread(provider, query);
+    }
+
+    public static String mqlread(Provider provider, String query) 
+    throws ClientProtocolException, IOException, JSONException {
+        
+        JSONObject envelope = new JSONObject();
+        envelope.put("query", new JSONObject(query));
+        
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("query", envelope.toString()));
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
+
+        HttpPost httpRequest = new HttpPost(getMQLReadURL(provider.getHost()));
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
+        httpRequest.setEntity(entity);
+
+        // this is required by the Metaweb API to avoid XSS
+        httpRequest.setHeader("X-Requested-With", "1");
+
+        // execute the request
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpResponse httpResponse = httpClient.execute(httpRequest);
+    
+        // return the results
+        return EntityUtils.toString(httpResponse.getEntity());
+    }
+    
     public static String mqlwrite(Credentials credentials, Provider provider, String query) 
     throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, JSONException {
         OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
@@ -104,31 +146,6 @@ public class FreebaseUtils {
         return EntityUtils.toString(httpResponse.getEntity());
     }
 
-    public static String mqlread(Provider provider, String query) 
-    throws ClientProtocolException, IOException, JSONException {
-        
-        JSONObject envelope = new JSONObject();
-        envelope.put("query", new JSONObject(query));
-        
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("query", envelope.toString()));
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
-
-        HttpPost httpRequest = new HttpPost(getMQLReadURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
-        httpRequest.setEntity(entity);
-
-        // this is required by the Metaweb API to avoid XSS
-        httpRequest.setHeader("X-Requested-With", "1");
-
-        // execute the request
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpResponse httpResponse = httpClient.execute(httpRequest);
-    
-        // return the results
-        return EntityUtils.toString(httpResponse.getEntity());
-    }
-        
     public static String uploadTriples(HttpServletRequest request, String graph, String source_name, String source_id, String triples) 
         throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, JSONException, IOException {
         
@@ -144,43 +161,75 @@ public class FreebaseUtils {
         
         JSONObject user_info = new JSONObject(getUserInfo(credentials, provider));
         if (user_info.has("username")) {
-            
-            List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-            formparams.add(new BasicNameValuePair("user", user_info.getString("id")));
-            formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
-            formparams.add(new BasicNameValuePair("operator", GRIDWORKS_ID));
-            formparams.add(new BasicNameValuePair("mdo_info", mdo_info.toString()));
-            formparams.add(new BasicNameValuePair("graphport", graph));
-            formparams.add(new BasicNameValuePair("payload", triples));
-            formparams.add(new BasicNameValuePair("check_params", "false"));
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
-            HttpPost httpRequest = new HttpPost(FREEQ_URL);
-            httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
-            httpRequest.setEntity(entity);
+            String user_id = user_info.getString("id");
+            boolean allowed = isAllowedToWrite(provider, graph, user_id);
             
-            HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));
-            surrogateRequest.setEntity(entity);
-            
-            OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
-
-            consumer.sign(surrogateRequest);
-
-            Header[] h = surrogateRequest.getHeaders("Authorization");
-            if (h.length > 0) {
-                httpRequest.setHeader("X-Freebase-Credentials", h[0].getValue());
+            if (allowed) {
+                List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+                formparams.add(new BasicNameValuePair("user", user_info.getString("id")));
+                formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
+                formparams.add(new BasicNameValuePair("operator", GRIDWORKS_ID));
+                formparams.add(new BasicNameValuePair("mdo_info", mdo_info.toString()));
+                formparams.add(new BasicNameValuePair("graphport", graph));
+                formparams.add(new BasicNameValuePair("payload", triples));
+                formparams.add(new BasicNameValuePair("check_params", "false"));
+                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
+    
+                HttpPost httpRequest = new HttpPost(FREEQ_URL);
+                httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
+                httpRequest.setEntity(entity);
+                
+                HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));
+                surrogateRequest.setEntity(entity);
+                
+                OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
+    
+                consumer.sign(surrogateRequest);
+    
+                Header[] h = surrogateRequest.getHeaders("Authorization");
+                if (h.length > 0) {
+                    httpRequest.setHeader("X-Freebase-Credentials", h[0].getValue());
+                } else {
+                    throw new RuntimeException("Couldn't find the oauth signature header in the surrogate request");
+                }
+                
+                // execute the request
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpResponse httpResponse = httpClient.execute(httpRequest);
+                
+                // return the results
+                return EntityUtils.toString(httpResponse.getEntity());
             } else {
-                throw new RuntimeException("Couldn't find the oauth signature header in the surrogate request");
+                throw new RuntimeException("User '" + user_id + "' is not allowed to write to '" + graph + "' with Gridworks");
             }
-            
-            // execute the request
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpResponse httpResponse = httpClient.execute(httpRequest);
-            
-            // return the results
-            return EntityUtils.toString(httpResponse.getEntity());
         } else {
             throw new RuntimeException("Invalid credentials");
         }
+    }
+    
+    private static boolean isAllowedToWrite(Provider provider, String graph, String user_id) throws JSONException, ClientProtocolException, IOException {
+        if ("sandbox".equals(graph)) return true;
+        
+        JSONObject user_badges = new JSONObject(getUserBadges(provider, user_id));
+        JSONObject result = user_badges.getJSONObject("result");
+        
+        if (result == null) {
+            throw new RuntimeException("Error evaluating badges for user '" + user_id + "'");
+        }
+
+        boolean allowed = false;
+        
+        JSONArray badges = result.getJSONArray("!/type/usergroup/member");
+        for (int i = 0; i < badges.length(); i++) {
+            JSONObject o = badges.getJSONObject(i);
+            String id = o.getString("id");
+            if ("/en/metaweb_staff".equals(id)) {
+                allowed = true;
+                break;
+            }
+        }
+        
+        return allowed;
     }
 }

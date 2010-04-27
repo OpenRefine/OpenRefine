@@ -69,18 +69,20 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     };
     
     var check_allowed = function(user_id, cont) {
-        var mql_query = {
-            id : user_id,  
-            "!/type/usergroup/member": [{
-                "id": "/en/metaweb_staff"
-            }]
-        };        
-        
-        $.post("/command/mqlread/" + provider, 
-            { "query" : JSON.stringify(mql_query) }, 
+        $.get("/command/user-badges/" + provider, 
+            { "user_id" : user_id }, 
             function(data) {
                 if ("status" in data && data.code == "/api/status/ok") {
-                    if (typeof cont == "function") cont((data.result != null));
+                    var badges = data.result['!/type/usergroup/member'];
+                    var allowed = false;
+                    for (var i = 0; i < badges.length; i++) {
+                        var id = badges[i].id;
+                        if (id == "/en/metaweb_staff") {
+                            allowed = true;
+                            break;
+                        }
+                    }
+                    if (typeof cont == "function") cont(allowed);
                 } else {
                     self._show_error("Error checking if user is a staff member", data);
                 }
@@ -94,7 +96,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
             "create": "unless_exists",
             "name":   new_topic_id,
             "a:type": topic_type,
-            "b:type": "/common/topic"
+            "b:type": "/common/topic",
             "id":     null,
             "guid":   null
         }];
@@ -204,7 +206,7 @@ FreebaseLoadingDialog.prototype._load = function() {
                     );
                     self._end();
                 } else {
-                    self._show_error("Error loading data",error);
+                    self._show_error("Error loading data",data);
                 }
             },
             "json"
