@@ -196,9 +196,13 @@ img.facet-choice-link {
 .facet-text-body {
     padding: 5px;
 }
-.facet-scatterplot-plot {
-    border: 1px solid #ccc;
+
+.facet-scatterplot-plot-container {
     margin: 5px 5px 5px 5px;
+    border: 1px solid #bbb;
+}
+		
+.facet-scatterplot-plot {
     position: relative;
 }
 .facet-scatterplot-image {

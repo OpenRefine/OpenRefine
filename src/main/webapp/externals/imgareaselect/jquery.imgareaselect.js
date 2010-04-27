@@ -353,9 +353,14 @@ $.imgAreaSelect = function (img, options) {
             fixAspectRatio(true);
         }
 
-        selection = { x1: selX(min(x1, x2)), x2: selX(max(x1, x2)),
-            y1: selY(min(y1, y2)), y2: selY(max(y1, y2)),
-            width: abs(x2 - x1), height: abs(y2 - y1) };
+        selection = { 
+            x1: selX(min(x1, x2)), 
+            x2: selX(max(x1, x2)),
+            y1: selY(min(y1, y2)), 
+            y2: selY(max(y1, y2)),
+            width: abs(x2 - x1), 
+            height: abs(y2 - y1) 
+        };
 
         update();
 
@@ -376,8 +381,7 @@ $.imgAreaSelect = function (img, options) {
         x2 = (x1 = newX1) + selection.width;
         y2 = (y1 = newY1) + selection.height;
 
-        $.extend(selection, { x1: selX(x1), y1: selY(y1), x2: selX(x2),
-            y2: selY(y2) });
+        $.extend(selection, { x1: selX(x1), y1: selY(y1), x2: selX(x2), y2: selY(y2) });
 
         update();
 
@@ -410,8 +414,7 @@ $.imgAreaSelect = function (img, options) {
 
         shown = true;
 
-        $(document).unbind('mouseup', cancelSelection)
-            .mousemove(selectingMouseMove).one('mouseup', docMouseUp);
+        $(document).unbind('mouseup', cancelSelection).mousemove(selectingMouseMove).one('mouseup', docMouseUp);
         $box.unbind('mousemove', areaMouseMove);
 
         options.onSelectStart(img, getSelection());
@@ -421,8 +424,14 @@ $.imgAreaSelect = function (img, options) {
         $(document).unbind('mousemove', startSelection);
         hide($box.add($outer));
 
-        selection = { x1: selX(x1), y1: selY(y1), x2: selX(x1), y2: selY(y1),
-                width: 0, height: 0 };
+        selection = { 
+            x1: selX(x1), 
+            y1: selY(y1), 
+            x2: selX(x1), 
+            y2: selY(y1),
+            width: 0, 
+            height: 0 
+        };
 
         options.onSelectChange(img, getSelection());
         options.onSelectEnd(img, getSelection());
@@ -435,8 +444,7 @@ $.imgAreaSelect = function (img, options) {
         startX = x1 = evX(event);
         startY = y1 = evY(event);
 
-        $(document).one('mousemove', startSelection)
-            .one('mouseup', cancelSelection);
+        $(document).one('mousemove', startSelection).one('mouseup', cancelSelection);
 
         return false;
     }
@@ -453,10 +461,10 @@ $.imgAreaSelect = function (img, options) {
             movable: true,
             resizable: true,
             parent: 'body',
-            onInit: function () {},
-            onSelectStart: function () {},
-            onSelectChange: function () {},
-            onSelectEnd: function () {}
+            onInit: function() {},
+            onSelectStart: function() {},
+            onSelectChange: function() {},
+            onSelectEnd: function() {}
         }, options));
 
         $box.add($outer).css({ visibility: '' });
@@ -484,47 +492,46 @@ $.imgAreaSelect = function (img, options) {
             (k.alt == 'resize' && (event.altKey || event.originalEvent.altKey)))
         {
             switch (key) {
-            case 37:
-                d = -d;
-            case 39:
-                t = max(x1, x2);
-                x1 = min(x1, x2);
-                x2 = max(t + d, x1);
-                fixAspectRatio();
-                break;
-            case 38:
-                d = -d;
-            case 40:
-                t = max(y1, y2);
-                y1 = min(y1, y2);
-                y2 = max(t + d, y1);
-                fixAspectRatio(true);
-                break;
-            default:
-                return;
+                case 37:
+                    d = -d;
+                case 39:
+                    t = max(x1, x2);
+                    x1 = min(x1, x2);
+                    x2 = max(t + d, x1);
+                    fixAspectRatio();
+                    break;
+                case 38:
+                    d = -d;
+                case 40:
+                    t = max(y1, y2);
+                    y1 = min(y1, y2);
+                    y2 = max(t + d, y1);
+                    fixAspectRatio(true);
+                    break;
+                default:
+                    return;
             }
 
             doResize();
-        }
-        else {
+        } else {
             x1 = min(x1, x2);
             y1 = min(y1, y2);
 
             switch (key) {
-            case 37:
-                doMove(max(x1 - d, left), y1);
-                break;
-            case 38:
-                doMove(x1, max(y1 - d, top));
-                break;
-            case 39:
-                doMove(x1 + min(d, imgWidth - selX(x2)), y1);
-                break;
-            case 40:
-                doMove(x1, y1 + min(d, imgHeight - selY(y2)));
-                break;
-            default:
-                return;
+                case 37:
+                    doMove(max(x1 - d, left), y1);
+                    break;
+                case 38:
+                    doMove(x1, max(y1 - d, top));
+                    break;
+                case 39:
+                    doMove(x1 + min(d, imgWidth - selX(x2)), y1);
+                    break;
+                case 40:
+                    doMove(x1, y1 + min(d, imgHeight - selY(y2)));
+                    break;
+                default:
+                    return;
             }
         }
 
@@ -575,26 +582,22 @@ $.imgAreaSelect = function (img, options) {
         scaleY = options.imageHeight / imgHeight || 1;
 
         if (newOptions.x1 != null) {
-            setSelection(newOptions.x1, newOptions.y1, newOptions.x2,
-                newOptions.y2);
+            setSelection(newOptions.x1, newOptions.y1, newOptions.x2, newOptions.y2);
             newOptions.show = !newOptions.hide;
         }
 
         if (newOptions.keys)
-            options.keys = $.extend({ shift: 1, ctrl: 'resize' },
-                newOptions.keys);
+            options.keys = $.extend({ shift: 1, ctrl: 'resize' }, newOptions.keys);
 
         $outer.addClass(options.classPrefix + '-outer');
         $area.addClass(options.classPrefix + '-selection');
         for (i = 0; i++ < 4;)
             $($border[i-1]).addClass(options.classPrefix + '-border' + i);
 
-        styleOptions($area, { selectionColor: 'background-color',
-            selectionOpacity: 'opacity' });
-        styleOptions($border, { borderOpacity: 'opacity',
-            borderWidth: 'border-width' });
-        styleOptions($outer, { outerColor: 'background-color',
-            outerOpacity: 'opacity' });
+        styleOptions($area, { selectionColor: 'background-color', selectionOpacity: 'opacity' });
+        styleOptions($border, { borderOpacity: 'opacity', borderWidth: 'border-width' });
+        styleOptions($outer, { outerColor: 'background-color', outerOpacity: 'opacity' });
+        
         if (o = options.borderColor1)
             $($border[0]).css({ borderStyle: 'solid', borderColor: o });
         if (o = options.borderColor2)
@@ -623,8 +626,7 @@ $.imgAreaSelect = function (img, options) {
             $box.unbind('mousemove', areaMouseMove).unbind('mousedown', areaMouseDown);
             $img.add($outer).unbind('mousedown', imgMouseDown);
             $(window).unbind('resize', windowResize);
-        }
-        else if (options.enable || options.disable === false) {
+        } else if (options.enable || options.disable === false) {
             if (options.resizable || options.movable)
                 $box.mousemove(areaMouseMove).mousedown(areaMouseDown);
 
@@ -655,33 +657,36 @@ $.imgAreaSelect = function (img, options) {
     $p = $img;
 
     while ($p.length) {
-        zIndex = max(zIndex,
-            !isNaN($p.css('z-index')) ? $p.css('z-index') : zIndex);
-        if ($p.css('position') == 'fixed')
-            position = 'fixed';
-
+        zIndex = max(zIndex, !isNaN($p.css('z-index')) ? $p.css('z-index') : zIndex);
+        //if ($p.css('position') == 'fixed')
+        //    position = 'fixed';
         $p = $p.parent(':not(body)');
     }
 
     zIndex = options.zIndex || zIndex;
 
-    if ($.browser.msie)
-        $img.attr('unselectable', 'on');
+    if ($.browser.msie) $img.attr('unselectable', 'on');
 
-    $.imgAreaSelect.keyPress = $.browser.msie ||
-        $.browser.safari ? 'keydown' : 'keypress';
+    $.imgAreaSelect.keyPress = $.browser.msie || $.browser.safari ? 'keydown' : 'keypress';
 
     if ($.browser.opera)
-        $areaOpera = div().css({ width: '100%', height: '100%',
-            position: 'absolute', zIndex: zIndex + 2 || 2 });
+        $areaOpera = div().css({ 
+            width: '100%', 
+            height: '100%',
+            position: 'absolute', 
+            zIndex: zIndex + 2 || 2 
+        });
 
-    $box.add($outer).css({ visibility: 'hidden', position: position,
-        overflow: 'hidden', zIndex: zIndex || '0' });
+    $box.add($outer).css({ 
+        visibility: 'hidden', 
+        position: position,
+        overflow: 'hidden', 
+        zIndex: zIndex || '0' 
+    });
     $box.css({ zIndex: zIndex + 2 || 2 });
     $area.add($border).css({ position: 'absolute', fontSize: 0 });
 
-    img.complete || img.readyState == 'complete' || !$img.is('img') ?
-        imgLoad() : $img.one('load', imgLoad);
+    img.complete || img.readyState == 'complete' || !$img.is('img') ? imgLoad() : $img.one('load', imgLoad);
 };
 
 $.fn.imgAreaSelect = function (options) {

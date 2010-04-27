@@ -65,10 +65,12 @@ ScatterplotFacet.prototype._initializeUI = function() {
         '<div class="facet-scatterplot-body" bind="bodyDiv">' +
             '<div class="facet-scatterplot-message" bind="messageDiv">Loading...</div>' +
             '<table width="100%"><tr>' + 
-                '<td class="facet-scatterplot-plot-container">' +
-                    '<div class="facet-scatterplot-plot" bind="plotDiv">' +
-                        '<img class="facet-scatterplot-image" bind="plotBaseImg" />' +
-                        '<img class="facet-scatterplot-image" bind="plotImg" />' +
+                '<td>' +
+                    '<div class="facet-scatterplot-plot-container">' +
+                        '<div class="facet-scatterplot-plot" bind="plotDiv">' +
+                            '<img class="facet-scatterplot-image" bind="plotBaseImg" />' +
+                            '<img class="facet-scatterplot-image" bind="plotImg" />' +
+                        '</div>' +
                     '</div>' +
                 '</td>' +
                 '<td class="facet-scatterplot-selectors-container" width="100%">' +
@@ -113,6 +115,7 @@ ScatterplotFacet.prototype._initializeUI = function() {
     var ops = {
         instance: true,        
         handles: false,
+        parent: this._elmts.plotDiv,
         fadeSpeed: 70,
         onSelectEnd: function(elmt, selection) {
             if (selection.height == 0 || selection.width == 0) {
