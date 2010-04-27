@@ -181,7 +181,7 @@ ReconDialog.prototype._wireEvents = function() {
     var self = this;
     
     this._elmts.heuristicTypeInput
-        .suggest({ type : '/type/type' })
+        .suggestT({ type : '/type/type' })
         .bind("fb-select", function(e, data) {
             $('input[name="recon-dialog-type-choice"][value=""]').attr("checked", "true");
             
@@ -201,7 +201,7 @@ ReconDialog.prototype._wireEvents = function() {
 ReconDialog.prototype._rewirePropertySuggests = function(schema) {
     var inputs = $('input[name="recon-dialog-heuristic-property"]');
     
-    inputs.suggest({
+    inputs.unbind().suggestP({
         type: '/type/property',
         schema: schema || "/common/topic"
     }).bind("fb-select", function(e, data) {
