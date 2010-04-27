@@ -67,21 +67,27 @@ public class FreebaseUtils {
         return EntityUtils.toString(httpResponse.getEntity());
     }
     
-    public static String uploadTriples(HttpServletRequest request, String info, String triples) 
+    public static String uploadTriples(HttpServletRequest request, String source_name, String source_id, String triples) 
         throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, JSONException, IOException {
         
         Provider provider = OAuthUtilities.getProvider(FREEBASE_HOST);
         
         Credentials credentials = Credentials.getCredentials(request, provider, Credentials.Type.ACCESS);
         
+        JSONObject mdo_info = new JSONObject();
+        mdo_info.put("name", source_name);
+        if (source_id != null) {
+            mdo_info.put("info_source",source_id);
+        }
+        
         JSONObject user_info = new JSONObject(getUserInfo(credentials, provider));
         if (user_info.has("username")) {
             
             List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-            formparams.add(new BasicNameValuePair("user", user_info.getString("username")));
+            formparams.add(new BasicNameValuePair("user", user_info.getString("id")));
             formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
             formparams.add(new BasicNameValuePair("operator", GRIDWORKS_ID));
-            formparams.add(new BasicNameValuePair("mdo_info", info));
+            formparams.add(new BasicNameValuePair("mdo_info", mdo_info.toString()));
             formparams.add(new BasicNameValuePair("graphport", provider.getHost().equals(FREEBASE_HOST) ? "otg" : "sandbox"));
             formparams.add(new BasicNameValuePair("payload", triples));
             formparams.add(new BasicNameValuePair("check_params", "false"));

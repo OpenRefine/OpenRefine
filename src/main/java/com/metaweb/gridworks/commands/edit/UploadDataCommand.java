@@ -30,9 +30,10 @@ public class UploadDataCommand extends Command {
             StringWriter triples = new StringWriter(1024 * 10);
             exporter.export(project, new Properties(), engine, triples);
 
-            String info = request.getParameter("info");
+            String source_name = request.getParameter("source_name");
+            String source_id = request.getParameter("source_id");
                         
-            String result = FreebaseUtils.uploadTriples(request, info, triples.toString());
+            String result = FreebaseUtils.uploadTriples(request, source_name, source_id, triples.toString());
 
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
