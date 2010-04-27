@@ -32,8 +32,9 @@ public class UploadDataCommand extends Command {
 
             String source_name = request.getParameter("source_name");
             String source_id = request.getParameter("source_id");
+            String graph = request.getParameter("graph");
                         
-            String result = FreebaseUtils.uploadTriples(request, source_name, source_id, triples.toString());
+            String result = FreebaseUtils.uploadTriples(request, graph, source_name, source_id, triples.toString());
 
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");

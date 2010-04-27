@@ -45,6 +45,14 @@ public class FreebaseUtils {
         return "http://" + host + "/api/service/user_info";
     }
 
+    private static String getMQLWriteURL(String host) {
+        return "http://" + host + "/api/service/mqlwrite";
+    }
+
+    private static String getMQLReadURL(String host) {
+        return "http://" + host + "/api/service/mqlread";
+    }
+    
     public static String getUserInfo(Credentials credentials, Provider provider) 
         throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException {
         
@@ -66,8 +74,62 @@ public class FreebaseUtils {
         // return the results
         return EntityUtils.toString(httpResponse.getEntity());
     }
+
+    public static String mqlwrite(Credentials credentials, Provider provider, String query) 
+    throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, JSONException {
+        OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
+
+        JSONObject envelope = new JSONObject();
+        envelope.put("query", new JSONObject(query));
+        
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("query", envelope.toString()));
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
+
+        HttpPost httpRequest = new HttpPost(getMQLWriteURL(provider.getHost()));
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
+        httpRequest.setEntity(entity);
+
+        // this is required by the Metaweb API to avoid XSS
+        httpRequest.setHeader("X-Requested-With", "1");
+
+        // sign the request with the oauth library
+        consumer.sign(httpRequest);
+
+        // execute the request
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpResponse httpResponse = httpClient.execute(httpRequest);
     
-    public static String uploadTriples(HttpServletRequest request, String source_name, String source_id, String triples) 
+        // return the results
+        return EntityUtils.toString(httpResponse.getEntity());
+    }
+
+    public static String mqlread(Provider provider, String query) 
+    throws ClientProtocolException, IOException, JSONException {
+        
+        JSONObject envelope = new JSONObject();
+        envelope.put("query", new JSONObject(query));
+        
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("query", envelope.toString()));
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
+
+        HttpPost httpRequest = new HttpPost(getMQLReadURL(provider.getHost()));
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
+        httpRequest.setEntity(entity);
+
+        // this is required by the Metaweb API to avoid XSS
+        httpRequest.setHeader("X-Requested-With", "1");
+
+        // execute the request
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpResponse httpResponse = httpClient.execute(httpRequest);
+    
+        // return the results
+        return EntityUtils.toString(httpResponse.getEntity());
+    }
+        
+    public static String uploadTriples(HttpServletRequest request, String graph, String source_name, String source_id, String triples) 
         throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, JSONException, IOException {
         
         Provider provider = OAuthUtilities.getProvider(FREEBASE_HOST);
@@ -88,7 +150,7 @@ public class FreebaseUtils {
             formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
             formparams.add(new BasicNameValuePair("operator", GRIDWORKS_ID));
             formparams.add(new BasicNameValuePair("mdo_info", mdo_info.toString()));
-            formparams.add(new BasicNameValuePair("graphport", provider.getHost().equals(FREEBASE_HOST) ? "otg" : "sandbox"));
+            formparams.add(new BasicNameValuePair("graphport", graph));
             formparams.add(new BasicNameValuePair("payload", triples));
             formparams.add(new BasicNameValuePair("check_params", "false"));
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
@@ -121,5 +183,4 @@ public class FreebaseUtils {
             throw new RuntimeException("Invalid credentials");
         }
     }
-
 }

@@ -29,6 +29,8 @@ import com.metaweb.gridworks.commands.edit.ExportProjectCommand;
 import com.metaweb.gridworks.commands.edit.ExtendDataCommand;
 import com.metaweb.gridworks.commands.edit.ImportProjectCommand;
 import com.metaweb.gridworks.commands.edit.JoinMultiValueCellsCommand;
+import com.metaweb.gridworks.commands.edit.MQLReadCommand;
+import com.metaweb.gridworks.commands.edit.MQLWriteCommand;
 import com.metaweb.gridworks.commands.edit.MassEditCommand;
 import com.metaweb.gridworks.commands.edit.RemoveColumnCommand;
 import com.metaweb.gridworks.commands.edit.RemoveRowsCommand;
@@ -145,6 +147,8 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("deauthorize", new DeAuthorizeCommand());
 
         _commands.put("upload-data", new UploadDataCommand());
+        _commands.put("mqlread", new MQLReadCommand());
+        _commands.put("mqlwrite", new MQLWriteCommand());
     }
 
     @Override
