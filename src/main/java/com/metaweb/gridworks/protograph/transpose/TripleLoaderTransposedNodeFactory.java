@@ -3,9 +3,11 @@ package com.metaweb.gridworks.protograph.transpose;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -27,6 +29,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     protected WritingTransposedNode lastRootNode;
     protected Map<String, Long> varPool = new HashMap<String, Long>();
     protected Map<Long, String> newTopicVars = new HashMap<Long, String>();
+    protected Set<Long> serializedRecons = new HashSet<Long>();
     
     public TripleLoaderTransposedNodeFactory(Writer writer) {
         this.writer = writer;
@@ -34,7 +37,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     
     public void flush() {
         if (lastRootNode != null) {
-            lastRootNode.write(null, null);
+            lastRootNode.write(null, null, null);
             lastRootNode = null;
         }
     }
@@ -51,40 +54,97 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             // ignore
         }
     }
-    protected void writeLine(String subject, String predicate, Object object) {
-        if (subject != null && object != null) {
-            String s = object instanceof String ? 
-                    JSONObject.quote((String) object) : object.toString();
+    
+    protected void writeRecon(StringBuffer sb, Cell cell) {
+        Recon recon = cell.recon;
+        if (serializedRecons.contains(recon.id)) {
+            sb.append(Long.toString(recon.id));
+        } else {
+            serializedRecons.add(recon.id);
+            
+            String s = cell.value instanceof String ? (String) cell.value : cell.value.toString();
                     
-            writeLine("{ \"s\" : \"" + subject + "\", \"p\" : \"" + predicate + "\", \"o\" : " + s + " }");
+            sb.append("{ ");
+            sb.append("\"id\" : "); sb.append(Long.toString(recon.id));
+            sb.append(", \"history_entry\" : "); sb.append(Long.toString(recon.judgmentHistoryEntry));
+            sb.append(", \"text\" : "); sb.append(JSONObject.quote(s));
+            sb.append(", \"service\" : "); sb.append(JSONObject.quote(recon.service));
+            sb.append(", \"action\" : "); sb.append(JSONObject.quote(recon.judgmentAction));
+            sb.append(", \"batch\" : "); sb.append(Integer.toString(recon.judgmentBatchSize));
+            sb.append(", \"matchRank\" : "); sb.append(Integer.toString(recon.matchRank));
+            sb.append(" }");
         }
     }
-    protected void writeLine(String subject, String predicate, Object object, String lang) {
+    
+    protected void writeLine(String subject, String predicate, Object object, Cell subjectCell, Cell objectCell) {
         if (subject != null && object != null) {
             String s = object instanceof String ? 
                     JSONObject.quote((String) object) : object.toString();
                     
-            writeLine("{ \"s\" : \"" + 
-                    subject + "\", \"p\" : \"" + 
-                    predicate + "\", \"o\" : " + 
-                    s + ", \"lang\" : \"" + lang + "\" }");
+            StringBuffer sb = new StringBuffer();
+            sb.append("{ \"s\" : \""); sb.append(subject); sb.append("\"");
+            sb.append(", \"p\" : \""); sb.append(predicate); sb.append("\"");
+            sb.append(", \"o\" : "); sb.append(s);
+            if (subjectCell != null || objectCell != null) {
+                sb.append(", \"meta\" : { ");
+                
+                if (subjectCell != null) {
+                    sb.append("\"srecon\" : ");
+                    writeRecon(sb, subjectCell);
+                }
+                if (objectCell != null) {
+                    if (subjectCell != null) {
+                        sb.append(", ");
+                    }
+                    sb.append("\"orecon\" : ");
+                    writeRecon(sb, objectCell);
+                }
+                
+                sb.append(" }");
+            }
+            sb.append(" }");
+                    
+            writeLine(sb.toString());
+        }
+    }
+    
+    protected void writeLine(String subject, String predicate, Object object, String lang, Cell subjectCell) {
+        if (subject != null && object != null) {
+            String s = object instanceof String ? 
+                    JSONObject.quote((String) object) : object.toString();
+                    
+            StringBuffer sb = new StringBuffer();
+            sb.append("{ \"s\" : \""); sb.append(subject); sb.append("\"");
+            sb.append(", \"p\" : \""); sb.append(predicate); sb.append("\"");
+            sb.append(", \"o\" : "); sb.append(s);
+            sb.append(", \"lang\" : "); sb.append(lang);
+                    
+            if (subjectCell != null) {
+                sb.append(", \"meta\" : { ");
+                sb.append("\"srecon\" : ");
+                writeRecon(sb, subjectCell);
+                sb.append(" }");
+            }
+            sb.append(" }");
+                    
+            writeLine(sb.toString());
         }
     }
     
     protected interface WritingTransposedNode extends TransposedNode {
-        public String write(String subject, String predicate);
+        public String write(String subject, String predicate, Cell subjectCell);
     }
     
     abstract protected class TransposedNodeWithChildren implements WritingTransposedNode {
         public List<FreebaseProperty> properties = new LinkedList<FreebaseProperty>();
         public List<WritingTransposedNode> children = new LinkedList<WritingTransposedNode>();
         
-        protected void writeChildren(String subject) {
+        protected void writeChildren(String subject, Cell subjectCell) {
             for (int i = 0; i < children.size(); i++) {
                 WritingTransposedNode child = children.get(i);
                 String predicate = properties.get(i).id;
                 
-                child.write(subject, predicate);
+                child.write(subject, predicate, subjectCell);
             }
         }
     }
@@ -93,7 +153,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         
         //protected AnonymousTransposedNode(AnonymousNode node) { }
         
-        public String write(String subject, String predicate) {
+        public String write(String subject, String predicate, Cell subjectCell) {
             if (children.size() == 0 || subject == null) {
                 return null;
             }
@@ -103,7 +163,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             
             boolean first = true;
             for (int i = 0; i < children.size(); i++) {
-                String s = children.get(i).write(null, null);
+                String s = children.get(i).write(null, null, null);
                 if (s != null) {
                     if (first) {
                         first = false;
@@ -116,7 +176,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             }
             sb.append(" }");
             
-            writeLine(subject, predicate, sb);
+            writeLine(subject, predicate, sb, subjectCell, null);
             
             return null;
         }
@@ -131,12 +191,15 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public String write(String subject, String predicate) {
+        public String write(String subject, String predicate, Cell subjectCell) {
             String id = null;
+            Cell objectCell = null;
+            
             if (cell.recon != null &&
                 cell.recon.judgment == Recon.Judgment.Matched &&
                 cell.recon.match != null) {
                 
+                objectCell = cell;
                 id = cell.recon.match.topicID;
             } else if (node.createForNoReconMatch || 
                     (cell.recon != null && cell.recon.judgment == Judgment.New)) {
@@ -151,8 +214,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                     
                     id = "$" + node.columnName.replaceAll("\\W+", "_") + "_" + var;
                     
-                    writeLine(id, "type", node.type.id);
-                    writeLine(id, "name", cell.value);
+                    writeLine(id, "type", node.type.id, (Cell) null, (Cell) null);
+                    writeLine(id, "name", cell.value, (Cell) null, (Cell) null);
                     
                     if (cell.recon != null) {
                         newTopicVars.put(cell.recon.id, id);
@@ -163,10 +226,10 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             }
             
             if (subject != null) {
-                writeLine(subject, predicate, id);
+                writeLine(subject, predicate, id, subjectCell, objectCell);
             }
             
-            writeChildren(id);
+            writeChildren(id, objectCell);
             
             return id;
         }
@@ -182,12 +245,12 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public String write(String subject, String predicate) {
+        public String write(String subject, String predicate, Cell subjectCell) {
             if (subject != null) {
                 if ("/type/text".equals(node.lang)) {
-                    writeLine(subject, predicate, cell.value, node.lang);
+                    writeLine(subject, predicate, cell.value, node.lang, subjectCell);
                 } else {
-                    writeLine(subject, predicate, cell.value);
+                    writeLine(subject, predicate, cell.value, subjectCell, null);
                 }
             }
             
@@ -204,8 +267,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public String write(String subject, String predicate) {
-            writeLine(subject, "key", node.namespace.id + "/" + cell.value);
+        public String write(String subject, String predicate, Cell subjectCell) {
+            writeLine(subject, "key", node.namespace.id + "/" + cell.value, subjectCell, null);
             
             return null;
         }
@@ -218,9 +281,9 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.node = node;
         }
 
-        public String write(String subject, String predicate) {
-            writeLine(subject, predicate, node.topic.id);
-            writeChildren(node.topic.id);
+        public String write(String subject, String predicate, Cell subjectCell) {
+            writeLine(subject, predicate, node.topic.id, subjectCell, null);
+            writeChildren(node.topic.id, null);
             
             return node.topic.id;
         }
@@ -233,11 +296,11 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.node = node;
         }
 
-        public String write(String subject, String predicate) {
+        public String write(String subject, String predicate, Cell subjectCell) {
             if ("/type/text".equals(node.lang)) {
-                writeLine(subject, predicate, node.value, node.lang);
+                writeLine(subject, predicate, node.value, node.lang, subjectCell);
             } else {
-                writeLine(subject, predicate, node.value);
+                writeLine(subject, predicate, node.value, subjectCell, null);
             }
             
             return node.value.toString();
@@ -319,7 +382,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     
     protected void addRootNode(WritingTransposedNode tnode) {
         if (lastRootNode != null) {
-            lastRootNode.write(null, null);
+            lastRootNode.write(null, null, null);
         }
         lastRootNode = tnode;
     }
