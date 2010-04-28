@@ -98,7 +98,13 @@ DataTableCellUI.prototype._render = function() {
                             .text(candidate.name)
                             .appendTo(li);
                             
-                        $('<span></span>').addClass("data-table-recon-score").text("(" + Math.round(candidate.score) + ")").appendTo(li);
+                        var score;
+                        if (candidate.score < 1) {
+                            score = Math.round(candidate.score * 1000) / 1000;
+                        } else {
+                            score = Math.round(candidate.score)
+                        }
+                        $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(li);
                     };
                     
                     for (var i = 0; i < candidates.length; i++) {
