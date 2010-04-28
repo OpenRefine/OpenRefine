@@ -138,7 +138,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
             ("separator".equals(_mode) ? " by separator" : " by field lengths");
     }
 
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         Column column = project.columnModel.getColumnByName(_columnName);
@@ -212,7 +212,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         );
         
         return new HistoryEntry(
-            project, description, this, change);
+            historyEntryID, project, description, this, change);
     }
 
     protected class ColumnSplitRowVisitor implements RowVisitor {

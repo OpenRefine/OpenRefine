@@ -98,7 +98,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             " cells in column " + column.getName() + ": " + _expression;
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         Evaluable eval = MetaParser.parse(_expression);

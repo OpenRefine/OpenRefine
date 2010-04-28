@@ -99,6 +99,7 @@ public class ReconOperation extends EngineDependentOperation {
     public class ReconProcess extends LongRunningProcess implements Runnable {
         final protected Project     _project;
         final protected JSONObject  _engineConfig;
+        final protected long        _historyEntryID;
         protected List<ReconEntry>  _entries;
         protected int               _cellIndex;
         
@@ -110,6 +111,7 @@ public class ReconOperation extends EngineDependentOperation {
             super(description);
             _project = project;
             _engineConfig = engineConfig;
+            _historyEntryID = HistoryEntry.allocateID();
         }
         
         public void write(JSONWriter writer, Properties options)
@@ -226,7 +228,7 @@ public class ReconOperation extends EngineDependentOperation {
                     jobs.add(groups.get(j).job);
                 }
                 
-                List<Recon> recons = _reconConfig.batchRecon(jobs);
+                List<Recon> recons = _reconConfig.batchRecon(jobs, _historyEntryID);
                 for (int j = i; j < to; j++) {
                     Recon recon = recons.get(j - i);
                     List<ReconEntry> entries = groups.get(j).entries;
@@ -268,6 +270,7 @@ public class ReconOperation extends EngineDependentOperation {
                 );
                 
                 HistoryEntry historyEntry = new HistoryEntry(
+                    _historyEntryID,
                     _project, 
                     _description, 
                     ReconOperation.this, 

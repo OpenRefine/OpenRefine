@@ -93,7 +93,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             " rows with " + _expression;
     }
     
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         Column column = project.columnModel.getColumnByName(_baseColumnName);
@@ -111,7 +111,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         Change change = new ColumnAdditionChange(_newColumnName, _columnInsertIndex, cellsAtRows);
         
         return new HistoryEntry(
-            project, description, this, change);
+            historyEntryID, project, description, this, change);
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellAtRow> cellsAtRows) throws Exception {

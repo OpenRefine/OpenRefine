@@ -95,6 +95,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
     public class ExtendDataProcess extends LongRunningProcess implements Runnable {
         final protected Project     _project;
         final protected JSONObject  _engineConfig;
+        final protected long        _historyEntryID;
         protected int               _cellIndex;
         protected FreebaseDataExtensionJob _job;
 
@@ -106,6 +107,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             super(description);
             _project = project;
             _engineConfig = engineConfig;
+            _historyEntryID = HistoryEntry.allocateID();
             
             _job = new FreebaseDataExtensionJob(_extension);
         }
@@ -230,6 +232,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                 }
             	
                 HistoryEntry historyEntry = new HistoryEntry(
+                    _historyEntryID,
                     _project, 
                     _description, 
                     ExtendDataOperation.this, 
@@ -239,7 +242,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     	columnNames,
                     	columnTypes,
                     	rowIndices,
-                    	dataExtensions)
+                    	dataExtensions,
+                    	_historyEntryID)
                 );
                 
                 _project.history.addEntry(historyEntry);

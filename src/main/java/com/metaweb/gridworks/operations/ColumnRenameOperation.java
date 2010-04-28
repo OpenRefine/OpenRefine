@@ -47,7 +47,7 @@ public class ColumnRenameOperation extends AbstractOperation {
         return "Rename column " + _oldColumnName + " to " + _newColumnName;
     }
 
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         if (project.columnModel.getColumnByName(_oldColumnName) == null) {
             throw new Exception("No column named " + _oldColumnName);
         }
@@ -57,6 +57,6 @@ public class ColumnRenameOperation extends AbstractOperation {
         
         Change change = new ColumnRenameChange(_oldColumnName, _newColumnName);
         
-        return new HistoryEntry(project, getBriefDescription(null), ColumnRenameOperation.this, change);
+        return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnRenameOperation.this, change);
     }
 }

@@ -110,7 +110,7 @@ public class ReconJudgeOneCellCommand extends Command {
             this.match = match;
         }
 
-        protected HistoryEntry createHistoryEntry() throws Exception {
+        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
                 throw new Exception("Cell is blank or error");
@@ -125,7 +125,7 @@ public class ReconJudgeOneCellCommand extends Command {
             
             newCell = new Cell(
                 cell.value, 
-                cell.recon == null ? new Recon() : cell.recon.dup()
+                cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID)
             );
             
             String cellDescription = 
@@ -199,7 +199,7 @@ public class ReconJudgeOneCellCommand extends Command {
             );
                 
             return new HistoryEntry(
-                _project, description, null, change);
+                historyEntryID, _project, description, null, change);
         }
     }
 }

@@ -45,12 +45,12 @@ public class SaveProtographOperation extends AbstractOperation {
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         String description = "Save schema-alignment protograph";
         
         Change change = new ProtographChange(_protograph);
         
-        return new HistoryEntry(project, description, SaveProtographOperation.this, change);
+        return new HistoryEntry(historyEntryID, project, description, SaveProtographOperation.this, change);
     }
 
     static public class ProtographChange implements Change {

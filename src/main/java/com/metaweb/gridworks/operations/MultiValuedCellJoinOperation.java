@@ -56,7 +56,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         return "Join multi-valued cells in column " + _columnName;
     }
 
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {
             throw new Exception("No column named " + _columnName);
@@ -118,6 +118,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         }
         
         return new HistoryEntry(
+            historyEntryID,
             project, 
             getBriefDescription(null), 
             this, 

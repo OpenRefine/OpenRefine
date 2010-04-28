@@ -59,17 +59,19 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
             " cells to its best candidate in column " + column.getName();
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
             int 				cellIndex;
             List<CellChange> 	cellChanges;
             Map<Long, Recon>	dupReconMap = new HashMap<Long, Recon>();
+            long                historyEntryID;
             
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
+            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
+                this.historyEntryID = historyEntryID;
                 return this;
             }
             
@@ -84,7 +86,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
                         		newRecon = dupReconMap.get(cell.recon.id);
                         		newRecon.judgmentBatchSize++;
                         	} else {
-                        		newRecon = cell.recon.dup();
+                        		newRecon = cell.recon.dup(historyEntryID);
                         		newRecon.judgmentBatchSize = 1;
                                 newRecon.match = candidate;
                                 newRecon.matchRank = 0;
@@ -105,7 +107,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
                 }
                 return false;
             }
-        }.init(column.getCellIndex(), cellChanges);
+        }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
     
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {

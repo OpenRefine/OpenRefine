@@ -100,7 +100,7 @@ public class EditOneCellCommand extends Command {
             this.value = value;
         }
 
-        protected HistoryEntry createHistoryEntry() throws Exception {
+        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
             Column column = _project.columnModel.getColumnByCellIndex(cellIndex);
             if (column == null) {
@@ -119,7 +119,7 @@ public class EditOneCellCommand extends Command {
             Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
                 
             return new HistoryEntry(
-                _project, description, null, change);
+                historyEntryID, _project, description, null, change);
         }
     }
 }

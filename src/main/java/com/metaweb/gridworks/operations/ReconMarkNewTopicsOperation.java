@@ -68,7 +68,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                 ", one topic for each cell");
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
@@ -76,10 +76,12 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
             List<CellChange> 	cellChanges;
             Map<String, Recon>  sharedRecons = new HashMap<String, Recon>();
             Map<Long, Recon> 	dupReconMap = new HashMap<Long, Recon>();
+            long                historyEntryID;
             
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
+            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
+                this.historyEntryID = historyEntryID;
                 return this;
             }
             
@@ -93,7 +95,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             recon = sharedRecons.get(s);
                             recon.judgmentBatchSize++;
                         } else {
-                            recon = new Recon();
+                            recon = new Recon(historyEntryID);
                             recon.judgment = Judgment.New;
                             recon.judgmentBatchSize = 1;
 	                        recon.judgmentAction = "mass";
@@ -106,7 +108,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                     		recon = dupReconMap.get(reconID);
                     		recon.judgmentBatchSize++;
                     	} else {
-	                        recon = cell.recon == null ? new Recon() : cell.recon.dup();
+	                        recon = cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID);
 	                        recon.match = null;
 	                        recon.matchRank = -1;
 	                        recon.judgment = Judgment.New;
@@ -124,7 +126,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                 }
                 return false;
             }
-        }.init(column.getCellIndex(), cellChanges);
+        }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
     
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {

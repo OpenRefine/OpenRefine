@@ -39,7 +39,7 @@ abstract public class ReconConfig implements Jsonizable {
         Cell        cell
     );
     
-    abstract public List<Recon> batchRecon(List<ReconJob> jobs);
+    abstract public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID);
     
     public void save(Writer writer) {
         JSONWriter jsonWriter = new JSONWriter(writer);

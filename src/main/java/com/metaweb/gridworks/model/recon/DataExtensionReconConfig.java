@@ -52,7 +52,7 @@ public class DataExtensionReconConfig extends StrictReconConfig {
     }
     
     @Override
-    public List<Recon> batchRecon(List<ReconJob> jobs) {
+    public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         throw new RuntimeException(WARN);
     }
 

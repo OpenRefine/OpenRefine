@@ -33,7 +33,7 @@ abstract public class QuickHistoryEntryProcess extends Process {
 
     public HistoryEntry performImmediate() throws Exception {
         if (_historyEntry == null) {
-            _historyEntry = createHistoryEntry();
+            _historyEntry = createHistoryEntry(HistoryEntry.allocateID());
         }
         _project.history.addEntry(_historyEntry);
         _done = true;
@@ -62,5 +62,5 @@ abstract public class QuickHistoryEntryProcess extends Process {
         return _done;
     }
     
-    abstract protected HistoryEntry createHistoryEntry() throws Exception;
+    abstract protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception;
 }

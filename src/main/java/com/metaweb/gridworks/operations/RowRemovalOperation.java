@@ -44,7 +44,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
         return "Remove rows";
     }
 
-   protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+   protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         List<Integer> rowIndices = new ArrayList<Integer>();
@@ -53,6 +53,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
         filteredRows.accept(project, createRowVisitor(project, rowIndices));
         
         return new HistoryEntry(
+            historyEntryID,
             project, 
             "Remove " + rowIndices.size() + " rows", 
             this, 

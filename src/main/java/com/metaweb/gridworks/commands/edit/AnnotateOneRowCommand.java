@@ -81,8 +81,9 @@ public class AnnotateOneRowCommand extends Command {
             this.starred = starred;
         }
 
-        protected HistoryEntry createHistoryEntry() throws Exception {
+        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
+                historyEntryID,
                 _project, 
                 (starred ? "Star row " : "Unstar row ") + (rowIndex + 1), 
                 null, 
@@ -106,8 +107,9 @@ public class AnnotateOneRowCommand extends Command {
             this.flagged = flagged;
         }
 
-        protected HistoryEntry createHistoryEntry() throws Exception {
+        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
+                historyEntryID,
                 _project, 
                 (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1), 
                 null, 

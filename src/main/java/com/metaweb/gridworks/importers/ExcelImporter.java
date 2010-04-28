@@ -212,7 +212,7 @@ public class ExcelImporter implements Importer {
                                     	recon = reconMap.get(id);
 	                                    recon.judgmentBatchSize++;
                                     } else {
-	                                    recon = new Recon();
+	                                    recon = new Recon(0);
 	                                    recon.service = "import";
 	                                    recon.match = new ReconCandidate(id, "", value.toString(), new String[0], 100);
 	                                    recon.matchRank = 0;

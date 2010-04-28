@@ -37,6 +37,7 @@ public class DataExtensionChange implements Change {
     final protected List<Integer> 		_rowIndices;
     final protected List<DataExtension> _dataExtensions;
     
+    protected long                      _historyEntryID;
     protected int 						_firstNewCellIndex = -1;
     protected List<Row>       			_oldRows;
     protected List<Row>       			_newRows;
@@ -47,7 +48,8 @@ public class DataExtensionChange implements Change {
 		List<String> columnNames,
 		List<FreebaseType> columnTypes,
 		List<Integer> rowIndices,
-		List<DataExtension> dataExtensions
+		List<DataExtension> dataExtensions,
+		long historyEntryID
 	) {
     	_baseColumnName = baseColumnName;
     	_columnInsertIndex = columnInsertIndex;
@@ -57,6 +59,8 @@ public class DataExtensionChange implements Change {
     	
         _rowIndices = rowIndices;
         _dataExtensions = dataExtensions;
+        
+        _historyEntryID = historyEntryID;
     }
 
     protected DataExtensionChange(
@@ -179,7 +183,7 @@ public class DataExtensionChange implements Change {
     		
     		if (value instanceof ReconCandidate) {
     			ReconCandidate rc = (ReconCandidate) value;
-    			Recon recon = new Recon();
+    			Recon recon = new Recon(_historyEntryID);
     			recon.addCandidate(rc);
     			recon.service = "mql";
     			recon.match = rc;

@@ -65,22 +65,24 @@ public class Recon implements HasFields, Jsonizable {
     
     public Judgment              judgment = Judgment.None;
     public String				 judgmentAction = "unknown";
-    public long					 judgmentHistoryEntry = -1;
+    public long			         judgmentHistoryEntry;
     public int					 judgmentBatchSize = 0;
     
     public ReconCandidate        match = null;
     public int					 matchRank = -1;
     
-    public Recon() {
+    public Recon(long judgmentHistoryEntry) {
         id = System.currentTimeMillis() * 1000000 + Math.round(Math.random() * 1000000);
+        this.judgmentHistoryEntry = judgmentHistoryEntry;
     }
     
-    protected Recon(long id) {
+    protected Recon(long id, long judgmentHistoryEntry) {
         this.id = id;
+        this.judgmentHistoryEntry = judgmentHistoryEntry;
     }
     
-    public Recon dup() {
-        Recon r = new Recon();
+    public Recon dup(long judgmentHistoryEntry) {
+        Recon r = new Recon(judgmentHistoryEntry);
         
         System.arraycopy(features, 0, r.features, 0, features.length);
         
@@ -93,7 +95,6 @@ public class Recon implements HasFields, Jsonizable {
         r.judgment = judgment;
         
         r.judgmentAction = judgmentAction;
-        r.judgmentHistoryEntry = judgmentHistoryEntry;
         r.judgmentBatchSize = judgmentBatchSize;
         
         r.match = match;
@@ -146,6 +147,8 @@ public class Recon implements HasFields, Jsonizable {
             return judgmentToString();
         } else if ("judgmentAction".equals(name) || "judgementAction".equals(name)) {
             return judgmentAction;
+        } else if ("judgmentHistoryEntry".equals(name) || "judgementHistoryEntry".equals(name)) {
+            return judgmentHistoryEntry;
         } else if ("judgmentBatchSize".equals(name) || "judgementBatchSize".equals(name)) {
             return judgmentBatchSize;
         } else if ("matched".equals(name)) {
@@ -188,8 +191,11 @@ public class Recon implements HasFields, Jsonizable {
     	
         writer.object();
         writer.key("id"); writer.value(id);
-        writer.key("j"); writer.value(judgmentToString());
+        if (saveMode) {
+            writer.key("judgmentHistoryEntry"); writer.value(judgmentHistoryEntry);
+        }
         
+        writer.key("j"); writer.value(judgmentToString());
         if (match != null) {
             writer.key("m");
             writer.value(match.topicID);
@@ -214,7 +220,6 @@ public class Recon implements HasFields, Jsonizable {
                 
             writer.key("service"); writer.value(service);
             writer.key("judgmentAction"); writer.value(judgmentAction);
-            writer.key("judgmentHistoryEntry"); writer.value(judgmentHistoryEntry);
             writer.key("judgmentBatchSize"); writer.value(judgmentBatchSize);
             
             if (match != null) {
@@ -242,72 +247,79 @@ public class Recon implements HasFields, Jsonizable {
         }
         
         Recon recon = null;
+        long id = -1;
+        long judgmentHistoryEntry = -1;
         
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jp.getCurrentName();
             jp.nextToken();
             
             if ("id".equals(fieldName)) {
-                long id = jp.getLongValue();
-                recon = new Recon(id);
-            } else if ("j".equals(fieldName)) {
-                recon.judgment = stringToJudgment(jp.getText());
-            } else if ("m".equals(fieldName)) {
-                if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
-                    String candidateID = jp.getText();
-                    
-                    recon.match = pool.getReconCandidate(candidateID);
-                } else {
-                    // legacy
-                    recon.match = ReconCandidate.loadStreaming(jp);
-                }
-            } else if ("f".equals(fieldName)) {
-                if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
-                    return null;
+                id = jp.getLongValue();
+            } else if ("judgmentHistoryEntry".equals(fieldName)) {
+                judgmentHistoryEntry = jp.getLongValue();
+            } else {
+                if (recon == null) {
+                    recon = new Recon(id, judgmentHistoryEntry);
                 }
                 
-                int feature = 0;
-                while (jp.nextToken() != JsonToken.END_ARRAY) {
-                    if (feature < recon.features.length) {
-                        JsonToken token = jp.getCurrentToken();
-                        if (token == JsonToken.VALUE_STRING) {
-                            recon.features[feature++] = jp.getText();
-                        } else if (token == JsonToken.VALUE_NUMBER_INT) {
-                            recon.features[feature++] = jp.getLongValue();
-                        } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
-                            recon.features[feature++] = jp.getDoubleValue();
-                        } else if (token == JsonToken.VALUE_FALSE) {
-                            recon.features[feature++] = false;
-                        } else if (token == JsonToken.VALUE_TRUE) {
-                            recon.features[feature++] = true;
-                        }
-                    }
-                }
-            } else if ("c".equals(fieldName)) {
-                if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
-                    return null;
-                }
-                
-                while (jp.nextToken() != JsonToken.END_ARRAY) {
+                if ("j".equals(fieldName)) {
+                    recon.judgment = stringToJudgment(jp.getText());
+                } else if ("m".equals(fieldName)) {
                     if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
                         String candidateID = jp.getText();
-                    
-                        recon.addCandidate(pool.getReconCandidate(candidateID));
+                        
+                        recon.match = pool.getReconCandidate(candidateID);
                     } else {
                         // legacy
-                        recon.addCandidate(ReconCandidate.loadStreaming(jp));
+                        recon.match = ReconCandidate.loadStreaming(jp);
                     }
+                } else if ("f".equals(fieldName)) {
+                    if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
+                        return null;
+                    }
+                    
+                    int feature = 0;
+                    while (jp.nextToken() != JsonToken.END_ARRAY) {
+                        if (feature < recon.features.length) {
+                            JsonToken token = jp.getCurrentToken();
+                            if (token == JsonToken.VALUE_STRING) {
+                                recon.features[feature++] = jp.getText();
+                            } else if (token == JsonToken.VALUE_NUMBER_INT) {
+                                recon.features[feature++] = jp.getLongValue();
+                            } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
+                                recon.features[feature++] = jp.getDoubleValue();
+                            } else if (token == JsonToken.VALUE_FALSE) {
+                                recon.features[feature++] = false;
+                            } else if (token == JsonToken.VALUE_TRUE) {
+                                recon.features[feature++] = true;
+                            }
+                        }
+                    }
+                } else if ("c".equals(fieldName)) {
+                    if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
+                        return null;
+                    }
+                    
+                    while (jp.nextToken() != JsonToken.END_ARRAY) {
+                        if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
+                            String candidateID = jp.getText();
+                        
+                            recon.addCandidate(pool.getReconCandidate(candidateID));
+                        } else {
+                            // legacy
+                            recon.addCandidate(ReconCandidate.loadStreaming(jp));
+                        }
+                    }
+                } else if ("service".equals(fieldName)) {
+                	recon.service = jp.getText();
+                } else if ("judgmentAction".equals(fieldName)) {
+                	recon.judgmentAction = jp.getText();
+                } else if ("judgmentBatchSize".equals(fieldName)) {
+                	recon.judgmentBatchSize = jp.getIntValue();
+                } else if ("matchRank".equals(fieldName)) {
+                	recon.matchRank = jp.getIntValue();
                 }
-            } else if ("service".equals(fieldName)) {
-            	recon.service = jp.getText();
-            } else if ("judgmentAction".equals(fieldName)) {
-            	recon.judgmentAction = jp.getText();
-            } else if ("judgmentHistoryEntry".equals(fieldName)) {
-            	recon.judgmentHistoryEntry = jp.getLongValue();
-            } else if ("judgmentBatchSize".equals(fieldName)) {
-            	recon.judgmentBatchSize = jp.getIntValue();
-            } else if ("matchRank".equals(fieldName)) {
-            	recon.matchRank = jp.getIntValue();
             }
         }
         

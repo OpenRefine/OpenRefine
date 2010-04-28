@@ -77,7 +77,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
     }
     
     @Override
-    public List<Recon> batchRecon(List<ReconJob> jobs) {
+    public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
         Map<String, Recon> guidToRecon = new HashMap<String, Recon>();
         
@@ -147,7 +147,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
                         100
                     );
                     
-                    Recon recon = new Recon();
+                    Recon recon = new Recon(historyEntryID);
                     recon.addCandidate(candidate);
                     recon.service = "mql";
                     recon.judgment = Judgment.Matched;

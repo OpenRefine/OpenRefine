@@ -52,7 +52,7 @@ public class RowFlagOperation extends EngineDependentOperation {
         return (_flagged ? "Flag rows" : "Unflag rows");
     }
 
-   protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+   protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         List<Change> changes = new ArrayList<Change>(project.rows.size());
@@ -61,6 +61,7 @@ public class RowFlagOperation extends EngineDependentOperation {
         filteredRows.accept(project, createRowVisitor(project, changes));
         
         return new HistoryEntry(
+            historyEntryID,
             project, 
             (_flagged ? "Flag" : "Unflag") + " " + changes.size() + " rows", 
             this, 

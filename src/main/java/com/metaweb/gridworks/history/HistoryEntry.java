@@ -40,8 +40,12 @@ public class HistoryEntry implements Jsonizable {
     
     private final static String OPERATION = "operation";
     
-    public HistoryEntry(Project project, String description, AbstractOperation operation, Change change) {
-        this.id = Math.round(Math.random() * 1000000) + System.currentTimeMillis();
+    static public long allocateID() {
+        return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
+    }
+    
+    public HistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change) {
+        this.id = id;
         this.projectID = project.id;
         this.description = description;
         this.operation = operation;

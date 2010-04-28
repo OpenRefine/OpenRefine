@@ -145,7 +145,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         throw new InternalError("Can't get here");
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
@@ -153,10 +153,12 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
             List<CellChange>    _cellChanges;
             Recon				_sharedNewRecon = null;
             Map<Long, Recon> 	_dupReconMap = new HashMap<Long, Recon>();
+            long                _historyEntryID;
             
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
+            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 _cellIndex = cellIndex;
                 _cellChanges = cellChanges;
+                _historyEntryID = historyEntryID;
                 return this;
             }
             
@@ -169,7 +171,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                     Recon recon = null;
                     if (_judgment == Judgment.New && _shareNewTopics) {
                     	if (_sharedNewRecon == null) {
-                    		_sharedNewRecon = new Recon();
+                    		_sharedNewRecon = new Recon(_historyEntryID);
                     		_sharedNewRecon.judgment = Judgment.New;
                     		_sharedNewRecon.judgmentBatchSize = 0;
                     		_sharedNewRecon.judgmentAction = "similar";
@@ -182,7 +184,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                     		recon = _dupReconMap.get(cell.recon.id);
                     		recon.judgmentBatchSize++;
                     	} else {
-                    		recon = cell.recon.dup();
+                    		recon = cell.recon.dup(_historyEntryID);
                     		recon.judgmentBatchSize = 1;
                             recon.matchRank = -1;
                             recon.judgmentAction = "similar";
@@ -218,7 +220,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 }
                 return false;
             }
-        }.init(column.getCellIndex(), cellChanges);
+        }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
     
     

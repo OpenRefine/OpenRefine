@@ -190,15 +190,15 @@ public class HeuristicReconConfig extends ReconConfig {
     }
     
     @Override
-    public List<Recon> batchRecon(List<ReconJob> jobs) {
+    public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         if ("relevance".equals(service)) {
-            return batchReconUsingRelevance(jobs);
+            return batchReconUsingRelevance(jobs, historyEntryID);
         } else {
-            return batchReconUsingReconService(jobs);
+            return batchReconUsingReconService(jobs, historyEntryID);
         }
     }
     
-    protected List<Recon> batchReconUsingRelevance(List<ReconJob> jobs) {
+    protected List<Recon> batchReconUsingRelevance(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
         
         try {
@@ -251,9 +251,9 @@ public class HeuristicReconConfig extends ReconConfig {
                     if (o2.has("result")) {
                         JSONArray results = o2.getJSONArray("result");
                         
-                        recon = createReconFromRelevanceResults(text, results);
+                        recon = createReconFromRelevanceResults(text, results, historyEntryID);
                     } else {
-                        recon = new Recon();
+                        recon = new Recon(historyEntryID);
                     }
                     
                     recon.service = "recon";
@@ -269,8 +269,8 @@ public class HeuristicReconConfig extends ReconConfig {
         return recons;
     }
 
-    protected Recon createReconFromRelevanceResults(String text, JSONArray results) {
-        Recon recon = new Recon();
+    protected Recon createReconFromRelevanceResults(String text, JSONArray results, long historyEntryID) {
+        Recon recon = new Recon(historyEntryID);
         try {
             int length = results.length();
             int count = 0;
@@ -332,7 +332,7 @@ public class HeuristicReconConfig extends ReconConfig {
     
     static final String s_reconService = "http://data.labs.freebase.com/recon/query";
     
-    protected List<Recon> batchReconUsingReconService(List<ReconJob> jobs) {
+    protected List<Recon> batchReconUsingReconService(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
         
         for (int i = 0; i < jobs.size(); i++) {
@@ -353,7 +353,7 @@ public class HeuristicReconConfig extends ReconConfig {
                     String s = ParsingUtilities.inputStreamToString(is);
                     JSONArray a = ParsingUtilities.evaluateJsonStringToArray(s);
                 
-                    recon = createReconFromReconResults(job.text, a);
+                    recon = createReconFromReconResults(job.text, a, historyEntryID);
                 } finally {
                     is.close();
                 }
@@ -362,7 +362,7 @@ public class HeuristicReconConfig extends ReconConfig {
             }
             
             if (recon == null) {
-                recon = new Recon();
+                recon = new Recon(historyEntryID);
             }
             recon.service = "recon";
             recons.add(recon);
@@ -371,8 +371,8 @@ public class HeuristicReconConfig extends ReconConfig {
         return recons;
     }
 
-    protected Recon createReconFromReconResults(String text, JSONArray results) {
-        Recon recon = new Recon();
+    protected Recon createReconFromReconResults(String text, JSONArray results, long historyEntryID) {
+        Recon recon = new Recon(historyEntryID);
         try {
             int length = results.length();
             int count = 0;
