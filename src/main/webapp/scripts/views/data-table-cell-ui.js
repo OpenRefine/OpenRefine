@@ -90,13 +90,15 @@ DataTableCellUI.prototype._render = function() {
                             .addClass("data-table-recon-topic")
                             .attr("href", "http://www.freebase.com/view" + candidate.id)
                             .attr("target", "_blank")
-                            .click(function(evt) {
-                                self._previewCandidateTopic(candidate.id, this);
-                                evt.preventDefault();
-                                return false;
-                            })
                             .text(candidate.name)
-                            .appendTo(li);
+                            .appendTo(li)
+                            .click(function(evt) {
+                                if (!evt.metaKey && !evt.ctrlKey) {
+                                    self._previewCandidateTopic(candidate, this);
+                                    evt.preventDefault();
+                                    return false;
+                                }
+                            });
                             
                         var score;
                         if (candidate.score < 1) {
@@ -305,26 +307,77 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, c
     );
 };
 
-DataTableCellUI.prototype._previewCandidateTopic = function(id, elmt) {
-    var url = "http://www.freebase.com/widget/topic" + id + '?mode=content&blocks=[{"block"%3A"image"}%2C{"block"%3A"full_info"}%2C{"block"%3A"article_props"}]';
+DataTableCellUI.topicBlockParams = {
+    "mode" : "content",
+    "blocks" : JSON.stringify([
+        {
+            "block" : "full_info",
+        },
+        {
+            "block" : "article_props"
+        }
+    ])
+};
+
+DataTableCellUI.topicBlockDimensions = {
+    width: 430,
+    height: 300
+};
+
+DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt) {
+    var self = this;
+    var id = candidate.id;
     
-    var fakeMenu = MenuSystem.createMenu();
-    fakeMenu
-        .width(700)
-        .height(300)
-        .css("background", "none")
-        .css("border", "none");
+    var render = function(id2) {
+        var url = "http://www.freebase.com/widget/topic" + id2 + '?' + $.param(DataTableCellUI.topicBlockParams);
     
-    var iframe = $('<iframe></iframe>')
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .css("background", "none")
-        .css("border", "none")
-        .attr("src", url)
-        .appendTo(fakeMenu);
+        var fakeMenu = MenuSystem.createMenu();
+        fakeMenu
+            .width(DataTableCellUI.topicBlockDimensions.width)
+            .css("background", "none")
+            .css("border", "none")
+            .html(
+                '<div class="data-table-topic-popup-header">' +
+                    '<button title="Match topic to this cell" bind="matchButton">Match</button> ' +
+                    '<button title="Match topic to all visible cells with same content" bind="matchSimilarButton">Match Similar</button>' +
+                '</div>'
+            );
     
-    MenuSystem.showMenu(fakeMenu, function(){});
-    MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
+        var iframe = $('<iframe></iframe>')
+            .addClass("data-table-topic-popup-iframe")
+            .width(DataTableCellUI.topicBlockDimensions.width)
+            .height(DataTableCellUI.topicBlockDimensions.height)
+            .attr("src", url)
+            .appendTo(fakeMenu);
+    
+        MenuSystem.showMenu(fakeMenu, function(){});
+        MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
+        
+        var elmts = DOM.bind(fakeMenu);
+        elmts.matchButton.click(function() {
+            self._doMatchTopicToOneCell(candidate);
+            MenuSystem.dismissAll();
+        });
+        elmts.matchSimilarButton.click(function() {
+            self._doMatchTopicToSimilarCells(candidate);
+            MenuSystem.dismissAll();
+        });
+    };
+    
+    if (id.indexOf("/guid/") !== 0) {
+        render(id);
+    } else {
+        Freebase.mqlread(
+            {
+                "guid" : "#" + id.substring(6),
+                "id" : null
+            },
+            null,
+            function(o) {
+                render(o.result.id);
+            }
+        );
+    }
 };
 
 DataTableCellUI.prototype._startEdit = function(elmt) {

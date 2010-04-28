@@ -240,3 +240,12 @@ textarea.data-table-cell-editor-editor {
 span.data-table-cell-editor-key {
     color: #aaa;
 }
+
+.data-table-topic-popup-header {
+    padding: 5px;
+    background: #DBE8EB;
+}
+iframe.data-table-topic-popup-iframe {
+    background: #DBE8EB;
+    border: none;
+}
