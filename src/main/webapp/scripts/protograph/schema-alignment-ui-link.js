@@ -93,8 +93,9 @@ SchemaAlignmentDialog.UILink.prototype._renderDetails = function() {
 
 SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
     var sourceTypeID = this._parentUINode.getExpectedType();
-    var targetTypeID = "type" in this._link.target && this._link.target.type !== null ? this._link.target.type.id : null;
-    var targetTypeName = "columnName" in this._link.target ? this._link.target.columnName : null;
+    var targetNode = this._targetUI._node;
+    var targetTypeID = "type" in targetNode && targetNode.type !== null ? targetNode.type.id : null;
+    var targetTypeName = "columnName" in targetNode ? targetNode.columnName : null;
     
     if (sourceTypeID !== null) {
         var self = this;
@@ -109,12 +110,14 @@ SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
             
             self._showPropertySuggestPopup(
                 elmt, 
-                SchemaAlignmentDialog.UILink._rankProperties(properties, sourceTypeID, targetTypeID, targetTypeName)
+                properties
             );
         }
         
         SchemaAlignmentDialog.UILink._getPropertiesOfType(
             sourceTypeID,
+            targetTypeID,
+            targetTypeName,
             onDone
         );
     } else {
@@ -122,78 +125,20 @@ SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
     }
 };
 
-SchemaAlignmentDialog.UILink._rankProperties = function(properties, sourceTypeID, targetTypeID, targetTypeName) {
-    var nameScorer;
-    if (targetTypeName === null) {
-        nameScorer = function() { return 1; };
-    } else {
-        var nameWords = targetTypeName.toLowerCase().replace(/\W/g, ' ').replace(/\s+/g, ' ').split(" ");
-        var nameScoreString = function(score, s) {
-            s = s.toLowerCase().replace(/\W/g, ' ');
-            
-            var n = 0;
-            for (var i = 0; i < nameWords.length; i++) {
-                if (s.indexOf(nameWords[i]) >= 0) {
-                    n++;
-                }
-            }
-            return Math.max(score, n / nameWords.length);
-        };
-        var nameScoreStrings = function(score, a) {
-            $.each(a, function() { score = nameScoreString(score, this); });
-            return score;
-        };
-        
-        nameScorer = function(p) {
-            var score = nameScoreString(0, p.name);
-            score = nameScoreStrings(score, p.alias);
-            
-            if ("name2" in p) {
-                score = nameScoreString(score, p.name2);
-                score = nameScoreStrings(score, p.alias2);
-            }
-            
-            if ("expects" in p && p.expects !== null) {
-                score = nameScoreString(score, p.expects.name);
-                score = nameScoreStrings(score, p.expects.alias);
-            }
-            if ("expects2" in p && p.expects2 !== null) {
-                score = nameScoreString(score, p.expects2.name);
-                score = nameScoreStrings(score, p.expects2.alias);
-            }
-            
-            return score;
-        };
-    }
-    
-    var typeScorer;
-    if (targetTypeID === null) {
-        typeScorer = function(p) { return p.weight; };
-    } else {
-        typeScorer = function(p) {
-            return p.expects.id == targetTypeID ? 1 : p.weight;
-        };
-    }
-    
-    var suggestions = [];
-    for (var i = 0; i < properties.length; i++) {
-        var p = properties[i];
-        p.score = p.weight * (0.5 * nameScorer(p) + 0.5 * typeScorer(p));
-        
-        suggestions.push(p);
-    }
-    
-    suggestions.sort(function(a, b) { return b.score - a.score; });
-    suggestions = suggestions.slice(0, 7);
-    
-    return suggestions;
-};
-
-SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, onDone) {
+SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, targetTypeID, targetTypeName, onDone) {
     var done = false;
     
+    var params = {
+        "type" : typeID
+    };
+    if (targetTypeID != null) {
+        params.expects = targetTypeID;
+    } else if (targetTypeName != null) {
+        params.expects = targetTypeName;
+    }
+    
     $.getJSON(
-        "http://gridworks-helper.freebaseapps.com/get_properties_of_type?type=" + typeID + "&callback=?",
+        "http://gridworks-helper.freebaseapps.com/get_properties_of_type?" + $.param(params) + "&callback=?",
         null,
         function(data) {
             if (done) return;
