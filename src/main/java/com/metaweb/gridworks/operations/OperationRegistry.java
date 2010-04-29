@@ -43,6 +43,8 @@ public abstract class OperationRegistry {
         register("save-protograph", SaveProtographOperation.class);
         register("text-transform", TextTransformOperation.class);
         register("mass-edit", MassEditOperation.class);
+        
+        register("denormalize", DenormalizeOperation.class);
     }
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) {

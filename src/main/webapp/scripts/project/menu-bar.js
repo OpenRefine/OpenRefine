@@ -16,6 +16,18 @@ MenuBar.prototype._initializeUI = function() {
     var self = this;
     
     this._createTopLevelMenuItem("Project", [
+        /*
+        {
+            "label": "Data Model",
+            "submenu": [
+                {
+                    "label": "Denormalize Records",
+                    "click": function() { self._doDenormalizeRecords(); }
+                }
+            ]
+        },
+        {},
+        */
         {
             "label": "Export Filtered Rows",
             "submenu": [
@@ -146,6 +158,15 @@ MenuBar.prototype._deactivateMenu = function() {
         
     this._wireAllMenuItemsInactive();
     this._mode = "inactive";
+};
+
+MenuBar.prototype._doDenormalizeRecords = function() {
+    Gridworks.postProcess(
+        "denormalize", 
+        {},
+        null,
+        { modelsChanged: true }
+    );
 };
 
 MenuBar.prototype._doExportTripleloader = function() {

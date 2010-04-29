@@ -25,6 +25,7 @@ import com.metaweb.gridworks.commands.edit.AnnotateRowsCommand;
 import com.metaweb.gridworks.commands.edit.ApplyOperationsCommand;
 import com.metaweb.gridworks.commands.edit.CreateProjectCommand;
 import com.metaweb.gridworks.commands.edit.DeleteProjectCommand;
+import com.metaweb.gridworks.commands.edit.DenormalizeCommand;
 import com.metaweb.gridworks.commands.edit.EditOneCellCommand;
 import com.metaweb.gridworks.commands.edit.ExportProjectCommand;
 import com.metaweb.gridworks.commands.edit.ExtendDataCommand;
@@ -118,6 +119,8 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("rename-column", new RenameColumnCommand());
         _commands.put("split-column", new SplitColumnCommand());
         _commands.put("extend-data", new ExtendDataCommand());
+        
+        _commands.put("denormalize", new DenormalizeCommand());
         
         _commands.put("reconcile", new ReconcileCommand());
         _commands.put("recon-match-best-candidates", new ReconMatchBestCandidatesCommand());
