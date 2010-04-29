@@ -249,7 +249,7 @@ ListFacet.prototype._update = function(resetScroll) {
             );
             
             // edit link
-            if (renderEdit && customLabel === undefined) {
+            if (renderEdit) {
                 html.push('<a href="javascript:{}" class="facet-choice-link facet-choice-edit" style="visibility: hidden">edit</a>');
             }
             
@@ -377,11 +377,28 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
     MenuSystem.showMenu(menu, function(){});
     MenuSystem.positionMenuLeftRight(menu, choiceDiv);
     
-    var originalContent = choice.v.v;
+    var originalContent;
+    if (choice === this._blankChoice) {
+        originalContent = "(blank)";
+    } else if (choice === this._errorChoice) {
+        originalContent = "(error)";
+    } else {
+        originalContent = choice.v.v;
+    }
+    
     var commit = function() {
         var text = elmts.textarea[0].value;
         
         MenuSystem.dismissAll();
+        
+        var edit = { to : text };
+        if (choice === self._blankChoice) {
+            edit.fromBlank = true;
+        } else if (choice === self._errorChoice) {
+            edit.fromError = true;
+        } else {
+            edit.from = [ originalContent ]
+        }
         
         Gridworks.postProcess(
             "mass-edit",
@@ -389,10 +406,7 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
             {
                 columnName: self._config.columnName,
                 expression: "value",
-                edits: JSON.stringify([{
-                    from: [ originalContent ],
-                    to: text
-                }])
+                edits: JSON.stringify([ edit ])
             },
             {
                 // limit edits to rows constrained only by the other facets
