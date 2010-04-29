@@ -1,6 +1,9 @@
 function ListFacet(div, config, options, selection) {
     this._div = div;
     this._config = config;
+    if (!("invert" in this._config)) {
+        this._config.invert = false;
+    }
     
     this._options = options || {};
     if (!("sort" in this._options)) {
@@ -8,8 +11,8 @@ function ListFacet(div, config, options, selection) {
     }
     
     this._selection = selection || [];
-    this._blankChoice = null;
-    this._errorChoice = null;
+    this._blankChoice = (config.selectBlank) ? { s : true, c : 0 } : null;
+    this._errorChoice = (config.selectError) ? { s : true, c : 0 } : null;
     
     this._data = null;
     
@@ -52,7 +55,8 @@ ListFacet.prototype.getJSON = function() {
         omitError: "omitError" in this._config ? this._config.omitError : false,
         selection: [],
         selectBlank: this._blankChoice !== null && this._blankChoice.s,
-        selectError: this._errorChoice !== null && this._errorChoice.s
+        selectError: this._errorChoice !== null && this._errorChoice.s,
+        invert: this._config.invert
     };
     for (var i = 0; i < this._selection.length; i++) {
         var choice = {
@@ -113,6 +117,7 @@ ListFacet.prototype._initializeUI = function() {
                 '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
                 '<td>' +
                     '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
+                    '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">invert</a>' +
                     '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
                     '<span bind="titleSpan"></span>' +
                 '</td>' +
@@ -141,6 +146,7 @@ ListFacet.prototype._initializeUI = function() {
     this._elmts.expressionDiv.text(this._config.expression).hide().click(function() { self._editExpression(); });
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.resetButton.click(function() { self._reset(); });
+    this._elmts.invertButton.click(function() { self._invert(); });
 
     this._elmts.sortByCountLink.click(function() {
         if (self._options.sort != "count") {
@@ -179,6 +185,15 @@ ListFacet.prototype._initializeUI = function() {
 ListFacet.prototype._update = function(resetScroll) {
     var self = this;
     
+    var invert = this._config.invert;
+    if (invert) {
+        this._elmts.bodyInnerDiv.addClass("facet-mode-inverted");
+        this._elmts.invertButton.addClass("facet-mode-inverted");
+    } else {
+        this._elmts.bodyInnerDiv.removeClass("facet-mode-inverted");
+        this._elmts.invertButton.removeClass("facet-mode-inverted");
+    }
+    
     if (!this._data) {
         //this._elmts.statusDiv.hide();
         this._elmts.controlsDiv.hide();
@@ -215,8 +230,10 @@ ListFacet.prototype._update = function(resetScroll) {
     this._elmts.choiceCountContainer.text(choices.length + " choices");
     if (selectionCount > 0) {
         this._elmts.resetButton.show();
+        this._elmts.invertButton.show();
     } else {
         this._elmts.resetButton.hide();
+        this._elmts.invertButton.hide();
     }
     
     if (this._options.sort == "name") {
@@ -244,7 +261,7 @@ ListFacet.prototype._update = function(resetScroll) {
             html.push(
                 '<a href="javascript:{}" class="facet-choice-link facet-choice-toggle" ' +
                     'style="visibility: ' + (choice.s ? 'visible' : 'hidden') + '">' + 
-                    (choice.s ? 'exclude' : 'include') + 
+                    (invert != choice.s ? 'exclude' : 'include') + 
                 '</a>'
             );
             
@@ -491,6 +508,13 @@ ListFacet.prototype._reset = function() {
     this._selection = [];
     this._blankChoice = null;
     this._errorChoice = null;
+    this._config.invert = false;
+    
+    this._updateRest();
+};
+
+ListFacet.prototype._invert = function() {
+    this._config.invert = !this._config.invert;
     
     this._updateRest();
 };

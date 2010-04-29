@@ -27,6 +27,7 @@ public class ListFacet implements Facet {
     protected String     _name;
     protected String     _expression;
     protected String     _columnName;
+    protected boolean    _invert;
     
     // If true, then facet won't show the blank and error choices
     protected boolean _omitBlank;
@@ -60,6 +61,7 @@ public class ListFacet implements Facet {
         writer.key("name"); writer.value(_name);
         writer.key("expression"); writer.value(_expression);
         writer.key("columnName"); writer.value(_columnName);
+        writer.key("invert"); writer.value(_invert);
         
         if (_errorMessage != null) {
             writer.key("error"); writer.value(_errorMessage);
@@ -95,6 +97,7 @@ public class ListFacet implements Facet {
         _name = o.getString("name");
         _expression = o.getString("expression");
         _columnName = o.getString("columnName");
+        _invert = o.has("invert") && o.getBoolean("invert");
         
         if (_columnName.length() > 0) {
             Column column = project.columnModel.getColumnByName(_columnName);
@@ -150,7 +153,8 @@ public class ListFacet implements Facet {
                     _cellIndex, 
                     createMatches(), 
                     _selectBlank, 
-                    _selectError);
+                    _selectError,
+                    _invert);
     }
 
     public void computeChoices(Project project, FilteredRows filteredRows) {

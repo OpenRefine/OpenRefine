@@ -25,6 +25,7 @@ public class ExpressionEqualRowFilter implements RowFilter {
     final protected Object[]        _matches;
     final protected boolean         _selectBlank;
     final protected boolean         _selectError;
+    final protected boolean         _invert;
     
     public ExpressionEqualRowFilter(
         Evaluable evaluable,
@@ -32,7 +33,8 @@ public class ExpressionEqualRowFilter implements RowFilter {
         int cellIndex, 
         Object[] matches, 
         boolean selectBlank, 
-        boolean selectError
+        boolean selectError,
+        boolean invert
     ) {
         _evaluable = evaluable;
         _columnName = columnName;
@@ -40,9 +42,14 @@ public class ExpressionEqualRowFilter implements RowFilter {
         _matches = matches;
         _selectBlank = selectBlank;
         _selectError = selectError;
+        _invert = invert;
     }
 
     public boolean filterRow(Project project, int rowIndex, Row row) {
+        return _invert != internalFilterRow(project, rowIndex, row);
+    }
+    
+    public boolean internalFilterRow(Project project, int rowIndex, Row row) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
         
         Properties bindings = ExpressionUtils.createBindings(project);

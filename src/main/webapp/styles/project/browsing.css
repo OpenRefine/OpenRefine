@@ -98,7 +98,7 @@ a.facet-title-remove:hover {
     border-bottom: 1px solid #ccc;
 }
 .facet-controls .ui-button-text {
-	padding: 0.1em 0.4em 0.2em;
+    padding: 0.1em 0.4em 0.2em;
 }
 
 .facet-body {
@@ -130,6 +130,14 @@ a.facet-title-remove:hover {
 .facet-choice-selected .facet-choice-label {
     font-weight: bold;
     color: #ff6a00;
+}
+.facet-mode-inverted .facet-choice-selected .facet-choice-label {
+    text-decoration: line-through;
+    color: black;
+}
+.facet-choice-link.facet-mode-inverted {
+    text-decoration: line-through;
+    color: black;
 }
 
 a.facet-choice-label {
