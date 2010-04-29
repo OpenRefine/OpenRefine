@@ -395,7 +395,8 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
                 }])
             },
             {
-                includeEngine: false, // we're really changing all rows, not just the visible ones
+                // limit edits to rows constrained only by the other facets
+                engineConfig: ui.browsingEngine.getJSON(false, self),
                 cellsChanged: true
             },
             {

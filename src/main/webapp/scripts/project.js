@@ -205,7 +205,11 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
     
     body = body || {};
     if (!("includeEngine" in updateOptions) || updateOptions.includeEngine) {
-        body.engine = JSON.stringify(ui.browsingEngine.getJSON());
+        body.engine = JSON.stringify(
+            "engineConfig" in updateOptions ?
+                updateOptions.engineConfig :
+                ui.browsingEngine.getJSON()
+        );
     }
     
     var done = false;
