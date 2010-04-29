@@ -15,6 +15,7 @@ import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.MetaParser;
+import com.metaweb.gridworks.expr.WrappedCell;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
@@ -136,21 +137,33 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
+                Cell newCell = null;
 
                 ExpressionUtils.bind(bindings, row, rowIndex, _baseColumnName, cell);
                 
-                Serializable v = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
-                if (ExpressionUtils.isError(v)) {
-                    if (_onError == OnError.SetToBlank) {
-                        return false;
-                    } else if (_onError == OnError.KeepOriginal) {
-                        v = cell != null ? cell.value : null;
+                Object o = eval.evaluate(bindings);
+                if (o != null) {
+                    if (o instanceof Cell) {
+                        newCell = (Cell) o;
+                    } else if (o instanceof WrappedCell) {
+                        newCell = ((WrappedCell) o).cell;
+                    } else {
+                        Serializable v = ExpressionUtils.wrapStorable(o);
+                        if (ExpressionUtils.isError(v)) {
+                            if (_onError == OnError.SetToBlank) {
+                                return false;
+                            } else if (_onError == OnError.KeepOriginal) {
+                                v = cell != null ? cell.value : null;
+                            }
+                        }
+                        
+                        if (v != null) {
+                            newCell = new Cell(v, null);
+                        }
                     }
                 }
                 
-                if (v != null) {
-                    Cell newCell = new Cell(v, null);
-                
+                if (newCell != null) {
                     cellsAtRows.add(new CellAtRow(rowIndex, newCell));
                 }
                 

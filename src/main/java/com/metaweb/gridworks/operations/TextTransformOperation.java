@@ -12,6 +12,7 @@ import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.MetaParser;
+import com.metaweb.gridworks.expr.WrappedCell;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
@@ -120,39 +121,52 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
+                Cell newCell = null;
+                
                 Object oldValue = cell != null ? cell.value : null;
 
                 ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
                 
-                Serializable newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
-                if (ExpressionUtils.isError(newValue)) {
-                	if (_onError == OnError.KeepOriginal) {
-                		return false;
-                	} else if (_onError == OnError.SetToBlank) {
-                		newValue = null;
-                	}
-                }
-                
-                if (!ExpressionUtils.sameValue(oldValue, newValue)) {
-                    Cell newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
-                    
-                    if (_repeat) {
-                        for (int i = 0; i < _repeatCount; i++) {
-                            ExpressionUtils.bind(bindings, row, rowIndex, _columnName, newCell);
+                Object o = eval.evaluate(bindings);
+                if (o != null) {
+                    if (o instanceof Cell) {
+                        newCell = (Cell) o;
+                    } else if (o instanceof WrappedCell) {
+                        newCell = ((WrappedCell) o).cell;
+                    } else {
+                        Serializable newValue = ExpressionUtils.wrapStorable(o);
+                        if (ExpressionUtils.isError(newValue)) {
+                        	if (_onError == OnError.KeepOriginal) {
+                        		return false;
+                        	} else if (_onError == OnError.SetToBlank) {
+                        		newValue = null;
+                        	}
+                        }
+                        
+                        if (!ExpressionUtils.sameValue(oldValue, newValue)) {
+                            newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
                             
-                            newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
-                            if (ExpressionUtils.isError(newValue)) {
-                                break;
-                            } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
-                                break;
+                            if (_repeat) {
+                                for (int i = 0; i < _repeatCount; i++) {
+                                    ExpressionUtils.bind(bindings, row, rowIndex, _columnName, newCell);
+                                    
+                                    newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
+                                    if (ExpressionUtils.isError(newValue)) {
+                                        break;
+                                    } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
+                                        break;
+                                    }
+                                    
+                                    newCell = new Cell(newValue, newCell.recon);
+                                }
                             }
-                            
-                            newCell = new Cell(newValue, newCell.recon);
                         }
                     }
-                
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                    cellChanges.add(cellChange);
+                    
+                    if (newCell != null) {
+                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+                        cellChanges.add(cellChange);
+                    }
                 }
                 
                 return false;
