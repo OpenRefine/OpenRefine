@@ -134,32 +134,27 @@ img {
 }
 
 #header {
-    background: url(../images/freebase-tools-sprite-vertical.png) repeat-x scroll 0 0 #F2F2F2;
-    border-bottom: 1px solid #bbb;    
+    background: url(../images/header-background.png) repeat-x 0 0;
+    border-bottom: 1px solid #ffb800;
     height: 32px;
-    padding-left: 20px;
-    padding-right: 20px;
     padding-bottom: 1px;
     position: relative;
     overflow: hidden;
 }
 #logo {
-    padding: 7px 0;
-    padding-right: 20px;
     float: left;
-    border-right: 1px solid #ddd;
 }
 #path {
     position: absolute;
     top: 50%;
     margin-top: -0.5em;
     line-height: 1em;
-    left: 75px;
+    left: 70px;
     height: 31px;
 }
 #path .app-path-section {
     background: url(../images/path-delimiter.png) no-repeat center right;
-    padding: 18px 20px 20px 10px;
+    padding: 18px 20px 20px 20px;
 }
 #path a {
     font-weight: bold;

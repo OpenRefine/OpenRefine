@@ -71,7 +71,7 @@ function initializeUI(uiState) {
     var path = $("#path");
     
     $('<span class="app-path-section">' +
-        '<a href="#">' + theProject.metadata.name + '</a> project' +
+        'project: <a href="#">' + theProject.metadata.name + '</a>' +
         '</span>').appendTo(path);
     
     $('<a href="javascript:{}" class="permalink">permalink</a>')
