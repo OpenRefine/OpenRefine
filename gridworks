@@ -498,8 +498,7 @@ ui_test() {
     
     echo "Starting Windmill..."
     if [ -z "$INTERACTIVE" ]; then
-        $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ test=$GRIDWORKS_TEST_DIR/windmill/python exit > /dev/null
-        #$WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/windmill/js exit > /dev/null
+        $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/windmill/js exit > /dev/null
     else
         $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ > /dev/null
     fi
