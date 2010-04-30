@@ -143,6 +143,8 @@ public class Recon implements HasFields, Jsonizable {
     public Object getField(String name, Properties bindings) {
         if ("best".equals(name)) {
             return candidates != null && candidates.size() > 0 ? candidates.get(0) : null;
+        } else if ("candidates".equals(name)) {
+            return candidates;
         } else if ("judgment".equals(name) || "judgement".equals(name)) {
             return judgmentToString();
         } else if ("judgmentAction".equals(name) || "judgementAction".equals(name)) {

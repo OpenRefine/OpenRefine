@@ -66,7 +66,7 @@ function resizeAll() {
 }
 
 function initializeUI(uiState) {
-    document.title = theProject.metadata.name + " - Gridworks";
+    Gridworks.setTitle();
     
     var path = $("#path");
     
@@ -118,6 +118,14 @@ function initializeUI(uiState) {
     
     $(window).bind("resize", resizeAll);
 }
+
+Gridworks.setTitle = function(status) {
+    var title = theProject.metadata.name + " - Gridworks";
+    if (status) {
+        title = status + " - " + title;
+    }
+    document.title = title;
+};
 
 Gridworks.reinitializeProjectData = function(f) {
     Ajax.chainGetJSON(

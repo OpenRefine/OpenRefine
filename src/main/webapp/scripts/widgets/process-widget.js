@@ -101,6 +101,7 @@ ProcessWidget.prototype._render = function(newData) {
     this._div.empty();
     
     if (!newData.processes.length) {
+        Gridworks.setTitle();
         this._div.hide();
     } else {
         this._div.show();
@@ -129,6 +130,7 @@ ProcessWidget.prototype._render = function(newData) {
             if (process.status == "pending") {
                 div.text(process.description + " (pending)");
             } else {
+                Gridworks.setTitle(process.progress + "%");
                 div.text(process.description + " (" + process.progress + "%)");
             }
         };
