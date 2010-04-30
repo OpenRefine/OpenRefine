@@ -2,6 +2,7 @@ package com.metaweb.gridworks.commands.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +65,9 @@ public class PreviewExtendDataCommand extends Command {
                 }
             }
             
+            Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
             FreebaseDataExtensionJob job = new FreebaseDataExtensionJob(json);
-            Map<String, DataExtension> map = job.extend(guids);
+            Map<String, DataExtension> map = job.extend(guids, reconCandidateMap);
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");

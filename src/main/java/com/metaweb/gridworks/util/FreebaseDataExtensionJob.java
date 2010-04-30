@@ -56,7 +56,10 @@ public class FreebaseDataExtensionJob {
                 countColumns(obj.getJSONArray("properties"), columns, new ArrayList<String>(), new ArrayList<String>()) : 0;
     }
     
-    public Map<String, FreebaseDataExtensionJob.DataExtension> extend(Set<String> guids) throws Exception {
+    public Map<String, FreebaseDataExtensionJob.DataExtension> extend(
+		Set<String> guids,
+        Map<String, ReconCandidate> reconCandidateMap
+	) throws Exception {
         StringWriter writer = new StringWriter();
         formulateQuery(guids, extension, writer);
         
@@ -73,7 +76,7 @@ public class FreebaseDataExtensionJob {
             for (int i = 0; i < l; i++) {
                 JSONObject o2 = a.getJSONObject(i);
                 String guid = o2.getString("guid");
-                FreebaseDataExtensionJob.DataExtension ext = collectResult(o2);
+                FreebaseDataExtensionJob.DataExtension ext = collectResult(o2, reconCandidateMap);
                 
                 if (ext != null) {
                     map.put(guid, ext);
@@ -86,10 +89,13 @@ public class FreebaseDataExtensionJob {
         }
     }
     
-    protected FreebaseDataExtensionJob.DataExtension collectResult(JSONObject obj) throws JSONException {
+    protected FreebaseDataExtensionJob.DataExtension collectResult(
+		JSONObject obj,
+        Map<String, ReconCandidate> reconCandidateMap
+	) throws JSONException {
         List<Object[]> rows = new ArrayList<Object[]>();
         
-        collectResult(rows, extension.getJSONArray("properties"), obj, 0, 0);
+        collectResult(rows, extension.getJSONArray("properties"), obj, 0, 0, reconCandidateMap);
         
         Object[][] data = new Object[rows.size()][columnCount];
         rows.toArray(data);
@@ -101,7 +107,8 @@ public class FreebaseDataExtensionJob {
         List<Object[]>  rows, 
         int row,
         int col,
-        Object value
+        Object value,
+        Map<String, ReconCandidate> reconCandidateMap
     ) {
         while (row >= rows.size()) {
             rows.add(new Object[columnCount]);
@@ -113,17 +120,26 @@ public class FreebaseDataExtensionJob {
         List<Object[]>  rows, 
         int row,
         int col,
-        JSONObject obj
+        JSONObject obj,
+        Map<String, ReconCandidate> reconCandidateMap
     ) throws JSONException {
-        storeCell(rows, row, col,
-            new ReconCandidate(
-                obj.getString("id"),
-                obj.getString("guid"),
-                obj.getString("name"),
-                JSONUtilities.getStringArray(obj, "type"),
-                100
-            )
-        );
+    	String guid = obj.getString("guid");
+    	ReconCandidate rc;
+    	if (reconCandidateMap.containsKey(guid)) {
+    		rc = reconCandidateMap.get(guid);
+    	} else {
+    		rc = new ReconCandidate(
+                    obj.getString("id"),
+                    obj.getString("guid"),
+                    obj.getString("name"),
+                    JSONUtilities.getStringArray(obj, "type"),
+                    100
+                );
+    		
+    		reconCandidateMap.put(guid, rc);
+    	}
+    	
+        storeCell(rows, row, col, rc, reconCandidateMap);
     }
     
     protected int[] collectResult(
@@ -131,7 +147,8 @@ public class FreebaseDataExtensionJob {
         JSONObject      extNode, 
         JSONObject      resultNode, 
         int             startRowIndex,
-        int             startColumnIndex
+        int             startColumnIndex,
+        Map<String, ReconCandidate> reconCandidateMap
     ) throws JSONException {
         String propertyID = extNode.getString("id");
         String expectedTypeID = extNode.getJSONObject("expected").getString("id");
@@ -145,7 +162,7 @@ public class FreebaseDataExtensionJob {
                 for (int r = 0; r < l; r++) {
                     Object o = a.isNull(r) ? null : a.get(r);
                     if (o instanceof Serializable) {
-                        storeCell(rows, startRowIndex++, startColumnIndex, o);
+                        storeCell(rows, startRowIndex++, startColumnIndex, o, reconCandidateMap);
                     }
                 }
             }
@@ -169,9 +186,9 @@ public class FreebaseDataExtensionJob {
                     
                     if (isOwnColumn) {
                         if (o != null) {
-                            storeCell(rows, startRowIndex2++, startColumnIndex2++, o);
+                            storeCell(rows, startRowIndex2++, startColumnIndex2++, o, reconCandidateMap);
                         } else {
-                            storeCell(rows, startRowIndex2++, startColumnIndex2++, v);
+                            storeCell(rows, startRowIndex2++, startColumnIndex2++, v, reconCandidateMap);
                         }
                     }
                     
@@ -181,7 +198,8 @@ public class FreebaseDataExtensionJob {
                             extNode.getJSONArray("properties"),
                             o,
                             startRowIndex,
-                            startColumnIndex2
+                            startColumnIndex2,
+                            reconCandidateMap
                         );
                         
                         startRowIndex2 = rowcol[0];
@@ -207,7 +225,8 @@ public class FreebaseDataExtensionJob {
         JSONArray       subProperties, 
         JSONObject      resultNode, 
         int             startRowIndex,
-        int             startColumnIndex
+        int             startColumnIndex,
+        Map<String, ReconCandidate> reconCandidateMap
     ) throws JSONException {
         int maxStartRowIndex = startRowIndex;
         
@@ -218,7 +237,8 @@ public class FreebaseDataExtensionJob {
                 subProperties.getJSONObject(c),
                 resultNode,
                 startRowIndex,
-                startColumnIndex
+                startColumnIndex,
+                reconCandidateMap
             );
             
             maxStartRowIndex = Math.max(maxStartRowIndex, rowcol[0]);

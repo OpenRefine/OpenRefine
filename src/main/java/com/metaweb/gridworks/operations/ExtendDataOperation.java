@@ -21,6 +21,7 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellAtRow;
 import com.metaweb.gridworks.model.changes.DataExtensionChange;
@@ -159,7 +160,13 @@ public class ExtendDataOperation extends EngineDependentOperation {
             }.init(rowIndices));
         }
         
-        protected int extendRows(List<Integer> rowIndices, List<DataExtension> dataExtensions, int from, int limit) {
+        protected int extendRows(
+    		List<Integer> rowIndices, 
+    		List<DataExtension> dataExtensions, 
+    		int from, 
+    		int limit,
+            Map<String, ReconCandidate> reconCandidateMap
+   		) {
             Set<String> guids = new HashSet<String>();
             
             int end;
@@ -173,7 +180,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         	
         	Map<String, DataExtension> map = null;
             try {
-				map = _job.extend(guids);
+				map = _job.extend(guids, reconCandidateMap);
 			} catch (Exception e) {
 				map = new HashMap<String, DataExtension>();
 			}
@@ -206,8 +213,10 @@ public class ExtendDataOperation extends EngineDependentOperation {
             }
             
             int start = 0;
+            Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
+            
             while (start < rowIndices.size()) {
-            	int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size());
+            	int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size(), reconCandidateMap);
             	start = end;
             	
                 _progress = end * 100 / rowIndices.size();

@@ -5,7 +5,9 @@ import java.io.LineNumberReader;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -106,9 +108,12 @@ public class DataExtensionChange implements Change {
                 int keyCellIndex = project.columnModel.columns.get(project.columnModel.getKeyColumnIndex()).getCellIndex();
                 int index = 0;
                 
-                int rowIndex = _rowIndices.get(index);
-                DataExtension dataExtension = _dataExtensions.get(index);
+                int rowIndex = index < _rowIndices.size() ? _rowIndices.get(index) : _oldRows.size();
+                DataExtension dataExtension = index < _rowIndices.size() ? _dataExtensions.get(index) : null;
+                
                 index++;
+                
+                Map<String, Recon> reconMap = new HashMap<String, Recon>();
                 
                 for (int r = 0; r < _oldRows.size(); r++) {
                 	Row oldRow = _oldRows.get(r);
@@ -121,7 +126,7 @@ public class DataExtensionChange implements Change {
                 		_newRows.add(oldRow);
                 	} else {
                 		Row firstNewRow = oldRow.dup();
-                		extendRow(firstNewRow, dataExtension, 0);
+                		extendRow(firstNewRow, dataExtension, 0, reconMap);
                 		_newRows.add(firstNewRow);
                 		
                         int r2 = r + 1;
@@ -132,7 +137,7 @@ public class DataExtensionChange implements Change {
                                     oldRow2.isCellBlank(keyCellIndex)) {
                                     
                                     Row newRow = oldRow2.dup();
-                                    extendRow(newRow, dataExtension, subR);
+                                    extendRow(newRow, dataExtension, subR, reconMap);
                                     
                                     _newRows.add(newRow);
                                     r2++;
@@ -142,7 +147,7 @@ public class DataExtensionChange implements Change {
                             }
                             
                             Row newRow = new Row(cellIndex + _columnNames.size());
-                            extendRow(newRow, dataExtension, subR);
+                            extendRow(newRow, dataExtension, subR, reconMap);
                             
                             _newRows.add(newRow);
                         }
@@ -175,7 +180,12 @@ public class DataExtensionChange implements Change {
         }
     }
     
-    protected void extendRow(Row row, DataExtension dataExtension, int extensionRowIndex) {
+    protected void extendRow(
+		Row row, 
+		DataExtension dataExtension, 
+		int extensionRowIndex,
+		Map<String, Recon> reconMap
+	) {
     	Object[] values = dataExtension.data[extensionRowIndex];
     	for (int c = 0; c < values.length; c++) {
     		Object value = values[c];
@@ -183,15 +193,21 @@ public class DataExtensionChange implements Change {
     		
     		if (value instanceof ReconCandidate) {
     			ReconCandidate rc = (ReconCandidate) value;
-    			Recon recon = new Recon(_historyEntryID);
-    			recon.addCandidate(rc);
-    			recon.service = "mql";
-    			recon.match = rc;
-    			recon.matchRank = 0;
-    			recon.judgment = Judgment.Matched;
-    			recon.judgmentAction = "auto";
-    			recon.judgmentBatchSize = 1;
-    			
+    			Recon recon;
+    			if (reconMap.containsKey(rc.topicGUID)) {
+    				recon = reconMap.get(rc.topicGUID);
+    			} else {
+	    			recon = new Recon(_historyEntryID);
+	    			recon.addCandidate(rc);
+	    			recon.service = "mql";
+	    			recon.match = rc;
+	    			recon.matchRank = 0;
+	    			recon.judgment = Judgment.Matched;
+	    			recon.judgmentAction = "auto";
+	    			recon.judgmentBatchSize = 1;
+	    			
+	    			reconMap.put(rc.topicGUID, recon);
+    			}
     			cell = new Cell(rc.topicName, recon);
     		} else {
     			cell = new Cell((Serializable) value, null);

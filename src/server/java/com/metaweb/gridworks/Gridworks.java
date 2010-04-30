@@ -156,6 +156,7 @@ class GridworksServer extends Server {
 
         logger.info("Initializing context: '" + contextPath + "' from '" + contextRoot.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(contextRoot.getAbsolutePath(), contextPath);
+        context.setMaxFormContentSize(1048576);
         //context.setCopyWebDir(false);
         //context.setDefaultsDescriptor(null);
 
