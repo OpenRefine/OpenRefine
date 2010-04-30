@@ -37,8 +37,7 @@ public class FreebaseUtils {
     static final public String FREEBASE_HOST = "www.freebase.com";
     static final public String FREEBASE_SANDBOX_HOST = "www.sandbox-freebase.com";
     
-    //static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/prod/";
-    static final private String FREEQ_URL = "http://zucchini.dmz.sjc1.metaweb.com:5000/unittest";
+    static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/gridworks";
     
     static final private String GRIDWORKS_ID = "/en/gridworks";
     
