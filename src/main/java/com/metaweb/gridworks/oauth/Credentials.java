@@ -35,10 +35,10 @@ public class Credentials {
         return (cookie == null) ? null : makeCredentials(cookie.getValue(), provider);
     }
 
-    public static void setCredentials(HttpServletResponse response, Credentials credentials, Type type, int max_age) {
+    public static void setCredentials(HttpServletRequest request, HttpServletResponse response, Credentials credentials, Type type, int max_age) {
         String name = type.getCookieName(credentials.getProvider());
         String value = credentials.toString();
-        CookiesUtilities.setCookie(response, name, value, max_age);
+        CookiesUtilities.setCookie(request, response, name, value, max_age);
     }
     
     public static void deleteCredentials(HttpServletRequest request, HttpServletResponse response, Provider provider, Type type) {

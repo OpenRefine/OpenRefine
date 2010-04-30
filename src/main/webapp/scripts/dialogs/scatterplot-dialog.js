@@ -175,7 +175,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                     "name" : $(this).attr("title"),
                     "cx" : $(this).attr("cx"), 
                     "cy" : $(this).attr("cy"), 
-                    "l" : 120,
+                    "l" : 150,
                     "ex" : "value",
                     "ey" : "value",
                     "dot" : self._dot_size,

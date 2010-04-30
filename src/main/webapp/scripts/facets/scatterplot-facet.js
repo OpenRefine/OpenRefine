@@ -39,11 +39,16 @@ ScatterplotFacet.prototype.getUIState = function() {
 
 ScatterplotFacet.prototype.getJSON = function() {
     this._config.type = "scatterplot";
+    var dot = this._config.dot;
+    if (typeof dot == 'number') this._config.dot.toFixed(2);
     return this._config;
 };
 
 ScatterplotFacet.prototype.hasSelection = function() {
-    return ("from_x" in this._config);
+    return  ("from_x" in this._config && this._config.from_x != 0) ||
+        ("from_y" in this._config && this._config.from_y != 0) ||
+        ("to_x" in this._config && this._config.to_x != this._config.l) ||
+        ("to_y" in this._config && this._config.to_y != this._config.l);
 };
 
 ScatterplotFacet.prototype._initializeUI = function() {
@@ -208,7 +213,7 @@ ScatterplotFacet.prototype._formulateImageUrl = function(engineConfig, conf) {
 };
 
 ScatterplotFacet.prototype.updateState = function(data) {
-    if ("min_x" in data && "max_x" in data && "max_x" in data && "min_x" in data) {
+    if ("min_x" in data && "max_x" in data && "max_y" in data && "min_y" in data) {
         this._error = false;
         
         this._config.min_x = data.min_x;
@@ -216,18 +221,18 @@ ScatterplotFacet.prototype.updateState = function(data) {
         this._config.min_y = data.min_y;
         this._config.max_y = data.max_y;
         
-        this._config.from_x = Math.max(data.from_x, this._config.min_x);
+        if ("from_x" in data) {
+            this._config.from_x = Math.max(data.from_x, 0);
+        }
         if ("to_x" in data) {
-            this._config.to_x = Math.min(data.to_x, this._config.max_x);
-        } else {
-            this._config.to_x = data.max_x;
+            this._config.to_x = Math.min(data.to_x, this._config.l);
         }
 
-        this._config.from_y = Math.max(data.from_y, this._config.min_x);
+        if ("from_y" in data) {
+            this._config.from_y = Math.max(data.from_y, 0);
+        }
         if ("to_y" in data) {
-            this._config.to_y = Math.min(data.to_y, this._config.max_x);
-        } else {
-            this._config.to_y = data.max_x;
+            this._config.to_y = Math.min(data.to_y, this._config.l);
         }
     } else {
         this._error = true;

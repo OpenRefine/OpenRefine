@@ -32,7 +32,7 @@ public class AuthorizeCommand  extends Command {
                                     
             // prepare the continuation URL that the OAuth provider will redirect the user to
             // (we need to make sure this URL points back to this code or the dance will never complete)
-            String callbackURL = Gridworks.getURL() + "/command/authorize/" + provider.getHost();
+            String callbackURL = getBaseURL(request,provider);
             
             if (access_credentials == null) {
                 // access credentials are not available so we need to check 
@@ -54,7 +54,7 @@ public class AuthorizeCommand  extends Command {
                     request_credentials = new Credentials(consumer.getToken(), consumer.getTokenSecret(), provider);
 
                     // and set them to that we can retrieve them later in the second part of the dance
-                    Credentials.setCredentials(response, request_credentials, Credentials.Type.REQUEST, 3600);
+                    Credentials.setCredentials(request, response, request_credentials, Credentials.Type.REQUEST, 3600);
                     
                     // now redirect the user to the Authorize URL where she can authenticate against the
                     // service provider and authorize us. 
@@ -88,7 +88,7 @@ public class AuthorizeCommand  extends Command {
 
                         response.sendRedirect(callbackURL);
                     } else {
-                        Credentials.setCredentials(response, access_credentials, Credentials.Type.ACCESS, 30 * 24 * 3600);
+                        Credentials.setCredentials(request, response, access_credentials, Credentials.Type.ACCESS, 30 * 24 * 3600);
                     }
 
                     finish(response);
@@ -120,5 +120,11 @@ public class AuthorizeCommand  extends Command {
             "</html>"
         );
         writer.flush();
+    }
+    
+    private String getBaseURL(HttpServletRequest request, Provider provider) {
+        String host = request.getHeader("host");
+        if (host == null) host = Gridworks.getFullHost();
+        return "http://" + host + "/command/authorize/" + provider.getHost();
     }
 }

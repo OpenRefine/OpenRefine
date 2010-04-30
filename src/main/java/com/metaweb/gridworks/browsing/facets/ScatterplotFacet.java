@@ -251,10 +251,7 @@ public class ScatterplotFacet implements Facet {
                 protected boolean checkValues(double x, double y) {
                     Point2D.Double p = new Point2D.Double(x,y);
                     p = translateCoordinates(p, dim_x, dim_y, rotation, l, min_x, max_x, min_y, max_y);
-                    
-                    boolean value = p.x >= from_x && p.x < to_x && p.y >= from_y && p.y < to_y;
-                    
-                    return value;
+                    return p.x >= from_x && p.x <= to_x && p.y >= from_y && p.y <= to_y;
                 };
             };
         } else {

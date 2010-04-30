@@ -197,7 +197,7 @@ FreebaseLoadingDialog.prototype._load = function() {
             }, 
             function(data) {
                 var body = $(".dialog-body");
-                if ("status" in data && "code" in data.status && data.status.code == 200) {
+                if ("status" in data && typeof data.status == "object" && "code" in data.status && data.status.code == 200) {
                     body.html(
                         '<div class="freebase-loading-tripleloader-message">' +
                             '<h2>' + data.result.added + ' triples successfully scheduled for loading</h2>' + 

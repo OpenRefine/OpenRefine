@@ -61,8 +61,8 @@ public class Gridworks {
         return Configurations.getInteger("gridworks.max_upload_size",MAX_UPLOAD_SIZE);
     }
     
-    public static String getURL() {
-        return "http://" + Configurations.get("gridworks.host",DEFAULT_HOST) + ":" + Configurations.getInteger("gridworks.port",DEFAULT_PORT);
+    public static String getFullHost() {
+        return host + ":" + port;
     }
     
     public static void main(String[] args) throws Exception  {

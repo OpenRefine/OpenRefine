@@ -23,9 +23,9 @@ public class CookiesUtilities {
         return cookie;
     }
 
-    public static void setCookie(HttpServletResponse response, String name, String value, int max_age) {
+    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, int max_age) {
         Cookie c = new Cookie(name, value);
-        c.setDomain(DOMAIN);
+        c.setDomain(getDomain(request));
         c.setPath(PATH);
         c.setMaxAge(max_age);
         response.addCookie(c);            
@@ -33,10 +33,16 @@ public class CookiesUtilities {
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie c = new Cookie(name, "");
-        c.setDomain(DOMAIN);
+        c.setDomain(getDomain(request));
         c.setPath(PATH);
         c.setMaxAge(0);
         response.addCookie(c);            
     }
     
+    public static String getDomain(HttpServletRequest request) {
+        String host = request.getHeader("Host");
+        if (host == null) return DOMAIN;
+        int index = host.indexOf(':');
+        return (index > -1) ? host.substring(0,index) : host ;
+    }
 }
