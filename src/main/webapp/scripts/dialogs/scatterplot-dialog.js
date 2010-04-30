@@ -185,24 +185,35 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                 ui.browsingEngine.addFacet("scatterplot", options);
                 //self._dismiss();
             });
-        
+
             var load_images = function(data) {
-                if (data.index < data.images.length && self._active) {
-                    data.index++;
-                    var elmt = $(data.images[data.index]);
-                    var src2 = elmt.attr("src2");
-                    if (src2) {
-                        elmt.attr("src", src2);
-                        elmt.removeAttr("src2");
-                        elmt.load(function() {
-                            load_images(data);
-                        });
+                if (self._active) {
+                    data.batch = 0;
+                    var end = Math.min(data.index + data.batch_size,data.images.length);
+                    for (; data.index < end; data.index++) {
+                        load_image(data);
                     }
+                }
+            };
+            
+            var load_image = function(data) {
+                var img = $(data.images[data.index]);                
+                var src2 = img.attr("src2");
+                if (src2) {
+                    img.attr("src", src2);
+                    img.removeAttr("src2");
+                    img.load(function() {
+                        data.batch++;
+                        if (data.batch == data.batch_size) {
+                            load_images(data);
+                        }
+                    });
                 }
             };
             
             load_images({
                 index : 0,
+                batch_size: 4,
                 images : container.find(".scatterplot img")
             })
         });
