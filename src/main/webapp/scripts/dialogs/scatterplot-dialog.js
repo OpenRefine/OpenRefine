@@ -118,7 +118,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
             
             var table = '<table class="scatterplot-matrix-table"><tbody>';
             
-            var createScatterplot = function(cx, cy) {
+            var createScatterplot = function(cx, cy, current) {
                 var title = cx + ' (x) vs. ' + cy + ' (y)';
                 var link = '<a href="javascript:{}" title="' + title + '" cx="' + cx + '" cy="' + cy + '">';
                 var plotter_params = { 
@@ -135,8 +135,17 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                     engine: JSON.stringify(ui.browsingEngine.getJSON()), 
                     plotter: JSON.stringify(plotter_params) 
                 };
+                var h = '<img';
+                
+                var attrs = [
+                    'width="' + self._plot_size + '"',
+                    'height="' + self._plot_size + '"'
+                ];
+                
                 var url = "/command/get-scatterplot?" + $.param(params);
-                return link + '<img src="' + url + '" width="' + self._plot_size + '" height="' + self._plot_size + '" /></a>';
+                attrs.push((current ? 'src="' : 'src2="') + url + '"');
+                
+                return link + '<img ' + attrs.join(' ') + ' /></a>';
             };
     
             for (var i = 0; i < columns.length; i++) {
@@ -149,8 +158,9 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                     var cy = columns[j].name;
                     
                     var div_class = "scatterplot";
-                    if (cx == self._column || cy == self._column) div_class += " current_column";
-                    table += '<td><div class="' + div_class + '">' + createScatterplot(cx,cy) + '</div></td>';
+                    var current = cx == self._column || cy == self._column;
+                    if (current) div_class += " current_column";
+                    table += '<td><div class="' + div_class + '">' + createScatterplot(cx,cy,current) + '</div></td>';
                 }
                 table += '</tr>';
             }
@@ -158,7 +168,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
             table += "</tbody></table>";
             
             var width = container.width();
-            container.empty().css("width", width + "px").append($(table));
+            container.empty().css("width", width + "px").html(table);
             
             container.find("a").click(function() {
                 var options = {
@@ -177,11 +187,18 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                 //self._dismiss();
             });
         
-            container.find(".scatterplot").hover(
-                function() {                
-                    $(this).find('img').addClass("hover");
-                } , function() {
-                    $(this).find('img').removeClass("hover");
+            container.find(".scatterplot img").hover(
+                function() {
+                    var elmt = $(this);
+                    elmt.addClass("hover");
+                    
+                    var src2= elmt.attr("src2");
+                    if (src2) {
+                        elmt.attr("src", src2);
+                        elmt.attr("src2", "");
+                    }
+                }, function() {
+                    $(this).removeClass("hover");
                 }
             );
         });
