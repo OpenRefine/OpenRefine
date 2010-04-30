@@ -201,7 +201,7 @@ FreebaseLoadingDialog.prototype._load = function() {
                     body.html(
                         '<div class="freebase-loading-tripleloader-message">' +
                             '<h2>' + data.result.added + ' triples successfully scheduled for loading</h2>' + 
-                            '<p>Follow the loading progress <a href="' + get_peacock_url(data.result.status_url) + '">here</a></p>' +
+                            '<h4>Follow the loading progress <a href="' + get_peacock_url(data.result.status_url) + '" target="_new">here</a></h4>' +
                         '</div>'
                     );
                     self._end();
