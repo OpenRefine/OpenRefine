@@ -23,11 +23,21 @@ import com.metaweb.gridworks.protograph.ValueNode;
 public class Transposer {
     static public void transpose(
         Project                 project,
-        Protograph                 protograph,
-        Node                     rootNode,
-        TransposedNodeFactory     nodeFactory
+        Protograph              protograph,
+        Node                    rootNode,
+        TransposedNodeFactory   nodeFactory
     ) {
-        Context rootContext = new Context(rootNode, null, null, 20);
+        transpose(project, protograph, rootNode, nodeFactory, 20);
+    }
+    
+    static public void transpose(
+        Project                 project,
+        Protograph              protograph,
+        Node                    rootNode,
+        TransposedNodeFactory   nodeFactory,
+        int                     limit
+    ) {
+        Context rootContext = new Context(rootNode, null, null, limit);
         
         for (Row row : project.rows) {
             descend(project, protograph, nodeFactory, row, rootNode, rootContext);

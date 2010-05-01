@@ -27,7 +27,7 @@ public class UploadDataCommand extends Command {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
             TripleloaderExporter exporter = new TripleloaderExporter();
-            StringWriter triples = new StringWriter(1024 * 10);
+            StringWriter triples = new StringWriter(10 * 1024 * 1024);
             exporter.export(project, new Properties(), engine, triples);
 
             String source_name = request.getParameter("source_name");

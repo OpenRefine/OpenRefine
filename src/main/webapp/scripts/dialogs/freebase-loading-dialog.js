@@ -116,22 +116,11 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     };
     
     var show_triples = function(cont) {
-        $.post("/command/export-rows", 
-            { 
-                project: theProject.id, 
-                format : "tripleloader" 
-            },
+        $.post(
+            "/command/preview-protograph?" + $.param({ project: theProject.id }),
+            { protograph: JSON.stringify(theProject.protograph) },
             function(data) {
-                if (data == null || data == "") {
-                    body.html(
-                        '<div class="freebase-loading-tripleloader-message">'+
-                            '<h2>This dataset has no triples</h2>' +
-                            '<p>Have you aligned it with the Freebase schemas yet?</p>' +
-                        '</div>'
-                    );
-                    self._elmts = DOM.bind(frame);
-                    self._end();
-                } else {
+                if ("tripleloader" in data) {
                     body.html(
                         '<div class="freebase-loading-tripleloader-info"><table><tr>' +
                           '<td><div>Name this data load &not; <sup style="color: red">required</sup></div>' +
@@ -139,7 +128,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                           '<td><div>Source ID &not; <sup style="color: #888">optional</sup></div>' +
                           '<input type="text" size="60" id="freebase-loading-source-id" bind="source_id"></td>' +
                         '</tr></table></div>' +
-                        '<div class="freebase-loading-tripleloader-data">' + data + '</div>'
+                        '<div class="freebase-loading-tripleloader-data">' + data.tripleloader + '</div>'
                     );
                     self._elmts = DOM.bind(frame);
                     
@@ -161,10 +150,19 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                     });
 
                     if (typeof cont == "function") cont();
+                } else {
+                    body.html(
+                        '<div class="freebase-loading-tripleloader-message">'+
+                            '<h2>This dataset has no triples</h2>' +
+                            '<p>Have you aligned it with the Freebase schemas yet?</p>' +
+                        '</div>'
+                    );
+                    self._elmts = DOM.bind(frame);
+                    self._end();
                 }
-
                 self._level = DialogSystem.showDialog(frame);
-            }
+            },
+            "json"
         );
     };
 
@@ -188,6 +186,8 @@ FreebaseLoadingDialog.prototype._load = function() {
     }
     
     var doLoad = function() {
+        var dismissBusy = DialogSystem.showBusy();
+        
         $.post("/command/upload-data", 
             {
                 project: theProject.id, 
@@ -196,6 +196,8 @@ FreebaseLoadingDialog.prototype._load = function() {
                 "source_id" : self._elmts.source_id.val()
             }, 
             function(data) {
+                dismissBusy();
+                
                 var body = $(".dialog-body");
                 if ("status" in data && typeof data.status == "object" && "code" in data.status && data.status.code == 200) {
                     body.html(

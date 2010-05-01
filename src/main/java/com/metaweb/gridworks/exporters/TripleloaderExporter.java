@@ -33,7 +33,7 @@ public class TripleloaderExporter implements Exporter {
             
             TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory(writer);
             
-            Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory);
+            Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory, -1);
             nodeFactory.flush();
         }
     }
