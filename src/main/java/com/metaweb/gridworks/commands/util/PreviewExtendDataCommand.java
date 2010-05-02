@@ -61,6 +61,10 @@ public class PreviewExtendDataCommand extends Command {
                         topicNames.add(cell.recon.match.topicName);
                         topicGuids.add(cell.recon.match.topicGUID);
                         guids.add(cell.recon.match.topicGUID);
+                    } else {
+                        topicNames.add(null);
+                        topicGuids.add(null);
+                        guids.add(null);
                     }
                 }
             }
@@ -101,7 +105,7 @@ public class PreviewExtendDataCommand extends Command {
                     String guid = topicGuids.get(r);
                     String topicName = topicNames.get(r);
                     
-                    if (map.containsKey(guid)) {
+                    if (guid != null && map.containsKey(guid)) {
                         DataExtension ext = map.get(guid);
                         boolean first = true;
                         
@@ -134,7 +138,14 @@ public class PreviewExtendDataCommand extends Command {
                     }
                     
                     writer.array();
-                    writer.value(topicName);
+                    if (guid != null) {
+                        writer.object();
+                        writer.key("id"); writer.value("/guid/" + guid.substring(1));
+                        writer.key("name"); writer.value(topicName);
+                        writer.endObject();
+                    } else {
+                        writer.value("<not reconciled>");
+                    }
                     writer.endArray();
                 }
                 writer.endArray();

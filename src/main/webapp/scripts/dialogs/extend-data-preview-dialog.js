@@ -53,8 +53,9 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
     }).appendTo(footer);
     
     var dismissBusy = DialogSystem.showBusy();
+    var type = "reconConfig" in column && "type" in column.reconConfig ? column.reconConfig.type.id : "/common/topic";
     
-    ExtendDataPreviewDialog.getAllProperties(column.reconConfig.type.id, function(properties) {
+    ExtendDataPreviewDialog.getAllProperties(type, function(properties) {
         dismissBusy();
         self._show(properties);
     });
@@ -131,12 +132,14 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
     }
     
     var suggestConfig = {
-        type: '/type/property',
-        schema: this._column.reconConfig.type.id
+        type: '/type/property'
     };
+    if ("reconConfig" in this._column && "type" in this._column.reconConfig) {
+        suggestConfig.schema = this._column.reconConfig.type.id
+    }
     
     this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-        var expected = data["/type/property/expected_type"];
+        var expected = data["expected_type"];
         self._addProperty({
             id : data.id,
             name: data.name,

@@ -866,30 +866,26 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
 };
 
 DataTableColumnHeaderUI.prototype._doAddColumnFromFreebase = function() {
-    if ("reconConfig" in this._column && "type" in this._column.reconConfig) {
-        var o = DataTableView.sampleVisibleRows(this._column);
-        var self = this;
-        new ExtendDataPreviewDialog(
-            this._column, 
-            this._columnIndex, 
-            o.rowIndices, 
-            function(extension) {
-                Gridworks.postProcess(
-                    "extend-data", 
-                    {
-                        baseColumnName: self._column.name,
-                        columnInsertIndex: self._columnIndex + 1
-                    },
-                    {
-                        extension: JSON.stringify(extension)
-                    },
-                    { rowsChanged: true, modelsChanged: true }
-                );
-            }
-        );
-    } else {
-        alert("This column has not been reconciled yet.");
-    }
+    var o = DataTableView.sampleVisibleRows(this._column);
+    var self = this;
+    new ExtendDataPreviewDialog(
+        this._column, 
+        this._columnIndex, 
+        o.rowIndices, 
+        function(extension) {
+            Gridworks.postProcess(
+                "extend-data", 
+                {
+                    baseColumnName: self._column.name,
+                    columnInsertIndex: self._columnIndex + 1
+                },
+                {
+                    extension: JSON.stringify(extension)
+                },
+                { rowsChanged: true, modelsChanged: true }
+            );
+        }
+    );
 };
 
 DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {
