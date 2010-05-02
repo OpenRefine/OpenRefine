@@ -5,6 +5,9 @@ import java.util.Properties;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 
+/**
+ * An abstract syntax tree node encapsulating an operator call, such as "+".
+ */
 public class OperatorCallExpr implements Evaluable {
     final protected Evaluable[] _args;
     final protected String        _op;

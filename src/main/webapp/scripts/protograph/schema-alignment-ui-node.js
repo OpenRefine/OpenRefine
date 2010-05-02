@@ -152,7 +152,7 @@ SchemaAlignmentDialog.UINode.prototype._renderDetails = function() {
 
     this._tableLinks = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._expandedDetailDiv)[0];
     
-    if ("links" in this._node && this._node.links != null) {
+    if ("links" in this._node && this._node.links !== null) {
         for (var i = 0; i < this._node.links.length; i++) {
             this._linkUIs.push(new SchemaAlignmentDialog.UILink(
                 this._dialog, 
@@ -248,7 +248,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     
     frame.width("800px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Protograph Node").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Schema Skeleton Node").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -265,10 +265,10 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         '<option value="/type/datetime">date/time</option>';
     
     var html = $(
-        '<table class="schema-align-node-dialog-layout">' +
+        '<table class="grid-layout layout-normal layout-full">' +
             '<tr>' +
                 '<td>' +
-                    '<table class="schema-align-node-dialog-layout2">' +
+                    '<table class="grid-layout layout-tight">' +
                         '<tr>' +
                             '<td>' +
                                 '<div class="schema-align-node-dialog-node-type">' +
@@ -278,11 +278,11 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                         '</tr>' +
                         '<tr>' +
                             '<td>' +
-                                '<table class="schema-align-node-dialog-layout2">' +
+                                '<table class="grid-layout layout-tight">' +
                                     '<tr>' +
                                         '<td><div class="schema-alignment-node-dialog-column-list" bind="divColumns"></div></td>' +
                                         '<td>' +
-                                            '<table class="schema-align-node-dialog-layout2" cols="4">' +
+                                            '<table class="grid-layout layout-tight" cols="4">' +
                                                 '<tr>' +
                                                     '<td colspan="4">The cell\'s content is used ...</td>' +
                                                 '</tr>' +
@@ -336,7 +336,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                 '</td>' +
                 
                 '<td>' +
-                    '<table class="schema-align-node-dialog-layout2">' +
+                    '<table class="grid-layout layout-tight">' +
                         '<tr>' +
                             '<td colspan="3">' +
                                 '<div class="schema-align-node-dialog-node-type">' +
@@ -420,7 +420,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                 }
             });
             
-        if ((!("columnName" in self._node) || self._node.columnName == null) && columnIndex == 0) {
+        if ((!("columnName" in self._node) || !self._node.columnName) && columnIndex === 0) {
             radio.attr("checked", "true");
         } else if (column.name == self._node.columnName) {
             radio.attr("checked", "true");
@@ -597,7 +597,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             };
         } else if (node.nodeType == "value") {
             node.value = $.trim(elmts.valueNodeTypeValueInput[0].value);
-            if (node.value.length == 0) {
+            if (!node.value.length) {
                 alert("Please specify the value to use.");
                 return null;
             }
@@ -614,7 +614,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         var node = getResultJSON();
-        if (node != null) {
+        if (node !== null) {
             DialogSystem.dismissUntil(level - 1);
             
             self._node = node;
@@ -635,7 +635,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
     var getLinks = false;
     
     if (this._node.nodeType.match(/^cell-as-/)) {
-        if (!("columnName" in this._node) || this._node.columnName == null) {
+        if (!("columnName" in this._node) || !this._node.columnName) {
             return null;
         }
             
@@ -655,7 +655,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
                 lang: "lang" in this._node ? this._node.lang : "/lang/en"
             };
         } else if (this._node.nodeType == "cell-as-key") {
-            if (!("namespace" in this._node) || this._node.namespace == null) {
+            if (!("namespace" in this._node) || !this._node.namespace) {
                 return null;
             }
             result = {
@@ -665,7 +665,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
             };
         }
     } else if (this._node.nodeType == "topic") {
-        if (!("topic" in this._node) || this._node.topic == null) {
+        if (!("topic" in this._node) || !this._node.topic) {
             return null;
         }
         result = {
@@ -674,7 +674,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
         };
         getLinks = true;
     } else if (this._node.nodeType == "value") {
-        if (!("value" in this._node) || this._node.value == null) {
+        if (!("value" in this._node) || !this._node.value) {
             return null;
         }
         result = {
@@ -684,7 +684,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
             lang: "lang" in this._node ? this._node.lang : "/lang/en"
         };
     } else if (this._node.nodeType == "anonymous") {
-        if (!("type" in this._node) || this._node.type == null) {
+        if (!("type" in this._node) || !this._node.type) {
             return null;
         }
         result = {
@@ -694,14 +694,14 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
         getLinks = true;
     }
     
-    if (result == null) {
+    if (!result) {
         return null;
     }
     if (getLinks) {
         var links = [];
         for (var i = 0; i < this._linkUIs.length; i++) {
             var link = this._linkUIs[i].getJSON();
-            if (link != null) {
+            if (link !== null) {
                 links.push(link);
             }
         }

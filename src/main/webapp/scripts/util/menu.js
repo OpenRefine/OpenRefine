@@ -4,7 +4,7 @@ MenuSystem = {
 };
 
 MenuSystem.showMenu = function(elmt, onDismiss) {
-    if (MenuSystem._overlay == null) {
+    if (!MenuSystem._overlay) {
         MenuSystem._overlay = $('<div>&nbsp;</div>')
             .addClass("menu-overlay")
             .appendTo(document.body)
@@ -26,7 +26,7 @@ MenuSystem.showMenu = function(elmt, onDismiss) {
 
 MenuSystem.dismissAll = function() {
     MenuSystem.dismissUntil(0);
-    if (MenuSystem._overlay != null) {
+    if (MenuSystem._overlay !== null) {
         MenuSystem._overlay.remove();
         MenuSystem._overlay = null;
     }
@@ -36,7 +36,7 @@ MenuSystem.dismissUntil = function(level) {
     for (var i = MenuSystem._layers.length - 1; i >= level; i--) {
         var layer = MenuSystem._layers[i];
         layer.elmt.remove();
-        layer["onDismiss"]();
+        layer.onDismiss();
     }
     MenuSystem._layers = MenuSystem._layers.slice(0, level);
 };
@@ -51,8 +51,8 @@ MenuSystem.createMenuItem = function() {
 
 MenuSystem.positionMenuAboveBelow = function(menu, elmt) {
     var offset = elmt.offset();
-    var windowWidth = $(document.body).innerWidth();
-    var windowHeight = $(document.body).innerHeight();
+    var windowWidth = $(window).width();
+    var windowHeight = $(window).height();
     
     if (offset.top + elmt.outerHeight() - document.body.scrollTop + menu.outerHeight() > windowHeight - 10) {
         menu.css("top", (offset.top - menu.outerHeight()) + "px");
@@ -69,8 +69,8 @@ MenuSystem.positionMenuAboveBelow = function(menu, elmt) {
 
 MenuSystem.positionMenuLeftRight = function(menu, elmt) {
     var offset = elmt.offset();
-    var windowWidth = $(document.body).innerWidth();
-    var windowHeight = $(document.body).innerHeight();
+    var windowWidth = $(window).width();
+    var windowHeight = $(window).height();
     
     if (offset.top - document.body.scrollTop + menu.outerHeight() > windowHeight - 10) {
         menu.css("top", (offset.top + elmt.outerHeight() - menu.outerHeight()) + "px");

@@ -15,7 +15,9 @@ public class DeleteProjectCommand extends Command {
             throws ServletException, IOException {
         
         try {
-            ProjectManager.singleton.deleteProject(getProject(request));
+            long projectID = Long.parseLong(request.getParameter("project"));
+            
+            ProjectManager.singleton.deleteProject(projectID);
             
             respond(response, "{ \"code\" : \"ok\" }");
             

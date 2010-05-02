@@ -44,9 +44,9 @@ SchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentUINo
 };
 
 SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
-    $(this._tdMain).empty()
+    $(this._tdMain).empty();
     
-    var label = this._link.property != null ? this._link.property.id : "property?";
+    var label = this._link.property !== null ? this._link.property.id : "property?";
     
     var self = this;
     
@@ -59,6 +59,7 @@ SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
             window.setTimeout(function() {
                 self._parentUINode.removeLink(self);
                 self._tr.parentNode.removeChild(self._tr);
+                self._dialog.preview();
             }, 100);
         });
     
@@ -92,10 +93,11 @@ SchemaAlignmentDialog.UILink.prototype._renderDetails = function() {
 
 SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
     var sourceTypeID = this._parentUINode.getExpectedType();
-    var targetTypeID = "type" in this._link.target && this._link.target.type != null ? this._link.target.type.id : null;
-    var targetTypeName = "columnName" in this._link.target ? this._link.target.columnName : null;
+    var targetNode = this._targetUI._node;
+    var targetTypeID = "type" in targetNode && targetNode.type !== null ? targetNode.type.id : null;
+    var targetTypeName = "columnName" in targetNode ? targetNode.columnName : null;
     
-    if (sourceTypeID != null) {
+    if (sourceTypeID !== null) {
         var self = this;
         var dismissBusy = DialogSystem.showBusy();
         
@@ -103,140 +105,54 @@ SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
         var outgoing = [];
         var incoming = [];
         
-        function onDone() {
+        function onDone(properties) {
             dismissBusy();
             
-            var suggestions = SchemaAlignmentDialog.UILink._rankProperties(outgoing, incoming, sourceTypeID, targetTypeID, targetTypeName);
-            self._showPropertySuggestPopup(elmt, suggestions);
-        };
-        
-        var cotypes = [];
-        function doCoTypes() {
-            if (cotypes.length === 0) {
-                onDone();
-            } else {
-                var cotype = cotypes.pop();
-                SchemaAlignmentDialog.UILink._getPropertiesOfType(
-                    cotype.t,
-                    outgoing,
-                    incoming,
-                    cotype.c / instanceCount,
-                    doCoTypes
-                );
-            }
-        };
+            self._showPropertySuggestPopup(
+                elmt, 
+                properties
+            );
+        }
         
         SchemaAlignmentDialog.UILink._getPropertiesOfType(
             sourceTypeID,
-            outgoing,
-            incoming,
-            1,
-            function(data) {
-                if ("result" in data) {
-                    instanceCount = data.result.count;
-                    if ("cotypes" in data.result) {
-                        cotypes = data.result.cotypes.slice(0, 3);
-                    }
-                }
-                doCoTypes();
-            }
+            targetTypeID,
+            targetTypeName,
+            onDone
         );
     } else {
         this._showPropertySuggestPopup(elmt, []);
     }
 };
 
-SchemaAlignmentDialog.UILink._rankProperties = function(outgoing, incoming, sourceTypeID, targetTypeID, targetTypeName) {
-    var nameScorer;
-    if (targetTypeName === null) {
-        nameScorer = function() { return 1; };
-    } else {
-        var nameWords = targetTypeName.toLowerCase().replace(/\W/g, ' ').replace(/\s+/g, ' ').split(" ");
-        var nameScoreString = function(score, s) {
-            s = s.toLowerCase().replace(/\W/g, ' ');
-            
-            var n = 0;
-            for (var i = 0; i < nameWords.length; i++) {
-                if (s.indexOf(nameWords[i]) >= 0) {
-                    n++;
-                }
-            }
-            return Math.max(score, n / nameWords.length);
-        };
-        var nameScoreStrings = function(score, a) {
-            $.each(a, function() { score = nameScoreString(score, this); });
-            return score;
-        };
-        
-        nameScorer = function(p) {
-            var score = nameScoreString(0, p.name);
-            score = nameScoreStrings(score, p.alias);
-            
-            if ("expects" in p && p.expects !== null) {
-                score = nameScoreString(score, p.expects.name);
-                score = nameScoreStrings(score, p.expects.alias);
-                if ("plural_names" in p.expects) {
-                    score = nameScoreStrings(score, p.expects.plural_names);
-                }
-                if ("plural_aliases" in p.expects) {
-                    score = nameScoreStrings(score, p.expects.plural_aliases);
-                }
-            }
-            
-            return score;
-        };
+SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, targetTypeID, targetTypeName, onDone) {
+    var done = false;
+    
+    var params = {
+        "type" : typeID
     };
-    
-    var typeScorer;
-    if (targetTypeID === null) {
-        typeScorer = function(p) { return p.weight; };
-    } else {
-        typeScorer = function(p) {
-            return p.expects.id == targetTypeID ? 1 : p.weight;
-        };
+    if (targetTypeID != null) {
+        params.expects = targetTypeID;
+    } else if (targetTypeName != null) {
+        params.expects = targetTypeName;
     }
     
-    var suggestions = [];
-    for (var i = 0; i < outgoing.length; i++) {
-        var p = outgoing[i];
-        p.score = p.weight * (0.5 * nameScorer(p) + 0.5 * typeScorer(p));
-        if (p.score > 0) {
-            suggestions.push(p);
-        }
-    }
-    
-    suggestions.sort(function(a, b) { return b.score - a.score; });
-    suggestions = suggestions.slice(0, 7);
-    
-    return suggestions;
-};
-
-SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, outgoing, incoming, weight, onDone) {
     $.getJSON(
-        "http://api.sandbox-freebase.com/api/trans/schema_index/-" + typeID + "?callback=?",
+        "http://gridworks-helper.freebaseapps.com/get_properties_of_type?" + $.param(params) + "&callback=?",
         null,
         function(data) {
-            if ("result" in data) {
-                var result = data.result;
-                if ("outgoing" in result) {
-                    for (var i = 0; i < result.outgoing.length; i++) {
-                        var p = result.outgoing[i];
-                        p.weight = weight;
-                        outgoing.push(p);
-                    }
-                }
-                if ("incoming" in result) {
-                    for (var i = 0; i < result.incoming.length; i++) {
-                        var p = result.incoming[i];
-                        p.weight = weight;
-                        incoming.push(p);
-                    }
-                }
-            }
-            onDone(data);
-        },
-        "jsonp"
+            if (done) return;
+            
+            onDone(data.properties || []);
+        }
     );
+    
+    window.setTimeout(function() {
+        if (done) return;
+        
+        done = true;
+        onDone([]);
+    }, 7000); // time to give up?
 };
 
 SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt, suggestions) {
@@ -247,17 +163,17 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     var commitProperty = function(p) {
         window.setTimeout(function() { MenuSystem.dismissAll(); }, 100);
         
-        if ("plies" in p && p.plies.length > 1) {
+        if ("id2" in p) {
             // self._targetUI.dispose();
             self._link.property = {
-                id: p.plies[0],
+                id: p.id,
                 name: p.name
             };
             self._link.target = {
                 nodeType: "anonymous",
                 links: [{
                     property: {
-                        id: p.plies[1],
+                        id: p.id2,
                         name: p.name2
                     },
                     target: self._link.target
@@ -274,8 +190,10 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
         self._configureTarget();
     };
     
+    var divSearch;
+    
     if (suggestions.length > 0) {
-        var divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search2").html('<div>Search for a property or pick one below</div>').appendTo(menu);
+        divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search2").html('<div>Search for a property or pick one below</div>').appendTo(menu);
         
         function createSuggestion(suggestion) {
             var menuItem = MenuSystem.createMenuItem().appendTo(menu);
@@ -288,7 +206,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
             createSuggestion(suggestions[i]);
         }
     } else {
-        var divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search").html('<div>Search for a property</div>').appendTo(menu);
+        divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search").html('<div>Search for a property</div>').appendTo(menu);
     }
     var input = $('<input />').appendTo($('<div>').appendTo(divSearch));
     
@@ -298,7 +216,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     var suggestOptions = {
         type : '/type/property'
     };
-    if (this._link.target != null && "type" in this._link.target && this._link.target.type != null) {
+    if (this._link.target !== null && "type" in this._link.target && this._link.target.type !== null) {
         /*
         suggestOptions.mql_filter = [{
             "/type/property/expected_type" : {
@@ -308,7 +226,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
         */
     } else {
         var sourceTypeID = this._parentUINode.getExpectedType();
-        if (sourceTypeID != null) {
+        if (sourceTypeID !== null) {
             suggestOptions.schema = sourceTypeID;
         }
     }
@@ -318,11 +236,11 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
 };
 
 SchemaAlignmentDialog.UILink.prototype.getJSON = function() {
-    if ("property" in this._link && this._link.property != null &&
-        "target" in this._link && this._link.target != null) {
+    if ("property" in this._link && this._link.property !== null &&
+        "target" in this._link && this._link.target !== null) {
         
         var targetJSON = this._targetUI.getJSON();
-        if (targetJSON != null) {
+        if (targetJSON !== null) {
             return {
                 property: cloneDeep(this._link.property),
                 target: targetJSON
@@ -358,7 +276,7 @@ SchemaAlignmentDialog.UILink.prototype._configureTarget = function() {
                     id: expected_type.id,
                     name: expected_type.name
                 };
-                if (expected_type["/freebase/type_hints/mediator"] == true) {
+                if (expected_type["/freebase/type_hints/mediator"] === true) {
                     self._link.target.nodeType = "anonymous";
                 } else if (expected_type.id == "/type/key") {
                     self._link.target.nodeType = "cell-as-key";

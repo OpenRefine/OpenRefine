@@ -1,10 +1,12 @@
 package com.metaweb.gridworks.expr.functions;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
 import com.metaweb.gridworks.gel.Function;
 
@@ -14,7 +16,7 @@ public class Get implements Function {
         if (args.length > 1 && args.length <= 3) {
             Object v = args[0];
             Object from = args[1];
-            Object to = args.length == 3 ? args[2] : null;
+            Object to = (args.length == 3) ? args[2] : null;
             
             if (v != null && from != null) {
                 if (v instanceof HasFields) {
@@ -23,35 +25,44 @@ public class Get implements Function {
                     }
                 } else {
                     if (from instanceof Number && (to == null || to instanceof Number)) {
-                        if (v.getClass().isArray()) {
-                            Object[] a = (Object[]) v;
+                        if (v.getClass().isArray() || v instanceof List<?>) {
+                            int length = v.getClass().isArray() ? 
+                                ((Object[]) v).length :
+                                ExpressionUtils.toObjectList(v).size();
+                            
                             int start = ((Number) from).intValue();
                             if (start < 0) {
-                                start = a.length + start;
+                                start = length + start;
                             }
-                            start = Math.min(a.length, Math.max(0, start));
+                            start = Math.min(length, Math.max(0, start));
                             
                             if (to == null) {
-                                return start < a.length ? a[start] : null;
+                                return start >= length ? null :
+                                    (v.getClass().isArray() ? 
+                                        ((Object[]) v)[start] :
+                                        ExpressionUtils.toObjectList(v).get(start));
                             } else {
-                                int end = to != null && to instanceof Number ? 
-                                        ((Number) to).intValue() : a.length;
+                                int end = (to != null && to instanceof Number) ? ((Number) to).intValue() : length;
                                             
                                 if (end < 0) {
-                                    end = a.length + end;
+                                    end = length + end;
                                 }
-                                end = Math.min(a.length, Math.max(start, end));
+                                end = Math.min(length, Math.max(start, end));
                                 
                                 if (end > start) {
-                                    Object[] a2 = new Object[end - start];
-                                    
-                                    System.arraycopy(a, start, a2, 0, end - start);
-                                    
-                                    return a2;
+                                    if (v.getClass().isArray()) {
+	                                    Object[] a2 = new Object[end - start];
+	                                    
+	                                    System.arraycopy((Object[]) v, start, a2, 0, end - start);
+	                                    
+	                                    return a2;
+                                    } else {
+                                        return ExpressionUtils.toObjectList(v).subList(start, end);
+                                    }
                                 }
                             }
                         } else {
-                            String s = (v instanceof String ? (String) v : v.toString());
+                            String s = (v instanceof String) ? (String) v : v.toString();
                             
                             int start = ((Number) from).intValue();
                             if (start < 0) {

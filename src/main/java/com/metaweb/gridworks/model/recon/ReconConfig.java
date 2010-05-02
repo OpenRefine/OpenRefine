@@ -21,6 +21,8 @@ abstract public class ReconConfig implements Jsonizable {
             return HeuristicReconConfig.reconstruct(obj);
         } else if ("strict".equals(mode)) {
             return StrictReconConfig.reconstruct(obj);
+        } else if ("extend".equals(mode)) {
+            return DataExtensionReconConfig.reconstruct(obj);
         }
         return null;
     }
@@ -37,7 +39,7 @@ abstract public class ReconConfig implements Jsonizable {
         Cell        cell
     );
     
-    abstract public List<Recon> batchRecon(List<ReconJob> jobs);
+    abstract public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID);
     
     public void save(Writer writer) {
         JSONWriter jsonWriter = new JSONWriter(writer);

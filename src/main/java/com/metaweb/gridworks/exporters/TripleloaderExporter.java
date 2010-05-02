@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.exporters;
 
-import java.io.IOException; 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Properties;
 
@@ -15,6 +16,15 @@ public class TripleloaderExporter implements Exporter {
         return "application/x-unknown";
     }
     
+    public boolean takeWriter() {
+        return true;
+    }
+    
+    public void export(Project project, Properties options, Engine engine,
+            OutputStream outputStream) throws IOException {
+        throw new RuntimeException("Not implemented");
+    }
+    
     public void export(Project project, Properties options, Engine engine,
             Writer writer) throws IOException {
         
@@ -23,7 +33,7 @@ public class TripleloaderExporter implements Exporter {
             
             TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory(writer);
             
-            Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory);
+            Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory, -1);
             nodeFactory.flush();
         }
     }

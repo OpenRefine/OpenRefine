@@ -23,11 +23,21 @@ import com.metaweb.gridworks.protograph.ValueNode;
 public class Transposer {
     static public void transpose(
         Project                 project,
-        Protograph                 protograph,
-        Node                     rootNode,
-        TransposedNodeFactory     nodeFactory
+        Protograph              protograph,
+        Node                    rootNode,
+        TransposedNodeFactory   nodeFactory
     ) {
-        Context rootContext = new Context(rootNode, null, null, 20);
+        transpose(project, protograph, rootNode, nodeFactory, 20);
+    }
+    
+    static public void transpose(
+        Project                 project,
+        Protograph              protograph,
+        Node                    rootNode,
+        TransposedNodeFactory   nodeFactory,
+        int                     limit
+    ) {
+        Context rootContext = new Context(rootNode, null, null, limit);
         
         for (Row row : project.rows) {
             descend(project, protograph, nodeFactory, row, rootNode, rootContext);
@@ -55,11 +65,10 @@ public class Transposer {
             Column column = project.columnModel.getColumnByName(node2.columnName);
             Cell cell = row.getCell(column.getCellIndex());
             if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                if (node2 instanceof CellTopicNode) {
-                    if (!((CellTopicNode) node2).createForNoReconMatch && 
-                        (cell.recon == null || cell.recon.judgment == Judgment.None)) {
+                if (node2 instanceof CellTopicNode && 
+                    !((CellTopicNode) node2).createForNoReconMatch && 
+                    (cell.recon == null || cell.recon.judgment == Judgment.None)) {
                         return;
-                    }
                 }
                 
                 context.count++;

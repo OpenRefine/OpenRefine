@@ -1,6 +1,6 @@
 package com.metaweb.gridworks;
 
-import java.io.File; 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,12 +12,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codeberry.jdatapath.DataPath;
 import com.codeberry.jdatapath.JDataPathSystem;
@@ -26,20 +29,34 @@ import com.metaweb.gridworks.util.JSONUtilities;
 
 public class ProjectManager {
     
-    private static final int s_expressionHistoryMax = 100; // last n expressions used across all projects
+    // last n expressions used across all projects
+    static protected final int s_expressionHistoryMax = 100;
     
     protected File                       _workspaceDir;
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected List<String> 				 _expressions;
     
-    transient protected Map<Long, Project>  _projects;
+    final static Logger logger = LoggerFactory.getLogger("project_manager");
+    
+    /**
+     *  While each project's metadata is loaded completely at start-up, each project's raw data 
+     *  is loaded only when the project is accessed by the user. This is because project
+     *  metadata is tiny compared to raw project data. This hash map from project ID to project
+     *  is more like a last accessed-last out cache.
+     */
+    transient protected Map<Long, Project> _projects;
+    
+    /**
+     *  What caches the joins between projects.
+     */
+    transient protected InterProjectModel _interProjectModel = new InterProjectModel(); 
     
     static public ProjectManager singleton;
     
-    static public void initialize() {
+    static public synchronized void initialize() {
         if (singleton == null) {
             File dir = getProjectLocation();
-            Gridworks.log("Using workspace directory: " + dir.getAbsolutePath());
+            logger.info("Using workspace directory: {}", dir.getAbsolutePath());
             
             singleton = new ProjectManager(dir);
         }
@@ -53,14 +70,48 @@ public class ProjectManager {
         
         String os = Configurations.get("os.name").toLowerCase();
         if (os.contains("windows")) {
-            // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
-            // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
-            // so we're using a library that uses JNI to ask directly the win32 APIs, 
-            // it's not elegant but it's the safest bet
-            DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
-            File data = new File(localDataPath.getPath());
-            data.mkdirs();
-            return data;           
+        	try {
+	            // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
+	            // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
+	            // so we're using a library that uses JNI to ask directly the win32 APIs, 
+	            // it's not elegant but it's the safest bet.
+        	    
+	            DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
+	            File data = new File(localDataPath.getPath());
+	            data.mkdirs();
+	            return data;
+        	} catch (Error e) {
+        	    /*
+        	     *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
+        	     *  we include is compiled for 32-bit. In this case, we just have to dig up
+        	     *  environment variables and try our best to find a user-specific path.
+        	     */
+        	    
+        		logger.warn("Failed to use jdatapath to detect user data path: resorting to environment variables");
+        		
+                File parentDir = null;
+                {
+            		String appData = System.getenv("APPDATA"); 
+            		if (appData != null && appData.length() > 0) {
+                        // e.g., C:\Users\[userid]\AppData\Roaming
+            			parentDir = new File(appData);
+            		} else {
+            			String userProfile = System.getenv("USERPROFILE");
+            			if (userProfile != null && userProfile.length() > 0) {
+            			    // e.g., C:\Users\[userid]
+            				parentDir = new File(userProfile);
+            			}
+            		}
+                }
+        		if (parentDir == null) {
+        			parentDir = new File(".");
+        		}
+        		
+        		File data = new File(parentDir, "Gridworks");
+        		data.mkdirs();
+        		
+        		return data;
+        	}
         } else if (os.contains("mac os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
@@ -94,6 +145,10 @@ public class ProjectManager {
         load();
     }
     
+    public InterProjectModel getInterProjectModel() {
+        return _interProjectModel;
+    }
+    
     public File getWorkspaceDir() {
         return _workspaceDir;
     }
@@ -117,14 +172,30 @@ public class ProjectManager {
         }
     }
     
-    public void importProject(long projectID) {
+    /**
+     * Import an external project that has been received as a .tar file, expanded, and 
+     * copied into our workspace directory.
+     * 
+     * @param projectID
+     */
+    public boolean importProject(long projectID) {
         synchronized (this) {
             ProjectMetadata metadata = ProjectMetadata.load(getProjectDir(projectID));
-        
-            _projectsMetadata.put(projectID, metadata);
+            if (metadata != null) {
+                _projectsMetadata.put(projectID, metadata);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
     
+    /**
+     * Make sure that a project's metadata and data are saved to file. For example, 
+     * this method is called before the project is exported to a .tar file.
+     * 
+     * @param id
+     */
     public void ensureProjectSaved(long id) {
         synchronized (this) {
             File projectDir = getProjectDir(id);
@@ -153,28 +224,50 @@ public class ProjectManager {
         return _projectsMetadata.get(id);
     }
     
+    public ProjectMetadata getProjectMetadata(String name) {
+        for (ProjectMetadata pm : _projectsMetadata.values()) {
+            if (pm.getName().equals(name)) {
+                return pm;
+            }
+        }
+        return null;
+    }
+    
+    public long getProjectID(String name) {
+        for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
+            if (entry.getValue().getName().equals(name)) {
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
+    
     public Map<Long, ProjectMetadata> getAllProjectMetadata() {
         return _projectsMetadata;
     }
     
     public Project getProject(long id) {
-        if (_projects.containsKey(id)) {
-            return _projects.get(id);
-        } else {
-            Project project = Project.load(getProjectDir(id), id);
-            
-            _projects.put(id, project);
-            
-            return project;
+        synchronized (this) {
+            if (_projects.containsKey(id)) {
+                return _projects.get(id);
+            } else {
+                Project project = Project.load(getProjectDir(id), id);
+                
+                _projects.put(id, project);
+                
+                return project;
+            }
         }
     }
     
     public void addLatestExpression(String s) {
-    	_expressions.remove(s);
-    	_expressions.add(0, s);
-    	while (_expressions.size() > s_expressionHistoryMax) {
-    		_expressions.remove(_expressions.size() - 1);
-    	}
+        synchronized (this) {
+        	_expressions.remove(s);
+        	_expressions.add(0, s);
+        	while (_expressions.size() > s_expressionHistoryMax) {
+        		_expressions.remove(_expressions.size() - 1);
+        	}
+        }
     }
     
     public List<String> getExpressions() {
@@ -186,6 +279,10 @@ public class ProjectManager {
         saveWorkspace();
     }
     
+    /**
+     * Save the workspace's data out to file in a safe way: save to a temporary file first
+     * and rename it to the real file.
+     */
     protected void saveWorkspace() {
         synchronized (this) {
         	File tempFile = new File(_workspaceDir, "workspace.temp.json");
@@ -194,7 +291,7 @@ public class ProjectManager {
             } catch (Exception e) {
                 e.printStackTrace();
                 
-                Gridworks.log("Failed to save workspace.");
+                logger.warn("Failed to save workspace");
                 return;
             }
         	
@@ -210,7 +307,7 @@ public class ProjectManager {
                 oldFile.delete();
             }
             
-            //Gridworks.log("Saved workspace.");
+            logger.info("Saved workspace");
         }
     }
     
@@ -222,13 +319,15 @@ public class ProjectManager {
             jsonWriter.key("projectIDs");
                 jsonWriter.array();
                 for (Long id : _projectsMetadata.keySet()) {
-                    jsonWriter.value(id);
-                    
                     ProjectMetadata metadata = _projectsMetadata.get(id);
-                    try {
-                        metadata.save(getProjectDir(id));
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (metadata != null) {
+                        jsonWriter.value(id);
+                        
+                        try {
+                            metadata.save(getProjectDir(id));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 jsonWriter.endArray();
@@ -241,6 +340,10 @@ public class ProjectManager {
         }
     }
     
+    /**
+     * A utility class to prioritize projects for saving, depending on how long ago
+     * they have been changed but have not been saved.
+     */
     static protected class SaveRecord {
         final Project project;
         final long overdue;
@@ -250,6 +353,9 @@ public class ProjectManager {
             this.overdue = overdue;
         }
     }
+    
+    static protected final int s_projectFlushDelay = 1000 * 60 * 60; // 1 hour
+    static protected final int s_quickSaveTimeout = 1000 * 30; // 30 secs
     
     protected void saveProjects(boolean allModified) {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
@@ -261,17 +367,18 @@ public class ProjectManager {
                 Project project = _projects.get(id);
                 
                 if (project != null) {
-                    boolean hasUnsavedChanges = metadata.getModified().getTime() > project.lastSave.getTime();
+                    boolean hasUnsavedChanges = 
+                        metadata.getModified().getTime() > project.lastSave.getTime();
                     
                     if (hasUnsavedChanges) {
                         long msecsOverdue = now.getTime() - project.lastSave.getTime();
                         
                         records.add(new SaveRecord(project, msecsOverdue));
                         
-                    } else if (now.getTime() - project.lastSave.getTime() > 1000 * 60 * 60) {
+                    } else if (now.getTime() - project.lastSave.getTime() > s_projectFlushDelay) {
                         /*
-                         *  It's been 1 hour since the project was last saved and it hasn't
-                         *  been modified. We can safely remove it from the cache to save some memory.
+                         *  It's been a while since the project was last saved and it hasn't been
+                         *  modified. We can safely remove it from the cache to save some memory.
                          */
                         _projects.remove(id);
                     }
@@ -292,14 +399,15 @@ public class ProjectManager {
                 }
             });
             
-            Gridworks.log(allModified ?
+            logger.info(allModified ?
                 "Saving all modified projects ..." :
                 "Saving some modified projects ..."
             );
             
             for (int i = 0; 
                  i < records.size() && 
-                    (allModified || (new Date().getTime() - now.getTime() < 30000)); i++) {
+                    (allModified || (new Date().getTime() - now.getTime() < s_quickSaveTimeout));
+                 i++) {
                 
                 try {
                     records.get(i).project.save();
@@ -311,68 +419,83 @@ public class ProjectManager {
     }
     
     public void deleteProject(Project project) {
+        deleteProject(project.id);
+    }
+    
+    public void deleteProject(long projectID) {
         synchronized (this) {
-            if (_projectsMetadata.containsKey(project.id)) {
-                _projectsMetadata.remove(project.id);
+            if (_projectsMetadata.containsKey(projectID)) {
+                _projectsMetadata.remove(projectID);
             }
-            if (_projects.containsKey(project.id)) {
-                _projects.remove(project.id);
+            if (_projects.containsKey(projectID)) {
+                _projects.remove(projectID);
             }
             
-            File dir = getProjectDir(project.id);
+            File dir = getProjectDir(projectID);
             if (dir.exists()) {
-                dir.delete();
+                deleteDir(dir);
             }
         }
         
         saveWorkspace();
     }
     
-    protected void load() {
-        try {
-            loadFromFile(new File(_workspaceDir, "workspace.json"));
-            return;
-        } catch (Exception e) {
+    static protected void deleteDir(File dir) {
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                deleteDir(file);
+            } else {
+                file.delete();
+            }
         }
-        
-        try {
-            loadFromFile(new File(_workspaceDir, "workspace.temp.json"));
-            return;
-        } catch (Exception e) {
-        }
-        
-        try {
-            loadFromFile(new File(_workspaceDir, "workspace.old.json"));
-            return;
-        } catch (Exception e) {
-        }
+        dir.delete();
     }
     
-    protected void loadFromFile(File file) throws IOException, JSONException {
-        Gridworks.log("Loading workspace from " + file.getAbsolutePath());
+    protected void load() {
+        if (loadFromFile(new File(_workspaceDir, "workspace.json"))) return;
+        if (loadFromFile(new File(_workspaceDir, "workspace.temp.json"))) return;
+        if (loadFromFile(new File(_workspaceDir, "workspace.old.json"))) return;
+    }
+    
+    protected boolean loadFromFile(File file) {
+        logger.info("Loading workspace: {}", file.getAbsolutePath());
         
         _projectsMetadata.clear();
         _expressions.clear();
         
-        FileReader reader = new FileReader(file);
-        try {
-            JSONTokener tokener = new JSONTokener(reader);
-            JSONObject obj = (JSONObject) tokener.nextValue();
-            
-            JSONArray a = obj.getJSONArray("projectIDs");
-            int count = a.length();
-            for (int i = 0; i < count; i++) {
-                long id = a.getLong(i);
+        if (file.exists() || file.canRead()) {
+            FileReader reader = null;
+            try {
+                reader = new FileReader(file);
+                JSONTokener tokener = new JSONTokener(reader);
+                JSONObject obj = (JSONObject) tokener.nextValue();
                 
-                File projectDir = getProjectDir(id);
-                ProjectMetadata metadata = ProjectMetadata.load(projectDir);
+                JSONArray a = obj.getJSONArray("projectIDs");
+                int count = a.length();
+                for (int i = 0; i < count; i++) {
+                    long id = a.getLong(i);
+                    
+                    File projectDir = getProjectDir(id);
+                    ProjectMetadata metadata = ProjectMetadata.load(projectDir);
+                    
+                    _projectsMetadata.put(id, metadata);
+                }
                 
-                _projectsMetadata.put(id, metadata);
+                JSONUtilities.getStringList(obj, "expressions", _expressions);
+                return true;
+            } catch (JSONException e) {
+                logger.warn("Error reading file", e);
+            } catch (IOException e) {
+                logger.warn("Error reading file", e);
+            } finally {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    logger.warn("Exception closing file",e);
+                }
             }
-            
-            JSONUtilities.getStringList(obj, "expressions", _expressions);
-        } finally {
-            reader.close();
         }
+        
+        return false;
     }
 }

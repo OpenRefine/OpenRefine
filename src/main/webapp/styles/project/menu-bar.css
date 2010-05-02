@@ -1,7 +1,8 @@
 .menu-bar {
     padding: 5px 10px;
-    background: #eee;
+    background: #e8e8e8;
     position: relative;
+    border-bottom: 1px solid #CCCCCC;    
 }
 
 .menu-bar-inner {

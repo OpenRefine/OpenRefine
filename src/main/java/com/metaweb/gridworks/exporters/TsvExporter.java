@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.exporters;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Properties;
 
@@ -14,7 +15,16 @@ import com.metaweb.gridworks.model.Row;
 
 public class TsvExporter implements Exporter {
     public String getContentType() {
-        return "text/plain";
+        return "application/x-unknown";
+    }
+    
+    public boolean takeWriter() {
+        return true;
+    }
+    
+    public void export(Project project, Properties options, Engine engine,
+            OutputStream outputStream) throws IOException {
+        throw new RuntimeException("Not implemented");
     }
     
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
@@ -38,7 +48,7 @@ public class TsvExporter implements Exporter {
                     return this;
                 }
                 
-                public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+                public boolean visit(Project project, int rowIndex, Row row, boolean contextual, boolean includeDependent) {
                     boolean first = true;
                     try {
                         for (Column column : project.columnModel.columns) {
@@ -53,7 +63,14 @@ public class TsvExporter implements Exporter {
                                 Cell cell = row.cells.get(cellIndex);
                                 if (cell != null && cell.value != null) {
                                     Object v = cell.value;
-                                    writer.write(v instanceof String ? ((String) v) : v.toString());
+                                    String s = v instanceof String ? ((String) v) : v.toString();
+                                    
+                                    s = s.replace("\\", "\\\\")
+                                        .replace("\n", "\\n")
+                                        .replace("\r", "\\r")
+                                        .replace("\t", "\\t");
+                                    
+                                    writer.write(s);
                                 }
                             }
                         }

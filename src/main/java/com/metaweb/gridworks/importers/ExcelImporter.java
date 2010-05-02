@@ -1,13 +1,18 @@
 package com.metaweb.gridworks.importers;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.poi.common.usermodel.Hyperlink;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -17,7 +22,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Recon;
+import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.model.Recon.Judgment;
 
 public class ExcelImporter implements Importer {
     final protected boolean _xmlBased;
@@ -30,26 +38,35 @@ public class ExcelImporter implements Importer {
         return false;
     }
     
-    public void read(Reader reader, Project project, Properties options, int skip, int limit)
-            throws Exception {
-        
+    public void read(Reader reader, Project project, Properties options) throws Exception {
         throw new NotImplementedException();
     }
 
-    public void read(InputStream inputStream, Project project,
-            Properties options, int skip, int limit) throws Exception {
+    public void read(InputStream inputStream, Project project, Properties options) throws Exception {
+        int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
+        int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
+        int skip = ImporterUtilities.getIntegerOption("skip",options,0);
         
-        Workbook wb = _xmlBased ? 
+        Workbook wb = null;
+        try {
+            wb = _xmlBased ? 
                 new XSSFWorkbook(inputStream) : 
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
-                
+        } catch (IOException e) {
+            throw new IOException(
+                "Attempted to parse file as Excel file but failed. " +
+                "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
+                e
+            );
+        }
+        
         Sheet sheet = wb.getSheetAt(0);
 
         int firstRow = sheet.getFirstRowNum();
         int lastRow = sheet.getLastRowNum();
         int r = firstRow;
         
-        List<Integer>     nonBlankIndices = null;
+        List<Integer>    nonBlankIndices = null;
         List<String>     nonBlankHeaderStrings = null;
         
         /*
@@ -58,6 +75,9 @@ public class ExcelImporter implements Importer {
         for (; r <= lastRow; r++) {
             org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
+                continue;
+            } else if (ignoreLines > 0) {
+                ignoreLines--;
                 continue;
             }
             
@@ -92,8 +112,19 @@ public class ExcelImporter implements Importer {
         /*
          *  Create columns
          */
+        Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
         for (int c = 0; c < nonBlankIndices.size(); c++) {
-            Column column = new Column(c, nonBlankHeaderStrings.get(c));
+        	String cell = nonBlankHeaderStrings.get(c);
+            if (nameToIndex.containsKey(cell)) {
+            	int index = nameToIndex.get(cell);
+            	nameToIndex.put(cell, index + 1);
+            	
+            	cell = cell.contains(" ") ? (cell + " " + index) : (cell + index);
+            } else {
+            	nameToIndex.put(cell, 2);
+            }
+            
+            Column column = new Column(c, cell);
             project.columnModel.columns.add(column);
         }
         
@@ -101,6 +132,8 @@ public class ExcelImporter implements Importer {
          *  Now process the data rows
          */
         int rowsWithData = 0;
+        Map<String, Recon> reconMap = new HashMap<String, Recon>();
+        
         for (; r <= lastRow; r++) {
             org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
@@ -136,7 +169,13 @@ public class ExcelImporter implements Importer {
                     if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
                         value = cell.getBooleanCellValue();
                     } else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {
-                        value = cell.getNumericCellValue();
+                        double d = cell.getNumericCellValue();
+                        
+                        if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                            value = HSSFDateUtil.getJavaDate(d);
+                        } else {
+                            value = d;
+                        }
                     } else {
                         String text = cell.getStringCellValue().trim();
                         if (text.length() > 0) {
@@ -145,7 +184,51 @@ public class ExcelImporter implements Importer {
                     }
                     
                     if (value != null) {
-                        newRow.setCell(c, new Cell(value, null));
+                        Recon recon = null;
+                        
+                        Hyperlink hyperlink = cell.getHyperlink();
+                        if (hyperlink != null) {
+                            String url = hyperlink.getAddress();
+                            
+                            if (url.startsWith("http://") || 
+                                url.startsWith("https://")) {
+                                
+                                final String sig = "freebase.com/view";
+                                
+                                int i = url.indexOf(sig);
+                                if (i > 0) {
+                                    String id = url.substring(i + sig.length());
+                                    
+                                    int q = id.indexOf('?');
+                                    if (q > 0) {
+                                        id = id.substring(0, q);
+                                    }
+                                    int h = id.indexOf('#');
+                                    if (h > 0) {
+                                        id = id.substring(0, h);
+                                    }
+                                    
+                                    if (reconMap.containsKey(id)) {
+                                    	recon = reconMap.get(id);
+	                                    recon.judgmentBatchSize++;
+                                    } else {
+	                                    recon = new Recon(0);
+	                                    recon.service = "import";
+	                                    recon.match = new ReconCandidate(id, "", value.toString(), new String[0], 100);
+	                                    recon.matchRank = 0;
+	                                    recon.judgment = Judgment.Matched;
+	                                    recon.judgmentAction = "auto";
+	                                    recon.judgmentBatchSize = 1;
+	                                    recon.addCandidate(recon.match);
+	                                    
+	                                    reconMap.put(id, recon);
+                                    }
+                                    
+                                }
+                            }
+                        }
+                        
+                        newRow.setCell(c, new Cell(value, recon));
                         hasData = true;
                     }
                 }
@@ -155,6 +238,8 @@ public class ExcelImporter implements Importer {
                     
                     if (skip <= 0 || rowsWithData > skip) {
                         project.rows.add(newRow);
+                        project.columnModel.setMaxCellIndex(newRow.cells.size());
+                        
                         if (limit > 0 && project.rows.size() >= limit) {
                             break;
                         }

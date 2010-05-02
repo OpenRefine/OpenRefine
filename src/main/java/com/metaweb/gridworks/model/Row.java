@@ -4,15 +4,18 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 
-import org.json.JSONArray;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.Jsonizable;
+import com.metaweb.gridworks.expr.CellTuple;
 import com.metaweb.gridworks.expr.HasFields;
-import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 
 public class Row implements HasFields, Jsonizable {
     public boolean             flagged;
@@ -24,8 +27,17 @@ public class Row implements HasFields, Jsonizable {
     transient public int[]          contextRowSlots;
     transient public int[]          contextCellSlots;
     
+    private static final String FLAGGED = "flagged";
+    private static final String STARRED = "starred";
+    
     public Row(int cellCount) {
         cells = new ArrayList<Cell>(cellCount);
+    }
+    
+    protected Row(List<Cell> cells, boolean flagged, boolean starred) {
+        this.cells = cells;
+        this.flagged = flagged;
+        this.starred = starred;
     }
     
     public Row dup() {
@@ -37,16 +49,16 @@ public class Row implements HasFields, Jsonizable {
     }
     
     public Object getField(String name, Properties bindings) {
-        if ("flagged".equals(name)) {
+        if (FLAGGED.equals(name)) {
             return flagged;
-        } else if ("starred".equals(name)) {
+        } else if (STARRED.equals(name)) {
             return starred;
-        } else if ("cells".equals(name)) {
-            return new Cells();
-        } else if ("index".equals(name)) {
-            return bindings.get("rowIndex");
         }
         return null;
+    }
+    
+    public boolean fieldAlsoHasFields(String name) {
+        return "cells".equals(name) || "record".equals(name);
     }
     
     public boolean isEmpty() {
@@ -59,7 +71,7 @@ public class Row implements HasFields, Jsonizable {
     }
     
     public Cell getCell(int cellIndex) {
-        if (cellIndex < cells.size()) {
+        if (cellIndex >= 0 && cellIndex < cells.size()) {
             return cells.get(cellIndex);
         } else {
             return null;
@@ -67,7 +79,7 @@ public class Row implements HasFields, Jsonizable {
     }
     
     public Object getCellValue(int cellIndex) {
-        if (cellIndex < cells.size()) {
+        if (cellIndex >= 0 && cellIndex < cells.size()) {
             Cell cell = cells.get(cellIndex);
             if (cell != null) {
                 return cell.value;
@@ -95,27 +107,16 @@ public class Row implements HasFields, Jsonizable {
         }
     }
     
-    public class Cells implements HasFields {
-        private Cells() {};
-
-        public Object getField(String name, Properties bindings) {
-            Project project = (Project) bindings.get("project");
-            Column column = project.columnModel.getColumnByName(name);
-            if (column != null) {
-                int cellIndex = column.getCellIndex();
-                return getCell(cellIndex);
-            }
-            return null;
-        }
-        
+    public CellTuple getCellTuple(Project project) {
+        return new CellTuple(project, this);
     }
-
+    
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
-        writer.key("flagged"); writer.value(flagged);
-        writer.key("starred"); writer.value(starred);
+        writer.key(FLAGGED); writer.value(flagged);
+        writer.key(STARRED); writer.value(starred);
         
         writer.key("cells"); writer.array();
         for (Cell cell : cells) {
@@ -138,9 +139,9 @@ public class Row implements HasFields, Jsonizable {
             if (options.containsKey("extra")) {
                 Properties extra = (Properties) options.get("extra");
                 if (extra != null) {
-                    for (Object key : extra.keySet()) {
-                        writer.key((String) key);
-                        writer.value(extra.get(key));
+                    for (Entry<Object,Object> e : extra.entrySet()) {
+                        writer.key((String) e.getKey());
+                        writer.value(e.getValue());
                     }
                 }
             }
@@ -158,30 +159,44 @@ public class Row implements HasFields, Jsonizable {
         }
     }
     
-    static public Row load(String s) throws Exception {
-        return s.length() == 0 ? null : load(ParsingUtilities.evaluateJsonStringToObject(s));
+    static public Row load(String s, Pool pool) throws Exception {
+        return s.length() == 0 ? null : 
+            loadStreaming(s, pool);
     }
     
-    static public Row load(JSONObject obj) throws Exception {
-        JSONArray a = obj.getJSONArray("cells");
-        int count = a.length();
+    static public Row loadStreaming(String s, Pool pool) throws Exception {
+        JsonFactory jsonFactory = new JsonFactory(); 
+        JsonParser jp = jsonFactory.createJsonParser(s);
         
-        Row row = new Row(count);
-        for (int i = 0; i < count; i++) {
-            if (!a.isNull(i)) {
-                JSONObject o = a.getJSONObject(i);
+        if (jp.nextToken() != JsonToken.START_OBJECT) {
+            return null;
+        }
+        
+        List<Cell>  cells = new ArrayList<Cell>();
+        boolean     starred = false;
+        boolean     flagged = false;
+        
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = jp.getCurrentName();
+            jp.nextToken();
+            
+            if (STARRED.equals(fieldName)) {
+                starred = jp.getBooleanValue();
+            } else if (FLAGGED.equals(fieldName)) {
+                flagged = jp.getBooleanValue();
+            } else if ("cells".equals(fieldName)) {
+                if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
+                    return null;
+                }
                 
-                row.setCell(i, Cell.load(o));
+                while (jp.nextToken() != JsonToken.END_ARRAY) {
+                    Cell cell = Cell.loadStreaming(jp, pool);
+                    
+                    cells.add(cell);
+                }
             }
         }
         
-        if (obj.has("starred")) {
-            row.starred = obj.getBoolean("starred");
-        }
-        if (obj.has("flagged")) {
-            row.flagged = obj.getBoolean("flagged");
-        }
-        
-        return row;
+        return (cells.size() > 0) ? new Row(cells, flagged, starred) : null;
     }
 }

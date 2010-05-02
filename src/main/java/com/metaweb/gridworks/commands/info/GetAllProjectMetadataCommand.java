@@ -3,6 +3,7 @@ package com.metaweb.gridworks.commands.info;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,15 +29,17 @@ public class GetAllProjectMetadataCommand extends Command {
             Properties options = new Properties();
             
             writer.object();
-            
-            writer.key("projects"); writer.object();
-            
-            Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
-            for (Long id : m.keySet()) {
-                writer.key(id.toString());
-                m.get(id).write(writer, options);
-            }
-            writer.endObject();
+            writer.key("projects");
+                writer.object();
+                Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
+                for (Entry<Long,ProjectMetadata> e : m.entrySet()) {
+                    ProjectMetadata pm = e.getValue();
+                    if (pm != null) {
+                        writer.key(e.getKey().toString());
+                        e.getValue().write(writer, options);
+                    }
+                }
+                writer.endObject();
             writer.endObject();
         } catch (JSONException e) {
             respondException(response, e);

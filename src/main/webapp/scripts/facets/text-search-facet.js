@@ -13,6 +13,14 @@ TextSearchFacet.reconstruct = function(div, uiState) {
     return new TextSearchFacet(div, uiState.c, uiState.o);
 };
 
+TextSearchFacet.prototype.dispose = function() {
+};
+
+TextSearchFacet.prototype.reset = function() {
+    this._query = null;
+    this._div.find(".input-container input").each(function() { this.value = ""; });
+};
+
 TextSearchFacet.prototype.getUIState = function() {
     var json = {
         c: this.getJSON(),
@@ -20,7 +28,7 @@ TextSearchFacet.prototype.getUIState = function() {
     };
     
     return json;
-}
+};
 
 TextSearchFacet.prototype.getJSON = function() {
     var o = {
@@ -35,28 +43,57 @@ TextSearchFacet.prototype.getJSON = function() {
 };
 
 TextSearchFacet.prototype.hasSelection = function() {
-    return this._query != null;
+    return this._query !== null;
 };
 
 TextSearchFacet.prototype._initializeUI = function() {
     var self = this;
-    var container = this._div.empty();
+    this._div.empty().show().html(
+        '<div class="facet-title">' + 
+            '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+                '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+                '<td>' +
+                    '<span>' + this._config.name + '</span>' +
+                '</td>' +
+            '</tr></table></div>' +
+        '</div>' +
+        '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
+            '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
+            '<tr>' +
+                '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" /></td><td>case sensitive</td>' +
+                '<td width="1%"><input type="checkbox" bind="regexCheckbox" /></td><td>regular expression</td>' +
+            '</tr>' +
+        '</table></div></div>'
+    );
     
-    var headerDiv = $('<div></div>').addClass("facet-title").appendTo(container);
-    $('<span></span>').text(this._config.name).appendTo(headerDiv);
+    var elmts = DOM.bind(this._div);
     
-    var removeButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("remove").click(function() {
-        self._remove();
-    }).prependTo(headerDiv);
+    if (this._config.caseSensitive) {
+        elmts.caseSensitiveCheckbox.attr("checked", "true");
+    }
+    if (this._config.mode == "regex") {
+        elmts.regexCheckbox.attr("checked", "true");
+    }
     
-    var bodyDiv = $('<div></div>').addClass("facet-text-body").appendTo(container);
+    elmts.removeButton.click(function() { self._remove(); });
     
-    var input = $('<input />').appendTo(bodyDiv);
-    input.keyup(function(evt) {
+    elmts.caseSensitiveCheckbox.bind("change", function() {
+        self._config.caseSensitive = this.checked;
+        if (self._query !== null && self._query.length > 0) {
+            self._scheduleUpdate();
+        }
+    });
+    elmts.regexCheckbox.bind("change", function() {
+        self._config.mode = this.checked ? "regex" : "text";
+        if (self._query !== null && self._query.length > 0) {
+            self._scheduleUpdate();
+        }
+    });
+    
+    elmts.input.keyup(function(evt) {
         self._query = this.value;
         self._scheduleUpdate();
-    });
-    input[0].focus();
+    }).focus();
 };
 
 TextSearchFacet.prototype.updateState = function(data) {
@@ -80,7 +117,7 @@ TextSearchFacet.prototype._remove = function() {
 };
 
 TextSearchFacet.prototype._scheduleUpdate = function() {
-    if (this._timerID == null) {
+    if (!this._timerID) {
         var self = this;
         this._timerID = window.setTimeout(function() {
             self._timerID = null;

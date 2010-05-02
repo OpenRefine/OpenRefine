@@ -19,6 +19,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 
 public class EditOneCellCommand extends Command {
     @Override
@@ -53,12 +54,23 @@ public class EditOneCellCommand extends Command {
                 value
             );
             
-            boolean done = project.processManager.queueProcess(process);
-            if (done) {
+            HistoryEntry historyEntry = project.processManager.queueProcess(process);
+            if (historyEntry != null) {
+                /*
+                 * If the operation has been done, return the new cell's data
+                 * so the client side can update the cell's rendering right away.
+                 */
                 JSONWriter writer = new JSONWriter(response.getWriter());
+                
+                Pool pool = new Pool();
+                Properties options = new Properties();
+                options.put("pool", pool);
+                
                 writer.object();
                 writer.key("code"); writer.value("ok");
-                writer.key("cell"); process.newCell.write(writer, new Properties());
+                writer.key("historyEntry"); historyEntry.write(writer, options);
+                writer.key("cell"); process.newCell.write(writer, options);
+                writer.key("pool"); pool.write(writer, options);
                 writer.endObject();
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");
@@ -68,7 +80,7 @@ public class EditOneCellCommand extends Command {
         }
     }
     
-    protected class EditOneCellProcess extends QuickHistoryEntryProcess {
+    protected static class EditOneCellProcess extends QuickHistoryEntryProcess {
         final int rowIndex;
         final int cellIndex;
         final Serializable value;
@@ -88,7 +100,7 @@ public class EditOneCellCommand extends Command {
             this.value = value;
         }
 
-        protected HistoryEntry createHistoryEntry() throws Exception {
+        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
             Column column = _project.columnModel.getColumnByCellIndex(cellIndex);
             if (column == null) {
@@ -107,7 +119,7 @@ public class EditOneCellCommand extends Command {
             Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
                 
             return new HistoryEntry(
-                _project, description, null, change);
+                historyEntryID, _project, description, null, change);
         }
     }
 }

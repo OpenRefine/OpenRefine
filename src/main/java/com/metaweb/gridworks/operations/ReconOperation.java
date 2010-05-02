@@ -24,6 +24,7 @@ import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
+import com.metaweb.gridworks.model.recon.HeuristicReconConfig;
 import com.metaweb.gridworks.model.recon.ReconConfig;
 import com.metaweb.gridworks.model.recon.ReconJob;
 import com.metaweb.gridworks.process.LongRunningProcess;
@@ -98,6 +99,7 @@ public class ReconOperation extends EngineDependentOperation {
     public class ReconProcess extends LongRunningProcess implements Runnable {
         final protected Project     _project;
         final protected JSONObject  _engineConfig;
+        final protected long        _historyEntryID;
         protected List<ReconEntry>  _entries;
         protected int               _cellIndex;
         
@@ -109,6 +111,7 @@ public class ReconOperation extends EngineDependentOperation {
             super(description);
             _project = project;
             _engineConfig = engineConfig;
+            _historyEntryID = HistoryEntry.allocateID();
         }
         
         public void write(JSONWriter writer, Properties options)
@@ -137,17 +140,20 @@ public class ReconOperation extends EngineDependentOperation {
                                 writer.key("scroll"); writer.value(false);
                             writer.endObject();
                     writer.endObject();
-                    writer.object();
-                        writer.key("action"); writer.value("createFacet");
-                        writer.key("facetType"); writer.value("range");
-                        writer.key("facetConfig");
-                            writer.object();
-                                writer.key("name"); writer.value(_columnName + ": best candidate's score");
-                                writer.key("columnName"); writer.value(_columnName);
-                                writer.key("expression"); writer.value("cell.recon.best.score");
-                                writer.key("mode"); writer.value("range");
-                            writer.endObject();
-                    writer.endObject();
+
+                    if (_reconConfig instanceof HeuristicReconConfig) {
+	                    writer.object();
+	                        writer.key("action"); writer.value("createFacet");
+	                        writer.key("facetType"); writer.value("range");
+	                        writer.key("facetConfig");
+	                            writer.object();
+	                                writer.key("name"); writer.value(_columnName + ": best candidate's score");
+	                                writer.key("columnName"); writer.value(_columnName);
+	                                writer.key("expression"); writer.value("cell.recon.best.score");
+	                                writer.key("mode"); writer.value("range");
+	                            writer.endObject();
+	                    writer.endObject();
+                    }
                 writer.endArray();
             writer.endObject();
         }
@@ -170,7 +176,7 @@ public class ReconOperation extends EngineDependentOperation {
             
             FilteredRows filteredRows = engine.getAllFilteredRows(false);
             filteredRows.accept(_project, new RowVisitor() {
-                public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+                public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                     if (_cellIndex < row.cells.size()) {
                         Cell cell = row.cells.get(_cellIndex);
                         if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
@@ -222,14 +228,16 @@ public class ReconOperation extends EngineDependentOperation {
                     jobs.add(groups.get(j).job);
                 }
                 
-                List<Recon> recons = _reconConfig.batchRecon(jobs);
+                List<Recon> recons = _reconConfig.batchRecon(jobs, _historyEntryID);
                 for (int j = i; j < to; j++) {
                     Recon recon = recons.get(j - i);
-                    if (recon == null) {
-                        recon = new Recon();
+                    List<ReconEntry> entries = groups.get(j).entries;
+                    
+                    if (recon != null) {
+                    	recon.judgmentBatchSize = entries.size();
                     }
                     
-                    for (ReconEntry entry : groups.get(j).entries) {
+                    for (ReconEntry entry : entries) {
                         Cell oldCell = entry.cell;
                         Cell newCell = new Cell(oldCell.value, recon);
                         
@@ -262,6 +270,7 @@ public class ReconOperation extends EngineDependentOperation {
                 );
                 
                 HistoryEntry historyEntry = new HistoryEntry(
+                    _historyEntryID,
                     _project, 
                     _description, 
                     ReconOperation.this, 

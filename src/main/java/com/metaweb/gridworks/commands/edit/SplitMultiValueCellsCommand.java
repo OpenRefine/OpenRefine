@@ -29,10 +29,7 @@ public class SplitMultiValueCellsCommand extends Command {
             AbstractOperation op = new MultiValuedCellSplitOperation(columnName, keyColumnName, separator, mode);
             Process process = op.createProcess(project, new Properties());
             
-            boolean done = project.processManager.queueProcess(process);
-            
-            respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
-            
+            performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);
         }

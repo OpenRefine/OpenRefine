@@ -31,10 +31,14 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     
     static public class Edit implements Jsonizable {
         final public List<String>     from;
+        final public boolean          fromBlank;
+        final public boolean          fromError;
         final public Serializable     to;
         
-        public Edit(List<String> from, Serializable to) {
+        public Edit(List<String> from, boolean fromBlank, boolean fromError, Serializable to) {
             this.from = from;
+            this.fromBlank = fromBlank;
+            this.fromError = fromError;
             this.to = to;
         }
         
@@ -42,6 +46,8 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             throws JSONException {
             
             writer.object();
+            writer.key("fromBlank"); writer.value(fromBlank);
+            writer.key("fromError"); writer.value(fromError);
             writer.key("from");
                 writer.array();
                 for (String s : from) {
@@ -54,7 +60,8 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     }
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        JSONObject engineConfig = obj.has("engineConfig") && !obj.isNull("engineConfig") ?
+                obj.getJSONObject("engineConfig") : null;
         
         return new MassEditOperation(
             engineConfig,
@@ -71,14 +78,22 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         for (int i = 0; i < editCount; i++) {
             JSONObject editO = editsA.getJSONObject(i);
             
-            JSONArray fromA = editO.getJSONArray("from");
-            int fromCount = fromA.length();
-            
-            List<String> from = new ArrayList<String>(fromCount);
-            for (int j = 0; j < fromCount; j++) {
-                from.add(fromA.getString(j));
+            List<String> from = null;
+            if (editO.has("from") && !editO.isNull("from")) {
+                JSONArray fromA = editO.getJSONArray("from");
+                int fromCount = fromA.length();
+                
+                from = new ArrayList<String>(fromCount);
+                for (int j = 0; j < fromCount; j++) {
+                    from.add(fromA.getString(j));
+                }
+            } else {
+                from = new ArrayList<String>();
             }
-        
+            
+            boolean fromBlank = editO.has("fromBlank") && editO.getBoolean("fromBlank");
+            boolean fromError = editO.has("fromError") && editO.getBoolean("fromError");
+            
             Serializable to = (Serializable) editO.get("to");
             if (editO.has("type")) {
                 String type = editO.getString("type");
@@ -87,7 +102,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 }
             }
 
-            edits.add(new Edit(from, to));
+            edits.add(new Edit(from, fromBlank, fromError, to));
         }
         
         return edits;
@@ -128,16 +143,27 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             " cells in column " + column.getName();
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
         
         Map<String, Serializable> fromTo = new HashMap<String, Serializable>();
+        Serializable fromBlankTo = null;
+        Serializable fromErrorTo = null;
+        
         for (Edit edit : _edits) {
             for (String s : edit.from) {
                 fromTo.put(s, edit.to);
+            }
+            
+            // the last edit wins
+            if (edit.fromBlank) {
+                fromBlankTo = edit.to;
+            }
+            if (edit.fromError) {
+                fromErrorTo = edit.to;
             }
         }
         
@@ -146,41 +172,59 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             Properties                  bindings;
             List<CellChange>            cellChanges;
             Evaluable                   eval;
+            
             Map<String, Serializable>   fromTo;
+            Serializable                fromBlankTo;
+            Serializable                fromErrorTo;
             
             public RowVisitor init(
                 int cellIndex, 
                 Properties bindings, 
                 List<CellChange> cellChanges, 
                 Evaluable eval, 
-                Map<String, Serializable> fromTo
+                Map<String, Serializable> fromTo,
+                Serializable fromBlankTo,
+                Serializable fromErrorTo
             ) {
                 this.cellIndex = cellIndex;
                 this.bindings = bindings;
                 this.cellChanges = cellChanges;
                 this.eval = eval;
                 this.fromTo = fromTo;
+                this.fromBlankTo = fromBlankTo;
+                this.fromErrorTo = fromErrorTo;
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
-
-                ExpressionUtils.bind(bindings, row, rowIndex, cell);
+                Cell newCell = null;
+                
+                ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
                 
                 Object v = eval.evaluate(bindings);
-                if (v != null) {
+                if (ExpressionUtils.isError(v)) {
+                    if (fromErrorTo != null) {
+                        newCell = new Cell(fromErrorTo, (cell != null) ? cell.recon : null);
+                    }
+                } else if (ExpressionUtils.isNonBlankData(v)) {
                     String from = v.toString();
                     Serializable to = fromTo.get(from);
                     if (to != null) {
-                        Cell newCell = new Cell(to, (cell != null) ? cell.recon : null);
-                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                        cellChanges.add(cellChange);
+                        newCell = new Cell(to, (cell != null) ? cell.recon : null);
+                    }
+                } else {
+                    if (fromBlankTo != null) {
+                        newCell = new Cell(fromBlankTo, (cell != null) ? cell.recon : null);
                     }
                 }
                 
+                if (newCell != null) {
+                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+                    cellChanges.add(cellChange);
+                }
                 return false;
             }
-        }.init(column.getCellIndex(), bindings, cellChanges, eval, fromTo);
+        }.init(column.getCellIndex(), bindings, cellChanges, eval, fromTo, fromBlankTo, fromErrorTo);
     }
 }

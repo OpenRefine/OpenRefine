@@ -29,19 +29,19 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
         values,
         expression
     );
-};
+}
 
 ExpressionPreviewDialog.generateWidgetHtml = function() {
-    return '<table class="expression-preview-layout" rows="4" cols="2">' +
+    return '<div class="grid-layout layout-tight layout-full"><table rows="4" cols="2">' +
             '<tr>' +
                 '<td>Expression</td>' +
                 '<td>Language</td>' +
             '</tr>' +
             '<tr>' +
-                '<td rowspan="2"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></td>' +
+                '<td rowspan="2"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></div></td>' +
                 '<td width="150" height="1">' +
                     '<select bind="expressionPreviewLanguageSelect">' +
-                        '<option value="gel">Native expression language</option>' +
+                        '<option value="gel">Gridworks expression language (GEL)</option>' +
                         '<option value="jython">Jython</option>' +
                         '<option value="clojure">Clojure</option>' +
                     '</select>' +
@@ -52,7 +52,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
             '</tr>' +
             '<tr>' +
                 '<td colspan="2">' +
-                    '<div id="expression-preview-tabs">' +
+                    '<div id="expression-preview-tabs" class="gridworks-tabs">' +
                         '<ul>' +
                             '<li><a href="#expression-preview-tabs-preview">Preview</a></li>' +
                             '<li><a href="#expression-preview-tabs-history">History</a></li>' +
@@ -70,7 +70,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
                     '</div>' +
                 '</td>' +
             '</tr>' +
-        '</table>';
+        '</table></div>';
 };
 
 ExpressionPreviewDialog.Widget = function(
@@ -98,7 +98,7 @@ ExpressionPreviewDialog.Widget = function(
     if (colon > 0) {
         var l = expression.substring(0, colon);
         if (l == "gel" || l == "jython" || l == "clojure") {
-            expression = expression.substring(colon + 1);
+            this.expression = expression.substring(colon + 1);
             language = l;
         }
     }
@@ -121,7 +121,7 @@ ExpressionPreviewDialog.Widget = function(
 
 ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     var s = $.trim(this.expression || "");
-    if (s.length == 0) {
+    if (!s.length) {
         return null;
     }
     
@@ -141,7 +141,7 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
 
 ExpressionPreviewDialog.Widget.prototype._getLanguage = function() {
     return this._elmts.expressionPreviewLanguageSelect[0].value;
-}
+};
 
 ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
     var self = this;
@@ -242,7 +242,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
     
     var table = $(
         '<table width="100%" cellspacing="5">' +
-            '<tr><th>Expression</th><th>Language</th><th>From</th><th></th></tr>' +
+            '<tr><th>Expression</th><th></th><th>Language</th><th>From</th></tr>' +
         '</table>'
     ).appendTo(elmt)[0];
     
@@ -251,10 +251,8 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
         var o = Scripting.parse(entry.code);
         
         $(tr.insertCell(0)).text(o.expression);
-        $(tr.insertCell(1)).text(o.language);
-        $(tr.insertCell(2)).text(entry.global ? "Other projects" : "This project");
         
-        $('<a href="javascript:{}">Re-use</a>').appendTo(tr.insertCell(3)).click(function() {
+        $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(1)).click(function() {
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
             
@@ -264,6 +262,9 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
             
             self.update();
         });
+        
+        $(tr.insertCell(2)).text(o.language);
+        $(tr.insertCell(3)).html(entry.global ? "Other&nbsp;projects" : "This&nbsp;project");
     };
     
     for (var i = 0; i < data.expressions.length; i++) {
@@ -273,7 +274,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
 };
 
 ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
-    if (this._timerID != null) {
+    if (this._timerID !== null) {
         window.clearTimeout(this._timerID);
     }
     var self = this;
@@ -321,24 +322,17 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
     
     var renderValue = function(td, v) {
         if (v !== null && v !== undefined) {
-            if ($.isArray(v)) {
-                var a = [];
-                $.each(v, function() { a.push(JSON.stringify(this)); });
-                
-                td.text("[ " + a.join(", ") + " ]");
-            } else if ($.isPlainObject(v)) {
+            if ($.isPlainObject(v)) {
                 $('<span></span>').addClass("expression-preview-special-value").text("Error: " + v.message).appendTo(td);
-            } else if (typeof v === "string" && v.length == 0) {
-                $('<span>empty string</span>').addClass("expression-preview-special-value").appendTo(td);
             } else {
-                td.text(v.toString());
+                td.text(v);
             }
         } else {
             $('<span>null</span>').addClass("expression-preview-special-value").appendTo(td);
         }
     };
     
-    if (this._results != null) {
+    if (this._results !== null) {
         this._elmts.expressionPreviewErrorContainer.empty();
     } else {
         var message = (data.type == "parser") ? data.message : "Internal error";
@@ -353,7 +347,7 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
         renderValue($(tr.insertCell(1)), this._values[i]);
         
         var tdValue = $(tr.insertCell(2));
-        if (this._results != null) {
+        if (this._results !== null) {
             var v = this._results[i];
             renderValue(tdValue, v);
         }

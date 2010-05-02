@@ -5,6 +5,9 @@ import java.util.Properties;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.gel.Control;
 
+/**
+ * An abstract syntax tree node encapsulating a control call, such as "if".
+ */
 public class ControlCallExpr implements Evaluable {
     final protected Evaluable[] _args;
     final protected Control     _control;

@@ -10,7 +10,7 @@ SchemaAlignment.autoAlign = function() {
     
     for (var c = 0; c < columns.length; c++) {
         var column = columns[c];
-        var typed = "reconConfig" in column && column.reconConfig != null;
+        var typed = "reconConfig" in column && column.reconConfig !== null;
         var candidate = {
             status: "unbound",
             typed: typed,
@@ -81,14 +81,14 @@ SchemaAlignment._batchSearch = function(queries, onDone) {
     
     args.push(function() {
         onDone(result);
-    })
+    });
     
     Ajax.chainGetJSON.apply(null, args);
 };
 
 SchemaAlignment._cleanName = function(s) {
     return s.replace(/\W/g, " ").replace(/\s+/g, " ").toLowerCase();
-}
+};
 
 SchemaAlignment.createNewRootNode = function() {
     var rootNode = null;
@@ -101,7 +101,7 @@ SchemaAlignment.createNewRootNode = function() {
             columnName: column.name,
             createForNoReconMatch: true
         };
-        if ("reconConfig" in column && column.reconConfig != null) {
+        if ("reconConfig" in column && column.reconConfig !== null) {
             target.type = {
                 id: column.reconConfig.type.id,
                 name: column.reconConfig.type.name
@@ -129,14 +129,14 @@ function SchemaAlignmentDialog(protograph, onDone) {
     this._originalProtograph = protograph || { rootNodes: [] };
     this._protograph = cloneDeep(this._originalProtograph); // this is what can be munched on
     
-    if (this._protograph.rootNodes.length == 0) {
+    if (!this._protograph.rootNodes.length) {
         this._protograph.rootNodes.push(SchemaAlignment.createNewRootNode());
     }
     
     this._nodeUIs = [];
     this._createDialog();
     this.preview();
-};
+}
 
 SchemaAlignmentDialog.prototype._createDialog = function() {
     var self = this;
@@ -191,7 +191,7 @@ SchemaAlignmentDialog.prototype._constructBody = function(body) {
     '</p>').appendTo(body);
     
     $(
-        '<div id="schema-alignment-tabs">' +
+        '<div id="schema-alignment-tabs" class="gridworks-tabs">' +
             '<ul>' +
                 '<li><a href="#schema-alignment-tabs-protograph">Skeleton</a></li>' +
                 '<li><a href="#schema-alignment-tabs-preview-mqllike">MQL-like Preview</a></li>' +
@@ -239,7 +239,7 @@ SchemaAlignmentDialog.prototype.getJSON = function() {
     var rootNodes = [];
     for (var i = 0; i < this._nodeUIs.length; i++) {
         var node = this._nodeUIs[i].getJSON();
-        if (node != null) {
+        if (node !== null) {
             rootNodes.push(node);
         }
     }

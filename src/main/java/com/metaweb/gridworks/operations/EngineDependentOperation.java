@@ -15,7 +15,8 @@ abstract public class EngineDependentOperation extends AbstractOperation {
     
     protected EngineDependentOperation(JSONObject engineConfig) {
         _engineConfig = engineConfig;
-        _engineConfigString = engineConfig.toString();
+        _engineConfigString = engineConfig == null || engineConfig.length() == 0
+        	? null : engineConfig.toString();
     }
     
     protected Engine createEngine(Project project) throws Exception {
@@ -25,7 +26,7 @@ abstract public class EngineDependentOperation extends AbstractOperation {
     }
     
     protected JSONObject getEngineConfig() {
-        if (_engineConfig == null) {
+        if (_engineConfig == null && _engineConfigString != null) {
             try {
                 _engineConfig = ParsingUtilities.evaluateJsonStringToObject(_engineConfigString);
             } catch (JSONException e) {

@@ -14,10 +14,12 @@ function ReconDialog(column, types) {
         delete defaultTypes[this.id];
     });
     for (var id in defaultTypes) {
-        this._types.push({
-            id: id,
-            name: defaultTypes[id].name
-        });
+        if (defaultTypes.hasOwnProperty(id)) {
+            this._types.push({
+                id: id,
+                name: defaultTypes[id].name
+            });
+        }
     }
     
     this._createDialog();
@@ -33,13 +35,13 @@ ReconDialog.prototype._createDialog = function() {
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     var html = $(
-        '<div id="recon-dialog-tabs">' +
+        '<div id="recon-dialog-tabs" class="gridworks-tabs">' +
             '<ul>' +
                 '<li><a href="#recon-dialog-tabs-heuristic">Heuristic</a></li>' +
                 '<li><a href="#recon-dialog-tabs-strict">Strict</a></li>' +
             '</ul>' +
             '<div id="recon-dialog-tabs-heuristic">' +
-                '<table class="recon-dialog-main-layout" width="100%">' +
+                '<div class="grid-layout layout-normal layout-full"><table>' +
                     '<tr>' +
                         '<td>Reconcile each cell to a Freebase topic of type:</td>' +
                         '<td>Also use relevant details from other columns:</td>' +
@@ -65,21 +67,21 @@ ReconDialog.prototype._createDialog = function() {
                         '</td>' +
                         '<td>' +
                             'Use ' +
-                            '<input type="radio" name="recon-dialog-heuristic-service" value="recon" checked /> recon service ' +
-                            '<input type="radio" name="recon-dialog-heuristic-service" value="relevance" /> relevance service ' +
+                            '<input type="radio" name="recon-dialog-heuristic-service" value="relevance" checked="" /> relevance service ' +
+                            '<input type="radio" name="recon-dialog-heuristic-service" value="recon" /> recon service ' +
                         '</td>' +
                     '</tr>' +
-                '</table>' +
+                '</table></div>' +
             '</div>' +
             '<div id="recon-dialog-tabs-strict" style="display: none;">' +
                 '<p>Each cell contains:</p>' +
-                '<table class="recon-dialog-main-layout">' +
+                '<div class="grid-layout layout-normal layout-full"><table>' +
                     '<tr><td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="id" checked /></td><td>a Freebase ID, e.g., /en/solar_system</td></tr>' +
                     '<tr><td><input type="radio" name="recon-dialog-strict-choice" value="guid" /></td><td>a Freebase GUID, e.g., #9202a8c04000641f80000000000354ae</td></tr>' +
                     '<tr>' +
                         '<td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="key" /></td>' +
                         '<td>' +
-                            '<table class="recon-dialog-inner-layout">' +
+                            '<div class="grid-layout layout-tighter layout-full"><table>' +
                                 '<tr><td colspan="2">a Freebase key in</td></tr>' +
                                 '<tr>' +
                                     '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="/wikipedia/en" nsName="Wikipedia EN" checked /></td>' +
@@ -89,10 +91,10 @@ ReconDialog.prototype._createDialog = function() {
                                     '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="other" /></td>' +
                                     '<td>this namespace: <input bind="strictNamespaceInput" /></td>' +
                                 '</tr>' +
-                            '</table>' +
+                            '</table></div>' +
                         '</td>' +
                     '</tr>' +
-                '</table>' +
+                '</table></div>' +
             '</div>' +
         '</div>'
     ).appendTo(body);
@@ -117,7 +119,8 @@ ReconDialog.prototype._populateDialog = function() {
     /*
      *  Populate types in heuristic tab
      */
-    var typeTable = $('<table></table>').addClass("recon-dialog-inner-layout").appendTo(this._elmts.heuristicTypeContainer)[0];
+    var typeTableContainer = $('<div>').addClass("grid-layout layout-tighter").appendTo(this._elmts.heuristicTypeContainer);
+    var typeTable = $('<table></table>').appendTo(typeTableContainer)[0];
     var createTypeChoice = function(type, check) {
         var tr = typeTable.insertRow(typeTable.rows.length);
         var td0 = tr.insertCell(0);
@@ -139,17 +142,21 @@ ReconDialog.prototype._populateDialog = function() {
         $(td1).html(type.name + '<br/><span class="recon-dialog-type-id">' + type.id + '</span>');
     };
     for (var i = 0; i < this._types.length; i++) {
-        createTypeChoice(this._types[i], i == 0);
+        createTypeChoice(this._types[i], i === 0);
     }
     
     /*
      *  Populate properties in heuristic tab
      */
+    var heuristicDetailTableContainer = $('<div>')
+        .addClass("grid-layout layout-tighter")
+        .appendTo(this._elmts.heuristicDetailContainer);
+        
     var heuristicDetailTable = $(
         '<table>' +
             '<tr><th>Column</th><th>Freebase property</th></tr>' +
         '</table>'
-    ).addClass("recon-dialog-inner-layout").appendTo(this._elmts.heuristicDetailContainer)[0];
+    ).appendTo(heuristicDetailTableContainer)[0];
     
     function renderDetailColumn(column) {
         var tr = heuristicDetailTable.insertRow(heuristicDetailTable.rows.length);
@@ -194,15 +201,17 @@ ReconDialog.prototype._wireEvents = function() {
 ReconDialog.prototype._rewirePropertySuggests = function(schema) {
     var inputs = $('input[name="recon-dialog-heuristic-property"]');
     
-    inputs.suggestP({
-            type: '/type/property',
-            schema: schema || "/common/topic"
-        });
+    inputs.unbind().suggestP({
+        type: '/type/property',
+        schema: schema || "/common/topic"
+    }).bind("fb-select", function(e, data) {
+        $('input[name="recon-dialog-heuristic-service"][value="recon"]').attr("checked", "true"); 
+    });
 };
 
 ReconDialog.prototype._onOK = function() {
     var tab = $("#recon-dialog-tabs").tabs('option', 'selected');
-    if (tab == 0) {
+    if (tab === 0) {
         this._onDoHeuristic();
     } else {
         this._onDoStrict();
@@ -217,21 +226,21 @@ ReconDialog.prototype._onDoHeuristic = function() {
     var type = this._elmts.heuristicTypeInput.data("data.suggest");
 
     var choices = $('input[name="recon-dialog-type-choice"]:checked');
-    if (choices != null && choices.length > 0 && choices[0].value != "") {
+    if (choices !== null && choices.length > 0 && choices[0].value != "") {
         type = {
             id: choices[0].value,
             name: choices.attr("typeName")
         };
     }
     
-    if (type == null)  {
+    if (!type)  {
         alert("Please specify a type.");
     } else {
         var columnDetails = [];
         var propertyInputs = $('input[name="recon-dialog-heuristic-property"]');
         $.each(propertyInputs, function() {
             var property = $(this).data("data.suggest");
-            if (property != null) {
+            if (property && property.id) {
                 columnDetails.push({
                     column: this.getAttribute("columnName"),
                     property: {
@@ -275,7 +284,7 @@ ReconDialog.prototype._onDoStrict = function() {
         
         if (namespaceChoice.value == "other") {
             var suggest = this._elmts.strictNamespaceInput.data("data.suggest");
-            if (suggest == null) {
+            if (!suggest) {
                 alert("Please specify a namespace.");
                 return;
             }

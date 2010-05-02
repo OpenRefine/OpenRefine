@@ -16,6 +16,7 @@ import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.util.Pool;
 
 public class GetRowsCommand extends Command {
 
@@ -28,7 +29,11 @@ public class GetRowsCommand extends Command {
             
             int start = Math.min(project.rows.size(), Math.max(0, getIntegerParameter(request, "start", 0)));
             int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
+            
+            Pool pool = new Pool();
             Properties options = new Properties();
+            options.put("reconCandidateOmitTypes", true);
+            options.put("pool", pool);
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
@@ -38,8 +43,8 @@ public class GetRowsCommand extends Command {
             
             {
                 RowAccumulator acc = new RowAccumulator(start, limit) {
-                    JSONWriter    writer;
-                    Properties    options;
+                    JSONWriter  writer;
+                    Properties  options;
                     Properties  extra;
                     
                     public RowAccumulator init(JSONWriter writer, Properties options) {
@@ -53,8 +58,13 @@ public class GetRowsCommand extends Command {
                     }
                     
                     @Override
-                    public boolean internalVisit(int rowIndex, Row row, boolean contextual) {
+                    public boolean internalVisit(int rowIndex, Row row, boolean contextual, boolean dependent) {
                         try {
+                            /*
+                             * Whatever that's in the "extra" field will be written out
+                             * by the row as well. This is how we can customize what the row
+                             * writes, in a limited way.
+                             */
                             if (contextual) {
                                 options.put("extra", extra);
                             } else {
@@ -81,6 +91,7 @@ public class GetRowsCommand extends Command {
             writer.key("start"); writer.value(start);
             writer.key("limit"); writer.value(limit);
             writer.key("total"); writer.value(project.rows.size());
+            writer.key("pool"); pool.write(writer, options);
             
             writer.endObject();
         } catch (Exception e) {
@@ -99,11 +110,11 @@ public class GetRowsCommand extends Command {
             this.limit = limit;
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+        public boolean visit(Project project, int rowIndex, Row row, boolean contextual, boolean dependent) {
             boolean r = false;
             
             if (total >= start && total < start + limit) {
-                r = internalVisit(rowIndex, row, contextual);
+                r = internalVisit(rowIndex, row, contextual, dependent);
             }
             if (!contextual) {
                 total++;
@@ -111,7 +122,7 @@ public class GetRowsCommand extends Command {
             return r;
         }
         
-        protected boolean internalVisit(int rowIndex, Row row, boolean contextual) {
+        protected boolean internalVisit(int rowIndex, Row row, boolean contextual, boolean dependent) {
             return false;
         }
     }

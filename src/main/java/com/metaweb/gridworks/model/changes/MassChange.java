@@ -10,6 +10,7 @@ import java.util.Properties;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.History;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.util.Pool;
 
 public class MassChange implements Change {
     final protected List<? extends Change> _changes;
@@ -53,7 +54,7 @@ public class MassChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         boolean updateRowContextDependencies = false;
         List<Change> changes = null;
         
@@ -69,7 +70,7 @@ public class MassChange implements Change {
                 
                 changes = new ArrayList<Change>(changeCount);
                 for (int i = 0; i < changeCount; i++) {
-                    changes.add(History.readOneChange(reader));
+                    changes.add(History.readOneChange(reader, pool));
                 }
             }
         }

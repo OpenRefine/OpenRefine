@@ -11,6 +11,11 @@ function RangeFacet(div, config, options) {
     this._selectBlank = ("selectBlank" in this._config) ? this._config.selectBlank : true;
     this._selectError = ("selectError" in this._config) ? this._config.selectError : true;
     
+    this._baseNumericCount = 0;
+    this._baseNonNumericCount = 0;
+    this._baseBlankCount = 0;
+    this._baseErrorCount = 0;
+    
     this._numericCount = 0;
     this._nonNumericCount = 0;
     this._blankCount = 0;
@@ -20,27 +25,30 @@ function RangeFacet(div, config, options) {
     this._initializedUI = false;
 }
 
-RangeFacet.prototype._setDefaults = function() {
-    switch (this._config.mode) {
-    case "min":
-        this._from = this._config.min;
-        break;
-    case "max":
-        this._to = this._config.max;
-        break;
-    default:
-        this._from = this._config.min;
-        this._to = this._config.max;
-    }
-    
+RangeFacet.prototype.reset = function() {
+    this._from = this._config.min;
+    this._to = this._config.max;
+    this._sliderWidget.update(
+        this._config.min, 
+        this._config.max, 
+        this._config.step, 
+        this._from,
+        this._to
+    );
+        
     this._selectNumeric = true;
     this._selectNonNumeric = true;
     this._selectBlank = true;
     this._selectError = true;
+    
+    this._setRangeIndicators();
 };
 
 RangeFacet.reconstruct = function(div, uiState) {
     return new RangeFacet(div, uiState.c, uiState.o);
+};
+
+RangeFacet.prototype.dispose = function() {
 };
 
 RangeFacet.prototype.getUIState = function() {
@@ -50,14 +58,12 @@ RangeFacet.prototype.getUIState = function() {
     };
     
     return json;
-}
-
+};
 
 RangeFacet.prototype.getJSON = function() {
     var o = {
         type: "range",
         name: this._config.name,
-        mode: this._config.mode,
         expression: this._config.expression,
         columnName: this._config.columnName,
         selectNumeric: this._selectNumeric,
@@ -66,15 +72,11 @@ RangeFacet.prototype.getJSON = function() {
         selectError: this._selectError
     };
     
-    if (this._config.mode == "min" || this._config.mode == "range") {
-        if (this._from != null) {
-            o.from = this._from;
-        }
+    if (this._from !== null) {
+        o.from = this._from;
     }
-    if (this._config.mode == "max" || this._config.mode == "range") {
-        if (this._to != null) {
-            o.to = this._to;
-        }
+    if (this._to !== null) {
+        o.to = this._to;
     }
     
     return o;
@@ -85,197 +87,164 @@ RangeFacet.prototype.hasSelection = function() {
         return true;
     }
     
-    switch (this._config.mode) {
-    case "min":
-        return this._from != null && (!this._initializedUI || this._from > this._config.min);
-    case "max":
-        return this._to != null && (!this._initializedUI || this._to < this._config.max);
-    default:
-        return (this._from != null && (!this._initializedUI || this._from > this._config.min)) ||
-            (this._to != null && (!this._initializedUI || this._to < this._config.max));
-    }
+    return (this._from !== null && (!this._initializedUI || this._from > this._config.min)) ||
+        (this._to !== null && (!this._initializedUI || this._to < this._config.max));
 };
 
 RangeFacet.prototype._initializeUI = function() {
     var self = this;
-    var container = this._div.empty();
+    this._div
+        .empty()
+        .show()
+        .html(
+            '<div class="facet-title" bind="headerDiv">' +
+                '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+                    '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+                    '<td>' +
+                        '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
+                        '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
+                        '<span bind="facetTitle"></span>' +
+                    '</td>' +
+                '</tr></table></div>' +
+            '</div>' +
+            '<div class="facet-expression" bind="expressionDiv"></div>' +
+            '<div class="facet-range-body">' +
+                '<div class="facet-range-message" bind="messageDiv">Loading...</div>' +
+                '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
+                    '<div class="facet-range-histogram" bind="histogramDiv"></div>' +
+                '</div>' +
+                '<div class="facet-range-status" bind="statusDiv"></div>' +
+                '<div class="facet-range-other-choices" bind="otherChoicesDiv"></div>' +
+            '</div>'
+        );
+    this._elmts = DOM.bind(this._div);
     
-    var headerDiv = $('<div></div>').addClass("facet-title").appendTo(container);
-    $('<span></span>').text(this._config.name).appendTo(headerDiv);
+    this._elmts.facetTitle.text(this._config.name);
+    this._elmts.changeButton.attr("title","Current Expression: " + this._config.expression).click(function() {
+        self._elmts.expressionDiv.slideToggle(100);
+    });
+    this._elmts.expressionDiv.text(this._config.expression).click(function() { 
+        self._editExpression(); 
+    }).hide();
     
-    var resetButton = $('<a href="javascript:{}"></a>').addClass("facet-choice-link").text("reset").click(function() {
-        switch (self._config.mode) {
-        case "min":
-            self._from = self._config.min;
-            self._sliderDiv.slider("value", self._from);
-            break;
-        case "max":
-            self._to = self._config.max;
-            self._sliderDiv.slider("value", self._to);
-            break;
-        default:
-            self._from = self._config.min;
-            self._to = self._config.max;
-            self._sliderDiv.slider("values", 0, self._from);
-            self._sliderDiv.slider("values", 1, self._to);
-        }
-        self._selectNumeric = true;
-        self._selectNonNumeric = true;
-        self._selectBlank = true;
-        self._selectError = true;
-        
-        self._setRangeIndicators();
+    this._elmts.resetButton.click(function() {
+        self.reset();
         self._updateRest();
-    }).prependTo(headerDiv);
-    
-    var removeButton = $('<img>')
-        .attr("src", "images/close.png")
-        .attr("title", "Remove this facet")
-        .addClass("facet-choice-link")
-        .click(function() {
-            self._remove();
-        }).prependTo(headerDiv);
+    });
+    this._elmts.removeButton.click(function() {
+        self._remove();
+    });
         
-    var bodyDiv = $('<div></div>').addClass("facet-range-body").appendTo(container);
+    this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
+    this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
     
-    if (this._error) {
-        return;
-    }
-    
-    this._histogramDiv = $('<div></div>').addClass("facet-range-histogram").appendTo(bodyDiv);
-    this._sliderDiv = $('<div></div>').addClass("facet-range-slider").appendTo(bodyDiv);
-    this._statusDiv = $('<div></div>').addClass("facet-range-status").appendTo(bodyDiv);
-    this._otherChoicesDiv = $('<div></div>').addClass("facet-range-other-choices").appendTo(bodyDiv);
-    
-    var onSlide = function(event, ui) {
-        switch (self._config.mode) {
-        case "min":
-            self._from = ui.value;
-            break;
-        case "max":
-            self._to = ui.value;
-            break;
-        default:
-            self._from = ui.values[0];
-            self._to = ui.values[1];
-        }
+    this._elmts.sliderWidgetDiv.bind("slide", function(evt, data) {
+        self._from = data.from;
+        self._to = data.to;
         self._setRangeIndicators();
-    };
-    var onStop = function() {
+    }).bind("stop", function(evt, data) {
+        self._from = data.from;
+        self._to = data.to;
         self._selectNumeric = true;
         self._updateRest();
-    };
-    var sliderConfig = {
-        range: "max",
-        min: this._config.min,
-        max: this._config.max,
-        value: 2,
-        stop: onStop,
-        slide: onSlide
-    };
-    if ("step" in this._config) {
-        sliderConfig.step = this._config.step;
-    }
-        
-    switch (this._config.mode) {
-    case "min":
-        sliderConfig.range = "max";
-        sliderConfig.value = this._from;
-        break;
-    case "max":
-        sliderConfig.range = "min";
-        sliderConfig.value = this._to;
-        break;
-    default:
-        sliderConfig.range = true;
-        sliderConfig.values = [ this._from, this._to ];
-    }
-    
-    this._sliderDiv.slider(sliderConfig);
-    this._setRangeIndicators();
-    this._renderOtherChoices();
+    });
 };
 
 RangeFacet.prototype._renderOtherChoices = function() {
     var self = this;
-    var container = this._otherChoicesDiv.empty();
+    var container = this._elmts.otherChoicesDiv.empty();
     
-    var table = $('<table>').attr("cellpadding", "0").attr("cellspacing", "1").css("white-space", "pre").appendTo(container)[0];
-    var tr0 = table.insertRow(0);
-    var tr1 = table.insertRow(1);
+    if (this._baseNonNumericCount === 0 && this._baseBlankCount === 0 && this._baseErrorCount === 0) {
+        return;
+    }
+
+    var facet_id = this._div.attr("id");
     
-    var td00 = $(tr0.insertCell(0)).attr("width", "1%");
-    var numericCheck = $('<input type="checkbox" />').appendTo(td00).change(function() {
+    var choices = $('<div>').addClass("facet-range-choices");
+
+    // ----------------- numeric -----------------
+    
+    var numericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-numeric").appendTo(choices).change(function() {
         self._selectNumeric = !self._selectNumeric;
         self._updateRest();
     });
-    if (this._selectNumeric) {
-        numericCheck[0].checked = true;
-    }
+    if (this._selectNumeric) numericCheck.attr("checked","checked");
     
-    var td01 = $(tr0.insertCell(1));
-    $('<span>').text("Numeric ").addClass("facet-choice-label").appendTo(td01);
-    $('<span>').text(this._numericCount).addClass("facet-choice-count").appendTo(td01);
+    var numericLabel = $('<label>').attr("for", facet_id + "-numeric").appendTo(choices);    
+    $('<span>').text("Numeric ").addClass("facet-choice-label").appendTo(numericLabel);
+    $('<br>').appendTo(numericLabel);
+    $('<span>').text(this._numericCount).addClass("facet-choice-count").appendTo(numericLabel);
+
+    // ----------------- blank -----------------
     
-    var td02 = $(tr0.insertCell(2)).attr("width", "1%");
-    var nonNumericCheck = $('<input type="checkbox" />').appendTo(td02).change(function() {
-        self._selectNonNumeric = !self._selectNonNumeric;
-        self._updateRest();
-    });
-    if (this._selectNonNumeric) {
-        nonNumericCheck[0].checked = true;
-    }
-    
-    var td03 = $(tr0.insertCell(3));
-    $('<span>').text("Non-numeric ").addClass("facet-choice-label").appendTo(td03);
-    $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(td03);
-    
-    var td10 = $(tr1.insertCell(0)).attr("width", "1%");
-    var blankCheck = $('<input type="checkbox" />').appendTo(td10).change(function() {
+    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(choices).change(function() {
         self._selectBlank = !self._selectBlank;
         self._updateRest();
     });
-    if (this._selectBlank) {
-        blankCheck[0].checked = true;
-    }
+    if (this._selectBlank) blankCheck.attr("checked","checked");
+
+    var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(choices);    
+    $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(blankLabel);
+    $('<br>').appendTo(blankLabel);
+    $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(blankLabel);
+
+    if (this._baseBlankCount === 0) blankCheck.removeAttr("checked");
     
-    var td11 = $(tr1.insertCell(1));
-    $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(td11);
-    $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(td11);
+    // ----------------- non-numeric -----------------
     
-    var td12 = $(tr1.insertCell(2)).attr("width", "1%");
-    var errorCheck = $('<input type="checkbox" />').appendTo(td12).change(function() {
+    var nonNumericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-numeric").appendTo(choices).change(function() {
+        self._selectNonNumeric = !self._selectNonNumeric;
+        self._updateRest();
+    });
+    if (this._selectNonNumeric) nonNumericCheck.attr("checked","checked");
+    
+    var nonNumericLabel = $('<label>').attr("for", facet_id + "-non-numeric").appendTo(choices);    
+    $('<span>').text("Non-numeric ").addClass("facet-choice-label").appendTo(nonNumericLabel);
+    $('<br>').appendTo(nonNumericLabel);
+    $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(nonNumericLabel);
+
+    if (this._baseNonNumericCount === 0) nonNumericCheck.removeAttr("checked");
+    
+    // ----------------- error -----------------
+
+    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(choices).change(function() {
         self._selectError = !self._selectError;
         self._updateRest();
     });
-    if (this._selectError) {
-        errorCheck[0].checked = true;
-    }
+    if (this._selectError) errorCheck.attr("checked","checked");
+
+    var errorLabel = $('<label>').attr("for", facet_id + "-error").appendTo(choices);    
+    $('<span>').text("Error ").addClass("facet-choice-label").appendTo(errorLabel);
+    $('<br>').appendTo(errorLabel);
+    $('<span>').text(this._errorCount).addClass("facet-choice-count").appendTo(errorLabel);
+
+    if (this._baseErrorCount === 0) errorCheck.removeAttr("checked");
+
+    // --------------------------
     
-    var td13 = $(tr1.insertCell(3));
-    $('<span>').text("Error ").addClass("facet-choice-label").appendTo(td13);
-    $('<span>').text(this._errorCount).addClass("facet-choice-count").appendTo(td13);
-    
+    choices.buttonset().appendTo(container);
 };
 
 RangeFacet.prototype._setRangeIndicators = function() {
-    var text;
-    switch (this._config.mode) {
-    case "min":
-        text = "At least " + this._from;
-        break;
-    case "max":
-        text = "At most " + this._to;
-        break;
-    default:
-        text = this._from + " to " + this._to;
-    }
-    
-    this._statusDiv.text(text);
+    this._elmts.statusDiv.html(this._addCommas(this._from.toFixed(2)) + " &mdash; " + this._addCommas(this._to.toFixed(2)));
 };
+
+RangeFacet.prototype._addCommas = function(nStr) {
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
 
 RangeFacet.prototype.updateState = function(data) {
     if ("min" in data && "max" in data) {
+        this._error = false;
+        
         this._config.min = data.min;
         this._config.max = data.max;
         this._config.step = data.step;
@@ -298,12 +267,18 @@ RangeFacet.prototype.updateState = function(data) {
             }
         }
         
+        this._baseNumericCount = data.baseNumericCount;
+        this._baseNonNumericCount = data.baseNonNumericCount;
+        this._baseBlankCount = data.baseBlankCount;
+        this._baseErrorCount = data.baseErrorCount;
+
         this._numericCount = data.numericCount;
         this._nonNumericCount = data.nonNumericCount;
         this._blankCount = data.blankCount;
         this._errorCount = data.errorCount;
     } else {
         this._error = true;
+        this._errorMessage = "error" in data ? data.error : "Unknown error.";
     }
     
     this.render();
@@ -314,51 +289,38 @@ RangeFacet.prototype.render = function() {
         this._initializeUI();
         this._initializedUI = true;
     }
+    
     if (this._error) {
+        this._elmts.messageDiv.text(this._errorMessage).show();
+        this._elmts.sliderWidgetDiv.hide();
+        this._elmts.histogramDiv.hide();
+        this._elmts.statusDiv.hide();
+        this._elmts.otherChoicesDiv.hide();
         return;
     }
     
-    this._sliderDiv.slider("option", "min", this._config.min);
-    this._sliderDiv.slider("option", "max", this._config.max);
-    this._sliderDiv.slider("option", "step", this._config.step);
+    this._elmts.messageDiv.hide();
+    this._elmts.sliderWidgetDiv.show();
+    this._elmts.histogramDiv.show();
+    this._elmts.statusDiv.show();
+    this._elmts.otherChoicesDiv.show();
     
-    var max = 0;
-    for (var i = 0; i < this._baseBins.length; i++) {
-        max = Math.max(max, this._baseBins[i]);
-    }
-    
-    if (max == 0) {
-        this._histogramDiv.hide();
-    } else {
-        var values = [];
-        var diffs = [];
-        
-        for (var i = 0; i < this._baseBins.length; i++) {
-            var v = Math.ceil(100 * this._bins[i] / max);
-            var diff = Math.ceil(100 * this._baseBins[i] / max) - v;
-            
-            values.push(v == 0 ? 0 : Math.max(2, v)); // use min 2 to make sure something shows up
-            diffs.push(diff == 0 ? 0 : Math.max(2, diff));
-        }
-        
-        this._histogramDiv.empty().show();
-        $('<img />').attr("src", 
-            "http://chart.apis.google.com/chart?" + [
-                "chs=" + this._histogramDiv[0].offsetWidth + "x50",
-                //"cht=ls&chm=o,ff6600,0,-1,3&chls=0", // use for line plot
-                "cht=bvs&chbh=r,0&chco=000088,aaaaff", // use for histogram
-                "chd=t:" + values.join(",") + "|" + diffs.join(",")
-            ].join("&")
-        ).appendTo(this._histogramDiv);
-    }
+    this._sliderWidget.update(
+        this._config.min, 
+        this._config.max, 
+        this._config.step, 
+        this._from,
+        this._to
+    );
+    this._histogram.update(
+        this._config.min, 
+        this._config.max, 
+        this._config.step, 
+        [ this._baseBins, this._bins ]
+    );
     
     this._setRangeIndicators();
     this._renderOtherChoices();
-};
-
-RangeFacet.prototype._reset = function() {
-    this._setDefaults();
-    this._updateRest();
 };
 
 RangeFacet.prototype._remove = function() {
@@ -371,4 +333,33 @@ RangeFacet.prototype._remove = function() {
 
 RangeFacet.prototype._updateRest = function() {
     Gridworks.update({ engineChanged: true });
+};
+
+RangeFacet.prototype._editExpression = function() {
+    var self = this;
+    var title = (this._config.columnName) ? 
+            ("Edit Facet's Expression based on Column " + this._config.columnName) : 
+            "Edit Facet's Expression"
+    
+    var column = Gridworks.columnNameToColumn(this._config.columnName);
+    var o = DataTableView.sampleVisibleRows(column);
+    
+    new ExpressionPreviewDialog(
+        title,
+        column ? column.cellIndex : -1, 
+        o.rowIndices,
+        o.values,
+        this._config.expression, 
+        function(expr) {
+            if (expr != self._config.expression) {
+                self._config.expression = expr;
+                self._elmts.expressionDiv.text(self._config.expression);
+                
+                self.reset();
+                self._from = null;
+                self._to = null;
+                self._updateRest();
+            }
+        }
+    );
 };

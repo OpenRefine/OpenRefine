@@ -6,11 +6,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONWriter;
-
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.changes.RowFlagChange;
 import com.metaweb.gridworks.model.changes.RowStarChange;
 import com.metaweb.gridworks.process.QuickHistoryEntryProcess;
 
@@ -30,7 +29,7 @@ public class AnnotateOneRowCommand extends Command {
             String starredString = request.getParameter("starred");
             if (starredString != null) {
                 boolean starred = "true".endsWith(starredString);
-                String description = starred ? "Star row " + rowIndex : "Unstar row " + rowIndex; 
+                String description = (starred ? "Star row " : "Unstar row ") + (rowIndex + 1); 
 
                 StarOneRowProcess process = new StarOneRowProcess(
                     project, 
@@ -39,25 +38,34 @@ public class AnnotateOneRowCommand extends Command {
                     starred
                 );
                 
-                boolean done = project.processManager.queueProcess(process);
-                if (done) {
-                    JSONWriter writer = new JSONWriter(response.getWriter());
-                    
-                    writer.object();
-                    writer.key("code"); writer.value("ok");
-                    writer.endObject();
-                } else {
-                    respond(response, "{ \"code\" : \"pending\" }");
-                }
-            } else {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"invalid command parameters\" }");
+                performProcessAndRespond(request, response, project, process);
+                return;
             }
+
+            String flaggedString = request.getParameter("flagged");
+            if (flaggedString != null) {
+                boolean flagged = "true".endsWith(flaggedString);
+                String description = (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1); 
+
+                FlagOneRowProcess process = new FlagOneRowProcess(
+                    project, 
+                    description,
+                    rowIndex, 
+                    flagged
+                );
+                
+                performProcessAndRespond(request, response, project, process);
+                return;
+            }
+
+            respond(response, "{ \"code\" : \"error\", \"message\" : \"invalid command parameters\" }");
+            
         } catch (Exception e) {
             respondException(response, e);
         }
     }
     
-    protected class StarOneRowProcess extends QuickHistoryEntryProcess {
+    protected static class StarOneRowProcess extends QuickHistoryEntryProcess {
         final int rowIndex;
         final boolean starred;
         
@@ -73,12 +81,39 @@ public class AnnotateOneRowCommand extends Command {
             this.starred = starred;
         }
 
-        protected HistoryEntry createHistoryEntry() throws Exception {
+        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
+                historyEntryID,
                 _project, 
-                starred ? "Star row " + rowIndex : "Unstar row " + rowIndex, 
+                (starred ? "Star row " : "Unstar row ") + (rowIndex + 1), 
                 null, 
                 new RowStarChange(rowIndex, starred)
+            );
+        }
+    }
+    protected static class FlagOneRowProcess extends QuickHistoryEntryProcess {
+        final int rowIndex;
+        final boolean flagged;
+        
+        FlagOneRowProcess(
+            Project project, 
+            String briefDescription, 
+            int rowIndex, 
+            boolean flagged
+        ) {
+            super(project, briefDescription);
+            
+            this.rowIndex = rowIndex;
+            this.flagged = flagged;
+        }
+
+        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
+            return new HistoryEntry(
+                historyEntryID,
+                _project, 
+                (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1), 
+                null, 
+                new RowFlagChange(rowIndex, flagged)
             );
         }
     }

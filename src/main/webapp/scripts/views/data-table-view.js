@@ -4,18 +4,15 @@ function DataTableView(div) {
     this._showRecon = true;
     this._collapsedColumnNames = {};
     
-    this._initializeUI();
     this._showRows(0);
 }
 
-DataTableView.prototype._initializeUI = function() {
-    this._div.addClass("view-panel");
+DataTableView.prototype.resize = function() {
+    var topHeight = this._div.find(".viewPanel-header").outerHeight(true);
     
-    var self = this;
-    $(window).resize(function() {
-        var dataTableContainer = self._div.find(".data-table-container");
-        dataTableContainer.hide().width(self._div.width() + "px").show();
-    });
+    this._div.find(".data-table-container")
+        .css("height", (this._div.innerHeight() - topHeight - 1) + "px")
+        .css("display", "block");
 };
 
 DataTableView.prototype.update = function(onDone) {
@@ -24,40 +21,52 @@ DataTableView.prototype.update = function(onDone) {
 
 DataTableView.prototype.render = function() {
     var self = this;
-    var container = this._div;
     
-    var scrollLeft = 0;
-    var oldTableDiv = container.find(".data-table-container");
-    if (oldTableDiv.length > 0) {
-        scrollLeft = oldTableDiv[0].scrollLeft;
-    }
+    var oldTableDiv = this._div.find(".data-table-container");
+    var scrollLeft = (oldTableDiv.length > 0) ? oldTableDiv[0].scrollLeft : 0;
     
-    container.empty();
+    var html = $(
+        '<table class="viewPanel-header">' +
+            '<tr>' +
+                '<td bind="summary"></td>' +
+                '<td bind="pageSizeControls" align="right"></td>' +
+                '<td bind="pagingControls" align="right"></td>' +
+            '</tr>' +
+        '</table>' +
+        '<div bind="dataTableContainer" class="data-table-container" style="display: none;"><table bind="table" class="data-table" cellspacing="0"></table></div>'
+    );
+    var elmts = DOM.bind(html);
     
-    var divSummary = $('<div></div>').addClass("viewPanel-summary").appendTo(container);
+    this._renderSummaryText(elmts.summary);
+    this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
+    this._renderDataTable(elmts.table[0]);
     
+    this._div.empty().append(html);
+    
+    this.resize();
+        
+    elmts.dataTableContainer[0].scrollLeft = scrollLeft;
+};
+
+DataTableView.prototype._renderSummaryText = function(elmt) {
     var summaryText;
     
     var from = (theProject.rowModel.start + 1);
     var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
     if (theProject.rowModel.filtered == theProject.rowModel.total) {
-        summaryText = from + ' to ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> rows';
+        summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> rows';
     } else {
-        summaryText = from + ' to ' + to + ' of <span class="viewPanel-summary-row-count">' + 
-            (theProject.rowModel.filtered) + '</span> rows (filtered from ' + (theProject.rowModel.total) + ' rows total)';
+        summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + 
+            (theProject.rowModel.filtered) + '</span> matching rows (' + (theProject.rowModel.total) + ' total)';
     }
-    $('<span>').html(summaryText).appendTo(divSummary);
+    $('<span>').html(summaryText).appendTo(elmt);
+};
+
+DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
+    var self = this;
     
-    /*
-     *  Paging controls
-     */
-    
-    var pagingControls = $('<table width="100%"><tr><td align="right"></td><td align="right"></td></tr></table>').addClass("viewPanel-pagingControls").appendTo(container);
-    var pagingControls0 = pagingControls[0].rows[0].cells[0];
-    var pagingControls1 = pagingControls[0].rows[0].cells[1];
-    
-    var firstPage = $('<a href="javascript:{}">&laquo; first</a>').appendTo(pagingControls0);
-    var previousPage = $('<a href="javascript:{}">&laquo; previous</a>').appendTo(pagingControls0);
+    var firstPage = $('<a href="javascript:{}">&laquo; first</a>').appendTo(pagingControls);
+    var previousPage = $('<a href="javascript:{}">&laquo; previous</a>').appendTo(pagingControls);
     if (theProject.rowModel.start > 0) {
         firstPage.addClass("action").click(function(evt) { self._onClickFirstPage(this, evt); });
         previousPage.addClass("action").click(function(evt) { self._onClickPreviousPage(this, evt); });
@@ -65,9 +74,9 @@ DataTableView.prototype.render = function() {
         firstPage.addClass("inaction");
         previousPage.addClass("inaction");
     }
-    $('<span> &bull; </span>').appendTo(pagingControls0);
-    var nextPage = $('<a href="javascript:{}">next page &raquo;</a>').appendTo(pagingControls0);
-    var lastPage = $('<a href="javascript:{}">last &raquo;</a>').appendTo(pagingControls0);
+    $('<span> &bull; </span>').appendTo(pagingControls);
+    var nextPage = $('<a href="javascript:{}">next page &raquo;</a>').appendTo(pagingControls);
+    var lastPage = $('<a href="javascript:{}">last &raquo;</a>').appendTo(pagingControls);
     if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
         nextPage.addClass("action").click(function(evt) { self._onClickNextPage(this, evt); });
         lastPage.addClass("action").click(function(evt) { self._onClickLastPage(this, evt); });
@@ -76,13 +85,15 @@ DataTableView.prototype.render = function() {
         lastPage.addClass("inaction");
     }
     
-    $('<span>page size: </span>').appendTo(pagingControls1);
-    var sizes = [ 5, 10, 15, 20, 25, 50 ];
+    $('<span>Show </span>').appendTo(pageSizeControls);
+    var sizes = [ 10, 20, 25, 50 ];
     var renderPageSize = function(index) {
         var pageSize = sizes[index];
-        var a = $('<a href="javascript:{}"></a>').appendTo(pagingControls1)
+        var a = $('<a href="javascript:{}"></a>')
+            .addClass("viewPanel-pagingControls-page")
+            .appendTo(pageSizeControls);
         if (pageSize == self._pageSize) {
-            a.text("[" + pageSize + "]").addClass("inaction");
+            a.text(pageSize).addClass("inaction");
         } else {
             a.text(pageSize).addClass("action").click(function(evt) {
                 self._pageSize = pageSize;
@@ -93,20 +104,11 @@ DataTableView.prototype.render = function() {
     for (var i = 0; i < sizes.length; i++) {
         renderPageSize(i);
     }
-    
-    /*============================================================
-     *  Data Table
-     *============================================================
-     */
-    var tableDiv = $('<div></div>')
-        .addClass("data-table-container")
-        .css("width", container.width() + "px")
-        .appendTo(container);
-    
-    var table = document.createElement("table");
-    $(table)
-        .attr("cellspacing", "0")
-        .addClass("data-table");
+    $('<span> rows</span>').appendTo(pageSizeControls);
+};
+
+DataTableView.prototype._renderDataTable = function(table) {
+    var self = this;
     
     var columns = theProject.columnModel.columns;
     var columnGroups = theProject.columnModel.columnGroups;
@@ -120,7 +122,8 @@ DataTableView.prototype.render = function() {
         if (keys.length > 0) {
             var tr = table.insertRow(table.rows.length);
             tr.insertCell(0); // star
-            tr.insertCell(1); // row index
+            tr.insertCell(1); // flag
+            tr.insertCell(2); // row index
             
             for (var c = 0; c < columns.length; c++) {
                 var td = tr.insertCell(tr.cells.length);
@@ -134,19 +137,22 @@ DataTableView.prototype.render = function() {
             }
         }
     };
+    
     var renderColumnGroups = function(groups, keys) {
         var nextLayer = [];
         
         if (groups.length > 0) {
             var tr = table.insertRow(table.rows.length);
             tr.insertCell(0); // star
-            tr.insertCell(1); // row index
+            tr.insertCell(1); // flag
+            tr.insertCell(2); // row index
             
             for (var c = 0; c < columns.length; c++) {
                 var foundGroup = false;
+                var columnGroup;
                 
                 for (var g = 0; g < groups.length; g++) {
-                    var columnGroup = groups[g];
+                    columnGroup = groups[g];
                     if (columnGroup.startColumnIndex == c) {
                         foundGroup = true;
                         break;
@@ -164,7 +170,9 @@ DataTableView.prototype.render = function() {
                     
                     c += (columnGroup.columnSpan - 1);
                     
-                    nextLayer = nextLayer.concat(columnGroup.subgroups);
+                    if ("subgroups" in columnGroup) {
+                        nextLayer = nextLayer.concat(columnGroup.subgroups);
+                    }
                 }
             }
         }
@@ -175,12 +183,13 @@ DataTableView.prototype.render = function() {
             renderColumnGroups(nextLayer, []);
         }
     };
-    /*
-    renderColumnGroups(
-        columnGroups, 
-        [ theProject.columnModel.keyCellIndex ]
-    );
-    */
+    
+    if (columnGroups.length > 0) {
+        renderColumnGroups(
+            columnGroups, 
+            [ theProject.columnModel.keyCellIndex ]
+        );
+    }    
     
     /*------------------------------------------------------------
      *  Column Headers with Menus
@@ -188,10 +197,19 @@ DataTableView.prototype.render = function() {
      */
     
     var trHead = table.insertRow(table.rows.length);
-    
-    var tdHeadIndex = trHead.insertCell(trHead.cells.length);
-    $(tdHeadIndex).attr("colspan", "2").addClass("column-header");
-    $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(tdHeadIndex).click(function() {
+    DOM.bind(
+        $(trHead.insertCell(trHead.cells.length))
+            .attr("colspan", "3")
+            .addClass("column-header")
+            .html(
+                '<table class="column-header-layout"><tr>' +
+                    '<td width="1%">' +
+                        '<a class="column-header-menu" bind="dropdownMenu">&nbsp;</a>' +
+                    '</td>' +
+                    '<td>&nbsp;</td>' +
+                '</tr></table>'
+            )
+    ).dropdownMenu.click(function() {
         self._createMenuForAllColumns(this);
     });
     
@@ -201,7 +219,7 @@ DataTableView.prototype.render = function() {
         
         if (column.name in self._collapsedColumnNames) {
             $(td).html("&nbsp;").attr("title", column.name).click(function(evt) {
-                delete self._collapsedColumnNames[column.name]
+                delete self._collapsedColumnNames[column.name];
                 self.render();
             });
         } else {
@@ -244,6 +262,27 @@ DataTableView.prototype.render = function() {
                     "json"
                 );
             });
+
+        var tdFlag = tr.insertCell(tr.cells.length);
+        var flag = $('<a href="javascript:{}">&nbsp;</a>')
+            .addClass(row.flagged ? "data-table-flag-on" : "data-table-flag-off")
+            .appendTo(tdFlag)
+            .click(function() {
+                var newFlagged = !row.flagged;
+
+                Gridworks.postProcess(
+                    "annotate-one-row",
+                    { row: row.i, flagged: newFlagged },
+                    null,
+                    {},
+                    {   onDone: function(o) {
+                            row.flagged = newFlagged;
+                            renderRow(tr, r, row, even);
+                        }
+                    },
+                    "json"
+                );
+            });
         
         var tdIndex = tr.insertCell(tr.cells.length);
         if ("j" in row) {
@@ -280,13 +319,6 @@ DataTableView.prototype.render = function() {
         }
         renderRow(tr, r, row, even);
     }
-    
-    /*
-     *  Finally, inject the table into the DOM
-     */
-    $(table).appendTo(tableDiv);
-    
-    tableDiv[0].scrollLeft = scrollLeft;
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
@@ -319,26 +351,10 @@ DataTableView.prototype._onClickLastPage = function(elmt, evt) {
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     self = this;
     MenuSystem.createAndShowStandardMenu([
-        {   label: "Edit",
+        {   label: "Facet",
             submenu: [
                 {
-                    label: "Star Rows",
-                    click: function() {
-                        Gridworks.postProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
-                    }
-                },
-                {
-                    label: "Unstar Rows",
-                    click: function() {
-                        Gridworks.postProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
-                    }
-                }
-            ]
-        },
-        {   label: "Filter",
-            submenu: [
-                {
-                    label: "By Star",
+                    label: "Facet by Star",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -352,6 +368,58 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                             }
                         );
                     }
+                },
+                {
+                    label: "Facet by Flag",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : "Flagged Rows",
+                                "columnName" : "", 
+                                "expression" : "row.flagged"
+                            },
+                            {
+                                "scroll" : false
+                            }
+                        );
+                    }
+                }
+            ]
+        },
+        {   label: "Edit Rows",
+            submenu: [
+                {
+                    label: "Star Rows",
+                    click: function() {
+                        Gridworks.postProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
+                    }
+                },
+                {
+                    label: "Unstar Rows",
+                    click: function() {
+                        Gridworks.postProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
+                    }
+                },
+                {},
+                {
+                    label: "Flag Rows",
+                    click: function() {
+                        Gridworks.postProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
+                    }
+                },
+                {
+                    label: "Unflag Rows",
+                    click: function() {
+                        Gridworks.postProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
+                    }
+                },
+                {},
+                {
+                    label: "Remove All Matching Rows",
+                    click: function() {
+                        Gridworks.postProcess("remove-rows", {}, null, { rowMetadataChanged: true });
+                    }
                 }
             ]
         },
@@ -361,7 +429,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                     label: "Collapse All Columns",
                     click: function() {
                         for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                            theProject.columnModel.columns[i].collapsed = true;
+                            self._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
                         }
                         self.render();
                     }
@@ -369,15 +437,27 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 {
                     label: "Expand All Columns",
                     click: function() {
-                        for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                            theProject.columnModel.columns[i].collapsed = false;
-                        }
+                        self._collapsedColumnNames = [];
                         self.render();
                     }
                 }
             ]
         }
     ], elmt, { width: "80px", horizontal: false });
+};
+
+DataTableView.prototype._updateCell = function(rowIndex, cellIndex, cell) {
+    var rows = theProject.rowModel.rows;
+    for (var r = 0; r < rows.length; r++) {
+        var row = rows[r];
+        if (row.i === rowIndex) {
+            while (cellIndex >= row.cells.length) {
+                row.cells.push(null);
+            }
+            row.cells[cellIndex] = cell;
+            break;
+        }
+    }
 };
 
 DataTableView.sampleVisibleRows = function(column) {
@@ -391,9 +471,9 @@ DataTableView.sampleVisibleRows = function(column) {
         rowIndices.push(row.i);
         
         var v = null;
-        if (column.cellIndex < row.cells.length) {
+        if (column && column.cellIndex < row.cells.length) {
             var cell = row.cells[column.cellIndex];
-            if (cell != null) {
+            if (cell !== null) {
                 v = cell.v;
             }
         }

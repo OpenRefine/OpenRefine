@@ -68,38 +68,55 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                 ", one topic for each cell");
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
-            int cellIndex;
-            List<CellChange> cellChanges;
-            Map<String, Recon>  _sharedRecons = new HashMap<String, Recon>();
+            int 				cellIndex;
+            List<CellChange> 	cellChanges;
+            Map<String, Recon>  sharedRecons = new HashMap<String, Recon>();
+            Map<Long, Recon> 	dupReconMap = new HashMap<Long, Recon>();
+            long                historyEntryID;
             
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
+            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
+                this.historyEntryID = historyEntryID;
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
                 if (cell != null) {
                     Recon recon = null;
                     if (_shareNewTopics) {
                         String s = cell.value == null ? "" : cell.value.toString();
-                        if (_sharedRecons.containsKey(s)) {
-                            recon = _sharedRecons.get(s);
+                        if (sharedRecons.containsKey(s)) {
+                            recon = sharedRecons.get(s);
+                            recon.judgmentBatchSize++;
                         } else {
-                            recon = new Recon();
+                            recon = new Recon(historyEntryID);
                             recon.judgment = Judgment.New;
+                            recon.judgmentBatchSize = 1;
+	                        recon.judgmentAction = "mass";
                             
-                            _sharedRecons.put(s, recon);
+                            sharedRecons.put(s, recon);
                         }
                     } else {
-                        recon = cell.recon == null ? new Recon() : cell.recon.dup();
-                        recon.match = null;
-                        recon.judgment = Judgment.New;
+                    	long reconID = cell.recon == null ? 0 : cell.recon.id;
+                    	if (dupReconMap.containsKey(reconID)) {
+                    		recon = dupReconMap.get(reconID);
+                    		recon.judgmentBatchSize++;
+                    	} else {
+	                        recon = cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID);
+	                        recon.match = null;
+	                        recon.matchRank = -1;
+	                        recon.judgment = Judgment.New;
+	                        recon.judgmentBatchSize = 1;
+	                        recon.judgmentAction = "mass";
+	                        
+	                        dupReconMap.put(reconID, recon);
+                    	}
                     }
                     
                     Cell newCell = new Cell(cell.value, recon);
@@ -109,7 +126,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                 }
                 return false;
             }
-        }.init(column.getCellIndex(), cellChanges);
+        }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
     
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {

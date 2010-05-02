@@ -1,19 +1,6 @@
-function onLoad() {
-    $("#upload-file-button").click(onClickUploadFileButton);
-    
-    $.getJSON(
-        "/command/get-all-project-metadata",
-        null,
-        function(data) {
-            renderProjects(data);
-        },
-        "json"
-    );
-}
-$(onLoad);
-
 function onClickUploadFileButton(evt) {
-    if ($("#project-name-input")[0].value.trim().length == 0) {
+    var projectName = $("#project-name-input")[0].value;
+    if (! $.trim(projectName).length) {
         window.alert("You must specify a project name.");
         
         evt.preventDefault();
@@ -21,10 +8,45 @@ function onClickUploadFileButton(evt) {
     } else {
         $("#file-upload-form").attr("action", 
             "/command/create-project-from-upload?" + [
+                "split-into-columns=" + $("#split-into-columns-input")[0].checked,
+                "separator=" + $("#separator-input")[0].value,
+                "ignore=" + $("#ignore-input")[0].value,
+                "header-lines=" + $("#header-lines-input")[0].value,
                 "skip=" + $("#skip-input")[0].value,
-                "limit=" + $("#limit-input")[0].value
+                "limit=" + $("#limit-input")[0].value,
+                "guess-value-type=" + $("#guess-value-type-input")[0].checked
             ].join("&"));
     }
+}
+
+function formatDate(d) {
+    var yesterday = Date.today().add({ days: -1 });
+    var today = Date.today();
+    var tomorrow = Date.today().add({ days: 1 });
+    if (d.between(today, tomorrow)) {
+        return "Today " + d.toString("h:mm tt");
+    } else if (d.between(yesterday, today)) {
+        return "Yesterday " + d.toString("h:mm tt");
+    } else {
+        return d.toString("ddd, MMM d, yyyy");
+    }
+}
+
+function isThereNewRelease() {
+    var thisRevision = GridworksVersion.revision;
+    
+    var revision_pattern = /r([0-9]+)/;
+    
+    if (!revision_pattern.test(thisRevision)) { // probably "trunk"
+        return false;
+    }
+
+    var latestRevision = GridworksReleases.releases[0].revision;
+    
+    var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
+    var latestRev = parseInt(revision_pattern.exec(GridworksReleases.releases[0].revision)[1],10);
+    
+    return latestRev > thisRev;
 }
 
 function renderProjects(data) {
@@ -37,26 +59,37 @@ function renderProjects(data) {
             projects.push(project);
         }
     }
+    projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
     
-    if (projects.length == 0) {
-        $('#body-empty').show();
-        $('#create-project-panel').remove().appendTo($('#body-empty-create-project-panel-container'));
+    var container = $("#projects-container").empty();
+    if (!projects.length) {
+        $('<div>')
+            .addClass("message")
+            .text("No existing project. Use form on left to create.")
+            .appendTo(container);
     } else {
-        $('#body-nonempty').show();
-        $('#create-project-panel').remove().appendTo($('#body-nonempty-create-project-panel-container'));
-
-        projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
-        if (projects.length > 10) {
-            $('#body-nonempty-logo-container').css("vertical-align", "top");
-            $('#body-nonempty-create-project-panel-container').css("vertical-align", "top");
-        }
-        
-        var container = $("#projects").empty().show();
-        $('<h1>').text("Projects").appendTo(container);
+        var table = $(
+            '<table><tr>' +
+                '<th>Project Name</th>' +
+                '<th>Last Modified</th>' +
+                '<th></th>' +
+            '</tr></table>'
+        ).appendTo(container)[0];
         
         var renderProject = function(project) {
-            var div = $('<div>').addClass("project").appendTo(container);
-        
+            var tr = table.insertRow(table.rows.length);
+            tr.className = "project " + (table.rows.length % 2 ? "even" : "odd");
+            
+            $('<a></a>')
+                .text(project.name)
+                .attr("href", "/project.html?project=" + project.id)
+                .appendTo(tr.insertCell(tr.cells.length));
+                
+            $('<span></span>')
+                .text(formatDate(project.date))
+                .addClass("last-modified")
+                .appendTo(tr.insertCell(tr.cells.length));
+            
             $('<a></a>')
                 .addClass("delete-project")
                 .attr("title","Delete this project")
@@ -70,36 +103,51 @@ function renderProjects(data) {
                             data: { "project" : project.id },
                             dataType: "json",
                             success: function (data) {
-                                if (data && typeof data['code'] != 'undefined' && data.code == "ok") {
-                                    window.location.reload()
+                                if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                                    fetchProjects();
                                 }
                             }
                         });                    
                     }
                     return false;
-                }).appendTo(div);
-            
-            $('<a></a>').text(project.name).attr("href", "/project.html?project=" + project.id).appendTo(div);
-            $('<span></span>').text(formatDate(project.date)).addClass("last-modified").appendTo(div);
+                }).appendTo(tr.insertCell(tr.cells.length));
         };
-        
+    
         for (var i = 0; i < projects.length; i++) {
             renderProject(projects[i]);
         }
-        
-        $(table).appendTo(container);
     }
 }
 
-function formatDate(d) {
-    var yesterday = Date.today().add({ days: -1 });
-    var today = Date.today();
-    var tomorrow = Date.today().add({ days: 1 });
-    if (d.between(today, tomorrow)) {
-        return "Today " + d.toString("HH:mm");
-    } else if (d.between(yesterday, today)) {
-        return "Yesterday " + d.toString("HH:mm");
-    } else {
-        return d.toString("M-ddd-yyyy");
+function fetchProjects() {
+    $.getJSON(
+        "/command/get-all-project-metadata",
+        null,
+        function(data) {
+            renderProjects(data);
+        },
+        "json"
+    );
+}
+
+function onLoad() {
+    fetchProjects();
+    
+    $("#form-tabs").tabs();
+    $("#upload-file-button").click(onClickUploadFileButton);
+    $("#more-options-link").click(function() {
+        $("#more-options-controls").hide();
+        $("#more-options").show();
+    });
+    
+    $("#gridworks-version").text(
+        GridworksVersion.version + "-" + GridworksVersion.revision
+    );
+    if (isThereNewRelease()) {
+        $('<div id="version-message">' +
+            'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
+          '</div>').appendTo(document.body);
     }
 }
+
+$(onLoad);

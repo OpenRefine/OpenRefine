@@ -1,11 +1,11 @@
 package com.metaweb.gridworks.model;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -15,8 +15,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.ProjectManager;
@@ -25,6 +28,7 @@ import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.History;
 import com.metaweb.gridworks.process.ProcessManager;
 import com.metaweb.gridworks.protograph.Protograph;
+import com.metaweb.gridworks.util.Pool;
 
 public class Project {
     final public long            id;
@@ -37,6 +41,8 @@ public class Project {
     
     transient public ProcessManager processManager = new ProcessManager();
     transient public Date lastSave = new Date();
+    
+    final static Logger logger = LoggerFactory.getLogger("project");
     
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
@@ -66,7 +72,7 @@ public class Project {
             } catch (Exception e) {
                 e.printStackTrace();
                 
-                Gridworks.log("Failed to save project " + id);
+                logger.warn("Failed to save project {}", id);
                 return;
             }
             
@@ -84,24 +90,25 @@ public class Project {
             
             lastSave = new Date();
             
-            Gridworks.log("Saved project " + id + ".");
+            logger.info("Saved project '{}'",id);
         }
     }
     
     protected void saveToFile(File file) throws Exception {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
         try {
+            Pool pool = new Pool();
+            
             out.putNextEntry(new ZipEntry("data.txt"));
             try {
-                Writer writer = new OutputStreamWriter(out);
-                try {
-                    Properties options = new Properties();
-                    options.setProperty("mode", "save");
-                    
-                    saveToWriter(writer, options);
-                } finally {
-                    writer.flush();
-                }
+                saveToOutputStream(out, pool);
+            } finally {
+                out.closeEntry();
+            }
+            
+            out.putNextEntry(new ZipEntry("pool.txt"));
+            try {
+                pool.save(out);
             } finally {
                 out.closeEntry();
             }
@@ -110,8 +117,21 @@ public class Project {
         }
     }
     
+    protected void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
+        Writer writer = new OutputStreamWriter(out);
+        try {
+            Properties options = new Properties();
+            options.setProperty("mode", "save");
+            options.put("pool", pool);
+            
+            saveToWriter(writer, options);
+        } finally {
+            writer.flush();
+        }
+    }
+    
     protected void saveToWriter(Writer writer, Properties options) throws IOException {
-        writer.write(Gridworks.s_version); writer.write('\n');
+        writer.write(Gridworks.getVersion()); writer.write('\n');
         
         writer.write("columnModel=\n"); columnModel.save(writer, options);
         writer.write("history=\n"); history.save(writer, options);
@@ -156,28 +176,43 @@ public class Project {
         return null;
     }
     
-    static protected Project loadFromFile(File file, long id) throws Exception {
-        ZipInputStream in = new ZipInputStream(new FileInputStream(file));
+    static protected Project loadFromFile(
+        File file, 
+        long id
+    ) throws Exception {
+        ZipFile zipFile = new ZipFile(file);
         try {
-            ZipEntry entry = in.getNextEntry();
+            Pool pool = new Pool();
+            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
+            if (poolEntry != null) {
+                pool.load(new InputStreamReader(
+                    zipFile.getInputStream(poolEntry)));
+            } // else, it's a legacy project file
             
-            assert "data.txt".equals(entry.getName());
-            
-            LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
-            try {
-                return loadFromReader(reader, id);
-            } finally {
-                reader.close();
-            }
+            return loadFromReader(
+                new LineNumberReader(
+                    new InputStreamReader(
+                        zipFile.getInputStream(
+                            zipFile.getEntry("data.txt")))),
+                id,
+                pool
+            );
         } finally {
-            in.close();
+            zipFile.close();
         }
     }
     
-    static protected Project loadFromReader(LineNumberReader reader, long id) throws Exception {
+    static protected Project loadFromReader(
+        LineNumberReader reader, 
+        long id,
+        Pool pool
+    ) throws Exception {
+        long start = System.currentTimeMillis();
+        
         /* String version = */ reader.readLine();
         
         Project project = new Project(id);
+        int maxCellCount = 0;
         
         String line;
         while ((line = reader.readLine()) != null) {
@@ -195,10 +230,21 @@ public class Project {
                 int count = Integer.parseInt(value);
                 
                 for (int i = 0; i < count; i++) {
-                    project.rows.add(Row.load(reader.readLine()));
+                    line = reader.readLine();
+                    if (line != null) {
+                    	Row row = Row.load(line, pool);
+                        project.rows.add(row);
+                        maxCellCount = Math.max(maxCellCount, row.cells.size());
+                    }
                 }
             }
         }
+        
+        project.columnModel.setMaxCellIndex(maxCellCount - 1);
+        
+        logger.info(
+            "Loaded project {} from disk in {} sec(s)",id,Long.toString((System.currentTimeMillis() - start) / 1000)
+        );
         
         project.recomputeRowContextDependencies();
         
@@ -246,13 +292,17 @@ public class Project {
             lastNonBlankRowsByGroup[i] = -1;
         }
         
+        int rowCount = rows.size();
+        int groupCount = keyedGroups.size();
+        
         int recordIndex = 0;
-        for (int r = 0; r < rows.size(); r++) {
+        for (int r = 0; r < rowCount; r++) {
             Row row = rows.get(r);
+            row.contextRows = null;
             row.contextRowSlots = null;
             row.contextCellSlots = null;
             
-            for (int g = 0; g < keyedGroups.size(); g++) {
+            for (int g = 0; g < groupCount; g++) {
                 Group group = keyedGroups.get(g);
                 
                 if (!ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
@@ -274,7 +324,7 @@ public class Project {
                 }
             }
             
-            if (row.contextRowSlots != null) {
+            if (row.contextRowSlots != null && row.contextRowSlots.length > 0) {
                 row.recordIndex = -1;
                 row.contextRows = new ArrayList<Integer>();
                 for (int index : row.contextRowSlots) {
@@ -283,6 +333,8 @@ public class Project {
                     }
                 }
                 Collections.sort(row.contextRows);
+                
+                columnModel._hasDependentRows = true;
             } else {
                 row.recordIndex = recordIndex++;
             }
@@ -296,6 +348,7 @@ public class Project {
             
             rootKeyedGroup.cellIndices = new int[count - 1];
             rootKeyedGroup.keyCellIndex = columnModel.columns.get(columnModel.getKeyColumnIndex()).getCellIndex();
+
             for (int i = 0; i < count; i++) {
                 if (i < rootKeyedGroup.keyCellIndex) {
                     rootKeyedGroup.cellIndices[i] = i;

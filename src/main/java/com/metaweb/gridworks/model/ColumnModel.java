@@ -3,6 +3,7 @@ package com.metaweb.gridworks.model;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,6 +27,8 @@ public class ColumnModel implements Jsonizable {
     transient protected Map<String, Column>  _nameToColumn;
     transient protected Map<Integer, Column> _cellIndexToColumn;
     transient protected List<ColumnGroup>    _rootColumnGroups;
+    transient protected List<String>		 _columnNames;
+    transient boolean _hasDependentRows;
     
     public ColumnModel() {
         internalInitialize();
@@ -51,23 +54,57 @@ public class ColumnModel implements Jsonizable {
     public int getKeyColumnIndex() {
         return _keyColumnIndex;
     }
+    
+    public void addColumnGroup(int startColumnIndex, int span, int keyColumnIndex) {
+        for (ColumnGroup g : columnGroups) {
+            if (g.startColumnIndex == startColumnIndex && g.columnSpan == span) {
+                if (g.keyColumnIndex == keyColumnIndex) {
+                    return;
+                } else {
+                    columnGroups.remove(g);
+                    break;
+                }
+            }
+        }
+        
+        ColumnGroup cg = new ColumnGroup(startColumnIndex, span, keyColumnIndex);
+        
+        columnGroups.add(cg);
+        
+    }
 
     public void update() {
-        generateMaps();
+        internalInitialize();
     }
     
     public Column getColumnByName(String name) {
         return _nameToColumn.get(name);
     }
     
+    public int getColumnIndexByName(String name) {
+        for (int i = 0; i < _columnNames.size(); i++) {
+            String s = _columnNames.get(i);
+            if (name.equals(s)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
     public Column getColumnByCellIndex(int cellIndex) {
         return _cellIndexToColumn.get(cellIndex);
+    }
+    
+    public List<String> getColumnNames() {
+    	return _columnNames;
     }
 
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
+        
+        writer.key("hasDependentRows"); writer.value(_hasDependentRows);
         
         writer.key("columns");
         writer.array();
@@ -76,8 +113,11 @@ public class ColumnModel implements Jsonizable {
         }
         writer.endArray();
         
-        writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
-        writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getName());
+        if (columns.size() > 0) {
+            writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
+            writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getName());
+        }
+        
         writer.key("columnGroups");
         writer.array();
         for (ColumnGroup g : _rootColumnGroups) {
@@ -171,10 +211,12 @@ public class ColumnModel implements Jsonizable {
     protected void generateMaps() {
         _nameToColumn = new HashMap<String, Column>();
         _cellIndexToColumn = new HashMap<Integer, Column>();
+        _columnNames = new ArrayList<String>();
         
         for (Column column : columns) {
             _nameToColumn.put(column.getName(), column);
             _cellIndexToColumn.put(column.getCellIndex(), column);
+            _columnNames.add(column.getName());
         }
     }
 }

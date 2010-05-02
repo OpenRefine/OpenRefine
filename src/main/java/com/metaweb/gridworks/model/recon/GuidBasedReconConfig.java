@@ -77,7 +77,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
     }
     
     @Override
-    public List<Recon> batchRecon(List<ReconJob> jobs) {
+    public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
         Map<String, Recon> guidToRecon = new HashMap<String, Recon>();
         
@@ -111,8 +111,9 @@ public class GuidBasedReconConfig extends StrictReconConfig {
                 query = stringWriter.toString();
             }
             
-            StringBuffer sb = new StringBuffer();
-            sb.append(s_mqlreadService + "?query=");
+            StringBuffer sb = new StringBuffer(1024);
+            sb.append(s_mqlreadService);
+            sb.append("?query=");
             sb.append(ParsingUtilities.encode(query));
             
             URL url = new URL(sb.toString());
@@ -146,10 +147,13 @@ public class GuidBasedReconConfig extends StrictReconConfig {
                         100
                     );
                     
-                    Recon recon = new Recon();
+                    Recon recon = new Recon(historyEntryID);
                     recon.addCandidate(candidate);
-                    recon.match = candidate;
+                    recon.service = "mql";
                     recon.judgment = Judgment.Matched;
+                    recon.judgmentAction = "auto";
+                    recon.match = candidate;
+                    recon.matchRank = 0;
                     
                     guidToRecon.put(guid, recon);
                 }

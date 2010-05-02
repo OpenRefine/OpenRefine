@@ -1,21 +1,48 @@
-.browsing-panel {
-}
-.browsing-panel-indicator {
-    clear: both;
+.browsing-panel-header {
+    position: relative;
     display: none;
-    margin: 1em;
+}
+
+.browsing-panel-indicator {
+    visibility: hidden;
+    position: absolute;
+    width: 50%;
+    margin: 0px;
+    top: 0em;
+    left: 20%;
     text-align: center;
+    background-color: #fff;
+    padding: 4px 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border: 1px solid #ccc;
+}
+.browsing-panel-indicator img {
+	vertical-align: text-top;
 }
 .browsing-panel-controls {
-    clear: both;
-    display: none;
-    margin: 1em;
-    text-align: center;
+    visibility: hidden;
+}
+
+.browsing-panel-help {
+    padding: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+.browsing-panel-help h1 {
+    margin-top: 0px;
+    font-size: 150%;
+    font-weight: bold;
+    color: #888;
 }
 
 ul.facets-container {
     margin: 0;
     padding: 0;
+    padding-right: 2px;
+    overflow: auto;
 }
 
 li.facet-container {
@@ -23,28 +50,77 @@ li.facet-container {
     clear: both;
     margin: 0;
     padding: 0;
-    margin-top: 1em;
+    margin-top: 6px;
     background: white;
+    border: 1px solid #bbb;
+    
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;    
+    border-radius: 7px 7px;
 }
 
 .facet-title {
-    padding: 5px;
-    background: #eee;
+    padding: 3px 5px;
     font-weight: bold;
     cursor: move;
+    border-bottom: 1px solid #ccc;
 }
+a.facet-title-remove {
+    display: block;
+    width: 16px;
+    height: 16px;
+    text-decoration: none;
+    background-image: url(../../images/close-map.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+}
+a.facet-title-remove:hover {
+    background-position: -16px 0px;
+}
+
+.facet-expression {
+    padding: 3px 5px;
+    font-family: monospace;
+    font-size: 11px;
+    background: #eee;
+    cursor: text;
+    border-bottom: 1px solid #ccc;
+}
+
+.facet-status {
+    font-size: 90%;
+    padding: 2px 5px;
+}
+.facet-controls {
+    font-size: 90%;
+    padding: 4px 5px 4px 5px;
+    background: #F4F7FA;
+    border-bottom: 1px solid #ccc;
+}
+.facet-controls .ui-button-text {
+    padding: 0.1em 0.4em 0.2em;
+}
+
 .facet-body {
-    border: 1px solid #ccc;
     padding: 1px;
 }
-.facet-body-scrollable {
-    height: 20em;
-    overflow: auto;
-}
-.facet-footer {
-    padding: 1px;
+.facet-body-message {
+    margin: 1em;
+    color: #666;
     text-align: center;
-    font-size: 80%;
+}
+.facet-body.facet-body-scrollable {
+    height: 17em;
+    padding-bottom: 10px;
+    background: url(../../images/facet-resize-handle.png) center bottom no-repeat;
+}
+.facet-body.facet-body-scrollable .ui-resizable-s {
+    bottom: -5px;
+    height: 15px;
+}
+.facet-body-scrollable .facet-body-inner {
+    height: 100%;
+    overflow: auto;
 }
 
 .facet-choice {
@@ -53,10 +129,19 @@ li.facet-container {
 }
 .facet-choice-selected .facet-choice-label {
     font-weight: bold;
+    color: #ff6a00;
+}
+.facet-mode-inverted .facet-choice-selected .facet-choice-label {
+    text-decoration: line-through;
+    color: black;
+}
+.facet-choice-link.facet-mode-inverted {
+    text-decoration: line-through;
+    color: black;
 }
 
 a.facet-choice-label {
-    margin-right: 0.5em;
+    margin-right: 0.25em;
     text-decoration: none;
     color: #004;
 }
@@ -67,18 +152,11 @@ a.facet-choice-label:hover {
 
 .facet-choice-count {
     color: #aaa;
-}
-.facet-choice-count:before {
-    content: "(";
-    color: #aaa;
-}
-.facet-choice-count:after {
-    content: ")";
-    color: #aaa;
+    font-size: 80%;
 }
 
 a.facet-choice-link {
-    margin-left: 1em;
+    margin-left: 0.5em;
     font-size: 80%;
     float: right;
     text-decoration: none;
@@ -89,53 +167,146 @@ a.facet-choice-link:hover {
     color: #88a;
 }
 
-a.facet-choice-edit {
-    margin-left: 0.5em;
-    font-size: 80%;
-    text-decoration: none;
-    color: #aac;
-    visibility: hidden;
-}
-
-a.facet-choice-edit:hover {
-    text-decoration: underline;
-    color: #88a;
-}
-
 img.facet-choice-link {
     text-align: baseline;
     cursor: pointer;
-    margin: 0 2px;
+    margin-left: 2px;
     float: right;
 }
 
 .facet-range-body {
-    border: 1px solid #ccc;
-    padding: 15px;
+    padding: 10px 5px 0px 5px;
+}
+.facet-range-message {
+    margin: 1em;
+    color: #f88;
 }
 .facet-range-histogram {
-    margin: 10px 4px;
     overflow: hidden;
 }
-.facet-range-histogram img {
-    height: 50px;
-    position: relative;
-    left: -2px;
-}
 .facet-range-slider {
-}
-.facet-range-status {
-    margin: 10px 0;
-    text-align: center;
-    color: #aaa;
+    margin: 0px;
 }
 
+.facet-range-status {
+    margin: 5px 0;
+    text-align: center;
+}
+
+.facet-range-choices {
+	margin-bottom: 0.8em;
+    text-align: center;
+}
+.facet-range-choices .ui-button-text {
+	line-height: 1;
+    padding: 0.1em 0.4em;	
+}
 .facet-text-body {
-    border: 1px solid #ccc;
     padding: 5px;
 }
 
-.facet-text-body input {
-    width: 98%;
+.facet-scatterplot-plot-container {
+    margin: 5px 0px 5px 5px;
+    border: 1px solid #bbb;
+}
+		
+.facet-scatterplot-plot {
+    position: relative;
+}
+.facet-scatterplot-image {
+    position: absolute;
 }
 
+.facet-scatterplot-body td {
+	vertical-align: middle;
+}
+
+.facet-scatterplot-body .ui-button-text-only .ui-button-text {
+	font-size: 90%;
+    padding: 0.0em 0.4em 0.1em 0.3em;
+}
+
+.facet-scatterplot-selectors {
+	text-align: center;
+}
+
+.facet-scatterplot-selectors .buttonset {
+    margin: 0.8em 0em;
+}
+
+.facet-scatterplot-selectors .buttonset .ui-corner-top { 
+	-moz-border-radius-topleft: 0.5em; 
+	-webkit-border-top-left-radius: 0.5em; 
+	border-top-left-radius: 0.5em; 
+	-moz-border-radius-topright: 0.5em; 
+	-webkit-border-top-right-radius: 0.5em; 
+	border-top-right-radius: 0.5em; 
+}
+
+.facet-scatterplot-selectors .buttonset .ui-corner-bottom { 
+	-moz-border-radius-bottomleft: 0.5em; 
+	-webkit-border-bottom-left-radius: 0.5em; 
+	border-bottom-left-radius: 0.5em; 
+	-moz-border-radius-bottomright: 0.5em; 
+	-webkit-border-bottom-right-radius: 0.5em; 
+	border-bottom-right-radius: 0.5em; 
+}
+
+.facet-scatterplot-selectors .buttonset .ui-corner-right { 
+    -moz-border-radius-topright: 0.5em; 
+    -webkit-border-top-right-radius: 0.5em; 
+    border-top-right-radius: 0.5em; 
+    -moz-border-radius-bottomright: 0.5em; 
+    -webkit-border-bottom-right-radius: 0.5em; 
+    border-bottom-right-radius: 0.5em; 
+}
+
+.facet-scatterplot-selectors .buttonset .ui-corner-left { 
+    -moz-border-radius-topleft: 0.5em; 
+    -webkit-border-top-left-radius: 0.5em; 
+    border-top-left-radius: 0.5em; 
+    -moz-border-radius-bottomleft: 0.5em; 
+    -webkit-border-bottom-left-radius: 0.5em; 
+    border-bottom-left-radius: 0.5em; 
+}
+
+.facet-scatterplot-selectors .facet-scatterplot-dim-selector label {
+    width: 32px;
+    height: 16px;
+}
+	
+.facet-scatterplot-selectors .facet-scatterplot-rot-selector label {
+    width: 22px;
+    height: 18px;
+    background-image: url("../../images/scatterplot-icons.png");
+}
+    
+.facet-scatterplot-selectors .facet-scatterplot-rot-selector label.rot-ccw-label {
+	background-position: -5px -5px;
+}
+
+.facet-scatterplot-selectors .facet-scatterplot-rot-selector label.rot-none-label {
+    background-position: -28px -4px;
+}
+
+.facet-scatterplot-selectors .facet-scatterplot-rot-selector label.rot-cw-label {
+    background-position: -48px -3px;
+}
+
+.facet-scatterplot-selectors .facet-scatterplot-dot-selector label {
+    width: 22px;
+    height: 18px;
+    background-image: url("../../images/scatterplot-icons.png");
+}
+
+.facet-scatterplot-selectors .facet-scatterplot-dot-selector label.dot-small-label {
+	background-position: -5px -25px;
+}
+
+.facet-scatterplot-selectors .facet-scatterplot-dot-selector label.dot-regular-label {
+    background-position: -27px -25px;
+}
+
+.facet-scatterplot-selectors .facet-scatterplot-dot-selector label.dot-big-label {
+    background-position: -48px -25px;
+}

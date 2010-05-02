@@ -1,13 +1,9 @@
 package com.metaweb.gridworks.commands;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -15,31 +11,81 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
+import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Project;
-import com.oreilly.servlet.multipart.FilePart;
-import com.oreilly.servlet.multipart.MultipartParser;
-import com.oreilly.servlet.multipart.ParamPart;
-import com.oreilly.servlet.multipart.Part;
+import com.metaweb.gridworks.process.Process;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
+/**
+ * The super class of all calls that the client side can invoke, most of which
+ * are AJAX calls.
+ */
 public abstract class Command {
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    final static protected Logger logger = LoggerFactory.getLogger("command");
+    
+    public void doPost(HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException {
+        
         throw new NotImplementedException();
     };
     
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException {
+        
         throw new NotImplementedException();
     };
     
-    protected Project getProject(HttpServletRequest request) throws ServletException {
+    /**
+     * Utility function to get the browsing engine's configuration as a JSON object
+     * from the "engine" request parameter, most often in the POST body.
+     * 
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    static protected JSONObject getEngineConfig(HttpServletRequest request) throws Exception {
+        String json = request.getParameter("engine");
+        return (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
+    }
+    
+    /**
+     * Utility function to reconstruct the browsing engine from the "engine" request parameter, 
+     * most often in the POST body.
+     * 
+     * @param request
+     * @param project
+     * @return
+     * @throws Exception
+     */
+    static protected Engine getEngine(HttpServletRequest request, Project project) throws Exception {
+        Engine engine = new Engine(project);
+        String json = request.getParameter("engine");
+        if (json != null) {
+            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(json);
+            engine.initializeFromJSON(o);
+        }
+        return engine;
+    }
+    
+    /**
+     * Utility method for retrieving the Project object having the ID specified
+     * in the "project" URL parameter.
+     * 
+     * @param request
+     * @return
+     * @throws ServletException
+     */
+    static protected Project getProject(HttpServletRequest request) throws ServletException {
         try {
             Project p = ProjectManager.singleton.getProject(Long.parseLong(request.getParameter("project")));
             if (p != null) {
@@ -51,7 +97,7 @@ public abstract class Command {
         throw new ServletException("Missing or bad project URL parameter");
     }
     
-    protected int getIntegerParameter(HttpServletRequest request, String name, int def) throws ServletException {
+    static protected int getIntegerParameter(HttpServletRequest request, String name, int def) {
         try {
             return Integer.parseInt(request.getParameter(name));
         } catch (Exception e) {
@@ -60,34 +106,95 @@ public abstract class Command {
         return def;
     }
     
-    protected void respond(HttpServletResponse response, String content) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
-        
-        OutputStream os = response.getOutputStream();
-        OutputStreamWriter osw = new OutputStreamWriter(os);
-        try {
-            osw.write(content);
-        } finally {
-            osw.flush();
-            osw.close();
+    static protected JSONObject getJsonParameter(HttpServletRequest request, String name) {
+        String value = request.getParameter(name);
+        if (value != null) {
+            try {
+                return ParsingUtilities.evaluateJsonStringToObject(value);
+            } catch (JSONException e) {
+                logger.warn("error getting json parameter",e);
+            }
         }
+        return null;
     }
     
-    protected void respondJSON(HttpServletResponse response, Jsonizable o) throws IOException, JSONException {
-        respondJSON(response, o, new Properties());
-    }
-    
-    protected void respondJSON(HttpServletResponse response, Jsonizable o, Properties options) throws IOException, JSONException {
+    static protected void performProcessAndRespond(
+		HttpServletRequest request, 
+		HttpServletResponse response,
+		Project project,
+		Process process
+	) throws Exception {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
         
-        JSONWriter writer = new JSONWriter(response.getWriter());
-        
-        o.write(writer, options);
+        HistoryEntry historyEntry = project.processManager.queueProcess(process);
+        if (historyEntry != null) {
+            Writer w = response.getWriter();
+            JSONWriter writer = new JSONWriter(w);
+            Properties options = new Properties();
+            
+            writer.object();
+            writer.key("code"); writer.value("ok");
+            writer.key("historyEntry"); historyEntry.write(writer, options);
+            writer.endObject();
+            
+            w.flush();
+            w.close();
+        } else {
+        	respond(response, "{ \"code\" : \"pending\" }");
+        }
     }
     
-    protected void respondException(HttpServletResponse response, Exception e) throws IOException {
-        e.printStackTrace();
+    static protected void respond(HttpServletResponse response, String content) 
+        throws IOException {
+        
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        Writer w = response.getWriter();
+        w.write(content);
+        w.flush();
+        w.close();
+    }
+    
+    static protected void respond(HttpServletResponse response, String status, String message) 
+        throws IOException, JSONException {
+        
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        writer.object();
+        writer.key("status"); writer.value(status);
+        writer.key("message"); writer.value(message);
+        writer.endObject();
+        w.flush();
+        w.close();
+    }
+    
+    static protected void respondJSON(HttpServletResponse response, Jsonizable o) 
+        throws IOException, JSONException {
+        
+        respondJSON(response, o, new Properties());
+    }
+    
+    static protected void respondJSON(
+            HttpServletResponse response, Jsonizable o, Properties options) 
+            throws IOException, JSONException {
+        
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        
+        o.write(writer, options);
+        w.flush();
+        w.close();
+    }
+    
+    static protected void respondException(HttpServletResponse response, Exception e) 
+        throws IOException {
+        
+        logger.warn("Exception caught", e);
+
         try {
             JSONObject o = new JSONObject();
             o.put("code", "error");
@@ -101,6 +208,7 @@ public abstract class Command {
             
             o.put("stack", sw.toString());
             
+            response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             respond(response, o.toString());
         } catch (JSONException e1) {
@@ -108,84 +216,8 @@ public abstract class Command {
         }
     }
     
-    protected void redirect(HttpServletResponse response, String url) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
-        
-        String content = "<html><head><meta http-equiv=\"refresh\" content=\"1;url=" + url + "\"></head><body></body></html>";
-        response.getWriter().print(content);
+    static protected void redirect(HttpServletResponse response, String url) throws IOException {
+        response.sendRedirect(url);
     }
     
-    protected String readFileUpload(HttpServletRequest request, Properties properties) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        try {
-            MultipartParser parser = new MultipartParser(request, 20 * 1024 * 1024);
-            Part part = null;
-            while ((part = parser.readNextPart()) != null) {
-                
-                if (part.isFile()) {
-                    Reader reader = new InputStreamReader(((FilePart) part).getInputStream());
-                    LineNumberReader lnr = new LineNumberReader(reader);
-                    try {
-                        String line = null;
-                        while ((line = lnr.readLine()) != null) {
-                            sb.append(line);
-                            sb.append('\n');
-                        }
-                    } finally {
-                        lnr.close();
-                    }
-                } else if (part.isParam()) {
-                    ParamPart paramPart = (ParamPart) part;
-                    properties.put(part.getName(), paramPart.getStringValue());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        return sb.toString();
-    }
-    
-    protected JSONObject getJsonParameter(HttpServletRequest request, String name) {
-        String value = request.getParameter(name);
-        if (value != null) {
-            try {
-                JSONObject o = jsonStringToObject(value);
-                
-                return o;
-            } catch (JSONException e) {
-            }
-        }
-        return null;
-    }
-    
-    protected JSONObject jsonStringToObject(String s) throws JSONException {
-        JSONTokener t = new JSONTokener(s);
-        JSONObject o = (JSONObject) t.nextValue();
-        return o;
-    }
-    
-    protected JSONArray jsonStringToArray(String s) throws JSONException {
-        JSONTokener t = new JSONTokener(s);
-        JSONArray a = (JSONArray) t.nextValue();
-        return a;
-    }
-    
-    protected JSONObject getEngineConfig(HttpServletRequest request) throws Exception {
-        String json = request.getParameter("engine");
-        if (json != null) {
-            return jsonStringToObject(json);
-        }
-        return null;
-    }
-    
-    protected Engine getEngine(HttpServletRequest request, Project project) throws Exception {
-        Engine engine = new Engine(project);
-        String json = request.getParameter("engine");
-        if (json != null) {
-            JSONObject o = jsonStringToObject(json);
-            engine.initializeFromJSON(o);
-        }
-        return engine;
-    }
 }

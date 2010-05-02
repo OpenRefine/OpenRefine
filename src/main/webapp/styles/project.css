@@ -1,35 +1,65 @@
+body {
+    background: white;
+}
+
 #body {
-    padding: 20px;
+    padding: 0;
+    margin: 0;
 }
 
 #loading-message {
     text-align: center;
     font-size: 300%;
-    color: #faa;
-    margin: 1in;
+    color: #aaa;
+    padding: 1in;
     font-style: italic;
 }
 
-#logo {
-    padding: 13px 0;
-    padding-right: 13px;
-    border-right: 1px solid #ccc;
-    float: left;
+#footer {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1000;
+    padding: 0.4em 0em 0.5em 0em;
+    width: 100%;
+    background: #E8E8E8;
+    color: #666;
 }
-#path {
-    position: absolute;
-    top: 50%;
-    left: 170px;
-    margin-top: -0.5em;
-    line-height: 1em;
-}
-#path .app-path-section {
-    font-weight: bold;
-}
-#path a.app-path-section {
+#footer a {
+	font-weight: bold;
+    color: #333;
     text-decoration: none;
-    color: #eee;
 }
-#path a.app-path-section:hover {
+#footer a:hover {
     text-decoration: underline;
+}
+
+.menu-bar-container {
+    position: fixed;
+    left: 0px;
+    width: 100%;
+}
+
+.view-panel {
+    position: fixed;
+    background: white;
+    overflow: hidden;
+}
+.left-panel {
+    position: fixed;
+    background: white;
+    overflow: hidden;
+    padding: 0px;
+    font-size: 11px;
+}
+.left-panel .gridworks-tabs.ui-tabs .ui-tabs-panel {
+    padding: 7px;
+    overflow: hidden;
+}
+
+.facet-panel {
+    overflow: auto;
+}
+.history-panel {
+    overflow: auto;
 }

@@ -1,11 +1,13 @@
 package com.metaweb.gridworks.expr.functions.arrays;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.EvalError;
+import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.gel.ControlFunctionRegistry;
 import com.metaweb.gridworks.gel.Function;
 
@@ -16,20 +18,30 @@ public class Join implements Function {
             Object v = args[0];
             Object s = args[1];
             
-            if (v != null && v.getClass().isArray() &&
+            if (v != null && (v.getClass().isArray() || v instanceof List<?>) &&
                 s != null && s instanceof String) {
                 
-                Object[] a = (Object[]) v;
                 String separator = (String) s;
                 
                 StringBuffer sb = new StringBuffer();
-                for (Object o : a) {
-                    if (o != null) {
-                        if (sb.length() > 0) {
-                            sb.append(separator);
-                        }
-                        sb.append(o.toString());
-                    }
+                if (v.getClass().isArray()) {
+	                for (Object o : (Object[]) v) {
+	                    if (o != null) {
+	                        if (sb.length() > 0) {
+	                            sb.append(separator);
+	                        }
+	                        sb.append(o.toString());
+	                    }
+	                }
+                } else {
+	                for (Object o : ExpressionUtils.toObjectList(v)) {
+	                    if (o != null) {
+	                        if (sb.length() > 0) {
+	                            sb.append(separator);
+	                        }
+	                        sb.append(o.toString());
+	                    }
+	                }
                 }
                 
                 return sb.toString();

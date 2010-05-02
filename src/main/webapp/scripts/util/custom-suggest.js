@@ -9,7 +9,7 @@
         schemaPrefixes.push(includedTypes[i] + "/");
     }
     
-    var results = data.result;
+    var results = "result" in data ? data.result : [];
     var entries1 = [];
     var entries2 = [];
     
@@ -46,25 +46,29 @@
       $.suggest.suggest.prototype, 
       {
         request: function(val, start) {
-            var self = this,
-                o = this.options;
-
             if (this.ac_xhr) {
                 this.ac_xhr.abort();
                 this.ac_xhr = null;
             }
+            
+            var self = this;
+            var o = this.options;
+                
             var data = {
                 query: val
             };
             if (start) {
                 data.start = start;
             }
+            if ("schema" in o) {
+                data.schema = o.schema;
+            }
 
             $.extend(data, o.ac_param);
-            $.extend(data, { limit: 50 });
 
-            var baseUrl = "http://api.freebase.com/api/service/search";
+            var baseUrl = "http://gridworks-helper.freebaseapps.com/suggest_property";
             var url = baseUrl + "?" + $.param(data),
+            
             cached = $.suggest.cache[url];
             if (cached) {
                 this.response(cached, start ? start : -1, true);
@@ -87,43 +91,7 @@
                                 self.input.data("request.count.suggest", calls);
                             },
                             success: function(data) {
-                                data.prefix = val; // we need this so that the rest of suggest wouldn't error out
-                                
-                                if ("schema" in o) {
-                                    var type = o.schema;
-                                    var apply = function() {
-                                        resortByType(data, type);
-                                        
-                                        $.suggest.cache[url] = data;
-                                        self.response(data, start ? start : -1);
-                                    };
-                                    if (type in typeToIncludedTypes) {
-                                        apply();
-                                    } else {
-                                        var query = {
-                                            query: {
-                                                "id" : type,
-                                                "/freebase/type_hints/included_types": []
-                                            }
-                                        };
-                                        $.getJSON(
-                                            "http://api.freebase.com/api/service/mqlread?" + $.param({ query: JSON.stringify(query) }) + "&callback=?",
-                                            null,
-                                            function(d) {
-                                                var types = [];
-                                                if ("result" in d) {
-                                                    types = d.result["/freebase/type_hints/included_types"];
-                                                }
-                                                typeToIncludedTypes[type] = types;
-                                                
-                                                apply();
-                                            },
-                                            "jsonp"
-                                        );
-                                    }
-                                } else {
-                                    self.response(data, start ? start : -1);
-                                }
+                                self.response(data, start ? start : -1);
                             },
                             error: function(xhr) {
                                 self.trackEvent(self.name, "request", "error", {url:this.url, response: xhr ? xhr.responseText : ''});
@@ -146,9 +114,8 @@
             var name = $("<div>")
                 .addClass(css.item_name)
                 .append(
-                    $("<label>")
-                        .append($.suggest.strongify(data.name || data.guid, response_data.prefix)));
-
+                    $("<label>").append($.suggest.strongify(data.name || data.guid, response_data.prefix)));
+            
             data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
             li.append(name);
 

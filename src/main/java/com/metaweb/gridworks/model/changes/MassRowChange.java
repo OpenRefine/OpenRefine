@@ -10,6 +10,7 @@ import java.util.Properties;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.util.Pool;
 
 public class MassRowChange implements Change {
     final protected List<Row> _newRows;
@@ -52,7 +53,7 @@ public class MassRowChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         List<Row> oldRows = null;
         List<Row> newRows = null;
         
@@ -67,7 +68,9 @@ public class MassRowChange implements Change {
                 oldRows = new ArrayList<Row>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    oldRows.add(Row.load(line));
+                    if (line != null) {
+                        oldRows.add(Row.load(line, pool));
+                    }
                 }
             } else if ("newRowCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
@@ -75,10 +78,11 @@ public class MassRowChange implements Change {
                 newRows = new ArrayList<Row>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    newRows.add(Row.load(line));
+                    if (line != null) {
+                        newRows.add(Row.load(line, pool));
+                    }
                 }
             }
-
         }
         
         MassRowChange change = new MassRowChange(newRows);

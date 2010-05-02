@@ -2,7 +2,7 @@ package com.metaweb.gridworks.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -16,30 +16,8 @@ public class ToTitlecase implements Function {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
             String s = o instanceof String ? (String) o : o.toString();
-            String[] segments = StringUtils.splitByCharacterType(s);
             
-            StringBuffer sb = new StringBuffer();
-            boolean startOfWord = true;
-            for (int i = 0; i < segments.length; i++) {
-                String segment = segments[i];
-                char c = segment.charAt(0);
-                
-                if (Character.isWhitespace(c)) {
-                	startOfWord = true;
-                } else if (c == '(' || c == '[' || c == '{' || c == '"' || c == '\'') {
-                	startOfWord = true;
-                } else if (Character.isLetter(c)) {
-                	if (startOfWord) {
-                		segment = StringUtils.capitalize(segment);
-                	}
-                	startOfWord = false;
-                } else {
-                	startOfWord = false;
-                }
-                sb.append(segment);
-            }
-            
-            return sb.toString();
+            return WordUtils.capitalizeFully(s);
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
     }

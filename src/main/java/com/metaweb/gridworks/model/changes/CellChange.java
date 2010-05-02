@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.util.Pool;
 
 public class CellChange implements Change {
     final public int     row;
@@ -53,7 +54,7 @@ public class CellChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public CellChange load(LineNumberReader reader) throws Exception {
+    static public CellChange load(LineNumberReader reader, Pool pool) throws Exception {
         int row = -1;
         int cellIndex = -1;
         Cell oldCell = null;
@@ -69,14 +70,10 @@ public class CellChange implements Change {
                 row = Integer.parseInt(value);
             } else if ("cell".equals(field)) {
                 cellIndex = Integer.parseInt(value);
-            } else if ("new".equals(field)) {
-                if (value.length() > 0) {
-                    newCell = Cell.load(value);
-                }
-            } else if ("old".equals(field)) {
-                if (value.length() > 0) {
-                    oldCell = Cell.load(value);
-                }
+            } else if ("new".equals(field) && value.length() > 0) {
+                newCell = Cell.loadStreaming(value, pool);
+            } else if ("old".equals(field) && value.length() > 0) {
+                oldCell = Cell.loadStreaming(value, pool);
             }
         }
         

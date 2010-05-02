@@ -43,7 +43,7 @@ public class ColumnRemovalOperation extends AbstractOperation {
         return "Remove column " + _columnName;
     }
 
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {
             throw new Exception("No column named " + _columnName);
@@ -53,6 +53,6 @@ public class ColumnRemovalOperation extends AbstractOperation {
         
         Change change = new ColumnRemovalChange(project.columnModel.columns.indexOf(column));
         
-        return new HistoryEntry(project, description, ColumnRemovalOperation.this, change);
+        return new HistoryEntry(historyEntryID, project, description, ColumnRemovalOperation.this, change);
     }
 }

@@ -9,19 +9,23 @@ function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td) {
 
 DataTableColumnHeaderUI.prototype._render = function() {
     var self = this;
-    var td = this._td;
     
-    var headerTable = document.createElement("table");
-    $(headerTable).addClass("column-header-layout").attr("cellspacing", "0").attr("cellpadding", "0").attr("width", "100%").appendTo(td);
+    var html = $(
+        '<table class="column-header-layout">' +
+            '<tr>' +
+                '<td width="1%">' +
+                    '<a class="column-header-menu" bind="dropdownMenu">&nbsp;</a>' +
+                '</td>' +
+                '<td bind="nameContainer"></td>' +
+            '</tr>' +
+        '</table>' +
+        '<div style="display:none;" bind="reconStatsContainer"></div>'
+    ).appendTo(this._td);
     
-    var headerTableRow = headerTable.insertRow(0);
-    var headerLeft = headerTableRow.insertCell(0);
-    var headerRight = headerTableRow.insertCell(1);
+    var elmts = DOM.bind(html);
     
-    $('<span></span>').html(this._column.name).appendTo(headerLeft);
-    
-    $(headerRight).attr("width", "1%");
-    $('<img src="/images/menu-dropdown.png" />').addClass("column-header-menu").appendTo(headerRight).click(function() {
+    elmts.nameContainer.text(this._column.name);
+    elmts.dropdownMenu.click(function() {
         self._createMenuForColumnHeader(this);
     });
     
@@ -31,20 +35,20 @@ DataTableColumnHeaderUI.prototype._render = function() {
             var newPercent = Math.ceil(100 * stats.newTopics / stats.nonBlanks);
             var matchPercent = Math.ceil(100 * stats.matchedTopics / stats.nonBlanks);
             var unreconciledPercent = Math.ceil(100 * (stats.nonBlanks - stats.matchedTopics - stats.newTopics) / stats.nonBlanks);
+            var title = matchPercent + "% matched, " + newPercent + "% new, " + unreconciledPercent + "% to be reconciled";
             
             var whole = $('<div>')
-                .height("3px")
-                .css("background", "#333")
-                .css("position", "relative")
-                .attr("title", matchPercent + "% matched, " + newPercent + "% new, " + unreconciledPercent + "% to be reconciled")
-                .width("100%")
-                .appendTo(td);
+                .addClass("column-header-recon-stats-bar")
+                .attr("title", title)
+                .appendTo(elmts.reconStatsContainer.show());
             
-            $('<div>').height("100%").css("background", "white").css("position", "absolute")
+            $('<div>')
+                .addClass("column-header-recon-stats-blanks")
                 .width(Math.round((stats.newTopics + stats.matchedTopics) * 100 / stats.nonBlanks) + "%")
                 .appendTo(whole);
                 
-            $('<div>').height("100%").css("background", "#6d6").css("position", "absolute")
+            $('<div>')
+                .addClass("column-header-recon-stats-matched")
                 .width(Math.round(stats.matchedTopics * 100 / stats.nonBlanks) + "%")
                 .appendTo(whole);
         }
@@ -55,8 +59,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     self = this;
     MenuSystem.createAndShowStandardMenu([
         {
-            label: "Filter",
-            tooltip: "Filter rows by this column's cell content or characteristics",
+            label: "Facet",
             submenu: [
                 {
                     label: "Text Facet",
@@ -72,29 +75,6 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     }
                 },
                 {
-                    label: "Custom Text Facet ...",
-                    click: function() { self._doFilterByExpressionPrompt("value", "list"); }
-                },
-                {
-                    label: "Common Text Facets",
-                    submenu: [
-                        {
-                            label: "Word Facet",
-                            click: function() {
-                                ui.browsingEngine.addFacet(
-                                    "list", 
-                                    {
-                                        "name" : self._column.name + " value.split(' ')",
-                                        "columnName" : self._column.name, 
-                                        "expression" : "value.split(' ')"
-                                    }
-                                );
-                            }
-                        }
-                    ]
-                },
-                {},
-                {
                     label: "Numeric Facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -109,19 +89,73 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     }
                 },
                 {
+                    label: "Scatterplot Facet",
+                    click: function() {
+                        new ScatterplotDialog(self._column.name);
+                    }
+                },
+                {},
+                {
+                    label: "Custom Text Facet ...",
+                    click: function() { self._doFilterByExpressionPrompt("value", "list"); }
+                },
+                {
                     label: "Custom Numeric Facet ...",
                     click: function() { self._doFilterByExpressionPrompt("value", "range"); }
                 },
                 {
-                    label: "Common Numeric Facets",
+                    label: "Customized Facets",
                     submenu: [
+                        {
+                            label: "Word Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "value.split(' ')"
+                                    }
+                                );
+                            }
+                        },
+                        {},
+                        {
+                            label: "Numeric Log Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "value.log()",
+                                        "mode" : "range"
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "1-bounded Numeric Log Facet",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "log(max(1, value))",
+                                        "mode" : "range"
+                                    }
+                                );
+                            }
+                        },
+                        {},
                         {
                             label: "Text Length Facet",
                             click: function() {
                                 ui.browsingEngine.addFacet(
                                     "range", 
                                     {
-                                        "name" : self._column.name + ": value.length()",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "value.length()",
                                         "mode" : "range"
@@ -135,7 +169,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "range", 
                                     {
-                                        "name" : self._column.name + ": value.length().log()",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "value.length().log()",
                                         "mode" : "range"
@@ -149,73 +183,58 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                                 ui.browsingEngine.addFacet(
                                     "range", 
                                     {
-                                        "name" : self._column.name + ": value.unicode()",
+                                        "name" : self._column.name,
                                         "columnName" : self._column.name, 
                                         "expression" : "value.unicode()",
                                         "mode" : "range"
                                     }
                                 );
                             }
+                        },
+                        {},
+                        {
+                            label: "Facet by Error",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "isError(value)"
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "Facet by Blank",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "isBlank(value)"
+                                    }
+                                );
+                            }
                         }
                     ]
-                },
-                {},
-                {
-                    label: "Text Search",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "text", 
-                            {
-                                "name" : self._column.name,
-                                "columnName" : self._column.name, 
-                                "mode" : "text",
-                                "caseSensitive" : false
-                            }
-                        );
-                    }
-                },
-                {
-                    label: "Regular Expression Search",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "text", 
-                            {
-                                "name" : self._column.name + " (regex)",
-                                "columnName" : self._column.name, 
-                                "mode" : "regex",
-                                "caseSensitive" : true
-                            }
-                        );
-                    }
-                },
-                {},
-                {
-                    label: "By Error",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name + ": Error?",
-                                "columnName" : self._column.name, 
-                                "expression" : "isError(value)"
-                            }
-                        );
-                    }
-                },
-                {
-                    label: "By Blank",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name + ": Blank?",
-                                "columnName" : self._column.name, 
-                                "expression" : "isBlank(value)"
-                            }
-                        );
-                    }
                 }
             ]
+        },
+        {
+            label: "Text Filter",
+            click: function() {
+                ui.browsingEngine.addFacet(
+                    "text", 
+                    {
+                        "name" : self._column.name,
+                        "columnName" : self._column.name, 
+                        "mode" : "text",
+                        "caseSensitive" : false
+                    }
+                );
+            }
         },
         {},
         {
@@ -263,7 +282,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {},
                 {
                     label: "Cluster & Edit ...",
-                    click: function() { new FacetBasedEditDialog(self._column.name, "value"); }
+                    click: function() { new ClusteringDialog(self._column.name, "value"); }
                 }
             ]
         },
@@ -271,13 +290,26 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             label: "Edit Column",
             submenu: [
                 {
+                    label: "Split into Several Columns",
+                    click: function() { self._doSplitColumn(); }
+                },
+                {
                     label: "Add Column Based on This Column ...",
                     click: function() { self._doAddColumn("value"); }
                 },
                 {
+                    label: "Add Columns From Freebase ...",
+                    click: function() { self._doAddColumnFromFreebase(); }
+                },
+                {},
+                {
+                    label: "Rename This Column",
+                    click: function() { self._doRenameColumn(); }
+                },
+                {
                     label: "Remove This Column",
                     click: function() { self._doRemoveColumn(); }
-                },
+                }
             ]
         },
         {},
@@ -295,7 +327,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {
                     label: "Collapse All Other Columns",
                     click: function() {
-                        var collapsedColumnNames = {}
+                        var collapsedColumnNames = {};
                         for (var i = 0; i < theProject.columnModel.columns.length; i++) {
                             if (i != self._columnIndex) {
                                 collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
@@ -339,162 +371,167 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 },
                 {},
                 {
-                    label: "Match Each Cell to Its Best Candidate",
-                    tooltip: "Match each cell to its best candidate in this column for all current filtered rows",
-                    click: function() {
-                        self._doReconMatchBestCandidates();
-                    }
-                },
-                {
-                    label: "Create a New Topic for Each Cell",
-                    tooltip: "Mark to create one new topic for each cell in this column for all current filtered rows",
-                    click: function() {
-                        self._doReconMarkNewTopics(false);
-                    }
-                },
-                {
-                    label: "Create One New Topic for Similar Cells",
-                    tooltip: "Mark to create one new topic for each group of similar cells in this column for all current filtered rows",
-                    click: function() {
-                        self._doReconMarkNewTopics(true);
-                    }
-                },
-                {
-                    label: "Discard Reconciliation Judgments",
-                    tooltip: "Discard reconciliaton results in this column for all current filtered rows",
-                    click: function() {
-                        self._doReconDiscardJudgments();
-                    }
-                },
-                {},
-                {
-                    label: "Match Filtered Cells to ...",
-                    tooltip: "Search for a topic to match all filtered cells to",
-                    click: function() {
-                        self._doSearchToMatch();
-                    }
-                }
-            ]
-        },
-        {
-            label: "Reconcile Filter",
-            tooltip: "Match this column's cells to topics on Freebase",
-            submenu: [
-                {
-                    label: "By Judgment",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name + ": judgment",
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.judgment",
-                                "omitError" : true
-                            },
-                            {
-                                "scroll" : false
+                    label: "Facets",
+                    submenu: [
+                        {
+                            label: "By Judgment",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.judgment",
+                                        "omitError" : true
+                                    },
+                                    {
+                                        "scroll" : false
+                                    }
+                                );
                             }
-                        );
-                    }
-                },
-                {},
-                {
-                    label: "Best Candidate's Relevance Score",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "range", 
-                            {
-                                "name" : self._column.name + ": best candidate's score",
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.best.score",
-                                "mode" : "range"
-                            },
-                            {
+                        },
+                        {},
+                        {
+                            label: "Best Candidate's Relevance Score",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.best.score",
+                                        "mode" : "range"
+                                    },
+                                    {
+                                    }
+                                );
                             }
-                        );
-                    }
+                        },
+                        {
+                            label: "Best Candidate's Type Match",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.features.typeMatch",
+                                        "omitError" : true
+                                    },
+                                    {
+                                        "scroll" : false
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "Best Candidate's Name Match",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.features.nameMatch",
+                                        "omitError" : true
+                                    },
+                                    {
+                                        "scroll" : false
+                                    }
+                                );
+                            }
+                        },
+                        {},
+                        {
+                            label: "Best Candidate's Name Edit Distance",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.features.nameLevenshtein",
+                                        "mode" : "range"
+                                    },
+                                    {
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            label: "Best Candidate's Name Word Similarity",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "range", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.features.nameWordDistance",
+                                        "mode" : "range"
+                                    },
+                                    {
+                                    }
+                                );
+                            }
+                        },
+                        {},
+                        {
+                            label: "Best Candidate's Types",
+                            click: function() {
+                                ui.browsingEngine.addFacet(
+                                    "list", 
+                                    {
+                                        "name" : self._column.name,
+                                        "columnName" : self._column.name, 
+                                        "expression" : "cell.recon.best.type",
+                                        "omitError" : true
+                                    }
+                                );
+                            }
+                        }
+                    ]
                 },
                 {
-                    label: "Best Candidate's Type Match",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name + ": best candidate's type match",
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.typeMatch",
-                                "omitError" : true
-                            },
-                            {
-                                "scroll" : false
+                    label: "Actions",
+                    submenu: [
+                        {
+                            label: "Match Each Cell to Its Best Candidate",
+                            tooltip: "Match each cell to its best candidate in this column for all current filtered rows",
+                            click: function() {
+                                self._doReconMatchBestCandidates();
                             }
-                        );
-                    }
-                },
-                {
-                    label: "Best Candidate's Name Match",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name + ": best candidate's name match",
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.nameMatch",
-                                "omitError" : true
-                            },
-                            {
-                                "scroll" : false
+                        },
+                        {
+                            label: "Create a New Topic for Each Cell",
+                            tooltip: "Mark to create one new topic for each cell in this column for all current filtered rows",
+                            click: function() {
+                                self._doReconMarkNewTopics(false);
                             }
-                        );
-                    }
-                },
-                {},
-                {
-                    label: "Best Candidate's Name Edit Distance",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "range", 
-                            {
-                                "name" : self._column.name + ": best candidate's name edit distance",
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.nameLevenshtein",
-                                "mode" : "range"
-                            },
-                            {
+                        },
+                        {},
+                        {
+                            label: "Create One New Topic for Similar Cells",
+                            tooltip: "Mark to create one new topic for each group of similar cells in this column for all current filtered rows",
+                            click: function() {
+                                self._doReconMarkNewTopics(true);
                             }
-                        );
-                    }
-                },
-                {
-                    label: "Best Candidate's Name Word Similarity",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "range", 
-                            {
-                                "name" : self._column.name + ": best candidate's name word similarity",
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.features.nameWordDistance",
-                                "mode" : "range"
-                            },
-                            {
+                        },
+                        {
+                            label: "Match All Filtered Cells to ...",
+                            tooltip: "Search for a topic to match all filtered cells to",
+                            click: function() {
+                                self._doSearchToMatch();
                             }
-                        );
-                    }
-                },
-                {},
-                {
-                    label: "Best Candidate's Types",
-                    click: function() {
-                        ui.browsingEngine.addFacet(
-                            "list", 
-                            {
-                                "name" : self._column.name + ": best candidate's types",
-                                "columnName" : self._column.name, 
-                                "expression" : "cell.recon.best.type",
-                                "omitError" : true
+                        },
+                        {},
+                        {
+                            label: "Discard Reconciliation Judgments",
+                            tooltip: "Discard reconciliaton judgments in this column for all current filtered rows",
+                            click: function() {
+                                self._doReconDiscardJudgments();
                             }
-                        );
-                    }
+                        }
+                    ]
                 }
             ]
         }
@@ -509,7 +546,7 @@ DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(express
         expression,
         function(expression) {
             var config = {
-                "name" : self._column.name + ": " + expression,
+                "name" : self._column.name,
                 "columnName" : self._column.name, 
                 "expression" : expression
             };
@@ -547,7 +584,7 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     body.html(
-        '<table class="expression-preview-layout">' +
+        '<div class="grid-layout layout-tight layout-full"><table>' +
             '<tr>' +
                 '<td colspan="4">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
             '</tr>' +
@@ -591,7 +628,7 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
             bodyElmts.repeatCountInput[0].value
         );
         dismiss();
-    })
+    });
     footerElmts.cancelButton.click(dismiss);
     
     var o = DataTableView.sampleVisibleRows(this._column);
@@ -625,7 +662,7 @@ DataTableColumnHeaderUI.prototype._doReconcile = function() {
                 data.types = data.types.slice(0, 20);
                 
                 var ids = $.map(data.types, function(elmt) { return elmt.id; });
-                if (ids.length == 0) {
+                if (!ids.length) {
                     dismissBusy();
                     new ReconDialog(self._column, []);
                 } else {
@@ -709,20 +746,35 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
     
     input.suggest({}).bind("fb-select", function(e, data) {
-        Gridworks.postProcess(
-            "recon-match-specific-topic-to-cells",
-            {
-                columnName: self._column.name,
-                topicID: data.id,
-                topicGUID: data.guid,
-                topicName: data.name,
-                types: $.map(data.type, function(elmt) { return elmt.id; }).join(",")
-            },
-            null,
-            { cellsChanged: true, columnStatsChanged: true }
-        );
+        var query = {
+            "id" : data.id,
+            "type" : []
+        };
+        var baseUrl = "http://api.freebase.com/api/service/mqlread";
+        var url = baseUrl + "?" + $.param({ query: JSON.stringify({ query: query }) }) + "&callback=?";
         
-        DialogSystem.dismissUntil(level - 1);
+        $.getJSON(
+            url,
+            null,
+            function(o) {
+                var types = "result" in o ? o.result.type : [];
+                
+                Gridworks.postProcess(
+                    "recon-match-specific-topic-to-cells",
+                    {
+                        columnName: self._column.name,
+                        topicID: data.id,
+                        topicGUID: data.guid,
+                        topicName: data.name,
+                        types: types.join(",")
+                    },
+                    null,
+                    { cellsChanged: true, columnStatsChanged: true }
+                );
+        
+                DialogSystem.dismissUntil(level - 1);
+            }
+        );
     });
     
     $('<button></button>').text("Cancel").click(function() {
@@ -743,7 +795,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     body.html(
-        '<table class="expression-preview-layout" cols="2">' +
+        '<div class="grid-layout layout-normal layout-full"><table cols="2">' +
             '<tr>' +
                 '<td width="1%" style="white-space: pre;">' +
                     'New column name' +
@@ -765,7 +817,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
             '<tr>' +
                 '<td colspan="2">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
             '</tr>' +
-        '</table>'
+        '</table></div>'
     );
     var bodyElmts = DOM.bind(body);
     
@@ -782,7 +834,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
     
     footerElmts.okButton.click(function() {
         var columnName = $.trim(bodyElmts.columnNameInput[0].value);
-        if (columnName.length == 0) {
+        if (!columnName.length) {
             alert("You must enter a column name.");
             return;
         }
@@ -800,7 +852,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
             { modelsChanged: true }
         );
         dismiss();
-    })
+    });
     footerElmts.cancelButton.click(dismiss);
     
     var o = DataTableView.sampleVisibleRows(this._column);
@@ -811,6 +863,33 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
         o.values,
         "value"
     );    
+};
+
+DataTableColumnHeaderUI.prototype._doAddColumnFromFreebase = function() {
+    if ("reconConfig" in this._column && "type" in this._column.reconConfig) {
+        var o = DataTableView.sampleVisibleRows(this._column);
+        var self = this;
+        new ExtendDataPreviewDialog(
+            this._column, 
+            this._columnIndex, 
+            o.rowIndices, 
+            function(extension) {
+                Gridworks.postProcess(
+                    "extend-data", 
+                    {
+                        baseColumnName: self._column.name,
+                        columnInsertIndex: self._columnIndex + 1
+                    },
+                    {
+                        extension: JSON.stringify(extension)
+                    },
+                    { rowsChanged: true, modelsChanged: true }
+                );
+            }
+        );
+    } else {
+        alert("This column has not been reconciled yet.");
+    }
 };
 
 DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {
@@ -824,9 +903,24 @@ DataTableColumnHeaderUI.prototype._doRemoveColumn = function() {
     );
 };
 
+DataTableColumnHeaderUI.prototype._doRenameColumn = function() {
+    var newColumnName = window.prompt("Enter new column name", this._column.name);
+    if (newColumnName !== null) {
+        Gridworks.postProcess(
+            "rename-column", 
+            {
+                oldColumnName: this._column.name,
+                newColumnName: newColumnName
+            },
+            null,
+            { modelsChanged: true }
+        );
+    }
+};
+
 DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
     var separator = window.prompt("Enter separator to use between values", ", ");
-    if (separator != null) {
+    if (separator !== null) {
         Gridworks.postProcess(
             "join-multi-value-cells", 
             {
@@ -842,7 +936,7 @@ DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
 
 DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
     var separator = window.prompt("What separator currently separates the values?", ",");
-    if (separator != null) {
+    if (separator !== null) {
         Gridworks.postProcess(
             "split-multi-value-cells", 
             {
@@ -855,4 +949,138 @@ DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
             { rowsChanged: true }
         );
     }
+};
+
+DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    frame.width("600px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Split Column " + this._column.name + " into Several Columns").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    body.html(
+        '<div class="grid-layout layout-looser layout-full"><table><tr>' +
+            '<td>' +
+                '<div class="grid-layout layout-tighter"><table>' +
+                    '<tr>' +
+                        '<td colspan="3"><h3>How to Split Column</h3></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" /></td>' +
+                        '<td colspan="2">by separator</td>' +
+                    '</tr>' +
+                    '<tr><td></td>' +
+                        '<td>Separator</td>' +
+                        '<td style="white-space: pre;">' +
+                            '<input size="15" value="," bind="separatorInput" /> ' +
+                            '<input type="checkbox" bind="regexInput" /> regular expression' +
+                        '</td>' +
+                    '</tr>' +
+                    '<tr><td></td>' +
+                        '<td>Split into</td>' +
+                        '<td style="white-space: pre;"><input size="3" bind="maxColumnsInput" /> ' +
+                            'columns at most (leave blank for no limit)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td width="1%"><input type="radio" name="split-by-mode" value="lengths" /></td>' +
+                        '<td colspan="2">by field lengths</td>' +
+                    '</tr>' +
+                    '<tr><td></td>' +
+                        '<td colspan="2">' +
+                            '<textarea style="width: 100%;" bind="lengthsTextarea"></textarea>' +
+                        '</td>' +
+                    '</tr>' +
+                    '<tr><td></td>' +
+                        '<td colspan="2">' +
+                            'List of integers separated by commas, e.g., 5, 7, 15' +
+                        '</td>' +
+                    '</tr>' +
+                '</table></div>' +
+            '</td>' +
+            '<td>' +
+                '<div class="grid-layout layout-tighter"><table>' +
+                    '<tr>' +
+                        '<td colspan="3"><h3>After Splitting</h3></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td width="1%"><input type="checkbox" checked="true" bind="guessCellTypeInput" /></td>' +
+                        '<td colspan="2">Guess cell type</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td width="1%"><input type="checkbox" checked="true" bind="removeColumnInput" /></td>' +
+                        '<td colspan="2">Remove this column</td>' +
+                    '</tr>' +
+                '</table></div>' +
+            '</td>' +
+        '</table></div>'
+    );
+    var bodyElmts = DOM.bind(body);
+    
+    footer.html(
+        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+        '<button bind="cancelButton">Cancel</button>'
+    );
+    var footerElmts = DOM.bind(footer);
+        
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    footerElmts.okButton.click(function() {
+        var mode = $("input[name='split-by-mode']:checked")[0].value;
+        var config = {
+            columnName: self._column.name,
+            mode: mode,
+            guessCellType: bodyElmts.guessCellTypeInput[0].checked,
+            removeOriginalColumn: bodyElmts.removeColumnInput[0].checked
+        };
+        if (mode == "separator") {
+            config.separator = bodyElmts.separatorInput[0].value;
+            if (!(config.separator)) {
+                alert("Please specify a separator.");
+                return;
+            }
+
+            config.regex = bodyElmts.regexInput[0].checked;
+            
+            var s = bodyElmts.maxColumnsInput[0].value;
+            if (s) {
+                var n = parseInt(s);
+                if (!isNaN(n)) {
+                    config.maxColumns = n;
+                }
+            }
+        } else {
+            var s = "[" + bodyElmts.lengthsTextarea[0].value + "]";
+            try {
+                var a = JSON.parse(s);
+            } catch (e) {
+                alert("The given field lengths are not properly formatted.");
+                return;
+            }
+            
+            var lengths = [];
+            $.each(a, function(i,n) { if (typeof n == "number") lengths.push(n); });
+            
+            if (lengths.length == 0) {
+                alert("No field length is specified.");
+                return;
+            }
+            
+            config.fieldLengths = JSON.stringify(lengths);
+        }
+        
+        Gridworks.postProcess(
+            "split-column", 
+            config,
+            null,
+            { modelsChanged: true }
+        );
+        dismiss();
+    });
+    
+    footerElmts.cancelButton.click(dismiss);
 };

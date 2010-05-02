@@ -15,6 +15,7 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.protograph.Protograph;
 import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 
 public class SaveProtographOperation extends AbstractOperation {
     final protected Protograph _protograph;
@@ -25,9 +26,7 @@ public class SaveProtographOperation extends AbstractOperation {
         );
     }
     
-    public SaveProtographOperation(
-        Protograph protograph
-    ) {
+    public SaveProtographOperation(Protograph protograph) {
         _protograph = protograph;
     }
 
@@ -46,17 +45,17 @@ public class SaveProtographOperation extends AbstractOperation {
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         String description = "Save schema-alignment protograph";
         
         Change change = new ProtographChange(_protograph);
         
-        return new HistoryEntry(project, description, SaveProtographOperation.this, change);
+        return new HistoryEntry(historyEntryID, project, description, SaveProtographOperation.this, change);
     }
 
     static public class ProtographChange implements Change {
-        final protected Protograph     _newProtograph;
-        protected Protograph        _oldProtograph;
+        final protected Protograph _newProtograph;
+        protected Protograph _oldProtograph;
         
         public ProtographChange(Protograph protograph) {
             _newProtograph = protograph;
@@ -81,7 +80,7 @@ public class SaveProtographOperation extends AbstractOperation {
             writer.write("/ec/\n"); // end of change marker
         }
         
-        static public Change load(LineNumberReader reader) throws Exception {
+        static public Change load(LineNumberReader reader, Pool pool) throws Exception {
             Protograph oldProtograph = null;
             Protograph newProtograph = null;
             
@@ -91,16 +90,11 @@ public class SaveProtographOperation extends AbstractOperation {
                 CharSequence field = line.subSequence(0, equal);
                 String value = line.substring(equal + 1);
                 
-                if ("oldProtograph".equals(field)) {
-                    if (value.length() > 0) {
-                        oldProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
-                    }
-                } else if ("newProtograph".equals(field)) {
-                    if (value.length() > 0) {
-                        newProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
-                    }
+                if ("oldProtograph".equals(field) && value.length() > 0) {
+                    oldProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                } else if ("newProtograph".equals(field) && value.length() > 0) {
+                    newProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
                 }
-
             }
             
             ProtographChange change = new ProtographChange(newProtograph);

@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -24,9 +25,9 @@ import com.metaweb.gridworks.clustering.Clusterer;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.wcohen.ss.api.Token;
-import com.wcohen.ss.tokens.SimpleTokenizer;
 
+import edu.mit.simile.vicino.clustering.NGramClusterer;
+import edu.mit.simile.vicino.clustering.VPTreeClusterer;
 import edu.mit.simile.vicino.distances.BZip2Distance;
 import edu.mit.simile.vicino.distances.Distance;
 import edu.mit.simile.vicino.distances.GZipDistance;
@@ -36,15 +37,18 @@ import edu.mit.simile.vicino.distances.JaroWinklerDistance;
 import edu.mit.simile.vicino.distances.JaroWinklerTFIDFDistance;
 import edu.mit.simile.vicino.distances.LevenshteinDistance;
 import edu.mit.simile.vicino.distances.PPMDistance;
-import edu.mit.simile.vicino.vptree.VPTreeBuilder;
 
 public class kNNClusterer extends Clusterer {
 
     private Distance _distance;
     
-    static protected Map<String, Distance> _distances = new HashMap<String, Distance>();
+    static final protected Map<String, Distance> _distances = new HashMap<String, Distance>();
 
-    ArrayList<Set<Serializable>> _clusters;
+    List<Set<Serializable>> _clusters;
+
+    Map<Serializable, Integer> _counts = new HashMap<Serializable, Integer>();
+
+    final static Logger logger = LoggerFactory.getLogger("kNN_clusterer");
     
     static {
         _distances.put("levenshtein", new LevenshteinDistance());
@@ -61,13 +65,13 @@ public class kNNClusterer extends Clusterer {
 
         Distance _distance;
         JSONObject _config;
-        VPTreeBuilder _treeBuilder;
+        VPTreeClusterer _clusterer;
         double _radius = 1.0f;
         
         public VPTreeClusteringRowVisitor(Distance d, JSONObject o) {
             _distance = d;
             _config = o;
-            _treeBuilder = new VPTreeBuilder(_distance);
+            _clusterer = new VPTreeClusterer(_distance);
             try {
                 JSONObject params = o.getJSONObject("params");
                 _radius = params.getDouble("radius");
@@ -76,18 +80,19 @@ public class kNNClusterer extends Clusterer {
             }
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
-            Cell cell = row.cells.get(_colindex);
+        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+            Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
                 Object v = cell.value;
                 String s = (v instanceof String) ? ((String) v) : v.toString();
-                _treeBuilder.populate(s);
+                _clusterer.populate(s);
+                count(s);
             }
             return false;
         }
         
-        public Map<Serializable,List<Serializable>> getClusters() {
-            return _treeBuilder.getClusters(_radius);
+        public List<Set<Serializable>> getClusters() {
+            return _clusterer.getClusters(_radius);
         }
     }
 
@@ -98,6 +103,7 @@ public class kNNClusterer extends Clusterer {
         double _radius = 1.0d;
         int _blockingNgramSize = 6;
         HashSet<String> _data;
+        NGramClusterer _clusterer;
         
         public BlockingClusteringRowVisitor(Distance d, JSONObject o) {
             _distance = d;
@@ -106,84 +112,31 @@ public class kNNClusterer extends Clusterer {
             try {
                 JSONObject params = o.getJSONObject("params");
                 _radius = params.getDouble("radius");
-                Gridworks.warn("Use radius: " + _radius);
+                logger.debug("Use radius: {}", _radius);
                 _blockingNgramSize = params.getInt("blocking-ngram-size");
-                Gridworks.warn("Use blocking ngram size: " + _blockingNgramSize);
+                logger.debug("Use blocking ngram size: {}",_blockingNgramSize);
             } catch (JSONException e) {
-                Gridworks.warn("No parameters found, using defaults");
+                logger.debug("No parameters found, using defaults");
             }
+            _clusterer = new NGramClusterer(_distance, _blockingNgramSize);
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
                 Object v = cell.value;
                 String s = (v instanceof String) ? ((String) v) : v.toString().intern();
-                _data.add(s);
+                _clusterer.populate(s);
+                count(s);
             }
             return false;
         }
         
-        public Map<Serializable,Set<Serializable>> getClusters() {
-            NGramTokenizer tokenizer = new NGramTokenizer(_blockingNgramSize,_blockingNgramSize,false,SimpleTokenizer.DEFAULT_TOKENIZER);
-
-            Map<String,List<String>> blocks = new HashMap<String,List<String>>();
-            
-            for (String s : _data) {
-                Token[] tokens = tokenizer.tokenize(s);
-                for (Token t : tokens) {
-                    String ss = t.getValue();
-                    List<String> l = null;
-                    if (!blocks.containsKey(ss)) {
-                        l = new ArrayList<String>(); 
-                        blocks.put(ss, l);
-                    } else {
-                        l = blocks.get(ss);
-                    }
-                    l.add(s);
-                }
-            }
-
-            int block_count = 0;
-                        
-            Map<Serializable,Set<Serializable>> clusters = new HashMap<Serializable,Set<Serializable>>();
-            
-            for (List<String> list : blocks.values()) {
-                if (list.size() < 2) continue;
-                block_count++;
-                for (String a : list) {
-                    for (String b : list) {
-                        if (a == b) continue;
-                        if (clusters.containsKey(a) && clusters.get(a).contains(b)) continue;
-                        if (clusters.containsKey(b) && clusters.get(b).contains(a)) continue;
-                        double d = _distance.d(a,b);
-                        if (d <= _radius || _radius < 0) {
-                            Set<Serializable> l = null; 
-                            if (!clusters.containsKey(a)) {
-                                l = new TreeSet<Serializable>();
-                                l.add(a);
-                                clusters.put(a, l);
-                            } else {
-                                l = clusters.get(a);
-                            }
-                            l.add(b);
-                        }
-                    }
-                }
-            }
-            
-            Gridworks.log("Calculated " + _distance.getCount() + " distances in " + block_count + " blocks.");
-            _distance.resetCounter();
-            return clusters;
+        public List<Set<Serializable>> getClusters() {
+            return _clusterer.getClusters(_radius);
         }
     }
-    
-    public class SizeComparator implements Comparator<Set<Serializable>> {
-        public int compare(Set<Serializable> o1, Set<Serializable> o2) {
-            return o2.size() - o1.size();
-        }
-    }
-    
+        
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         super.initializeFromJSON(project, o);
         _distance = _distances.get(o.getString("function").toLowerCase());
@@ -192,28 +145,47 @@ public class kNNClusterer extends Clusterer {
     public void computeClusters(Engine engine) {
         //VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
         BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance,_config);
-        FilteredRows filteredRows = engine.getAllFilteredRows(true);
+        FilteredRows filteredRows = engine.getAllFilteredRows(false);
         filteredRows.accept(_project, visitor);
      
-        Map<Serializable,Set<Serializable>> clusters = visitor.getClusters();
-        _clusters = new ArrayList<Set<Serializable>>(clusters.values());
-        Collections.sort(_clusters, new SizeComparator());
+        _clusters = visitor.getClusters();
+    }
+
+    public static class ValuesComparator implements Comparator<Entry<Serializable,Integer>>, Serializable {
+        private static final long serialVersionUID = 204469656070583155L;
+        public int compare(Entry<Serializable,Integer> o1, Entry<Serializable,Integer> o2) {
+            return o2.getValue() - o1.getValue();
+        }
     }
     
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.array();        
         for (Set<Serializable> m : _clusters) {
             if (m.size() > 1) {
-                writer.array();        
+                Map<Serializable,Integer> internal_counts = new HashMap<Serializable,Integer>();
                 for (Serializable s : m) {
+                    internal_counts.put(s,_counts.get(s));
+                }
+                List<Entry<Serializable,Integer>> values = new ArrayList<Entry<Serializable,Integer>>(internal_counts.entrySet());
+                Collections.sort(values, new ValuesComparator());
+                writer.array();        
+                for (Entry<Serializable,Integer> e : values) {
                     writer.object();
-                    writer.key("v"); writer.value(s);
-                    writer.key("c"); writer.value(1);
+                    writer.key("v"); writer.value(e.getKey());
+                    writer.key("c"); writer.value(e.getValue());
                     writer.endObject();
                 }
                 writer.endArray();
             }
         }
         writer.endArray();
+    }
+    
+    private void count(Serializable s) {
+        if (_counts.containsKey(s)) {
+            _counts.put(s, _counts.get(s) + 1);
+        } else {
+            _counts.put(s, 1);
+        }
     }
 }

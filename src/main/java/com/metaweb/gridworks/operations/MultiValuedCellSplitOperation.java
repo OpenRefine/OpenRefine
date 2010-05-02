@@ -62,7 +62,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {
             throw new Exception("No column named " + _columnName);
@@ -70,7 +70,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         int cellIndex = column.getCellIndex();
         
         Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
-        if (column == null) {
+        if (keyColumn == null) {
             throw new Exception("No key column named " + _keyColumnName);
         }
         int keyCellIndex = keyColumn.getCellIndex();
@@ -136,6 +136,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         }
         
         return new HistoryEntry(
+            historyEntryID,
             project, 
             getBriefDescription(null), 
             this, 

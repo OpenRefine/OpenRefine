@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.model.changes;
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.util.Pool;
 
 public class ColumnAdditionChange extends ColumnChange {
     final protected String          _columnName;
@@ -72,7 +73,7 @@ public class ColumnAdditionChange extends ColumnChange {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String columnName = null;
         int columnIndex = -1;
         int newCellIndex = -1;
@@ -94,7 +95,10 @@ public class ColumnAdditionChange extends ColumnChange {
                 
                 newCells = new ArrayList<CellAtRow>(newCellCount);
                 for (int i = 0; i < newCellCount; i++) {
-                    newCells.add(CellAtRow.load(line = reader.readLine()));
+                    line = reader.readLine();
+                    if (line != null) {
+                        newCells.add(CellAtRow.load(line, pool));
+                    }
                 }
             }
         }

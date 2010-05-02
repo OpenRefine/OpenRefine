@@ -6,7 +6,7 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
     this._td = td;
     
     this._render();
-};
+}
 
 DataTableCellUI.prototype._render = function() {
     var self = this;
@@ -15,9 +15,9 @@ DataTableCellUI.prototype._render = function() {
     var divContent = $('<div/>')
         .addClass("data-table-cell-content");
         
-    var editLink = $('<a href="javascript:{}" />')
+    var editLink = $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-cell-edit")
-        .text("edit")
+        .attr("title", "edit this cell")
         .appendTo(divContent)
         .click(function() { self._startEdit(this); });
         
@@ -26,23 +26,27 @@ DataTableCellUI.prototype._render = function() {
         .mouseenter(function() { editLink.css("visibility", "visible"); })
         .mouseleave(function() { editLink.css("visibility", "hidden"); });
     
-    if (cell == null || ("v" in cell && cell.v == null)) {
+    if (!cell || ("v" in cell && cell.v === null)) {
         $('<span>').html("&nbsp;").appendTo(divContent);
     } else if ("e" in cell) {
         $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
-    } else if (!("r" in cell) || cell.r == null) {
-        $('<span>').text(cell.v).appendTo(divContent);
+    } else if (!("r" in cell) || !cell.r) {
+        var span = $('<span>').text(cell.v).appendTo(divContent);
+        if (typeof cell.v !== "string") {
+            span.addClass("data-table-value-nonstring");
+        }
     } else {
         var r = cell.r;
         if (r.j == "new") {
             $('<span>').text(cell.v + " (new topic) ").appendTo(divContent);
             
-            $('<a href="javascript:{}">re-match</a>')
+            $('<a href="javascript:{}"></a>')
+                .text("re\u2011match")
                 .addClass("data-table-recon-action")
                 .appendTo(divContent).click(function(evt) {
                     self._doRematch();
                 });
-        } else if (r.j == "matched" && "m" in r && r.m != null) {
+        } else if (r.j == "matched" && "m" in r && r.m !== null) {
             var match = cell.r.m;
             $('<a></a>')
                 .text(match.name)
@@ -52,7 +56,7 @@ DataTableCellUI.prototype._render = function() {
                 
             $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}"></a>')
-                .text("re-match")
+                .text("re\u2011match")
                 .addClass("data-table-recon-action")
                 .appendTo(divContent)
                 .click(function(evt) {
@@ -86,15 +90,23 @@ DataTableCellUI.prototype._render = function() {
                             .addClass("data-table-recon-topic")
                             .attr("href", "http://www.freebase.com/view" + candidate.id)
                             .attr("target", "_blank")
-                            .click(function(evt) {
-                                self._previewCandidateTopic(candidate.id, this);
-                                evt.preventDefault();
-                                return false;
-                            })
                             .text(candidate.name)
-                            .appendTo(li);
+                            .appendTo(li)
+                            .click(function(evt) {
+                                if (!evt.metaKey && !evt.ctrlKey) {
+                                    self._previewCandidateTopic(candidate, this);
+                                    evt.preventDefault();
+                                    return false;
+                                }
+                            });
                             
-                        $('<span></span>').addClass("data-table-recon-score").text("(" + Math.round(candidate.score) + ")").appendTo(li);
+                        var score;
+                        if (candidate.score < 1) {
+                            score = Math.round(candidate.score * 1000) / 1000;
+                        } else {
+                            score = Math.round(candidate.score)
+                        }
+                        $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(li);
                     };
                     
                     for (var i = 0; i < candidates.length; i++) {
@@ -131,7 +143,7 @@ DataTableCellUI.prototype._render = function() {
         }
     }
     
-    divContent.appendTo(this._td)
+    divContent.appendTo(this._td);
 };
 
 DataTableCellUI.prototype._doRematch = function() {
@@ -192,49 +204,75 @@ DataTableCellUI.prototype._searchForMatch = function() {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
-    $('<p></p>').text("Search Freebase for topic to match " + this._cell.v).appendTo(body);
+    var html = $(
+        '<div class="grid-layout layout-normal layout-full"><table>' +
+            '<tr><td colspan="2">Search Freebase for topic to match ' + this._cell.v + '</td></tr>' +
+            '<tr>' +
+                '<td><input bind="input" /></td>' +
+                '<td><input type="checkbox" checked="true" bind="checkSimilar" /> Match other cells with same content</td>' +
+            '</tr>' +
+        '</table></div>'
+    ).appendTo(body);
     
-    var input = $('<input />').attr("value", this._cell.v).appendTo($('<p></p>').appendTo(body));
+    var elmts = DOM.bind(html);
+    
     var match = null;
-    input.suggest({}).bind("fb-select", function(e, data) {
-        match = data;
-    });
-    
-    var pSimilar = $('<p></p>').appendTo(body);
-    var checkSimilar = $('<input type="checkbox" checked="true" />').appendTo(pSimilar);
-    $('<span>').text(" Match other cells with the same content as well").appendTo(pSimilar);
-    
-    $('<button></button>').text("Match").click(function() {
-        if (match != null) {
-            var params = {
-                judgment: "matched",
-                topicID: match.id,
-                topicGUID: match.guid,
-                topicName: match.name,
-                types: $.map(match.type, function(elmt) { return elmt.id; }).join(",")
+    var commit = function() {
+        if (match !== null) {
+            var query = {
+                "id" : match.id,
+                "type" : []
             };
-            if (checkSimilar[0].checked) {
-                params.similarValue = self._cell.v;
-                params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
-                
-                self._postProcessSeveralCells("recon-judge-similar-cells", params, true);
-            } else {
-                params.row = self._rowIndex;
-                params.cell = self._cellIndex;
-                
-                self._postProcessOneCell("recon-judge-one-cell", params, true);
-            }
-        
-            DialogSystem.dismissUntil(level - 1);
+            var baseUrl = "http://api.freebase.com/api/service/mqlread";
+            var url = baseUrl + "?" + $.param({ query: JSON.stringify({ query: query }) }) + "&callback=?";
+            
+            $.getJSON(
+                url,
+                null,
+                function(o) {
+                    var types = "result" in o ? o.result.type : [];
+                    var params = {
+                        judgment: "matched",
+                        topicID: match.id,
+                        topicGUID: match.guid,
+                        topicName: match.name,
+                        types: $.map(types, function(elmt) { return elmt.id; }).join(",")
+                    };
+                    if (elmts.checkSimilar[0].checked) {
+                        params.similarValue = self._cell.v;
+                        params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
+
+                        self._postProcessSeveralCells("recon-judge-similar-cells", params, true);
+                    } else {
+                        params.row = self._rowIndex;
+                        params.cell = self._cellIndex;
+
+                        self._postProcessOneCell("recon-judge-one-cell", params, true);
+                    }
+
+                    DialogSystem.dismissUntil(level - 1);
+                },
+                "jsonp"
+            );
         }
-    }).appendTo(footer);
+    };
     
+    $('<button></button>').text("Match").click(commit).appendTo(footer);
     $('<button></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
     var level = DialogSystem.showDialog(frame);
-    input.focus().data("suggest").textchange();
+    
+    elmts.input
+        .attr("value", this._cell.v)
+        .suggest({})
+        .bind("fb-select", function(e, data) {
+            match = data;
+            commit();
+        })
+        .focus()
+        .data("suggest").textchange();
 };
 
 DataTableCellUI.prototype._postProcessOneCell = function(command, params, columnStatsChanged) {
@@ -247,7 +285,13 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, column
         { columnStatsChanged: columnStatsChanged },
         {
             onDone: function(o) {
+                Gridworks.preparePool(o.pool);
+                if (o.cell.r) {
+                    o.cell.r = o.pool.recons[o.cell.r];
+                }
+                
                 self._cell = o.cell;
+                self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
                 self._render();
             }
         }
@@ -263,36 +307,87 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, c
     );
 };
 
-DataTableCellUI.prototype._previewCandidateTopic = function(id, elmt) {
-    var url = "http://www.freebase.com/widget/topic" + id + '?mode=content&blocks=[{"block"%3A"image"}%2C{"block"%3A"full_info"}%2C{"block"%3A"article_props"}]';
+DataTableCellUI.topicBlockParams = {
+    "mode" : "content",
+    "blocks" : JSON.stringify([
+        {
+            "block" : "full_info",
+        },
+        {
+            "block" : "article_props"
+        }
+    ])
+};
+
+DataTableCellUI.topicBlockDimensions = {
+    width: 430,
+    height: 300
+};
+
+DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt) {
+    var self = this;
+    var id = candidate.id;
     
-    var fakeMenu = MenuSystem.createMenu();
-    fakeMenu
-        .width(700)
-        .height(300)
-        .css("background", "none")
-        .css("border", "none");
+    var render = function(id2) {
+        var url = "http://www.freebase.com/widget/topic" + id2 + '?' + $.param(DataTableCellUI.topicBlockParams);
     
-    var iframe = $('<iframe></iframe>')
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .css("background", "none")
-        .css("border", "none")
-        .attr("src", url)
-        .appendTo(fakeMenu);
+        var fakeMenu = MenuSystem.createMenu();
+        fakeMenu
+            .width(DataTableCellUI.topicBlockDimensions.width)
+            .css("background", "none")
+            .css("border", "none")
+            .html(
+                '<div class="data-table-topic-popup-header">' +
+                    '<button title="Match topic to this cell" bind="matchButton">Match</button> ' +
+                    '<button title="Match topic to all visible cells with same content" bind="matchSimilarButton">Match Similar</button>' +
+                '</div>'
+            );
     
-    MenuSystem.showMenu(fakeMenu, function(){});
-    MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
+        var iframe = $('<iframe></iframe>')
+            .addClass("data-table-topic-popup-iframe")
+            .width(DataTableCellUI.topicBlockDimensions.width)
+            .height(DataTableCellUI.topicBlockDimensions.height)
+            .attr("src", url)
+            .appendTo(fakeMenu);
+    
+        MenuSystem.showMenu(fakeMenu, function(){});
+        MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
+        
+        var elmts = DOM.bind(fakeMenu);
+        elmts.matchButton.click(function() {
+            self._doMatchTopicToOneCell(candidate);
+            MenuSystem.dismissAll();
+        });
+        elmts.matchSimilarButton.click(function() {
+            self._doMatchTopicToSimilarCells(candidate);
+            MenuSystem.dismissAll();
+        });
+    };
+    
+    if (id.indexOf("/guid/") !== 0) {
+        render(id);
+    } else {
+        Freebase.mqlread(
+            {
+                "guid" : "#" + id.substring(6),
+                "id" : null
+            },
+            null,
+            function(o) {
+                render(o.result.id);
+            }
+        );
+    }
 };
 
 DataTableCellUI.prototype._startEdit = function(elmt) {
     self = this;
     
-    var originalContent = this._cell == null || ("v" in this._cell && this._cell.v == null) ? "" : this._cell.v;
+    var originalContent = !this._cell || ("v" in this._cell && this._cell.v === null) ? "" : this._cell.v;
     
     var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
     menu.html(
-        '<table class="data-table-cell-editor-layout">' +
+        '<table class="grid-layout layout-tighest layout-full data-table-cell-editor-layout">' +
             '<tr>' +
                 '<td colspan="5">' +
                     '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
@@ -347,7 +442,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
             value = ("true" == text);
         } else if (type == "date") {
             value = Date.parse(text);
-            if (value == null) {
+            if (!value) {
                 alert("Not a valid date.");
                 return;
             }
@@ -384,7 +479,13 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
                 {},
                 {
                     onDone: function(o) {
+                        Gridworks.preparePool(o.pool);
+                        if (o.cell.r) {
+                            o.cell.r = o.pool.recons[o.cell.r];
+                        }
+                        
                         self._cell = o.cell;
+                        self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
                         self._render();
                     }
                 }

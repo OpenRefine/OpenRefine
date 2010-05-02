@@ -1,17 +1,18 @@
 .process-panel {
-    position: absolute;
-    top: -1px;
-    width: 100%;
-    text-align: center;
+    position: fixed;
+    top: 0px;
+    z-index: 1000;
+    background: #fffee0;
+    border: 1px solid #aaa;
+    border-top: none;
+    -moz-border-radius-bottomleft: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -webkit-border-bottom-right-radius: 10px;    
 }
 
 .process-panel-inner {
-    border: 1px solid #ccc;
-    width: 500px;
-    max-height: 70px;
-    margin: 0 auto;
-    text-align: left;
-    background: #fffee0;
+    padding-bottom: 10px;
 }
 
 .process-panel-head {
@@ -20,6 +21,13 @@
 }
 
 .process-panel-body {
+    max-height: 70px;
+    overflow: auto;
+    padding: 10px;
+}
+
+.process-panel-undo {
+    max-height: 50px;
     overflow: auto;
     padding: 10px;
 }

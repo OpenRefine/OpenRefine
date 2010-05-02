@@ -3,6 +3,9 @@ function MenuBar(div) {
     this._initializeUI();
 }
 
+MenuBar.prototype.resize = function() {
+};
+
 MenuBar.prototype._initializeUI = function() {
     this._mode = "inactive";
     this._menuItemRecords = [];
@@ -13,6 +16,18 @@ MenuBar.prototype._initializeUI = function() {
     var self = this;
     
     this._createTopLevelMenuItem("Project", [
+        /*
+        {
+            "label": "Data Model",
+            "submenu": [
+                {
+                    "label": "Denormalize Records",
+                    "click": function() { self._doDenormalizeRecords(); }
+                }
+            ]
+        },
+        {},
+        */
         {
             "label": "Export Filtered Rows",
             "submenu": [
@@ -21,8 +36,17 @@ MenuBar.prototype._initializeUI = function() {
                     "click": function() { self._doExportRows("tsv", "tsv"); }
                 },
                 {
+                    "label": "HTML Table",
+                    "click": function() { self._doExportRows("html", "html"); }
+                },
+                {
+                    "label": "Excel",
+                    "click": function() { self._doExportRows("xls", "xls"); }
+                },
+                {},
+                {
                     "label": "Tripleloader",
-                    "click": function() { self._doExportRows("tripleloader", "txt"); }
+                    "click": function() { self._doExportTripleloader(); }
                 }
             ]
         },
@@ -47,7 +71,7 @@ MenuBar.prototype._initializeUI = function() {
         {},
         {
             label: "Load into Freebase ...",
-            click: function() {}
+            click: function() { self._doLoadIntoFreebase(); }
         }
     ]);
     
@@ -136,12 +160,33 @@ MenuBar.prototype._deactivateMenu = function() {
     this._mode = "inactive";
 };
 
+MenuBar.prototype._doDenormalizeRecords = function() {
+    Gridworks.postProcess(
+        "denormalize", 
+        {},
+        null,
+        { modelsChanged: true }
+    );
+};
+
+MenuBar.prototype._doExportTripleloader = function() {
+    if (!theProject.protograph) {
+        alert(
+            "You haven't done any schema alignment yet,\nso there is no triple to export.\n\n" +
+            "Use the Schemas > Edit Schema Alignment Skeleton...\ncommand to align your data with Freebase schemas first."
+        );
+    } else {
+        this._doExportRows("tripleloader", "txt");
+    }
+};
+
 MenuBar.prototype._doExportRows = function(format, ext) {
+    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
     var form = document.createElement("form");
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-rows/gridworks_" + theProject.id + "." + ext)
+        .attr("action", "/command/export-rows/" + name + "." + ext)
         .attr("target", "gridworks-export");
 
     $('<input />')
@@ -166,12 +211,12 @@ MenuBar.prototype._doExportRows = function(format, ext) {
 };
 
 MenuBar.prototype._exportProject = function() {
-    var name = theProject.metadata.name.replace(/\W/g, ' ').replace(/\s+/g, '-');
+    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
     var form = document.createElement("form");
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-project/" + name + ".gridworks.tar")
+        .attr("action", "/command/export-project/" + name + ".gridworks.tar.gz")
         .attr("target", "gridworks-export"); 
     $('<input />')
         .attr("name", "project")
@@ -192,4 +237,8 @@ MenuBar.prototype._doAutoSchemaAlignment = function() {
 
 MenuBar.prototype._doEditSchemaAlignment = function(reset) {
     new SchemaAlignmentDialog(reset ? null : theProject.protograph, function(newProtograph) {});
+};
+
+MenuBar.prototype._doLoadIntoFreebase = function() {
+    new FreebaseLoadingDialog();
 };

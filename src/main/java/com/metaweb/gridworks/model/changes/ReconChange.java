@@ -15,6 +15,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.ReconStats;
 import com.metaweb.gridworks.model.recon.ReconConfig;
 import com.metaweb.gridworks.util.ParsingUtilities;
+import com.metaweb.gridworks.util.Pool;
 
 public class ReconChange extends MassCellChange {
     final protected ReconConfig _newReconConfig;
@@ -118,7 +119,7 @@ public class ReconChange extends MassCellChange {
         super.save(writer, options);
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
+    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         ReconConfig newReconConfig = null;
         ReconStats newReconStats = null;
         ReconConfig oldReconConfig = null;
@@ -157,7 +158,7 @@ public class ReconChange extends MassCellChange {
                 
                 cellChanges = new CellChange[cellChangeCount];
                 for (int i = 0; i < cellChangeCount; i++) {
-                    cellChanges[i] = CellChange.load(reader);
+                    cellChanges[i] = CellChange.load(reader, pool);
                 }
             }
         }

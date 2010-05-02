@@ -52,7 +52,7 @@ public class RowStarOperation extends EngineDependentOperation {
         return (_starred ? "Star rows" : "Unstar rows");
     }
 
-   protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+   protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         List<Change> changes = new ArrayList<Change>(project.rows.size());
@@ -61,6 +61,7 @@ public class RowStarOperation extends EngineDependentOperation {
         filteredRows.accept(project, createRowVisitor(project, changes));
         
         return new HistoryEntry(
+            historyEntryID,
             project, 
             (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows", 
             this, 
@@ -77,7 +78,7 @@ public class RowStarOperation extends EngineDependentOperation {
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 if (row.starred != _starred) {
                     RowStarChange change = new RowStarChange(rowIndex, _starred);
                     

@@ -97,7 +97,7 @@ public class HeuristicReconConfig extends ReconConfig {
         this.typeID = typeID;
         this.typeName = typeName;
         this.autoMatch = autoMatch;
-        this.columnDetails = new ArrayList<ColumnDetail>();
+        this.columnDetails = columnDetails;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -156,7 +156,7 @@ public class HeuristicReconConfig extends ReconConfig {
                         Cell cell2 = row.getCell(detailCellIndex);
                         if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) {
                             int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
-                            if (cellIndex < row.contextRowSlots.length) {
+                            if (row.contextRowSlots != null && cellIndex < row.contextRowSlots.length) {
                                 int contextRowIndex = row.contextRowSlots[cellIndex];
                                 if (contextRowIndex >= 0 && contextRowIndex < project.rows.size()) {
                                     Row row2 = project.rows.get(contextRowIndex);
@@ -190,15 +190,15 @@ public class HeuristicReconConfig extends ReconConfig {
     }
     
     @Override
-    public List<Recon> batchRecon(List<ReconJob> jobs) {
+    public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         if ("relevance".equals(service)) {
-            return batchReconUsingRelevance(jobs);
+            return batchReconUsingRelevance(jobs, historyEntryID);
         } else {
-            return batchReconUsingReconService(jobs);
+            return batchReconUsingReconService(jobs, historyEntryID);
         }
     }
     
-    protected List<Recon> batchReconUsingRelevance(List<ReconJob> jobs) {
+    protected List<Recon> batchReconUsingRelevance(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
         
         try {
@@ -222,7 +222,7 @@ public class HeuristicReconConfig extends ReconConfig {
             }
             jsonWriter.endObject();
             
-            StringBuffer sb = new StringBuffer();
+            StringBuffer sb = new StringBuffer(1024);
             sb.append("http://api.freebase.com/api/service/search?indent=1&queries=");
             sb.append(ParsingUtilities.encode(stringWriter.toString()));
             
@@ -251,11 +251,12 @@ public class HeuristicReconConfig extends ReconConfig {
                     if (o2.has("result")) {
                         JSONArray results = o2.getJSONArray("result");
                         
-                        recon = createReconFromRelevanceResults(text, results);
+                        recon = createReconFromRelevanceResults(text, results, historyEntryID);
                     } else {
-                        recon = new Recon();
+                        recon = new Recon(historyEntryID);
                     }
                     
+                    recon.service = "recon";
                     recons.add(recon);
                 }
             } finally {
@@ -265,13 +266,11 @@ public class HeuristicReconConfig extends ReconConfig {
             e.printStackTrace();
         }
         
-        System.gc();
-        
         return recons;
     }
 
-    protected Recon createReconFromRelevanceResults(String text, JSONArray results) {
-        Recon recon = new Recon();
+    protected Recon createReconFromRelevanceResults(String text, JSONArray results, long historyEntryID) {
+        Recon recon = new Recon(historyEntryID);
         try {
             int length = results.length();
             int count = 0;
@@ -296,27 +295,34 @@ public class HeuristicReconConfig extends ReconConfig {
                     score
                 );
                 
-                // best match
-                if (i == 0) {
-                    recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
-                    recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
-                    recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
-                    
-                    recon.setFeature(Recon.Feature_typeMatch, false);
-                    for (String typeID : candidate.typeIDs) {
-                        if (this.typeID.equals(typeID)) {
-                            recon.setFeature(Recon.Feature_typeMatch, true);
-                            if (autoMatch && score >= 100) {
-                                recon.match = candidate;
-                                recon.judgment = Judgment.Matched;
-                            }
-                            break;
-                        }
-                    }
-                }
-                
                 recon.addCandidate(candidate);
                 count++;
+            }
+            
+            if (count > 0) {
+            	ReconCandidate candidate = recon.candidates.get(0);
+            	
+                recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
+                recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
+                recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
+                
+                recon.setFeature(Recon.Feature_typeMatch, false);
+                for (String typeID : candidate.typeIDs) {
+                    if (this.typeID.equals(typeID)) {
+                        recon.setFeature(Recon.Feature_typeMatch, true);
+                        if (autoMatch && candidate.score >= 100) {
+                        	if (count == 1 || 
+                        		candidate.score / recon.candidates.get(1).score >= 1.5) {
+                        		
+                        		recon.match = candidate;
+                        		recon.matchRank = 0;
+                        		recon.judgment = Judgment.Matched;
+                        		recon.judgmentAction = "auto";
+                        	}
+                        }
+                        break;
+                    }
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -326,7 +332,7 @@ public class HeuristicReconConfig extends ReconConfig {
     
     static final String s_reconService = "http://data.labs.freebase.com/recon/query";
     
-    protected List<Recon> batchReconUsingReconService(List<ReconJob> jobs) {
+    protected List<Recon> batchReconUsingReconService(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
         
         for (int i = 0; i < jobs.size(); i++) {
@@ -347,7 +353,7 @@ public class HeuristicReconConfig extends ReconConfig {
                     String s = ParsingUtilities.inputStreamToString(is);
                     JSONArray a = ParsingUtilities.evaluateJsonStringToArray(s);
                 
-                    recon = createReconFromReconResults(job.text, a);
+                    recon = createReconFromReconResults(job.text, a, historyEntryID);
                 } finally {
                     is.close();
                 }
@@ -356,18 +362,17 @@ public class HeuristicReconConfig extends ReconConfig {
             }
             
             if (recon == null) {
-                recon = new Recon();
+                recon = new Recon(historyEntryID);
             }
+            recon.service = "recon";
             recons.add(recon);
         }
-        
-        System.gc();
         
         return recons;
     }
 
-    protected Recon createReconFromReconResults(String text, JSONArray results) {
-        Recon recon = new Recon();
+    protected Recon createReconFromReconResults(String text, JSONArray results, long historyEntryID) {
+        Recon recon = new Recon(historyEntryID);
         try {
             int length = results.length();
             int count = 0;
@@ -405,11 +410,11 @@ public class HeuristicReconConfig extends ReconConfig {
                     for (String typeID : candidate.typeIDs) {
                         if (this.typeID.equals(typeID)) {
                             recon.setFeature(Recon.Feature_typeMatch, true);
-                            if (autoMatch && 
-                                (score > 0.6 ||
-                                    (result.has("match") && result.getBoolean("match")))) {
+                            if (autoMatch && result.has("match") && result.getBoolean("match")) {
                                 recon.match = candidate;
+                                recon.matchRank = 0;
                                 recon.judgment = Judgment.Matched;
+                                recon.judgmentAction = "auto";
                             }
                             break;
                         }
@@ -441,9 +446,8 @@ public class HeuristicReconConfig extends ReconConfig {
         return common / longWords.size();
     }
     
-    static protected Set<String> s_stopWords;
+    static final protected Set<String> s_stopWords = new HashSet<String>();
     static {
-        s_stopWords = new HashSet<String>();
         s_stopWords.add("the");
         s_stopWords.add("a");
         s_stopWords.add("and");

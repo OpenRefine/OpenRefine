@@ -1,6 +1,8 @@
 package com.metaweb.gridworks.operations;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -56,34 +58,48 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
             " cells in column " + column.getName();
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
             int cellIndex;
             List<CellChange> cellChanges;
+            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
+            long historyEntryID;
             
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
+            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
+                this.historyEntryID = historyEntryID;
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean contextual) {
+            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {
-                    Recon recon = cell.recon.dup();
-                    recon.judgment = Judgment.None;
-                    recon.match = null;
-
-                    Cell newCell = new Cell(cell.value, recon);
+                	Recon newRecon;
+                	if (dupReconMap.containsKey(cell.recon.id)) {
+                		newRecon = dupReconMap.get(cell.recon.id);
+                		newRecon.judgmentBatchSize++;
+                	} else {
+                		newRecon = cell.recon.dup(historyEntryID);
+                        newRecon.match = null;
+                        newRecon.matchRank = -1;
+                        newRecon.judgment = Judgment.None;
+                        newRecon.judgmentAction = "mass";
+                		newRecon.judgmentBatchSize = 1;
+                		
+                		dupReconMap.put(cell.recon.id, newRecon);
+                	}
+                	
+                    Cell newCell = new Cell(cell.value, newRecon);
                     
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);
                 }
                 return false;
             }
-        }.init(column.getCellIndex(), cellChanges);
+        }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
     
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {

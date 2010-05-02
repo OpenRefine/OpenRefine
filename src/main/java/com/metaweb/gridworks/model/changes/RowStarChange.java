@@ -8,11 +8,12 @@ import java.util.Properties;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.util.Pool;
 
 public class RowStarChange implements Change {
     final int rowIndex;
     final boolean newStarred;
-    boolean oldStarred;
+    Boolean oldStarred = null;
     
     public RowStarChange(int rowIndex, boolean newStarred) {
         this.rowIndex = rowIndex;
@@ -21,8 +22,9 @@ public class RowStarChange implements Change {
 
     public void apply(Project project) {
         Row row = project.rows.get(rowIndex);
-        
-        oldStarred = row.starred;
+        if (oldStarred == null) {
+            oldStarred = row.starred;
+        }
         row.starred = newStarred;
     }
 
@@ -39,7 +41,7 @@ public class RowStarChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public RowStarChange load(LineNumberReader reader) throws Exception {
+    static public RowStarChange load(LineNumberReader reader, Pool pool) throws Exception {
         int row = -1;
         boolean oldStarred = false;
         boolean newStarred = false;

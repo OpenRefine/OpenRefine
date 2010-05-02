@@ -5,18 +5,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.metaweb.gridworks.expr.functions.Cross;
 import com.metaweb.gridworks.expr.functions.Get;
 import com.metaweb.gridworks.expr.functions.Length;
 import com.metaweb.gridworks.expr.functions.Slice;
 import com.metaweb.gridworks.expr.functions.ToDate;
 import com.metaweb.gridworks.expr.functions.ToNumber;
 import com.metaweb.gridworks.expr.functions.ToString;
+import com.metaweb.gridworks.expr.functions.Type;
 import com.metaweb.gridworks.expr.functions.arrays.Join;
 import com.metaweb.gridworks.expr.functions.arrays.Reverse;
 import com.metaweb.gridworks.expr.functions.arrays.Sort;
 import com.metaweb.gridworks.expr.functions.booleans.And;
 import com.metaweb.gridworks.expr.functions.booleans.Not;
 import com.metaweb.gridworks.expr.functions.booleans.Or;
+import com.metaweb.gridworks.expr.functions.date.DatePart;
 import com.metaweb.gridworks.expr.functions.date.Inc;
 import com.metaweb.gridworks.expr.functions.date.Now;
 import com.metaweb.gridworks.expr.functions.math.Ceil;
@@ -29,6 +32,7 @@ import com.metaweb.gridworks.expr.functions.math.Min;
 import com.metaweb.gridworks.expr.functions.math.Mod;
 import com.metaweb.gridworks.expr.functions.math.Pow;
 import com.metaweb.gridworks.expr.functions.math.Round;
+import com.metaweb.gridworks.expr.functions.math.Sum;
 import com.metaweb.gridworks.expr.functions.strings.Contains;
 import com.metaweb.gridworks.expr.functions.strings.Diff;
 import com.metaweb.gridworks.expr.functions.strings.EndsWith;
@@ -46,6 +50,7 @@ import com.metaweb.gridworks.expr.functions.strings.ReplaceChars;
 import com.metaweb.gridworks.expr.functions.strings.SHA1;
 import com.metaweb.gridworks.expr.functions.strings.Split;
 import com.metaweb.gridworks.expr.functions.strings.SplitByCharType;
+import com.metaweb.gridworks.expr.functions.strings.SplitByLengths;
 import com.metaweb.gridworks.expr.functions.strings.StartsWith;
 import com.metaweb.gridworks.expr.functions.strings.ToLowercase;
 import com.metaweb.gridworks.expr.functions.strings.ToTitlecase;
@@ -104,6 +109,8 @@ public class ControlFunctionRegistry {
     }
 
     static {
+        registerFunction("type", new Type());
+        
         registerFunction("toString", new ToString());
         registerFunction("toNumber", new ToNumber());
         registerFunction("toDate", new ToDate());
@@ -119,6 +126,7 @@ public class ControlFunctionRegistry {
         registerFunction("replaceChars", new ReplaceChars());
         registerFunction("split", new Split());
         registerFunction("splitByCharType", new SplitByCharType());
+        registerFunction("splitByLengths", new SplitByLengths());
         registerFunction("partition", new Partition());
         registerFunction("rpartition", new RPartition());
         registerFunction("trim", new Trim());
@@ -147,6 +155,7 @@ public class ControlFunctionRegistry {
 
         registerFunction("now", new Now());
         registerFunction("inc", new Inc());
+        registerFunction("datePart", new DatePart());
         
         registerFunction("round", new Round());
         registerFunction("floor", new Floor());
@@ -158,10 +167,13 @@ public class ControlFunctionRegistry {
         registerFunction("ln", new Ln());
         registerFunction("pow", new Pow());
         registerFunction("exp", new Exp());
+        registerFunction("sum", new Sum());
         
         registerFunction("and", new And());
         registerFunction("or", new Or());
         registerFunction("not", new Not());
+        
+        registerFunction("cross", new Cross());
 
         registerControl("if", new If());
         registerControl("with", new With());

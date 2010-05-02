@@ -1,47 +1,114 @@
 /*
- *  (c) Copyright 2010 Metaweb Technologies, Inc. All rights reserved.
+ * Copyright (c) 2010 Metaweb Technologies, Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY METAWEB TECHNOLOGIES AND CONTRIBUTORS
+ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL METAWEB
+ * TECHNOLOGIES OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+/*
+ *  External Licenses
  */
 
 See the 'licenses' directory for a list of the licenses for the libraries we depend on,
 ordered here by license:
 
+Apache License 2.0
+------------------
+
 licenses/apache2.0.LICENSE.txt
-    jetty
-    jetty-util
-    servlet-api
+    calendar-parser (package com.metaweb.gridworks.expr.util)
+    ant-tools 
     commons-lang
     commons-codec
+    commons-fileupload
+    jackson
+    jdatapath
+    jetty
+    jetty-util
     log4j
-    xmlbeans
     poi
     poi-ooxml
     poi-ooxml-schemas
-    jdatapath
-    calendar-parser (package com.metaweb.gridworks.expr.util)
-    bzip2 (package org.apache.tools.bzip2)
- 
-licenses/secondstring.LICENSE.txt (BSD family)
+    servlet-api
+    xmlbeans
+    signpost
+   
+LGPL
+----
+
+licenses/marj4j.LICENSE.txt
+    marc4j
+    
+     
+BSD
+---
+    
+licenses/secondstring.LICENSE.txt
     secondstring
 
-licenses/dom4j.LICENSE.txt (BSD family)
+licenses/dom4j.LICENSE.txt
     dom4j
     
-licenses/simile.LICENSE.txt (BSD family)
-    vicino (package edu.mit.simile.vicino)
+licenses/simile.LICENSE.txt
+    simile vicino
 
-licenses/arithcode.LICENSE.txt (BSD family)
+licenses/arithcode.LICENSE.txt
     arithcode
+
+licenses/freebase_suggest.LICENSE.txt
+    freebase_suggest
+
+MIT
+---
+
+licenses/jquery.LICENSE.txt
+    jquery
+
+licenses/jquery_ui.LICENSE.txt
+    jquery_ui
+
+licenses/datejs.LICENSE.txt
+    datejs
+
+licenses/imgareaselect.LICENSE.txt
+    imgareaselect
        
-licenses/icu4j.LICENSE.txt (MIT family)
-    icu4j
-   
-licenses/slf4j.LICENSE.txt (MIT family)
+licenses/slf4j.LICENSE.txt
     slf4j-api
     slf4j-log4j12
     jcl-over-slf4j
-
-licenses/json.LICENSE.txt (MIT family)    
+       
+licenses/icu4j.LICENSE.txt
+    icu4j
+   
+licenses/json.LICENSE.txt
     json
-    
-licenses/cos.LICENSE.txt
-    cos
+
+Others
+------
+
+Flag icon
+    http://pixel-mixer.com/category/free-icons/

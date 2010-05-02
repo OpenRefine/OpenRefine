@@ -1,13 +1,12 @@
 html {
     font-size: 62.5%;
-    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 body {
-    font-size: 120%;
+    font-size: 11px;
     margin: 0;
     padding: 0;
-    background: #eee;
 }
 
 table {
@@ -18,43 +17,88 @@ tr, td {
     vertical-align: baseline;
 }
 
-input {
+div.grid-layout > table {
+    border-collapse: separate;
+}
+div.grid-layout.layout-full > table {
+    width: 100%;
+    max-width: 100% !important;
+}
+div.grid-layout > table > tbody > tr > th, div.grid-layout > table > tbody > tr > td {
+    padding: 0px;
+    text-align: left;
+    vertical-align: baseline;
+}
+div.grid-layout.layout-normal {
+    margin: -10px;
+}
+div.grid-layout.layout-normal > table {
+    border-spacing: 10px;
+}
+
+div.grid-layout.layout-tight {
+    margin: -7px;
+}
+div.grid-layout.layout-tight > table {
+    border-spacing: 7px;
+}
+
+div.grid-layout.layout-tighter {
+    margin: -5px;
+}
+div.grid-layout.layout-tighter > table {
+    border-spacing: 5px;
+}
+
+div.grid-layout.layout-tightest {
+    margin: -3px;
+}
+div.grid-layout.layout-tightest > table {
+    border-spacing: 3px;
+}
+
+div.grid-layout.layout-loose {
+    margin: -15px;
+}
+div.grid-layout.layout-loose > table {
+    border-spacing: 15px;
+}
+
+div.grid-layout.layout-looser {
+    margin: -20px;
+}
+div.grid-layout.layout-looser > table {
+    border-spacing: 20px;
+}
+
+input[type="checkbox"], input[type="radio"] {
+    vertical-align: baseline;
+}
+input.inline {
     vertical-align: middle;
 }
 
-#header {
-    background: url(../images/metaweb-sprite-vertical.png) repeat-x scroll 0 0 #025B8D;
-    border-bottom: 1px solid #FCE166;
-    color: #FFFFFF;
-    height: 47px;
-    padding-left: 20px;
-    padding-right: 20px;
-    position: relative;
+div.input-container {
+    padding: 3px;
 }
-#logo {
+div.input-container > input, div.input-container > textarea {
     display: block;
-    padding: 13px 0;
-}
-#footer {
-    font-size: 80%;
-    margin: 10px;
-    color: #888;
-    text-align: center;
-}
-#footer a {
-    color: #448;
+    width: 100%;
+    padding: 2px;
+    border: 1px inset;
+    margin-left: -3px;
+    margin-top: -3px;
+    vertical-align: top;
 }
 
-#body {
-    background: white;
-}
-
-a.action {
+a.action, 
+a.quiet-link {
     margin: 0 3px;
     text-decoration: none;
     color: #448;
 }
-a.action:hover {
+a.action:hover, 
+a.quiet-link:hover {
     color: #88f;
 }
 
@@ -72,29 +116,71 @@ img {
     vertical-align: middle;
 }
 
-.fbs-pane, .fbs-flyout-pane {
-    z-index: 2000;
-}
-
 .hidden {
     display: none;
 }
 
-.ui-widget-header {
-    background-image: none;
-    background-color: #ccc;
+.fbs-pane, .fbs-flyout-pane {
+    z-index: 2000;
 }
 
-.ui-widget-content a.ui-state-default.ui-slider-handle {
-    background: url(../images/slider-left-bracket.png) no-repeat bottom left;
-    border: none;
-    top: -10px;
+.ui-widget {
+    font-family: inherit;
+    font-size: inherit;
 }
-.ui-widget-content a.ui-state-default.ui-slider-handle:last-child {
-    background: url(../images/slider-right-bracket.png) no-repeat bottom right;
-    border: none;
-    top: -10px;
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+    font-family: inherit;
+    font-size: inherit;
 }
-.ui-slider .ui-slider-handle {
+
+#header {
+    background: url(../images/header-background.png) repeat-x 0 0;
+    border-bottom: 1px solid #ffb800;
     height: 32px;
+    padding-bottom: 1px;
+    position: relative;
+    overflow: hidden;
 }
+#logo {
+    float: left;
+}
+#path {
+    position: absolute;
+    top: 50%;
+    margin-top: -0.5em;
+    line-height: 1em;
+    left: 70px;
+    height: 31px;
+}
+#path .app-path-section {
+    background: url(../images/path-delimiter.png) no-repeat center right;
+    padding: 18px 20px 20px 20px;
+}
+#path a {
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+#path a:hover {
+    text-decoration: underline;
+}
+
+#path a.permalink {
+    padding: 18px 20px 20px 10px;
+	color: #ff6a00;
+}
+
+#footer {
+    font-size: 85%;
+    padding: 1em 0;
+    color: #666;
+    text-align: center;
+    border-top: 1px solid #ccc;
+}
+#footer a {
+    color: #448;
+}
+
+#body {
+}
+

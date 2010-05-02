@@ -4,6 +4,8 @@
 #               Gridworks Control System                 #
 ##########################################################
 
+# -------------- utility functions ----------------------
+
 fail () {
    cat <<EOF
 ERROR: $1
@@ -15,6 +17,11 @@ exit 1
 error() {
     echo "$1"
     exit 1
+}
+
+warn() {
+    echo "$1"
+    exit 0
 }
 
 usage() {
@@ -35,20 +42,35 @@ where [options] include:
 
   -d <path> path to the data directory
      default: OS dependent
-          
+
+  -m <memory> max memory heap size to use
+     default: 1024M
+               
+  -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
+     default: info
+  
   --debug enable JVM debugging (on port 8000)
        
-  --jmx enable JMX monitoring (for jconsole)
+  --jmx enable JMX monitoring (for jconsole and jvisualvm)
   
 and <action> is one of
 
    build ..................... Build Gridworks      
-   run ....................... Run Gridworks
+   run ....................... Run Gridworks [default]
 
-   test ...................... Test Gridworks      
+   test ...................... Run all Gridworks tests
+   server_test ............... Run only the server tests
+   ui_test ................... Run only the UI tests
    
-   make_dmg <version> ........ Make MacOSX DMG distribution
-   make_exe <version> ........ Make Windows EXE distribution
+   findbugs .................. Run Findbugs against Gridworks     
+   pmd ....................... Run PMD against Gridworks     
+   cpd ....................... Run Copy/Paste Detection against Gridworks     
+   jslint .................... Run JSlint against Gridworks
+   
+   mac_dist <version> ........ Make MacOSX binary distribution
+   windows_dist <version> .... Make Windows binary distribution
+   linux_dist <version> ...... Make Linux binary distribution
+   dist <version> ............ Make all distributions
 
    clean ..................... Clean compiled classes
    distclean ................. Remove all generated files
@@ -56,123 +78,356 @@ and <action> is one of
 EOF
     exit 1
 }
-
+                
 add_option() {
-  OPTS="$OPTS $1"
+    OPTS="$OPTS $1"
 }
-
-OPTS="$GRIDWORKS_OPTS"
-
-# Normalize the current directory
-cd `dirname $0`
-
-SYSTEM=`uname`
-
-if [ "$SYSTEM" == "Darwin" ] && [ "$JAVA_HOME" == "" ] ; then
-    export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
-fi
-        
-# ----- actions -------------------------------------------------
-
+                
+load_configs() {
+    cat $1 | egrep "^[A-Z]" | sed 's/^\(.*\)$/export \1/' > .$1
+    . ./.$1
+    rm ./.$1
+}
+    
 check_macosx() {
-    if [ "$SYSTEM" != 'Darwin' ] ; then
+    if ! $DARWIN ; then
         error "This action can only run on MacOSX"
     fi
 }
+
+check_downloaders() {
+    CURL="`which curl 2> /dev/null`"
+    WGET="`which wget 2> /dev/null`"
     
-ant_prepare() {
-    if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
-        mkdir $GRIDWORKS_BUILD_DIR || exit 1
+    if [ -z "$CURL"  -a   -z "$WGET" ]; then
+        error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
     fi
+}
+
+check_unzip() {
+    UNZIP="`which unzip 2> /dev/null`"
     
-    ANT=`which ant`
-    if [ "$ANT" = "" ] ; then
-        cd thirdparty
-        ANT_TAR=`ls | grep apache-ant | grep tar.gz | grep -v svn`
-        ANT_DIR=`echo $ANT_TAR | sed 's/.tar.gz//'`
-        if [ ! -d $ANT_DIR ] ; then
-            tar xzf $ANT_TAR -C . || exit 1
-        fi
-        ANT="`pwd`/$ANT_DIR/bin/ant"
-        cd ..
+    if [ -z "$UNZIP" ]; then
+        error "We need 'unzip' present in PATH to expand external dependencies."
+    fi
+}
+    
+check_python() {
+    PYTHON="`which python 2> /dev/null`"
+    if [ -z "$PYTHON" ]; then
+        error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
+    fi
+    PYTHON_VERSION="`python --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
+    if [ "$PYTHON_VERSION" != "2.5"  -a   "$PYTHON_VERSION" != "2.6" ]; then
+        error "This action requires python version 2.5.x or 2.6.x. You can download it for free at http://www.python.org/"
     fi
 }
 
-ant() {
-    ant_prepare   
-    echo $NUM_VERSION 
-    $ANT -f build.xml -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Djava.options="$JAVA_OPTIONS" $1 || exit 1
-}
-
-dist_prepare() {
-    if [ ! -d $GRIDWORKS_DIST_DIR ] ; then 
-        mkdir $GRIDWORKS_DIST_DIR || exit 1
-    fi
-}
-       
-launch4j_prepare() {
-    cd thirdparty
-    LAUNCH4J_TAR=`ls | grep launch4j | grep tar.gz | grep -v svn`
-    LAUNCH4J_DIR="launch4j"
-    if [ ! -d "$LAUNCH4J_DIR" ] ; then
-        tar xzf $LAUNCH4J_TAR -C thirdparty || exit 1
-    fi
-    cd ..
-}
-
-protobuf_prepare() {
-    cd thirdparty
-    PROTOBUF_TAR=`ls | grep protobuf | grep tar.gz | grep -v svn`
-    PROTOBUF_DIR=`echo $PROTOBUF_TAR | sed 's/.tar.gz//'`
-    PROTOC="`pwd`/$PROTOBUF_DIR/bin/protoc"
-    if [ ! -f $PROTOC ] ; then
-        tar xzf $PROTOBUF_TAR -C . || exit 1
-        cd $PROTOBUF_DIR
-        ./configure --prefix=`pwd`
-        make
-        make install
-        cd ..
-    fi
-    PROTOC="`pwd`/$PROTOBUF_DIR/bin/protoc"
-    cd ..
+check_running() {
+    check_downloaders
+    URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/"
+    
+    if [ "$CURL" ]; then
+        NOT_RUNNING=`curl -s $URL > /dev/null || echo not_running`
+    elif [ "$WGET" ]; then
+        NOT_RUNNING=`wget -q -O - $URL > /dev/null || echo not_running`
+    fi    
 }
 
 get_version() {
-    VERSION=$1        
+    VERSION="$1"
     
-    if [ "$VERSION" == "" ] ; then
+    if [ -z "$VERSION" ]; then
         fail "Must specify a version number"
     fi
     
     NUM_VERSION=`echo $VERSION | sed 's/[a-zA-Z]//g'`
 }
-    
-make_exe() {
-    check_macosx
-    dist_prepare
-    launch4j_prepare
-    get_version $1
-    
-    ant exe
+
+get_revision() {
+    if [ -d ".svn" ]; then
+        INFO=`svn info`
+    elif [ -d ".git" ]; then
+        INFO=`git svn info`
+    else
+        error "cannot obtain revision, exiting!"
+    fi
+
+    REVISION=`echo $INFO | sed 's/.*Revision: /r/' | sed 's/ .*//'`
 }
     
-make_dmg() {
+download() {
+    URL=$1
+    DEST=$2
+    
+    check_downloaders
+    
+    if [ "$CURL" ]; then
+        curl -L -o $DEST $URL || exit "Error while downloading $URL"
+    elif [ "$WGET" ]; then
+        wget -O $DEST $URL || error "Error while downloading $URL"
+    fi
+}
+
+tool_download() {
+    URL=$1
+    FILE=$2
+    DIR=$3
+    
+    cd $GRIDWORKS_TOOLS_DIR
+        if [ ! -f "$FILE" ]; then
+            download $URL $FILE
+        fi
+        if [ ! -d "$DIR" ]; then
+            if [ -z "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" ]; then
+                tar xzf $FILE || error "Error while expanding $FILE"
+            fi
+            if [ -z "`echo $FILE | sed 's@.*.zip$@@'`" ]; then
+                check_unzip
+                $UNZIP -q $FILE || error "Error while expanding $FILE"
+            fi
+        fi
+    cd ..
+}
+
+load_data() {
+    FILE=$1
+    NAME=$2
+    URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/command/create-project-from-upload"
+    CURL="`which curl 2> /dev/null`"
+    
+    if [ -z "$CURL" ]; then
+        error "We need 'curl' present in PATH to upload data to gridworks."
+    else
+        curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to Gridworks"
+        echo "Loaded $FILE as $NAME"
+    fi
+}
+
+# ----------------------------------------------------------------------------------------------
+
+build_prepare() {
+    if [ ! -d $GRIDWORKS_BUILD_DIR ]; then 
+        mkdir $GRIDWORKS_BUILD_DIR || error "Error while making directory $GRIDWORKS_BUILD_DIR"
+    fi
+}
+
+dist_prepare() {
+    if [ ! -d $GRIDWORKS_DIST_DIR ]; then 
+        mkdir $GRIDWORKS_DIST_DIR || error "Error while making directory $GRIDWORKS_DIST_DIR"
+    fi
+}
+
+tools_prepare() {
+    if [ ! -d $GRIDWORKS_TOOLS_DIR ]; then 
+        mkdir $GRIDWORKS_TOOLS_DIR || error "Error while making directory $GRIDWORKS_TOOLS_DIR"
+    fi
+}
+            
+ant_prepare() {
+    tools_prepare
+
+    ANT_URL="http://www.apache.org/dist/ant/binaries/apache-ant-1.8.0-bin.tar.gz"
+    ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
+    ANT_DIR="apache-ant-1.8.0"
+    
+    ANT="`which ant 2> /dev/null`"
+    if [ -z "$ANT" ]; then
+        if [ -z "$ANT_HOME" ]; then
+            cd $GRIDWORKS_TOOLS_DIR
+                if [ ! -f "$ANT_FILE" ]; then
+                    download $ANT_URL $ANT_FILE
+                fi
+                if [ ! -d "$ANT_DIR" ]; then
+                    tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
+                fi
+                export ANT_HOME="`pwd`/$ANT_DIR"
+                if $CYGWIN ; then
+                    export ANT_HOME=`cygpath --unix "$ANT_HOME"`
+                fi
+            cd ..
+        fi
+        ANT="$ANT_HOME/bin/ant"
+    fi
+}
+
+launch4j_prepare() {
+    tools_prepare
+    
+    LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-macosx.tgz"
+    LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
+    LAUNCH4J_DIR="launch4j"
+    
+    tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
+}
+    
+jarbundler_prepare() {
+    tools_prepare
+    
+    JARBUNDLER_URL="http://www.informagen.com/JarBundler/dist/jarbundler.tar.gz"
+    JARBUNDLER_FILE=`echo $JARBUNDLER_URL | sed 's|.*/||'`
+    JARBUNDLER_DIR="jarbundler-2.1.0"
+
+    tool_download $JARBUNDLER_URL $JARBUNDLER_FILE $JARBUNDLER_DIR
+}
+   
+virtualenv_prepare() {
+    check_python
+
+    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.4.6.tar.gz"
+    VIRTUALENV_FILE="virtualenv-1.4.6.tar.gz"
+    VIRTUALENV_DIR="virtualenv-1.4.6"
+
+    tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
+    
+    PYTHON_LOCAL="$GRIDWORKS_TOOLS_DIR/python"
+    if $CYGWIN ; then
+        PYTHON_LOCAL="${PYTHON_LOCAL}_win"
+    fi
+    
+    if [ ! -d "$PYTHON_LOCAL" ]; then
+        $PYTHON $GRIDWORKS_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
+    fi
+    
+    PYTHON_HOME="`pwd`/$PYTHON_LOCAL"
+
+    if $CYGWIN ; then
+        PYTHON="$PYTHON_HOME/Scripts/python.exe"
+        PYTHON_INSTALL="$PYTHON_HOME/Scripts/easy_install.exe"
+    else 
+        PYTHON="$PYTHON_HOME/bin/python"
+        PYTHON_INSTALL="$PYTHON_HOME/bin/easy_install"
+    fi
+}
+    
+windmill_prepare() {
+    WINDMILL="`which windmill 2> /dev/null`"
+    if [ -z "$WINDMILL" ]; then
+        check_python
+        tools_prepare
+        virtualenv_prepare
+
+        if $CYGWIN ; then
+            WINDMILL="$PYTHON_HOME/Scripts/windmill.exe"
+        else 
+            WINDMILL="$PYTHON_HOME/bin/windmill"
+        fi
+        
+        if [ ! -f "$WINDMILL" ]; then
+            $PYTHON_INSTALL windmill
+        fi
+    fi    
+}
+
+findbugs_prepare() {
+    tools_prepare
+    
+    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/1.3.9/findbugs-1.3.9.tar.gz"
+    FINDBUGS_FILE=`echo $FINDBUGS_URL | sed 's|.*/||'`
+    FINDBUGS_DIR="findbugs-1.3.9"
+
+    tool_download $FINDBUGS_URL $FINDBUGS_FILE $FINDBUGS_DIR
+}
+
+pmd_prepare() {
+    tools_prepare
+    
+    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/4.2.5/pmd-bin-4.2.5.zip"
+    PMD_FILE="pmd-bin-4.2.5.zip"
+    PMD_DIR="pmd-4.2.5"
+
+    tool_download $PMD_URL $PMD_FILE $PMD_DIR
+}
+
+jslint_prepare() {
+    tools_prepare
+    
+    JSLINT_URL="http://jslint4java.googlecode.com/files/jslint4java-1.3.3-dist.zip"
+    JSLINT_FILE="jslint4java-1.3.3-dist.zip"
+    JSLINT_DIR="jslint4java-1.3.3"
+
+    tool_download $JSLINT_URL $JSLINT_FILE $JSLINT_DIR
+}
+      
+      
+# ----------------------------------------------------------------------------------------------
+
+ant() {
+    ant_prepare   
+    
+    #export ANT_OPTS="-Xmx1024M"
+    
+    "$ANT" -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
+}
+
+# ----------------------------------------------------------------------------------------------
+
+dist() {
+    mac_dist $1
+    windows_dist $1
+    linux_dist $1
+    
+    echo "All distributions were built and are located at $GRIDWORKS_DIST_DIR"
+    echo 
+    echo "Upload them to the distibution site, then prepend the GridworksReleases array at"
+    echo
+    echo "   http://acre.freebase.com/#app=/user/dfhuynh/labs-site&file=gridworks.js"
+    echo
+    echo "with"
+    echo 
+    echo "  {"
+    echo "    description: \"Gridworks ${VERSION}\","
+    echo "    version: \"${VERSION}\","
+    echo "    revision: \"${REVISION}\""
+    echo "  },"
+    echo
+}
+
+windows_dist() {
     check_macosx
     dist_prepare
     get_version $1
-    
-    ant bundle
+    get_revision
 
-    mkdir "$GRIDWORKS_BUILD_DIR/bundle/.background"
-    cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/bundle/.background/dmg_background.png"
+    launch4j_prepare
     
-    SIZE=30
+    ANT_PARAMS="-Dlaunch4j.dir=${GRIDWORKS_TOOLS_DIR}/${LAUNCH4J_DIR}"
+    ant windows
+}
+
+linux_dist() {
+    dist_prepare
+    get_version $1
+    get_revision
+    
+    ant linux
+}
+    
+mac_dist() {
+    check_macosx
+    dist_prepare
+    get_version $1
+    get_revision
+
+    jarbundler_prepare
+    
+    ANT_PARAMS="-Djarbundler.dir=${GRIDWORKS_TOOLS_DIR}/${JARBUNDLER_DIR}"
+    ant mac
+
+    mkdir -p "$GRIDWORKS_BUILD_DIR/mac/.background"
+    cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/mac/.background/dmg_background.png"
+    
+    SIZE=40
+    
+    if [ -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" ]; then
+        rm "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    fi
     
     TITLE="Gridworks $VERSION"
     echo "Building MacOSX DMG for $TITLE"
-    hdiutil create -srcfolder "$GRIDWORKS_BUILD_DIR/bundle" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
-    DEVICE=$(hdiutil attach -readwrite -noverify -noautoopen "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}')
-    hdiutil attach "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    hdiutil create -srcfolder "$GRIDWORKS_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" || error "can't create empty DMG"
+    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}'`
+    hdiutil attach "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" || error "Can't attach temp DMG"
     
     echo '
        tell application "Finder"
@@ -192,107 +447,259 @@ make_dmg() {
             close
             open               
             update without registering applications
-            delay 2
+            delay 2            
             eject
          end tell
        end tell
-    ' | osascript    
+    ' | osascript || error "Error running applescript"
     
-    chmod -Rf go-w /Volumes/Gridworks
     sync
     sync
     hdiutil detach $DEVICE
-    hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION.dmg"
-    hdiutil internet-enable -yes "$GRIDWORKS_DIST_DIR/gridworks-$VERSION.dmg"
+    
+    if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ]; then
+        rm "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
+    fi
+    
+    hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
+    hdiutil internet-enable -yes "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
+    
     rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
 }
 
 test() {
-    if [ ! -d $GRIDWORKS_TEST_DIR/classes ] ; then
+    server_test $1
+    ui_test $1 
+}
+
+ui_test() {
+    INTERACTIVE=$1
+    
+    windmill_prepare
+    
+    GRIDWORKS_DATA_DIR="${GRIDWORKS_TEST_DIR}/temp"
+    
+    add_option "-Dgridworks.headless=true"
+    
+    run fork
+    
+    echo "Waiting for Gridworks to load..."
+    sleep 5
+    check_running
+    if [ ! -z "$NOT_RUNNING" ]; then
+        sleep 10
+    fi
+    echo "... proceed with the tests."
+    echo ""
+    
+    load_data "$GRIDWORKS_TEST_DIR/data/food.csv" "Food"
+    sleep 3
+    echo ""
+    
+    echo "Starting Windmill..."
+    if [ -z "$INTERACTIVE" ]; then
+        $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/windmill/js exit > /dev/null
+    else
+        $WINDMILL firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ > /dev/null
+    fi
+    
+    echo ""
+    echo "Killing Gridworks"
+    kill -9 $GRIDWORKS_PID
+    echo "Cleaning up"
+    rm -rf $GRIDWORKS_DATA_DIR
+}
+
+server_test() {
+    if [ ! -d "$GRIDWORKS_TEST_DIR/java/classes" ]; then
         ant build_tests
         echo ""
     fi
     
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_TEST_DIR/classes:$GRIDWORKS_TEST_DIR/lib/*:$GRIDWORKS_LIB_DIR/*"
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_WEBAPP/WEB-INF/classes${SEP}$GRIDWORKS_TEST_DIR/java/classes${SEP}$GRIDWORKS_TEST_DIR/java/lib/*${SEP}$GRIDWORKS_LIB_DIR/*${SEP}$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
 
-    if [ "$1" == "" ] ; then
-        cd $GRIDWORKS_TEST_DIR/classes
+    if [ -z "$1" ]; then
+        cd $GRIDWORKS_TEST_DIR/java/classes
         TESTS=`find . -name '*.class' | sed s@/@.@g | sed s@.class@@ | sed s@..@@`
-        cd ../..
+        cd ../../..
     else 
         TESTS=$1
     fi
     
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.junit.runner.JUnitCore $TESTS"
     
-    echo "$RUN_CMD"
-    echo ""
+    #echo "$RUN_CMD"
+    #echo ""
     
-    exec $RUN_CMD
+    $RUN_CMD || error "Failed passing server tests"
 }
 
 run() {
-    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ] ; then
-        ant build
-        echo ""
+    FORK=$1
+    
+    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ]; then
+        IS_JAR=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
+        if [ -z "$IS_JAR" ]; then
+            ant build
+            echo ""
+        fi
+    fi
+    
+    check_running
+    
+    if [ -z "$NOT_RUNNING" ]; then
+        warn "Gridworks is already running."
+    fi
+    
+    if [ -d $GRIDWORKS_BUILD_DIR/classes ]; then
+        add_option "-Dgridworks.autoreloading=true"
     fi
 
-    if [ "$SYSTEM" == 'Darwin' ] ; then
-        OPTS="-Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns $OPTS"
+    if $DARWIN ; then
+        add_option "-Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns"
     fi
     
-    if [ "$GRIDWORKS_DATA_DIR" != "" ] ; then
-        OPTS="-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR $OPTS"
+    if [ "$GRIDWORKS_DATA_DIR" ]; then
+        add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
-    
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes:$GRIDWORKS_LIB_DIR/*"
+                
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
+
+    #echo "$RUN_CMD"
+    #echo ""
   
     echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
+
+    if [ -z "$FORK" ]; then
+        exec $RUN_CMD
+    else
+        $RUN_CMD &
+        GRIDWORKS_PID="$!"
+    fi
+}
+
+execute() {
+    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ]; then
+        ant build
+        echo ""
+    fi
+    
+    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_LIB_DIR/*"
+
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS $*"
+  
     #echo "$RUN_CMD"
     #echo ""
 
-    exec $RUN_CMD
+    exec $RUN_CMD $*
 }
     
-# ----- We called without arguments print the usage -------------
+findbugs() {
+    findbugs_prepare
+    
+    ANT_PARAMS="-Dfindbugs.dir=${GRIDWORKS_TOOLS_DIR}/${FINDBUGS_DIR}"
+    ant findbugs
+    
+    open "$GRIDWORKS_BUILD_DIR/reports/findbugs.html"
+}    
 
-[ $# -gt 0 ] || usage
+pmd() {
+    pmd_prepare
+    
+    ANT_PARAMS="-Dpmd.dir=${GRIDWORKS_TOOLS_DIR}/${PMD_DIR}"
+    ant pmd
+    
+    open "$GRIDWORKS_BUILD_DIR/reports/pmd.html"
+}    
 
+cpd() {
+    pmd_prepare
+    
+    ANT_PARAMS="-Dpmd.dir=${GRIDWORKS_TOOLS_DIR}/${PMD_DIR}"
+    ant cpd
+
+    open "$GRIDWORKS_BUILD_DIR/reports/cpd.txt"
+}    
+
+jslint() {
+    jslint_prepare
+
+    ANT_PARAMS="-Djslint.dir=${GRIDWORKS_TOOLS_DIR}/${JSLINT_DIR}"
+    ant jslint
+
+    open "$GRIDWORKS_BUILD_DIR/reports/jslint.txt"
+}
+
+# -------------------------- script -----------------------------
+    
 # ----- Normalize the current directory -------------------------
 
 cd `dirname $0`
 
-# ----- Make sure there is a java environment installed -------------------------
-    
-if [ ! -z "$JAVA_HOME" ] ; then
-    JAVA="$JAVA_HOME/bin/java"
-else 
-    JAVA=`which java`
-    if [ -z "$JAVA" ] ; then
-        if [ "$SYSTEM" = 'Darwin' ] ; then
-            JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Home
-        else
-            error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
-        fi
+# ----- Default values ------------------------------------------
+
+OPTS=""
+
+# ---- OS-specific support --------------------------------------
+
+SYSTEM=`uname`
+
+CYGWIN=false
+DARWIN=false
+case "$SYSTEM" in
+  CYGWIN*) CYGWIN=true ;;
+  Darwin*) DARWIN=true ;;
+esac
+
+SEP=":" 
+if $CYGWIN ; then
+    SEP=";" 
+fi
+
+# ----- Load configurations -------------------------------------
+
+load_configs gridworks.ini
+
+# ----- Make sure there is an appropriate java environment is available -------------
+
+if $DARWIN ; then
+    if [ -z "$JAVA_HOME" ]; then
+        # Mac OS X defaults to Java 5. So update JAVA_HOME unless the user manually set it.
+        export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
     fi
 fi
 
-JAVA_VERSION=`java -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1.6`
-if [ -z "$JAVA_VERSION" ] ; then
-    error "Gridworks requires java version 6 or later."
+JAVA="`which java 2> /dev/null`"
+if [ -z "$JAVA" ]; then
+    if [ "$JAVA_HOME" ]; then
+        JAVA="$JAVA_HOME/bin/java"
+        if [ ! -f "$JAVA" ] ; then
+            error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
+        fi
+    else
+        error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
+    fi
+fi
+
+JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1\.6`
+if [ -z "$JAVA_VERSION" ]; then
+    error "Gridworks requires Java version 6 or later. If you have multiple versions of Java installed, please set JAVA_HOME to the correct version."
 fi
 
 # ----- Parse the command line args ------------------------------------------
 
 while [ $# -ne 0 ] ; do
   case "$1" in
+    -h) usage;;
     -p) shift; GRIDWORKS_PORT="$1"; shift; continue;;
     -i) shift; GRIDWORKS_HOST="$1"; shift; continue;;
     -w) shift; GRIDWORKS_WEBAPP="$1"; shift; continue;;
     -d) shift; GRIDWORKS_DATA_DIR="$1"; shift; continue;;
+    -m) shift; GRIDWORKS_MEMORY="$1"; shift; continue;;
+    -v) shift; GRIDWORKS_VERBOSITY="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
@@ -300,74 +707,94 @@ while [ $# -ne 0 ] ; do
   esac
 done
 
-ACTION=$1; shift
+if [ $# -ne 0 ]; then
+    ACTION=$1; shift
+fi
+
+if [ -z "$ACTION" ]; then
+    ACTION="run"
+fi
 
 # ----- Verify and Set Required Environment Variables -------------------------
 
-if [ "$JAVA_OPTIONS" == "" ] ; then
-  JAVA_OPTIONS="-Xms256M -Xmx1024M -XX:+UseParallelGC"
+if [ -z "$JAVA_OPTIONS" ]; then
+  JAVA_OPTIONS=""
 fi
 add_option "$JAVA_OPTIONS"
 
-if [ "$GRIDWORKS_PORT" == "" ] ; then
+if [ -z "$GRIDWORKS_MEMORY" ]; then
+    GRIDWORKS_MEMORY="1024M"
+fi
+add_option "-Xms256M -Xmx$GRIDWORKS_MEMORY"
+
+if [ -z "$GRIDWORKS_PORT" ]; then
     GRIDWORKS_PORT="3333"
 fi
 add_option "-Dgridworks.port=$GRIDWORKS_PORT"
 
-if [ "$GRIDWORKS_HOST" == "" ] ; then
+if [ -z "$GRIDWORKS_HOST" ]; then
     GRIDWORKS_HOST="127.0.0.1"
 fi
 add_option "-Dgridworks.host=$GRIDWORKS_HOST"
 
-if [ "$GRIDWORKS_WEBAPP" == "" ] ; then
+if [ -z "$GRIDWORKS_WEBAPP" ]; then
     GRIDWORKS_WEBAPP="src/main/webapp"
 fi
 add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
 
-if [ "$GRIDWORKS_TEST_DIR" == "" ] ; then
+if [ -z "$GRIDWORKS_TEST_DIR" ]; then
     GRIDWORKS_TEST_DIR="tests"
 fi
 
-if [ "$GRIDWORKS_BUILD_DIR" == "" ] ; then
+if [ -z "$GRIDWORKS_BUILD_DIR" ]; then
     GRIDWORKS_BUILD_DIR="build"
 fi
 
-if [ "$GRIDWORKS_LIB_DIR" == "" ] ; then
+if [ -z "$GRIDWORKS_LIB_DIR" ]; then
     GRIDWORKS_LIB_DIR="lib"
 fi
 
-if [ "$GRIDWORKS_DIST_DIR" == "" ] ; then
+if [ -z "$GRIDWORKS_TOOLS_DIR" ]; then
+    GRIDWORKS_TOOLS_DIR="tools"
+fi
+
+if [ -z "$GRIDWORKS_DIST_DIR" ]; then
     GRIDWORKS_DIST_DIR="dist"
 fi
+
+if [ -z "$GRIDWORKS_VERBOSITY" ]; then
+    GRIDWORKS_VERBOSITY="info"
+fi
+add_option "-Dgridworks.verbosity=$GRIDWORKS_VERBOSITY"
+
+if [ -z "$JYTHONPATH" ]; then
+    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython"
+else
+    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython/${SEP}$JYTHONPATH"
+fi
+add_option "-Dpython.path=$JYTHONPATH"
 
 # ----- Respond to the action given --------------------------------------------
 
 case "$ACTION" in
-
-  build)
-    ant build;;
-
-  bundle)
-    ant bundle;;
-
-  clean)
-    ant clean;;
-
-  distclean)
-    ant distclean;;
-
-  test) 
-    test $1;;  
-
-  run) 
-    run;;  
-    
-  make_dmg)
-    make_dmg $1;;
-
-  make_exe)
-    make_exe $1;;
-      
-  *)
-    usage; ;;
+  build) build_prepare; ant build;;
+  clean) ant clean;;
+  distclean) ant distclean;;
+  test) test $1;;  
+  tests) test $1;;  
+  ui_test) ui_test $1;;  
+  ui_tests) ui_test $1;;  
+  server_test) server_test $1;;  
+  server_tests) server_test $1;;  
+  findbugs) findbugs;;  
+  pmd) pmd;;  
+  cpd) cpd;;  
+  jslint) jslint;;  
+  run) run;;  
+  execute) execute $*;;  
+  mac_dist) mac_dist $1;;
+  windows_dist) windows_dist $1;;
+  linux_dist) linux_dist $1;;
+  dist) dist $1;;
+  *) usage; ;;
 esac

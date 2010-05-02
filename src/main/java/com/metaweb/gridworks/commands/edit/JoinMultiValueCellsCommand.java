@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.commands.edit;
 
- import java.io.IOException;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -28,10 +28,7 @@ public class JoinMultiValueCellsCommand extends Command {
             AbstractOperation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
             Process process = op.createProcess(project, new Properties());
             
-            boolean done = project.processManager.queueProcess(process);
-            
-            respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
-            
+            performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);
         }

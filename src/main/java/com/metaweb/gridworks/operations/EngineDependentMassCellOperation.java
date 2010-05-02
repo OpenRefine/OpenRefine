@@ -26,7 +26,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
         _updateRowContextDependencies = updateRowContextDependencies;
     }
 
-    protected HistoryEntry createHistoryEntry(Project project) throws Exception {
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         Column column = project.columnModel.getColumnByName(_columnName);
@@ -37,12 +37,16 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
         List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
         
         FilteredRows filteredRows = engine.getAllFilteredRows(false);
-        filteredRows.accept(project, createRowVisitor(project, cellChanges));
+        try {
+        	filteredRows.accept(project, createRowVisitor(project, cellChanges, historyEntryID));
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
         
         String description = createDescription(column, cellChanges);
         
         return new HistoryEntry(
-            project, description, this, createChange(project, column, cellChanges));
+            historyEntryID, project, description, this, createChange(project, column, cellChanges));
     }
     
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
@@ -50,6 +54,6 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
             cellChanges, column.getName(), _updateRowContextDependencies);
     }
     
-    abstract protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges) throws Exception;
+    abstract protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception;
     abstract protected String createDescription(Column column, List<CellChange> cellChanges);
 }

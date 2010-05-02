@@ -31,12 +31,14 @@ abstract public class QuickHistoryEntryProcess extends Process {
         throw new RuntimeException("Not a long-running process");
     }
 
-    public void performImmediate() throws Exception {
+    public HistoryEntry performImmediate() throws Exception {
         if (_historyEntry == null) {
-            _historyEntry = createHistoryEntry();
+            _historyEntry = createHistoryEntry(HistoryEntry.allocateID());
         }
         _project.history.addEntry(_historyEntry);
         _done = true;
+        
+        return _historyEntry;
     }
 
     public void startPerforming(ProcessManager manager) {
@@ -60,5 +62,5 @@ abstract public class QuickHistoryEntryProcess extends Process {
         return _done;
     }
     
-    abstract protected HistoryEntry createHistoryEntry() throws Exception;
+    abstract protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception;
 }

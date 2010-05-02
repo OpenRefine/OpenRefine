@@ -81,36 +81,6 @@ div.schema-alignment-dialog-preview {
  *--------------------------------------------------
  */
 
-table.schema-align-node-dialog-layout {
-    border-collapse: collapse;
-}
-table.schema-align-node-dialog-layout > tbody > tr > td {
-    padding-right: 1.5em;
-    padding-bottom: 1.5em;
-    vertical-align: baseline;
-}
-table.schema-align-node-dialog-layout > tbody > tr > td:last-child {
-    padding-right: 0;
-}
-table.schema-align-node-dialog-layout > tbody > tr:last-child > td {
-    padding-bottom: 0;
-}
-
-table.schema-align-node-dialog-layout2 {
-    border-collapse: collapse;
-}
-table.schema-align-node-dialog-layout2 > tbody > tr > td {
-    padding-right: 0.75em;
-    padding-bottom: 0.75em;
-    vertical-align: baseline;
-}
-table.schema-align-node-dialog-layout2 > tbody > tr > td:last-child {
-    padding-right: 0;
-}
-table.schema-align-node-dialog-layout2 > tbody > tr:last-child > td {
-    padding-bottom: 0;
-}
-
 .schema-align-node-dialog-node-type {
     padding: 0.25em;
     background: #ddf;

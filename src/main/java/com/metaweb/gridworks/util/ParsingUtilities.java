@@ -20,7 +20,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class ParsingUtilities {
-    static public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    static final public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
@@ -30,17 +31,27 @@ public class ParsingUtilities {
             if (query.startsWith("?")) {
                 query = query.substring(1);
             }
-            
-            String[] pairs = query.split("&");
-            for (String pairString : pairs) {
-                int equal = pairString.indexOf('=');
-                String name = equal >= 0 ? pairString.substring(0, equal) : "";
-                String value = equal >= 0 ? ParsingUtilities.decode(pairString.substring(equal + 1)) : "";
-                
-                options.put(name, value);
-            }
+    
+            parseParameters(options,query);
         }
         return options;
+    }
+    
+    static public Properties parseParameters(Properties p, String str) {
+        if (str != null) {
+            String[] pairs = str.split("&");
+            for (String pairString : pairs) {
+                int equal = pairString.indexOf('=');
+                String name = (equal >= 0) ? pairString.substring(0, equal) : "";
+                String value = (equal >= 0) ? ParsingUtilities.decode(pairString.substring(equal + 1)) : "";
+                p.put(name, value);
+            }
+        }
+        return p;
+    }
+    
+    static public Properties parseParameters(String str) {
+        return (str == null) ? null : parseParameters(new Properties(),str);
     }
     
     static public String inputStreamToString(InputStream is) throws IOException {

@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.browsing.filters;
 
+import java.util.Collection;
 import java.util.Properties;
 
 import com.metaweb.gridworks.expr.Evaluable;
@@ -8,8 +9,15 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
+/**
+ * Judge if a row matches by evaluating a given expression on the row, based on a particular
+ * column, and checking the result. It's a match if the result satisfies some numeric comparisons, 
+ * or if the result is non-numeric or blank or error and we want non-numeric or blank or error 
+ * values. 
+ */
 abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     final protected Evaluable  _evaluable;
+    final protected String     _columnName;
     final protected int        _cellIndex;
     final protected boolean _selectNumeric;
     final protected boolean _selectNonNumeric;
@@ -17,7 +25,8 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     final protected boolean _selectError;
     
     public ExpressionNumberComparisonRowFilter(
-        Evaluable evaluable, 
+        Evaluable evaluable,
+        String columnName,
         int cellIndex,
         boolean selectNumeric,
         boolean selectNonNumeric,
@@ -25,6 +34,7 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
         boolean selectError
     ) {
         _evaluable = evaluable;
+        _columnName = columnName;
         _cellIndex = cellIndex;
         _selectNumeric = selectNumeric;
         _selectNonNumeric = selectNonNumeric;
@@ -33,25 +43,32 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     }
 
     public boolean filterRow(Project project, int rowIndex, Row row) {
-        Cell cell = row.getCell(_cellIndex);
+        Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings(project);
-        ExpressionUtils.bind(bindings, row, rowIndex, cell);
+        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
-        if (value != null && value.getClass().isArray()) {
-            Object[] a = (Object[]) value;
-            for (Object v : a) {
-                if (checkValue(v)) {
-                    return true;
+        if (value != null) {
+            if (value.getClass().isArray()) {
+                Object[] a = (Object[]) value;
+                for (Object v : a) {
+                    if (checkValue(v)) {
+                        return true;
+                    }
                 }
-            }
-        } else {
-            if (checkValue(value)) {
-                return true;
-            }
+                return false;
+            } else if (value instanceof Collection<?>) {
+                for (Object v : ExpressionUtils.toObjectCollection(value)) {
+                    if (checkValue(v)) {
+                        return true;
+                    }
+                }
+                return false;
+            } // else, fall through
         }
-        return false;
+        
+        return checkValue(value);
     }
         
     protected boolean checkValue(Object v) {
@@ -59,7 +76,12 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
             return _selectError;
         } else if (ExpressionUtils.isNonBlankData(v)) {
             if (v instanceof Number) {
-                return _selectNumeric && checkValue(((Number) v).doubleValue());
+                double d = ((Number) v).doubleValue();
+                if (Double.isInfinite(d) || Double.isNaN(d)) {
+                    return _selectError;
+                } else {
+                    return _selectNumeric && checkValue(d);
+                }
             } else {
                 return _selectNonNumeric;
             }
