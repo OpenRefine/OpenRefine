@@ -3,8 +3,9 @@ function onClickUploadFileButton(evt) {
     if (! $.trim(projectName).length) {
         window.alert("You must specify a project name.");
         
-        evt.preventDefault();
-        return false;
+    } else if ($("#project-file-input")[0].files.length === 0) {
+        window.alert("You must specify select a file to upload.");
+        
     } else {
         $("#file-upload-form").attr("action", 
             "/command/create-project-from-upload?" + [
@@ -16,7 +17,12 @@ function onClickUploadFileButton(evt) {
                 "limit=" + $("#limit-input")[0].value,
                 "guess-value-type=" + $("#guess-value-type-input")[0].checked
             ].join("&"));
+            
+        return true;
     }
+    
+    evt.preventDefault();
+    return false;
 }
 
 function formatDate(d) {

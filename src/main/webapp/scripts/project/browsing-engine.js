@@ -59,7 +59,7 @@ BrowsingEngine.prototype._initializeUI = function() {
         '<div class="browsing-panel-help" bind="help">' +
             '<h1>Explore data ...</h1>' +
             '<p>by choosing a facet or filter method from the menus at the top of each column.</p>' +
-            '<p>Not sure how to get started? Watch this screencast.</p>' +
+            '<p>Not sure how to get started? <a href="http://www.vimeo.com/groups/gridworks" target="_blank">Watch these screencasts</a>.</p>' +
         '</div>' +
         '<div class="browsing-panel-header" bind="header">' +
             '<div class="browsing-panel-indicator" bind="indicator">' +
