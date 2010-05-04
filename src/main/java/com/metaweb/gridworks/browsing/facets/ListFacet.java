@@ -107,7 +107,7 @@ public class ListFacet implements Facet {
                 _errorMessage = "No column named " + _columnName;
             }
         } else {
-        	_cellIndex = -1;
+            _cellIndex = -1;
         }
         
         try {

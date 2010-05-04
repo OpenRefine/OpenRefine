@@ -35,19 +35,19 @@ public class FreebaseDataExtensionJob {
     }
     
     static public class ColumnInfo {
-    	final public List<String> names;
-    	final public List<String> path;
-    	final public FreebaseType expectedType;
-    	
-    	protected ColumnInfo(List<String> names, List<String> path, FreebaseType expectedType) {
-    		this.names = names;
-    		this.path = path;
-    		this.expectedType = expectedType;
-    	}
+        final public List<String> names;
+        final public List<String> path;
+        final public FreebaseType expectedType;
+        
+        protected ColumnInfo(List<String> names, List<String> path, FreebaseType expectedType) {
+            this.names = names;
+            this.path = path;
+            this.expectedType = expectedType;
+        }
     }
     
-    final public JSONObject     	extension;
-    final public int            	columnCount;
+    final public JSONObject         extension;
+    final public int                columnCount;
     final public List<ColumnInfo>   columns = new ArrayList<ColumnInfo>();
     
     public FreebaseDataExtensionJob(JSONObject obj) throws JSONException {
@@ -57,9 +57,9 @@ public class FreebaseDataExtensionJob {
     }
     
     public Map<String, FreebaseDataExtensionJob.DataExtension> extend(
-		Set<String> guids,
+        Set<String> guids,
         Map<String, ReconCandidate> reconCandidateMap
-	) throws Exception {
+    ) throws Exception {
         StringWriter writer = new StringWriter();
         formulateQuery(guids, extension, writer);
         
@@ -92,9 +92,9 @@ public class FreebaseDataExtensionJob {
     }
     
     protected FreebaseDataExtensionJob.DataExtension collectResult(
-		JSONObject obj,
+        JSONObject obj,
         Map<String, ReconCandidate> reconCandidateMap
-	) throws JSONException {
+    ) throws JSONException {
         List<Object[]> rows = new ArrayList<Object[]>();
         
         collectResult(rows, extension.getJSONArray("properties"), obj, 0, 0, reconCandidateMap);
@@ -125,22 +125,22 @@ public class FreebaseDataExtensionJob {
         JSONObject obj,
         Map<String, ReconCandidate> reconCandidateMap
     ) throws JSONException {
-    	String guid = obj.getString("guid");
-    	ReconCandidate rc;
-    	if (reconCandidateMap.containsKey(guid)) {
-    		rc = reconCandidateMap.get(guid);
-    	} else {
-    		rc = new ReconCandidate(
+        String guid = obj.getString("guid");
+        ReconCandidate rc;
+        if (reconCandidateMap.containsKey(guid)) {
+            rc = reconCandidateMap.get(guid);
+        } else {
+            rc = new ReconCandidate(
                     obj.getString("id"),
                     obj.getString("guid"),
                     obj.getString("name"),
                     JSONUtilities.getStringArray(obj, "type"),
                     100
                 );
-    		
-    		reconCandidateMap.put(guid, rc);
-    	}
-    	
+            
+            reconCandidateMap.put(guid, rc);
+        }
+        
         storeCell(rows, row, col, rc, reconCandidateMap);
     }
     
@@ -372,18 +372,18 @@ public class FreebaseDataExtensionJob {
     }
     
     static protected int countColumns(JSONObject obj, List<ColumnInfo> columns, List<String> names, List<String> path) throws JSONException {
-    	String name = obj.getString("name");
-    	
-    	List<String> names2 = null;
-    	List<String> path2 = null;
-    	if (columns != null) {
-    		names2 = new ArrayList<String>(names);
-    		names2.add(name);
-    		
-    		path2 = new ArrayList<String>(path);
-    		path2.add(obj.getString("id"));
-    	}
-    	
+        String name = obj.getString("name");
+        
+        List<String> names2 = null;
+        List<String> path2 = null;
+        if (columns != null) {
+            names2 = new ArrayList<String>(names);
+            names2.add(name);
+            
+            path2 = new ArrayList<String>(path);
+            path2.add(obj.getString("id"));
+        }
+        
         if (obj.has("properties") && !obj.isNull("properties")) {
             boolean included = (obj.has("included") && obj.getBoolean("included"));
             if (included && columns != null) {
@@ -394,7 +394,7 @@ public class FreebaseDataExtensionJob {
             }
             
             return (included ? 1 : 0) + 
-            	countColumns(obj.getJSONArray("properties"), columns, names2, path2);
+                countColumns(obj.getJSONArray("properties"), columns, names2, path2);
         } else {
             if (columns != null) {
                 JSONObject expected = obj.getJSONObject("expected");

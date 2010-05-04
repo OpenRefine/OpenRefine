@@ -146,18 +146,18 @@ public class Scanner {
                 } else if (c == '\\') {
                     _index++; // skip escaping marker
                     if (_index < _limit) {
-                    	char c2 = _text.charAt(_index);
-                    	if (c2 == 't') {
-                    		sb.append('\t');
-                    	} else if (c2 == 'n') {
-                    		sb.append('\n');
-                    	} else if (c2 == 'r') {
-                    		sb.append('\r');
-                    	} else if (c2 == '\\') {
-                    		sb.append('\\');
-                    	} else {
-                    		sb.append(c2);
-                    	}
+                        char c2 = _text.charAt(_index);
+                        if (c2 == 't') {
+                            sb.append('\t');
+                        } else if (c2 == 'n') {
+                            sb.append('\n');
+                        } else if (c2 == 'r') {
+                            sb.append('\r');
+                        } else if (c2 == '\\') {
+                            sb.append('\\');
+                        } else {
+                            sb.append(c2);
+                        }
                     }
                 } else {
                     sb.append(c);
@@ -170,12 +170,12 @@ public class Scanner {
             
         } else if (Character.isLetter(c) || c == '_') { // identifier
             while (_index < _limit) {
-            	char c1 = _text.charAt(_index);
-            	if (c1 == '_' || Character.isLetterOrDigit(c1)) {
-            		_index++;
-            	} else {
-            		break;
-            	}
+                char c1 = _text.charAt(_index);
+                if (c1 == '_' || Character.isLetterOrDigit(c1)) {
+                    _index++;
+                } else {
+                    break;
+                }
             }
             
             return new Token(

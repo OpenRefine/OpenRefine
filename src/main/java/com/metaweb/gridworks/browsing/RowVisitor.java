@@ -11,12 +11,12 @@ import com.metaweb.gridworks.model.Row;
  */
 public interface RowVisitor {
     public boolean visit(
-		Project project, 
-		int 	rowIndex,   // zero-based row index 
-		Row 	row, 
-		boolean contextual, // true if this row is included because it's the context row 
-		                    // of a matched row, that is, a matched row depends on it
-		boolean dependent   // true if this row is included because it depends on a matched row,
-		                    // that is, it depends on a matched row
+        Project project, 
+        int     rowIndex,   // zero-based row index 
+        Row     row, 
+        boolean contextual, // true if this row is included because it's the context row 
+                            // of a matched row, that is, a matched row depends on it
+        boolean dependent   // true if this row is included because it depends on a matched row,
+                            // that is, it depends on a matched row
     );
 }

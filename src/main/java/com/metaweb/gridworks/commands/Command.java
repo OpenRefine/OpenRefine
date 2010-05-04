@@ -119,11 +119,11 @@ public abstract class Command {
     }
     
     static protected void performProcessAndRespond(
-		HttpServletRequest request, 
-		HttpServletResponse response,
-		Project project,
-		Process process
-	) throws Exception {
+        HttpServletRequest request, 
+        HttpServletResponse response,
+        Project project,
+        Process process
+    ) throws Exception {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
         
@@ -141,7 +141,7 @@ public abstract class Command {
             w.flush();
             w.close();
         } else {
-        	respond(response, "{ \"code\" : \"pending\" }");
+            respond(response, "{ \"code\" : \"pending\" }");
         }
     }
     

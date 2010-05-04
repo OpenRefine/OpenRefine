@@ -151,8 +151,8 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         return new RowVisitor() {
             int                 _cellIndex;
             List<CellChange>    _cellChanges;
-            Recon				_sharedNewRecon = null;
-            Map<Long, Recon> 	_dupReconMap = new HashMap<Long, Recon>();
+            Recon               _sharedNewRecon = null;
+            Map<Long, Recon>    _dupReconMap = new HashMap<Long, Recon>();
             long                _historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
@@ -170,36 +170,36 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                     
                     Recon recon = null;
                     if (_judgment == Judgment.New && _shareNewTopics) {
-                    	if (_sharedNewRecon == null) {
-                    		_sharedNewRecon = new Recon(_historyEntryID);
-                    		_sharedNewRecon.judgment = Judgment.New;
-                    		_sharedNewRecon.judgmentBatchSize = 0;
-                    		_sharedNewRecon.judgmentAction = "similar";
-                    	}
-                    	_sharedNewRecon.judgmentBatchSize++;
-                    	
-                    	recon = _sharedNewRecon;
+                        if (_sharedNewRecon == null) {
+                            _sharedNewRecon = new Recon(_historyEntryID);
+                            _sharedNewRecon.judgment = Judgment.New;
+                            _sharedNewRecon.judgmentBatchSize = 0;
+                            _sharedNewRecon.judgmentAction = "similar";
+                        }
+                        _sharedNewRecon.judgmentBatchSize++;
+                        
+                        recon = _sharedNewRecon;
                     } else {
-                    	if (_dupReconMap.containsKey(cell.recon.id)) {
-                    		recon = _dupReconMap.get(cell.recon.id);
-                    		recon.judgmentBatchSize++;
-                    	} else {
-                    		recon = cell.recon.dup(_historyEntryID);
-                    		recon.judgmentBatchSize = 1;
+                        if (_dupReconMap.containsKey(cell.recon.id)) {
+                            recon = _dupReconMap.get(cell.recon.id);
+                            recon.judgmentBatchSize++;
+                        } else {
+                            recon = cell.recon.dup(_historyEntryID);
+                            recon.judgmentBatchSize = 1;
                             recon.matchRank = -1;
                             recon.judgmentAction = "similar";
-                    		
+                            
                             if (_judgment == Judgment.Matched) {
                                 recon.judgment = Recon.Judgment.Matched;
                                 recon.match = _match;
                                 
                                 if (recon.candidates != null) {
-	                                for (int m = 0; m < recon.candidates.size(); m++) {
-	                                	if (recon.candidates.get(m).topicGUID.equals(_match.topicGUID)) {
-	                                		recon.matchRank = m;
-	                                		break;
-	                                	}
-	                                }
+                                    for (int m = 0; m < recon.candidates.size(); m++) {
+                                        if (recon.candidates.get(m).topicGUID.equals(_match.topicGUID)) {
+                                            recon.matchRank = m;
+                                            break;
+                                        }
+                                    }
                                 }
                             } else if (_judgment == Judgment.New) {
                                 recon.judgment = Recon.Judgment.New;
@@ -209,8 +209,8 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                                 recon.match = null;
                             }
                             
-                    		_dupReconMap.put(cell.recon.id, recon);
-                    	}
+                            _dupReconMap.put(cell.recon.id, recon);
+                        }
                     }
                     
                     Cell newCell = new Cell(cell.value, recon);

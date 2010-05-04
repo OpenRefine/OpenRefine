@@ -40,22 +40,22 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     }
     
     static public OnError stringToOnError(String s) {
-    	if ("set-to-blank".equalsIgnoreCase(s)) {
-    		return OnError.SetToBlank;
-    	} else if ("store-error".equalsIgnoreCase(s)) {
-    		return OnError.StoreError;
-    	} else {
-    		return OnError.KeepOriginal;
-    	}
+        if ("set-to-blank".equalsIgnoreCase(s)) {
+            return OnError.SetToBlank;
+        } else if ("store-error".equalsIgnoreCase(s)) {
+            return OnError.StoreError;
+        } else {
+            return OnError.KeepOriginal;
+        }
     }
     static public String onErrorToString(OnError onError) {
-    	if (onError == OnError.SetToBlank) {
-    		return "set-to-blank";
-    	} else if (onError == OnError.StoreError) {
-    		return "store-error";
-    	} else {
-    		return "keep-original";
-    	}
+        if (onError == OnError.SetToBlank) {
+            return "set-to-blank";
+        } else if (onError == OnError.StoreError) {
+            return "store-error";
+        } else {
+            return "keep-original";
+        }
     }
     
     public TextTransformOperation(
@@ -136,11 +136,11 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                     } else {
                         Serializable newValue = ExpressionUtils.wrapStorable(o);
                         if (ExpressionUtils.isError(newValue)) {
-                        	if (_onError == OnError.KeepOriginal) {
-                        		return false;
-                        	} else if (_onError == OnError.SetToBlank) {
-                        		newValue = null;
-                        	}
+                            if (_onError == OnError.KeepOriginal) {
+                                return false;
+                            } else if (_onError == OnError.SetToBlank) {
+                                newValue = null;
+                            }
                         }
                         
                         if (!ExpressionUtils.sameValue(oldValue, newValue)) {

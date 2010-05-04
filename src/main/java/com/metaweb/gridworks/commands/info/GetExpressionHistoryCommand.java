@@ -36,23 +36,23 @@ public class GetExpressionHistoryCommand extends Command {
             JSONWriter writer = new JSONWriter(response.getWriter());
             writer.object();
             writer.key("expressions");
-            	writer.array();
-            	for (String s : localExpressions) {
-            		writer.object();
-            		writer.key("code"); writer.value(s);
-            		writer.key("global"); writer.value(false);
-            		writer.endObject();
-            		done.add(s);
-            	}
-            	for (String s : globalExpressions) {
-            		if (!done.contains(s)) {
-	            		writer.object();
-	            		writer.key("code"); writer.value(s);
-	            		writer.key("global"); writer.value(true);
-	            		writer.endObject();
-            		}
-            	}
-            	writer.endArray();
+                writer.array();
+                for (String s : localExpressions) {
+                    writer.object();
+                    writer.key("code"); writer.value(s);
+                    writer.key("global"); writer.value(false);
+                    writer.endObject();
+                    done.add(s);
+                }
+                for (String s : globalExpressions) {
+                    if (!done.contains(s)) {
+                        writer.object();
+                        writer.key("code"); writer.value(s);
+                        writer.key("global"); writer.value(true);
+                        writer.endObject();
+                    }
+                }
+                writer.endArray();
             writer.endObject();
         } catch (Exception e) {
             respondException(response, e);

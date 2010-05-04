@@ -25,23 +25,23 @@ public class Join implements Function {
                 
                 StringBuffer sb = new StringBuffer();
                 if (v.getClass().isArray()) {
-	                for (Object o : (Object[]) v) {
-	                    if (o != null) {
-	                        if (sb.length() > 0) {
-	                            sb.append(separator);
-	                        }
-	                        sb.append(o.toString());
-	                    }
-	                }
+                    for (Object o : (Object[]) v) {
+                        if (o != null) {
+                            if (sb.length() > 0) {
+                                sb.append(separator);
+                            }
+                            sb.append(o.toString());
+                        }
+                    }
                 } else {
-	                for (Object o : ExpressionUtils.toObjectList(v)) {
-	                    if (o != null) {
-	                        if (sb.length() > 0) {
-	                            sb.append(separator);
-	                        }
-	                        sb.append(o.toString());
-	                    }
-	                }
+                    for (Object o : ExpressionUtils.toObjectList(v)) {
+                        if (o != null) {
+                            if (sb.length() > 0) {
+                                sb.append(separator);
+                            }
+                            sb.append(o.toString());
+                        }
+                    }
                 }
                 
                 return sb.toString();

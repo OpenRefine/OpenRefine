@@ -156,8 +156,8 @@ public class NumericBinIndex {
         }
         
         if (_max <= originalMax) {
-        	_max += _step;
-        	binCount++;
+            _max += _step;
+            binCount++;
         }
         
         _bins = new int[(int) Math.round(binCount)];

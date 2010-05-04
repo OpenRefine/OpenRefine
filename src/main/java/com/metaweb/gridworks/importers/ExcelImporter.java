@@ -114,14 +114,14 @@ public class ExcelImporter implements Importer {
          */
         Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
         for (int c = 0; c < nonBlankIndices.size(); c++) {
-        	String cell = nonBlankHeaderStrings.get(c);
+            String cell = nonBlankHeaderStrings.get(c);
             if (nameToIndex.containsKey(cell)) {
-            	int index = nameToIndex.get(cell);
-            	nameToIndex.put(cell, index + 1);
-            	
-            	cell = cell.contains(" ") ? (cell + " " + index) : (cell + index);
+                int index = nameToIndex.get(cell);
+                nameToIndex.put(cell, index + 1);
+                
+                cell = cell.contains(" ") ? (cell + " " + index) : (cell + index);
             } else {
-            	nameToIndex.put(cell, 2);
+                nameToIndex.put(cell, 2);
             }
             
             Column column = new Column(c, cell);
@@ -209,19 +209,19 @@ public class ExcelImporter implements Importer {
                                     }
                                     
                                     if (reconMap.containsKey(id)) {
-                                    	recon = reconMap.get(id);
-	                                    recon.judgmentBatchSize++;
+                                        recon = reconMap.get(id);
+                                        recon.judgmentBatchSize++;
                                     } else {
-	                                    recon = new Recon(0);
-	                                    recon.service = "import";
-	                                    recon.match = new ReconCandidate(id, "", value.toString(), new String[0], 100);
-	                                    recon.matchRank = 0;
-	                                    recon.judgment = Judgment.Matched;
-	                                    recon.judgmentAction = "auto";
-	                                    recon.judgmentBatchSize = 1;
-	                                    recon.addCandidate(recon.match);
-	                                    
-	                                    reconMap.put(id, recon);
+                                        recon = new Recon(0);
+                                        recon.service = "import";
+                                        recon.match = new ReconCandidate(id, "", value.toString(), new String[0], 100);
+                                        recon.matchRank = 0;
+                                        recon.judgment = Judgment.Matched;
+                                        recon.judgmentAction = "auto";
+                                        recon.judgmentBatchSize = 1;
+                                        recon.addCandidate(recon.match);
+                                        
+                                        reconMap.put(id, recon);
                                     }
                                     
                                 }

@@ -51,11 +51,11 @@ public class Get implements Function {
                                 
                                 if (end > start) {
                                     if (v.getClass().isArray()) {
-	                                    Object[] a2 = new Object[end - start];
-	                                    
-	                                    System.arraycopy((Object[]) v, start, a2, 0, end - start);
-	                                    
-	                                    return a2;
+                                        Object[] a2 = new Object[end - start];
+                                        
+                                        System.arraycopy((Object[]) v, start, a2, 0, end - start);
+                                        
+                                        return a2;
                                     } else {
                                         return ExpressionUtils.toObjectList(v).subList(start, end);
                                     }

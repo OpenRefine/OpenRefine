@@ -63,9 +63,9 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
-            int 				cellIndex;
-            List<CellChange> 	cellChanges;
-            Map<Long, Recon>	dupReconMap = new HashMap<Long, Recon>();
+            int                 cellIndex;
+            List<CellChange>    cellChanges;
+            Map<Long, Recon>    dupReconMap = new HashMap<Long, Recon>();
             long                historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
@@ -81,20 +81,20 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
                     if (cell != null && cell.recon != null) {
                         ReconCandidate candidate = cell.recon.getBestCandidate();
                         if (candidate != null) {
-                        	Recon newRecon;
-                        	if (dupReconMap.containsKey(cell.recon.id)) {
-                        		newRecon = dupReconMap.get(cell.recon.id);
-                        		newRecon.judgmentBatchSize++;
-                        	} else {
-                        		newRecon = cell.recon.dup(historyEntryID);
-                        		newRecon.judgmentBatchSize = 1;
+                            Recon newRecon;
+                            if (dupReconMap.containsKey(cell.recon.id)) {
+                                newRecon = dupReconMap.get(cell.recon.id);
+                                newRecon.judgmentBatchSize++;
+                            } else {
+                                newRecon = cell.recon.dup(historyEntryID);
+                                newRecon.judgmentBatchSize = 1;
                                 newRecon.match = candidate;
                                 newRecon.matchRank = 0;
                                 newRecon.judgment = Judgment.Matched;
                                 newRecon.judgmentAction = "mass";
-                        		
-                        		dupReconMap.put(cell.recon.id, newRecon);
-                        	}
+                                
+                                dupReconMap.put(cell.recon.id, newRecon);
+                            }
                             Cell newCell = new Cell(
                                 cell.value,
                                 newRecon

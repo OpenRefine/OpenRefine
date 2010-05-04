@@ -170,9 +170,9 @@ public class ProjectMetadata implements Jsonizable {
     }
     
     public void setEncodingConfidence(String confidence) {
-    	if (confidence != null) {
-    		this.setEncodingConfidence(Integer.parseInt(confidence));
-    	}
+        if (confidence != null) {
+            this.setEncodingConfidence(Integer.parseInt(confidence));
+        }
     }
 
     public int getEncodingConfidence() {
@@ -196,16 +196,16 @@ public class ProjectMetadata implements Jsonizable {
     }
     
     public void addLatestExpression(String s) {
-    	_expressions.remove(s);
-    	_expressions.add(0, s);
-    	while (_expressions.size() > s_expressionHistoryMax) {
-    		_expressions.remove(_expressions.size() - 1);
-    	}
-    	
-    	ProjectManager.singleton.addLatestExpression(s);
+        _expressions.remove(s);
+        _expressions.add(0, s);
+        while (_expressions.size() > s_expressionHistoryMax) {
+            _expressions.remove(_expressions.size() - 1);
+        }
+        
+        ProjectManager.singleton.addLatestExpression(s);
     }
     
     public List<String> getExpressions() {
-    	return _expressions;
+        return _expressions;
     }
 }

@@ -31,7 +31,7 @@ public class ExportProjectCommand extends Command {
             
             OutputStream os = response.getOutputStream();
             try {
-            	gzipTarToOutputStream(
+                gzipTarToOutputStream(
                     ProjectManager.singleton.getProjectDir(project.id),
                     os
                 );
@@ -44,9 +44,9 @@ public class ExportProjectCommand extends Command {
     }
     
     protected void gzipTarToOutputStream(File dir, OutputStream os) throws IOException {
-    	GZIPOutputStream gos = new GZIPOutputStream(os);
+        GZIPOutputStream gos = new GZIPOutputStream(os);
         try {
-        	tarToOutputStream(dir, gos);
+            tarToOutputStream(dir, gos);
         } finally {
             gos.close();
         }

@@ -38,9 +38,9 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
         
         FilteredRows filteredRows = engine.getAllFilteredRows(false);
         try {
-        	filteredRows.accept(project, createRowVisitor(project, cellChanges, historyEntryID));
+            filteredRows.accept(project, createRowVisitor(project, cellChanges, historyEntryID));
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         }
         
         String description = createDescription(column, cellChanges);

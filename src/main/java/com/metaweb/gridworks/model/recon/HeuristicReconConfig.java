@@ -300,8 +300,8 @@ public class HeuristicReconConfig extends ReconConfig {
             }
             
             if (count > 0) {
-            	ReconCandidate candidate = recon.candidates.get(0);
-            	
+                ReconCandidate candidate = recon.candidates.get(0);
+                
                 recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
                 recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
                 recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
@@ -311,14 +311,14 @@ public class HeuristicReconConfig extends ReconConfig {
                     if (this.typeID.equals(typeID)) {
                         recon.setFeature(Recon.Feature_typeMatch, true);
                         if (autoMatch && candidate.score >= 100) {
-                        	if (count == 1 || 
-                        		candidate.score / recon.candidates.get(1).score >= 1.5) {
-                        		
-                        		recon.match = candidate;
-                        		recon.matchRank = 0;
-                        		recon.judgment = Judgment.Matched;
-                        		recon.judgmentAction = "auto";
-                        	}
+                            if (count == 1 || 
+                                candidate.score / recon.candidates.get(1).score >= 1.5) {
+                                
+                                recon.match = candidate;
+                                recon.matchRank = 0;
+                                recon.judgment = Judgment.Matched;
+                                recon.judgmentAction = "auto";
+                            }
                         }
                         break;
                     }

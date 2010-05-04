@@ -27,7 +27,7 @@ public class ColumnModel implements Jsonizable {
     transient protected Map<String, Column>  _nameToColumn;
     transient protected Map<Integer, Column> _cellIndexToColumn;
     transient protected List<ColumnGroup>    _rootColumnGroups;
-    transient protected List<String>		 _columnNames;
+    transient protected List<String>         _columnNames;
     transient boolean _hasDependentRows;
     
     public ColumnModel() {
@@ -96,7 +96,7 @@ public class ColumnModel implements Jsonizable {
     }
     
     public List<String> getColumnNames() {
-    	return _columnNames;
+        return _columnNames;
     }
 
     public void write(JSONWriter writer, Properties options)

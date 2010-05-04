@@ -21,7 +21,7 @@ public class Length implements Function {
                     Object[] a = (Object[]) v;
                     return a.length;
                 } else if (v instanceof Collection<?>) {
-                	return ((Collection<?>) v).size();
+                    return ((Collection<?>) v).size();
                 } else {
                     String s = (v instanceof String ? (String) v : v.toString());
                     return s.length();

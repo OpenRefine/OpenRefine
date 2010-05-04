@@ -109,25 +109,25 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
             }
             
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
-            	Cell cell = row.getCell(cellIndex);
+                Cell cell = row.getCell(cellIndex);
                 if (cell != null) {
-                	long reconID = cell.recon != null ? cell.recon.id : 0;
-                	
-                	Recon newRecon;
-                	if (dupReconMap.containsKey(reconID)) {
-                		newRecon = dupReconMap.get(reconID);
-                		newRecon.judgmentBatchSize++;
-                	} else {
-                		newRecon = cell.recon != null ? cell.recon.dup(historyEntryID) : new Recon(historyEntryID);
+                    long reconID = cell.recon != null ? cell.recon.id : 0;
+                    
+                    Recon newRecon;
+                    if (dupReconMap.containsKey(reconID)) {
+                        newRecon = dupReconMap.get(reconID);
+                        newRecon.judgmentBatchSize++;
+                    } else {
+                        newRecon = cell.recon != null ? cell.recon.dup(historyEntryID) : new Recon(historyEntryID);
                         newRecon.match = match;
                         newRecon.matchRank = -1;
                         newRecon.judgment = Judgment.Matched;
                         newRecon.judgmentAction = "mass";
-                		newRecon.judgmentBatchSize = 1;
-                		
-                		dupReconMap.put(reconID, newRecon);
-                	}
-                	
+                        newRecon.judgmentBatchSize = 1;
+                        
+                        dupReconMap.put(reconID, newRecon);
+                    }
+                    
                     Cell newCell = new Cell(
                         cell.value,
                         newRecon

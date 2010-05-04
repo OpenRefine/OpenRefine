@@ -138,10 +138,10 @@ public class ImportProjectCommand extends Command {
         destDir.mkdirs();
         
         if (gziped) {
-        	GZIPInputStream gis = new GZIPInputStream(inputStream);
-        	untar(destDir, gis);
+            GZIPInputStream gis = new GZIPInputStream(inputStream);
+            untar(destDir, gis);
         } else {
-        	untar(destDir, inputStream);
+            untar(destDir, inputStream);
         }
     }
     

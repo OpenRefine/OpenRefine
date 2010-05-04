@@ -34,7 +34,7 @@ public class ProjectManager {
     
     protected File                       _workspaceDir;
     protected Map<Long, ProjectMetadata> _projectsMetadata;
-    protected List<String> 				 _expressions;
+    protected List<String>               _expressions;
     
     final static Logger logger = LoggerFactory.getLogger("project_manager");
     
@@ -70,48 +70,48 @@ public class ProjectManager {
         
         String os = Configurations.get("os.name").toLowerCase();
         if (os.contains("windows")) {
-        	try {
-	            // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
-	            // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
-	            // so we're using a library that uses JNI to ask directly the win32 APIs, 
-	            // it's not elegant but it's the safest bet.
-        	    
-	            DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
-	            File data = new File(localDataPath.getPath());
-	            data.mkdirs();
-	            return data;
-        	} catch (Error e) {
-        	    /*
-        	     *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
-        	     *  we include is compiled for 32-bit. In this case, we just have to dig up
-        	     *  environment variables and try our best to find a user-specific path.
-        	     */
-        	    
-        		logger.warn("Failed to use jdatapath to detect user data path: resorting to environment variables");
-        		
+            try {
+                // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
+                // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
+                // so we're using a library that uses JNI to ask directly the win32 APIs, 
+                // it's not elegant but it's the safest bet.
+                
+                DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
+                File data = new File(localDataPath.getPath());
+                data.mkdirs();
+                return data;
+            } catch (Error e) {
+                /*
+                 *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
+                 *  we include is compiled for 32-bit. In this case, we just have to dig up
+                 *  environment variables and try our best to find a user-specific path.
+                 */
+                
+                logger.warn("Failed to use jdatapath to detect user data path: resorting to environment variables");
+                
                 File parentDir = null;
                 {
-            		String appData = System.getenv("APPDATA"); 
-            		if (appData != null && appData.length() > 0) {
+                    String appData = System.getenv("APPDATA"); 
+                    if (appData != null && appData.length() > 0) {
                         // e.g., C:\Users\[userid]\AppData\Roaming
-            			parentDir = new File(appData);
-            		} else {
-            			String userProfile = System.getenv("USERPROFILE");
-            			if (userProfile != null && userProfile.length() > 0) {
-            			    // e.g., C:\Users\[userid]
-            				parentDir = new File(userProfile);
-            			}
-            		}
+                        parentDir = new File(appData);
+                    } else {
+                        String userProfile = System.getenv("USERPROFILE");
+                        if (userProfile != null && userProfile.length() > 0) {
+                            // e.g., C:\Users\[userid]
+                            parentDir = new File(userProfile);
+                        }
+                    }
                 }
-        		if (parentDir == null) {
-        			parentDir = new File(".");
-        		}
-        		
-        		File data = new File(parentDir, "Gridworks");
-        		data.mkdirs();
-        		
-        		return data;
-        	}
+                if (parentDir == null) {
+                    parentDir = new File(".");
+                }
+                
+                File data = new File(parentDir, "Gridworks");
+                data.mkdirs();
+                
+                return data;
+            }
         } else if (os.contains("mac os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
@@ -262,16 +262,16 @@ public class ProjectManager {
     
     public void addLatestExpression(String s) {
         synchronized (this) {
-        	_expressions.remove(s);
-        	_expressions.add(0, s);
-        	while (_expressions.size() > s_expressionHistoryMax) {
-        		_expressions.remove(_expressions.size() - 1);
-        	}
+            _expressions.remove(s);
+            _expressions.add(0, s);
+            while (_expressions.size() > s_expressionHistoryMax) {
+                _expressions.remove(_expressions.size() - 1);
+            }
         }
     }
     
     public List<String> getExpressions() {
-    	return _expressions;
+        return _expressions;
     }
     
     public void save(boolean allModified) {
@@ -285,8 +285,8 @@ public class ProjectManager {
      */
     protected void saveWorkspace() {
         synchronized (this) {
-        	File tempFile = new File(_workspaceDir, "workspace.temp.json");
-        	try {
+            File tempFile = new File(_workspaceDir, "workspace.temp.json");
+            try {
                 saveToFile(tempFile);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -294,7 +294,7 @@ public class ProjectManager {
                 logger.warn("Failed to save workspace");
                 return;
             }
-        	
+            
             File file = new File(_workspaceDir, "workspace.json");
             File oldFile = new File(_workspaceDir, "workspace.old.json");
             

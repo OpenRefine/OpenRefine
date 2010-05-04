@@ -16,7 +16,7 @@ abstract public class EngineDependentOperation extends AbstractOperation {
     protected EngineDependentOperation(JSONObject engineConfig) {
         _engineConfig = engineConfig;
         _engineConfigString = engineConfig == null || engineConfig.length() == 0
-        	? null : engineConfig.toString();
+            ? null : engineConfig.toString();
     }
     
     protected Engine createEngine(Project project) throws Exception {

@@ -27,12 +27,12 @@ public class TextTransformCommand extends EngineDependentCommand {
         }
         
         return new TextTransformOperation(
-        	engineConfig, 
-        	columnName, 
-        	expression, 
-        	TextTransformOperation.stringToOnError(onError),
-        	repeat,
-        	repeatCount
+            engineConfig, 
+            columnName, 
+            expression, 
+            TextTransformOperation.stringToOnError(onError),
+            repeat,
+            repeatCount
         );
     }
 }

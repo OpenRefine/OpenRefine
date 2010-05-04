@@ -142,17 +142,17 @@ public class ReconOperation extends EngineDependentOperation {
                     writer.endObject();
 
                     if (_reconConfig instanceof HeuristicReconConfig) {
-	                    writer.object();
-	                        writer.key("action"); writer.value("createFacet");
-	                        writer.key("facetType"); writer.value("range");
-	                        writer.key("facetConfig");
-	                            writer.object();
-	                                writer.key("name"); writer.value(_columnName + ": best candidate's score");
-	                                writer.key("columnName"); writer.value(_columnName);
-	                                writer.key("expression"); writer.value("cell.recon.best.score");
-	                                writer.key("mode"); writer.value("range");
-	                            writer.endObject();
-	                    writer.endObject();
+                        writer.object();
+                            writer.key("action"); writer.value("createFacet");
+                            writer.key("facetType"); writer.value("range");
+                            writer.key("facetConfig");
+                                writer.object();
+                                    writer.key("name"); writer.value(_columnName + ": best candidate's score");
+                                    writer.key("columnName"); writer.value(_columnName);
+                                    writer.key("expression"); writer.value("cell.recon.best.score");
+                                    writer.key("mode"); writer.value("range");
+                                writer.endObject();
+                        writer.endObject();
                     }
                 writer.endArray();
             writer.endObject();
@@ -234,7 +234,7 @@ public class ReconOperation extends EngineDependentOperation {
                     List<ReconEntry> entries = groups.get(j).entries;
                     
                     if (recon != null) {
-                    	recon.judgmentBatchSize = entries.size();
+                        recon.judgmentBatchSize = entries.size();
                     }
                     
                     for (ReconEntry entry : entries) {

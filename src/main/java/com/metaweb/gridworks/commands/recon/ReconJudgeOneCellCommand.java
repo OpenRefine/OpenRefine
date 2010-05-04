@@ -154,10 +154,10 @@ public class ReconJudgeOneCellCommand extends Command {
                 newCell.recon.match = this.match;
                 
                 for (int m = 0; m < newCell.recon.candidates.size(); m++) {
-                	if (newCell.recon.candidates.get(m).topicGUID.equals(this.match.topicGUID)) {
-                		newCell.recon.matchRank = m;
-                		break;
-                	}
+                    if (newCell.recon.candidates.get(m).topicGUID.equals(this.match.topicGUID)) {
+                        newCell.recon.matchRank = m;
+                        break;
+                    }
                 }
                 
                 description = "Match " + this.match.topicName +

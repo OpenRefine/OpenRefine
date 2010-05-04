@@ -77,21 +77,21 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {
-                	Recon newRecon;
-                	if (dupReconMap.containsKey(cell.recon.id)) {
-                		newRecon = dupReconMap.get(cell.recon.id);
-                		newRecon.judgmentBatchSize++;
-                	} else {
-                		newRecon = cell.recon.dup(historyEntryID);
+                    Recon newRecon;
+                    if (dupReconMap.containsKey(cell.recon.id)) {
+                        newRecon = dupReconMap.get(cell.recon.id);
+                        newRecon.judgmentBatchSize++;
+                    } else {
+                        newRecon = cell.recon.dup(historyEntryID);
                         newRecon.match = null;
                         newRecon.matchRank = -1;
                         newRecon.judgment = Judgment.None;
                         newRecon.judgmentAction = "mass";
-                		newRecon.judgmentBatchSize = 1;
-                		
-                		dupReconMap.put(cell.recon.id, newRecon);
-                	}
-                	
+                        newRecon.judgmentBatchSize = 1;
+                        
+                        dupReconMap.put(cell.recon.id, newRecon);
+                    }
+                    
                     Cell newCell = new Cell(cell.value, newRecon);
                     
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);

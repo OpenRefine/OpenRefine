@@ -110,7 +110,7 @@ public class ExpressionNumericRowBinner implements RowVisitor {
                     
                     int bin = (int) Math.floor((d - _index.getMin()) / _index.getStep());
                     if (bin >= 0 && bin < bins.length) { // as a precaution
-                    	bins[bin]++;
+                        bins[bin]++;
                     }
                 } else {
                     rowHasError = true;

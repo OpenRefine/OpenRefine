@@ -15,8 +15,8 @@ import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
 public class JythonEvaluable implements Evaluable {
-	private static final String s_functionName = "___temp___";
-	
+    private static final String s_functionName = "___temp___";
+    
     private static PythonInterpreter _engine; 
     static {
         File libPath = new File("lib/jython");
@@ -77,7 +77,7 @@ public class JythonEvaluable implements Evaluable {
             }
         }
         
-        return result;	    
+        return result;      
     }
     
     protected Object unwrap(PyObject po) {

@@ -14,8 +14,8 @@ import com.metaweb.gridworks.gel.Function;
 
 public class Sort implements Function {
 
-	@SuppressWarnings("unchecked")
-	public Object call(Properties bindings, Object[] args) {
+    @SuppressWarnings("unchecked")
+    public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
             

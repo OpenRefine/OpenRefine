@@ -51,7 +51,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
     public ExtendDataOperation(
         JSONObject     engineConfig,
         String         baseColumnName,
-        JSONObject	   extension,
+        JSONObject     extension,
         int            columnInsertIndex 
     ) {
         super(engineConfig);
@@ -142,17 +142,17 @@ public class ExtendDataOperation extends EngineDependentOperation {
             
             FilteredRows filteredRows = engine.getAllFilteredRows(false);
             filteredRows.accept(_project, new RowVisitor() {
-            	List<Integer> _rowIndices;
-            	
-            	public RowVisitor init(List<Integer> rowIndices) {
-            		_rowIndices = rowIndices;
-            		return this;
-            	}
+                List<Integer> _rowIndices;
+                
+                public RowVisitor init(List<Integer> rowIndices) {
+                    _rowIndices = rowIndices;
+                    return this;
+                }
                 public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                     if (!includeContextual) {
                         Cell cell = row.getCell(_cellIndex);
                         if (cell != null && cell.recon != null && cell.recon.match != null) {
-                        	_rowIndices.add(rowIndex);
+                            _rowIndices.add(rowIndex);
                         }
                     }
                     return false;
@@ -161,50 +161,50 @@ public class ExtendDataOperation extends EngineDependentOperation {
         }
         
         protected int extendRows(
-    		List<Integer> rowIndices, 
-    		List<DataExtension> dataExtensions, 
-    		int from, 
-    		int limit,
+            List<Integer> rowIndices, 
+            List<DataExtension> dataExtensions, 
+            int from, 
+            int limit,
             Map<String, ReconCandidate> reconCandidateMap
-   		) {
+        ) {
             Set<String> guids = new HashSet<String>();
             
             int end;
-        	for (end = from; end < limit && guids.size() < 10; end++) {
-        		int index = rowIndices.get(end);
-        		Row row = _project.rows.get(index);
-        		Cell cell = row.getCell(_cellIndex);
-        		
+            for (end = from; end < limit && guids.size() < 10; end++) {
+                int index = rowIndices.get(end);
+                Row row = _project.rows.get(index);
+                Cell cell = row.getCell(_cellIndex);
+                
                 guids.add(cell.recon.match.topicGUID);
-        	}
-        	
-        	Map<String, DataExtension> map = null;
+            }
+            
+            Map<String, DataExtension> map = null;
             try {
-				map = _job.extend(guids, reconCandidateMap);
-			} catch (Exception e) {
-				map = new HashMap<String, DataExtension>();
-			}
-			
-        	for (int i = from; i < end; i++) {
-        		int index = rowIndices.get(i);
-        		Row row = _project.rows.get(index);
-        		Cell cell = row.getCell(_cellIndex);
-        		String guid = cell.recon.match.topicGUID;
-        		
-        		if (map.containsKey(guid)) {
-        			dataExtensions.add(map.get(guid));
-        		} else {
-        			dataExtensions.add(null);
-        		}
-        	}
-        	
-        	return end;
+                map = _job.extend(guids, reconCandidateMap);
+            } catch (Exception e) {
+                map = new HashMap<String, DataExtension>();
+            }
+            
+            for (int i = from; i < end; i++) {
+                int index = rowIndices.get(i);
+                Row row = _project.rows.get(index);
+                Cell cell = row.getCell(_cellIndex);
+                String guid = cell.recon.match.topicGUID;
+                
+                if (map.containsKey(guid)) {
+                    dataExtensions.add(map.get(guid));
+                } else {
+                    dataExtensions.add(null);
+                }
+            }
+            
+            return end;
         }
         
         public void run() {
-        	List<Integer> rowIndices = new ArrayList<Integer>();
-        	List<DataExtension> dataExtensions = new ArrayList<DataExtension>();
-        	
+            List<Integer> rowIndices = new ArrayList<Integer>();
+            List<DataExtension> dataExtensions = new ArrayList<DataExtension>();
+            
             try {
                 populateRowsWithMatches(rowIndices);
             } catch (Exception e2) {
@@ -216,9 +216,9 @@ public class ExtendDataOperation extends EngineDependentOperation {
             Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
             
             while (start < rowIndices.size()) {
-            	int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size(), reconCandidateMap);
-            	start = end;
-            	
+                int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size(), reconCandidateMap);
+                start = end;
+                
                 _progress = end * 100 / rowIndices.size();
                 try {
                     Thread.sleep(200);
@@ -230,29 +230,29 @@ public class ExtendDataOperation extends EngineDependentOperation {
             }
             
             if (!_canceled) {
-            	List<String> columnNames = new ArrayList<String>();
-            	for (ColumnInfo info : _job.columns) {
-            		columnNames.add(StringUtils.join(info.names, " - "));
-            	}
-            	
+                List<String> columnNames = new ArrayList<String>();
+                for (ColumnInfo info : _job.columns) {
+                    columnNames.add(StringUtils.join(info.names, " - "));
+                }
+                
                 List<FreebaseType> columnTypes = new ArrayList<FreebaseType>();
                 for (ColumnInfo info : _job.columns) {
                     columnTypes.add(info.expectedType);
                 }
-            	
+                
                 HistoryEntry historyEntry = new HistoryEntry(
                     _historyEntryID,
                     _project, 
                     _description, 
                     ExtendDataOperation.this, 
                     new DataExtensionChange(
-                    	_baseColumnName,
-                    	_columnInsertIndex,
-                    	columnNames,
-                    	columnTypes,
-                    	rowIndices,
-                    	dataExtensions,
-                    	_historyEntryID)
+                        _baseColumnName,
+                        _columnInsertIndex,
+                        columnNames,
+                        columnTypes,
+                        rowIndices,
+                        dataExtensions,
+                        _historyEntryID)
                 );
                 
                 _project.history.addEntry(historyEntry);
