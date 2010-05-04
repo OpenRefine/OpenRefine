@@ -66,6 +66,8 @@ and <action> is one of
    pmd ....................... Run PMD against Gridworks     
    cpd ....................... Run Copy/Paste Detection against Gridworks     
    jslint .................... Run JSlint against Gridworks
+
+   whitespace <extension> .... Normalize whitespace in files with the given extension
    
    mac_dist <version> ........ Make MacOSX binary distribution
    windows_dist <version> .... Make Windows binary distribution
@@ -633,6 +635,21 @@ jslint() {
     open "$GRIDWORKS_BUILD_DIR/reports/jslint.txt"
 }
 
+whitespace() {
+    [ $# -gt 0 ] || usage
+    
+    for i in `find . -name *.$1`; do
+        # expand tabs to spaces
+        expand -t 4 < $i > $i.1
+        
+        # convert DOS to UNIX newlines
+        tr -d '\r' < $i.1 > $i.2
+            
+        rm $i $i.1
+        mv $i.2 $i
+    done
+}   
+    
 # -------------------------- script -----------------------------
     
 # ----- Normalize the current directory -------------------------
@@ -779,6 +796,7 @@ add_option "-Dpython.path=$JYTHONPATH"
 case "$ACTION" in
   build) build_prepare; ant build;;
   clean) ant clean;;
+  whitespace) whitespace $1;;
   distclean) ant distclean;;
   test) test $1;;  
   tests) test $1;;  
