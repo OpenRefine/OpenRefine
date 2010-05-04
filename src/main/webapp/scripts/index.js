@@ -26,17 +26,27 @@ function onClickUploadFileButton(evt) {
 }
 
 function formatDate(d) {
-    var yesterday = Date.today().add({ days: -1 });
+    var d = new Date(d);
+    var last_year = Date.today().add({ years: -1 });
+    var last_month = Date.today().add({ months: -1 });
+    var last_week = Date.today().add({ days: -7 });
     var today = Date.today();
     var tomorrow = Date.today().add({ days: 1 });
+
     if (d.between(today, tomorrow)) {
-        return "Today " + d.toString("h:mm tt");
-    } else if (d.between(yesterday, today)) {
-        return "Yesterday " + d.toString("h:mm tt");
-    } else if (d.getYear() == today.getYear()) {
-        return d.toString("ddd, MMM d");
+        return "today";
+    } else if (d.between(last_week, today)) {
+        var diff = today.getDayOfYear() - d.getDayOfYear();
+        return (diff == 1) ? "yesterday" : diff + " days ago";
+    } else if (d.between(last_month, today)) {
+        var diff = (today.getDayOfYear() - d.getDayOfYear()) / 7;
+        return (diff == 1) ? "a week ago" : diff.toFixed(0) + " weeks ago" ;
+    } else if (d.between(last_year, today)) {
+        var diff = today.getMonth() - d.getMonth();
+        return (diff == 1) ? "a month ago" : diff + " months ago";
     } else {
-        return d.toString("ddd, MMM d, yyyy");
+        var diff = today.getYear() - d.getYear();
+        return (diff == 1) ? "a year ago" : diff + " years ago";
     }
 }
 
@@ -116,7 +126,7 @@ function renderProjects(data) {
                 .appendTo(tr.insertCell(tr.cells.length));
                 
             $('<div></div>')
-                .text(formatDate(project.date))
+                .html(formatDate(project.date))
                 .addClass("last-modified")
                 .appendTo(tr.insertCell(tr.cells.length));
             
