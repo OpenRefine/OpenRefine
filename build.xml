@@ -172,7 +172,7 @@
                 originalFilename="gridworks.exe" 
             />
           </config>
-        </launch4j>		
+        </launch4j>     
         <copy todir="${windows.dir}/lib">
             <fileset dir="${lib.dir}">
                 <include name="**/*.jar"/>
