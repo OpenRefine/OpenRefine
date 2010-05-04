@@ -33,6 +33,8 @@ function formatDate(d) {
         return "Today " + d.toString("h:mm tt");
     } else if (d.between(yesterday, today)) {
         return "Yesterday " + d.toString("h:mm tt");
+    } else if (d.getYear() == today.getYear()) {
+        return d.toString("ddd, MMM d");
     } else {
         return d.toString("ddd, MMM d, yyyy");
     }
@@ -71,30 +73,20 @@ function renderProjects(data) {
     if (!projects.length) {
         $('<div>')
             .addClass("message")
-            .text("No existing project. Use form on left to create.")
+            .text("No existing project. Use form on right to create.")
             .appendTo(container);
     } else {
         var table = $(
             '<table><tr>' +
-                '<th>Project Name</th>' +
-                '<th>Last Modified</th>' +
                 '<th></th>' +
+                '<th>Name</th>' +
+                '<th align="right">Last Modified</th>' +
             '</tr></table>'
         ).appendTo(container)[0];
         
         var renderProject = function(project) {
             var tr = table.insertRow(table.rows.length);
-            tr.className = "project " + (table.rows.length % 2 ? "even" : "odd");
-            
-            $('<a></a>')
-                .text(project.name)
-                .attr("href", "/project.html?project=" + project.id)
-                .appendTo(tr.insertCell(tr.cells.length));
-                
-            $('<span></span>')
-                .text(formatDate(project.date))
-                .addClass("last-modified")
-                .appendTo(tr.insertCell(tr.cells.length));
+            tr.className = "project";
             
             $('<a></a>')
                 .addClass("delete-project")
@@ -117,6 +109,17 @@ function renderProjects(data) {
                     }
                     return false;
                 }).appendTo(tr.insertCell(tr.cells.length));
+                
+            $('<a></a>')
+                .text(project.name)
+                .attr("href", "/project.html?project=" + project.id)
+                .appendTo(tr.insertCell(tr.cells.length));
+                
+            $('<div></div>')
+                .text(formatDate(project.date))
+                .addClass("last-modified")
+                .appendTo(tr.insertCell(tr.cells.length));
+            
         };
     
         for (var i = 0; i < projects.length; i++) {
@@ -136,10 +139,14 @@ function fetchProjects() {
     );
 }
 
+function showHide(toHide, toShow) {
+    $("#" + toHide).hide();
+    $("#" + toShow).show();
+}
+
 function onLoad() {
     fetchProjects();
     
-    $("#form-tabs").tabs();
     $("#upload-file-button").click(onClickUploadFileButton);
     $("#more-options-link").click(function() {
         $("#more-options-controls").hide();
@@ -147,7 +154,7 @@ function onLoad() {
     });
     
     $("#gridworks-version").text(
-        GridworksVersion.version + "-" + GridworksVersion.revision
+        "Version " + GridworksVersion.version + "-" + GridworksVersion.revision
     );
     if (isThereNewRelease()) {
         $('<div id="version-message">' +

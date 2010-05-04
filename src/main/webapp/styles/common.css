@@ -93,9 +93,11 @@ div.input-container > input, div.input-container > textarea {
 
 a.action, 
 a.quiet-link {
-    margin: 0 3px;
     text-decoration: none;
     color: #448;
+}
+a.action {
+    margin: 0 3px;
 }
 a.action:hover, 
 a.quiet-link:hover {

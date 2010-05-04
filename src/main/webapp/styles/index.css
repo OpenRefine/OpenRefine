@@ -1,53 +1,64 @@
+body {
+    background: #f4f7fa;
+}
 #body {
-    padding: 50px;
-    background: url("/images/gridworks-watermark.png") no-repeat -70px -70px;
+    padding: 40px;
 }
 #body > div.grid-layout > table > tbody > tr > th, 
 #body > div.grid-layout > table > tbody > tr > td {
     vertical-align: top;
 }
 
-#top-panel {
-    margin-bottom: 15px;
+#gridworks-version {
+    float: right;
+    color: #aaa;
+    margin: 5px;
 }
-#top-panel h1 {
+
+#welcome-panel {
+    width: 230px;
+    min-width: 230px !important;
+    font-size: 10pt;
+    line-height: 150%;
+    color: #666;
+}
+#welcome-panel h1 {
+    font-size: 15pt;
     margin: 0;
     padding: 0;
-    font-weight: normal;
-}
-#gridworks-info {
-    color: #aaa;
+    font-weight: bold;
+    color: #848C8E;
 }
 
-#form-tabs > div {
-    height: 400px;
-}
-
-#create-project-panel h1 {
-    font-size: 120%;
-    margin: 2em 0 1em 0;
-}
-#projects-panel {
-    width: 400px;
-}
-#projects {
-    background: #DBE8EB;
+div.island {
+    background: #dbe8eb;
+    padding: 4px;
     -moz-border-radius: 7px;
     -webkit-border-radius: 7px;
-    padding: 15px;
 }
+div.round-corners {
+    border: 1px solid #c5d1d4;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+}
+
+#projects-panel {
+    width: 270px;
+    min-width: 270px !important;
+}
+#projects {
+    background: white;
+}
+
 #projects h1 {
     margin: 0;
-    margin-bottom: 0.5em;
-    padding: 0;
-    font-size: 120%;
+    padding: 7px 10px;
+    font-size: 13pt;
+    font-weight: bold;
 }
 
 #projects-container {
-    border: 1px solid #C5D1D4;
-    background: white;
-    padding: 1px;
-    height: 30em;
+    height: 40em;
     overflow: auto;
 }
 #projects-container .message {
@@ -60,24 +71,97 @@
     width: 100%;
 }
 #projects-container td, #projects-container th {
-    padding: 5px;
-    border-right: 1px solid white;
+    padding: 3px;
     text-align: left;
+    vertical-align: middle;
+}
+#projects-container td:first-child, #projects-container th:first-child {
+    padding-left: 7px;
+}
+#projects-container td:last-child, #projects-container th:last-child {
+    padding-right: 7px;
 }
 #projects-container th {
-    background: #C5D1D4;
-}
-#projects-container tr.project.even {
-    background: #DBE8EB;
+    font-weight: normal;
+    background: #f4f7fa;
+    border-bottom: 1px solid #eee;
 }
 .project a {
     text-decoration: none;
-    font-weight: bold;
-    color: #004;
+    font-weight: normal;
+    color: #1170a3;
 }
 .project a:hover {
     text-decoration: underline;
-    color: #008;
+}
+.last-modified {
+    white-space: pre;
+    text-align: right;
+    color: #aaa;
+}
+
+#forms {
+    color: #666;
+}
+
+a.form-tab-link {
+    display: block;
+    float: right;
+    text-decoration: none;
+    font-size: 10pt;
+    font-weight: bold;
+    color: #1170a3;
+    margin-left: 1em;
+}
+
+#form-tabs-create-project, #form-tabs-import-project, #form-create-project-more-options {
+    padding: 7px 10px;
+}
+#form-tabs-create-project, #form-tabs-import-project {
+    background: white;
+    width: 400px;
+}
+#form-tabs-create-project h1, #form-tabs-import-project h1 {
+    margin: 0;
+    padding: 0px 0px 15px 0px;
+    font-size: 13pt;
+    font-weight: bold;
+    color: black;
+}
+#form-create-project-more-options h2 {
+    font-size: 100%;
+    color: black;
+    margin: 0;
+}
+#form-create-project-more-options > table {
+    border-collapse: collapse;
+}
+#form-create-project-more-options > table > tbody > tr > td {
+    padding: 1em;
+}
+
+div.field-group {
+    margin-top: 0.7em;
+    margin-bottom: 1.5em;
+}
+.field-label {
+    font-weight: bold;
+    white-space: pre;
+}
+div.field-label {
+    margin-top: 0.5em;
+    margin-bottom: 0.25em;
+}
+td.field-label {
+    text-align: right;
+}
+
+div.field-body {
+    white-space: pre;
+}
+div.field-hint {
+    font-size: 90%;
+    white-space: pre;
 }
 
 #version-message {
