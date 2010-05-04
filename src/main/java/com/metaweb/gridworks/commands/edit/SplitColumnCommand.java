@@ -21,6 +21,8 @@ public class SplitColumnCommand extends EngineDependentCommand {
         boolean removeOriginalColumn = Boolean.parseBoolean(request.getParameter("removeOriginalColumn"));
         String mode = request.getParameter("mode");
         if ("separator".equals(mode)) {
+            String maxColumns = request.getParameter("maxColumns");
+            
             return new ColumnSplitOperation(
                 engineConfig, 
                 columnName, 
@@ -28,7 +30,7 @@ public class SplitColumnCommand extends EngineDependentCommand {
                 removeOriginalColumn,
                 request.getParameter("separator"),
                 Boolean.parseBoolean(request.getParameter("regex")),
-                Integer.parseInt(request.getParameter("maxColumns"))
+                maxColumns != null && maxColumns.length() > 0 ? Integer.parseInt(maxColumns) : 0
             );
         } else {
             String s = request.getParameter("fieldLengths");
