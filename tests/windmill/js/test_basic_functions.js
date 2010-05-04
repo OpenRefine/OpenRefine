@@ -13,11 +13,11 @@ var test_basicFunctionality =  new function()  {//try cutting 'new' at some poin
     {method: "type", params: { jquery: '(".expression-preview-code")[0]', text: "value.split(',')[0]"} },
     {method: "waits.forElement", params: { jquery: '("td:contains(\'value.split\')")[0]'} },  
     {method: "click", params: { jquery: '("button:contains(\'OK\')")[0]'} },
-    {method: "waits.forElement", params: { jquery: '("a:contains(\'Count\')")[0]'} },	    
-    {method: "click", params: { jquery: '("a:contains(\'Count\')")[0]'} }	
+    {method: "waits.forElement", params: { jquery: '("a:contains(\'Count\')")[0]'} },       
+    {method: "click", params: { jquery: '("a:contains(\'Count\')")[0]'} }   
 //    assert_expected_top_value(client, 'BEEF')    
 
-  ];	
+  ];    
 };
     
 
