@@ -1,1 +1,191 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html><head>    <title>About Freebase Gridworks</title>    <link rel="icon" type="image/png" href="images/favicon.png">    <link rel="stylesheet" href="/styles/common.css" />    <link rel="stylesheet" href="/styles/index.css" />    <script type="text/javascript" src="scripts/version.js"></script>    <script type="text/javascript" src="externals/jquery-1.4.2.min.js"></script>    <script>      $(function() {          if (GridworksVersion && GridworksVersion.version) {              if (GridworksVersion.version != "$VERSION") {                  $("#version").text("Version " + GridworksVersion.version + " [" + GridworksVersion.revision + "]").show();              }          }      });    </script>    <style>        #body {            margin: 0em;            padding: 40px;        }        h1 {          font-family: helvetica;          font-weight: normal;          letter-spacing: -0.04em;        }		h1 + h2 {		  font-family: myriad pro, tahoma;		  font-weight: normal;		  position: relative;		  bottom: 1em;		  letter-spacing: 0.3em;		  font-size: 130%;		  margin: 0em;		  padding: 0em;		  color: #888;		}                #about p {            width: 40em;        }        .license {            font-family: monospace;            font-size: 12px;            white-space: pre;            border: 1px solid #ddd;            background: #eee;            padding: 20px;            width: 60em;        }        h2 {            margin-top: 2em;            color: #888;        }        ul.credit-entries {            margin: 0;            padding: 0;        }        ul.credit-entries li {            display: block;            margin: 1em 0;        }    </style></head><body>    <div id="header">      <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>      <div id="path"><span class="app-path-section"><a href="./index.html">Gridworks</a></span></div>    </div>    <div id="body">        <h1>About Free<b>base</b> Grid<b>works</b></h1>        <h2 id="version" style="display: none"></h2>                <div id="about">                        <p>                Freebase Gridworks is a power tool that allows you to load data,   understand it, clean it up, reconcile it internally, and augment it   with data coming from Freebase. All with the comfort and privacy of   your own computer.</p>              <p>                It was originally developed by <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>            </p>                        <h2>License</h2>            <pre class="license">/* * Copyright (c) 2010, Metaweb Technologies, Inc. All rights reserved. * * Redistribution and use in source and binary forms, with or without * modification, are permitted provided that the following conditions * are met: * *  1. Redistributions of source code must retain the above copyright *     notice, this list of conditions and the following disclaimer. * *  2. Redistributions in binary form must reproduce the above *     copyright notice, this list of conditions and the following *     disclaimer in the documentation and/or other materials provided *     with the distribution. *  * THIS SOFTWARE IS PROVIDED BY METAWEB TECHNOLOGIES AND CONTRIBUTORS * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL METAWEB * TECHNOLOGIES OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE * POSSIBILITY OF SUCH DAMAGE. * */</pre>  <h2>Dependencies Licenses</h2><pre class="license">licenses/apache2.0.LICENSE.txt    ant (package org.apache.tools.tar)    bzip2 (package org.apache.tools.bzip2)    calendar-parser (package com.metaweb.gridworks.expr.util)    commons-lang    commons-codec    jackson    jdatapath    jetty    jetty-util    log4j    poi    poi-ooxml    poi-ooxml-schemas    servlet-api    xmlbeans licenses/secondstring.LICENSE.txt (BSD family)    secondstringlicenses/dom4j.LICENSE.txt (BSD family)    dom4j    licenses/simile.LICENSE.txt (BSD family)    vicino (package edu.mit.simile.vicino)licenses/arithcode.LICENSE.txt (BSD family)    arithcode       licenses/icu4j.LICENSE.txt (MIT family)    icu4j   licenses/slf4j.LICENSE.txt (MIT family)    slf4j-api    slf4j-log4j12    jcl-over-slf4jlicenses/json.LICENSE.txt (MIT family)        json    licenses/cos.LICENSE.txt    cos    Flag icon, free for commercial reuse    http://pixel-mixer.com/category/free-icons/</pre>                    <h2>Credits</h2>            <ul class="credit-entries">                <li><a href="http://www.freebase.com/view/en/david_francois_huynh">David Huynh</a>, Metaweb Technologies, Inc.</li>                <li><a href="http://www.freebase.com/view/en/stefano_mazzocchi">Stefano Mazzocchi</a>, Metaweb Technologies, Inc.</li>                <li><a href="http://www.freebase.com/view/en/vishal_talwar">Vishal Talwar</a>, Metaweb Technologies, Inc.</li>                <li><a href="http://www.freebase.com/view/en/will_moffat">Will Moffat</a>, Metaweb Technologies, Inc.</li>                <li><a href="http://www.freebase.com/view/en/jeff_fry">Jeff Fry</a>, Metaweb Technologies, Inc.</li>                <li><a href="http://www.freebase.com/view/en/james_home">James Home</a>, Metaweb Technologies, Inc.</li>            </ul>            <h2>Special Thanks</h2>            <ul class="credit-entries">                <li><a href="http://www.paolociccarese.info/">Paolo Ciccarese</a></li>            </ul>        </div>    </div>    <div id="footer">        <a href="about.html">About Freebase Gridworks</a>        &bull;         &copy; 2010 <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>    </div></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>About Freebase Gridworks</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="/styles/common.css" />
+    <link rel="stylesheet" href="/styles/index.css" />
+    <script type="text/javascript" src="scripts/version.js"></script>
+    <script type="text/javascript" src="externals/jquery-1.4.2.min.js"></script>
+    <script>
+      $(function() {
+          if (GridworksVersion && GridworksVersion.version) {
+              if (GridworksVersion.version != "$VERSION") {
+                  $("#version").text("Version " + GridworksVersion.version + " [" + GridworksVersion.revision + "]").show();
+              }
+          }
+      });
+    </script>
+    <style>
+        #body {
+            margin: 0em;
+            padding: 40px;
+        }
+        h1 {
+          font-family: helvetica;
+          font-weight: normal;
+          letter-spacing: -0.04em;
+        }
+		h1 + h2 {
+		  font-family: myriad pro, tahoma;
+		  font-weight: normal;
+		  position: relative;
+		  bottom: 1em;
+		  letter-spacing: 0.3em;
+		  font-size: 130%;
+		  margin: 0em;
+		  padding: 0em;
+		  color: #888;
+		}        
+        #about p {
+            width: 40em;
+        }
+        .license {
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre;
+            border: 1px solid #ddd;
+            background: #eee;
+            padding: 20px;
+            width: 60em;
+        }
+        h2 {
+            margin-top: 2em;
+            color: #888;
+        }
+        ul.credit-entries {
+            margin: 0;
+            padding: 0;
+        }
+        ul.credit-entries li {
+            display: block;
+            margin: 1em 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+      <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
+      <div id="path"><span class="app-path-section"><a href="./index.html">Gridworks</a></span></div>
+    </div>
+
+    <div id="body">
+        <h1>About Free<b>base</b> Grid<b>works</b></h1>
+        <h2 id="version" style="display: none"></h2>
+        
+        <div id="about">
+            
+            <p>
+                Freebase Gridworks is a power tool that allows you to load data, 
+  understand it, clean it up, reconcile it internally, and augment it 
+  with data coming from Freebase. All with the comfort and privacy of 
+  your own computer.</p>
+  
+            <p>
+                It was originally developed by <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>
+            </p>
+            
+            <h2>License</h2>
+            
+<pre class="license">/*
+ * Copyright (c) 2010, Metaweb Technologies, Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY METAWEB TECHNOLOGIES AND CONTRIBUTORS
+ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL METAWEB
+ * TECHNOLOGIES OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ */</pre>
+ 
+ <h2>Dependencies Licenses</h2>
+
+<pre class="license">licenses/apache2.0.LICENSE.txt
+    ant (package org.apache.tools.tar)
+    bzip2 (package org.apache.tools.bzip2)
+    calendar-parser (package com.metaweb.gridworks.expr.util)
+    commons-lang
+    commons-codec
+    jackson
+    jdatapath
+    jetty
+    jetty-util
+    log4j
+    poi
+    poi-ooxml
+    poi-ooxml-schemas
+    servlet-api
+    xmlbeans
+ 
+licenses/secondstring.LICENSE.txt (BSD family)
+    secondstring
+
+licenses/dom4j.LICENSE.txt (BSD family)
+    dom4j
+    
+licenses/simile.LICENSE.txt (BSD family)
+    vicino (package edu.mit.simile.vicino)
+
+licenses/arithcode.LICENSE.txt (BSD family)
+    arithcode
+       
+licenses/icu4j.LICENSE.txt (MIT family)
+    icu4j
+   
+licenses/slf4j.LICENSE.txt (MIT family)
+    slf4j-api
+    slf4j-log4j12
+    jcl-over-slf4j
+
+licenses/json.LICENSE.txt (MIT family)    
+    json
+    
+licenses/cos.LICENSE.txt
+    cos
+    
+Flag icon, free for commercial reuse
+    http://pixel-mixer.com/category/free-icons/</pre>
+        
+            <h2>Credits</h2>
+            <ul class="credit-entries">
+                <li><a href="http://www.freebase.com/view/en/david_francois_huynh">David Huynh</a>, Metaweb Technologies, Inc.</li>
+                <li><a href="http://www.freebase.com/view/en/stefano_mazzocchi">Stefano Mazzocchi</a>, Metaweb Technologies, Inc.</li>
+                <li><a href="http://www.freebase.com/view/en/vishal_talwar">Vishal Talwar</a>, Metaweb Technologies, Inc.</li>
+                <li><a href="http://www.freebase.com/view/en/will_moffat">Will Moffat</a>, Metaweb Technologies, Inc.</li>
+                <li><a href="http://www.freebase.com/view/en/jeff_fry">Jeff Fry</a>, Metaweb Technologies, Inc.</li>
+                <li><a href="http://www.freebase.com/view/en/james_home">James Home</a>, Metaweb Technologies, Inc.</li>
+            </ul>
+
+            <h2>Special Thanks</h2>
+            <ul class="credit-entries">
+                <li><a href="http://www.paolociccarese.info/">Paolo Ciccarese</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="footer">
+        <a href="about.html">About Freebase Gridworks</a>
+        &bull; 
+        &copy; 2010 <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>
+    </div>
+</body>
+</html>
