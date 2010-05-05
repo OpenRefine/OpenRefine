@@ -24,7 +24,7 @@ public class Slice implements Function {
                             ExpressionUtils.toObjectList(v).size();
                     
                     int start = ((Number) from).intValue();
-                    int end = (to != null && to instanceof Number) ? ((Number) to).intValue() : length;
+                    int end = (to != null) ? ((Number) to).intValue() : length;
                                 
                     if (start < 0) {
                         start = length + start;
@@ -54,7 +54,7 @@ public class Slice implements Function {
                     }
                     start = Math.min(s.length(), Math.max(0, start));
                     
-                    if (to != null && to instanceof Number) {
+                    if (to != null) {
                         int end = ((Number) to).intValue();
                         if (end < 0) {
                             end = s.length() + end;

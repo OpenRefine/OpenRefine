@@ -216,7 +216,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     }
 
     protected class ColumnSplitRowVisitor implements RowVisitor {
-        Project project;
+
         int cellIndex;
         List<String> columnNames;
         List<Integer> rowIndices;
@@ -231,7 +231,6 @@ public class ColumnSplitOperation extends EngineDependentOperation {
             List<Integer> rowIndices,
             List<List<Serializable>> tuples
         ) {
-            this.project = project;
             this.cellIndex = cellIndex;
             this.columnNames = columnNames;
             this.rowIndices = rowIndices;

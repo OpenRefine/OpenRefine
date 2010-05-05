@@ -78,9 +78,9 @@ public class GridworksServlet extends HttpServlet {
     static final protected Map<String, Command> _commands = new HashMap<String, Command>();
     
     // timer for periodically saving projects
-    static protected Timer _timer;
+    static private Timer _timer;
 
-    final Logger logger = LoggerFactory.getLogger("servlet");
+    final static Logger logger = LoggerFactory.getLogger("servlet");
     
     static {
         _commands.put("create-project-from-upload", new CreateProjectCommand());

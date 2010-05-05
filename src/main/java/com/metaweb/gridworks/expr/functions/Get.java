@@ -42,7 +42,7 @@ public class Get implements Function {
                                         ((Object[]) v)[start] :
                                         ExpressionUtils.toObjectList(v).get(start));
                             } else {
-                                int end = (to != null && to instanceof Number) ? ((Number) to).intValue() : length;
+                                int end = (to != null) ? ((Number) to).intValue() : length;
                                             
                                 if (end < 0) {
                                     end = length + end;
@@ -70,7 +70,7 @@ public class Get implements Function {
                             }
                             start = Math.min(s.length(), Math.max(0, start));
                             
-                            if (to != null && to instanceof Number) {
+                            if (to != null) {
                                 int end = ((Number) to).intValue();
                                 if (end < 0) {
                                     end = s.length() + end;

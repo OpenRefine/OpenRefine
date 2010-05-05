@@ -463,6 +463,8 @@ public class ProjectManager {
         _projectsMetadata.clear();
         _expressions.clear();
         
+        boolean found = false;
+        
         if (file.exists() || file.canRead()) {
             FileReader reader = null;
             try {
@@ -482,7 +484,7 @@ public class ProjectManager {
                 }
                 
                 JSONUtilities.getStringList(obj, "expressions", _expressions);
-                return true;
+                found = true;
             } catch (JSONException e) {
                 logger.warn("Error reading file", e);
             } catch (IOException e) {
@@ -496,6 +498,6 @@ public class ProjectManager {
             }
         }
         
-        return false;
+        return found;
     }
 }

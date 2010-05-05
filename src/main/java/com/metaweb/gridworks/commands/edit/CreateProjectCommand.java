@@ -181,7 +181,8 @@ public class CreateProjectCommand extends Command {
             // better than nothing
             HashMap<String,Integer> ext_map = new HashMap<String,Integer>();
 
-            InputStream is = getStream(fileName, new FileInputStream(file));
+            FileInputStream fis = new FileInputStream(file);
+            InputStream is = getStream(fileName, fis);
             
             // NOTE(SM): unfortunately, java.io does not provide any generalized class for 
             // archive-like input streams so while both TarInputStream and ZipInputStream 
@@ -209,6 +210,7 @@ public class CreateProjectCommand extends Command {
             } finally {
                 try {
                     is.close();
+                    fis.close();
                 } catch (IOException e) {}
             }
 

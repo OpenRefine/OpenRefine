@@ -19,7 +19,6 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
 
     int col_x;
     int col_y;
-    int size;
     int dim_x;
     int dim_y;
     int rotation;
@@ -32,8 +31,6 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
     double min_y;
     double max_y;
     
-    Color color; 
-           
     BufferedImage image;
     Graphics2D g2;
     
@@ -47,9 +44,7 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
         this.min_y = min_y;
         this.max_x = max_x;
         this.max_y = max_y;
-        this.size = size; 
         this.dot = dot;
-        this.color = color;
         this.dim_x = dim_x;
         this.dim_y = dim_y;
         this.rotation = rotation;
