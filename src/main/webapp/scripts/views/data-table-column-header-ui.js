@@ -1044,7 +1044,7 @@ DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
             
             var s = bodyElmts.maxColumnsInput[0].value;
             if (s) {
-                var n = parseInt(s);
+                var n = parseInt(s,10);
                 if (!isNaN(n)) {
                     config.maxColumns = n;
                 }
@@ -1061,7 +1061,7 @@ DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
             var lengths = [];
             $.each(a, function(i,n) { if (typeof n == "number") lengths.push(n); });
             
-            if (lengths.length == 0) {
+            if (lengths.length === 0) {
                 alert("No field length is specified.");
                 return;
             }

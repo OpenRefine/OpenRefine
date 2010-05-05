@@ -135,11 +135,11 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
         type: '/type/property'
     };
     if ("reconConfig" in this._column && "type" in this._column.reconConfig) {
-        suggestConfig.schema = this._column.reconConfig.type.id
+        suggestConfig.schema = this._column.reconConfig.type.id;
     }
     
     this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-        var expected = data["expected_type"];
+        var expected = data.expected_type;
         self._addProperty({
             id : data.id,
             name: data.name,
@@ -370,7 +370,7 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
                 o = o[0];
             }
             if (!$.isPlainObject(o)) {
-                alert("The JSON you enter must be an object, that is, it is of this form { ... }.")
+                alert("The JSON you enter must be an object, that is, it is of this form { ... }.");
                 return;
             }
             

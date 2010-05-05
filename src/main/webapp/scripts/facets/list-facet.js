@@ -289,7 +289,7 @@ ListFacet.prototype._update = function(resetScroll) {
     this._elmts.bodyInnerDiv[0].scrollTop = scrollTop;
     
     var getChoice = function(elmt) {
-        var index = parseInt(elmt.attr("choiceIndex"));
+        var index = parseInt(elmt.attr("choiceIndex"),10);
         if (index == -1) {
             return self._blankChoice;
         } else if (index == -2) {
@@ -356,7 +356,7 @@ ListFacet.prototype._update = function(resetScroll) {
                 select(choice);
             }
         });
-    }
+    };
     window.setTimeout(wireEvents, 100);
 };
 
@@ -414,7 +414,7 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
         } else if (choice === self._errorChoice) {
             edit.fromError = true;
         } else {
-            edit.from = [ originalContent ]
+            edit.from = [ originalContent ];
         }
         
         Gridworks.postProcess(
@@ -539,7 +539,7 @@ ListFacet.prototype._editExpression = function() {
     var self = this;
     var title = (this._config.columnName) ? 
             ("Edit Facet's Expression based on Column " + this._config.columnName) : 
-            "Edit Facet's Expression"
+            "Edit Facet's Expression";
     
     var column = Gridworks.columnNameToColumn(this._config.columnName);
     var o = DataTableView.sampleVisibleRows(column);

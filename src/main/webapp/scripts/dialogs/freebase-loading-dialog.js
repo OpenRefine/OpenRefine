@@ -183,7 +183,7 @@ FreebaseLoadingDialog.prototype._load = function() {
 
     var get_peacock_url = function(url) {
       return "http://peacock.freebaseapps.com/stats/data.labs/" + url.split("/").slice(-2).join("/");
-    }
+    };
     
     var doLoad = function() {
         var dismissBusy = DialogSystem.showBusy();
@@ -238,7 +238,7 @@ FreebaseLoadingDialog.prototype._load = function() {
     } else {
         doLoad();
     }
-}
+};
 
 FreebaseLoadingDialog.prototype._dismiss = function() {
     DialogSystem.dismissUntil(this._level - 1);

@@ -239,7 +239,7 @@ RangeFacet.prototype._addCommas = function(nStr) {
         x1 = x1.replace(rgx, '$1' + ',' + '$2');
     }
     return x1 + x2;
-}
+};
 
 RangeFacet.prototype.updateState = function(data) {
     if ("min" in data && "max" in data) {
@@ -339,7 +339,7 @@ RangeFacet.prototype._editExpression = function() {
     var self = this;
     var title = (this._config.columnName) ? 
             ("Edit Facet's Expression based on Column " + this._config.columnName) : 
-            "Edit Facet's Expression"
+            "Edit Facet's Expression";
     
     var column = Gridworks.columnNameToColumn(this._config.columnName);
     var o = DataTableView.sampleVisibleRows(column);

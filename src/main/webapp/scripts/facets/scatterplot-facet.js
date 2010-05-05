@@ -9,7 +9,7 @@ function ScatterplotFacet(div, config, options) {
 
 ScatterplotFacet.prototype.update = function() {
     this._plotAreaSelector.update();
-}
+};
 
 ScatterplotFacet.prototype.reset = function() {
     delete this._config.from_x;
@@ -45,8 +45,8 @@ ScatterplotFacet.prototype.getJSON = function() {
 };
 
 ScatterplotFacet.prototype.hasSelection = function() {
-    return  ("from_x" in this._config && this._config.from_x != 0) ||
-        ("from_y" in this._config && this._config.from_y != 0) ||
+    return  ("from_x" in this._config && this._config.from_x !== 0) ||
+        ("from_y" in this._config && this._config.from_y !== 0) ||
         ("to_x" in this._config && this._config.to_x != this._config.l) ||
         ("to_y" in this._config && this._config.to_y != this._config.l);
 };
@@ -123,7 +123,7 @@ ScatterplotFacet.prototype._initializeUI = function() {
         parent: this._elmts.plotDiv,
         fadeSpeed: 70,
         onSelectEnd: function(elmt, selection) {
-            if (selection.height == 0 || selection.width == 0) {
+            if (selection.height === 0 || selection.width === 0) {
                 self.reset();
             } else {
                 self._config.from_x = selection.x1;
@@ -198,11 +198,13 @@ ScatterplotFacet.prototype._formulateCurrentImageUrl = function() {
 
 ScatterplotFacet.prototype._formulateBaseImageUrl = function() {
     return this._formulateImageUrl({},{ color: "888888", dot : this._config.dot * 0.9 });
-}
+};
 
 ScatterplotFacet.prototype._formulateImageUrl = function(engineConfig, conf) {
     for (var p in conf) {
-        this._config[p] = conf[p];
+        if (conf.hasOwnProperty(p)) {        
+            this._config[p] = conf[p];
+        }
     }
     var params = {
         project: theProject.id,
@@ -246,7 +248,7 @@ ScatterplotFacet.prototype.changePlot = function() {
     this._elmts.plotBaseImg.attr("src", this._formulateBaseImageUrl());
     this._elmts.plotImg.attr("src", this._formulateCurrentImageUrl());
     this._updateRest();
-}
+};
 
 ScatterplotFacet.prototype.render = function() {
     if (!this._initializedUI) {

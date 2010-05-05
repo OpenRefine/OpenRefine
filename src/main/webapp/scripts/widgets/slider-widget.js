@@ -39,7 +39,7 @@ SliderWidget.prototype.update = function(min, max, step, from, to) {
         to: to
     };
     this._update();
-}
+};
 
 SliderWidget.prototype._initializeUI = function() {
     this._elmt.addClass("slider-widget");

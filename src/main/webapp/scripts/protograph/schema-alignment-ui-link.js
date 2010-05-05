@@ -131,9 +131,9 @@ SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, targetTypeI
     var params = {
         "type" : typeID
     };
-    if (targetTypeID != null) {
+    if (targetTypeID !== null) {
         params.expects = targetTypeID;
-    } else if (targetTypeName != null) {
+    } else if (targetTypeName !== null) {
         params.expects = targetTypeName;
     }
     

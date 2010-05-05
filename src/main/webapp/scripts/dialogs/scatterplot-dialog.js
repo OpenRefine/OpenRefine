@@ -61,7 +61,7 @@ ScatterplotDialog.prototype._createDialog = function() {
     
     this._elmts.plotSize.change(function() {
         try {
-            self._plot_size = parseInt($(this).val())
+            self._plot_size = parseInt($(this).val(),10);
             self._renderMatrix();
         } catch (e) {
             alert("Must be a number");
@@ -70,7 +70,7 @@ ScatterplotDialog.prototype._createDialog = function() {
 
     this._elmts.dotSize.change(function() {
         try {
-            self._dot_size = parseFloat($(this).val())
+            self._dot_size = parseFloat($(this).val(),10);
             self._renderMatrix();
         } catch (e) {
             alert("Must be a number");
@@ -98,7 +98,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
             project: theProject.id
         };
         $.getJSON("/command/get-columns-info?" + $.param(params),function(data) {
-            if (data == null || typeof data.length == 'undefined') {
+            if (data === null || typeof data.length == 'undefined') {
                 container.html("Error calling 'get-columns-info'");
                 return;
             }
@@ -151,7 +151,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                 table += '<tr>';
                 var div_class = "column_header";
                 if (columns[i].name == self._column) div_class += " current_column";
-                table += '<td class="' + div_class + '" colspan="' + (i + 1) + '">' + columns[i].name + '</td>'
+                table += '<td class="' + div_class + '" colspan="' + (i + 1) + '">' + columns[i].name + '</td>';
                 for (var j = i + 1; j < columns.length; j++) {
                     var cx = columns[i].name;
                     var cy = columns[j].name;
@@ -215,7 +215,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                 index : 0,
                 batch_size: 4,
                 images : container.find(".scatterplot img")
-            })
+            });
         });
     } else {
         container.html(

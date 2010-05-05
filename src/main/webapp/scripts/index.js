@@ -67,6 +67,17 @@ function isThereNewRelease() {
     return latestRev > thisRev;
 }
 
+function fetchProjects() {
+    $.getJSON(
+        "/command/get-all-project-metadata",
+        null,
+        function(data) {
+            renderProjects(data);
+        },
+        "json"
+    );
+}
+
 function renderProjects(data) {
     var projects = [];
     for (var n in data.projects) {
@@ -136,17 +147,6 @@ function renderProjects(data) {
             renderProject(projects[i]);
         }
     }
-}
-
-function fetchProjects() {
-    $.getJSON(
-        "/command/get-all-project-metadata",
-        null,
-        function(data) {
-            renderProjects(data);
-        },
-        "json"
-    );
 }
 
 function showHide(toHide, toShow) {

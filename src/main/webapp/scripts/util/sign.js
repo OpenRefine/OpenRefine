@@ -5,16 +5,16 @@
         
         if (typeof(window.innerWidth) == 'number') {
           // Non-IE
-          position['width'] = window.outerWidth;
-          position['height'] = window.outerHeight;
-          position['top'] = window.screenY;
-          position['left'] = window.screenX;
+          position.width = window.outerWidth;
+          position.height = window.outerHeight;
+          position.top = window.screenY;
+          position.left = window.screenX;
         } else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
           // IE 6+ in 'standards compliant mode'
-          position['width'] = document.body.clientWidth;
-          position['height'] = document.body.clientHeight;
-          position['top'] = window.screenTop;
-          position['left'] = window.screenLeft;
+          position.width = document.body.clientWidth;
+          position.height = document.body.clientHeight;
+          position.top = window.screenTop;
+          position.left = window.screenLeft;
         }
         
         return position;
@@ -25,8 +25,8 @@
         height = height || 500;
         
         var pos = window.Sign.window_position();
-        var left = Math.floor((pos['width']-width)/2) + pos['left'];
-        var top = Math.floor((pos['height']-height)/2) + pos['top'];
+        var left = Math.floor((pos.width - width) / 2) + pos.left;
+        var top = Math.floor((pos.height - height) / 2) + pos.top;
         
         // Chrome might fix this bug, but until then add some padding
         //  to the height of the popup for the urlbar 
@@ -51,7 +51,9 @@
         
         var params_list = [];
         for (var key in params) {
-          params_list.push(key + "=" + params[key]);
+          if (params.hasOwnProperty(key)) {            
+            params_list.push(key + "=" + params[key]);
+          }
         }
                 
         return window.open(url, windowname || "", params_list.join(","));

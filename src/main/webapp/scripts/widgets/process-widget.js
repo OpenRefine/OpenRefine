@@ -62,7 +62,7 @@ ProcessWidget.prototype.showUndo = function(historyEntry) {
         '<div class="process-panel-inner"><div class="process-panel-undo">' +
             '<a href="javascript:{}" bind="undo">Undo</a> <span bind="description"></span>' +
         '</div><div style="text-align: right; padding-right: 1em;"><a href="javascript:{}" bind="close">close</a></div></div>'
-    ).slideDown().delay(5000).slideUp(); ;
+    ).slideDown().delay(5000).slideUp();
     var elmts = DOM.bind(this._div);
         
     elmts.description.text(historyEntry.description);

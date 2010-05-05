@@ -104,7 +104,7 @@ DataTableCellUI.prototype._render = function() {
                         if (candidate.score < 1) {
                             score = Math.round(candidate.score * 1000) / 1000;
                         } else {
-                            score = Math.round(candidate.score)
+                            score = Math.round(candidate.score);
                         }
                         $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(li);
                     };
@@ -311,7 +311,7 @@ DataTableCellUI.topicBlockParams = {
     "mode" : "content",
     "blocks" : JSON.stringify([
         {
-            "block" : "full_info",
+            "block" : "full_info"
         },
         {
             "block" : "article_props"

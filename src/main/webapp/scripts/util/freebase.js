@@ -8,12 +8,14 @@ Freebase.mqlread = function(query, options, onDone) {
     
     if (options) {
         for (var n in options) {
-            var v = options[n];
-            if (typeof v != "string") {
-                v = JSON.stringify(v);
+            if (options.hasOwnProperty(n)) {
+                var v = options[n];
+                if (typeof v != "string") {
+                    v = JSON.stringify(v);
+                }
+                
+                queryEnv[n] = v;
             }
-            
-            queryEnv[n] = v;
         }
     }
     

@@ -318,13 +318,15 @@ Gridworks.columnNameToColumn = function(columnName) {
 
 Gridworks.preparePool = function(pool) {
     for (var id in pool.recons) {
-        var recon = pool.recons[id];
-        if (recon.m) {
-            recon.m = pool.reconCandidates[recon.m];
-        }
-        if (recon.c) {
-            for (var j = 0; j < recon.c.length; j++) {
-                recon.c[j] = pool.reconCandidates[recon.c[j]];
+        if (pool.recons.hasOwnProperty(id)) {        
+            var recon = pool.recons[id];
+            if (recon.m) {
+                recon.m = pool.reconCandidates[recon.m];
+            }
+            if (recon.c) {
+                for (var j = 0; j < recon.c.length; j++) {
+                    recon.c[j] = pool.reconCandidates[recon.c[j]];
+                }
             }
         }
     }
