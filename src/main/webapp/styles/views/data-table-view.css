@@ -222,9 +222,11 @@ a.data-table-flag-off, a.data-table-flag-on:hover {
 }
 
 .data-table-cell-editor {
-    border: 1px solid #ccc;
+    border: 1px solid #aaa;
     padding: 5px;
-    background: #fffee0;
+    background: #DBE8EB;
+    -moz-border-radiust: 5px;
+    -webkit-border-radius: 5px;
 }
 table.data-table-cell-editor-layout {
     white-space: pre;
@@ -235,6 +237,7 @@ textarea.data-table-cell-editor-editor {
     width: 96%;
     padding: 2%;
     height: 3em;
+    font-family: monospace;
 }
 
 span.data-table-cell-editor-key {
