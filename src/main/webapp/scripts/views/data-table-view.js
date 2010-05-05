@@ -162,7 +162,7 @@ DataTableView.prototype._renderDataTable = function(table) {
                 var td = tr.insertCell(tr.cells.length);
                 if (foundGroup) {
                     td.setAttribute("colspan", columnGroup.columnSpan);
-                    td.style.background = "blue";
+                    td.style.background = "#FF6A00";
                     
                     if (columnGroup.keyColumnIndex >= 0) {
                         keys.push(columnGroup.keyColumnIndex);
