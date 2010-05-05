@@ -46,8 +46,9 @@ var test_basic_functions = new function () {
     this.test_wait_for_value = {method: "waits.forElement", params: { jquery: '("td:contains(\'value.split\')")[0]'} };
     this.test_click_button = function () { wm.actions.click( { jquery: '("button:contains(\'OK\')")[0]'} ); };
     this.test_wait_for_link = {method: "waits.forElement", params: { jquery: '(".ui-button-text:contains(\'count\')")[0]'} };
-    this.test_sort_worked= function () { asserts.gw.expected_top_value("SPAGHETTIOS"); };
+    this.test_facet_worked= function () { asserts.gw.expected_top_value("ABALONE"); };
     this.test_sort_by_count = function () { wm.actions.click( { jquery: '(".ui-button-text:contains(\'count\')")[0]'} ); };
+    this.test_wait_for_count = {method: "waits.forElement", params: { jquery: '(".ui-state-active .ui-button-text:contains(\'count\')")[0]'} };
     this.test_sort_worked= function () { asserts.gw.expected_top_value("BEEF"); };
     
 }();
