@@ -310,15 +310,11 @@ public class HeuristicReconConfig extends ReconConfig {
                 for (String typeID : candidate.typeIDs) {
                     if (this.typeID.equals(typeID)) {
                         recon.setFeature(Recon.Feature_typeMatch, true);
-                        if (autoMatch && candidate.score >= 100) {
-                            if (count == 1 || 
-                                candidate.score / recon.candidates.get(1).score >= 1.5) {
-                                
-                                recon.match = candidate;
-                                recon.matchRank = 0;
-                                recon.judgment = Judgment.Matched;
-                                recon.judgmentAction = "auto";
-                            }
+                        if (autoMatch && candidate.score >= 100 && (count == 1 || candidate.score / recon.candidates.get(1).score >= 1.5)) {
+                            recon.match = candidate;
+                            recon.matchRank = 0;
+                            recon.judgment = Judgment.Matched;
+                            recon.judgmentAction = "auto";
                         }
                         break;
                     }

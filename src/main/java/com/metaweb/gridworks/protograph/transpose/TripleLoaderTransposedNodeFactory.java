@@ -82,8 +82,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                     JSONObject.quote((String) object) : object.toString();
                     
             StringBuffer sb = new StringBuffer();
-            sb.append("{ \"s\" : \""); sb.append(subject); sb.append("\"");
-            sb.append(", \"p\" : \""); sb.append(predicate); sb.append("\"");
+            sb.append("{ \"s\" : \""); sb.append(subject); sb.append('"');
+            sb.append(", \"p\" : \""); sb.append(predicate); sb.append('"');
             sb.append(", \"o\" : "); sb.append(s);
             if (subjectCell != null || objectCell != null) {
                 sb.append(", \"meta\" : { ");
@@ -114,8 +114,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                     JSONObject.quote((String) object) : object.toString();
                     
             StringBuffer sb = new StringBuffer();
-            sb.append("{ \"s\" : \""); sb.append(subject); sb.append("\"");
-            sb.append(", \"p\" : \""); sb.append(predicate); sb.append("\"");
+            sb.append("{ \"s\" : \""); sb.append(subject); sb.append('"');
+            sb.append(", \"p\" : \""); sb.append(predicate); sb.append('"');
             sb.append(", \"o\" : "); sb.append(s);
             sb.append(", \"lang\" : "); sb.append(lang);
                     

@@ -137,11 +137,9 @@ public class Cell implements HasFields, Jsonizable {
             }
         }
         
-        if (value != null) {
-            if (type != null) {
-                if ("date".equals(type)) {
-                    value = ParsingUtilities.stringToDate((String) value); 
-                }
+        if (value != null && type != null) {
+            if ("date".equals(type)) {
+                value = ParsingUtilities.stringToDate((String) value); 
             }
             return new Cell(value, recon);
         } else {

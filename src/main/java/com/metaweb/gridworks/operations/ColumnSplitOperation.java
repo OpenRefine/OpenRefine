@@ -153,7 +153,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         FilteredRows filteredRows = engine.getAllFilteredRows(false);
         RowVisitor rowVisitor;
         if ("lengths".equals(_mode)) {
-            rowVisitor = new ColumnSplitRowVisitor(project, column.getCellIndex(), columnNames, rowIndices, tuples) {
+            rowVisitor = new ColumnSplitRowVisitor(column.getCellIndex(), columnNames, rowIndices, tuples) {
                 protected java.util.List<Serializable> split(String s) {
                     List<Serializable> results = new ArrayList<Serializable>(_fieldLengths.length + 1);
                     
@@ -174,7 +174,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         } else if (_regex) {
             Pattern pattern = Pattern.compile(_separator);
             
-            rowVisitor = new ColumnSplitRowVisitor(project, column.getCellIndex(), columnNames, rowIndices, tuples) {
+            rowVisitor = new ColumnSplitRowVisitor(column.getCellIndex(), columnNames, rowIndices, tuples) {
                 Pattern _pattern;
                 
                 protected java.util.List<Serializable> split(String s) {
@@ -187,7 +187,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
                 }
             }.init(pattern);
         } else {
-            rowVisitor = new ColumnSplitRowVisitor(project, column.getCellIndex(), columnNames, rowIndices, tuples) {
+            rowVisitor = new ColumnSplitRowVisitor(column.getCellIndex(), columnNames, rowIndices, tuples) {
                 protected java.util.List<Serializable> split(String s) {
                     return stringArrayToValueList(
                             StringUtils.splitByWholeSeparatorPreserveAllTokens(s, _separator, _maxColumns));
@@ -225,7 +225,6 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         int columnNameIndex = 1;
         
         ColumnSplitRowVisitor(
-            Project project,
             int cellIndex,
             List<String> columnNames,
             List<Integer> rowIndices,
