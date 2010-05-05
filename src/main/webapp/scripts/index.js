@@ -99,38 +99,16 @@ function renderProjects(data) {
     } else {
         var table = $(
             '<table><tr>' +
-                '<th></th>' +
                 '<th>Name</th>' +
                 '<th align="right">Last Modified</th>' +
+                '<th></th>' +
             '</tr></table>'
         ).appendTo(container)[0];
         
         var renderProject = function(project) {
             var tr = table.insertRow(table.rows.length);
             tr.className = "project";
-            
-            $('<a></a>')
-                .addClass("delete-project")
-                .attr("title","Delete this project")
-                .attr("href","")
-                .html("<img src='/images/close.png' />")
-                .click(function() {
-                    if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
-                        $.ajax({
-                            type: "POST",
-                            url: "/command/delete-project",
-                            data: { "project" : project.id },
-                            dataType: "json",
-                            success: function (data) {
-                                if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                                    fetchProjects();
-                                }
-                            }
-                        });                    
-                    }
-                    return false;
-                }).appendTo(tr.insertCell(tr.cells.length));
-                
+                            
             $('<a></a>')
                 .text(project.name)
                 .attr("href", "/project.html?project=" + project.id)
@@ -140,6 +118,28 @@ function renderProjects(data) {
                 .html(formatDate(project.date))
                 .addClass("last-modified")
                 .appendTo(tr.insertCell(tr.cells.length));
+            
+            $('<a></a>')
+            .addClass("delete-project")
+            .attr("title","Delete this project")
+            .attr("href","")
+            .html("<img src='/images/close.png' />")
+            .click(function() {
+                if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/command/delete-project",
+                        data: { "project" : project.id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                                fetchProjects();
+                            }
+                        }
+                    });                    
+                }
+                return false;
+            }).appendTo(tr.insertCell(tr.cells.length));
             
         };
     
