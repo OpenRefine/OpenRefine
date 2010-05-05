@@ -105,14 +105,14 @@ SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
         var outgoing = [];
         var incoming = [];
         
-        function onDone(properties) {
+        var onDone = function(properties) {
             dismissBusy();
             
             self._showPropertySuggestPopup(
                 elmt, 
                 properties
             );
-        }
+        };
         
         SchemaAlignmentDialog.UILink._getPropertiesOfType(
             sourceTypeID,
@@ -195,12 +195,12 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     if (suggestions.length > 0) {
         divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search2").html('<div>Search for a property or pick one below</div>').appendTo(menu);
         
-        function createSuggestion(suggestion) {
+        var createSuggestion = function(suggestion) {
             var menuItem = MenuSystem.createMenuItem().appendTo(menu);
             menuItem.html(suggestion.id).click(function() {
                 commitProperty(suggestion);
             });
-        }
+        };
         
         for (var i = 0; i < suggestions.length; i++) {
             createSuggestion(suggestions[i]);
