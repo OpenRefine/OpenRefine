@@ -32,6 +32,10 @@ public class Engine implements Jsonizable {
         _project  = project;
     }
     
+    public FilteredRows getAllRows() {
+        return new ConjunctiveFilteredRows(false, false);
+    }
+    
     public FilteredRows getAllFilteredRows(boolean includeContextual) {
         return getFilteredRows(null, includeContextual);
     }

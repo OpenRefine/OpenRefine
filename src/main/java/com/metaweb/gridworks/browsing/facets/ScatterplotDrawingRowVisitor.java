@@ -80,6 +80,11 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
         }
     }
     
+    public void setColor(Color color) {
+        g2.setColor(color);
+        g2.setPaint(color);
+    }
+    
     public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
         Cell cellx = row.getCell(col_x);
         Cell celly = row.getCell(col_y);

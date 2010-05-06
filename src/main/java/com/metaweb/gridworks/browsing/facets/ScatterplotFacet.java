@@ -86,6 +86,7 @@ public class ScatterplotFacet implements Facet {
     public static final String NAME = "name";
     public static final String IMAGE = "image";
     public static final String COLOR = "color";
+    public static final String BASE_COLOR = "base_color";
     public static final String SIZE = "l";
     public static final String ROTATION = "r";
     public static final String DOT = "dot";

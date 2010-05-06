@@ -83,7 +83,10 @@ public class GetScatterplotCommand extends Command {
         int rotation = (o.has(ScatterplotFacet.ROTATION)) ? ScatterplotFacet.getRotation(o.getString(ScatterplotFacet.ROTATION)) : ScatterplotFacet.NO_ROTATION;
         
         String color_str = (o.has(ScatterplotFacet.COLOR)) ? o.getString(ScatterplotFacet.COLOR) : "000000";
-        Color color = new Color(Integer.parseInt(color_str,16));            
+        Color color = new Color(Integer.parseInt(color_str,16));
+        
+        String base_color_str = (o.has(ScatterplotFacet.BASE_COLOR)) ? o.getString(ScatterplotFacet.BASE_COLOR) : null;
+        Color base_color = base_color_str != null ? new Color(Integer.parseInt(base_color_str,16)) : null;
         
         String columnName_x = o.getString(ScatterplotFacet.X_COLUMN_NAME);
         String expression_x = (o.has(ScatterplotFacet.X_EXPRESSION)) ? o.getString(ScatterplotFacet.X_EXPRESSION) : "value";
@@ -144,12 +147,24 @@ public class GetScatterplotCommand extends Command {
         
         if (index_x != null && index_y != null && index_x.isNumeric() && index_y.isNumeric()) {
             ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
-                    columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                    size, dim_x, dim_y, rotation, dot, color
-                  );
-            FilteredRows filteredRows = engine.getAllFilteredRows(false);
-            filteredRows.accept(project, drawer);
-        
+                columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
+                size, dim_x, dim_y, rotation, dot, color
+            );
+            
+        	if (base_color != null) {
+        		drawer.setColor(base_color);
+        		
+                FilteredRows filteredRows = engine.getAllRows();
+                filteredRows.accept(project, drawer);
+                
+        		drawer.setColor(color);
+        	}
+        	
+        	{
+	            FilteredRows filteredRows = engine.getAllFilteredRows(false);
+	            filteredRows.accept(project, drawer);
+        	}
+        	
             ImageIO.write(drawer.getImage(), "png", output);
         } else {
             ImageIO.write(new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR), "png", output);

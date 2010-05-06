@@ -94,6 +94,7 @@ ScatterplotFacet.prototype._initializeUI = function() {
                             '<input type="radio" id="' + facet_id + '-dot-regular" name="' + facet_id + '-dot" value="regular"/><label class="dot-regular-label" for="' + facet_id + '-dot-regular" title="Regular Dot Size">&nbsp;</label>' +
                             '<input type="radio" id="' + facet_id + '-dot-big"     name="' + facet_id + '-dot" value="big"/><label class="dot-big-label" for="' + facet_id + '-dot-big" title="Big Dot Size">&nbsp;</label>' +
                         '</div>' +
+                        '<div><a bind="exportPlotLink" class="action" target="_blank">export plot</a></div>' +
                     '</div>' +
                 '</td>' + 
             '</tr></table>' +
@@ -218,16 +219,26 @@ ScatterplotFacet.prototype._formulateBaseImageUrl = function() {
     return this._formulateImageUrl({},{ color: "888888", dot : this._config.dot * 0.9 });
 };
 
+ScatterplotFacet.prototype._formulateExportImageUrl = function() {
+    return this._formulateImageUrl(ui.browsingEngine.getJSON(false, this), { dot : this._config.dot * 5, l: 500, base_color: "888888" });
+};
+
 ScatterplotFacet.prototype._formulateImageUrl = function(engineConfig, conf) {
+    var options = {};
+    for (var p in this._config) {
+        if (this._config.hasOwnProperty(p)) {        
+            options[p] = this._config[p];
+        }
+    }
     for (var p in conf) {
         if (conf.hasOwnProperty(p)) {        
-            this._config[p] = conf[p];
+            options[p] = conf[p];
         }
     }
     var params = {
         project: theProject.id,
         engine: JSON.stringify(engineConfig), 
-        plotter: JSON.stringify(this._config) 
+        plotter: JSON.stringify(options) 
     };
     return "/command/get-scatterplot?" + $.param(params);
 };
@@ -276,6 +287,7 @@ ScatterplotFacet.prototype.updateState = function(data) {
 ScatterplotFacet.prototype.changePlot = function() {
     this._elmts.plotBaseImg.attr("src", this._formulateBaseImageUrl());
     this._elmts.plotImg.attr("src", this._formulateCurrentImageUrl());
+    this._elmts.exportPlotLink.attr("href", this._formulateExportImageUrl());
 };
 
 ScatterplotFacet.prototype.render = function() {
@@ -296,6 +308,7 @@ ScatterplotFacet.prototype.render = function() {
     this._elmts.statusDiv.show();
     
     this._elmts.plotImg.attr("src", this._formulateCurrentImageUrl());
+    this._elmts.exportPlotLink.attr("href", this._formulateExportImageUrl());
 };
 
 ScatterplotFacet.prototype._remove = function() {
