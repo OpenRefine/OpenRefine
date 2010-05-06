@@ -126,7 +126,7 @@ ListFacet.prototype._initializeUI = function() {
         '<div class="facet-expression" bind="expressionDiv"></div>' +
         '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
             '<table><tr>' +
-                '<td><span bind="choiceCountContainer"></span> <span bind="sortGroup">sorted by ' +
+                '<td><a bind="choiceCountContainer" class="action" href="javascript:{}"></a> <span bind="sortGroup">sorted by ' +
                     '<input bind="sortByNameLink" type="radio" id="' + facet_id + '-name-sort" name="radio" checked="checked" /><label for="' + facet_id + '-name-sort">name</label>' +
                     '<input bind="sortByCountLink" type="radio" id="' + facet_id + '-count-sort" name="radio" /><label for="' + facet_id + '-count-sort">count</label>' +
                 '</span></td>' +
@@ -148,6 +148,7 @@ ListFacet.prototype._initializeUI = function() {
     this._elmts.resetButton.click(function() { self._reset(); });
     this._elmts.invertButton.click(function() { self._invert(); });
 
+    this._elmts.choiceCountContainer.click(function() { self._copyChoices(); });
     this._elmts.sortByCountLink.click(function() {
         if (self._options.sort != "count") {
             self._options.sort = "count";
@@ -180,6 +181,42 @@ ListFacet.prototype._initializeUI = function() {
             }
         });
     }
+};
+
+ListFacet.prototype._copyChoices = function() {
+    var self = this;
+    var frame = DialogSystem.createDialog();
+    frame.width("600px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Copy Facet Choices").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    body.html('<textarea wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
+    var elmts = DOM.bind(body);
+    
+    $('<button></button>').text("Done").click(function() {
+        DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+    
+    var lines = [];
+    for (var i = 0; i < this._data.choices.length; i++) {
+        var choice = this._data.choices[i];
+        lines.push(choice.v.l + "\t" + choice.c);
+    }
+    if (this._blankChoice) {
+        lines.push("(blank)\t" + this._blankChoice.c);
+    }
+    if (this._errorChoice) {
+        lines.push("(error)\t" + this._errorChoice.c);
+    }
+    
+    var level = DialogSystem.showDialog(frame);
+    
+    var textarea = elmts.textarea[0];
+    textarea.value = lines.join("\n");
+    textarea.focus();
+    textarea.select();
 };
 
 ListFacet.prototype._update = function(resetScroll) {
