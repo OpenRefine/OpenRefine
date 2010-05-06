@@ -79,22 +79,22 @@ ScatterplotFacet.prototype._initializeUI = function() {
                     '</div>' +
                 '</td>' +
                 '<td class="facet-scatterplot-selectors-container" width="100%">' +
-                    '<div class="facet-scatterplot-selectors" bind="selectors">' +
-                        '<div class="buttonset facet-scatterplot-dim-selector">' +
+                    '<div class="scatterplot-selectors" bind="selectors">' +
+                        '<div class="buttonset scatterplot-dim-selector">' +
                             '<input type="radio" id="' + facet_id + '-dim-lin" name="' + facet_id + '-dim" value="lin"/><label class="dim-lin-label" for="' + facet_id + '-dim-lin" title="Linear Plot">lin</label>' +
                             '<input type="radio" id="' + facet_id + '-dim-log" name="' + facet_id + '-dim" value="log"/><label class="dim-log-label" for="' + facet_id + '-dim-log" title="Logarithmic Plot">log</label>' +
                         '</div>' + 
-                        '<div class="buttonset facet-scatterplot-rot-selector">' +
+                        '<div class="buttonset scatterplot-rot-selector">' +
                             '<input type="radio" id="' + facet_id + '-rot-ccw"  name="' + facet_id + '-rot" value="ccw"/><label class="rot-ccw-label" for="' + facet_id + '-rot-ccw" title="Rotated 45° Counter-Clockwise">&nbsp;</label>' +
                             '<input type="radio" id="' + facet_id + '-rot-none" name="' + facet_id + '-rot" value="none"/><label class="rot-none-label" for="' + facet_id + '-rot-none" title="No rotation">&nbsp;</label>' +
                             '<input type="radio" id="' + facet_id + '-rot-cw"   name="' + facet_id + '-rot" value="cw"/><label class="rot-cw-label" for="' + facet_id + '-rot-cw" title="Rotated 45° Clockwise">&nbsp;</label>' +
                         '</div>' +
-                        '<div class="buttonset facet-scatterplot-dot-selector">' +
+                        '<div class="buttonset scatterplot-dot-selector">' +
                             '<input type="radio" id="' + facet_id + '-dot-small"   name="' + facet_id + '-dot" value="small"/><label class="dot-small-label" for="' + facet_id + '-dot-small" title="Small Dot Size">&nbsp;</label>' +
                             '<input type="radio" id="' + facet_id + '-dot-regular" name="' + facet_id + '-dot" value="regular"/><label class="dot-regular-label" for="' + facet_id + '-dot-regular" title="Regular Dot Size">&nbsp;</label>' +
                             '<input type="radio" id="' + facet_id + '-dot-big"     name="' + facet_id + '-dot" value="big"/><label class="dot-big-label" for="' + facet_id + '-dot-big" title="Big Dot Size">&nbsp;</label>' +
                         '</div>' +
-                        '<div><a bind="exportPlotLink" class="action" target="_blank">export plot</a></div>' +
+                        '<div class="scatterplot-export-plot"><a bind="exportPlotLink" class="action" target="_blank">export plot</a></div>' +
                     '</div>' +
                 '</td>' + 
             '</tr></table>' +
@@ -154,7 +154,7 @@ ScatterplotFacet.prototype._initializeUI = function() {
         this._elmts.selectors.find("#" + facet_id + "-dot-regular").attr('checked','checked');
     }
     
-    this._elmts.selectors.find(".facet-scatterplot-dim-selector").change(function() {
+    this._elmts.selectors.find(".scatterplot-dim-selector").change(function() {
         var dim = $(this).find("input:checked").val();
         self._config.dim_x = dim;
         self._config.dim_y = dim;
@@ -163,14 +163,14 @@ ScatterplotFacet.prototype._initializeUI = function() {
         self.changePlot();
     });
 
-    this._elmts.selectors.find(".facet-scatterplot-rot-selector").change(function() {
+    this._elmts.selectors.find(".scatterplot-rot-selector").change(function() {
         self._config.r = $(this).find("input:checked").val();
         self.reset();
         self._updateRest();
         self.changePlot();        
     });
 
-    this._elmts.selectors.find(".facet-scatterplot-dot-selector").change(function() {
+    this._elmts.selectors.find(".scatterplot-dot-selector").change(function() {
         var dot_size = $(this).find("input:checked").val();
         if (dot_size == "small") {
             self._config.dot = 0.4;

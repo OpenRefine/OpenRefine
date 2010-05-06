@@ -22,24 +22,32 @@ ScatterplotDialog.prototype._createDialog = function() {
     ).appendTo(frame);
         
     var html = $(
-        '<div class="grid-layout layout-normal"><table width="100%">' +
+        '<div class="grid-layout layout-normal"><table width="100%" class="scatterplot-selectors">' +
             '<tr>' +
-                '<td>' +
-                    '<span class="clustering-dialog-controls">Plot type: <select bind="plotSelector">' +
-                        '<option selected="true" value="lin">linear</option>' +
-                        '<option value="log">log-log</option>' +
-                    '</select></span>' +
-                    '<span class="clustering-dialog-controls">Plot Size: <input bind="plotSize" type="test" size="2" value=""> px</span>' +
-                    '<span class="clustering-dialog-controls">Dot Size: <input bind="dotSize" type="test" size="2" value=""> px</span>' +
-                    '<span class="clustering-dialog-controls">Rotation: <select bind="rotationSelector">' +
-                    '<option selected="true" value="none">none</option>' +
-                    '<option value="cw">45° clockwise</option>' +
-                    '<option value="ccw">45° counter-clockwise</option>' +
-                '</select></span>' +
+                '<td nowrap>' +
+                    '<div class="buttonset scatterplot-dim-selector" bind="plotSelector">' +
+                        '<input type="radio" id="clustering-dialog-dim-lin" name="clustering-dialog-dim" value="lin" checked="checked"/><label class="dim-lin-label" for="clustering-dialog-dim-lin" title="Linear Plot">lin</label>' +
+                        '<input type="radio" id="clustering-dialog-dim-log" name="clustering-dialog-dim" value="log"/><label class="dim-log-label" for="clustering-dialog-dim-log" title="Logarithmic Plot">log</label>' +
+                    '</div>' + 
                 '</td>' +
+                '<td nowrap>' +
+                    '<div class="buttonset scatterplot-rot-selector" bind="rotationSelector">' +
+                        '<input type="radio" id="clustering-dialog-rot-ccw"  name="clustering-dialog-rot" value="ccw"/><label class="rot-ccw-label" for="clustering-dialog-rot-ccw" title="Rotated 45° Counter-Clockwise">&nbsp;</label>' +
+                        '<input type="radio" id="clustering-dialog-rot-none" name="clustering-dialog-rot" value="none" checked="checked"/><label class="rot-none-label" for="clustering-dialog-rot-none" title="No rotation">&nbsp;</label>' +
+                        '<input type="radio" id="clustering-dialog-rot-cw"   name="clustering-dialog-rot" value="cw"/><label class="rot-cw-label" for="clustering-dialog-rot-cw" title="Rotated 45° Clockwise">&nbsp;</label>' +
+                    '</div>' +
+                '</td>' +
+                '<td nowrap>' +
+                    '<div class="buttonset scatterplot-dot-selector" bind="dotSelector">' +
+                        '<input type="radio" id="clustering-dialog-dot-small"   name="clustering-dialog-dot" value="small"/><label class="dot-small-label" for="clustering-dialog-dot-small" title="Small Dot Size">&nbsp;</label>' +
+                        '<input type="radio" id="clustering-dialog-dot-regular" name="clustering-dialog-dot" value="regular" checked="checked"/><label class="dot-regular-label" for="clustering-dialog-dot-regular" title="Regular Dot Size">&nbsp;</label>' +
+                        '<input type="radio" id="clustering-dialog-dot-big"     name="clustering-dialog-dot" value="big"/><label class="dot-big-label" for="clustering-dialog-dot-big" title="Big Dot Size">&nbsp;</label>' +
+                    '</div>' +
+                '</td>' +
+                '<td width="100%">&nbsp;</td>' +
             '</tr>' +
             '<tr>' +
-                '<td>' +
+                '<td colspan="4">' +
                     '<div bind="tableContainer" class="scatterplot-dialog-table-container"></div>' +
                 '</td>' +
             '</tr>' +
@@ -48,39 +56,33 @@ ScatterplotDialog.prototype._createDialog = function() {
     
     
     this._elmts = DOM.bind(html);
-    
-    this._elmts.plotSelector.change(function() {
-        self._plot_method = $(this).find("option:selected").attr("value");
+        
+    this._elmts.plotSelector.buttonset().change(function() {
+        self._plot_method = $(this).find("input:checked").val();
         self._renderMatrix();
     });
 
-    this._elmts.rotationSelector.change(function() {
-        self._rotation = $(this).find("option:selected").attr("value");
+    this._elmts.rotationSelector.buttonset().change(function() {
+        self._rotation = $(this).find("input:checked").val();
         self._renderMatrix();
     });
     
-    this._elmts.plotSize.change(function() {
-        try {
-            self._plot_size = parseInt($(this).val(),10);
-            self._renderMatrix();
-        } catch (e) {
-            alert("Must be a number");
+    this._elmts.dotSelector.buttonset().change(function() {
+        var dot_size = $(this).find("input:checked").val();
+        if (dot_size == "small") {
+            self._dot_size = 0.4;
+        } else if (dot_size == "big") {
+            self._dot_size = 1.4;
+        } else {
+            self._dot_size = 0.8;
         }
-    });
-
-    this._elmts.dotSize.change(function() {
-        try {
-            self._dot_size = parseFloat($(this).val(),10);
-            self._renderMatrix();
-        } catch (e) {
-            alert("Must be a number");
-        }
+        self._renderMatrix();
     });
     
     var left_footer = footer.find(".left");    
+    $('<button></button>').text("cancel").click(function() { self._dismiss(); }).appendTo(left_footer);
     
     var right_footer = footer.find(".right");    
-    $('<button></button>').text("Done").click(function() { self._dismiss(); }).appendTo(right_footer);
     
     this._level = DialogSystem.showDialog(frame);
     this._renderMatrix();
@@ -113,8 +115,6 @@ ScatterplotDialog.prototype._renderMatrix = function() {
             if (typeof self._plot_size == 'undefined') {
                 self._plot_size = Math.max(Math.floor(500 / columns.length / 5) * 5,20);
                 self._dot_size = 0.8;
-                self._elmts.plotSize.val(self._plot_size);                
-                self._elmts.dotSize.val(self._dot_size);                
             }
             
             var table = '<table class="scatterplot-matrix-table"><tbody>';
@@ -183,7 +183,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                     'r': self._rotation
                 };
                 ui.browsingEngine.addFacet("scatterplot", options);
-                //self._dismiss();
+                self._dismiss();
             });
 
             var load_images = function(data) {

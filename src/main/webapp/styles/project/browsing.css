@@ -221,20 +221,29 @@ img.facet-choice-link {
     vertical-align: middle;
 }
 
-.facet-scatterplot-body .ui-button-text-only .ui-button-text {
+.facet-scatterplot-selectors-container .scatterplot-selectors {
+    text-align: center;
+}
+
+.facet-scatterplot-selectors-container .scatterplot-export-plot {
+	font-size: 95%;
+	margin-top: 3em;
+}
+
+.facet-scatterplot-selectors-container .scatterplot-selectors .buttonset {
+    margin: 0.8em 0em;
+}
+
+.scatterplot-selectors .ui-button-text-only .ui-button-text {
     font-size: 90%;
     padding: 0.0em 0.4em 0.1em 0.3em;
 }
 
-.facet-scatterplot-selectors {
-    text-align: center;
+.scatterplot-selectors .buttonset {
+	margin: 0px;
 }
 
-.facet-scatterplot-selectors .buttonset {
-    margin: 0.8em 0em;
-}
-
-.facet-scatterplot-selectors .buttonset .ui-corner-top { 
+.scatterplot-selectors .buttonset .ui-corner-top { 
     -moz-border-radius-topleft: 0.5em; 
     -webkit-border-top-left-radius: 0.5em; 
     border-top-left-radius: 0.5em; 
@@ -243,7 +252,7 @@ img.facet-choice-link {
     border-top-right-radius: 0.5em; 
 }
 
-.facet-scatterplot-selectors .buttonset .ui-corner-bottom { 
+.scatterplot-selectors .buttonset .ui-corner-bottom { 
     -moz-border-radius-bottomleft: 0.5em; 
     -webkit-border-bottom-left-radius: 0.5em; 
     border-bottom-left-radius: 0.5em; 
@@ -252,7 +261,7 @@ img.facet-choice-link {
     border-bottom-right-radius: 0.5em; 
 }
 
-.facet-scatterplot-selectors .buttonset .ui-corner-right { 
+.scatterplot-selectors .buttonset .ui-corner-right { 
     -moz-border-radius-topright: 0.5em; 
     -webkit-border-top-right-radius: 0.5em; 
     border-top-right-radius: 0.5em; 
@@ -261,7 +270,7 @@ img.facet-choice-link {
     border-bottom-right-radius: 0.5em; 
 }
 
-.facet-scatterplot-selectors .buttonset .ui-corner-left { 
+.scatterplot-selectors .buttonset .ui-corner-left { 
     -moz-border-radius-topleft: 0.5em; 
     -webkit-border-top-left-radius: 0.5em; 
     border-top-left-radius: 0.5em; 
@@ -270,43 +279,43 @@ img.facet-choice-link {
     border-bottom-left-radius: 0.5em; 
 }
 
-.facet-scatterplot-selectors .facet-scatterplot-dim-selector label {
+.scatterplot-selectors .scatterplot-dim-selector label {
     width: 32px;
     height: 16px;
 }
-    
-.facet-scatterplot-selectors .facet-scatterplot-rot-selector label {
+
+.scatterplot-selectors .scatterplot-rot-selector label {
     width: 22px;
     height: 18px;
     background-image: url("../../images/scatterplot-icons.png");
 }
     
-.facet-scatterplot-selectors .facet-scatterplot-rot-selector label.rot-ccw-label {
+.scatterplot-selectors .scatterplot-rot-selector label.rot-ccw-label {
     background-position: -5px -5px;
 }
 
-.facet-scatterplot-selectors .facet-scatterplot-rot-selector label.rot-none-label {
+.scatterplot-selectors .scatterplot-rot-selector label.rot-none-label {
     background-position: -28px -4px;
 }
 
-.facet-scatterplot-selectors .facet-scatterplot-rot-selector label.rot-cw-label {
+.scatterplot-selectors .scatterplot-rot-selector label.rot-cw-label {
     background-position: -48px -3px;
 }
 
-.facet-scatterplot-selectors .facet-scatterplot-dot-selector label {
+.scatterplot-selectors .scatterplot-dot-selector label {
     width: 22px;
     height: 18px;
     background-image: url("../../images/scatterplot-icons.png");
 }
 
-.facet-scatterplot-selectors .facet-scatterplot-dot-selector label.dot-small-label {
+.scatterplot-selectors .scatterplot-dot-selector label.dot-small-label {
     background-position: -5px -25px;
 }
 
-.facet-scatterplot-selectors .facet-scatterplot-dot-selector label.dot-regular-label {
+.scatterplot-selectors .scatterplot-dot-selector label.dot-regular-label {
     background-position: -27px -25px;
 }
 
-.facet-scatterplot-selectors .facet-scatterplot-dot-selector label.dot-big-label {
+.scatterplot-selectors .scatterplot-dot-selector label.dot-big-label {
     background-position: -48px -25px;
 }
