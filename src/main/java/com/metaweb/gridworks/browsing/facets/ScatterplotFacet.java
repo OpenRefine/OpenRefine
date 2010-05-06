@@ -373,7 +373,7 @@ public class ScatterplotFacet implements Facet {
         double relative_x = x - min_x;
         double range_x = max_x - min_x;
         if (dim_x == ScatterplotFacet.LOG) {
-            x = Math.log10(relative_x) * l / Math.log10(range_x);
+            x = Math.log10(relative_x + 1) * l / Math.log10(range_x + 1);
         } else {
             x = relative_x * l / range_x;
         }
@@ -381,7 +381,7 @@ public class ScatterplotFacet implements Facet {
         double relative_y = y - min_y;
         double range_y = max_y - min_y;
         if (dim_y == ScatterplotFacet.LOG) {
-            y = Math.log10(relative_y) * l / Math.log10(range_y);
+            y = Math.log10(relative_y + 1) * l / Math.log10(range_y + 1);
         } else {
             y = relative_y * l / range_y;
         }
