@@ -52,7 +52,7 @@ li.fbs-selected .fbs-item-name{border-color:#f60;background:#fff;}
 .fbs-suggestnew-button{color:#444444;}
 ul.fbs-list,.fbs-flyout-content,.fbs-attribution,.fbs-header{border:1px solid #dae3e9;}
 .fbs-header{border-bottom:0;}
-li.fbs-item{border-bottom:1px solid #dae3e9;}
+li.fbs-item{border-bottom:1px solid #dae3e9;list-style-type:none;}
 .fbs-attribution{border-top:0;}
 .fbs-pane,.fbs-flyout-pane{font-size:16px;font-family:Helvetica Neue, Arial, Helvetica, sans-serif;}
 ul.fbs-list,.fbs-flyout-content,.fbs-attribution,div.fbs-header{font-size:62.5%;}
@@ -111,4 +111,4 @@ p.fbs-flyout-image-true,h3.fbs-flyout-image-true,h1.fbs-flyout-image-true{margin
 * html .fbs-item-name{width:253px !important;}
 * html .fbs-item-name{width:100%;}
 * html .fbs-flyout-content:after{height:1px;}
-/* Version:r87595 Built:Tue Jan 05 2010 by daepark */
+/* Version:r94143M Built:Thu Apr 29 2010 by daepark */
