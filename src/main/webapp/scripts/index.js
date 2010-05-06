@@ -36,16 +36,16 @@ function formatDate(d) {
     if (d.between(today, tomorrow)) {
         return "today";
     } else if (d.between(last_week, today)) {
-        var diff = today.getDayOfYear() - d.getDayOfYear();
+        var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
         return (diff == 1) ? "yesterday" : diff + " days ago";
     } else if (d.between(last_month, today)) {
-        var diff = (today.getDayOfYear() - d.getDayOfYear()) / 7;
+        var diff = Math.floor((today.getDayOfYear() - d.getDayOfYear()) / 7);
         return (diff == 1) ? "a week ago" : diff.toFixed(0) + " weeks ago" ;
     } else if (d.between(last_year, today)) {
-        var diff = today.getMonth() - d.getMonth();
+        var diff = Math.floor(today.getMonth() - d.getMonth());
         return (diff == 1) ? "a month ago" : diff + " months ago";
     } else {
-        var diff = today.getYear() - d.getYear();
+        var diff = Math.floor(today.getYear() - d.getYear());
         return (diff == 1) ? "a year ago" : diff + " years ago";
     }
 }
