@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.browsing.facets;
 
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -45,16 +46,6 @@ public class ScatterplotFacet implements Facet {
     protected String columnName_x; // column to base the x expression on, if any
     protected String columnName_y; // column to base the y expression on, if any
     
-    protected double from_x; // the numeric selection for the x axis
-    protected double to_x;
-    protected double from_y; // the numeric selection for the y axis
-    protected double to_y;
-
-    protected double min_x; 
-    protected double max_x;
-    protected double min_y;
-    protected double max_y;
-    
     protected int size;
     protected int dim_x;
     protected int dim_y;
@@ -68,6 +59,11 @@ public class ScatterplotFacet implements Facet {
     protected String color_str;
     protected Color color;
     
+    protected double from_x; // the numeric selection for the x axis, from 0 to 1
+    protected double to_x;
+    protected double from_y; // the numeric selection for the y axis, from 0 to 1
+    protected double to_y;
+
     /*
      * Derived configuration data
      */
@@ -78,6 +74,12 @@ public class ScatterplotFacet implements Facet {
     protected String     errorMessage_x;
     protected String     errorMessage_y;
 
+    protected double min_x; 
+    protected double max_x;
+    protected double min_y;
+    protected double max_y;
+    protected AffineTransform t;
+    
     protected boolean selected; // false if we're certain that all rows will match
                                 // and there isn't any filtering to do
         
@@ -144,8 +146,6 @@ public class ScatterplotFacet implements Facet {
             writer.key(ERROR_X); writer.value(errorMessage_x);
         } else {
             if (!Double.isInfinite(min_x) && !Double.isInfinite(max_x)) {
-                writer.key(MIN_X); writer.value(min_x);
-                writer.key(MAX_X); writer.value(max_x);
                 writer.key(FROM_X); writer.value(from_x);
                 writer.key(TO_X); writer.value(to_x);
             }
@@ -155,8 +155,6 @@ public class ScatterplotFacet implements Facet {
             writer.key(ERROR_Y); writer.value(errorMessage_y);
         } else {
             if (!Double.isInfinite(min_y) && !Double.isInfinite(max_y)) {
-                writer.key(MIN_Y); writer.value(min_y);
-                writer.key(MAX_Y); writer.value(max_y);
                 writer.key(FROM_Y); writer.value(from_y);
                 writer.key(TO_Y); writer.value(to_y);
             }
@@ -167,19 +165,34 @@ public class ScatterplotFacet implements Facet {
 
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         name = o.getString(NAME);
-
-        size = (o.has(SIZE)) ? o.getInt(SIZE) : 100;
-        l = size;
-
+        l = size = (o.has(SIZE)) ? o.getInt(SIZE) : 100;
         dot = (o.has(DOT)) ? o.getInt(DOT) : 0.5d;
         
         dim_x = (o.has(DIM_X)) ? getAxisDim(o.getString(DIM_X)) : LIN;
+        if (o.has(FROM_X) && o.has(TO_X)) {
+            from_x = o.getDouble(FROM_X);
+            to_x = o.getDouble(TO_X);
+            selected = true;
+        } else {
+        	from_x = 0;
+        	to_x = 1;
+        }
+        
         dim_y = (o.has(DIM_Y)) ? getAxisDim(o.getString(DIM_Y)) : LIN;
-
+        if (o.has(FROM_Y) && o.has(TO_Y)) {
+            from_y = o.getDouble(FROM_Y);
+            to_y = o.getDouble(TO_Y);
+            selected = true;
+        } else {
+        	from_y = 0;
+        	to_y = 1;
+        }
+        
         rotation = (o.has(ROTATION)) ? getRotation(o.getString(ROTATION)) : NO_ROTATION;
+        t = createRotationMatrix(rotation, l);
         
         color_str = (o.has(COLOR)) ? o.getString(COLOR) : "000000";
-        color = new Color(Integer.parseInt(color_str,16));            
+        color = new Color(Integer.parseInt(color_str,16));
         
         columnName_x = o.getString(X_COLUMN_NAME);
         expression_x = o.getString(X_EXPRESSION);
@@ -203,12 +216,6 @@ public class ScatterplotFacet implements Facet {
             eval_x = MetaParser.parse(expression_x);
         } catch (ParsingException e) {
             errorMessage_x = e.getMessage();
-        }
-        
-        if (o.has(FROM_X) && o.has(TO_X)) {
-            from_x = o.getDouble(FROM_X);
-            to_x = o.getDouble(TO_X);
-            selected = true;
         }
         
         columnName_y = o.getString(Y_COLUMN_NAME);
@@ -235,11 +242,6 @@ public class ScatterplotFacet implements Facet {
             errorMessage_y = e.getMessage();
         }
         
-        if (o.has(FROM_Y) && o.has(TO_Y)) {
-            from_y = o.getDouble(FROM_Y);
-            to_y = o.getDouble(TO_Y);
-            selected = true;
-        }
     }
 
     public RowFilter getRowFilter() {
@@ -247,11 +249,18 @@ public class ScatterplotFacet implements Facet {
             eval_x != null && errorMessage_x == null && 
             eval_y != null && errorMessage_y == null) 
         {
-            return new DualExpressionsNumberComparisonRowFilter(eval_x, columnName_x, columnIndex_x, eval_y, columnName_y, columnIndex_y) {
+            return new DualExpressionsNumberComparisonRowFilter(
+            		eval_x, columnName_x, columnIndex_x, eval_y, columnName_y, columnIndex_y) {
+            	
+            	double from_x_pixels = from_x * l;
+            	double to_x_pixels = to_x * l;
+            	double from_y_pixels = from_y * l;
+            	double to_y_pixels = to_y * l;
+            	
                 protected boolean checkValues(double x, double y) {
                     Point2D.Double p = new Point2D.Double(x,y);
-                    p = translateCoordinates(p, dim_x, dim_y, rotation, l, min_x, max_x, min_y, max_y);
-                    return p.x >= from_x && p.x <= to_x && p.y >= from_y && p.y <= to_y;
+                    p = translateCoordinates(p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, t);
+                    return p.x >= from_x_pixels && p.x <= to_x_pixels && p.y >= from_y_pixels && p.y <= to_y_pixels;
                 };
             };
         } else {
@@ -266,28 +275,12 @@ public class ScatterplotFacet implements Facet {
             
             min_x = index_x.getMin();
             max_x = index_x.getMax();
-            
-            if (selected) {
-                from_x = Math.max(from_x, min_x);
-                to_x = Math.min(to_x, max_x);
-            } else {
-                from_x = min_x;
-                to_x = max_x;
-            }
                         
             Column column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
             NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, expression_y);
 
             min_y = index_y.getMin();
             max_y = index_y.getMax();
-            
-            if (selected) {
-                from_y = Math.max(from_y, min_y);
-                to_y = Math.min(to_y, max_y);
-            } else {
-                from_y = min_y;
-                to_y = max_y;
-            }
             
             if (IMAGE_URI) {
                 if (index_x.isNumeric() && index_y.isNumeric()) {
@@ -350,36 +343,53 @@ public class ScatterplotFacet implements Facet {
         return index;
     }
     
-    public static Point2D.Double translateCoordinates(Point2D.Double p, int dim_x, int dim_y, int rotation, double l, double min_x, double max_x, double min_y, double max_y) {
+    private static double s_rotateScale = 1 / Math.sqrt(2.0);
+    
+    public static AffineTransform createRotationMatrix(int rotation, double l) {
+        if (rotation == ScatterplotFacet.ROTATE_CW) {
+        	AffineTransform t = AffineTransform.getTranslateInstance(0, l / 2);
+        	t.scale(s_rotateScale, s_rotateScale);
+        	t.rotate(-Math.PI / 4);
+        	return t;
+        } else if (rotation == ScatterplotFacet.ROTATE_CCW) {
+        	AffineTransform t = AffineTransform.getTranslateInstance(l / 2, 0);
+        	t.scale(s_rotateScale, s_rotateScale);
+        	t.rotate(Math.PI / 4);
+        	return t;
+        } else {
+        	return null;
+        }
+    }
+    
+    public static Point2D.Double translateCoordinates(
+    		Point2D.Double p, 
+    		double min_x, double max_x, double min_y, double max_y,
+    		int dim_x, int dim_y, double l, AffineTransform t) {
+    	
         double x = p.x;
         double y = p.y;
         
+        double relative_x = x - min_x;
+        double range_x = max_x - min_x;
         if (dim_x == ScatterplotFacet.LOG) {
-            x = Math.log10(p.x - min_x) * l / Math.log10(max_x - min_x);
+            x = Math.log10(relative_x) * l / Math.log10(range_x);
         } else {
-            x = (p.x - min_x) * l / (max_x - min_x);
+            x = relative_x * l / range_x;
         }
 
+        double relative_y = y - min_y;
+        double range_y = max_y - min_y;
         if (dim_y == ScatterplotFacet.LOG) {
-            y = Math.log10(p.y - min_y) * l / Math.log10(max_y - min_y);
+            y = Math.log10(relative_y) * l / Math.log10(range_y);
         } else {
-            y = (p.y - min_y) * l / (max_y - min_y);
+            y = relative_y * l / range_y;
         }
         
-        if (rotation == ScatterplotFacet.ROTATE_CW) {
-            double x1 = (x + y) / 2;
-            double y1 = (l - x + y) / 2;
-            x = x1;
-            y = y1;
-        } else if (rotation == ScatterplotFacet.ROTATE_CCW) {
-            double x1 = (l - y + x) / 2;
-            double y1 = (y + x) / 2;
-            x = x1;
-            y = y1;
-        }
-     
         p.x = x;
         p.y = y;
+        if (t != null) {
+        	t.transform(p, p);
+        }
         
         return p;
     }

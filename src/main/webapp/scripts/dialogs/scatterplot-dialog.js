@@ -112,7 +112,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                 
             if (typeof self._plot_size == 'undefined') {
                 self._plot_size = Math.max(Math.floor(500 / columns.length / 5) * 5,20);
-                self._dot_size = 0.4;
+                self._dot_size = 0.8;
                 self._elmts.plotSize.val(self._plot_size);                
                 self._elmts.dotSize.val(self._dot_size);                
             }

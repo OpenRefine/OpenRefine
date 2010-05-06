@@ -47,8 +47,8 @@ ScatterplotFacet.prototype.getJSON = function() {
 ScatterplotFacet.prototype.hasSelection = function() {
     return  ("from_x" in this._config && this._config.from_x !== 0) ||
         ("from_y" in this._config && this._config.from_y !== 0) ||
-        ("to_x" in this._config && this._config.to_x != this._config.l) ||
-        ("to_y" in this._config && this._config.to_y != this._config.l);
+        ("to_x" in this._config && this._config.to_x !== 1) ||
+        ("to_y" in this._config && this._config.to_y !== 1);
 };
 
 ScatterplotFacet.prototype._initializeUI = function() {
@@ -123,24 +123,12 @@ ScatterplotFacet.prototype._initializeUI = function() {
         parent: this._elmts.plotDiv,
         fadeSpeed: 70,
         onSelectEnd: function(elmt, selection) {
-            if (selection.height === 0 || selection.width === 0) {
-                self.reset();
-            } else {
-                self._config.from_x = selection.x1;
-                self._config.to_x = selection.x2 - 2;
-                self._config.from_y = self._config.l - selection.y2 + 2;
-                self._config.to_y = self._config.l - selection.y1 - 1;
-            }
+            self._putSelectionOptions(selection);
             self._updateRest();
         }
     };
 
-    if (this.hasSelection()) {
-        ops.x1 = this._config.from_x;
-        ops.y1 = this._config.from_y;
-        ops.x2 = this._config.to_x;
-        ops.y2 = this._config.to_y;
-    }
+    this._fillSelectionOptions(ops);
     this._plotAreaSelector = this._elmts.plotImg.imgAreaSelect(ops);
     
     if (this._config.dim_x == 'lin' && this._config.dim_y == 'lin') {
@@ -169,11 +157,15 @@ ScatterplotFacet.prototype._initializeUI = function() {
         var dim = $(this).find("input:checked").val();
         self._config.dim_x = dim;
         self._config.dim_y = dim;
+        self.reset();
+        self._updateRest();
         self.changePlot();
     });
 
     this._elmts.selectors.find(".facet-scatterplot-rot-selector").change(function() {
         self._config.r = $(this).find("input:checked").val();
+        self.reset();
+        self._updateRest();
         self.changePlot();        
     });
 
@@ -190,6 +182,32 @@ ScatterplotFacet.prototype._initializeUI = function() {
     });
     
     this._elmts.selectors.find(".buttonset").buttonset();
+};
+
+ScatterplotFacet.prototype._fillSelectionOptions = function(ops) {
+    if (this.hasSelection()) {
+        ops.x1 = this._config.l * this._config.from_x;
+        ops.x2 = this._config.l * this._config.to_x;
+        
+        ops.y1 = this._config.l - (this._config.l * this._config.to_y);
+        ops.y2 = this._config.l - (this._config.l * this._config.from_y);
+    } else {
+        ops.x1 = ops.y1 = 0;
+        ops.x2 = ops.y2 = this._config.l;
+        ops.hide = true;
+    }
+};
+
+ScatterplotFacet.prototype._putSelectionOptions = function(selection) {
+    if (selection.height === 0 || selection.width === 0) {
+        this.reset();
+    } else {
+        this._config.from_x = selection.x1 / this._config.l;
+        this._config.to_x = selection.x2 / this._config.l;
+        
+        this._config.from_y = (this._config.l - selection.y2) / this._config.l;
+        this._config.to_y = (this._config.l - selection.y1) / this._config.l;
+    }
 };
 
 ScatterplotFacet.prototype._formulateCurrentImageUrl = function() {
@@ -215,30 +233,41 @@ ScatterplotFacet.prototype._formulateImageUrl = function(engineConfig, conf) {
 };
 
 ScatterplotFacet.prototype.updateState = function(data) {
-    if ("min_x" in data && "max_x" in data && "max_y" in data && "min_y" in data) {
+    if ("error" in data) {
+        this._error = true;
+        this._errorMessage = "error" in data ? data.error : "Unknown error.";
+    } else {
         this._error = false;
         
-        this._config.min_x = data.min_x;
-        this._config.max_x = data.max_x;
-        this._config.min_y = data.min_y;
-        this._config.max_y = data.max_y;
-        
+        // These are in 0 - 1 coordinates
         if ("from_x" in data) {
-            this._config.from_x = Math.max(data.from_x, 0);
+            this._config.from_x = Math.min(Math.max(data.from_x, 0), 1);
+        } else {
+            this._config.from_x = 0;
         }
         if ("to_x" in data) {
-            this._config.to_x = Math.min(data.to_x, this._config.l);
+            this._config.to_x = Math.min(Math.max(data.to_x, data.from_x), 1);
+        } else {
+            this._config.to_x = 1;
         }
 
         if ("from_y" in data) {
-            this._config.from_y = Math.max(data.from_y, 0);
+            this._config.from_y = Math.min(Math.max(data.from_y, 0), 1);
+        } else {
+            this._config.from_y = 0;
         }
         if ("to_y" in data) {
-            this._config.to_y = Math.min(data.to_y, this._config.l);
+            this._config.to_y = Math.min(Math.max(data.to_y, data.from_y), this._config.l);
+        } else {
+            this._config.to_y = 1;
         }
-    } else {
-        this._error = true;
-        this._errorMessage = "error" in data ? data.error : "Unknown error.";
+        
+        if (this._plotAreaSelector) {
+            var ops = {};
+            this._fillSelectionOptions(ops);
+            this._plotAreaSelector.setOptions(ops);
+            this._plotAreaSelector.update();
+        }
     }
     
     this.render();
@@ -247,7 +276,6 @@ ScatterplotFacet.prototype.updateState = function(data) {
 ScatterplotFacet.prototype.changePlot = function() {
     this._elmts.plotBaseImg.attr("src", this._formulateBaseImageUrl());
     this._elmts.plotImg.attr("src", this._formulateCurrentImageUrl());
-    this._updateRest();
 };
 
 ScatterplotFacet.prototype.render = function() {
