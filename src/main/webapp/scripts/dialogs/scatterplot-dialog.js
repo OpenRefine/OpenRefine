@@ -28,7 +28,7 @@ ScatterplotDialog.prototype._createDialog = function() {
     var left_footer = footer.find(".left");    
     var right_footer = footer.find(".right");    
     
-    $('<button></button>').text("close").click(function() { self._dismiss(); }).appendTo(right_footer);
+    $('<button></button>').text("Close").click(function() { self._dismiss(); }).appendTo(right_footer);
     
     $('<div class="scatterplot-dialog-selectors-container">' +
         '<table class="scatterplot-selectors"><tr>' +

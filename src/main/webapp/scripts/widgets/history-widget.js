@@ -186,7 +186,7 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     };
     updateJson();
     
-    $('<button></button>').text("Done").click(function() {
+    $('<button></button>').text("Close").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     

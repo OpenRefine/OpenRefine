@@ -188,14 +188,14 @@ ListFacet.prototype._copyChoices = function() {
     var frame = DialogSystem.createDialog();
     frame.width("600px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Copy Facet Choices").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Facet Choices exported as TSV").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     body.html('<textarea wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
     var elmts = DOM.bind(body);
     
-    $('<button></button>').text("Done").click(function() {
+    $('<button></button>').text("Close").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
