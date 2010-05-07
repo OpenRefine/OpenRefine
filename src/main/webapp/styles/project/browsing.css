@@ -197,9 +197,13 @@ img.facet-choice-link {
     margin-bottom: 0.8em;
     text-align: center;
 }
-.facet-range-choices .ui-button-text {
+.facet-range-choices .ui-button .ui-button-text {
     line-height: 1;
     padding: 0.1em 0.4em;   
+    text-decoration: line-through;
+}
+.facet-range-choices .ui-button.ui-state-active .ui-button-text {
+    text-decoration: none;
 }
 .facet-text-body {
     padding: 5px;

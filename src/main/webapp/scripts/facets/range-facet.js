@@ -175,21 +175,6 @@ RangeFacet.prototype._renderOtherChoices = function() {
     $('<br>').appendTo(numericLabel);
     $('<span>').text(this._numericCount).addClass("facet-choice-count").appendTo(numericLabel);
 
-    // ----------------- blank -----------------
-    
-    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(choices).change(function() {
-        self._selectBlank = !self._selectBlank;
-        self._updateRest();
-    });
-    if (this._selectBlank) blankCheck.attr("checked","checked");
-
-    var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(choices);    
-    $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(blankLabel);
-    $('<br>').appendTo(blankLabel);
-    $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(blankLabel);
-
-    if (this._baseBlankCount === 0) blankCheck.removeAttr("checked");
-    
     // ----------------- non-numeric -----------------
     
     var nonNumericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-numeric").appendTo(choices).change(function() {
@@ -204,6 +189,21 @@ RangeFacet.prototype._renderOtherChoices = function() {
     $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(nonNumericLabel);
 
     if (this._baseNonNumericCount === 0) nonNumericCheck.removeAttr("checked");
+    
+    // ----------------- blank -----------------
+    
+    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(choices).change(function() {
+        self._selectBlank = !self._selectBlank;
+        self._updateRest();
+    });
+    if (this._selectBlank) blankCheck.attr("checked","checked");
+
+    var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(choices);    
+    $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(blankLabel);
+    $('<br>').appendTo(blankLabel);
+    $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(blankLabel);
+
+    if (this._baseBlankCount === 0) blankCheck.removeAttr("checked");
     
     // ----------------- error -----------------
 
