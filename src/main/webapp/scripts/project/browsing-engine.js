@@ -27,7 +27,8 @@ function BrowsingEngine(div, facetConfigs) {
             
             this._facets.push({ elmt: elmt, facet: facet });
         }
-        this.update();
+        
+        Gridworks.update({ engineChanged: true });
     }
 }
 
@@ -149,7 +150,8 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
     }
     
     this._facets.push({ elmt: elmt, facet: facet });
-    this.update();
+    
+    Gridworks.update({ engineChanged: true });
 };
 
 BrowsingEngine.prototype._createFacetContainer = function() {
