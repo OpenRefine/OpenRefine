@@ -50,12 +50,12 @@ table.clustering-dialog-entry-table a:hover {
 
 .clustering-dialog-controls {
     margin-bottom: 0.5em;
+    margin-right: 2em;
 }
 
 .clustering-dialog-controls td {
     padding-right: 0.5em;
 }
-
 
 .clustering-dialog-facet {
     margin-bottom: 1em;

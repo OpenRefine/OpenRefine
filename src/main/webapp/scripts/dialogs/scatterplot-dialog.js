@@ -13,49 +13,49 @@ ScatterplotDialog.prototype._createDialog = function() {
     var header = $('<div></div>').addClass("dialog-header").text('Scatterplot Matrix' + ((typeof this._column == "undefined") ? "" : " (focusing on '" + this._column + "')")).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $(
-        '<div class="dialog-footer">' +
+        '<div>' +
            '<table width="100%"><tr>' +
              '<td class="left" style="text-align: left"></td>' + 
              '<td class="right" style="text-align: right"></td>' +
            '</tr></table>' +
         '</div>'
     ).appendTo(frame);
-        
-    var html = $(
-        '<div class="grid-layout layout-normal"><table width="100%" class="scatterplot-selectors">' +
-            '<tr>' +
-                '<td nowrap>' +
-                    '<div class="buttonset scatterplot-dim-selector" bind="plotSelector">' +
-                        '<input type="radio" id="clustering-dialog-dim-lin" name="clustering-dialog-dim" value="lin" checked="checked"/><label class="dim-lin-label" for="clustering-dialog-dim-lin" title="Linear Plot">lin</label>' +
-                        '<input type="radio" id="clustering-dialog-dim-log" name="clustering-dialog-dim" value="log"/><label class="dim-log-label" for="clustering-dialog-dim-log" title="Logarithmic Plot">log</label>' +
-                    '</div>' + 
-                '</td>' +
-                '<td nowrap>' +
-                    '<div class="buttonset scatterplot-rot-selector" bind="rotationSelector">' +
-                        '<input type="radio" id="clustering-dialog-rot-ccw"  name="clustering-dialog-rot" value="ccw"/><label class="rot-ccw-label" for="clustering-dialog-rot-ccw" title="Rotated 45° Counter-Clockwise">&nbsp;</label>' +
-                        '<input type="radio" id="clustering-dialog-rot-none" name="clustering-dialog-rot" value="none" checked="checked"/><label class="rot-none-label" for="clustering-dialog-rot-none" title="No rotation">&nbsp;</label>' +
-                        '<input type="radio" id="clustering-dialog-rot-cw"   name="clustering-dialog-rot" value="cw"/><label class="rot-cw-label" for="clustering-dialog-rot-cw" title="Rotated 45° Clockwise">&nbsp;</label>' +
-                    '</div>' +
-                '</td>' +
-                '<td nowrap>' +
-                    '<div class="buttonset scatterplot-dot-selector" bind="dotSelector">' +
-                        '<input type="radio" id="clustering-dialog-dot-small"   name="clustering-dialog-dot" value="small"/><label class="dot-small-label" for="clustering-dialog-dot-small" title="Small Dot Size">&nbsp;</label>' +
-                        '<input type="radio" id="clustering-dialog-dot-regular" name="clustering-dialog-dot" value="regular" checked="checked"/><label class="dot-regular-label" for="clustering-dialog-dot-regular" title="Regular Dot Size">&nbsp;</label>' +
-                        '<input type="radio" id="clustering-dialog-dot-big"     name="clustering-dialog-dot" value="big"/><label class="dot-big-label" for="clustering-dialog-dot-big" title="Big Dot Size">&nbsp;</label>' +
-                    '</div>' +
-                '</td>' +
-                '<td width="100%">&nbsp;</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td colspan="4">' +
-                    '<div bind="tableContainer" class="scatterplot-dialog-table-container"></div>' +
-                '</td>' +
-            '</tr>' +
-        '</table></div>'
-    ).appendTo(body);
+
+    $('<div class="grid-layout layout-normal">' +
+         '<div bind="tableContainer" class="scatterplot-dialog-table-container"></div>' +
+      '</div>').appendTo(body);
     
+    var left_footer = footer.find(".left");    
+    var right_footer = footer.find(".right");    
     
-    this._elmts = DOM.bind(html);
+    $('<button></button>').text("close").click(function() { self._dismiss(); }).appendTo(right_footer);
+    
+    $('<div class="scatterplot-dialog-selectors-container">' +
+        '<table class="scatterplot-selectors"><tr>' +
+            '<td nowrap>' +
+                '<div class="buttonset scatterplot-dim-selector" bind="plotSelector">' +
+                    '<input type="radio" id="clustering-dialog-dim-lin" name="clustering-dialog-dim" value="lin" checked="checked"/><label class="dim-lin-label" for="clustering-dialog-dim-lin" title="Linear Plot">lin</label>' +
+                    '<input type="radio" id="clustering-dialog-dim-log" name="clustering-dialog-dim" value="log"/><label class="dim-log-label" for="clustering-dialog-dim-log" title="Logarithmic Plot">log</label>' +
+                '</div>' + 
+            '</td>' +
+            '<td nowrap>' +
+                '<div class="buttonset scatterplot-rot-selector" bind="rotationSelector">' +
+                    '<input type="radio" id="clustering-dialog-rot-ccw"  name="clustering-dialog-rot" value="ccw"/><label class="rot-ccw-label" for="clustering-dialog-rot-ccw" title="Rotated 45° Counter-Clockwise">&nbsp;</label>' +
+                    '<input type="radio" id="clustering-dialog-rot-none" name="clustering-dialog-rot" value="none" checked="checked"/><label class="rot-none-label" for="clustering-dialog-rot-none" title="No rotation">&nbsp;</label>' +
+                    '<input type="radio" id="clustering-dialog-rot-cw"   name="clustering-dialog-rot" value="cw"/><label class="rot-cw-label" for="clustering-dialog-rot-cw" title="Rotated 45° Clockwise">&nbsp;</label>' +
+                '</div>' +
+            '</td>' +
+            '<td nowrap>' +
+                '<div class="buttonset scatterplot-dot-selector" bind="dotSelector">' +
+                    '<input type="radio" id="clustering-dialog-dot-small"   name="clustering-dialog-dot" value="small"/><label class="dot-small-label" for="clustering-dialog-dot-small" title="Small Dot Size">&nbsp;</label>' +
+                    '<input type="radio" id="clustering-dialog-dot-regular" name="clustering-dialog-dot" value="regular" checked="checked"/><label class="dot-regular-label" for="clustering-dialog-dot-regular" title="Regular Dot Size">&nbsp;</label>' +
+                    '<input type="radio" id="clustering-dialog-dot-big"     name="clustering-dialog-dot" value="big"/><label class="dot-big-label" for="clustering-dialog-dot-big" title="Big Dot Size">&nbsp;</label>' +
+                '</div>' +
+            '</td>' +
+        '</tr></table>' +
+    '</div>').appendTo(left_footer);
+    
+    this._elmts = DOM.bind(frame);
         
     this._elmts.plotSelector.buttonset().change(function() {
         self._plot_method = $(this).find("input:checked").val();
@@ -78,11 +78,6 @@ ScatterplotDialog.prototype._createDialog = function() {
         }
         self._renderMatrix();
     });
-    
-    var left_footer = footer.find(".left");    
-    $('<button></button>').text("cancel").click(function() { self._dismiss(); }).appendTo(left_footer);
-    
-    var right_footer = footer.find(".right");    
     
     this._level = DialogSystem.showDialog(frame);
     this._renderMatrix();
