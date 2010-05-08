@@ -3,7 +3,8 @@
 
 var actions = windmill.jsTest.actions;
 
-function action(what,params) {        
+function action(what,params) {
+params = params || {};    
     return {
         method : what,
         params : params
@@ -32,10 +33,13 @@ function assert(what,params) {
 }
     
 asserts.gw_row_count = function (count) {
+    action("waits.forElement", { jquery:  '(".viewPanel-summary-row-count")[0]' } );
     asserts.assertText( { jquery: '(".viewPanel-summary-row-count")[0]', validator: count } );
 };
 
 asserts.gw_expected_top_value = function (expected_value) {
+    // action("waits.forElement", { jquery: '("a.facet-choice-label")[0]' } );   // doesn't work bc waits can't go inside functions
+    //TODO: is there a way to make the assert wait first, rather than putting this before each call of the assert?,
     asserts.assertEquals(expected_value, $.trim($("a.facet-choice-label")[0].text)); 
 };
 
