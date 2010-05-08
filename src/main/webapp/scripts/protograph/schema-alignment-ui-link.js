@@ -138,7 +138,7 @@ SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, targetTypeI
     }
     
     $.getJSON(
-        "http://gridworks-helper.freebaseapps.com/get_properties_of_type?" + $.param(params) + "&callback=?",
+        Gridworks.gridworksHelperService + "get_properties_of_type?" + $.param(params) + "&callback=?",
         null,
         function(data) {
             if (done) return;
@@ -202,7 +202,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
             });
         };
         
-        for (var i = 0; i < suggestions.length; i++) {
+        for (var i = 0; i < suggestions.length && i < 10; i++) {
             createSuggestion(suggestions[i]);
         }
     } else {

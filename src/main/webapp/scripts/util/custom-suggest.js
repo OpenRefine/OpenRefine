@@ -66,7 +66,7 @@
 
             $.extend(data, o.ac_param);
 
-            var baseUrl = "http://gridworks-helper.freebaseapps.com/suggest_property";
+            var baseUrl = Gridworks.gridworksHelperService + "suggest_property";
             var url = baseUrl + "?" + $.param(data),
             
             cached = $.suggest.cache[url];
