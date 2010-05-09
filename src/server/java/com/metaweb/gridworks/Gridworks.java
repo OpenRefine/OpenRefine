@@ -34,7 +34,7 @@ import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
 public class Gridworks {
     
-    static private final String VERSION = "1.0a";
+    static private final String VERSION = "1.0";
     static private final String DEFAULT_HOST = "127.0.0.1";
     static private final int DEFAULT_PORT = 3333;
     static private final int MAX_UPLOAD_SIZE = 1024 * 1024 * 1024;
