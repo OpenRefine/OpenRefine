@@ -4,6 +4,9 @@ SchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentUINo
     this._options = options;
     this._parentUINode = parentUINode;
     
+    // Make sure target node is there
+    this._link.target = this._link.target || { nodeType: "cell-as-value" }
+    
     this._tr = table.insertRow(table.rows.length);
     this._tdMain = this._tr.insertCell(0);
     this._tdToggle = this._tr.insertCell(1);
