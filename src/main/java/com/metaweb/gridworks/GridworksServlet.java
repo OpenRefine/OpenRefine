@@ -156,7 +156,7 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("mqlwrite", new MQLWriteCommand());
     }
     
-    final static protected long s_autoSavePeriod = 1000 * 60 * 1; // minutes
+    final static protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
     static protected class AutoSaveTimerTask extends TimerTask {
         public void run() {
         	try {
