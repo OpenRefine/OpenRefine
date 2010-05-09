@@ -62,6 +62,7 @@ public class CreateProjectCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+    	ProjectManager.singleton.setBusy(true);
         try {
             /*
              * The uploaded file is in the POST body as a "file part". If
@@ -97,6 +98,8 @@ public class CreateProjectCommand extends Command {
                 ParsingUtilities.encode("Failed to import file: " + e.getLocalizedMessage())
             );
             e.printStackTrace();
+        } finally {
+        	ProjectManager.singleton.setBusy(false);
         }
     }
     

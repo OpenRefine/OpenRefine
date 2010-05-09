@@ -49,7 +49,12 @@ public class ProjectManager {
     /**
      *  What caches the joins between projects.
      */
-    transient protected InterProjectModel _interProjectModel = new InterProjectModel(); 
+    transient protected InterProjectModel _interProjectModel = new InterProjectModel();
+    
+    /**
+     *  Flags
+     */
+    transient protected int _busy = 0; // heavy operations like creating or importing projects are going on 
     
     static public ProjectManager singleton;
     
@@ -260,6 +265,16 @@ public class ProjectManager {
         }
     }
     
+    public void setBusy(boolean busy) {
+    	synchronized (this) {
+    		if (busy) {
+    			_busy++;
+    		} else {
+    			_busy--;
+    		}
+    	}
+    }
+    
     public void addLatestExpression(String s) {
         synchronized (this) {
             _expressions.remove(s);
@@ -275,8 +290,10 @@ public class ProjectManager {
     }
     
     public void save(boolean allModified) {
-        saveProjects(allModified);
-        saveWorkspace();
+    	if (allModified || _busy == 0) {
+    		saveProjects(allModified);
+    		saveWorkspace();
+    	}
     }
     
     /**

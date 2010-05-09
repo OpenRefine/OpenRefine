@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.exporters.Exporter;
@@ -32,6 +33,7 @@ public class ExportRowsCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+    	ProjectManager.singleton.setBusy(true);
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
@@ -53,6 +55,8 @@ public class ExportRowsCommand extends Command {
             }
         } catch (Exception e) {
             respondException(response, e);
+        } finally {
+        	ProjectManager.singleton.setBusy(false);
         }
     }
 }

@@ -36,6 +36,7 @@ public class ImportProjectCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+    	ProjectManager.singleton.setBusy(true);
         try {
             Properties options = ParsingUtilities.parseUrlParameters(request);
             
@@ -63,6 +64,8 @@ public class ImportProjectCommand extends Command {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+        	ProjectManager.singleton.setBusy(false);
         }
     }
     
