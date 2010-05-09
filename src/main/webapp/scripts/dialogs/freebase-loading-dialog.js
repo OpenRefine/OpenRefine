@@ -182,7 +182,7 @@ FreebaseLoadingDialog.prototype._load = function() {
     var freebase = self._elmts.freebase.attr("checked");
 
     var get_peacock_url = function(url) {
-      return "http://peacock.freebaseapps.com/stats/data.labs/" + url.split("/").slice(-2).join("/");
+        return "http://gridworks-loads.freebaseapps.com/job/" + url.split("/").slice(-1)[0];
     };
     
     var doLoad = function() {
