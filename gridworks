@@ -229,9 +229,9 @@ tools_prepare() {
 ant_prepare() {
     tools_prepare
 
-    ANT_URL="http://www.apache.org/dist/ant/binaries/apache-ant-1.8.0-bin.tar.gz"
+    ANT_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-1.8.1-bin.tar.gz"
     ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
-    ANT_DIR="apache-ant-1.8.0"
+    ANT_DIR="apache-ant-1.8.1"
     
     ANT="`which ant 2> /dev/null`"
     if [ -z "$ANT" ]; then
