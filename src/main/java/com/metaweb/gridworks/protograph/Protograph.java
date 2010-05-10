@@ -92,7 +92,8 @@ public class Protograph implements Jsonizable {
                 
                 node2.addLink(new Link(
                     reconstructProperty(oLink.getJSONObject("property")),
-                    reconstructNode(oLink.getJSONObject("target"))
+                    oLink.has("target") && !oLink.isNull("target") ? 
+                		reconstructNode(oLink.getJSONObject("target")) : null
                 ));
             }
         }
