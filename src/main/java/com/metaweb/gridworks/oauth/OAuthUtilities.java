@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.http.HttpParameters;
 
@@ -44,7 +43,7 @@ public class OAuthUtilities {
         if (provider == null) throw new RuntimeException("Provider can't be null");
         String[] consumer_info = infos.get(provider.getHost());
         if (consumer_info == null) throw new RuntimeException("Can't find secrets for provider '" + provider.getHost() + "'");
-        OAuthConsumer oauthConsumer = new CommonsHttpOAuthConsumer(consumer_info[0],consumer_info[1]);
+        OAuthConsumer oauthConsumer = new FreebaseTimeCommonsHttpOAuthConsumer(consumer_info[0],consumer_info[1]);
         HttpParameters params = new HttpParameters();
         params.put("realm", provider.getHost());
         oauthConsumer.setAdditionalParameters(params);
