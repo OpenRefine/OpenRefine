@@ -1,5 +1,7 @@
 package com.metaweb.gridworks.protograph.transpose;
 
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
     private static final String CREATE = "create";
     private static final String VALUE = "value";
     private static final String CONNECT = "connect";
-    private static final String LANG = "connect";
+    private static final String LANG = "lang";
     
     public JSONArray getJSON() {
         return new JSONArray(rootObjects);
@@ -128,7 +130,7 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
                 try {
                     obj.put(VALUE, cell.value.toString());
                     obj.put(TYPE, node.valueType);
-                    if ("/type/text".equals(node.lang)) {
+                    if ("/type/text".equals(node.valueType)) {
                         obj.put(LANG, node.lang);
                     }
                     
@@ -205,7 +207,7 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
                 try {
                     obj.put(VALUE, node.value);
                     obj.put(TYPE, node.valueType);
-                    if ("/type/text".equals(node.lang)) {
+                    if ("/type/text".equals(node.valueType)) {
                         obj.put(LANG, node.lang);
                     }
                     
