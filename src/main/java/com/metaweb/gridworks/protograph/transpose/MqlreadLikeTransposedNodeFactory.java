@@ -1,7 +1,5 @@
 package com.metaweb.gridworks.protograph.transpose;
 
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
