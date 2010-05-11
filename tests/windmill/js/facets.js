@@ -1,6 +1,11 @@
 var test_facets = new function() {
 
-    // test opening Food project
+	// TODO: if I'm in a project, go back to main page (useful when working on this test)
+    //if () { 
+    	//go back
+    //};
+	
+	// test opening Food project
     this.test_open_project = [
         action("click",             { link: "Food" } ),
         action("waits.forPageLoad", { timeout: "20000" } ),
@@ -30,9 +35,9 @@ var test_facets = new function() {
         
     // filter down to BEEF
     this.test_fitler_text_facet = [
-        action("click",            { jquery: '("a.facet-choice-label")[0]' } )//,
-        //TODO: gw_row_count fails with 'undefined'
-        //assert("gw_row_count", "457")
+        action("click",            { jquery: '("a.facet-choice-label")[0]' } ),
+        action("waits.forElement", { jquery:  '(".viewPanel-summary-row-count")[0]' } ),
+        assert("gw_row_count", "457")
     ];
         
     // create numeric filter from Water column
@@ -45,14 +50,15 @@ var test_facets = new function() {
         //function () { jum.assertTrue( $(".facet-panel span:contains(\'Water\')").length ); }
     ]; 
 
-/*
     // filter out BEEF with lower water content
     this.test_filter_numeric_facet = [
-        //TODO: dragDropElem fails with 'undefined'. Maybe because of two params?
-        //action("dragDropElem",     { jquery: '((".slider-widget-draggable.left"))[0]', pixels: '150, 0' } )//,
-        assert("gw_row_count", "153")
+        action("gw_wait4ajaxend"), 
+        action("waits.forElement", { jquery: '((".slider-widget-draggable.left"))[0]' } ),
+        action("dragDropElem",     { jquery: '((".slider-widget-draggable.left"))[0]', pixels: '150, 0' } )//,
+        // TODO: What to wait on, to know we're ready to do the following assert? Talk to dfhuynh.
+        //assert("gw_row_count", "153")
     ];
-*/
+
         
 };
 
