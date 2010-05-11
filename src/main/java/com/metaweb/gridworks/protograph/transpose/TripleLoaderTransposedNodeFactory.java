@@ -132,7 +132,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     }
     
     protected interface WritingTransposedNode extends TransposedNode {
-        public String write(String subject, String predicate, Cell subjectCell);
+        public Object write(String subject, String predicate, Cell subjectCell);
     }
     
     abstract protected class TransposedNodeWithChildren implements WritingTransposedNode {
@@ -153,7 +153,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         
         //protected AnonymousTransposedNode(AnonymousNode node) { }
         
-        public String write(String subject, String predicate, Cell subjectCell) {
+        public Object write(String subject, String predicate, Cell subjectCell) {
             if (children.size() == 0 || subject == null) {
                 return null;
             }
@@ -163,15 +163,15 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             
             boolean first = true;
             for (int i = 0; i < children.size(); i++) {
-                String s = children.get(i).write(null, null, null);
-                if (s != null) {
+                Object c = children.get(i).write(null, null, null);
+                if (c != null) {
                     if (first) {
                         first = false;
                     } else {
                         sb.append(", ");
                     }
                     sb.append("\"" + properties.get(i).id + "\": ");
-                    sb.append(JSONObject.quote(s));
+                    sb.append(c instanceof String ? JSONObject.quote((String) c) : c.toString());
                 }
             }
             sb.append(" }");
@@ -191,7 +191,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public String write(String subject, String predicate, Cell subjectCell) {
+        public Object write(String subject, String predicate, Cell subjectCell) {
             String id = null;
             Cell objectCell = null;
             
@@ -245,7 +245,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public String write(String subject, String predicate, Cell subjectCell) {
+        public Object write(String subject, String predicate, Cell subjectCell) {
             if (subject != null) {
                 if ("/type/text".equals(node.lang)) {
                     writeLine(subject, predicate, cell.value, node.lang, subjectCell);
@@ -254,7 +254,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                 }
             }
             
-            return cell.value.toString();
+            return cell.value;
         }
     }
     
@@ -267,7 +267,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public String write(String subject, String predicate, Cell subjectCell) {
+        public Object write(String subject, String predicate, Cell subjectCell) {
             writeLine(subject, "key", node.namespace.id + "/" + cell.value, subjectCell, null);
             
             return null;
@@ -281,7 +281,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.node = node;
         }
 
-        public String write(String subject, String predicate, Cell subjectCell) {
+        public Object write(String subject, String predicate, Cell subjectCell) {
             writeLine(subject, predicate, node.topic.id, subjectCell, null);
             writeChildren(node.topic.id, null);
             
@@ -296,14 +296,14 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.node = node;
         }
 
-        public String write(String subject, String predicate, Cell subjectCell) {
+        public Object write(String subject, String predicate, Cell subjectCell) {
             if ("/type/text".equals(node.lang)) {
                 writeLine(subject, predicate, node.value, node.lang, subjectCell);
             } else {
                 writeLine(subject, predicate, node.value, subjectCell, null);
             }
             
-            return node.value.toString();
+            return node.value;
         }
     }
     
