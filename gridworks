@@ -513,10 +513,8 @@ ui_test() {
 }
 
 server_test() {
-    if [ ! -d "$GRIDWORKS_TEST_DIR/java/classes" ]; then
-        ant build_tests
-        echo ""
-    fi
+    ant build_tests
+    echo ""
     
     CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_WEBAPP/WEB-INF/classes${SEP}$GRIDWORKS_TEST_DIR/java/classes${SEP}$GRIDWORKS_TEST_DIR/java/lib/*${SEP}$GRIDWORKS_LIB_DIR/*${SEP}$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
 
