@@ -146,14 +146,18 @@ public abstract class Command {
     }
     
     static protected void respond(HttpServletResponse response, String content) 
-        throws IOException {
+        throws IOException, ServletException {
         
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         Writer w = response.getWriter();
-        w.write(content);
-        w.flush();
-        w.close();
+        if (w != null) {
+            w.write(content);
+            w.flush();
+            w.close();
+        } else {
+            throw new ServletException("response returned a null writer");
+        }
     }
     
     static protected void respond(HttpServletResponse response, String status, String message) 
@@ -191,9 +195,13 @@ public abstract class Command {
     }
     
     static protected void respondException(HttpServletResponse response, Exception e) 
-        throws IOException {
+        throws IOException, ServletException {
         
         logger.warn("Exception caught", e);
+
+        if (response == null) {
+            throw new ServletException("Response object can't be null");
+        }
 
         try {
             JSONObject o = new JSONObject();

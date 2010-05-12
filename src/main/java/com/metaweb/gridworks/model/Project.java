@@ -375,4 +375,10 @@ public class Project {
         row.contextRowSlots[cellIndex] = contextRowIndex;
         row.contextCellSlots[cellIndex] = contextCellIndex;
     }
+
+    //wrapper of processManager variable to allow unit testing
+    //TODO make the processManager variable private, and force all calls through this method
+    public ProcessManager getProcessManager() {
+        return this.processManager;
+    }
 }
