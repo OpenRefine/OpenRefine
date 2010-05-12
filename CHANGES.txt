@@ -1,0 +1,13 @@
+1.0.1 Release
+
+User-facing bug fixes:
+- Issue 2: "Undo History bug" - bulk row starring and flagging operations could not be undone.
+- Issue 5: "Localized Windows cause save problems for Gridworks" - 
+  Windows user IDs that contain unicode characters were not retrieved correctly.
+- Issue 10: "OAuth fails on sign in" - due to clock offset.
+- Issue 11: "missing "lang" attribute in MQL generated in schema alignment"
+- Issue 13: "float rejected from sandbox upload as Json object" - everything was sent as a string.
+- Issue 17: "Conflated triples - all rows are producing triple with "s" :" $Name_0"" -
+  The Create A New Topic for Each Cell command created shared recon objects.
+- Issue 18: "Error converting russian characters during edit of single cell"
+- [half fix] Issue 19: "CSV import is too basic" - fixed for CSV, not for TSV
