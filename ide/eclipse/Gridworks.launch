@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/gridworks/src/server/java/com/metaweb/gridworks/Gridworks.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.metaweb.gridworks.Gridworks"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="gridworks"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dgridworks.autoreloading=true  -Dgridworks.webapp=src/main/webapp"/>
+</launchConfiguration>
