@@ -21,7 +21,7 @@
   
   Look at the Gridworks web site
   
-    http://www.freebase.com/labs/gridworks/
+    http://code.google.com/p/freebase-gridworks/
 
 
 
@@ -58,4 +58,4 @@
    
    
                                              The Freebase Gridworks Development Team
-                                             http://www.freebase.com/labs/gridworks
+                                           http://code.google.com/p/freebase-gridworks/
