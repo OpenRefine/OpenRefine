@@ -60,6 +60,8 @@
         <fileset dir="${lib.dir}">
             <include name="**/*.jar" />
         </fileset>
+        <pathelement location="${server_classes.dir}"/>
+        <pathelement location="${webapp_classes.dir}"/>
     </path>
 
     <path id="tests.class.path">

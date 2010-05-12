@@ -28,8 +28,9 @@
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/jython-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/clojure-1.1.0.jar"/>
-	<classpathentry kind="lib" path="tests/java/lib/junit-4.8.1.jar" sourcepath="tests/java/lib-src/junit-4.8.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-asl-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/marc4j-2.4.jar"/>
+	<classpathentry kind="lib" path="tests/java/lib/junit-4.8.1.jar" sourcepath="tests/java/lib-src/junit-4.8.1-sources.jar"/>
+	<classpathentry kind="lib" path="tests/java/lib/mockito-all-1.8.4.jar" sourcepath="tests/java/lib-src/mockito-all-1.8.4-sources.jar"/>
 	<classpathentry kind="output" path="src/main/webapp/WEB-INF/classes"/>
 </classpath>
