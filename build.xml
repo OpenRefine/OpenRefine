@@ -178,12 +178,12 @@
                 <opt>-Djava.library.path=lib/native/windows -Dgridworks.version=${revision}</opt>
             </jre>
             <versionInfo
-                fileVersion="${num_version}.0.0"
+                fileVersion="${full_version}"
                 txtFileVersion="${version}"
                 fileDescription="gridworks"
                 copyright="Copyright (c) 2010, Metaweb Technologies, Inc."
-                productVersion="${num_version}.0.0"
-                txtProductVersion="${num_version}.0.0"
+                productVersion="${full_version}"
+                txtProductVersion="${full_version}"
                 productName="Gridworks"
                 companyName="Metaweb Technologies, Inc."
                 internalName="gridworks"

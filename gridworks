@@ -143,6 +143,16 @@ get_version() {
         fail "Must specify a version number"
     fi
     
+    if [[ "${VERSION}" == *.*.*.* ]]; then
+        FULL_VERSION="${VERSION}"
+    elif [[ "${VERSION}" == *.*.* ]]; then
+        FULL_VERSION="${VERSION}.0"
+    elif [[ "${VERSION}" == *.* ]]; then
+        FULL_VERSION="${VERSION}.0.0"
+    else
+        FULL_VERSION="${VERSION}.0.0.0"
+    fi
+    
     NUM_VERSION=`echo $VERSION | sed 's/[a-zA-Z]//g'`
 }
 
@@ -359,7 +369,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    "$ANT" -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
+    "$ANT" -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Dfull_version="$FULL_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
