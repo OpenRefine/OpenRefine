@@ -30,7 +30,7 @@
     </condition>
 
     <condition property="build.dir" value="build">
-        <not><isset property="build.dir2"/></not>
+        <not><isset property="build.dir"/></not>
     </condition>
 
     <condition property="dist.dir" value="dist">
