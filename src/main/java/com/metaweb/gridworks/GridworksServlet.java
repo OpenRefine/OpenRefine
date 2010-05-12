@@ -159,13 +159,13 @@ public class GridworksServlet extends HttpServlet {
     final static protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
     static protected class AutoSaveTimerTask extends TimerTask {
         public void run() {
-        	try {
-        		ProjectManager.singleton.save(false); // quick, potentially incomplete save
-        	} finally {
-            	_timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
-            	// we don't use scheduleAtFixedRate because that might result in 
-            	// bunched up events when the computer is put in sleep mode
-        	}
+            try {
+                ProjectManager.singleton.save(false); // quick, potentially incomplete save
+            } finally {
+                _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
+                // we don't use scheduleAtFixedRate because that might result in 
+                // bunched up events when the computer is put in sleep mode
+            }
         }
     }
 
@@ -178,7 +178,7 @@ public class GridworksServlet extends HttpServlet {
                 
         if (_timer == null) {
             _timer = new Timer("autosave");
-        	_timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
+            _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
         }
         
         logger.trace("< initialize");

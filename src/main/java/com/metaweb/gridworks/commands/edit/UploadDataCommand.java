@@ -24,7 +24,7 @@ public class UploadDataCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-    	ProjectManager.singleton.setBusy(true);
+        ProjectManager.singleton.setBusy(true);
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
@@ -51,7 +51,7 @@ public class UploadDataCommand extends Command {
         } catch (Exception e) {
             respondException(response, e);
         } finally {
-        	ProjectManager.singleton.setBusy(false);
+            ProjectManager.singleton.setBusy(false);
         }
     }
 }

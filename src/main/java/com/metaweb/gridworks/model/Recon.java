@@ -141,9 +141,9 @@ public class Recon implements HasFields, Jsonizable {
     }
     
     public Object getField(String name, Properties bindings) {
-    	if ("id".equals(name)) {
-    		return id;
-    	} else if ("best".equals(name)) {
+        if ("id".equals(name)) {
+            return id;
+        } else if ("best".equals(name)) {
             return candidates != null && candidates.size() > 0 ? candidates.get(0) : null;
         } else if ("candidates".equals(name)) {
             return candidates;

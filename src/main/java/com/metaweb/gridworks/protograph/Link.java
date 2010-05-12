@@ -31,7 +31,7 @@ public class Link implements Jsonizable {
         writer.key("property"); property.write(writer, options);
         if (target != null) {
             writer.key("target");
-        	target.write(writer, options);
+            target.write(writer, options);
         }
         writer.endObject();
     }

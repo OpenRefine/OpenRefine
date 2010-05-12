@@ -49,7 +49,7 @@ public class MassChange implements Change {
         writer.write("updateRowContextDependencies="); writer.write(Boolean.toString(_updateRowContextDependencies)); writer.write('\n');
         writer.write("changeCount="); writer.write(Integer.toString(_changes.size())); writer.write('\n');
         for (Change c : _changes) {
-        	History.writeOneChange(writer, c, options);
+            History.writeOneChange(writer, c, options);
         }
         writer.write("/ec/\n"); // end of change marker
     }

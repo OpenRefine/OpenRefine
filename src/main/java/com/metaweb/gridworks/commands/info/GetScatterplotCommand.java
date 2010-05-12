@@ -151,20 +151,20 @@ public class GetScatterplotCommand extends Command {
                 size, dim_x, dim_y, rotation, dot, color
             );
             
-        	if (base_color != null) {
-        		drawer.setColor(base_color);
-        		
+            if (base_color != null) {
+                drawer.setColor(base_color);
+                
                 FilteredRows filteredRows = engine.getAllRows();
                 filteredRows.accept(project, drawer);
                 
-        		drawer.setColor(color);
-        	}
-        	
-        	{
-	            FilteredRows filteredRows = engine.getAllFilteredRows(false);
-	            filteredRows.accept(project, drawer);
-        	}
-        	
+                drawer.setColor(color);
+            }
+            
+            {
+                FilteredRows filteredRows = engine.getAllFilteredRows(false);
+                filteredRows.accept(project, drawer);
+            }
+            
             ImageIO.write(drawer.getImage(), "png", output);
         } else {
             ImageIO.write(new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR), "png", output);

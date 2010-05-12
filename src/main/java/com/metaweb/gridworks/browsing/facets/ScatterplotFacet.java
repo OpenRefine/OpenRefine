@@ -175,8 +175,8 @@ public class ScatterplotFacet implements Facet {
             to_x = o.getDouble(TO_X);
             selected = true;
         } else {
-        	from_x = 0;
-        	to_x = 1;
+            from_x = 0;
+            to_x = 1;
         }
         
         dim_y = (o.has(DIM_Y)) ? getAxisDim(o.getString(DIM_Y)) : LIN;
@@ -185,8 +185,8 @@ public class ScatterplotFacet implements Facet {
             to_y = o.getDouble(TO_Y);
             selected = true;
         } else {
-        	from_y = 0;
-        	to_y = 1;
+            from_y = 0;
+            to_y = 1;
         }
         
         rotation = (o.has(ROTATION)) ? getRotation(o.getString(ROTATION)) : NO_ROTATION;
@@ -251,13 +251,13 @@ public class ScatterplotFacet implements Facet {
             eval_y != null && errorMessage_y == null) 
         {
             return new DualExpressionsNumberComparisonRowFilter(
-            		eval_x, columnName_x, columnIndex_x, eval_y, columnName_y, columnIndex_y) {
-            	
-            	double from_x_pixels = from_x * l;
-            	double to_x_pixels = to_x * l;
-            	double from_y_pixels = from_y * l;
-            	double to_y_pixels = to_y * l;
-            	
+                    eval_x, columnName_x, columnIndex_x, eval_y, columnName_y, columnIndex_y) {
+                
+                double from_x_pixels = from_x * l;
+                double to_x_pixels = to_x * l;
+                double from_y_pixels = from_y * l;
+                double to_y_pixels = to_y * l;
+                
                 protected boolean checkValues(double x, double y) {
                     Point2D.Double p = new Point2D.Double(x,y);
                     p = translateCoordinates(p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, t);
@@ -348,25 +348,25 @@ public class ScatterplotFacet implements Facet {
     
     public static AffineTransform createRotationMatrix(int rotation, double l) {
         if (rotation == ScatterplotFacet.ROTATE_CW) {
-        	AffineTransform t = AffineTransform.getTranslateInstance(0, l / 2);
-        	t.scale(s_rotateScale, s_rotateScale);
-        	t.rotate(-Math.PI / 4);
-        	return t;
+            AffineTransform t = AffineTransform.getTranslateInstance(0, l / 2);
+            t.scale(s_rotateScale, s_rotateScale);
+            t.rotate(-Math.PI / 4);
+            return t;
         } else if (rotation == ScatterplotFacet.ROTATE_CCW) {
-        	AffineTransform t = AffineTransform.getTranslateInstance(l / 2, 0);
-        	t.scale(s_rotateScale, s_rotateScale);
-        	t.rotate(Math.PI / 4);
-        	return t;
+            AffineTransform t = AffineTransform.getTranslateInstance(l / 2, 0);
+            t.scale(s_rotateScale, s_rotateScale);
+            t.rotate(Math.PI / 4);
+            return t;
         } else {
-        	return null;
+            return null;
         }
     }
     
     public static Point2D.Double translateCoordinates(
-    		Point2D.Double p, 
-    		double min_x, double max_x, double min_y, double max_y,
-    		int dim_x, int dim_y, double l, AffineTransform t) {
-    	
+            Point2D.Double p, 
+            double min_x, double max_x, double min_y, double max_y,
+            int dim_x, int dim_y, double l, AffineTransform t) {
+        
         double x = p.x;
         double y = p.y;
         
@@ -389,7 +389,7 @@ public class ScatterplotFacet implements Facet {
         p.x = x;
         p.y = y;
         if (t != null) {
-        	t.transform(p, p);
+            t.transform(p, p);
         }
         
         return p;

@@ -67,16 +67,16 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
         g2.setPaint(color);
         
         if (r != null) {
-        	/*
-        	 *  Fill in the negative quadrants to give a hint of how the plot has been rotated.
-        	 */
-        	Graphics2D g2r = (Graphics2D) g2.create();
-        	g2r.transform(r);
-        	
-        	g2r.setPaint(Color.lightGray);
-        	g2r.fillRect(-size, 0, size, size);
-        	g2r.fillRect(0, -size, size, size);
-        	g2r.dispose();
+            /*
+             *  Fill in the negative quadrants to give a hint of how the plot has been rotated.
+             */
+            Graphics2D g2r = (Graphics2D) g2.create();
+            g2r.transform(r);
+            
+            g2r.setPaint(Color.lightGray);
+            g2r.fillRect(-size, 0, size, size);
+            g2r.fillRect(0, -size, size, size);
+            g2r.dispose();
         }
     }
     
@@ -97,7 +97,7 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
             Point2D.Double p = new Point2D.Double(xv,yv);
             
             p = ScatterplotFacet.translateCoordinates(
-            		p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, r);
+                    p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, r);
             
             g2.fill(new Rectangle2D.Double(p.x - dot / 2, p.y - dot / 2, dot, dot));
         }

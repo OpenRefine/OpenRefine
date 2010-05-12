@@ -28,13 +28,13 @@ public class CSVRowParser extends RowParser {
                     if (quote < 0) {
                         sb.append(line.substring(start));
                         
-						start = 0;
+                        start = 0;
                         try {
-							line = lineReader.readLine();
-						} catch (IOException e) {
-							line = "";
-							break;
-						}
+                            line = lineReader.readLine();
+                        } catch (IOException e) {
+                            line = "";
+                            break;
+                        }
                     } else {
                         if (quote < line.length() - 1 && line.charAt(quote + 1) == '"') {
                             sb.append(line.substring(start, quote + 1)); // include " as well

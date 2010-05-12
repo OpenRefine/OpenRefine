@@ -145,23 +145,23 @@ public class ProjectManager {
      * APPDATA value to substitute back the original user ID.
      */
     static protected String fixWindowsUnicodePath(String path) {
-    	int q = path.indexOf('?');
-    	if (q < 0) {
-    		return path;
-    	}
-    	int pathSep = path.indexOf(File.separatorChar, q);
-    	
-    	String goodPath = System.getenv("APPDATA");
-    	if (goodPath == null || goodPath.length() == 0) {
+        int q = path.indexOf('?');
+        if (q < 0) {
+            return path;
+        }
+        int pathSep = path.indexOf(File.separatorChar, q);
+        
+        String goodPath = System.getenv("APPDATA");
+        if (goodPath == null || goodPath.length() == 0) {
             goodPath = System.getenv("USERPROFILE");
             if (!goodPath.endsWith(File.separator)) {
-            	goodPath = goodPath + File.separator;
+                goodPath = goodPath + File.separator;
             }
-    	}
-    	
-    	int goodPathSep = goodPath.indexOf(File.separatorChar, q);
-    	
-    	return path.substring(0, q) + goodPath.substring(q, goodPathSep) + path.substring(pathSep);
+        }
+        
+        int goodPathSep = goodPath.indexOf(File.separatorChar, q);
+        
+        return path.substring(0, q) + goodPath.substring(q, goodPathSep) + path.substring(pathSep);
     }
     
     private ProjectManager(File dir) {
@@ -291,13 +291,13 @@ public class ProjectManager {
     }
     
     public void setBusy(boolean busy) {
-    	synchronized (this) {
-    		if (busy) {
-    			_busy++;
-    		} else {
-    			_busy--;
-    		}
-    	}
+        synchronized (this) {
+            if (busy) {
+                _busy++;
+            } else {
+                _busy--;
+            }
+        }
     }
     
     public void addLatestExpression(String s) {
@@ -315,10 +315,10 @@ public class ProjectManager {
     }
     
     public void save(boolean allModified) {
-    	if (allModified || _busy == 0) {
-    		saveProjects(allModified);
-    		saveWorkspace();
-    	}
+        if (allModified || _busy == 0) {
+            saveProjects(allModified);
+            saveWorkspace();
+        }
     }
     
     /**
