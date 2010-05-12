@@ -21,6 +21,22 @@
 
     <property environment="env"/>
 
+    <condition property="version" value="trunk">
+        <not><isset property="version"/></not>
+    </condition>
+
+    <condition property="revision" value="rXXXX">
+        <not><isset property="revision"/></not>
+    </condition>
+
+    <condition property="build.dir" value="build">
+        <not><isset property="build.dir2"/></not>
+    </condition>
+
+    <condition property="dist.dir" value="dist">
+        <not><isset property="dist.dir"/></not>
+    </condition>
+
     <property name="src.dir" value="${basedir}/src/main/java" />
     <property name="server.src.dir" value="${basedir}/src/server/java" />
     <property name="graphics.dir" value="${basedir}/src/graphics" />
