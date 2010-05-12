@@ -387,11 +387,11 @@ dist() {
     echo
     echo "with"
     echo 
-    echo "  {"
-    echo "    description: \"Gridworks ${VERSION}\","
-    echo "    version: \"${VERSION}\","
-    echo "    revision: \"${REVISION}\""
-    echo "  },"
+    echo "    {"
+    echo "        \"description\": \"Gridworks ${VERSION}\","
+    echo "        \"version\": \"${VERSION}\","
+    echo "        \"revision\": \"${REVISION}\""
+    echo "    },"
     echo
 }
 
