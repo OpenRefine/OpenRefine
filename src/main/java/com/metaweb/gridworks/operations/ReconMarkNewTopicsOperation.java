@@ -75,7 +75,6 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
             int                 cellIndex;
             List<CellChange>    cellChanges;
             Map<String, Recon>  sharedRecons = new HashMap<String, Recon>();
-            Map<Long, Recon>    dupReconMap = new HashMap<Long, Recon>();
             long                historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
@@ -103,20 +102,12 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             sharedRecons.put(s, recon);
                         }
                     } else {
-                        long reconID = cell.recon == null ? 0 : cell.recon.id;
-                        if (dupReconMap.containsKey(reconID)) {
-                            recon = dupReconMap.get(reconID);
-                            recon.judgmentBatchSize++;
-                        } else {
-                            recon = cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID);
-                            recon.match = null;
-                            recon.matchRank = -1;
-                            recon.judgment = Judgment.New;
-                            recon.judgmentBatchSize = 1;
-                            recon.judgmentAction = "mass";
-                            
-                            dupReconMap.put(reconID, recon);
-                        }
+                        recon = cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID);
+                        recon.match = null;
+                        recon.matchRank = -1;
+                        recon.judgment = Judgment.New;
+                        recon.judgmentBatchSize = 1;
+                        recon.judgmentAction = "mass";
                     }
                     
                     Cell newCell = new Cell(cell.value, recon);
