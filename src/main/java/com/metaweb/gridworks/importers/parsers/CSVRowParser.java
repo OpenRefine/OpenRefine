@@ -1,5 +1,7 @@
 package com.metaweb.gridworks.importers.parsers;
 
+import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,7 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Row;
 
 public class CSVRowParser extends RowParser {
-    public List<String> split(String line) {
+    public List<String> split(String line, LineNumberReader lineReader) {
         List<String> results = new ArrayList<String>();
         
         int start = 0;
@@ -25,8 +27,14 @@ public class CSVRowParser extends RowParser {
                     int quote = line.indexOf('"', start);
                     if (quote < 0) {
                         sb.append(line.substring(start));
-                        start = line.length();
-                        break;
+                        
+						start = 0;
+                        try {
+							line = lineReader.readLine();
+						} catch (IOException e) {
+							line = "";
+							break;
+						}
                     } else {
                         if (quote < line.length() - 1 && line.charAt(quote + 1) == '"') {
                             sb.append(line.substring(start, quote + 1)); // include " as well
@@ -60,10 +68,10 @@ public class CSVRowParser extends RowParser {
         return results;
     }
     
-    public boolean parseRow(Row row, String line, boolean guessValueType) {
+    public boolean parseRow(Row row, String line, boolean guessValueType, LineNumberReader lineReader) {
         boolean hasData = false;
         
-        List<String> strings = split(line);
+        List<String> strings = split(line, lineReader);
         for (String s : strings) {
             Serializable value = guessValueType ? ImporterUtilities.parseCellValue(s) : s;
             

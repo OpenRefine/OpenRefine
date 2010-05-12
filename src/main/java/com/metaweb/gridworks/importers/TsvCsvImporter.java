@@ -64,7 +64,7 @@ public class TsvCsvImporter implements Importer {
             if (headerLines > 0) {
                 headerLines--;
                 
-                List<String> cells = parser.split(line);
+                List<String> cells = parser.split(line, lnReader);
                 for (int c = 0; c < cells.size(); c++) {
                     String cell = cells.get(c).trim();
                     
@@ -73,7 +73,7 @@ public class TsvCsvImporter implements Importer {
             } else {
                 Row row = new Row(columnNames.size());
                 
-                if (parser.parseRow(row, line, guessValueType)) {
+                if (parser.parseRow(row, line, guessValueType, lnReader)) {
                     rowsWithData++;
                     
                     if (skip <= 0 || rowsWithData > skip) {
