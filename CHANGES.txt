@@ -1,6 +1,6 @@
-1.0.1 Release
+1.0.1 Release (May 12, 2010)
 
-User-facing bug fixes:
+Fixes:
 - Issue 2: "Undo History bug" - bulk row starring and flagging operations could not be undone.
 - Issue 5: "Localized Windows cause save problems for Gridworks" - 
   Windows user IDs that contain unicode characters were not retrieved correctly.
@@ -10,4 +10,9 @@ User-facing bug fixes:
 - Issue 17: "Conflated triples - all rows are producing triple with "s" :" $Name_0"" -
   The Create A New Topic for Each Cell command created shared recon objects.
 - Issue 18: "Error converting russian characters during edit of single cell"
-- [half fix] Issue 19: "CSV import is too basic" - fixed for CSV, not for TSV
+- [partial fix] Issue 19: "CSV import is too basic" - fixed for CSV, not for TSV
+
+1.0 Release (May 10, 2010)
+
+First Public Release
+
