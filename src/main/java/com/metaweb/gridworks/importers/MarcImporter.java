@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.Properties;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
@@ -25,7 +24,7 @@ public class MarcImporter implements Importer {
     public void read(Reader reader, Project project, Properties options)
         throws Exception {
     
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public void read(

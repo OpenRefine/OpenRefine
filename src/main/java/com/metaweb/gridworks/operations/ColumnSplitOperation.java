@@ -11,8 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -260,7 +258,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         }
         
         protected List<Serializable> split(String s) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
         
         protected Serializable stringToValue(String s) {

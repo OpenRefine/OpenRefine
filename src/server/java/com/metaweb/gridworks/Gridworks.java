@@ -29,9 +29,12 @@ import org.mortbay.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.metaweb.util.signal.AbstractSignalHandler;
 import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
+/**
+ * Main class for Gridworks server application.  Starts an instance of the
+ * Jetty HTTP server / servlet container (inner class Gridworks Server).
+ */
 public class Gridworks {
     
     static private final String VERSION = "1.0";
@@ -113,8 +116,9 @@ public class Gridworks {
         }
         
         // hook up the signal handlers
-        new ShutdownSignalHandler("TERM", server);
-        
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(new ShutdownSignalHandler(server)));
+ 
         server.join();
     }
 }
@@ -293,26 +297,24 @@ class GridworksClient extends JFrame implements ActionListener {
     
     private void openBrowser() {
         try {
-            Desktop.getDesktop().browse(uri); 
+            Desktop.getDesktop().browse(uri);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 }
 
-class ShutdownSignalHandler extends AbstractSignalHandler {
+class ShutdownSignalHandler implements Runnable {
     
     private Server _server;
 
-    public ShutdownSignalHandler(String sigName, Server server) {
-        super(sigName);
+    public ShutdownSignalHandler(Server server) {
         this._server = server;
     }
 
-    public boolean handle(String signame) {
+    @Override
+    public void run() {
 
-        //System.err.println("Received Signal: " + signame);
-        
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections
         // right away but it will continue to process the ones that
@@ -327,8 +329,7 @@ class ShutdownSignalHandler extends AbstractSignalHandler {
             e.printStackTrace();
             System.exit(1);
         }
-
-        return true;
     }
+
 }
     

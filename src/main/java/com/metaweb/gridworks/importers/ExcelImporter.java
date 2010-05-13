@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -39,7 +38,7 @@ public class ExcelImporter implements Importer {
     }
     
     public void read(Reader reader, Project project, Properties options) throws Exception {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public void read(InputStream inputStream, Project project, Properties options) throws Exception {
@@ -53,7 +52,7 @@ public class ExcelImporter implements Importer {
                 new XSSFWorkbook(inputStream) : 
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
-            throw new IOException(
+            throw new Exception(
                 "Attempted to parse file as Excel file but failed. " +
                 "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
                 e

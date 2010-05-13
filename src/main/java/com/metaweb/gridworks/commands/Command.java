@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -36,13 +35,13 @@ public abstract class Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     };
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     };
 
     /**

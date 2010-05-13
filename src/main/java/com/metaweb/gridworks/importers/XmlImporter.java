@@ -6,8 +6,6 @@ import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.util.Properties;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import com.metaweb.gridworks.importers.XmlImportUtilities.ImportColumnGroup;
 import com.metaweb.gridworks.model.Project;
 
@@ -22,7 +20,7 @@ public class XmlImporter implements Importer {
     public void read(Reader reader, Project project, Properties options)
             throws Exception {
         
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public void read(

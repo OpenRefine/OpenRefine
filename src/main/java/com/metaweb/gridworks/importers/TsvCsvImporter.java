@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 
 import com.metaweb.gridworks.importers.parsers.CSVRowParser;
@@ -94,7 +93,7 @@ public class TsvCsvImporter implements Importer {
     }
 
     public void read(InputStream inputStream, Project project, Properties options) throws Exception {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public boolean takesReader() {

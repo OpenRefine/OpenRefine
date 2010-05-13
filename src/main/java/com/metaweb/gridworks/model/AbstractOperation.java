@@ -2,8 +2,6 @@ package com.metaweb.gridworks.model;
 
 import java.util.Properties;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.process.Process;
@@ -24,10 +22,10 @@ abstract public class AbstractOperation implements Jsonizable {
     }
     
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
     
     protected String getBriefDescription(Project project) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

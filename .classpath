@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/server/java"/>
 	<classpathentry kind="src" path="tests/java/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/servlet-api-2.5.jar" sourcepath="lib-src/servlet-api-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-6.1.22.jar" sourcepath="lib-src/jetty-6.1.22-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-util-6.1.22.jar" sourcepath="lib-src/jetty-util-6.1.22-sources.jar"/>
