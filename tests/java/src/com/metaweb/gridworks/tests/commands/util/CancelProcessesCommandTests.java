@@ -41,15 +41,17 @@ public class CancelProcessesCommandTests {
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     ProjectManager projMan = null;
-    Project p = null;
+    Project proj = null;
     ProcessManager processMan = null;
+    PrintWriter pw = null;
 
     @Before
     public void SetUp() {
         projMan = mock(ProjectManager.class);
         ProjectManager.singleton = projMan;
-        p = mock(Project.class);
+        proj = mock(Project.class);
         processMan = mock(ProcessManager.class);
+        pw = mock(PrintWriter.class);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -62,7 +64,8 @@ public class CancelProcessesCommandTests {
 
         projMan = null;
         ProjectManager.singleton = null;
-        p = null;
+        proj = null;
+        pw = null;
         request = null;
         response = null;
     }
@@ -79,7 +82,7 @@ public class CancelProcessesCommandTests {
         } catch (Exception e) {
             Assert.fail();
         }
-        
+
         // request is null
         try {
             SUT.doPost(null, response);
@@ -101,15 +104,16 @@ public class CancelProcessesCommandTests {
         }
     }
 
-    // runs through a complete working post
+    /**
+     *  Contract for a complete working post
+     */
     @Test
-    public void doPost() {
+    public void doPostRegressionTest() {
 
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
-        when(projMan.getProject(anyLong())).thenReturn(p);
-        when(p.getProcessManager()).thenReturn(processMan);
-        PrintWriter pw = mock(PrintWriter.class);
+        when(projMan.getProject(anyLong())).thenReturn(proj);
+        when(proj.getProcessManager()).thenReturn(processMan);
         try {
             when(response.getWriter()).thenReturn(pw);
         } catch (IOException e1) {
@@ -128,17 +132,72 @@ public class CancelProcessesCommandTests {
         // verify
         verify(request, times(1)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
-        verify(p, times(1)).getProcessManager();
+
+        verify(processMan, times(1)).cancelAll();
+        verify(response, times(1)).setCharacterEncoding("UTF-8");
+        verify(response, times(1)).setHeader("Content-Type", "application/json");
+        verify(proj, times(1)).getProcessManager();
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
             Assert.fail();
         }
-
-        verify(processMan, times(1)).cancelAll();
-        verify(response, times(1)).setCharacterEncoding("UTF-8");
-        verify(response, times(1))
-                .setHeader("Content-Type", "application/json");
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
     }
+
+     @Test
+     public void doPostThrowsIfCommand_getProjectReturnsNull(){
+        // mock dependencies
+        when(request.getParameter("project")).thenReturn(PROJECT_ID);
+        when(projMan.getProject(anyLong()))
+            .thenReturn(null);
+
+        // run
+        try {
+            SUT.doPost(request, response);
+        } catch (ServletException e) {
+            //expected
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        // verify
+        verify(request, times(1)).getParameter("project");
+        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
+     }
+
+     @Test
+     public void doPostCatchesExceptionFromWriter(){
+         String ERROR_MESSAGE = "hello world";
+
+        // mock dependencies
+        when(request.getParameter("project")).thenReturn(PROJECT_ID);
+        when(projMan.getProject(anyLong())).thenReturn(proj);
+        when(proj.getProcessManager()).thenReturn(processMan);
+        try {
+            when(response.getWriter())
+              .thenThrow(new IllegalStateException(ERROR_MESSAGE))
+              .thenReturn(pw);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        // run
+        try {
+            SUT.doPost(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        verify(request, times(1)).getParameter("project");
+        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
+
+        verify(processMan, times(1)).cancelAll();
+        verify(response, times(3)).setCharacterEncoding("UTF-8");
+        //omitted other verifications for brevity.
+        //assumption is that expecting response.setCharacterEncoding times(3)
+        //implies it has Command.respondException has been called as expected
+     }
 }

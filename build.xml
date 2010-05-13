@@ -95,6 +95,7 @@
         <javac srcdir="${tests.dir}/src" destdir="${tests_classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="tests.class.path" />
         </javac>
+        <copy file="${tests.dir}/src/log4j.properties" tofile="${tests_classes.dir}/log4j.properties"/>
     </target>
 
     <target name="jar" depends="build">

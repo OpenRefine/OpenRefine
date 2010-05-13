@@ -30,62 +30,68 @@ import com.metaweb.gridworks.util.ParsingUtilities;
  * are AJAX calls.
  */
 public abstract class Command {
-    
+
     final static protected Logger logger = LoggerFactory.getLogger("command");
-    
-    public void doPost(HttpServletRequest request, HttpServletResponse response) 
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        
+
         throw new NotImplementedException();
     };
-    
-    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        
+
         throw new NotImplementedException();
     };
-    
+
     /**
      * Utility function to get the browsing engine's configuration as a JSON object
      * from the "engine" request parameter, most often in the POST body.
-     * 
+     *
      * @param request
      * @return
      * @throws Exception
      */
-    static protected JSONObject getEngineConfig(HttpServletRequest request) throws Exception {
+    static protected JSONObject getEngineConfig(HttpServletRequest request)
+    throws JSONException {
+        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
+        
         String json = request.getParameter("engine");
         return (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
     }
-    
+
     /**
-     * Utility function to reconstruct the browsing engine from the "engine" request parameter, 
+     * Utility function to reconstruct the browsing engine from the "engine" request parameter,
      * most often in the POST body.
-     * 
+     *
      * @param request
      * @param project
      * @return
      * @throws Exception
      */
-    static protected Engine getEngine(HttpServletRequest request, Project project) throws Exception {
+    static protected Engine getEngine(HttpServletRequest request, Project project)
+    throws Exception {
+        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
+        if (project == null) throw new IllegalArgumentException("parameter 'project' should not be null");
+
         Engine engine = new Engine(project);
-        String json = request.getParameter("engine");
-        if (json != null) {
-            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(json);
+        JSONObject o = getEngineConfig(request);
+        if (o != null)
             engine.initializeFromJSON(o);
-        }
         return engine;
     }
-    
+
     /**
      * Utility method for retrieving the Project object having the ID specified
      * in the "project" URL parameter.
-     * 
+     *
      * @param request
      * @return
      * @throws ServletException
      */
-    static protected Project getProject(HttpServletRequest request) throws ServletException {
+    protected Project getProject(HttpServletRequest request) throws ServletException {
+        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
         try {
             Project p = ProjectManager.singleton.getProject(Long.parseLong(request.getParameter("project")));
             if (p != null) {
@@ -94,10 +100,11 @@ public abstract class Command {
         } catch (Exception e) {
             // ignore
         }
-        throw new ServletException("Missing or bad project URL parameter");
+        throw new ServletException("Can't find project: missing or bad URL parameter");
     }
-    
+
     static protected int getIntegerParameter(HttpServletRequest request, String name, int def) {
+        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
         try {
             return Integer.parseInt(request.getParameter(name));
         } catch (Exception e) {
@@ -105,8 +112,9 @@ public abstract class Command {
         }
         return def;
     }
-    
+
     static protected JSONObject getJsonParameter(HttpServletRequest request, String name) {
+        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
         String value = request.getParameter(name);
         if (value != null) {
             try {
@@ -117,37 +125,37 @@ public abstract class Command {
         }
         return null;
     }
-    
+
     static protected void performProcessAndRespond(
-        HttpServletRequest request, 
+        HttpServletRequest request,
         HttpServletResponse response,
         Project project,
         Process process
     ) throws Exception {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
-        
+
         HistoryEntry historyEntry = project.processManager.queueProcess(process);
         if (historyEntry != null) {
             Writer w = response.getWriter();
             JSONWriter writer = new JSONWriter(w);
             Properties options = new Properties();
-            
+
             writer.object();
             writer.key("code"); writer.value("ok");
             writer.key("historyEntry"); historyEntry.write(writer, options);
             writer.endObject();
-            
+
             w.flush();
             w.close();
         } else {
             respond(response, "{ \"code\" : \"pending\" }");
         }
     }
-    
-    static protected void respond(HttpServletResponse response, String content) 
+
+    static protected void respond(HttpServletResponse response, String content)
         throws IOException, ServletException {
-        
+
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         Writer w = response.getWriter();
@@ -159,10 +167,10 @@ public abstract class Command {
             throw new ServletException("response returned a null writer");
         }
     }
-    
-    static protected void respond(HttpServletResponse response, String status, String message) 
+
+    static protected void respond(HttpServletResponse response, String status, String message)
         throws IOException, JSONException {
-        
+
         Writer w = response.getWriter();
         JSONWriter writer = new JSONWriter(w);
         writer.object();
@@ -172,31 +180,31 @@ public abstract class Command {
         w.flush();
         w.close();
     }
-    
-    static protected void respondJSON(HttpServletResponse response, Jsonizable o) 
+
+    static protected void respondJSON(HttpServletResponse response, Jsonizable o)
         throws IOException, JSONException {
-        
+
         respondJSON(response, o, new Properties());
     }
-    
+
     static protected void respondJSON(
-            HttpServletResponse response, Jsonizable o, Properties options) 
+            HttpServletResponse response, Jsonizable o, Properties options)
             throws IOException, JSONException {
-        
+
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
-        
+
         Writer w = response.getWriter();
         JSONWriter writer = new JSONWriter(w);
-        
+
         o.write(writer, options);
         w.flush();
         w.close();
     }
-    
-    static protected void respondException(HttpServletResponse response, Exception e) 
+
+    static protected void respondException(HttpServletResponse response, Exception e)
         throws IOException, ServletException {
-        
+
         logger.warn("Exception caught", e);
 
         if (response == null) {
@@ -207,15 +215,15 @@ public abstract class Command {
             JSONObject o = new JSONObject();
             o.put("code", "error");
             o.put("message", e.getMessage());
-            
+
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
             sw.flush();
-            
+
             o.put("stack", sw.toString());
-            
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             respond(response, o.toString());
@@ -223,9 +231,9 @@ public abstract class Command {
             e.printStackTrace(response.getWriter());
         }
     }
-    
+
     static protected void redirect(HttpServletResponse response, String url) throws IOException {
         response.sendRedirect(url);
     }
-    
+
 }

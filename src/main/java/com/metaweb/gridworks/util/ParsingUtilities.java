@@ -78,14 +78,22 @@ public class ParsingUtilities {
 
     static public JSONObject evaluateJsonStringToObject(String s) throws JSONException {
         JSONTokener t = new JSONTokener(s);
-        JSONObject o = (JSONObject) t.nextValue();
-        return o;
+        Object o = t.nextValue();
+        if (o instanceof JSONObject) {
+            return (JSONObject) o;
+        } else {
+            throw new JSONException(s + " couldn't be parsed as JSON object");
+        }
     }
     
     static public JSONArray evaluateJsonStringToArray(String s) throws JSONException {
         JSONTokener t = new JSONTokener(s);
-        JSONArray a = (JSONArray) t.nextValue();
-        return a;
+        Object o = t.nextValue();
+        if (o instanceof JSONArray) {
+            return (JSONArray) o;
+        } else {
+            throw new JSONException(s + " couldn't be parsed as JSON array");
+        }
     }
     
     private static final URLCodec codec = new URLCodec();
