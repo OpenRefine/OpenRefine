@@ -20,7 +20,7 @@ goto endUtils
 echo Usage %0 [options] ^<action^>
 echo where [options] include:
 echo.
-echo  /h print this message and exit
+echo  /? print this message and exit
 echo.
 echo  /p <port> the port that Gridworks will listen to
 echo     default: 3333
@@ -78,6 +78,7 @@ rem --- Argument parsing --------------------------------------------
 :loop
 if ""%1"" == """" goto endArgumentParsing
 if ""%1"" == ""/h"" goto usage
+if ""%1"" == ""/?"" goto usage
 if ""%1"" == ""/p"" goto arg-p
 if ""%1"" == ""/i"" goto arg-i
 if ""%1"" == ""/w"" goto arg-w
