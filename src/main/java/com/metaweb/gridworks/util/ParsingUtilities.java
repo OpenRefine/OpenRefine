@@ -22,21 +22,21 @@ import org.json.JSONTokener;
 public class ParsingUtilities {
 
     static final public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    
+
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
-        
+
         String query = request.getQueryString();
         if (query != null) {
             if (query.startsWith("?")) {
                 query = query.substring(1);
             }
-    
+
             parseParameters(options,query);
         }
         return options;
     }
-    
+
     static public Properties parseParameters(Properties p, String str) {
         if (str != null) {
             String[] pairs = str.split("&");
@@ -49,11 +49,11 @@ public class ParsingUtilities {
         }
         return p;
     }
-    
+
     static public Properties parseParameters(String str) {
         return (str == null) ? null : parseParameters(new Properties(),str);
     }
-    
+
     static public String inputStreamToString(InputStream is) throws IOException {
         Reader reader = new InputStreamReader(is, "UTF-8");
         try {
@@ -65,18 +65,19 @@ public class ParsingUtilities {
 
     static public String readerToString(Reader reader) throws IOException {
         StringBuffer sb = new StringBuffer();
-        
+
         char[] chars = new char[8192];
         int c;
-        
+
         while ((c = reader.read(chars)) > 0) {
             sb.insert(sb.length(), chars, 0, c);
         }
-        
+
         return sb.toString();
     }
 
     static public JSONObject evaluateJsonStringToObject(String s) throws JSONException {
+        if( s == null ) throw new IllegalArgumentException("parameter 's' should not be null");
         JSONTokener t = new JSONTokener(s);
         Object o = t.nextValue();
         if (o instanceof JSONObject) {
@@ -85,7 +86,7 @@ public class ParsingUtilities {
             throw new JSONException(s + " couldn't be parsed as JSON object");
         }
     }
-    
+
     static public JSONArray evaluateJsonStringToArray(String s) throws JSONException {
         JSONTokener t = new JSONTokener(s);
         Object o = t.nextValue();
@@ -95,7 +96,7 @@ public class ParsingUtilities {
             throw new JSONException(s + " couldn't be parsed as JSON array");
         }
     }
-    
+
     private static final URLCodec codec = new URLCodec();
     static public String encode(String s) {
         try {
@@ -113,11 +114,11 @@ public class ParsingUtilities {
             return s; // should not happen
         }
     }
-    
+
     static public String dateToString(Date d) {
         return s_sdf.format(d);
     }
-    
+
     static public Date stringToDate(String s) {
         try {
             return s_sdf.parse(s);

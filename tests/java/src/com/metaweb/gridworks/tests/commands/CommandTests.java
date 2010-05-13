@@ -99,14 +99,13 @@ public class CommandTests {
     }
 
     @Test
-    public void getEngineConfigThrowsWithEmptyOrBadParameterValue() {
+    public void getEngineConfigReturnsNullWithEmptyOrBadParameterValue() {
         when(request.getParameter("engine")).thenReturn("sdfasdfas");
 
         try {
-            Assert.assertNull(SUT.wrapGetEngineConfig(request));
+            Assert.assertNull( SUT.wrapGetEngineConfig(request) );
+        } catch (JSONException e) {
             Assert.fail();
-        } catch (Exception e) {
-            // expected
         }
 
         verify(request, times(1)).getParameter("engine");

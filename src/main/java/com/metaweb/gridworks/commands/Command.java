@@ -51,14 +51,19 @@ public abstract class Command {
      *
      * @param request
      * @return
-     * @throws Exception
+     * @throws JSONException
      */
     static protected JSONObject getEngineConfig(HttpServletRequest request)
     throws JSONException {
         if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
-        
+
         String json = request.getParameter("engine");
-        return (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
+        try{
+            return (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
+        } catch (JSONException e){
+            logger.debug( json + " could not be parsed to JSON");
+            return null;
+        }
     }
 
     /**
