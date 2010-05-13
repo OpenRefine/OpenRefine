@@ -489,7 +489,7 @@ ui_test() {
     
     windmill_prepare
     
-    GRIDWORKS_DATA_DIR="${GRIDWORKS_TEST_DIR}/temp"
+    GRIDWORKS_DATA_DIR="${TMPDIR}/gridworks-tests"
     
     add_option "-Dgridworks.headless=true"
     
@@ -510,9 +510,9 @@ ui_test() {
     
     echo "Starting Windmill... (press COMMAND-c or CTRL-c to exit)"
     if [ -z "$INTERACTIVE" ]; then
-        "$WINDMILL" firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/windmill/js > /dev/null
+        "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/windmill/js exit
     else
-        "$WINDMILL" firefox http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ > /dev/null
+        "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/
     fi
     
     echo ""
