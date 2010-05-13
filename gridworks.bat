@@ -127,7 +127,7 @@ set OPTS=%OPTS% %JAVA_OPTIONS%
 if not "%GRIDWORKS_MEMORY%" == "" goto gotMemory
 set GRIDWORKS_MEMORY=1024M
 :gotMemory
-set OPTS=%OPTS% -Xms256M -Xmx%GRIDWORKS_MEMORY%
+set OPTS=%OPTS% -Xms256M -Xmx%GRIDWORKS_MEMORY% -Dgridworks.memory=%GRIDWORKS_MEMORY%
 
 if not "%GRIDWORKS_PORT%" == "" goto gotPort
 set GRIDWORKS_PORT=3333

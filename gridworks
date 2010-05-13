@@ -750,7 +750,7 @@ add_option "$JAVA_OPTIONS"
 if [ -z "$GRIDWORKS_MEMORY" ]; then
     GRIDWORKS_MEMORY="1024M"
 fi
-add_option "-Xms256M -Xmx$GRIDWORKS_MEMORY"
+add_option "-Xms256M -Xmx$GRIDWORKS_MEMORY -Dgridworks.memory=$GRIDWORKS_MEMORY"
 
 if [ -z "$GRIDWORKS_PORT" ]; then
     GRIDWORKS_PORT="3333"

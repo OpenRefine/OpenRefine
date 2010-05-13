@@ -128,6 +128,11 @@ class GridworksServer extends Server {
     private ThreadPoolExecutor threadPool;
     
     public void init(String host, int port) throws Exception {
+        logger.info("Starting Server bound to '" + host + ":" + port + "'");
+
+        String memory = Configurations.get("gridworks.memory");
+        if (memory != null) logger.info("Max memory size: " + memory);
+        
         int maxThreads = Configurations.getInteger("gridworks.queue.size", 30);
         int maxQueue = Configurations.getInteger("gridworks.queue.max_size", 300);
         long keepAliveTime = Configurations.getInteger("gridworks.queue.idle_time", 60);
