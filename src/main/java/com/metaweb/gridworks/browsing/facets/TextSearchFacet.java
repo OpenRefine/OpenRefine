@@ -58,19 +58,16 @@ public class TextSearchFacet implements Facet {
         _mode = o.getString("mode");
         _caseSensitive = o.getBoolean("caseSensitive");
         if (_query != null) {
-            _query = _query.trim();
-            if (_query.length() > 0) {
-                if (!_caseSensitive) {
-                    _query = _query.toLowerCase();
+            if ("regex".equals(_mode)) {
+                try {
+                    _pattern = Pattern.compile(
+                    		_query, 
+                    		_caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                } catch (java.util.regex.PatternSyntaxException e) {
+                    e.printStackTrace();
                 }
-                
-                if ("regex".equals(_mode)) {
-                    try {
-                        _pattern = Pattern.compile(_query);
-                    } catch (java.util.regex.PatternSyntaxException e) {
-                        //e.printStackTrace();
-                    }
-                }
+            } else if (!_caseSensitive) {
+        		_query = _query.toLowerCase();
             }
         }
     }
