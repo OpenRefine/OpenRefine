@@ -22,7 +22,7 @@ import com.metaweb.gridworks.commands.Command;
 
 public class GridworksServletTests {
     // logging
-    final static protected Logger logger = LoggerFactory.getLogger("CancelProcessesCommandTests");
+    final static protected Logger logger = LoggerFactory.getLogger("GridworksServletTests");
 
     //System under test
     GridworksServletStub SUT = null;
@@ -45,6 +45,7 @@ public class GridworksServletTests {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         command = mock(Command.class);
+
         GridworksServletStub.InsertCommand(TEST_COMMAND_NAME,command); //inject mock into command container
     }
 
@@ -56,8 +57,14 @@ public class GridworksServletTests {
         command = null;
         GridworksServletStub.RemoveCommand(TEST_COMMAND_NAME); //remove mock to clean command container
     }
+    //-------------------AutoSaveTimerTask tests-----------
+    //TODO would need to mock Timer and inject it into GridworksServlet.  Also need to deal with ProjectManager.singleton
+    //-------------------init tests------------------------
+    //TODO need to stub super.init(), mock Timer and inject it into GridworksServlet
+    //-------------------destroy tests---------------------
+    //TODO need to mock Timer and inject it into GridworksServlet.  Also need to deal with ProjectManager.singleton
 
-    //--------------------doGet tests---------------------
+    //--------------------doGet tests----------------------
     @Test
     public void doGetRegressionTest(){
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
@@ -94,7 +101,7 @@ public class GridworksServletTests {
 
         verifyGetCommandNameCalled();
         verifyError404Called();
-        
+
     }
 
     //----------------doPost tests-------------------------
@@ -119,11 +126,11 @@ public class GridworksServletTests {
             Assert.fail();
         }
     }
-    
+
     @Test
     public void doPostReturns404WhenCommandNotFound(){
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
-        
+
         try {
             SUT.wrapDoPost(request, response);
         } catch (ServletException e) {
@@ -131,11 +138,10 @@ public class GridworksServletTests {
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         verifyGetCommandNameCalled();
         verifyError404Called();
     }
-
 
     //----------------getCommandName tests----------------
 
@@ -149,7 +155,7 @@ public class GridworksServletTests {
         verify(request, times(1)).getPathInfo();
     }
 
-    //helpers
+    //------------helpers
     protected void whenGetCommandNameThenReturn(String commandName){
         when(request.getPathInfo()).thenReturn(commandName);
     }
