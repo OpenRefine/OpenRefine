@@ -164,59 +164,61 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
             
             public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
                 Cell cell = row.getCell(_cellIndex);
-                if (cell != null && 
-                    ExpressionUtils.isNonBlankData(cell.value) && 
-                    _similarValue.equals(cell.value)) {
-                    
-                    Recon recon = null;
-                    if (_judgment == Judgment.New && _shareNewTopics) {
-                        if (_sharedNewRecon == null) {
-                            _sharedNewRecon = new Recon(_historyEntryID);
-                            _sharedNewRecon.judgment = Judgment.New;
-                            _sharedNewRecon.judgmentBatchSize = 0;
-                            _sharedNewRecon.judgmentAction = "similar";
-                        }
-                        _sharedNewRecon.judgmentBatchSize++;
-                        
-                        recon = _sharedNewRecon;
-                    } else {
-                        if (_dupReconMap.containsKey(cell.recon.id)) {
-                            recon = _dupReconMap.get(cell.recon.id);
-                            recon.judgmentBatchSize++;
-                        } else {
-                            recon = cell.recon.dup(_historyEntryID);
-                            recon.judgmentBatchSize = 1;
-                            recon.matchRank = -1;
-                            recon.judgmentAction = "similar";
-                            
-                            if (_judgment == Judgment.Matched) {
-                                recon.judgment = Recon.Judgment.Matched;
-                                recon.match = _match;
-                                
-                                if (recon.candidates != null) {
-                                    for (int m = 0; m < recon.candidates.size(); m++) {
-                                        if (recon.candidates.get(m).topicGUID.equals(_match.topicGUID)) {
-                                            recon.matchRank = m;
-                                            break;
-                                        }
-                                    }
-                                }
-                            } else if (_judgment == Judgment.New) {
-                                recon.judgment = Recon.Judgment.New;
-                                recon.match = null;
-                            } else if (_judgment == Judgment.None) {
-                                recon.judgment = Recon.Judgment.None;
-                                recon.match = null;
-                            }
-                            
-                            _dupReconMap.put(cell.recon.id, recon);
-                        }
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                	String value = cell.value instanceof String ? 
+                			((String) cell.value) : cell.value.toString();
+                			
+                    if (_similarValue.equals(value)) {
+	                    Recon recon = null;
+	                    if (_judgment == Judgment.New && _shareNewTopics) {
+	                        if (_sharedNewRecon == null) {
+	                            _sharedNewRecon = new Recon(_historyEntryID);
+	                            _sharedNewRecon.judgment = Judgment.New;
+	                            _sharedNewRecon.judgmentBatchSize = 0;
+	                            _sharedNewRecon.judgmentAction = "similar";
+	                        }
+	                        _sharedNewRecon.judgmentBatchSize++;
+	                        
+	                        recon = _sharedNewRecon;
+	                    } else {
+	                        if (_dupReconMap.containsKey(cell.recon.id)) {
+	                            recon = _dupReconMap.get(cell.recon.id);
+	                            recon.judgmentBatchSize++;
+	                        } else {
+	                            recon = cell.recon.dup(_historyEntryID);
+	                            recon.judgmentBatchSize = 1;
+	                            recon.matchRank = -1;
+	                            recon.judgmentAction = "similar";
+	                            
+	                            if (_judgment == Judgment.Matched) {
+	                                recon.judgment = Recon.Judgment.Matched;
+	                                recon.match = _match;
+	                                
+	                                if (recon.candidates != null) {
+	                                    for (int m = 0; m < recon.candidates.size(); m++) {
+	                                        if (recon.candidates.get(m).topicGUID.equals(_match.topicGUID)) {
+	                                            recon.matchRank = m;
+	                                            break;
+	                                        }
+	                                    }
+	                                }
+	                            } else if (_judgment == Judgment.New) {
+	                                recon.judgment = Recon.Judgment.New;
+	                                recon.match = null;
+	                            } else if (_judgment == Judgment.None) {
+	                                recon.judgment = Recon.Judgment.None;
+	                                recon.match = null;
+	                            }
+	                            
+	                            _dupReconMap.put(cell.recon.id, recon);
+	                        }
+	                    }
+	                    
+	                    Cell newCell = new Cell(cell.value, recon);
+	                    
+	                    CellChange cellChange = new CellChange(rowIndex, _cellIndex, cell, newCell);
+	                    _cellChanges.add(cellChange);
                     }
-                    
-                    Cell newCell = new Cell(cell.value, recon);
-                    
-                    CellChange cellChange = new CellChange(rowIndex, _cellIndex, cell, newCell);
-                    _cellChanges.add(cellChange);
                 }
                 return false;
             }

@@ -3,7 +3,8 @@ Ongoing
 Fixes:
 - Issue 34: "Behavior of Text Filter is unpredictable when "regular expression" mode is enabled."
   Regex was not compiled with case insensitivity flag.
-   
+- Issue 4: "Match All bug with ZIP code". Numeric values in cells were not stringified first
+  before comparison.
 
 1.0.1 Release (May 12, 2010)
 
