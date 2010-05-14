@@ -6,6 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.Ignore;
+
 import com.metaweb.gridworks.GridworksServlet;
 import com.metaweb.gridworks.commands.Command;
 
@@ -13,27 +15,39 @@ import com.metaweb.gridworks.commands.Command;
  * Exposes protected methods of com.metaweb.gridworks.GridworksServlet as public for unit testing
  *
  */
+@Ignore
 public class GridworksServletStub extends GridworksServlet{
 
     //requirement of extending HttpServlet, not required for testing
     private static final long serialVersionUID = 1L;
 
+    public void wrapDoGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        super.doGet(request, response);
+    }
+
+    public void wrapDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        super.doPost(request, response);
+    }
+
+    public String wrapGetCommandName(HttpServletRequest request){
+        return super.getCommandName(request);
+    }
+
+    //-------------------helper methods--------------
     /**
      * Helper method for inserting a mock object
+     * @param commandName
      * @param command
      */
-    static public void InsertTestCommand( Command command ){
-        _commands.put("test-command", command);
+    static public void InsertCommand( String commandName, Command command ){
+        _commands.put(commandName, command);
     }
 
     /**
      * Helper method for clearing up after testing
+     * @param commandName
      */
-    static public void RemoveTestCommand( ){
-        _commands.remove("test-command");
-    }
-
-    public void wrapDoGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        super.doGet(request, response);
+    static public void RemoveCommand( String commandName ){
+        _commands.remove(commandName);
     }
 }

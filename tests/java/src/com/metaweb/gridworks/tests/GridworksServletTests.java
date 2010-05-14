@@ -27,6 +27,11 @@ public class GridworksServletTests {
     //System under test
     GridworksServletStub SUT = null;
 
+    //variables
+    String TEST_COMMAND_NAME = "test-command";
+    String TEST_COMMAND_PATH = "/test-command/foobar";
+    String BAD_COMMAND_PATH = "/command-does-not-exist";
+
     //mocks
     HttpServletRequest request = null;
     HttpServletResponse response = null;
@@ -40,7 +45,7 @@ public class GridworksServletTests {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         command = mock(Command.class);
-        GridworksServletStub.InsertTestCommand(command); //inject mock into command container
+        GridworksServletStub.InsertCommand(TEST_COMMAND_NAME,command); //inject mock into command container
     }
 
     @After
@@ -49,13 +54,13 @@ public class GridworksServletTests {
         request = null;
         response = null;
         command = null;
-        GridworksServletStub.RemoveTestCommand(); //remove mock to clean command container
+        GridworksServletStub.RemoveCommand(TEST_COMMAND_NAME); //remove mock to clean command container
     }
 
     //--------------------doGet tests---------------------
     @Test
     public void doGetRegressionTest(){
-        when(request.getPathInfo()).thenReturn("/test-command/foobar");  //called in getCommandName method
+        whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
 
         try {
             SUT.wrapDoGet(request, response);
@@ -65,11 +70,95 @@ public class GridworksServletTests {
             Assert.fail();
         }
 
-        verify(request,times(1)).getPathInfo();
+        verifyGetCommandNameCalled();
         try {
             verify(command,times(1)).doGet(request, response);
         } catch (ServletException e) {
             Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void doGetReturnsError404WhenCommandNotFound(){
+        whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
+
+        try {
+            SUT.wrapDoGet(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        verifyGetCommandNameCalled();
+        verifyError404Called();
+        
+    }
+
+    //----------------doPost tests-------------------------
+    @Test
+    public void doPostRegressionTest(){
+        whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
+
+        try {
+            SUT.wrapDoPost(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        verifyGetCommandNameCalled();
+        try {
+            verify(command,times(1)).doPost(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+    }
+    
+    @Test
+    public void doPostReturns404WhenCommandNotFound(){
+        whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
+        
+        try {
+            SUT.wrapDoPost(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        
+        verifyGetCommandNameCalled();
+        verifyError404Called();
+    }
+
+
+    //----------------getCommandName tests----------------
+
+    @Test
+    public void getCommandNameHandlesBadCommandName(){
+
+        when(request.getPathInfo()).thenReturn("/this-command-has-no-trailing-slash");
+
+        Assert.assertEquals("this-command-has-no-trailing-slash", SUT.wrapGetCommandName(request));
+
+        verify(request, times(1)).getPathInfo();
+    }
+
+    //helpers
+    protected void whenGetCommandNameThenReturn(String commandName){
+        when(request.getPathInfo()).thenReturn(commandName);
+    }
+    protected void verifyGetCommandNameCalled(){
+        verify(request,times(1)).getPathInfo();
+    }
+    protected void verifyError404Called(){
+        try {
+            verify(response,times(1)).sendError(404);
         } catch (IOException e) {
             Assert.fail();
         }
