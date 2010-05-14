@@ -118,6 +118,10 @@ function initializeUI(uiState) {
     });
     
     $(window).bind("resize", resizeAll);
+    
+    if (uiState.facets) {
+        Gridworks.update({ engineChanged: true });
+    }
 }
 
 Gridworks.setTitle = function(status) {

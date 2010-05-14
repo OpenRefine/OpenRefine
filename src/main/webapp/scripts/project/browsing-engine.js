@@ -27,8 +27,6 @@ function BrowsingEngine(div, facetConfigs) {
             
             this._facets.push({ elmt: elmt, facet: facet });
         }
-        
-        Gridworks.update({ engineChanged: true });
     }
 }
 
