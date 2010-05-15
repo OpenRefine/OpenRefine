@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,7 @@ public class CSVRowParserTests {
         Assert.assertEquals("15.87", splitLine.get(2));
     }
     
-    //@Test
+    @Ignore("CSV parser not doing the right thing yet") @Test
     public void splitWithUnclosedQuote(){
         try {
             when(lineReader.readLine()).thenReturn("");
@@ -85,7 +86,7 @@ public class CSVRowParserTests {
         }
     }
     
-    //@Test
+    @Ignore("CSV parser not doing the right thing yet") @Test
     public void splitWithLeadingQuoteWithComma(){
         List<String> splitLine = SUT.split(LEADING_QUOTE_WITH_COMMA, lineReader);
         Assert.assertEquals(3, splitLine.size());
@@ -94,7 +95,7 @@ public class CSVRowParserTests {
         Assert.assertEquals("value3", splitLine.get(2));
     }
     
-    //@Test
+    @Ignore("CSV parser not doing the right thing yet") @Test
     public void splitWithQuoteInsideValue(){
         List<String> splitLine = SUT.split(QUOTED, lineReader);
         Assert.assertEquals(3, splitLine.size());
