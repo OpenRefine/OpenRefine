@@ -6,8 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Ignore;
-
 import com.metaweb.gridworks.GridworksServlet;
 import com.metaweb.gridworks.commands.Command;
 
@@ -15,8 +13,7 @@ import com.metaweb.gridworks.commands.Command;
  * Exposes protected methods of com.metaweb.gridworks.GridworksServlet as public for unit testing
  *
  */
-@Ignore
-public class GridworksServletStub extends GridworksServlet{
+public class GridworksServletStub extends GridworksServlet {
 
     //requirement of extending HttpServlet, not required for testing
     private static final long serialVersionUID = 1L;

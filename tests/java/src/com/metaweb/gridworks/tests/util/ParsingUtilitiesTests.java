@@ -2,10 +2,10 @@ package com.metaweb.gridworks.tests.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.util.ParsingUtilities;
 

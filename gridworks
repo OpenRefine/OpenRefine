@@ -529,14 +529,12 @@ server_test() {
     CLASSPATH="$GRIDWORKS_TEST_DIR/java/classes${SEP}$GRIDWORKS_WEBAPP/WEB-INF/classes${SEP}$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_TEST_DIR/java/lib/*${SEP}$GRIDWORKS_LIB_DIR/*${SEP}$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
 
     if [ -z "$1" ]; then
-        cd "$GRIDWORKS_TEST_DIR/java/classes"
-        TESTS=`find . -name '*.class' | sed s@/@.@g | sed s@.class@@ | sed s@..@@`
-        cd ../../..
+        TESTS="-excludegroups broken $GRIDWORKS_TEST_DIR/java/conf/tests.xml"
     else 
-        TESTS=$1
+        TESTS="-testclass $1"
     fi
     
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.junit.runner.JUnitCore $TESTS"
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.testng.TestNG -d $GRIDWORKS_BUILD_DIR/server_tests -listener org.testng.reporters.DotTestListener $TESTS"
     
     #echo "$RUN_CMD"
     #echo ""

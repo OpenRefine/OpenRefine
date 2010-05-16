@@ -24,13 +24,14 @@
 	<classpathentry kind="lib" path="lib/httpclient-4.0.1.jar" sourcepath="lib-src/httpclient-4.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/signpost-core-1.2.1.1.jar" sourcepath="lib-src/signpost-core-1.2.1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/signpost-commonshttp4-1.2.1.1.jar" sourcepath="lib-src/signpost-commonshttp4-1.2.1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/opencsv-2.2.jar" sourcepath="tests/java/lib-src/opencsv-2.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/jython-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/clojure-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-asl-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/marc4j-2.4.jar"/>
-	<classpathentry kind="lib" path="tests/java/lib/junit-4.8.1.jar" sourcepath="tests/java/lib-src/junit-4.8.1-sources.jar"/>
 	<classpathentry kind="lib" path="tests/java/lib/mockito-all-1.8.4.jar" sourcepath="tests/java/lib-src/mockito-all-1.8.4-sources.jar"/>
+	<classpathentry kind="lib" path="tests/java/lib/testng-5.12.1.jar" sourcepath="tests/java/lib-src/testng-5.12.1-sources.jar"/>
 	<classpathentry kind="output" path="src/main/webapp/WEB-INF/classes"/>
 </classpath>

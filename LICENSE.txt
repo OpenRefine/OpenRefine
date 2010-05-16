@@ -55,6 +55,8 @@ licenses/apache2.0.LICENSE.txt
     servlet-api
     xmlbeans
     signpost
+    opencsv
+    textng
    
 LGPL
 ----

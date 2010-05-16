@@ -48,7 +48,7 @@
    - Jeff Fry <jfry@metaweb.com>
    - Will Moffat <willmoffat@metaweb.com>
    - James Home <jh@metaweb.com>
-  
+   - Iain Sproat <iainsproat@gmail.com>
      
 
                                   - o -

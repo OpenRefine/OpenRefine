@@ -9,13 +9,12 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.importers.parsers.CSVRowParser;
 
@@ -38,18 +37,20 @@ public class CSVRowParserTests {
     //mocked dependencies
     LineNumberReader lineReader = null;
 
-    @Before
+    @BeforeMethod
     public void SetUp(){
         lineReader = mock(LineNumberReader.class);
         SUT = new CSVRowParser();
     }
 
-    @After
+    @AfterMethod
     public void TearDown(){
         lineReader = null;
         SUT = null;
     }
+    
     //------------split tests-------------------------
+    
     @Test
     public void split(){
         List<String> splitLine = SUT.split(SAMPLE_ROW, lineReader);
@@ -68,16 +69,18 @@ public class CSVRowParserTests {
         Assert.assertEquals("15.87", splitLine.get(2));
     }
     
-    @Ignore("CSV parser not doing the right thing yet") @Test
+    @Test(enabled = false, groups = { "broken" })
     public void splitWithUnclosedQuote(){
         try {
-            when(lineReader.readLine()).thenReturn("");
+            when(lineReader.readLine()).thenReturn("continuation of row above, with comma\",value2");
         } catch (IOException e) {
             Assert.fail();
         }
         List<String> splitLine = SUT.split(UNCLOSED_QUOTED_ROW, lineReader);
         Assert.assertEquals(1, splitLine.size());
         Assert.assertEquals(UNCLOSED_QUOTED_ROW, splitLine.get(0));
+        Assert.assertEquals(UNCLOSED_QUOTED_ROW + "\ncontinuation of row above, with comma\"", splitLine.get(0));
+        Assert.assertEquals("value2", splitLine.get(1));
         
         try {
             verify(lineReader, times(1)).readLine();
@@ -86,7 +89,7 @@ public class CSVRowParserTests {
         }
     }
     
-    @Ignore("CSV parser not doing the right thing yet") @Test
+    @Test(enabled = false, groups = { "broken" })
     public void splitWithLeadingQuoteWithComma(){
         List<String> splitLine = SUT.split(LEADING_QUOTE_WITH_COMMA, lineReader);
         Assert.assertEquals(3, splitLine.size());
@@ -95,7 +98,7 @@ public class CSVRowParserTests {
         Assert.assertEquals("value3", splitLine.get(2));
     }
     
-    @Ignore("CSV parser not doing the right thing yet") @Test
+    @Test(enabled = false, groups = { "broken" })
     public void splitWithQuoteInsideValue(){
         List<String> splitLine = SUT.split(QUOTED, lineReader);
         Assert.assertEquals(3, splitLine.size());

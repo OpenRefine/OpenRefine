@@ -11,12 +11,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.commands.Command;
 
@@ -38,9 +38,8 @@ public class GridworksServletTests {
     Command command = null;
 
 
-    @Before
-    public void SetUp()
-    {
+    @BeforeMethod
+    public void SetUp() {
         SUT = new GridworksServletStub();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -49,14 +48,15 @@ public class GridworksServletTests {
         GridworksServletStub.InsertCommand(TEST_COMMAND_NAME,command); //inject mock into command container
     }
 
-    @After
-    public void TearDown(){
+    @AfterMethod
+    public void TearDown() {
         SUT = null;
         request = null;
         response = null;
         command = null;
         GridworksServletStub.RemoveCommand(TEST_COMMAND_NAME); //remove mock to clean command container
     }
+    
     //-------------------AutoSaveTimerTask tests-----------
     //TODO would need to mock Timer and inject it into GridworksServlet.  Also need to deal with ProjectManager.singleton
     //-------------------init tests------------------------

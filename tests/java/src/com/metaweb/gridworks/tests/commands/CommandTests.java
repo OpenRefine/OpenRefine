@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
@@ -30,7 +30,7 @@ public class CommandTests {
     ProjectManager projectManager = null;
     Project project = null;
 
-    @Before
+    @BeforeMethod
     public void SetUp() {
         SUT = new CommandStub();
         request = mock(HttpServletRequest.class);
@@ -38,7 +38,7 @@ public class CommandTests {
         project = mock(Project.class);
     }
 
-    @After
+    @AfterMethod
     public void TearDown() {
         SUT = null;
         request = null;

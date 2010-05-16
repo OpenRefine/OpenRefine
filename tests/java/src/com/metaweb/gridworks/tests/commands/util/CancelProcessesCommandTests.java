@@ -13,12 +13,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.commands.util.CancelProcessesCommand;
@@ -45,7 +45,7 @@ public class CancelProcessesCommandTests {
     ProcessManager processMan = null;
     PrintWriter pw = null;
 
-    @Before
+    @BeforeMethod
     public void SetUp() {
         projMan = mock(ProjectManager.class);
         ProjectManager.singleton = projMan;
@@ -58,7 +58,7 @@ public class CancelProcessesCommandTests {
         SUT = new CancelProcessesCommand();
     }
 
-    @After
+    @AfterMethod
     public void TearDown() {
         SUT = null;
 

@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Ignore;
 
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.commands.Command;
@@ -14,7 +13,6 @@ import com.metaweb.gridworks.model.Project;
 /**
  * Implementation of abstract class for testing Exposes protected members as public
  */
-@Ignore
 public class CommandStub extends Command {
 
     public Project wrapGetProject(HttpServletRequest request)
