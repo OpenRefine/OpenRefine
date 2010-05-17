@@ -15,9 +15,7 @@ public class ImporterUtilities {
     static public Serializable parseCellValue(String text) {
         if (text.length() > 0) {
             if (text.length() > 1 && text.startsWith("\"") && text.endsWith("\"")) {
-                return text.substring(1, text.length() - 1); // FIXME is this a good assumption?
-                // what about the following string: '"To be" is almost always followed by "or not to be"'.
-                // This would be emitted as: 'To be" is almost always followed by "or not to be'
+                return text.substring(1, text.length() - 1);
             }
 
             try {
