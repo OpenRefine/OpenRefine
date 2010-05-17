@@ -345,7 +345,7 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data-row1-cell1");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data-row1-cell2");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data-row1-cell3");
-        Assert.assertEquals(project.rows.get(1).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(1).cells.size(), 2);
         Assert.assertEquals(project.rows.get(1).cells.get(0).value, "data-row2-cell1");
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "data-row2-cell2");
     }
@@ -367,6 +367,26 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To\n Be\" is often followed by \"or not To\n Be\"");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+    }
+    
+    @Test(enabled=false, groups={"broken"})
+    public void readWithMultiLinedQuotedDataAndBlankLines(){
+        String input = "col1,col2,col3\n" +
+            "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n\n\n\n\n Be\"\"\",data2";
+        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
+        try {
+            SUT.read(lnReader, project, null, -1, 0, 0, 1, false, true);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To\n Be\" is often followed by \"or not To\n\n\n\n\n Be\"");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
 
