@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.info;
+package com.metaweb.gridworks.commands.workspace;
 
 import java.io.IOException;
 import java.util.Map;

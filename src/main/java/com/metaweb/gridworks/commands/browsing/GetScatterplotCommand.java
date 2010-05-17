@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.info;
+package com.metaweb.gridworks.commands.browsing;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
