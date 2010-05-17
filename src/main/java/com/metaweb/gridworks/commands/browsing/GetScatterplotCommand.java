@@ -53,7 +53,7 @@ public class GetScatterplotCommand extends Command {
                 sos.close();
             }
             
-            logger.info("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
+            logger.trace("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);
