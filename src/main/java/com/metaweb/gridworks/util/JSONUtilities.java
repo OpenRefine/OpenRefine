@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.util;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -107,5 +108,25 @@ public class JSONUtilities {
             writer.value(s);
         }
         writer.endArray();
+    }
+    
+    static public void putField(JSONObject obj, String key, Object value) throws JSONException {
+    	if (value instanceof Integer) {
+    		obj.put(key, ((Integer) value).intValue());
+    	} else if (value instanceof Long) {
+    		obj.put(key, ((Long) value).intValue());
+    	} else if (value instanceof Number) {
+    		obj.put(key, ((Double) value).doubleValue());
+    	} else if (value instanceof Boolean) {
+    		obj.put(key, (Boolean) value);
+    	} else if (value instanceof Date) {
+    		obj.put(key, ParsingUtilities.dateToString((Date) value));
+    	} else if (value instanceof Calendar) {
+    		obj.put(key, ParsingUtilities.dateToString(((Calendar) value).getTime()));
+    	} else if (value instanceof String) {
+    		obj.put(key, (String) value);
+    	} else {
+    		obj.put(key, value.toString());
+    	}
     }
 }

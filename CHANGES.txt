@@ -8,6 +8,8 @@ Fixes:
 - Issue 41: "Envelope quotation marks are removed by CSV importer"
 - Issue 19: "CSV import is too basic"
 - Issue 15: "Ability to rename projects"
+- Issue 16: "Column name collision when adding data from Freebase"
+- Issue 28: "mql-like preview is not properly unquoting numbers"
 
 Changes:
 - Moved unit tests from JUnit to TestNG

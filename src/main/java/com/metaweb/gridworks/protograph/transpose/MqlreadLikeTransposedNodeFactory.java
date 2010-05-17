@@ -17,6 +17,7 @@ import com.metaweb.gridworks.protograph.CellValueNode;
 import com.metaweb.gridworks.protograph.FreebaseProperty;
 import com.metaweb.gridworks.protograph.FreebaseTopicNode;
 import com.metaweb.gridworks.protograph.ValueNode;
+import com.metaweb.gridworks.util.JSONUtilities;
 
 public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
     protected List<JSONObject> rootObjects = new LinkedList<JSONObject>();
@@ -126,7 +127,8 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
             if (obj == null) {
                 obj = new JSONObject();
                 try {
-                    obj.put(VALUE, cell.value.toString());
+                	JSONUtilities.putField(obj, VALUE, cell.value);
+                	
                     obj.put(TYPE, node.valueType);
                     if ("/type/text".equals(node.valueType)) {
                         obj.put(LANG, node.lang);
