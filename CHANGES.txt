@@ -9,6 +9,9 @@ Fixes:
 - Issue 19: "CSV import is too basic"
 - Issue 15: "Ability to rename projects"
 
+Changes:
+- Moved unit tests from JUnit to TestNG
+
 1.0.1 Release (May 12, 2010)
 
 Fixes:
