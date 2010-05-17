@@ -66,6 +66,23 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
     }
+    
+    @Test(dataProvider = "CSV-or-null")
+    public void readUnseperatedData(String sep){
+        String input = "value1,value2,value3";
+        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
+
+        try {
+            SUT.read(lnReader, project, sep, -1, 0, 0, 0, false, false);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 1);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column");
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, input);
+    }
 
     @Test(dataProvider = "CSV-or-null")
     public void readSimpleData_CSV_1Header_1Row(String sep){
@@ -129,7 +146,7 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    @Test(groups = {  }, dataProvider = "CSV-or-null")
     public void readDoesTrimsLeadingTrailingWhitespace(String sep){
         String input = " data1 , data2 , data3 ";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
@@ -229,7 +246,7 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(5).value, "data6");
     }
 
-    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    @Test(groups = { }, dataProvider = "CSV-or-null")
     public void readQuotedData(String sep){
         String input = "col1,col2,col3\n" +
                        "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\",data2";
@@ -319,7 +336,7 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    @Test(groups = {  }, dataProvider = "CSV-or-null")
     public void readIgnore3_Header2_Skip2_limit2(String sep){
         String input = "ignore1\n" +
                        "ignore2\n" +
@@ -346,12 +363,13 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data-row1-cell1");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data-row1-cell2");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data-row1-cell3");
-        Assert.assertEquals(project.rows.get(1).cells.size(), 2);
+        Assert.assertEquals(project.rows.get(1).cells.size(), 3);
         Assert.assertEquals(project.rows.get(1).cells.get(0).value, "data-row2-cell1");
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "data-row2-cell2");
+        Assert.assertNull(project.rows.get(1).cells.get(2));
     }
 
-    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    @Test(groups = { }, dataProvider = "CSV-or-null")
     public void readWithMultiLinedQuotedData(String sep){
         String input = "col1,col2,col3\n" +
         	"\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\",data2";
@@ -371,7 +389,7 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
 
-    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    @Test(groups = {  }, dataProvider = "CSV-or-null")
     public void readWithMultiLinedQuotedDataAndBlankLines(String sep){
         String input = "col1,col2,col3\n" +
             "\"A line with many \n\n\n\n\n empty lines\",data2";

@@ -10,10 +10,10 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.metaweb.gridworks.importers.parsers.TsvCsvRowParser;
-import com.metaweb.gridworks.importers.parsers.NonSplitRowParser;
-import com.metaweb.gridworks.importers.parsers.RowParser;
-import com.metaweb.gridworks.importers.parsers.SeparatorRowParser;
+import au.com.bytecode.opencsv.CSVParser;
+
+import com.metaweb.gridworks.expr.ExpressionUtils;
+import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
@@ -38,9 +38,31 @@ public class TsvCsvImporter implements Importer {
     	);
     }
 
+    /**
+     *
+     * @param lnReader
+     *           LineNumberReader used to read file or string contents
+     * @param project
+     *           The project into which the parsed data will be added
+     * @param sep
+     *           The character used to denote different the break between data points
+     * @param limit
+     *           The maximum number of rows of data to import
+     * @param skip
+     *           The number of initial data rows to skip
+     * @param ignoreLines
+     *           The number of initial lines within the data source which should be ignored entirely
+     * @param headerLines
+     *           The number of lines in the data source which describe each column
+     * @param guessValueType
+     *           Whether the parser should try and guess the type of the value being parsed
+     * @param splitIntoColumns
+     *           Whether the parser should try and split the data source into columns
+     * @throws IOException
+     */
     public void read(LineNumberReader lnReader, Project project, String sep, int limit, int skip, int ignoreLines, int headerLines, boolean guessValueType, boolean splitIntoColumns ) throws IOException{
-        RowParser parser = (sep != null && sep.length() > 0 && splitIntoColumns) ?
-                new SeparatorRowParser(sep) : null;
+        CSVParser parser = (sep != null && sep.length() > 0 && splitIntoColumns) ?
+                        new CSVParser(sep.toCharArray()[0]) : null;//HACK changing string to char - won't work for multi-char separators.
         List<String> columnNames = new ArrayList<String>();
         String line = null;
         int rowsWithData = 0;
@@ -53,51 +75,79 @@ public class TsvCsvImporter implements Importer {
                 continue;
             }
 
+            //guess separator
             if (parser == null) {
-                if (splitIntoColumns) {
-                    int tab = line.indexOf('\t');
-                    if (tab >= 0) {
-                        sep = "\t";
-                        parser = new TsvCsvRowParser('\t');
-                    } else {
-                        sep = ",";
-                        parser = new TsvCsvRowParser(',');
-                    }
+                int tab = line.indexOf('\t');
+                if (tab >= 0) {
+                    parser = new CSVParser('\t');
                 } else {
-                    parser = new NonSplitRowParser();
+                    parser = new CSVParser(',');
                 }
             }
 
+
             if (headerLines > 0) {
+                //column headers
                 headerLines--;
 
-                List<String> cells = parser.split(line, lnReader);
+                ArrayList<String> cells = getCells(line, parser, lnReader, splitIntoColumns);
+
                 for (int c = 0; c < cells.size(); c++) {
                     String cell = cells.get(c).trim();
-
+                    //add column even if cell is blank
                     ImporterUtilities.appendColumnName(columnNames, c, cell);
                 }
             } else {
+                //data
                 Row row = new Row(columnNames.size());
 
-                if (parser.parseRow(row, line, guessValueType, lnReader)) {
+                ArrayList<String> cells = getCells(line, parser, lnReader, splitIntoColumns);
+
+                if( cells != null && cells.size() > 0 )
                     rowsWithData++;
 
-                    if (skip <= 0 || rowsWithData > skip) {
-                        project.rows.add(row);
-                        project.columnModel.setMaxCellIndex(row.cells.size());
-
-                        ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
-
-                        if (limit > 0 && project.rows.size() >= limit) {
-                            break;
+                if (skip <=0  || rowsWithData > skip){
+                    //add parsed data to row
+                    for(String s : cells){
+                        s = s.trim();
+                        if (ExpressionUtils.isNonBlankData(s)) {
+                            row.cells.add(new Cell(s, null));
+                        }else{
+                            row.cells.add(null);
                         }
+                    }
+                    project.rows.add(row);
+                    project.columnModel.setMaxCellIndex(row.cells.size());
+
+                    ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
+
+                    if (limit > 0 && project.rows.size() >= limit) {
+                        break;
                     }
                 }
             }
         }
 
         ImporterUtilities.setupColumns(project, columnNames);
+    }
+
+    protected ArrayList<String> getCells(String line, CSVParser parser, LineNumberReader lnReader, boolean splitIntoColumns) throws IOException{
+        ArrayList<String> cells = new ArrayList<String>();
+        if(splitIntoColumns){
+            String[] tokens = parser.parseLineMulti(line);
+            for(String s : tokens){
+                cells.add(s);
+            }
+            while(parser.isPending()){
+                tokens = parser.parseLineMulti(lnReader.readLine());
+                for(String s : tokens){
+                    cells.add(s);
+                }
+            }
+        }else{
+            cells.add(line);
+        }
+        return cells;
     }
 
     public void read(InputStream inputStream, Project project, Properties options) throws Exception {
