@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.importers.parsers.TsvCsvRowParser;
 
-public class CSVRowParserTests {
+public class TsvCsvRowParserTests {
     // logging
     final static protected Logger logger = LoggerFactory.getLogger("CSVRowParserTests");
 
