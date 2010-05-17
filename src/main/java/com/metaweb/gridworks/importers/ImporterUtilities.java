@@ -32,6 +32,7 @@ public class ImporterUtilities {
                 }
             } catch (NumberFormatException e) {
             }
+            text = text.trim();
         }
         return text;
     }
@@ -91,7 +92,7 @@ public class ImporterUtilities {
             if (cell.isEmpty()) {
                 cell = "Column";
             } else if (cell.startsWith("\"") && cell.endsWith("\"")) {
-                cell = cell.substring(1, cell.length() - 1).trim();
+                cell = cell.substring(1, cell.length() - 1).trim(); //FIXME is trimming quotation marks appropriate?
             }
 
             if (nameToIndex.containsKey(cell)) {
