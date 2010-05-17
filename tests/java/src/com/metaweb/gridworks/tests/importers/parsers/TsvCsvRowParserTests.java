@@ -26,7 +26,7 @@ public class TsvCsvRowParserTests {
     String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
     String ROW_WITH_QUOTED_COMMA = "01001,\"BUTTER,WITH SALT\",15.87";
     String UNCLOSED_QUOTED_ROW = "\"Open quoted value, with commas";
-    String LEADING_QUOTE_WITH_COMMA = "value1, \"\"\"Open quoted, with commas\"\" and close quote but no comma\", value3";
+    String LEADING_QUOTE_WITH_COMMA = "value1, \"\"\"Open quoted with commas\"\", and close quote but no comma\", value3";
     String QUOTED = "value1, \"value2 with \"\"quote\"\" in middle\", value3";
 
     String SAMPLE_CSV = SAMPLE_ROW + "\n" + ROW_WITH_QUOTED_COMMA;  //Unix line endings?
@@ -88,16 +88,16 @@ public class TsvCsvRowParserTests {
         }
     }
 
-    @Test(enabled = false, groups = { "broken" })
+    @Test(groups = { "broken" })
     public void splitWithLeadingQuoteWithComma(){
         List<String> splitLine = SUT.split(LEADING_QUOTE_WITH_COMMA, lineReader);
         Assert.assertEquals(splitLine.size(), 3);
         Assert.assertEquals(splitLine.get(0), "value1");
-        Assert.assertEquals(splitLine.get(1), "\"Open quoted, with commas\" and close quote but no comma");
+        Assert.assertEquals(splitLine.get(1), "\"Open quoted with commas\", and close quote but no comma");
         Assert.assertEquals(splitLine.get(2), "value3");
     }
 
-    @Test(enabled = false, groups = { "broken" })
+    @Test(groups = { "broken" })
     public void splitWithQuoteInsideValue(){
         List<String> splitLine = SUT.split(QUOTED, lineReader);
         Assert.assertEquals(splitLine.size(), 3);

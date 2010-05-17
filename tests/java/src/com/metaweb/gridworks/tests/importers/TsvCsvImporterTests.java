@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.importers.TsvCsvImporter;
@@ -50,13 +51,13 @@ public class TsvCsvImporterTests {
         properties = null;
     }
 
-    @Test
-    public void readJustColumns(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readJustColumns(String sep){
         String input = "col1,col2,col3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
 
         try {
-            SUT.read(lnReader, project, null, -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -66,13 +67,13 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
     }
 
-    @Test
-    public void readSimpleData_CSV_1Header_1Row(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readSimpleData_CSV_1Header_1Row(String sep){
         String input = "col1,col2,col3\n" +
                        "data1,data2,data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, ",", -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -108,12 +109,12 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test
-    public void readSimpleData_0Header_1Row(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readSimpleData_0Header_1Row(String sep){
         String input = "data1,data2,data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, ",", -1, 0, 0, 0, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 0, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -128,29 +129,12 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test
-    public void readDoesNotTrimLeadingTrailingWhitespaceWhenNotGuessingValue(){
-        String input = " data1, data2, data3";
+    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    public void readDoesTrimsLeadingTrailingWhitespace(String sep){
+        String input = " data1 , data2 , data3 ";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, ",", -1, 0, 0, 0, false, true);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, " data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3");
-    }
-
-    @Test
-    public void readTrimsLeadingTrailingWhitespace(){
-        String input = " data1, data2, data3";
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
-        try {
-            SUT.read(lnReader, project, ",", -1, 0, 0, 0, true, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 0, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -162,12 +146,29 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test
-    public void readCanAddNull(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readTrimsLeadingTrailingWhitespace(String sep){
+        String input = " data1, data2, data3";
+        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
+        try {
+            SUT.read(lnReader, project, sep, -1, 0, 0, 0, true, true);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+    }
+
+    @Test(dataProvider = "CSV-or-null")
+    public void readCanAddNull(String sep){
         String input = " data1, , data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, ",", -1, 0, 0, 0, true, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 0, true, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -179,14 +180,14 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test
-    public void readSimpleData_2Header_1Row(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readSimpleData_2Header_1Row(String sep){
         String input = "col1,col2,col3\n" +
                        "sub1,sub2,sub3\n" +
                        "data1,data2,data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, null, -1, 0, 0, 2, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 2, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -201,13 +202,13 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test()
-    public void readSimpleData_RowLongerThanHeader(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readSimpleData_RowLongerThanHeader(String sep){
         String input = "col1,col2,col3\n" +
         "data1,data2,data3,data4,data5,data6";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, ",", -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -228,13 +229,13 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(5).value, "data6");
     }
 
-    @Test(enabled=false, groups={"broken"})
-    public void readQuotedData(){
+    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    public void readQuotedData(String sep){
         String input = "col1,col2,col3\n" +
                        "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\",data2";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, ",", -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -248,14 +249,14 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
 
-    @Test
-    public void readIgnoreFirstLine(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readIgnoreFirstLine(String sep){
         String input = "ignore1\n" +
                        "col1,col2,col3\n" +
                        "data1,data2,data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, null, -1, 0, 1, 1, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 1, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -270,14 +271,14 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test
-    public void readSkipFirstDataLine(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readSkipFirstDataLine(String sep){
         String input = "col1,col2,col3\n" +
                        "skip1\n" +
                        "data1,data2,data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, null, -1, 1, 0, 1, false, true);
+            SUT.read(lnReader, project, sep, -1, 1, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -292,8 +293,8 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test
-    public void readIgnore3_Header2_Skip1(){
+    @Test(dataProvider = "CSV-or-null")
+    public void readIgnore3_Header2_Skip1(String sep){
         String input = "ignore1\n" +
                        "ignore2\n" +
                        "ignore3\n" +
@@ -303,7 +304,7 @@ public class TsvCsvImporterTests {
                        "data1,data2,data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, null, -1, 1, 3, 2, false, true);
+            SUT.read(lnReader, project, sep, -1, 1, 3, 2, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -318,8 +319,8 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test(enabled=false, groups={"broken"})
-    public void readIgnore3_Header2_Skip2_limit2(){
+    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    public void readIgnore3_Header2_Skip2_limit2(String sep){
         String input = "ignore1\n" +
                        "ignore2\n" +
                        "ignore3\n" +
@@ -332,7 +333,7 @@ public class TsvCsvImporterTests {
                        "data-row3-cell1,data-row3-cell2,data-row1-cell3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, null, 2, 2, 3, 2, false, true);
+            SUT.read(lnReader, project, sep, 2, 2, 3, 2, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -350,13 +351,13 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "data-row2-cell2");
     }
 
-    @Test(enabled=false, groups={"broken"})
-    public void readWithMultiLinedQuotedData(){
+    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    public void readWithMultiLinedQuotedData(String sep){
         String input = "col1,col2,col3\n" +
         	"\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\",data2";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, ",", -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -369,14 +370,14 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To\n Be\" is often followed by \"or not To\n Be\"");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
-    
-    @Test(enabled=false, groups={"broken"})
-    public void readWithMultiLinedQuotedDataAndBlankLines(){
+
+    @Test(groups = { "broken" }, dataProvider = "CSV-or-null")
+    public void readWithMultiLinedQuotedDataAndBlankLines(String sep){
         String input = "col1,col2,col3\n" +
-            "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n\n\n\n\n Be\"\"\",data2";
+            "\"A line with many \n\n\n\n\n empty lines\",data2";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, null, -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -386,7 +387,7 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To\n Be\" is often followed by \"or not To\n\n\n\n\n Be\"");
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "A line with many \n\n\n\n\n empty lines");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
 
@@ -422,6 +423,17 @@ public class TsvCsvImporterTests {
     }
 
     //--helpers--
+    /**
+     * Used for parameterized testing for both SeparatorParser and TsvCsvParser.
+     */
+    @DataProvider(name = "CSV-or-null")
+    public Object[][] CSV_or_null(){
+        return new Object[][]{{
+                ",",
+                null
+        }};
+    }
+
     public void whenGetIntegerOption(String name, Properties properties, int def){
         when(properties.containsKey(name)).thenReturn(true);
         when(properties.getProperty(name)).thenReturn(Integer.toString(def));
