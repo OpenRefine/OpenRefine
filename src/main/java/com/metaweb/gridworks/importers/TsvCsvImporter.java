@@ -10,7 +10,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.metaweb.gridworks.importers.parsers.CSVRowParser;
+import com.metaweb.gridworks.importers.parsers.TsvCsvRowParser;
 import com.metaweb.gridworks.importers.parsers.NonSplitRowParser;
 import com.metaweb.gridworks.importers.parsers.RowParser;
 import com.metaweb.gridworks.importers.parsers.SeparatorRowParser;
@@ -57,10 +57,10 @@ public class TsvCsvImporter implements Importer {
                     int tab = line.indexOf('\t');
                     if (tab >= 0) {
                         sep = "\t";
-                        parser = new SeparatorRowParser(sep);
+                        parser = new TsvCsvRowParser('\t');
                     } else {
                         sep = ",";
-                        parser = new CSVRowParser();
+                        parser = new TsvCsvRowParser(',');
                     }
                 } else {
                     parser = new NonSplitRowParser();

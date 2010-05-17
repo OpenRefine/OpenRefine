@@ -16,7 +16,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.metaweb.gridworks.importers.parsers.CSVRowParser;
+import com.metaweb.gridworks.importers.parsers.TsvCsvRowParser;
 
 public class CSVRowParserTests {
     // logging
@@ -32,7 +32,7 @@ public class CSVRowParserTests {
     String SAMPLE_CSV = SAMPLE_ROW + "\n" + ROW_WITH_QUOTED_COMMA;  //Unix line endings?
 
     //System Under Test
-    CSVRowParser SUT = null;
+    TsvCsvRowParser SUT = null;
 
     //mocked dependencies
     LineNumberReader lineReader = null;
@@ -40,7 +40,7 @@ public class CSVRowParserTests {
     @BeforeMethod
     public void SetUp(){
         lineReader = mock(LineNumberReader.class);
-        SUT = new CSVRowParser();
+        SUT = new TsvCsvRowParser(',');
     }
 
     @AfterMethod

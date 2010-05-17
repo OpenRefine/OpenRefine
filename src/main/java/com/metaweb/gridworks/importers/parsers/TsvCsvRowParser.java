@@ -11,7 +11,13 @@ import com.metaweb.gridworks.importers.ImporterUtilities;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Row;
 
-public class CSVRowParser extends RowParser {
+public class TsvCsvRowParser extends RowParser {
+	final protected char _sep;
+	
+	public TsvCsvRowParser(char sep) {
+		_sep = sep;
+	}
+	
     public List<String> split(String line, LineNumberReader lineReader) {
         List<String> results = new ArrayList<String>();
         
@@ -43,8 +49,8 @@ public class CSVRowParser extends RowParser {
                         } else {
                             sb.append(line.substring(start, quote));
                             start = quote + 1;
-                            if (start < line.length() && line.charAt(start) == ',') {
-                                start++; // skip ,
+                            if (start < line.length() && line.charAt(start) == _sep) {
+                                start++; // skip separator
                             }
                             break;
                         }
@@ -53,7 +59,7 @@ public class CSVRowParser extends RowParser {
                 
                 text = sb.toString();
             } else {
-                int next = line.indexOf(',', start);
+                int next = line.indexOf(_sep, start);
                 if (next < 0) {
                     text = line.substring(start);
                     start = line.length();
