@@ -57,6 +57,7 @@ import com.metaweb.gridworks.commands.project.ExportRowsCommand;
 import com.metaweb.gridworks.commands.project.GetModelsCommand;
 import com.metaweb.gridworks.commands.project.GetProjectMetadataCommand;
 import com.metaweb.gridworks.commands.project.ImportProjectCommand;
+import com.metaweb.gridworks.commands.project.RenameProjectCommand;
 import com.metaweb.gridworks.commands.recon.ReconDiscardJudgmentsCommand;
 import com.metaweb.gridworks.commands.recon.ReconJudgeOneCellCommand;
 import com.metaweb.gridworks.commands.recon.ReconJudgeSimilarCellsCommand;
@@ -92,6 +93,7 @@ public class GridworksServlet extends HttpServlet {
         _commands.put("get-all-project-metadata", new GetAllProjectMetadataCommand());
 
         _commands.put("delete-project", new DeleteProjectCommand());
+        _commands.put("rename-project", new RenameProjectCommand());
         
         _commands.put("get-models", new GetModelsCommand());
         _commands.put("get-rows", new GetRowsCommand());

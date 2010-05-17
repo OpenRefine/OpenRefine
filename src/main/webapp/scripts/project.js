@@ -67,19 +67,15 @@ function resizeAll() {
 }
 
 function initializeUI(uiState) {
-    Gridworks.setTitle();
-    
     var path = $("#path");
-    
-    $('<span class="app-path-section">' +
-        'project: <a href="#">' + theProject.metadata.name + '</a>' +
-        '</span>').appendTo(path);
-    
+    $('<span class="app-path-section" id="project-name-in-path"></span>').appendTo(path);
     $('<a href="javascript:{}" class="permalink">permalink</a>')
         .mouseenter(function() {
             this.href = Gridworks.getPermanentLink();
         }).appendTo(path);
     
+    Gridworks.setTitle();
+
     var body = $("#body").empty().html(
         '<div bind="viewPanel" class="view-panel"></div>' +
         '<div bind="processPanel" class="process-panel"></div>' +
@@ -130,6 +126,11 @@ Gridworks.setTitle = function(status) {
         title = status + " - " + title;
     }
     document.title = title;
+    
+    var name = $("#project-name-in-path");
+    name.empty();
+    name.text('project: ');
+    $('<a href="#">' + theProject.metadata.name + '</a>').appendTo(name);
 };
 
 Gridworks.reinitializeProjectData = function(f) {

@@ -5,6 +5,9 @@ Fixes:
   Regex was not compiled with case insensitivity flag.
 - Issue 4: "Match All bug with ZIP code". Numeric values in cells were not stringified first
   before comparison.
+- Issue 41: "Envelope quotation marks are removed by CSV importer"
+- Issue 19: "CSV import is too basic"
+- Issue 15: "Ability to rename projects"
 
 1.0.1 Release (May 12, 2010)
 

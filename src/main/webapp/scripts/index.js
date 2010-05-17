@@ -34,10 +34,10 @@ function formatDate(d) {
     var tomorrow = Date.today().add({ days: 1 });
 
     if (d.between(today, tomorrow)) {
-        return "today";
+        return "today " + d.toString("h:mm tt");
     } else if (d.between(last_week, today)) {
         var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
-        return (diff == 1) ? "yesterday" : diff + " days ago";
+        return (diff <= 1) ? ("yesterday " + d.toString("h:mm tt")) : (diff + " days ago");
     } else if (d.between(last_month, today)) {
         var diff = Math.floor((today.getDayOfYear() - d.getDayOfYear()) / 7);
         return (diff == 1) ? "a week ago" : diff.toFixed(0) + " weeks ago" ;
@@ -100,6 +100,7 @@ function renderProjects(data) {
         var table = $(
             '<table><tr>' +
                 '<th>Name</th>' +
+                '<th></th>' +
                 '<th align="right">Last Modified</th>' +
                 '<th></th>' +
             '</tr></table>'
@@ -108,15 +109,46 @@ function renderProjects(data) {
         var renderProject = function(project) {
             var tr = table.insertRow(table.rows.length);
             tr.className = "project";
-                            
-            $('<a></a>')
+            
+            var nameLink = $('<a></a>')
                 .text(project.name)
                 .attr("href", "/project.html?project=" + project.id)
                 .appendTo(tr.insertCell(tr.cells.length));
                 
+            var renameLink = $('<a></a>')
+                .text("rename")
+                .attr("href", "javascript:{}")
+                .css("visibility", "hidden")
+                .click(function() {
+                    var name = window.prompt("Rename Project", project.name);
+                    if (name == null) {
+                        return;
+                    }
+                    
+                    name = $.trim(name);
+                    if (project.name == name || name.length == 0) {
+                        return;
+                    }
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: "/command/rename-project",
+                        data: { "project" : project.id, "name" : name },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                                nameLink.text(name);
+                            } else {
+                                alert("Failed to rename project: " + data.message)
+                            }
+                        }
+                    });
+                }).appendTo(tr.insertCell(tr.cells.length));
+                
             $('<div></div>')
                 .html(formatDate(project.date))
                 .addClass("last-modified")
+                .attr("title", project.date.toString())
                 .appendTo(tr.insertCell(tr.cells.length));
             
             $('<a></a>')
@@ -141,6 +173,11 @@ function renderProjects(data) {
                 return false;
             }).appendTo(tr.insertCell(tr.cells.length));
             
+            $(tr).mouseenter(function() {
+                renameLink.css("visibility", "visible");
+            }).mouseleave(function() {
+                renameLink.css("visibility", "hidden");
+            });
         };
     
         for (var i = 0; i < projects.length; i++) {
@@ -166,11 +203,24 @@ function onLoad() {
     $("#gridworks-version").text(
         "Version " + GridworksVersion.version + "-" + GridworksVersion.revision
     );
-    if (isThereNewRelease()) {
-        $('<div id="version-message">' +
-            'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
-          '</div>').appendTo(document.body);
-    }
+    
+    var script = $('<script></script>')
+        .attr("src", "http://freebase-gridworks.googlecode.com/svn/support/releases.js")
+        .attr("type", "text/javascript")
+        .appendTo(document.body);
+        
+    var poll = function() {
+        if ("GridworksReleases" in window) {
+            if (isThereNewRelease()) {
+                $('<div id="version-message">' +
+                    'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
+                  '</div>').appendTo(document.body);
+            }
+        } else {
+            window.setTimeout(poll, 1000);
+        }
+    };
+    window.setTimeout(poll, 1000);
 }
 
 $(onLoad);

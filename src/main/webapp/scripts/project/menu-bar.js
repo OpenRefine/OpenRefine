@@ -29,6 +29,11 @@ MenuBar.prototype._initializeUI = function() {
         {},
         */
         {
+            "label": "Rename...",
+            "click": function() { self._renameProject(); }
+        },
+        {},
+        {
             "label": "Export Filtered Rows",
             "submenu": [
                 {
@@ -229,6 +234,33 @@ MenuBar.prototype._exportProject = function() {
     form.submit();
 
     document.body.removeChild(form);
+};
+
+MenuBar.prototype._renameProject = function() {
+    var name = window.prompt("Rename Project", theProject.metadata.name);
+    if (name == null) {
+        return;
+    }
+    
+    name = $.trim(name);
+    if (theProject.metadata.name == name || name.length == 0) {
+        return;
+    }
+    
+    $.ajax({
+        type: "POST",
+        url: "/command/rename-project",
+        data: { "project" : theProject.id, "name" : name },
+        dataType: "json",
+        success: function (data) {
+            if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                theProject.metadata.name = name;
+                Gridworks.setTitle();
+            } else {
+                alert("Failed to rename project: " + data.message);
+            }
+        }
+    });
 };
 
 MenuBar.prototype._doAutoSchemaAlignment = function() {

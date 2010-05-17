@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
+import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Project;
@@ -107,6 +108,27 @@ public abstract class Command {
         throw new ServletException("Can't find project: missing or bad URL parameter");
     }
 
+    /**
+     * Utility method for retrieving the ProjectMetadata object having the ID specified
+     * in the "project" URL parameter.
+     *
+     * @param request
+     * @return
+     * @throws ServletException
+     */
+    protected ProjectMetadata getProjectMetadata(HttpServletRequest request) throws ServletException {
+        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
+        try {
+            ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(Long.parseLong(request.getParameter("project")));
+            if (pm != null) {
+                return pm;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        throw new ServletException("Can't find project metadata: missing or bad URL parameter");
+    }
+    
     static protected int getIntegerParameter(HttpServletRequest request, String name, int def) {
         if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
         try {
