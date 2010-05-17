@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.edit;
+package com.metaweb.gridworks.commands.column;
 
 import javax.servlet.http.HttpServletRequest;
 

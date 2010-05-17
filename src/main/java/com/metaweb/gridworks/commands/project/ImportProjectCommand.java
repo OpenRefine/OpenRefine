@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.edit;
+package com.metaweb.gridworks.commands.project;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.edit;
+package com.metaweb.gridworks.commands.cell;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.operations.ColumnRemovalOperation;
+import com.metaweb.gridworks.operations.MultiValuedCellJoinOperation;
 import com.metaweb.gridworks.process.Process;
 
-public class RemoveColumnCommand extends Command {
+public class JoinMultiValueCellsCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -22,8 +22,10 @@ public class RemoveColumnCommand extends Command {
             Project project = getProject(request);
             
             String columnName = request.getParameter("columnName");
+            String keyColumnName = request.getParameter("keyColumnName");
+            String separator = request.getParameter("separator");
             
-            AbstractOperation op = new ColumnRemovalOperation(columnName);
+            AbstractOperation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
             Process process = op.createProcess(project, new Properties());
             
             performProcessAndRespond(request, response, project, process);
