@@ -27,6 +27,7 @@ public class CSVRowParser extends RowParser {
                     int quote = line.indexOf('"', start);
                     if (quote < 0) {
                         sb.append(line.substring(start));
+                        sb.append('\n');
                         
                         start = 0;
                         try {
