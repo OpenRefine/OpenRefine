@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.info;
+package com.metaweb.gridworks.commands.project;
 
 import java.io.IOException;
 import java.util.Properties;

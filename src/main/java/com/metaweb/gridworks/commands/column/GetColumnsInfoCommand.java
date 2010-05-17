@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.info;
+package com.metaweb.gridworks.commands.column;
 
 import java.io.IOException;
 

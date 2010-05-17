@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.util;
+package com.metaweb.gridworks.commands.freebase;
 
 import java.io.IOException;
 import java.io.InputStream;

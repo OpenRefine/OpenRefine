@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.commands.edit;
+package com.metaweb.gridworks.commands.history;
 
 import java.io.IOException;
 
@@ -7,23 +7,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.metaweb.gridworks.commands.Command;
-import com.metaweb.gridworks.oauth.OAuthUtilities;
-import com.metaweb.gridworks.oauth.Provider;
-import com.metaweb.gridworks.util.FreebaseUtils;
+import com.metaweb.gridworks.model.Project;
 
-public class MQLReadCommand extends Command {
+public class CancelProcessesCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        if( request == null ) throw new IllegalArgumentException("parameter 'request' should not be null");
+        if( response == null ) throw new IllegalArgumentException("parameter 'request' should not be null");
+
         try {
-            Provider provider = OAuthUtilities.getProvider(request);
+            Project project = getProject(request);
+            project.getProcessManager().cancelAll();
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            String query = request.getParameter("query");
-            String result = FreebaseUtils.mqlread(provider,query);
-            response.getWriter().write(result);
+            response.getWriter().write("{ \"code\" : \"ok\" }");
         } catch (Exception e) {
             respondException(response, e);
         }

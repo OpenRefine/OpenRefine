@@ -21,7 +21,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.ProjectManager;
-import com.metaweb.gridworks.commands.util.CancelProcessesCommand;
+import com.metaweb.gridworks.commands.history.CancelProcessesCommand;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.process.ProcessManager;
 
