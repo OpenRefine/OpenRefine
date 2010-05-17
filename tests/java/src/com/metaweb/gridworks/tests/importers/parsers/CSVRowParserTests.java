@@ -26,8 +26,8 @@ public class CSVRowParserTests {
     String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
     String ROW_WITH_QUOTED_COMMA = "01001,\"BUTTER,WITH SALT\",15.87";
     String UNCLOSED_QUOTED_ROW = "\"Open quoted value, with commas";
-    String LEADING_QUOTE_WITH_COMMA = "value1, \"Open quoted, with commas\" and close quote but no comma, value3";
-    String QUOTED = "value1, value2 with \"quote\" in middle, value3";
+    String LEADING_QUOTE_WITH_COMMA = "value1, \"\"\"Open quoted, with commas\"\" and close quote but no comma\", value3";
+    String QUOTED = "value1, \"value2 with \"\"quote\"\" in middle\", value3";
 
     String SAMPLE_CSV = SAMPLE_ROW + "\n" + ROW_WITH_QUOTED_COMMA;  //Unix line endings?
 
@@ -48,9 +48,9 @@ public class CSVRowParserTests {
         lineReader = null;
         SUT = null;
     }
-    
+
     //------------split tests-------------------------
-    
+
     @Test
     public void split(){
         List<String> splitLine = SUT.split(SAMPLE_ROW, lineReader);
@@ -63,47 +63,46 @@ public class CSVRowParserTests {
     @Test
     public void splitWithQuotedComma(){
         List<String> splitLine = SUT.split(ROW_WITH_QUOTED_COMMA, lineReader);
-        Assert.assertEquals(3, splitLine.size());
-        Assert.assertEquals("01001", splitLine.get(0));
-        Assert.assertEquals("BUTTER,WITH SALT", splitLine.get(1));
-        Assert.assertEquals("15.87", splitLine.get(2));
+        Assert.assertEquals(splitLine.size(), 3);
+        Assert.assertEquals(splitLine.get(0), "01001");
+        Assert.assertEquals(splitLine.get(1), "BUTTER,WITH SALT");
+        Assert.assertEquals(splitLine.get(2), "15.87");
     }
-    
-    @Test(enabled = false, groups = { "broken" })
+
+    @Test
     public void splitWithUnclosedQuote(){
         try {
-            when(lineReader.readLine()).thenReturn("continuation of row above, with comma\",value2");
+            when(lineReader.readLine()).thenReturn(" continuation of row above, with comma\",value2");
         } catch (IOException e) {
             Assert.fail();
         }
         List<String> splitLine = SUT.split(UNCLOSED_QUOTED_ROW, lineReader);
-        Assert.assertEquals(1, splitLine.size());
-        Assert.assertEquals(UNCLOSED_QUOTED_ROW, splitLine.get(0));
-        Assert.assertEquals(UNCLOSED_QUOTED_ROW + "\ncontinuation of row above, with comma\"", splitLine.get(0));
-        Assert.assertEquals("value2", splitLine.get(1));
-        
+        Assert.assertEquals(splitLine.size(), 2);
+        Assert.assertEquals(splitLine.get(0), "Open quoted value, with commas\n continuation of row above, with comma");
+        Assert.assertEquals(splitLine.get(1), "value2");
+
         try {
             verify(lineReader, times(1)).readLine();
         } catch (IOException e) {
             Assert.fail();
         }
     }
-    
+
     @Test(enabled = false, groups = { "broken" })
     public void splitWithLeadingQuoteWithComma(){
         List<String> splitLine = SUT.split(LEADING_QUOTE_WITH_COMMA, lineReader);
-        Assert.assertEquals(3, splitLine.size());
-        Assert.assertEquals("value1", splitLine.get(0));
-        Assert.assertEquals("\"Open quoted, with commas\" and close quote but no comma", splitLine.get(0));
-        Assert.assertEquals("value3", splitLine.get(2));
+        Assert.assertEquals(splitLine.size(), 3);
+        Assert.assertEquals(splitLine.get(0), "value1");
+        Assert.assertEquals(splitLine.get(1), "\"Open quoted, with commas\" and close quote but no comma");
+        Assert.assertEquals(splitLine.get(2), "value3");
     }
-    
+
     @Test(enabled = false, groups = { "broken" })
     public void splitWithQuoteInsideValue(){
         List<String> splitLine = SUT.split(QUOTED, lineReader);
-        Assert.assertEquals(3, splitLine.size());
-        Assert.assertEquals("value1", splitLine.get(0));
-        Assert.assertEquals("value2 with \"quote\" in middle", splitLine.get(1));
-        Assert.assertEquals("value3", splitLine.get(2));
+        Assert.assertEquals(splitLine.size(), 3);
+        Assert.assertEquals(splitLine.get(0), "value1");
+        Assert.assertEquals(splitLine.get(1), "value2 with \"quote\" in middle");
+        Assert.assertEquals(splitLine.get(2), "value3");
     }
 }

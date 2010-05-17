@@ -35,6 +35,7 @@ public class TsvCsvImporterTests {
     Project project = null;
     Properties properties = null;
 
+
     @BeforeMethod
     public void SetUp(){
         SUT = new TsvCsvImporter();
@@ -52,11 +53,10 @@ public class TsvCsvImporterTests {
     @Test
     public void readJustColumns(){
         String input = "col1,col2,col3";
-
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
 
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, ",", -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -70,10 +70,9 @@ public class TsvCsvImporterTests {
     public void readSimpleData_CSV_1Header_1Row(){
         String input = "col1,col2,col3\n" +
                        "data1,data2,data3";
-
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, ",", -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -92,10 +91,9 @@ public class TsvCsvImporterTests {
     public void readSimpleData_TSV_1Header_1Row(){
         String input = "col1\tcol2\tcol3\n" +
                        "data1\tdata2\tdata3";
-        
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, "\t", -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -113,10 +111,9 @@ public class TsvCsvImporterTests {
     @Test
     public void readSimpleData_0Header_1Row(){
         String input = "data1,data2,data3";
-
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 0, false, true);
+            SUT.read(lnReader, project, ",", -1, 0, 0, 0, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -134,10 +131,9 @@ public class TsvCsvImporterTests {
     @Test
     public void readDoesNotTrimLeadingTrailingWhitespaceWhenNotGuessingValue(){
         String input = " data1, data2, data3";
-
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 0, false, true);
+            SUT.read(lnReader, project, ",", -1, 0, 0, 0, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -154,7 +150,7 @@ public class TsvCsvImporterTests {
         String input = " data1, data2, data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 0, true, true);
+            SUT.read(lnReader, project, ",", -1, 0, 0, 0, true, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -171,7 +167,7 @@ public class TsvCsvImporterTests {
         String input = " data1, , data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 0, true, true);
+            SUT.read(lnReader, project, ",", -1, 0, 0, 0, true, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -188,10 +184,9 @@ public class TsvCsvImporterTests {
         String input = "col1,col2,col3\n" +
                        "sub1,sub2,sub3\n" +
                        "data1,data2,data3";
-
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 2, false, true);
+            SUT.read(lnReader, project, ",", -1, 0, 0, 2, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -210,10 +205,9 @@ public class TsvCsvImporterTests {
     public void readSimpleData_RowLongerThanHeader(){
         String input = "col1,col2,col3\n" +
         "data1,data2,data3,data4,data5,data6";
-
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, ",", -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -238,10 +232,9 @@ public class TsvCsvImporterTests {
     public void readQuotedData(){
         String input = "col1,col2,col3\n" +
                        "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\",data2";
-
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, null, -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -262,7 +255,7 @@ public class TsvCsvImporterTests {
                        "data1,data2,data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 1, 1, false, true);
+            SUT.read(lnReader, project, ",", -1, 0, 1, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -282,10 +275,9 @@ public class TsvCsvImporterTests {
         String input = "col1,col2,col3\n" +
                        "skip1\n" +
                        "data1,data2,data3";
-        
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 1, 0, 1, false, true);
+            SUT.read(lnReader, project, ",", -1, 1, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -311,7 +303,7 @@ public class TsvCsvImporterTests {
                        "data1,data2,data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 1, 3, 2, false, true);
+            SUT.read(lnReader, project, ",", -1, 1, 3, 2, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -338,10 +330,9 @@ public class TsvCsvImporterTests {
                        "data-row1-cell1,data-row1-cell2,data-row1-cell3\n" +
                        "data-row2-cell1,data-row2-cell2,\n" + //missing last data point of this row on purpose
                        "data-row3-cell1,data-row3-cell2,data-row1-cell3";
-        
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, 2, 2, 3, 2, false, true);
+            SUT.read(lnReader, project, ",", 2, 2, 3, 2, false, true);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -354,7 +345,7 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data-row1-cell1");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data-row1-cell2");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data-row1-cell3");
-        Assert.assertEquals(project.rows.get(1).cells.size(), 2);
+        Assert.assertEquals(project.rows.get(1).cells.size(), 3);
         Assert.assertEquals(project.rows.get(1).cells.get(0).value, "data-row2-cell1");
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "data-row2-cell2");
     }
@@ -363,10 +354,9 @@ public class TsvCsvImporterTests {
     public void readWithMultiLinedQuotedData(){
         String input = "col1,col2,col3\n" +
         	"\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\",data2";
-        
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(null, lnReader, project, null, -1, 0, 0, 1, false, true);
+            SUT.read(lnReader, project, null, -1, 0, 0, 1, false, true);
         } catch (IOException e) {
             Assert.fail();
         }

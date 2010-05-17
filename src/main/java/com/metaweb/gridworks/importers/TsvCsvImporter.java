@@ -30,16 +30,17 @@ public class TsvCsvImporter implements Importer {
         boolean guessValueType = ImporterUtilities.getBooleanOption("guess-value-type", options, true);
 
         LineNumberReader lnReader = new LineNumberReader(reader);
-        RowParser parser = (sep != null && sep.length() > 0 && splitIntoColumns) ?
-                new SeparatorRowParser(sep) : null;
-                
-        read(parser, lnReader, project, sep, 
-    		limit, skip, ignoreLines, headerLines, 
+
+
+        read(lnReader, project, sep,
+    		limit, skip, ignoreLines, headerLines,
     		guessValueType, splitIntoColumns
     	);
     }
 
-    public void read(RowParser parser, LineNumberReader lnReader, Project project, String sep, int limit, int skip, int ignoreLines, int headerLines, boolean guessValueType, boolean splitIntoColumns ) throws IOException{
+    public void read(LineNumberReader lnReader, Project project, String sep, int limit, int skip, int ignoreLines, int headerLines, boolean guessValueType, boolean splitIntoColumns ) throws IOException{
+        RowParser parser = (sep != null && sep.length() > 0 && splitIntoColumns) ?
+                new SeparatorRowParser(sep) : null;
         List<String> columnNames = new ArrayList<String>();
         String line = null;
         int rowsWithData = 0;
