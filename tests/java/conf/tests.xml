@@ -5,5 +5,10 @@
     <packages>
       <package name="com.metaweb.gridworks.tests.*"/>
     </packages>
+    <groups>
+      <run>
+        <exclude name="broken" />
+      </run>
+    </groups>
   </test>
 </suite>
