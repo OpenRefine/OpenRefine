@@ -17,6 +17,7 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
+import com.metaweb.gridworks.model.ModelException;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
@@ -172,7 +173,14 @@ public class DataExtensionChange implements Change {
                 column.setReconConfig(new DataExtensionReconConfig(_columnTypes.get(i)));
                 column.setReconStats(ReconStats.create(project, cellIndex));
                 
-                project.columnModel.columns.add(_columnInsertIndex + i, column);
+                try {
+					project.columnModel.addColumn(_columnInsertIndex + i, column, true);
+					
+					// the column might have been renamed to avoid collision
+					_columnNames.set(i, column.getName());
+				} catch (ModelException e) {
+					// won't get here since we set the avoid collision flag
+				}
             }
             
             project.columnModel.update();
