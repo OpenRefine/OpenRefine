@@ -10,6 +10,7 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.6.jar" sourcepath="lib-src/slf4j-api-1.5.6-sources.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar" sourcepath="lib-src/log4j-1.2.15-sources.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.6.jar" sourcepath="lib-src/slf4j-log4j12-1.5.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jcl-over-slf4j-1.5.6.jar" sourcepath="lib-src/jcl-over-slf4j-1.5.6-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.4.jar" sourcepath="lib-src/commons-codec-1.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.5.jar" sourcepath="lib-src/commons-lang-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.1.jar" sourcepath="lib-src/commons-fileupload-1.2.1-sources.jar"/>
@@ -27,6 +28,9 @@
 	<classpathentry kind="lib" path="lib/opencsv-2.2.jar" sourcepath="tests/java/lib-src/opencsv-2.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.6.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.6-20091214.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/jython-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/clojure-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-asl-1.5.1.jar"/>
