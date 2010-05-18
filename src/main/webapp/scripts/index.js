@@ -200,9 +200,8 @@ function onLoad() {
         $("#more-options").show();
     });
     
-    $("#gridworks-version").text(
-        "Version " + GridworksVersion.version + "-" + GridworksVersion.revision
-    );
+    var version = (GridworksVersion.version != "$VERSION") ? "Version " + GridworksVersion.version + "-" + GridworksVersion.revision : "";
+    $("#gridworks-version").text(version);
     
     var script = $('<script></script>')
         .attr("src", "http://freebase-gridworks.googlecode.com/svn/support/releases.js")
