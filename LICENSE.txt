@@ -57,6 +57,11 @@ licenses/apache2.0.LICENSE.txt
     signpost
     opencsv
     textng
+
+Apache License 1.1
+------------------
+licenses/jrdf.LICENSE.txt
+    jrdf
    
 LGPL
 ----

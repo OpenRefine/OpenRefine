@@ -37,5 +37,6 @@
 	<classpathentry kind="lib" path="lib/marc4j-2.4.jar"/>
 	<classpathentry kind="lib" path="tests/java/lib/mockito-all-1.8.4.jar" sourcepath="tests/java/lib-src/mockito-all-1.8.4-sources.jar"/>
 	<classpathentry kind="lib" path="tests/java/lib/testng-5.12.1.jar" sourcepath="tests/java/lib-src/testng-5.12.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jrdf-0.5.6.jar"/>
 	<classpathentry kind="output" path="src/main/webapp/WEB-INF/classes"/>
 </classpath>
