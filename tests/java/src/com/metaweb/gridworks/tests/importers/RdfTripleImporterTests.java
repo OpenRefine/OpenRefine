@@ -63,14 +63,31 @@ public class RdfTripleImporterTests {
             Assert.fail();
         }
 
+        //columns
         Assert.assertEquals(project.columnModel.columns.size(), 2);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
+
+        //rows
         Assert.assertEquals(project.rows.size(), 3);
+
+        //row0
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
+
+        //row1
+        Assert.assertEquals(project.rows.get(2).cells.size(), 2);
+        Assert.assertNull(project.rows.get(1).cells.get(0));
+        Assert.assertEquals(project.rows.get(1).contextRowSlots[1], 0);
+        Assert.assertEquals(project.rows.get(1).contextCellSlots[1], 0);
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home"); //NB triples aren't created in order they were input
+
+        //row2
+        Assert.assertEquals(project.rows.get(2).cells.size(), 2);
+        Assert.assertEquals(project.rows.get(2).contextRowSlots[1], 0);
+        Assert.assertEquals(project.rows.get(2).contextCellSlots[1], 0);
+        Assert.assertNull(project.rows.get(2).cells.get(0));
         Assert.assertEquals(project.rows.get(2).cells.get(1).value, "http://rdf.freebase.com/ns/en.under_the_red_sky"); //NB triples aren't created in order they were input
     }
 
@@ -87,18 +104,46 @@ public class RdfTripleImporterTests {
             Assert.fail();
         }
 
+        //columns
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://rdf.freebase.com/ns/music.artist.genre");
+
+        //rows
         Assert.assertEquals(project.rows.size(), 2);
+
+        //row0
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
-        Assert.assertNull(project.rows.get(0).cells.get(2));
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://rdf.freebase.com/ns/en.folk_rock");
+
+        //row1
         Assert.assertEquals(project.rows.get(1).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(1).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
+        Assert.assertEquals(project.rows.get(1).contextRowSlots[1], 0);
+        Assert.assertEquals(project.rows.get(1).contextCellSlots[1], 0);
+        Assert.assertNull(project.rows.get(1).cells.get(0));
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home");
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://rdf.freebase.com/ns/en.folk_rock");
+        Assert.assertNull(project.rows.get(1).cells.get(2));
     }
+      @Test
+        public void CanParseTripleWithValue(){
+            String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/common.topic.alias> \"Robert Zimmerman\"@en.";
+            StringReader reader = new StringReader(sampleRdf);
+
+            try {
+                SUT.read(reader, project, options);
+            } catch (Exception e) {
+                Assert.fail();
+            }
+
+            Assert.assertEquals(project.columnModel.columns.size(), 2);
+            Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
+            Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/common.topic.alias");
+            Assert.assertEquals(project.rows.size(), 1);
+            Assert.assertEquals(project.rows.get(0).cells.size(), 2);
+            Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
+            Assert.assertEquals(project.rows.get(0).cells.get(1).value, "\"Robert Zimmerman\"@en");
+        }
 }
