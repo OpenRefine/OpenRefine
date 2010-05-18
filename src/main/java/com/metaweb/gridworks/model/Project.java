@@ -62,7 +62,7 @@ public class Project {
         return ProjectManager.singleton.getProjectMetadata(id);
     }
     
-    public void save() {
+    synchronized public void save() {
         synchronized (this) {
             File dir = ProjectManager.singleton.getProjectDir(id);
             
@@ -257,7 +257,7 @@ public class Project {
         int     keyCellIndex;
     }
     
-    public void recomputeRowContextDependencies() {
+    synchronized public void recomputeRowContextDependencies() {
         List<Group> keyedGroups = new ArrayList<Group>();
         
         addRootKeyedGroup(keyedGroups);

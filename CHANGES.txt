@@ -10,6 +10,8 @@ Fixes:
 - Issue 15: "Ability to rename projects"
 - Issue 16: "Column name collision when adding data from Freebase"
 - Issue 28: "mql-like preview is not properly unquoting numbers"
+- Issue 45: "Renaming Cells with Ctrl-Enter produced ERROR"
+  Tentative fix for a concurrent bug.
 
 Changes:
 - Moved unit tests from JUnit to TestNG
