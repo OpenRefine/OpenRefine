@@ -9,7 +9,7 @@ function ProcessWidget(div) {
     
     var self = this;
     $(window).keypress(function(evt) {
-        if (evt.ctrlKey || evt.metaKey) {
+        if (evt.charCode == 26 || (evt.charCode == 122 && (evt.ctrlKey || evt.metaKey))) { // ctrl-z or meta-z
             var t = evt.target;
             if (t) {
                 var tagName = t.tagName.toLowerCase();
