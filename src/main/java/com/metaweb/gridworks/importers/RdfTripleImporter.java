@@ -66,7 +66,6 @@ public class RdfTripleImporter implements Importer{
 
         ClosableIterable<Triple> triples = graph.find(ANY_SUBJECT_NODE, ANY_PREDICATE_NODE, ANY_OBJECT_NODE);
         try {
-            int numberOfColumns = 1;
             for (Triple triple : triples) {
 
                 //System.out.println("Triple    : " + triple);
@@ -81,11 +80,7 @@ public class RdfTripleImporter implements Importer{
 
                 //creates new column for every predicate
                 if(project.columnModel.getColumnByName(predicate) == null){
-                    //System.out.println("adding new column");
-                    project.columnModel.columns.add(numberOfColumns, new Column(numberOfColumns, predicate));
-                    project.columnModel.update();
-                    numberOfColumns++;
-                    //System.out.println("New total number of columns      : " + numberOfColumns);
+                    AddNewColumn(project, predicate);
                 }
 
                 //FIXME - this is sparse (one row per triple), need to reconcile on subjects.
@@ -95,6 +90,21 @@ public class RdfTripleImporter implements Importer{
         } finally {
             triples.iterator().close();
         }
+    }
+    
+    protected void AddNewColumn(Project project, String predicate){
+        //System.out.println("adding new column");
+        int numberOfColumns = project.columnModel.columns.size();
+        
+        project.columnModel.columns.add(numberOfColumns, new Column(numberOfColumns, predicate));
+        project.columnModel.update();
+        //update existing rows with new column
+        for(Row r : project.rows){
+            r.cells.add(numberOfColumns, null);
+        }
+        //numberOfColumns = project.columnModel.columns.size();
+        //System.out.println("New total number of columns      : " + numberOfColumns);
+        
     }
 
     protected void AddNewRow(Project project, String subject, String predicate, String object){
