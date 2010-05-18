@@ -2,8 +2,6 @@ package com.metaweb.gridworks.importers;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.jrdf.JRDFFactory;
@@ -12,22 +10,9 @@ import org.jrdf.collection.MemMapFactory;
 import org.jrdf.graph.Graph;
 import org.jrdf.graph.Triple;
 import org.jrdf.parser.line.GraphLineParser;
-import org.jrdf.parser.line.LineParser;
-import org.jrdf.parser.line.LineParserImpl;
 import org.jrdf.parser.line.LineHandler;
-import org.jrdf.parser.ntriples.NTriplesParser;
 import org.jrdf.parser.ntriples.NTriplesParserFactory;
-import org.jrdf.parser.ntriples.parser.BlankNodeParserImpl;
-import org.jrdf.parser.ntriples.parser.LiteralParserImpl;
-import org.jrdf.parser.ntriples.parser.NodeMaps;
-import org.jrdf.parser.ntriples.parser.NodeMapsImpl;
-import org.jrdf.parser.ntriples.parser.RegexTripleParser;
-import org.jrdf.parser.ntriples.parser.TripleParser;
-import org.jrdf.parser.ntriples.parser.TripleParserImpl;
-import org.jrdf.parser.ntriples.parser.URIReferenceParserImpl;
 import org.jrdf.util.ClosableIterable;
-import org.jrdf.util.boundary.RegexMatcherFactory;
-import org.jrdf.util.boundary.RegexMatcherFactoryImpl;
 import static org.jrdf.graph.AnyObjectNode.ANY_OBJECT_NODE;
 import static org.jrdf.graph.AnyPredicateNode.ANY_PREDICATE_NODE;
 import static org.jrdf.graph.AnySubjectNode.ANY_SUBJECT_NODE;
@@ -78,33 +63,57 @@ public class RdfTripleImporter implements Importer{
                 //System.out.println("object    : " + object);
                 //System.out.println("predicate relates to column    : " + project.columnModel.getColumnByName(predicate));
 
-                //creates new column for every predicate
-                if(project.columnModel.getColumnByName(predicate) == null){
-                    AddNewColumn(project, predicate);
-                }
+                int candidateMergeRowIndex = -1;
 
-                //FIXME - this is sparse (one row per triple), need to reconcile on subjects.
-                AddNewRow(project, subject, predicate, object);
+                //creates new column for every predicate
+                int columnIndex = project.columnModel.getColumnIndexByName(predicate);
+                if(columnIndex == -1){
+                    candidateMergeRowIndex = AddNewColumn(project, predicate, subject);
+                }
+                columnIndex = project.columnModel.getColumnIndexByName(predicate);
+
+                if(candidateMergeRowIndex > -1){
+                    if(project.rows.get(candidateMergeRowIndex).cells.get(columnIndex) == null){
+                        //empty, so merge in this value
+                        MergeWithRow(project, candidateMergeRowIndex, columnIndex, object);
+                    }else{
+                        //can't overwrite existing, so add new row
+                        AddNewRow(project, subject, predicate, object); //TODO group to original row.
+                    }
+                }else{
+                    AddNewRow(project, subject, predicate, object);
+                }
             }
 
         } finally {
             triples.iterator().close();
         }
     }
-    
-    protected void AddNewColumn(Project project, String predicate){
+
+    protected int AddNewColumn(Project project, String predicate, String subject){
         //System.out.println("adding new column");
         int numberOfColumns = project.columnModel.columns.size();
-        
+
         project.columnModel.columns.add(numberOfColumns, new Column(numberOfColumns, predicate));
         project.columnModel.update();
+
+        int candidateMergeRowIndex = -1;
         //update existing rows with new column
-        for(Row r : project.rows){
-            r.cells.add(numberOfColumns, null);
+        for(int i = 0; i < project.rows.size(); i++){
+            project.rows.get(i).cells.add(numberOfColumns, null);
+            if(project.rows.get(i).cells.get(0).value == subject){
+                candidateMergeRowIndex = i;
+            }
         }
+
         //numberOfColumns = project.columnModel.columns.size();
         //System.out.println("New total number of columns      : " + numberOfColumns);
-        
+
+        return candidateMergeRowIndex;
+    }
+
+    protected void MergeWithRow(Project project, int candidateMergeRowIndex, int columnIndex, String object){
+        project.rows.get(candidateMergeRowIndex).setCell(columnIndex, new Cell(object, null));
     }
 
     protected void AddNewRow(Project project, String subject, String predicate, String object){

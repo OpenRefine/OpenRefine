@@ -91,13 +91,14 @@ public class RdfTripleImporterTests {
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://rdf.freebase.com/ns/music.artist.genre");
-        Assert.assertEquals(project.rows.size(), 3);
+        Assert.assertEquals(project.rows.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
+        Assert.assertNull(project.rows.get(0).cells.get(2));
         Assert.assertEquals(project.rows.get(1).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home"); //NB triples aren't created in order they were input
-        Assert.assertEquals(project.rows.get(2).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(2).cells.get(2).value, "http://rdf.freebase.com/ns/en.folk_rock"); //NB triples aren't created in order they were input
+        Assert.assertEquals(project.rows.get(1).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
+        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home");
+        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://rdf.freebase.com/ns/en.folk_rock");
     }
 }
