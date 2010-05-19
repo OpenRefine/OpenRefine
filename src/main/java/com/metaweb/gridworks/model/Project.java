@@ -9,8 +9,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -24,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
-import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.History;
 import com.metaweb.gridworks.process.ProcessManager;
 import com.metaweb.gridworks.protograph.Protograph;
@@ -33,12 +30,12 @@ import com.metaweb.gridworks.util.Pool;
 public class Project {
     final public long            id;
 
-    final public ColumnModel     columnModel = new ColumnModel();
     final public List<Row>       rows = new ArrayList<Row>();
-    final public History         history;
-
+    final public ColumnModel     columnModel = new ColumnModel();
+    final public RecordModel     recordModel = new RecordModel();
     public Protograph            protograph;
 
+    final public History         history;
     transient public ProcessManager processManager = new ProcessManager();
     transient public Date lastSave = new Date();
 
@@ -246,136 +243,16 @@ public class Project {
             "Loaded project {} from disk in {} sec(s)",id,Long.toString((System.currentTimeMillis() - start) / 1000)
         );
 
-        project.recomputeRowContextDependencies();
+        project.update();
 
         return project;
     }
-
-
-    static protected class Group {
-        int[]   cellIndices;
-        int     keyCellIndex;
+    
+    public void update() {
+        columnModel.update();
+    	recordModel.update(this);
     }
 
-    synchronized public void recomputeRowContextDependencies() {
-        List<Group> keyedGroups = new ArrayList<Group>();
-
-        addRootKeyedGroup(keyedGroups);
-
-        for (ColumnGroup group : columnModel.columnGroups) {
-            if (group.keyColumnIndex >= 0) {
-                Group keyedGroup = new Group();
-                keyedGroup.keyCellIndex = columnModel.columns.get(group.keyColumnIndex).getCellIndex();
-                keyedGroup.cellIndices = new int[group.columnSpan - 1];
-
-                int c = 0;
-                for (int i = 0; i < group.columnSpan; i++) {
-                    int columnIndex = group.startColumnIndex + i;
-                    if (columnIndex != group.keyColumnIndex) {
-                        int cellIndex = columnModel.columns.get(columnIndex).getCellIndex();
-                        keyedGroup.cellIndices[c++] = cellIndex;
-                    }
-                }
-
-                keyedGroups.add(keyedGroup);
-            }
-        }
-
-        Collections.sort(keyedGroups, new Comparator<Group>() {
-            public int compare(Group o1, Group o2) {
-                return o2.cellIndices.length - o1.cellIndices.length; // larger groups first
-            }
-        });
-
-        int[] lastNonBlankRowsByGroup = new int[keyedGroups.size()];
-        for (int i = 0; i < lastNonBlankRowsByGroup.length; i++) {
-            lastNonBlankRowsByGroup[i] = -1;
-        }
-
-        int rowCount = rows.size();
-        int groupCount = keyedGroups.size();
-
-        int recordIndex = 0;
-        for (int r = 0; r < rowCount; r++) {
-            Row row = rows.get(r);
-            row.contextRows = null;
-            row.contextRowSlots = null;
-            row.contextCellSlots = null;
-
-            for (int g = 0; g < groupCount; g++) {
-                Group group = keyedGroups.get(g);
-
-                if (!ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
-                    int contextRowIndex = lastNonBlankRowsByGroup[g];
-                    if (contextRowIndex >= 0) {
-                        for (int dependentCellIndex : group.cellIndices) {
-                            if (ExpressionUtils.isNonBlankData(row.getCellValue(dependentCellIndex))) {
-                                setRowDependency(
-                                    this,
-                                    row,
-                                    dependentCellIndex,
-                                    contextRowIndex,
-                                    group.keyCellIndex
-                                );
-                            }
-                        }
-                    }
-                } else {
-                    lastNonBlankRowsByGroup[g] = r;
-                }
-            }
-
-            if (row.contextRowSlots != null && row.contextRowSlots.length > 0) {
-                row.recordIndex = -1;
-                row.contextRows = new ArrayList<Integer>();
-                for (int index : row.contextRowSlots) {
-                    if (index >= 0) {
-                        row.contextRows.add(index);
-                    }
-                }
-                Collections.sort(row.contextRows);
-
-                columnModel._hasDependentRows = true;
-            } else {
-                row.recordIndex = recordIndex++;
-            }
-        }
-    }
-
-    protected void addRootKeyedGroup(List<Group> keyedGroups) {
-        int count = columnModel.getMaxCellIndex() + 1;
-        if (count > 0 && columnModel.getKeyColumnIndex() < columnModel.columns.size()) {
-            Group rootKeyedGroup = new Group();
-
-            rootKeyedGroup.cellIndices = new int[count - 1];
-            rootKeyedGroup.keyCellIndex = columnModel.columns.get(columnModel.getKeyColumnIndex()).getCellIndex();
-
-            for (int i = 0; i < count; i++) {
-                if (i < rootKeyedGroup.keyCellIndex) {
-                    rootKeyedGroup.cellIndices[i] = i;
-                } else if (i > rootKeyedGroup.keyCellIndex) {
-                    rootKeyedGroup.cellIndices[i - 1] = i;
-                }
-            }
-            keyedGroups.add(rootKeyedGroup);
-        }
-    }
-
-    public static void setRowDependency(Project project, Row row, int cellIndex, int contextRowIndex, int contextCellIndex) {
-        int count = project.columnModel.getMaxCellIndex() + 1;
-        if (row.contextRowSlots == null || row.contextCellSlots == null) {
-            row.contextRowSlots = new int[count];
-            row.contextCellSlots = new int[count];
-
-            for (int i = 0; i < count; i++) {
-                row.contextRowSlots[i] = -1;
-                row.contextCellSlots[i] = -1;
-            }
-        }
-
-        row.contextRowSlots[cellIndex] = contextRowIndex;
-        row.contextCellSlots[cellIndex] = contextCellIndex;
-    }
 
     //wrapper of processManager variable to allow unit testing
     //TODO make the processManager variable private, and force all calls through this method

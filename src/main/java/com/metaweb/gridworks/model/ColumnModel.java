@@ -98,7 +98,7 @@ public class ColumnModel implements Jsonizable {
     	}
     	
     	column.setName(name);
-		columns.add(index, column);
+		columns.add(index < 0 ? columns.size() : index, column);
 		_nameToColumn.put(name, column); // so the next call can check
     }
     

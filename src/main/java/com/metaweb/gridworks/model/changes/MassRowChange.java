@@ -26,7 +26,7 @@ public class MassRowChange implements Change {
             project.rows.clear();
             project.rows.addAll(_newRows);
             
-            project.recomputeRowContextDependencies();
+            project.update();
         }
     }
 
@@ -35,7 +35,7 @@ public class MassRowChange implements Change {
             project.rows.clear();
             project.rows.addAll(_oldRows);
             
-            project.recomputeRowContextDependencies();
+            project.update();
         }
     }
 

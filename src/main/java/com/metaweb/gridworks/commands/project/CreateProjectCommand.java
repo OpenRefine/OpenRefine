@@ -90,8 +90,7 @@ public class CreateProjectCommand extends Command {
             pm.setEncodingConfidence(options.getProperty("encoding_confidence"));
             ProjectManager.singleton.registerProject(project, pm);
 
-            project.columnModel.update();
-            project.recomputeRowContextDependencies();
+            project.update();
             
             redirect(response, "/project.html?project=" + project.id);
         } catch (Exception e) {

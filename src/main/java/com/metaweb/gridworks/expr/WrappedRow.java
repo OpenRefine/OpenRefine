@@ -5,6 +5,7 @@ import java.util.Properties;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.model.Row;
 
 public class WrappedRow implements HasFields {
@@ -25,10 +26,8 @@ public class WrappedRow implements HasFields {
             return rowIndex;
         } else if ("record".equals(name)) {
             int rowIndex = (Integer) bindings.get("rowIndex");
-            int recordRowIndex = (row.contextRows != null && row.contextRows.size() > 0) ?
-                    row.contextRows.get(0) : rowIndex;
             
-            return new Record(recordRowIndex, rowIndex);
+            return new WrappedRecord(project.recordModel.getRecordOfRow(rowIndex));
         } else if ("columnNames".equals(name)) {
             Project project = (Project) bindings.get("project");
             
@@ -42,18 +41,16 @@ public class WrappedRow implements HasFields {
         return row.fieldAlsoHasFields(name);
     }
 
-    protected class Record implements HasFields {
-        final int _recordRowIndex;
-        final int _currentRowIndex;
+    protected class WrappedRecord implements HasFields {
+    	final Record _record;
         
-        protected Record(int recordRowIndex, int currentRowIndex) {
-            _recordRowIndex = recordRowIndex;
-            _currentRowIndex = currentRowIndex;
+        protected WrappedRecord(Record record) {
+        	_record = record;
         }
 
         public Object getField(String name, Properties bindings) {
             if ("cells".equals(name)) {
-                return new RecordCells(_recordRowIndex);
+                return new RecordCells(_record);
             }
             return null;
         }
@@ -64,28 +61,20 @@ public class WrappedRow implements HasFields {
     }
     
     protected class RecordCells implements HasFields {
-        final int _recordRowIndex;
+        final Record _record;
         
-        protected RecordCells(int recordRowIndex) {
-            _recordRowIndex = recordRowIndex;
+        protected RecordCells(Record record) {
+            _record = record;
         }
         
         public Object getField(String name, Properties bindings) {
             Column column = project.columnModel.getColumnByName(name);
             if (column != null) {
-                Row recordRow = project.rows.get(_recordRowIndex);
                 int cellIndex = column.getCellIndex();
                 
                 HasFieldsListImpl cells = new HasFieldsListImpl();
-                
-                int recordIndex = recordRow.recordIndex;
-                int count = project.rows.size();
-                for (int r = _recordRowIndex; r < count; r++) {
+                for (int r = _record.fromRowIndex; r < _record.toRowIndex; r++) {
                     Row row = project.rows.get(r);
-                    if (row.recordIndex > recordIndex) {
-                        break;
-                    }
-                    
                     Cell cell = row.getCell(cellIndex);
                     if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                         cells.add(new WrappedCell(project, name, cell));

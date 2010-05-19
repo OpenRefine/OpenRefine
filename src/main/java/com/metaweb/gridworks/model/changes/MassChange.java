@@ -28,7 +28,7 @@ public class MassChange implements Change {
             }
             
             if (_updateRowContextDependencies) {
-                project.recomputeRowContextDependencies();
+                project.update();
             }
         }
     }
@@ -40,7 +40,7 @@ public class MassChange implements Change {
             }
             
             if (_updateRowContextDependencies) {
-                project.recomputeRowContextDependencies();
+                project.update();
             }
         }
     }

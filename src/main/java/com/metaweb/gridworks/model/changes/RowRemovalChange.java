@@ -36,7 +36,7 @@ public class RowRemovalChange implements Change {
                 offset--;
             }
             
-            project.recomputeRowContextDependencies();
+            project.update();
         }
     }
 
@@ -51,7 +51,7 @@ public class RowRemovalChange implements Change {
                 project.rows.add(index, row);
             }
             
-            project.recomputeRowContextDependencies();
+            project.update();
         }
     }
 

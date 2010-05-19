@@ -183,8 +183,7 @@ public class DataExtensionChange implements Change {
 				}
             }
             
-            project.columnModel.update();
-            project.recomputeRowContextDependencies();
+            project.update();
         }
     }
     
@@ -234,8 +233,7 @@ public class DataExtensionChange implements Change {
                 project.columnModel.columns.remove(_columnInsertIndex);
             }
             
-            project.columnModel.update();
-            project.recomputeRowContextDependencies();
+            project.update();
         }
     }
 

@@ -139,8 +139,7 @@ public class ColumnSplitChange implements Change {
                 project.columnModel.columns.remove(_columnIndex);
             }
             
-            project.columnModel.update();
-            project.recomputeRowContextDependencies();
+            project.update();
         }
     }
     
@@ -161,8 +160,7 @@ public class ColumnSplitChange implements Change {
                 project.columnModel.columns.remove(_columnIndex + 1);
             }
             
-            project.columnModel.update();
-            project.recomputeRowContextDependencies();
+            project.update();
         }
     }
 

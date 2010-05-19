@@ -13,6 +13,8 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.model.RecordModel.CellDependency;
+import com.metaweb.gridworks.model.RecordModel.RowDependency;
 import com.metaweb.gridworks.model.changes.MassRowChange;
 
 public class DenormalizeOperation extends AbstractOperation {
@@ -45,19 +47,23 @@ public class DenormalizeOperation extends AbstractOperation {
             Row oldRow = oldRows.get(r);
             Row newRow = null;
             
-            if (oldRow.contextCellSlots != null && oldRow.contextRowSlots != null) {
+            RowDependency rd = project.recordModel.getRowDependency(r);
+            if (rd.cellDependencies != null) {
                 newRow = oldRow.dup();
                 
-                for (int c = 0; c < oldRow.contextCellSlots.length && c < oldRow.contextRowSlots.length; c++) {
-                    int contextRowIndex = oldRow.contextRowSlots[c];
-                    int contextCellIndex = oldRow.contextCellSlots[c];
-                    
-                    if (contextRowIndex >= 0 && contextRowIndex < oldRows.size()) {
-                        Row contextRow = oldRows.get(contextRowIndex);
-                        Cell contextCell = contextRow.getCell(contextCellIndex);
-                        
-                        newRow.setCell(contextCellIndex, contextCell);
-                    }
+                for (int c = 0; c < rd.cellDependencies.length; c++) {
+                	CellDependency cd = rd.cellDependencies[c];
+                	if (cd != null) {
+	                    int contextRowIndex = cd.rowIndex;
+	                    int contextCellIndex = cd.cellIndex;
+	                    
+	                    if (contextRowIndex >= 0 && contextRowIndex < oldRows.size()) {
+	                        Row contextRow = oldRows.get(contextRowIndex);
+	                        Cell contextCell = contextRow.getCell(contextCellIndex);
+	                        
+	                        newRow.setCell(contextCellIndex, contextCell);
+	                    }
+                	}
                 }
             }
             

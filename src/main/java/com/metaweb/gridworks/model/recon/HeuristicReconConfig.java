@@ -23,6 +23,7 @@ import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
+import com.metaweb.gridworks.model.RecordModel.RowDependency;
 import com.metaweb.gridworks.protograph.FreebaseProperty;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
@@ -156,8 +157,10 @@ public class HeuristicReconConfig extends ReconConfig {
                         Cell cell2 = row.getCell(detailCellIndex);
                         if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) {
                             int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
-                            if (row.contextRowSlots != null && cellIndex < row.contextRowSlots.length) {
-                                int contextRowIndex = row.contextRowSlots[cellIndex];
+                            
+                            RowDependency rd = project.recordModel.getRowDependency(rowIndex);
+                            if (rd != null && rd.cellDependencies != null) {
+                                int contextRowIndex = rd.cellDependencies[cellIndex].rowIndex;
                                 if (contextRowIndex >= 0 && contextRowIndex < project.rows.size()) {
                                     Row row2 = project.rows.get(contextRowIndex);
                                     

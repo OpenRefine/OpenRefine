@@ -6,6 +6,7 @@ import java.util.List;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.model.RecordModel.RowDependency;
 
 /**
  * Encapsulate logic for visiting rows that match all give row filters. Also visit
@@ -32,13 +33,14 @@ public class ConjunctiveFilteredRows implements FilteredRows {
         int c = project.rows.size();
         for (int rowIndex = 0; rowIndex < c; rowIndex++) {
             Row row = project.rows.get(rowIndex);
+            RowDependency rd = project.recordModel.getRowDependency(rowIndex);
             
             if (matchRow(project, rowIndex, row)) {
-                if (row.recordIndex >= 0) {
+                if (rd.recordIndex >= 0) {
                     lastRecordRowAcceptedRowIndex = rowIndex; // this is a record row itself
                 }
                 
-                visitRow(project, visitor, rowIndex, row, lastVisitedRowRowIndex);
+                visitRow(project, visitor, rowIndex, row, rd, lastVisitedRowRowIndex);
                 
                 lastVisitedRowRowIndex = rowIndex;
             } else if (
@@ -47,11 +49,11 @@ public class ConjunctiveFilteredRows implements FilteredRows {
                 
                 _includeDependent &&
                 // and this row is a dependent row since it's not a record row
-                row.recordIndex < 0 &&
-                row.contextRows != null &&
-                row.contextRows.size() > 0 &&
+                rd.recordIndex < 0 &&
+                rd.contextRows != null &&
+                rd.contextRows.size() > 0 &&
                 
-                row.contextRows.get(0) == lastRecordRowAcceptedRowIndex
+                rd.contextRows.get(0) == lastRecordRowAcceptedRowIndex
             ) {
                 // this row depends on the last previously matched record row,
                 // so we visit it as well as a dependent row
@@ -62,13 +64,13 @@ public class ConjunctiveFilteredRows implements FilteredRows {
         }
     }
     
-    protected void visitRow(Project project, RowVisitor visitor, int rowIndex, Row row, int lastVisitedRow) {
+    protected void visitRow(Project project, RowVisitor visitor, int rowIndex, Row row, RowDependency rd, int lastVisitedRow) {
         if (_includeContextual &&         // we need to include any context row and
-            row.contextRows != null &&    // this row itself isn't a context row and
+            rd.contextRows != null &&    // this row itself isn't a context row and
             lastVisitedRow < rowIndex - 1 // there is definitely some rows before this row
                                           // that we haven't visited yet
         ) {
-            for (int contextRowIndex : row.contextRows) {
+            for (int contextRowIndex : rd.contextRows) {
                 if (contextRowIndex > lastVisitedRow) {
                     visitor.visit(
                         project, 

@@ -32,6 +32,7 @@ public class GetRowsCommand extends Command {
             
             Pool pool = new Pool();
             Properties options = new Properties();
+            options.put("project", project);
             options.put("reconCandidateOmitTypes", true);
             options.put("pool", pool);
             
