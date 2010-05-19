@@ -37,7 +37,7 @@ public class GridworksServletStub extends GridworksServlet {
      * @param command
      */
     static public void InsertCommand( String commandName, Command command ){
-        _commands.put(commandName, command);
+        registerCommand(commandName, command);
     }
 
     /**
@@ -45,6 +45,6 @@ public class GridworksServletStub extends GridworksServlet {
      * @param commandName
      */
     static public void RemoveCommand( String commandName ){
-        _commands.remove(commandName);
+        unregisterCommand(commandName);
     }
 }

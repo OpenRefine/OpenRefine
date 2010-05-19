@@ -15,147 +15,96 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.commands.Command;
-import com.metaweb.gridworks.commands.auth.AuthorizeCommand;
-import com.metaweb.gridworks.commands.auth.CheckAuthorizationCommand;
-import com.metaweb.gridworks.commands.auth.DeAuthorizeCommand;
-import com.metaweb.gridworks.commands.auth.GetUserBadgesCommand;
-import com.metaweb.gridworks.commands.browsing.ComputeClustersCommand;
-import com.metaweb.gridworks.commands.browsing.ComputeFacetsCommand;
-import com.metaweb.gridworks.commands.browsing.GetScatterplotCommand;
-import com.metaweb.gridworks.commands.cell.EditOneCellCommand;
-import com.metaweb.gridworks.commands.cell.JoinMultiValueCellsCommand;
-import com.metaweb.gridworks.commands.cell.MassEditCommand;
-import com.metaweb.gridworks.commands.cell.SplitMultiValueCellsCommand;
-import com.metaweb.gridworks.commands.cell.TextTransformCommand;
-import com.metaweb.gridworks.commands.column.AddColumnCommand;
-import com.metaweb.gridworks.commands.column.ExtendDataCommand;
-import com.metaweb.gridworks.commands.column.GetColumnsInfoCommand;
-import com.metaweb.gridworks.commands.column.PreviewExtendDataCommand;
-import com.metaweb.gridworks.commands.column.RemoveColumnCommand;
-import com.metaweb.gridworks.commands.column.RenameColumnCommand;
-import com.metaweb.gridworks.commands.column.SplitColumnCommand;
-import com.metaweb.gridworks.commands.expr.GetExpressionHistoryCommand;
-import com.metaweb.gridworks.commands.expr.GetExpressionLanguageInfoCommand;
-import com.metaweb.gridworks.commands.expr.LogExpressionCommand;
-import com.metaweb.gridworks.commands.expr.PreviewExpressionCommand;
-import com.metaweb.gridworks.commands.freebase.GuessTypesOfColumnCommand;
-import com.metaweb.gridworks.commands.freebase.MQLReadCommand;
-import com.metaweb.gridworks.commands.freebase.MQLWriteCommand;
-import com.metaweb.gridworks.commands.freebase.PreviewProtographCommand;
-import com.metaweb.gridworks.commands.freebase.SaveProtographCommand;
-import com.metaweb.gridworks.commands.freebase.UploadDataCommand;
-import com.metaweb.gridworks.commands.history.ApplyOperationsCommand;
-import com.metaweb.gridworks.commands.history.CancelProcessesCommand;
-import com.metaweb.gridworks.commands.history.GetHistoryCommand;
-import com.metaweb.gridworks.commands.history.GetOperationsCommand;
-import com.metaweb.gridworks.commands.history.GetProcessesCommand;
-import com.metaweb.gridworks.commands.history.UndoRedoCommand;
-import com.metaweb.gridworks.commands.project.CreateProjectCommand;
-import com.metaweb.gridworks.commands.project.DeleteProjectCommand;
-import com.metaweb.gridworks.commands.project.ExportProjectCommand;
-import com.metaweb.gridworks.commands.project.ExportRowsCommand;
-import com.metaweb.gridworks.commands.project.GetModelsCommand;
-import com.metaweb.gridworks.commands.project.GetProjectMetadataCommand;
-import com.metaweb.gridworks.commands.project.ImportProjectCommand;
-import com.metaweb.gridworks.commands.project.RenameProjectCommand;
-import com.metaweb.gridworks.commands.recon.ReconDiscardJudgmentsCommand;
-import com.metaweb.gridworks.commands.recon.ReconJudgeOneCellCommand;
-import com.metaweb.gridworks.commands.recon.ReconJudgeSimilarCellsCommand;
-import com.metaweb.gridworks.commands.recon.ReconMarkNewTopicsCommand;
-import com.metaweb.gridworks.commands.recon.ReconMatchBestCandidatesCommand;
-import com.metaweb.gridworks.commands.recon.ReconMatchSpecificTopicCommand;
-import com.metaweb.gridworks.commands.recon.ReconcileCommand;
-import com.metaweb.gridworks.commands.row.AnnotateOneRowCommand;
-import com.metaweb.gridworks.commands.row.AnnotateRowsCommand;
-import com.metaweb.gridworks.commands.row.DenormalizeCommand;
-import com.metaweb.gridworks.commands.row.GetRowsCommand;
-import com.metaweb.gridworks.commands.row.RemoveRowsCommand;
-import com.metaweb.gridworks.commands.workspace.GetAllProjectMetadataCommand;
 
 public class GridworksServlet extends HttpServlet {
     
     private static final long serialVersionUID = 2386057901503517403L;
     
-    static final protected Map<String, Command> _commands = new HashMap<String, Command>();
+    static final private Map<String, Command> commands = new HashMap<String, Command>();
     
     // timer for periodically saving projects
     static private Timer _timer;
 
     final static Logger logger = LoggerFactory.getLogger("servlet");
+
+    // TODO: This belongs in an external config file somewhere
+    private static final String[][] commandNames = {
+        {"create-project-from-upload", "com.metaweb.gridworks.commands.project.CreateProjectCommand"},
+        {"import-project", "com.metaweb.gridworks.commands.project.ImportProjectCommand"},
+        {"export-project", "com.metaweb.gridworks.commands.project.ExportProjectCommand"},
+        {"export-rows", "com.metaweb.gridworks.commands.project.ExportRowsCommand"},
+        
+        {"get-project-metadata", "com.metaweb.gridworks.commands.project.GetProjectMetadataCommand"},
+        {"get-all-project-metadata", "com.metaweb.gridworks.commands.workspace.GetAllProjectMetadataCommand"},
+
+        {"delete-project", "com.metaweb.gridworks.commands.project.DeleteProjectCommand"},
+        {"rename-project", "com.metaweb.gridworks.commands.project.RenameProjectCommand"},
+        
+        {"get-models", "com.metaweb.gridworks.commands.project.GetModelsCommand"},
+        {"get-rows", "com.metaweb.gridworks.commands.row.GetRowsCommand"},
+        {"get-processes", "com.metaweb.gridworks.commands.history.GetProcessesCommand"},
+        {"get-history", "com.metaweb.gridworks.commands.history.GetHistoryCommand"},
+        {"get-operations", "com.metaweb.gridworks.commands.history.GetOperationsCommand"},
+        {"get-columns-info", "com.metaweb.gridworks.commands.column.GetColumnsInfoCommand"},
+        {"get-scatterplot", "com.metaweb.gridworks.commands.browsing.GetScatterplotCommand"},
+        
+        {"undo-redo", "com.metaweb.gridworks.commands.history.UndoRedoCommand"},
+        {"apply-operations", "com.metaweb.gridworks.commands.history.ApplyOperationsCommand"},
+        {"cancel-processes", "com.metaweb.gridworks.commands.history.CancelProcessesCommand"},
+        
+        {"compute-facets", "com.metaweb.gridworks.commands.browsing.ComputeFacetsCommand"},
+        {"compute-clusters", "com.metaweb.gridworks.commands.browsing.ComputeClustersCommand"},
+        
+        {"edit-one-cell", "com.metaweb.gridworks.commands.cell.EditOneCellCommand"},
+        {"text-transform", "com.metaweb.gridworks.commands.cell.TextTransformCommand"},
+        {"mass-edit", "com.metaweb.gridworks.commands.cell.MassEditCommand"},
+        {"join-multi-value-cells", "com.metaweb.gridworks.commands.cell.JoinMultiValueCellsCommand"},
+        {"split-multi-value-cells", "com.metaweb.gridworks.commands.cell.SplitMultiValueCellsCommand"},
+        
+        {"add-column", "com.metaweb.gridworks.commands.column.AddColumnCommand"},
+        {"remove-column", "com.metaweb.gridworks.commands.column.RemoveColumnCommand"},
+        {"rename-column", "com.metaweb.gridworks.commands.column.RenameColumnCommand"},
+        {"split-column", "com.metaweb.gridworks.commands.column.SplitColumnCommand"},
+        {"extend-data", "com.metaweb.gridworks.commands.column.ExtendDataCommand"},
+        
+        {"denormalize", "com.metaweb.gridworks.commands.row.DenormalizeCommand"},
+        
+        {"reconcile", "com.metaweb.gridworks.commands.recon.ReconcileCommand"},
+        {"recon-match-best-candidates", "com.metaweb.gridworks.commands.recon.ReconMatchBestCandidatesCommand"},
+        {"recon-mark-new-topics", "com.metaweb.gridworks.commands.recon.ReconMarkNewTopicsCommand"},
+        {"recon-discard-judgments", "com.metaweb.gridworks.commands.recon.ReconDiscardJudgmentsCommand"},
+        {"recon-match-specific-topic-to-cells", "com.metaweb.gridworks.commands.recon.ReconMatchSpecificTopicCommand"},
+        {"recon-judge-one-cell", "com.metaweb.gridworks.commands.recon.ReconJudgeOneCellCommand"},
+        {"recon-judge-similar-cells", "com.metaweb.gridworks.commands.recon.ReconJudgeSimilarCellsCommand"},
+        
+        {"annotate-one-row", "com.metaweb.gridworks.commands.row.AnnotateOneRowCommand"},
+        {"annotate-rows", "com.metaweb.gridworks.commands.row.AnnotateRowsCommand"},
+        {"remove-rows", "com.metaweb.gridworks.commands.row.RemoveRowsCommand"},
+        
+        {"save-protograph", "com.metaweb.gridworks.commands.freebase.SaveProtographCommand"},
+        
+        {"get-expression-language-info", "com.metaweb.gridworks.commands.expr.GetExpressionLanguageInfoCommand"},
+        {"get-expression-history", "com.metaweb.gridworks.commands.expr.GetExpressionHistoryCommand"},
+        {"log-expression", "com.metaweb.gridworks.commands.expr.LogExpressionCommand"},
+        
+        {"preview-expression", "com.metaweb.gridworks.commands.expr.PreviewExpressionCommand"},
+        {"preview-extend-data", "com.metaweb.gridworks.commands.column.PreviewExtendDataCommand"},
+        {"preview-protograph", "com.metaweb.gridworks.commands.freebase.PreviewProtographCommand"},
+        
+        {"guess-types-of-column", "com.metaweb.gridworks.commands.freebase.GuessTypesOfColumnCommand"},
+        
+        {"check-authorization", "com.metaweb.gridworks.commands.auth.CheckAuthorizationCommand"},
+        {"authorize", "com.metaweb.gridworks.commands.auth.AuthorizeCommand"},
+        {"deauthorize", "com.metaweb.gridworks.commands.auth.DeAuthorizeCommand"},
+        {"user-badges", "com.metaweb.gridworks.commands.auth.GetUserBadgesCommand"},
+
+        {"upload-data", "com.metaweb.gridworks.commands.freebase.UploadDataCommand"},
+        {"mqlread", "com.metaweb.gridworks.commands.freebase.MQLReadCommand"},
+        {"mqlwrite", "com.metaweb.gridworks.commands.freebase.MQLWriteCommand"},
+    };
     
     static {
-        _commands.put("create-project-from-upload", new CreateProjectCommand());
-        _commands.put("import-project", new ImportProjectCommand());
-        _commands.put("export-project", new ExportProjectCommand());
-        _commands.put("export-rows", new ExportRowsCommand());
-        
-        _commands.put("get-project-metadata", new GetProjectMetadataCommand());
-        _commands.put("get-all-project-metadata", new GetAllProjectMetadataCommand());
-
-        _commands.put("delete-project", new DeleteProjectCommand());
-        _commands.put("rename-project", new RenameProjectCommand());
-        
-        _commands.put("get-models", new GetModelsCommand());
-        _commands.put("get-rows", new GetRowsCommand());
-        _commands.put("get-processes", new GetProcessesCommand());
-        _commands.put("get-history", new GetHistoryCommand());
-        _commands.put("get-operations", new GetOperationsCommand());
-        _commands.put("get-columns-info", new GetColumnsInfoCommand());
-        _commands.put("get-scatterplot", new GetScatterplotCommand());
-        
-        _commands.put("undo-redo", new UndoRedoCommand());
-        _commands.put("apply-operations", new ApplyOperationsCommand());
-        _commands.put("cancel-processes", new CancelProcessesCommand());
-        
-        _commands.put("compute-facets", new ComputeFacetsCommand());
-        _commands.put("compute-clusters", new ComputeClustersCommand());
-        
-        _commands.put("edit-one-cell", new EditOneCellCommand());
-        _commands.put("text-transform", new TextTransformCommand());
-        _commands.put("mass-edit", new MassEditCommand());
-        _commands.put("join-multi-value-cells", new JoinMultiValueCellsCommand());
-        _commands.put("split-multi-value-cells", new SplitMultiValueCellsCommand());
-        
-        _commands.put("add-column", new AddColumnCommand());
-        _commands.put("remove-column", new RemoveColumnCommand());
-        _commands.put("rename-column", new RenameColumnCommand());
-        _commands.put("split-column", new SplitColumnCommand());
-        _commands.put("extend-data", new ExtendDataCommand());
-        
-        _commands.put("denormalize", new DenormalizeCommand());
-        
-        _commands.put("reconcile", new ReconcileCommand());
-        _commands.put("recon-match-best-candidates", new ReconMatchBestCandidatesCommand());
-        _commands.put("recon-mark-new-topics", new ReconMarkNewTopicsCommand());
-        _commands.put("recon-discard-judgments", new ReconDiscardJudgmentsCommand());
-        _commands.put("recon-match-specific-topic-to-cells", new ReconMatchSpecificTopicCommand());
-        _commands.put("recon-judge-one-cell", new ReconJudgeOneCellCommand());
-        _commands.put("recon-judge-similar-cells", new ReconJudgeSimilarCellsCommand());
-        
-        _commands.put("annotate-one-row", new AnnotateOneRowCommand());
-        _commands.put("annotate-rows", new AnnotateRowsCommand());
-        _commands.put("remove-rows", new RemoveRowsCommand());
-        
-        _commands.put("save-protograph", new SaveProtographCommand());
-        
-        _commands.put("get-expression-language-info", new GetExpressionLanguageInfoCommand());
-        _commands.put("get-expression-history", new GetExpressionHistoryCommand());
-        _commands.put("log-expression", new LogExpressionCommand());
-        
-        _commands.put("preview-expression", new PreviewExpressionCommand());
-        _commands.put("preview-extend-data", new PreviewExtendDataCommand());
-        _commands.put("preview-protograph", new PreviewProtographCommand());
-        
-        _commands.put("guess-types-of-column", new GuessTypesOfColumnCommand());
-        
-        _commands.put("check-authorization", new CheckAuthorizationCommand());
-        _commands.put("authorize", new AuthorizeCommand());
-        _commands.put("deauthorize", new DeAuthorizeCommand());
-        _commands.put("user-badges", new GetUserBadgesCommand());
-
-        _commands.put("upload-data", new UploadDataCommand());
-        _commands.put("mqlread", new MQLReadCommand());
-        _commands.put("mqlwrite", new MQLWriteCommand());
+        registerCommands(commandNames);
     }
     
     final static protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
@@ -207,7 +156,7 @@ public class GridworksServlet extends HttpServlet {
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String commandName = getCommandName(request);
-        Command command = _commands.get(commandName);
+        Command command = commands.get(commandName);
         if (command != null) {
             logger.trace("> GET {}", commandName);
             command.doGet(request, response);
@@ -219,7 +168,7 @@ public class GridworksServlet extends HttpServlet {
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String commandName = getCommandName(request);
-        Command command = _commands.get(commandName);
+        Command command = commands.get(commandName);
         if (command != null) {
             logger.trace("> POST {}", commandName);
             command.doPost(request, response);
@@ -236,6 +185,67 @@ public class GridworksServlet extends HttpServlet {
         String commandName = request.getPathInfo().substring(1);
         int slash = commandName.indexOf('/');
         return slash > 0 ? commandName.substring(0, slash) : commandName;
+    }
+    
+    /**
+     * Register an array of commands
+     * 
+     * @param commands
+     *            An array of arrays containing pairs of strings with the
+     *            command name in the first element of the tuple and the fully
+     *            qualified class name of the class implementing the command in
+     *            the second.
+     * @return false if any commands failed to load
+     */
+    static public boolean registerCommands(String[][] commands) {
+        boolean status = true;
+        for (String[] command : commandNames) {
+            String commandName = command[0];
+            String className = command[1];
+            logger.debug("Loading command " + commandName + " class: " + className);
+            Command cmd;
+            try {
+                // TODO: May need to use the servlet container's class loader here
+                cmd = (Command) Class.forName(className).newInstance();
+            } catch (InstantiationException e) {
+                logger.error("Failed to load command class " + className, e);
+                status = false;
+                continue;
+            } catch (IllegalAccessException e) {
+                logger.error("Failed to load command class " + className, e);
+                status = false;
+                continue;
+            } catch (ClassNotFoundException e) {
+                logger.error("Failed to load command class " + className, e);
+                status = false;
+                continue;
+            }
+            status |= registerCommand(commandName, cmd);
+        }
+        return status;
+    }
+    
+    /**
+     * Register a single command.
+     * 
+     * @param name
+     *            command verb for command
+     * @param commandObject
+     *            object implementing the command
+     * @return true if command was loaded and registered successfully
+     */
+    static public boolean registerCommand(String name, 
+            Command commandObject) {
+        if (commands.containsKey(name)) {
+            return false;
+        }
+        commands.put(name, commandObject);
+        return true;
+    }
+
+    // Currently only for test purposes
+    static protected boolean unregisterCommand(String verb) {
+        return commands.remove(verb) != null;
     }
 }
 
