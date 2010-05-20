@@ -46,47 +46,7 @@ public class GetRowsCommand extends Command {
             JSONWriter writer = new JSONWriter(response.getWriter());
             writer.object();
             
-            RowAccumulator acc = new RowAccumulator(start, limit) {
-                JSONWriter  writer;
-                Properties  options;
-                
-                public RowAccumulator init(JSONWriter writer, Properties options) {
-                    this.writer = writer;
-                    this.options = options;
-                    
-                    return this;
-                }
-                
-                @Override
-                public boolean internalVisit(Project project, int rowIndex, Row row) {
-                    try {
-                        options.put("rowIndex", rowIndex);
-                        row.write(writer, options);
-                    } catch (JSONException e) {
-                    }
-                    return false;
-                }
-                
-                @Override
-                protected boolean internalVisit(Project project, Record record) {
-                    options.put("recordIndex", record.recordIndex);
-                    
-                	for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-                        try {
-                        	Row row = project.rows.get(r);
-                        	
-                            options.put("rowIndex", r);
-                            
-                            row.write(writer, options);
-                            
-                        } catch (JSONException e) {
-                        }
-                        
-                        options.remove("recordIndex");
-                	}
-                	return false;
-                }
-            }.init(writer, options);
+            RowWritingVisitor acc = new RowWritingVisitor(start, limit, writer, options);
             
             if (engine.getMode() == Mode.RowBased) {
                 FilteredRows filteredRows = engine.getAllFilteredRows();
@@ -119,44 +79,66 @@ public class GetRowsCommand extends Command {
         }
     }
     
-    static protected class RowAccumulator implements RowVisitor, RecordVisitor {
-        final public int start;
-        final public int limit;
+    static protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
+        final int 		  start;
+        final int 		  limit;
+        final JSONWriter  writer;
+        final Properties  options;
         
         public int total;
         
-        public RowAccumulator(int start, int limit) {
+        public RowWritingVisitor(int start, int limit, JSONWriter writer, Properties options) {
             this.start = start;
             this.limit = limit;
+            this.writer = writer;
+            this.options = options;
         }
         
         public boolean visit(Project project, int rowIndex, Row row) {
-            boolean r = false;
-            
             if (total >= start && total < start + limit) {
-                r = internalVisit(project, rowIndex, row);
+                internalVisit(project, rowIndex, row);
             }
         	total++;
-            return r;
+        	
+            return false;
         }
         
         @Override
         public boolean visit(Project project, Record record) {
-            boolean r = false;
-            
             if (total >= start && total < start + limit) {
-                r = internalVisit(project, record);
+                internalVisit(project, record);
             }
         	total++;
-            return r;
+        	
+            return false;
         }
         
-        protected boolean internalVisit(Project project, int rowIndex, Row row) {
+        public boolean internalVisit(Project project, int rowIndex, Row row) {
+            try {
+                options.put("rowIndex", rowIndex);
+                row.write(writer, options);
+            } catch (JSONException e) {
+            }
             return false;
         }
         
         protected boolean internalVisit(Project project, Record record) {
-            return false;
+            options.put("recordIndex", record.recordIndex);
+            
+        	for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+                try {
+                	Row row = project.rows.get(r);
+                	
+                    options.put("rowIndex", r);
+                    
+                    row.write(writer, options);
+                    
+                } catch (JSONException e) {
+                }
+                
+                options.remove("recordIndex");
+        	}
+        	return false;
         }
     }
 }

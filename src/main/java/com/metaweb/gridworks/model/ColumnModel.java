@@ -28,7 +28,6 @@ public class ColumnModel implements Jsonizable {
     transient protected Map<Integer, Column> _cellIndexToColumn;
     transient protected List<ColumnGroup>    _rootColumnGroups;
     transient protected List<String>         _columnNames;
-    transient boolean _hasDependentRows;
     
     public ColumnModel() {
         internalInitialize();
@@ -128,8 +127,6 @@ public class ColumnModel implements Jsonizable {
             throws JSONException {
         
         writer.object();
-        
-        writer.key("hasDependentRows"); writer.value(_hasDependentRows);
         
         writer.key("columns");
         writer.array();

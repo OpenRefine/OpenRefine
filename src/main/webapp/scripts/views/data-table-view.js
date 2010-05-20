@@ -105,7 +105,10 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     for (var i = 0; i < sizes.length; i++) {
         renderPageSize(i);
     }
-    $('<span> rows</span>').appendTo(pageSizeControls);
+
+    $('<span>')
+        .text(theProject.rowModel.mode == "record-based" ? ' records' : ' rows')
+        .appendTo(pageSizeControls);
 };
 
 DataTableView.prototype._renderDataTable = function(table) {

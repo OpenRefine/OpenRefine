@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
+import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 
-public class RecordModel {
+public class RecordModel implements Jsonizable {
 	final static public class CellDependency {
 		final public int rowIndex;
 		final public int cellIndex;
@@ -52,6 +57,14 @@ public class RecordModel {
 		return null;
 	}
 	
+    synchronized public void write(JSONWriter writer, Properties options)
+    	throws JSONException {
+
+    	writer.object();
+    	writer.key("hasRecords"); writer.value(_records.size() < _rowDependencies.size());
+    	writer.endObject();
+    }
+    
     static protected class KeyedGroup {
         int[]   cellIndices;
         int     keyCellIndex;
@@ -110,8 +123,6 @@ public class RecordModel {
 	                    }
 	                }
 	                Collections.sort(rowDependency.contextRows);
-	
-	                columnModel._hasDependentRows = true;
 	            } else {
 	            	rowDependency.recordIndex = recordIndex++;
 	            }

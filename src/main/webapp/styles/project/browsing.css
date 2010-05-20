@@ -1,3 +1,15 @@
+.browsing-panel-modes {
+    margin: 1em 0;
+    text-align: center;
+}
+.browsing-panel-modes .ui-button .ui-button-text {
+    line-height: 1.0;
+    text-decoration: line-through;
+}
+.browsing-panel-modes .ui-button.ui-state-active .ui-button-text {
+    text-decoration: none;
+}
+
 .browsing-panel-header {
     position: relative;
     display: none;
@@ -20,6 +32,7 @@
 .browsing-panel-indicator img {
     vertical-align: text-top;
 }
+
 .browsing-panel-controls {
     visibility: hidden;
 }

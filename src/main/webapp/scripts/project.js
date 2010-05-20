@@ -141,11 +141,10 @@ Gridworks.reinitializeProjectData = function(f) {
         },
         "/command/get-models?" + $.param({ project: theProject.id }), null,
         function(data) {
-            theProject.columnModel = data.columnModel;
-            theProject.protograph = data.protograph;
-            
-            for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-                theProject.columnModel.columns[i].collapsed = false;
+            for (var n in data) {
+                if (data.hasOwnProperty(n)) {
+                    theProject[n] = data[n];
+                }
             }
         },
         f

@@ -29,6 +29,7 @@ public class GetModelsCommand extends Command {
             
             writer.object();
             writer.key("columnModel"); project.columnModel.write(writer, options);
+            writer.key("recordModel"); project.recordModel.write(writer, options);
             writer.key("protograph"); 
             if (project.protograph == null) {
                 writer.value(null);

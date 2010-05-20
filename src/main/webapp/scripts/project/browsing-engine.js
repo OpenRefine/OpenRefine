@@ -60,6 +60,13 @@ BrowsingEngine.prototype._initializeUI = function() {
             '<p>by choosing a facet or filter method from the menus at the top of each column.</p>' +
             '<p>Not sure how to get started? <a href="http://vimeo.com/groups/gridworks/videos" target="_blank">Watch these screencasts</a>.</p>' +
         '</div>' +
+        '<div class="browsing-panel-modes">' +
+            'Browse by ' +
+            '<span bind="modeSelectors">' + 
+                '<input type="radio" id="browsing-panel-mode-row-based" name="browsing-panel-mode" value="row-based" /><label for="browsing-panel-mode-row-based">rows</label>' +
+                '<input type="radio" id="browsing-panel-mode-record-based" name="browsing-panel-mode" value="record-based" /><label for="browsing-panel-mode-record-based">records</label>' +
+            '</span>' +
+        '</div>' +
         '<div class="browsing-panel-header" bind="header">' +
             '<div class="browsing-panel-indicator" bind="indicator">' +
                 '<img src="images/small-spinner.gif" /> refreshing facets ...' +
@@ -76,9 +83,6 @@ BrowsingEngine.prototype._initializeUI = function() {
                         '<a href="javascript:{}" bind="removeLink" class="action" title="Remove all facets">Remove&nbsp;All</a>' +
                     '</td>' +
                 '</tr>' +
-                '<tr bind="dependentRowControls">' +
-                    '<td colspan="3"><input type="checkbox" class="inline" bind="includeDependentRowsCheck" /> show dependent rows</td>' +
-                '</tr>' +
             '</table></div></div>' +
         '</div>' +
         '<ul bind="facets" class="facets-container"></ul>'
@@ -92,7 +96,11 @@ BrowsingEngine.prototype._initializeUI = function() {
     });
     this._elmts.facets.disableSelection();
     
-    this._elmts.includeDependentRowsCheck.change(function() {
+    $("#browsing-panel-mode-" + 
+        (theProject.recordModel.hasRecords ? 'record-based' : 'row-based')).attr("checked", "checked");
+        
+    this._elmts.modeSelectors.buttonset();
+    this._elmts.modeSelectors.find("input").change(function() {
         Gridworks.update({ engineChanged: true });
     });
     
@@ -119,7 +127,7 @@ BrowsingEngine.prototype._updateFacetOrder = function() {
 BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
     var a = {
         facets: [],
-        includeDependent: this._elmts.includeDependentRowsCheck[0].checked
+        mode: this._elmts.modeSelectors.find("input:checked")[0].value
     };
     for (var i = 0; i < this._facets.length; i++) {
         var facet = this._facets[i];
@@ -211,12 +219,6 @@ BrowsingEngine.prototype.update = function(onDone) {
             if (self._facets.length > 0) {
                 self._elmts.header.show();
                 self._elmts.controls.css("visibility", "visible");
-                
-                if (theProject.columnModel.hasDependentRows) {
-                    self._elmts.dependentRowControls.show();
-                } else {
-                    self._elmts.dependentRowControls.hide();
-                }
                 
                 self.resize();
             } else {
