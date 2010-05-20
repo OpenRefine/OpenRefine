@@ -32,11 +32,15 @@ function BrowsingEngine(div, facetConfigs) {
 
 BrowsingEngine.prototype.resize = function() {
     if (this._facets.length > 0) {
-        var header = this._div.find(".browsing-panel-header");
         var body = this._div.find(".facets-container");
         var bodyPaddings = body.outerHeight(true) - body.height();
+        var height = 
+            this._div.height() -
+            this._div.find(".browsing-panel-header").outerHeight(true) -
+            this._div.find(".browsing-panel-modes").outerHeight(true) -
+            bodyPaddings;
         
-        body.css("height", (this._div.height() - header.outerHeight(true) - bodyPaddings) + "px");
+        body.css("height", height + "px");
         
         this._elmts.facets.sortable("refresh");
     }

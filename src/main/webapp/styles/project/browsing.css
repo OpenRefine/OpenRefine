@@ -1,5 +1,5 @@
 .browsing-panel-modes {
-    margin: 1em 0;
+    padding-bottom: 0.5em;
     text-align: center;
 }
 .browsing-panel-modes .ui-button .ui-button-text {
@@ -11,6 +11,7 @@
 }
 
 .browsing-panel-header {
+    padding-bottom: 0.5em;
     position: relative;
     display: none;
 }
@@ -38,6 +39,7 @@
 }
 
 .browsing-panel-help {
+    margin-bottom: 1em;
     padding: 10px;
     background: white;
     border: 1px solid #ccc;
@@ -63,7 +65,7 @@ li.facet-container {
     clear: both;
     margin: 0;
     padding: 0;
-    margin-top: 6px;
+    margin-bottom: 6px;
     background: white;
     border: 1px solid #bbb;
     
