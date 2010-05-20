@@ -66,7 +66,7 @@ public class BinningClusterer extends Clusterer {
             }
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+        public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
                 Object v = cell.value;
@@ -128,7 +128,7 @@ public class BinningClusterer extends Clusterer {
 
     public void computeClusters(Engine engine) {
         BinningRowVisitor visitor = new BinningRowVisitor(_keyer,_config);
-        FilteredRows filteredRows = engine.getAllFilteredRows(true);
+        FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(_project, visitor);
      
         Map<String,Map<String,Integer>> map = visitor.getMap();

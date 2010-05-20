@@ -32,6 +32,10 @@ public class RecordModel {
 				_rowDependencies.get(rowIndex) : null;
 	}
 	
+	public int getRecordCount() {
+		return _records.size();
+	}
+	
 	public Record getRecord(int recordIndex) {
 		return _records != null && recordIndex >= 0 && recordIndex < _records.size() ?
 				_records.get(recordIndex) : null;

@@ -119,7 +119,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+            public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;
                 

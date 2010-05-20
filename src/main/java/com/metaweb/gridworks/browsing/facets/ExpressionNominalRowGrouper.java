@@ -6,18 +6,29 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.metaweb.gridworks.browsing.DecoratedValue;
+import com.metaweb.gridworks.browsing.RecordVisitor;
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.model.Row;
 
 /**
  * Visit matched rows and group them into facet choices based on the values computed
  * from a given expression.
  */
-public class ExpressionNominalRowGrouper implements RowVisitor {
+public class ExpressionNominalRowGrouper implements RowVisitor, RecordVisitor {
+	static public class IndexedNominalFacetChoice extends NominalFacetChoice {
+		int _latestIndex;
+		
+		public IndexedNominalFacetChoice(DecoratedValue decoratedValue, int latestIndex) {
+			super(decoratedValue);
+			_latestIndex = latestIndex;
+		}
+	}
+	
     /*
      * Configuration
      */
@@ -28,9 +39,11 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
     /*
      * Computed results
      */
-    final public Map<Object, NominalFacetChoice> choices = new HashMap<Object, NominalFacetChoice>();
+    final public Map<Object, IndexedNominalFacetChoice> choices = new HashMap<Object, IndexedNominalFacetChoice>();
     public int blankCount = 0;
     public int errorCount = 0;
+    protected boolean hasBlank;
+    protected boolean hasError;
     
     public ExpressionNominalRowGrouper(Evaluable evaluable, String columnName, int cellIndex) {
         _evaluable = evaluable;
@@ -38,10 +51,49 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
         _cellIndex = cellIndex;
     }
     
-    public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+    public boolean visit(Project project, int rowIndex, Row row) {
+    	hasError = false;
+    	hasBlank = false;
+    	
+        Properties bindings = ExpressionUtils.createBindings(project);
+        
+        visitRow(project, rowIndex, row, bindings, rowIndex);
+        
+        if (hasError) {
+        	errorCount++;
+        }
+        if (hasBlank) {
+        	blankCount++;
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public boolean visit(Project project, Record record) {
+    	hasError = false;
+    	hasBlank = false;
+    	
+        Properties bindings = ExpressionUtils.createBindings(project);
+        
+        for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+        	Row row = project.rows.get(r);
+            visitRow(project, r, row, bindings, record.recordIndex);
+        }
+        
+        if (hasError) {
+        	errorCount++;
+        }
+        if (hasBlank) {
+        	blankCount++;
+        }
+        
+        return false;
+    }
+    
+    protected void visitRow(Project project, int rowIndex, Row row, Properties bindings, int index) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
-        Properties bindings = ExpressionUtils.createBindings(project);
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
@@ -49,40 +101,43 @@ public class ExpressionNominalRowGrouper implements RowVisitor {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;
                 for (Object v : a) {
-                    processValue(v);
+                    processValue(v, rowIndex);
                 }
-                return false;
             } else if (value instanceof Collection<?>) {
                 for (Object v : ExpressionUtils.toObjectCollection(value)) {
-                    processValue(v);
+                    processValue(v, rowIndex);
                 }
-                return false;
-            } // else, fall through
+            } else {
+            	processValue(value, rowIndex);
+            }
+        } else {
+        	processValue(value, rowIndex);
         }
-        
-        processValue(value);
-        return false;
     }
     
-    protected void processValue(Object value) {
+    protected void processValue(Object value, int index) {
         if (ExpressionUtils.isError(value)) {
-            errorCount++;
+            hasError = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
             String valueString = value.toString();
-            String label = value.toString();
+            IndexedNominalFacetChoice facetChoice = choices.get(valueString);
             
-            DecoratedValue dValue = new DecoratedValue(value, label);
-            
-            if (choices.containsKey(valueString)) {
-                choices.get(valueString).count++;
+            if (facetChoice != null) {
+            	if (facetChoice._latestIndex < index) {
+            		facetChoice._latestIndex = index;
+            		facetChoice.count++;
+            	}
             } else {
-                NominalFacetChoice choice = new NominalFacetChoice(dValue);
+            	String label = value.toString();
+            	DecoratedValue dValue = new DecoratedValue(value, label);
+            	IndexedNominalFacetChoice choice = 
+            		new IndexedNominalFacetChoice(dValue, index);
+            	
                 choice.count = 1;
-                
                 choices.put(valueString, choice);
             }
         } else {
-            blankCount++;
+        	hasBlank = true;
         }
     }
 }

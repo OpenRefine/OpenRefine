@@ -64,7 +64,7 @@ public class XlsExporter implements Exporter {
                     return this;
                 }
                 
-                public boolean visit(Project project, int rowIndex, Row row, boolean contextual, boolean includeDependent) {
+                public boolean visit(Project project, int rowIndex, Row row) {
                     org.apache.poi.ss.usermodel.Row r = sheet.createRow(rowCount++);
                     
                     int cellCount = 0;
@@ -105,7 +105,7 @@ public class XlsExporter implements Exporter {
                 }
             }.init(s, rowCount);
             
-            FilteredRows filteredRows = engine.getAllFilteredRows(true);
+            FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(project, visitor);
         }
         

@@ -7,8 +7,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionStringComparisonRowFilter;
+import com.metaweb.gridworks.browsing.filters.RecordFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.gel.ast.VariableExpr;
@@ -33,6 +36,7 @@ public class TextSearchFacet implements Facet {
     public TextSearchFacet() {
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -45,6 +49,7 @@ public class TextSearchFacet implements Facet {
         writer.endObject();
     }
 
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         _name = o.getString("name");
         _columnName = o.getString("columnName");
@@ -72,6 +77,7 @@ public class TextSearchFacet implements Facet {
         }
     }
 
+    @Override
     public RowFilter getRowFilter() {
         if (_query == null || _query.length() == 0) {
             return null;
@@ -96,7 +102,19 @@ public class TextSearchFacet implements Facet {
         }        
     }
 
+    @Override
+    public RecordFilter getRecordFilter() {
+    	RowFilter rowFilter = getRowFilter();
+    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
+    }
+
+    @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         // nothing to do
+    }
+    
+    @Override
+    public void computeChoices(Project project, FilteredRecords filteredRecords) {
+    	// nothing to do
     }
 }

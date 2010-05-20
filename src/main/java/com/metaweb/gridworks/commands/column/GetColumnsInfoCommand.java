@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.facets.NumericBinIndex;
+import com.metaweb.gridworks.browsing.facets.NumericBinRowIndex;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
@@ -59,7 +60,7 @@ public class GetColumnsInfoCommand extends Command {
         }
         NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
         if (index == null) {
-            index = new NumericBinIndex(project, column.getName(), column.getCellIndex(), eval);
+            index = new NumericBinRowIndex(project, column.getName(), column.getCellIndex(), eval);
             column.setPrecompute(key, index);
         }
         return index;

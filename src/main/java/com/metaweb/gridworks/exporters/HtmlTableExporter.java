@@ -56,7 +56,7 @@ public class HtmlTableExporter implements Exporter {
                     return this;
                 }
                 
-                public boolean visit(Project project, int rowIndex, Row row, boolean contextual, boolean includeDependent) {
+                public boolean visit(Project project, int rowIndex, Row row) {
                     try {
                         writer.write("<tr>");
                         
@@ -83,7 +83,7 @@ public class HtmlTableExporter implements Exporter {
                 }
             }.init(writer);
             
-            FilteredRows filteredRows = engine.getAllFilteredRows(true);
+            FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(project, visitor);
         }
         

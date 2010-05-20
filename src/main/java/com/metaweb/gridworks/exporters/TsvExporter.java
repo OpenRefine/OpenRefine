@@ -48,7 +48,7 @@ public class TsvExporter implements Exporter {
                     return this;
                 }
                 
-                public boolean visit(Project project, int rowIndex, Row row, boolean contextual, boolean includeDependent) {
+                public boolean visit(Project project, int rowIndex, Row row) {
                     boolean first = true;
                     try {
                         for (Column column : project.columnModel.columns) {
@@ -82,7 +82,7 @@ public class TsvExporter implements Exporter {
                 }
             }.init(writer);
             
-            FilteredRows filteredRows = engine.getAllFilteredRows(true);
+            FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(project, visitor);
         }
     }

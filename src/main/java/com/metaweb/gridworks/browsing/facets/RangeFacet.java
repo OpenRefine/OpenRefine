@@ -6,8 +6,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionNumberComparisonRowFilter;
+import com.metaweb.gridworks.browsing.filters.RecordFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
@@ -165,45 +168,80 @@ public class RangeFacet implements Facet {
         }
     }
 
+    @Override
+    public RecordFilter getRecordFilter() {
+    	RowFilter rowFilter = getRowFilter();
+    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
+    }
+
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             
-            String key = "numeric-bin:" + _expression;
+            String key = "numeric-bin:row-based:" + _expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
-                index = new NumericBinIndex(project, _columnName, _cellIndex, _eval);
+                index = new NumericBinRowIndex(project, _columnName, _cellIndex, _eval);
                 column.setPrecompute(key, index);
             }
             
-            _min = index.getMin();
-            _max = index.getMax();
-            _step = index.getStep();
-            _baseBins = index.getBins();
-            
-            _baseNumericCount = index.getNumericRowCount();
-            _baseNonNumericCount = index.getNonNumericRowCount();
-            _baseBlankCount = index.getBlankRowCount();
-            _baseErrorCount = index.getErrorRowCount();
-            
-            if (_selected) {
-                _from = Math.max(_from, _min);
-                _to = Math.min(_to, _max);
-            } else {
-                _from = _min;
-                _to = _max;
-            }
+            retrieveDataFromBaseBinIndex(index);
             
             ExpressionNumericRowBinner binner = 
                 new ExpressionNumericRowBinner(_eval, _columnName, _cellIndex, index);
             
             filteredRows.accept(project, binner);
-            
-            _bins = binner.bins;
-            _numericCount = binner.numericCount;
-            _nonNumericCount = binner.nonNumericCount;
-            _blankCount = binner.blankCount;
-            _errorCount = binner.errorCount;
+            retrieveDataFromBinner(binner);
         }
+    }
+    
+    public void computeChoices(Project project, FilteredRecords filteredRecords) {
+        if (_eval != null && _errorMessage == null) {
+            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+            
+            String key = "numeric-bin:record-based:" + _expression;
+            NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+            if (index == null) {
+                index = new NumericBinRecordIndex(project, _columnName, _cellIndex, _eval);
+                column.setPrecompute(key, index);
+            }
+            
+            retrieveDataFromBaseBinIndex(index);
+            
+            ExpressionNumericRowBinner binner = 
+                new ExpressionNumericRowBinner(_eval, _columnName, _cellIndex, index);
+            
+            filteredRecords.accept(project, binner);
+            
+            retrieveDataFromBinner(binner);
+        }
+    }
+    
+    protected void retrieveDataFromBaseBinIndex(NumericBinIndex index) {
+        _min = index.getMin();
+        _max = index.getMax();
+        _step = index.getStep();
+        _baseBins = index.getBins();
+        
+        _baseNumericCount = index.getNumericRowCount();
+        _baseNonNumericCount = index.getNonNumericRowCount();
+        _baseBlankCount = index.getBlankRowCount();
+        _baseErrorCount = index.getErrorRowCount();
+        
+        if (_selected) {
+            _from = Math.max(_from, _min);
+            _to = Math.min(_to, _max);
+        } else {
+            _from = _min;
+            _to = _max;
+        }
+    }
+    
+    protected void retrieveDataFromBinner(ExpressionNumericRowBinner binner) {
+        _bins = binner.bins;
+        _numericCount = binner.numericCount;
+        _nonNumericCount = binner.nonNumericCount;
+        _blankCount = binner.blankCount;
+        _errorCount = binner.errorCount;
     }
 }

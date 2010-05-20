@@ -80,7 +80,7 @@ public class kNNClusterer extends Clusterer {
             }
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+        public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
                 Object v = cell.value;
@@ -121,7 +121,7 @@ public class kNNClusterer extends Clusterer {
             _clusterer = new NGramClusterer(_distance, _blockingNgramSize);
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+        public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
                 Object v = cell.value;
@@ -145,7 +145,7 @@ public class kNNClusterer extends Clusterer {
     public void computeClusters(Engine engine) {
         //VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
         BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance,_config);
-        FilteredRows filteredRows = engine.getAllFilteredRows(false);
+        FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(_project, visitor);
      
         _clusters = visitor.getClusters();

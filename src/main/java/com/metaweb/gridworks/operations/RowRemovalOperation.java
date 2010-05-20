@@ -49,7 +49,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
         
         List<Integer> rowIndices = new ArrayList<Integer>();
         
-        FilteredRows filteredRows = engine.getAllFilteredRows(false);
+        FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, rowIndices));
         
         return new HistoryEntry(
@@ -70,10 +70,9 @@ public class RowRemovalOperation extends EngineDependentOperation {
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
-                if (!includeContextual) {
-                    rowIndices.add(rowIndex);
-                }
+            public boolean visit(Project project, int rowIndex, Row row) {
+                rowIndices.add(rowIndex);
+                
                 return false;
             }
         }.init(rowIndices);

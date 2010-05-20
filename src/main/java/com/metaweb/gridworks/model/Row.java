@@ -15,19 +15,13 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.CellTuple;
 import com.metaweb.gridworks.expr.HasFields;
-import com.metaweb.gridworks.model.RecordModel.RowDependency;
 import com.metaweb.gridworks.util.Pool;
 
 public class Row implements HasFields, Jsonizable {
     public boolean             flagged;
     public boolean             starred;
     final public List<Cell>    cells;
-    /*
-    transient public int            recordIndex = -1; // -1 for rows that are not main record rows
-    transient public List<Integer>  contextRows;
-    transient public int[]          contextRowSlots;
-    transient public int[]          contextCellSlots;
-    */
+    
     private static final String FLAGGED = "flagged";
     private static final String STARRED = "starred";
     
@@ -134,10 +128,10 @@ public class Row implements HasFields, Jsonizable {
             	int rowIndex = (Integer) options.get("rowIndex");
                 writer.key("i"); writer.value(rowIndex);
                 
-            	Project project = (Project) options.get("project");
-            	RowDependency rd = project.recordModel.getRowDependency(rowIndex);
-                if (rd.recordIndex >= 0) {
-                    writer.key("j"); writer.value(rd.recordIndex);
+                if (options.containsKey("recordIndex")) {
+                	int recordIndex = (Integer) options.get("recordIndex");
+                	
+                    writer.key("j"); writer.value(recordIndex);
                 }
             }
             

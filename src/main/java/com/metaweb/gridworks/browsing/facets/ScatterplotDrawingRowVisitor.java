@@ -10,12 +10,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 
+import com.metaweb.gridworks.browsing.RecordVisitor;
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.model.Row;
 
-public class ScatterplotDrawingRowVisitor implements RowVisitor {
+public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
 
     int col_x;
     int col_y;
@@ -85,7 +87,8 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
         g2.setPaint(color);
     }
     
-    public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+    @Override
+    public boolean visit(Project project, int rowIndex, Row row) {
         Cell cellx = row.getCell(col_x);
         Cell celly = row.getCell(col_y);
         if ((cellx != null && cellx.value != null && cellx.value instanceof Number) &&
@@ -103,6 +106,14 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor {
         }
         
         return false;
+    }
+    
+    @Override
+    public boolean visit(Project project, Record record) {
+    	for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+    		visit(project, r, project.rows.get(r));
+    	}
+    	return false;
     }
     
     public RenderedImage getImage() {

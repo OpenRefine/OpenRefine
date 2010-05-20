@@ -57,7 +57,7 @@ public class RowStarOperation extends EngineDependentOperation {
         
         List<Change> changes = new ArrayList<Change>(project.rows.size());
         
-        FilteredRows filteredRows = engine.getAllFilteredRows(false);
+        FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, changes));
         
         return new HistoryEntry(
@@ -78,7 +78,7 @@ public class RowStarOperation extends EngineDependentOperation {
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+            public boolean visit(Project project, int rowIndex, Row row) {
                 if (row.starred != _starred) {
                     RowStarChange change = new RowStarChange(rowIndex, _starred);
                     

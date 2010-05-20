@@ -104,7 +104,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         
         List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
         
-        FilteredRows filteredRows = engine.getAllFilteredRows(false);
+        FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, cellsAtRows));
         
         String description = createDescription(column, cellsAtRows);
@@ -135,7 +135,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+            public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;
 

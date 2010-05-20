@@ -10,8 +10,11 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.DecoratedValue;
+import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionEqualRowFilter;
+import com.metaweb.gridworks.browsing.filters.RecordFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
@@ -54,6 +57,7 @@ public class ListFacet implements Facet {
     public ListFacet() {
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -93,6 +97,7 @@ public class ListFacet implements Facet {
         writer.endObject();
     }
 
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         _name = o.getString("name");
         _expression = o.getString("expression");
@@ -141,6 +146,7 @@ public class ListFacet implements Facet {
         _selectError = JSONUtilities.getBoolean(o, "selectError", false);
     }
 
+    @Override
     public RowFilter getRowFilter() {
         return 
             _eval == null || 
@@ -156,7 +162,14 @@ public class ListFacet implements Facet {
                     _selectError,
                     _invert);
     }
+    
+    @Override
+    public RecordFilter getRecordFilter() {
+    	RowFilter rowFilter = getRowFilter();
+    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
+    }
 
+    @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             ExpressionNominalRowGrouper grouper = 
@@ -164,33 +177,49 @@ public class ListFacet implements Facet {
             
             filteredRows.accept(project, grouper);
             
-            _choices.clear();
-            _choices.addAll(grouper.choices.values());
-            
-            for (NominalFacetChoice choice : _selection) {
-                String valueString = choice.decoratedValue.value.toString();
-                
-                if (grouper.choices.containsKey(valueString)) {
-                    grouper.choices.get(valueString).selected = true;
-                } else {
-                    /*
-                     *  A selected choice can have zero count if it is selected together
-                     *  with other choices, and some other facets' constraints eliminate
-                     *  all rows projected to this choice altogether. For example, if you
-                     *  select both "car" and "bicycle" in the "type of vehicle" facet, and
-                     *  then constrain the "wheels" facet to more than 2, then the "bicycle"
-                     *  choice now has zero count even if it's still selected. The grouper 
-                     *  won't be able to detect the "bicycle" choice, so we need to inject
-                     *  that choice into the choice list ourselves.
-                     */
-                    choice.count = 0;
-                    _choices.add(choice);
-                }
-            }
-            
-            _blankCount = grouper.blankCount;
-            _errorCount = grouper.errorCount;
+            postProcessGrouper(grouper);
         }
+    }
+    
+    @Override
+    public void computeChoices(Project project, FilteredRecords filteredRecords) {
+        if (_eval != null && _errorMessage == null) {
+            ExpressionNominalRowGrouper grouper = 
+                new ExpressionNominalRowGrouper(_eval, _columnName, _cellIndex);
+            
+            filteredRecords.accept(project, grouper);
+            
+            postProcessGrouper(grouper);
+        }
+    }
+    
+    protected void postProcessGrouper(ExpressionNominalRowGrouper grouper) {
+        _choices.clear();
+        _choices.addAll(grouper.choices.values());
+        
+        for (NominalFacetChoice choice : _selection) {
+            String valueString = choice.decoratedValue.value.toString();
+            
+            if (grouper.choices.containsKey(valueString)) {
+                grouper.choices.get(valueString).selected = true;
+            } else {
+                /*
+                 *  A selected choice can have zero count if it is selected together
+                 *  with other choices, and some other facets' constraints eliminate
+                 *  all rows projected to this choice altogether. For example, if you
+                 *  select both "car" and "bicycle" in the "type of vehicle" facet, and
+                 *  then constrain the "wheels" facet to more than 2, then the "bicycle"
+                 *  choice now has zero count even if it's still selected. The grouper 
+                 *  won't be able to detect the "bicycle" choice, so we need to inject
+                 *  that choice into the choice list ourselves.
+                 */
+                choice.count = 0;
+                _choices.add(choice);
+            }
+        }
+        
+        _blankCount = grouper.blankCount;
+        _errorCount = grouper.errorCount;
     }
     
     protected Object[] createMatches() {

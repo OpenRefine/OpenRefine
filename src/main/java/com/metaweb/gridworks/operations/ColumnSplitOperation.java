@@ -148,7 +148,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         List<Integer> rowIndices = new ArrayList<Integer>(project.rows.size());
         List<List<Serializable>> tuples = new ArrayList<List<Serializable>>(project.rows.size());
         
-        FilteredRows filteredRows = engine.getAllFilteredRows(false);
+        FilteredRows filteredRows = engine.getAllFilteredRows();
         RowVisitor rowVisitor;
         if ("lengths".equals(_mode)) {
             rowVisitor = new ColumnSplitRowVisitor(column.getCellIndex(), columnNames, rowIndices, tuples) {
@@ -234,7 +234,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
             this.tuples = tuples;
         }
         
-        public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+        public boolean visit(Project project, int rowIndex, Row row) {
             Object value = row.getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
                 String s = value instanceof String ? ((String) value) : value.toString();

@@ -108,7 +108,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
                 return this;
             }
             
-            public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+            public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 if (cell != null) {
                     long reconID = cell.recon != null ? cell.recon.id : 0;

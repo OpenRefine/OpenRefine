@@ -140,7 +140,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             
             _cellIndex = column.getCellIndex();
             
-            FilteredRows filteredRows = engine.getAllFilteredRows(false);
+            FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(_project, new RowVisitor() {
                 List<Integer> _rowIndices;
                 
@@ -148,13 +148,12 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     _rowIndices = rowIndices;
                     return this;
                 }
-                public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
-                    if (!includeContextual) {
-                        Cell cell = row.getCell(_cellIndex);
-                        if (cell != null && cell.recon != null && cell.recon.match != null) {
-                            _rowIndices.add(rowIndex);
-                        }
+                public boolean visit(Project project, int rowIndex, Row row) {
+                    Cell cell = row.getCell(_cellIndex);
+                    if (cell != null && cell.recon != null && cell.recon.match != null) {
+                        _rowIndices.add(rowIndex);
                     }
+                    
                     return false;
                 }
             }.init(rowIndices));

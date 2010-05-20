@@ -51,13 +51,14 @@ DataTableView.prototype.render = function() {
 DataTableView.prototype._renderSummaryText = function(elmt) {
     var summaryText;
     
+    var units = theProject.rowModel.mode == "row-based" ? "rows" : "records";
     var from = (theProject.rowModel.start + 1);
     var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
     if (theProject.rowModel.filtered == theProject.rowModel.total) {
-        summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> rows';
+        summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> ' + units;
     } else {
         summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + 
-            (theProject.rowModel.filtered) + '</span> matching rows (' + (theProject.rowModel.total) + ' total)';
+            (theProject.rowModel.filtered) + '</span> matching ' + units + ' (' + (theProject.rowModel.total) + ' total)';
     }
     $('<span>').html(summaryText).appendTo(elmt);
 };
@@ -285,15 +286,15 @@ DataTableView.prototype._renderDataTable = function(table) {
             });
         
         var tdIndex = tr.insertCell(tr.cells.length);
-        if ("j" in row) {
-            $(tr).addClass("record");
-            $('<div></div>').html((row.j + 1) + ".").appendTo(tdIndex);
+        if (theProject.rowModel.mode == "record-based") {
+            if ("j" in row) {
+                $(tr).addClass("record");
+                $('<div></div>').html((row.j + 1) + ".").appendTo(tdIndex);
+            } else {
+                $('<div></div>').html("&nbsp;").appendTo(tdIndex);
+            }
         } else {
-            $('<div></div>').html("&nbsp;").appendTo(tdIndex);
-        }
-        
-        if ("contextual" in row && row.contextual) {
-            $(tr).addClass("contextual");
+            $('<div></div>').html((row.i + 1) + ".").appendTo(tdIndex);
         }
         
         $(tr).addClass(even ? "even" : "odd");
@@ -314,7 +315,7 @@ DataTableView.prototype._renderDataTable = function(table) {
     for (var r = 0; r < rows.length; r++) {
         var row = rows[r];
         var tr = table.insertRow(table.rows.length);
-        if ("j" in row) {
+        if (theProject.rowModel.mode == "row-based" || "j" in row) {
             even = !even;
         }
         renderRow(tr, r, row, even);

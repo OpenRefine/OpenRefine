@@ -161,7 +161,7 @@ public class GetScatterplotCommand extends Command {
             }
             
             {
-                FilteredRows filteredRows = engine.getAllFilteredRows(false);
+                FilteredRows filteredRows = engine.getAllFilteredRows();
                 filteredRows.accept(project, drawer);
             }
             

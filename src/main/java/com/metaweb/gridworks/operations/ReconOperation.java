@@ -174,9 +174,9 @@ public class ReconOperation extends EngineDependentOperation {
             _entries = new ArrayList<ReconEntry>(_project.rows.size());
             _cellIndex = column.getCellIndex();
             
-            FilteredRows filteredRows = engine.getAllFilteredRows(false);
+            FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(_project, new RowVisitor() {
-                public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
+                public boolean visit(Project project, int rowIndex, Row row) {
                     if (_cellIndex < row.cells.size()) {
                         Cell cell = row.cells.get(_cellIndex);
                         if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {

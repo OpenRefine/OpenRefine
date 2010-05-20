@@ -18,8 +18,11 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.DualExpressionsNumberComparisonRowFilter;
+import com.metaweb.gridworks.browsing.filters.RecordFilter;
 import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
@@ -269,19 +272,21 @@ public class ScatterplotFacet implements Facet {
         }
     }
 
+    @Override
+    public RecordFilter getRecordFilter() {
+    	RowFilter rowFilter = getRowFilter();
+    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
+    }
+
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (eval_x != null && eval_y != null && errorMessage_x == null && errorMessage_y == null) {
             Column column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
-            NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, expression_x);
+            NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, expression_x, "row-based");
             
-            min_x = index_x.getMin();
-            max_x = index_x.getMax();
-                        
             Column column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
-            NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, expression_y);
+            NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, expression_y, "row-based");
 
-            min_y = index_y.getMin();
-            max_y = index_y.getMax();
+            retrieveDataFromBinIndices(index_x, index_y);
             
             if (IMAGE_URI) {
                 if (index_x.isNumeric() && index_y.isNumeric()) {
@@ -302,7 +307,45 @@ public class ScatterplotFacet implements Facet {
             }
         }
     }
-
+    
+    public void computeChoices(Project project, FilteredRecords filteredRecords) {
+        if (eval_x != null && eval_y != null && errorMessage_x == null && errorMessage_y == null) {
+            Column column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
+            NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, expression_x, "record-based");
+            
+            Column column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
+            NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, expression_y, "record-based");
+            
+            retrieveDataFromBinIndices(index_x, index_y);
+            
+            if (IMAGE_URI) {
+                if (index_x.isNumeric() && index_y.isNumeric()) {
+                    ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
+                      columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
+                      size, dim_x, dim_y, rotation, dot, color
+                    );
+                    filteredRecords.accept(project, drawer);
+                 
+                    try {
+                        image = serializeImage(drawer.getImage());
+                    } catch (IOException e) {
+                        logger.warn("Exception caught while generating the image", e);
+                    }
+                } else {
+                    image = EMPTY_IMAGE;
+                }
+            }
+        }
+    }
+    
+    protected void retrieveDataFromBinIndices(NumericBinIndex index_x, NumericBinIndex index_y) {
+        min_x = index_x.getMin();
+        max_x = index_x.getMax();
+                    
+        min_y = index_y.getMin();
+        max_y = index_y.getMax();
+    }
+    
     public static String serializeImage(RenderedImage image) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream(4096);
         ImageIO.write(image, "png", output);
@@ -328,7 +371,11 @@ public class ScatterplotFacet implements Facet {
     }
     
     public static NumericBinIndex getBinIndex(Project project, Column column, Evaluable eval, String expression) {
-        String key = "numeric-bin:" + expression;
+    	return getBinIndex(project, column, eval, expression, "row-based");
+    }
+    
+    public static NumericBinIndex getBinIndex(Project project, Column column, Evaluable eval, String expression, String mode) {
+        String key = "numeric-bin:" + mode + ":" + expression;
         if (eval == null) {
             try {
                 eval = MetaParser.parse(expression);
@@ -338,7 +385,10 @@ public class ScatterplotFacet implements Facet {
         }
         NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
         if (index == null) {
-            index = new NumericBinIndex(project, column.getName(), column.getCellIndex(), eval);
+            index = "row-based".equals(mode) ? 
+            		new NumericBinRowIndex(project, column.getName(), column.getCellIndex(), eval) :
+        			new NumericBinRecordIndex(project, column.getName(), column.getCellIndex(), eval);
+            		
             column.setPrecompute(key, index);
         }
         return index;

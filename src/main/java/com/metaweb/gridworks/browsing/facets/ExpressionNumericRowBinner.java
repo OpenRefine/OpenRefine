@@ -3,18 +3,20 @@ package com.metaweb.gridworks.browsing.facets;
 import java.util.Collection;
 import java.util.Properties;
 
+import com.metaweb.gridworks.browsing.RecordVisitor;
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.model.Row;
 
 /**
  * Visit matched rows and slot them into bins based on the numbers computed
  * from a given expression.
  */
-public class ExpressionNumericRowBinner implements RowVisitor {
+public class ExpressionNumericRowBinner implements RowVisitor, RecordVisitor {
     /*
      * Configuration
      */
@@ -35,10 +37,10 @@ public class ExpressionNumericRowBinner implements RowVisitor {
     /*
      * Scratchpad variables
      */
-    private boolean rowHasError;
-    private boolean rowHasBlank;
-    private boolean rowHasNumeric;
-    private boolean rowHasNonNumeric;
+    protected boolean hasError;
+    protected boolean hasBlank;
+    protected boolean hasNumeric;
+    protected boolean hasNonNumeric;
     
     public ExpressionNumericRowBinner(Evaluable evaluable, String columnName, int cellIndex, NumericBinIndex index) {
         _evaluable = evaluable;
@@ -48,18 +50,60 @@ public class ExpressionNumericRowBinner implements RowVisitor {
         bins = new int[_index.getBins().length];
     }
     
-    public boolean visit(Project project, int rowIndex, Row row, boolean includeContextual, boolean includeDependent) {
-        Cell cell = row.getCell(_cellIndex);
-
+    @Override
+    public boolean visit(Project project, int rowIndex, Row row) {
+        resetFlags();
+        
         Properties bindings = ExpressionUtils.createBindings(project);
+        processRow(project, rowIndex, row, bindings);
+        
+        updateCounts();
+        
+        return false;
+    }
+    
+    @Override
+    public boolean visit(Project project, Record record) {
+        resetFlags();
+        
+        Properties bindings = ExpressionUtils.createBindings(project);
+        for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+        	processRow(project, r, project.rows.get(r), bindings);
+        }
+        
+        updateCounts();
+        
+        return false;
+    }
+    
+    protected void resetFlags() {
+        hasError = false;
+        hasBlank = false;
+        hasNumeric = false;
+        hasNonNumeric = false;
+    }
+    
+    protected void updateCounts() {
+        if (hasError) {
+            errorCount++;
+        }
+        if (hasBlank) {
+            blankCount++;
+        }
+        if (hasNumeric) {
+            numericCount++;
+        }
+        if (hasNonNumeric) {
+            nonNumericCount++;
+        }
+    }
+    
+    protected void processRow(Project project, int rowIndex, Row row, Properties bindings) {
+        Cell cell = row.getCell(_cellIndex);
+        
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
         Object value = _evaluable.evaluate(bindings);
-        
-        rowHasError = false;
-        rowHasBlank = false;
-        rowHasNumeric = false;
-        rowHasNonNumeric = false;
         
         if (value != null) {
             if (value.getClass().isArray()) {
@@ -67,59 +111,39 @@ public class ExpressionNumericRowBinner implements RowVisitor {
                 for (Object v : a) {
                     processValue(v);
                 }
-                updateCounts();
-                return false;
+                return;
             } else if (value instanceof Collection<?>) {
                 for (Object v : ExpressionUtils.toObjectCollection(value)) {
                     processValue(v);
                 }
-                updateCounts();
-                return false;
+                return;
             } // else, fall through
         }
         
         processValue(value);
-        updateCounts();
-        
-        return false;
-    }
-    
-    protected void updateCounts() {
-        if (rowHasError) {
-            errorCount++;
-        }
-        if (rowHasBlank) {
-            blankCount++;
-        }
-        if (rowHasNumeric) {
-            numericCount++;
-        }
-        if (rowHasNonNumeric) {
-            nonNumericCount++;
-        }
     }
     
     protected void processValue(Object value) {
         if (ExpressionUtils.isError(value)) {
-            rowHasError = true;
+            hasError = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
             if (value instanceof Number) {
                 double d = ((Number) value).doubleValue();
                 if (!Double.isInfinite(d) && !Double.isNaN(d)) {
-                    rowHasNumeric = true;
+                    hasNumeric = true;
                     
                     int bin = (int) Math.floor((d - _index.getMin()) / _index.getStep());
                     if (bin >= 0 && bin < bins.length) { // as a precaution
                         bins[bin]++;
                     }
                 } else {
-                    rowHasError = true;
+                    hasError = true;
                 }
             } else {
-                rowHasNonNumeric = true;
+                hasNonNumeric = true;
             }
         } else {
-            rowHasBlank = true;
+            hasBlank = true;
         }
     }
 }
