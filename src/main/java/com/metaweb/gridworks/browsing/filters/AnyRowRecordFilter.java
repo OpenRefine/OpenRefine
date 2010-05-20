@@ -1,5 +1,7 @@
 package com.metaweb.gridworks.browsing.filters;
 
+import com.metaweb.gridworks.browsing.RecordFilter;
+import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Record;
 

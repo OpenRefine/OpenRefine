@@ -20,10 +20,13 @@ import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.RecordFilter;
+import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.DualExpressionsNumberComparisonRowFilter;
-import com.metaweb.gridworks.browsing.filters.RecordFilter;
-import com.metaweb.gridworks.browsing.filters.RowFilter;
+import com.metaweb.gridworks.browsing.util.NumericBinIndex;
+import com.metaweb.gridworks.browsing.util.NumericBinRecordIndex;
+import com.metaweb.gridworks.browsing.util.NumericBinRowIndex;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.expr.ParsingException;

@@ -9,10 +9,10 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.RecordFilter;
+import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionStringComparisonRowFilter;
-import com.metaweb.gridworks.browsing.filters.RecordFilter;
-import com.metaweb.gridworks.browsing.filters.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.gel.ast.VariableExpr;
 import com.metaweb.gridworks.model.Project;

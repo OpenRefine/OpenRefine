@@ -1,9 +1,11 @@
-package com.metaweb.gridworks.browsing;
+package com.metaweb.gridworks.browsing.util;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import com.metaweb.gridworks.browsing.filters.RowFilter;
+import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.RowFilter;
+import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 

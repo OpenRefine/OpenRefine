@@ -15,8 +15,9 @@ import com.metaweb.gridworks.browsing.facets.ListFacet;
 import com.metaweb.gridworks.browsing.facets.RangeFacet;
 import com.metaweb.gridworks.browsing.facets.ScatterplotFacet;
 import com.metaweb.gridworks.browsing.facets.TextSearchFacet;
-import com.metaweb.gridworks.browsing.filters.RecordFilter;
-import com.metaweb.gridworks.browsing.filters.RowFilter;
+import com.metaweb.gridworks.browsing.util.ConjunctiveFilteredRecords;
+import com.metaweb.gridworks.browsing.util.ConjunctiveFilteredRows;
+import com.metaweb.gridworks.browsing.util.FilteredRecordsAsFilteredRows;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 

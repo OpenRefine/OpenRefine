@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
-import com.metaweb.gridworks.browsing.facets.NumericBinIndex;
 import com.metaweb.gridworks.browsing.facets.ScatterplotDrawingRowVisitor;
 import com.metaweb.gridworks.browsing.facets.ScatterplotFacet;
+import com.metaweb.gridworks.browsing.util.NumericBinIndex;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;

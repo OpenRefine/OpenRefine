@@ -5,8 +5,8 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
-import com.metaweb.gridworks.browsing.filters.RecordFilter;
-import com.metaweb.gridworks.browsing.filters.RowFilter;
+import com.metaweb.gridworks.browsing.RecordFilter;
+import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.model.Project;
 
 /**

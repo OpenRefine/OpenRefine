@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.browsing.facets;
+package com.metaweb.gridworks.browsing.util;
 
 import java.util.ArrayList;
 import java.util.Collection;

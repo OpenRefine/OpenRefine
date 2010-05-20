@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.browsing.filters;
+package com.metaweb.gridworks.browsing;
 
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;

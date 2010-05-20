@@ -8,10 +8,14 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.RecordFilter;
+import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionNumberComparisonRowFilter;
-import com.metaweb.gridworks.browsing.filters.RecordFilter;
-import com.metaweb.gridworks.browsing.filters.RowFilter;
+import com.metaweb.gridworks.browsing.util.ExpressionNumericValueBinner;
+import com.metaweb.gridworks.browsing.util.NumericBinIndex;
+import com.metaweb.gridworks.browsing.util.NumericBinRecordIndex;
+import com.metaweb.gridworks.browsing.util.NumericBinRowIndex;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.expr.ParsingException;
@@ -187,8 +191,8 @@ public class RangeFacet implements Facet {
             
             retrieveDataFromBaseBinIndex(index);
             
-            ExpressionNumericRowBinner binner = 
-                new ExpressionNumericRowBinner(_eval, _columnName, _cellIndex, index);
+            ExpressionNumericValueBinner binner = 
+                new ExpressionNumericValueBinner(_eval, _columnName, _cellIndex, index);
             
             filteredRows.accept(project, binner);
             retrieveDataFromBinner(binner);
@@ -208,8 +212,8 @@ public class RangeFacet implements Facet {
             
             retrieveDataFromBaseBinIndex(index);
             
-            ExpressionNumericRowBinner binner = 
-                new ExpressionNumericRowBinner(_eval, _columnName, _cellIndex, index);
+            ExpressionNumericValueBinner binner = 
+                new ExpressionNumericValueBinner(_eval, _columnName, _cellIndex, index);
             
             filteredRecords.accept(project, binner);
             
@@ -237,7 +241,7 @@ public class RangeFacet implements Facet {
         }
     }
     
-    protected void retrieveDataFromBinner(ExpressionNumericRowBinner binner) {
+    protected void retrieveDataFromBinner(ExpressionNumericValueBinner binner) {
         _bins = binner.bins;
         _numericCount = binner.numericCount;
         _nonNumericCount = binner.nonNumericCount;

@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.browsing.facets;
+package com.metaweb.gridworks.browsing.util;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -13,10 +13,10 @@ import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.model.Row;
 
 /**
- * Visit matched rows and slot them into bins based on the numbers computed
+ * Visit matched rows or records and slot them into bins based on the numbers computed
  * from a given expression.
  */
-public class ExpressionNumericRowBinner implements RowVisitor, RecordVisitor {
+public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
     /*
      * Configuration
      */
@@ -42,7 +42,7 @@ public class ExpressionNumericRowBinner implements RowVisitor, RecordVisitor {
     protected boolean hasNumeric;
     protected boolean hasNonNumeric;
     
-    public ExpressionNumericRowBinner(Evaluable evaluable, String columnName, int cellIndex, NumericBinIndex index) {
+    public ExpressionNumericValueBinner(Evaluable evaluable, String columnName, int cellIndex, NumericBinIndex index) {
         _evaluable = evaluable;
         _columnName = columnName;
         _cellIndex = cellIndex;

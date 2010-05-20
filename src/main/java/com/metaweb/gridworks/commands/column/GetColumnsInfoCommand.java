@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.browsing.facets.NumericBinIndex;
-import com.metaweb.gridworks.browsing.facets.NumericBinRowIndex;
+import com.metaweb.gridworks.browsing.util.NumericBinIndex;
+import com.metaweb.gridworks.browsing.util.NumericBinRowIndex;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;

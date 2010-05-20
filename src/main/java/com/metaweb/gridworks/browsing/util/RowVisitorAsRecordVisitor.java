@@ -1,5 +1,7 @@
-package com.metaweb.gridworks.browsing;
+package com.metaweb.gridworks.browsing.util;
 
+import com.metaweb.gridworks.browsing.RecordVisitor;
+import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Record;
 

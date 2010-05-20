@@ -2,6 +2,7 @@ package com.metaweb.gridworks.browsing.filters;
 
 import java.util.Properties;
 
+import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;

@@ -12,10 +12,11 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.browsing.DecoratedValue;
 import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.RecordFilter;
+import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionEqualRowFilter;
-import com.metaweb.gridworks.browsing.filters.RecordFilter;
-import com.metaweb.gridworks.browsing.filters.RowFilter;
+import com.metaweb.gridworks.browsing.util.ExpressionNominalValueGrouper;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.expr.ParsingException;
@@ -172,8 +173,8 @@ public class ListFacet implements Facet {
     @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
-            ExpressionNominalRowGrouper grouper = 
-                new ExpressionNominalRowGrouper(_eval, _columnName, _cellIndex);
+            ExpressionNominalValueGrouper grouper = 
+                new ExpressionNominalValueGrouper(_eval, _columnName, _cellIndex);
             
             filteredRows.accept(project, grouper);
             
@@ -184,8 +185,8 @@ public class ListFacet implements Facet {
     @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
-            ExpressionNominalRowGrouper grouper = 
-                new ExpressionNominalRowGrouper(_eval, _columnName, _cellIndex);
+            ExpressionNominalValueGrouper grouper = 
+                new ExpressionNominalValueGrouper(_eval, _columnName, _cellIndex);
             
             filteredRecords.accept(project, grouper);
             
@@ -193,7 +194,7 @@ public class ListFacet implements Facet {
         }
     }
     
-    protected void postProcessGrouper(ExpressionNominalRowGrouper grouper) {
+    protected void postProcessGrouper(ExpressionNominalValueGrouper grouper) {
         _choices.clear();
         _choices.addAll(grouper.choices.values());
         

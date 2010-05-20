@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.browsing.facets;
+package com.metaweb.gridworks.browsing.util;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.metaweb.gridworks.browsing.DecoratedValue;
 import com.metaweb.gridworks.browsing.RecordVisitor;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.browsing.facets.NominalFacetChoice;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
@@ -16,10 +17,10 @@ import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.model.Row;
 
 /**
- * Visit matched rows and group them into facet choices based on the values computed
+ * Visit matched rows or records and group them into facet choices based on the values computed
  * from a given expression.
  */
-public class ExpressionNominalRowGrouper implements RowVisitor, RecordVisitor {
+public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor {
 	static public class IndexedNominalFacetChoice extends NominalFacetChoice {
 		int _latestIndex;
 		
@@ -42,10 +43,14 @@ public class ExpressionNominalRowGrouper implements RowVisitor, RecordVisitor {
     final public Map<Object, IndexedNominalFacetChoice> choices = new HashMap<Object, IndexedNominalFacetChoice>();
     public int blankCount = 0;
     public int errorCount = 0;
+    
+    /*
+     * Scratch pad variables
+     */
     protected boolean hasBlank;
     protected boolean hasError;
     
-    public ExpressionNominalRowGrouper(Evaluable evaluable, String columnName, int cellIndex) {
+    public ExpressionNominalValueGrouper(Evaluable evaluable, String columnName, int cellIndex) {
         _evaluable = evaluable;
         _columnName = columnName;
         _cellIndex = cellIndex;
