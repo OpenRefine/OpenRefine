@@ -21,15 +21,21 @@ public class ConjunctiveFilteredRecords implements FilteredRecords {
     
     @Override
     public void accept(Project project, RecordVisitor visitor) {
-    	int c = project.recordModel.getRecordCount();
-        for (int r = 0; r < c; r++) {
-        	Record record = project.recordModel.getRecord(r);
-            if (matchRecord(project, record)) {
-            	if (visitor.visit(project, record)) {
-            		return;
-            	}
-            }
-        }
+    	try {
+    		visitor.start(project);
+    		
+	    	int c = project.recordModel.getRecordCount();
+	        for (int r = 0; r < c; r++) {
+	        	Record record = project.recordModel.getRecord(r);
+	            if (matchRecord(project, record)) {
+	            	if (visitor.visit(project, record)) {
+	            		return;
+	            	}
+	            }
+	        }
+    	} finally {
+    		visitor.end(project);
+    	}
     }
     
     protected boolean matchRecord(Project project, Record record) {

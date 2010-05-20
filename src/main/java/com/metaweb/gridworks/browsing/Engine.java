@@ -51,11 +51,17 @@ public class Engine implements Jsonizable {
         return new FilteredRows() {
 			@Override
 			public void accept(Project project, RowVisitor visitor) {
-		        int c = project.rows.size();
-		        for (int rowIndex = 0; rowIndex < c; rowIndex++) {
-		            Row row = project.rows.get(rowIndex);
-		            visitor.visit(project, rowIndex, row);
-		        }
+		    	try {
+		    		visitor.start(project);
+		    		
+			        int c = project.rows.size();
+			        for (int rowIndex = 0; rowIndex < c; rowIndex++) {
+			            Row row = project.rows.get(rowIndex);
+			            visitor.visit(project, rowIndex, row);
+			        }
+		    	} finally {
+		    		visitor.end(project);
+		    	}
 			}
         };
     }
@@ -86,10 +92,16 @@ public class Engine implements Jsonizable {
         return new FilteredRecords() {
 			@Override
 			public void accept(Project project, RecordVisitor visitor) {
-		        int c = project.recordModel.getRecordCount();
-		        for (int r = 0; r < c; r++) {
-		            visitor.visit(project, project.recordModel.getRecord(r));
-		        }
+		    	try {
+		    		visitor.start(project);
+		    		
+			        int c = project.recordModel.getRecordCount();
+			        for (int r = 0; r < c; r++) {
+			            visitor.visit(project, project.recordModel.getRecord(r));
+			        }
+		    	} finally {
+		    		visitor.end(project);
+		    	}
 			}
         };
     }

@@ -176,6 +176,16 @@ public class ReconOperation extends EngineDependentOperation {
             
             FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(_project, new RowVisitor() {
+                @Override
+                public void start(Project project) {
+                	// nothing to do
+                }
+                
+                @Override
+                public void end(Project project) {
+                	// nothing to do
+                }
+                
                 public boolean visit(Project project, int rowIndex, Row row) {
                     if (_cellIndex < row.cells.size()) {
                         Cell cell = row.cells.get(_cellIndex);

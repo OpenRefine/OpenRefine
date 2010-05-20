@@ -21,13 +21,19 @@ public class ConjunctiveFilteredRows implements FilteredRows {
     }
     
     public void accept(Project project, RowVisitor visitor) {
-        int c = project.rows.size();
-        for (int rowIndex = 0; rowIndex < c; rowIndex++) {
-            Row row = project.rows.get(rowIndex);
-            if (matchRow(project, rowIndex, row)) {
-                visitRow(project, visitor, rowIndex, row);
-            }
-        }
+    	try {
+    		visitor.start(project);
+    		
+	        int c = project.rows.size();
+	        for (int rowIndex = 0; rowIndex < c; rowIndex++) {
+	            Row row = project.rows.get(rowIndex);
+	            if (matchRow(project, rowIndex, row)) {
+	                visitRow(project, visitor, rowIndex, row);
+	            }
+	        }
+    	} finally {
+    		visitor.end(project);
+    	}
     }
     
     protected void visitRow(Project project, RowVisitor visitor, int rowIndex, Row row) {

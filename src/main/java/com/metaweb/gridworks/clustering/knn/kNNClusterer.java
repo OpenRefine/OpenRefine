@@ -80,6 +80,16 @@ public class kNNClusterer extends Clusterer {
             }
         }
         
+        @Override
+        public void start(Project project) {
+        	// nothing to do
+        }
+        
+        @Override
+        public void end(Project project) {
+        	// nothing to do
+        }
+        
         public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
@@ -119,6 +129,16 @@ public class kNNClusterer extends Clusterer {
                 logger.debug("No parameters found, using defaults");
             }
             _clusterer = new NGramClusterer(_distance, _blockingNgramSize);
+        }
+        
+        @Override
+        public void start(Project project) {
+        	// nothing to do
+        }
+        
+        @Override
+        public void end(Project project) {
+        	// nothing to do
         }
         
         public boolean visit(Project project, int rowIndex, Row row) {

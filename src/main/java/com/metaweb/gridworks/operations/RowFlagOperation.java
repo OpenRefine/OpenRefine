@@ -78,6 +78,16 @@ public class RowFlagOperation extends EngineDependentOperation {
                 return this;
             }
             
+            @Override
+            public void start(Project project) {
+            	// nothing to do
+            }
+            
+            @Override
+            public void end(Project project) {
+            	// nothing to do
+            }
+            
             public boolean visit(Project project, int rowIndex, Row row) {
                 if (row.flagged != _flagged) {
                     RowFlagChange change = new RowFlagChange(rowIndex, _flagged);

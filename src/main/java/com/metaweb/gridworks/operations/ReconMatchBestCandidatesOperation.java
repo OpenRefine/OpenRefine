@@ -75,6 +75,16 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
                 return this;
             }
             
+            @Override
+            public void start(Project project) {
+            	// nothing to do
+            }
+            
+            @Override
+            public void end(Project project) {
+            	// nothing to do
+            }
+            
             public boolean visit(Project project, int rowIndex, Row row) {
                 if (cellIndex < row.cells.size()) {
                     Cell cell = row.cells.get(cellIndex);

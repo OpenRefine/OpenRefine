@@ -51,6 +51,16 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
     }
     
     @Override
+    public void start(Project project) {
+    	// nothing to do
+    }
+    
+    @Override
+    public void end(Project project) {
+    	// nothing to do
+    }
+    
+    @Override
     public boolean visit(Project project, int rowIndex, Row row) {
         resetFlags();
         

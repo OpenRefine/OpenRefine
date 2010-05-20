@@ -94,6 +94,16 @@ public class GetRowsCommand extends Command {
             this.options = options;
         }
         
+        @Override
+        public void start(Project project) {
+        	// nothing to do
+        }
+        
+        @Override
+        public void end(Project project) {
+        	// nothing to do
+        }
+        
         public boolean visit(Project project, int rowIndex, Row row) {
             if (total >= start && total < start + limit) {
                 internalVisit(project, rowIndex, row);

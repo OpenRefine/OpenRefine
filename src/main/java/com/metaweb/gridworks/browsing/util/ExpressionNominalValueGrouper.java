@@ -56,6 +56,16 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         _cellIndex = cellIndex;
     }
     
+    @Override
+    public void start(Project project) {
+    	// nothing to do
+    }
+    
+    @Override
+    public void end(Project project) {
+    	// nothing to do
+    }
+    
     public boolean visit(Project project, int rowIndex, Row row) {
     	hasError = false;
     	hasBlank = false;

@@ -88,6 +88,16 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
     }
     
     @Override
+    public void start(Project project) {
+    	// nothing to do
+    }
+    
+    @Override
+    public void end(Project project) {
+    	// nothing to do
+    }
+    
+    @Override
     public boolean visit(Project project, int rowIndex, Row row) {
         Cell cellx = row.getCell(col_x);
         Cell celly = row.getCell(col_y);

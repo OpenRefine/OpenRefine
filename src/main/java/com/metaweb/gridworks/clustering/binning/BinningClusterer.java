@@ -66,6 +66,16 @@ public class BinningClusterer extends Clusterer {
             }
         }
         
+        @Override
+        public void start(Project project) {
+        	// nothing to do
+        }
+        
+        @Override
+        public void end(Project project) {
+        	// nothing to do
+        }
+        
         public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {

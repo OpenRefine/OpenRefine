@@ -234,6 +234,16 @@ public class ColumnSplitOperation extends EngineDependentOperation {
             this.tuples = tuples;
         }
         
+        @Override
+        public void start(Project project) {
+        	// nothing to do
+        }
+        
+        @Override
+        public void end(Project project) {
+        	// nothing to do
+        }
+        
         public boolean visit(Project project, int rowIndex, Row row) {
             Object value = row.getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {

@@ -162,6 +162,16 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 return this;
             }
             
+            @Override
+            public void start(Project project) {
+            	// nothing to do
+            }
+            
+            @Override
+            public void end(Project project) {
+            	// nothing to do
+            }
+            
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(_cellIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {

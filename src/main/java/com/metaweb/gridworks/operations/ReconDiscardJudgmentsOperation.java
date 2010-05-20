@@ -74,6 +74,16 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
                 return this;
             }
             
+            @Override
+            public void start(Project project) {
+            	// nothing to do
+            }
+            
+            @Override
+            public void end(Project project) {
+            	// nothing to do
+            }
+            
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {

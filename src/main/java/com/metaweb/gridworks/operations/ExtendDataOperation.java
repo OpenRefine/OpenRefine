@@ -148,6 +148,17 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     _rowIndices = rowIndices;
                     return this;
                 }
+                
+                @Override
+                public void start(Project project) {
+                	// nothing to do
+                }
+                
+                @Override
+                public void end(Project project) {
+                	// nothing to do
+                }
+                
                 public boolean visit(Project project, int rowIndex, Row row) {
                     Cell cell = row.getCell(_cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
