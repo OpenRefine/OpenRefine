@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ParsingException;
+import com.metaweb.gridworks.expr.functions.arrays.ArgsToArray;
 import com.metaweb.gridworks.gel.Scanner.NumberToken;
 import com.metaweb.gridworks.gel.Scanner.RegexToken;
 import com.metaweb.gridworks.gel.Scanner.Token;
@@ -197,6 +198,12 @@ public class Parser {
             } else {
                 throw makeException("Missing )");
             }
+        } else if (_token.type == TokenType.Delimiter && _token.text.equals("[")) { // [ ... ] array
+        	next(true); // swallow [
+        	
+            List<Evaluable> args = parseExpressionList("]");
+
+            eval = new FunctionCallExpr(makeArray(args), new ArgsToArray());
         } else {
             throw makeException("Missing number, string, identifier, regex, or parenthesized expression");
         }

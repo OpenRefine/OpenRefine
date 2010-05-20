@@ -12,6 +12,7 @@ Fixes:
 - Issue 28: "mql-like preview is not properly unquoting numbers"
 - Issue 45: "Renaming Cells with Ctrl-Enter produced ERROR"
   Tentative fix for a concurrent bug.
+- Issue 46: "Array literals in GEL"
 
 Changes:
 - Moved unit tests from JUnit to TestNG
