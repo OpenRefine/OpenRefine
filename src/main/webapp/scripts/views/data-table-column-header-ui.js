@@ -7,6 +7,10 @@ function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td) {
     this._render();
 }
 
+DataTableColumnHeaderUI.prototype.getColumn = function() {
+    return this._column;
+};
+
 DataTableColumnHeaderUI.prototype._render = function() {
     var self = this;
     
@@ -56,7 +60,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
 };
 
 DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
-    self = this;
+    var self = this;
     MenuSystem.createAndShowStandardMenu([
         {
             label: "Facet",
@@ -313,10 +317,19 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             ]
         },
         {},
-        {
-            label: "Sort",
-            submenu: this.createSortingMenu()
-        },
+        (
+            this._dataTableView._getSortingCriterionForColumn(this._column.name) == null ?
+                {
+                    "label": "Sort ...",
+                    "click": function() {
+                        self._showSortingCriterion(null, self._dataTableView._getSortingCriteriaCount() > 0)
+                    }
+                } :
+                {
+                    label: "Sort",
+                    submenu: this.createSortingMenu()
+                }
+        ),
         {
             label: "View",
             tooltip: "Collapse/expand columns to make viewing the data more convenient",
@@ -1174,8 +1187,8 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
                 '</td>' +
             '</tr>' +
             '<tr><td colspan="2" bind="directionOptions">' +
-                '<input type="radio" class="inline" name="sorting-dialog-direction" value="forward" /><label>forward</label> ' +
-                '<input type="radio" class="inline" name="sorting-dialog-direction" value="reverse" /><label>reverse</label> ' +
+                '<input type="radio" class="inline" name="sorting-dialog-direction" value="forward" /><label id="sorting-dialog-direction-forward">forward</label> ' +
+                '<input type="radio" class="inline" name="sorting-dialog-direction" value="reverse" /><label id="sorting-dialog-direction-reverse">reverse</label> ' +
                 '<span bind="sortAloneContainer" style="display:none;"><input type="checkbox" class="inline" /><label>sort by this column alone</label></span>' +
             '</td></tr>' +
         '</table></div>'
@@ -1186,6 +1199,27 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
     bodyElmts.valueTypeOptions.find("input[type='radio'][value='" + criterion.valueType + "']")
         .attr("checked", "checked");
         
+    var setValueType = function(valueType) {
+        var forward = $("#sorting-dialog-direction-forward");
+        var reverse = $("#sorting-dialog-direction-reverse");
+        if (valueType == "string") {
+            forward.html("a - z");
+            reverse.html("z - a");
+        } else if (valueType == "number") {
+            forward.html("smallest first");
+            reverse.html("largest first");
+        } else if (valueType == "date") {
+            forward.html("earliest first");
+            reverse.html("latest first");
+        } else if (valueType == "boolean") {
+            forward.html("false then true");
+            reverse.html("true then false");
+        }
+    };
+    bodyElmts.valueTypeOptions.find("input[type='radio']").change(function() {
+        setValueType(this.value);
+    });
+       
     if (criterion.valueType == "string" && criterion.caseSensitive) {
         bodyElmts.caseSensitiveCheckbox.attr("checked", "checked");
     }
@@ -1207,6 +1241,8 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
     var dismiss = function() {
         DialogSystem.dismissUntil(level - 1);
     };
+    
+    setValueType(criterion.valueType); 
     
     footerElmts.cancelButton.click(dismiss);
     footerElmts.okButton.click(function() {

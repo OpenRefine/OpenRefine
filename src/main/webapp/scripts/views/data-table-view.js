@@ -1,9 +1,11 @@
 function DataTableView(div) {
     this._div = div;
+    
     this._pageSize = 20;
     this._showRecon = true;
     this._collapsedColumnNames = {};
     this._sorting = { criteria: [] };
+    this._columnHeaderUIs = [];
     
     this._showRows(0);
 }
@@ -30,6 +32,7 @@ DataTableView.prototype.render = function() {
         '<table class="viewPanel-header">' +
             '<tr>' +
                 '<td bind="summary"></td>' +
+                '<td bind="sortingControls" align="right"></td>' +
                 '<td bind="pageSizeControls" align="right"></td>' +
                 '<td bind="pagingControls" align="right"></td>' +
             '</tr>' +
@@ -41,6 +44,10 @@ DataTableView.prototype.render = function() {
     this._renderSummaryText(elmts.summary);
     this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
     this._renderDataTable(elmts.table[0]);
+    
+    if (this._sorting.criteria.length > 0) {
+        this._renderSortingControls(elmts.sortingControls);
+    }
     
     this._div.empty().append(html);
     
@@ -62,6 +69,19 @@ DataTableView.prototype._renderSummaryText = function(elmt) {
             (theProject.rowModel.filtered) + '</span> matching ' + units + ' (' + (theProject.rowModel.total) + ' total)';
     }
     $('<span>').html(summaryText).appendTo(elmt);
+};
+
+DataTableView.prototype._renderSortingControls = function(sortingControls) {
+    var self = this;
+    
+    $('<a href="javascript:{}"></a>')
+        .addClass("action")
+        .text("Sorted")
+        .append($('<img>').attr("src", "/images/down-arrow.png"))
+        .appendTo(sortingControls)
+        .click(function() {
+            self._createSortingMenu(this);
+        });
 };
 
 DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
@@ -218,6 +238,7 @@ DataTableView.prototype._renderDataTable = function(table) {
         self._createMenuForAllColumns(this);
     });
     
+    this._columnHeaderUIs = [];
     var createColumnHeader = function(column, index) {
         var td = trHead.insertCell(trHead.cells.length);
         $(td).addClass("column-header");
@@ -228,7 +249,8 @@ DataTableView.prototype._renderDataTable = function(table) {
                 self.render();
             });
         } else {
-            new DataTableColumnHeaderUI(self, column, index, td);
+            var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, td);
+            self._columnHeaderUIs.push(columnHeaderUI);
         }
     };
     
@@ -402,7 +424,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
 };
 
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
-    self = this;
+    var self = this;
     MenuSystem.createAndShowStandardMenu([
         {   label: "Facet",
             submenu: [
@@ -498,6 +520,45 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         }
     ], elmt, { width: "80px", horizontal: false });
 };
+
+DataTableView.prototype._createSortingMenu = function(elmt) {
+    var self = this;
+    var items = [
+        {
+            "label" : "Un-sort",
+            "click" : function() {
+                self._sorting.criteria = [];
+                self.update();
+            }
+        },
+        {}
+    ];
+    
+    var getColumnHeaderUI = function(columnName) {
+        for (var i = 0; i < self._columnHeaderUIs.length; i++) {
+            var columnHeaderUI = self._columnHeaderUIs[i];
+            if (columnHeaderUI.getColumn().name == columnName) {
+                return columnHeaderUI;
+            }
+        }
+        return null;
+    }
+    var createSubmenu = function(criterion) {
+        var columnHeaderUI = getColumnHeaderUI(criterion.column);
+        if (columnHeaderUI != null) {
+            items.push({
+                "label" : "By " + criterion.column,
+                "submenu" : columnHeaderUI.createSortingMenu()
+            })
+        }
+    };
+    for (var i = 0; i < this._sorting.criteria.length; i++) {
+        createSubmenu(this._sorting.criteria[i]);
+    }
+    
+    MenuSystem.createAndShowStandardMenu(items, elmt, { horizontal: false });
+};
+
 
 DataTableView.prototype._updateCell = function(rowIndex, cellIndex, cell) {
     var rows = theProject.rowModel.rows;
