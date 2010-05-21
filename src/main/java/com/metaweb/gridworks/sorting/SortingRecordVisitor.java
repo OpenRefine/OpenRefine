@@ -6,22 +6,23 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.metaweb.gridworks.browsing.RecordVisitor;
-import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.sorting.Criterion.KeyMaker;
 
 public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
-	final protected RowVisitor 	_visitor;
-	protected List<Record> 		_records;
+	final protected RecordVisitor 	_visitor;
+	protected List<Record>	 		_records;
 	
-	public SortingRecordVisitor(RowVisitor visitor) {
+	public SortingRecordVisitor(RecordVisitor visitor) {
 		_visitor = visitor;
 	}
 
 	@Override
 	public void start(Project project) {
-		_records = new ArrayList<Record>(project.recordModel.getRecordCount());
+		int count = project.recordModel.getRecordCount();
+		_records = new ArrayList<Record>(count);
+		_keys = new ArrayList<Object[]>(count);
 	}
 
 	@Override
@@ -41,6 +42,10 @@ public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
 				return SortingRecordVisitor.this.compare(project, o1, o1.recordIndex, o2, o2.recordIndex);
 			}
 		}.init(project));
+		
+		for (Record record : _records) {
+			_visitor.visit(project, record);
+		}
 		
 		_visitor.end(project);
 	}

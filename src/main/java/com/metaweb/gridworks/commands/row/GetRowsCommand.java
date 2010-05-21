@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.browsing.Engine;
@@ -20,10 +21,13 @@ import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.sorting.SortingRecordVisitor;
+import com.metaweb.gridworks.sorting.SortingRowVisitor;
+import com.metaweb.gridworks.util.ParsingUtilities;
 import com.metaweb.gridworks.util.Pool;
 
 public class GetRowsCommand extends Command {
-
+	
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
@@ -46,25 +50,49 @@ public class GetRowsCommand extends Command {
             JSONWriter writer = new JSONWriter(response.getWriter());
             writer.object();
             
-            RowWritingVisitor acc = new RowWritingVisitor(start, limit, writer, options);
+            RowWritingVisitor rwv = new RowWritingVisitor(start, limit, writer, options);
             
+            JSONObject sortingJson = null;
+            try{
+                String json = request.getParameter("sorting");
+                sortingJson = (json == null) ? null : 
+                	ParsingUtilities.evaluateJsonStringToObject(json);
+            } catch (JSONException e) {
+            }
+
             if (engine.getMode() == Mode.RowBased) {
                 FilteredRows filteredRows = engine.getAllFilteredRows();
+                RowVisitor visitor = rwv;
+                
+                if (sortingJson != null) {
+                	SortingRowVisitor srv = new SortingRowVisitor(visitor);
+                	
+                	srv.initializeFromJSON(project, sortingJson);
+                	visitor = srv;
+                }
                 
                 writer.key("mode"); writer.value("row-based");
                 writer.key("rows"); writer.array();
-                filteredRows.accept(project, acc);
+                filteredRows.accept(project, visitor);
                 writer.endArray();
-                writer.key("filtered"); writer.value(acc.total);
+                writer.key("filtered"); writer.value(rwv.total);
                 writer.key("total"); writer.value(project.rows.size());
             } else {
                 FilteredRecords filteredRecords = engine.getFilteredRecords();
+                RecordVisitor visitor = rwv;
+                
+                if (sortingJson != null) {
+                	SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
+                	
+                	srv.initializeFromJSON(project, sortingJson);
+                	visitor = srv;
+                }
                 
                 writer.key("mode"); writer.value("record-based");
                 writer.key("rows"); writer.array();
-                filteredRecords.accept(project, acc);
+                filteredRecords.accept(project, visitor);
                 writer.endArray();
-                writer.key("filtered"); writer.value(acc.total);
+                writer.key("filtered"); writer.value(rwv.total);
                 writer.key("total"); writer.value(project.recordModel.getRecordCount());
             }
             

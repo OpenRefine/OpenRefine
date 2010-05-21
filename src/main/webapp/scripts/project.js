@@ -337,10 +337,17 @@ Gridworks.preparePool = function(pool) {
     }
 };
 
-Gridworks.fetchRows = function(start, limit, onDone) {
+Gridworks.fetchRows = function(start, limit, onDone, sorting) {
+    var body = {
+        engine: JSON.stringify(ui.browsingEngine.getJSON())
+    };
+    if (sorting) {
+        body.sorting = JSON.stringify(sorting)
+    }
+    
     $.post(
         "/command/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }),
-        { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+        body,
         function(data) {
             theProject.rowModel = data;
             

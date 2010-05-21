@@ -314,6 +314,10 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
         },
         {},
         {
+            label: "Sort",
+            submenu: this.createSortingMenu()
+        },
+        {
             label: "View",
             tooltip: "Collapse/expand columns to make viewing the data more convenient",
             submenu: [
@@ -536,6 +540,40 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             ]
         }
     ], elmt, { width: "120px", horizontal: false });
+};
+
+DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
+    var self = this;
+    var criterion = this._dataTableView._getSortingCriterionForColumn(this._column.name);
+    var criteriaCount = this._dataTableView._getSortingCriteriaCount();
+    var hasOtherCriteria = criterion == null ? (criteriaCount > 0) : criteriaCount > 1;
+    
+    var items = [
+        {
+            "label": "Sort ...",
+            "click": function() {
+                self._showSortingCriterion(criterion, hasOtherCriteria)
+            }
+        }
+    ];
+    
+    if (criterion != null) {
+        items.push({
+            "label": "Reverse",
+            "click": function() {
+                criterion.reverse = !criterion.reverse;
+                self._dataTableView._addSortingCriterion(criterion);
+            }
+        });
+        items.push({
+            "label": "Un-sort",
+            "click": function() {
+                self._dataTableView._removeSortingCriterionOfColumn(criterion.column);
+            }
+        });
+    }
+    
+    return items;
 };
 
 DataTableColumnHeaderUI.prototype._doFilterByExpressionPrompt = function(expression, type) {
@@ -1079,4 +1117,112 @@ DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
     });
     
     footerElmts.cancelButton.click(dismiss);
+};
+
+DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, hasOtherCriteria) {
+    var self = this;
+    
+    criterion = criterion || {
+        column: this._column.name,
+        valueType: "string",
+        caseSensitive: false,
+        errorPosition: 1,
+        blankPosition: 2
+    };
+    
+    var frame = DialogSystem.createDialog();
+    frame.width("400px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Sort by " + this._column.name).appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    body.html(
+        '<div class="grid-layout layout-normal layout-full "><table>' +
+            '<tr>' +
+                '<td>Sort cell values as</td>' +
+                '<td>Position blanks and errors</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td>' +
+                    '<div class="grid-layout layout-tightest grid-layout-for-text" bind="valueTypeOptions"><table>' +
+                        '<tr>' +
+                            '<td width="1"><input type="radio" name="sorting-dialog-value-type" value="string" /></td>' +
+                            '<td>text <input type="checkbox" class="inline" bind="caseSensitiveCheckbox" /> case-sensitive</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td width="1"><input type="radio" name="sorting-dialog-value-type" value="number" /></td>' +
+                            '<td>numbers</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td width="1"><input type="radio" name="sorting-dialog-value-type" value="date" /></td>' +
+                            '<td>dates</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td width="1"><input type="radio" name="sorting-dialog-value-type" value="boolean" /></td>' +
+                            '<td>booleans</td>' +
+                        '</tr>' +
+                    '</table></div>' +
+                '</td>' +
+                '<td>' +
+                    '<ul>' +
+                        '<li>Valid Values</li>' +
+                        '<li>Blanks</li>' +
+                        '<li>Errors</li>' +
+                    '</ul>' +
+                    '<p>Drag and drop to re-order</p>' +
+                '</td>' +
+            '</tr>' +
+            '<tr><td colspan="2" bind="directionOptions">' +
+                '<input type="radio" class="inline" name="sorting-dialog-direction" value="forward" /><label>forward</label> ' +
+                '<input type="radio" class="inline" name="sorting-dialog-direction" value="reverse" /><label>reverse</label> ' +
+                '<span bind="sortAloneContainer" style="display:none;"><input type="checkbox" class="inline" /><label>sort by this column alone</label></span>' +
+            '</td></tr>' +
+        '</table></div>'
+    );
+    
+    var bodyElmts = DOM.bind(body);
+    
+    bodyElmts.valueTypeOptions.find("input[type='radio'][value='" + criterion.valueType + "']")
+        .attr("checked", "checked");
+        
+    if (criterion.valueType == "string" && criterion.caseSensitive) {
+        bodyElmts.caseSensitiveCheckbox.attr("checked", "checked");
+    }
+    
+    bodyElmts.directionOptions.find("input[type='radio'][value='" + (criterion.reverse ? "reverse" : "forward") + "']")
+        .attr("checked", "checked");
+
+    if (hasOtherCriteria) {
+        bodyElmts.sortAloneContainer.show();
+    }
+    
+    footer.html(
+        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+        '<button bind="cancelButton">Cancel</button>'
+    );
+    var footerElmts = DOM.bind(footer);
+        
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    footerElmts.cancelButton.click(dismiss);
+    footerElmts.okButton.click(function() {
+        var criterion2 = {
+            column: self._column.name,
+            valueType: bodyElmts.valueTypeOptions.find("input[type='radio']:checked")[0].value,
+            reverse: bodyElmts.directionOptions.find("input[type='radio']:checked")[0].value == "reverse"
+        };
+        
+        if (criterion2.valueType == "string") {
+            criterion2.caseSensitive = bodyElmts.caseSensitiveCheckbox[0].checked;
+        }
+        
+        self._dataTableView._addSortingCriterion(
+            criterion2, bodyElmts.sortAloneContainer.find("input")[0].checked);
+            
+        dismiss();
+    });
 };

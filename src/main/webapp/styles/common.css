@@ -29,6 +29,9 @@ div.grid-layout > table > tbody > tr > th, div.grid-layout > table > tbody > tr 
     text-align: left;
     vertical-align: baseline;
 }
+div.grid-layout.grid-layout-for-text > table > tbody > tr > th, div.grid-layout.grid-layout-for-text > table > tbody > tr > td {
+    vertical-align: middle;
+}
 div.grid-layout.layout-normal {
     margin: -10px;
 }

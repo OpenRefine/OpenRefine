@@ -26,6 +26,10 @@ abstract public class BaseSorter {
 		}
 		
 		public Object getKey(Project project, Object o, int index) {
+			while (index >= _keys.size()) {
+				_keys.add(null);
+			}
+			
 			Object[] keys = _keys.get(index);
 			if (keys == null) {
 				keys = makeKeys(project, o, index);

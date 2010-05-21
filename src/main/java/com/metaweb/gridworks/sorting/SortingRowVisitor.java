@@ -30,7 +30,9 @@ public class SortingRowVisitor extends BaseSorter implements RowVisitor {
 
 	@Override
 	public void start(Project project) {
-		_indexedRows = new ArrayList<IndexedRow>(project.rows.size());
+		int count = project.rows.size();
+		_indexedRows = new ArrayList<IndexedRow>(count);
+		_keys = new ArrayList<Object[]>(count);
 	}
 
 	@Override
@@ -50,6 +52,10 @@ public class SortingRowVisitor extends BaseSorter implements RowVisitor {
 				return SortingRowVisitor.this.compare(project, o1.row, o1.index, o2.row, o2.index);
 			}
 		}.init(project));
+		
+		for (IndexedRow indexedRow : _indexedRows) {
+			_visitor.visit(project, indexedRow.index, indexedRow.row);
+		}
 		
 		_visitor.end(project);
 	}

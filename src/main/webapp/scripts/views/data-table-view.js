@@ -3,6 +3,7 @@ function DataTableView(div) {
     this._pageSize = 20;
     this._showRecon = true;
     this._collapsedColumnNames = {};
+    this._sorting = { criteria: [] };
     
     this._showRows(0);
 }
@@ -333,7 +334,7 @@ DataTableView.prototype._showRows = function(start, onDone) {
         if (onDone) {
             onDone();
         }
-    });
+    }, this._sorting);
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
@@ -350,6 +351,54 @@ DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
     this._showRows(Math.floor(theProject.rowModel.filtered / this._pageSize) * this._pageSize);
+};
+
+DataTableView.prototype._getSortingCriteriaCount = function() {
+    return this._sorting.criteria.length;
+};
+
+DataTableView.prototype._sortedByColumn = function(columnName) {
+    for (var i = 0; i < this._sorting.criteria.length; i++) {
+        if (this._sorting.criteria[i].column == columnName) {
+            return true;
+        }
+    }
+    return false;
+};
+
+DataTableView.prototype._getSortingCriterionForColumn = function(columnName) {
+    for (var i = 0; i < this._sorting.criteria.length; i++) {
+        if (this._sorting.criteria[i].column == columnName) {
+            return this._sorting.criteria[i];
+        }
+    }
+    return null;
+};
+
+DataTableView.prototype._removeSortingCriterionOfColumn = function(columnName) {
+    for (var i = 0; i < this._sorting.criteria.length; i++) {
+        if (this._sorting.criteria[i].column == columnName) {
+            this._sorting.criteria.splice(i, 1);
+            break;
+        }
+    }
+    this.update();
+};
+
+DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
+    if (alone) {
+        this._sorting.criteria = [];
+    } else {
+        for (var i = 0; i < this._sorting.criteria.length; i++) {
+            if (this._sorting.criteria[i].column == criterion.column) {
+                this._sorting.criteria[i] = criterion;
+                this.update();
+                return;
+            }
+        }
+    }
+    this._sorting.criteria.push(criterion);
+    this.update();
 };
 
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
