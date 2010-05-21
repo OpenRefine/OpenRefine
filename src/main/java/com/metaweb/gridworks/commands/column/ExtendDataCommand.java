@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.operations.ExtendDataOperation;
+import com.metaweb.gridworks.operations.column.ExtendDataOperation;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class ExtendDataCommand extends EngineDependentCommand {

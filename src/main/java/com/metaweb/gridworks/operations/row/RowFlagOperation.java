@@ -1,6 +1,6 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.row;
 
- import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -17,24 +17,26 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.MassChange;
-import com.metaweb.gridworks.model.changes.RowStarChange;
+import com.metaweb.gridworks.model.changes.RowFlagChange;
+import com.metaweb.gridworks.operations.EngineDependentOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
-public class RowStarOperation extends EngineDependentOperation {
-    final protected boolean _starred;
+public class RowFlagOperation extends EngineDependentOperation {
+    final protected boolean _flagged;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        boolean starred = obj.getBoolean("starred");
+        boolean flagged = obj.getBoolean("flagged");
         
-        return new RowStarOperation(
+        return new RowFlagOperation(
             engineConfig, 
-            starred
+            flagged
         );
     }
     
-    public RowStarOperation(JSONObject engineConfig, boolean starred) {
+    public RowFlagOperation(JSONObject engineConfig, boolean flagged) {
         super(engineConfig);
-        _starred = starred;
+        _flagged = flagged;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -44,12 +46,12 @@ public class RowStarOperation extends EngineDependentOperation {
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("starred"); writer.value(_starred);
+        writer.key("flagged"); writer.value(_flagged);
         writer.endObject();
     }
 
     protected String getBriefDescription(Project project) {
-        return (_starred ? "Star rows" : "Unstar rows");
+        return (_flagged ? "Flag rows" : "Unflag rows");
     }
 
    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
@@ -63,7 +65,7 @@ public class RowStarOperation extends EngineDependentOperation {
         return new HistoryEntry(
             historyEntryID,
             project, 
-            (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows", 
+            (_flagged ? "Flag" : "Unflag") + " " + changes.size() + " rows", 
             this, 
             new MassChange(changes, false)
         );
@@ -89,8 +91,8 @@ public class RowStarOperation extends EngineDependentOperation {
             }
             
             public boolean visit(Project project, int rowIndex, Row row) {
-                if (row.starred != _starred) {
-                    RowStarChange change = new RowStarChange(rowIndex, _starred);
+                if (row.flagged != _flagged) {
+                    RowFlagChange change = new RowFlagChange(rowIndex, _flagged);
                     
                     changes.add(change);
                 }

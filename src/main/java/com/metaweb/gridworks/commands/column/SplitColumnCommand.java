@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.operations.ColumnSplitOperation;
+import com.metaweb.gridworks.operations.column.ColumnSplitOperation;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class SplitColumnCommand extends EngineDependentCommand {

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.operations.MultiValuedCellJoinOperation;
+import com.metaweb.gridworks.operations.cell.MultiValuedCellJoinOperation;
 import com.metaweb.gridworks.process.Process;
 
 public class JoinMultiValueCellsCommand extends Command {

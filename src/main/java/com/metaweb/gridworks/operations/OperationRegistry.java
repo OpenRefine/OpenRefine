@@ -8,6 +8,25 @@ import org.json.JSONObject;
 
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.operations.cell.MassEditOperation;
+import com.metaweb.gridworks.operations.cell.MultiValuedCellJoinOperation;
+import com.metaweb.gridworks.operations.cell.MultiValuedCellSplitOperation;
+import com.metaweb.gridworks.operations.cell.TextTransformOperation;
+import com.metaweb.gridworks.operations.column.ColumnAdditionOperation;
+import com.metaweb.gridworks.operations.column.ColumnRemovalOperation;
+import com.metaweb.gridworks.operations.column.ColumnRenameOperation;
+import com.metaweb.gridworks.operations.column.ColumnSplitOperation;
+import com.metaweb.gridworks.operations.column.ExtendDataOperation;
+import com.metaweb.gridworks.operations.recon.ReconDiscardJudgmentsOperation;
+import com.metaweb.gridworks.operations.recon.ReconJudgeSimilarCellsOperation;
+import com.metaweb.gridworks.operations.recon.ReconMarkNewTopicsOperation;
+import com.metaweb.gridworks.operations.recon.ReconMatchBestCandidatesOperation;
+import com.metaweb.gridworks.operations.recon.ReconMatchSpecificTopicOperation;
+import com.metaweb.gridworks.operations.recon.ReconOperation;
+import com.metaweb.gridworks.operations.row.DenormalizeOperation;
+import com.metaweb.gridworks.operations.row.RowFlagOperation;
+import com.metaweb.gridworks.operations.row.RowRemovalOperation;
+import com.metaweb.gridworks.operations.row.RowStarOperation;
 
 public abstract class OperationRegistry {
 

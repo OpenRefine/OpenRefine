@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.recon;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +27,8 @@ import com.metaweb.gridworks.model.changes.ReconChange;
 import com.metaweb.gridworks.model.recon.HeuristicReconConfig;
 import com.metaweb.gridworks.model.recon.ReconConfig;
 import com.metaweb.gridworks.model.recon.ReconJob;
+import com.metaweb.gridworks.operations.EngineDependentOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.process.LongRunningProcess;
 import com.metaweb.gridworks.process.Process;
 

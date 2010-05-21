@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.column;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +25,8 @@ import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellAtRow;
 import com.metaweb.gridworks.model.changes.DataExtensionChange;
+import com.metaweb.gridworks.operations.EngineDependentOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.process.LongRunningProcess;
 import com.metaweb.gridworks.process.Process;
 import com.metaweb.gridworks.protograph.FreebaseType;

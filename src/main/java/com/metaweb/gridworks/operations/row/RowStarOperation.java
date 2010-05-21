@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.row;
 
  import java.util.ArrayList;
 import java.util.List;
@@ -11,23 +11,32 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.model.changes.RowRemovalChange;
+import com.metaweb.gridworks.model.changes.MassChange;
+import com.metaweb.gridworks.model.changes.RowStarChange;
+import com.metaweb.gridworks.operations.EngineDependentOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
-public class RowRemovalOperation extends EngineDependentOperation {
+public class RowStarOperation extends EngineDependentOperation {
+    final protected boolean _starred;
+
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        boolean starred = obj.getBoolean("starred");
         
-        return new RowRemovalOperation(
-            engineConfig
+        return new RowStarOperation(
+            engineConfig, 
+            starred
         );
     }
     
-    public RowRemovalOperation(JSONObject engineConfig) {
+    public RowStarOperation(JSONObject engineConfig, boolean starred) {
         super(engineConfig);
+        _starred = starred;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -37,36 +46,37 @@ public class RowRemovalOperation extends EngineDependentOperation {
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("starred"); writer.value(_starred);
         writer.endObject();
     }
 
     protected String getBriefDescription(Project project) {
-        return "Remove rows";
+        return (_starred ? "Star rows" : "Unstar rows");
     }
 
    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
-        List<Integer> rowIndices = new ArrayList<Integer>();
+        List<Change> changes = new ArrayList<Change>(project.rows.size());
         
         FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(project, createRowVisitor(project, rowIndices));
+        filteredRows.accept(project, createRowVisitor(project, changes));
         
         return new HistoryEntry(
             historyEntryID,
             project, 
-            "Remove " + rowIndices.size() + " rows", 
+            (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows", 
             this, 
-            new RowRemovalChange(rowIndices)
+            new MassChange(changes, false)
         );
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<Integer> rowIndices) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
         return new RowVisitor() {
-            List<Integer> rowIndices;
+            List<Change> changes;
             
-            public RowVisitor init(List<Integer> rowIndices) {
-                this.rowIndices = rowIndices;
+            public RowVisitor init(List<Change> changes) {
+                this.changes = changes;
                 return this;
             }
             
@@ -81,10 +91,13 @@ public class RowRemovalOperation extends EngineDependentOperation {
             }
             
             public boolean visit(Project project, int rowIndex, Row row) {
-                rowIndices.add(rowIndex);
-                
+                if (row.starred != _starred) {
+                    RowStarChange change = new RowStarChange(rowIndex, _starred);
+                    
+                    changes.add(change);
+                }
                 return false;
             }
-        }.init(rowIndices);
+        }.init(changes);
     }
 }

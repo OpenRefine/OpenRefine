@@ -1,6 +1,6 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.row;
 
-import java.util.ArrayList;
+ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -11,30 +11,25 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
-import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.model.changes.MassChange;
-import com.metaweb.gridworks.model.changes.RowFlagChange;
+import com.metaweb.gridworks.model.changes.RowRemovalChange;
+import com.metaweb.gridworks.operations.EngineDependentOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
-public class RowFlagOperation extends EngineDependentOperation {
-    final protected boolean _flagged;
-
+public class RowRemovalOperation extends EngineDependentOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        boolean flagged = obj.getBoolean("flagged");
         
-        return new RowFlagOperation(
-            engineConfig, 
-            flagged
+        return new RowRemovalOperation(
+            engineConfig
         );
     }
     
-    public RowFlagOperation(JSONObject engineConfig, boolean flagged) {
+    public RowRemovalOperation(JSONObject engineConfig) {
         super(engineConfig);
-        _flagged = flagged;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -44,37 +39,36 @@ public class RowFlagOperation extends EngineDependentOperation {
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("flagged"); writer.value(_flagged);
         writer.endObject();
     }
 
     protected String getBriefDescription(Project project) {
-        return (_flagged ? "Flag rows" : "Unflag rows");
+        return "Remove rows";
     }
 
    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
-        List<Change> changes = new ArrayList<Change>(project.rows.size());
+        List<Integer> rowIndices = new ArrayList<Integer>();
         
         FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(project, createRowVisitor(project, changes));
+        filteredRows.accept(project, createRowVisitor(project, rowIndices));
         
         return new HistoryEntry(
             historyEntryID,
             project, 
-            (_flagged ? "Flag" : "Unflag") + " " + changes.size() + " rows", 
+            "Remove " + rowIndices.size() + " rows", 
             this, 
-            new MassChange(changes, false)
+            new RowRemovalChange(rowIndices)
         );
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
+    protected RowVisitor createRowVisitor(Project project, List<Integer> rowIndices) throws Exception {
         return new RowVisitor() {
-            List<Change> changes;
+            List<Integer> rowIndices;
             
-            public RowVisitor init(List<Change> changes) {
-                this.changes = changes;
+            public RowVisitor init(List<Integer> rowIndices) {
+                this.rowIndices = rowIndices;
                 return this;
             }
             
@@ -89,13 +83,10 @@ public class RowFlagOperation extends EngineDependentOperation {
             }
             
             public boolean visit(Project project, int rowIndex, Row row) {
-                if (row.flagged != _flagged) {
-                    RowFlagChange change = new RowFlagChange(rowIndex, _flagged);
-                    
-                    changes.add(change);
-                }
+                rowIndices.add(rowIndex);
+                
                 return false;
             }
-        }.init(changes);
+        }.init(rowIndices);
     }
 }

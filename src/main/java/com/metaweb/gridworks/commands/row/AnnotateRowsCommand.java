@@ -7,8 +7,8 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.operations.RowFlagOperation;
-import com.metaweb.gridworks.operations.RowStarOperation;
+import com.metaweb.gridworks.operations.row.RowFlagOperation;
+import com.metaweb.gridworks.operations.row.RowStarOperation;
 
 public class AnnotateRowsCommand extends EngineDependentCommand {
     

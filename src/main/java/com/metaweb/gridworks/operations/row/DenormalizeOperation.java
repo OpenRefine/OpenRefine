@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.row;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,7 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.RecordModel.CellDependency;
 import com.metaweb.gridworks.model.RecordModel.RowDependency;
 import com.metaweb.gridworks.model.changes.MassRowChange;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
 public class DenormalizeOperation extends AbstractOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {

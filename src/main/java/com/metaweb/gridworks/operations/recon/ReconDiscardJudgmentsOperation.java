@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.recon;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,23 +20,22 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
+import com.metaweb.gridworks.operations.EngineDependentMassCellOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
-public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
-    final protected boolean    _shareNewTopics;
-    
+public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        String columnName = obj.getString("columnName");
         
-        return new ReconMarkNewTopicsOperation(
+        return new ReconDiscardJudgmentsOperation(
             engineConfig, 
-            obj.getString("columnName"),
-            obj.has("shareNewTopics") ? obj.getBoolean("shareNewTopics") : false
+            columnName
         );
     }
-
-    public ReconMarkNewTopicsOperation(JSONObject engineConfig, String columnName, boolean shareNewTopics) {
+    
+    public ReconDiscardJudgmentsOperation(JSONObject engineConfig, String columnName) {
         super(engineConfig, columnName, false);
-        _shareNewTopics = shareNewTopics;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -47,35 +46,28 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("engineConfig"); writer.value(getEngineConfig());
         writer.key("columnName"); writer.value(_columnName);
-        writer.key("shareNewTopics"); writer.value(_shareNewTopics);
         writer.endObject();
     }
-    
+
     protected String getBriefDescription(Project project) {
-        return "Mark to create new topics for cells in column " + _columnName +
-            (_shareNewTopics ? 
-                ", one topic for each group of similar cells" : 
-                ", one topic for each cell");
+        return "Discard recon judgments for cells in column " + _columnName;
     }
 
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Mark to create new topics for " + cellChanges.size() + 
-            " cells in column " + column.getName() +
-            (_shareNewTopics ? 
-                ", one topic for each group of similar cells" : 
-                ", one topic for each cell");
+        return "Discard recon judgments for " + cellChanges.size() + 
+            " cells in column " + column.getName();
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
-            int                 cellIndex;
-            List<CellChange>    cellChanges;
-            Map<String, Recon>  sharedRecons = new HashMap<String, Recon>();
-            long                historyEntryID;
+            int cellIndex;
+            List<CellChange> cellChanges;
+            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
+            long historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
@@ -96,31 +88,23 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
             
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
-                if (cell != null) {
-                    Recon recon = null;
-                    if (_shareNewTopics) {
-                        String s = cell.value == null ? "" : cell.value.toString();
-                        if (sharedRecons.containsKey(s)) {
-                            recon = sharedRecons.get(s);
-                            recon.judgmentBatchSize++;
-                        } else {
-                            recon = new Recon(historyEntryID);
-                            recon.judgment = Judgment.New;
-                            recon.judgmentBatchSize = 1;
-                            recon.judgmentAction = "mass";
-                            
-                            sharedRecons.put(s, recon);
-                        }
+                if (cell != null && cell.recon != null) {
+                    Recon newRecon;
+                    if (dupReconMap.containsKey(cell.recon.id)) {
+                        newRecon = dupReconMap.get(cell.recon.id);
+                        newRecon.judgmentBatchSize++;
                     } else {
-                        recon = cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID);
-                        recon.match = null;
-                        recon.matchRank = -1;
-                        recon.judgment = Judgment.New;
-                        recon.judgmentBatchSize = 1;
-                        recon.judgmentAction = "mass";
+                        newRecon = cell.recon.dup(historyEntryID);
+                        newRecon.match = null;
+                        newRecon.matchRank = -1;
+                        newRecon.judgment = Judgment.None;
+                        newRecon.judgmentAction = "mass";
+                        newRecon.judgmentBatchSize = 1;
+                        
+                        dupReconMap.put(cell.recon.id, newRecon);
                     }
                     
-                    Cell newCell = new Cell(cell.value, recon);
+                    Cell newCell = new Cell(cell.value, newRecon);
                     
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);

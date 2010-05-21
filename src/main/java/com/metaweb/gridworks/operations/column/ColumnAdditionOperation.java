@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.column;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,6 +25,10 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellAtRow;
 import com.metaweb.gridworks.model.changes.ColumnAdditionChange;
+import com.metaweb.gridworks.operations.EngineDependentOperation;
+import com.metaweb.gridworks.operations.OnError;
+import com.metaweb.gridworks.operations.OperationRegistry;
+import com.metaweb.gridworks.operations.cell.TextTransformOperation;
 
 public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;

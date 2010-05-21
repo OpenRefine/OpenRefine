@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.cell;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,6 +23,8 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellChange;
+import com.metaweb.gridworks.operations.EngineDependentMassCellOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class MassEditOperation extends EngineDependentMassCellOperation {

@@ -10,7 +10,7 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Recon.Judgment;
-import com.metaweb.gridworks.operations.ReconJudgeSimilarCellsOperation;
+import com.metaweb.gridworks.operations.recon.ReconJudgeSimilarCellsOperation;
 
 public class ReconJudgeSimilarCellsCommand extends EngineDependentCommand {
 

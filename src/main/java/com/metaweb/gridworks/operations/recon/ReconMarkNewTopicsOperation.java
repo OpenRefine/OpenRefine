@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.recon;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,25 +16,29 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
-import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
+import com.metaweb.gridworks.operations.EngineDependentMassCellOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
-public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
+public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
+    final protected boolean    _shareNewTopics;
+    
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        String columnName = obj.getString("columnName");
         
-        return new ReconMatchBestCandidatesOperation(
+        return new ReconMarkNewTopicsOperation(
             engineConfig, 
-            columnName
+            obj.getString("columnName"),
+            obj.has("shareNewTopics") ? obj.getBoolean("shareNewTopics") : false
         );
     }
-    
-    public ReconMatchBestCandidatesOperation(JSONObject engineConfig, String columnName) {
+
+    public ReconMarkNewTopicsOperation(JSONObject engineConfig, String columnName, boolean shareNewTopics) {
         super(engineConfig, columnName, false);
+        _shareNewTopics = shareNewTopics;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -45,18 +49,25 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("engineConfig"); writer.value(getEngineConfig());
         writer.key("columnName"); writer.value(_columnName);
+        writer.key("shareNewTopics"); writer.value(_shareNewTopics);
         writer.endObject();
     }
-
+    
     protected String getBriefDescription(Project project) {
-        return "Match each cell to its best recon candidate in column " + _columnName;
+        return "Mark to create new topics for cells in column " + _columnName +
+            (_shareNewTopics ? 
+                ", one topic for each group of similar cells" : 
+                ", one topic for each cell");
     }
 
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Match each of " + cellChanges.size() + 
-            " cells to its best candidate in column " + column.getName();
+        return "Mark to create new topics for " + cellChanges.size() + 
+            " cells in column " + column.getName() +
+            (_shareNewTopics ? 
+                ", one topic for each group of similar cells" : 
+                ", one topic for each cell");
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
@@ -65,7 +76,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
         return new RowVisitor() {
             int                 cellIndex;
             List<CellChange>    cellChanges;
-            Map<Long, Recon>    dupReconMap = new HashMap<Long, Recon>();
+            Map<String, Recon>  sharedRecons = new HashMap<String, Recon>();
             long                historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
@@ -86,34 +97,35 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
             }
             
             public boolean visit(Project project, int rowIndex, Row row) {
-                if (cellIndex < row.cells.size()) {
-                    Cell cell = row.cells.get(cellIndex);
-                    if (cell != null && cell.recon != null) {
-                        ReconCandidate candidate = cell.recon.getBestCandidate();
-                        if (candidate != null) {
-                            Recon newRecon;
-                            if (dupReconMap.containsKey(cell.recon.id)) {
-                                newRecon = dupReconMap.get(cell.recon.id);
-                                newRecon.judgmentBatchSize++;
-                            } else {
-                                newRecon = cell.recon.dup(historyEntryID);
-                                newRecon.judgmentBatchSize = 1;
-                                newRecon.match = candidate;
-                                newRecon.matchRank = 0;
-                                newRecon.judgment = Judgment.Matched;
-                                newRecon.judgmentAction = "mass";
-                                
-                                dupReconMap.put(cell.recon.id, newRecon);
-                            }
-                            Cell newCell = new Cell(
-                                cell.value,
-                                newRecon
-                            );
+                Cell cell = row.getCell(cellIndex);
+                if (cell != null) {
+                    Recon recon = null;
+                    if (_shareNewTopics) {
+                        String s = cell.value == null ? "" : cell.value.toString();
+                        if (sharedRecons.containsKey(s)) {
+                            recon = sharedRecons.get(s);
+                            recon.judgmentBatchSize++;
+                        } else {
+                            recon = new Recon(historyEntryID);
+                            recon.judgment = Judgment.New;
+                            recon.judgmentBatchSize = 1;
+                            recon.judgmentAction = "mass";
                             
-                            CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                            cellChanges.add(cellChange);
+                            sharedRecons.put(s, recon);
                         }
+                    } else {
+                        recon = cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID);
+                        recon.match = null;
+                        recon.matchRank = -1;
+                        recon.judgment = Judgment.New;
+                        recon.judgmentBatchSize = 1;
+                        recon.judgmentAction = "mass";
                     }
+                    
+                    Cell newCell = new Cell(cell.value, recon);
+                    
+                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+                    cellChanges.add(cellChange);
                 }
                 return false;
             }

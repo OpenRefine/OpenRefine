@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.commands.EngineDependentCommand;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.operations.MassEditOperation;
+import com.metaweb.gridworks.operations.cell.MassEditOperation;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class MassEditCommand extends EngineDependentCommand {

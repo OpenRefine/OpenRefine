@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.cell;
 
  import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,7 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.MassRowChange;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
 public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _columnName;

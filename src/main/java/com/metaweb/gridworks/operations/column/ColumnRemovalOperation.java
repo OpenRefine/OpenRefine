@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.column;
 
 import java.util.Properties;
 
@@ -12,6 +12,7 @@ import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.changes.ColumnRemovalChange;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
 public class ColumnRemovalOperation extends AbstractOperation {
     final protected String _columnName;

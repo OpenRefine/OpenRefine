@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.column;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,6 +23,8 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.ColumnSplitChange;
+import com.metaweb.gridworks.operations.EngineDependentOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 import com.metaweb.gridworks.util.JSONUtilities;
 
 public class ColumnSplitOperation extends EngineDependentOperation {

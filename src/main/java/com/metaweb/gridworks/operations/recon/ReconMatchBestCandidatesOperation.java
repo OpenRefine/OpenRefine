@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.recon;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,23 +16,26 @@ import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
+import com.metaweb.gridworks.model.ReconCandidate;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
+import com.metaweb.gridworks.operations.EngineDependentMassCellOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
-public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOperation {
+public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         String columnName = obj.getString("columnName");
         
-        return new ReconDiscardJudgmentsOperation(
+        return new ReconMatchBestCandidatesOperation(
             engineConfig, 
             columnName
         );
     }
     
-    public ReconDiscardJudgmentsOperation(JSONObject engineConfig, String columnName) {
+    public ReconMatchBestCandidatesOperation(JSONObject engineConfig, String columnName) {
         super(engineConfig, columnName, false);
     }
 
@@ -48,24 +51,24 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
     }
 
     protected String getBriefDescription(Project project) {
-        return "Discard recon judgments for cells in column " + _columnName;
+        return "Match each cell to its best recon candidate in column " + _columnName;
     }
 
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Discard recon judgments for " + cellChanges.size() + 
-            " cells in column " + column.getName();
+        return "Match each of " + cellChanges.size() + 
+            " cells to its best candidate in column " + column.getName();
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
-            int cellIndex;
-            List<CellChange> cellChanges;
-            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
-            long historyEntryID;
+            int                 cellIndex;
+            List<CellChange>    cellChanges;
+            Map<Long, Recon>    dupReconMap = new HashMap<Long, Recon>();
+            long                historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
@@ -85,27 +88,34 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
             }
             
             public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(cellIndex);
-                if (cell != null && cell.recon != null) {
-                    Recon newRecon;
-                    if (dupReconMap.containsKey(cell.recon.id)) {
-                        newRecon = dupReconMap.get(cell.recon.id);
-                        newRecon.judgmentBatchSize++;
-                    } else {
-                        newRecon = cell.recon.dup(historyEntryID);
-                        newRecon.match = null;
-                        newRecon.matchRank = -1;
-                        newRecon.judgment = Judgment.None;
-                        newRecon.judgmentAction = "mass";
-                        newRecon.judgmentBatchSize = 1;
-                        
-                        dupReconMap.put(cell.recon.id, newRecon);
+                if (cellIndex < row.cells.size()) {
+                    Cell cell = row.cells.get(cellIndex);
+                    if (cell != null && cell.recon != null) {
+                        ReconCandidate candidate = cell.recon.getBestCandidate();
+                        if (candidate != null) {
+                            Recon newRecon;
+                            if (dupReconMap.containsKey(cell.recon.id)) {
+                                newRecon = dupReconMap.get(cell.recon.id);
+                                newRecon.judgmentBatchSize++;
+                            } else {
+                                newRecon = cell.recon.dup(historyEntryID);
+                                newRecon.judgmentBatchSize = 1;
+                                newRecon.match = candidate;
+                                newRecon.matchRank = 0;
+                                newRecon.judgment = Judgment.Matched;
+                                newRecon.judgmentAction = "mass";
+                                
+                                dupReconMap.put(cell.recon.id, newRecon);
+                            }
+                            Cell newCell = new Cell(
+                                cell.value,
+                                newRecon
+                            );
+                            
+                            CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+                            cellChanges.add(cellChange);
+                        }
                     }
-                    
-                    Cell newCell = new Cell(cell.value, newRecon);
-                    
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                    cellChanges.add(cellChange);
                 }
                 return false;
             }

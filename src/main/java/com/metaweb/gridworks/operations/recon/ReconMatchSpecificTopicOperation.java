@@ -1,4 +1,4 @@
-package com.metaweb.gridworks.operations;
+package com.metaweb.gridworks.operations.recon;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +22,8 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
+import com.metaweb.gridworks.operations.EngineDependentMassCellOperation;
+import com.metaweb.gridworks.operations.OperationRegistry;
 
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
     final protected ReconCandidate match;
