@@ -33,7 +33,7 @@ abstract public class Criterion {
 			blankPosition = obj.getInt("blankPosition");
 		}
 		if (obj.has("errorPosition") && !obj.isNull("errorPosition")) {
-			blankPosition = obj.getInt("errorPosition");
+			errorPosition = obj.getInt("errorPosition");
 		}
 		
 		if (obj.has("reverse") && !obj.isNull("reverse")) {

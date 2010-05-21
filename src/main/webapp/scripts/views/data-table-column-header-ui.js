@@ -1178,11 +1178,7 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
                     '</table></div>' +
                 '</td>' +
                 '<td>' +
-                    '<ul>' +
-                        '<li>Valid Values</li>' +
-                        '<li>Blanks</li>' +
-                        '<li>Errors</li>' +
-                    '</ul>' +
+                    '<ul class="sorting-dialog-blank-error-positions" bind="blankErrorPositions"></ul>' +
                     '<p>Drag and drop to re-order</p>' +
                 '</td>' +
             '</tr>' +
@@ -1231,6 +1227,29 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
         bodyElmts.sortAloneContainer.show();
     }
     
+    var validValuesHtml = '<li kind="value">Valid Values</li>';
+    var blankValuesHtml = '<li kind="blank">Blanks</li>';
+    var errorValuesHtml = '<li kind="error">Errors</li>';
+    var positionsHtml;
+    if (criterion.blankPosition < 0) {
+        if (criterion.errorPosition > 0) {
+            positionsHtml = [ blankValuesHtml, validValuesHtml, errorValuesHtml ];
+        } else if (criterion.errorPosition < criterion.blankPosition) {
+            positionsHtml = [ errorValuesHtml, blankValuesHtml, validValuesHtml ];
+        } else {
+            positionsHtml = [ blankValuesHtml, errorValuesHtml, validValuesHtml ];
+        }
+    } else {
+        if (criterion.errorPosition < 0) {
+            positionsHtml = [ errorValuesHtml, validValuesHtml, blankValuesHtml ];
+        } else if (criterion.errorPosition < criterion.blankPosition) {
+            positionsHtml = [ validValuesHtml, errorValuesHtml, blankValuesHtml  ];
+        } else {
+            positionsHtml = [ validValuesHtml, blankValuesHtml, errorValuesHtml ];
+        }
+    }
+    bodyElmts.blankErrorPositions.html(positionsHtml.join("")).sortable().disableSelection();
+    
     footer.html(
         '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
         '<button bind="cancelButton">Cancel</button>'
@@ -1251,6 +1270,20 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
             valueType: bodyElmts.valueTypeOptions.find("input[type='radio']:checked")[0].value,
             reverse: bodyElmts.directionOptions.find("input[type='radio']:checked")[0].value == "reverse"
         };
+        
+        var valuePosition, blankPosition, errorPosition;
+        bodyElmts.blankErrorPositions.find("li").each(function(index, elmt) {
+            var kind = this.getAttribute("kind");
+            if (kind == "value") {
+                valuePosition = index;
+            } else if (kind == "blank") {
+                blankPosition = index;
+            } else if (kind == "error") {
+                errorPosition = index;
+            }
+        });
+        criterion2.blankPosition = blankPosition - valuePosition;
+        criterion2.errorPosition = errorPosition - valuePosition;
         
         if (criterion2.valueType == "string") {
             criterion2.caseSensitive = bodyElmts.caseSensitiveCheckbox[0].checked;

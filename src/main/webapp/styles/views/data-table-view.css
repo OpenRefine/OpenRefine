@@ -252,3 +252,22 @@ iframe.data-table-topic-popup-iframe {
     background: #DBE8EB;
     border: none;
 }
+
+ul.sorting-dialog-blank-error-positions {
+    margin: 0;
+    padding: 5px;
+    height: 10em;
+    border: 1px solid #ccc;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+ul.sorting-dialog-blank-error-positions > li {
+    display: block;
+    border: 1px solid #ccc;
+    background: #eee;
+    padding: 5px;
+    margin: 2px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    cursor: move;
+}
