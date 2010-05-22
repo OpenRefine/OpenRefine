@@ -101,7 +101,8 @@ ListFacet.prototype._reSortChoices = function() {
             return a.v.l.localeCompare(b.v.l);
         } :
         function(a, b) {
-            return b.c - a.c;
+            var c = b.c - a.c;
+            return c !== 0 ? c : a.v.l.localeCompare(b.v.l);
         }
     );
 };

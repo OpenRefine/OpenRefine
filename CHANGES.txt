@@ -13,6 +13,10 @@ Fixes:
 - Issue 45: "Renaming Cells with Ctrl-Enter produced ERROR"
   Tentative fix for a concurrent bug.
 - Issue 46: "Array literals in GEL"
+- Issue 55: "Use stable sorting for text facets sorted by count"
+
+Features:
+- Row/record sorting (Issue 32)
 
 Changes:
 - Moved unit tests from JUnit to TestNG
