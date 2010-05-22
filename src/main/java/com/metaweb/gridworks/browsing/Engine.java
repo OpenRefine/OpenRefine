@@ -39,12 +39,22 @@ public class Engine implements Jsonizable {
     protected List<Facet>     _facets = new LinkedList<Facet>();
     protected Mode			  _mode = Mode.RowBased;
     
+    static public String modeToString(Mode mode) {
+    	return mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED;
+    }
+    static public Mode stringToMode(String s) {
+    	return MODE_ROW_BASED.equals(s) ? Mode.RowBased : Mode.RecordBased;
+    }
+    
     public Engine(Project project) {
         _project  = project;
     }
     
     public Mode getMode() {
     	return _mode;
+    }
+    public void setMode(Mode mode) {
+    	_mode = mode;
     }
     
     public FilteredRows getAllRows() {

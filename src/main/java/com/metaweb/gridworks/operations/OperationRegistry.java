@@ -26,6 +26,7 @@ import com.metaweb.gridworks.operations.recon.ReconOperation;
 import com.metaweb.gridworks.operations.row.DenormalizeOperation;
 import com.metaweb.gridworks.operations.row.RowFlagOperation;
 import com.metaweb.gridworks.operations.row.RowRemovalOperation;
+import com.metaweb.gridworks.operations.row.RowReorderOperation;
 import com.metaweb.gridworks.operations.row.RowStarOperation;
 
 public abstract class OperationRegistry {
@@ -58,6 +59,7 @@ public abstract class OperationRegistry {
         register("row-removal", RowRemovalOperation.class);
         register("row-star", RowStarOperation.class);
         register("row-flag", RowFlagOperation.class);
+        register("row-reorder", RowReorderOperation.class);
         
         register("save-protograph", SaveProtographOperation.class);
         register("text-transform", TextTransformOperation.class);

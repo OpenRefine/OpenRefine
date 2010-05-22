@@ -531,6 +531,22 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
                 self.update();
             }
         },
+        {
+            "label" : "Reorder Rows Permanently",
+            "click" : function() {
+                Gridworks.postProcess(
+                    "reorder-rows",
+                    null,
+                    { "sorting" : JSON.stringify(self._sorting) }, 
+                    { rowMetadataChanged: true },
+                    {
+                        onDone: function() {
+                            self._sorting.criteria = [];
+                        }
+                    }
+                );
+            }
+        },
         {}
     ];
     

@@ -80,6 +80,7 @@ public class GridworksServlet extends HttpServlet {
         {"annotate-one-row", "com.metaweb.gridworks.commands.row.AnnotateOneRowCommand"},
         {"annotate-rows", "com.metaweb.gridworks.commands.row.AnnotateRowsCommand"},
         {"remove-rows", "com.metaweb.gridworks.commands.row.RemoveRowsCommand"},
+        {"reorder-rows", "com.metaweb.gridworks.commands.row.ReorderRowsCommand"},
         
         {"save-protograph", "com.metaweb.gridworks.commands.freebase.SaveProtographCommand"},
         
