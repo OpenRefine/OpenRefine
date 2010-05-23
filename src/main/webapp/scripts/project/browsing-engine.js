@@ -98,7 +98,6 @@ BrowsingEngine.prototype._initializeUI = function() {
             self._updateFacetOrder();
         }
     });
-    this._elmts.facets.disableSelection();
     
     $("#browsing-panel-mode-" + 
         (theProject.recordModel.hasRecords ? 'record-based' : 'row-based')).attr("checked", "checked");

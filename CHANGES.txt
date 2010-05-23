@@ -14,6 +14,7 @@ Fixes:
   Tentative fix for a concurrent bug.
 - Issue 46: "Array literals in GEL"
 - Issue 55: "Use stable sorting for text facets sorted by count"
+- Issue 53: "Moving the cursor inside the Text Filter box by clicking"
 
 Features:
 - Row/record sorting (Issue 32)
