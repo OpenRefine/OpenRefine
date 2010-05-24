@@ -97,6 +97,24 @@ public class CsvExporterTests {
                                                "\"row2cell0\",\"row2cell1\",\"row2cell2\"\n");
     }
     
+    @Test
+    public void exportCsvWithEmptyCells(){
+        CreateGrid(3,3);
+        
+        project.rows.get(1).cells.set(1, null);
+        project.rows.get(2).cells.set(0, null);
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
+                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
+                                               "\"row1cell0\",,\"row1cell2\"\n" +
+                                               ",\"row2cell1\",\"row2cell2\"\n");
+    }
+    
     //helper methods
 
     protected void CreateColumns(int noOfColumns){

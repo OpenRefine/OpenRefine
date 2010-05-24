@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
+import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
@@ -48,7 +49,10 @@ public class CsvExporter implements Exporter{
 
                     vals = new String[row.cells.size()];
                     for(int i = 0; i < vals.length; i++){
-                        vals[i] = row.cells.get(i).value.toString();
+                        Cell cell = row.cells.get(i);
+                        if(cell != null){
+                            vals[i] = row.cells.get(i).value.toString();
+                        }
                     }
 
                     csvWriter.writeNext(vals);

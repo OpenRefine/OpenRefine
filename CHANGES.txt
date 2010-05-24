@@ -18,6 +18,7 @@ Fixes:
 
 Features:
 - Row/record sorting (Issue 32)
+- CSV exporting (Issue 59)
 
 Changes:
 - Moved unit tests from JUnit to TestNG
@@ -26,7 +27,7 @@ Changes:
 
 Fixes:
 - Issue 2: "Undo History bug" - bulk row starring and flagging operations could not be undone.
-- Issue 5: "Localized Windows cause save problems for Gridworks" - 
+- Issue 5: "Localized Windows cause save problems for Gridworks" -
   Windows user IDs that contain unicode characters were not retrieved correctly.
 - Issue 10: "OAuth fails on sign in" - due to clock offset.
 - Issue 11: "missing "lang" attribute in MQL generated in schema alignment"

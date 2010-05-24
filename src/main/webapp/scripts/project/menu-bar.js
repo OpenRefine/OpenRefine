@@ -9,12 +9,12 @@ MenuBar.prototype.resize = function() {
 MenuBar.prototype._initializeUI = function() {
     this._mode = "inactive";
     this._menuItemRecords = [];
-    
+
     this._div.addClass("menu-bar").html("&nbsp;");
     this._innerDiv = $('<div></div>').addClass("menu-bar-inner").appendTo(this._div);
 
     var self = this;
-    
+
     this._createTopLevelMenuItem("Project", [
         /*
         {
@@ -40,6 +40,10 @@ MenuBar.prototype._initializeUI = function() {
                     "label": "Tab-Separated Value",
                     "click": function() { self._doExportRows("tsv", "tsv"); }
                 },
+				{
+					"label": "Comma-Separated Value",
+					"click": function() { self._doExportRows("csv", "csv"); }
+				},
                 {
                     "label": "HTML Table",
                     "click": function() { self._doExportRows("html", "html"); }
@@ -79,22 +83,22 @@ MenuBar.prototype._initializeUI = function() {
             click: function() { self._doLoadIntoFreebase(); }
         }
     ]);
-    
+
     this._wireAllMenuItemsInactive();
 };
 
 MenuBar.prototype._createTopLevelMenuItem = function(label, submenu) {
     var self = this;
-    
+
     var menuItem = MenuSystem.createMenuItem().text(label).appendTo(this._innerDiv);
-    
+
     this._menuItemRecords.push({
         menuItem: menuItem,
         show: function() {
             MenuSystem.dismissUntil(self._level);
-            
+
             menuItem.addClass("menu-expanded");
-            
+
             MenuSystem.createAndShowStandardMenu(
                 submenu,
                 this,
@@ -115,7 +119,7 @@ MenuBar.prototype._wireMenuItemInactive = function(record) {
         self._activateMenu();
         record.show.apply(record.menuItem[0]);
     };
-    
+
     record.menuItem.click(function() {
         // because we're going to rewire the menu bar, we have to
         // make this asynchronous, or jquery event binding won't work.
@@ -143,13 +147,13 @@ MenuBar.prototype._wireAllMenuItemsActive = function() {
 
 MenuBar.prototype._activateMenu = function() {
     var self = this;
-    
+
     var top = this._innerDiv.offset().top;
-    
+
     this._innerDiv.remove().css("top", top + "px");
     this._wireAllMenuItemsActive();
     this._mode = "active";
-    
+
     this._level = MenuSystem.showMenu(this._innerDiv, function() {
         self._deactivateMenu();
     });
@@ -160,14 +164,14 @@ MenuBar.prototype._deactivateMenu = function() {
         .css("z-index", "auto")
         .css("top", "0px")
         .appendTo(this._div);
-        
+
     this._wireAllMenuItemsInactive();
     this._mode = "inactive";
 };
 
 MenuBar.prototype._doDenormalizeRecords = function() {
     Gridworks.postProcess(
-        "denormalize", 
+        "denormalize",
         {},
         null,
         { modelsChanged: true }
@@ -206,12 +210,12 @@ MenuBar.prototype._doExportRows = function(format, ext) {
         .attr("name", "format")
         .attr("value", format)
         .appendTo(form);
-    
+
     document.body.appendChild(form);
 
     window.open("about:blank", "gridworks-export");
     form.submit();
-    
+
     document.body.removeChild(form);
 };
 
@@ -222,12 +226,12 @@ MenuBar.prototype._exportProject = function() {
         .css("display", "none")
         .attr("method", "post")
         .attr("action", "/command/export-project/" + name + ".gridworks.tar.gz")
-        .attr("target", "gridworks-export"); 
+        .attr("target", "gridworks-export");
     $('<input />')
         .attr("name", "project")
         .attr("value", theProject.id)
         .appendTo(form);
-        
+
     document.body.appendChild(form);
 
     window.open("about:blank", "gridworks-export");
@@ -241,12 +245,12 @@ MenuBar.prototype._renameProject = function() {
     if (name == null) {
         return;
     }
-    
+
     name = $.trim(name);
     if (theProject.metadata.name == name || name.length == 0) {
         return;
     }
-    
+
     $.ajax({
         type: "POST",
         url: "/command/rename-project",
