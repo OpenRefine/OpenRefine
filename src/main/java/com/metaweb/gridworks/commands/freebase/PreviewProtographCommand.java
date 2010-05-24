@@ -7,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.metaweb.gridworks.browsing.Engine;
@@ -15,7 +14,7 @@ import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.protograph.Protograph;
-import com.metaweb.gridworks.protograph.transpose.MqlreadLikeTransposedNodeFactory;
+import com.metaweb.gridworks.protograph.transpose.MqlwriteLikeTransposedNodeFactory;
 import com.metaweb.gridworks.protograph.transpose.Transposer;
 import com.metaweb.gridworks.protograph.transpose.TripleLoaderTransposedNodeFactory;
 import com.metaweb.gridworks.util.ParsingUtilities;
@@ -52,14 +51,14 @@ public class PreviewProtographCommand extends Command {
             }
             
             {
-                MqlreadLikeTransposedNodeFactory nodeFactory = new MqlreadLikeTransposedNodeFactory();
+                StringWriter stringWriter = new StringWriter();
+                MqlwriteLikeTransposedNodeFactory nodeFactory = new MqlwriteLikeTransposedNodeFactory(stringWriter);
                 
                 Transposer.transpose(project, filteredRows, protograph, protograph.getRootNode(0), nodeFactory);
-                
-                JSONArray results = nodeFactory.getJSON();
+                nodeFactory.flush();
                 
                 sb.append(", \"mqllike\" : ");
-                sb.append(results.toString());
+                sb.append(sb.toString());
             }
 
             sb.append(" }");

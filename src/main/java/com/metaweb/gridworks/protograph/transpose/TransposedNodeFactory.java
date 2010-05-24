@@ -1,5 +1,7 @@
 package com.metaweb.gridworks.protograph.transpose;
 
+import java.io.IOException;
+
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.protograph.AnonymousNode;
 import com.metaweb.gridworks.protograph.CellNode;
@@ -32,4 +34,6 @@ public interface TransposedNodeFactory {
         FreebaseProperty property, 
         FreebaseTopicNode node
     );
+    
+    public void flush() throws IOException;
 }

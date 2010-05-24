@@ -55,7 +55,11 @@ MenuBar.prototype._initializeUI = function() {
                 {},
                 {
                     "label": "Tripleloader",
-                    "click": function() { self._doExportTripleloader(); }
+                    "click": function() { self._doExportTripleloader("tripleloader"); }
+                },
+                {
+                    "label": "MQLWrite",
+                    "click": function() { self._doExportTripleloader("mqlwrite"); }
                 }
             ]
         },
@@ -178,14 +182,14 @@ MenuBar.prototype._doDenormalizeRecords = function() {
     );
 };
 
-MenuBar.prototype._doExportTripleloader = function() {
+MenuBar.prototype._doExportTripleloader = function(format) {
     if (!theProject.protograph) {
         alert(
             "You haven't done any schema alignment yet,\nso there is no triple to export.\n\n" +
             "Use the Schemas > Edit Schema Alignment Skeleton...\ncommand to align your data with Freebase schemas first."
         );
     } else {
-        this._doExportRows("tripleloader", "txt");
+        this._doExportRows(format, "txt");
     }
 };
 

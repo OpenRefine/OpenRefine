@@ -8,10 +8,18 @@ import java.util.Properties;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.protograph.Protograph;
+import com.metaweb.gridworks.protograph.transpose.MqlwriteLikeTransposedNodeFactory;
+import com.metaweb.gridworks.protograph.transpose.TransposedNodeFactory;
 import com.metaweb.gridworks.protograph.transpose.Transposer;
 import com.metaweb.gridworks.protograph.transpose.TripleLoaderTransposedNodeFactory;
 
-public class TripleloaderExporter implements Exporter {
+abstract public class ProtographTransposeExporter implements Exporter {
+	final protected String _contentType;
+	
+	public ProtographTransposeExporter(String contentType) {
+		_contentType = contentType;
+	}
+	
     public String getContentType() {
         return "application/x-unknown";
     }
@@ -31,11 +39,36 @@ public class TripleloaderExporter implements Exporter {
         if (project.protograph != null) {
             Protograph protograph = project.protograph;
             
-            TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory(writer);
+            TransposedNodeFactory nodeFactory = createNodeFactory(writer);
             
             Transposer.transpose(project, engine.getAllFilteredRows(), protograph, protograph.getRootNode(0), nodeFactory, -1);
+            
             nodeFactory.flush();
         }
+    }
+    
+    abstract protected TransposedNodeFactory createNodeFactory(Writer writer);
+    
+    static public class TripleLoaderExporter extends ProtographTransposeExporter {
+		public TripleLoaderExporter() {
+			super("application/x-unknown");
+		}
+
+		@Override
+		protected TransposedNodeFactory createNodeFactory(Writer writer) {
+			return new TripleLoaderTransposedNodeFactory(writer);
+		}
+    }
+
+    static public class MqlwriteLikeExporter extends ProtographTransposeExporter {
+		public MqlwriteLikeExporter() {
+			super("application/x-unknown");
+		}
+
+		@Override
+		protected TransposedNodeFactory createNodeFactory(Writer writer) {
+			return new MqlwriteLikeTransposedNodeFactory(writer);
+		}
     }
 
 }

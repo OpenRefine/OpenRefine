@@ -1,5 +1,7 @@
 package com.metaweb.gridworks.protograph.transpose;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,7 +21,8 @@ import com.metaweb.gridworks.protograph.FreebaseTopicNode;
 import com.metaweb.gridworks.protograph.ValueNode;
 import com.metaweb.gridworks.util.JSONUtilities;
 
-public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
+public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory {
+    protected Writer writer;
     protected List<JSONObject> rootObjects = new LinkedList<JSONObject>();
     
     private static final String TYPE = "type";
@@ -30,8 +33,18 @@ public class MqlreadLikeTransposedNodeFactory implements TransposedNodeFactory {
     private static final String CONNECT = "connect";
     private static final String LANG = "lang";
     
-    public JSONArray getJSON() {
+    public MqlwriteLikeTransposedNodeFactory(Writer writer) {
+    	this.writer = writer;
+    }
+    
+    protected JSONArray getJSON() {
         return new JSONArray(rootObjects);
+    }
+    
+    @Override
+    public void flush() throws IOException {
+    	writer.write(getJSON().toString());
+    	writer.flush();
     }
     
     abstract protected class JsonTransposedNode implements TransposedNode {

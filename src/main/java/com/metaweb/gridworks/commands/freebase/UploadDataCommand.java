@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.commands.Command;
-import com.metaweb.gridworks.exporters.TripleloaderExporter;
+import com.metaweb.gridworks.exporters.ProtographTransposeExporter.TripleLoaderExporter;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.FreebaseUtils;
 
@@ -28,7 +28,7 @@ public class UploadDataCommand extends Command {
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            TripleloaderExporter exporter = new TripleloaderExporter();
+            TripleLoaderExporter exporter = new TripleLoaderExporter();
             StringWriter triples = new StringWriter(10 * 1024 * 1024);
             exporter.export(project, new Properties(), engine, triples);
 

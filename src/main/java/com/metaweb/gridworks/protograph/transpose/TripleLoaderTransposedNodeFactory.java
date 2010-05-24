@@ -35,7 +35,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         this.writer = writer;
     }
     
-    public void flush() {
+    @Override
+    public void flush() throws IOException {
         if (lastRootNode != null) {
             lastRootNode.write(null, null, null);
             lastRootNode = null;
