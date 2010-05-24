@@ -47,7 +47,7 @@ public class TsvExporterTests {
         options = null;
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportSimpleTsv(){
         CreateGrid(2, 2);
 
@@ -57,16 +57,16 @@ public class TsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\n" +
-                                               "\"row0cell0\"\t\"row0cell1\"\n" +
-                                               "\"row1cell0\"\t\"row1cell1\"\n");
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\n" +
+                                               "row0cell0\trow0cell1\n" +
+                                               "row1cell0\trow1cell1\n");
 
     }
-    
+
     @Test(groups={"broken"})
     public void exportTsvWithLineBreaks(){
         CreateGrid(3,3);
-        
+
         project.rows.get(1).cells.set(1, new Cell("line\n\n\nbreak", null));
         try {
             SUT.export(project, options, engine, writer);
@@ -74,14 +74,14 @@ public class TsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\t\"column2\"\n" +
-                                               "\"row0cell0\"\t\"row0cell1\"\t\"row0cell2\"\n" +
-                                               "\"row1cell0\"\t\"line\n\n\nbreak\"\t\"row1cell2\"\n" +
-                                               "\"row2cell0\"\t\"row2cell1\"\t\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                                               "row0cell0\trow0cell1\trow0cell2\n" +
+                                               "row1cell0\t\"line\n\n\nbreak\"\trow1cell2\n" +
+                                               "row2cell0\trow2cell1\trow2cell2\n");
     }
-    
+
     @Test(groups={"broken"})
-    public void exportCsvWithComma(){
+    public void exportTsvWithComma(){
         CreateGrid(3,3);
 
         project.rows.get(1).cells.set(1, new Cell("with\t tab", null));
@@ -91,16 +91,16 @@ public class TsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\t\"column2\"\n" +
-                                               "\"row0cell0\"\t\"row0cell1\"\t\"row0cell2\"\n" +
-                                               "\"row1cell0\"\t\"with\t tab\"\t\"row1cell2\"\n" +
-                                               "\"row2cell0\"\t\"row2cell1\"\t\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                                               "row0cell0\trow0cell1\trow0cell2\n" +
+                                               "row1cell0\t\"with\t tab\"\trow1cell2\n" +
+                                               "row2cell0\trow2cell1\trow2cell2\n");
     }
-    
+
     @Test(groups={"broken"})
     public void exportTsvWithQuote(){
         CreateGrid(3,3);
-        
+
         project.rows.get(1).cells.set(1, new Cell("line has \"quote\"", null));
         try {
             SUT.export(project, options, engine, writer);
@@ -108,16 +108,16 @@ public class TsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\t\"column2\"\n" +
-                                               "\"row0cell0\"\t\"row0cell1\"\t\"row0cell2\"\n" +
-                                               "\"row1cell0\"\t\"line has \"\"quote\"\"\"\t\"row1cell2\"\n" +
-                                               "\"row2cell0\"\t\"row2cell1\"\t\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                                               "row0cell0\trow0cell1\trow0cell2\n" +
+                                               "row1cell0\t\"line has \"\"quote\"\"\"\trow1cell2\n" +
+                                               "row2cell0\trow2cell1\trow2cell2\n");
     }
-    
-    @Test(groups={"broken"})
+
+    @Test
     public void exportTsvWithEmptyCells(){
         CreateGrid(3,3);
-        
+
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
         try {
@@ -126,18 +126,19 @@ public class TsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\t\"column2\"\n" +
-                                               "\"row0cell0\"\t\"row0cell1\"\t\"row0cell2\"\n" +
-                                               "\"row1cell0\"\t\t\"row1cell2\"\n" +
-                                               "\t\"row2cell1\"\t\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                                               "row0cell0\trow0cell1\trow0cell2\n" +
+                                               "row1cell0\t\trow1cell2\n" +
+                                               "\trow2cell1\trow2cell2\n");
     }
-    
+
     //helper methods
 
     protected void CreateColumns(int noOfColumns){
         for(int i = 0; i < noOfColumns; i++){
             try {
-                project.columnModel.addColumn(i, new Column(0, "column" + i), true);
+                project.columnModel.addColumn(i, new Column(i, "column" + i), true);
+                project.columnModel.columns.get(i).getCellIndex();
             } catch (ModelException e1) {
                 Assert.fail("Could not create column");
             }
@@ -146,7 +147,7 @@ public class TsvExporterTests {
 
     protected void CreateGrid(int noOfRows, int noOfColumns){
         CreateColumns(noOfColumns);
-        
+
         for(int i = 0; i < noOfRows; i++){
             Row row = new Row(noOfColumns);
             for(int j = 0; j < noOfColumns; j++){

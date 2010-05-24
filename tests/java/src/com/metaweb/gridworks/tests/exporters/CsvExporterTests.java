@@ -57,9 +57,9 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\"\n" +
-                                               "\"row0cell0\",\"row0cell1\"\n" +
-                                               "\"row1cell0\",\"row1cell1\"\n");
+        Assert.assertEquals(writer.toString(), "column0,column1\n" +
+                                               "row0cell0,row0cell1\n" +
+                                               "row1cell0,row1cell1\n");
 
     }
     
@@ -74,10 +74,10 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
-                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
-                                               "\"row1cell0\",\"line\n\n\nbreak\",\"row1cell2\"\n" +
-                                               "\"row2cell0\",\"row2cell1\",\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+                                               "row0cell0,row0cell1,row0cell2\n" +
+                                               "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
+                                               "row2cell0,row2cell1,row2cell2\n");
     }
     
     @Test
@@ -91,10 +91,10 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
-                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
-                                               "\"row1cell0\",\"with, comma\",\"row1cell2\"\n" +
-                                               "\"row2cell0\",\"row2cell1\",\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+                                               "row0cell0,row0cell1,row0cell2\n" +
+                                               "row1cell0,\"with, comma\",row1cell2\n" +
+                                               "row2cell0,row2cell1,row2cell2\n");
     }
     
     @Test
@@ -108,10 +108,10 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
-                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
-                                               "\"row1cell0\",\"line has \"\"quote\"\"\",\"row1cell2\"\n" +
-                                               "\"row2cell0\",\"row2cell1\",\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+                                               "row0cell0,row0cell1,row0cell2\n" +
+                                               "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
+                                               "row2cell0,row2cell1,row2cell2\n");
     }
     
     @Test
@@ -126,10 +126,10 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
-                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
-                                               "\"row1cell0\",,\"row1cell2\"\n" +
-                                               ",\"row2cell1\",\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+                                               "row0cell0,row0cell1,row0cell2\n" +
+                                               "row1cell0,,row1cell2\n" +
+                                               ",row2cell1,row2cell2\n");
     }
     
     //helper methods
@@ -137,7 +137,7 @@ public class CsvExporterTests {
     protected void CreateColumns(int noOfColumns){
         for(int i = 0; i < noOfColumns; i++){
             try {
-                project.columnModel.addColumn(i, new Column(0, "column" + i), true);
+                project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
                 Assert.fail("Could not create column");
             }

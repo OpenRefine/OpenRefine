@@ -48,7 +48,7 @@ public class CsvExporter implements Exporter{
                         for(int i = 0; i < cols.length; i++){
                             cols[i] = project.columnModel.columns.get(i).getName();
                         }
-                        csvWriter.writeNext(cols);
+                        csvWriter.writeNext(cols,false);
                         columnHeader = false; //switch off flag
                     }
 
@@ -60,7 +60,7 @@ public class CsvExporter implements Exporter{
                         }
                     }
 
-                    csvWriter.writeNext(vals);
+                    csvWriter.writeNext(vals,false);
                     return false;
                 }
 
