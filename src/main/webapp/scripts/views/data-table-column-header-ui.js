@@ -271,6 +271,10 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                         {
                             label: "To Lowercase",
                             click: function() { self._doTextTransform("toLowercase(value)", "store-blank", false, ""); }
+                        },
+                        {
+                            label: "To Blank",
+                            click: function() { self._doTextTransform("null", "store-blank", false, ""); }
                         }
                     ]
                 },

@@ -19,6 +19,7 @@ Fixes:
   Supported by the function facetCount()
 - Issue 14: "Limiting Freebase load to starred records"
   We load whatever rows that are filtered through, not particularly starred rows.
+- Issue 49: "Add Edit Cells / Set Null"
 
 Features:
 - Row/record sorting (Issue 32)

@@ -141,7 +141,12 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                 ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
                 
                 Object o = eval.evaluate(bindings);
-                if (o != null) {
+                if (o == null) {
+                	if (oldValue != null) {
+                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, null);
+                        cellChanges.add(cellChange);
+                	}
+                } else {
                     if (o instanceof Cell) {
                         newCell = (Cell) o;
                     } else if (o instanceof WrappedCell) {

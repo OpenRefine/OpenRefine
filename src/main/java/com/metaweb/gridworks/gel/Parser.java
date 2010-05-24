@@ -165,7 +165,7 @@ public class Parser {
             next(false);
             
             if (_token == null || _token.type != TokenType.Delimiter || !_token.text.equals("(")) {
-                eval = new VariableExpr(text);
+                eval = "null".equals(text) ? new LiteralExpr(null) : new VariableExpr(text);
             } else {
                 Function f = ControlFunctionRegistry.getFunction(text);
                 Control c = ControlFunctionRegistry.getControl(text);
