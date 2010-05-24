@@ -137,6 +137,10 @@ a.facet-title-remove:hover {
     height: 100%;
     overflow: auto;
 }
+.facet-body-controls {
+    margin: 0.5em 0;
+    text-align: center;
+}
 
 .facet-choice {
     padding: 2px 5px;

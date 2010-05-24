@@ -245,6 +245,9 @@ ListFacet.prototype._update = function(resetScroll) {
         this._elmts.bodyInnerDiv.empty().append(
             $('<div>').text(this._data.error).addClass("facet-body-message"));
         
+        if (this._data.error == "Too many choices") {
+            this._renderBodyControls();
+        }
         return;
     }
     
@@ -324,6 +327,7 @@ ListFacet.prototype._update = function(resetScroll) {
     }
     
     this._elmts.bodyInnerDiv.html(html.join(''));
+    this._renderBodyControls();
     this._elmts.bodyInnerDiv[0].scrollTop = scrollTop;
     
     var getChoice = function(elmt) {
@@ -397,6 +401,52 @@ ListFacet.prototype._update = function(resetScroll) {
     };
     window.setTimeout(wireEvents, 100);
 };
+
+ListFacet.prototype._renderBodyControls = function() {
+    var self = this;
+    var bodyControls = $('<div>')
+        .addClass("facet-body-controls")
+        .appendTo(this._elmts.bodyInnerDiv);
+        
+    $('<a>')
+        .text("facet by choice counts")
+        .attr("href", "javascript:{}")
+        .addClass("action")
+        .appendTo(bodyControls)
+        .click(function() {
+            ui.browsingEngine.addFacet(
+                "range", 
+                {
+                    "name" : self._config.columnName,
+                    "columnName" : self._config.columnName, 
+                    "expression" : self._getMetaExpression(),
+                    "mode" : "range"
+                },
+                {
+                }
+            );
+        });
+};
+
+ListFacet.prototype._getMetaExpression = function() {
+    var expression = this._config.expression;
+    
+    var language = "gel:";
+    var colon = expression.indexOf(":");
+    if (colon > 0) {
+        var l = expression.substring(0, colon + 1);
+        if (l == "gel:" || l == "jython:" || l == "clojure:") {
+            expression = expression.substring(colon + 1);
+            language = l;
+        }
+    }
+    
+    return language + 'facetCount(' + [
+        expression,
+        JSON.stringify(this._config.expression),
+        JSON.stringify(this._config.columnName)
+    ].join(', ') + ')';
+}
 
 ListFacet.prototype._doEdit = function() {
     new ClusteringDialog(this._config.columnName, this._config.expression);

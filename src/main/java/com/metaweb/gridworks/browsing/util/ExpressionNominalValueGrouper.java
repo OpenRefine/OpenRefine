@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.browsing.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -166,35 +167,45 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 			@Override
 			public Object eval(Project project, int rowIndex, Row row, Properties bindings) {
 		    	Object value = evalRow(project, rowIndex, row, bindings);
-		        if (value != null) {
-			        if (value.getClass().isArray()) {
-		                Object[] a = (Object[]) value;
-		                for (int i = 0; i < a.length; i++) {
-		                	a[i] = getValueCount(a[i]);
-		                }
-		                return a;
-		            } else if (value instanceof Collection<?>) {
-		            	List<Object> list = ExpressionUtils.toObjectList(value);
-		            	int count = list.size();
-		                for (int i = 0; i < count; i++) {
-		                	list.set(i, getValueCount(list.get(i)));
-		                }
-		                return list;
-		            }
-	            }
-			        
-		        return getValueCount(value);
+		    	return getChoiceValueCountMultiple(value);
 			}
     	
-    		protected Integer getValueCount(Object value) {
-    			if (value == null) {
-    				return blankCount;
-    			} else if (ExpressionUtils.isError(value)) {
-    				return errorCount;
-    			} else {
-    				return choices.get(value).count;
-    			}
-    		}
     	};
     }
+    
+    public Object getChoiceValueCountMultiple(Object value) {
+        if (value != null) {
+	        if (value.getClass().isArray()) {
+                Object[] choiceValues = (Object[]) value;
+                List<Integer> counts = new ArrayList<Integer>(choiceValues.length);
+                
+                for (int i = 0; i < choiceValues.length; i++) {
+                	counts.add(getChoiceValueCount(choiceValues[i]));
+                }
+                return counts;
+            } else if (value instanceof Collection<?>) {
+            	List<Object> choiceValues = ExpressionUtils.toObjectList(value);
+                List<Integer> counts = new ArrayList<Integer>(choiceValues.size());
+                
+            	int count = choiceValues.size();
+                for (int i = 0; i < count; i++) {
+                	counts.add(getChoiceValueCount(choiceValues.get(i)));
+                }
+                return counts;
+            }
+        }
+	        
+        return getChoiceValueCount(value);
+    }
+    
+	public Integer getChoiceValueCount(Object choiceValue) {
+		if (ExpressionUtils.isError(choiceValue)) {
+			return errorCount;
+		} else if (ExpressionUtils.isNonBlankData(choiceValue)) {
+			IndexedNominalFacetChoice choice = choices.get(choiceValue);
+			return choice != null ? choice.count : 0;
+		} else {
+			return blankCount;
+		}
+	}
 }

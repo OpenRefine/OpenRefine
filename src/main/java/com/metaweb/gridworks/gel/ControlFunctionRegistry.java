@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.metaweb.gridworks.expr.functions.Cross;
+import com.metaweb.gridworks.expr.functions.FacetCount;
 import com.metaweb.gridworks.expr.functions.Get;
 import com.metaweb.gridworks.expr.functions.Length;
 import com.metaweb.gridworks.expr.functions.Slice;
@@ -175,6 +176,8 @@ public class ControlFunctionRegistry {
         
         registerFunction("cross", new Cross());
 
+        registerFunction("facetCount", new FacetCount());
+        
         registerControl("if", new If());
         registerControl("with", new With());
         registerControl("forEach", new ForEach());
