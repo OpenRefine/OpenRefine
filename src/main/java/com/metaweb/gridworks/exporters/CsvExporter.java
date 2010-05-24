@@ -5,6 +5,9 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -16,6 +19,8 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 
 public class CsvExporter implements Exporter{
+
+    final static Logger logger = LoggerFactory.getLogger("CsvExporter");
 
     @Override
     public void export(Project project, Properties options, Engine engine, OutputStream outputStream)
@@ -66,8 +71,11 @@ public class CsvExporter implements Exporter{
 
                 @Override
                 public void end(Project project) {
-                    // nothing to do
-
+                    try {
+                        csvWriter.close();
+                    } catch (IOException e) {
+                        logger.error("CsvExporter could not close writer : " + e.getMessage());
+                    }
                 }
 
             }.init(new CSVWriter(writer));

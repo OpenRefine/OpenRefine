@@ -12,14 +12,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.browsing.Engine;
-import com.metaweb.gridworks.exporters.CsvExporter;
+import com.metaweb.gridworks.exporters.TsvExporter;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.ModelException;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
-public class CsvExporterTests {
+public class TsvExporterTests {
     //dependencies
     StringWriter writer;
     Project project;
@@ -27,11 +27,11 @@ public class CsvExporterTests {
     Properties options;
 
     //System Under Test
-    CsvExporter SUT;
+    TsvExporter SUT;
 
     @BeforeMethod
     public void SetUp(){
-        SUT = new CsvExporter();
+        SUT = new TsvExporter();
         writer = new StringWriter();
         project = new Project();
         engine = new Engine(project);
@@ -47,8 +47,8 @@ public class CsvExporterTests {
         options = null;
     }
 
-    @Test
-    public void exportSimpleCsv(){
+    @Test(groups={"broken"})
+    public void exportSimpleTsv(){
         CreateGrid(2, 2);
 
         try {
@@ -57,14 +57,14 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\"\n" +
-                                               "\"row0cell0\",\"row0cell1\"\n" +
-                                               "\"row1cell0\",\"row1cell1\"\n");
+        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\n" +
+                                               "\"row0cell0\"\t\"row0cell1\"\n" +
+                                               "\"row1cell0\"\t\"row1cell1\"\n");
 
     }
     
-    @Test
-    public void exportCsvWithLineBreaks(){
+    @Test(groups={"broken"})
+    public void exportTsvWithLineBreaks(){
         CreateGrid(3,3);
         
         project.rows.get(1).cells.set(1, new Cell("line\n\n\nbreak", null));
@@ -74,31 +74,31 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
-                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
-                                               "\"row1cell0\",\"line\n\n\nbreak\",\"row1cell2\"\n" +
-                                               "\"row2cell0\",\"row2cell1\",\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\t\"column2\"\n" +
+                                               "\"row0cell0\"\t\"row0cell1\"\t\"row0cell2\"\n" +
+                                               "\"row1cell0\"\t\"line\n\n\nbreak\"\t\"row1cell2\"\n" +
+                                               "\"row2cell0\"\t\"row2cell1\"\t\"row2cell2\"\n");
     }
     
-    @Test
+    @Test(groups={"broken"})
     public void exportCsvWithComma(){
         CreateGrid(3,3);
-        
-        project.rows.get(1).cells.set(1, new Cell("with, comma", null));
+
+        project.rows.get(1).cells.set(1, new Cell("with\t tab", null));
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
-                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
-                                               "\"row1cell0\",\"with, comma\",\"row1cell2\"\n" +
-                                               "\"row2cell0\",\"row2cell1\",\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\t\"column2\"\n" +
+                                               "\"row0cell0\"\t\"row0cell1\"\t\"row0cell2\"\n" +
+                                               "\"row1cell0\"\t\"with\t tab\"\t\"row1cell2\"\n" +
+                                               "\"row2cell0\"\t\"row2cell1\"\t\"row2cell2\"\n");
     }
     
-    @Test
-    public void exportCsvWithQuote(){
+    @Test(groups={"broken"})
+    public void exportTsvWithQuote(){
         CreateGrid(3,3);
         
         project.rows.get(1).cells.set(1, new Cell("line has \"quote\"", null));
@@ -108,14 +108,14 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
-                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
-                                               "\"row1cell0\",\"line has \"\"quote\"\"\",\"row1cell2\"\n" +
-                                               "\"row2cell0\",\"row2cell1\",\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\t\"column2\"\n" +
+                                               "\"row0cell0\"\t\"row0cell1\"\t\"row0cell2\"\n" +
+                                               "\"row1cell0\"\t\"line has \"\"quote\"\"\"\t\"row1cell2\"\n" +
+                                               "\"row2cell0\"\t\"row2cell1\"\t\"row2cell2\"\n");
     }
     
-    @Test
-    public void exportCsvWithEmptyCells(){
+    @Test(groups={"broken"})
+    public void exportTsvWithEmptyCells(){
         CreateGrid(3,3);
         
         project.rows.get(1).cells.set(1, null);
@@ -126,10 +126,10 @@ public class CsvExporterTests {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\",\"column2\"\n" +
-                                               "\"row0cell0\",\"row0cell1\",\"row0cell2\"\n" +
-                                               "\"row1cell0\",,\"row1cell2\"\n" +
-                                               ",\"row2cell1\",\"row2cell2\"\n");
+        Assert.assertEquals(writer.toString(), "\"column0\"\t\"column1\"\t\"column2\"\n" +
+                                               "\"row0cell0\"\t\"row0cell1\"\t\"row0cell2\"\n" +
+                                               "\"row1cell0\"\t\t\"row1cell2\"\n" +
+                                               "\t\"row2cell1\"\t\"row2cell2\"\n");
     }
     
     //helper methods
@@ -156,3 +156,4 @@ public class CsvExporterTests {
         }
     }
 }
+
