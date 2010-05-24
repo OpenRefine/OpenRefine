@@ -12,10 +12,12 @@ import com.metaweb.gridworks.browsing.RecordFilter;
 import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionNumberComparisonRowFilter;
+import com.metaweb.gridworks.browsing.util.ExpressionBasedRowEvaluable;
 import com.metaweb.gridworks.browsing.util.ExpressionNumericValueBinner;
 import com.metaweb.gridworks.browsing.util.NumericBinIndex;
 import com.metaweb.gridworks.browsing.util.NumericBinRecordIndex;
 import com.metaweb.gridworks.browsing.util.NumericBinRowIndex;
+import com.metaweb.gridworks.browsing.util.RowEvaluable;
 import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.expr.ParsingException;
@@ -158,10 +160,10 @@ public class RangeFacet implements Facet {
         }
     }
 
-    public RowFilter getRowFilter() {
+    public RowFilter getRowFilter(Project project) {
         if (_eval != null && _errorMessage == null && _selected) {
             return new ExpressionNumberComparisonRowFilter(
-                    _eval, _columnName, _cellIndex, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+        		getRowEvaluable(project), _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                 
                 protected boolean checkValue(double d) {
                     return d >= _from && d < _to;
@@ -173,26 +175,27 @@ public class RangeFacet implements Facet {
     }
 
     @Override
-    public RecordFilter getRecordFilter() {
-    	RowFilter rowFilter = getRowFilter();
+    public RecordFilter getRecordFilter(Project project) {
+    	RowFilter rowFilter = getRowFilter(project);
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
-            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+            RowEvaluable rowEvaluable = getRowEvaluable(project);
             
+            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "numeric-bin:row-based:" + _expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
-                index = new NumericBinRowIndex(project, _columnName, _cellIndex, _eval);
+                index = new NumericBinRowIndex(project, rowEvaluable);
                 column.setPrecompute(key, index);
             }
             
             retrieveDataFromBaseBinIndex(index);
             
             ExpressionNumericValueBinner binner = 
-                new ExpressionNumericValueBinner(_eval, _columnName, _cellIndex, index);
+                new ExpressionNumericValueBinner(rowEvaluable, index);
             
             filteredRows.accept(project, binner);
             retrieveDataFromBinner(binner);
@@ -201,24 +204,29 @@ public class RangeFacet implements Facet {
     
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
-            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+            RowEvaluable rowEvaluable = getRowEvaluable(project);
             
+            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "numeric-bin:record-based:" + _expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
-                index = new NumericBinRecordIndex(project, _columnName, _cellIndex, _eval);
+                index = new NumericBinRecordIndex(project, rowEvaluable);
                 column.setPrecompute(key, index);
             }
             
             retrieveDataFromBaseBinIndex(index);
             
             ExpressionNumericValueBinner binner = 
-                new ExpressionNumericValueBinner(_eval, _columnName, _cellIndex, index);
+                new ExpressionNumericValueBinner(rowEvaluable, index);
             
             filteredRecords.accept(project, binner);
             
             retrieveDataFromBinner(binner);
         }
+    }
+    
+    protected RowEvaluable getRowEvaluable(Project project) {
+    	return new ExpressionBasedRowEvaluable(_columnName, _cellIndex, _eval);
     }
     
     protected void retrieveDataFromBaseBinIndex(NumericBinIndex index) {

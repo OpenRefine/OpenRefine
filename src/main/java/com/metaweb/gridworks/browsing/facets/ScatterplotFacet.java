@@ -24,6 +24,7 @@ import com.metaweb.gridworks.browsing.RecordFilter;
 import com.metaweb.gridworks.browsing.RowFilter;
 import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.DualExpressionsNumberComparisonRowFilter;
+import com.metaweb.gridworks.browsing.util.ExpressionBasedRowEvaluable;
 import com.metaweb.gridworks.browsing.util.NumericBinIndex;
 import com.metaweb.gridworks.browsing.util.NumericBinRecordIndex;
 import com.metaweb.gridworks.browsing.util.NumericBinRowIndex;
@@ -251,7 +252,7 @@ public class ScatterplotFacet implements Facet {
         
     }
 
-    public RowFilter getRowFilter() {
+    public RowFilter getRowFilter(Project project) {
         if (selected && 
             eval_x != null && errorMessage_x == null && 
             eval_y != null && errorMessage_y == null) 
@@ -276,8 +277,8 @@ public class ScatterplotFacet implements Facet {
     }
 
     @Override
-    public RecordFilter getRecordFilter() {
-    	RowFilter rowFilter = getRowFilter();
+    public RecordFilter getRecordFilter(Project project) {
+    	RowFilter rowFilter = getRowFilter(project);
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
@@ -389,8 +390,8 @@ public class ScatterplotFacet implements Facet {
         NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
         if (index == null) {
             index = "row-based".equals(mode) ? 
-            		new NumericBinRowIndex(project, column.getName(), column.getCellIndex(), eval) :
-        			new NumericBinRecordIndex(project, column.getName(), column.getCellIndex(), eval);
+            		new NumericBinRowIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval)) :
+        			new NumericBinRecordIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval));
             		
             column.setPrecompute(key, index);
         }

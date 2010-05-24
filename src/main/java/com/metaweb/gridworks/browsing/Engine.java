@@ -87,7 +87,7 @@ public class Engine implements Jsonizable {
 	        ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows();
 	        for (Facet facet : _facets) {
 	            if (facet != except) {
-	                RowFilter rowFilter = facet.getRowFilter();
+	                RowFilter rowFilter = facet.getRowFilter(_project);
 	                if (rowFilter != null) {
 	                    cfr.add(rowFilter);
 	                }
@@ -125,7 +125,7 @@ public class Engine implements Jsonizable {
     		ConjunctiveFilteredRecords cfr = new ConjunctiveFilteredRecords();
             for (Facet facet : _facets) {
                 if (facet != except) {
-                    RecordFilter recordFilter = facet.getRecordFilter();
+                    RecordFilter recordFilter = facet.getRecordFilter(_project);
                     if (recordFilter != null) {
                         cfr.add(recordFilter);
                     }

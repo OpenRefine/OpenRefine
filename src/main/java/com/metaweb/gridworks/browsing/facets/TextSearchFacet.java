@@ -78,7 +78,7 @@ public class TextSearchFacet implements Facet {
     }
 
     @Override
-    public RowFilter getRowFilter() {
+    public RowFilter getRowFilter(Project project) {
         if (_query == null || _query.length() == 0) {
             return null;
         } else if ("regex".equals(_mode) && _pattern == null) {
@@ -103,8 +103,8 @@ public class TextSearchFacet implements Facet {
     }
 
     @Override
-    public RecordFilter getRecordFilter() {
-    	RowFilter rowFilter = getRowFilter();
+    public RecordFilter getRecordFilter(Project project) {
+    	RowFilter rowFilter = getRowFilter(project);
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 

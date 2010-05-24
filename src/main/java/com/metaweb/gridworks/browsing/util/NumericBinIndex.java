@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
@@ -40,15 +38,15 @@ abstract public class NumericBinIndex {
     protected boolean _hasNumeric = false;
     protected boolean _hasBlank = false;
     
-    abstract protected void iterate(Project project, String columnName, int cellIndex, Evaluable eval, List<Double> allValues);
+    abstract protected void iterate(Project project, RowEvaluable rowEvaluable, List<Double> allValues);
     
-    public NumericBinIndex(Project project, String columnName, int cellIndex, Evaluable eval) {
+    public NumericBinIndex(Project project, RowEvaluable rowEvaluable) {
         _min = Double.POSITIVE_INFINITY;
         _max = Double.NEGATIVE_INFINITY;
         
         List<Double> allValues = new ArrayList<Double>();
         
-        iterate(project, columnName, cellIndex, eval, allValues);
+        iterate(project, rowEvaluable, allValues);
         
         _numbericValueCount = allValues.size();
         
@@ -134,19 +132,13 @@ abstract public class NumericBinIndex {
 
 	protected void processRow(
 		Project 		project, 
-		String 			columnName, 
-		int 			cellIndex,
-		Evaluable 		eval, 
+		RowEvaluable	rowEvaluable,
 		List<Double> 	allValues,
 		int 			rowIndex,
 		Row 			row,
 		Properties 		bindings
 	) {
-        Cell cell = row.getCell(cellIndex);
-
-        ExpressionUtils.bind(bindings, row, rowIndex, columnName, cell);
-        
-        Object value = eval.evaluate(bindings);
+        Object value = rowEvaluable.eval(project, rowIndex, row, bindings);
         
         if (ExpressionUtils.isError(value)) {
             _hasError = true;

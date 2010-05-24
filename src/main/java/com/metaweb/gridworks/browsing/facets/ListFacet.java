@@ -148,7 +148,7 @@ public class ListFacet implements Facet {
     }
 
     @Override
-    public RowFilter getRowFilter() {
+    public RowFilter getRowFilter(Project project) {
         return 
             _eval == null || 
             _errorMessage != null ||
@@ -165,8 +165,8 @@ public class ListFacet implements Facet {
     }
     
     @Override
-    public RecordFilter getRecordFilter() {
-    	RowFilter rowFilter = getRowFilter();
+    public RecordFilter getRecordFilter(Project project) {
+    	RowFilter rowFilter = getRowFilter(project);
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 

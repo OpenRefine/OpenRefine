@@ -13,9 +13,9 @@ import com.metaweb.gridworks.model.Project;
  * Interface of facets.
  */
 public interface Facet extends Jsonizable {
-    public RowFilter getRowFilter();
+    public RowFilter getRowFilter(Project project);
     
-    public RecordFilter getRecordFilter();
+    public RecordFilter getRecordFilter(Project project);
     
     public void computeChoices(Project project, FilteredRows filteredRows);
     

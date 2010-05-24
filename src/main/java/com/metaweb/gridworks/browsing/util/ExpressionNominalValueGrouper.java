@@ -2,6 +2,7 @@ package com.metaweb.gridworks.browsing.util;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -107,11 +108,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
     }
     
     protected void visitRow(Project project, int rowIndex, Row row, Properties bindings, int index) {
-        Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
-
-        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
-        
-        Object value = _evaluable.evaluate(bindings);
+    	Object value = evalRow(project, rowIndex, row, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;
@@ -128,6 +125,14 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         } else {
         	processValue(value, rowIndex);
         }
+    }
+    
+    protected Object evalRow(Project project, int rowIndex, Row row, Properties bindings) {
+	    Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
+	
+	    ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
+	    
+	    return _evaluable.evaluate(bindings);
     }
     
     protected void processValue(Object value, int index) {
@@ -154,5 +159,42 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         } else {
         	hasBlank = true;
         }
+    }
+    
+    public RowEvaluable getChoiceCountRowEvaluable() {
+    	return new RowEvaluable() {
+			@Override
+			public Object eval(Project project, int rowIndex, Row row, Properties bindings) {
+		    	Object value = evalRow(project, rowIndex, row, bindings);
+		        if (value != null) {
+			        if (value.getClass().isArray()) {
+		                Object[] a = (Object[]) value;
+		                for (int i = 0; i < a.length; i++) {
+		                	a[i] = getValueCount(a[i]);
+		                }
+		                return a;
+		            } else if (value instanceof Collection<?>) {
+		            	List<Object> list = ExpressionUtils.toObjectList(value);
+		            	int count = list.size();
+		                for (int i = 0; i < count; i++) {
+		                	list.set(i, getValueCount(list.get(i)));
+		                }
+		                return list;
+		            }
+	            }
+			        
+		        return getValueCount(value);
+			}
+    	
+    		protected Integer getValueCount(Object value) {
+    			if (value == null) {
+    				return blankCount;
+    			} else if (ExpressionUtils.isError(value)) {
+    				return errorCount;
+    			} else {
+    				return choices.get(value).count;
+    			}
+    		}
+    	};
     }
 }

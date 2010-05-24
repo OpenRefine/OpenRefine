@@ -3,23 +3,19 @@ package com.metaweb.gridworks.browsing.util;
 import java.util.List;
 import java.util.Properties;
 
-import com.metaweb.gridworks.expr.Evaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.model.Row;
 
 public class NumericBinRecordIndex extends NumericBinIndex {
-	public NumericBinRecordIndex(Project project, String columnName,
-			int cellIndex, Evaluable eval) {
-		
-		super(project, columnName, cellIndex, eval);
+	public NumericBinRecordIndex(Project project, RowEvaluable rowEvaluable) {
+		super(project, rowEvaluable);
 	}
 
 	@Override
 	protected void iterate(
-		Project project, String columnName, int cellIndex,
-			Evaluable eval, List<Double> allValues) {
+		Project project, RowEvaluable rowEvaluable, List<Double> allValues) {
 		
         Properties bindings = ExpressionUtils.createBindings(project);
         int count = project.recordModel.getRecordCount();
@@ -32,7 +28,7 @@ public class NumericBinRecordIndex extends NumericBinIndex {
 	        for (int i = record.fromRowIndex; i < record.toRowIndex; i++) {
 	            Row row = project.rows.get(i);
 	            
-	            processRow(project, columnName, cellIndex, eval, allValues, i, row, bindings);
+	            processRow(project, rowEvaluable, allValues, i, row, bindings);
 	        }
             
             postprocessing();

@@ -4,9 +4,8 @@ import java.util.Collection;
 import java.util.Properties;
 
 import com.metaweb.gridworks.browsing.RowFilter;
-import com.metaweb.gridworks.expr.Evaluable;
+import com.metaweb.gridworks.browsing.util.RowEvaluable;
 import com.metaweb.gridworks.expr.ExpressionUtils;
-import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
@@ -17,26 +16,20 @@ import com.metaweb.gridworks.model.Row;
  * values. 
  */
 abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
-    final protected Evaluable  _evaluable;
-    final protected String     _columnName;
-    final protected int        _cellIndex;
-    final protected boolean _selectNumeric;
-    final protected boolean _selectNonNumeric;
-    final protected boolean _selectBlank;
-    final protected boolean _selectError;
+    final protected RowEvaluable  	_rowEvaluable;
+    final protected boolean 		_selectNumeric;
+    final protected boolean 		_selectNonNumeric;
+    final protected boolean 		_selectBlank;
+    final protected boolean 		_selectError;
     
     public ExpressionNumberComparisonRowFilter(
-        Evaluable evaluable,
-        String columnName,
-        int cellIndex,
+    	RowEvaluable rowEvaluable,
         boolean selectNumeric,
         boolean selectNonNumeric,
         boolean selectBlank,
         boolean selectError
     ) {
-        _evaluable = evaluable;
-        _columnName = columnName;
-        _cellIndex = cellIndex;
+    	_rowEvaluable = rowEvaluable;
         _selectNumeric = selectNumeric;
         _selectNonNumeric = selectNonNumeric;
         _selectBlank = selectBlank;
@@ -44,12 +37,9 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     }
 
     public boolean filterRow(Project project, int rowIndex, Row row) {
-        Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
-
         Properties bindings = ExpressionUtils.createBindings(project);
-        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         
-        Object value = _evaluable.evaluate(bindings);
+        Object value = _rowEvaluable.eval(project, rowIndex, row, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;
