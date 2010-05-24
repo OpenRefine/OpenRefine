@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.metaweb.gridworks.browsing.Engine;
+import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.protograph.Protograph;
@@ -25,6 +27,8 @@ public class PreviewProtographCommand extends Command {
         
         try {
             Project project = getProject(request);
+            Engine engine = getEngine(request, project);
+            FilteredRows filteredRows = engine.getAllFilteredRows();
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
@@ -40,7 +44,7 @@ public class PreviewProtographCommand extends Command {
                 StringWriter stringWriter = new StringWriter();
                 TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory(stringWriter);
                 
-                Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory);
+                Transposer.transpose(project, filteredRows, protograph, protograph.getRootNode(0), nodeFactory);
                 nodeFactory.flush();
                 
                 sb.append("\"tripleloader\" : ");
@@ -50,7 +54,7 @@ public class PreviewProtographCommand extends Command {
             {
                 MqlreadLikeTransposedNodeFactory nodeFactory = new MqlreadLikeTransposedNodeFactory();
                 
-                Transposer.transpose(project, protograph, protograph.getRootNode(0), nodeFactory);
+                Transposer.transpose(project, filteredRows, protograph, protograph.getRootNode(0), nodeFactory);
                 
                 JSONArray results = nodeFactory.getJSON();
                 

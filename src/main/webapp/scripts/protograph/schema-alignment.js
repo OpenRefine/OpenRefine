@@ -257,7 +257,7 @@ SchemaAlignmentDialog.prototype.preview = function() {
     var protograph = this.getJSON();
     $.post(
         "/command/preview-protograph?" + $.param({ project: theProject.id }),
-        { protograph: JSON.stringify(protograph) },
+        { protograph: JSON.stringify(protograph), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
             if ("mqllike" in data) {
                 $(self._previewPanes[0]).text(JSON.stringify(data.mqllike, null, 2));

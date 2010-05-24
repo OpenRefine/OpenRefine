@@ -3,6 +3,8 @@ package com.metaweb.gridworks.protograph.transpose;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.metaweb.gridworks.browsing.FilteredRows;
+import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
@@ -23,15 +25,17 @@ import com.metaweb.gridworks.protograph.ValueNode;
 public class Transposer {
     static public void transpose(
         Project                 project,
+        FilteredRows			filteredRows,
         Protograph              protograph,
         Node                    rootNode,
         TransposedNodeFactory   nodeFactory
     ) {
-        transpose(project, protograph, rootNode, nodeFactory, 20);
+        transpose(project, filteredRows, protograph, rootNode, nodeFactory, 20);
     }
     
     static public void transpose(
         Project                 project,
+        FilteredRows			filteredRows,
         Protograph              protograph,
         Node                    rootNode,
         TransposedNodeFactory   nodeFactory,
@@ -39,12 +43,50 @@ public class Transposer {
     ) {
         Context rootContext = new Context(rootNode, null, null, limit);
         
-        for (Row row : project.rows) {
-            descend(project, protograph, nodeFactory, row, rootNode, rootContext);
-            if (rootContext.limit > 0 && rootContext.count > rootContext.limit) {
-                break;
-            }
-        }
+    	filteredRows.accept(project, new RowVisitor() {
+    		Context 				rootContext;
+            Protograph              protograph;
+            Node                    rootNode;
+            TransposedNodeFactory   nodeFactory;
+    		
+			@Override
+			public boolean visit(Project project, int rowIndex, Row row) {
+				if (rootContext.limit <= 0 || rootContext.count < rootContext.limit) {
+					descend(project, protograph, nodeFactory, row, rootNode, rootContext);
+				}
+				
+	            if (rootContext.limit > 0 && rootContext.count > rootContext.limit) {
+	                return true;
+	            }
+				return false;
+			}
+			
+			@Override
+			public void start(Project project) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void end(Project project) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public RowVisitor init(
+				Context 				rootContext,
+	            Protograph              protograph,
+	            Node                    rootNode,
+	            TransposedNodeFactory   nodeFactory
+			) {
+				this.rootContext = rootContext;
+				this.protograph = protograph;
+				this.rootNode = rootNode;
+				this.nodeFactory = nodeFactory;
+				
+				return this;
+			}
+		}.init(rootContext, protograph, rootNode, nodeFactory));
     }
     
     static protected void descend(

@@ -118,7 +118,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     var show_triples = function(cont) {
         $.post(
             "/command/preview-protograph?" + $.param({ project: theProject.id }),
-            { protograph: JSON.stringify(theProject.protograph) },
+            { protograph: JSON.stringify(theProject.protograph), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
             function(data) {
                 if ("tripleloader" in data) {
                     body.html(
@@ -192,6 +192,7 @@ FreebaseLoadingDialog.prototype._load = function() {
             {
                 project: theProject.id, 
                 "graph" : (freebase) ? "otg" : "sandbox",
+                "engine" : JSON.stringify(ui.browsingEngine.getJSON()),
                 "source_name" : self._elmts.source_name.val(),
                 "source_id" : self._elmts.source_id.val()
             }, 

@@ -15,8 +15,10 @@ Fixes:
 - Issue 46: "Array literals in GEL"
 - Issue 55: "Use stable sorting for text facets sorted by count"
 - Issue 53: "Moving the cursor inside the Text Filter box by clicking"
-- Issue 58:	"Meta facet"
+- Issue 58: "Meta facet"
   Supported by the function facetCount()
+- Issue 14: "Limiting Freebase load to starred records"
+  We load whatever rows that are filtered through, not particularly starred rows.
 
 Features:
 - Row/record sorting (Issue 32)
