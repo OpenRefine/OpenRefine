@@ -22,6 +22,15 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class CsvExporter implements Exporter{
 
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
+    char separator;
+
+    public CsvExporter(){
+        separator = ','; //Comma separated-value is default
+    }
+
+    public CsvExporter(char separator){
+        this.separator = separator;
+    }
 
     @Override
     public void export(Project project, Properties options, Engine engine, OutputStream outputStream)
@@ -91,7 +100,7 @@ public class CsvExporter implements Exporter{
                     }
                 }
 
-            }.init(new CSVWriter(writer), printColumnHeader);
+            }.init(new CSVWriter(writer, separator), printColumnHeader);
 
             FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(project, visitor);

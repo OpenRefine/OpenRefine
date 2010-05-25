@@ -45,7 +45,7 @@ public class ExportRowsCommand extends Command {
 
             Exporter exporter = s_formatToExporter.get(format.toLowerCase());
             if (exporter == null){
-                exporter = new TsvExporter();
+                exporter = new CsvExporter('\t');
             }
 
             response.setCharacterEncoding("UTF-8");

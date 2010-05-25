@@ -15,6 +15,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.browsing.Engine;
+import com.metaweb.gridworks.exporters.CsvExporter;
 import com.metaweb.gridworks.exporters.TsvExporter;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
@@ -30,11 +31,11 @@ public class TsvExporterTests {
     Properties options;
 
     //System Under Test
-    TsvExporter SUT;
+    CsvExporter SUT;
 
     @BeforeMethod
     public void SetUp(){
-        SUT = new TsvExporter();
+        SUT = new CsvExporter('\t');//new TsvExporter();
         writer = new StringWriter();
         project = new Project();
         engine = new Engine(project);
@@ -66,7 +67,7 @@ public class TsvExporterTests {
 
     }
     
-    @Test(groups={"broken"})
+    @Test
     public void exportSimpleTsvNoHeader(){
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
@@ -82,7 +83,7 @@ public class TsvExporterTests {
         verify(options,times(1)).getProperty("printColumnHeader");
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportTsvWithLineBreaks(){
         CreateGrid(3,3);
 
@@ -99,7 +100,7 @@ public class TsvExporterTests {
                                                "row2cell0\trow2cell1\trow2cell2\n");
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportTsvWithComma(){
         CreateGrid(3,3);
 
@@ -116,7 +117,7 @@ public class TsvExporterTests {
                                                "row2cell0\trow2cell1\trow2cell2\n");
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportTsvWithQuote(){
         CreateGrid(3,3);
 
