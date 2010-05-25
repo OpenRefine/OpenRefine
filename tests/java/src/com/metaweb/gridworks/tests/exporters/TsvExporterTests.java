@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.exporters.CsvExporter;
-import com.metaweb.gridworks.exporters.TsvExporter;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.ModelException;
@@ -66,7 +65,7 @@ public class TsvExporterTests {
                                                "row1cell0\trow1cell1\n");
 
     }
-    
+
     @Test
     public void exportSimpleTsvNoHeader(){
         CreateGrid(2, 2);

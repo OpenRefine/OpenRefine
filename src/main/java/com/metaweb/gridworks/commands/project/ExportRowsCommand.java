@@ -18,7 +18,6 @@ import com.metaweb.gridworks.exporters.Exporter;
 import com.metaweb.gridworks.exporters.HtmlTableExporter;
 import com.metaweb.gridworks.exporters.ProtographTransposeExporter.TripleLoaderExporter;
 import com.metaweb.gridworks.exporters.ProtographTransposeExporter.MqlwriteLikeExporter;
-import com.metaweb.gridworks.exporters.TsvExporter;
 import com.metaweb.gridworks.exporters.XlsExporter;
 import com.metaweb.gridworks.model.Project;
 

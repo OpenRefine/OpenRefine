@@ -50,11 +50,6 @@ public class CsvExporter implements Exporter{
                 boolean printColumnHeader = true;
                 boolean isFirstRow = true; //the first row should also add the column headers
 
-                public RowVisitor init(CSVWriter writer) {
-                    this.csvWriter = writer;
-                    return this;
-                }
-
                 public RowVisitor init(CSVWriter writer, boolean printColumnHeader){
                     this.csvWriter = writer;
                     this.printColumnHeader = printColumnHeader;
