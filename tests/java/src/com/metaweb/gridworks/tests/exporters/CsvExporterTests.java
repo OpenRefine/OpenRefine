@@ -5,6 +5,9 @@ import java.io.StringWriter;
 import java.util.Properties;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -62,11 +65,27 @@ public class CsvExporterTests {
                                                "row1cell0,row1cell1\n");
 
     }
-    
+
+    @Test
+    public void exportSimpleCsvNoHeader(){
+        CreateGrid(2, 2);
+        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "row0cell0,row0cell1\n" +
+                                               "row1cell0,row1cell1\n");
+
+        verify(options,times(1)).getProperty("printColumnHeader");
+    }
+
     @Test
     public void exportCsvWithLineBreaks(){
         CreateGrid(3,3);
-        
+
         project.rows.get(1).cells.set(1, new Cell("line\n\n\nbreak", null));
         try {
             SUT.export(project, options, engine, writer);
@@ -79,11 +98,11 @@ public class CsvExporterTests {
                                                "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
                                                "row2cell0,row2cell1,row2cell2\n");
     }
-    
+
     @Test
     public void exportCsvWithComma(){
         CreateGrid(3,3);
-        
+
         project.rows.get(1).cells.set(1, new Cell("with, comma", null));
         try {
             SUT.export(project, options, engine, writer);
@@ -96,11 +115,11 @@ public class CsvExporterTests {
                                                "row1cell0,\"with, comma\",row1cell2\n" +
                                                "row2cell0,row2cell1,row2cell2\n");
     }
-    
+
     @Test
     public void exportCsvWithQuote(){
         CreateGrid(3,3);
-        
+
         project.rows.get(1).cells.set(1, new Cell("line has \"quote\"", null));
         try {
             SUT.export(project, options, engine, writer);
@@ -113,11 +132,11 @@ public class CsvExporterTests {
                                                "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
                                                "row2cell0,row2cell1,row2cell2\n");
     }
-    
+
     @Test
     public void exportCsvWithEmptyCells(){
         CreateGrid(3,3);
-        
+
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
         try {
@@ -131,7 +150,7 @@ public class CsvExporterTests {
                                                "row1cell0,,row1cell2\n" +
                                                ",row2cell1,row2cell2\n");
     }
-    
+
     //helper methods
 
     protected void CreateColumns(int noOfColumns){
@@ -146,7 +165,7 @@ public class CsvExporterTests {
 
     protected void CreateGrid(int noOfRows, int noOfColumns){
         CreateColumns(noOfColumns);
-        
+
         for(int i = 0; i < noOfRows; i++){
             Row row = new Row(noOfColumns);
             for(int j = 0; j < noOfColumns; j++){

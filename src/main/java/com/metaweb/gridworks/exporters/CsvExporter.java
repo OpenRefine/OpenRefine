@@ -12,6 +12,7 @@ import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.model.Cell;
+import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
@@ -31,36 +32,48 @@ public class CsvExporter implements Exporter{
     @Override
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
         {
+            boolean printColumnHeader = true;
+            if(options != null)
+                printColumnHeader = options.getProperty("printColumnHeader")=="false"?false:true;
+
             RowVisitor visitor = new RowVisitor() {
                 CSVWriter csvWriter;
-                boolean columnHeader = true; //the first row should also add the column headers
+                boolean printColumnHeader = true;
+                boolean isFirstRow = true; //the first row should also add the column headers
 
                 public RowVisitor init(CSVWriter writer) {
                     this.csvWriter = writer;
                     return this;
                 }
 
+                public RowVisitor init(CSVWriter writer, boolean printColumnHeader){
+                    this.csvWriter = writer;
+                    this.printColumnHeader = printColumnHeader;
+                    return this;
+                }
+
                 public boolean visit(Project project, int rowIndex, Row row) {
-                    String[] vals = null;
+                    String[] cols = new String[project.columnModel.columns.size()];
+                    String[] vals = new String[row.cells.size()];
 
-                    if( columnHeader ){
-                        String[] cols = new String[project.columnModel.columns.size()];
-                        for(int i = 0; i < cols.length; i++){
-                            cols[i] = project.columnModel.columns.get(i).getName();
-                        }
-                        csvWriter.writeNext(cols,false);
-                        columnHeader = false; //switch off flag
-                    }
+                    int i = 0;
+                    for(Column col : project.columnModel.columns){
+                        int cellIndex = col.getCellIndex();
+                        cols[i] = col.getName();
 
-                    vals = new String[row.cells.size()];
-                    for(int i = 0; i < vals.length; i++){
-                        Cell cell = row.cells.get(i);
+                        Cell cell = row.cells.get(cellIndex);
                         if(cell != null){
-                            vals[i] = row.cells.get(i).value.toString();
+                            vals[i] = cell.value.toString();
                         }
+                        i++;
                     }
 
+                    if( printColumnHeader && isFirstRow ){
+                        csvWriter.writeNext(cols,false);
+                        isFirstRow = false; //switch off flag
+                    }
                     csvWriter.writeNext(vals,false);
+
                     return false;
                 }
 
@@ -78,7 +91,7 @@ public class CsvExporter implements Exporter{
                     }
                 }
 
-            }.init(new CSVWriter(writer));
+            }.init(new CSVWriter(writer), printColumnHeader);
 
             FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(project, visitor);

@@ -5,6 +5,9 @@ import java.io.StringWriter;
 import java.util.Properties;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -61,6 +64,22 @@ public class TsvExporterTests {
                                                "row0cell0\trow0cell1\n" +
                                                "row1cell0\trow1cell1\n");
 
+    }
+    
+    @Test(groups={"broken"})
+    public void exportSimpleTsvNoHeader(){
+        CreateGrid(2, 2);
+        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "row0cell0\trow0cell1\n" +
+                                               "row1cell0\trow1cell1\n");
+
+        verify(options,times(1)).getProperty("printColumnHeader");
     }
 
     @Test(groups={"broken"})
