@@ -65,7 +65,9 @@ public class RowReorderOperation extends AbstractOperation {
             	SortingRowVisitor srv = new SortingRowVisitor(visitor);
             	
             	srv.initializeFromJSON(project, _sorting);
-            	visitor = srv;
+        		if (srv.hasCriteria()) {
+        			visitor = srv;
+        		}
             }
             
         	engine.getAllRows().accept(project, visitor);
@@ -75,7 +77,9 @@ public class RowReorderOperation extends AbstractOperation {
             	SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
             	
             	srv.initializeFromJSON(project, _sorting);
-            	visitor = srv;
+        		if (srv.hasCriteria()) {
+        			visitor = srv;
+        		}
             }
             
         	engine.getAllRecords().accept(project, visitor);

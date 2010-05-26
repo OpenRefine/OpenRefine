@@ -94,6 +94,10 @@ div.input-container > input, div.input-container > textarea {
     vertical-align: top;
 }
 
+input.code, textarea.code {
+    font-family: monospace;
+}
+
 a.action, 
 a.quiet-link {
     text-decoration: none;

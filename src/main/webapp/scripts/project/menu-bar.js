@@ -40,10 +40,10 @@ MenuBar.prototype._initializeUI = function() {
                     "label": "Tab-Separated Value",
                     "click": function() { self._doExportRows("tsv", "tsv"); }
                 },
-				{
-					"label": "Comma-Separated Value",
-					"click": function() { self._doExportRows("csv", "csv"); }
-				},
+                {
+                    "label": "Comma-Separated Value",
+                    "click": function() { self._doExportRows("csv", "csv"); }
+                },
                 {
                     "label": "HTML Table",
                     "click": function() { self._doExportRows("html", "html"); }
@@ -60,6 +60,13 @@ MenuBar.prototype._initializeUI = function() {
                 {
                     "label": "MQLWrite",
                     "click": function() { self._doExportTripleloader("mqlwrite"); }
+                },
+                {},
+                {
+                    "label": "Templating...",
+                    "click": function() {
+                         new TemplatingExporterDialog();
+                     }
                 }
             ]
         },

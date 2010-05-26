@@ -23,8 +23,9 @@ Fixes:
 
 Features:
 - Row/record sorting (Issue 32)
-- CSV exporting (Issue 59)
-- Mqlwrite exporting
+- CSV exporter (Issue 59)
+- Mqlwrite exporter
+- Templating exporter
 
 Changes:
 - Moved unit tests from JUnit to TestNG

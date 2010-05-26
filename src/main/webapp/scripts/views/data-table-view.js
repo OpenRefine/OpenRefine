@@ -10,6 +10,10 @@ function DataTableView(div) {
     this._showRows(0);
 }
 
+DataTableView.prototype.getSorting = function() {
+    return this._sorting;
+};
+
 DataTableView.prototype.resize = function() {
     var topHeight = this._div.find(".viewPanel-header").outerHeight(true);
     

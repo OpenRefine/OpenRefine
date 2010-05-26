@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import com.metaweb.gridworks.expr.functions.Cross;
 import com.metaweb.gridworks.expr.functions.FacetCount;
 import com.metaweb.gridworks.expr.functions.Get;
+import com.metaweb.gridworks.expr.functions.Jsonize;
 import com.metaweb.gridworks.expr.functions.Length;
 import com.metaweb.gridworks.expr.functions.Slice;
 import com.metaweb.gridworks.expr.functions.ToDate;
@@ -145,6 +146,7 @@ public class ControlFunctionRegistry {
         registerFunction("ngramFingerprint", new NGramFingerprint());
         registerFunction("phonetic", new Phonetic());
         registerFunction("reinterpret", new Reinterpret());
+        registerFunction("jsonize", new Jsonize());
         
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

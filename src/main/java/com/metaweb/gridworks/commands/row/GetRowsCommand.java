@@ -68,7 +68,9 @@ public class GetRowsCommand extends Command {
                 	SortingRowVisitor srv = new SortingRowVisitor(visitor);
                 	
                 	srv.initializeFromJSON(project, sortingJson);
-                	visitor = srv;
+            		if (srv.hasCriteria()) {
+            			visitor = srv;
+            		}
                 }
                 
                 writer.key("mode"); writer.value("row-based");
@@ -85,7 +87,9 @@ public class GetRowsCommand extends Command {
                 	SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
                 	
                 	srv.initializeFromJSON(project, sortingJson);
-                	visitor = srv;
+            		if (srv.hasCriteria()) {
+            			visitor = srv;
+            		}
                 }
                 
                 writer.key("mode"); writer.value("record-based");
