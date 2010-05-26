@@ -6,10 +6,15 @@ import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.metaweb.gridworks.importers.XmlImportUtilities.ImportColumnGroup;
 import com.metaweb.gridworks.model.Project;
 
 public class XmlImporter implements Importer {
+
+    final static Logger logger = LoggerFactory.getLogger("XmlImporter");
 
     public static final int BUFFER_SIZE = 64 * 1024;
 
@@ -28,6 +33,7 @@ public class XmlImporter implements Importer {
         Project project,
         Properties options
     ) throws Exception {
+        logger.trace("XmlImporter.read");
         PushbackInputStream pis = new PushbackInputStream(inputStream,BUFFER_SIZE);
 
         String[] recordPath = null;
