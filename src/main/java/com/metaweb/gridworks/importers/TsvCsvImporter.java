@@ -2,6 +2,7 @@ package com.metaweb.gridworks.importers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -151,10 +152,25 @@ public class TsvCsvImporter implements Importer {
     }
 
     public void read(InputStream inputStream, Project project, Properties options) throws Exception {
-        throw new UnsupportedOperationException();
+        read(new InputStreamReader(inputStream), project, options);
     }
 
     public boolean takesReader() {
         return true;
+    }
+
+    public boolean canImportData(String contentType, String fileName) {
+        if (contentType != null) {
+            contentType = contentType.toLowerCase().trim();
+            return false;
+        } else if (fileName != null) {
+            fileName = fileName.toLowerCase();
+            if (fileName.endsWith(".tsv")) {
+                return true;
+            }else if (fileName.endsWith(".csv")){
+                return true;
+            }
+        }
+        return false;
     }
 }

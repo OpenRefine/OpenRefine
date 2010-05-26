@@ -45,12 +45,8 @@ import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
-import com.metaweb.gridworks.importers.ExcelImporter;
 import com.metaweb.gridworks.importers.Importer;
-import com.metaweb.gridworks.importers.MarcImporter;
-import com.metaweb.gridworks.importers.RdfTripleImporter;
 import com.metaweb.gridworks.importers.TsvCsvImporter;
-import com.metaweb.gridworks.importers.XmlImporter;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.IOUtils;
 import com.metaweb.gridworks.util.ParsingUtilities;
@@ -58,11 +54,76 @@ import com.metaweb.gridworks.util.ParsingUtilities;
 public class CreateProjectCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("create-project_command");
-    
+
+    static final private Map<String, Importer> importers = new HashMap<String, Importer>();
+
+    private static final String[][] importerNames = {
+        {"ExcelImporter", "com.metaweb.gridworks.importers.ExcelImporter"},
+        {"XmlImporter", "com.metaweb.gridworks.importers.XmlImporter"},
+        {"RdfTripleImporter", "com.metaweb.gridworks.importers.RdfTripleImporter"},
+        {"MarcImporter", "com.metaweb.gridworks.importers.MarcImporter"},
+        {"TsvCsvImporter", "com.metaweb.gridworks.importers.TsvCsvImporter"},
+    };
+
+    static {
+        registerImporters(importerNames);
+    }
+
+    static public boolean registerImporters(String[][] importers) {
+        boolean status = true;
+        for (String[] importer : importerNames) {
+            String importerName = importer[0];
+            String className = importer[1];
+            logger.debug("Loading command " + importerName + " class: " + className);
+            Importer cmd;
+            try {
+                // TODO: May need to use the servlet container's class loader here
+                cmd = (Importer) Class.forName(className).newInstance();
+            } catch (InstantiationException e) {
+                logger.error("Failed to load importer class " + className, e);
+                status = false;
+                continue;
+            } catch (IllegalAccessException e) {
+                logger.error("Failed to load importer class " + className, e);
+                status = false;
+                continue;
+            } catch (ClassNotFoundException e) {
+                logger.error("Failed to load importer class " + className, e);
+                status = false;
+                continue;
+            }
+            status |= registerImporter(importerName, cmd);
+        }
+        return status;
+    }
+
+    /**
+     * Register a single importer.
+     *
+     * @param name
+     *            importer verb for importer
+     * @param commandObject
+     *            object implementing the importer
+     * @return true if importer was loaded and registered successfully
+     */
+    static public boolean registerImporter(String name,
+            Importer importerObject) {
+        if (importers.containsKey(name)) {
+            return false;
+        }
+        importers.put(name, importerObject);
+        return true;
+    }
+
+    // Currently only for test purposes
+    static protected boolean unregisterImporter(String verb) {
+        return importers.remove(verb) != null;
+    }
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         ProjectManager.singleton.setBusy(true);
         try {
             /*
@@ -73,9 +134,9 @@ public class CreateProjectCommand extends Command {
              * Don't call request.getParameter() before calling internalImport().
              */
             Properties options = ParsingUtilities.parseUrlParameters(request);
-            
+
             Project project = new Project();
-            
+
             internalImport(request, project, options);
 
             /*
@@ -91,7 +152,7 @@ public class CreateProjectCommand extends Command {
             ProjectManager.singleton.registerProject(project, pm);
 
             project.update();
-            
+
             redirect(response, "/project.html?project=" + project.id);
         } catch (Exception e) {
             redirect(response, "/error.html?redirect=index.html&msg=" +
@@ -102,7 +163,7 @@ public class CreateProjectCommand extends Command {
             ProjectManager.singleton.setBusy(false);
         }
     }
-    
+
     protected void internalImport(
         HttpServletRequest    request,
         Project               project,
@@ -111,7 +172,7 @@ public class CreateProjectCommand extends Command {
 
         ServletFileUpload upload = new ServletFileUpload();
         String url = null;
-        
+
         FileItemIterator iter = upload.getItemIterator(request);
         while (iter.hasNext()) {
             FileItemStream item = iter.next();
@@ -138,32 +199,32 @@ public class CreateProjectCommand extends Command {
                     stream.close();
                 }
             }
-        }        
+        }
 
         if (url != null && url.length() > 0) {
             internalImportURL(request, project, options, url);
         }
     }
-        
+
     static class SafeInputStream extends FilterInputStream {
         public SafeInputStream(InputStream stream) {
             super(stream);
         }
-               
+
         @Override
         public void close() {
-            // some libraries attempt to close the input stream while they can't 
-            // read anymore from it... unfortunately this behavior prevents 
+            // some libraries attempt to close the input stream while they can't
+            // read anymore from it... unfortunately this behavior prevents
             // the zip input stream from functioning correctly so we just have
             // to ignore those close() calls and just close it ourselves
             // forcefully later
         }
-        
+
         public void reallyClose() throws IOException {
             super.close();
         }
     }
-    
+
     protected void internalImportFile(
         Project     project,
         Properties  options,
@@ -172,13 +233,13 @@ public class CreateProjectCommand extends Command {
     ) throws Exception {
 
         logger.info("Importing '{}'", fileName);
-        
+
         if (fileName.endsWith(".zip") || fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || fileName.endsWith(".tar.bz2")) {
 
-            // first, save the file on disk, since we need two passes and we might 
+            // first, save the file on disk, since we need two passes and we might
             // not have enough memory to keep it all in there
             File file = save(inputStream);
-            
+
             // in the first pass, gather statistics about what files are in there
             // unfortunately, we have to rely on files extensions, which is horrible but
             // better than nothing
@@ -186,9 +247,9 @@ public class CreateProjectCommand extends Command {
 
             FileInputStream fis = new FileInputStream(file);
             InputStream is = getStream(fileName, fis);
-            
-            // NOTE(SM): unfortunately, java.io does not provide any generalized class for 
-            // archive-like input streams so while both TarInputStream and ZipInputStream 
+
+            // NOTE(SM): unfortunately, java.io does not provide any generalized class for
+            // archive-like input streams so while both TarInputStream and ZipInputStream
             // behave precisely the same, there is no polymorphic behavior so we have
             // to treat each instance explicitly... one of those times you wish you had
             // closures
@@ -224,10 +285,10 @@ public class CreateProjectCommand extends Command {
             if (values.size() == 0) {
                 throw new RuntimeException("The archive contains no files.");
             }
-            
+
             // this will contain the set of extensions we'll load from the archive
             HashSet<String> exts = new HashSet<String>();
-            
+
             // find the extension that is most frequent or those who share the highest frequency value
             if (values.size() == 1) {
                 exts.add(values.get(0).getKey());
@@ -245,7 +306,7 @@ public class CreateProjectCommand extends Command {
                     }
                 }
             }
-            
+
             logger.info("Most frequent extensions: {}", exts.toString());
 
             // second pass, load the data for real
@@ -299,9 +360,9 @@ public class CreateProjectCommand extends Command {
             return o2.getValue() - o1.getValue();
         }
     }
-    
+
     private void load(Project project, Properties options, String fileName, InputStream inputStream) throws Exception {
-        Importer importer = guessImporter(options, null, fileName);
+        Importer importer = guessImporter(null, fileName);
         internalInvokeImporter(project, importer, options, inputStream, null);
     }
 
@@ -312,7 +373,7 @@ public class CreateProjectCommand extends Command {
         is.close();
         return temp;
     }
-    
+
     private void mapExtension(String name, Map<String,Integer> ext_map) {
         String ext = getExtension(name)[1];
         if (ext_map.containsKey(ext)) {
@@ -323,7 +384,7 @@ public class CreateProjectCommand extends Command {
     }
 
     private InputStream getStream(String fileName, InputStream is) throws IOException {
-        if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) { 
+        if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) {
             return new TarInputStream(new GZIPInputStream(is));
         } else if (fileName.endsWith(".tar.bz2")) {
             return new TarInputStream(new CBZip2InputStream(is));
@@ -331,7 +392,7 @@ public class CreateProjectCommand extends Command {
             return new ZipInputStream(is);
         }
     }
-    
+
     private String[] getExtension(String filename) {
         String[] result = new String[2];
         int ext_index = filename.lastIndexOf('.');
@@ -339,7 +400,7 @@ public class CreateProjectCommand extends Command {
         result[1] = (ext_index == -1) ? "" : filename.substring(ext_index + 1);
         return result;
     }
-    
+
     protected void internalImportURL(
         HttpServletRequest    request,
         Project               project,
@@ -348,7 +409,7 @@ public class CreateProjectCommand extends Command {
     ) throws Exception {
         URL url = new URL(urlString);
         URLConnection connection = null;
-        
+
         try {
             connection = url.openConnection();
             connection.setConnectTimeout(5000);
@@ -356,27 +417,26 @@ public class CreateProjectCommand extends Command {
         } catch (Exception e) {
             throw new Exception("Cannot connect to " + urlString, e);
         }
-        
+
         InputStream inputStream = null;
         try {
             inputStream = connection.getInputStream();
         } catch (Exception e) {
             throw new Exception("Cannot retrieve content from " + url, e);
         }
-        
+
         try {
             Importer importer = guessImporter(
-                options, 
                 connection.getContentType(),
                 url.getPath()
             );
-            
+
             internalInvokeImporter(project, importer, options, inputStream, connection.getContentEncoding());
         } finally {
             inputStream.close();
         }
     }
-    
+
     protected void internalInvokeImporter(
         Project     project,
         Importer    importer,
@@ -387,48 +447,48 @@ public class CreateProjectCommand extends Command {
         if (importer.takesReader()) {
 
             BufferedInputStream inputStream = new BufferedInputStream(rawInputStream);
-            
-            // NOTE(SM): The ICU4J char detection code requires the input stream to support mark/reset. 
-            // Unfortunately, not all ServletInputStream implementations are marking, so we need do 
-            // this memory-expensive wrapping to make it work. It's far from ideal but I don't have 
+
+            // NOTE(SM): The ICU4J char detection code requires the input stream to support mark/reset.
+            // Unfortunately, not all ServletInputStream implementations are marking, so we need do
+            // this memory-expensive wrapping to make it work. It's far from ideal but I don't have
             // a more efficient solution.
             byte[] bytes = new byte[1024 * 4];
             inputStream.mark(bytes.length);
             inputStream.read(bytes);
             inputStream.reset();
-            
+
             CharsetDetector detector = new CharsetDetector();
             detector.setDeclaredEncoding("utf8"); // most of the content on the web is encoded in UTF-8 so start with that
-            
+
             Reader reader = null;
             CharsetMatch[] charsetMatches = detector.setText(bytes).detectAll();
             for (CharsetMatch charsetMatch : charsetMatches) {
                 try {
                     reader = new InputStreamReader(inputStream, charsetMatch.getName());
-                    
+
                     options.setProperty("encoding", charsetMatch.getName());
                     options.setProperty("encoding_confidence", Integer.toString(charsetMatch.getConfidence()));
-                    
+
                     logger.info("Best encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
-                    
+
                     break;
                 } catch (UnsupportedEncodingException e) {
                     // silent
                 }
             }
-            
+
             if (reader == null) { // when all else fails
                 reader = encoding != null ?
                         new InputStreamReader(inputStream, encoding) :
                         new InputStreamReader(inputStream);
             }
-            
+
             importer.read(reader, project, options);
         } else {
             importer.read(rawInputStream, project, options);
-        }        
+        }
     }
-    
+
     protected void internalInvokeImporter(
         Project     project,
         Importer    importer,
@@ -437,58 +497,14 @@ public class CreateProjectCommand extends Command {
     ) throws Exception {
         importer.read(reader, project, options);
     }
-    
-    protected Importer guessImporter(
-            Properties options, String contentType, String fileName) {
-        
-        if (contentType != null) {
-            contentType = contentType.toLowerCase().trim();
-            
-            if ("application/msexcel".equals(contentType) ||
-                "application/x-msexcel".equals(contentType) ||
-                "application/x-ms-excel".equals(contentType) ||
-                "application/vnd.ms-excel".equals(contentType) ||
-                "application/x-excel".equals(contentType) ||
-                "application/xls".equals(contentType)) {
-                
-                return new ExcelImporter(false);
-            } else if("application/x-xls".equals(contentType)) {
-                return new ExcelImporter(true); 
-            } else if("application/xml".equals(contentType) ||
-                      "text/xml".equals(contentType) ||
-                      "application/rss+xml".equals(contentType) ||
-                      "application/atom+xml".equals(contentType)) {
-                return new XmlImporter();
-            } else if("application/rdf+xml".equals(contentType)) {
-            	return new RdfTripleImporter();
-            } else if ("application/marc".equals(contentType)) {
-                return new MarcImporter();
-            }
-        } else if (fileName != null) {
-            fileName = fileName.toLowerCase();
-            if (fileName.endsWith(".xls")) {
-                return new ExcelImporter(false); 
-            } else if (fileName.endsWith(".xlsx")) {
-                return new ExcelImporter(true); 
-            } else if (
-                    fileName.endsWith(".xml") ||
-                    fileName.endsWith(".atom") ||
-                    fileName.endsWith(".rss")
-                ) {
-                return new XmlImporter(); 
-            } else if (
-                    fileName.endsWith(".rdf")) {
-            	return new RdfTripleImporter();
-            } else if (
-                    fileName.endsWith(".mrc") || 
-                    fileName.endsWith(".marc") || 
-                    fileName.contains(".mrc.") || 
-                    fileName.contains(".marc.")
-                ) {
-                return new MarcImporter();
+
+    protected Importer guessImporter(String contentType, String fileName) {
+        for(Importer i : importers.values()){
+            if(i.canImportData(contentType, fileName)){
+                return i;
             }
         }
-        
-        return new TsvCsvImporter();
+
+        return new TsvCsvImporter(); //default
     }
 }

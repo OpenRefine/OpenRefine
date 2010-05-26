@@ -43,25 +43,25 @@ public class RdfTripleImporter implements Importer{
     @Override
     public void read(Reader reader, Project project, Properties options) throws Exception {
         String baseUrl = options.getProperty("base-url");
-        
+
         Graph graph = JrdfFactory.getNewGraph();
         LineHandler lineHandler = nTriplesParserFactory.createParser(graph, newMapFactory);
         GraphLineParser parser = new GraphLineParser(graph, lineHandler);
         parser.parse(reader, baseUrl); // fills JRDF graph
-        
+
         Map<String, List<Row>> subjectToRows = new HashMap<String, List<Row>>();
-        
+
         Column subjectColumn = new Column(0, "subject");
         project.columnModel.columns.add(0, subjectColumn);
         project.columnModel.setKeyColumnIndex(0);
-        
+
         ClosableIterable<Triple> triples = graph.find(ANY_SUBJECT_NODE, ANY_PREDICATE_NODE, ANY_OBJECT_NODE);
         try {
             for (Triple triple : triples) {
                 String subject = triple.getSubject().toString();
                 String predicate = triple.getPredicate().toString();
                 String object = triple.getObject().toString();
-                
+
                 Column column = project.columnModel.getColumnByName(predicate);
                 if (column == null) {
                 	column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
@@ -71,7 +71,7 @@ public class RdfTripleImporter implements Importer{
             			// ignore
             		}
                 }
-        		
+
                 int cellIndex = column.getCellIndex();
                 if (subjectToRows.containsKey(subject)) {
                 	List<Row> rows = subjectToRows.get(subject);
@@ -82,20 +82,20 @@ public class RdfTripleImporter implements Importer{
                         	break;
                 		}
                 	}
-                	
+
                 	if (object != null) {
                     	Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
                     	rows.add(row);
-                    	
+
                     	row.setCell(cellIndex, new Cell(object, null));
                 	}
                 } else {
                 	List<Row> rows = new ArrayList<Row>();
                 	subjectToRows.put(subject, rows);
-                	
+
                 	Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
                 	rows.add(row);
-                	
+
                 	row.setCell(subjectColumn.getCellIndex(), new Cell(subject, null));
                 	row.setCell(cellIndex, new Cell(object, null));
                 }
@@ -118,6 +118,23 @@ public class RdfTripleImporter implements Importer{
     @Override
     public boolean takesReader() {
         return true;
+    }
+
+    public boolean canImportData(String contentType, String fileName) {
+        if (contentType != null) {
+            contentType = contentType.toLowerCase().trim();
+
+            if("application/rdf+xml".equals(contentType)) {
+                return true;
+            }
+        } else if (fileName != null) {
+            fileName = fileName.toLowerCase();
+            if (
+                    fileName.endsWith(".rdf")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

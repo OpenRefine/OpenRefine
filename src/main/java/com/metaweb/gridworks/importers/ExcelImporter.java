@@ -27,16 +27,12 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.Recon.Judgment;
 
 public class ExcelImporter implements Importer {
-    final protected boolean _xmlBased;
-    
-    public ExcelImporter(boolean xmlBased) {
-        _xmlBased = xmlBased;
-    }
+    protected boolean _xmlBased;
 
     public boolean takesReader() {
         return false;
     }
-    
+
     public void read(Reader reader, Project project, Properties options) throws Exception {
         throw new UnsupportedOperationException();
     }
@@ -45,11 +41,11 @@ public class ExcelImporter implements Importer {
         int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
         int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
         int skip = ImporterUtilities.getIntegerOption("skip",options,0);
-        
+
         Workbook wb = null;
         try {
-            wb = _xmlBased ? 
-                new XSSFWorkbook(inputStream) : 
+            wb = _xmlBased ?
+                new XSSFWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
             throw new Exception(
@@ -58,16 +54,16 @@ public class ExcelImporter implements Importer {
                 e
             );
         }
-        
+
         Sheet sheet = wb.getSheetAt(0);
 
         int firstRow = sheet.getFirstRowNum();
         int lastRow = sheet.getLastRowNum();
         int r = firstRow;
-        
+
         List<Integer>    nonBlankIndices = null;
         List<String>     nonBlankHeaderStrings = null;
-        
+
         /*
          *  Find the header row
          */
@@ -79,13 +75,13 @@ public class ExcelImporter implements Importer {
                 ignoreLines--;
                 continue;
             }
-            
+
             short firstCell = row.getFirstCellNum();
             short lastCell = row.getLastCellNum();
             if (firstCell >= 0 && firstCell <= lastCell) {
                 nonBlankIndices = new ArrayList<Integer>(lastCell - firstCell + 1);
                 nonBlankHeaderStrings = new ArrayList<String>(lastCell - firstCell + 1);
-                
+
                 for (int c = firstCell; c <= lastCell; c++) {
                     org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
                     if (cell != null) {
@@ -96,18 +92,18 @@ public class ExcelImporter implements Importer {
                         }
                     }
                 }
-                
+
                 if (nonBlankIndices.size() > 0) {
                     r++;
                     break;
                 }
             }
         }
-        
+
         if (nonBlankIndices == null || nonBlankIndices.size() == 0) {
             return;
         }
-        
+
         /*
          *  Create columns
          */
@@ -117,59 +113,59 @@ public class ExcelImporter implements Importer {
             if (nameToIndex.containsKey(cell)) {
                 int index = nameToIndex.get(cell);
                 nameToIndex.put(cell, index + 1);
-                
+
                 cell = cell.contains(" ") ? (cell + " " + index) : (cell + index);
             } else {
                 nameToIndex.put(cell, 2);
             }
-            
+
             Column column = new Column(c, cell);
             project.columnModel.columns.add(column);
         }
-        
+
         /*
          *  Now process the data rows
          */
         int rowsWithData = 0;
         Map<String, Recon> reconMap = new HashMap<String, Recon>();
-        
+
         for (; r <= lastRow; r++) {
             org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
                 continue;
             }
-            
+
             short firstCell = row.getFirstCellNum();
             short lastCell = row.getLastCellNum();
             if (firstCell >= 0 && firstCell <= lastCell) {
                 Row newRow = new Row(nonBlankIndices.size());
                 boolean hasData = false;
-                
+
                 for (int c = 0; c < nonBlankIndices.size(); c++) {
                     if (c < firstCell || c > lastCell) {
                         continue;
                     }
-                    
+
                     org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
                     if (cell == null) {
                         continue;
                     }
-                    
+
                     int cellType = cell.getCellType();
-                    if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR || 
+                    if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR ||
                         cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
                         continue;
                     }
                     if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
                         cellType = cell.getCachedFormulaResultType();
                     }
-                    
+
                     Serializable value = null;
                     if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
                         value = cell.getBooleanCellValue();
                     } else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {
                         double d = cell.getNumericCellValue();
-                        
+
                         if (HSSFDateUtil.isCellDateFormatted(cell)) {
                             value = HSSFDateUtil.getJavaDate(d);
                         } else {
@@ -181,23 +177,23 @@ public class ExcelImporter implements Importer {
                             value = text;
                         }
                     }
-                    
+
                     if (value != null) {
                         Recon recon = null;
-                        
+
                         Hyperlink hyperlink = cell.getHyperlink();
                         if (hyperlink != null) {
                             String url = hyperlink.getAddress();
-                            
-                            if (url.startsWith("http://") || 
+
+                            if (url.startsWith("http://") ||
                                 url.startsWith("https://")) {
-                                
+
                                 final String sig = "freebase.com/view";
-                                
+
                                 int i = url.indexOf(sig);
                                 if (i > 0) {
                                     String id = url.substring(i + sig.length());
-                                    
+
                                     int q = id.indexOf('?');
                                     if (q > 0) {
                                         id = id.substring(0, q);
@@ -206,7 +202,7 @@ public class ExcelImporter implements Importer {
                                     if (h > 0) {
                                         id = id.substring(0, h);
                                     }
-                                    
+
                                     if (reconMap.containsKey(id)) {
                                         recon = reconMap.get(id);
                                         recon.judgmentBatchSize++;
@@ -219,26 +215,26 @@ public class ExcelImporter implements Importer {
                                         recon.judgmentAction = "auto";
                                         recon.judgmentBatchSize = 1;
                                         recon.addCandidate(recon.match);
-                                        
+
                                         reconMap.put(id, recon);
                                     }
-                                    
+
                                 }
                             }
                         }
-                        
+
                         newRow.setCell(c, new Cell(value, recon));
                         hasData = true;
                     }
                 }
-                
+
                 if (hasData) {
                     rowsWithData++;
-                    
+
                     if (skip <= 0 || rowsWithData > skip) {
                         project.rows.add(newRow);
                         project.columnModel.setMaxCellIndex(newRow.cells.size());
-                        
+
                         if (limit > 0 && project.rows.size() >= limit) {
                             break;
                         }
@@ -246,5 +242,33 @@ public class ExcelImporter implements Importer {
                 }
             }
         }
+    }
+
+    public boolean canImportData(String contentType, String fileName) {
+        if (contentType != null) {
+            contentType = contentType.toLowerCase().trim();
+            if ("application/msexcel".equals(contentType) ||
+                "application/x-msexcel".equals(contentType) ||
+                "application/x-ms-excel".equals(contentType) ||
+                "application/vnd.ms-excel".equals(contentType) ||
+                "application/x-excel".equals(contentType) ||
+                "application/xls".equals(contentType)) {
+                this._xmlBased = false;
+                return true;
+            } else if("application/x-xls".equals(contentType)) {
+                this._xmlBased = true;
+                return true;
+            }
+        } else if (fileName != null) {
+            fileName = fileName.toLowerCase();
+            if (fileName.endsWith(".xls")) {
+                this._xmlBased = false;
+                return true;
+            } else if (fileName.endsWith(".xlsx")) {
+                this._xmlBased = true;
+                return true;
+            }
+        }
+        return false;
     }
 }

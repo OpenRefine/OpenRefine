@@ -20,21 +20,21 @@ public class MarcImporter implements Importer {
     public boolean takesReader() {
         return false;
     }
-    
+
     public void read(Reader reader, Project project, Properties options)
         throws Exception {
-    
+
         throw new UnsupportedOperationException();
     }
 
     public void read(
-        InputStream inputStream, 
+        InputStream inputStream,
         Project project,
         Properties options
     ) throws Exception {
         int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
         int skip = ImporterUtilities.getIntegerOption("skip",options,0);
-        
+
         File tempFile = File.createTempFile("gridworks-import-", ".marc.xml");
         try {
             OutputStream os = new FileOutputStream(tempFile);
@@ -45,7 +45,7 @@ public class MarcImporter implements Importer {
                     true
                 );
                 MarcWriter writer = new MarcXmlWriter(os, true);
-                
+
                 int count = 0;
                 while (reader.hasNext()) {
                     Record record = reader.next();
@@ -64,7 +64,7 @@ public class MarcImporter implements Importer {
             } finally {
                 os.close();
             }
-            
+
             InputStream is = new FileInputStream(tempFile);
             try {
                 new XmlImporter().read(is, project, options);
@@ -74,5 +74,26 @@ public class MarcImporter implements Importer {
         } finally {
             tempFile.delete();
         }
+    }
+
+    public boolean canImportData(String contentType, String fileName) {
+        if (contentType != null) {
+            contentType = contentType.toLowerCase().trim();
+
+            if ("application/marc".equals(contentType)) {
+                return true;
+            }
+        } else if (fileName != null) {
+            fileName = fileName.toLowerCase();
+            if (
+                    fileName.endsWith(".mrc") ||
+                    fileName.endsWith(".marc") ||
+                    fileName.contains(".mrc.") ||
+                    fileName.contains(".marc.")
+                ) {
+                return true;
+            }
+        }
+        return false;
     }
 }
