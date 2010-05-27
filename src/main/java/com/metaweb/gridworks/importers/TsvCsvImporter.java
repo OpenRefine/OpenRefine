@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -112,7 +113,8 @@ public class TsvCsvImporter implements Importer {
                     for(String s : cells){
                         s = s.trim();
                         if (ExpressionUtils.isNonBlankData(s)) {
-                            row.cells.add(new Cell(s, null));
+                            Serializable value = guessValueType ? ImporterUtilities.parseCellValue(s) : s;
+                            row.cells.add(new Cell(value, null));
                         }else{
                             row.cells.add(null);
                         }

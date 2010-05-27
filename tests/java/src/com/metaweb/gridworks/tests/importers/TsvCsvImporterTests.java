@@ -66,7 +66,7 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
     }
-    
+
     @Test(dataProvider = "CSV-or-null")
     public void readUnseperatedData(String sep){
         String input = "value1,value2,value3";
@@ -123,6 +123,28 @@ public class TsvCsvImporterTests {
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+    }
+
+    @Test(dataProvider = "CSV-or-null")
+    public void readSimpleData_CSV_1Header_1Row_GuessValues(String sep){
+        String input = "col1,col2,col3\n" +
+                       "data1,234,data3";
+        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
+        try {
+            SUT.read(lnReader, project, sep, -1, 0, 0, 1, true, true);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertTrue(project.rows.get(0).cells.get(1).value instanceof Long);
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, Long.parseLong("234"));
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
