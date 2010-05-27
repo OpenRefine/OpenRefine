@@ -192,7 +192,7 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     
     var level = DialogSystem.showDialog(frame);
     
-    textarea[0].select();
+    elmts.textarea[0].select();
 };
 
 HistoryWidget.prototype._showApplyOperationsDialog = function() {
