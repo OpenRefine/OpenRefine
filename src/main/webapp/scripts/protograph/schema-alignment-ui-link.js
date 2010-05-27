@@ -146,6 +146,7 @@ SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, targetTypeI
         function(data) {
             if (done) return;
             
+            done = true;
             onDone(data.properties || []);
         }
     );
@@ -200,7 +201,22 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
         
         var createSuggestion = function(suggestion) {
             var menuItem = MenuSystem.createMenuItem().appendTo(menu);
-            menuItem.html(suggestion.id).click(function() {
+            
+            $('<span>')
+                .text(suggestion.name)
+                .attr("title", suggestion.id)
+                .appendTo(menuItem);
+                
+            if ("name2" in suggestion) {
+                $('<span>').html(" &raquo; ").appendTo(menuItem);
+                
+                $('<span>')
+                    .text(suggestion.name2)
+                    .attr("title", suggestion.id2)
+                    .appendTo(menuItem);
+            }
+            
+            menuItem.click(function() {
                 commitProperty(suggestion);
             });
         };
