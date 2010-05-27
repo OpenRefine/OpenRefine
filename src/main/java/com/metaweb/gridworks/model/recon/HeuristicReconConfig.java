@@ -221,6 +221,7 @@ public class HeuristicReconConfig extends ReconConfig {
                     jsonWriter.key("type_strict"); jsonWriter.value("should");
                     jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
                     jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
+                    jsonWriter.key("stemmed"); jsonWriter.value(1);
                 jsonWriter.endObject();
             }
             jsonWriter.endObject();
