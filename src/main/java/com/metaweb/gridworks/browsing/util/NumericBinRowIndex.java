@@ -8,15 +8,15 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class NumericBinRowIndex extends NumericBinIndex {
-	public NumericBinRowIndex(Project project, RowEvaluable rowEvaluable) {
-		
-		super(project, rowEvaluable);
-	}
+    public NumericBinRowIndex(Project project, RowEvaluable rowEvaluable) {
+        
+        super(project, rowEvaluable);
+    }
 
-	@Override
-	protected void iterate(
-		Project project, RowEvaluable rowEvaluable, List<Double> allValues) {
-		
+    @Override
+    protected void iterate(
+        Project project, RowEvaluable rowEvaluable, List<Double> allValues) {
+        
         Properties bindings = ExpressionUtils.createBindings(project);
         
         for (int i = 0; i < project.rows.size(); i++) {
@@ -28,6 +28,6 @@ public class NumericBinRowIndex extends NumericBinIndex {
             
             postprocessing();
         }
-	}
+    }
 
 }

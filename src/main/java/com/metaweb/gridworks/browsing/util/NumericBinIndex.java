@@ -21,12 +21,12 @@ import com.metaweb.gridworks.model.Row;
  */
 abstract public class NumericBinIndex {
     
-	protected int _totalValueCount;
-	protected int _numbericValueCount;
-	protected double _min;
-	protected double _max;
-	protected double _step;
-	protected int[]  _bins;
+    protected int _totalValueCount;
+    protected int _numbericValueCount;
+    protected double _min;
+    protected double _max;
+    protected double _step;
+    protected int[]  _bins;
     
     protected int _numericRowCount;
     protected int _nonNumericRowCount;
@@ -130,14 +130,14 @@ abstract public class NumericBinIndex {
         return _errorRowCount;
     }
 
-	protected void processRow(
-		Project 		project, 
-		RowEvaluable	rowEvaluable,
-		List<Double> 	allValues,
-		int 			rowIndex,
-		Row 			row,
-		Properties 		bindings
-	) {
+    protected void processRow(
+        Project         project, 
+        RowEvaluable    rowEvaluable,
+        List<Double>     allValues,
+        int             rowIndex,
+        Row             row,
+        Properties         bindings
+    ) {
         Object value = rowEvaluable.eval(project, rowIndex, row, bindings);
         
         if (ExpressionUtils.isError(value)) {
@@ -191,16 +191,16 @@ abstract public class NumericBinIndex {
         } else {
             _hasBlank = true;
         }
-	}
-	
-	protected void preprocessing() {
-		_hasBlank = false;
-		_hasError = false;
-		_hasNonNumeric = false;
-		_hasNumeric = false;
-	}
-	
-	protected void postprocessing() {
+    }
+    
+    protected void preprocessing() {
+        _hasBlank = false;
+        _hasError = false;
+        _hasNonNumeric = false;
+        _hasNumeric = false;
+    }
+    
+    protected void postprocessing() {
         if (_hasError) {
             _errorRowCount++;
         }
@@ -213,7 +213,7 @@ abstract public class NumericBinIndex {
         if (_hasNonNumeric) {
             _nonNumericRowCount++;
         }
-	}
+    }
 
     protected void processValue(double v, List<Double> allValues) {
         if (!Double.isInfinite(v) && !Double.isNaN(v)) {
