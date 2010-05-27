@@ -8,6 +8,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Recon;
@@ -43,7 +44,18 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
     
     @Override
     public void flush() throws IOException {
-    	writer.write(getJSON().toString());
+    	try {
+        	JSONWriter jsonWriter = new JSONWriter(writer);
+        	
+        	jsonWriter.array();
+        	for (JSONObject obj : rootObjects) {
+        		jsonWriter.value(obj);
+        	}
+        	jsonWriter.endArray();
+        	
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
     	writer.flush();
     }
     

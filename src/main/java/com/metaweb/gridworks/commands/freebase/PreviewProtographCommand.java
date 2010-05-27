@@ -58,7 +58,7 @@ public class PreviewProtographCommand extends Command {
                 nodeFactory.flush();
                 
                 sb.append(", \"mqllike\" : ");
-                sb.append(sb.toString());
+                sb.append(stringWriter.toString());
             }
 
             sb.append(" }");
