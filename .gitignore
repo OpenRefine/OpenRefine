@@ -1,0 +1,4 @@
+build/
+src/main/webapp/WEB-INF/classes/
+tests/java/classes/
+tools/
