@@ -1,4 +1,10 @@
-Ongoing
+1.1 Release (May 27, 2010)
+
+Features:
+- Row/record sorting (Issue 32)
+- CSV exporter (Issue 59)
+- Mqlwrite exporter
+- Templating exporter (experimental)
 
 Fixes:
 - Issue 34: "Behavior of Text Filter is unpredictable when "regular expression" mode is enabled."
@@ -23,14 +29,9 @@ Fixes:
 - Issue 30: "Transform dialog should remember preferred language."
 - Issue 62: "It'd be nice if URIs were hyperlinked in the data cells"
 
-Features:
-- Row/record sorting (Issue 32)
-- CSV exporter (Issue 59)
-- Mqlwrite exporter
-- Templating exporter
-
-Changes:
+Other Changes:
 - Moved unit tests from JUnit to TestNG
+
 
 1.0.1 Release (May 12, 2010)
 
