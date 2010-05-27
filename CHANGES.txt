@@ -21,6 +21,7 @@ Fixes:
   We load whatever rows that are filtered through, not particularly starred rows.
 - Issue 49: "Add Edit Cells / Set Null"
 - Issue 30: "Transform dialog should remember preferred language."
+- Issue 62: "It'd be nice if URIs were hyperlinked in the data cells"
 
 Features:
 - Row/record sorting (Issue 32)

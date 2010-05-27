@@ -1,4 +1,45 @@
-URL = {};
+URL = {
+    schemes: { // 1 means followed by ://, 0 means followed by just :
+        "callto":0,
+        "chrome":1,
+        "file":1,
+        "ftp":1,
+        "http":1,
+        "https":1,
+        "imap":1,
+        "info":0,
+        "irc":1,
+        "jar":0,
+        "javascript":0,
+        "lastfm":1,
+        "ldap":1, 
+        "ldaps":1,
+        "mailto":0, 
+        "news":0,
+        "nntp":1,
+        "pop":1,
+        "sftp":1,
+        "skype":0,
+        "smb":1,
+        "ssh":1,
+        "svn":1,
+        "svn+ssh":1,
+        "telnet":1,
+        "view-source":0
+    }
+};
+(function() {
+    var minLength = 100;
+    var maxLength = 0;
+    
+    for (var n in URL.schemes) {
+        minLength = Math.min(minLength, n.length);
+        maxLength = Math.max(maxLength, n.length);
+    }
+    
+    URL.minSchemeLength = minLength;
+    URL.maxSchemeLength = maxLength;
+})();
 
 URL.getParameters = function() {
     var r = {};
@@ -13,4 +54,18 @@ URL.getParameters = function() {
     }
     
     return r;
+};
+
+URL.looksLikeUrl = function(s) {
+    if (s.length > URL.minSchemeLength + 1) {
+        var sep = s.substring(0, URL.maxSchemeLength + 3).indexOf(":");
+        if (sep >= URL.minSchemeLength) {
+            var scheme = s.substring(0, sep).toLowerCase();
+            if (scheme in URL.schemes) {
+                return URL.schemes[scheme] == 0 ||
+                       s.substring(sep + 1, sep + 3) == "//";
+            }
+        }
+    }
+    return false;
 };

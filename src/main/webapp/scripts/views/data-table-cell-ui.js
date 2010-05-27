@@ -31,9 +31,21 @@ DataTableCellUI.prototype._render = function() {
     } else if ("e" in cell) {
         $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
     } else if (!("r" in cell) || !cell.r) {
-        var span = $('<span>').text(cell.v).appendTo(divContent);
         if (typeof cell.v !== "string") {
-            span.addClass("data-table-value-nonstring");
+            $('<span>')
+                .addClass("data-table-value-nonstring")
+                .text(cell.v)
+                .appendTo(divContent);
+        } else if (URL.looksLikeUrl(cell.v)) {
+            $('<a>')
+                .text(cell.v)
+                .attr("href", cell.v)
+                .attr("target", "_blank")
+                .appendTo(divContent);
+        } else {
+            $('<span>')
+                .text(cell.v)
+                .appendTo(divContent);
         }
     } else {
         var r = cell.r;
