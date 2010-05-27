@@ -80,11 +80,34 @@ ExpressionPreviewDialog.Widget = function(
     values,
     expression
 ) {
+    var language = "gel";
+    if (!(expression)) {
+        language = $.cookie("scripting.lang");
+        if (language == "jython") {
+            this.expression = "return value";
+        } else if (language == "clojure") {
+            this.expression = "value";
+        } else {
+            language = "gel";
+            this.expression = "value";
+        }
+    } else {
+        this.expression = expression;
+        
+        var colon = expression.indexOf(":");
+        if (colon > 0) {
+            var l = expression.substring(0, colon);
+            if (l == "gel" || l == "jython" || l == "clojure") {
+                this.expression = expression.substring(colon + 1);
+                language = l;
+            }
+        }
+    }
+    
     this._elmts = elmts;
     this._cellIndex = cellIndex;
     this._rowIndices = rowIndices;
     this._values = values;
-    this.expression = expression;
     
     this._results = null;
     this._timerID = null;
@@ -93,17 +116,11 @@ ExpressionPreviewDialog.Widget = function(
     $("#expression-preview-tabs-history").css("display", "");
     $("#expression-preview-tabs-help").css("display", "");
     
-    var language = "gel";
-    var colon = expression.indexOf(":");
-    if (colon > 0) {
-        var l = expression.substring(0, colon);
-        if (l == "gel" || l == "jython" || l == "clojure") {
-            this.expression = expression.substring(colon + 1);
-            language = l;
-        }
-    }
     this._elmts.expressionPreviewLanguageSelect[0].value = language;
-    this._elmts.expressionPreviewLanguageSelect.bind("change", function() { self.update(); });
+    this._elmts.expressionPreviewLanguageSelect.bind("change", function() {
+        $.cookie("scripting.lang", this.value);
+        self.update();
+    });
         
     var self = this;
     this._elmts.expressionPreviewTextarea
@@ -242,7 +259,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
     
     var table = $(
         '<table width="100%" cellspacing="5">' +
-            '<tr><th>Expression</th><th></th><th>Language</th><th>From</th></tr>' +
+            '<tr><th></th><th>From</th><th colspan="2">Expression</th><th></th></tr>' +
         '</table>'
     ).appendTo(elmt)[0];
     
@@ -250,9 +267,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
         var tr = table.insertRow(table.rows.length);
         var o = Scripting.parse(entry.code);
         
-        $(tr.insertCell(0)).text(o.expression);
-        
-        $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(1)).click(function() {
+        $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(0)).click(function() {
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
             
@@ -263,8 +278,9 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
             self.update();
         });
         
-        $(tr.insertCell(2)).text(o.language);
-        $(tr.insertCell(3)).html(entry.global ? "Other&nbsp;projects" : "This&nbsp;project");
+        $(tr.insertCell(1)).html(entry.global ? "Other&nbsp;projects" : "This&nbsp;project");
+        $(tr.insertCell(2)).text(o.language + ":");
+        $(tr.insertCell(3)).text(o.expression);
     };
     
     for (var i = 0; i < data.expressions.length; i++) {

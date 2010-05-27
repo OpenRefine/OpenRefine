@@ -101,11 +101,11 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {},
                 {
                     label: "Custom Text Facet ...",
-                    click: function() { self._doFilterByExpressionPrompt("value", "list"); }
+                    click: function() { self._doFilterByExpressionPrompt(null, "list"); }
                 },
                 {
                     label: "Custom Numeric Facet ...",
-                    click: function() { self._doFilterByExpressionPrompt("value", "range"); }
+                    click: function() { self._doFilterByExpressionPrompt(null, "range"); }
                 },
                 {
                     label: "Customized Facets",
@@ -692,7 +692,7 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
         this._column.cellIndex,
         o.rowIndices,
         o.values,
-        "value"
+        null
     );
     previewWidget._prepareUpdate = function(params) {
         params.repeat = bodyElmts.repeatCheckbox[0].checked;
@@ -916,7 +916,7 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
         this._column.cellIndex,
         o.rowIndices,
         o.values,
-        "value"
+        null
     );    
 };
 
