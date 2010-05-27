@@ -429,7 +429,7 @@ mac_dist() {
     mkdir -p "$GRIDWORKS_BUILD_DIR/mac/.background"
     cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/mac/.background/dmg_background.png"
     
-    SIZE=40
+    SIZE=60
     
     if [ -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" ]; then
         rm "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
