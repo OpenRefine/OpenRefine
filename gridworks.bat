@@ -141,16 +141,16 @@ set GRIDWORKS_HOST=127.0.0.1
 set OPTS=%OPTS% -Dgridworks.host=%GRIDWORKS_HOST%
 
 if not "%GRIDWORKS_WEBAPP%" == "" goto gotHost
-set GRIDWORKS_WEBAPP=src\main\webapp
+set GRIDWORKS_WEBAPP=main\webapp
 :gotHOST
 set OPTS=%OPTS% -Dgridworks.webapp=%GRIDWORKS_WEBAPP%
 
 if not "%GRIDWORKS_BUILD_DIR%" == "" goto gotBuildDir
-set GRIDWORKS_BUILD_DIR=build
+set GRIDWORKS_BUILD_DIR=server\build
 :gotBuildDir
 
 if not "%GRIDWORKS_LIB_DIR%" == "" goto gotLibDir
-set GRIDWORKS_LIB_DIR=lib
+set GRIDWORKS_LIB_DIR=server\lib
 :gotLibDir
 
 rem ----- Respond to the action ----------------------------------------------------------
@@ -164,7 +164,7 @@ if ""%ACTION%"" == ""run"" goto doRun
 
 :doRun
 set CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*"
-"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=lib/native/windows com.metaweb.gridworks.Gridworks
+"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%GRIDWORKS_LIB_DIR%/native/windows com.metaweb.gridworks.Gridworks
 goto end
 
 :doAnt

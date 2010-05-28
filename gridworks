@@ -369,7 +369,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    "$ANT" -f build.xml $ANT_PARAMS -Dbuild.dir="$GRIDWORKS_BUILD_DIR" -Ddist.dir="$GRIDWORKS_DIST_DIR" -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Dfull_version="$FULL_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
+    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Dfull_version="$FULL_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -383,7 +383,7 @@ dist() {
     echo 
     echo "Upload them to the distibution site, then prepend the GridworksReleases array at"
     echo
-    echo "   http://acre.freebase.com/#app=/user/dfhuynh/labs-site&file=gridworks.js"
+    echo "   http://code.google.com/p/freebase-gridworks/source/browse/support/releases.js"
     echo
     echo "with"
     echo 
@@ -427,7 +427,7 @@ mac_dist() {
     ant mac
 
     mkdir -p "$GRIDWORKS_BUILD_DIR/mac/.background"
-    cp src/graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/mac/.background/dmg_background.png"
+    cp graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/mac/.background/dmg_background.png"
     
     SIZE=60
     
@@ -526,10 +526,10 @@ server_test() {
     ant build_tests
     echo ""
     
-    CLASSPATH="$GRIDWORKS_TEST_DIR/java/classes${SEP}$GRIDWORKS_WEBAPP/WEB-INF/classes${SEP}$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_TEST_DIR/java/lib/*${SEP}$GRIDWORKS_LIB_DIR/*${SEP}$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
+    CLASSPATH="$GRIDWORKS_TEST_DIR/server/classes${SEP}$GRIDWORKS_WEBAPP/WEB-INF/classes${SEP}$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_TEST_DIR/server/lib/*${SEP}$GRIDWORKS_LIB_DIR/*${SEP}$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
 
     if [ -z "$1" ]; then
-        TESTS="-excludegroups broken $GRIDWORKS_TEST_DIR/java/conf/tests.xml"
+        TESTS="-excludegroups broken $GRIDWORKS_TEST_DIR/server/conf/tests.xml"
     else 
         TESTS="-testclass $1"
     fi
@@ -545,7 +545,7 @@ server_test() {
 run() {
     FORK=$1
     
-    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ]; then
+    if [ ! -d $GRIDWORKS_CLASSES_DIR ]; then
         IS_JAR=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
         if [ -z "$IS_JAR" ]; then
             ant build
@@ -559,19 +559,19 @@ run() {
         warn "Gridworks is already running."
     fi
     
-    if [ -d $GRIDWORKS_BUILD_DIR/classes ]; then
+    if [ -d $GRIDWORKS_CLASSES_DIR ]; then
         add_option "-Dgridworks.autoreloading=true"
     fi
 
     if $DARWIN ; then
-        add_option "-Xdock:name=Gridworks -Xdock:icon=src/graphics/icon/gridworks.icns"
+        add_option "-Xdock:name=Gridworks -Xdock:icon=graphics/icon/gridworks.icns"
     fi
     
     if [ "$GRIDWORKS_DATA_DIR" ]; then
         add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
                 
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_LIB_DIR/*"
+    CLASSPATH="$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
 
@@ -587,22 +587,6 @@ run() {
         $RUN_CMD &
         GRIDWORKS_PID="$!"
     fi
-}
-
-execute() {
-    if [ ! -d $GRIDWORKS_BUILD_DIR/classes ]; then
-        ant build
-        echo ""
-    fi
-    
-    CLASSPATH="$GRIDWORKS_BUILD_DIR/classes${SEP}$GRIDWORKS_LIB_DIR/*"
-
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS $*"
-  
-    #echo "$RUN_CMD"
-    #echo ""
-
-    exec $RUN_CMD $*
 }
     
 findbugs() {
@@ -761,20 +745,24 @@ fi
 add_option "-Dgridworks.host=$GRIDWORKS_HOST"
 
 if [ -z "$GRIDWORKS_WEBAPP" ]; then
-    GRIDWORKS_WEBAPP="src/main/webapp"
+    GRIDWORKS_WEBAPP="main/webapp"
 fi
 add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
 
 if [ -z "$GRIDWORKS_TEST_DIR" ]; then
-    GRIDWORKS_TEST_DIR="tests"
+    GRIDWORKS_TEST_DIR="main/tests"
+fi
+
+if [ -z "$GRIDWORKS_CLASSES_DIR" ]; then
+    GRIDWORKS_CLASSES_DIR="server/classes"
+fi
+
+if [ -z "$GRIDWORKS_LIB_DIR" ]; then
+    GRIDWORKS_LIB_DIR="server/lib"
 fi
 
 if [ -z "$GRIDWORKS_BUILD_DIR" ]; then
     GRIDWORKS_BUILD_DIR="build"
-fi
-
-if [ -z "$GRIDWORKS_LIB_DIR" ]; then
-    GRIDWORKS_LIB_DIR="lib"
 fi
 
 if [ -z "$GRIDWORKS_TOOLS_DIR" ]; then
@@ -791,9 +779,9 @@ fi
 add_option "-Dgridworks.verbosity=$GRIDWORKS_VERBOSITY"
 
 if [ -z "$JYTHONPATH" ]; then
-    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython"
+    JYTHONPATH="$GRIDWORKS_WEBAPP/WEB-INF/lib/jython"
 else
-    JYTHONPATH="$GRIDWORKS_LIB_DIR/jython/${SEP}$JYTHONPATH"
+    JYTHONPATH="$GRIDWORKS_WEBAPP/WEB-INF/lib/jython${SEP}$JYTHONPATH"
 fi
 add_option "-Dpython.path=$JYTHONPATH"
 
@@ -815,7 +803,6 @@ case "$ACTION" in
   cpd) cpd;;  
   jslint) jslint;;  
   run) run;;  
-  execute) execute $*;;  
   mac_dist) mac_dist $1;;
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
