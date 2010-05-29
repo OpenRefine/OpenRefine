@@ -41,7 +41,9 @@ public class CsvExporter implements Exporter {
         boolean printColumnHeader = true;
 
         if (options != null) {
-            printColumnHeader = Boolean.parseBoolean(options.getProperty("printColumnHeader"));
+            String printColHead = options.getProperty("printColumnHeader");
+            if(printColHead != null)
+                printColumnHeader = !printColHead.toLowerCase().equals("false");
         }
 
         RowVisitor visitor = new RowVisitor() {
