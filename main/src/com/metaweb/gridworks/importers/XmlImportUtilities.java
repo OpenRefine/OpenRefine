@@ -72,8 +72,6 @@ public class XmlImportUtilities {
     }
 
     static public String[] detectPathFromTag(InputStream inputStream, String tag) {
-        //List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
-
         try {
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
 
@@ -99,6 +97,8 @@ public class XmlImportUtilities {
     }
 
     static protected List<String> detectRecordElement(XMLStreamReader parser, String tag) throws XMLStreamException {
+        if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT)
+            parser.next();
         String localName = parser.getLocalName();
         String fullName = composeName(parser.getPrefix(), localName);
         if (tag.equals(parser.getLocalName()) || tag.equals(fullName)) {
@@ -327,6 +327,10 @@ public class XmlImportUtilities {
         int pathIndex,
         ImportColumnGroup rootColumnGroup
     ) throws XMLStreamException {
+        if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT){
+            logger.warn("Cannot use findRecord method for START_DOCUMENT event");
+            return;
+        }
         String tagName = parser.getLocalName();
         if (tagName.equals(recordPath[pathIndex])) {
             if (pathIndex < recordPath.length - 1) {
@@ -466,7 +470,7 @@ public class XmlImportUtilities {
         ImportRecord record,
         String columnLocalName,
         String text,
-        int commonStaringRowIndex
+        int commonStartingRowIndex
     ) {
         if (text == null || ((String) text).isEmpty()) {
             return;
@@ -478,7 +482,7 @@ public class XmlImportUtilities {
         int cellIndex = column.cellIndex;
 
         while (cellIndex >= record.columnEmptyRowIndices.size()) {
-            record.columnEmptyRowIndices.add(commonStaringRowIndex);
+            record.columnEmptyRowIndices.add(commonStartingRowIndex);
         }
         int rowIndex = record.columnEmptyRowIndices.get(cellIndex);
 
@@ -491,7 +495,9 @@ public class XmlImportUtilities {
             row.add(null);
         }
 
-        row.set(cellIndex, new Cell(value, null));
+        logger.trace("Adding cell with value : " + value + " to row : " + rowIndex + " at cell index : " + (cellIndex-1));
+
+        row.set(cellIndex-1, new Cell(value, null));
 
         record.columnEmptyRowIndices.set(cellIndex, rowIndex + 1);
 
