@@ -132,7 +132,7 @@
     <target name="build" depends="build_server, build_webapp"/>
 
     <target name="jar_server" depends="build_server">
-        <jar destfile="${build.dir}/${fullname}-server.jar" basedir="${webapp.classes.dir}"/>
+        <jar destfile="${build.dir}/${fullname}-server.jar" basedir="${server.classes.dir}"/>
     </target>
     
     <target name="jar_webapp" depends="build_webapp">
@@ -208,7 +208,7 @@
           <config 
                headerType="console" 
                outfile="${windows.dir}/Gridworks.exe" 
-               jarPath="lib/${fullname}.jar" 
+               jarPath="lib/${fullname}-server.jar" 
                dontWrapJar="true"
                icon="${graphics.dir}/icon/gridworks.ico">
             <classPath mainClass="com.metaweb.gridworks.Gridworks">
@@ -242,9 +242,9 @@
                 <include name="*.dll"/>
             </fileset>
         </copy>
-        <copy file="${build.dir}/${fullname}.jar" tofile="${windows.dir}/${fullname}.jar"/>
+
         <copy todir="${windows.dir}/webapp">
-            <fileset dir="${webapp.dir}">
+            <fileset dir="${built.webapp.dir}">
                 <include name="**"/>
             </fileset>
         </copy>
@@ -266,19 +266,20 @@
     <target name="linux" depends="jar, prepare_webapp">
         <mkdir dir="${linux.dir}"/>
     
-        <copy todir="${linux.dir}/lib">
+        <copy todir="${linux.dir}/server/lib">
             <fileset dir="${server.lib.dir}">
                 <include name="**/*.jar"/>
             </fileset>
         </copy>
 
-        <copy file="${build.dir}/${fullname}-server.jar" tofile="${linux.dir}/lib/${fullname}-server.jar"/>
+        <copy file="${build.dir}/${fullname}-server.jar" tofile="${linux.dir}/server/lib/${fullname}-server.jar"/>
 
-        <copy todir="${linux.dir}/webapp">
-            <fileset dir="${webapp.dir}">
+        <copy todir="${linux.dir}/main/webapp">
+            <fileset dir="${built.webapp.dir}">
                 <include name="**"/>
             </fileset>
         </copy>
+
         <copy todir="${linux.dir}/licenses">
             <fileset dir="${basedir}/licenses">
                 <include name="**"/>
