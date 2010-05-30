@@ -312,7 +312,6 @@ class ShutdownSignalHandler implements Runnable {
         this._server = server;
     }
 
-    @Override
     public void run() {
 
         // Tell the server we want to try and shutdown gracefully
