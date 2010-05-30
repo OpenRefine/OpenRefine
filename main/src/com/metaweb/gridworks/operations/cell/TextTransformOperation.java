@@ -24,7 +24,6 @@ import com.metaweb.gridworks.operations.OnError;
 import com.metaweb.gridworks.operations.OperationRegistry;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
-
     final protected String  _expression;
     final protected OnError _onError;
     final protected boolean _repeat;
@@ -123,10 +122,12 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                 return this;
             }
             
+            @Override
             public void start(Project project) {
             	// nothing to do
             }
             
+            @Override
             public void end(Project project) {
             	// nothing to do
             }

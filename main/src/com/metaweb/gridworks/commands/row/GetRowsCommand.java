@@ -126,10 +126,12 @@ public class GetRowsCommand extends Command {
             this.options = options;
         }
         
+        @Override
         public void start(Project project) {
         	// nothing to do
         }
         
+        @Override
         public void end(Project project) {
         	// nothing to do
         }
@@ -143,6 +145,7 @@ public class GetRowsCommand extends Command {
             return false;
         }
         
+        @Override
         public boolean visit(Project project, Record record) {
             if (total >= start && total < start + limit) {
                 internalVisit(project, record);

@@ -245,6 +245,7 @@ public class GridworksServlet extends HttpServlet {
             Command cmd;
             try {
                 cmd = (Command) this.getClass().getClassLoader().loadClass(className).newInstance();
+                cmd.init(this);
             } catch (InstantiationException e) {
                 logger.error("Failed to load command class " + className, e);
                 status = false;

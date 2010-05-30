@@ -30,7 +30,6 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class RdfTripleImporter implements Importer{
-
     JRDFFactory JrdfFactory;
     NTriplesParserFactory nTriplesParserFactory;
     MemMapFactory newMapFactory;
@@ -41,6 +40,7 @@ public class RdfTripleImporter implements Importer{
         newMapFactory = new MemMapFactory();
     }
 
+    @Override
     public void read(Reader reader, Project project, Properties options) throws Exception {
         String baseUrl = options.getProperty("base-url");
 
@@ -109,11 +109,13 @@ public class RdfTripleImporter implements Importer{
         }
     }
 
+    @Override
     public void read(InputStream inputStream, Project project, Properties options) throws Exception {
         // TODO
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean takesReader() {
         return true;
     }

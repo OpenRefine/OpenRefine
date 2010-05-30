@@ -198,10 +198,12 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 return this;
             }
             
+            @Override
             public void start(Project project) {
             	// nothing to do
             }
             
+            @Override
             public void end(Project project) {
             	// nothing to do
             }

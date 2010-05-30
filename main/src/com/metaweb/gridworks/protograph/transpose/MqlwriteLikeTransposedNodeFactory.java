@@ -42,6 +42,7 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
         return new JSONArray(rootObjects);
     }
     
+    @Override
     public void flush() throws IOException {
     	try {
         	JSONWriter jsonWriter = new JSONWriter(writer);

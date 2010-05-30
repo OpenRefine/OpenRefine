@@ -36,7 +36,10 @@ public class TextSearchFacet implements Facet {
     public TextSearchFacet() {
     }
 
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        
         writer.object();
         writer.key("name"); writer.value(_name);
         writer.key("columnName"); writer.value(_columnName);
@@ -46,6 +49,7 @@ public class TextSearchFacet implements Facet {
         writer.endObject();
     }
 
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         _name = o.getString("name");
         _columnName = o.getString("columnName");
@@ -73,6 +77,7 @@ public class TextSearchFacet implements Facet {
         }
     }
 
+    @Override
     public RowFilter getRowFilter(Project project) {
         if (_query == null || _query.length() == 0) {
             return null;
@@ -97,15 +102,18 @@ public class TextSearchFacet implements Facet {
         }        
     }
 
+    @Override
     public RecordFilter getRecordFilter(Project project) {
     	RowFilter rowFilter = getRowFilter(project);
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
+    @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         // nothing to do
     }
     
+    @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
     	// nothing to do
     }

@@ -101,17 +101,21 @@ public class RowReorderOperation extends AbstractOperation {
     		_indices = indices;
     	}
     	
+		@Override
 		public void start(Project project) {
 		}
 
+		@Override
 		public void end(Project project) {
 		}
 
+		@Override
 		public boolean visit(Project project, int rowIndex, Row row) {
 			_indices.add(rowIndex);
 			return false;
 		}
 
+		@Override
 		public boolean visit(Project project, Record record) {
 			for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
 				_indices.add(r);

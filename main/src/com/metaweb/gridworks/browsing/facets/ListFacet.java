@@ -58,7 +58,9 @@ public class ListFacet implements Facet {
     public ListFacet() {
     }
 
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
         
         writer.object();
         writer.key("name"); writer.value(_name);
@@ -96,6 +98,7 @@ public class ListFacet implements Facet {
         writer.endObject();
     }
 
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         _name = o.getString("name");
         _expression = o.getString("expression");
@@ -144,6 +147,7 @@ public class ListFacet implements Facet {
         _selectError = JSONUtilities.getBoolean(o, "selectError", false);
     }
 
+    @Override
     public RowFilter getRowFilter(Project project) {
         return 
             _eval == null || 
@@ -160,11 +164,13 @@ public class ListFacet implements Facet {
                     _invert);
     }
     
+    @Override
     public RecordFilter getRecordFilter(Project project) {
     	RowFilter rowFilter = getRowFilter(project);
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
+    @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             ExpressionNominalValueGrouper grouper = 
@@ -176,6 +182,7 @@ public class ListFacet implements Facet {
         }
     }
     
+    @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
             ExpressionNominalValueGrouper grouper = 

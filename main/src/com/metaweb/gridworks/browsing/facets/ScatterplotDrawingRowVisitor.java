@@ -87,14 +87,17 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         g2.setPaint(color);
     }
     
+    @Override
     public void start(Project project) {
     	// nothing to do
     }
     
+    @Override
     public void end(Project project) {
     	// nothing to do
     }
     
+    @Override
     public boolean visit(Project project, int rowIndex, Row row) {
         Cell cellx = row.getCell(col_x);
         Cell celly = row.getCell(col_y);
@@ -115,6 +118,7 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         return false;
     }
     
+    @Override
     public boolean visit(Project project, Record record) {
     	for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
     		visit(project, r, project.rows.get(r));

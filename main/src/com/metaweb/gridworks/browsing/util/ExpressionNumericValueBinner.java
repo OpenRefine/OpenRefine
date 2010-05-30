@@ -15,7 +15,6 @@ import com.metaweb.gridworks.model.Row;
  * from a given expression.
  */
 public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
-
     /*
      * Configuration
      */
@@ -45,14 +44,17 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
         bins = new int[_index.getBins().length];
     }
     
+    @Override
     public void start(Project project) {
     	// nothing to do
     }
     
+    @Override
     public void end(Project project) {
     	// nothing to do
     }
     
+    @Override
     public boolean visit(Project project, int rowIndex, Row row) {
         resetFlags();
         
@@ -64,6 +66,7 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
         return false;
     }
     
+    @Override
     public boolean visit(Project project, Record record) {
         resetFlags();
         

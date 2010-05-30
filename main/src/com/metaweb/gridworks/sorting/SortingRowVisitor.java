@@ -11,8 +11,7 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.sorting.Criterion.KeyMaker;
 
 public class SortingRowVisitor extends BaseSorter implements RowVisitor {
-
-    final protected RowVisitor 	_visitor;
+	final protected RowVisitor 	_visitor;
 	protected List<IndexedRow> 	_indexedRows;
 	
 	static protected class IndexedRow {
@@ -29,12 +28,14 @@ public class SortingRowVisitor extends BaseSorter implements RowVisitor {
 		_visitor = visitor;
 	}
 
+	@Override
 	public void start(Project project) {
 		int count = project.rows.size();
 		_indexedRows = new ArrayList<IndexedRow>(count);
 		_keys = new ArrayList<Object[]>(count);
 	}
 
+	@Override
 	public void end(Project project) {
 		_visitor.start(project);
 		
@@ -46,6 +47,7 @@ public class SortingRowVisitor extends BaseSorter implements RowVisitor {
 				return this;
 			}
 			
+			@Override
 			public int compare(IndexedRow o1, IndexedRow o2) {
 				return SortingRowVisitor.this.compare(project, o1.row, o1.index, o2.row, o2.index);
 			}
@@ -58,12 +60,16 @@ public class SortingRowVisitor extends BaseSorter implements RowVisitor {
 		_visitor.end(project);
 	}
 
+	@Override
 	public boolean visit(Project project, int rowIndex, Row row) {
 		_indexedRows.add(new IndexedRow(rowIndex, row));
 		return false;
 	}
 
-	protected Object makeKey(Project project, KeyMaker keyMaker, Criterion c, Object o, int index) {
+	@Override
+	protected Object makeKey(
+			Project project, KeyMaker keyMaker, Criterion c, Object o, int index) {
+		
 		return keyMaker.makeKey(project, (Row) o, index);
 	}
 }

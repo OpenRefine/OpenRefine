@@ -11,20 +11,21 @@ import com.metaweb.gridworks.model.Record;
 import com.metaweb.gridworks.sorting.Criterion.KeyMaker;
 
 public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
-
-    final protected RecordVisitor 	_visitor;
+	final protected RecordVisitor 	_visitor;
 	protected List<Record>	 		_records;
 	
 	public SortingRecordVisitor(RecordVisitor visitor) {
 		_visitor = visitor;
 	}
 
+	@Override
 	public void start(Project project) {
 		int count = project.recordModel.getRecordCount();
 		_records = new ArrayList<Record>(count);
 		_keys = new ArrayList<Object[]>(count);
 	}
 
+	@Override
 	public void end(Project project) {
 		_visitor.start(project);
 		
@@ -36,6 +37,7 @@ public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
 				return this;
 			}
 			
+			@Override
 			public int compare(Record o1, Record o2) {
 				return SortingRecordVisitor.this.compare(project, o1, o1.recordIndex, o2, o2.recordIndex);
 			}
@@ -48,12 +50,16 @@ public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
 		_visitor.end(project);
 	}
 
+	@Override
 	public boolean visit(Project project, Record record) {
 		_records.add(record);
 		return false;
 	}
 
-	protected Object makeKey(Project project, KeyMaker keyMaker, Criterion c, Object o, int index) {
+	@Override
+	protected Object makeKey(
+			Project project, KeyMaker keyMaker, Criterion c, Object o, int index) {
+		
 		return keyMaker.makeKey(project, (Record) o);
 	}
 }

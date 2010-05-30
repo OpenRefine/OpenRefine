@@ -59,6 +59,7 @@ public class Engine implements Jsonizable {
     
     public FilteredRows getAllRows() {
         return new FilteredRows() {
+			@Override
 			public void accept(Project project, RowVisitor visitor) {
 		    	try {
 		    		visitor.start(project);
@@ -99,6 +100,7 @@ public class Engine implements Jsonizable {
     
     public FilteredRecords getAllRecords() {
         return new FilteredRecords() {
+			@Override
 			public void accept(Project project, RecordVisitor visitor) {
 		    	try {
 		    		visitor.start(project);

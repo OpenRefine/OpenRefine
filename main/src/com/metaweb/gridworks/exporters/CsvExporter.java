@@ -19,31 +19,31 @@ import com.metaweb.gridworks.model.Row;
 import au.com.bytecode.opencsv.CSVWriter;
 
 
-public class CsvExporter implements Exporter {
+public class CsvExporter implements Exporter{
 
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
     char separator;
 
-    public CsvExporter() {
+    public CsvExporter(){
         separator = ','; //Comma separated-value is default
     }
 
-    public CsvExporter(char separator) {
+    public CsvExporter(char separator){
         this.separator = separator;
     }
 
-    public void export(Project project, Properties options, Engine engine, OutputStream outputStream) throws IOException {
+    @Override
+    public void export(Project project, Properties options, Engine engine, OutputStream outputStream)
+            throws IOException {
         throw new RuntimeException("Not implemented");
     }
 
+    @Override
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
-
         boolean printColumnHeader = true;
 
         if (options != null) {
-            String printColHead = options.getProperty("printColumnHeader");
-            if(printColHead != null)
-                printColumnHeader = !printColHead.toLowerCase().equals("false");
+            printColumnHeader = Boolean.parseBoolean(options.getProperty("printColumnHeader"));
         }
 
         RowVisitor visitor = new RowVisitor() {
@@ -82,10 +82,12 @@ public class CsvExporter implements Exporter {
                 return false;
             }
 
+            @Override
             public void start(Project project) {
                 // nothing to do
             }
 
+            @Override
             public void end(Project project) {
                 try {
                     csvWriter.close();
@@ -100,10 +102,12 @@ public class CsvExporter implements Exporter {
         filteredRows.accept(project, visitor);
     }
 
+    @Override
     public String getContentType() {
         return "application/x-unknown";
     }
 
+    @Override
     public boolean takeWriter() {
         return true;
     }

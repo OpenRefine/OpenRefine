@@ -15,7 +15,6 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class HtmlTableExporter implements Exporter {
-
     public String getContentType() {
         return "text/html";
     }
@@ -57,10 +56,12 @@ public class HtmlTableExporter implements Exporter {
                     return this;
                 }
                 
+                @Override
                 public void start(Project project) {
                 	// nothing to do
                 }
                 
+                @Override
                 public void end(Project project) {
                 	// nothing to do
                 }

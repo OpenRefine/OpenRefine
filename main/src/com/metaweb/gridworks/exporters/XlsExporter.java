@@ -22,7 +22,6 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class XlsExporter implements Exporter {
-
     public String getContentType() {
         return "application/xls";
     }
@@ -65,10 +64,12 @@ public class XlsExporter implements Exporter {
                     return this;
                 }
                 
+                @Override
                 public void start(Project project) {
                 	// nothing to do
                 }
                 
+                @Override
                 public void end(Project project) {
                 	// nothing to do
                 }

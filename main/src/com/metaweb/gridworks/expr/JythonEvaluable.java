@@ -15,17 +15,16 @@ import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
 public class JythonEvaluable implements Evaluable {
-    
     private static final String s_functionName = "___temp___";
     
     private static PythonInterpreter _engine; 
-    
     static {
         File libPath = new File("webapp/WEB-INF/lib/jython");
         if (libPath.exists()) {
             Properties props = new Properties();
             props.setProperty("python.path", libPath.getAbsolutePath());
-            PythonInterpreter.initialize(System.getProperties(), props, new String[] { "" });
+            
+            PythonInterpreter.initialize(System.getProperties(),props, new String[] { "" });
         }
         _engine = new PythonInterpreter();
     }

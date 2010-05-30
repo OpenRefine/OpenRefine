@@ -80,10 +80,12 @@ public class kNNClusterer extends Clusterer {
             }
         }
         
+        @Override
         public void start(Project project) {
         	// nothing to do
         }
         
+        @Override
         public void end(Project project) {
         	// nothing to do
         }
@@ -129,10 +131,12 @@ public class kNNClusterer extends Clusterer {
             _clusterer = new NGramClusterer(_distance, _blockingNgramSize);
         }
         
+        @Override
         public void start(Project project) {
         	// nothing to do
         }
         
+        @Override
         public void end(Project project) {
         	// nothing to do
         }

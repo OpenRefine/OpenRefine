@@ -276,6 +276,7 @@ public class ScatterplotFacet implements Facet {
         }
     }
 
+    @Override
     public RecordFilter getRecordFilter(Project project) {
     	RowFilter rowFilter = getRowFilter(project);
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);

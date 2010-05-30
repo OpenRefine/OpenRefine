@@ -58,10 +58,12 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         _cellIndex = cellIndex;
     }
     
+    @Override
     public void start(Project project) {
     	// nothing to do
     }
     
+    @Override
     public void end(Project project) {
     	// nothing to do
     }
@@ -84,6 +86,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         return false;
     }
     
+    @Override
     public boolean visit(Project project, Record record) {
     	hasError = false;
     	hasBlank = false;
@@ -161,10 +164,12 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
     
     public RowEvaluable getChoiceCountRowEvaluable() {
     	return new RowEvaluable() {
+			@Override
 			public Object eval(Project project, int rowIndex, Row row, Properties bindings) {
 		    	Object value = evalRow(project, rowIndex, row, bindings);
 		    	return getChoiceValueCountMultiple(value);
 			}
+    	
     	};
     }
     
