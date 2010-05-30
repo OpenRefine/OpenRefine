@@ -1,0 +1,3 @@
+#Wed May 26 15:13:15 PDT 2010
+eclipse.preferences.version=1
+validationExclusions=src/com/metaweb/gridworks/appengine/*ClientConnection*.java
