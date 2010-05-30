@@ -57,6 +57,9 @@ public class XmlImporter implements Importer {
             }
         }
 
+        if(recordPath == null)
+            return;
+
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
 
         XmlImportUtilities.importXml(pis, project, recordPath, rootColumnGroup);

@@ -1,11 +1,13 @@
 package com.metaweb.gridworks;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +20,11 @@ import com.metaweb.gridworks.commands.Command;
 
 public class GridworksServlet extends HttpServlet {
     
+    static private final String VERSION = "1.0";
+    
     private static final long serialVersionUID = 2386057901503517403L;
+    
+    private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
     
     static final private Map<String, Command> commands = new HashMap<String, Command>();
     
@@ -104,11 +110,12 @@ public class GridworksServlet extends HttpServlet {
         {"mqlwrite", "com.metaweb.gridworks.commands.freebase.MQLWriteCommand"},
     };
     
-    static {
-        registerCommands(commandNames);
+    public static String getVersion() {
+        return VERSION;
     }
     
     final static protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
+    
     static protected class AutoSaveTimerTask extends TimerTask {
         public void run() {
             try {
@@ -121,12 +128,21 @@ public class GridworksServlet extends HttpServlet {
         }
     }
 
+    protected ServletConfig config;
+    
     @Override
     public void init() throws ServletException {
-        super.init();
         logger.trace("> initialize");
         
-        ProjectManager.initialize();
+        String data = getInitParameter("gridworks.data");
+        
+        if (data == null) {
+            throw new ServletException("can't find servlet init config 'gridworks.data', I have to give up initializing");
+        }
+        
+        registerCommands(commandNames);
+        
+        ProjectManager.initialize(new File(data));
                 
         if (_timer == null) {
             _timer = new Timer("autosave");
@@ -149,6 +165,8 @@ public class GridworksServlet extends HttpServlet {
             ProjectManager.singleton.save(true); // complete save
             ProjectManager.singleton = null;
         }
+
+        this.config = null;
         
         super.destroy();
 
@@ -188,6 +206,26 @@ public class GridworksServlet extends HttpServlet {
         return slash > 0 ? commandName.substring(0, slash) : commandName;
     }
     
+    private File tempDir = null;
+    
+    public File getTempDir() { 
+        if (tempDir == null) {
+            File tempDir = (File) this.config.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
+            if (tempDir == null) {
+                throw new RuntimeException("This app server doesn't support temp directories");
+            }
+        }
+        return tempDir;
+    }
+    
+    public File getTempFile(String name) {
+        return new File(getTempDir(), name);
+    }
+
+    public String getConfiguration(String name, String def) {
+        return null;
+    }
+    
     /**
      * Register an array of commands
      * 
@@ -198,7 +236,7 @@ public class GridworksServlet extends HttpServlet {
      *            the second.
      * @return false if any commands failed to load
      */
-    static public boolean registerCommands(String[][] commands) {
+    private boolean registerCommands(String[][] commands) {
         boolean status = true;
         for (String[] command : commandNames) {
             String commandName = command[0];
@@ -206,8 +244,8 @@ public class GridworksServlet extends HttpServlet {
             logger.debug("Loading command " + commandName + " class: " + className);
             Command cmd;
             try {
-                // TODO: May need to use the servlet container's class loader here
-                cmd = (Command) Class.forName(className).newInstance();
+                cmd = (Command) this.getClass().getClassLoader().loadClass(className).newInstance();
+                cmd.init(this);
             } catch (InstantiationException e) {
                 logger.error("Failed to load command class " + className, e);
                 status = false;
@@ -235,8 +273,7 @@ public class GridworksServlet extends HttpServlet {
      *            object implementing the command
      * @return true if command was loaded and registered successfully
      */
-    static public boolean registerCommand(String name, 
-            Command commandObject) {
+    protected boolean registerCommand(String name, Command commandObject) {
         if (commands.containsKey(name)) {
             return false;
         }
@@ -245,7 +282,7 @@ public class GridworksServlet extends HttpServlet {
     }
 
     // Currently only for test purposes
-    static protected boolean unregisterCommand(String verb) {
+    protected boolean unregisterCommand(String verb) {
         return commands.remove(verb) != null;
     }
 }

@@ -16,7 +16,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.Gridworks;
+import com.metaweb.gridworks.GridworksServlet;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.model.Project;
@@ -68,7 +68,7 @@ public class History implements Jsonizable {
     }
     
     static public void writeOneChange(Writer writer, Change change, Properties options) throws IOException {
-        writer.write(Gridworks.getVersion()); writer.write('\n');
+        writer.write(GridworksServlet.getVersion()); writer.write('\n');
         writer.write(change.getClass().getName()); writer.write('\n');
             
         change.save(writer, options);

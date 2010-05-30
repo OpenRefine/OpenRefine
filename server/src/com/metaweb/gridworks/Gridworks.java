@@ -24,11 +24,14 @@ import org.apache.log4j.Level;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.codeberry.jdatapath.DataPath;
+import com.codeberry.jdatapath.JDataPathSystem;
 import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
 
 /**
@@ -37,38 +40,15 @@ import com.metaweb.util.threads.ThreadPoolExecutorAdapter;
  */
 public class Gridworks {
     
-    static private final String VERSION = "1.0";
     static private final String DEFAULT_HOST = "127.0.0.1";
     static private final int DEFAULT_PORT = 3333;
-    static private final int MAX_UPLOAD_SIZE = 1024 * 1024 * 1024;
-    
-    static private File tempDir;
+        
     static private int port;
     static private String host;
 
     final static Logger logger = LoggerFactory.getLogger("gridworks");
-    
-    public static String getVersion() {
-        return VERSION;
-    }
-    
-    public static File getTempFile(String name) {
-        return new File(tempDir, name);
-    }
-
-    public static File getTempDir() {
-        return tempDir;
-    }
-    
-    public static int getMaxUploadSize() {
-        return Configurations.getInteger("gridworks.max_upload_size",MAX_UPLOAD_SIZE);
-    }
-    
-    public static String getFullHost() {
-        return host + ":" + port;
-    }
-    
-    public static void main(String[] args) throws Exception  {
+        
+    public static void main(String[] args) throws Exception {
         
         // tell jetty to use SLF4J for logging instead of its own stuff
         System.setProperty("VERBOSE","false");
@@ -88,9 +68,6 @@ public class Gridworks {
         
         // set the log verbosity level
         org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("gridworks.verbosity","info")));
-
-        tempDir = new File(Configurations.get("gridworks.temp","temp"));
-        if (!tempDir.exists()) tempDir.mkdirs();
 
         port = Configurations.getInteger("gridworks.port",DEFAULT_PORT);
         host = Configurations.get("gridworks.host",DEFAULT_HOST);
@@ -117,7 +94,8 @@ public class Gridworks {
         
         // hook up the signal handlers
         Runtime.getRuntime().addShutdownHook(
-                new Thread(new ShutdownSignalHandler(server)));
+            new Thread(new ShutdownSignalHandler(server))
+        );
  
         server.join();
     }
@@ -178,7 +156,15 @@ class GridworksServer extends Server {
             scanForUpdates(contextRoot, context);
         }
         
+        // start the server
         this.start();
+        
+        // inject configuration parameters in the servlets
+        // NOTE: this is done *after* starting the server because jetty might override the init
+        // parameters if we set them in the webapp context upon reading the web.xml file
+        ServletHolder servlet = context.getServletHandler().getServlet("gridworks");
+        servlet.setInitParameter("gridworks.data", getDataDir());
+        servlet.doStart();
     }
     
     @Override
@@ -194,7 +180,7 @@ class GridworksServer extends Server {
         }
     }
         
-    private void scanForUpdates(final File contextRoot, final WebAppContext context) {
+    static private void scanForUpdates(final File contextRoot, final WebAppContext context) {
         List<File> scanList = new ArrayList<File>();
 
         scanList.add(new File(contextRoot, "WEB-INF/web.xml"));
@@ -225,7 +211,7 @@ class GridworksServer extends Server {
         scanner.start();
     }
     
-    private void findFiles(final String extension, File baseDir, final Collection<File> found) {
+    static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
         baseDir.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
                 if (pathname.isDirectory()) {
@@ -236,6 +222,103 @@ class GridworksServer extends Server {
                 return false;
             }
         });
+    }
+    
+    static private String getDataDir() {
+        
+        String data_dir = Configurations.get("gridworks.data_dir");
+        if (data_dir != null) {
+            return data_dir;
+        }
+        
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("windows")) {
+            try {
+                // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
+                // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
+                // so we're using a library that uses JNI to ask directly the win32 APIs, 
+                // it's not elegant but it's the safest bet.
+                
+                DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
+                File data = new File(fixWindowsUnicodePath(localDataPath.getPath()));
+                data.mkdirs();
+                return data.getAbsolutePath();
+            } catch (Error e) {
+                /*
+                 *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
+                 *  we include is compiled for 32-bit. In this case, we just have to dig up
+                 *  environment variables and try our best to find a user-specific path.
+                 */
+                
+                logger.warn("Failed to use jdatapath to detect user data path: resorting to environment variables");
+                
+                File parentDir = null;
+                String appData = System.getenv("APPDATA"); 
+                if (appData != null && appData.length() > 0) {
+                    // e.g., C:\Users\[userid]\AppData\Roaming
+                    parentDir = new File(appData);
+                } else {
+                    String userProfile = System.getenv("USERPROFILE");
+                    if (userProfile != null && userProfile.length() > 0) {
+                        // e.g., C:\Users\[userid]
+                        parentDir = new File(userProfile);
+                    }
+                }
+
+                if (parentDir == null) {
+                    parentDir = new File(".");
+                }
+                
+                File data = new File(parentDir, "Gridworks");
+                data.mkdirs();
+                
+                return data.getAbsolutePath();
+            }
+        } else if (os.contains("mac os x")) {
+            // on macosx, use "~/Library/Application Support"
+            String home = System.getProperty("user.home");
+            String data_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks"; 
+            File data = new File(data_home);
+            data.mkdirs();
+            return data.getAbsolutePath();
+        } else { // most likely a UNIX flavor
+            // start with the XDG environment
+            // see http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+            String data_home = System.getenv("XDG_DATA_HOME");
+            if (data_home == null) { // if not found, default back to ~/.local/share
+                String home = System.getProperty("user.home");
+                if (home == null) home = ".";
+                data_home = home + "/.local/share";
+            }
+            File data = new File(data_home + "/gridworks");
+            data.mkdirs();
+            return data.getAbsolutePath();
+        }
+    }
+    
+    /**
+     * For Windows file paths that contain user IDs with non ASCII characters,
+     * those characters might get replaced with ?. We need to use the environment
+     * APPDATA value to substitute back the original user ID.
+     */
+    static private String fixWindowsUnicodePath(String path) {
+        int q = path.indexOf('?');
+        if (q < 0) {
+            return path;
+        }
+        int pathSep = path.indexOf(File.separatorChar, q);
+        
+        String goodPath = System.getenv("APPDATA");
+        if (goodPath == null || goodPath.length() == 0) {
+            goodPath = System.getenv("USERPROFILE");
+            if (!goodPath.endsWith(File.separator)) {
+                goodPath = goodPath + File.separator;
+            }
+        }
+        
+        int goodPathSep = goodPath.indexOf(File.separatorChar, q);
+        
+        return path.substring(0, q) + goodPath.substring(q, goodPathSep) + path.substring(pathSep);
     }
     
 }

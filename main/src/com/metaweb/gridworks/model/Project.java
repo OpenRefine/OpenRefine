@@ -19,7 +19,7 @@ import java.util.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.Gridworks;
+import com.metaweb.gridworks.GridworksServlet;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.history.History;
@@ -128,7 +128,7 @@ public class Project {
     }
 
     protected void saveToWriter(Writer writer, Properties options) throws IOException {
-        writer.write(Gridworks.getVersion()); writer.write('\n');
+        writer.write(GridworksServlet.getVersion()); writer.write('\n');
 
         writer.write("columnModel=\n"); columnModel.save(writer, options);
         writer.write("history=\n"); history.save(writer, options);

@@ -16,6 +16,7 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.metaweb.gridworks.GridworksServlet;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
@@ -33,6 +34,12 @@ public abstract class Command {
 
     final static protected Logger logger = LoggerFactory.getLogger("command");
 
+    protected GridworksServlet servlet;
+    
+    public void init(GridworksServlet servlet) {
+        this.servlet = servlet;
+    }
+    
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 

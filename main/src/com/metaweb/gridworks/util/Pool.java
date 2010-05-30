@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.Gridworks;
+import com.metaweb.gridworks.GridworksServlet;
 import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.ReconCandidate;
@@ -59,7 +59,7 @@ public class Pool implements Jsonizable {
     }
     
     public void save(Writer writer) throws IOException {
-        writer.write(Gridworks.getVersion()); writer.write('\n');
+        writer.write(GridworksServlet.getVersion()); writer.write('\n');
 
         Properties options = new Properties();
         options.setProperty("mode", "save");

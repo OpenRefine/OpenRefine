@@ -40,21 +40,22 @@ public class GridworksServletTests {
 
     @BeforeMethod
     public void SetUp() {
-        SUT = new GridworksServletStub();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         command = mock(Command.class);
 
-        GridworksServletStub.InsertCommand(TEST_COMMAND_NAME,command); //inject mock into command container
+        SUT = new GridworksServletStub();
+        SUT.insertCommand(TEST_COMMAND_NAME,command); //inject mock into command container
     }
 
     @AfterMethod
     public void TearDown() {
+        SUT.removeCommand(TEST_COMMAND_NAME); //remove mock to clean command container
         SUT = null;
+        
         request = null;
         response = null;
         command = null;
-        GridworksServletStub.RemoveCommand(TEST_COMMAND_NAME); //remove mock to clean command container
     }
     
     //-------------------AutoSaveTimerTask tests-----------

@@ -19,7 +19,7 @@ public class JythonEvaluable implements Evaluable {
     
     private static PythonInterpreter _engine; 
     static {
-        File libPath = new File("lib/jython");
+        File libPath = new File("webapp/WEB-INF/lib/jython");
         if (libPath.exists()) {
             Properties props = new Properties();
             props.setProperty("python.path", libPath.getAbsolutePath());

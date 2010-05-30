@@ -8,7 +8,6 @@
     <servlet>
         <servlet-name>gridworks</servlet-name>
         <servlet-class>com.metaweb.gridworks.GridworksServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>

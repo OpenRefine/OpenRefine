@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
@@ -367,7 +366,7 @@ public class CreateProjectCommand extends Command {
     }
 
     private File save(InputStream is) throws IOException {
-        File temp = Gridworks.getTempFile(Long.toString(System.currentTimeMillis()));
+        File temp = this.servlet.getTempFile(Long.toString(System.currentTimeMillis()));
         temp.deleteOnExit();
         IOUtils.copy(is,temp);
         is.close();

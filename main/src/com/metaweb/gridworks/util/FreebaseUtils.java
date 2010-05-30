@@ -27,7 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.metaweb.gridworks.Gridworks;
+import com.metaweb.gridworks.GridworksServlet;
 import com.metaweb.gridworks.oauth.Credentials;
 import com.metaweb.gridworks.oauth.OAuthUtilities;
 import com.metaweb.gridworks.oauth.Provider;
@@ -59,7 +59,7 @@ public class FreebaseUtils {
         OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
         
         HttpGet httpRequest = new HttpGet(getUserInfoURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
         
         // this is required by the Metaweb API to avoid XSS
         httpRequest.setHeader("X-Requested-With", "1");
@@ -102,7 +102,7 @@ public class FreebaseUtils {
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
         HttpPost httpRequest = new HttpPost(getMQLReadURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
         httpRequest.setEntity(entity);
 
         // this is required by the Metaweb API to avoid XSS
@@ -128,7 +128,7 @@ public class FreebaseUtils {
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
         HttpPost httpRequest = new HttpPost(getMQLWriteURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
         httpRequest.setEntity(entity);
 
         // this is required by the Metaweb API to avoid XSS
@@ -176,7 +176,7 @@ public class FreebaseUtils {
                 UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
     
                 HttpPost httpRequest = new HttpPost(FREEQ_URL);
-                httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + Gridworks.getVersion());
+                httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
                 httpRequest.setEntity(entity);
                 
                 HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));

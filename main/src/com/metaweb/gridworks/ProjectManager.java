@@ -22,8 +22,6 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codeberry.jdatapath.DataPath;
-import com.codeberry.jdatapath.JDataPathSystem;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
 
@@ -58,112 +56,13 @@ public class ProjectManager {
     
     static public ProjectManager singleton;
     
-    static public synchronized void initialize() {
+    static public synchronized void initialize(File dir) {
         if (singleton == null) {
-            File dir = getProjectLocation();
             logger.info("Using workspace directory: {}", dir.getAbsolutePath());
-            
             singleton = new ProjectManager(dir);
         }
     }
-    
-    static protected File getProjectLocation() {
-        String data_dir = Configurations.get("gridworks.data_dir");
-        if (data_dir != null) {
-            return new File(data_dir);
-        }
         
-        String os = Configurations.get("os.name").toLowerCase();
-        if (os.contains("windows")) {
-            try {
-                // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
-                // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
-                // so we're using a library that uses JNI to ask directly the win32 APIs, 
-                // it's not elegant but it's the safest bet.
-                
-                DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
-                File data = new File(fixWindowsUnicodePath(localDataPath.getPath()));
-                data.mkdirs();
-                return data;
-            } catch (Error e) {
-                /*
-                 *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
-                 *  we include is compiled for 32-bit. In this case, we just have to dig up
-                 *  environment variables and try our best to find a user-specific path.
-                 */
-                
-                logger.warn("Failed to use jdatapath to detect user data path: resorting to environment variables");
-                
-                File parentDir = null;
-                {
-                    String appData = System.getenv("APPDATA"); 
-                    if (appData != null && appData.length() > 0) {
-                        // e.g., C:\Users\[userid]\AppData\Roaming
-                        parentDir = new File(appData);
-                    } else {
-                        String userProfile = System.getenv("USERPROFILE");
-                        if (userProfile != null && userProfile.length() > 0) {
-                            // e.g., C:\Users\[userid]
-                            parentDir = new File(userProfile);
-                        }
-                    }
-                }
-                if (parentDir == null) {
-                    parentDir = new File(".");
-                }
-                
-                File data = new File(parentDir, "Gridworks");
-                data.mkdirs();
-                
-                return data;
-            }
-        } else if (os.contains("mac os x")) {
-            // on macosx, use "~/Library/Application Support"
-            String home = System.getProperty("user.home");
-            String data_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks"; 
-            File data = new File(data_home);
-            data.mkdirs();
-            return data;
-        } else { // most likely a UNIX flavor
-            // start with the XDG environment
-            // see http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
-            String data_home = System.getenv("XDG_DATA_HOME");
-            if (data_home == null) { // if not found, default back to ~/.local/share
-                String home = System.getProperty("user.home");
-                if (home == null) home = ".";
-                data_home = home + "/.local/share";
-            }
-            File data = new File(data_home + "/gridworks");
-            data.mkdirs();
-            return data;
-        }
-    }
-    
-    /**
-     * For Windows file paths that contain user IDs with non ASCII characters,
-     * those characters might get replaced with ?. We need to use the environment
-     * APPDATA value to substitute back the original user ID.
-     */
-    static protected String fixWindowsUnicodePath(String path) {
-        int q = path.indexOf('?');
-        if (q < 0) {
-            return path;
-        }
-        int pathSep = path.indexOf(File.separatorChar, q);
-        
-        String goodPath = System.getenv("APPDATA");
-        if (goodPath == null || goodPath.length() == 0) {
-            goodPath = System.getenv("USERPROFILE");
-            if (!goodPath.endsWith(File.separator)) {
-                goodPath = goodPath + File.separator;
-            }
-        }
-        
-        int goodPathSep = goodPath.indexOf(File.separatorChar, q);
-        
-        return path.substring(0, q) + goodPath.substring(q, goodPathSep) + path.substring(pathSep);
-    }
-    
     private ProjectManager(File dir) {
         _workspaceDir = dir;
         _workspaceDir.mkdirs();

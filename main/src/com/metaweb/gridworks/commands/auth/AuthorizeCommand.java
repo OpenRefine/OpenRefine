@@ -2,6 +2,8 @@ package com.metaweb.gridworks.commands.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -10,13 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 
-import com.metaweb.gridworks.Gridworks;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.oauth.Credentials;
 import com.metaweb.gridworks.oauth.OAuthUtilities;
 import com.metaweb.gridworks.oauth.Provider;
 
-public class AuthorizeCommand  extends Command {
+public class AuthorizeCommand extends Command {
     
     private static final String OAUTH_VERIFIER_PARAM = "oauth_verifier";
     
@@ -124,7 +125,21 @@ public class AuthorizeCommand  extends Command {
     
     private String getBaseURL(HttpServletRequest request, Provider provider) {
         String host = request.getHeader("host");
-        if (host == null) host = Gridworks.getFullHost();
+        if (host == null) {
+            String referrer = request.getHeader("referer");
+            if (referrer != null) {
+                URI url;
+                try {
+                    url = new URI(referrer);
+                    int port = url.getPort();
+                    host = url.getHost() + ((port > -1) ? ":" + url.getPort() : "");
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException("referrer '" + referrer + "' can't be parsed as a URL");
+                }
+            } else {
+                throw new RuntimeException("neither the 'host' nor 'referer' headers were present in the HTTP response, I can't determine what URL gridworks is listening to.");
+            }
+        }
         return "http://" + host + "/command/authorize/" + provider.getHost();
     }
 }
