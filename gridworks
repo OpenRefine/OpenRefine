@@ -508,9 +508,9 @@ ui_test() {
     sleep 3
     echo ""
     
-    echo "Starting Windmill... (press COMMAND-c or CTRL-c to exit)"
+    echo "Starting Windmill..."
     if [ -z "$INTERACTIVE" ]; then
-        "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/windmill/js exit
+        "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/client/src exit
     else
         "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/
     fi

@@ -14,6 +14,7 @@ var test_facets = new function() {
     test = newTest();
     action (test, "click",        { link:    "Food" });
     wait   (test, "forPageLoad",  { timeout: "20000" });
+    wait   (test, "forElement", { jquery: '(".viewPanel-summary-row-count")[0]' });
     assert (test, "rowCount", "7413" );
     this.test_open_project = test;
 
@@ -40,7 +41,6 @@ var test_facets = new function() {
     // filter down to BEEF
     test = newTest();
     action (test, "click",      { jquery: '("a.facet-choice-label")[0]' });
-    wait   (test, "forElement", { jquery: '(".viewPanel-summary-row-count")[0]' });
     assert (test, "rowCount", "457");
     this.test_fitler_text_facet = test;
         
@@ -50,10 +50,10 @@ var test_facets = new function() {
     action (test, "mouseOver",   { jquery: '("td:contains(\'Facet\')")[0]' });
     wait   (test, "forMenuItem", {   name: 'Numeric Facet' });
     action (test, "click",       { jquery: '(".menu-item:contains(\'Numeric Facet\')")[0]' });
-    // TODO: What to wait on, to know we're ready to do the following assert? Talk to dfhuynh.
-    //assert (test, function() {
-    //    jum.assertTrue($(".facet-panel span:contains(\'Water\')").length > 0);
-    //});
+    wait   (test, "forAjaxEnd");
+    assert (test, function() {
+        jum.assertTrue($(".facet-panel span:contains('Water')").length > 0);
+    });
     this.test_create_numeric_facet = test;
 
     // filter out BEEF with lower water content
@@ -61,7 +61,7 @@ var test_facets = new function() {
     wait   (test, "forAjaxEnd"); 
     wait   (test, "forElement",   { jquery: '((".slider-widget-draggable.left"))[0]' }),
     action (test, "dragDropElem", { jquery: '((".slider-widget-draggable.left"))[0]', pixels: '150, 0' });
-    // TODO: What to wait on, to know we're ready to do the following assert? Talk to dfhuynh.
+    wait   (test, "forAjaxEnd"); // <--- FIXME for some reason the range faceting doesn't seem to be triggering that
     //assert (test, "rowCount", "153");
     this.test_filter_numeric_facet = test;
     
