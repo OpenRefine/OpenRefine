@@ -1,22 +1,24 @@
-package com.metaweb.gridworks.tests.importers;
+package com.metaweb.gridworks.tests;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
 
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
-/**
- * Helper methods for Importer testing
- *
- */
-public class TestTools {
-    final static Logger logger = LoggerFactory.getLogger("Common");
+public class GridworksTest {
 
-    public static void AssertGridCreated(Project project, int numCols, int numRows){
+    protected Logger logger;
+
+    @BeforeSuite
+    public void init() {
+        System.setProperty("log4j.configuration", "tests.log4j.properties");
+    }
+            
+    public static void assertProjectCreated(Project project, int numCols, int numRows) {
         Assert.assertNotNull(project);
         Assert.assertNotNull(project.columnModel);
         Assert.assertNotNull(project.columnModel.columns);
@@ -25,8 +27,8 @@ public class TestTools {
         Assert.assertEquals(project.rows.size(), numRows);
     }
 
-    public static void PrintProject(Project project){
-        //some quick and dirty debugging
+    public void log(Project project) {
+        // some quick and dirty debugging
         StringBuilder sb = new StringBuilder();
         for(Column c : project.columnModel.columns){
             sb.append(c.getName());

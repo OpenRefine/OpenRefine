@@ -3,20 +3,25 @@ package com.metaweb.gridworks.tests.importers;
 import java.io.StringReader;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.importers.RdfTripleImporter;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.tests.GridworksTest;
 
 
-public class RdfTripleImporterTests {
-    // logging
-    final static protected Logger logger = LoggerFactory.getLogger("RdfImporterTests");
-
+public class RdfTripleImporterTests extends GridworksTest {
+    
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
+    
+    
     //System Under Test
     RdfTripleImporter SUT = null;
     Project project = null;

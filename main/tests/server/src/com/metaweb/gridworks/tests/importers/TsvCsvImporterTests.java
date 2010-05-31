@@ -1,31 +1,34 @@
 package com.metaweb.gridworks.tests.importers;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.importers.TsvCsvImporter;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.tests.GridworksTest;
 
-
-public class TsvCsvImporterTests {
- // logging
-    final static protected Logger logger = LoggerFactory.getLogger("TsvCsvImporterTests");
-
+public class TsvCsvImporterTests extends GridworksTest {
+    
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
+    
     //constants
     String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
 

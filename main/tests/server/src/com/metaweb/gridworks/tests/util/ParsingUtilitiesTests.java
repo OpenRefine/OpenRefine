@@ -2,17 +2,23 @@ package com.metaweb.gridworks.tests.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.metaweb.gridworks.tests.GridworksTest;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class ParsingUtilitiesTests {
-    final static protected Logger logger = LoggerFactory.getLogger("ParsingUtilitiesTests");
-
+public class ParsingUtilitiesTests extends GridworksTest {
+    
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
+    
     //--------------evaluateJsonStringToObject tests-----------------------
+
     @Test
     public void evaluateJsonStringToObjectRegressionTest(){
         try {

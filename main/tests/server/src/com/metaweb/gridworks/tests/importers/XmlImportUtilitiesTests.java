@@ -11,12 +11,11 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.importers.XmlImportUtilities.ImportColumn;
@@ -24,11 +23,16 @@ import com.metaweb.gridworks.importers.XmlImportUtilities.ImportColumnGroup;
 import com.metaweb.gridworks.importers.XmlImportUtilities.ImportRecord;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.tests.GridworksTest;
 
 
-public class XmlImportUtilitiesTests {
-    final static Logger logger = LoggerFactory.getLogger("XmlImporterUtilitiesTests");
-
+public class XmlImportUtilitiesTests extends GridworksTest {
+    
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
+    
     //dependencies
     Project project;
     XMLStreamReader parser;
@@ -41,7 +45,6 @@ public class XmlImportUtilitiesTests {
 
     @BeforeMethod
     public void SetUp(){
-        org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel("trace"));
         SUT = new XmlImportUtilitiesStub();
         project = new Project();
         columnGroup = new ImportColumnGroup();
@@ -150,15 +153,15 @@ public class XmlImportUtilitiesTests {
         String[] recordPath = new String[]{"library","book"};
         XmlImportUtilitiesStub.importXml(inputStream, project, recordPath, columnGroup );
 
-        TestTools.PrintProject(project);
-        TestTools.AssertGridCreated(project, 0, 6);
+        log(project);
+        assertProjectCreated(project, 0, 6);
+
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         //TODO
     }
 
     @Test
-    public void createColumnsFromImportTest(){
-
+    public void createColumnsFromImportTest() {
         ImportColumnGroup columnGroup = new ImportColumnGroup();
         ImportColumn ic1 = new ImportColumn();
         ic1.name = "hello";
@@ -175,8 +178,8 @@ public class XmlImportUtilitiesTests {
         columnGroup.columns.put("b", ic2);
         columnGroup.subgroups.put("e", subGroup);
         XmlImportUtilitiesStub.createColumnsFromImport(project, columnGroup);
-        TestTools.PrintProject(project);
-        TestTools.AssertGridCreated(project, 4, 0);
+        log(project);
+        assertProjectCreated(project, 4, 0);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "world");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "hello");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "bar");
@@ -201,8 +204,9 @@ public class XmlImportUtilitiesTests {
             Assert.fail();
         }
 
-        TestTools.PrintProject(project);
-        TestTools.AssertGridCreated(project, 0, 6);
+        log(project);
+        assertProjectCreated(project, 0, 6);
+        
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         //TODO
     }
@@ -218,7 +222,7 @@ public class XmlImportUtilitiesTests {
         } catch (XMLStreamException e) {
             Assert.fail();
         }
-        TestTools.PrintProject(project);
+        log(project);
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);
@@ -239,7 +243,7 @@ public class XmlImportUtilitiesTests {
         } catch (XMLStreamException e) {
             Assert.fail();
         }
-        TestTools.PrintProject(project);
+        log(project);
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 2);
         Row row = project.rows.get(0);
@@ -262,7 +266,7 @@ public class XmlImportUtilitiesTests {
         } catch (XMLStreamException e) {
             Assert.fail();
         }
-        TestTools.PrintProject(project);
+        log(project);
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);
@@ -286,7 +290,7 @@ public class XmlImportUtilitiesTests {
         } catch (XMLStreamException e) {
             Assert.fail();
         }
-        TestTools.PrintProject(project);
+        log(project);
         Assert.fail();
         //TODO need to verify 'record' was set correctly which we can't do as ImportRecord is an internal class
     }

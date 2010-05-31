@@ -1,27 +1,31 @@
 package com.metaweb.gridworks.tests.importers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.mock;
-
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.importers.ImporterUtilities;
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
+import com.metaweb.gridworks.tests.GridworksTest;
 
-public class ImporterUtilitiesTests {
-    // logging
-    final static protected Logger logger = LoggerFactory.getLogger("ImporterUtilitiesTests");
+public class ImporterUtilitiesTests extends GridworksTest {
+    
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
 
     @Test(enabled=false)
     public void parseCellValueWithText(){

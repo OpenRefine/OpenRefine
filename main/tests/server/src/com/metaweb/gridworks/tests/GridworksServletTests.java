@@ -11,19 +11,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.metaweb.gridworks.commands.Command;
 
-public class GridworksServletTests {
-    // logging
-    final static protected Logger logger = LoggerFactory.getLogger("GridworksServletTests");
-
+public class GridworksServletTests extends GridworksTest {
+    
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
+        
     //System under test
     GridworksServletStub SUT = null;
 

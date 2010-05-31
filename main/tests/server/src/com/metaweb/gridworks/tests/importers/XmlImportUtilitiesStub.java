@@ -8,8 +8,8 @@ import javax.xml.stream.XMLStreamReader;
 import com.metaweb.gridworks.importers.XmlImportUtilities;
 import com.metaweb.gridworks.model.Project;
 
-
-public class XmlImportUtilitiesStub extends XmlImportUtilities{
+public class XmlImportUtilitiesStub extends XmlImportUtilities {
+    
     public List<String> detectRecordElementWrapper(XMLStreamReader parser, String tag) throws XMLStreamException{
         return super.detectRecordElement(parser, tag);
     }
