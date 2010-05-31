@@ -1,5 +1,6 @@
 .DS_Store
 build/
+dist/
 server/classes/
 main/webapp/WEB-INF/classes/
 main/tests/server/classes/

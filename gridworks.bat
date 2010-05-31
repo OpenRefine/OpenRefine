@@ -140,14 +140,9 @@ set GRIDWORKS_HOST=127.0.0.1
 :gotHOST
 set OPTS=%OPTS% -Dgridworks.host=%GRIDWORKS_HOST%
 
-if not "%GRIDWORKS_WEBAPP%" == "" goto gotHost
-set GRIDWORKS_WEBAPP=main\webapp
-:gotHOST
-set OPTS=%OPTS% -Dgridworks.webapp=%GRIDWORKS_WEBAPP%
-
-if not "%GRIDWORKS_BUILD_DIR%" == "" goto gotBuildDir
-set GRIDWORKS_BUILD_DIR=server\build
-:gotBuildDir
+if not "%GRIDWORKS_CLASSES_DIR%" == "" goto gotClassesDir
+set GRIDWORKS_CLASSES_DIR=server\classes
+:gotClassesDir
 
 if not "%GRIDWORKS_LIB_DIR%" == "" goto gotLibDir
 set GRIDWORKS_LIB_DIR=server\lib
@@ -163,7 +158,7 @@ if ""%ACTION%"" == ""distclean"" goto doAnt
 if ""%ACTION%"" == ""run"" goto doRun
 
 :doRun
-set CLASSPATH="%GRIDWORKS_BUILD_DIR%\classes;%GRIDWORKS_LIB_DIR%\*"
+set CLASSPATH="%GRIDWORKS_CLASSES_DIR%;%GRIDWORKS_LIB_DIR%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%GRIDWORKS_LIB_DIR%/native/windows com.metaweb.gridworks.Gridworks
 goto end
 
@@ -180,7 +175,7 @@ echo.
 echo   http://bit.ly/1c2gkR
 echo.
 :gotAntHome
-"%ANT_HOME%\bin\ant.bat" -f build.xml -Dbuild.dir="%GRIDWORKS_BUILD_DIR%" %ACTION%
+"%ANT_HOME%\bin\ant.bat" -f build.xml %ACTION%
 goto end
 
 :end

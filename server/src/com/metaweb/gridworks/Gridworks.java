@@ -132,17 +132,23 @@ class GridworksServer extends Server {
         connector.setStatsOn(false);
         this.addConnector(connector);
 
-        final File contextRoot = new File(Configurations.get("gridworks.webapp","webapp"));
-        final String contextPath = Configurations.get("gridworks.context_path","/");
+        File webapp = new File(Configurations.get("gridworks.webapp","main/webapp"));
 
-        File webXml = new File(contextRoot, "WEB-INF/web.xml");
-        if (!webXml.isFile()) {
-            logger.warn("Warning: Failed to find web application. Could not find 'web.xml' at '" + webXml.getAbsolutePath() + "'");
-            System.exit(-1);
+        if (!isWebapp(webapp)) {
+            webapp = new File("main/webapp");
+            if (!isWebapp(webapp)) {
+                webapp = new File("webapp");
+                if (!isWebapp(webapp)) {
+                    logger.warn("Warning: Failed to find web application at '" + webapp.getAbsolutePath() + "'");
+                    System.exit(-1);
+                }
+            }
         }
 
-        logger.info("Initializing context: '" + contextPath + "' from '" + contextRoot.getAbsolutePath() + "'");
-        WebAppContext context = new WebAppContext(contextRoot.getAbsolutePath(), contextPath);
+        final String contextPath = Configurations.get("gridworks.context_path","/");
+        
+        logger.info("Initializing context: '" + contextPath + "' from '" + webapp.getAbsolutePath() + "'");
+        WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(1048576);
         //context.setCopyWebDir(false);
         //context.setDefaultsDescriptor(null);
@@ -153,7 +159,7 @@ class GridworksServer extends Server {
 
         // Enable context autoreloading
         if (Configurations.getBoolean("gridworks.autoreloading",false)) {
-            scanForUpdates(contextRoot, context);
+            scanForUpdates(webapp, context);
         }
         
         // start the server
@@ -180,6 +186,13 @@ class GridworksServer extends Server {
         }
     }
         
+    static private boolean isWebapp(File dir) {
+        if (dir == null) return false;
+        if (!dir.exists() || !dir.canRead()) return false;
+        File webXml = new File(dir, "WEB-INF/web.xml");
+        return webXml.exists() && webXml.canRead();
+    }
+    
     static private void scanForUpdates(final File contextRoot, final WebAppContext context) {
         List<File> scanList = new ArrayList<File>();
 

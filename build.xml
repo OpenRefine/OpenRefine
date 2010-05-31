@@ -208,14 +208,14 @@
           <config 
                headerType="console" 
                outfile="${windows.dir}/Gridworks.exe" 
-               jarPath="lib/${fullname}-server.jar" 
+               jarPath="server/lib/${fullname}-server.jar" 
                dontWrapJar="true"
                icon="${graphics.dir}/icon/gridworks.ico">
             <classPath mainClass="com.metaweb.gridworks.Gridworks">
-                <cp>lib/*.jar</cp>
+                <cp>server/lib/*.jar</cp>
             </classPath>
             <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
-                <opt>-Djava.library.path=lib/native/windows -Dgridworks.version=${revision}</opt>
+                <opt>-Djava.library.path=server/lib/native/windows -Dgridworks.version=${revision}</opt>
             </jre>
             <versionInfo
                 fileVersion="${full_version}"
@@ -231,13 +231,13 @@
             />
           </config>
         </launch4j>     
-        <copy file="${build.dir}/${fullname}-server.jar" tofile="${windows.dir}/${fullname}-server.jar"/>
-        <copy todir="${windows.dir}/lib">
+        <copy file="${build.dir}/${fullname}-server.jar" tofile="${windows.dir}/server/lib/${fullname}-server.jar"/>
+        <copy todir="${windows.dir}/server/lib">
             <fileset dir="${server.lib.dir}">
                 <include name="**/*.jar"/>
             </fileset>
         </copy>
-        <copy todir="${windows.dir}/lib/native/windows">
+        <copy todir="${windows.dir}/server/lib/native/windows">
             <fileset dir="${server.lib.dir}/native/windows">
                 <include name="*.dll"/>
             </fileset>
@@ -257,6 +257,7 @@
 
         <copy file="${conf.dir}/gridworks.l4j.ini" tofile="${windows.dir}/gridworks.l4j.ini"/>
         <copy file="${basedir}/gridworks.bat" tofile="${windows.dir}/gridworks.bat"/>
+        <copy file="${basedir}/gridworks.ini" tofile="${windows.dir}/gridworks.ini"/>
         <copy file="${basedir}/README.txt" tofile="${windows.dir}/README.txt"/>
         <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
         
@@ -274,7 +275,7 @@
 
         <copy file="${build.dir}/${fullname}-server.jar" tofile="${linux.dir}/server/lib/${fullname}-server.jar"/>
 
-        <copy todir="${linux.dir}/main/webapp">
+        <copy todir="${linux.dir}/webapp">
             <fileset dir="${built.webapp.dir}">
                 <include name="**"/>
             </fileset>
