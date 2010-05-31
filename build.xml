@@ -121,7 +121,7 @@
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
     </target>
 
-    <target name="build_tests" depends="build_webapp">
+    <target name="build_tests" depends="build_webapp, build_server">
         <mkdir dir="${server.tests.classes.dir}" />
         <javac srcdir="${server.tests.src.dir}" destdir="${server.tests.classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="tests.class.path" />
