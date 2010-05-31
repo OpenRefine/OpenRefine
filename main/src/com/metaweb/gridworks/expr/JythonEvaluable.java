@@ -15,17 +15,32 @@ import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
 public class JythonEvaluable implements Evaluable {
+    
     private static final String s_functionName = "___temp___";
     
     private static PythonInterpreter _engine; 
+    
+    // FIXME(SM): this initialization logic depends on the fact that the JVM's 
+    // current working directory is the root of the Gridworks distributions
+    // or the development checkouts. While this works in practice, it would
+    // be preferable to have a more reliable address space, but since we
+    // don't have access to the servlet context from this class this is
+    // the best we can do for now.
     static {
         File libPath = new File("webapp/WEB-INF/lib/jython");
-        if (libPath.exists()) {
+        if (!libPath.exists() && !libPath.canRead()) {
+            libPath = new File("main/webapp/WEB-INF/lib/jython");
+            if (!libPath.exists() && !libPath.canRead()) {
+                libPath = null;
+            }
+        }
+        
+        if (libPath != null) {
             Properties props = new Properties();
             props.setProperty("python.path", libPath.getAbsolutePath());
-            
-            PythonInterpreter.initialize(System.getProperties(),props, new String[] { "" });
+            PythonInterpreter.initialize(System.getProperties(), props, new String[] { "" });
         }
+        
         _engine = new PythonInterpreter();
     }
 
