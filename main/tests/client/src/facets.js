@@ -14,7 +14,6 @@ var test_facets = new function() {
     test = newTest();
     action (test, "click",        { link:    "Food" });
     wait   (test, "forPageLoad",  { timeout: "20000" });
-    wait   (test, "forElement", { jquery: '(".viewPanel-summary-row-count")[0]' });
     assert (test, "rowCount", "7413" );
     this.test_open_project = test;
 
