@@ -150,8 +150,6 @@ class GridworksServer extends Server {
         logger.info("Initializing context: '" + contextPath + "' from '" + webapp.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(1048576);
-        //context.setCopyWebDir(false);
-        //context.setDefaultsDescriptor(null);
 
         this.setHandler(context);
         this.setStopAtShutdown(true);
@@ -165,12 +163,7 @@ class GridworksServer extends Server {
         // start the server
         this.start();
         
-        // inject configuration parameters in the servlets
-        // NOTE: this is done *after* starting the server because jetty might override the init
-        // parameters if we set them in the webapp context upon reading the web.xml file
-        ServletHolder servlet = context.getServletHandler().getServlet("gridworks");
-        servlet.setInitParameter("gridworks.data", getDataDir());
-        servlet.doStart();
+        configure(context);
     }
     
     @Override
@@ -215,6 +208,8 @@ class GridworksServer extends Server {
 
                     logger.info("Starting context: " + contextRoot.getAbsolutePath());
                     context.start();
+                    
+                    configure(context);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -236,7 +231,16 @@ class GridworksServer extends Server {
             }
         });
     }
-    
+
+    // inject configuration parameters in the servlets
+    // NOTE: this is done *after* starting the server because jetty might override the init
+    // parameters if we set them in the webapp context upon reading the web.xml file    
+    static private void configure(WebAppContext context) throws Exception {
+        ServletHolder servlet = context.getServletHandler().getServlet("gridworks");
+        servlet.setInitParameter("gridworks.data", getDataDir());
+        servlet.doStart();
+    }
+
     static private String getDataDir() {
         
         String data_dir = Configurations.get("gridworks.data_dir");
