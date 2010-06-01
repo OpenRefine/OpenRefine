@@ -42,6 +42,7 @@ import com.metaweb.gridworks.expr.functions.strings.Fingerprint;
 import com.metaweb.gridworks.expr.functions.strings.IndexOf;
 import com.metaweb.gridworks.expr.functions.strings.LastIndexOf;
 import com.metaweb.gridworks.expr.functions.strings.MD5;
+import com.metaweb.gridworks.expr.functions.strings.NGram;
 import com.metaweb.gridworks.expr.functions.strings.NGramFingerprint;
 import com.metaweb.gridworks.expr.functions.strings.Partition;
 import com.metaweb.gridworks.expr.functions.strings.Phonetic;
@@ -147,6 +148,7 @@ public class ControlFunctionRegistry {
         registerFunction("phonetic", new Phonetic());
         registerFunction("reinterpret", new Reinterpret());
         registerFunction("jsonize", new Jsonize());
+        registerFunction("ngram", new NGram());
         
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());
