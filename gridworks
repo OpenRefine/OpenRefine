@@ -125,6 +125,14 @@ check_python() {
     fi
 }
 
+check_pywin32() {
+    PYWIN32="`$PYTHON -c 'import win32api' 2>&1`"
+
+    if [ ! -z "$PYWIN32" ]; then
+        error "This action requires you to have 'pywin32' windows extensions for Python installed on your machine. You can download it for free at http://sourceforge.net/projects/pywin32/"
+    fi
+}
+
 check_running() {
     check_downloaders
     URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/"
@@ -320,6 +328,7 @@ windmill_prepare() {
         virtualenv_prepare
 
         if $CYGWIN ; then
+            check_pywin32
             WINDMILL="$PYTHON_HOME/Scripts/windmill.exe"
         else 
             WINDMILL="$PYTHON_HOME/bin/windmill"
