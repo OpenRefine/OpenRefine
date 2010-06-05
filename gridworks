@@ -38,7 +38,7 @@ where [options] include:
      default: 127.0.0.1
 
   -w <path> path to the webapp
-     default: src/main/webapp
+     default: main/webapp
 
   -d <path> path to the data directory
      default: OS dependent
