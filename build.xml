@@ -6,17 +6,6 @@
     |                
     +-->
     
-<!--+
-    | NOTE: this script expects the 'build.dir' and 'dist.dir' properties to be set 
-    | when invoking it. This is done like this
-    |
-    |   ant -f build.xml -Dbuild.dir="/path/to/build/dir" -Ddist.dir="/path/to/dist/dir" -Drevision="r3934"
-    |
-    | Basically, this build file is designed to be invoked by the 'gridworks' shell 
-    | script (this makes it easy to integrate into nightly-build and continuous 
-    | integration systems).
-    +-->
-
 <project name="gridworks" default="build" basedir=".">
 
     <property environment="env"/>
