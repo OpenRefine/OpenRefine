@@ -9,7 +9,6 @@ import java.util.TimerTask;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.commands.Command;
 
-public class GridworksServlet extends HttpServlet {
+import edu.mit.simile.butterfly.Butterfly;
+
+public class GridworksServlet extends Butterfly {
     
     static private final String VERSION = "1.0";
     
@@ -31,7 +32,7 @@ public class GridworksServlet extends HttpServlet {
     // timer for periodically saving projects
     static private Timer _timer;
 
-    final static Logger logger = LoggerFactory.getLogger("servlet");
+    final static Logger logger = LoggerFactory.getLogger("gridworks");
 
     // TODO: This belongs in an external config file somewhere
     private static final String[][] commandNames = {
@@ -132,6 +133,8 @@ public class GridworksServlet extends HttpServlet {
     
     @Override
     public void init() throws ServletException {
+        super.init();
+        
         logger.trace("> initialize");
         
         String data = getInitParameter("gridworks.data");
@@ -168,40 +171,41 @@ public class GridworksServlet extends HttpServlet {
 
         this.config = null;
         
-        super.destroy();
-
         logger.trace("< destroy");
+
+        super.destroy();
     }
     
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String commandName = getCommandName(request);
-        Command command = commands.get(commandName);
-        if (command != null) {
-            logger.trace("> GET {}", commandName);
-            command.doGet(request, response);
-            logger.trace("< GET {}", commandName);
+    @Override
+    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getPathInfo().startsWith("/command")) {
+            String commandName = getCommandName(request);
+            Command command = commands.get(commandName);
+            if (command != null) {
+                if (request.getMethod().equals("GET")) {
+                    logger.trace("> GET {}", commandName);
+                    command.doGet(request, response);
+                    logger.trace("< GET {}", commandName);
+                } else if (request.getMethod().equals("POST")) {
+                    logger.trace("> POST {}", commandName);
+                    command.doPost(request, response);
+                    logger.trace("< POST {}", commandName);
+                } else {
+                    response.sendError(405);
+                }
+            } else {
+                response.sendError(404);
+            }
         } else {
-            response.sendError(404);
+            super.service(request, response);
         }
     }
-    
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String commandName = getCommandName(request);
-        Command command = commands.get(commandName);
-        if (command != null) {
-            logger.trace("> POST {}", commandName);
-            command.doPost(request, response);
-            logger.trace("< POST {}", commandName);
-        } else {
-            response.sendError(404);
-        }
-    }
-        
+            
     protected String getCommandName(HttpServletRequest request) {
         // Remove extraneous path segments that might be there for other purposes,
         // e.g., for /export-rows/filename.ext, export-rows is the command while
         // filename.ext is only for the browser to prompt a convenient filename. 
-        String commandName = request.getPathInfo().substring(1);
+        String commandName = request.getPathInfo().substring("/command/".length());
         int slash = commandName.indexOf('/');
         return slash > 0 ? commandName.substring(0, slash) : commandName;
     }

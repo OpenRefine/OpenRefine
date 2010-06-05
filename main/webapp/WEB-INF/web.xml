@@ -5,6 +5,19 @@
     "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
 
 <web-app>
+
+    <!--+
+        | This forces all the session cookies to default to the root path.
+        | to allow sessions to work even when butterfly is handling
+        | multiple zones.
+        | NOTE: this is jetty-specific, so other web-app servers
+        | might require different parameters.
+        +-->
+    <context-param>
+        <param-name>org.mortbay.jetty.servlet.SessionPath</param-name>
+        <param-value>/</param-value>
+    </context-param>
+     
     <servlet>
         <servlet-name>gridworks</servlet-name>
         <servlet-class>com.metaweb.gridworks.GridworksServlet</servlet-class>
@@ -12,11 +25,7 @@
 
     <servlet-mapping>
         <servlet-name>gridworks</servlet-name>
-        <url-pattern>/command/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
-    
+        
 </web-app>
