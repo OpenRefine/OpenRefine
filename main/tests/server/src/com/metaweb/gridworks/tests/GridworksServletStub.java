@@ -18,12 +18,8 @@ public class GridworksServletStub extends GridworksServlet {
     //requirement of extending HttpServlet, not required for testing
     private static final long serialVersionUID = 1L;
 
-    public void wrapDoGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        super.doGet(request, response);
-    }
-
-    public void wrapDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        super.doPost(request, response);
+    public void wrapService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        super.service(request, response);
     }
 
     public String wrapGetCommandName(HttpServletRequest request){

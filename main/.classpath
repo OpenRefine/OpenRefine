@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests/server/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/butterfly-trunk-r14.jar" />
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="webapp/WEB-INF/lib-src/butterfly-trunk-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-codec-1.4.jar" sourcepath="webapp/WEB-INF/lib-src/commons-codec-1.4-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-lang-2.5.jar" sourcepath="webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar" sourcepath="webapp/WEB-INF/lib-src/commons-fileupload-1.2.1-sources.jar"/>
@@ -35,5 +35,9 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/slf4j-api-1.5.6.jar" sourcepath="webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar" sourcepath="webapp/WEB-INF/lib-src/slf4j-log4j12-1.5.6-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/log4j-1.2.15.jar" sourcepath="webapp/WEB-INF/lib-src/log4j-1.2.15-sources.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/velocity-1.5.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>

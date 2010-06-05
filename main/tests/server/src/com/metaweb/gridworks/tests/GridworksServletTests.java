@@ -31,18 +31,21 @@ public class GridworksServletTests extends GridworksTest {
     GridworksServletStub SUT = null;
 
     //variables
-    String TEST_COMMAND_NAME = "test-command";
-    String TEST_COMMAND_PATH = "/test-command/foobar";
-    String BAD_COMMAND_PATH = "/command-does-not-exist";
+    final static private String TEST_COMMAND_NAME = "test-command";
+    final static private String TEST_COMMAND_PATH = "/command/test-command/foobar";
+    final static private String BAD_COMMAND_PATH = "/command-does-not-exist";
 
-    //mocks
+    final static private String POST = "POST";
+    final static private String GET = "GET";
+    
+    // mocks
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     Command command = null;
 
 
     @BeforeMethod
-    public void SetUp() {
+    public void SetUp() throws ServletException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         command = mock(Command.class);
@@ -72,9 +75,10 @@ public class GridworksServletTests extends GridworksTest {
     @Test
     public void doGetRegressionTest(){
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
+        whenGetMethodThenReturn(GET);
 
         try {
-            SUT.wrapDoGet(request, response);
+            SUT.wrapService(request, response);
         } catch (ServletException e) {
             Assert.fail();
         } catch (IOException e) {
@@ -94,9 +98,10 @@ public class GridworksServletTests extends GridworksTest {
     @Test
     public void doGetReturnsError404WhenCommandNotFound(){
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
+        whenGetMethodThenReturn(GET);
 
         try {
-            SUT.wrapDoGet(request, response);
+            SUT.wrapService(request, response);
         } catch (ServletException e) {
             Assert.fail();
         } catch (IOException e) {
@@ -112,9 +117,10 @@ public class GridworksServletTests extends GridworksTest {
     @Test
     public void doPostRegressionTest(){
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
+        whenGetMethodThenReturn(POST);
 
         try {
-            SUT.wrapDoPost(request, response);
+            SUT.wrapService(request, response);
         } catch (ServletException e) {
             Assert.fail();
         } catch (IOException e) {
@@ -134,9 +140,10 @@ public class GridworksServletTests extends GridworksTest {
     @Test
     public void doPostReturns404WhenCommandNotFound(){
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
-
+        whenGetMethodThenReturn(POST);
+        
         try {
-            SUT.wrapDoPost(request, response);
+            SUT.wrapService(request, response);
         } catch (ServletException e) {
             Assert.fail();
         } catch (IOException e) {
@@ -152,7 +159,7 @@ public class GridworksServletTests extends GridworksTest {
     @Test
     public void getCommandNameHandlesBadCommandName(){
 
-        when(request.getPathInfo()).thenReturn("/this-command-has-no-trailing-slash");
+        when(request.getPathInfo()).thenReturn("/command/this-command-has-no-trailing-slash");
 
         Assert.assertEquals("this-command-has-no-trailing-slash", SUT.wrapGetCommandName(request));
 
@@ -163,8 +170,11 @@ public class GridworksServletTests extends GridworksTest {
     protected void whenGetCommandNameThenReturn(String commandName){
         when(request.getPathInfo()).thenReturn(commandName);
     }
+    protected void whenGetMethodThenReturn(String method){
+        when(request.getMethod()).thenReturn(method);
+    }
     protected void verifyGetCommandNameCalled(){
-        verify(request,times(1)).getPathInfo();
+        verify(request,times(2)).getPathInfo();
     }
     protected void verifyError404Called(){
         try {
