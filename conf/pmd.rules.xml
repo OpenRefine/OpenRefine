@@ -22,7 +22,6 @@
     <exclude name="AvoidDuplicateLiterals"/>
   </rule>
 
-  <rule ref="rulesets/junit.xml"/>
   <rule ref="rulesets/unusedcode.xml"/>
   <rule ref="rulesets/clone.xml"/>
   
