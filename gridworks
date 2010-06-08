@@ -55,27 +55,31 @@ where [options] include:
   
 and <action> is one of
 
-   build ..................... Build Gridworks      
-   run ....................... Run Gridworks [default]
+   build ............................ Build Gridworks      
+   run .............................. Run Gridworks [default]
 
-   test ...................... Run all Gridworks tests
-   server_test ............... Run only the server tests
-   ui_test ................... Run only the UI tests
+   test ............................. Run all Gridworks tests
+   server_test ...................... Run only the server tests
+   ui_test .......................... Run only the UI tests
+
+   appengine_build <id> <version> ... Build Gridworks for Google App Engine
+   appengine_run <id> <version> ..... Run Gridworks for Google App Engine in local server
+   appengine_upload <id> <version>... Upload Gridworks to Google App Engine
    
-   findbugs .................. Run Findbugs against Gridworks     
-   pmd ....................... Run PMD against Gridworks     
-   cpd ....................... Run Copy/Paste Detection against Gridworks     
-   jslint .................... Run JSlint against Gridworks
+   findbugs ......................... Run Findbugs against Gridworks     
+   pmd .............................. Run PMD against Gridworks     
+   cpd .............................. Run Copy/Paste Detection against Gridworks     
+   jslint ........................... Run JSlint against Gridworks
 
-   whitespace <extension> .... Normalize whitespace in files with the given extension
-   
-   mac_dist <version> ........ Make MacOSX binary distribution
-   windows_dist <version> .... Make Windows binary distribution
-   linux_dist <version> ...... Make Linux binary distribution
-   dist <version> ............ Make all distributions
+   whitespace <extension> ........... Normalize whitespace in files with the given extension
 
-   clean ..................... Clean compiled classes
-   distclean ................. Remove all generated files
+   mac_dist <version> ............... Make MacOSX binary distribution
+   windows_dist <version> ........... Make Windows binary distribution
+   linux_dist <version> ............. Make Linux binary distribution
+   dist <version> ................... Make all distributions
+
+   clean ............................ Clean compiled classes
+   distclean ........................ Remove all generated files
                 
 EOF
     exit 1
@@ -243,7 +247,7 @@ tools_prepare() {
         mkdir $GRIDWORKS_TOOLS_DIR || error "Error while making directory $GRIDWORKS_TOOLS_DIR"
     fi
 }
-            
+                        
 ant_prepare() {
     tools_prepare
 
@@ -269,6 +273,18 @@ ant_prepare() {
         fi
         ANT="$ANT_HOME/bin/ant"
     fi
+}
+
+appengine_prepare() {
+    if [ -z "$APPENGINE_HOME" ]; then
+        error "You have to have the APPENGINE_HOME environment variable set and pointing to the local installation of the Google AppEngine SDK."
+    elif [ ! -f "$APPENGINE_HOME/bin/appcfg.sh" ]; then
+        error "Environment variable APPENGINE_HOME is set to '$APPENGINE_HOME' which doesn't point to a valid Google App Engine SDK."
+    fi
+    APPENGINE="$APPENGINE_HOME/bin/appcfg.sh"
+    APPENGINE_LOCAL="$APPENGINE_HOME/bin/dev_appserver.sh"
+    
+    ANT_PARAMS="$ANT_PARAMS -Dappengine.sdk.dir=$APPENGINE_HOME"
 }
 
 launch4j_prepare() {
@@ -369,8 +385,7 @@ jslint_prepare() {
 
     tool_download $JSLINT_URL $JSLINT_FILE $JSLINT_DIR
 }
-      
-      
+            
 # ----------------------------------------------------------------------------------------------
 
 ant() {
@@ -549,6 +564,34 @@ server_test() {
     #echo ""
     
     $RUN_CMD || error "Failed passing server tests"
+}
+
+appengine_build() {
+    appengine_prepare
+    get_revision
+    
+    ANT_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
+    if [ -z "$1" ]; then
+        error "Must specify the application id"
+    else
+        ANT_PARAMS="$ANT_PARAMS -Dappengine.app_id=$1"
+    fi
+    
+    if [ "$2" ]; then
+        ANT_PARAMS="$ANT_PARAMS -Dappengine.version=$2"
+    fi
+        
+    ant prepare_webapp_appengine
+}
+       
+appengine_upload() {
+    appengine_build $1 $2
+    "$APPENGINE" update "$GRIDWORKS_BUILD_DIR/appengine"
+}
+
+appengine_run() {
+    appengine_build $1 $2
+    "$APPENGINE_LOCAL" "$GRIDWORKS_BUILD_DIR/appengine"
 }
 
 run() {
@@ -812,6 +855,9 @@ case "$ACTION" in
   cpd) cpd;;  
   jslint) jslint;;  
   run) run;;  
+  appengine_build) appengine_build $1 $2;;
+  appengine_run) appengine_run $1 $2;;
+  appengine_upload) appengine_upload $1 $2;;
   mac_dist) mac_dist $1;;
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
