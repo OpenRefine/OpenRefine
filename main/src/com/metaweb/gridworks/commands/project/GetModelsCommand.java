@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.commands.Command;
+import com.metaweb.gridworks.expr.MetaParser;
+import com.metaweb.gridworks.expr.MetaParser.LanguageInfo;
 import com.metaweb.gridworks.model.Project;
 
 public class GetModelsCommand extends Command {
@@ -36,6 +38,19 @@ public class GetModelsCommand extends Command {
             } else {
                 project.protograph.write(writer, options);
             }
+            
+            writer.key("scripting"); writer.object();
+            for (String languagePrefix : MetaParser.getLanguagePrefixes()) {
+                LanguageInfo info = MetaParser.getLanguageInfo(languagePrefix);
+                
+                writer.key(languagePrefix);
+                writer.object();
+                    writer.key("name"); writer.value(info.name);
+                    writer.key("defaultExpression"); writer.value(info.defaultExpression);
+                writer.endObject();
+            }
+            writer.endObject();
+            
             writer.endObject();
         } catch (JSONException e) {
             respondException(response, e);

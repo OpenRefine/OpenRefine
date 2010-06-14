@@ -429,20 +429,10 @@ ListFacet.prototype._renderBodyControls = function() {
 };
 
 ListFacet.prototype._getMetaExpression = function() {
-    var expression = this._config.expression;
+    var r = Scripting.parse(this._config.expression);
     
-    var language = "gel:";
-    var colon = expression.indexOf(":");
-    if (colon > 0) {
-        var l = expression.substring(0, colon + 1);
-        if (l == "gel:" || l == "jython:" || l == "clojure:") {
-            expression = expression.substring(colon + 1);
-            language = l;
-        }
-    }
-    
-    return language + 'facetCount(' + [
-        expression,
+    return r.language + ':facetCount(' + [
+        r.expression,
         JSON.stringify(this._config.expression),
         JSON.stringify(this._config.columnName)
     ].join(', ') + ')';

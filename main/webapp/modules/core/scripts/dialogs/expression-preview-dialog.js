@@ -32,6 +32,14 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
 }
 
 ExpressionPreviewDialog.generateWidgetHtml = function() {
+    var languageOptions = [];
+    for (var prefix in theProject.scripting) {
+        if (theProject.scripting.hasOwnProperty(prefix)) {
+            var info = theProject.scripting[prefix];
+            languageOptions.push('<option value="' + prefix + '">' + info.name + '</option>');
+        }
+    }
+    
     return '<div class="grid-layout layout-tight layout-full"><table rows="4" cols="2">' +
             '<tr>' +
                 '<td>Expression</td>' +
@@ -41,9 +49,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
                 '<td rowspan="2"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></div></td>' +
                 '<td width="150" height="1">' +
                     '<select bind="expressionPreviewLanguageSelect">' +
-                        '<option value="gel">Gridworks expression language (GEL)</option>' +
-                        '<option value="jython">Jython</option>' +
-                        '<option value="clojure">Clojure</option>' +
+                        languageOptions.join("") +
                     '</select>' +
                 '</td>' +
             '</tr>' +
@@ -83,21 +89,17 @@ ExpressionPreviewDialog.Widget = function(
     var language = "gel";
     if (!(expression)) {
         language = $.cookie("scripting.lang");
-        if (language == "jython") {
-            this.expression = "return value";
-        } else if (language == "clojure") {
-            this.expression = "value";
-        } else {
+        if (!(language) || !(language.toLowerCase() in theProject.scripting)) {
             language = "gel";
-            this.expression = "value";
         }
+        this.expression = theProject.scripting[language].defaultExpression;
     } else {
         this.expression = expression;
         
         var colon = expression.indexOf(":");
         if (colon > 0) {
             var l = expression.substring(0, colon);
-            if (l == "gel" || l == "jython" || l == "clojure") {
+            if (l.toLowerCase() in theProject.scripting) {
                 this.expression = expression.substring(colon + 1);
                 language = l;
             }
