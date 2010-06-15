@@ -20,15 +20,15 @@ import com.metaweb.gridworks.commands.Command;
 import edu.mit.simile.butterfly.Butterfly;
 
 public class GridworksServlet extends Butterfly {
-    
+
     static private final String VERSION = "1.0";
-    
+
     private static final long serialVersionUID = 2386057901503517403L;
-    
+
     private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
-    
+
     static final private Map<String, Command> commands = new HashMap<String, Command>();
-    
+
     // timer for periodically saving projects
     static private Timer _timer;
 
@@ -40,13 +40,13 @@ public class GridworksServlet extends Butterfly {
         {"import-project", "com.metaweb.gridworks.commands.project.ImportProjectCommand"},
         {"export-project", "com.metaweb.gridworks.commands.project.ExportProjectCommand"},
         {"export-rows", "com.metaweb.gridworks.commands.project.ExportRowsCommand"},
-        
+
         {"get-project-metadata", "com.metaweb.gridworks.commands.project.GetProjectMetadataCommand"},
         {"get-all-project-metadata", "com.metaweb.gridworks.commands.workspace.GetAllProjectMetadataCommand"},
 
         {"delete-project", "com.metaweb.gridworks.commands.project.DeleteProjectCommand"},
         {"rename-project", "com.metaweb.gridworks.commands.project.RenameProjectCommand"},
-        
+
         {"get-models", "com.metaweb.gridworks.commands.project.GetModelsCommand"},
         {"get-rows", "com.metaweb.gridworks.commands.row.GetRowsCommand"},
         {"get-processes", "com.metaweb.gridworks.commands.history.GetProcessesCommand"},
@@ -54,28 +54,28 @@ public class GridworksServlet extends Butterfly {
         {"get-operations", "com.metaweb.gridworks.commands.history.GetOperationsCommand"},
         {"get-columns-info", "com.metaweb.gridworks.commands.column.GetColumnsInfoCommand"},
         {"get-scatterplot", "com.metaweb.gridworks.commands.browsing.GetScatterplotCommand"},
-        
+
         {"undo-redo", "com.metaweb.gridworks.commands.history.UndoRedoCommand"},
         {"apply-operations", "com.metaweb.gridworks.commands.history.ApplyOperationsCommand"},
         {"cancel-processes", "com.metaweb.gridworks.commands.history.CancelProcessesCommand"},
-        
+
         {"compute-facets", "com.metaweb.gridworks.commands.browsing.ComputeFacetsCommand"},
         {"compute-clusters", "com.metaweb.gridworks.commands.browsing.ComputeClustersCommand"},
-        
+
         {"edit-one-cell", "com.metaweb.gridworks.commands.cell.EditOneCellCommand"},
         {"text-transform", "com.metaweb.gridworks.commands.cell.TextTransformCommand"},
         {"mass-edit", "com.metaweb.gridworks.commands.cell.MassEditCommand"},
         {"join-multi-value-cells", "com.metaweb.gridworks.commands.cell.JoinMultiValueCellsCommand"},
         {"split-multi-value-cells", "com.metaweb.gridworks.commands.cell.SplitMultiValueCellsCommand"},
-        
+
         {"add-column", "com.metaweb.gridworks.commands.column.AddColumnCommand"},
         {"remove-column", "com.metaweb.gridworks.commands.column.RemoveColumnCommand"},
         {"rename-column", "com.metaweb.gridworks.commands.column.RenameColumnCommand"},
         {"split-column", "com.metaweb.gridworks.commands.column.SplitColumnCommand"},
         {"extend-data", "com.metaweb.gridworks.commands.column.ExtendDataCommand"},
-        
+
         {"denormalize", "com.metaweb.gridworks.commands.row.DenormalizeCommand"},
-        
+
         {"reconcile", "com.metaweb.gridworks.commands.recon.ReconcileCommand"},
         {"recon-match-best-candidates", "com.metaweb.gridworks.commands.recon.ReconMatchBestCandidatesCommand"},
         {"recon-mark-new-topics", "com.metaweb.gridworks.commands.recon.ReconMarkNewTopicsCommand"},
@@ -83,24 +83,24 @@ public class GridworksServlet extends Butterfly {
         {"recon-match-specific-topic-to-cells", "com.metaweb.gridworks.commands.recon.ReconMatchSpecificTopicCommand"},
         {"recon-judge-one-cell", "com.metaweb.gridworks.commands.recon.ReconJudgeOneCellCommand"},
         {"recon-judge-similar-cells", "com.metaweb.gridworks.commands.recon.ReconJudgeSimilarCellsCommand"},
-        
+
         {"annotate-one-row", "com.metaweb.gridworks.commands.row.AnnotateOneRowCommand"},
         {"annotate-rows", "com.metaweb.gridworks.commands.row.AnnotateRowsCommand"},
         {"remove-rows", "com.metaweb.gridworks.commands.row.RemoveRowsCommand"},
         {"reorder-rows", "com.metaweb.gridworks.commands.row.ReorderRowsCommand"},
-        
+
         {"save-protograph", "com.metaweb.gridworks.commands.freebase.SaveProtographCommand"},
-        
+
         {"get-expression-language-info", "com.metaweb.gridworks.commands.expr.GetExpressionLanguageInfoCommand"},
         {"get-expression-history", "com.metaweb.gridworks.commands.expr.GetExpressionHistoryCommand"},
         {"log-expression", "com.metaweb.gridworks.commands.expr.LogExpressionCommand"},
-        
+
         {"preview-expression", "com.metaweb.gridworks.commands.expr.PreviewExpressionCommand"},
         {"preview-extend-data", "com.metaweb.gridworks.commands.column.PreviewExtendDataCommand"},
         {"preview-protograph", "com.metaweb.gridworks.commands.freebase.PreviewProtographCommand"},
-        
+
         {"guess-types-of-column", "com.metaweb.gridworks.commands.freebase.GuessTypesOfColumnCommand"},
-        
+
         {"check-authorization", "com.metaweb.gridworks.commands.auth.CheckAuthorizationCommand"},
         {"authorize", "com.metaweb.gridworks.commands.auth.AuthorizeCommand"},
         {"deauthorize", "com.metaweb.gridworks.commands.auth.DeAuthorizeCommand"},
@@ -110,56 +110,56 @@ public class GridworksServlet extends Butterfly {
         {"mqlread", "com.metaweb.gridworks.commands.freebase.MQLReadCommand"},
         {"mqlwrite", "com.metaweb.gridworks.commands.freebase.MQLWriteCommand"},
     };
-    
+
     public static String getVersion() {
         return VERSION;
     }
-    
+
     final static protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
-    
+
     static protected class AutoSaveTimerTask extends TimerTask {
         public void run() {
             try {
                 ProjectManager.singleton.save(false); // quick, potentially incomplete save
             } finally {
                 _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
-                // we don't use scheduleAtFixedRate because that might result in 
+                // we don't use scheduleAtFixedRate because that might result in
                 // bunched up events when the computer is put in sleep mode
             }
         }
     }
 
     protected ServletConfig config;
-    
+
     @Override
     public void init() throws ServletException {
         super.init();
-        
+
         logger.trace("> initialize");
-        
+
         String data = getInitParameter("gridworks.data");
-        
+
         if (data == null) {
             throw new ServletException("can't find servlet init config 'gridworks.data', I have to give up initializing");
         }
-        
+
         registerCommands(commandNames);
-        
-        ProjectManager.initialize(new File(data));
-                
+
+        FileProjectManager.initialize(new File(data));
+
         if (_timer == null) {
             _timer = new Timer("autosave");
             _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
         }
-        
+
         logger.trace("< initialize");
     }
-    
+
     @Override
     public void destroy() {
         logger.trace("> destroy");
 
-        // cancel automatic periodic saving and force a complete save. 
+        // cancel automatic periodic saving and force a complete save.
         if (_timer != null) {
             _timer.cancel();
             _timer = null;
@@ -170,12 +170,12 @@ public class GridworksServlet extends Butterfly {
         }
 
         this.config = null;
-        
+
         logger.trace("< destroy");
 
         super.destroy();
     }
-    
+
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo().startsWith("/command")) {
@@ -200,19 +200,19 @@ public class GridworksServlet extends Butterfly {
             super.service(request, response);
         }
     }
-            
+
     protected String getCommandName(HttpServletRequest request) {
         // Remove extraneous path segments that might be there for other purposes,
         // e.g., for /export-rows/filename.ext, export-rows is the command while
-        // filename.ext is only for the browser to prompt a convenient filename. 
+        // filename.ext is only for the browser to prompt a convenient filename.
         String commandName = request.getPathInfo().substring("/command/".length());
         int slash = commandName.indexOf('/');
         return slash > 0 ? commandName.substring(0, slash) : commandName;
     }
-    
+
     private File tempDir = null;
-    
-    public File getTempDir() { 
+
+    public File getTempDir() {
         if (tempDir == null) {
             File tempDir = (File) this.config.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
             if (tempDir == null) {
@@ -221,7 +221,7 @@ public class GridworksServlet extends Butterfly {
         }
         return tempDir;
     }
-    
+
     public File getTempFile(String name) {
         return new File(getTempDir(), name);
     }
@@ -229,10 +229,10 @@ public class GridworksServlet extends Butterfly {
     public String getConfiguration(String name, String def) {
         return null;
     }
-    
+
     /**
      * Register an array of commands
-     * 
+     *
      * @param commands
      *            An array of arrays containing pairs of strings with the
      *            command name in the first element of the tuple and the fully
@@ -267,10 +267,10 @@ public class GridworksServlet extends Butterfly {
         }
         return status;
     }
-    
+
     /**
      * Register a single command.
-     * 
+     *
      * @param name
      *            command verb for command
      * @param commandObject
