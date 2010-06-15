@@ -112,7 +112,7 @@ function renderProjects(data) {
             
             var nameLink = $('<a></a>')
                 .text(project.name)
-                .attr("href", "/project.html?project=" + project.id)
+                .attr("href", "/project?project=" + project.id)
                 .appendTo(tr.insertCell(tr.cells.length));
                 
             var renameLink = $('<a></a>')

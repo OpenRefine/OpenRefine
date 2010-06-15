@@ -1,5 +1,5 @@
 function init() {
-    Packages.java.lang.System.err.println("Initializing jython extension");
+    // Packages.java.lang.System.err.println("Initializing jython extension");
     
     Packages.com.metaweb.gridworks.expr.MetaParser.registerLanguageParser(
         "jython",

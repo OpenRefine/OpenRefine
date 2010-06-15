@@ -37,7 +37,7 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/velocity-1.5.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/butterfly-trunk-r20.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/butterfly-trunk-r21.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
