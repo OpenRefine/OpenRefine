@@ -378,7 +378,7 @@ Gridworks.getPermanentLink = function() {
             facets: ui.browsingEngine.getFacetUIStates()
         }))
     ];
-    return "project.html?" + params.join("&");
+    return "project?" + params.join("&");
 };
 
 /*
