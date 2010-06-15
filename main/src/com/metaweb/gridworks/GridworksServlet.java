@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.commands.Command;
+import com.metaweb.gridworks.io.FileProjectManager;
 
 import edu.mit.simile.butterfly.Butterfly;
 

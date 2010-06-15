@@ -1,9 +1,6 @@
 package com.metaweb.gridworks.model;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -12,9 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,62 +53,7 @@ public class Project {
         return ProjectManager.singleton.getProjectMetadata(id);
     }
 
-    synchronized public void save() {
-        synchronized (this) {
-            File dir = ProjectManager.singleton.getProjectDir(id);
-
-            File tempFile = new File(dir, "data.temp.zip");
-            try {
-                saveToFile(tempFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                logger.warn("Failed to save project {}", id);
-                return;
-            }
-
-            File file = new File(dir, "data.zip");
-            File oldFile = new File(dir, "data.old.zip");
-
-            if (file.exists()) {
-                file.renameTo(oldFile);
-            }
-
-            tempFile.renameTo(file);
-            if (oldFile.exists()) {
-                oldFile.delete();
-            }
-
-            lastSave = new Date();
-
-            logger.info("Saved project '{}'",id);
-        }
-    }
-
-    protected void saveToFile(File file) throws Exception {
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
-        try {
-            Pool pool = new Pool();
-
-            out.putNextEntry(new ZipEntry("data.txt"));
-            try {
-                saveToOutputStream(out, pool);
-            } finally {
-                out.closeEntry();
-            }
-
-            out.putNextEntry(new ZipEntry("pool.txt"));
-            try {
-                pool.save(out);
-            } finally {
-                out.closeEntry();
-            }
-        } finally {
-            out.close();
-        }
-    }
-
-    protected void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
+    public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
         Writer writer = new OutputStreamWriter(out);
         try {
             Properties options = new Properties();
@@ -142,64 +81,7 @@ public class Project {
         }
     }
 
-    static public Project load(File dir, long id) {
-        try {
-            File file = new File(dir, "data.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            File file = new File(dir, "data.temp.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            File file = new File(dir, "data.old.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    static protected Project loadFromFile(
-        File file,
-        long id
-    ) throws Exception {
-        ZipFile zipFile = new ZipFile(file);
-        try {
-            Pool pool = new Pool();
-            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
-            if (poolEntry != null) {
-                pool.load(new InputStreamReader(
-                    zipFile.getInputStream(poolEntry)));
-            } // else, it's a legacy project file
-
-            return loadFromReader(
-                new LineNumberReader(
-                    new InputStreamReader(
-                        zipFile.getInputStream(
-                            zipFile.getEntry("data.txt")))),
-                id,
-                pool
-            );
-        } finally {
-            zipFile.close();
-        }
-    }
-
-    static protected Project loadFromReader(
+    static public Project loadFromReader(
         LineNumberReader reader,
         long id,
         Pool pool
@@ -247,7 +129,7 @@ public class Project {
 
         return project;
     }
-    
+
     public void update() {
         columnModel.update();
     	recordModel.update(this);

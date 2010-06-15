@@ -1,4 +1,4 @@
-package com.metaweb.gridworks;
+package com.metaweb.gridworks.io;
 
 import java.io.File;
 import java.io.FileReader;
@@ -20,6 +20,8 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.metaweb.gridworks.ProjectManager;
+import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
 
@@ -63,8 +65,6 @@ public class FileProjectManager extends ProjectManager{
         return getProjectDir(_workspaceDir, projectID);
     }
 
-
-
     /**
      * Import an external project that has been received as a .tar file, expanded, and
      * copied into our workspace directory.
@@ -73,7 +73,7 @@ public class FileProjectManager extends ProjectManager{
      */
     public boolean importProject(long projectID) {
         synchronized (this) {
-            ProjectMetadata metadata = ProjectMetadata.load(getProjectDir(projectID));
+            ProjectMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
                 return true;
@@ -96,7 +96,7 @@ public class FileProjectManager extends ProjectManager{
             ProjectMetadata metadata = _projectsMetadata.get(id);
             if (metadata != null) {
                 try {
-                    metadata.save(projectDir);
+                    ProjectMetadataUtilities.save(metadata, projectDir);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -105,7 +105,7 @@ public class FileProjectManager extends ProjectManager{
             Project project = _projects.get(id);
             if (project != null && metadata.getModified().after(project.lastSave)) {
                 try {
-                    project.save();
+                    ProjectUtilities.save(project);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -118,7 +118,7 @@ public class FileProjectManager extends ProjectManager{
             if (_projects.containsKey(id)) {
                 return _projects.get(id);
             } else {
-                Project project = Project.load(getProjectDir(id), id);
+                Project project = ProjectUtilities.load(getProjectDir(id), id);
 
                 _projects.put(id, project);
 
@@ -179,7 +179,7 @@ public class FileProjectManager extends ProjectManager{
                         jsonWriter.value(id);
 
                         try {
-                            metadata.save(getProjectDir(id));
+                            ProjectMetadataUtilities.save(metadata, getProjectDir(id));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -265,7 +265,7 @@ public class FileProjectManager extends ProjectManager{
                  i++) {
 
                 try {
-                    records.get(i).project.save();
+                    ProjectUtilities.save(records.get(i).project);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -329,7 +329,7 @@ public class FileProjectManager extends ProjectManager{
                     long id = a.getLong(i);
 
                     File projectDir = getProjectDir(id);
-                    ProjectMetadata metadata = ProjectMetadata.load(projectDir);
+                    ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
 
                     _projectsMetadata.put(id, metadata);
                 }
