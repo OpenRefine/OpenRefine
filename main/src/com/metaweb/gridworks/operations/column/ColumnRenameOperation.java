@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
@@ -23,7 +24,7 @@ public class ColumnRenameOperation extends AbstractOperation {
             obj.getString("newColumnName")
         );
     }
-    
+
     public ColumnRenameOperation(
         String oldColumnName,
         String newColumnName
@@ -31,10 +32,10 @@ public class ColumnRenameOperation extends AbstractOperation {
         _oldColumnName = oldColumnName;
         _newColumnName = newColumnName;
     }
-    
+
    public void write(JSONWriter writer, Properties options)
            throws JSONException {
-       
+
        writer.object();
        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
        writer.key("description"); writer.value("Rename column " + _oldColumnName + " to " + _newColumnName);
@@ -55,9 +56,9 @@ public class ColumnRenameOperation extends AbstractOperation {
         if (project.columnModel.getColumnByName(_newColumnName) != null) {
             throw new Exception("Another column already named " + _newColumnName);
         }
-        
+
         Change change = new ColumnRenameChange(_oldColumnName, _newColumnName);
-        
-        return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnRenameOperation.this, change);
+
+        return ProjectManager.singleton.createHistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnRenameOperation.this, change);
     }
 }

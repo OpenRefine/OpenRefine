@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.Change;
@@ -29,19 +30,19 @@ public class ReconJudgeOneCellCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             Project project = getProject(request);
-            
+
             int rowIndex = Integer.parseInt(request.getParameter("row"));
             int cellIndex = Integer.parseInt(request.getParameter("cell"));
             Judgment judgment = Recon.stringToJudgment(request.getParameter("judgment"));
-            
+
             ReconCandidate match = null;
             String topicID = request.getParameter("topicID");
             if (topicID != null) {
                 String scoreString = request.getParameter("score");
-                
+
                 match = new ReconCandidate(
                     topicID,
                     request.getParameter("topicGUID"),
@@ -50,16 +51,16 @@ public class ReconJudgeOneCellCommand extends Command {
                     scoreString != null ? Double.parseDouble(scoreString) : 100
                 );
             }
-        
+
             JudgeOneCellProcess process = new JudgeOneCellProcess(
-                project, 
+                project,
                 "Judge one cell's recon result",
                 judgment,
-                rowIndex, 
-                cellIndex, 
+                rowIndex,
+                cellIndex,
                 match
             );
-            
+
             HistoryEntry historyEntry = project.processManager.queueProcess(process);
             if (historyEntry != null) {
                 /*
@@ -67,11 +68,11 @@ public class ReconJudgeOneCellCommand extends Command {
                  * client side can update its UI right away.
                  */
                 JSONWriter writer = new JSONWriter(response.getWriter());
-                
+
                 Pool pool = new Pool();
                 Properties options = new Properties();
                 options.put("pool", pool);
-                
+
                 writer.object();
                 writer.key("code"); writer.value("ok");
                 writer.key("historyEntry"); historyEntry.write(writer, options);
@@ -85,7 +86,7 @@ public class ReconJudgeOneCellCommand extends Command {
             respondException(response, e);
         }
     }
-    
+
     protected static class JudgeOneCellProcess extends QuickHistoryEntryProcess {
 
         final int rowIndex;
@@ -93,17 +94,17 @@ public class ReconJudgeOneCellCommand extends Command {
         final Judgment judgment;
         final ReconCandidate match;
         Cell newCell;
-        
+
         JudgeOneCellProcess(
-            Project project, 
-            String briefDescription, 
-            Judgment judgment, 
-            int rowIndex, 
-            int cellIndex, 
+            Project project,
+            String briefDescription,
+            Judgment judgment,
+            int rowIndex,
+            int cellIndex,
             ReconCandidate match
         ) {
             super(project, briefDescription);
-            
+
             this.judgment = judgment;
             this.rowIndex = rowIndex;
             this.cellIndex = cellIndex;
@@ -115,63 +116,63 @@ public class ReconJudgeOneCellCommand extends Command {
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
                 throw new Exception("Cell is blank or error");
             }
-            
+
             Column column = _project.columnModel.getColumnByCellIndex(cellIndex);
             if (column == null) {
                 throw new Exception("No such column");
             }
-            
+
             Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
-            
+
             newCell = new Cell(
-                cell.value, 
+                cell.value,
                 cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID)
             );
-            
-            String cellDescription = 
-                "single cell on row " + (rowIndex + 1) + 
-                ", column " + column.getName() + 
+
+            String cellDescription =
+                "single cell on row " + (rowIndex + 1) +
+                ", column " + column.getName() +
                 ", containing \"" + cell.value + "\"";
-            
+
             String description = null;
-            
+
             newCell.recon.matchRank = -1;
             newCell.recon.judgmentAction = "single";
             newCell.recon.judgmentBatchSize = 1;
-            
+
             if (judgment == Judgment.None) {
                 newCell.recon.judgment = Recon.Judgment.None;
                 newCell.recon.match = null;
-                
+
                 description = "Discard recon judgment for " + cellDescription;
             } else if (judgment == Judgment.New) {
                 newCell.recon.judgment = Recon.Judgment.New;
                 newCell.recon.match = null;
-                
+
                 description = "Mark to create new topic for " + cellDescription;
             } else {
                 newCell.recon.judgment = Recon.Judgment.Matched;
                 newCell.recon.match = this.match;
-                
+
                 for (int m = 0; m < newCell.recon.candidates.size(); m++) {
                     if (newCell.recon.candidates.get(m).topicGUID.equals(this.match.topicGUID)) {
                         newCell.recon.matchRank = m;
                         break;
                     }
                 }
-                
+
                 description = "Match " + this.match.topicName +
-                    " (" + match.topicID + ") to " + 
+                    " (" + match.topicID + ") to " +
                     cellDescription;
             }
-            
+
             ReconStats stats = column.getReconStats();
             if (stats == null) {
                 stats = ReconStats.create(_project, cellIndex);
             } else {
                 int newChange = 0;
                 int matchChange = 0;
-                
+
                 if (oldJudgment == Judgment.New) {
                     newChange--;
                 }
@@ -184,21 +185,21 @@ public class ReconJudgeOneCellCommand extends Command {
                 if (newCell.recon.judgment == Judgment.Matched) {
                     matchChange++;
                 }
-                
+
                 stats = new ReconStats(
-                    stats.nonBlanks, 
-                    stats.newTopics + newChange, 
+                    stats.nonBlanks,
+                    stats.newTopics + newChange,
                     stats.matchedTopics + matchChange);
             }
-            
+
             Change change = new ReconChange(
-                new CellChange(rowIndex, cellIndex, cell, newCell), 
-                column.getName(), 
+                new CellChange(rowIndex, cellIndex, cell, newCell),
+                column.getName(),
                 column.getReconConfig(),
                 stats
             );
-                
-            return new HistoryEntry(
+
+            return ProjectManager.singleton.createHistoryEntry(
                 historyEntryID, _project, description, null, change);
         }
     }

@@ -1,6 +1,6 @@
 package com.metaweb.gridworks;
 
-import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,6 +8,9 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.metaweb.gridworks.history.Change;
+import com.metaweb.gridworks.history.HistoryEntry;
+import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 
 
@@ -43,9 +46,6 @@ public abstract class ProjectManager {
     public InterProjectModel getInterProjectModel() {
         return _interProjectModel;
     }
-
-    //FIXME this is File System specific, need to remove from this abstract class
-    public abstract File getProjectDir(long id);
 
     public void registerProject(Project project, ProjectMetadata projectMetadata) {
         synchronized (this) {
@@ -119,4 +119,6 @@ public abstract class ProjectManager {
 
     public abstract void deleteProject(long projectID) ;
 
+    public abstract HistoryEntry createHistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time);
+    public abstract HistoryEntry createHistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change);
 }

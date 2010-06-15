@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -38,10 +39,10 @@ public class ExtendDataOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;
     final protected JSONObject _extension;
     final protected int        _columnInsertIndex;
-    
+
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
+
         return new ExtendDataOperation(
             engineConfig,
             obj.getString("baseColumnName"),
@@ -49,15 +50,15 @@ public class ExtendDataOperation extends EngineDependentOperation {
             obj.getInt("columnInsertIndex")
         );
     }
-    
+
     public ExtendDataOperation(
         JSONObject     engineConfig,
         String         baseColumnName,
         JSONObject     extension,
-        int            columnInsertIndex 
+        int            columnInsertIndex
     ) {
         super(engineConfig);
-        
+
         _baseColumnName = baseColumnName;
         _extension = extension;
         _columnInsertIndex = columnInsertIndex;
@@ -65,7 +66,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
-        
+
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
@@ -77,24 +78,24 @@ public class ExtendDataOperation extends EngineDependentOperation {
     }
 
     protected String getBriefDescription(Project project) {
-        return "Extend data at index " + _columnInsertIndex + 
+        return "Extend data at index " + _columnInsertIndex +
             " based on column " + _baseColumnName;
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Extend data at index " + _columnInsertIndex + 
-            " based on column " + column.getName() + 
+        return "Extend data at index " + _columnInsertIndex +
+            " based on column " + column.getName() +
             " by filling " + cellsAtRows.size();
     }
-    
+
     public Process createProcess(Project project, Properties options) throws Exception {
         return new ExtendDataProcess(
-            project, 
+            project,
             getEngineConfig(),
             getBriefDescription(null)
         );
     }
-    
+
     public class ExtendDataProcess extends LongRunningProcess implements Runnable {
         final protected Project     _project;
         final protected JSONObject  _engineConfig;
@@ -103,21 +104,21 @@ public class ExtendDataOperation extends EngineDependentOperation {
         protected FreebaseDataExtensionJob _job;
 
         public ExtendDataProcess(
-            Project project, 
-            JSONObject engineConfig, 
+            Project project,
+            JSONObject engineConfig,
             String description
         ) throws JSONException {
             super(description);
             _project = project;
             _engineConfig = engineConfig;
             _historyEntryID = HistoryEntry.allocateID();
-            
+
             _job = new FreebaseDataExtensionJob(_extension);
         }
-        
+
         public void write(JSONWriter writer, Properties options)
                 throws JSONException {
-            
+
             writer.object();
             writer.key("id"); writer.value(hashCode());
             writer.key("description"); writer.value(_description);
@@ -126,111 +127,111 @@ public class ExtendDataOperation extends EngineDependentOperation {
             writer.key("progress"); writer.value(_progress);
             writer.endObject();
         }
-        
+
         protected Runnable getRunnable() {
             return this;
         }
-        
+
         protected void populateRowsWithMatches(List<Integer> rowIndices) throws Exception {
             Engine engine = new Engine(_project);
             engine.initializeFromJSON(_engineConfig);
-            
+
             Column column = _project.columnModel.getColumnByName(_baseColumnName);
             if (column == null) {
                 throw new Exception("No column named " + _baseColumnName);
             }
-            
+
             _cellIndex = column.getCellIndex();
-            
+
             FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(_project, new RowVisitor() {
                 List<Integer> _rowIndices;
-                
+
                 public RowVisitor init(List<Integer> rowIndices) {
                     _rowIndices = rowIndices;
                     return this;
                 }
-                
+
                 @Override
                 public void start(Project project) {
                 	// nothing to do
                 }
-                
+
                 @Override
                 public void end(Project project) {
                 	// nothing to do
                 }
-                
+
                 public boolean visit(Project project, int rowIndex, Row row) {
                     Cell cell = row.getCell(_cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
                         _rowIndices.add(rowIndex);
                     }
-                    
+
                     return false;
                 }
             }.init(rowIndices));
         }
-        
+
         protected int extendRows(
-            List<Integer> rowIndices, 
-            List<DataExtension> dataExtensions, 
-            int from, 
+            List<Integer> rowIndices,
+            List<DataExtension> dataExtensions,
+            int from,
             int limit,
             Map<String, ReconCandidate> reconCandidateMap
         ) {
             Set<String> guids = new HashSet<String>();
-            
+
             int end;
             for (end = from; end < limit && guids.size() < 10; end++) {
                 int index = rowIndices.get(end);
                 Row row = _project.rows.get(index);
                 Cell cell = row.getCell(_cellIndex);
-                
+
                 guids.add(cell.recon.match.topicGUID);
             }
-            
+
             Map<String, DataExtension> map = null;
             try {
                 map = _job.extend(guids, reconCandidateMap);
             } catch (Exception e) {
                 map = new HashMap<String, DataExtension>();
             }
-            
+
             for (int i = from; i < end; i++) {
                 int index = rowIndices.get(i);
                 Row row = _project.rows.get(index);
                 Cell cell = row.getCell(_cellIndex);
                 String guid = cell.recon.match.topicGUID;
-                
+
                 if (map.containsKey(guid)) {
                     dataExtensions.add(map.get(guid));
                 } else {
                     dataExtensions.add(null);
                 }
             }
-            
+
             return end;
         }
-        
+
         public void run() {
             List<Integer> rowIndices = new ArrayList<Integer>();
             List<DataExtension> dataExtensions = new ArrayList<DataExtension>();
-            
+
             try {
                 populateRowsWithMatches(rowIndices);
             } catch (Exception e2) {
                 // TODO : Not sure what to do here?
                 e2.printStackTrace();
             }
-            
+
             int start = 0;
             Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
-            
+
             while (start < rowIndices.size()) {
                 int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size(), reconCandidateMap);
                 start = end;
-                
+
                 _progress = end * 100 / rowIndices.size();
                 try {
                     Thread.sleep(200);
@@ -240,23 +241,23 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     }
                 }
             }
-            
+
             if (!_canceled) {
                 List<String> columnNames = new ArrayList<String>();
                 for (ColumnInfo info : _job.columns) {
                     columnNames.add(StringUtils.join(info.names, " - "));
                 }
-                
+
                 List<FreebaseType> columnTypes = new ArrayList<FreebaseType>();
                 for (ColumnInfo info : _job.columns) {
                     columnTypes.add(info.expectedType);
                 }
-                
-                HistoryEntry historyEntry = new HistoryEntry(
+
+                HistoryEntry historyEntry = ProjectManager.singleton.createHistoryEntry(
                     _historyEntryID,
-                    _project, 
-                    _description, 
-                    ExtendDataOperation.this, 
+                    _project,
+                    _description,
+                    ExtendDataOperation.this,
                     new DataExtensionChange(
                         _baseColumnName,
                         _columnInsertIndex,
@@ -266,7 +267,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                         dataExtensions,
                         _historyEntryID)
                 );
-                
+
                 _project.history.addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             }

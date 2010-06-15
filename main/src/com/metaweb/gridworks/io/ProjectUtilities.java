@@ -23,7 +23,7 @@ public class ProjectUtilities {
     synchronized public static void save(Project project) {
         synchronized (project) {
             long id = project.id;
-            File dir = ProjectManager.singleton.getProjectDir(id);
+            File dir = ((FileProjectManager)ProjectManager.singleton).getProjectDir(id);
 
             File tempFile = new File(dir, "data.temp.zip");
             try {

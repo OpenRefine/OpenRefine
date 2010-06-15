@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -27,13 +28,13 @@ public class RowStarOperation extends EngineDependentOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         boolean starred = obj.getBoolean("starred");
-        
+
         return new RowStarOperation(
-            engineConfig, 
+            engineConfig,
             starred
         );
     }
-    
+
     public RowStarOperation(JSONObject engineConfig, boolean starred) {
         super(engineConfig);
         _starred = starred;
@@ -41,7 +42,7 @@ public class RowStarOperation extends EngineDependentOperation {
 
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
-        
+
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
@@ -56,17 +57,17 @@ public class RowStarOperation extends EngineDependentOperation {
 
    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
-        
+
         List<Change> changes = new ArrayList<Change>(project.rows.size());
-        
+
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, changes));
-        
-        return new HistoryEntry(
+
+        return ProjectManager.singleton.createHistoryEntry(
             historyEntryID,
-            project, 
-            (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows", 
-            this, 
+            project,
+            (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows",
+            this,
             new MassChange(changes, false)
         );
     }
@@ -74,26 +75,26 @@ public class RowStarOperation extends EngineDependentOperation {
     protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
         return new RowVisitor() {
             List<Change> changes;
-            
+
             public RowVisitor init(List<Change> changes) {
                 this.changes = changes;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
             	// nothing to do
             }
-            
+
             @Override
             public void end(Project project) {
             	// nothing to do
             }
-            
+
             public boolean visit(Project project, int rowIndex, Row row) {
                 if (row.starred != _starred) {
                     RowStarChange change = new RowStarChange(rowIndex, _starred);
-                    
+
                     changes.add(change);
                 }
                 return false;

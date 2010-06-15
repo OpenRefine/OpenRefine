@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
@@ -30,7 +31,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
             obj.getString("separator")
         );
     }
-    
+
     public MultiValuedCellJoinOperation(
         String      columnName,
         String      keyColumnName,
@@ -43,7 +44,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
 
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
-        
+
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
@@ -52,7 +53,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         writer.key("separator"); writer.value(_separator);
         writer.endObject();
     }
-    
+
     protected String getBriefDescription(Project project) {
         return "Join multi-valued cells in column " + _columnName;
     }
@@ -63,34 +64,34 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
             throw new Exception("No column named " + _columnName);
         }
         int cellIndex = column.getCellIndex();
-        
+
         Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
         if (keyColumn == null) {
             throw new Exception("No key column named " + _keyColumnName);
         }
         int keyCellIndex = keyColumn.getCellIndex();
-        
+
         List<Row> newRows = new ArrayList<Row>();
-        
+
         int oldRowCount = project.rows.size();
         for (int r = 0; r < oldRowCount; r++) {
             Row oldRow = project.rows.get(r);
-            
+
             if (oldRow.isCellBlank(keyCellIndex)) {
                 newRows.add(oldRow.dup());
                 continue;
             }
-            
+
             int r2 = r + 1;
             while (r2 < oldRowCount && project.rows.get(r2).isCellBlank(keyCellIndex)) {
                 r2++;
             }
-            
+
             if (r2 == r + 1) {
                 newRows.add(oldRow.dup());
                 continue;
             }
-            
+
             StringBuffer sb = new StringBuffer();
             for (int r3 = r; r3 < r2; r3++) {
                 Object value = project.rows.get(r3).getCellValue(cellIndex);
@@ -101,7 +102,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
                     sb.append(value.toString());
                 }
             }
-            
+
             for (int r3 = r; r3 < r2; r3++) {
                 Row newRow = project.rows.get(r3).dup();
                 if (r3 == r) {
@@ -109,20 +110,20 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
                 } else {
                     newRow.setCell(cellIndex, null);
                 }
-                
+
                 if (!newRow.isEmpty()) {
                     newRows.add(newRow);
                 }
             }
-            
+
             r = r2 - 1; // r will be incremented by the for loop anyway
         }
-        
-        return new HistoryEntry(
+
+        return ProjectManager.singleton.createHistoryEntry(
             historyEntryID,
-            project, 
-            getBriefDescription(null), 
-            this, 
+            project,
+            getBriefDescription(null),
+            this,
             new MassRowChange(newRows)
         );
     }

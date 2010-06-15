@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
@@ -22,16 +23,16 @@ public class ColumnRemovalOperation extends AbstractOperation {
             obj.getString("columnName")
         );
     }
-    
+
     public ColumnRemovalOperation(
         String columnName
     ) {
         _columnName = columnName;
     }
-    
+
    public void write(JSONWriter writer, Properties options)
            throws JSONException {
-       
+
        writer.object();
        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
        writer.key("description"); writer.value("Remove column " + _columnName);
@@ -49,11 +50,11 @@ public class ColumnRemovalOperation extends AbstractOperation {
         if (column == null) {
             throw new Exception("No column named " + _columnName);
         }
-        
+
         String description = "Remove column " + column.getName();
-        
+
         Change change = new ColumnRemovalChange(project.columnModel.columns.indexOf(column));
-        
-        return new HistoryEntry(historyEntryID, project, description, ColumnRemovalOperation.this, change);
+
+        return ProjectManager.singleton.createHistoryEntry(historyEntryID, project, description, ColumnRemovalOperation.this, change);
     }
 }

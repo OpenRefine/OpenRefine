@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
@@ -25,20 +26,20 @@ public class EditOneCellCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
-            
+
             Project project = getProject(request);
-            
+
             int rowIndex = Integer.parseInt(request.getParameter("row"));
             int cellIndex = Integer.parseInt(request.getParameter("cell"));
-            
+
             String type = request.getParameter("type");
             String valueString = request.getParameter("value");
             Serializable value = null;
-            
+
             if ("number".equals(type)) {
                 value = Double.parseDouble(valueString);
             } else if ("boolean".equals(type)) {
@@ -50,13 +51,13 @@ public class EditOneCellCommand extends Command {
             }
 
             EditOneCellProcess process = new EditOneCellProcess(
-                project, 
+                project,
                 "Edit single cell",
-                rowIndex, 
-                cellIndex, 
+                rowIndex,
+                cellIndex,
                 value
             );
-            
+
             HistoryEntry historyEntry = project.processManager.queueProcess(process);
             if (historyEntry != null) {
                 /*
@@ -64,11 +65,11 @@ public class EditOneCellCommand extends Command {
                  * so the client side can update the cell's rendering right away.
                  */
                 JSONWriter writer = new JSONWriter(response.getWriter());
-                
+
                 Pool pool = new Pool();
                 Properties options = new Properties();
                 options.put("pool", pool);
-                
+
                 writer.object();
                 writer.key("code"); writer.value("ok");
                 writer.key("historyEntry"); historyEntry.write(writer, options);
@@ -82,22 +83,22 @@ public class EditOneCellCommand extends Command {
             respondException(response, e);
         }
     }
-    
+
     protected static class EditOneCellProcess extends QuickHistoryEntryProcess {
         final int rowIndex;
         final int cellIndex;
         final Serializable value;
         Cell newCell;
-        
+
         EditOneCellProcess(
-            Project project, 
-            String briefDescription, 
-            int rowIndex, 
-            int cellIndex, 
+            Project project,
+            String briefDescription,
+            int rowIndex,
+            int cellIndex,
             Serializable value
         ) {
             super(project, briefDescription);
-            
+
             this.rowIndex = rowIndex;
             this.cellIndex = cellIndex;
             this.value = value;
@@ -109,19 +110,19 @@ public class EditOneCellCommand extends Command {
             if (column == null) {
                 throw new Exception("No such column");
             }
-            
+
             newCell = new Cell(
-                value, 
+                value,
                 cell != null ? cell.recon : null
             );
-            
-            String description = 
-                "Edit single cell on row " + (rowIndex + 1) + 
+
+            String description =
+                "Edit single cell on row " + (rowIndex + 1) +
                 ", column " + column.getName();
 
             Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
-                
-            return new HistoryEntry(
+
+            return ProjectManager.singleton.createHistoryEntry(
                 historyEntryID, _project, description, null, change);
         }
     }
