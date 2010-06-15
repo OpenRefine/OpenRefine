@@ -27,11 +27,20 @@ import com.metaweb.gridworks.model.Row;
 public class XmlImportUtilities {
     final static Logger logger = LoggerFactory.getLogger("XmlImporterUtilities");
 
+    /**
+     * An element which holds sub-elements we
+     * shall import as records
+     */
     static protected class RecordElementCandidate {
         String[] path;
         int count;
     }
 
+    /**
+     *
+     *
+     *
+     */
     static protected abstract class ImportVertical {
         public String name = "";
         public int nonBlankCount;
@@ -39,6 +48,9 @@ public class XmlImportUtilities {
         abstract void tabulate();
     }
 
+    /**
+     * A column group describes a branch in tree structured data
+     */
     static public class ImportColumnGroup extends ImportVertical {
         public Map<String, ImportColumnGroup> subgroups = new HashMap<String, ImportColumnGroup>();
         public Map<String, ImportColumn> columns = new HashMap<String, ImportColumn>();
@@ -56,9 +68,18 @@ public class XmlImportUtilities {
         }
     }
 
+    /**
+     * A column is used to describe a branch-terminating element in a tree structure
+     *
+     */
     static public class ImportColumn extends ImportVertical {
         public int cellIndex;
         public boolean blankOnFirstRow;
+
+        public ImportColumn(){}
+        public ImportColumn(String name){ //required for testing
+            super.name = name;
+        }
 
         @Override
         void tabulate() {
@@ -66,9 +87,13 @@ public class XmlImportUtilities {
         }
     }
 
+    /**
+     * A record describes a data element in a tree-structure
+     *
+     */
     static public class ImportRecord {
-        List<List<Cell>> rows = new LinkedList<List<Cell>>();
-        List<Integer> columnEmptyRowIndices = new ArrayList<Integer>();
+        public List<List<Cell>> rows = new LinkedList<List<Cell>>();
+        public List<Integer> columnEmptyRowIndices = new ArrayList<Integer>();
     }
 
     static public String[] detectPathFromTag(InputStream inputStream, String tag) {
@@ -96,6 +121,19 @@ public class XmlImportUtilities {
         return null;
     }
 
+    /**
+     * Looks for an element with the given tag name in the Xml being parsed, returning the path hierarchy to reach it.
+     *
+     * @param parser
+     * @param tag
+     *         The Xml element name (can be qualified) to search for
+     * @return
+     *         If the tag is found, an array of strings is returned.
+     *         If the tag is at the top level, the tag will be the only item in the array.
+     *         If the tag is nested beneath the top level, the array is filled with the hierarchy with the tag name at the last index
+     *         Null if the the tag is not found.
+     * @throws XMLStreamException
+     */
     static protected List<String> detectRecordElement(XMLStreamReader parser, String tag) throws XMLStreamException {
         if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT)
             parser.next();
@@ -123,6 +161,15 @@ public class XmlImportUtilities {
         return null;
     }
 
+    /**
+     * Seeks for recurring XML element in an InputStream
+     * which are likely candidates for being data records
+     * @param inputStream
+     *              The XML data as a stream
+     * @return
+     *              The path to the most numerous of the possible candidates.
+     *              null if no candidates were found (less than 6 recurrences)
+     */
     static public String[] detectRecordElement(InputStream inputStream) {
         logger.trace("detectRecordElement(inputStream)");
         List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
@@ -320,6 +367,15 @@ public class XmlImportUtilities {
         }
     }
 
+    /**
+     *
+     * @param project
+     * @param parser
+     * @param recordPath
+     * @param pathIndex
+     * @param rootColumnGroup
+     * @throws XMLStreamException
+     */
     static protected void findRecord(
         Project project,
         XMLStreamReader parser,
@@ -361,6 +417,14 @@ public class XmlImportUtilities {
         }
     }
 
+    /**
+     * processRecord parsesXml for a single element and it's sub-elements,
+     * adding the parsed data as a row to the project
+     * @param project
+     * @param parser
+     * @param rootColumnGroup
+     * @throws XMLStreamException
+     */
     static protected void processRecord(
         Project project,
         XMLStreamReader parser,
@@ -390,6 +454,14 @@ public class XmlImportUtilities {
         return prefix != null && prefix.length() > 0 ? (prefix + ":" + localName) : localName;
     }
 
+    /**
+     *
+     * @param project
+     * @param parser
+     * @param columnGroup
+     * @param record
+     * @throws XMLStreamException
+     */
     static protected void processSubRecord(
         Project project,
         XMLStreamReader parser,
@@ -495,7 +567,7 @@ public class XmlImportUtilities {
             row.add(null);
         }
 
-        logger.trace("Adding cell with value : " + value + " to row : " + rowIndex + " at cell index : " + (cellIndex-1));
+        logger.trace("Adding cell with value : \"" + value + "\" to row : " + rowIndex + " at cell index : " + (cellIndex-1));
 
         row.set(cellIndex-1, new Cell(value, null));
 

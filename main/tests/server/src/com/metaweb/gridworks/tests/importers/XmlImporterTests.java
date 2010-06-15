@@ -95,24 +95,27 @@ public class XmlImporterTests extends GridworksTest {
         Assert.assertEquals(row.getCell(1).value, "With line\n break");
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void testElementsWithVaryingStructure(){
         RunTest(getSampleWithVaryingStructure());
 
         log(project);
         assertProjectCreated(project, 5, 6);
 
+        Assert.assertEquals( project.columnModel.getColumnByCellIndex(5).getName(), "book - genre");
+
         Row row0 = project.rows.get(0);
         Assert.assertNotNull(row0);
-        Assert.assertEquals(row0.cells.size(),6);
+        Assert.assertEquals(row0.cells.size(),4);
 
         Row row5  = project.rows.get(5);
         Assert.assertNotNull(row5);
-        Assert.assertEquals(row5.cells.size(),6);
+        Assert.assertEquals(row5.cells.size(),5);
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void testElementWithNestedTree(){
+        RunTest(getSampleWithTreeStructure());
         log(project);
         assertProjectCreated(project, 5, 6);
 

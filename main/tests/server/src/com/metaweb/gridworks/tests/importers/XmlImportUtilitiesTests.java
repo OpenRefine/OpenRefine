@@ -27,12 +27,12 @@ import com.metaweb.gridworks.tests.GridworksTest;
 
 
 public class XmlImportUtilitiesTests extends GridworksTest {
-    
+
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     //dependencies
     Project project;
     XMLStreamReader parser;
@@ -157,26 +157,51 @@ public class XmlImportUtilitiesTests extends GridworksTest {
         assertProjectCreated(project, 0, 6);
 
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        //TODO
+
+        Assert.assertEquals(columnGroup.subgroups.size(), 1);
+        Assert.assertNotNull(columnGroup.subgroups.get("book"));
+        Assert.assertEquals(columnGroup.subgroups.get("book").subgroups.size(), 3);
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("author"));
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("title"));
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("publish_date"));
     }
 
     @Test
-    public void createColumnsFromImportTest() {
+    public void importXmlWithVaryingStructureTest(){
+        loadXml(XmlImporterTests.getSampleWithVaryingStructure());
+
+        String[] recordPath = new String[]{"library", "book"};
+        XmlImportUtilitiesStub.importXml(inputStream, project, recordPath, columnGroup);
+
+        log(project);
+        assertProjectCreated(project, 0, 6);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        Assert.assertEquals(project.rows.get(5).cells.size(), 5);
+
+        Assert.assertEquals(columnGroup.subgroups.size(), 1);
+        Assert.assertEquals(columnGroup.name, "");
+        ImportColumnGroup book = columnGroup.subgroups.get("book");
+        Assert.assertNotNull(book);
+        Assert.assertEquals(book.columns.size(), 1);
+        Assert.assertEquals(book.subgroups.size(), 4);
+        Assert.assertNotNull(book.subgroups.get("author"));
+        Assert.assertEquals(book.subgroups.get("author").columns.size(), 1);
+        Assert.assertNotNull(book.subgroups.get("title"));
+        Assert.assertNotNull(book.subgroups.get("publish_date"));
+        Assert.assertNotNull(book.subgroups.get("genre"));
+    }
+
+    @Test
+    public void createColumnsFromImportTest(){
+
         ImportColumnGroup columnGroup = new ImportColumnGroup();
-        ImportColumn ic1 = new ImportColumn();
-        ic1.name = "hello";
-        ImportColumn ic2 = new ImportColumn();
-        ic2.name = "world";
         ImportColumnGroup subGroup = new ImportColumnGroup();
-        ImportColumn ic3 = new ImportColumn();
-        ic3.name = "foo";
-        ImportColumn ic4 = new ImportColumn();
-        ic4.name = "bar";
-        subGroup.columns.put("c", ic3);
-        subGroup.columns.put("d", ic4);
-        columnGroup.columns.put("a", ic1);
-        columnGroup.columns.put("b", ic2);
+        columnGroup.columns.put("a", new ImportColumn("hello"));
+        columnGroup.columns.put("b", new ImportColumn("world"));
+        subGroup.columns.put("c", new ImportColumn("foo"));
+        subGroup.columns.put("d", new ImportColumn("bar"));
         columnGroup.subgroups.put("e", subGroup);
+
         XmlImportUtilitiesStub.createColumnsFromImport(project, columnGroup);
         log(project);
         assertProjectCreated(project, 4, 0);
@@ -206,7 +231,7 @@ public class XmlImportUtilitiesTests extends GridworksTest {
 
         log(project);
         assertProjectCreated(project, 0, 6);
-        
+
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         //TODO
     }
@@ -279,7 +304,7 @@ public class XmlImportUtilitiesTests extends GridworksTest {
     }
 
 
-    @Test(groups={"broken"})
+    @Test
     public void processSubRecordTest(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         createParser();
@@ -291,20 +316,43 @@ public class XmlImportUtilitiesTests extends GridworksTest {
             Assert.fail();
         }
         log(project);
-        Assert.fail();
-        //TODO need to verify 'record' was set correctly which we can't do as ImportRecord is an internal class
+
+        Assert.assertEquals(columnGroup.subgroups.size(), 1);
+        Assert.assertEquals(columnGroup.name, "");
+
+        Assert.assertNotNull(columnGroup.subgroups.get("library"));
+        Assert.assertEquals(columnGroup.subgroups.get("library").subgroups.size(), 1);
+
+        ImportColumnGroup book = columnGroup.subgroups.get("library").subgroups.get("book");
+        Assert.assertNotNull(book);
+        Assert.assertEquals(book.subgroups.size(), 2);
+        Assert.assertNotNull(book.subgroups.get("author"));
+        Assert.assertNotNull(book.subgroups.get("genre"));
+
+        //TODO check record
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void addCellTest(){
         String columnLocalName = "author";
         String text = "Author1, The";
         int commonStartingRowIndex = 0;
-        project.rows.add(new Row(0));
         SUT.addCellWrapper(project, columnGroup, record, columnLocalName, text, commonStartingRowIndex);
 
-        Assert.fail();
-        //TODO need to verify 'record' was set correctly which we can't do as ImportRecord is an internal class
+        Assert.assertNotNull(record);
+        Assert.assertNotNull(record.rows);
+        Assert.assertNotNull(record.columnEmptyRowIndices);
+        Assert.assertEquals(record.rows.size(), 1);
+        Assert.assertEquals(record.columnEmptyRowIndices.size(), 2);
+        Assert.assertNotNull(record.rows.get(0));
+        Assert.assertNotNull(record.columnEmptyRowIndices.get(0));
+        Assert.assertNotNull(record.columnEmptyRowIndices.get(1));
+        Assert.assertEquals(record.rows.get(0).size(), 2);
+        Assert.assertNotNull(record.rows.get(0).get(0));
+        Assert.assertEquals(record.rows.get(0).get(0).value, "Author1, The");
+        Assert.assertEquals(record.columnEmptyRowIndices.get(0).intValue(),0);
+        Assert.assertEquals(record.columnEmptyRowIndices.get(1).intValue(),1);
+
     }
 
     //----------------helpers-------------
