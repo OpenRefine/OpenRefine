@@ -152,7 +152,7 @@ public class CreateProjectCommand extends Command {
 
             project.update();
 
-            redirect(response, "/project.html?project=" + project.id);
+            redirect(response, "/project?project=" + project.id);
         } catch (Exception e) {
             redirect(response, "/error.html?redirect=index.html&msg=" +
                 ParsingUtilities.encode("Failed to import file: " + e.getLocalizedMessage())
