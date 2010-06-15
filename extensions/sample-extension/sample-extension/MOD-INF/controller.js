@@ -5,10 +5,9 @@ var ClientSideResourceManager = Packages.com.metaweb.gridworks.ClientSideResourc
 /*
  * Function invoked to initialize the extension.
  */
-/*
 function init() {
-    # Packages.java.lang.System.err.println("Initializing sample extension");
-    # Packages.java.lang.System.err.println(module.getMountPoint());
+    // Packages.java.lang.System.err.println("Initializing sample extension");
+    // Packages.java.lang.System.err.println(module.getMountPoint());
     
     // Script files to inject into /project page
     ClientSideResourceManager.addPaths(
@@ -28,7 +27,6 @@ function init() {
         ]
     );
 }
-*/
 
 /*
  * Function invoked to handle each request in a custom way.
@@ -37,6 +35,9 @@ function process(path, request, response) {
     // Analyze path and handle this request yourself.
     
     if (path == "/" || path == "") {
+        var context = {};
+        context.someVar = "foo"; // here's how to pass things into the .vt templates
+        
         send(request, response, "index.vt", context);
     }
 }

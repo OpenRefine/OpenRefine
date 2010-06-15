@@ -13,6 +13,8 @@
       and styles into the /project page.
     </p>
     
+    <p>Here is someVar: $someVar.</p>
+    
     <p>Here is a sample list using a veloci-macro:</p>
     
     #set( $greatlakes = ["Superior","Michigan","Huron","Erie","Ontario"] )
