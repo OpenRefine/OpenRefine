@@ -28,7 +28,7 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jrdf-0.5.6.jar"/>
 	<classpathentry kind="lib" path="tests/server/lib/mockito-all-1.8.4.jar" sourcepath="tests/server/lib-src/mockito-all-1.8.4-sources.jar"/>
 	<classpathentry kind="lib" path="tests/server/lib/testng-5.12.1.jar" sourcepath="tests/server/lib-src/testng-5.12.1-sources.jar"/>
-	<classpathentry kind="lib" path="/gridworks server/lib/servlet-api-2.5.jar" sourcepath="/gridworks server/lib-src/servlet-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/dfhuynh/dev/standalones/gridworks/server/lib/servlet-api-2.5.jar" sourcepath="/gridworks server/lib-src/servlet-api-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar" sourcepath="webapp/WEB-INF/lib-src/jcl-over-slf4j-1.5.6-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/slf4j-api-1.5.6.jar" sourcepath="webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar" sourcepath="webapp/WEB-INF/lib-src/slf4j-log4j12-1.5.6-sources.jar"/>
