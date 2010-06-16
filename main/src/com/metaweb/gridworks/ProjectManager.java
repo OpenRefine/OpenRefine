@@ -1,10 +1,13 @@
 package com.metaweb.gridworks;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.tools.tar.TarOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +58,10 @@ public abstract class ProjectManager {
     }
 
     public abstract boolean importProject(long projectID);
+
+    public abstract void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException;
+
+    public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
 
     public abstract void ensureProjectSaved(long id);
 

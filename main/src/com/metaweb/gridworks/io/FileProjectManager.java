@@ -1,9 +1,13 @@
 package com.metaweb.gridworks.io;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,7 +15,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
+import org.apache.tools.tar.TarEntry;
+import org.apache.tools.tar.TarInputStream;
+import org.apache.tools.tar.TarOutputStream;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,6 +91,89 @@ public class FileProjectManager extends ProjectManager{
             } else {
                 return false;
             }
+        }
+    }
+
+    public void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException {
+        File destDir = this.getProjectDir(projectID);
+        destDir.mkdirs();
+
+        if (gziped) {
+            GZIPInputStream gis = new GZIPInputStream(inputStream);
+            untar(destDir, gis);
+        } else {
+            untar(destDir, inputStream);
+        }
+    }
+
+    protected void untar(File destDir, InputStream inputStream) throws IOException {
+        TarInputStream tin = new TarInputStream(inputStream);
+        TarEntry tarEntry = null;
+
+        while ((tarEntry = tin.getNextEntry()) != null) {
+            File destEntry = new File(destDir, tarEntry.getName());
+            File parent = destEntry.getParentFile();
+
+            if (!parent.exists()) {
+                parent.mkdirs();
+            }
+
+            if (tarEntry.isDirectory()) {
+                destEntry.mkdirs();
+            } else {
+                FileOutputStream fout = new FileOutputStream(destEntry);
+                try {
+                    tin.copyEntryContents(fout);
+                } finally {
+                    fout.close();
+                }
+            }
+        }
+    }
+
+    public void exportProject(long projectId, TarOutputStream tos) throws IOException {
+        File dir = this.getProjectDir(projectId);
+        this.tarDir("", dir, tos);
+    }
+
+    protected void tarDir(String relative, File dir, TarOutputStream tos) throws IOException{
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (!file.isHidden()) {
+                String path = relative + file.getName();
+
+                if (file.isDirectory()) {
+                    tarDir(path + File.separator, file, tos);
+                } else {
+                    TarEntry entry = new TarEntry(path);
+
+                    entry.setMode(TarEntry.DEFAULT_FILE_MODE);
+                    entry.setSize(file.length());
+                    entry.setModTime(file.lastModified());
+
+                    tos.putNextEntry(entry);
+
+                    copyFile(file, tos);
+
+                    tos.closeEntry();
+                }
+            }
+        }
+    }
+
+    protected void copyFile(File file, OutputStream os) throws IOException {
+        final int buffersize = 4096;
+
+        FileInputStream fis = new FileInputStream(file);
+        try {
+            byte[] buf = new byte[buffersize];
+            int count;
+
+            while((count = fis.read(buf, 0, buffersize)) != -1) {
+                os.write(buf, 0, count);
+            }
+        } finally {
+            fis.close();
         }
     }
 

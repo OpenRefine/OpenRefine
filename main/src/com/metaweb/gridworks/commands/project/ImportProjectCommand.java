@@ -1,13 +1,10 @@
 package com.metaweb.gridworks.commands.project;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
-import java.util.zip.GZIPInputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,15 +14,12 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.apache.tools.tar.TarEntry;
-import org.apache.tools.tar.TarInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
-import com.metaweb.gridworks.io.FileProjectManager;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
@@ -94,7 +88,7 @@ public class ImportProjectCommand extends Command {
             } else {
                 String fileName = item.getName().toLowerCase();
                 try {
-                    internalImportInputStream(projectID, stream, !fileName.endsWith(".tar"));
+                    ProjectManager.singleton.importProject(projectID, stream, !fileName.endsWith(".tar"));
                 } finally {
                     stream.close();
                 }
@@ -131,46 +125,11 @@ public class ImportProjectCommand extends Command {
         }
 
         try {
-            internalImportInputStream(projectID, inputStream, !urlString.endsWith(".tar"));
+            ProjectManager.singleton.importProject(projectID, inputStream, !urlString.endsWith(".tar"));
         } finally {
             inputStream.close();
         }
     }
 
-    protected void internalImportInputStream(long projectID, InputStream inputStream, boolean gziped) throws IOException {
-        File destDir = ((FileProjectManager)ProjectManager.singleton).getProjectDir(projectID);//FIXME relies on FileProjectManager
-        destDir.mkdirs();
 
-        if (gziped) {
-            GZIPInputStream gis = new GZIPInputStream(inputStream);
-            untar(destDir, gis);
-        } else {
-            untar(destDir, inputStream);
-        }
-    }
-
-    protected void untar(File destDir, InputStream inputStream) throws IOException {
-        TarInputStream tin = new TarInputStream(inputStream);
-        TarEntry tarEntry = null;
-
-        while ((tarEntry = tin.getNextEntry()) != null) {
-            File destEntry = new File(destDir, tarEntry.getName());
-            File parent = destEntry.getParentFile();
-
-            if (!parent.exists()) {
-                parent.mkdirs();
-            }
-
-            if (tarEntry.isDirectory()) {
-                destEntry.mkdirs();
-            } else {
-                FileOutputStream fout = new FileOutputStream(destEntry);
-                try {
-                    tin.copyEntryContents(fout);
-                } finally {
-                    fout.close();
-                }
-            }
-        }
-    }
 }
