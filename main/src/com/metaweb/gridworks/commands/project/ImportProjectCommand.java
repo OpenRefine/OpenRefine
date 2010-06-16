@@ -57,7 +57,7 @@ public class ImportProjectCommand extends Command {
                     }
                 }
 
-                redirect(response, "/project.html?project=" + projectID);
+                redirect(response, "/project?project=" + projectID);
             } else {
                 redirect(response, "/error.html?redirect=index.html&msg=" +
                     ParsingUtilities.encode("Failed to import project")
