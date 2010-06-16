@@ -19,7 +19,7 @@ import com.metaweb.gridworks.history.HistoryEntryManager;
 import com.metaweb.gridworks.util.Pool;
 
 
-public class FileHistoryEntry implements HistoryEntryManager{
+public class FileHistoryEntryManager implements HistoryEntryManager{
 
     public void delete(HistoryEntry historyEntry) {
         File file = getChangeFile(historyEntry);

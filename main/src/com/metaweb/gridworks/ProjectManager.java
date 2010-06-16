@@ -41,8 +41,6 @@ public abstract class ProjectManager {
      */
     transient protected Map<Long, Project> _projects;
 
-    protected HistoryEntryManager _historyEntryManager;
-
     static public ProjectManager singleton;
 
     public InterProjectModel getInterProjectModel() {
@@ -125,9 +123,5 @@ public abstract class ProjectManager {
 
     public abstract void deleteProject(long projectID) ;
 
-    //public abstract HistoryEntry createHistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time);
-    //public abstract HistoryEntry createHistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change);
-    public HistoryEntryManager getHistoryEntryManager(){
-        return this._historyEntryManager;
-    }
+    public abstract HistoryEntryManager getHistoryEntryManager();
 }

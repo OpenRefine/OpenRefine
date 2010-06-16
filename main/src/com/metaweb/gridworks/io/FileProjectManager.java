@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
+import com.metaweb.gridworks.history.HistoryEntryManager;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
 
@@ -54,8 +55,6 @@ public class FileProjectManager extends ProjectManager{
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _expressions = new LinkedList<String>();
         _projects = new HashMap<Long, Project>();
-
-        _historyEntryManager = new FileHistoryEntry();
 
         load();
     }
@@ -444,5 +443,9 @@ public class FileProjectManager extends ProjectManager{
         }
 
         return found;
+    }
+
+    public HistoryEntryManager getHistoryEntryManager(){
+        return new FileHistoryEntryManager();
     }
 }
