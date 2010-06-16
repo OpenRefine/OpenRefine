@@ -2,5 +2,5 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="module/MOD-INF/classes"/>
+	<classpathentry kind="output" path="sample-extension/MOD-INF/classes"/>
 </classpath>

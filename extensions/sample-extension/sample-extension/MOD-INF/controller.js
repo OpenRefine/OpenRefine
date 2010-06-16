@@ -36,7 +36,10 @@ function process(path, request, response) {
     
     if (path == "/" || path == "") {
         var context = {};
-        context.someVar = "foo"; // here's how to pass things into the .vt templates
+        // here's how to pass things into the .vt templates
+        context.someList = ["Superior","Michigan","Huron","Erie","Ontario"];
+        context.someString = "foo";
+        context.someInt = Packages.com.metaweb.gridworks.sampleExtension.SampleUtil.stringArrayLength(context.someList);
         
         send(request, response, "index.vt", context);
     }
