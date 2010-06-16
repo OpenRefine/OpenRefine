@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
@@ -122,7 +121,7 @@ public class EditOneCellCommand extends Command {
 
             Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
 
-            return ProjectManager.singleton.createHistoryEntry(
+            return new HistoryEntry(
                 historyEntryID, _project, description, null, change);
         }
     }

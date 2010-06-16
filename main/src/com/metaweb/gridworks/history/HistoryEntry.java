@@ -19,19 +19,30 @@ import com.metaweb.gridworks.util.ParsingUtilities;
  * This is the metadata of a Change. It's small, so we can load it in order to
  * obtain information about a change without actually loading the change.
  */
-public abstract class HistoryEntry implements Jsonizable {
+public class HistoryEntry implements Jsonizable {
     final public long   id;
     final public long   projectID;
     final public String description;
     final public Date   time;
 
+    // the manager (deals with IO systems or databases etc.)
+    final public HistoryEntryManager _manager;
+
     // the abstract operation, if any, that results in the change
     final public AbstractOperation operation;
 
     // the actual change, loaded on demand
-    transient protected Change _change;
+    private transient Change _change;
 
     private final static String OPERATION = "operation";
+
+    public void setChange(Change _change) {
+        this._change = _change;
+    }
+
+    public Change getChange() {
+        return _change;
+    }
 
     static public long allocateID() {
         return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
@@ -44,7 +55,8 @@ public abstract class HistoryEntry implements Jsonizable {
         this.operation = operation;
         this.time = new Date();
 
-        _change = change;
+        this._manager = ProjectManager.singleton.getHistoryEntryManager();
+        setChange(change);
     }
 
     protected HistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time) {
@@ -53,6 +65,7 @@ public abstract class HistoryEntry implements Jsonizable {
         this.description = description;
         this.operation = operation;
         this.time = time;
+        this._manager = ProjectManager.singleton.getHistoryEntryManager();
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -68,23 +81,27 @@ public abstract class HistoryEntry implements Jsonizable {
         writer.endObject();
     }
 
+    public void save(Writer writer, Properties options){
+        _manager.save(this, writer, options);
+    }
+
     public void apply(Project project) {
-        if (_change == null) {
-            loadChange();
+        if (getChange() == null) {
+            ProjectManager.singleton.getHistoryEntryManager().loadChange(this);
         }
 
         synchronized (project) {
-            _change.apply(project);
+            getChange().apply(project);
 
             // When a change is applied, it can hang on to old data (in order to be able
             // to revert later). Hence, we need to save the change out.
 
             try {
-                saveChange();
+                _manager.saveChange(this);
             } catch (Exception e) {
                 e.printStackTrace();
 
-                _change.revert(project);
+                getChange().revert(project);
 
                 throw new RuntimeException("Failed to apply change", e);
             }
@@ -92,19 +109,11 @@ public abstract class HistoryEntry implements Jsonizable {
     }
 
     public void revert(Project project) {
-        if (_change == null) {
-            loadChange();
+        if (getChange() == null) {
+            _manager.loadChange(this);
         }
-        _change.revert(project);
+        getChange().revert(project);
     }
-
-    public abstract void loadChange();
-
-    protected abstract void saveChange() throws Exception;
-
-    public abstract void save(Writer writer, Properties options);
-
-    protected abstract void delete();
 
     static public HistoryEntry load(Project project, String s) throws Exception {
         JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
@@ -114,7 +123,7 @@ public abstract class HistoryEntry implements Jsonizable {
             operation = OperationRegistry.reconstruct(project, obj.getJSONObject(OPERATION));
         }
 
-        return ProjectManager.singleton.createHistoryEntry(
+        return new HistoryEntry(
             obj.getLong("id"),
             project.id,
             obj.getString("description"),
@@ -123,6 +132,8 @@ public abstract class HistoryEntry implements Jsonizable {
         );
     }
 
-
+    public void delete(){
+        _manager.delete(this);
+    }
 
 }

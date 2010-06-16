@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.history.Change;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
@@ -20,20 +19,20 @@ import com.metaweb.gridworks.util.Pool;
 
 public class SaveProtographOperation extends AbstractOperation {
     final protected Protograph _protograph;
-
+    
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         return new SaveProtographOperation(
             Protograph.reconstruct(obj.getJSONObject("protograph"))
         );
     }
-
+    
     public SaveProtographOperation(Protograph protograph) {
         _protograph = protograph;
     }
 
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
-
+    
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value("Save protograph");
@@ -48,20 +47,20 @@ public class SaveProtographOperation extends AbstractOperation {
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         String description = "Save schema-alignment protograph";
-
+        
         Change change = new ProtographChange(_protograph);
-
-        return ProjectManager.singleton.createHistoryEntry(historyEntryID, project, description, SaveProtographOperation.this, change);
+        
+        return new HistoryEntry(historyEntryID, project, description, SaveProtographOperation.this, change);
     }
 
     static public class ProtographChange implements Change {
         final protected Protograph _newProtograph;
         protected Protograph _oldProtograph;
-
+        
         public ProtographChange(Protograph protograph) {
             _newProtograph = protograph;
         }
-
+        
         public void apply(Project project) {
             synchronized (project) {
                 _oldProtograph = project.protograph;
@@ -74,36 +73,36 @@ public class SaveProtographOperation extends AbstractOperation {
                 project.protograph = _oldProtograph;
             }
         }
-
+        
         public void save(Writer writer, Properties options) throws IOException {
             writer.write("newProtograph="); writeProtograph(_newProtograph, writer); writer.write('\n');
             writer.write("oldProtograph="); writeProtograph(_oldProtograph, writer); writer.write('\n');
             writer.write("/ec/\n"); // end of change marker
         }
-
+        
         static public Change load(LineNumberReader reader, Pool pool) throws Exception {
             Protograph oldProtograph = null;
             Protograph newProtograph = null;
-
+            
             String line;
             while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
                 int equal = line.indexOf('=');
                 CharSequence field = line.subSequence(0, equal);
                 String value = line.substring(equal + 1);
-
+                
                 if ("oldProtograph".equals(field) && value.length() > 0) {
                     oldProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
                 } else if ("newProtograph".equals(field) && value.length() > 0) {
                     newProtograph = Protograph.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
                 }
             }
-
+            
             ProtographChange change = new ProtographChange(newProtograph);
             change._oldProtograph = oldProtograph;
-
+            
             return change;
         }
-
+        
         static protected void writeProtograph(Protograph p, Writer writer) throws IOException {
             if (p != null) {
                 JSONWriter jsonWriter = new JSONWriter(writer);
@@ -114,5 +113,5 @@ public class SaveProtographOperation extends AbstractOperation {
                 }
             }
         }
-    }
+    } 
 }

@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Cell;
@@ -33,7 +32,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             obj.getString("mode")
         );
     }
-
+    
     public MultiValuedCellSplitOperation(
         String      columnName,
         String      keyColumnName,
@@ -48,7 +47,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
    public void write(JSONWriter writer, Properties options)
            throws JSONException {
-
+       
        writer.object();
        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
        writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
@@ -70,15 +69,15 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             throw new Exception("No column named " + _columnName);
         }
         int cellIndex = column.getCellIndex();
-
+        
         Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
         if (keyColumn == null) {
             throw new Exception("No key column named " + _keyColumnName);
         }
         int keyCellIndex = keyColumn.getCellIndex();
-
+        
         List<Row> newRows = new ArrayList<Row>();
-
+        
         int oldRowCount = project.rows.size();
         for (int r = 0; r < oldRowCount; r++) {
             Row oldRow = project.rows.get(r);
@@ -86,7 +85,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                 newRows.add(oldRow.dup());
                 continue;
             }
-
+            
             Object value = oldRow.getCellValue(cellIndex);
             String s = value instanceof String ? ((String) value) : value.toString();
             String[] values = null;
@@ -95,53 +94,53 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             } else {
                 values = StringUtils.splitByWholeSeparator(s, _separator);
             }
-
+            
             if (values.length < 2) {
                 newRows.add(oldRow.dup());
                 continue;
             }
-
+            
             // First value goes into the same row
             {
                 Row firstNewRow = oldRow.dup();
                 firstNewRow.setCell(cellIndex, new Cell(values[0].trim(), null));
-
+                
                 newRows.add(firstNewRow);
             }
-
+            
             int r2 = r + 1;
             for (int v = 1; v < values.length; v++) {
                 Cell newCell = new Cell(values[v].trim(), null);
-
+                
                 if (r2 < project.rows.size()) {
                     Row oldRow2 = project.rows.get(r2);
-                    if (oldRow2.isCellBlank(cellIndex) &&
+                    if (oldRow2.isCellBlank(cellIndex) && 
                         oldRow2.isCellBlank(keyCellIndex)) {
-
+                        
                         Row newRow = oldRow2.dup();
                         newRow.setCell(cellIndex, newCell);
-
+                        
                         newRows.add(newRow);
                         r2++;
-
+                        
                         continue;
                     }
                 }
-
+                
                 Row newRow = new Row(cellIndex + 1);
                 newRow.setCell(cellIndex, newCell);
-
+                
                 newRows.add(newRow);
             }
-
+            
             r = r2 - 1; // r will be incremented by the for loop anyway
         }
-
-        return ProjectManager.singleton.createHistoryEntry(
+        
+        return new HistoryEntry(
             historyEntryID,
-            project,
-            getBriefDescription(null),
-            this,
+            project, 
+            getBriefDescription(null), 
+            this, 
             new MassRowChange(newRows)
         );
     }

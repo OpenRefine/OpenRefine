@@ -6,7 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.history.HistoryEntry;
 import com.metaweb.gridworks.model.Project;
@@ -83,7 +82,7 @@ public class AnnotateOneRowCommand extends Command {
         }
 
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
-            return ProjectManager.singleton.createHistoryEntry(
+            return new HistoryEntry(
                 historyEntryID,
                 _project,
                 (starred ? "Star row " : "Unstar row ") + (rowIndex + 1),
@@ -109,7 +108,7 @@ public class AnnotateOneRowCommand extends Command {
         }
 
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
-            return ProjectManager.singleton.createHistoryEntry(
+            return new HistoryEntry(
                 historyEntryID,
                 _project,
                 (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1),

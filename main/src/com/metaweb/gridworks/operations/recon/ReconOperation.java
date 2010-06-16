@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -36,20 +35,20 @@ import com.metaweb.gridworks.process.Process;
 public class ReconOperation extends EngineDependentOperation {
     final protected String      _columnName;
     final protected ReconConfig _reconConfig;
-
+    
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-
+        
         return new ReconOperation(
-            engineConfig,
+            engineConfig, 
             obj.getString("columnName"),
             ReconConfig.reconstruct(obj.getJSONObject("config"))
         );
     }
-
+    
     public ReconOperation(
-        JSONObject engineConfig,
-        String columnName,
+        JSONObject engineConfig, 
+        String columnName, 
         ReconConfig reconConfig
     ) {
         super(engineConfig);
@@ -59,19 +58,19 @@ public class ReconOperation extends EngineDependentOperation {
 
     public Process createProcess(Project project, Properties options) throws Exception {
         return new ReconProcess(
-            project,
+            project, 
             getEngineConfig(),
             getBriefDescription(null)
         );
     }
-
+    
     protected String getBriefDescription(Project project) {
         return _reconConfig.getBriefDescription(project, _columnName);
     }
 
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
-
+        
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
@@ -84,7 +83,7 @@ public class ReconOperation extends EngineDependentOperation {
     static protected class ReconEntry {
         final public int rowIndex;
         final public Cell cell;
-
+        
         public ReconEntry(int rowIndex, Cell cell) {
             this.rowIndex = rowIndex;
             this.cell = cell;
@@ -93,22 +92,22 @@ public class ReconOperation extends EngineDependentOperation {
     static protected class JobGroup {
         final public ReconJob job;
         final public List<ReconEntry> entries = new ArrayList<ReconEntry>();
-
+        
         public JobGroup(ReconJob job) {
             this.job = job;
         }
     }
-
+    
     public class ReconProcess extends LongRunningProcess implements Runnable {
         final protected Project     _project;
         final protected JSONObject  _engineConfig;
         final protected long        _historyEntryID;
         protected List<ReconEntry>  _entries;
         protected int               _cellIndex;
-
+        
         public ReconProcess(
-            Project project,
-            JSONObject engineConfig,
+            Project project, 
+            JSONObject engineConfig, 
             String description
         ) {
             super(description);
@@ -116,10 +115,10 @@ public class ReconOperation extends EngineDependentOperation {
             _engineConfig = engineConfig;
             _historyEntryID = HistoryEntry.allocateID();
         }
-
+        
         public void write(JSONWriter writer, Properties options)
                 throws JSONException {
-
+            
             writer.object();
             writer.key("id"); writer.value(hashCode());
             writer.key("description"); writer.value(_description);
@@ -160,35 +159,35 @@ public class ReconOperation extends EngineDependentOperation {
                 writer.endArray();
             writer.endObject();
         }
-
+        
         protected Runnable getRunnable() {
             return this;
         }
-
+        
         protected void populateEntries() throws Exception {
             Engine engine = new Engine(_project);
             engine.initializeFromJSON(_engineConfig);
-
+            
             Column column = _project.columnModel.getColumnByName(_columnName);
             if (column == null) {
                 throw new Exception("No column named " + _columnName);
             }
-
+            
             _entries = new ArrayList<ReconEntry>(_project.rows.size());
             _cellIndex = column.getCellIndex();
-
+            
             FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(_project, new RowVisitor() {
                 @Override
                 public void start(Project project) {
                 	// nothing to do
                 }
-
+                
                 @Override
                 public void end(Project project) {
                 	// nothing to do
                 }
-
+                
                 public boolean visit(Project project, int rowIndex, Row row) {
                     if (_cellIndex < row.cells.size()) {
                         Cell cell = row.cells.get(_cellIndex);
@@ -200,7 +199,7 @@ public class ReconOperation extends EngineDependentOperation {
                 }
             });
         }
-
+        
         public void run() {
             try {
                 populateEntries();
@@ -208,18 +207,18 @@ public class ReconOperation extends EngineDependentOperation {
                 // TODO : Not sure what to do here?
                 e2.printStackTrace();
             }
-
+            
             Map<Integer, JobGroup> jobKeyToGroup = new HashMap<Integer, JobGroup>();
-
+            
             for (ReconEntry entry : _entries) {
                 ReconJob job = _reconConfig.createJob(
-                    _project,
-                    entry.rowIndex,
-                    _project.rows.get(entry.rowIndex),
-                    _columnName,
+                    _project, 
+                    entry.rowIndex, 
+                    _project.rows.get(entry.rowIndex), 
+                    _columnName, 
                     entry.cell
                 );
-
+                
                 int key = job.getKey();
                 JobGroup group = jobKeyToGroup.get(key);
                 if (group == null) {
@@ -228,42 +227,42 @@ public class ReconOperation extends EngineDependentOperation {
                 }
                 group.entries.add(entry);
             }
-
+            
             List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
             List<JobGroup> groups = new ArrayList<JobGroup>(jobKeyToGroup.values());
-
+            
             int batchSize = _reconConfig.getBatchSize();
             for (int i = 0; i < groups.size(); i += batchSize) {
                 int to = Math.min(i + batchSize, groups.size());
-
+                
                 List<ReconJob> jobs = new ArrayList<ReconJob>(to - i);
                 for (int j = i; j < to; j++) {
                     jobs.add(groups.get(j).job);
                 }
-
+                
                 List<Recon> recons = _reconConfig.batchRecon(jobs, _historyEntryID);
                 for (int j = i; j < to; j++) {
                     Recon recon = recons.get(j - i);
                     List<ReconEntry> entries = groups.get(j).entries;
-
+                    
                     if (recon != null) {
                         recon.judgmentBatchSize = entries.size();
                     }
-
+                    
                     for (ReconEntry entry : entries) {
                         Cell oldCell = entry.cell;
                         Cell newCell = new Cell(oldCell.value, recon);
-
+                        
                         CellChange cellChange = new CellChange(
-                            entry.rowIndex,
-                            _cellIndex,
-                            oldCell,
+                            entry.rowIndex, 
+                            _cellIndex, 
+                            oldCell, 
                             newCell
                         );
                         cellChanges.add(cellChange);
                     }
                 }
-
+                
                 _progress = i * 100 / groups.size();
                 try {
                     Thread.sleep(50);
@@ -273,23 +272,23 @@ public class ReconOperation extends EngineDependentOperation {
                     }
                 }
             }
-
+            
             if (!_canceled) {
                 Change reconChange = new ReconChange(
-                    cellChanges,
-                    _columnName,
+                    cellChanges, 
+                    _columnName, 
                     _reconConfig,
                     null
                 );
-
-                HistoryEntry historyEntry = ProjectManager.singleton.createHistoryEntry(
+                
+                HistoryEntry historyEntry = new HistoryEntry(
                     _historyEntryID,
-                    _project,
-                    _description,
-                    ReconOperation.this,
+                    _project, 
+                    _description, 
+                    ReconOperation.this, 
                     reconChange
                 );
-
+                
                 _project.history.addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             }

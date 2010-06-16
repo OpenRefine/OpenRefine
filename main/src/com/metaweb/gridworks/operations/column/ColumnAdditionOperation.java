@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.Engine;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RowVisitor;
@@ -35,13 +34,13 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;
     final protected String     _expression;
     final protected OnError    _onError;
-
+    
     final protected String     _newColumnName;
     final protected int        _columnInsertIndex;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-
+        
         return new ColumnAdditionOperation(
             engineConfig,
             obj.getString("baseColumnName"),
@@ -51,28 +50,28 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             obj.getInt("columnInsertIndex")
         );
     }
-
+    
     public ColumnAdditionOperation(
         JSONObject     engineConfig,
         String         baseColumnName,
         String         expression,
         OnError        onError,
-        String         newColumnName,
-        int            columnInsertIndex
+        String         newColumnName, 
+        int            columnInsertIndex 
     ) {
         super(engineConfig);
-
+        
         _baseColumnName = baseColumnName;
         _expression = expression;
         _onError = onError;
-
+        
         _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
     }
 
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
-
+        
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
@@ -86,52 +85,52 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     }
 
     protected String getBriefDescription(Project project) {
-        return "Create column " + _newColumnName +
-            " at index " + _columnInsertIndex +
-            " based on column " + _baseColumnName +
+        return "Create column " + _newColumnName + 
+            " at index " + _columnInsertIndex + 
+            " based on column " + _baseColumnName + 
             " using expression " + _expression;
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _newColumnName +
-            " based on column " + column.getName() +
+        return "Create new column " + _newColumnName + 
+            " based on column " + column.getName() + 
             " by filling " + cellsAtRows.size() +
             " rows with " + _expression;
     }
-
+    
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
-
+        
         Column column = project.columnModel.getColumnByName(_baseColumnName);
         if (column == null) {
             throw new Exception("No column named " + _baseColumnName);
         }
-
+        
         List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
-
+        
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, cellsAtRows));
-
+        
         String description = createDescription(column, cellsAtRows);
-
+        
         Change change = new ColumnAdditionChange(_newColumnName, _columnInsertIndex, cellsAtRows);
-
-        return ProjectManager.singleton.createHistoryEntry(
+        
+        return new HistoryEntry(
             historyEntryID, project, description, this, change);
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellAtRow> cellsAtRows) throws Exception {
         Column column = project.columnModel.getColumnByName(_baseColumnName);
-
+        
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
-
+        
         return new RowVisitor() {
             int              cellIndex;
             Properties       bindings;
             List<CellAtRow>  cellsAtRows;
             Evaluable        eval;
-
+            
             public RowVisitor init(int cellIndex, Properties bindings, List<CellAtRow> cellsAtRows, Evaluable eval) {
                 this.cellIndex = cellIndex;
                 this.bindings = bindings;
@@ -139,23 +138,23 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 this.eval = eval;
                 return this;
             }
-
+            
             @Override
             public void start(Project project) {
             	// nothing to do
             }
-
+            
             @Override
             public void end(Project project) {
             	// nothing to do
             }
-
+            
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;
 
                 ExpressionUtils.bind(bindings, row, rowIndex, _baseColumnName, cell);
-
+                
                 Object o = eval.evaluate(bindings);
                 if (o != null) {
                     if (o instanceof Cell) {
@@ -171,17 +170,17 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                                 v = cell != null ? cell.value : null;
                             }
                         }
-
+                        
                         if (v != null) {
                             newCell = new Cell(v, null);
                         }
                     }
                 }
-
+                
                 if (newCell != null) {
                     cellsAtRows.add(new CellAtRow(rowIndex, newCell));
                 }
-
+                
                 return false;
             }
         }.init(column.getCellIndex(), bindings, cellsAtRows, eval);

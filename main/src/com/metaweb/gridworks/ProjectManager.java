@@ -2,7 +2,6 @@ package com.metaweb.gridworks;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,9 +10,7 @@ import org.apache.tools.tar.TarOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.metaweb.gridworks.history.Change;
-import com.metaweb.gridworks.history.HistoryEntry;
-import com.metaweb.gridworks.model.AbstractOperation;
+import com.metaweb.gridworks.history.HistoryEntryManager;
 import com.metaweb.gridworks.model.Project;
 
 
@@ -43,6 +40,8 @@ public abstract class ProjectManager {
      *  is more like a last accessed-last out cache.
      */
     transient protected Map<Long, Project> _projects;
+
+    protected HistoryEntryManager _historyEntryManager;
 
     static public ProjectManager singleton;
 
@@ -126,6 +125,9 @@ public abstract class ProjectManager {
 
     public abstract void deleteProject(long projectID) ;
 
-    public abstract HistoryEntry createHistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time);
-    public abstract HistoryEntry createHistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change);
+    //public abstract HistoryEntry createHistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time);
+    //public abstract HistoryEntry createHistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change);
+    public HistoryEntryManager getHistoryEntryManager(){
+        return this._historyEntryManager;
+    }
 }

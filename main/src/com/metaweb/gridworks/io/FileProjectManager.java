@@ -30,9 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
-import com.metaweb.gridworks.history.Change;
-import com.metaweb.gridworks.history.HistoryEntry;
-import com.metaweb.gridworks.model.AbstractOperation;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.JSONUtilities;
 
@@ -47,6 +44,7 @@ public class FileProjectManager extends ProjectManager{
             logger.info("Using workspace directory: {}", dir.getAbsolutePath());
             singleton = new FileProjectManager(dir);
         }
+
     }
 
     private FileProjectManager(File dir) {
@@ -56,6 +54,8 @@ public class FileProjectManager extends ProjectManager{
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _expressions = new LinkedList<String>();
         _projects = new HashMap<Long, Project>();
+
+        _historyEntryManager = new FileHistoryEntry();
 
         load();
     }
@@ -444,12 +444,5 @@ public class FileProjectManager extends ProjectManager{
         }
 
         return found;
-    }
-
-    public HistoryEntry createHistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time){
-        return new FileHistoryEntry(id, projectID, description, operation, time);
-    }
-    public HistoryEntry createHistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change){
-        return new FileHistoryEntry(id, project, description, operation, change);
     }
 }
