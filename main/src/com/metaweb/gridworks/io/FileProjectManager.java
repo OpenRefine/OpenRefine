@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.tools.tar.TarEntry;
@@ -32,9 +32,10 @@ import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.history.HistoryEntryManager;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.util.JSONUtilities;
+import com.metaweb.gridworks.preference.PreferenceStore;
+import com.metaweb.gridworks.preference.TopList;
 
-public class FileProjectManager extends ProjectManager{
+public class FileProjectManager extends ProjectManager {
 
     protected File                       _workspaceDir;
 
@@ -53,12 +54,14 @@ public class FileProjectManager extends ProjectManager{
         _workspaceDir.mkdirs();
 
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
-        _expressions = new LinkedList<String>();
+        _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
-
+        
+        preparePreferenceStore(_preferenceStore);
+        
         load();
     }
-
+    
     public File getWorkspaceDir() {
         return _workspaceDir;
     }
@@ -281,7 +284,9 @@ public class FileProjectManager extends ProjectManager{
                 jsonWriter.endArray();
                 writer.write('\n');
 
-            jsonWriter.key("expressions"); JSONUtilities.writeStringList(jsonWriter, _expressions);
+            jsonWriter.key("preferences"); 
+                _preferenceStore.write(jsonWriter, new Properties());
+                
             jsonWriter.endObject();
         } finally {
             writer.close();
@@ -405,7 +410,6 @@ public class FileProjectManager extends ProjectManager{
         logger.info("Loading workspace: {}", file.getAbsolutePath());
 
         _projectsMetadata.clear();
-        _expressions.clear();
 
         boolean found = false;
 
@@ -426,8 +430,16 @@ public class FileProjectManager extends ProjectManager{
 
                     _projectsMetadata.put(id, metadata);
                 }
-
-                JSONUtilities.getStringList(obj, "expressions", _expressions);
+                
+                if (obj.has("preferences") && !obj.isNull("preferences")) {
+                    _preferenceStore.load(obj.getJSONObject("preferences"));
+                }
+                
+                if (obj.has("expressions") && !obj.isNull("expressions")) {
+                    ((TopList) _preferenceStore.get("expressions"))
+                        .load(obj.getJSONArray("expressions"));
+                }
+                
                 found = true;
             } catch (JSONException e) {
                 logger.warn("Error reading file", e);

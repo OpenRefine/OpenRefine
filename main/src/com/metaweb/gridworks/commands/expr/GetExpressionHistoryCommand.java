@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.ProjectManager;
-import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
     
@@ -24,10 +24,17 @@ public class GetExpressionHistoryCommand extends Command {
         
         try {
             Project project = getProject(request);
-            ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(project.id);
             
-            List<String> localExpressions = pm.getExpressions();
-            List<String> globalExpressions = ProjectManager.singleton.getExpressions();
+            List<String> localExpressions = 
+                ((TopList) project.getMetadata().getPreferenceStore().get("expressions"))
+                    .getList();
+            
+            localExpressions = localExpressions.size() > 20 ? localExpressions.subList(0, 20) : localExpressions;
+            
+            List<String> globalExpressions =
+                ((TopList) ProjectManager.singleton.getPreferenceStore().get("expressions"))
+                    .getList();
+            
             Set<String> done = new HashSet<String>();
             
             response.setCharacterEncoding("UTF-8");

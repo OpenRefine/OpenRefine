@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.history.HistoryEntryManager;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.preference.PreferenceStore;
+import com.metaweb.gridworks.preference.TopList;
 
 
 public abstract class ProjectManager {
@@ -19,7 +21,7 @@ public abstract class ProjectManager {
     static protected final int s_expressionHistoryMax = 100;
 
     protected Map<Long, ProjectMetadata> _projectsMetadata;
-    protected List<String>               _expressions;
+    protected PreferenceStore            _preferenceStore;
 
     final static Logger logger = LoggerFactory.getLogger("project_manager");
 
@@ -100,19 +102,19 @@ public abstract class ProjectManager {
             }
         }
     }
+    
+    public PreferenceStore getPreferenceStore() {
+        return _preferenceStore;
+    }
 
     public void addLatestExpression(String s) {
         synchronized (this) {
-            _expressions.remove(s);
-            _expressions.add(0, s);
-            while (_expressions.size() > s_expressionHistoryMax) {
-                _expressions.remove(_expressions.size() - 1);
-            }
+            ((TopList) _preferenceStore.get("expressions")).add(s);
         }
     }
 
     public List<String> getExpressions() {
-        return _expressions;
+        return ((TopList) _preferenceStore.get("expressions")).getList();
     }
 
     public abstract void save(boolean b);
@@ -124,4 +126,8 @@ public abstract class ProjectManager {
     public abstract void deleteProject(long projectID) ;
 
     public abstract HistoryEntryManager getHistoryEntryManager();
+    
+    static protected void preparePreferenceStore(PreferenceStore ps) {
+        ps.put("expressions", new TopList(s_expressionHistoryMax));
+    }
 }

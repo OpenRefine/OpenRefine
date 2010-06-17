@@ -6,8 +6,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
+import com.metaweb.gridworks.preference.TopList;
 
 public class LogExpressionCommand extends Command {
     
@@ -19,7 +21,11 @@ public class LogExpressionCommand extends Command {
             Project project = getProject(request);
             String expression = request.getParameter("expression");
             
-            project.getMetadata().addLatestExpression(expression);
+            ((TopList) project.getMetadata().getPreferenceStore().get("expressions"))
+                .add(expression);
+
+            ((TopList) ProjectManager.singleton.getPreferenceStore().get("expressions"))
+                .add(expression);
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
