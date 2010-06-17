@@ -42,7 +42,7 @@ public class CsvExporter implements Exporter{
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
         boolean printColumnHeader = true;
 
-        if (options != null) {
+        if (options != null && options.getProperty("printColumnHeader") != null) {
             printColumnHeader = Boolean.parseBoolean(options.getProperty("printColumnHeader"));
         }
 

@@ -49,7 +49,7 @@ public class FileProjectManager extends ProjectManager {
 
     }
 
-    private FileProjectManager(File dir) {
+    protected FileProjectManager(File dir) {
         _workspaceDir = dir;
         _workspaceDir.mkdirs();
 

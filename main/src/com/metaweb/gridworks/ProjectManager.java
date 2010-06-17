@@ -56,10 +56,28 @@ public abstract class ProjectManager {
         }
     }
 
+    /**
+     * Load project from data storage
+     * @param projectID
+     * @return
+     */
     public abstract boolean importProject(long projectID);
 
+    /**
+     * Import project from a Gridworks archive
+     * @param projectID
+     * @param inputStream
+     * @param gziped
+     * @throws IOException
+     */
     public abstract void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException;
 
+    /**
+     * Export project to a Gridworks archive
+     * @param projectId
+     * @param tos
+     * @throws IOException
+     */
     public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
 
     public abstract void ensureProjectSaved(long id);
@@ -117,14 +135,26 @@ public abstract class ProjectManager {
         return ((TopList) _preferenceStore.get("expressions")).getList();
     }
 
+    /**
+     * Save project to data store
+     * @param b
+     */
     public abstract void save(boolean b);
 
     public void deleteProject(Project project) {
         deleteProject(project.id);
     }
 
+    /**
+     * Remove project from data store
+     * @param projectID
+     */
     public abstract void deleteProject(long projectID) ;
 
+    /**
+     * The history entry manager deals with changes
+     * @return manager for handling history
+     */
     public abstract HistoryEntryManager getHistoryEntryManager();
     
     static protected void preparePreferenceStore(PreferenceStore ps) {

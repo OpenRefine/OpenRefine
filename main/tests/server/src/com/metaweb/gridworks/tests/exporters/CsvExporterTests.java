@@ -26,12 +26,12 @@ import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.tests.GridworksTest;
 
 public class CsvExporterTests extends GridworksTest {
-    
+
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     //dependencies
     StringWriter writer;
     Project project;
@@ -59,7 +59,7 @@ public class CsvExporterTests extends GridworksTest {
         options = null;
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportSimpleCsv(){
         CreateGrid(2, 2);
 
@@ -88,10 +88,10 @@ public class CsvExporterTests extends GridworksTest {
         Assert.assertEquals(writer.toString(), "row0cell0,row0cell1\n" +
                                                "row1cell0,row1cell1\n");
 
-        verify(options,times(1)).getProperty("printColumnHeader");
+        verify(options,times(2)).getProperty("printColumnHeader");
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportCsvWithLineBreaks(){
         CreateGrid(3,3);
 
@@ -108,7 +108,7 @@ public class CsvExporterTests extends GridworksTest {
                                                "row2cell0,row2cell1,row2cell2\n");
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportCsvWithComma(){
         CreateGrid(3,3);
 
@@ -125,7 +125,7 @@ public class CsvExporterTests extends GridworksTest {
                                                "row2cell0,row2cell1,row2cell2\n");
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportCsvWithQuote(){
         CreateGrid(3,3);
 
@@ -142,7 +142,7 @@ public class CsvExporterTests extends GridworksTest {
                                                "row2cell0,row2cell1,row2cell2\n");
     }
 
-    @Test(groups={"broken"})
+    @Test
     public void exportCsvWithEmptyCells(){
         CreateGrid(3,3);
 

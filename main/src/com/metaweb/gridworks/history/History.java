@@ -89,6 +89,11 @@ public class History implements Jsonizable {
         _futureEntries = new ArrayList<HistoryEntry>();
     }
 
+    /**
+     * Adds a HistoryEntry to the list of past histories
+     * Adding a new entry clears all currently held future histories
+     * @param entry
+     */
     synchronized public void addEntry(HistoryEntry entry) {
         entry.apply(ProjectManager.singleton.getProject(_projectID));
         _pastEntries.add(entry);
