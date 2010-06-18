@@ -56,12 +56,12 @@ public class FileProjectManager extends ProjectManager {
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
-        
+
         preparePreferenceStore(_preferenceStore);
-        
+
         load();
     }
-    
+
     public File getWorkspaceDir() {
         return _workspaceDir;
     }
@@ -209,18 +209,9 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    public Project getProject(long id) {
-        synchronized (this) {
-            if (_projects.containsKey(id)) {
-                return _projects.get(id);
-            } else {
-                Project project = ProjectUtilities.load(getProjectDir(id), id);
-
-                _projects.put(id, project);
-
-                return project;
-            }
-        }
+    @Override
+    public Project loadProject(long id) {
+        return ProjectUtilities.load(getProjectDir(id), id);
     }
 
     public void save(boolean allModified) {
@@ -284,9 +275,9 @@ public class FileProjectManager extends ProjectManager {
                 jsonWriter.endArray();
                 writer.write('\n');
 
-            jsonWriter.key("preferences"); 
+            jsonWriter.key("preferences");
                 _preferenceStore.write(jsonWriter, new Properties());
-                
+
             jsonWriter.endObject();
         } finally {
             writer.close();
@@ -373,12 +364,7 @@ public class FileProjectManager extends ProjectManager {
 
     public void deleteProject(long projectID) {
         synchronized (this) {
-            if (_projectsMetadata.containsKey(projectID)) {
-                _projectsMetadata.remove(projectID);
-            }
-            if (_projects.containsKey(projectID)) {
-                _projects.remove(projectID);
-            }
+            removeProject(projectID);
 
             File dir = getProjectDir(projectID);
             if (dir.exists()) {
@@ -430,16 +416,16 @@ public class FileProjectManager extends ProjectManager {
 
                     _projectsMetadata.put(id, metadata);
                 }
-                
+
                 if (obj.has("preferences") && !obj.isNull("preferences")) {
                     _preferenceStore.load(obj.getJSONObject("preferences"));
                 }
-                
+
                 if (obj.has("expressions") && !obj.isNull("expressions")) {
                     ((TopList) _preferenceStore.get("expressions"))
                         .load(obj.getJSONArray("expressions"));
                 }
-                
+
                 found = true;
             } catch (JSONException e) {
                 logger.warn("Error reading file", e);
