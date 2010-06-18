@@ -179,37 +179,17 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    /**
-     * Make sure that a project's metadata and data are saved to file. For example,
-     * this method is called before the project is exported to a .tar file.
-     *
-     * @param id
-     */
-    public void ensureProjectSaved(long id) {
-        synchronized (this) {
-            File projectDir = getProjectDir(id);
-
-            ProjectMetadata metadata = _projectsMetadata.get(id);
-            if (metadata != null) {
-                try {
-                    ProjectMetadataUtilities.save(metadata, projectDir);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Project project = _projects.get(id);
-            if (project != null && metadata.getModified().after(project.lastSave)) {
-                try {
-                    ProjectUtilities.save(project);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    @Override
+    protected void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
+        File projectDir = getProjectDir(projectId);
+        ProjectMetadataUtilities.save(metadata, projectDir);
     }
 
     @Override
+    protected void saveProject(Project project){
+        ProjectUtilities.save(project);
+    }
+
     public Project loadProject(long id) {
         return ProjectUtilities.load(getProjectDir(id), id);
     }

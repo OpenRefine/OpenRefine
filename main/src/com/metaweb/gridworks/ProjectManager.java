@@ -86,10 +86,33 @@ public abstract class ProjectManager {
     public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
 
     /**
-     *
+     * Saves a project and its metadata to the data store
      * @param id
      */
-    public abstract void ensureProjectSaved(long id);
+    public void ensureProjectSaved(long id) {
+        synchronized(this){
+            ProjectMetadata metadata = _projectsMetadata.get(id);
+            if (metadata != null) {
+                try {
+                    saveMetadata(metadata, id);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Project project = _projects.get(id);
+            if (project != null && metadata.getModified().after(project.lastSave)) {
+                try {
+                    saveProject(project);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+    protected abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
+    protected abstract void saveProject(Project project);
 
     public ProjectMetadata getProjectMetadata(long id) {
         return _projectsMetadata.get(id);
