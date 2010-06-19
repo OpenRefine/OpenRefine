@@ -7,3 +7,6 @@ main/tests/server/classes/
 main/test-output/
 appengine/classes/
 tools/
+extensions/sample-extension/module/MOD-INF/classes/
+extensions/jython/module/MOD-INF/classes/
+extensions/jython/module/MOD-INF/lib/cachedir/
