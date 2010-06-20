@@ -40,7 +40,7 @@ public class ImportProjectCommand extends Command {
 
             internalImport(request, options, projectID);
 
-            ProjectManager.singleton.importProject(projectID);
+            ProjectManager.singleton.loadProjectMetadata(projectID);
 
             ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(projectID);
             if (pm != null) {

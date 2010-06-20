@@ -2,6 +2,10 @@ package com.metaweb.gridworks;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,10 +49,6 @@ public abstract class ProjectManager {
 
     static public ProjectManager singleton;
 
-    public InterProjectModel getInterProjectModel() {
-        return _interProjectModel;
-    }
-
     /**
      * Registers the project in the memory of the current session
      * @param project
@@ -60,14 +60,23 @@ public abstract class ProjectManager {
             _projectsMetadata.put(project.id, projectMetadata);
         }
     }
+ //----------Load from data store to memory----------------
 
     /**
-     * Load project from data storage
+     * Load project metadata from data storage
      * @param projectID
      * @return
      */
-    public abstract boolean importProject(long projectID);
+    public abstract boolean loadProjectMetadata(long projectID);
 
+    /**
+     * Loads a project from the data store into memory
+     * @param id
+     * @return
+     */
+    protected abstract Project loadProject(long id);
+
+    //------------Import and Export from Gridworks archive-----------------
     /**
      * Import project from a Gridworks archive
      * @param projectID
@@ -85,6 +94,8 @@ public abstract class ProjectManager {
      */
     public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
 
+
+ //------------Save to record store------------
     /**
      * Saves a project and its metadata to the data store
      * @param id
@@ -111,15 +122,140 @@ public abstract class ProjectManager {
         }
 
     }
+    /**
+     * Save project metadata to the data store
+     * @param metadata
+     * @param projectId
+     * @throws Exception
+     */
     protected abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
+
+    /**
+     * Save project to the data store
+     * @param project
+     */
     protected abstract void saveProject(Project project);
 
+    /**
+     * Save workspace and all projects to data store
+     * @param b
+     */
+    public void save(boolean allModified) {
+        if (allModified || _busy == 0) {
+            saveProjects(allModified);
+            saveWorkspace();
+        }
+    }
+
+    /**
+     * Saves the workspace to the data store
+     */
+    protected abstract void saveWorkspace();
+
+    /**
+     * A utility class to prioritize projects for saving, depending on how long ago
+     * they have been changed but have not been saved.
+     */
+    static protected class SaveRecord {
+        final Project project;
+        final long overdue;
+
+        SaveRecord(Project project, long overdue) {
+            this.project = project;
+            this.overdue = overdue;
+        }
+    }
+
+    static protected final int s_projectFlushDelay = 1000 * 60 * 60; // 1 hour
+    static protected final int s_quickSaveTimeout = 1000 * 30; // 30 secs
+
+    /**
+     * Saves all projects to the data store
+     * @param allModified
+     */
+    protected void saveProjects(boolean allModified) {
+        List<SaveRecord> records = new ArrayList<SaveRecord>();
+        Date now = new Date();
+
+        synchronized (this) {
+            for (long id : _projectsMetadata.keySet()) {
+                ProjectMetadata metadata = _projectsMetadata.get(id);
+                Project project = _projects.get(id);
+
+                if (project != null) {
+                    boolean hasUnsavedChanges =
+                        metadata.getModified().getTime() > project.lastSave.getTime();
+
+                    if (hasUnsavedChanges) {
+                        long msecsOverdue = now.getTime() - project.lastSave.getTime();
+
+                        records.add(new SaveRecord(project, msecsOverdue));
+
+                    } else if (now.getTime() - project.lastSave.getTime() > s_projectFlushDelay) {
+                        /*
+                         *  It's been a while since the project was last saved and it hasn't been
+                         *  modified. We can safely remove it from the cache to save some memory.
+                         */
+                        _projects.remove(id);
+                    }
+                }
+            }
+        }
+
+        if (records.size() > 0) {
+            Collections.sort(records, new Comparator<SaveRecord>() {
+                public int compare(SaveRecord o1, SaveRecord o2) {
+                    if (o1.overdue < o2.overdue) {
+                        return 1;
+                    } else if (o1.overdue > o2.overdue) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+
+            logger.info(allModified ?
+                "Saving all modified projects ..." :
+                "Saving some modified projects ..."
+            );
+
+            for (int i = 0;
+                 i < records.size() &&
+                    (allModified || (new Date().getTime() - now.getTime() < s_quickSaveTimeout));
+                 i++) {
+
+                try {
+                    saveProject(records.get(i).project);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //--------------Get from memory--------------
+    /**
+     * Gets the InterProjectModel from memory
+     */
+    public InterProjectModel getInterProjectModel() {
+        return _interProjectModel;
+    }
+
+
+    /**
+     * Gets the project metadata from memory
+     * Requires that the metadata has already been loaded from the data store
+     * @param id
+     * @return
+     */
     public ProjectMetadata getProjectMetadata(long id) {
         return _projectsMetadata.get(id);
     }
 
     /**
-     *
+     * Gets the project metadata from memory
+     * Requires that the metadata has already been loaded from the data store
      * @param name
      * @return
      */
@@ -134,6 +270,7 @@ public abstract class ProjectManager {
 
     /**
      * Tries to find the project id when given a project name
+     * Requires that all project metadata exists has been loaded to memory from the data store
      * @param name
      *     The name of the project
      * @return
@@ -149,12 +286,17 @@ public abstract class ProjectManager {
     }
 
 
+    /**
+     * Gets all the project Metadata currently held in memory
+     * @return
+     */
     public Map<Long, ProjectMetadata> getAllProjectMetadata() {
         return _projectsMetadata;
     }
 
     /**
      * Gets the required project from the data store
+     * If project does not already exist in memory, it is loaded from the data store
      * @param id
      *     the id of the project
      * @return
@@ -174,41 +316,29 @@ public abstract class ProjectManager {
         }
     }
 
-    protected abstract Project loadProject(long id);
-
     /**
-     * Sets the flag for long running operations
-     * @param busy
+     * Gets the preference store
+     * @return
      */
-    public void setBusy(boolean busy) {
-        synchronized (this) {
-            if (busy) {
-                _busy++;
-            } else {
-                _busy--;
-            }
-        }
-    }
-
     public PreferenceStore getPreferenceStore() {
         return _preferenceStore;
     }
 
-    public void addLatestExpression(String s) {
-        synchronized (this) {
-            ((TopList) _preferenceStore.get("expressions")).add(s);
-        }
-    }
-
+    /**
+     * Gets all expressions from the preference store
+     * @return
+     */
     public List<String> getExpressions() {
         return ((TopList) _preferenceStore.get("expressions")).getList();
     }
 
     /**
-     * Save project to data store
-     * @param b
+     * The history entry manager deals with changes
+     * @return manager for handling history
      */
-    public abstract void save(boolean b);
+    public abstract HistoryEntryManager getHistoryEntryManager();
+
+    //-------------remove project-----------
 
     /**
      * Remove the project from the data store
@@ -224,6 +354,10 @@ public abstract class ProjectManager {
      */
     public abstract void deleteProject(long projectID);
 
+    /**
+     * Removes project from memory
+     * @param projectID
+     */
     protected void removeProject(long projectID){
         if (_projectsMetadata.containsKey(projectID)) {
             _projectsMetadata.remove(projectID);
@@ -233,13 +367,47 @@ public abstract class ProjectManager {
         }
     }
 
-    /**
-     * The history entry manager deals with changes
-     * @return manager for handling history
-     */
-    public abstract HistoryEntryManager getHistoryEntryManager();
+    //--------------Miscellaneous-----------
 
-    static protected void preparePreferenceStore(PreferenceStore ps) {
-        ps.put("expressions", new TopList(s_expressionHistoryMax));
+    /**
+     * Sets the flag for long running operations
+     * @param busy
+     */
+    public void setBusy(boolean busy) {
+        synchronized (this) {
+            if (busy) {
+                _busy++;
+            } else {
+                _busy--;
+            }
+        }
     }
+
+
+
+    /**
+     * Add the latest expression to the preference store
+     * @param s
+     */
+    public void addLatestExpression(String s) {
+        synchronized (this) {
+            ((TopList) _preferenceStore.get("expressions")).add(s);
+        }
+    }
+
+
+    /**
+    *
+    * @param ps
+    */
+   static protected void preparePreferenceStore(PreferenceStore ps) {
+       ps.put("expressions", new TopList(s_expressionHistoryMax));
+   }
+
+
+
+
+
+
+
 }

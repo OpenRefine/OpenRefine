@@ -8,12 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
@@ -84,7 +79,7 @@ public class FileProjectManager extends ProjectManager {
      *
      * @param projectID
      */
-    public boolean importProject(long projectID) {
+    public boolean loadProjectMetadata(long projectID) {
         synchronized (this) {
             ProjectMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
             if (metadata != null) {
@@ -194,17 +189,13 @@ public class FileProjectManager extends ProjectManager {
         return ProjectUtilities.load(getProjectDir(id), id);
     }
 
-    public void save(boolean allModified) {
-        if (allModified || _busy == 0) {
-            saveProjects(allModified);
-            saveWorkspace();
-        }
-    }
+
 
     /**
      * Save the workspace's data out to file in a safe way: save to a temporary file first
      * and rename it to the real file.
      */
+    @Override
     protected void saveWorkspace() {
         synchronized (this) {
             File tempFile = new File(_workspaceDir, "workspace.temp.json");
@@ -264,83 +255,7 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    /**
-     * A utility class to prioritize projects for saving, depending on how long ago
-     * they have been changed but have not been saved.
-     */
-    static protected class SaveRecord {
-        final Project project;
-        final long overdue;
 
-        SaveRecord(Project project, long overdue) {
-            this.project = project;
-            this.overdue = overdue;
-        }
-    }
-
-    static protected final int s_projectFlushDelay = 1000 * 60 * 60; // 1 hour
-    static protected final int s_quickSaveTimeout = 1000 * 30; // 30 secs
-
-    protected void saveProjects(boolean allModified) {
-        List<SaveRecord> records = new ArrayList<SaveRecord>();
-        Date now = new Date();
-
-        synchronized (this) {
-            for (long id : _projectsMetadata.keySet()) {
-                ProjectMetadata metadata = _projectsMetadata.get(id);
-                Project project = _projects.get(id);
-
-                if (project != null) {
-                    boolean hasUnsavedChanges =
-                        metadata.getModified().getTime() > project.lastSave.getTime();
-
-                    if (hasUnsavedChanges) {
-                        long msecsOverdue = now.getTime() - project.lastSave.getTime();
-
-                        records.add(new SaveRecord(project, msecsOverdue));
-
-                    } else if (now.getTime() - project.lastSave.getTime() > s_projectFlushDelay) {
-                        /*
-                         *  It's been a while since the project was last saved and it hasn't been
-                         *  modified. We can safely remove it from the cache to save some memory.
-                         */
-                        _projects.remove(id);
-                    }
-                }
-            }
-        }
-
-        if (records.size() > 0) {
-            Collections.sort(records, new Comparator<SaveRecord>() {
-                public int compare(SaveRecord o1, SaveRecord o2) {
-                    if (o1.overdue < o2.overdue) {
-                        return 1;
-                    } else if (o1.overdue > o2.overdue) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
-
-            logger.info(allModified ?
-                "Saving all modified projects ..." :
-                "Saving some modified projects ..."
-            );
-
-            for (int i = 0;
-                 i < records.size() &&
-                    (allModified || (new Date().getTime() - now.getTime() < s_quickSaveTimeout));
-                 i++) {
-
-                try {
-                    ProjectUtilities.save(records.get(i).project);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     public void deleteProject(long projectID) {
         synchronized (this) {
