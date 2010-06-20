@@ -26,12 +26,13 @@
         <not><isset property="dist.dir"/></not>
     </condition>
 
-    <property name="fullname" value="gridworks-jython-${version}-${revision}" />
+    <property name="fullname" value="${name}-${version}-${revision}" />
     
     <property name="gridworks.dir" value="${basedir}/../../main" />
+    <property name="gridworks.webinf.dir" value="${gridworks.dir}/webapp/WEB-INF" />
     <property name="gridworks.modinf.dir" value="${gridworks.dir}/webapp/modules/core/MOD-INF" />
-    <property name="gridworks.classes.dir" value="${gridworks.modinf.dir}/classes" />
-    <property name="gridworks.lib.dir" value="${gridworks.dir}/lib" />
+    <property name="gridworks.classes.dir" value="${gridworks.webinf.dir}/classes" />
+    <property name="gridworks.lib.dir" value="${gridworks.webinf.dir}/lib" />
     
     <property name="src.dir" value="${basedir}/src" />
     <property name="module.dir" value="${basedir}/module" />
@@ -46,6 +47,7 @@
         <fileset dir="${gridworks.lib.dir}">
             <include name="**/*.jar" />
         </fileset>
+        <pathelement path="${gridworks.classes.dir}"/>
     </path>
             
     <target name="build_java">
