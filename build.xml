@@ -150,8 +150,12 @@
         </javac>
         <copy file="${server.tests.src.dir}/tests.log4j.properties" tofile="${server.tests.classes.dir}/tests.log4j.properties"/>
     </target>
+    
+    <target name="build_extensions">
+      <ant dir="extensions/" target="build" />
+    </target>
 
-    <target name="build" depends="build_server, build_webapp"/>
+    <target name="build" depends="build_server, build_webapp, build_extensions"/>
 
     <!-- ================================================================== -->
 

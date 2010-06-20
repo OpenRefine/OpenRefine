@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--+
+    |
+    |  Gridworks Extension Sample Extension Build File    
+    |                
+    +-->
+    
+<project name="gridworks-sample-extension" default="build" basedir=".">
+
+    <property environment="env"/>
+
+    <condition property="version" value="trunk">
+        <not><isset property="version"/></not>
+    </condition>
+
+    <condition property="revision" value="rXXXX">
+        <not><isset property="revision"/></not>
+    </condition>
+
+    <condition property="full_version" value="0.0.0.0">
+        <not><isset property="full_version"/></not>
+    </condition>
+
+    <condition property="dist.dir" value="dist">
+        <not><isset property="dist.dir"/></not>
+    </condition>
+
+    <property name="fullname" value="${name}-${version}-${revision}" />
+    
+    <property name="gridworks.dir" value="${basedir}/../../main" />
+    <property name="gridworks.modinf.dir" value="${gridworks.dir}/webapp/modules/core/MOD-INF" />
+    <property name="gridworks.classes.dir" value="${gridworks.modinf.dir}/classes" />
+    <property name="gridworks.lib.dir" value="${gridworks.dir}/lib" />
+    
+    <property name="src.dir" value="${basedir}/src" />
+    <property name="module.dir" value="${basedir}/module" />
+    <property name="modinf.dir" value="${module.dir}/MOD-INF" />
+    <property name="lib.dir" value="${modinf.dir}/lib" />
+    <property name="classes.dir" value="${modinf.dir}/classes" />
+
+    <path id="class.path">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+        <fileset dir="${gridworks.lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+            
+    <target name="build_java">
+        <mkdir dir="${classes.dir}" />
+        <javac destdir="${classes.dir}" debug="true" includeAntRuntime="no">
+            <src path="${src.dir}"/>
+            <classpath refid="class.path" />
+        </javac>
+    </target>
+
+    <target name="build" depends="build_java"/>
+
+    <target name="clean">
+        <delete dir="${classes.dir}" />
+    </target>
+</project>
