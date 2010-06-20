@@ -2,12 +2,12 @@ function onClickUploadFileButton(evt) {
     var projectName = $("#project-name-input")[0].value;
     if (! $.trim(projectName).length) {
         window.alert("You must specify a project name.");
-        
+
     } else if ($("#project-file-input")[0].files.length === 0) {
         window.alert("You must specify select a file to upload.");
-        
+
     } else {
-        $("#file-upload-form").attr("action", 
+        $("#file-upload-form").attr("action",
             "/command/create-project-from-upload?" + [
                 "split-into-columns=" + $("#split-into-columns-input")[0].checked,
                 "separator=" + $("#separator-input")[0].value,
@@ -15,12 +15,13 @@ function onClickUploadFileButton(evt) {
                 "header-lines=" + $("#header-lines-input")[0].value,
                 "skip=" + $("#skip-input")[0].value,
                 "limit=" + $("#limit-input")[0].value,
-                "guess-value-type=" + $("#guess-value-type-input")[0].checked
+                "guess-value-type=" + $("#guess-value-type-input")[0].checked,
+        "ignore-quotes=" + $("#ignore-quotes-input")[0].checked
             ].join("&"));
-            
+
         return true;
     }
-    
+
     evt.preventDefault();
     return false;
 }
@@ -52,18 +53,18 @@ function formatDate(d) {
 
 function isThereNewRelease() {
     var thisRevision = GridworksVersion.revision;
-    
+
     var revision_pattern = /r([0-9]+)/;
-    
+
     if (!revision_pattern.test(thisRevision)) { // probably "trunk"
         return false;
     }
 
     var latestRevision = GridworksReleases.releases[0].revision;
-    
+
     var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
     var latestRev = parseInt(revision_pattern.exec(GridworksReleases.releases[0].revision)[1],10);
-    
+
     return latestRev > thisRev;
 }
 
@@ -89,7 +90,7 @@ function renderProjects(data) {
         }
     }
     projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
-    
+
     var container = $("#projects-container").empty();
     if (!projects.length) {
         $('<div>')
@@ -105,16 +106,16 @@ function renderProjects(data) {
                 '<th></th>' +
             '</tr></table>'
         ).appendTo(container)[0];
-        
+
         var renderProject = function(project) {
             var tr = table.insertRow(table.rows.length);
             tr.className = "project";
-            
+
             var nameLink = $('<a></a>')
                 .text(project.name)
                 .attr("href", "/project?project=" + project.id)
                 .appendTo(tr.insertCell(tr.cells.length));
-                
+
             var renameLink = $('<a></a>')
                 .text("rename")
                 .attr("href", "javascript:{}")
@@ -124,12 +125,12 @@ function renderProjects(data) {
                     if (name == null) {
                         return;
                     }
-                    
+
                     name = $.trim(name);
                     if (project.name == name || name.length == 0) {
                         return;
                     }
-                    
+
                     $.ajax({
                         type: "POST",
                         url: "/command/rename-project",
@@ -144,13 +145,13 @@ function renderProjects(data) {
                         }
                     });
                 }).appendTo(tr.insertCell(tr.cells.length));
-                
+
             $('<div></div>')
                 .html(formatDate(project.date))
                 .addClass("last-modified")
                 .attr("title", project.date.toString())
                 .appendTo(tr.insertCell(tr.cells.length));
-            
+
             $('<a></a>')
             .addClass("delete-project")
             .attr("title","Delete this project")
@@ -168,18 +169,18 @@ function renderProjects(data) {
                                 fetchProjects();
                             }
                         }
-                    });                    
+                    });
                 }
                 return false;
             }).appendTo(tr.insertCell(tr.cells.length));
-            
+
             $(tr).mouseenter(function() {
                 renameLink.css("visibility", "visible");
             }).mouseleave(function() {
                 renameLink.css("visibility", "hidden");
             });
         };
-    
+
         for (var i = 0; i < projects.length; i++) {
             renderProject(projects[i]);
         }
@@ -193,21 +194,21 @@ function showHide(toHide, toShow) {
 
 function onLoad() {
     fetchProjects();
-    
+
     $("#upload-file-button").click(onClickUploadFileButton);
     $("#more-options-link").click(function() {
         $("#more-options-controls").hide();
         $("#more-options").show();
     });
-    
+
     var version = (GridworksVersion.version != "$VERSION") ? "Version " + GridworksVersion.version + "-" + GridworksVersion.revision : "";
     $("#gridworks-version").text(version);
-    
+
     var script = $('<script></script>')
         .attr("src", "http://freebase-gridworks.googlecode.com/svn/support/releases.js")
         .attr("type", "text/javascript")
         .appendTo(document.body);
-        
+
     var poll = function() {
         if ("GridworksReleases" in window) {
             if (isThereNewRelease()) {

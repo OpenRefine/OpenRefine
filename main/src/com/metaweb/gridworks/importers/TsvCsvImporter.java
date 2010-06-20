@@ -30,14 +30,14 @@ public class TsvCsvImporter implements Importer {
         int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
         int skip = ImporterUtilities.getIntegerOption("skip",options,0);
         boolean guessValueType = ImporterUtilities.getBooleanOption("guess-value-type", options, true);
+        boolean ignoreQuotes = ImporterUtilities.getBooleanOption("ignore-quotes", options, false);
 
         LineNumberReader lnReader = new LineNumberReader(reader);
 
-
         read(lnReader, project, sep,
-    		limit, skip, ignoreLines, headerLines,
-    		guessValueType, splitIntoColumns
-    	);
+            limit, skip, ignoreLines, headerLines,
+            guessValueType, splitIntoColumns, ignoreQuotes
+        );
     }
 
     /**
@@ -60,11 +60,18 @@ public class TsvCsvImporter implements Importer {
      *           Whether the parser should try and guess the type of the value being parsed
      * @param splitIntoColumns
      *           Whether the parser should try and split the data source into columns
+     * @param ignoreQuotes
+     *           Quotation marks are ignored, and all separators and newlines treated as such regardless of whether they are within quoted values
      * @throws IOException
      */
-    public void read(LineNumberReader lnReader, Project project, String sep, int limit, int skip, int ignoreLines, int headerLines, boolean guessValueType, boolean splitIntoColumns ) throws IOException{
+    public void read(LineNumberReader lnReader, Project project, String sep, int limit, int skip, int ignoreLines, int headerLines, boolean guessValueType, boolean splitIntoColumns, boolean ignoreQuotes ) throws IOException{
         CSVParser parser = (sep != null && sep.length() > 0 && splitIntoColumns) ?
-                        new CSVParser(sep.toCharArray()[0]) : null;//HACK changing string to char - won't work for multi-char separators.
+                        new CSVParser(sep.toCharArray()[0],//HACK changing string to char - won't work for multi-char separators.
+                                CSVParser.DEFAULT_QUOTE_CHARACTER,
+                                CSVParser.DEFAULT_ESCAPE_CHARACTER,
+                                CSVParser.DEFAULT_STRICT_QUOTES,
+                                CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+                                ignoreQuotes) : null;
         List<String> columnNames = new ArrayList<String>();
         String line = null;
         int rowsWithData = 0;
@@ -81,9 +88,19 @@ public class TsvCsvImporter implements Importer {
             if (parser == null) {
                 int tab = line.indexOf('\t');
                 if (tab >= 0) {
-                    parser = new CSVParser('\t');
+                    parser = new CSVParser('\t',
+                            CSVParser.DEFAULT_QUOTE_CHARACTER,
+                            CSVParser.DEFAULT_ESCAPE_CHARACTER,
+                            CSVParser.DEFAULT_STRICT_QUOTES,
+                            CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+                            ignoreQuotes);
                 } else {
-                    parser = new CSVParser(',');
+                    parser = new CSVParser(',',
+                            CSVParser.DEFAULT_QUOTE_CHARACTER,
+                            CSVParser.DEFAULT_ESCAPE_CHARACTER,
+                            CSVParser.DEFAULT_STRICT_QUOTES,
+                            CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+                            ignoreQuotes);
                 }
             }
 

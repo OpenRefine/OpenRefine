@@ -4,22 +4,22 @@
     <title>Freebase Gridworks</title>
 
     <link rel="icon" type="image/png" href="images/favicon.png">
-    
+
     <link type="text/css" rel="stylesheet" href="externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css" />
-    
+
     <link rel="stylesheet" href="/styles/common.css" />
     <link rel="stylesheet" href="/styles/freebase.css" />
     <link rel="stylesheet" href="/styles/index.css" />
     <link rel="stylesheet" href="/styles/jquery-ui-overrides.css" />
-    
+
     <script type="text/javascript" src="externals/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="externals/jquery-ui/jquery-ui-1.8.custom.min.js"></script>
     <script type="text/javascript" src="externals/date.js"></script>
-    
+
     <script type="text/javascript" src="scripts/util/string.js"></script>
     <script type="text/javascript" src="scripts/version.js"></script>
     <script type="text/javascript" src="scripts/index.js"></script>
-    
+
 </head>
 <body>
     <div id="header">
@@ -27,7 +27,7 @@
       <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
       <div id="path"><span class="app-path-section"><a href="./index.html">Gridworks</a></span></div>
     </div>
-    
+
     <div id="body">
       <div class="grid-layout layout-loose"><table>
         <tr>
@@ -43,7 +43,7 @@
             <p><a href="about.html" class="quiet-link">Credits and Licenses &raquo;</a>
             </p>
           </td>
-          
+
           <td id="projects-panel">
             <div class="island">
               <div id="projects" class="round-corners">
@@ -52,11 +52,11 @@
               </div>
             </div>
           </td>
-          
+
           <td id="forms">
             <div class="island">
               <form id="file-upload-form" method="post" enctype="multipart/form-data" action="/command/create-project-from-upload" accept-charset="UTF-8">
-                
+
                 <div id="form-tabs-create-project" class="round-corners">
                   <a class="form-tab-link" href="javascript:showHide('file-upload-form', 'project-upload-form')">or Import an Existing Project</a>
                   <h1>Create a New Project</h1>
@@ -70,48 +70,53 @@
                       <td><input type="submit" value="Create Project" id="upload-file-button" class="button-primary" /></td></tr>
                   </table></div>
                 </div>
-                
+
                 <div id="form-create-project-more-options">
                   <h2>Advanced Options</h2>
-                  
+
                   <table><tr>
                     <td>
                       <div class="field-label">Limit load to:</div>
                       <div class="field-body"><input id="limit-input" name="limit" size="5" /> rows (blank for all)</div>
-                      
+
                       <div class="field-label">Ignore:</div>
                       <div class="field-body"><input id="ignore-input" name="ignore" size="5" value="0" /> initial non-blank lines</div>
-                      
+
                       <div class="field-label">Skip:</div>
                       <div class="field-body"><input id="skip-input" name="skip" size="5" value="0" /> initial data rows</div>
                     </td>
                     <td>
                       <div class="field-label">When parsing text files:</div>
-                      
+
                       <div class="field-group">
                         <div><input id="split-into-columns-input" type="checkbox" checked="true" name="split-into-columns" /> Split into columns</div>
-                      
+
                         <div>Column separator:
                           <input id="separator-input" name="separator" size="2" /></div>
                         <div class="field-hint">leave blank to guess comma or tab</div>
                       </div>
-                      
+
                       <div class="field-group">
                         <div><input id="guess-value-type-input" name="guess-value-type" type="checkbox" checked="true" /> Guess cells' value types</div>
                         <div class="field-hint">try to parse numbers, dates, etc.</div>
                       </div>
-                      
+
                       <div class="field-group">
                         <div>Header lines:
                           <input id="header-lines-input" name="header-lines" size="5" value="1" /></div>
                         <div class="field-hint">use 0 if there is no header line</div>
                       </div>
+
+            <div class="field-group">
+              <div><input id="ignore-quotes-input" name="ignore-quotes" type="checkbox" />Ignore Quotation Marks </div>
+            <div class="field-hint">Ignore quotation marks, using all newlines and separators</div>
+            </div>
                     </td>
                   </tr></table>
                 </div>
               </form>
-              
-              
+
+
               <form id="project-upload-form" method="post" enctype="multipart/form-data" action="/command/import-project" accept-charset="UTF-8" style="display:none;">
                 <div id="form-tabs-import-project" class="round-corners">
                   <a class="form-tab-link" href="javascript:showHide('project-upload-form', 'file-upload-form')">or Create a New Project</a>
