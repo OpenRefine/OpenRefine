@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/gridworks/webapp/WEB-INF/lib/butterfly-trunk-r25.jar" sourcepath="/gridworks/webapp/WEB-INF/lib-src/butterfly-trunk-r25-sources.jar"/>
+	<classpathentry kind="lib" path="/gridworks-server/lib/servlet-api-2.5.jar" sourcepath="/gridworks-server/lib-src/servlet-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/gridworks/webapp/WEB-INF/lib/json-20100208.jar" sourcepath="/gridworks/webapp/WEB-INF/lib-src/json-20100208-sources.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/bdb-je-4.0.103.jar" sourcepath="module/MOD-INF/lib-src/bdb-je-4.0.103-sources.jar"/>
+	<classpathentry kind="lib" path="/gridworks/webapp/WEB-INF/lib/httpclient-4.0.1.jar" sourcepath="/gridworks/webapp/WEB-INF/lib-src/httpclient-4.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="/gridworks/webapp/WEB-INF/lib/httpcore-4.0.1.jar" sourcepath="/gridworks/webapp/WEB-INF/lib-src/httpcore-4.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="/gridworks/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar" sourcepath="/gridworks/webapp/WEB-INF/lib-src/slf4j-api-1.5.6-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gridworks-broker"/>
+	<classpathentry kind="output" path="module/MOD-INF/classes"/>
+</classpath>
