@@ -62,6 +62,9 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
         }
     }
     
+    static public final long LOCK_DURATION = 60 * 1000; // 1 minute
+    static public final long LOCK_EXPIRATION_CHECK_DELAY = 5 * 1000; // 5 seconds
+    
     protected HttpClient httpclient;
 
     @Override
@@ -98,6 +101,8 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
             
             if ("get_lock".equals(path)) {
                 getLock(response, pid);
+            } else if ("expire_locks".equals(path)) {
+                expireLocks(response);
             } else if ("obtain_lock".equals(path)) {
                 obtainLock(response, pid, uid);
             } else if ("release_lock".equals(path)) {
@@ -128,6 +133,8 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     // ----------------------------------------------------------------------------------------
     
     protected abstract HttpClient getHttpClient();
+
+    protected abstract void expireLocks(HttpServletResponse response) throws Exception;
     
     protected abstract void getLock(HttpServletResponse response, String pid) throws Exception;
 

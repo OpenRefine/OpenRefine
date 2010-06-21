@@ -10,3 +10,6 @@ tools/
 extensions/sample-extension/module/MOD-INF/classes/
 extensions/jython/module/MOD-INF/classes/
 extensions/jython/module/MOD-INF/lib/cachedir/
+broker/appengine/module/MOD-INF/classes/
+broker/core/module/MOD-INF/classes/
+broker/local/module/MOD-INF/classes/

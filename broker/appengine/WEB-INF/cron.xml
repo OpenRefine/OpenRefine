@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/expire_locks</url>
+    <schedule>every 5 seconds synchronized</schedule>
+  </cron>
+</cronentries>

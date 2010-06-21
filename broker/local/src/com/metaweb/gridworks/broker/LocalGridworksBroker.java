@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletResponse;
@@ -36,12 +38,17 @@ public class LocalGridworksBroker extends GridworksBroker {
     PrimaryIndex<String,Project> projectById;
     PrimaryIndex<String,Lock> lockByProject;
 
-    protected HttpClient httpclient;
-
+    Timer timer;
+    LockExpirer expirer;
+    
     @Override
     public void init(ServletConfig config) throws Exception {
         super.init(config);
 
+        timer = new Timer();
+        expirer = new LockExpirer();
+        timer.schedule(expirer, LOCK_EXPIRATION_CHECK_DELAY, LOCK_EXPIRATION_CHECK_DELAY);
+        
         File dataPath = new File("data"); // FIXME: data should be configurable;
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
@@ -77,6 +84,20 @@ public class LocalGridworksBroker extends GridworksBroker {
         }
     }
 
+    class LockExpirer extends TimerTask {
+        public void run() {
+            for (Lock lock : lockByProject.entities()) {
+                if (lock.timestamp + LOCK_DURATION < System.currentTimeMillis()) {
+                    try {
+                        releaseLock(null, lock.pid, lock.uid, lock.id);
+                    } catch (Exception e) {
+                        logger.error("Exception while expiring lock for project '" + lock.pid + "'", e);
+                    }
+                }
+            }
+        }
+    }
+    
     // ---------------------------------------------------------------------------------
 
     protected HttpClient getHttpClient() {
@@ -84,6 +105,11 @@ public class LocalGridworksBroker extends GridworksBroker {
     }
     
     // ---------------------------------------------------------------------------------
+    
+    protected void expireLocks(HttpServletResponse response) throws Exception {
+        expirer.run();
+        respond(response, OK);
+    }
     
     protected void getLock(HttpServletResponse response, String pid) throws Exception {
         respond(response, lockToJSON(getLock(pid)));
@@ -135,7 +161,9 @@ public class LocalGridworksBroker extends GridworksBroker {
             }
         }
                 
-        respond(response, OK);
+        if (response != null) { // this because the expiration thread can call this method without a real response
+            respond(response, OK);
+        }
     }
     
     // ----------------------------------------------------------------------------------------------------
@@ -283,6 +311,7 @@ public class LocalGridworksBroker extends GridworksBroker {
             o.put("lock_id", lock.id);
             o.put("project_id", lock.pid);
             o.put("user_id", lock.uid);
+            o.put("timestamp", lock.timestamp);
         }
         return o;
     }
@@ -297,10 +326,13 @@ public class LocalGridworksBroker extends GridworksBroker {
         
         String uid;
         
+        long timestamp;
+        
         Lock(String id, String pid, String uid) {
             this.id = id;
             this.pid = pid;
             this.uid = uid;
+            this.timestamp = System.currentTimeMillis();
         }
                 
         @SuppressWarnings("unused")

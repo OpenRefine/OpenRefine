@@ -4,6 +4,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.Extent;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -52,6 +53,39 @@ public class AppEngineGridworksBroker extends GridworksBroker {
     }
     
     // ---------------------------------------------------------------------------------
+    
+    protected void expireLocks(HttpServletResponse response) throws Exception {
+        
+        PersistenceManager pm = pmfInstance.getPersistenceManager();
+        
+        try {
+            Extent<Lock> extent = pm.getExtent(Lock.class, false);
+
+            try {
+                for (Lock lock : extent) {
+                    if (lock.timestamp + LOCK_DURATION < System.currentTimeMillis()) {
+                        Transaction tx = pm.currentTransaction();
+                        try {
+                            tx.begin();
+                            pm.deletePersistent(lock);
+                            tx.commit();
+                        } finally {
+                            if (tx.isActive()) {
+                                tx.rollback();
+                            }
+                        }
+                    }
+                }
+            } finally {
+                extent.closeAll();                
+            }            
+            
+            respond(response, OK);
+            
+        } finally {
+            pm.close();
+        }
+    }
     
     protected void getLock(HttpServletResponse response, String pid) throws Exception {
         PersistenceManager pm = pmfInstance.getPersistenceManager();
@@ -295,6 +329,7 @@ public class AppEngineGridworksBroker extends GridworksBroker {
             o.put("lock_id", lock.id);
             o.put("project_id", lock.pid);
             o.put("user_id", lock.uid);
+            o.put("timestamp", lock.timestamp);
         }
         return o;
     }
@@ -312,10 +347,14 @@ public class AppEngineGridworksBroker extends GridworksBroker {
         @Persistent
         String uid;
         
+        @Persistent
+        long timestamp;
+        
         Lock(String id, String pid, String uid) {
             this.id = id;
             this.pid = pid;
             this.uid = uid;
+            this.timestamp = System.currentTimeMillis();
         }
     }
     
