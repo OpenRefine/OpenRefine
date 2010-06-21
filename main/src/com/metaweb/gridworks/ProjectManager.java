@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,7 +20,11 @@ import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.preference.PreferenceStore;
 import com.metaweb.gridworks.preference.TopList;
 
-
+/**
+ * ProjectManager is responsible for loading and saving the workspace and projects.
+ *
+ *
+ */
 public abstract class ProjectManager {
     // last n expressions used across all projects
     static protected final int s_expressionHistoryMax = 100;
@@ -48,6 +53,14 @@ public abstract class ProjectManager {
     transient protected Map<Long, Project> _projects;
 
     static public ProjectManager singleton;
+
+    protected ProjectManager(){
+        _projectsMetadata = new HashMap<Long, ProjectMetadata>();
+        _preferenceStore = new PreferenceStore();
+        _projects = new HashMap<Long, Project>();
+
+        preparePreferenceStore(_preferenceStore);
+    }
 
     /**
      * Registers the project in the memory of the current session
@@ -102,26 +115,28 @@ public abstract class ProjectManager {
      */
     public void ensureProjectSaved(long id) {
         synchronized(this){
-            ProjectMetadata metadata = _projectsMetadata.get(id);
+            ProjectMetadata metadata = this.getProjectMetadata(id);
             if (metadata != null) {
                 try {
                     saveMetadata(metadata, id);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }//FIXME what should be the behaviour if metadata is null? i.e. not found
 
-            Project project = _projects.get(id);
-            if (project != null && metadata.getModified().after(project.lastSave)) {
+            Project project = getProject(id);
+            if (project != null && metadata != null && metadata.getModified().after(project.getLastSave())) {
                 try {
                     saveProject(project);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }//FIXME what should be the behaviour if project is null? i.e. not found or loaded.
+            //FIXME what should happen if the metadata is found, but not the project? or vice versa?
         }
 
     }
+
     /**
      * Save project metadata to the data store
      * @param metadata
@@ -138,7 +153,7 @@ public abstract class ProjectManager {
 
     /**
      * Save workspace and all projects to data store
-     * @param b
+     * @param allModified
      */
     public void save(boolean allModified) {
         if (allModified || _busy == 0) {
@@ -175,23 +190,23 @@ public abstract class ProjectManager {
      */
     protected void saveProjects(boolean allModified) {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
-        Date now = new Date();
+        Date startTimeOfSave = new Date();
 
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
-                ProjectMetadata metadata = _projectsMetadata.get(id);
-                Project project = _projects.get(id);
+                ProjectMetadata metadata = getProjectMetadata(id);
+                Project project = getProject(id);
 
                 if (project != null) {
                     boolean hasUnsavedChanges =
-                        metadata.getModified().getTime() > project.lastSave.getTime();
+                        metadata.getModified().getTime() > project.getLastSave().getTime();
 
                     if (hasUnsavedChanges) {
-                        long msecsOverdue = now.getTime() - project.lastSave.getTime();
+                        long msecsOverdue = startTimeOfSave.getTime() - project.getLastSave().getTime();
 
                         records.add(new SaveRecord(project, msecsOverdue));
 
-                    } else if (now.getTime() - project.lastSave.getTime() > s_projectFlushDelay) {
+                    } else if (startTimeOfSave.getTime() - project.getLastSave().getTime() > s_projectFlushDelay) {
                         /*
                          *  It's been a while since the project was last saved and it hasn't been
                          *  modified. We can safely remove it from the cache to save some memory.
@@ -222,7 +237,7 @@ public abstract class ProjectManager {
 
             for (int i = 0;
                  i < records.size() &&
-                    (allModified || (new Date().getTime() - now.getTime() < s_quickSaveTimeout));
+                    (allModified || (new Date().getTime() - startTimeOfSave.getTime() < s_quickSaveTimeout));
                  i++) {
 
                 try {

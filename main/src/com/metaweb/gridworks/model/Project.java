@@ -31,7 +31,7 @@ public class Project {
 
     final public History         history;
     transient public ProcessManager processManager = new ProcessManager();
-    transient public Date lastSave = new Date();
+    transient private Date _lastSave = new Date();
 
     final static Logger logger = LoggerFactory.getLogger("project");
 
@@ -47,6 +47,16 @@ public class Project {
     protected Project(long id) {
         this.id = id;
         this.history = new History(this);
+    }
+
+    public Date getLastSave(){
+        return this._lastSave;
+    }
+    /**
+     * Sets the lastSave time to now
+     */
+    public void setLastSave(){
+        this._lastSave = new Date();
     }
 
     public ProjectMetadata getMetadata() {
@@ -132,7 +142,7 @@ public class Project {
 
     public void update() {
         columnModel.update();
-    	recordModel.update(this);
+        recordModel.update(this);
     }
 
 

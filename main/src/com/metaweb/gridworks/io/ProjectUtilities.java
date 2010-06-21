@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -47,7 +46,7 @@ public class ProjectUtilities {
                 oldFile.delete();
             }
 
-            project.lastSave = new Date();
+            project.setLastSave();
 
             logger.info("Saved project '{}'",id);
         }

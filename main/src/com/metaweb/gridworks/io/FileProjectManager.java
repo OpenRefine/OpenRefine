@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
@@ -27,14 +26,13 @@ import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.history.HistoryEntryManager;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.preference.PreferenceStore;
 import com.metaweb.gridworks.preference.TopList;
 
 public class FileProjectManager extends ProjectManager {
 
     protected File                       _workspaceDir;
 
-    final static Logger logger = LoggerFactory.getLogger("file_project_manager");
+    final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
     static public synchronized void initialize(File dir) {
         if (singleton == null) {
@@ -45,14 +43,9 @@ public class FileProjectManager extends ProjectManager {
     }
 
     protected FileProjectManager(File dir) {
+        super();
         _workspaceDir = dir;
         _workspaceDir.mkdirs();
-
-        _projectsMetadata = new HashMap<Long, ProjectMetadata>();
-        _preferenceStore = new PreferenceStore();
-        _projects = new HashMap<Long, Project>();
-
-        preparePreferenceStore(_preferenceStore);
 
         load();
     }
