@@ -53,9 +53,9 @@ function init() {
             "scripts/facets/scatterplot-facet.js",
             "scripts/facets/text-search-facet.js",
 
-            "scripts/views/data-table-view.js",
-            "scripts/views/data-table-cell-ui.js",
-            "scripts/views/data-table-column-header-ui.js",
+            "scripts/views/data-table/data-table-view.js",
+            "scripts/views/data-table/data-table-cell-ui.js",
+            "scripts/views/data-table/data-table-column-header-ui.js",
 
             "scripts/dialogs/recon-dialog.js",
             "scripts/dialogs/expression-preview-dialog.js",
