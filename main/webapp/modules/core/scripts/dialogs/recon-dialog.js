@@ -27,85 +27,16 @@ function ReconDialog(column, types) {
 
 ReconDialog.prototype._createDialog = function() {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("800px");
+    var dialog = $(DOM.loadHTML("core", "scripts/dialogs/recon-dialog.html"));
+
+    this._elmts = DOM.bind(dialog);
+    this._elmts.dialogHeader.text("Reconcile column " + this._column.name);
+    this._elmts.reconcileButton.click(function() { self._onOK(); });
+    this._elmts.cancelButton.click(function() { self._dismiss(); });
     
-    var header = $('<div></div>').addClass("dialog-header").text("Reconcile column " + this._column.name).appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    var html = $(
-        '<div id="recon-dialog-tabs" class="gridworks-tabs">' +
-            '<ul>' +
-                '<li><a href="#recon-dialog-tabs-heuristic">Heuristic</a></li>' +
-                '<li><a href="#recon-dialog-tabs-strict">Strict</a></li>' +
-            '</ul>' +
-            '<div id="recon-dialog-tabs-heuristic">' +
-                '<div class="grid-layout layout-normal layout-full"><table>' +
-                    '<tr>' +
-                        '<td>Reconcile each cell to a Freebase topic of type:</td>' +
-                        '<td>Also use relevant details from other columns:</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                        '<td>' +
-                            '<div class="recon-dialog-heuristic-types-container" bind="heuristicTypeContainer">' +
-                            '</div>' +
-                            '<table class="recon-dialog-heuristic-other-type-container recon-dialog-inner-layout">' +
-                                '<tr>' +
-                                    '<td width="1"><input type="radio" name="recon-dialog-type-choice" value=""></td>' +
-                                    '<td>Search for type: <input size="20" bind="heuristicTypeInput" /></td>' +
-                                '<tr>' +
-                            '</table>' +
-                        '</td>' +
-                        '<td width="50%">' +
-                            '<div class="recon-dialog-heuristic-details-container" bind="heuristicDetailContainer"></div>' +
-                        '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                        '<td>' +
-                            '<input type="checkbox" checked bind="heuristicAutomatchCheck" /> Auto-match candidates with high confidence' +
-                        '</td>' +
-                        '<td>' +
-                            'Use ' +
-                            '<input type="radio" name="recon-dialog-heuristic-service" value="relevance" checked="" /> relevance service ' +
-                            '<input type="radio" name="recon-dialog-heuristic-service" value="recon" /> recon service ' +
-                        '</td>' +
-                    '</tr>' +
-                '</table></div>' +
-            '</div>' +
-            '<div id="recon-dialog-tabs-strict" style="display: none;">' +
-                '<p>Each cell contains:</p>' +
-                '<div class="grid-layout layout-normal layout-full"><table>' +
-                    '<tr><td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="id" checked /></td><td>a Freebase ID, e.g., /en/solar_system</td></tr>' +
-                    '<tr><td><input type="radio" name="recon-dialog-strict-choice" value="guid" /></td><td>a Freebase GUID, e.g., #9202a8c04000641f80000000000354ae</td></tr>' +
-                    '<tr>' +
-                        '<td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="key" /></td>' +
-                        '<td>' +
-                            '<div class="grid-layout layout-tighter layout-full"><table>' +
-                                '<tr><td colspan="2">a Freebase key in</td></tr>' +
-                                '<tr>' +
-                                    '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="/wikipedia/en" nsName="Wikipedia EN" checked /></td>' +
-                                    '<td>the Wikipedia English namespace</td>' +
-                                '</tr>' +
-                                '<tr>' +
-                                    '<td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="other" /></td>' +
-                                    '<td>this namespace: <input bind="strictNamespaceInput" /></td>' +
-                                '</tr>' +
-                            '</table></div>' +
-                        '</td>' +
-                    '</tr>' +
-                '</table></div>' +
-            '</div>' +
-        '</div>'
-    ).appendTo(body);
-    
-    this._elmts = DOM.bind(html);
     this._populateDialog();
     
-    $('<button></button>').text("Start Reconciling").click(function() { self._onOK(); }).appendTo(footer);
-    $('<button></button>').text("Cancel").click(function() { self._dismiss(); }).appendTo(footer);
-    
-    this._level = DialogSystem.showDialog(frame);
+    this._level = DialogSystem.showDialog(dialog);
     
     $("#recon-dialog-tabs").tabs();
     $("#recon-dialog-tabs-strict").css("display", "");

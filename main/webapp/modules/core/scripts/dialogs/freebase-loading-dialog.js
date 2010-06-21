@@ -5,53 +5,26 @@ function FreebaseLoadingDialog() {
 
 FreebaseLoadingDialog.prototype._createDialog = function() {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("800px");
-    
-    var header = $('<div></div>').addClass("dialog-header").text('Load Data into Freebase').appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $(
-        '<div class="dialog-footer">' +
-           '<table width="100%"><tr>' +
-             '<td bind="left" style="text-align: left" width="40%" nowrap="true"></td>' + 
-             '<td bind="center" style="text-align: center" width="20%" nowrap="true"></td>' +
-             '<td bind="right" style="text-align: right" width="40%" nowrap="true"></td>' +
-           '</tr></table>' +
-        '</div>'
-    ).appendTo(frame);
-            
-    this._elmts = DOM.bind(frame);
-    
-    var left_footer = this._elmts.left;  
-    var center_footer = this._elmts.center;  
-    var right_footer = this._elmts.right;  
-    
-    var cancel_button = $('<button bind="cancel" id="freebase-loading-cancel"></button>').text("Cancel").click(function() { 
-        self._dismiss(); 
-    }).appendTo(left_footer);
-        
-    var authorization = $('<div bind="authorization">').addClass("freebase-loading-authorization").hide().appendTo(center_footer);
+    var dialog = $(DOM.loadHTML("core", "scripts/dialogs/freebase-loading-dialog.html"));
+    this._elmts = DOM.bind(dialog);
+    this._elmts.cancelButton.click(function() { self._dismiss(); });
+    this._elmts.selector.buttonset();
 
-    var selector = $('<span bind="selector">').addClass("freebase-loading-graph-selector").html("Load this data into " +
-        '<input type="radio" bind="sandbox" id="freebase-loading-graph-selector-sandbox" name="graph-selector" checked="checked" value="sandbox"/><label class="sandbox" for="freebase-loading-graph-selector-sandbox" title="Load into the sandbox">sandbox</label>' +
-        '<input type="radio" bind="freebase" id="freebase-loading-graph-selector-freebase" name="graph-selector" value="freebase" disabled="disabled"/><label class="freebase" for="freebase-loading-graph-selector-freebase" title="Load into Freebase">freebase</label>'
-    ).buttonset().appendTo(right_footer);
-
-    var load_button = $('<button bind="load" id="freebase-loading-load" disabled="disabled"></button>').text("Load").appendTo(right_footer);
-    
     var provider = "www.freebase.com";
-
+    var authorization = this._elmts.authorization;
+    var loadButton = this._elmts.loadButton;
+    
     var check_authorization = function(cont) {
         $.get("/command/check-authorization/" + provider, function(data) {
             if ("status" in data && data.code == "/api/status/ok") {
                 authorization.html('Signed in as: <a target="_new" href="http://www.freebase.com/view/user/' + data.username + '">' + data.username + '</a> | <a href="javascript:{}" bind="signout">Sign Out</a>').show();
                 DOM.bind(authorization).signout.click(function() {
                     self._signedin = false;
-                    load_button.attr("disabled","disabled");
+                    loadButton.attr("disabled","disabled");
                     $("#freebase-loading-graph-selector-freebase").attr("disabled","disabled").button("refresh");
                     Sign.signout(check_authorization,provider);
                 });
-                load_button.unbind().click(function() {
+                loadButton.unbind().click(function() {
                     self._load();
                 });
                 self._signedin = true;
@@ -121,6 +94,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
             { protograph: JSON.stringify(theProject.protograph), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
             function(data) {
                 if ("tripleloader" in data) {
+                    var body = self._elmts.dialogBody;
                     body.html(
                         '<div class="freebase-loading-tripleloader-info"><table><tr>' +
                           '<td><div>Name this data load &not; <sup style="color: red">required</sup></div>' +
@@ -130,13 +104,13 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                         '</tr></table></div>' +
                         '<div class="freebase-loading-tripleloader-data">' + data.tripleloader + '</div>'
                     );
-                    self._elmts = DOM.bind(frame);
+                    self._elmts = DOM.bind(dialog);
                     
                     self._elmts.source_name.keyup(function() {
                         if (self._signedin && $(this).val() != "") {
-                            load_button.removeAttr("disabled");
+                            loadButton.removeAttr("disabled");
                         } else {
-                            load_button.attr("disabled","disabled");
+                            loadButton.attr("disabled","disabled");
                         }
                     });
                     
@@ -157,10 +131,10 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                             '<p>Have you aligned it with the Freebase schemas yet?</p>' +
                         '</div>'
                     );
-                    self._elmts = DOM.bind(frame);
+                    self._elmts = DOM.bind(dialog);
                     self._end();
                 }
-                self._level = DialogSystem.showDialog(frame);
+                self._level = DialogSystem.showDialog(dialog);
             },
             "json"
         );
@@ -199,7 +173,7 @@ FreebaseLoadingDialog.prototype._load = function() {
             function(data) {
                 dismissBusy();
                 
-                var body = $(".dialog-body");
+                var body = self._elmts.dialogBody;
                 if ("status" in data && typeof data.status == "object" && "code" in data.status && data.status.code == 200) {
                     body.html(
                         '<div class="freebase-loading-tripleloader-message">' +
@@ -246,7 +220,7 @@ FreebaseLoadingDialog.prototype._dismiss = function() {
 };
 
 FreebaseLoadingDialog.prototype._show_error = function(msg, error) {
-    var body = $(".dialog-body");
+    var body = self._elmts.dialogBody;
     body.html(
         '<div class="freebase-loading-tripleloader-message">' +
             '<h2>' + msg + '</h2>' + 
@@ -259,10 +233,10 @@ FreebaseLoadingDialog.prototype._show_error = function(msg, error) {
 
 FreebaseLoadingDialog.prototype._end = function() {
     var self = this;
-    self._elmts.load.text("Close").removeAttr("disabled").unbind().click(function() {
+    self._elmts.loadButton.text("Close").removeAttr("disabled").unbind().click(function() {
         self._dismiss();
     });
-    self._elmts.cancel.hide();
+    self._elmts.cancelButton.hide();
     self._elmts.authorization.hide();
     self._elmts.selector.hide();
 };

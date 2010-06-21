@@ -18,6 +18,8 @@ function init() {
         "project/scripts",
         module,
         [
+            "wirings.js",
+            
             "externals/jquery-1.4.2.min.js",
             "externals/jquery.cookie.js",
             "externals/suggest/suggest-1.2.min.js",
@@ -111,18 +113,29 @@ function init() {
  * This is the function that is invoked by Butterfly
  */
 function process(path, request, response) {
-    if (path.endsWith("/")) {
-        path = path.substring(0, path.length - 1);
-    }
+    if (path == "wirings.js") {
+        var wirings = butterfly.getWirings(request);
+        butterfly.sendString(
+            request, 
+            response, 
+            "var ModuleWirings = " + butterfly.toJSONString(wirings) + ";", 
+            encoding, 
+            "text/javascript"
+        );
+    } else {
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length - 1);
+        }
     
-    var slash = path.lastIndexOf("/");
-    var lastSegment = slash >= 0 ? path.substring(slash + 1) : path;
-    if (lastSegment in templatedFiles) {
-        var context = {};
-        context.scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
-        context.styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
+        var slash = path.lastIndexOf("/");
+        var lastSegment = slash >= 0 ? path.substring(slash + 1) : path;
+        if (lastSegment in templatedFiles) {
+            var context = {};
+            context.scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
+            context.styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         
-        send(request, response, path + ".vt", context);
+            send(request, response, path + ".vt", context);
+        }
     }
 }
 

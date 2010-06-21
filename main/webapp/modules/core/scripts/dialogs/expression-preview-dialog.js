@@ -32,6 +32,8 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
 }
 
 ExpressionPreviewDialog.generateWidgetHtml = function() {
+    var html = DOM.loadHTML("core", "scripts/dialogs/expression-preview-dialog.html");
+    
     var languageOptions = [];
     for (var prefix in theProject.scripting) {
         if (theProject.scripting.hasOwnProperty(prefix)) {
@@ -40,43 +42,7 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
         }
     }
     
-    return '<div class="grid-layout layout-tight layout-full"><table rows="4" cols="2">' +
-            '<tr>' +
-                '<td>Expression</td>' +
-                '<td>Language</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td rowspan="2"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></div></td>' +
-                '<td width="150" height="1">' +
-                    '<select bind="expressionPreviewLanguageSelect">' +
-                        languageOptions.join("") +
-                    '</select>' +
-                '</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td class="expression-preview-error-container" bind="expressionPreviewErrorContainer" width="150" style="vertical-align: top;"></td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td colspan="2">' +
-                    '<div id="expression-preview-tabs" class="gridworks-tabs">' +
-                        '<ul>' +
-                            '<li><a href="#expression-preview-tabs-preview">Preview</a></li>' +
-                            '<li><a href="#expression-preview-tabs-history">History</a></li>' +
-                            '<li><a href="#expression-preview-tabs-help">Help</a></li>' +
-                        '</ul>' +
-                        '<div id="expression-preview-tabs-preview">' +
-                            '<div class="expression-preview-container" bind="expressionPreviewPreviewContainer"></div>' +
-                        '</div>' +
-                        '<div id="expression-preview-tabs-history" style="display: none;">' +
-                            '<div class="expression-preview-container" bind="expressionPreviewHistoryContainer"></div>' +
-                        '</div>' +
-                        '<div id="expression-preview-tabs-help" style="display: none;">' +
-                            '<div class="expression-preview-help-container" bind="expressionPreviewHelpTabBody"></div>' +
-                        '</div>' +
-                    '</div>' +
-                '</td>' +
-            '</tr>' +
-        '</table></div>';
+    return html.replace("$LANGUAGE_OPTIONS$", languageOptions.join(""));
 };
 
 ExpressionPreviewDialog.Widget = function(

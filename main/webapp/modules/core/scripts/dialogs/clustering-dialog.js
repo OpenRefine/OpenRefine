@@ -13,62 +13,10 @@ function ClusteringDialog(columnName, expression) {
 
 ClusteringDialog.prototype._createDialog = function() {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("900px");
-    
-    var header = $('<div></div>').addClass("dialog-header").text('Cluster & Edit column "' + this._columnName + '"').appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $(
-        '<div class="dialog-footer">' +
-           '<table width="100%"><tr>' +
-             '<td class="left" style="text-align: left"></td>' + 
-             '<td class="right" style="text-align: right"></td>' +
-           '</tr></table>' +
-        '</div>'
-    ).appendTo(frame);
-    
-    var html = $(
-        '<div class="grid-layout layout-normal layout-full"><table>' +
-            '<tr>' +
-                '<td>' +
-                    'Method: <select bind="methodSelector">' +
-                        '<option selected="true">key collision</option>' +
-                        '<option>nearest neighbor</option>' +
-                    '</select>' +
-                '</td>' +
-                '<td>' +
-                    '<div class="binning-controls">Keying Function: <select bind="keyingFunctionSelector">' +
-                        '<option selected="true">fingerprint</option>' +
-                        '<option>ngram-fingerprint</option>' +
-                        '<option>double-metaphone</option>' +
-                    '</select></div>' +
-                    '<div class="knn-controls hidden">Distance Function: <select bind="distanceFunctionSelector">' +
-                        '<option selected="true">levenshtein</option>' +
-                        '<option>PPM</option>' +
-                    '</select></div>' +
-                '</td>' +
-                '<td>' +
-                    '<div id="ngram-fingerprint-params" class="function-params hidden">' +
-                      'Ngram Size: <input type="text" value="2" bind="ngramSize" name="ngram-size" size="3" class="param" datatype="int">' +
-                    '</div>' + 
-                    '<div class="knn-controls hidden">' +
-                        '<span style="margin-right: 1em">Radius: <input type="text" value="1.0" bind="radius" name="radius" size="3" class="param" datatype="float"></span>' +
-                        '<span>Block Chars: <input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="3" class="param" datatype="int"></span>' +
-                    '</div>' + 
-                '</td>' +
-                '<td bind="resultSummary" align="right">' +
-                '</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td colspan="3">' +
-                    '<div bind="tableContainer" class="clustering-dialog-table-container"></div>' +
-                '</td>' +
-                '<td bind="facetContainer" width="200"></td>' +
-            '</tr>' +
-        '</table></div>'
-    ).appendTo(body);
-    
-    this._elmts = DOM.bind(html);
+    var dialog = $(DOM.loadHTML("core", "scripts/dialogs/clustering-dialog.html"));
+
+    this._elmts = DOM.bind(dialog);
+    this._elmts.dialogHeader.text('Cluster & Edit column "' + this._columnName + '"');
 
     this._elmts.methodSelector.change(function() {
         var selection = $(this).find("option:selected").text();
@@ -116,19 +64,13 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.radius.change(params_changer);
     this._elmts.ngramBlock.change(params_changer);
     
-    var left_footer = footer.find(".left");    
-    $('<button></button>').text("Select All").click(function() { self._selectAll(); }).appendTo(left_footer);
-    $('<button></button>').text("Deselect All").click(function() { self._deselectAll(); }).appendTo(left_footer);
+    this._elmts.selectAllButton.click(function() { self._selectAll(); });
+    this._elmts.deselectAllButton.click(function() { self._deselectAll(); });
+    this._elmts.applyReClusterButton.click(function() { self._onApplyReCluster(); });
+    this._elmts.applyCloseButton.click(function() { self._onApplyClose(); });
+    this._elmts.closeButton.click(function() { self._dismiss(); });
     
-    var right_footer = footer.find(".right");    
-    $('<button></button>').text("Apply & Re-Cluster").click(function() { self._onApplyReCluster(); }).appendTo(right_footer);
-    $('<button></button>').text("Apply & Close").click(function() { self._onApplyClose(); }).appendTo(right_footer);
-    $('<button></button>').text("Close").click(function() { self._dismiss(); }).appendTo(right_footer);
-    
-    this._level = DialogSystem.showDialog(frame);
-    
-    $("#recon-dialog-tabs").tabs();
-    $("#recon-dialog-tabs-strict").css("display", "");
+    this._level = DialogSystem.showDialog(dialog);
 };
 
 ClusteringDialog.prototype._renderTable = function(clusters) {
@@ -248,7 +190,6 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">No clusters were found with the selected method</div><div style="padding-top: 1em; font-size: 110%; color: #888;">Try selecting another method above or changing its parameters</div></div>'
         );
     }
-    
 };
 
 ClusteringDialog.prototype._cluster = function() {

@@ -6,51 +6,25 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
     this._extension = { properties: [] };
 
     var self = this;
-    var frame = this._frame = DialogSystem.createDialog();
-    frame.width("1000px").addClass("extend-data-preview-dialog");
-    
-    var header = $('<div></div>').addClass("dialog-header").text("Add Columns from Freebase Based on Column " + column.name).appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    var html = $(
-        '<div class="grid-layout layout-normal layout-full"><table rows="4">' +
-            '<tr>' +
-                '<td width="300" height="1">Add Property</td>' +
-                '<td height="1">Preview</td>' +
-                '<td height="1" width="1%"><button bind="resetButton">Reset</button></td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td style="vertical-align: top;" height="1"><div class="input-container"><input bind="addPropertyInput" /></div></td>' +
-                '<td style="vertical-align: top;" rowspan="3" colspan="2"><div class="preview-container" bind="previewContainer"></div></td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td height="1">Suggested Properties</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td><div class="suggested-property-container" bind="suggestedPropertyContainer"></div></td>' +
-            '</tr>' +
-        '</table></div>'
-    ).appendTo(body);
-    
-    this._elmts = DOM.bind(html);
-    
+    this._dialog = $(DOM.loadHTML("core", "scripts/dialogs/extend-data-preview-dialog.html"));
+    this._elmts = DOM.bind(this._dialog);
+    this._elmts.dialogHeader.text("Add Columns from Freebase Based on Column " + column.name);
     this._elmts.resetButton.click(function() {
         self._extension.properties = [];
         self._update();
     });
     
-    $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    this._elmts.okButton.click(function() {
         if (self._extension.properties.length === 0) {
             alert("Please add some properties first.");
         } else {
             DialogSystem.dismissUntil(self._level - 1);
             self._onDone(self._extension);
         }
-    }).appendTo(footer);
-    
-    $('<button></button>').text("Cancel").click(function() {
+    });
+    this._elmts.cancelButton.click(function() {
         DialogSystem.dismissUntil(self._level - 1);
-    }).appendTo(footer);
+    });
     
     var dismissBusy = DialogSystem.showBusy();
     var type = "reconConfig" in column && "type" in column.reconConfig ? column.reconConfig.type.id : "/common/topic";
@@ -105,7 +79,7 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
 };
 
 ExtendDataPreviewDialog.prototype._show = function(properties) {
-    this._level = DialogSystem.showDialog(this._frame);
+    this._level = DialogSystem.showDialog(this._dialog);
     
     var n = this._elmts.suggestedPropertyContainer.offset().top +
         this._elmts.suggestedPropertyContainer.outerHeight(true) -

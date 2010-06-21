@@ -6,34 +6,8 @@ function TemplatingExporterDialog() {
 
 TemplatingExporterDialog.prototype._createDialog = function() {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("900px");
-    
-    var header = $('<div></div>').addClass("dialog-header").text('Templating Export').appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div>').addClass("dialog-footer").appendTo(frame);
-    
-    body.html(
-        '<div class="grid-layout layout-normal layout-full"><table>' +
-            '<tr>' +
-                '<td style="vertical-align: top"><div class="grid-layout layout-tighter layout-full" bind="controls"><table>' +
-                    '<tr><td>Prefix</td></tr>' +
-                    '<tr><td><div class="input-container"><textarea bind="prefixTextarea" class="code" wrap="off" style="height:5em;"></textarea></div></td></tr>' +
-                    '<tr><td>Row Template</td></tr>' +
-                    '<tr><td><div class="input-container"><textarea bind="templateTextarea" class="code" wrap="off" style="height:20em;"></textarea></div></td></tr>' +
-                    '<tr><td>Row Separator</td></tr>' +
-                    '<tr><td><div class="input-container"><textarea bind="separatorTextarea" class="code" wrap="off" style="height:3em;"></textarea></div></td></tr>' +
-                    '<tr><td>Suffix</td></tr>' +
-                    '<tr><td><div class="input-container"><textarea bind="suffixTextarea" class="code" wrap="off" style="height:5em;"></textarea></div></td></tr>' +
-                '</table></div></td>' +
-                '<td width="50%" style="vertical-align: top">' +
-                    '<div class="input-container"><textarea bind="previewTextarea" class="code" wrap="off" style="height: 40em;"></textarea></div>' +
-                '</td>' +
-            '</tr>' +
-        '</table></div>'
-    );
-    
-    this._elmts = DOM.bind(body);
+    var dialog = $(DOM.loadHTML("core", "scripts/dialogs/templating-exporter-dialog.html"));
+    this._elmts = DOM.bind(dialog);
     this._elmts.controls.find("textarea").keyup(function() { self._scheduleUpdate(); });
     
     this._elmts.prefixTextarea[0].value = '{\n  "rows" : [\n';
@@ -44,10 +18,10 @@ TemplatingExporterDialog.prototype._createDialog = function() {
             return '\n      "' + column.name + '" : {{jsonize(cells["' + column.name + '"].value)}}';
         }).join(',') + '\n    }';
     
-    $('<button></button>').text("Export").click(function() { self._export(); self._dismiss(); }).appendTo(footer);
-    $('<button></button>').text("Close").click(function() { self._dismiss(); }).appendTo(footer);
-
-    this._level = DialogSystem.showDialog(frame);
+    this._elmts.exportButton.click(function() { self._export(); self._dismiss(); });
+    this._elmts.cancelButton.click(function() { self._dismiss(); });
+    
+    this._level = DialogSystem.showDialog(dialog);
 };
 
 TemplatingExporterDialog.prototype._scheduleUpdate = function() {

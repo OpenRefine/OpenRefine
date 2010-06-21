@@ -14,7 +14,6 @@ DOM._bindDOMElement = function(elmt, map) {
     var bind = elmt.getAttribute("bind");
     if (bind !== null && bind.length > 0) {
         map[bind] = $(elmt);
-        elmt.removeAttribute("bind");
     }
     
     if (elmt.hasChildNodes()) {
@@ -31,4 +30,20 @@ DOM._bindDOMChildren = function(elmt, map) {
         }
         node = node2;
     }
+};
+
+DOM._loadedHTML = {};
+DOM.loadHTML = function(module, path) {
+    var fullPath = ModuleWirings[module] + path;
+    if (!(fullPath in DOM._loadedHTML)) {
+        $.ajax({
+            async: false,
+            url: fullPath,
+            dataType: "html",
+            success: function(html) {
+                DOM._loadedHTML[fullPath] = html;
+            }
+        })
+    }
+    return DOM._loadedHTML[fullPath];
 };
