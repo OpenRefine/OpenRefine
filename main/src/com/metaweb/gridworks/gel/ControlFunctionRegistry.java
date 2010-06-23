@@ -35,6 +35,7 @@ import com.metaweb.gridworks.expr.functions.math.Mod;
 import com.metaweb.gridworks.expr.functions.math.Pow;
 import com.metaweb.gridworks.expr.functions.math.Round;
 import com.metaweb.gridworks.expr.functions.math.Sum;
+import com.metaweb.gridworks.expr.functions.strings.Chomp;
 import com.metaweb.gridworks.expr.functions.strings.Contains;
 import com.metaweb.gridworks.expr.functions.strings.Diff;
 import com.metaweb.gridworks.expr.functions.strings.EndsWith;
@@ -78,10 +79,10 @@ public class ControlFunctionRegistry {
 
     static private Map<String, Function> s_nameToFunction = new HashMap<String, Function>();
     static private Map<Function, String> s_functionToName = new HashMap<Function, String>();
-    
+
     static private Map<String, Control> s_nameToControl = new HashMap<String, Control>();
     static private Map<Control, String> s_controlToName = new HashMap<Control, String>();
-    
+
     static public Function getFunction(String name) {
         return s_nameToFunction.get(name);
     }
@@ -114,15 +115,15 @@ public class ControlFunctionRegistry {
 
     static {
         registerFunction("type", new Type());
-        
+
         registerFunction("toString", new ToString());
         registerFunction("toNumber", new ToNumber());
         registerFunction("toDate", new ToDate());
-        
+
         registerFunction("toUppercase", new ToUppercase());
         registerFunction("toLowercase", new ToLowercase());
         registerFunction("toTitlecase", new ToTitlecase());
-        
+
         registerFunction("get", new Get());
         registerFunction("slice", new Slice());
         registerFunction("substring", new Slice());
@@ -143,7 +144,7 @@ public class ControlFunctionRegistry {
         registerFunction("unicode", new Unicode());
         registerFunction("unicodeType", new UnicodeType());
         registerFunction("diff", new Diff());
-        registerFunction("chomp", new Diff());
+        registerFunction("chomp", new Chomp());
         registerFunction("fingerprint", new Fingerprint());
         registerFunction("ngramFingerprint", new NGramFingerprint());
         registerFunction("phonetic", new Phonetic());
@@ -151,7 +152,7 @@ public class ControlFunctionRegistry {
         registerFunction("jsonize", new Jsonize());
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
-        
+
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());
         registerFunction("startsWith", new StartsWith());
@@ -163,7 +164,7 @@ public class ControlFunctionRegistry {
         registerFunction("now", new Now());
         registerFunction("inc", new Inc());
         registerFunction("datePart", new DatePart());
-        
+
         registerFunction("round", new Round());
         registerFunction("floor", new Floor());
         registerFunction("ceil", new Ceil());
@@ -175,20 +176,20 @@ public class ControlFunctionRegistry {
         registerFunction("pow", new Pow());
         registerFunction("exp", new Exp());
         registerFunction("sum", new Sum());
-        
+
         registerFunction("and", new And());
         registerFunction("or", new Or());
         registerFunction("not", new Not());
-        
+
         registerFunction("cross", new Cross());
 
         registerFunction("facetCount", new FacetCount());
-        
+
         registerControl("if", new If());
         registerControl("with", new With());
         registerControl("forEach", new ForEach());
         registerControl("forNonBlank", new ForNonBlank());
-        
+
         registerControl("isNull", new IsNull());
         registerControl("isNotNull", new IsNotNull());
         registerControl("isBlank", new IsBlank());
