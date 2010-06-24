@@ -1,21 +1,47 @@
-.recon-dialog-type-id {
+.recon-dialog-service-header {
+    padding: 5px 10px;
+    font-weight: bold;
+    font-size: 120%;
+}
+.recon-dialog-service-list {
+    border: 1px solid #aaa;
+    padding: 1px;
+    overflow: auto;
+    width: 200px;
+    height: 400px;
+}
+
+.recon-dialog-service-controls {
+    padding: 5px 0px;
+}
+.recon-dialog-service-controls > button {
+    display: block;
+    width: 100%;
+}
+
+a.recon-dialog-service-selector {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+}
+a.recon-dialog-service-selector:hover {
+    background: #eee;
+}
+a.recon-dialog-service-selector.selected {
+    background: #eee;
+    font-weight: bold;
+}
+
+.recon-dialog-standard-service-panel .type-id {
     color: #888;
 }
 
-.recon-dialog-heuristic-types-container {
-    border: 1px solid #ccc;
-    padding: 10px;
-    max-height: 200px;
-    overflow: auto;
-}
-.recon-dialog-heuristic-other-type-container {
-    margin: 10px;
-}
-
-.recon-dialog-heuristic-details-container {
+.recon-dialog-standard-service-panel .type-container,
+.recon-dialog-standard-service-panel .detail-container {
     border: 1px solid #ccc;
     padding: 10px;
     max-height: 300px;
+    height: 300px !important;
     overflow: auto;
 }
-

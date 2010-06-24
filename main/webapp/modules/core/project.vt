@@ -5,8 +5,8 @@
     
     <title>Freebase Gridworks</title>
 
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+    <script type="text/javascript">var theProject = { id : $projectID };</script>
     
 #foreach($path in $styles)
   <link type="text/css" rel="stylesheet" href="$path" />

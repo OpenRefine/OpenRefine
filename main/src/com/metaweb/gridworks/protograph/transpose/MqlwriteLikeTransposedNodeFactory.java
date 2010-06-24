@@ -123,7 +123,7 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
                     if (cell.recon != null && 
                         cell.recon.judgment == Recon.Judgment.Matched &&
                         cell.recon.match != null) {
-                        obj.put(ID, cell.recon.match.topicID);
+                        obj.put(ID, cell.recon.match.id);
                     } else {
                         obj.put(ID, (String) null);
                         obj.put(NAME, cell.value.toString());

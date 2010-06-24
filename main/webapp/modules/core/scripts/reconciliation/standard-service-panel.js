@@ -1,0 +1,257 @@
+function ReconStandardServicePanel(column, service, container) {
+    this._column = column;
+    this._service = service;
+    this._container = container;
+    this._types = [];
+    
+    this._constructUI();
+}
+
+ReconStandardServicePanel.prototype._guessTypes = function(f) {
+    var self = this;
+    var dismissBusy = DialogSystem.showBusy();
+    
+    $.post(
+        "/command/guess-types-of-column?" + $.param({
+            project: theProject.id, 
+            columnName: this._column.name,
+            service: this._service.url
+        }),
+        null, 
+        function(data) {
+            self._types = data.types;
+
+            if (self._types.length === 0 && "defaultTypes" in self._service) {
+                var defaultTypes = {};
+                $.each(self._service["defaultTypes"], function() {
+                    defaultTypes[this.id] = this.name;
+                });
+                $.each(self._types, function() {
+                    delete defaultTypes[typeof this == "string" ? this : this.id];
+                });
+                for (var id in defaultTypes) {
+                    if (defaultTypes.hasOwnProperty(id)) {
+                        self._types.push({
+                            id: id,
+                            name: defaultTypes[id].name
+                        });
+                    }
+                }
+            }
+            
+            dismissBusy();
+            f();
+        }
+    );
+};
+
+ReconStandardServicePanel.prototype._constructUI = function() {
+    var self = this;
+    this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
+    this._elmts = DOM.bind(this._panel);
+    
+    this._guessTypes(function() {
+        self._populatePanel();
+        self._wireEvents();
+    });
+};
+
+ReconStandardServicePanel.prototype.activate = function() {
+    this._panel.show();
+};
+
+ReconStandardServicePanel.prototype.deactivate = function() {
+    this._panel.hide();
+};
+
+ReconStandardServicePanel.prototype.dispose = function() {
+    this._panel.remove();
+    this._panel = null;
+    
+    this._column = null;
+    this._service = null;
+    this._container = null;
+};
+
+ReconStandardServicePanel.prototype._populatePanel = function() {
+    var self = this;
+    
+    /*
+     *  Populate types
+     */
+    var typeTableContainer = $('<div>')
+        .addClass("grid-layout layout-tightest")
+        .appendTo(this._elmts.typeContainer);
+        
+    var typeTable = $('<table></table>').appendTo(typeTableContainer)[0];
+    var createTypeChoice = function(type, check) {
+        var typeID = typeof type == "string" ? type : type.id;
+        var typeName = typeof type == "string" ? type : (type.name || type.id);
+        
+        var tr = typeTable.insertRow(typeTable.rows.length);
+        var td0 = tr.insertCell(0);
+        var td1 = tr.insertCell(1);
+        
+        td0.width = "1%";
+        var radio = $('<input type="radio" name="type-choice">')
+            .attr("value", typeID)
+            .attr("typeName", typeName)
+            .appendTo(td0)
+            .click(function() {
+                self._rewirePropertySuggests(this.value);
+            });
+            
+        if (check) {
+            radio.attr("checked", "true");
+        }
+        
+        if (typeName == typeID) {
+            $(td1).html(typeName);
+        } else {
+            $(td1).html(
+                typeName + 
+                '<br/>' +
+                '<span class="type-id">' + typeID + '</span>');
+        }
+    };
+    for (var i = 0; i < this._types.length; i++) {
+        createTypeChoice(this._types[i], i === 0);
+    }
+    
+    /*
+     *  Populate properties
+     */
+    var detailTableContainer = $('<div>')
+        .addClass("grid-layout layout-tightest")
+        .appendTo(this._elmts.detailContainer);
+        
+    var detailTable = $(
+        '<table>' +
+            '<tr><th>Column</th><th>Include?</th><th>As Property</th></tr>' +
+        '</table>'
+    ).appendTo(detailTableContainer)[0];
+    
+    function renderDetailColumn(column) {
+        var tr = detailTable.insertRow(detailTable.rows.length);
+        var td0 = tr.insertCell(0);
+        var td1 = tr.insertCell(1);
+        var td2 = tr.insertCell(2);
+        
+        $(td0).html(column.name);
+        $('<input type="checkbox" />')
+            .attr("columnName", column.name)
+            .appendTo(td1);
+        $('<input size="25" name="property" />')
+            .attr("columnName", column.name)
+            .appendTo(td2);
+    }
+    var columns = theProject.columnModel.columns;
+    for (var i = 0; i < columns.length; i++) {
+        var column = columns[i];
+        if (column !== this._column) {
+            renderDetailColumn(column);
+        }
+    }
+};
+
+ReconStandardServicePanel.prototype._wireEvents = function() {
+    if (this._isInFreebaseIdentifierSpace()) {
+        var self = this;
+        this._elmts.typeInput
+            .suggestT({ type : '/type/type' })
+            .bind("fb-select", function(e, data) {
+                self._panel
+                    .find('input[name="type-choice"][value=""]')
+                    .attr("checked", "true");
+                    
+                self._rewirePropertySuggests(data.id);
+            });
+        
+        this._rewirePropertySuggests(this._types[0].id);
+    }
+};
+
+ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
+    if (this._isInFreebaseIdentifierSpace()) {
+        this._panel
+            .find('input[name="property"]')
+            .unbind().suggestP({
+                type: '/type/property',
+                schema: (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
+            });
+    }
+};
+
+ReconStandardServicePanel.prototype._isInFreebaseIdentifierSpace = function() {
+    return "identifier-space" in this._service &&
+        this._service["identifier-space"].startsWith("http://rdf.freebase.com/");
+};
+
+ReconStandardServicePanel.prototype.start = function() {
+    var self = this;
+    
+    var type = this._isInFreebaseIdentifierSpace() ?
+        this._elmts.typeInput.data("data.suggest") :
+        {
+            id: this._elmts.typeInput[0].value,
+            name: this._elmts.typeInput[0].value
+        };
+        
+    var choices = this._panel.find('input[name="type-choice"]:checked');
+    if (choices !== null && choices.length > 0 && choices[0].value != "") {
+        type = {
+            id: choices[0].value,
+            name: choices.attr("typeName")
+        };
+    }
+    
+    var columnDetails = [];
+    $.each(
+        this._panel.find('input[name="property"]'),
+        function() {
+            var property = $(this).data("data.suggest");
+            if (property && property.id) {
+                columnDetails.push({
+                    column: this.getAttribute("columnName"),
+                    property: {
+                        id: property.id,
+                        name: property.name
+                    }
+                });
+            } else {
+                var property = $.trim(this.value);
+                if (property) {
+                    columnDetails.push({
+                        column: this.getAttribute("columnName"),
+                        property: {
+                            id: property,
+                            name: property
+                        }
+                    });
+                }
+            }
+        }
+    );
+    
+    Gridworks.postProcess(
+        "reconcile",
+        {},
+        {
+            columnName: this._column.name,
+            config: JSON.stringify({
+                mode: "standard-service",
+                service: this._service.url,
+                identifierSpace: this._service.identifierSpace,
+                schemaSpace: this._service.schemaSpace,
+                type: {
+                    id: type.id, 
+                    name: type.name
+                },
+                autoMatch: this._elmts.automatchCheck[0].checked,
+                columnDetails: columnDetails
+            })
+        },
+        { cellsChanged: true, columnStatsChanged: true }
+    );
+};
+

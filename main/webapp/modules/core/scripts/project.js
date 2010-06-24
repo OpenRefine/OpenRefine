@@ -388,10 +388,6 @@ Gridworks.getPermanentLink = function() {
 function onLoad() {
     var params = URL.getParameters();
     if ("project" in params) {
-        theProject = {
-            id: parseInt(params.project,10)
-        };
-        
         var uiState = {};
         if ("ui" in params) {
             try {

@@ -50,28 +50,28 @@ public class PreviewExtendDataCommand extends Command {
             int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
             
             List<String> topicNames = new ArrayList<String>();
-            List<String> topicGuids = new ArrayList<String>();
-            Set<String> guids = new HashSet<String>();
+            List<String> topicIds = new ArrayList<String>();
+            Set<String> ids = new HashSet<String>();
             for (int i = 0; i < length; i++) {
                 int rowIndex = rowIndices.getInt(i);
                 if (rowIndex >= 0 && rowIndex < project.rows.size()) {
                     Row row = project.rows.get(rowIndex);
                     Cell cell = row.getCell(cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
-                        topicNames.add(cell.recon.match.topicName);
-                        topicGuids.add(cell.recon.match.topicGUID);
-                        guids.add(cell.recon.match.topicGUID);
+                        topicNames.add(cell.recon.match.name);
+                        topicIds.add(cell.recon.match.id);
+                        ids.add(cell.recon.match.id);
                     } else {
                         topicNames.add(null);
-                        topicGuids.add(null);
-                        guids.add(null);
+                        topicIds.add(null);
+                        ids.add(null);
                     }
                 }
             }
             
             Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
             FreebaseDataExtensionJob job = new FreebaseDataExtensionJob(json);
-            Map<String, DataExtension> map = job.extend(guids, reconCandidateMap);
+            Map<String, DataExtension> map = job.extend(ids, reconCandidateMap);
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
@@ -102,11 +102,11 @@ public class PreviewExtendDataCommand extends Command {
             writer.key("rows");
                 writer.array();
                 for (int r = 0; r < topicNames.size(); r++) {
-                    String guid = topicGuids.get(r);
+                    String id = topicIds.get(r);
                     String topicName = topicNames.get(r);
                     
-                    if (guid != null && map.containsKey(guid)) {
-                        DataExtension ext = map.get(guid);
+                    if (id != null && map.containsKey(id)) {
+                        DataExtension ext = map.get(id);
                         boolean first = true;
                         
                         if (ext.data.length > 0) {
@@ -123,8 +123,8 @@ public class PreviewExtendDataCommand extends Command {
                                     if (cell != null && cell instanceof ReconCandidate) {
                                         ReconCandidate rc = (ReconCandidate) cell;
                                         writer.object();
-                                        writer.key("id"); writer.value(rc.topicID);
-                                        writer.key("name"); writer.value(rc.topicName);
+                                        writer.key("id"); writer.value(rc.id);
+                                        writer.key("name"); writer.value(rc.name);
                                         writer.endObject();
                                     } else {
                                         writer.value(cell);
@@ -138,9 +138,9 @@ public class PreviewExtendDataCommand extends Command {
                     }
                     
                     writer.array();
-                    if (guid != null) {
+                    if (id != null) {
                         writer.object();
-                        writer.key("id"); writer.value("/guid/" + guid.substring(1));
+                        writer.key("id"); writer.value(id);
                         writer.key("name"); writer.value(topicName);
                         writer.endObject();
                     } else {

@@ -1,0 +1,23 @@
+<div class="recon-dialog-service-panel">
+  <p>Each cell contains:</p>
+  <div class="grid-layout layout-normal layout-full"><table>
+    <tr><td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="id" checked /></td><td>a Freebase ID, e.g., /en/solar_system</td></tr>
+    <tr><td><input type="radio" name="recon-dialog-strict-choice" value="guid" /></td><td>a Freebase GUID, e.g., #9202a8c04000641f80000000000354ae</td></tr>
+    <tr>
+      <td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="key" /></td>
+      <td>
+        <div class="grid-layout layout-tighter layout-full"><table>
+          <tr><td colspan="2">a Freebase key in</td></tr>
+          <tr>
+            <td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="/wikipedia/en" nsName="Wikipedia EN" checked /></td>
+            <td>the Wikipedia English namespace</td>
+          </tr>
+          <tr>
+            <td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="other" /></td>
+            <td>this namespace: <input bind="strictNamespaceInput" /></td>
+          </tr>
+        </table></div>
+      </td>
+    </tr>
+  </table></div>
+</div>

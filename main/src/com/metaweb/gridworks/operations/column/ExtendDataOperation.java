@@ -179,20 +179,20 @@ public class ExtendDataOperation extends EngineDependentOperation {
             int limit,
             Map<String, ReconCandidate> reconCandidateMap
         ) {
-            Set<String> guids = new HashSet<String>();
+            Set<String> ids = new HashSet<String>();
             
             int end;
-            for (end = from; end < limit && guids.size() < 10; end++) {
+            for (end = from; end < limit && ids.size() < 10; end++) {
                 int index = rowIndices.get(end);
                 Row row = _project.rows.get(index);
                 Cell cell = row.getCell(_cellIndex);
                 
-                guids.add(cell.recon.match.topicGUID);
+                ids.add(cell.recon.match.id);
             }
             
             Map<String, DataExtension> map = null;
             try {
-                map = _job.extend(guids, reconCandidateMap);
+                map = _job.extend(ids, reconCandidateMap);
             } catch (Exception e) {
                 map = new HashMap<String, DataExtension>();
             }
@@ -201,7 +201,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                 int index = rowIndices.get(i);
                 Row row = _project.rows.get(index);
                 Cell cell = row.getCell(_cellIndex);
-                String guid = cell.recon.match.topicGUID;
+                String guid = cell.recon.match.id;
                 
                 if (map.containsKey(guid)) {
                     dataExtensions.add(map.get(guid));

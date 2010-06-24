@@ -201,7 +201,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                 cell.recon.match != null) {
                 
                 objectCell = cell;
-                id = cell.recon.match.topicID;
+                id = cell.recon.match.id;
             } else if (node.createForNoReconMatch || 
                     (cell.recon != null && cell.recon.judgment == Judgment.New)) {
                 if (cell.recon != null && newTopicVars.containsKey(cell.recon.id)) {

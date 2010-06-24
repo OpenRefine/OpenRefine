@@ -86,11 +86,11 @@ public class XlsExporter implements Exporter {
                             Cell cell = row.cells.get(cellIndex);
                             if (cell != null) {
                                 if (cell.recon != null && cell.recon.match != null) {
-                                    c.setCellValue(cell.recon.match.topicName);
+                                    c.setCellValue(cell.recon.match.name);
                                     
                                     HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-                                    hl.setLabel(cell.recon.match.topicName);
-                                    hl.setAddress("http://www.freebase.com/view" + cell.recon.match.topicID);
+                                    hl.setLabel(cell.recon.match.name);
+                                    hl.setAddress("http://www.freebase.com/view" + cell.recon.match.id);
                                     
                                     c.setHyperlink(hl);
                                 } else if (cell.value != null) {

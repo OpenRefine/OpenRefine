@@ -59,8 +59,11 @@ public class Recon implements HasFields, Jsonizable {
     }
     
     final public long            id;
-    public Object[]              features = new Object[Feature_max];
     public String                service = "unknown";
+    public String                identifierSpace = null;
+    public String                schemaSpace = null;
+    
+    public Object[]              features = new Object[Feature_max];
     public List<ReconCandidate>  candidates;
     
     public Judgment              judgment = Judgment.None;
@@ -71,9 +74,18 @@ public class Recon implements HasFields, Jsonizable {
     public ReconCandidate        match = null;
     public int                   matchRank = -1;
     
-    public Recon(long judgmentHistoryEntry) {
+    static public Recon makeFreebaseRecon(long judgmentHistoryEntry) {
+        return new Recon(
+            judgmentHistoryEntry,
+            "http://rdf.freebase.com/ns/type.object.id",
+            "http://rdf.freebase.com/ns/type.object.id");
+    }
+    
+    public Recon(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
         id = System.currentTimeMillis() * 1000000 + Math.round(Math.random() * 1000000);
         this.judgmentHistoryEntry = judgmentHistoryEntry;
+        this.identifierSpace = identifierSpace;
+        this.schemaSpace = schemaSpace;
     }
     
     protected Recon(long id, long judgmentHistoryEntry) {
@@ -82,7 +94,7 @@ public class Recon implements HasFields, Jsonizable {
     }
     
     public Recon dup(long judgmentHistoryEntry) {
-        Recon r = new Recon(judgmentHistoryEntry);
+        Recon r = new Recon(judgmentHistoryEntry, identifierSpace, schemaSpace);
         
         System.arraycopy(features, 0, r.features, 0, features.length);
         
@@ -165,6 +177,12 @@ public class Recon implements HasFields, Jsonizable {
             return matchRank;
         } else if ("features".equals(name)) {
             return new Features();
+        } else if ("service".equals(name)) {
+            return service;
+        } else if ("identifierSpace".equals(name)) {
+            return identifierSpace;
+        } else if ("schemaSpace".equals(name)) {
+            return schemaSpace;
         }
         return null;
     }
@@ -195,6 +213,10 @@ public class Recon implements HasFields, Jsonizable {
         
         writer.object();
         writer.key("id"); writer.value(id);
+        writer.key("service"); writer.value(service);
+        writer.key("identifierSpace"); writer.value(identifierSpace);
+        writer.key("schemaSpace"); writer.value(schemaSpace);
+        
         if (saveMode) {
             writer.key("judgmentHistoryEntry"); writer.value(judgmentHistoryEntry);
         }
@@ -202,13 +224,13 @@ public class Recon implements HasFields, Jsonizable {
         writer.key("j"); writer.value(judgmentToString());
         if (match != null) {
             writer.key("m");
-            writer.value(match.topicID);
+            writer.value(match.id);
         }
         if (match == null || saveMode) {
             writer.key("c"); writer.array();
             if (candidates != null) {
                 for (ReconCandidate c : candidates) {
-                    writer.value(c.topicID);
+                    writer.value(c.id);
                 }
             }
             writer.endArray();
@@ -222,7 +244,6 @@ public class Recon implements HasFields, Jsonizable {
                 }
                 writer.endArray();
                 
-            writer.key("service"); writer.value(service);
             writer.key("judgmentAction"); writer.value(judgmentAction);
             writer.key("judgmentBatchSize"); writer.value(judgmentBatchSize);
             
@@ -317,6 +338,10 @@ public class Recon implements HasFields, Jsonizable {
                     }
                 } else if ("service".equals(fieldName)) {
                     recon.service = jp.getText();
+                } else if ("identifierSpace".equals(fieldName)) {
+                    recon.identifierSpace = jp.getText();
+                } else if ("schemaSpace".equals(fieldName)) {
+                    recon.schemaSpace = jp.getText();
                 } else if ("judgmentAction".equals(fieldName)) {
                     recon.judgmentAction = jp.getText();
                 } else if ("judgmentBatchSize".equals(fieldName)) {

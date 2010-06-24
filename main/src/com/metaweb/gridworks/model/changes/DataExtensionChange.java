@@ -201,10 +201,10 @@ public class DataExtensionChange implements Change {
             if (value instanceof ReconCandidate) {
                 ReconCandidate rc = (ReconCandidate) value;
                 Recon recon;
-                if (reconMap.containsKey(rc.topicGUID)) {
-                    recon = reconMap.get(rc.topicGUID);
+                if (reconMap.containsKey(rc.id)) {
+                    recon = reconMap.get(rc.id);
                 } else {
-                    recon = new Recon(_historyEntryID);
+                    recon = Recon.makeFreebaseRecon(_historyEntryID);
                     recon.addCandidate(rc);
                     recon.service = "mql";
                     recon.match = rc;
@@ -213,9 +213,9 @@ public class DataExtensionChange implements Change {
                     recon.judgmentAction = "auto";
                     recon.judgmentBatchSize = 1;
                     
-                    reconMap.put(rc.topicGUID, recon);
+                    reconMap.put(rc.id, recon);
                 }
-                cell = new Cell(rc.topicName, recon);
+                cell = new Cell(rc.name, recon);
             } else {
                 cell = new Cell((Serializable) value, null);
             }

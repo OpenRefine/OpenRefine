@@ -14,29 +14,25 @@ import com.metaweb.gridworks.Jsonizable;
 import com.metaweb.gridworks.expr.HasFields;
 
 public class ReconCandidate implements HasFields, Jsonizable {
-    final public String     topicID;
-    final public String     topicGUID;
-    final public String     topicName;
-    final public String[]   typeIDs;
+    final public String     id;
+    final public String     name;
+    final public String[]   types;
     final public double     score;
     
-    public ReconCandidate(String topicID, String topicGUID, String topicName, String[] typeIDs, double score) {
-        this.topicID = topicID;
-        this.topicGUID = topicGUID;
-        this.topicName = topicName;
-        this.typeIDs = typeIDs;
+    public ReconCandidate(String topicID, String topicName, String[] typeIDs, double score) {
+        this.id = topicID;
+        this.name = topicName;
+        this.types = typeIDs;
         this.score = score;
     }
     
     public Object getField(String name, Properties bindings) {
         if ("id".equals(name)) {
-            return topicID;
-        } else if ("guid".equals(name)) {
-            return topicGUID;
+            return id;
         } else if ("name".equals(name)) {
-            return topicName;
+            return this.name;
         } else if ("type".equals(name)) {
-            return typeIDs;
+            return types;
         } else if ("score".equals(name)) {
             return score;
         }
@@ -51,14 +47,13 @@ public class ReconCandidate implements HasFields, Jsonizable {
             throws JSONException {
         
         writer.object();
-        writer.key("id"); writer.value(topicID);
-        writer.key("guid"); writer.value(topicGUID);
-        writer.key("name"); writer.value(topicName);
+        writer.key("id"); writer.value(id);
+        writer.key("name"); writer.value(name);
         writer.key("score"); writer.value(score);
         
         /* if (!options.containsKey("reconCandidateOmitTypes")) */ {
             writer.key("types"); writer.array();
-            for (String typeID : typeIDs) {
+            for (String typeID : types) {
                 writer.value(typeID);
             }
             writer.endArray();
@@ -84,7 +79,6 @@ public class ReconCandidate implements HasFields, Jsonizable {
         }
         
         String id = null;
-        String guid = null;
         String name = null;
         List<String> types = null;
         double score = 0;
@@ -95,8 +89,6 @@ public class ReconCandidate implements HasFields, Jsonizable {
             
             if ("id".equals(fieldName)) {
                 id = jp.getText();
-            } else if ("guid".equals(fieldName)) {
-                guid = jp.getText();
             } else if ("name".equals(fieldName)) {
                 name = jp.getText();
             } else if ("score".equals(fieldName)) {
@@ -124,7 +116,6 @@ public class ReconCandidate implements HasFields, Jsonizable {
         
         return new ReconCandidate(
             id,
-            guid,
             name,
             typesA, 
             score

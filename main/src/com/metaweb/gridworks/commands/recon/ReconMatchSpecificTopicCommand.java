@@ -19,12 +19,17 @@ public class ReconMatchSpecificTopicCommand extends EngineDependentCommand {
         String columnName = request.getParameter("columnName");
         ReconCandidate match = new ReconCandidate(
             request.getParameter("topicID"),
-            request.getParameter("topicGUID"),
             request.getParameter("topicName"),
             request.getParameter("types").split(","),
             100
         );
         
-        return new ReconMatchSpecificTopicOperation(engineConfig, columnName, match);
+        return new ReconMatchSpecificTopicOperation(
+            engineConfig, 
+            columnName, 
+            match,
+            request.getParameter("identifierSpace"),
+            request.getParameter("schemaSpace")
+        );
     }
 }

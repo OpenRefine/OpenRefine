@@ -704,60 +704,7 @@ DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
 };
 
 DataTableColumnHeaderUI.prototype._doReconcile = function() {
-    var self = this;
-    var dismissBusy = DialogSystem.showBusy();
-    $.post(
-        "/command/guess-types-of-column?" + $.param({ project: theProject.id, columnName: this._column.name }), 
-        null,
-        function(data) {
-            if (data.code != "ok") {
-                dismissBusy();
-                new ReconDialog(self._column, []);
-            } else {
-                data.types = data.types.slice(0, 20);
-                
-                var ids = $.map(data.types, function(elmt) { return elmt.id; });
-                if (!ids.length) {
-                    dismissBusy();
-                    new ReconDialog(self._column, []);
-                } else {
-                    var query = [{
-                        "id|=" : ids,
-                        "id" : null,
-                        "/freebase/type_profile/kind" : []
-                    }];
-                    $.getJSON(
-                        "http://api.freebase.com/api/service/mqlread?" + $.param({ "query" : JSON.stringify({ "query" : query }) }) + "&callback=?",
-                        null,
-                        function(o) {
-                            dismissBusy();
-                            
-                            var kindMap = {};
-                            $.each(o.result, function() {
-                                var m = kindMap[this.id] = {};
-                                $.each(this["/freebase/type_profile/kind"], function() {
-                                    m[this] = true;
-                                });
-                            });
-                            
-                            new ReconDialog(self._column, $.map(data.types, function(type) {
-                                if (type.id in kindMap) {
-                                    var m = kindMap[type.id];
-                                    if (!("Role" in m) && !("Annotation" in m)) {
-                                        return type;
-                                    }
-                                }
-                                return null;
-                            }));
-                        },
-                        "jsonp"
-                    );
-                }
-            }
-        },
-        "json"
-    );
-
+    new ReconDialog(this._column);
 };
 
 DataTableColumnHeaderUI.prototype._doReconDiscardJudgments = function() {

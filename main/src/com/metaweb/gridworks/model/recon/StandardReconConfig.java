@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.model.recon;
 
+import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
@@ -15,6 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.model.Cell;
@@ -27,7 +30,9 @@ import com.metaweb.gridworks.model.RecordModel.RowDependency;
 import com.metaweb.gridworks.protograph.FreebaseProperty;
 import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class HeuristicReconConfig extends ReconConfig {
+public class StandardReconConfig extends ReconConfig {
+    final static Logger logger = LoggerFactory.getLogger("gridworks-standard-recon");
+    
     static public class ColumnDetail {
         final public String columnName;
         final public FreebaseProperty property;
@@ -63,8 +68,10 @@ public class HeuristicReconConfig extends ReconConfig {
         
         JSONObject t = obj.getJSONObject("type");
         
-        return new HeuristicReconConfig(
+        return new StandardReconConfig(
             obj.getString("service"),
+            obj.has("identifierSpace") ? obj.getString("identifierSpace") : null,
+            obj.has("schemaSpace") ? obj.getString("schemaSpace") : null,
             t.getString("id"),
             t.getString("name"),
             obj.getBoolean("autoMatch"),
@@ -72,7 +79,7 @@ public class HeuristicReconConfig extends ReconConfig {
         );
     }
     
-    static protected class HeuristicReconJob extends ReconJob {
+    static protected class StandardReconJob extends ReconJob {
         String text;
         String code;
         
@@ -81,20 +88,29 @@ public class HeuristicReconConfig extends ReconConfig {
         }
     }
     
-    final public String     service; // either "recon" or "relevance"
+    final public String     service;
+    final public String     identifierSpace;
+    final public String     schemaSpace;
+    
     final public String     typeID;
     final public String     typeName;
     final public boolean    autoMatch;
     final public List<ColumnDetail> columnDetails;
     
-    public HeuristicReconConfig(
+    public StandardReconConfig(
         String service,
+        String identifierSpace,
+        String schemaSpace,
+        
         String typeID, 
         String typeName,
         boolean autoMatch,
         List<ColumnDetail> columnDetails
     ) {
         this.service = service;
+        this.identifierSpace = identifierSpace;
+        this.schemaSpace = schemaSpace;
+        
         this.typeID = typeID;
         this.typeName = typeName;
         this.autoMatch = autoMatch;
@@ -105,8 +121,10 @@ public class HeuristicReconConfig extends ReconConfig {
             throws JSONException {
         
         writer.object();
-        writer.key("mode"); writer.value("heuristic"); 
-        writer.key("service"); writer.value(service); 
+        writer.key("mode"); writer.value("standard-service");
+        writer.key("service"); writer.value(service);
+        writer.key("identifierSpace"); writer.value(identifierSpace);
+        writer.key("schemaSpace"); writer.value(schemaSpace);
         writer.key("type"); 
             writer.object();
             writer.key("id"); writer.value(typeID);
@@ -127,7 +145,7 @@ public class HeuristicReconConfig extends ReconConfig {
 
     @Override
     public int getBatchSize() {
-        return 10;
+        return 7;
     }
 
     @Override
@@ -139,17 +157,18 @@ public class HeuristicReconConfig extends ReconConfig {
     public ReconJob createJob(Project project, int rowIndex, Row row,
             String columnName, Cell cell) {
         
-        HeuristicReconJob job = new HeuristicReconJob();
-        if ("relevance".equals(service)) {
-            job.code = job.text = cell.value.toString();
-        } else {
-            try {
-                StringWriter stringWriter = new StringWriter();
-                JSONWriter jsonWriter = new JSONWriter(stringWriter);
-                
-                jsonWriter.object();
-                    jsonWriter.key("/type/object/name"); jsonWriter.value(cell.value.toString());
-                    jsonWriter.key("/type/object/type"); jsonWriter.value(typeID);
+        StandardReconJob job = new StandardReconJob();
+
+        try {
+            StringWriter stringWriter = new StringWriter();
+            JSONWriter jsonWriter = new JSONWriter(stringWriter);
+            
+            jsonWriter.object();
+                jsonWriter.key("query"); jsonWriter.value(cell.value.toString());
+                jsonWriter.key("type"); jsonWriter.value(typeID);
+                if (columnDetails.size() > 0) {
+                    jsonWriter.key("properties");
+                    jsonWriter.array();
                     
                     for (ColumnDetail c : columnDetails) {
                         int detailCellIndex = project.columnModel.getColumnByName(c.columnName).getCellIndex();
@@ -168,72 +187,75 @@ public class HeuristicReconConfig extends ReconConfig {
                                 }
                             }
                         }
+                        
                         if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
-                            jsonWriter.key(c.property.id);
+                            jsonWriter.object();
                             
+                            jsonWriter.key("pid"); jsonWriter.value(c.property.id);
+                            jsonWriter.key("v");
                             if (cell2.recon != null && cell2.recon.match != null) {
                                 jsonWriter.object();
-                                jsonWriter.key("id"); jsonWriter.value(cell2.recon.match.topicID);
-                                jsonWriter.key("name"); jsonWriter.value(cell2.recon.match.topicName);
+                                jsonWriter.key("id"); jsonWriter.value(cell2.recon.match.id);
+                                jsonWriter.key("name"); jsonWriter.value(cell2.recon.match.name);
                                 jsonWriter.endObject();
                             } else {
                                 jsonWriter.value(cell2.value.toString());
                             }
+                            
+                            jsonWriter.endObject();
                         }
                     }
-                jsonWriter.endObject();
-                
-                job.text = cell.value.toString();
-                job.code = stringWriter.toString();
-            } catch (JSONException e) {
-                //
-            }
+                    
+                    jsonWriter.endArray();
+                }
+            jsonWriter.endObject();
+            
+            job.text = cell.value.toString();
+            job.code = stringWriter.toString();
+        } catch (JSONException e) {
+            //
         }
         return job;
     }
     
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
-        if ("relevance".equals(service)) {
-            return batchReconUsingRelevance(jobs, historyEntryID);
-        } else {
-            return batchReconUsingReconService(jobs, historyEntryID);
-        }
-    }
-    
-    protected List<Recon> batchReconUsingRelevance(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
         
-        try {
-            StringWriter stringWriter = new StringWriter();
-            JSONWriter jsonWriter = new JSONWriter(stringWriter);
-            
-            jsonWriter.object();
-            for (int i = 0; i < jobs.size(); i++) {
-                HeuristicReconJob job = (HeuristicReconJob) jobs.get(i);
-                
-                jsonWriter.key("q" + i + ":search");
-                
-                jsonWriter.object();
-                    jsonWriter.key("query"); jsonWriter.value(job.text);
-                    jsonWriter.key("limit"); jsonWriter.value(3);
-                    jsonWriter.key("type"); jsonWriter.value(typeID);
-                    jsonWriter.key("type_strict"); jsonWriter.value("should");
-                    jsonWriter.key("type_exclude"); jsonWriter.value("/common/image");
-                    jsonWriter.key("domain_exclude"); jsonWriter.value("/freebase");
-                    jsonWriter.key("stemmed"); jsonWriter.value(1);
-                jsonWriter.endObject();
+        StringWriter stringWriter = new StringWriter();
+        
+        stringWriter.write("{");
+        for (int i = 0; i < jobs.size(); i++) {
+            StandardReconJob job = (StandardReconJob) jobs.get(i);
+            if (i > 0) {
+                stringWriter.write(",");
             }
-            jsonWriter.endObject();
-            
-            StringBuffer sb = new StringBuffer(1024);
-            sb.append("http://api.freebase.com/api/service/search?indent=1&queries=");
-            sb.append(ParsingUtilities.encode(stringWriter.toString()));
-            
-            URL url = new URL(sb.toString());
+            stringWriter.write("\"q" + i + "\":");
+            stringWriter.write(job.code);
+        }
+        stringWriter.write("}");
+        String queriesString = stringWriter.toString();
+        
+        try {
+            URL url = new URL(service);
             URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.connect();
+            {
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setConnectTimeout(30000);
+                connection.setDoOutput(true);
+                
+                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+                try {
+                    String body = "queries=" + ParsingUtilities.encode(queriesString);
+                    
+                    dos.writeBytes(body);
+                } finally {
+                    dos.flush();
+                    dos.close();
+                }
+                
+                connection.connect();
+            }
             
             InputStream is = connection.getInputStream();
             try {
@@ -241,40 +263,48 @@ public class HeuristicReconConfig extends ReconConfig {
                 JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
                 
                 for (int i = 0; i < jobs.size(); i++) {
-                    HeuristicReconJob job = (HeuristicReconJob) jobs.get(i);
-                    
-                    String text = job.text;
-                    String key = "q" + i + ":search";
-                    if (!o.has(key)) {
-                        continue;
-                    }
-                    
+                    StandardReconJob job = (StandardReconJob) jobs.get(i);
                     Recon recon = null;
                     
-                    JSONObject o2 = o.getJSONObject(key);
-                    if (o2.has("result")) {
-                        JSONArray results = o2.getJSONArray("result");
-                        
-                        recon = createReconFromRelevanceResults(text, results, historyEntryID);
-                    } else {
-                        recon = new Recon(historyEntryID);
+                    String text = job.text;
+                    String key = "q" + i;
+                    if (o.has(key)) {
+                        JSONObject o2 = o.getJSONObject(key);
+                        if (o2.has("result")) {
+                            JSONArray results = o2.getJSONArray("result");
+                            
+                            recon = createReconServiceResults(text, results, historyEntryID);
+                        }
                     }
                     
-                    recon.service = "recon";
+                    if (recon == null) {
+                        recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                    }
+                    recon.service = service;
+                    
                     recons.add(recon);
                 }
             } finally {
                 is.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to batch recon with load:\n" + queriesString, e);
+        }
+        
+        while (recons.size() < jobs.size()) {
+            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+            recon.service = service;
+            recon.identifierSpace = identifierSpace;
+            recon.schemaSpace = schemaSpace;
+
+            recons.add(recon);
         }
         
         return recons;
     }
 
-    protected Recon createReconFromRelevanceResults(String text, JSONArray results, long historyEntryID) {
-        Recon recon = new Recon(historyEntryID);
+    protected Recon createReconServiceResults(String text, JSONArray results, long historyEntryID) {
+        Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
         try {
             int length = results.length();
             int count = 0;
@@ -287,13 +317,14 @@ public class HeuristicReconConfig extends ReconConfig {
                 JSONArray types = result.getJSONArray("type");
                 String[] typeIDs = new String[types.length()];
                 for (int j = 0; j < typeIDs.length; j++) {
-                    typeIDs[j] = types.getJSONObject(j).getString("id");
+                    Object type = types.get(j);
+                    typeIDs[j] = type instanceof String ? (String) type :
+                        ((JSONObject) type).getString("id");
                 }
                 
-                double score = result.getDouble("relevance:score");
+                double score = result.getDouble("score");
                 ReconCandidate candidate = new ReconCandidate(
                     result.getString("id"),
-                    result.getString("guid"),
                     result.getString("name"),
                     typeIDs,
                     score
@@ -306,12 +337,12 @@ public class HeuristicReconConfig extends ReconConfig {
             if (count > 0) {
                 ReconCandidate candidate = recon.candidates.get(0);
                 
-                recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
-                recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
-                recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
+                recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
+                recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.name));
+                recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
                 
                 recon.setFeature(Recon.Feature_typeMatch, false);
-                for (String typeID : candidate.typeIDs) {
+                for (String typeID : candidate.types) {
                     if (this.typeID.equals(typeID)) {
                         recon.setFeature(Recon.Feature_typeMatch, true);
                         if (autoMatch && candidate.score >= 100 && (count == 1 || candidate.score / recon.candidates.get(1).score >= 1.5)) {
@@ -323,106 +354,6 @@ public class HeuristicReconConfig extends ReconConfig {
                         break;
                     }
                 }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return recon;
-    }
-    
-    static final String s_reconService = "http://data.labs.freebase.com/recon/query";
-    
-    protected List<Recon> batchReconUsingReconService(List<ReconJob> jobs, long historyEntryID) {
-        List<Recon> recons = new ArrayList<Recon>(jobs.size());
-        
-        for (int i = 0; i < jobs.size(); i++) {
-            HeuristicReconJob job = (HeuristicReconJob) jobs.get(i);
-            Recon recon = null;
-            try {
-                StringBuffer sb = new StringBuffer();
-                sb.append(s_reconService + "?limit=5&q=");
-                sb.append(ParsingUtilities.encode(job.code));
-                
-                URL url = new URL(sb.toString());
-                URLConnection connection = url.openConnection();
-                connection.setConnectTimeout(5000);
-                connection.connect();
-                
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    JSONArray a = ParsingUtilities.evaluateJsonStringToArray(s);
-                
-                    recon = createReconFromReconResults(job.text, a, historyEntryID);
-                } finally {
-                    is.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-            if (recon == null) {
-                recon = new Recon(historyEntryID);
-            }
-            recon.service = "recon";
-            recons.add(recon);
-        }
-        
-        return recons;
-    }
-
-    protected Recon createReconFromReconResults(String text, JSONArray results, long historyEntryID) {
-        Recon recon = new Recon(historyEntryID);
-        try {
-            int length = results.length();
-            int count = 0;
-            for (int i = 0; i < length && count < 3; i++) {
-                JSONObject result = results.getJSONObject(i);
-                if (!result.has("name")) {
-                    continue;
-                }
-                
-                String id = result.getString("id");
-                JSONArray names = result.getJSONArray("name");
-                double score = result.getDouble("score");
-                
-                JSONArray types = result.getJSONArray("type");
-                String[] typeIDs = new String[types.length()];
-                for (int j = 0; j < typeIDs.length; j++) {
-                    typeIDs[j] = types.getString(j);
-                }
-                
-                ReconCandidate candidate = new ReconCandidate(
-                    id,
-                    "#" + id.substring(6),
-                    names.getString(0),
-                    typeIDs,
-                    score
-                );
-                
-                // best match
-                if (i == 0) {
-                    recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.topicName));
-                    recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.topicName));
-                    recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.topicName));
-                    
-                    recon.setFeature(Recon.Feature_typeMatch, false);
-                    for (String typeID : candidate.typeIDs) {
-                        if (this.typeID.equals(typeID)) {
-                            recon.setFeature(Recon.Feature_typeMatch, true);
-                            if (autoMatch && result.has("match") && result.getBoolean("match")) {
-                                recon.match = candidate;
-                                recon.matchRank = 0;
-                                recon.judgment = Judgment.Matched;
-                                recon.judgmentAction = "auto";
-                            }
-                            break;
-                        }
-                    }
-                }
-                
-                recon.addCandidate(candidate);
-                count++;
             }
         } catch (JSONException e) {
             e.printStackTrace();

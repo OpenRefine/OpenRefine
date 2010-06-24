@@ -29,7 +29,6 @@ public class ReconJudgeSimilarCellsCommand extends EngineDependentCommand {
             
             match = new ReconCandidate(
                 topicID,
-                request.getParameter("topicGUID"),
                 request.getParameter("topicName"),
                 request.getParameter("types").split(","),
                 scoreString != null ? Double.parseDouble(scoreString) : 100

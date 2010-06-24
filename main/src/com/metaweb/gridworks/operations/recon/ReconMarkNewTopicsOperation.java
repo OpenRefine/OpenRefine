@@ -106,7 +106,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             recon = sharedRecons.get(s);
                             recon.judgmentBatchSize++;
                         } else {
-                            recon = new Recon(historyEntryID);
+                            recon = new Recon(historyEntryID, null, null);
                             recon.judgment = Judgment.New;
                             recon.judgmentBatchSize = 1;
                             recon.judgmentAction = "mass";
@@ -114,7 +114,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             sharedRecons.put(s, recon);
                         }
                     } else {
-                        recon = cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID);
+                        recon = cell.recon == null ? new Recon(historyEntryID, null, null) : cell.recon.dup(historyEntryID);
                         recon.match = null;
                         recon.matchRank = -1;
                         recon.judgment = Judgment.New;

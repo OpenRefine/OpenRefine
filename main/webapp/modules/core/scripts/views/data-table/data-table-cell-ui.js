@@ -195,6 +195,8 @@ DataTableCellUI.prototype._doJudgment = function(judgment, params) {
     params.row = this._rowIndex;
     params.cell = this._cellIndex;
     params.judgment = judgment;
+    params.identifierSpace = (this._cell.r) ? this._cell.r.identifierSpace : null;
+    params.schemaSpace = (this._cell.r) ? this._cell.r.schemaSpace : null;
     this._postProcessOneCell("recon-judge-one-cell", params, true);
 };
 
@@ -203,7 +205,8 @@ DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params
     params.columnName = Gridworks.cellIndexToColumn(this._cellIndex).name;
     params.similarValue = this._cell.v;
     params.judgment = judgment;
-    
+    params.identifierSpace = (this._cell.r) ? this._cell.r.identifierSpace : null;
+    params.schemaSpace = (this._cell.r) ? this._cell.r.schemaSpace : null;
     this._postProcessSeveralCells("recon-judge-similar-cells", params, true);
 };
 

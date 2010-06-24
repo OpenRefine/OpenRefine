@@ -17,8 +17,10 @@ import com.metaweb.gridworks.model.Row;
 abstract public class ReconConfig implements Jsonizable {
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {
         String mode = obj.getString("mode");
-        if ("heuristic".equals(mode)) {
-            return HeuristicReconConfig.reconstruct(obj);
+        if ("standard-service".equals(mode) ||
+            "heuristic".equals(mode) // legacy
+            ) {
+            return StandardReconConfig.reconstruct(obj);
         } else if ("strict".equals(mode)) {
             return StrictReconConfig.reconstruct(obj);
         } else if ("extend".equals(mode)) {

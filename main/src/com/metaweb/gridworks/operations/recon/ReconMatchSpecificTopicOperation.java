@@ -27,6 +27,8 @@ import com.metaweb.gridworks.operations.OperationRegistry;
 
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
     final protected ReconCandidate match;
+    final protected String identifierSpace;
+    final protected String schemaSpace;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
@@ -44,17 +46,26 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
             obj.getString("columnName"),
             new ReconCandidate(
                 match.getString("id"),
-                match.getString("guid"),
                 match.getString("name"),
                 typeIDs,
                 100
-            )
+            ),
+            obj.getString("identifierSpace"),
+            obj.getString("schemaSpace")
         );
     }
     
-    public ReconMatchSpecificTopicOperation(JSONObject engineConfig, String columnName, ReconCandidate match) {
+    public ReconMatchSpecificTopicOperation(
+        JSONObject engineConfig, 
+        String columnName, 
+        ReconCandidate match,
+        String identifierSpace,
+        String schemaSpace
+    ) {
         super(engineConfig, columnName, false);
         this.match = match;
+        this.identifierSpace = identifierSpace;
+        this.schemaSpace = schemaSpace;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -67,30 +78,31 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         writer.key("columnName"); writer.value(_columnName);
         writer.key("match");
             writer.object();
-            writer.key("id"); writer.value(match.topicID);
-            writer.key("guid"); writer.value(match.topicGUID);
-            writer.key("name"); writer.value(match.topicName);
+            writer.key("id"); writer.value(match.id);
+            writer.key("name"); writer.value(match.name);
             writer.key("types");
                 writer.array();
-                for (String typeID : match.typeIDs) {
+                for (String typeID : match.types) {
                     writer.value(typeID);
                 }
                 writer.endArray();
             writer.endObject();
+        writer.key("identifierSpace"); writer.value(identifierSpace);
+        writer.key("schemaSpace"); writer.value(schemaSpace);
         writer.endObject();
     }
     
     protected String getBriefDescription(Project project) {
         return "Match specific topic " +
-            match.topicName + " (" + 
-            match.topicID + ") to cells in column " + _columnName;
+            match.name + " (" + 
+            match.id + ") to cells in column " + _columnName;
     }
 
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         return "Match specific topic " + 
-            match.topicName + " (" + 
-            match.topicID + ") to " + cellChanges.size() + 
+            match.name + " (" + 
+            match.id + ") to " + cellChanges.size() + 
             " cells in column " + column.getName();
     }
 
@@ -130,7 +142,13 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
                         newRecon = dupReconMap.get(reconID);
                         newRecon.judgmentBatchSize++;
                     } else {
-                        newRecon = cell.recon != null ? cell.recon.dup(historyEntryID) : new Recon(historyEntryID);
+                        newRecon = cell.recon != null ? 
+                            cell.recon.dup(historyEntryID) : 
+                            new Recon(
+                                historyEntryID,
+                                identifierSpace,
+                                schemaSpace);
+                            
                         newRecon.match = match;
                         newRecon.matchRank = -1;
                         newRecon.judgment = Judgment.Matched;

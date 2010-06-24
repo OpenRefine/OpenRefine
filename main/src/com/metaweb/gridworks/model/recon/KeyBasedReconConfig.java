@@ -159,13 +159,12 @@ public class KeyBasedReconConfig extends StrictReconConfig {
                     
                     ReconCandidate candidate = new ReconCandidate(
                         result.getString("id"),
-                        result.getString("guid"),
                         result.getString("name"),
                         typeIDs,
                         100
                     );
                     
-                    Recon recon = new Recon(historyEntryID);
+                    Recon recon = Recon.makeFreebaseRecon(historyEntryID);
                     recon.addCandidate(candidate);
                     recon.service = "mql";
                     recon.judgment = Judgment.Matched;

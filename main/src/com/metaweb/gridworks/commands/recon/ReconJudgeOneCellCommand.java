@@ -44,7 +44,6 @@ public class ReconJudgeOneCellCommand extends Command {
 
                 match = new ReconCandidate(
                     topicID,
-                    request.getParameter("topicGUID"),
                     request.getParameter("topicName"),
                     request.getParameter("types").split(","),
                     scoreString != null ? Double.parseDouble(scoreString) : 100
@@ -57,7 +56,9 @@ public class ReconJudgeOneCellCommand extends Command {
                 judgment,
                 rowIndex,
                 cellIndex,
-                match
+                match,
+                request.getParameter("identifierSpace"),
+                request.getParameter("schemaSpace")
             );
 
             HistoryEntry historyEntry = project.processManager.queueProcess(process);
@@ -88,10 +89,13 @@ public class ReconJudgeOneCellCommand extends Command {
 
     protected static class JudgeOneCellProcess extends QuickHistoryEntryProcess {
 
-        final int rowIndex;
-        final int cellIndex;
-        final Judgment judgment;
-        final ReconCandidate match;
+        final int               rowIndex;
+        final int               cellIndex;
+        final Judgment          judgment;
+        final ReconCandidate    match;
+        final String            identifierSpace;
+        final String            schemaSpace;
+        
         Cell newCell;
 
         JudgeOneCellProcess(
@@ -100,7 +104,9 @@ public class ReconJudgeOneCellCommand extends Command {
             Judgment judgment,
             int rowIndex,
             int cellIndex,
-            ReconCandidate match
+            ReconCandidate match,
+            String identifierSpace,
+            String schemaSpace
         ) {
             super(project, briefDescription);
 
@@ -108,6 +114,8 @@ public class ReconJudgeOneCellCommand extends Command {
             this.rowIndex = rowIndex;
             this.cellIndex = cellIndex;
             this.match = match;
+            this.identifierSpace = identifierSpace;
+            this.schemaSpace = schemaSpace;
         }
 
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
@@ -125,7 +133,7 @@ public class ReconJudgeOneCellCommand extends Command {
 
             newCell = new Cell(
                 cell.value,
-                cell.recon == null ? new Recon(historyEntryID) : cell.recon.dup(historyEntryID)
+                cell.recon == null ? new Recon(historyEntryID, identifierSpace, schemaSpace) : cell.recon.dup(historyEntryID)
             );
 
             String cellDescription =
@@ -152,16 +160,17 @@ public class ReconJudgeOneCellCommand extends Command {
             } else {
                 newCell.recon.judgment = Recon.Judgment.Matched;
                 newCell.recon.match = this.match;
-
-                for (int m = 0; m < newCell.recon.candidates.size(); m++) {
-                    if (newCell.recon.candidates.get(m).topicGUID.equals(this.match.topicGUID)) {
-                        newCell.recon.matchRank = m;
-                        break;
+                if (newCell.recon.candidates != null) {
+                    for (int m = 0; m < newCell.recon.candidates.size(); m++) {
+                        if (newCell.recon.candidates.get(m).id.equals(this.match.id)) {
+                            newCell.recon.matchRank = m;
+                            break;
+                        }
                     }
                 }
-
-                description = "Match " + this.match.topicName +
-                    " (" + match.topicID + ") to " +
+                
+                description = "Match " + this.match.name +
+                    " (" + match.id + ") to " +
                     cellDescription;
             }
 

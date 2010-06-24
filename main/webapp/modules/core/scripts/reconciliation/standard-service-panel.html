@@ -1,0 +1,22 @@
+<div class="recon-dialog-service-panel recon-dialog-standard-service-panel">
+  <div class="grid-layout layout-normal layout-full"><table>
+    <tr>
+      <td>Reconcile each cell to an entity of one of these types:</td>
+      <td>Also use relevant details from other columns:</td>
+    </tr>
+    <tr>
+      <td><div class="type-container" bind="typeContainer"></div></td>
+      <td width="50%"><div class="detail-container" bind="detailContainer"></div></td>
+    </tr>
+    <tr>
+      <td><input type="radio" name="type-choice" value="">
+        Or enter a specific type: <input size="20" bind="typeInput" /></td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" checked bind="automatchCheck" /> Auto-match candidates with high confidence</td>
+      <td></td>
+    </tr>
+  </table></div>
+</div>

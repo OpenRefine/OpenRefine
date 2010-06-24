@@ -57,11 +57,11 @@ public class FreebaseDataExtensionJob {
     }
     
     public Map<String, FreebaseDataExtensionJob.DataExtension> extend(
-        Set<String> guids,
+        Set<String> ids,
         Map<String, ReconCandidate> reconCandidateMap
     ) throws Exception {
         StringWriter writer = new StringWriter();
-        formulateQuery(guids, extension, writer);
+        formulateQuery(ids, extension, writer);
         
         String query = writer.toString();
         InputStream is = doMqlRead(query);
@@ -76,11 +76,11 @@ public class FreebaseDataExtensionJob {
                 
                 for (int i = 0; i < l; i++) {
                     JSONObject o2 = a.getJSONObject(i);
-                    String guid = o2.getString("guid");
+                    String id = o2.getString("id");
                     FreebaseDataExtensionJob.DataExtension ext = collectResult(o2, reconCandidateMap);
                     
                     if (ext != null) {
-                        map.put(guid, ext);
+                        map.put(id, ext);
                     }
                 }
             }
@@ -125,20 +125,19 @@ public class FreebaseDataExtensionJob {
         JSONObject obj,
         Map<String, ReconCandidate> reconCandidateMap
     ) throws JSONException {
-        String guid = obj.getString("guid");
+        String id = obj.getString("id");
         ReconCandidate rc;
-        if (reconCandidateMap.containsKey(guid)) {
-            rc = reconCandidateMap.get(guid);
+        if (reconCandidateMap.containsKey(id)) {
+            rc = reconCandidateMap.get(id);
         } else {
             rc = new ReconCandidate(
                     obj.getString("id"),
-                    obj.getString("guid"),
                     obj.getString("name"),
                     JSONUtilities.getStringArray(obj, "type"),
                     100
                 );
             
-            reconCandidateMap.put(guid, rc);
+            reconCandidateMap.put(id, rc);
         }
         
         storeCell(rows, row, col, rc, reconCandidateMap);
@@ -274,7 +273,7 @@ public class FreebaseDataExtensionJob {
         return connection.getInputStream();
     }
     
-    static protected void formulateQuery(Set<String> guids, JSONObject node, Writer writer) throws JSONException {
+    static protected void formulateQuery(Set<String> ids, JSONObject node, Writer writer) throws JSONException {
         JSONWriter jsonWriter = new JSONWriter(writer);
         
         jsonWriter.object();
@@ -282,12 +281,12 @@ public class FreebaseDataExtensionJob {
             jsonWriter.array();
             jsonWriter.object();
             
-                jsonWriter.key("guid"); jsonWriter.value(null);
-                jsonWriter.key("guid|=");
+                jsonWriter.key("id"); jsonWriter.value(null);
+                jsonWriter.key("id|=");
                     jsonWriter.array();
-                    for (String guid : guids) {
-                        if (guid != null) {
-                            jsonWriter.value(guid);
+                    for (String id : ids) {
+                        if (id != null) {
+                            jsonWriter.value(id);
                         }
                     }
                     jsonWriter.endArray();
@@ -349,7 +348,6 @@ public class FreebaseDataExtensionJob {
                     if (!hasSubProperties || (node.has("included") && node.getBoolean("included"))) {
                         writer.key("name"); writer.value(null);
                         writer.key("id"); writer.value(null);
-                        writer.key("guid"); writer.value(null);
                         writer.key("type"); writer.array(); writer.endArray();
                     }
                     

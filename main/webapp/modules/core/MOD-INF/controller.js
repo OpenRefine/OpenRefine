@@ -57,7 +57,11 @@ function init() {
             "scripts/views/data-table/data-table-cell-ui.js",
             "scripts/views/data-table/data-table-column-header-ui.js",
 
-            "scripts/dialogs/recon-dialog.js",
+            "scripts/reconciliation/recon-manager.js",
+            "scripts/reconciliation/recon-dialog.js",
+            "scripts/reconciliation/freebase-query-panel.js",
+            "scripts/reconciliation/standard-service-panel.js",
+            
             "scripts/dialogs/expression-preview-dialog.js",
             "scripts/dialogs/freebase-loading-dialog.js",
             "scripts/dialogs/clustering-dialog.js",
@@ -133,7 +137,8 @@ function process(path, request, response) {
             var context = {};
             context.scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
             context.styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
-        
+            context.projectID = request.getParameter("project");
+            
             send(request, response, path + ".vt", context);
         }
     }

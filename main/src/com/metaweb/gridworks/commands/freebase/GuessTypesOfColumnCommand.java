@@ -1,5 +1,6 @@
 package com.metaweb.gridworks.commands.freebase;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -38,6 +39,7 @@ public class GuessTypesOfColumnCommand extends Command {
         try {
             Project project = getProject(request);
             String columnName = request.getParameter("columnName");
+            String serviceUrl = request.getParameter("service");
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
@@ -54,7 +56,7 @@ public class GuessTypesOfColumnCommand extends Command {
                     writer.key("code"); writer.value("ok");
                     writer.key("types"); writer.array();
                     
-                    List<TypeGroup> typeGroups = guessTypes(project, column);
+                    List<TypeGroup> typeGroups = guessTypes(project, column, serviceUrl);
                     for (TypeGroup tg : typeGroups) {
                         writer.object();
                         writer.key("id"); writer.value(tg.id);
@@ -87,7 +89,7 @@ public class GuessTypesOfColumnCommand extends Command {
      * @param column
      * @return
      */
-    protected List<TypeGroup> guessTypes(Project project, Column column) {
+    protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl) {
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
         
         int cellIndex = column.getCellIndex();
@@ -115,7 +117,7 @@ public class GuessTypesOfColumnCommand extends Command {
             
             jsonWriter.object();
             for (int i = 0; i < samples.size(); i++) {
-                jsonWriter.key("q" + i + ":search");
+                jsonWriter.key("q" + i);
                 jsonWriter.object();
                 
                 jsonWriter.key("query"); jsonWriter.value(samples.get(i));
@@ -125,14 +127,26 @@ public class GuessTypesOfColumnCommand extends Command {
             }
             jsonWriter.endObject();
             
-            StringBuffer sb = new StringBuffer(1024);
-            sb.append("http://api.freebase.com/api/service/search?queries=");
-            sb.append(ParsingUtilities.encode(stringWriter.toString()));
-            
-            URL url = new URL(sb.toString());
+            String queriesString = stringWriter.toString();
+            URL url = new URL(serviceUrl);
             URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.connect();
+            {
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setConnectTimeout(30000);
+                connection.setDoOutput(true);
+                
+                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+                try {
+                    String body = "queries=" + ParsingUtilities.encode(queriesString);
+                    
+                    dos.writeBytes(body);
+                } finally {
+                    dos.flush();
+                    dos.close();
+                }
+                
+                connection.connect();
+            }
             
             InputStream is = connection.getInputStream();
             try {
@@ -140,7 +154,7 @@ public class GuessTypesOfColumnCommand extends Command {
                 JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
                 
                 for (int i = 0; i < samples.size(); i++) {
-                    String key = "q" + i + ":search";
+                    String key = "q" + i;
                     if (!o.has(key)) {
                         continue;
                     }
@@ -161,23 +175,24 @@ public class GuessTypesOfColumnCommand extends Command {
                         int typeCount = types.length();
                         
                         for (int t = 0; t < typeCount; t++) {
-                            JSONObject type = types.getJSONObject(t);
-                            String id = type.getString("id");
-                            if (id.equals("/common/topic") ||
-                                id.equals("/base/ontologies/ontology_instance") ||
-                                (id.startsWith("/base/") && id.endsWith("/topic")) ||
-                                id.startsWith("/user/") ||
-                                id.startsWith("/freebase/")
-                            ) {
-                                continue;
+                            Object type = types.get(t);
+                            String typeID;
+                            String typeName;
+                            
+                            if (type instanceof String) {
+                                typeID = typeName = (String) type;
+                            } else {
+                                typeID = ((JSONObject) type).getString("id");
+                                typeName = ((JSONObject) type).getString("name");
                             }
                             
-                            if (map.containsKey(id)) {
-                                TypeGroup tg = map.get(id);
-                                tg.score += score;
+                            double score2 = score * (typeCount - t) / (double) typeCount;
+                            if (map.containsKey(typeID)) {
+                                TypeGroup tg = map.get(typeID);
+                                tg.score += score2;
                                 tg.count++;
                             } else {
-                                map.put(id, new TypeGroup(id, type.getString("name"), score));
+                                map.put(typeID, new TypeGroup(typeID, typeName, score2));
                             }
                         }
                     }

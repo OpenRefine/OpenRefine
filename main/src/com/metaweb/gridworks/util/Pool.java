@@ -25,7 +25,7 @@ public class Pool implements Jsonizable {
     final protected Map<String, Recon> recons = new HashMap<String, Recon>();
     
     public void pool(ReconCandidate candidate) {
-        candidates.put(candidate.topicID, candidate);
+        candidates.put(candidate.id, candidate);
     }
     
     public void pool(Recon recon) {

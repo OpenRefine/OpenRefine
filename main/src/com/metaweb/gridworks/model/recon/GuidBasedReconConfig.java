@@ -141,13 +141,12 @@ public class GuidBasedReconConfig extends StrictReconConfig {
                     
                     ReconCandidate candidate = new ReconCandidate(
                         result.getString("id"),
-                        guid,
                         result.getString("name"),
                         typeIDs,
                         100
                     );
                     
-                    Recon recon = new Recon(historyEntryID);
+                    Recon recon = Recon.makeFreebaseRecon(historyEntryID);
                     recon.addCandidate(candidate);
                     recon.service = "mql";
                     recon.judgment = Judgment.Matched;

@@ -110,6 +110,9 @@ public class GridworksServlet extends Butterfly {
         {"upload-data", "com.metaweb.gridworks.commands.freebase.UploadDataCommand"},
         {"mqlread", "com.metaweb.gridworks.commands.freebase.MQLReadCommand"},
         {"mqlwrite", "com.metaweb.gridworks.commands.freebase.MQLWriteCommand"},
+        
+        {"get-preference", "com.metaweb.gridworks.commands.GetPreferenceCommand"},
+        {"set-preference", "com.metaweb.gridworks.commands.SetPreferenceCommand"}
     };
 
     public static String getVersion() {

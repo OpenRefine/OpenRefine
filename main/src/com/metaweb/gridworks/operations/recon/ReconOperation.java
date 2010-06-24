@@ -24,7 +24,7 @@ import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Row;
 import com.metaweb.gridworks.model.changes.CellChange;
 import com.metaweb.gridworks.model.changes.ReconChange;
-import com.metaweb.gridworks.model.recon.HeuristicReconConfig;
+import com.metaweb.gridworks.model.recon.StandardReconConfig;
 import com.metaweb.gridworks.model.recon.ReconConfig;
 import com.metaweb.gridworks.model.recon.ReconJob;
 import com.metaweb.gridworks.operations.EngineDependentOperation;
@@ -143,7 +143,7 @@ public class ReconOperation extends EngineDependentOperation {
                             writer.endObject();
                     writer.endObject();
 
-                    if (_reconConfig instanceof HeuristicReconConfig) {
+                    if (_reconConfig instanceof StandardReconConfig) {
                         writer.object();
                             writer.key("action"); writer.value("createFacet");
                             writer.key("facetType"); writer.value("range");
@@ -242,7 +242,8 @@ public class ReconOperation extends EngineDependentOperation {
                 
                 List<Recon> recons = _reconConfig.batchRecon(jobs, _historyEntryID);
                 for (int j = i; j < to; j++) {
-                    Recon recon = recons.get(j - i);
+                    int index = j - i;
+                    Recon recon = index < recons.size() ? recons.get(j - i) : null;
                     List<ReconEntry> entries = groups.get(j).entries;
                     
                     if (recon != null) {

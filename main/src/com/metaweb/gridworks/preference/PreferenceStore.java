@@ -53,22 +53,27 @@ public class PreferenceStore implements Jsonizable {
             while (i.hasNext()) {
                 String key = i.next();
                 Object o = entries.get(key);
-                if (o instanceof JSONObject) {
-                    try {
-                        JSONObject obj2 = (JSONObject) o;
-                        String className = obj2.getString("class");
-                        Class klass = Class.forName(className);
-                        Method method = klass.getMethod("load", JSONObject.class);
-                        
-                        _prefs.put(key, method.invoke(null, obj2));
-                    } catch (Exception e) {
-                        //
-                        e.printStackTrace();
-                    }
-                } else {
-                    _prefs.put(key, o);
-                }
+                _prefs.put(key, loadObject(o));
             }
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    static public Object loadObject(Object o) {
+        if (o instanceof JSONObject) {
+            try {
+                JSONObject obj2 = (JSONObject) o;
+                String className = obj2.getString("class");
+                Class klass = Class.forName(className);
+                Method method = klass.getMethod("load", JSONObject.class);
+                
+                return method.invoke(null, obj2);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return o;
         }
     }
 }
