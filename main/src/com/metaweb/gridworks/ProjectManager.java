@@ -195,7 +195,7 @@ public abstract class ProjectManager {
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
                 ProjectMetadata metadata = getProjectMetadata(id);
-                Project project = getProject(id);
+                Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
                 if (project != null) {
                     boolean hasUnsavedChanges =
