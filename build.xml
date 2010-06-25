@@ -30,7 +30,7 @@
         <not><isset property="dist.dir"/></not>
     </condition>
 
-    <condition property="appengine.app_id" value="mygridworks">
+    <condition property="appengine.app_id" value="gridworks-broker">
         <not><isset property="appengine.app_id"/></not>
     </condition>
 
@@ -56,12 +56,10 @@
     <property name="server.lib.dir" value="${server.dir}/lib" />
     <property name="server.classes.dir" value="${server.dir}/classes" />
 
-    <property name="appengine.dir" value="${basedir}/appengine" />
-    <property name="appengine.src.dir" value="${appengine.dir}/src" />
-    <property name="appengine.webapp.dir" value="${appengine.dir}/webapp" />
-    <property name="appengine.lib.dir" value="${appengine.webapp.dir}/WEB-INF/lib" />
-    <property name="appengine.classes.dir" value="${appengine.dir}/classes" />
-
+    <property name="broker.dir" value="${basedir}/broker" />
+    <property name="broker.core.dir" value="${broker.dir}/core" />
+    <property name="broker.appengine.dir" value="${broker.dir}/appengine" />
+    
     <property name="tests.dir" value="${main.dir}/tests" />
     <property name="server.tests.dir" value="${tests.dir}/server" />
     <property name="server.tests.lib.dir" value="${server.tests.dir}/lib" />
@@ -76,7 +74,8 @@
 
     <property name="built.webapp.name" value="webapp" />
     <property name="built.webapp.dir" value="${build.dir}/${built.webapp.name}" />
-    <property name="built.appengine.webapp.dir" value="${build.dir}/appengine" />
+
+    <property name="built.broker.webapp.dir" value="${build.dir}/broker" />
 
     <property name="mac.dir" value="${build.dir}/mac" />
     <property name="windows.dir" value="${build.dir}/windows" />
@@ -102,17 +101,39 @@
         <pathelement location="${webapp.classes.dir}"/>
     </path>
 
-    <path id="appengine.class.path">
-        <path refid="webapp.class.path"/>
-        <fileset dir="${appengine.sdk.dir}/lib">
-            <include name="shared/**/*.jar" />
-        </fileset>
-    </path>
-
     <path id="tests.class.path">
         <path refid="webapp.class.path"/>
         <fileset dir="${server.tests.lib.dir}">
             <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <path id="broker.class.path">
+        <fileset dir="${server.lib.dir}">
+            <include name="**/servlet-api*.jar" />
+        </fileset>
+        <fileset dir="${webapp.lib.dir}">
+            <include name="**/butterfly*.jar" />
+            <include name="**/json*.jar" />
+            <include name="**/http*.jar" />
+            <include name="**/slf4j-api*.jar" />
+        </fileset>
+    </path>
+
+    <path id="broker.core.class.path">
+        <pathelement location="${broker.core.dir}/module/MOD-INF/classes"/>
+        <path refid="broker.class.path"/>
+        <fileset dir="${broker.core.dir}/module/MOD-INF/lib">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <path id="broker.appengine.class.path">
+        <pathelement location="${broker.core.dir}/module/MOD-INF/classes"/>
+        <path refid="broker.class.path"/>
+        <fileset dir="${appengine.sdk.dir}/lib">
+            <include name="shared/**/*.jar" />
+            <include name="user/**/*.jar" />
         </fileset>
     </path>
 
@@ -135,14 +156,6 @@
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
     </target>
 
-    <target name="build_appengine" depends="build_webapp">
-        <mkdir dir="${appengine.classes.dir}" />
-        <javac destdir="${appengine.classes.dir}" debug="true" includeAntRuntime="no">
-            <src path="${appengine.src.dir}"/>
-            <classpath refid="appengine.class.path" />
-        </javac>
-    </target>
-
     <target name="build_tests" depends="build_webapp, build_server">
         <mkdir dir="${server.tests.classes.dir}" />
         <javac srcdir="${server.tests.src.dir}" destdir="${server.tests.classes.dir}" debug="true" includeAntRuntime="no">
@@ -157,6 +170,32 @@
 
     <target name="build" depends="build_server, build_webapp, build_extensions"/>
 
+    <target name="build_broker_core">
+        <mkdir dir="${broker.core.dir}/module/MOD-INF/classes" />
+        <javac destdir="${broker.core.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
+            <src path="${broker.core.dir}/src/"/>
+            <classpath refid="broker.class.path" />
+        </javac>
+    </target>
+
+    <target name="build_broker_local" depends="build_broker_core">
+        <mkdir dir="${broker.core.dir}/module/MOD-INF/classes" />
+        <javac destdir="${broker.core.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
+            <src path="${broker.core.dir}/src/"/>
+            <classpath refid="broker.core.class.path" />
+        </javac>
+    </target>
+
+    <target name="build_broker_appengine" depends="build_broker_core">
+        <mkdir dir="${broker.appengine.dir}/module/MOD-INF/classes" />
+        <javac destdir="${broker.appengine.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
+            <src path="${broker.appengine.dir}/src/"/>
+            <classpath refid="broker.appengine.class.path" />
+        </javac>
+    </target>
+
+    <target name="build_broker" depends="build_broker_local, build_broker_appengine"/>
+
     <!-- ================================================================== -->
 
     <target name="jar_server" depends="build_server">
@@ -165,10 +204,6 @@
     
     <target name="jar_webapp" depends="build_webapp">
         <jar destfile="${build.dir}/${fullname}.jar" basedir="${webapp.classes.dir}"/>
-    </target>
-
-    <target name="jar_appengine" depends="build_appengine">
-        <jar destfile="${build.dir}/${fullname}-appengine.jar" basedir="${appengine.classes.dir}"/>
     </target>
 
     <target name="jar" depends="jar_server, jar_webapp"/>
@@ -416,33 +451,78 @@
 
     <!-- ================================================================== -->
 
-    <target name="prepare_webapp_appengine" depends="jar_appengine">
-        <mkdir dir="${built.appengine.webapp.dir}" />
-        
-        <copy todir="${built.appengine.webapp.dir}">
-            <fileset dir="${webapp.dir}">
-                <include name="WEB-INF/lib/slf4j**"/>
-                <exclude name="WEB-INF/lib/slf4j-log4j*"/>
-                <exclude name="WEB-INF/lib-src/**"/>
-                <exclude name="WEB-INF/classes/**"/>
+    <target name="prepare_broker" depends="jar_server, build_broker_local">
+        <copy todir="${broker.core.dir}/WEB-INF/lib">
+            <fileset dir="${webapp.lib.dir}">
+                <include name="**/butterfly*.jar" />
+                <include name="**/rhino*.jar" />
+                <include name="**/commons-collections*.jar" />
+                <include name="**/velocity*.jar" />
+                <include name="**/lessen*.jar" />
+                <include name="**/slf4j*.jar" />
+                <include name="**/log4j*.jar" />
+
+                <include name="**/json*.jar" />
+                <include name="**/http*.jar" />
+                <include name="**/jcl*.jar" />
             </fileset>
         </copy>
+    </target>
+
+    <target name="prepare_broker_appengine" depends="build_broker_appengine">
+        <mkdir dir="${built.broker.webapp.dir}/appengine" />
+        <mkdir dir="${built.broker.webapp.dir}/appengine/modules" />
         
-        <copy file="${build.dir}/${fullname}-appengine.jar" tofile="${built.appengine.webapp.dir}/WEB-INF/lib/${fullname}-appengine.jar"/>
-        
-        <copy todir="${built.appengine.webapp.dir}/WEB-INF/lib" flatten="true">
+        <copy todir="${built.broker.webapp.dir}/appengine">
+            <fileset dir="${broker.appengine.dir}">
+                <include name="WEB-INF/**"/>
+                <exclude name="WEB-INF/jdo*"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${built.broker.webapp.dir}/appengine/WEB-INF/classes/META-INF">
+            <fileset dir="${broker.appengine.dir}/WEB-INF">
+                <include name="jdo*"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${built.broker.webapp.dir}/appengine/modules/appengine-broker">
+            <fileset dir="${broker.appengine.dir}/module">
+                <include name="**"/>
+                <exclude name="**/lib-src/**"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${built.broker.webapp.dir}/appengine/modules/broker">
+            <fileset dir="${broker.core.dir}/module">
+                <include name="**"/>
+                <exclude name="**/lib-src/**"/>
+            </fileset>
+        </copy>
+                
+        <copy todir="${built.broker.webapp.dir}/appengine/WEB-INF/lib">
+            <fileset dir="${webapp.lib.dir}">
+                <include name="**/butterfly*.jar" />
+                <include name="**/rhino*.jar" />
+                <include name="**/commons-collections*.jar" />
+                <include name="**/velocity*.jar" />
+                <include name="**/lessen*.jar" />
+
+                <include name="**/slf4j-api*.jar" />
+                <include name="**/jcl*.jar" />
+
+                <include name="**/json*.jar" />
+                <include name="**/http*.jar" />
+            </fileset>
+        </copy>
+                
+        <copy todir="${built.broker.webapp.dir}/appengine/WEB-INF/lib" flatten="true">
             <fileset dir="${appengine.sdk.dir}/lib/user">
                 <include name="**/*.jar" />
             </fileset>
         </copy>
-
-        <copy todir="${built.appengine.webapp.dir}">
-            <fileset dir="${appengine.webapp.dir}">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
         
-        <replace file="${built.appengine.webapp.dir}/WEB-INF/appengine-web.xml">
+        <replace file="${built.broker.webapp.dir}/appengine/WEB-INF/appengine-web.xml">
             <replacefilter token="$APPID" value="${appengine.app_id}"/>
             <replacefilter token="$VERSION" value="${appengine.version}"/>
         </replace>
@@ -455,8 +535,9 @@
         <delete file="${build.dir}/${fullname}-server.jar" />
         <delete dir="${server.classes.dir}" />
         <delete dir="${webapp.classes.dir}" />
-        <delete dir="${appengine.classes.dir}" />
         <delete dir="${server.tests.classes.dir}" />
+        <delete dir="${broker.core.dir}/module/MOD-INF/classes" />
+        <delete dir="${broker.appengine.dir}/module/MOD-INF/classes" />
     </target>
 
     <target name="distclean" depends="clean">

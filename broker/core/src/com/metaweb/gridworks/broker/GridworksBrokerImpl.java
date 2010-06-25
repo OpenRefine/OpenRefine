@@ -27,7 +27,7 @@ import com.sleepycat.persist.StoreConfig;
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 
-public class LocalGridworksBroker extends GridworksBroker {
+public class GridworksBrokerImpl extends GridworksBroker {
                 
     protected static final Logger logger = LoggerFactory.getLogger("gridworks.broker.local");
     
@@ -50,6 +50,7 @@ public class LocalGridworksBroker extends GridworksBroker {
         timer.schedule(expirer, LOCK_EXPIRATION_CHECK_DELAY, LOCK_EXPIRATION_CHECK_DELAY);
         
         File dataPath = new File("data"); // FIXME: data should be configurable;
+        if (!dataPath.exists()) dataPath.mkdirs();
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setAllowCreate(true);
@@ -86,12 +87,14 @@ public class LocalGridworksBroker extends GridworksBroker {
 
     class LockExpirer extends TimerTask {
         public void run() {
-            for (Lock lock : lockByProject.entities()) {
-                if (lock.timestamp + LOCK_DURATION < System.currentTimeMillis()) {
-                    try {
-                        releaseLock(null, lock.pid, lock.uid, lock.id);
-                    } catch (Exception e) {
-                        logger.error("Exception while expiring lock for project '" + lock.pid + "'", e);
+            if (lockByProject != null) {
+                for (Lock lock : lockByProject.entities()) {
+                    if (lock.timestamp + LOCK_DURATION < System.currentTimeMillis()) {
+                        try {
+                            releaseLock(null, lock.pid, lock.uid, lock.id);
+                        } catch (Exception e) {
+                            logger.error("Exception while expiring lock for project '" + lock.pid + "'", e);
+                        }
                     }
                 }
             }
@@ -265,7 +268,7 @@ public class LocalGridworksBroker extends GridworksBroker {
     }
         
     @Entity
-    class Project {
+    static class Project {
         
         @PrimaryKey
         String pid;
@@ -317,7 +320,7 @@ public class LocalGridworksBroker extends GridworksBroker {
     }
     
     @Entity
-    class Lock {
+    static class Lock {
 
         @PrimaryKey
         String pid;

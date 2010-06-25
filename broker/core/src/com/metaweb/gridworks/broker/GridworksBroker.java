@@ -81,9 +81,9 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     @Override
     public boolean process(String path, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (logger.isDebugEnabled()) {
-            logger.debug("> process {}", path);
+            logger.debug("> process '{}'", path);
         } else {
-            logger.info("process {}", path);
+            logger.info("process '{}'", path);
         }
 
         response.setCharacterEncoding("UTF-8");
@@ -115,19 +115,23 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
                 startProject(response, pid, uid, getParameter(request, "lock"), getParameter(request, "data"));
             } else if ("get".equals(path)) {
                 getProject(response, pid);
+            } else {
+                boolean value = super.process(path, request, response);
+                if (logger.isDebugEnabled()) logger.debug("< process '{}'", path);
+                return value;
             }
             
         } catch (RuntimeException e) {
-            logger.error("runtime error", e);
+            logger.error("runtime error", e.getMessage());
             respondError(response, e.getMessage());
         } catch (Exception e) {
             logger.error("internal error", e);
             respondException(response, e);
         }
         
-        if (logger.isDebugEnabled()) logger.debug("< process {}", path);
+        if (logger.isDebugEnabled()) logger.debug("< process '{}'", path);
         
-        return super.process(path, request, response);
+        return true;
     }
     
     // ----------------------------------------------------------------------------------------

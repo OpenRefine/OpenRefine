@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.google.appengine.api.datastore.Text;
 import com.metaweb.gridworks.appengine.AppEngineClientConnectionManager;
 
-public class AppEngineGridworksBroker extends GridworksBroker {
+public class AppEngineGridworksBrokerImpl extends GridworksBroker {
                 
     protected static final Logger logger = LoggerFactory.getLogger("gridworks.broker.appengine");
     

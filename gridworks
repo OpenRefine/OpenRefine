@@ -55,31 +55,32 @@ where [options] include:
   
 and <action> is one of
 
-   build ............................ Build Gridworks      
-   run .............................. Run Gridworks [default]
+   build ............................... Build Gridworks      
+   run ................................. Run Gridworks [default]
 
-   test ............................. Run all Gridworks tests
-   server_test ...................... Run only the server tests
-   ui_test .......................... Run only the UI tests
+   test ................................ Run all Gridworks tests
+   server_test ......................... Run only the server tests
+   ui_test ............................. Run only the UI tests
 
-   appengine_build <id> <version> ... Build Gridworks for Google App Engine
-   appengine_run <id> <version> ..... Run Gridworks for Google App Engine in local server
-   appengine_upload <id> <version>... Upload Gridworks to Google App Engine
+   broker .............................. Run Gridworks Broker
    
-   findbugs ......................... Run Findbugs against Gridworks     
-   pmd .............................. Run PMD against Gridworks     
-   cpd .............................. Run Copy/Paste Detection against Gridworks     
-   jslint ........................... Run JSlint against Gridworks
+   broker_appengine_run <id> <ver> ..... Run Gridworks Broker for Google App Engine in local server
+   broker_appengine_upload <id> <ver> .. Upload Gridworks to Google App Engine
+   
+   findbugs ............................ Run Findbugs against Gridworks     
+   pmd ................................. Run PMD against Gridworks     
+   cpd ................................. Run Copy/Paste Detection against Gridworks     
+   jslint .............................. Run JSlint against Gridworks
 
-   whitespace <extension> ........... Normalize whitespace in files with the given extension
+   whitespace <extension> .............. Normalize whitespace in files with the given extension
 
-   mac_dist <version> ............... Make MacOSX binary distribution
-   windows_dist <version> ........... Make Windows binary distribution
-   linux_dist <version> ............. Make Linux binary distribution
-   dist <version> ................... Make all distributions
+   mac_dist <version> .................. Make MacOSX binary distribution
+   windows_dist <version> .............. Make Windows binary distribution
+   linux_dist <version> ................ Make Linux binary distribution
+   dist <version> ...................... Make all distributions
 
-   clean ............................ Clean compiled classes
-   distclean ........................ Remove all generated files
+   clean ............................... Clean compiled classes
+   distclean ........................... Remove all generated files
                 
 EOF
     exit 1
@@ -566,36 +567,14 @@ server_test() {
     $RUN_CMD || error "Failed passing server tests"
 }
 
-appengine_build() {
-    appengine_prepare
-    get_revision
-    
-    ANT_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
-    if [ -z "$1" ]; then
-        error "Must specify the application id"
-    else
-        ANT_PARAMS="$ANT_PARAMS -Dappengine.app_id=$1"
-    fi
-    
-    if [ "$2" ]; then
-        ANT_PARAMS="$ANT_PARAMS -Dappengine.version=$2"
-    fi
-        
-    ant prepare_webapp_appengine
-}
-       
-appengine_upload() {
-    appengine_build $1 $2
-    "$APPENGINE" update "$GRIDWORKS_BUILD_DIR/appengine"
-}
-
-appengine_run() {
-    appengine_build $1 $2
-    "$APPENGINE_LOCAL" "$GRIDWORKS_BUILD_DIR/appengine"
-}
-
 run() {
     FORK=$1
+    
+    check_running
+    
+    if [ -z "$NOT_RUNNING" ]; then
+        warn "Gridworks is already running."
+    fi
     
     if [ ! -d $GRIDWORKS_CLASSES_DIR ]; then
         IS_JAR=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
@@ -604,13 +583,7 @@ run() {
             echo ""
         fi
     fi
-    
-    check_running
-    
-    if [ -z "$NOT_RUNNING" ]; then
-        warn "Gridworks is already running."
-    fi
-    
+            
     if [ -d $GRIDWORKS_CLASSES_DIR ]; then
         add_option "-Dgridworks.autoreloading=true"
     fi
@@ -622,7 +595,19 @@ run() {
     if [ "$GRIDWORKS_DATA_DIR" ]; then
         add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
-                
+
+    if [ "$GRIDWORKS_WEBAPP" ]; then
+        add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
+    fi
+                    
+    if [ "$GRIDWORKS_PORT" ]; then
+        add_option "-Dgridworks.port=$GRIDWORKS_PORT"
+    fi
+    
+    if [ "$GRIDWORKS_HOST" ]; then
+        add_option "-Dgridworks.host=$GRIDWORKS_HOST"
+    fi
+                    
     CLASSPATH="$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
@@ -639,6 +624,85 @@ run() {
         $RUN_CMD &
         GRIDWORKS_PID="$!"
     fi
+}
+    
+broker_build() {
+    build_prepare
+    get_revision    
+    ant prepare_broker
+}
+
+broker_run() {
+    FORK=$1
+
+    GRIDWORKS_HOST=127.0.0.1
+    GRIDWORKS_PORT=3334
+            
+    check_running
+    
+    if [ -z "$NOT_RUNNING" ]; then
+        warn "Gridworks Broker is already running."
+    fi
+
+    if [ ! -d "broker/core/WEB-INF/lib" ]; then
+        broker_build
+        echo ""
+    fi
+
+    if [ -d $GRIDWORKS_CLASSES_DIR ]; then
+        add_option "-Dgridworks.autoreloading=true"
+    fi
+                    
+    add_option "-Dgridworks.webapp=broker/core"
+    add_option "-Dgridworks.headless=true"
+
+    add_option "-Dgridworks.port=$GRIDWORKS_PORT"
+    add_option "-Dgridworks.host=0.0.0.0"
+                    
+    CLASSPATH="$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_LIB_DIR/*"
+
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.metaweb.gridworks.Gridworks"
+
+    #echo "$RUN_CMD"
+    #echo ""
+  
+    echo "Starting Gridworks Broker at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
+    echo ""
+
+    if [ -z "$FORK" ]; then
+        exec $RUN_CMD
+    else
+        $RUN_CMD &
+        GRIDWORKS_PID="$!"
+    fi
+    
+}
+
+broker_appengine_build() {
+    appengine_prepare
+    get_revision
+    
+    ANT_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
+
+    if [ "$1" ]; then
+        ANT_PARAMS="$ANT_PARAMS -Dappengine.app_id=$1"
+    fi
+    
+    if [ "$2" ]; then
+        ANT_PARAMS="$ANT_PARAMS -Dappengine.version=$2"
+    fi
+        
+    ant prepare_broker_appengine
+}
+       
+broker_appengine_upload() {
+    broker_appengine_build $1 $2
+    "$APPENGINE" update "$GRIDWORKS_BUILD_DIR/broker/appengine"
+}
+
+broker_appengine_run() {
+    broker_appengine_build $1 $2
+    "$APPENGINE_LOCAL" "$GRIDWORKS_BUILD_DIR/broker/appengine"
 }
     
 findbugs() {
@@ -789,17 +853,14 @@ add_option "-Xms256M -Xmx$GRIDWORKS_MEMORY -Dgridworks.memory=$GRIDWORKS_MEMORY"
 if [ -z "$GRIDWORKS_PORT" ]; then
     GRIDWORKS_PORT="3333"
 fi
-add_option "-Dgridworks.port=$GRIDWORKS_PORT"
 
 if [ -z "$GRIDWORKS_HOST" ]; then
     GRIDWORKS_HOST="127.0.0.1"
 fi
-add_option "-Dgridworks.host=$GRIDWORKS_HOST"
 
 if [ -z "$GRIDWORKS_WEBAPP" ]; then
     GRIDWORKS_WEBAPP="main/webapp"
 fi
-add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
 
 if [ -z "$GRIDWORKS_TEST_DIR" ]; then
     GRIDWORKS_TEST_DIR="main/tests"
@@ -855,9 +916,9 @@ case "$ACTION" in
   cpd) cpd;;  
   jslint) jslint;;  
   run) run;;  
-  appengine_build) appengine_build $1 $2;;
-  appengine_run) appengine_run $1 $2;;
-  appengine_upload) appengine_upload $1 $2;;
+  broker) broker_run;;
+  broker_appengine_run) broker_appengine_run $1 $2;;
+  broker_appengine_upload) broker_appengine_upload $1 $2;;
   mac_dist) mac_dist $1;;
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
