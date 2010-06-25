@@ -7,12 +7,13 @@
 <web-app>
      
     <servlet>
-        <servlet-name>gridworks-broker</servlet-name>
+        <servlet-name>Butterfly</servlet-name>
         <servlet-class>edu.mit.simile.butterfly.Butterfly</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>gridworks-broker</servlet-name>
+        <servlet-name>Butterfly</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
         

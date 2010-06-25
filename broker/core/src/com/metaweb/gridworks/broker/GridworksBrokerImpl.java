@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.Transaction;
-import com.sleepycat.persist.EntityCursor;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
@@ -41,7 +40,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
 
     Timer timer;
     LockExpirer expirer;
-
+    
     @Override
     public void init(ServletConfig config) throws Exception {
         super.init(config);
@@ -50,11 +49,9 @@ public class GridworksBrokerImpl extends GridworksBroker {
         expirer = new LockExpirer();
         timer.schedule(expirer, LOCK_EXPIRATION_CHECK_DELAY, LOCK_EXPIRATION_CHECK_DELAY);
         
-        String dataDir = config.getInitParameter("gridworks.data");
-        if (dataDir == null) dataDir = "data";
-        File dataPath = new File(dataDir);
+        File dataPath = new File("data"); // FIXME: data should be configurable;
         if (!dataPath.exists()) dataPath.mkdirs();
-        
+
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setAllowCreate(true);
         envConfig.setTransactional(true);
@@ -76,43 +73,30 @@ public class GridworksBrokerImpl extends GridworksBroker {
         
         if (projectStore != null) {
             projectStore.close();
-            projectById = null;            
         } 
 
         if (lockStore != null) {
             lockStore.close();
-            lockByProject = null;
         } 
         
-        if (timer != null) {
-            timer.cancel();
-            timer.purge();
-            timer = null;
-        }
-        
         if (env != null) {
+            env.cleanLog();
             env.close();
-            env = null;
         }
     }
 
     class LockExpirer extends TimerTask {
         public void run() {
             if (lockByProject != null) {
-                EntityCursor<Lock> cursor = lockByProject.entities();
-                try {
-                    for (Lock lock = cursor.first(); lock != null; lock = cursor.next()) {
-                        if (lock.timestamp + LOCK_DURATION < System.currentTimeMillis()) {
-                            try {
-                                releaseLock(null, lock.pid, lock.uid, lock.id);
-                            } catch (Exception e) {
-                                logger.error("Exception while expiring lock for project '" + lock.pid + "'", e);
-                            }
+                for (Lock lock : lockByProject.entities()) {
+                    if (lock.timestamp + LOCK_DURATION < System.currentTimeMillis()) {
+                        try {
+                            releaseLock(null, lock.pid, lock.uid, lock.id);
+                        } catch (Exception e) {
+                            logger.error("Exception while expiring lock for project '" + lock.pid + "'", e);
                         }
                     }
-                } finally {
-                    cursor.close();
-                }                
+                }
             }
         }
     }

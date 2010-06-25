@@ -67,16 +67,12 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     
     protected HttpClient httpclient;
 
-    protected boolean developmentMode;
-    
     @Override
     public void init(ServletConfig config) throws Exception {
         super.init(config);
         httpclient = getHttpClient();
-        developmentMode = Boolean.parseBoolean(config.getInitParameter("gridworks.development"));
-        if (developmentMode) logger.warn("Running in development mode");
     }
-
+    
     @Override
     public void destroy() throws Exception {
         httpclient.getConnectionManager().shutdown();       
@@ -95,14 +91,14 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
         
         try {
             String uid = getUserId(request);
-            logger.debug("uid: {}", uid);
+            logger.debug("uid: {}", path);
             String pid = getParameter(request, "pid");
-            logger.debug("pid: {}", pid);
+            logger.debug("pid: {}", path);
             
             // NOTE: conditionals should be ordered by call frequency estimate to (slightly) improve performance
             // we could be using a hashtable and some classes that implement the commands, but the complexity overhead
             // doesn't seem to justify the marginal benefit.
-
+            
             if ("get_lock".equals(path)) {
                 getLock(response, pid);
             } else if ("expire_locks".equals(path)) {
@@ -163,11 +159,6 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     @SuppressWarnings("unchecked")
     protected String getUserId(HttpServletRequest request) throws Exception {
 
-        // This is useful for testing
-        if (developmentMode) {
-            return getParameter(request, "uid");
-        }
-        
         String oauth = request.getHeader(DELEGATED_OAUTH_HEADER);
         if (oauth == null) {
             throw new RuntimeException("The request needs to contain the '" + DELEGATED_OAUTH_HEADER + "' header set to obtain user identity via Freebase.");
@@ -197,7 +188,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     static protected String getParameter(HttpServletRequest request, String name) throws ServletException {
         String param = request.getParameter(name);
         if (param == null) {
-            throw new RuntimeException("request must come with a '" + name + "' parameter");
+            throw new ServletException("request must come with a '" + name + "' parameter");
         }
         return param;
     }
@@ -215,7 +206,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     static protected int getInteger(HttpServletRequest request, String name) throws ServletException, JSONException {
         return Integer.parseInt(getParameter(request, name));
     }
-    
+
     static protected void respondError(HttpServletResponse response, String error) throws IOException, ServletException {
 
         if (response == null) {

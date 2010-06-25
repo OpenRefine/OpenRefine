@@ -118,6 +118,11 @@
             <include name="**/http*.jar" />
             <include name="**/slf4j-api*.jar" />
         </fileset>
+    </path>
+
+    <path id="broker.core.class.path">
+        <pathelement location="${broker.core.dir}/module/MOD-INF/classes"/>
+        <path refid="broker.class.path"/>
         <fileset dir="${broker.core.dir}/module/MOD-INF/lib">
             <include name="**/*.jar" />
         </fileset>
@@ -173,6 +178,14 @@
         </javac>
     </target>
 
+    <target name="build_broker_local" depends="build_broker_core">
+        <mkdir dir="${broker.core.dir}/module/MOD-INF/classes" />
+        <javac destdir="${broker.core.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
+            <src path="${broker.core.dir}/src/"/>
+            <classpath refid="broker.core.class.path" />
+        </javac>
+    </target>
+
     <target name="build_broker_appengine" depends="build_broker_core">
         <mkdir dir="${broker.appengine.dir}/module/MOD-INF/classes" />
         <javac destdir="${broker.appengine.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
@@ -181,7 +194,7 @@
         </javac>
     </target>
 
-    <target name="build_broker" depends="build_broker_core, build_broker_appengine"/>
+    <target name="build_broker" depends="build_broker_local, build_broker_appengine"/>
 
     <!-- ================================================================== -->
 
@@ -438,7 +451,7 @@
 
     <!-- ================================================================== -->
 
-    <target name="prepare_broker" depends="jar_server, build_broker_core">
+    <target name="prepare_broker" depends="jar_server, build_broker_local">
         <copy todir="${broker.core.dir}/WEB-INF/lib">
             <fileset dir="${webapp.lib.dir}">
                 <include name="**/butterfly*.jar" />
@@ -524,7 +537,6 @@
         <delete dir="${webapp.classes.dir}" />
         <delete dir="${server.tests.classes.dir}" />
         <delete dir="${broker.core.dir}/module/MOD-INF/classes" />
-        <delete dir="${broker.core.dir}/WEB-INF/lib" />
         <delete dir="${broker.appengine.dir}/module/MOD-INF/classes" />
     </target>
 

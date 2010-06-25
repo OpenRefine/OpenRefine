@@ -156,7 +156,7 @@ class GridworksServer extends Server {
         this.setSendServerVersion(true);
 
         // Enable context autoreloading
-        if (Configurations.getBoolean("gridworks.autoreload",false)) {
+        if (Configurations.getBoolean("gridworks.autoreloading",false)) {
             scanForUpdates(webapp, context);
         }
         
@@ -191,7 +191,6 @@ class GridworksServer extends Server {
 
         scanList.add(new File(contextRoot, "WEB-INF/web.xml"));
         findFiles(".class", new File(contextRoot, "WEB-INF/classes"), scanList);
-        findFiles(".jar", new File(contextRoot, "WEB-INF/lib"), scanList);
 
         logger.info("Starting autoreloading scanner... ");
 
@@ -238,19 +237,8 @@ class GridworksServer extends Server {
     // parameters if we set them in the webapp context upon reading the web.xml file    
     static private void configure(WebAppContext context) throws Exception {
         ServletHolder servlet = context.getServletHandler().getServlet("gridworks");
-        if (servlet != null) {
-            servlet.setInitParameter("gridworks.data", getDataDir());
-            servlet.setInitOrder(1);
-            servlet.doStart();
-        }
-
-        servlet = context.getServletHandler().getServlet("gridworks-broker");
-        if (servlet != null) {
-            servlet.setInitParameter("gridworks.data", getDataDir() + "/broker");
-            servlet.setInitParameter("gridworks.development", Configurations.get("gridworks.development","false"));
-            servlet.setInitOrder(1);
-            servlet.doStart();
-        }
+        servlet.setInitParameter("gridworks.data", getDataDir());
+        servlet.doStart();
     }
 
     static private String getDataDir() {
