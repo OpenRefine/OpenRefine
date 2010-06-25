@@ -585,7 +585,7 @@ run() {
     fi
             
     if [ -d $GRIDWORKS_CLASSES_DIR ]; then
-        add_option "-Dgridworks.autoreloading=true"
+        add_option "-Dgridworks.autoreload=true -Dbutterfly.autoreload=true"
     fi
 
     if $DARWIN ; then
@@ -650,7 +650,8 @@ broker_run() {
     fi
 
     if [ -d $GRIDWORKS_CLASSES_DIR ]; then
-        add_option "-Dgridworks.autoreloading=true"
+        add_option "-Dgridworks.autoreload=true -Dbutterfly.autoreload=true"
+        add_option "-Dgridworks.development=true"
     fi
                     
     add_option "-Dgridworks.webapp=broker/core"
