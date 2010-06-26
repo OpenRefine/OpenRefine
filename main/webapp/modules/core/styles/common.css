@@ -32,6 +32,9 @@ div.grid-layout > table > tbody > tr > th, div.grid-layout > table > tbody > tr 
 div.grid-layout.grid-layout-for-text > table > tbody > tr > th, div.grid-layout.grid-layout-for-text > table > tbody > tr > td {
     vertical-align: middle;
 }
+div.grid-layout.grid-layout-for-ui > table > tbody > tr > th, div.grid-layout.grid-layout-for-ui > table > tbody > tr > td {
+    vertical-align: top;
+}
 div.grid-layout.layout-normal {
     margin: -10px;
 }

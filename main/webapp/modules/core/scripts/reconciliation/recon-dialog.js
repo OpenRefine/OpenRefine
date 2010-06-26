@@ -11,7 +11,11 @@ ReconDialog.prototype._createDialog = function() {
     var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/recon-dialog.html"));
 
     this._elmts = DOM.bind(dialog);
-    this._elmts.dialogHeader.text("Reconcile column " + this._column.name);
+    this._elmts.dialogHeader.text('Reconcile column "' + this._column.name + '"');
+    
+    this._elmts.addStandardServiceButton.click(function() { self._onAddStandardService(); });
+    this._elmts.addNamespacedServiceButton.click(function() { self._onAddNamespacedService(); });
+    
     this._elmts.reconcileButton.click(function() { self._onOK(); });
     this._elmts.cancelButton.click(function() { self._dismiss(); });
     
@@ -41,8 +45,21 @@ ReconDialog.prototype._dismiss = function() {
     DialogSystem.dismissUntil(this._level - 1);
 };
 
+ReconDialog.prototype._cleanDialog = function() {
+    for (var i = 0; i < this._serviceRecords.length; i++) {
+        var record = this._serviceRecords[i];
+        if (record.handler) {
+            record.handler.deactivate();
+        }
+        record.selector.remove();
+    }
+    this._serviceRecords = [];
+    this._selectedServiceRecordIndex = -1;
+};
+
 ReconDialog.prototype._populateDialog = function() {
     var self = this;
+    
     var services = ReconciliationManager.getAllServices();
     if (services.length > 0) {
         var renderService = function(service) {
@@ -66,8 +83,6 @@ ReconDialog.prototype._populateDialog = function() {
         for (var i = 0; i < services.length; i++) {
             renderService(services[i]);
         }
-    
-        this._selectService(this._serviceRecords[0]);
     }
 };
 
@@ -82,6 +97,8 @@ ReconDialog.prototype._selectService = function(record) {
                         oldRecord.handler.deactivate();
                     }
                 }
+                
+                this._elmts.servicePanelMessage.hide();
                 
                 record.selector.addClass("selected");
                 if (record.handler) {
@@ -98,4 +115,73 @@ ReconDialog.prototype._selectService = function(record) {
             }
         }
     }
+};
+
+ReconDialog.prototype._refresh = function(newSelectIndex) {
+    this._cleanDialog();
+    this._populateDialog();
+    if (newSelectIndex >= 0) {
+        this._selectService(this._serviceRecords[newSelectIndex]);
+    }
+};
+
+ReconDialog.prototype._onAddStandardService = function() {
+    var self = this;
+    var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-standard-service-dialog.html"));
+    var elmts = DOM.bind(dialog);
+    
+    var level = DialogSystem.showDialog(dialog);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    elmts.cancelButton.click(dismiss);
+    elmts.addButton.click(function() {
+        var url = $.trim(elmts.input[0].value);
+        if (url.length > 0) {
+            ReconciliationManager.registerStandardService(url, function(index) {
+                self._refresh(index);
+            });
+        }
+        dismiss();
+    });
+    elmts.input.focus().select();
+};
+
+ReconDialog.prototype._onAddNamespacedService = function() {
+    var self = this;
+    var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-namespaced-service-dialog.html"));
+    var elmts = DOM.bind(dialog);
+    
+    var level = DialogSystem.showDialog(dialog);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    elmts.namespaceInput
+        .suggest({ type: '/type/namespace' })
+        .bind("fb-select", function(e, data) {
+            elmts.typeInput.focus();
+        });
+        
+    elmts.typeInput.suggestT({ type: '/type/type' });
+    
+    elmts.cancelButton.click(dismiss);
+    elmts.addButton.click(function() {
+        var namespaceData = elmts.namespaceInput.data("data.suggest");
+        var typeData = elmts.typeInput.data("data.suggest");
+        if (namespaceData) {
+            var url = "http://standard-reconcile.freebaseapps.com/namespace_reconcile?namespace=" + 
+                escape(namespaceData.id);
+            if (typeData) {
+                url += "&type=" + typeData.id;
+            }
+            
+            ReconciliationManager.registerStandardService(url, function(index) {
+                self._refresh(index);
+            });
+        }
+        dismiss();
+    });
+    elmts.namespaceInput.focus().data("suggest").textchange();
 };

@@ -330,6 +330,13 @@ public class StandardReconConfig extends ReconConfig {
                     score
                 );
                 
+                if (i == 0 && result.has("match") && result.getBoolean("match")) {
+                    recon.match = candidate;
+                    recon.matchRank = 0;
+                    recon.judgment = Judgment.Matched;
+                    recon.judgmentAction = "auto";
+                }
+                
                 recon.addCandidate(candidate);
                 count++;
             }
@@ -345,12 +352,6 @@ public class StandardReconConfig extends ReconConfig {
                 for (String typeID : candidate.types) {
                     if (this.typeID.equals(typeID)) {
                         recon.setFeature(Recon.Feature_typeMatch, true);
-                        if (autoMatch && candidate.score >= 100 && (count == 1 || candidate.score / recon.candidates.get(1).score >= 1.5)) {
-                            recon.match = candidate;
-                            recon.matchRank = 0;
-                            recon.judgment = Judgment.Matched;
-                            recon.judgmentAction = "auto";
-                        }
                         break;
                     }
                 }

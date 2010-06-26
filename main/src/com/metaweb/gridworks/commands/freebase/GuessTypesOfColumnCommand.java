@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
@@ -78,7 +79,7 @@ public class GuessTypesOfColumnCommand extends Command {
         }
     }
     
-    final static int s_sampleSize = 20;
+    final static int s_sampleSize = 10;
     
     /**
      * Run relevance searches for the first n cells in the given column and
@@ -111,10 +112,9 @@ public class GuessTypesOfColumnCommand extends Command {
             }
         }
         
+        StringWriter stringWriter = new StringWriter();
         try {
-            StringWriter stringWriter = new StringWriter();
             JSONWriter jsonWriter = new JSONWriter(stringWriter);
-            
             jsonWriter.object();
             for (int i = 0; i < samples.size(); i++) {
                 jsonWriter.key("q" + i);
@@ -126,8 +126,12 @@ public class GuessTypesOfColumnCommand extends Command {
                 jsonWriter.endObject();
             }
             jsonWriter.endObject();
-            
-            String queriesString = stringWriter.toString();
+        } catch (JSONException e) {
+            // ignore
+        }
+        
+        String queriesString = stringWriter.toString();
+        try {
             URL url = new URL(serviceUrl);
             URLConnection connection = url.openConnection();
             {
@@ -201,7 +205,7 @@ public class GuessTypesOfColumnCommand extends Command {
                 is.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to guess cell types for load\n" + queriesString, e);
         }
         
         List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());

@@ -1,0 +1,28 @@
+.recon-dialog-service-list {
+    border: 1px solid #aaa;
+    padding: 1px;
+    overflow: auto;
+    width: 200px;
+    height: 500px;
+}
+
+a.recon-dialog-service-selector {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+}
+a.recon-dialog-service-selector:hover {
+    background: #eee;
+}
+a.recon-dialog-service-selector.selected {
+    background: #eee;
+    font-weight: bold;
+}
+
+.recon-dialog-service-panel-message {
+    text-align: center;
+    font-size: 200%;
+    padding: 50px 0;
+    color: #aaa;
+}

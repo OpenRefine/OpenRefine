@@ -102,11 +102,13 @@ function init() {
             "styles/views/data-table-view.css",
             
             "styles/dialogs/expression-preview-dialog.css",
-            "styles/dialogs/recon-dialog.css",
             "styles/dialogs/clustering-dialog.css",
             "styles/dialogs/scatterplot-dialog.css",
             "styles/dialogs/freebase-loading-dialog.css",
             "styles/dialogs/extend-data-preview-dialog.css",
+            
+            "styles/reconciliation/recon-dialog.css",
+            "styles/reconciliation/standard-service-panel.css",
             
             "styles/protograph/schema-alignment-dialog.css"
         ]

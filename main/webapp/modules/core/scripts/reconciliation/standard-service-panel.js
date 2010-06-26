@@ -50,6 +50,8 @@ ReconStandardServicePanel.prototype._constructUI = function() {
     this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
     this._elmts = DOM.bind(this._panel);
     
+    this._elmts.rawServiceLink.attr("href", this._service.url);
+    
     this._guessTypes(function() {
         self._populatePanel();
         self._wireEvents();
@@ -79,43 +81,57 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
     /*
      *  Populate types
      */
-    var typeTableContainer = $('<div>')
-        .addClass("grid-layout layout-tightest")
-        .appendTo(this._elmts.typeContainer);
+    if (this._types.length > 0) {
+        var typeTableContainer = $('<div>')
+            .addClass("grid-layout layout-tightest")
+            .appendTo(this._elmts.typeContainer);
         
-    var typeTable = $('<table></table>').appendTo(typeTableContainer)[0];
-    var createTypeChoice = function(type, check) {
-        var typeID = typeof type == "string" ? type : type.id;
-        var typeName = typeof type == "string" ? type : (type.name || type.id);
+        var typeTable = $('<table></table>').appendTo(typeTableContainer)[0];
         
-        var tr = typeTable.insertRow(typeTable.rows.length);
-        var td0 = tr.insertCell(0);
-        var td1 = tr.insertCell(1);
+        var createTypeChoice = function(type, check) {
+            var typeID = typeof type == "string" ? type : type.id;
+            var typeName = typeof type == "string" ? type : (type.name || type.id);
         
-        td0.width = "1%";
-        var radio = $('<input type="radio" name="type-choice">')
-            .attr("value", typeID)
-            .attr("typeName", typeName)
-            .appendTo(td0)
-            .click(function() {
-                self._rewirePropertySuggests(this.value);
-            });
+            var tr = typeTable.insertRow(typeTable.rows.length);
+            var td0 = tr.insertCell(0);
+            var td1 = tr.insertCell(1);
+        
+            td0.width = "1%";
+            var radio = $('<input type="radio" name="type-choice">')
+                .attr("value", typeID)
+                .attr("typeName", typeName)
+                .appendTo(td0)
+                .click(function() {
+                    self._rewirePropertySuggests(this.value);
+                });
             
-        if (check) {
-            radio.attr("checked", "true");
-        }
+            if (check) {
+                radio.attr("checked", "true");
+            }
         
-        if (typeName == typeID) {
-            $(td1).html(typeName);
-        } else {
-            $(td1).html(
-                typeName + 
-                '<br/>' +
-                '<span class="type-id">' + typeID + '</span>');
+            if (typeName == typeID) {
+                $(td1).html(typeName);
+            } else {
+                $(td1).html(
+                    typeName + 
+                    '<br/>' +
+                    '<span class="type-id">' + typeID + '</span>');
+            }
+        };
+        for (var i = 0; i < this._types.length; i++) {
+            createTypeChoice(this._types[i], i === 0);
         }
-    };
-    for (var i = 0; i < this._types.length; i++) {
-        createTypeChoice(this._types[i], i === 0);
+    } else {
+        $('<div>')
+            .addClass("recon-dialog-standard-service-panel-message")
+            .text("Sorry, we can't suggest any type for your data. Please specify a type yourself below.")
+            .appendTo(this._elmts.typeContainer);
+            
+        this._panel
+            .find('input[name="type-choice"][value=""]')
+            .attr("checked", "true");
+            
+        this._panel.typeInput.focus();
     }
     
     /*
@@ -155,36 +171,54 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 };
 
 ReconStandardServicePanel.prototype._wireEvents = function() {
-    if (this._isInFreebaseIdentifierSpace()) {
-        var self = this;
-        this._elmts.typeInput
-            .suggestT({ type : '/type/type' })
-            .bind("fb-select", function(e, data) {
-                self._panel
-                    .find('input[name="type-choice"][value=""]')
-                    .attr("checked", "true");
-                    
-                self._rewirePropertySuggests(data.id);
-            });
-        
-        this._rewirePropertySuggests(this._types[0].id);
+    var self = this;
+    var input = this._elmts.typeInput.unbind();
+    
+    if ("suggest" in this._service && "type" in this._service.suggest) {
+        var suggestOptions = $.extend({}, this._service.suggest.type);
+        input.suggestT(suggestOptions);
+    } else if (this._isInFreebaseSchemaSpace()) {
+        input.suggestT({ type : '/type/type' });
     }
+    
+    input.bind("fb-select", function(e, data) {
+        self._panel
+            .find('input[name="type-choice"][value=""]')
+            .attr("checked", "true");
+            
+        self._rewirePropertySuggests(data.id);
+    });
+    
+    this._rewirePropertySuggests((this._types.length > 0) ? this._types[0] : null);
 };
 
 ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
-    if (this._isInFreebaseIdentifierSpace()) {
-        this._panel
-            .find('input[name="property"]')
-            .unbind().suggestP({
-                type: '/type/property',
-                schema: (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
-            });
+    var inputs = this._panel
+        .find('input[name="property"]')
+        .unbind();
+        
+    if ("property" in this._service && "property" in this._service.suggest) {
+        var suggestOptions = $.extend({}, this._service.suggest.property);
+        if (type) {
+            suggestOptions.schema = typeof type == "string" ? type : type.id;
+        }
+        inputs.suggestP(suggestOptions);
+    } else if (this._isInFreebaseSchemaSpace()) {
+        inputs.suggestP({
+            type: '/type/property',
+            schema: (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
+        });
     }
 };
 
 ReconStandardServicePanel.prototype._isInFreebaseIdentifierSpace = function() {
-    return "identifier-space" in this._service &&
-        this._service["identifier-space"].startsWith("http://rdf.freebase.com/");
+    return "identifierSpace" in this._service &&
+        this._service.identifierSpace == "http://rdf.freebase.com/ns/type.object.id";
+};
+
+ReconStandardServicePanel.prototype._isInFreebaseSchemaSpace = function() {
+    return "schemaSpace" in this._service &&
+        this._service.schemaSpace == "http://rdf.freebase.com/ns/type.object.id";
 };
 
 ReconStandardServicePanel.prototype.start = function() {

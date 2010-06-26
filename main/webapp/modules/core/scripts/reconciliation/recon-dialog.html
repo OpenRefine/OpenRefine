@@ -1,19 +1,25 @@
 <div class="dialog-frame" style="width: 900px;">
   <div class="dialog-header" bind="dialogHeader"></div>
   <div class="dialog-body" bind="dialogBody">
-    <div class="grid-layout layout-normal layout-full"><table><tr>
+    <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table><tr>
       <td width="1%">
-        <div class="recon-dialog-service-header">Services and Extensions</div>
         <div class="recon-dialog-service-list" bind="serviceList"></div>
-        <div class="recon-dialog-service-controls">
-          <button bind="addStandardServiceButton">Add Standard Service...</button>
-        </div>
       </td>
-      <td><div class="recon-dialog-service-panel-container" bind="servicePanelContainer"></div></td>
+      <td><div class="recon-dialog-service-panel-container" bind="servicePanelContainer">
+        <div class="recon-dialog-service-panel-message" bind="servicePanelMessage">
+          Pick a Service or Extension on Left
+        </div>
+      </div></td>
     </tr></table></div>
   </div>
-  <div class="dialog-footer" bind="dialogFooter">
-    <button bind="reconcileButton">Start Reconciling</button>
-    <button bind="cancelButton">Cancel</button>
+  <div class="dialog-footer" bind="dialogFooter"><table width="100%"><tr>
+    <td align="left">
+      <button bind="addStandardServiceButton">Add Standard Service...</button>
+      <button bind="addNamespacedServiceButton">Add Namespaced Service...</button>
+    </td>
+    <td align="right">
+      <button bind="reconcileButton">Start Reconciling</button>
+      <button bind="cancelButton">Cancel</button>
+    </td>
   </div>
 </div>

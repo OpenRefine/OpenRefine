@@ -9,9 +9,11 @@ ReconciliationManager.getAllServices = function() {
 
 ReconciliationManager.registerService = function(service) {
     ReconciliationManager.customServices.push(service);
+    
+    return ReconciliationManager.customServices.length - 1;
 };
 
-ReconciliationManager.registerStandardService = function(url) {
+ReconciliationManager.registerStandardService = function(url, f) {
     $.ajax({
         async: false,
         url: url + (url.contains("?") ? "&" : "?") + "callback=?",
@@ -19,8 +21,15 @@ ReconciliationManager.registerStandardService = function(url) {
             data.url = url;
             data.ui = { "handler" : "ReconStandardServicePanel" };
             
+            index = ReconciliationManager.customServices.length + 
+                ReconciliationManager.standardServices.length;
+            
             ReconciliationManager.standardServices.push(data);
             ReconciliationManager.save();
+            
+            if (f) {
+                f(index);
+            }
         },
         dataType: "jsonp"
     });
@@ -57,7 +66,7 @@ ReconciliationManager.save = function(f) {
                 ReconciliationManager.standardServices = JSON.parse(data.value);
             } else {
                 ReconciliationManager.registerStandardService(
-                    "http://gridworks-helper.dfhuynh.user.dev.freebaseapps.com/reconcile");
+                    "http://standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");
             }
         },
         dataType: "json"
