@@ -49,6 +49,8 @@ DataTableCellUI.prototype._render = function() {
         }
     } else {
         var r = cell.r;
+        var service = (r.service) ? ReconciliationManager.getServiceFromUrl(r.service) : null;
+        
         if (r.j == "new") {
             $('<span>').text(cell.v + " (new topic) ").appendTo(divContent);
             
@@ -60,11 +62,18 @@ DataTableCellUI.prototype._render = function() {
                 });
         } else if (r.j == "matched" && "m" in r && r.m !== null) {
             var match = cell.r.m;
-            $('<a></a>')
+            var a = $('<a></a>')
                 .text(match.name)
-                .attr("href", "http://www.freebase.com/view" + match.id)
                 .attr("target", "_blank")
                 .appendTo(divContent);
+                
+            if (service) {
+                if ((service.view) && (service.view.url)) {
+                    a.attr("href", service.view.url.replace("{{id}}", match.id));
+                } else if (ReconciliationManager.isFreebaseId(service.identifierSpace)) {
+                    a.attr("href", "http://www.freebase.com/view" + match.id);
+                }
+            }
                 
             $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}"></a>')
@@ -98,19 +107,36 @@ DataTableCellUI.prototype._render = function() {
                                 self._doMatchTopicToOneCell(candidate);
                             });
                             
-                        $('<a></a>')
+                        var a = $('<a></a>')
                             .addClass("data-table-recon-topic")
-                            .attr("href", "http://www.freebase.com/view" + candidate.id)
                             .attr("target", "_blank")
                             .text(candidate.name)
-                            .appendTo(li)
-                            .click(function(evt) {
-                                if (!evt.metaKey && !evt.ctrlKey) {
-                                    self._previewCandidateTopic(candidate, this);
-                                    evt.preventDefault();
-                                    return false;
-                                }
-                            });
+                            .appendTo(li);
+                            
+                        if (service) {
+                            if ((service.view) && (service.view.url)) {
+                                a.attr("href", service.view.url.replace("{{id}}", candidate.id));
+                            } else if (ReconciliationManager.isFreebaseId(service.identifierSpace)) {
+                                a.attr("href", "http://www.freebase.com/view" + candidate.id);
+                            }
+                            
+                            var preview = null;
+                            if (service.preview) {
+                                preview = service.preview;
+                            } else if (ReconciliationManager.isFreebaseId(service.identifierSpace)) {
+                                preview = DataTableCellUI.topicBlockPreview;
+                            }
+                            
+                            if (preview) {
+                                a.click(function(evt) {
+                                    if (!evt.metaKey && !evt.ctrlKey) {
+                                        self._previewCandidateTopic(candidate, this, preview);
+                                        evt.preventDefault();
+                                        return false;
+                                    }
+                                });
+                            }
+                        }
                             
                         var score;
                         if (candidate.score < 1) {
@@ -322,77 +348,48 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, c
     );
 };
 
-DataTableCellUI.topicBlockParams = {
-    "mode" : "content",
-    "blocks" : JSON.stringify([
-        {
-            "block" : "full_info"
-        },
-        {
-            "block" : "article_props"
-        }
-    ])
-};
-
-DataTableCellUI.topicBlockDimensions = {
+DataTableCellUI.topicBlockPreview = {
+    url: 'http://www.freebase.com/widget/topic{{id}}?mode=content&blocks=[{"block":"full_info"},{"block":"article_props"}]',
     width: 430,
     height: 300
 };
 
-DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt) {
+DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, preview) {
     var self = this;
     var id = candidate.id;
-    
-    var render = function(id2) {
-        var url = "http://www.freebase.com/widget/topic" + id2 + '?' + $.param(DataTableCellUI.topicBlockParams);
-    
-        var fakeMenu = MenuSystem.createMenu();
-        fakeMenu
-            .width(DataTableCellUI.topicBlockDimensions.width)
-            .css("background", "none")
-            .css("border", "none")
-            .html(
-                '<div class="data-table-topic-popup-header">' +
-                    '<button title="Match topic to this cell" bind="matchButton">Match</button> ' +
-                    '<button title="Match topic to all visible cells with same content" bind="matchSimilarButton">Match Similar</button>' +
-                '</div>'
-            );
-    
-        var iframe = $('<iframe></iframe>')
-            .addClass("data-table-topic-popup-iframe")
-            .width(DataTableCellUI.topicBlockDimensions.width)
-            .height(DataTableCellUI.topicBlockDimensions.height)
-            .attr("src", url)
-            .appendTo(fakeMenu);
-    
-        MenuSystem.showMenu(fakeMenu, function(){});
-        MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
-        
-        var elmts = DOM.bind(fakeMenu);
-        elmts.matchButton.click(function() {
-            self._doMatchTopicToOneCell(candidate);
-            MenuSystem.dismissAll();
-        });
-        elmts.matchSimilarButton.click(function() {
-            self._doMatchTopicToSimilarCells(candidate);
-            MenuSystem.dismissAll();
-        });
-    };
-    
-    if (id.indexOf("/guid/") !== 0) {
-        render(id);
-    } else {
-        Freebase.mqlread(
-            {
-                "guid" : "#" + id.substring(6),
-                "id" : null
-            },
-            null,
-            function(o) {
-                render(o.result.id);
-            }
+    var url = preview.url.replace("{{id}}", id);
+
+    var fakeMenu = MenuSystem.createMenu();
+    fakeMenu
+        .width(preview.width)
+        .css("background", "none")
+        .css("border", "none")
+        .html(
+            '<div class="data-table-topic-popup-header">' +
+                '<button title="Match topic to this cell" bind="matchButton">Match</button> ' +
+                '<button title="Match topic to all visible cells with same content" bind="matchSimilarButton">Match Similar</button>' +
+            '</div>'
         );
-    }
+
+    var iframe = $('<iframe></iframe>')
+        .addClass("data-table-topic-popup-iframe")
+        .width(preview.width)
+        .height(preview.height)
+        .attr("src", url)
+        .appendTo(fakeMenu);
+
+    MenuSystem.showMenu(fakeMenu, function(){});
+    MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
+    
+    var elmts = DOM.bind(fakeMenu);
+    elmts.matchButton.click(function() {
+        self._doMatchTopicToOneCell(candidate);
+        MenuSystem.dismissAll();
+    });
+    elmts.matchSimilarButton.click(function() {
+        self._doMatchTopicToSimilarCells(candidate);
+        MenuSystem.dismissAll();
+    });
 };
 
 DataTableCellUI.prototype._startEdit = function(elmt) {

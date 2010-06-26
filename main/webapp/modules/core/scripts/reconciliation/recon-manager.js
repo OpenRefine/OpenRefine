@@ -1,6 +1,25 @@
 var ReconciliationManager = {
-    "customServices" : [],     // services registered by core and extensions
-    "standardServices" : []    // services registered by user
+    customServices : [],     // services registered by core and extensions
+    standardServices : [],   // services registered by user
+    _urlMap : {}
+};
+
+ReconciliationManager.isFreebaseId = function(s) {
+    return s == "http://rdf.freebase.com/ns/type.object.id";
+};
+
+ReconciliationManager._rebuildMap = function() {
+    var map = {};
+    $.each(ReconciliationManager.getAllServices(), function(i, service) {
+        if ("url" in service) {
+            map[service.url] = service;
+        }
+    });
+    ReconciliationManager._urlMap = map;
+};
+
+ReconciliationManager.getServiceFromUrl = function(url) {
+    return ReconciliationManager._urlMap[url];
 };
 
 ReconciliationManager.getAllServices = function() {
@@ -9,6 +28,7 @@ ReconciliationManager.getAllServices = function() {
 
 ReconciliationManager.registerService = function(service) {
     ReconciliationManager.customServices.push(service);
+    ReconciliationManager._rebuildMap();
     
     return ReconciliationManager.customServices.length - 1;
 };
@@ -25,6 +45,8 @@ ReconciliationManager.registerStandardService = function(url, f) {
                 ReconciliationManager.standardServices.length;
             
             ReconciliationManager.standardServices.push(data);
+            ReconciliationManager._rebuildMap();
+            
             ReconciliationManager.save();
             
             if (f) {
@@ -33,6 +55,22 @@ ReconciliationManager.registerStandardService = function(url, f) {
         },
         dataType: "jsonp"
     });
+};
+
+ReconciliationManager.unregisterService = function(service, f) {
+    for (var i = 0; i < ReconciliationManager.customServices.length; i++) {
+        if (ReconciliationManager.customServices[i] === service) {
+            ReconciliationManager.customServices.splice(i, 1);
+            break;
+        }
+    }
+    for (var i = 0; i < ReconciliationManager.standardServices.length; i++) {
+        if (ReconciliationManager.standardServices[i] === service) {
+            ReconciliationManager.standardServices.splice(i, 1);
+            break;
+        }
+    }
+    ReconciliationManager.save(f);
 };
 
 ReconciliationManager.save = function(f) {
@@ -64,6 +102,7 @@ ReconciliationManager.save = function(f) {
         success: function(data) {
             if (data.value && data.value != "null") {
                 ReconciliationManager.standardServices = JSON.parse(data.value);
+                ReconciliationManager._rebuildMap();
             } else {
                 ReconciliationManager.registerStandardService(
                     "http://standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");

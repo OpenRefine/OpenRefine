@@ -76,6 +76,16 @@ ReconDialog.prototype._populateDialog = function() {
                 .click(function() {
                     self._selectService(record);
                 });
+                
+            $('<a>')
+                .html("&nbsp;")
+                .addClass("recon-dialog-service-selector-remove")
+                .prependTo(record.selector)
+                .click(function() {
+                    ReconciliationManager.unregisterService(service, function() {
+                        self._refresh(-1);
+                    });
+                });
             
             self._serviceRecords.push(record);
         };

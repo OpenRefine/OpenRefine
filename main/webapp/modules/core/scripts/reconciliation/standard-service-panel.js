@@ -212,13 +212,11 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
 };
 
 ReconStandardServicePanel.prototype._isInFreebaseIdentifierSpace = function() {
-    return "identifierSpace" in this._service &&
-        this._service.identifierSpace == "http://rdf.freebase.com/ns/type.object.id";
+    return ReconciliationManager.isFreebaseId(this._service.identifierSpace);
 };
 
 ReconStandardServicePanel.prototype._isInFreebaseSchemaSpace = function() {
-    return "schemaSpace" in this._service &&
-        this._service.schemaSpace == "http://rdf.freebase.com/ns/type.object.id";
+    return ReconciliationManager.isFreebaseId(this._service.schemaSpace);
 };
 
 ReconStandardServicePanel.prototype.start = function() {
