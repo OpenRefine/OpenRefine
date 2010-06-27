@@ -98,7 +98,7 @@ ProcessWidget.prototype._render = function(newData) {
     var self = this;
     var newProcessMap = {};
     
-    this._div.empty();
+    this._div.stop(true, false).empty();
     
     if (!newData.processes.length) {
         Gridworks.setTitle();
