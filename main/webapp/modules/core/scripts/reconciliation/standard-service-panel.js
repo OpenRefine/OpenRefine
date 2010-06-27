@@ -230,11 +230,15 @@ ReconStandardServicePanel.prototype.start = function() {
         };
         
     var choices = this._panel.find('input[name="type-choice"]:checked');
-    if (choices !== null && choices.length > 0 && choices[0].value != "") {
-        type = {
-            id: choices[0].value,
-            name: choices.attr("typeName")
-        };
+    if (choices !== null && choices.length > 0) {
+        if (choices[0].value == '-') {
+            type = null;
+        } else if (choices[0].value != "") {
+            type = {
+                id: choices[0].value,
+                name: choices.attr("typeName")
+            };
+        }
     }
     
     var columnDetails = [];
@@ -275,10 +279,7 @@ ReconStandardServicePanel.prototype.start = function() {
                 service: this._service.url,
                 identifierSpace: this._service.identifierSpace,
                 schemaSpace: this._service.schemaSpace,
-                type: {
-                    id: type.id, 
-                    name: type.name
-                },
+                type: (type) ? { id: type.id, name: type.name } : null,
                 autoMatch: this._elmts.automatchCheck[0].checked,
                 columnDetails: columnDetails
             })

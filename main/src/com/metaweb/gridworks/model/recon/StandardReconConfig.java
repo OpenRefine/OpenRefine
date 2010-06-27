@@ -66,14 +66,14 @@ public class StandardReconConfig extends ReconConfig {
             columnDetails = new ArrayList<ColumnDetail>();
         }
         
-        JSONObject t = obj.getJSONObject("type");
+        JSONObject t = obj.has("type") && !obj.isNull("type") ? obj.getJSONObject("type") : null;
         
         return new StandardReconConfig(
             obj.getString("service"),
             obj.has("identifierSpace") ? obj.getString("identifierSpace") : null,
             obj.has("schemaSpace") ? obj.getString("schemaSpace") : null,
-            t.getString("id"),
-            t.getString("name"),
+            t == null ? null : t.getString("id"),
+            t == null ? null : (t.has("name") ? t.getString("name") : null),
             obj.getBoolean("autoMatch"),
             columnDetails
         );
@@ -125,11 +125,15 @@ public class StandardReconConfig extends ReconConfig {
         writer.key("service"); writer.value(service);
         writer.key("identifierSpace"); writer.value(identifierSpace);
         writer.key("schemaSpace"); writer.value(schemaSpace);
-        writer.key("type"); 
-            writer.object();
-            writer.key("id"); writer.value(typeID);
-            writer.key("name"); writer.value(typeName);
-            writer.endObject();
+        writer.key("type");
+            if (typeID == null) {
+                writer.value(null);
+            } else {
+                writer.object();
+                writer.key("id"); writer.value(typeID);
+                writer.key("name"); writer.value(typeName);
+                writer.endObject();
+            }
         writer.key("autoMatch"); writer.value(autoMatch);
         writer.key("columnDetails");
             writer.array();
@@ -165,7 +169,10 @@ public class StandardReconConfig extends ReconConfig {
             
             jsonWriter.object();
                 jsonWriter.key("query"); jsonWriter.value(cell.value.toString());
-                jsonWriter.key("type"); jsonWriter.value(typeID);
+                if (typeID != null) {
+                    jsonWriter.key("type"); jsonWriter.value(typeID);
+                }
+                
                 if (columnDetails.size() > 0) {
                     jsonWriter.key("properties");
                     jsonWriter.array();
@@ -349,10 +356,12 @@ public class StandardReconConfig extends ReconConfig {
                 recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
                 
                 recon.setFeature(Recon.Feature_typeMatch, false);
-                for (String typeID : candidate.types) {
-                    if (this.typeID.equals(typeID)) {
-                        recon.setFeature(Recon.Feature_typeMatch, true);
-                        break;
+                if (this.typeID != null) {
+                    for (String typeID : candidate.types) {
+                        if (this.typeID.equals(typeID)) {
+                            recon.setFeature(Recon.Feature_typeMatch, true);
+                            break;
+                        }
                     }
                 }
             }

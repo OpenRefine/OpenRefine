@@ -183,7 +183,7 @@ DataTableCellUI.prototype._render = function() {
                     if (addSuggest) {
                         $('<a href="javascript:{}"></a>')
                             .addClass("data-table-recon-search")
-                            .click(function(evt) {console.log(suggestOptions);
+                            .click(function(evt) {
                                 self._searchForMatch(suggestOptions);
                                 return false;
                             })
