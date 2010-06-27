@@ -38,13 +38,13 @@ public class ReconJudgeOneCellCommand extends Command {
             Judgment judgment = Recon.stringToJudgment(request.getParameter("judgment"));
 
             ReconCandidate match = null;
-            String topicID = request.getParameter("topicID");
-            if (topicID != null) {
+            String id = request.getParameter("id");
+            if (id != null) {
                 String scoreString = request.getParameter("score");
 
                 match = new ReconCandidate(
-                    topicID,
-                    request.getParameter("topicName"),
+                    id,
+                    request.getParameter("name"),
                     request.getParameter("types").split(","),
                     scoreString != null ? Double.parseDouble(scoreString) : 100
                 );

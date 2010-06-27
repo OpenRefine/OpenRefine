@@ -169,14 +169,28 @@ DataTableCellUI.prototype._render = function() {
                     
                 $('<span>').text("(New topic)").appendTo(liNew);
                 
-                $('<a href="javascript:{}"></a>')
-                    .addClass("data-table-recon-search")
-                    .click(function(evt) {
-                        self._searchForMatch();
-                        return false;
-                    })
-                    .text("search for match")
-                    .appendTo($('<div>').appendTo(divContent));
+                if (service) {
+                    var suggestOptions;
+                    var addSuggest = false;
+                    
+                    if ((service.suggest) && (service.suggest.entity)) {
+                        suggestOptions = service.suggest.entity;
+                        addSuggest = true;
+                    } else if (ReconciliationManager.isFreebaseId(service.identifierSpace)) {
+                        addSuggest = true;
+                    }
+                    
+                    if (addSuggest) {
+                        $('<a href="javascript:{}"></a>')
+                            .addClass("data-table-recon-search")
+                            .click(function(evt) {console.log(suggestOptions);
+                                self._searchForMatch(suggestOptions);
+                                return false;
+                            })
+                            .text("search for match")
+                            .appendTo($('<div>').appendTo(divContent));
+                    }
+                }
             }
         }
     }
@@ -236,7 +250,7 @@ DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params
     this._postProcessSeveralCells("recon-judge-similar-cells", params, true);
 };
 
-DataTableCellUI.prototype._searchForMatch = function() {
+DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     var self = this;
     var frame = DialogSystem.createDialog();
     frame.width("400px");
@@ -260,41 +274,28 @@ DataTableCellUI.prototype._searchForMatch = function() {
     var match = null;
     var commit = function() {
         if (match !== null) {
-            var query = {
-                "id" : match.id,
-                "type" : []
+            var params = {
+                judgment: "matched",
+                id: match.id,
+                name: match.name,
+                types: $.map(match.type, function(elmt) {
+                    return typeof elmt == "string" ? elmt : elmt.id; 
+                }).join(",")
             };
-            var baseUrl = "http://api.freebase.com/api/service/mqlread";
-            var url = baseUrl + "?" + $.param({ query: JSON.stringify({ query: query }) }) + "&callback=?";
             
-            $.getJSON(
-                url,
-                null,
-                function(o) {
-                    var types = "result" in o ? o.result.type : [];
-                    var params = {
-                        judgment: "matched",
-                        topicID: match.id,
-                        topicGUID: match.guid,
-                        topicName: match.name,
-                        types: $.map(types, function(elmt) { return elmt.id; }).join(",")
-                    };
-                    if (elmts.checkSimilar[0].checked) {
-                        params.similarValue = self._cell.v;
-                        params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
+            if (elmts.checkSimilar[0].checked) {
+                params.similarValue = self._cell.v;
+                params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
 
-                        self._postProcessSeveralCells("recon-judge-similar-cells", params, true);
-                    } else {
-                        params.row = self._rowIndex;
-                        params.cell = self._cellIndex;
+                self._postProcessSeveralCells("recon-judge-similar-cells", params, true);
+            } else {
+                params.row = self._rowIndex;
+                params.cell = self._cellIndex;
 
-                        self._postProcessOneCell("recon-judge-one-cell", params, true);
-                    }
+                self._postProcessOneCell("recon-judge-one-cell", params, true);
+            }
 
-                    DialogSystem.dismissUntil(level - 1);
-                },
-                "jsonp"
-            );
+            DialogSystem.dismissUntil(level - 1);
         }
     };
     
@@ -307,7 +308,9 @@ DataTableCellUI.prototype._searchForMatch = function() {
     
     elmts.input
         .attr("value", this._cell.v)
-        .suggest({})
+        .suggest(suggestOptions || {
+            all_types: true
+        })
         .bind("fb-select", function(e, data) {
             match = data;
             commit();
