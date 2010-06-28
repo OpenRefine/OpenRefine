@@ -2,7 +2,7 @@ var theProject;
 var ui = {};
 
 var Gridworks = {
-    gridworksHelperService: "http://1-0.gridworks-helper.dfhuynh.user.dev.freebaseapps.com/"
+    gridworksHelperService: "http://6.gridworks-helper.dfhuynh.user.dev.freebaseapps.com"
 };
 
 Gridworks.reportException = function(e) {

@@ -141,7 +141,7 @@ SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, targetTypeI
     }
     
     $.getJSON(
-        Gridworks.gridworksHelperService + "get_properties_of_type?" + $.param(params) + "&callback=?",
+        Gridworks.gridworksHelperService + "/get_properties_of_type?" + $.param(params) + "&callback=?",
         null,
         function(data) {
             if (done) return;
@@ -246,7 +246,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     } else {
         var sourceTypeID = this._parentUINode.getExpectedType();
         if (sourceTypeID !== null) {
-            suggestOptions.schema = sourceTypeID;
+            suggestOptions.ac_param = { schema: sourceTypeID };
         }
     }
     input.suggestP(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });

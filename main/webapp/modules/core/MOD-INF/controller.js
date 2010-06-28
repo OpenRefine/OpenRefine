@@ -27,6 +27,8 @@ function init() {
             "externals/imgareaselect/jquery.imgareaselect.js",
             "externals/date.js",
             
+            "scripts/project.js",
+            
             "scripts/util/misc.js",
             "scripts/util/url.js",
             "scripts/util/string.js",
@@ -43,7 +45,6 @@ function init() {
             "scripts/widgets/histogram-widget.js",
             "scripts/widgets/slider-widget.js",
 
-            "scripts/project.js",
             "scripts/project/menu-bar.js",
             "scripts/project/browsing-engine.js",
             "scripts/project/scripting.js",

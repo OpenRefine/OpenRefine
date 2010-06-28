@@ -34,10 +34,12 @@ ReconciliationManager.registerService = function(service) {
 };
 
 ReconciliationManager.registerStandardService = function(url, f) {
-    $.ajax({
-        async: false,
-        url: url + (url.contains("?") ? "&" : "?") + "callback=?",
-        success: function(data) {
+    var dismissBusy = DialogSystem.showBusy();
+    
+    $.getJSON(
+        url + (url.contains("?") ? "&" : "?") + "callback=?",
+        null,
+        function(data) {
             data.url = url;
             data.ui = { "handler" : "ReconStandardServicePanel" };
             
@@ -49,12 +51,14 @@ ReconciliationManager.registerStandardService = function(url, f) {
             
             ReconciliationManager.save();
             
+            dismissBusy();
+            
             if (f) {
                 f(index);
             }
         },
-        dataType: "jsonp"
-    });
+        "jsonp"
+    );
 };
 
 ReconciliationManager.unregisterService = function(service, f) {

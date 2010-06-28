@@ -39,7 +39,7 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
     var done = false;
     
     $.getJSON(
-        Gridworks.gridworksHelperService + "get_properties_of_type?type=" + typeID + "&callback=?",
+        Gridworks.gridworksHelperService + "/get_properties_of_type?type=" + typeID + "&callback=?",
         null,
         function(data) {
             if (done) return;
@@ -109,7 +109,7 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
         type: '/type/property'
     };
     if ("reconConfig" in this._column && "type" in this._column.reconConfig) {
-        suggestConfig.schema = this._column.reconConfig.type.id;
+        suggestConfig.ac_param = { schema: this._column.reconConfig.type.id };
     }
     
     this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {

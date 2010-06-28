@@ -131,7 +131,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
             .find('input[name="type-choice"][value=""]')
             .attr("checked", "true");
             
-        this._panel.typeInput.focus();
+        this._elmts.typeInput.focus();
     }
     
     /*
@@ -197,16 +197,18 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
         .find('input[name="property"]')
         .unbind();
         
-    if ("property" in this._service && "property" in this._service.suggest) {
+    if ("suggest" in this._service && "property" in this._service.suggest) {
         var suggestOptions = $.extend({}, this._service.suggest.property);
         if (type) {
-            suggestOptions.schema = typeof type == "string" ? type : type.id;
+            suggestOptions.ac_param = { schema: typeof type == "string" ? type : type.id };
         }
         inputs.suggestP(suggestOptions);
     } else if (this._isInFreebaseSchemaSpace()) {
         inputs.suggestP({
             type: '/type/property',
-            schema: (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
+            ac_param: {
+                schema: (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
+            }
         });
     }
 };
