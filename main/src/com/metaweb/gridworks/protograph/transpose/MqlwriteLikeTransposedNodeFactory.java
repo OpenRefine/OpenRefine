@@ -247,7 +247,7 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
     public TransposedNode transposeAnonymousNode(
             TransposedNode parentNode,
             FreebaseProperty property, 
-            AnonymousNode node) {
+            AnonymousNode node, int rowIndex) {
         
         return new AnonymousTransposedNode(
             parentNode instanceof JsonObjectTransposedNode ? (JsonObjectTransposedNode) parentNode : null, 
@@ -260,7 +260,7 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
             TransposedNode parentNode,
             FreebaseProperty property, 
             CellNode node, 
-            Cell cell) {
+            int rowIndex, Cell cell) {
         
         JsonTransposedNode tnode = null;
         if (node instanceof CellTopicNode) {
@@ -280,7 +280,7 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
     public TransposedNode transposeTopicNode(
             TransposedNode parentNode,
             FreebaseProperty property, 
-            FreebaseTopicNode node) {
+            FreebaseTopicNode node, int rowIndex) {
         
         JsonTransposedNode tnode = new TopicTransposedNode(node);
         
@@ -292,7 +292,7 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
     public TransposedNode transposeValueNode(
             TransposedNode parentNode,
             FreebaseProperty property, 
-            ValueNode node) {
+            ValueNode node, int rowIndex) {
         
         JsonTransposedNode tnode = new ValueTransposedNode(node);
         

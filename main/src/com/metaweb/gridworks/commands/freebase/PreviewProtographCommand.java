@@ -41,7 +41,7 @@ public class PreviewProtographCommand extends Command {
             
             {
                 StringWriter stringWriter = new StringWriter();
-                TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory(stringWriter);
+                TripleLoaderTransposedNodeFactory nodeFactory = new TripleLoaderTransposedNodeFactory(project, stringWriter);
                 
                 Transposer.transpose(project, filteredRows, protograph, protograph.getRootNode(0), nodeFactory);
                 nodeFactory.flush();

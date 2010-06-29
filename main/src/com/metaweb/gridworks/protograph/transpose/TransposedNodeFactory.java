@@ -13,26 +13,29 @@ public interface TransposedNodeFactory {
     public TransposedNode transposeAnonymousNode(
         TransposedNode parentNode, 
         FreebaseProperty property, 
-        AnonymousNode node
+        AnonymousNode node, int rowIndex
     );
     
     public TransposedNode transposeCellNode(
         TransposedNode parentNode, 
         FreebaseProperty property, 
         CellNode node, 
+        int rowIndex,
         Cell cell
     );
     
     public TransposedNode transposeValueNode(
         TransposedNode parentNode, 
         FreebaseProperty property, 
-        ValueNode node
+        ValueNode node, 
+        int rowIndex
     );
     
     public TransposedNode transposeTopicNode(
         TransposedNode parentNode, 
         FreebaseProperty property, 
-        FreebaseTopicNode node
+        FreebaseTopicNode node, 
+        int rowIndex
     );
     
     public void flush() throws IOException;

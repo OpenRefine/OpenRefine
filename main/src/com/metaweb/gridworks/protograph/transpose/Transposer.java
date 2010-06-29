@@ -25,7 +25,7 @@ import com.metaweb.gridworks.protograph.ValueNode;
 public class Transposer {
     static public void transpose(
         Project                 project,
-        FilteredRows			filteredRows,
+        FilteredRows            filteredRows,
         Protograph              protograph,
         Node                    rootNode,
         TransposedNodeFactory   nodeFactory
@@ -35,7 +35,7 @@ public class Transposer {
     
     static public void transpose(
         Project                 project,
-        FilteredRows			filteredRows,
+        FilteredRows            filteredRows,
         Protograph              protograph,
         Node                    rootNode,
         TransposedNodeFactory   nodeFactory,
@@ -43,56 +43,57 @@ public class Transposer {
     ) {
         Context rootContext = new Context(rootNode, null, null, limit);
         
-    	filteredRows.accept(project, new RowVisitor() {
-    		Context 				rootContext;
+        filteredRows.accept(project, new RowVisitor() {
+            Context                 rootContext;
             Protograph              protograph;
             Node                    rootNode;
             TransposedNodeFactory   nodeFactory;
-    		
-			@Override
-			public boolean visit(Project project, int rowIndex, Row row) {
-				if (rootContext.limit <= 0 || rootContext.count < rootContext.limit) {
-					descend(project, protograph, nodeFactory, row, rootNode, rootContext);
-				}
-				
-	            if (rootContext.limit > 0 && rootContext.count > rootContext.limit) {
-	                return true;
-	            }
-				return false;
-			}
-			
-			@Override
-			public void start(Project project) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void end(Project project) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			public RowVisitor init(
-				Context 				rootContext,
-	            Protograph              protograph,
-	            Node                    rootNode,
-	            TransposedNodeFactory   nodeFactory
-			) {
-				this.rootContext = rootContext;
-				this.protograph = protograph;
-				this.rootNode = rootNode;
-				this.nodeFactory = nodeFactory;
-				
-				return this;
-			}
-		}.init(rootContext, protograph, rootNode, nodeFactory));
+            
+            @Override
+            public boolean visit(Project project, int rowIndex, Row row) {
+                if (rootContext.limit <= 0 || rootContext.count < rootContext.limit) {
+                    descend(project, protograph, nodeFactory, rowIndex, row, rootNode, rootContext);
+                }
+                
+                if (rootContext.limit > 0 && rootContext.count > rootContext.limit) {
+                    return true;
+                }
+                return false;
+            }
+            
+            @Override
+            public void start(Project project) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void end(Project project) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            public RowVisitor init(
+                Context                 rootContext,
+                Protograph              protograph,
+                Node                    rootNode,
+                TransposedNodeFactory   nodeFactory
+            ) {
+                this.rootContext = rootContext;
+                this.protograph = protograph;
+                this.rootNode = rootNode;
+                this.nodeFactory = nodeFactory;
+                
+                return this;
+            }
+        }.init(rootContext, protograph, rootNode, nodeFactory));
     }
     
     static protected void descend(
         Project project,
         Protograph protograph, 
         TransposedNodeFactory nodeFactory,
+        int rowIndex, 
         Row row,
         Node node,
         Context context
@@ -122,6 +123,7 @@ public class Transposer {
                     parentNode,
                     property,
                     node2, 
+                    rowIndex,
                     cell
                 );
             }
@@ -130,19 +132,22 @@ public class Transposer {
                 tnode = nodeFactory.transposeAnonymousNode(
                     parentNode,
                     property,
-                    (AnonymousNode) node
+                    (AnonymousNode) node,
+                    rowIndex
                 );
             } else if (node instanceof FreebaseTopicNode) {
                 tnode = nodeFactory.transposeTopicNode(
                     parentNode,
                     property,
-                    (FreebaseTopicNode) node
+                    (FreebaseTopicNode) node,
+                    rowIndex
                 );
             } else if (node instanceof ValueNode) {
                 tnode = nodeFactory.transposeValueNode(
                     parentNode,
                     property,
-                    (ValueNode) node
+                    (ValueNode) node,
+                    rowIndex
                 );
             }
         }
@@ -164,7 +169,8 @@ public class Transposer {
                 descend(
                     project, 
                     protograph, 
-                    nodeFactory, 
+                    nodeFactory,
+                    rowIndex,
                     row, 
                     node2.getLink(i).getTarget(), 
                     context.subContexts.get(i)

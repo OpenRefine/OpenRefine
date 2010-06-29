@@ -39,7 +39,7 @@ abstract public class ProtographTransposeExporter implements Exporter {
         if (project.protograph != null) {
             Protograph protograph = project.protograph;
             
-            TransposedNodeFactory nodeFactory = createNodeFactory(writer);
+            TransposedNodeFactory nodeFactory = createNodeFactory(project, writer);
             
             Transposer.transpose(project, engine.getAllFilteredRows(), protograph, protograph.getRootNode(0), nodeFactory, -1);
             
@@ -47,7 +47,7 @@ abstract public class ProtographTransposeExporter implements Exporter {
         }
     }
     
-    abstract protected TransposedNodeFactory createNodeFactory(Writer writer);
+    abstract protected TransposedNodeFactory createNodeFactory(Project project, Writer writer);
     
     static public class TripleLoaderExporter extends ProtographTransposeExporter {
 		public TripleLoaderExporter() {
@@ -55,8 +55,8 @@ abstract public class ProtographTransposeExporter implements Exporter {
 		}
 
 		@Override
-		protected TransposedNodeFactory createNodeFactory(Writer writer) {
-			return new TripleLoaderTransposedNodeFactory(writer);
+		protected TransposedNodeFactory createNodeFactory(Project project, Writer writer) {
+			return new TripleLoaderTransposedNodeFactory(project, writer);
 		}
     }
 
@@ -66,7 +66,7 @@ abstract public class ProtographTransposeExporter implements Exporter {
 		}
 
 		@Override
-		protected TransposedNodeFactory createNodeFactory(Writer writer) {
+		protected TransposedNodeFactory createNodeFactory(Project project, Writer writer) {
 			return new MqlwriteLikeTransposedNodeFactory(writer);
 		}
     }
