@@ -21,13 +21,13 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.methodSelector.change(function() {
         var selection = $(this).find("option:selected").text();
         if (selection == 'key collision') {
-            body.find(".binning-controls").show();
-            body.find(".knn-controls").hide();
+            dialog.find(".binning-controls").show();
+            dialog.find(".knn-controls").hide();
             self._method = "binning";
             self._elmts.keyingFunctionSelector.change();
         } else if (selection === 'nearest neighbor') {
-            body.find(".binning-controls").hide();
-            body.find(".knn-controls").show();
+            dialog.find(".binning-controls").hide();
+            dialog.find(".knn-controls").show();
             self._method = "knn";
             self._elmts.distanceFunctionSelector.change();
         }
