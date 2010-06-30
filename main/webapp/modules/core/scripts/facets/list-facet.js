@@ -128,8 +128,8 @@ ListFacet.prototype._initializeUI = function() {
         '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
             '<table><tr>' +
                 '<td><a bind="choiceCountContainer" class="action" href="javascript:{}"></a> <span bind="sortGroup">sorted by ' +
-                    '<input bind="sortByNameLink" type="radio" id="' + facet_id + '-name-sort" name="radio" checked="checked" /><label for="' + facet_id + '-name-sort">name</label>' +
-                    '<input bind="sortByCountLink" type="radio" id="' + facet_id + '-count-sort" name="radio" /><label for="' + facet_id + '-count-sort">count</label>' +
+                    '<input bind="sortByNameLink" type="radio" id="' + facet_id + '-name-sort" name="' + facet_id + '-sort-radio" checked="checked" /><label for="' + facet_id + '-name-sort">name</label>' +
+                    '<input bind="sortByCountLink" type="radio" id="' + facet_id + '-count-sort" name="' + facet_id + '-sort-radio" /><label for="' + facet_id + '-count-sort">count</label>' +
                 '</span></td>' +
                 '<td width="1%" nowrap=""><button bind="clusterLink">cluster</button></td>' +
             '</tr></table>' +
