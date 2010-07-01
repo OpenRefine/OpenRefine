@@ -141,7 +141,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                     "facets" : [ facet ]
                 }))
             ];
-            var url = "project.html?" + params.join("&");
+            var url = "project?" + params.join("&");
                             
             var div = $('<div></div>').addClass("clustering-dialog-value-focus");
             
