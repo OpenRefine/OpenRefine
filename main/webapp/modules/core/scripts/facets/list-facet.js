@@ -312,7 +312,7 @@ ListFacet.prototype._update = function(resetScroll) {
             }
             
             html.push('<a href="javascript:{}" class="facet-choice-label">' + encodeHtml(label) + '</a>');
-            html.push('<span class="facet-choice-count">' + count + '</span>');
+            html.push('<span class="facet-choice-count">' + (invert ? "-" : "") + count + '</span>');
             
         html.push('</div>');
     };

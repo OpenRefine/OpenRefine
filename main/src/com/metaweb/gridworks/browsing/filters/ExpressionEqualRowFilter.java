@@ -47,7 +47,9 @@ public class ExpressionEqualRowFilter implements RowFilter {
     }
 
     public boolean filterRow(Project project, int rowIndex, Row row) {
-        return _invert != internalFilterRow(project, rowIndex, row);
+        return _invert ?
+                internalInvertedFilterRow(project, rowIndex, row) :
+                internalFilterRow(project, rowIndex, row);
     }
     
     public boolean internalFilterRow(Project project, int rowIndex, Row row) {
@@ -77,6 +79,35 @@ public class ExpressionEqualRowFilter implements RowFilter {
         }
         
         return testValue(value);
+    }
+    
+    public boolean internalInvertedFilterRow(Project project, int rowIndex, Row row) {
+        Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
+        
+        Properties bindings = ExpressionUtils.createBindings(project);
+        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
+        
+        Object value = _evaluable.evaluate(bindings);
+        if (value != null) {
+            if (value.getClass().isArray()) {
+                Object[] a = (Object[]) value;
+                for (Object v : a) {
+                    if (testValue(v)) {
+                        return false;
+                    }
+                }
+                return true;
+            } else if (value instanceof Collection<?>) {
+                for (Object v : ExpressionUtils.toObjectCollection(value)) {
+                    if (testValue(v)) {
+                        return false;
+                    }
+                }
+                return true;
+            } // else, fall through
+        }
+        
+        return !testValue(value);
     }
     
     protected boolean testValue(Object v) {

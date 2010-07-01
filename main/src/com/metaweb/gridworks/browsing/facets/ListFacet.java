@@ -14,6 +14,7 @@ import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
 import com.metaweb.gridworks.browsing.RecordFilter;
 import com.metaweb.gridworks.browsing.RowFilter;
+import com.metaweb.gridworks.browsing.filters.AllRowsRecordFilter;
 import com.metaweb.gridworks.browsing.filters.AnyRowRecordFilter;
 import com.metaweb.gridworks.browsing.filters.ExpressionEqualRowFilter;
 import com.metaweb.gridworks.browsing.util.ExpressionNominalValueGrouper;
@@ -167,7 +168,10 @@ public class ListFacet implements Facet {
     @Override
     public RecordFilter getRecordFilter(Project project) {
     	RowFilter rowFilter = getRowFilter(project);
-    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
+    	return rowFilter == null ? null :
+    	    (_invert ?
+    	        new AllRowsRecordFilter(rowFilter) :
+	            new AnyRowRecordFilter(rowFilter));
     }
 
     @Override
