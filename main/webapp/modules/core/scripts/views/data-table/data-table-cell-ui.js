@@ -67,12 +67,10 @@ DataTableCellUI.prototype._render = function() {
                 .attr("target", "_blank")
                 .appendTo(divContent);
                 
-            if (service) {
-                if ((service.view) && (service.view.url)) {
-                    a.attr("href", service.view.url.replace("{{id}}", match.id));
-                } else if (ReconciliationManager.isFreebaseId(service.identifierSpace)) {
-                    a.attr("href", "http://www.freebase.com/view" + match.id);
-                }
+            if (service && (service.view) && (service.view.url)) {
+                a.attr("href", service.view.url.replace("{{id}}", match.id));
+            } else if (ReconciliationManager.isFreebaseId(r.identifierSpace)) {
+                a.attr("href", "http://www.freebase.com/view" + match.id);
             }
                 
             $('<span> </span>').appendTo(divContent);
@@ -113,29 +111,26 @@ DataTableCellUI.prototype._render = function() {
                             .text(candidate.name)
                             .appendTo(li);
                             
-                        if (service) {
-                            if ((service.view) && (service.view.url)) {
-                                a.attr("href", service.view.url.replace("{{id}}", candidate.id));
-                            } else if (ReconciliationManager.isFreebaseId(service.identifierSpace)) {
-                                a.attr("href", "http://www.freebase.com/view" + candidate.id);
-                            }
+                        if ((service) && (service.view) && (service.view.url)) {
+                            a.attr("href", service.view.url.replace("{{id}}", candidate.id));
+                        } else if (ReconciliationManager.isFreebaseId(r.identifierSpace)) {
+                            a.attr("href", "http://www.freebase.com/view" + candidate.id);
+                        }
                             
-                            var preview = null;
-                            if (service.preview) {
-                                preview = service.preview;
-                            } else if (ReconciliationManager.isFreebaseId(service.identifierSpace)) {
-                                preview = DataTableCellUI.topicBlockPreview;
-                            }
-                            
-                            if (preview) {
-                                a.click(function(evt) {
-                                    if (!evt.metaKey && !evt.ctrlKey) {
-                                        self._previewCandidateTopic(candidate, this, preview);
-                                        evt.preventDefault();
-                                        return false;
-                                    }
-                                });
-                            }
+                        var preview = null;
+                        if ((service) && (service.preview)) {
+                            preview = service.preview;
+                        } else if (ReconciliationManager.isFreebaseId(r.identifierSpace)) {
+                            preview = DataTableCellUI.topicBlockPreview;
+                        }
+                        if (preview) {
+                            a.click(function(evt) {
+                                if (!evt.metaKey && !evt.ctrlKey) {
+                                    self._previewCandidateTopic(candidate, this, preview);
+                                    evt.preventDefault();
+                                    return false;
+                                }
+                            });
                         }
                             
                         var score;
@@ -169,27 +164,24 @@ DataTableCellUI.prototype._render = function() {
                     
                 $('<span>').text("(New topic)").appendTo(liNew);
                 
-                if (service) {
-                    var suggestOptions;
-                    var addSuggest = false;
+                var suggestOptions;
+                var addSuggest = false;
+                if ((service) && (service.suggest) && (service.suggest.entity)) {
+                    suggestOptions = service.suggest.entity;
+                    addSuggest = true;
+                } else if (ReconciliationManager.isFreebaseId(r.identifierSpace)) {
+                    addSuggest = true;
+                }
                     
-                    if ((service.suggest) && (service.suggest.entity)) {
-                        suggestOptions = service.suggest.entity;
-                        addSuggest = true;
-                    } else if (ReconciliationManager.isFreebaseId(service.identifierSpace)) {
-                        addSuggest = true;
-                    }
-                    
-                    if (addSuggest) {
-                        $('<a href="javascript:{}"></a>')
-                            .addClass("data-table-recon-search")
-                            .click(function(evt) {
-                                self._searchForMatch(suggestOptions);
-                                return false;
-                            })
-                            .text("search for match")
-                            .appendTo($('<div>').appendTo(divContent));
-                    }
+                if (addSuggest) {
+                    $('<a href="javascript:{}"></a>')
+                        .addClass("data-table-recon-search")
+                        .click(function(evt) {
+                            self._searchForMatch(suggestOptions);
+                            return false;
+                        })
+                        .text("search for match")
+                        .appendTo($('<div>').appendTo(divContent));
                 }
             }
         }
