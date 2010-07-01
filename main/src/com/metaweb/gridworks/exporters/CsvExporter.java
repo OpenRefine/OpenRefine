@@ -66,9 +66,9 @@ public class CsvExporter implements Exporter{
                     int cellIndex = col.getCellIndex();
                     cols[i] = col.getName();
 
-                    Cell cell = row.cells.get(cellIndex);
-                    if(cell != null){
-                        vals[i] = cell.value.toString();
+                    Object value = row.getCellValue(cellIndex);
+                    if(value != null){
+                        vals[i] = value instanceof String ? (String) value : value.toString();
                     }
                     i++;
                 }
