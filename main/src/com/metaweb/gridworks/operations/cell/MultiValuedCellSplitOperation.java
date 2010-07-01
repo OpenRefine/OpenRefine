@@ -92,7 +92,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             if (_mode.equals("regex")) {
                 values = s.split(_separator);
             } else {
-                values = StringUtils.splitByWholeSeparator(s, _separator);
+                values = StringUtils.splitByWholeSeparatorPreserveAllTokens(s, _separator);
             }
             
             if (values.length < 2) {
