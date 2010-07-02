@@ -13,3 +13,5 @@ extensions/jython/module/MOD-INF/lib/cachedir/
 broker/appengine/module/MOD-INF/classes/
 broker/core/module/MOD-INF/classes/
 broker/core/WEB-INF/lib/
+broker/core/data/
+broker/core/test-output/
