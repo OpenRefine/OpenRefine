@@ -161,6 +161,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
     protected void obtainLock(HttpServletResponse response, String pid, String uid, int locktype, String lockvalue) throws Exception {
         logger.trace("> obtain lock");
         Lock lock = null;
+        Lock blocker = null;
 
         Transaction txn = env.beginTransaction(null, null);
 
@@ -168,27 +169,68 @@ public class GridworksBrokerImpl extends GridworksBroker {
 
             EntityCursor<Lock> cursor = locksByProject.subIndex(pid).entities(); 
             
+            /*
+             *  ALL
+             *       blocked -> somebody else's lock
+             *       reuse -> you already have an ALL lock
+             *       new -> else
+             *   
+             *   COL
+             *       blocked -> somebody else's all lock || a lock on the same col
+             *       reuse -> you have an ALL lock || a lock on the same col 
+             *       new -> else
+             *   
+             *   CELL
+             *       blocked -> somebody else's all lock || a lock on the same col || a lock on the same cell
+             *       reuse -> you have a lock on the same cell            
+             *       yes -> (you have a lock on the same cell) && (nobody else has a lock on the same cell || the same col || all)
+             *       new -> else 
+             *       
+             */
+            
             try {
-                for (Lock l : cursor) {
-                    logger.info("found lock: {}", l.id);
-
-                    if (locktype == ALL) {
-                        if (l.type == ALL) {
-                            lock = l;
+                if (locktype == ALL) {
+                    for (Lock l : cursor) {
+                        if (!l.uid.equals(uid)) {
+                            blocker = l;
                             break;
+                        } else {
+                            if (l.type == ALL) {
+                                lock = l;
+                                break;
+                            }
                         }
-                    } else if (locktype == COLUMN) {
-                        if (l.type == ALL || 
-                           (l.type == COLUMN && l.value.equals(lockvalue))) {
-                            lock = l;
-                            break;
+                    }
+                } else if (locktype == COL) {
+                    for (Lock l : cursor) {
+                        if (!l.uid.equals(uid)) {
+                            if (l.type == ALL || 
+                               (l.type == COL && l.value.equals(lockvalue))) {
+                                blocker = l;
+                                break;
+                            }
+                        } else {
+                            if (l.type == ALL || 
+                               (l.type == COL && l.value.equals(lockvalue))) {
+                                lock = l;
+                                break;
+                            }
                         }
-                    } else if (locktype == CELL) {
-                        if (l.type == ALL || 
-                           (l.type == COLUMN && l.value.equals(lockvalue.split(",")[0])) || 
-                           (l.type == CELL && l.value.equals(lockvalue))) {
-                            lock = l;
-                            break;
+                    }
+                } else if (locktype == CELL) {
+                    for (Lock l : cursor) {
+                        if (!l.uid.equals(uid)) {
+                            if (l.type == ALL || 
+                               (l.type == COL && l.value.equals(lockvalue.split(",")[0])) || 
+                               (l.type == CELL && l.value.equals(lockvalue))) {
+                                blocker = l;
+                                break;
+                            }
+                        } else {
+                            if (l.type == CELL && l.value.equals(lockvalue)) {
+                                lock = l;
+                                break;
+                            }
                         }
                     }
                 }
@@ -196,8 +238,13 @@ public class GridworksBrokerImpl extends GridworksBroker {
                 cursor.close(); 
             } 
     
+            if (blocker != null) {
+                logger.info("found a blocking lock {}", lockToString(blocker));
+                throw new RuntimeException("Can't obtain lock, it is blocked by a type '" + blocker.type + "' lock owned by '" + blocker.uid + "'");
+            }
+            
             if (lock == null) {
-                logger.info("no lock found, creating new");
+                logger.info("no comparable lock already exists, creating a new one");
                 lock = new Lock(Long.toHexString(txn.getId()), pid, uid, locktype, lockvalue);
                 lockById.put(txn, lock);
                 txn.commit();
@@ -287,6 +334,8 @@ public class GridworksBrokerImpl extends GridworksBroker {
 
             Lock lock = getLock(lid, pid, uid);
 
+            logger.info("obtained lock: {}", lockToString(lock));
+            
             if (lock.type == ALL) {
                 project.transformations.addAll(transformations);
             } else {
@@ -295,8 +344,8 @@ public class GridworksBrokerImpl extends GridworksBroker {
                     
                     int type = o.getInt("op_type");
                     String value = o.getString("op_value");
-                    if (lock.type == COLUMN) {
-                        if (type == COLUMN) {
+                    if (lock.type == COL) {
+                        if (type == COL) {
                             if (value != null && value.equals(lock.value)) {
                                project.transformations.add(s);
                             } else {
@@ -311,7 +360,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
                             }
                         }
                     } else if (lock.type == CELL) {
-                        if (type == COLUMN) {
+                        if (type == COL) {
                             throw new RuntimeException("Can't apply '" + s + "': you offered a lock for a single cell and you're attempting an operation for the entire column.");
                         } else if (type == CELL) {
                             if (value != null && value.equals(lock.value)) {
@@ -324,6 +373,8 @@ public class GridworksBrokerImpl extends GridworksBroker {
                 }
             }
 
+            projectById.put(txn, project);
+            
             txn.commit();
         } finally {
             if (txn != null) {
@@ -374,7 +425,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
         writer.array();
             int size = project.transformations.size();
             for (int i = rev; i < size; i++) {
-                writer.value(project.transformations.get(i));
+                writer.value(new JSONObject(project.transformations.get(i)));
             }
         writer.endArray();
 
@@ -487,6 +538,10 @@ public class GridworksBrokerImpl extends GridworksBroker {
             o.put("timestamp", lock.timestamp);
         }
         return o;
+    }
+    
+    String lockToString(Lock lock) {
+        return lock.id + "," + lock.pid + "," + lock.uid + "," + lock.type + "," + lock.value;
     }
     
     @Entity

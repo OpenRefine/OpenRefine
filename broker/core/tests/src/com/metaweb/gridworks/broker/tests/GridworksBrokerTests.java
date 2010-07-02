@@ -1,6 +1,6 @@
 package com.metaweb.gridworks.broker.tests;
 
-import static com.metaweb.gridworks.broker.GridworksBroker.ALL;
+import static com.metaweb.gridworks.broker.GridworksBroker.*;
 import static com.metaweb.gridworks.broker.GridworksBroker.EXPIRE;
 import static com.metaweb.gridworks.broker.GridworksBroker.GET_STATE;
 import static com.metaweb.gridworks.broker.GridworksBroker.OBTAIN_LOCK;
@@ -109,8 +109,7 @@ public class GridworksBrokerTests {
     @Test
     public void testService() {
         try {
-            JSONObject result = call(broker, request, response, EXPIRE);
-            assertJSON(result, "status", "ok");
+            success(broker, request, response, EXPIRE);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -119,8 +118,7 @@ public class GridworksBrokerTests {
     @Test
     public void testObtainLockFailure() {
         try {
-            JSONObject result = call(broker, request, response, OBTAIN_LOCK);
-            assertJSON(result, "status", "error");
+            failure(broker, request, response, OBTAIN_LOCK);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -129,8 +127,7 @@ public class GridworksBrokerTests {
     @Test
     public void testReleaseLockFailure() {
         try {
-            JSONObject result = call(broker, request, response, RELEASE_LOCK);
-            assertJSON(result, "status", "error");
+            failure(broker, request, response, RELEASE_LOCK);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -139,37 +136,120 @@ public class GridworksBrokerTests {
     @Test
     public void testStartProject() {
         try {
-            String project = "1";
+            String project = "proj1";
             String user = "testuser";
+            String user2 = "testuser2";
             String data = "blah";
             String metadata = "{}";
             String rev = "0";
             
-            JSONObject result = call(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
+            logger.info("--- obtain ALL lock on project ---");
+            JSONObject result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
             assertJSON(result, "uid", "testuser");
             String lock = result.getString("lock");
 
-            result = call(broker, request, response, START, "pid", project, "uid", user, "lock", lock, "data", data, "metadata", metadata, "rev", rev);
-            assertJSON(result, "status", "ok");
+            logger.info("--- start project ---");
+            success(broker, request, response, START, "pid", project, "uid", user, "lock", lock, "data", data, "metadata", metadata, "rev", rev);
 
-            result = call(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", rev);
+            logger.info("--- verify project state contains lock ---");
+            result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", rev);
             JSONArray locks = result.getJSONArray("locks");
             Assert.assertEquals(locks.length(), 1);
             JSONObject l = locks.getJSONObject(0);
             assertJSON(l, "uid", "testuser");
             Assert.assertEquals(l.getInt("type"), ALL);
             
-            result = call(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
-            assertJSON(result, "status", "ok");
+            logger.info("--- release ALL lock on project ---");
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
             
-            result = call(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", rev);
+            logger.info("--- verify no locks are present ---");
+            result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", rev);
             locks = result.getJSONArray("locks");
             Assert.assertEquals(locks.length(), 0);
             
-            result = call(broker, request, response, OPEN, "pid", project, "uid", user, "rev", rev);
-            assertJSON(result, "status", "ok");
+            logger.info("--- open project and verify data was loaded correctly ---");
+            result = success(broker, request, response, OPEN, "pid", project, "uid", user, "rev", rev);
             JSONArray result_data = result.getJSONArray("data");
             Assert.assertEquals(result_data.length(),data.getBytes("UTF-8").length);
+
+            JSONArray tt;
+            JSONObject t;
+            
+            logger.info("--- obtain column lock ---");
+            String column = "1";
+            result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(COL), "lockvalue", column);
+            String col_lock = result.getString("lock");
+
+            logger.info("--- perform column transformation ---");
+            t = new JSONObject();
+            t.put("op_type", COL);
+            t.put("op_value", column); // operate on col 1
+            t.put("value", new JSONObject());
+            tt = new JSONArray();
+            tt.put(t);
+            result = success(broker, request, response, TRANSFORM, "pid", project, "uid", user, "lock", col_lock, "transformations", tt.toString());
+
+            logger.info("--- make sure transformation was recorded properly ---");
+            result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", "0");
+            tt = result.getJSONArray("transformations");
+            Assert.assertEquals(tt.length(), 1);
+            t = tt.getJSONObject(0);
+            assertJSON(t, "op_value", column);
+
+            logger.info("--- make sure revision numbers in state management work as expected ---");
+            result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", "1");
+            tt = result.getJSONArray("transformations");
+            Assert.assertEquals(tt.length(), 0);
+            
+            logger.info("--- perform cell transformation ---");
+            String cell = "1";
+            t = new JSONObject();
+            t.put("op_type", CELL);
+            t.put("op_value", column + "," + cell); // operate on cell at row 1 column 1
+            t.put("value", new JSONObject());
+            tt = new JSONArray();
+            tt.put(t);
+            result = success(broker, request, response, TRANSFORM, "pid", project, "uid", user, "lock", col_lock, "transformations", tt.toString());
+            
+            logger.info("--- make sure transformation was recorded properly ---");
+            result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", "0");
+            tt = result.getJSONArray("transformations");
+            Assert.assertEquals(tt.length(), 2);
+
+            result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", "1");
+            tt = result.getJSONArray("transformations");
+            Assert.assertEquals(tt.length(), 1);
+            t = tt.getJSONObject(0);
+            assertJSON(t, "op_value", column + "," + cell);
+            
+            logger.info("--- make sure another user fails to acquire ALL lock ---");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(ALL), "lockvalue", column);
+
+            logger.info("--- make sure another user fails to acquire COL lock on the same column ---");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(COL), "lockvalue", column);
+
+            logger.info("--- make sure another user manages to acquire COL lock on another column ---");
+            String column2 = "2";
+            result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(COL), "lockvalue", column2);
+            String col_lock2 = result.getString("lock");
+            
+            logger.info("--- make sure that both locks are present ---");
+            result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", "2");
+            locks = result.getJSONArray("locks");
+            Assert.assertEquals(locks.length(), 2);
+            
+            logger.info("--- make sure we can't escalate our current COL lock to an ALL lock ---");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
+            
+            logger.info("--- release column locks ---");
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", col_lock);
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user2, "lock", col_lock2);
+            
+            logger.info("--- make sure the project has no locks ---");
+            result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", "2");
+            locks = result.getJSONArray("locks");
+            Assert.assertEquals(locks.length(), 0);
+            
         } catch (Exception e) {
             Assert.fail();
         }
@@ -181,7 +261,15 @@ public class GridworksBrokerTests {
         Assert.assertEquals(o.get(name), value);
     }
     
-    private JSONObject call(GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
+    private JSONObject success(GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
+        return call(true, broker, request, response, service, params);
+    }
+
+    private JSONObject failure(GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
+        return call(false, broker, request, response, service, params);
+    }
+    
+    private JSONObject call(boolean successful, GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
         if (params != null) {
             for (int i = 0; i < params.length; ) {
                 String name = params[i++];
@@ -206,8 +294,14 @@ public class GridworksBrokerTests {
 
         JSONObject result = new JSONObject(writer.toString());
         
-        logger.info(result.toString());
+        if (successful) {
+            assertJSON(result, "status", "ok");
+        } else {
+            assertJSON(result, "status", "error");
+        }
         
+        logger.info(result.toString());
+
         return result;
     }
 }

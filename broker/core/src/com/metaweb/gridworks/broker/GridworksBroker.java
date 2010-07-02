@@ -54,7 +54,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     static final public String OPEN = "open";
 
     static final public int ALL = 0;
-    static final public int COLUMN = 1;
+    static final public int COL = 1;
     static final public int CELL = 2;
     
     static final protected Logger logger = LoggerFactory.getLogger("gridworks.broker");
