@@ -1,7 +1,9 @@
 
 package com.metaweb.gridworks.broker;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -26,7 +28,6 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,10 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     static final protected String DELEGATED_OAUTH_HEADER = "X-Freebase-Credentials";
     static final protected String OAUTH_HEADER = "Authorization";
 
+    static final protected int ALL = 0;
+    static final protected int COLUMN = 1;
+    static final protected int CELL = 2;
+    
     static protected String OK; 
     
     static {
@@ -63,6 +68,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     }
     
     static public final long LOCK_DURATION = 60 * 1000; // 1 minute
+    static public final long USER_DURATION = 5 * 60 * 1000; // 1 minute
     static public final long LOCK_EXPIRATION_CHECK_DELAY = 5 * 1000; // 5 seconds
     
     protected HttpClient httpclient;
@@ -103,22 +109,20 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
             // we could be using a hashtable and some classes that implement the commands, but the complexity overhead
             // doesn't seem to justify the marginal benefit.
 
-            if ("get_lock".equals(path)) {
-                getLock(response, pid);
-            } else if ("expire_locks".equals(path)) {
-                expireLocks(response);
+            if ("get_state".equals(path)) {
+                getState(response, pid, uid, getInteger(request, "rev"));
+            } else if ("expire".equals(path)) {
+                expire(response);
             } else if ("obtain_lock".equals(path)) {
-                obtainLock(response, pid, uid);
+                obtainLock(response, pid, uid, getInteger(request, "locktype"), getParameter(request, "lockvalue"));
             } else if ("release_lock".equals(path)) {
                 releaseLock(response, pid, uid, getParameter(request, "lock"));
-            } else if ("history".equals(path)) {
-                getHistory(response, pid, getInteger(request, "tindex"));
             } else if ("transform".equals(path)) {
                 addTransformations(response, pid, uid, getParameter(request, "lock"), getList(request, "transformations"));
             } else if ("start".equals(path)) {
-                startProject(response, pid, uid, getParameter(request, "lock"), getParameter(request, "data"));
-            } else if ("get".equals(path)) {
-                getProject(response, pid);
+                startProject(response, pid, uid, getParameter(request, "lock"), getData(request), getParameter(request, "metadata"), getInteger(request, "rev"));
+            } else if ("open".equals(path)) {
+                openProject(response, pid);
             } else {
                 boolean value = super.process(path, request, response);
                 if (logger.isDebugEnabled()) logger.debug("< process '{}'", path);
@@ -142,21 +146,19 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     
     protected abstract HttpClient getHttpClient();
 
-    protected abstract void expireLocks(HttpServletResponse response) throws Exception;
-    
-    protected abstract void getLock(HttpServletResponse response, String pid) throws Exception;
+    protected abstract void expire(HttpServletResponse response) throws Exception;
 
-    protected abstract void obtainLock(HttpServletResponse response, String pid, String uid) throws Exception;
+    protected abstract void getState(HttpServletResponse response, String pid, String uid, int rev) throws Exception;
+
+    protected abstract void obtainLock(HttpServletResponse response, String pid, String uid, int locktype, String lockvalue) throws Exception;
     
     protected abstract void releaseLock(HttpServletResponse response, String pid, String uid, String lock) throws Exception;
-    
-    protected abstract void startProject(HttpServletResponse response, String pid, String uid, String lock, String data) throws Exception;
+
+    protected abstract void startProject(HttpServletResponse response, String pid, String uid, String lock, byte[] data, String metadata, int rev) throws Exception;
 
     protected abstract void addTransformations(HttpServletResponse response, String pid, String uid, String lock, List<String> transformations) throws Exception;
     
-    protected abstract void getProject(HttpServletResponse response, String pid) throws Exception;
-    
-    protected abstract void getHistory(HttpServletResponse response, String pid, int tindex) throws Exception;
+    protected abstract void openProject(HttpServletResponse response, String pid) throws Exception;
     
     // ----------------------------------------------------------------------------------------
     
@@ -211,9 +213,23 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
         }
         return result;
     }
-
+    
     static protected int getInteger(HttpServletRequest request, String name) throws ServletException, JSONException {
         return Integer.parseInt(getParameter(request, name));
+    }
+    
+    static protected byte[] getData(HttpServletRequest request) throws ServletException, IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        InputStream input = request.getInputStream();
+        byte[] buffer = new byte[4096];
+        int count = 0;
+        int n = 0;
+        while (-1 != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+            count += n;
+        }
+        return buffer;
+        
     }
     
     static protected void respondError(HttpServletResponse response, String error) throws IOException, ServletException {
