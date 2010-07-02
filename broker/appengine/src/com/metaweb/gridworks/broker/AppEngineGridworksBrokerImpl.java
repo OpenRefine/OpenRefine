@@ -87,18 +87,21 @@ public class AppEngineGridworksBrokerImpl extends GridworksBroker {
         }
     }
     
-    protected void getLock(HttpServletResponse response, String pid) throws Exception {
+    protected void getState(HttpServletResponse response, String pid, String rev) throws Exception {
         PersistenceManager pm = pmfInstance.getPersistenceManager();
         
         try {
+            // FIXME
             respond(response, lockToJSON(getLock(pm,pid)));
         } finally {
             pm.close();
         }
     }
 
-    protected void obtainLock(HttpServletResponse response, String pid, String uid) throws Exception {
+    protected void obtainLock(HttpServletResponse response, String pid, String uid, String type) throws Exception {
         PersistenceManager pm = pmfInstance.getPersistenceManager();
+        
+        // FIXME (use type)
         
         try {
             Lock lock = getLock(pm, pid);
@@ -224,7 +227,7 @@ public class AppEngineGridworksBrokerImpl extends GridworksBroker {
 
     // ---------------------------------------------------------------------------------
     
-    protected void getProject(HttpServletResponse response, String pid) throws Exception {
+    protected void openProject(HttpServletResponse response, String pid) throws Exception {
         PersistenceManager pm = pmfInstance.getPersistenceManager();
         
         try {
@@ -271,7 +274,7 @@ public class AppEngineGridworksBrokerImpl extends GridworksBroker {
             pm.close();
         }
     }
-
+    
     // ---------------------------------------------------------------------------------
     
     Project getProject(PersistenceManager pm, String pid) {

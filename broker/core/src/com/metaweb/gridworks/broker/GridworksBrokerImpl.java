@@ -57,7 +57,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
 
         timer = new Timer();
         expirer = new Expirer();
-        timer.schedule(expirer, LOCK_EXPIRATION_CHECK_DELAY, LOCK_EXPIRATION_CHECK_DELAY);
+        timer.schedule(expirer, 0, LOCK_EXPIRATION_CHECK_DELAY);
         
         String dataDir = config.getInitParameter("gridworks.data");
         if (dataDir == null) dataDir = "data";
@@ -159,7 +159,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
         
     @Override
     protected void obtainLock(HttpServletResponse response, String pid, String uid, int locktype, String lockvalue) throws Exception {
-
+        logger.trace("> obtain lock");
         Lock lock = null;
 
         Transaction txn = env.beginTransaction(null, null);
@@ -170,6 +170,8 @@ public class GridworksBrokerImpl extends GridworksBroker {
             
             try {
                 for (Lock l : cursor) {
+                    logger.info("found lock: {}", l.id);
+
                     if (locktype == ALL) {
                         if (l.type == ALL) {
                             lock = l;
@@ -195,6 +197,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
             } 
     
             if (lock == null) {
+                logger.info("no lock found, creating new");
                 lock = new Lock(Long.toHexString(txn.getId()), pid, uid, locktype, lockvalue);
                 lockById.put(txn, lock);
                 txn.commit();
@@ -207,7 +210,9 @@ public class GridworksBrokerImpl extends GridworksBroker {
             }
         }
         
-        respond(response, lockToJSON(lock));
+        respond(response, lockToJSON(lock, uid));
+        
+        logger.trace("< obtain lock");
     }
     
     @Override
@@ -221,7 +226,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
                 if (!lock.uid.equals(uid)) {
                     throw new RuntimeException("User id doesn't match the lock owner, can't release the lock");
                 }
-                lockById.delete(pid);
+                lockById.delete(lid);
                 txn.commit();
             }
         } finally {
@@ -368,16 +373,14 @@ public class GridworksBrokerImpl extends GridworksBroker {
                 writer.value(project.transformations.get(i));
             }
         writer.endArray();
-        writer.endObject();
 
         EntityCursor<Lock> cursor = locksByProject.subIndex(pid).entities(); 
         
         try {
-            writer.object();
             writer.key("locks"); 
             writer.array();
             for (Lock lock : cursor) {
-                writer.value(lockToJSON(lock));
+                writer.value(lockToJSON(lock, uid));
             }
             writer.endArray();
             writer.endObject();
@@ -464,12 +467,19 @@ public class GridworksBrokerImpl extends GridworksBroker {
         return lock;
     }    
     
-    JSONObject lockToJSON(Lock lock) throws JSONException {
+    JSONObject lockToJSON(Lock lock, String uid) throws JSONException {
         JSONObject o = new JSONObject();
         if (lock != null) {
-            o.put("lock_id", lock.id);
-            o.put("project_id", lock.pid);
-            o.put("user_id", lock.uid);
+            // NOTE: only the owner of the lock should get the ID, 
+            // otherwise others can just fake ownership of other people's locks
+            if (lock.uid.equals(uid)) { 
+                o.put("lock", lock.id);
+            }
+            
+            o.put("pid", lock.pid);
+            o.put("uid", lock.uid);
+            o.put("type", lock.type);
+            o.put("value", lock.value);
             o.put("timestamp", lock.timestamp);
         }
         return o;

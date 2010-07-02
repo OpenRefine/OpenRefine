@@ -44,17 +44,25 @@ import edu.mit.simile.butterfly.ButterflyModuleImpl;
  * 
  */
 public abstract class GridworksBroker extends ButterflyModuleImpl {
-            
-    protected static final Logger logger = LoggerFactory.getLogger("gridworks.broker");
+    
+    static final public String GET_STATE = "get_state";
+    static final public String EXPIRE = "expire";
+    static final public String OBTAIN_LOCK = "obtain_lock";
+    static final public String RELEASE_LOCK = "release_lock";
+    static final public String TRANSFORM = "transform";
+    static final public String START = "start";
+    static final public String OPEN = "open";
+
+    static final public int ALL = 0;
+    static final public int COLUMN = 1;
+    static final public int CELL = 2;
+    
+    static final protected Logger logger = LoggerFactory.getLogger("gridworks.broker");
     
     static final protected String USER_INFO_URL = "http://www.freebase.com/api/service/user_info";
     static final protected String DELEGATED_OAUTH_HEADER = "X-Freebase-Credentials";
     static final protected String OAUTH_HEADER = "Authorization";
 
-    static final protected int ALL = 0;
-    static final protected int COLUMN = 1;
-    static final protected int CELL = 2;
-    
     static protected String OK; 
     
     static {
@@ -98,31 +106,31 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
 
         try {
 
-            if ("get_state".equals(path)) {
+            if (GET_STATE.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
                 getState(response, getParameter(request, "pid"), getUserId(request), getInteger(request, "rev"));
-            } else if ("expire".equals(path)) {
+            } else if (EXPIRE.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
                 expire(response);
-            } else if ("obtain_lock".equals(path)) {
+            } else if (OBTAIN_LOCK.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
                 obtainLock(response, getParameter(request, "pid"), getUserId(request), getInteger(request, "locktype"), getParameter(request, "lockvalue"));
-            } else if ("release_lock".equals(path)) {
+            } else if (RELEASE_LOCK.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
                 releaseLock(response, getParameter(request, "pid"), getUserId(request), getParameter(request, "lock"));
-            } else if ("transform".equals(path)) {
+            } else if (TRANSFORM.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
                 addTransformations(response, getParameter(request, "pid"), getUserId(request), getParameter(request, "lock"), getList(request, "transformations"));
-            } else if ("start".equals(path)) {
+            } else if (START.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
                 startProject(response, getParameter(request, "pid"), getUserId(request), getParameter(request, "lock"), getData(request), getParameter(request, "metadata"), getInteger(request, "rev"));
-            } else if ("open".equals(path)) {
+            } else if (OPEN.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
                 openProject(response, getParameter(request, "pid"));
@@ -243,7 +251,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
         
         try {
             JSONObject o = new JSONObject();
-            o.put("code", "error");
+            o.put("status", "error");
             o.put("message", error);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             respond(response, o.toString());
@@ -260,7 +268,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
         
         try {
             JSONObject o = new JSONObject();
-            o.put("code", "error");
+            o.put("status", "error");
             o.put("message", e.getMessage());
         
             StringWriter sw = new StringWriter();
@@ -283,8 +291,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
             throw new ServletException("Content object can't be null");
         }
         
-        JSONObject o = new JSONObject();
-        respond(response, o.toString());
+        respond(response, content.toString());
     }
 
     static protected void respond(HttpServletResponse response, String content) throws IOException, ServletException {

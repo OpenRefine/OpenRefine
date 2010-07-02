@@ -1,25 +1,34 @@
 package com.metaweb.gridworks.broker.tests;
 
+import static com.metaweb.gridworks.broker.GridworksBroker.ALL;
+import static com.metaweb.gridworks.broker.GridworksBroker.EXPIRE;
+import static com.metaweb.gridworks.broker.GridworksBroker.GET_STATE;
+import static com.metaweb.gridworks.broker.GridworksBroker.OBTAIN_LOCK;
+import static com.metaweb.gridworks.broker.GridworksBroker.RELEASE_LOCK;
+import static com.metaweb.gridworks.broker.GridworksBroker.START;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
@@ -30,9 +39,8 @@ import com.metaweb.gridworks.broker.GridworksBrokerImpl;
 
 public class GridworksBrokerTests {
 
-    protected Logger logger;
-
-    protected File data;
+    Logger logger;
+    File data;
     
     @BeforeSuite
     public void suite_init() {
@@ -43,80 +51,151 @@ public class GridworksBrokerTests {
 
     @AfterSuite
     public void suite_destroy() {
+        for (File f : data.listFiles()) {
+            f.delete();
+        }
+        data.delete();
     }
 
+    // ------------------------------------------------------------------------------------
+    
+    ServletConfig config = null;
+    GridworksBroker broker = null;
+    
     @BeforeTest
-    public void test_init() {
+    public void test_init() throws Exception {
         logger = LoggerFactory.getLogger(this.getClass());
-    }
-        
-    // System under test
-    GridworksBroker SUT = null;
+        config = mock(ServletConfig.class);
+        when(config.getInitParameter("gridworks.data")).thenReturn(data.getAbsolutePath());
+        when(config.getInitParameter("gridworks.development")).thenReturn("true");
 
-    // mocks
+        broker = new GridworksBrokerImpl();
+        broker.init(config);
+    }
+
+    @AfterTest
+    public void test_destroy() throws Exception {
+        broker.destroy();
+        broker = null;
+        config = null;
+    }
+    
+    // ------------------------------------------------------------------------------------
+
     HttpServletRequest request = null;
     HttpServletResponse response = null;
-    ServletConfig config = null;
     StringWriter writer = null;
     
     @BeforeMethod
     public void setup() throws Exception {
-        config = mock(ServletConfig.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        writer = new StringWriter();
-
-        when(config.getInitParameter("gridworks.data")).thenReturn(data.getAbsolutePath());
-        when(response.getWriter()).thenReturn(new PrintWriter(writer));
-
-        SUT = new GridworksBrokerImpl();
-        SUT.init(config);
     }
 
     @AfterMethod
     public void teardown() throws Exception {
-        SUT.destroy();
-        SUT = null;
-    
-        writer = null;
         response = null;
         request = null;
-        config = null;
     }
     
     // ------------------------------------------------------------------------------------
 
     @Test
     public void testLifeCycle() {
-        logger.info("testing lifecycle");
         Assert.assertTrue(true);
     }
 
     @Test
     public void testService() {
         try {
-            call(SUT, request, response, "expire", null);
-            logger.info(writer.toString());
+            JSONObject result = call(broker, request, response, EXPIRE);
+            assertJSON(result, "status", "ok");
         } catch (Exception e) {
             Assert.fail();
         }
     }
 
+    @Test
+    public void testObtainLockFailure() {
+        try {
+            JSONObject result = call(broker, request, response, OBTAIN_LOCK);
+            assertJSON(result, "status", "error");
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testReleaseLockFailure() {
+        try {
+            JSONObject result = call(broker, request, response, RELEASE_LOCK);
+            assertJSON(result, "status", "error");
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testStartProject() {
+        try {
+            JSONObject result = call(broker, request, response, OBTAIN_LOCK, "pid", "1", "uid", "testuser", "locktype", Integer.toString(ALL), "lockvalue", "");
+            assertJSON(result, "uid", "testuser");
+            String lock = result.getString("lock");
+
+            result = call(broker, request, response, START, "pid", "1", "uid", "testuser", "lock", lock, "data", "blah", "metadata", "{}", "rev", "0");
+            assertJSON(result, "status", "ok");
+
+            result = call(broker, request, response, GET_STATE, "pid", "1", "uid", "testuser", "rev", "0");
+            JSONArray locks = result.getJSONArray("locks");
+            Assert.assertEquals(locks.length(), 1);
+            JSONObject l = locks.getJSONObject(0);
+            assertJSON(l, "uid", "testuser");
+            Assert.assertEquals(l.getInt("type"), ALL);
+            
+            result = call(broker, request, response, RELEASE_LOCK, "pid", "1", "uid", "testuser", "lock", lock);
+            assertJSON(result, "status", "ok");
+            
+            result = call(broker, request, response, GET_STATE, "pid", "1", "uid", "testuser", "rev", "0");
+            locks = result.getJSONArray("locks");
+            Assert.assertEquals(locks.length(), 0);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+    
     // ------------------------------------------------------------------------------------
     
-    private void call(GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, Map<String,String> params) throws Exception {
+    private void assertJSON(JSONObject o, String name, String value) throws JSONException {
+        Assert.assertEquals(o.get(name), value);
+    }
+    
+    private JSONObject call(GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
         if (params != null) {
-            for (Entry<String,String> e : params.entrySet()) {
-                when(request.getParameter(e.getKey())).thenReturn(e.getValue());
+            for (int i = 0; i < params.length; ) {
+                String name = params[i++];
+                String value = params[i++];
+                if ("data".equals(name)) {
+                    final ByteArrayInputStream inputStream = new ByteArrayInputStream(value.getBytes("UTF-8"));
+                    when(request.getInputStream()).thenReturn(new ServletInputStream() {
+                        public int read() throws IOException {
+                            return inputStream.read();
+                        }
+                    });                    
+                } else {
+                    when(request.getParameter(name)).thenReturn(value);
+                }
             }
         }
 
-        broker.process(service, request, response);
+        StringWriter writer = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
         
-        if (params != null) {
-            for (Entry<String,String> e : params.entrySet()) {
-                verify(request,times(1)).getParameter(e.getKey());
-            }
-        }
+        broker.process(service, request, response);
+
+        JSONObject result = new JSONObject(writer.toString());
+        
+        logger.info(result.toString());
+        
+        return result;
     }
 }
