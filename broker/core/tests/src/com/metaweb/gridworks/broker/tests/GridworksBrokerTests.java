@@ -6,6 +6,7 @@ import static com.metaweb.gridworks.broker.GridworksBroker.GET_STATE;
 import static com.metaweb.gridworks.broker.GridworksBroker.OBTAIN_LOCK;
 import static com.metaweb.gridworks.broker.GridworksBroker.RELEASE_LOCK;
 import static com.metaweb.gridworks.broker.GridworksBroker.START;
+import static com.metaweb.gridworks.broker.GridworksBroker.OPEN;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -138,26 +139,37 @@ public class GridworksBrokerTests {
     @Test
     public void testStartProject() {
         try {
-            JSONObject result = call(broker, request, response, OBTAIN_LOCK, "pid", "1", "uid", "testuser", "locktype", Integer.toString(ALL), "lockvalue", "");
+            String project = "1";
+            String user = "testuser";
+            String data = "blah";
+            String metadata = "{}";
+            String rev = "0";
+            
+            JSONObject result = call(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
             assertJSON(result, "uid", "testuser");
             String lock = result.getString("lock");
 
-            result = call(broker, request, response, START, "pid", "1", "uid", "testuser", "lock", lock, "data", "blah", "metadata", "{}", "rev", "0");
+            result = call(broker, request, response, START, "pid", project, "uid", user, "lock", lock, "data", data, "metadata", metadata, "rev", rev);
             assertJSON(result, "status", "ok");
 
-            result = call(broker, request, response, GET_STATE, "pid", "1", "uid", "testuser", "rev", "0");
+            result = call(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", rev);
             JSONArray locks = result.getJSONArray("locks");
             Assert.assertEquals(locks.length(), 1);
             JSONObject l = locks.getJSONObject(0);
             assertJSON(l, "uid", "testuser");
             Assert.assertEquals(l.getInt("type"), ALL);
             
-            result = call(broker, request, response, RELEASE_LOCK, "pid", "1", "uid", "testuser", "lock", lock);
+            result = call(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
             assertJSON(result, "status", "ok");
             
-            result = call(broker, request, response, GET_STATE, "pid", "1", "uid", "testuser", "rev", "0");
+            result = call(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", rev);
             locks = result.getJSONArray("locks");
             Assert.assertEquals(locks.length(), 0);
+            
+            result = call(broker, request, response, OPEN, "pid", project, "uid", user, "rev", rev);
+            assertJSON(result, "status", "ok");
+            JSONArray result_data = result.getJSONArray("data");
+            Assert.assertEquals(result_data.length(),data.getBytes("UTF-8").length);
         } catch (Exception e) {
             Assert.fail();
         }

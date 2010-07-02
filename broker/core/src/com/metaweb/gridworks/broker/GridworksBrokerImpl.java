@@ -210,7 +210,9 @@ public class GridworksBrokerImpl extends GridworksBroker {
             }
         }
         
-        respond(response, lockToJSON(lock, uid));
+        JSONObject o = lockToJSON(lock, uid);
+        o.put("status", "ok");
+        respond(response, o);
         
         logger.trace("< obtain lock");
     }
@@ -342,6 +344,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
         Writer w = response.getWriter();
         JSONWriter writer = new JSONWriter(w);
         writer.object();
+            writer.key("status"); writer.value("ok");
             writer.key("data"); writer.value(project.data);
             writer.key("metadata"); writer.value(new JSONObject(project.metadata));
             writer.key("transformations"); 
@@ -366,6 +369,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
         JSONWriter writer = new JSONWriter(w);
         
         writer.object();
+        writer.key("status"); writer.value("ok");
         writer.key("transformations"); 
         writer.array();
             int size = project.transformations.size();

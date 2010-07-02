@@ -239,7 +239,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
             output.write(buffer, 0, n);
             count += n;
         }
-        return buffer;
+        return output.toByteArray();
         
     }
     
