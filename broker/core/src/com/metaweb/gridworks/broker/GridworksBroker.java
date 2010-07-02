@@ -96,39 +96,42 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
             logger.info("process '{}'", path);
         }
 
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
-        
         try {
-            String uid = getUserId(request);
-            logger.debug("uid: {}", uid);
-            String pid = getParameter(request, "pid");
-            logger.debug("pid: {}", pid);
-            
-            // NOTE: conditionals should be ordered by call frequency estimate to (slightly) improve performance
-            // we could be using a hashtable and some classes that implement the commands, but the complexity overhead
-            // doesn't seem to justify the marginal benefit.
 
             if ("get_state".equals(path)) {
-                getState(response, pid, uid, getInteger(request, "rev"));
+                response.setCharacterEncoding("UTF-8");
+                response.setHeader("Content-Type", "application/json");
+                getState(response, getParameter(request, "pid"), getUserId(request), getInteger(request, "rev"));
             } else if ("expire".equals(path)) {
+                response.setCharacterEncoding("UTF-8");
+                response.setHeader("Content-Type", "application/json");
                 expire(response);
             } else if ("obtain_lock".equals(path)) {
-                obtainLock(response, pid, uid, getInteger(request, "locktype"), getParameter(request, "lockvalue"));
+                response.setCharacterEncoding("UTF-8");
+                response.setHeader("Content-Type", "application/json");
+                obtainLock(response, getParameter(request, "pid"), getUserId(request), getInteger(request, "locktype"), getParameter(request, "lockvalue"));
             } else if ("release_lock".equals(path)) {
-                releaseLock(response, pid, uid, getParameter(request, "lock"));
+                response.setCharacterEncoding("UTF-8");
+                response.setHeader("Content-Type", "application/json");
+                releaseLock(response, getParameter(request, "pid"), getUserId(request), getParameter(request, "lock"));
             } else if ("transform".equals(path)) {
-                addTransformations(response, pid, uid, getParameter(request, "lock"), getList(request, "transformations"));
+                response.setCharacterEncoding("UTF-8");
+                response.setHeader("Content-Type", "application/json");
+                addTransformations(response, getParameter(request, "pid"), getUserId(request), getParameter(request, "lock"), getList(request, "transformations"));
             } else if ("start".equals(path)) {
-                startProject(response, pid, uid, getParameter(request, "lock"), getData(request), getParameter(request, "metadata"), getInteger(request, "rev"));
+                response.setCharacterEncoding("UTF-8");
+                response.setHeader("Content-Type", "application/json");
+                startProject(response, getParameter(request, "pid"), getUserId(request), getParameter(request, "lock"), getData(request), getParameter(request, "metadata"), getInteger(request, "rev"));
             } else if ("open".equals(path)) {
-                openProject(response, pid);
+                response.setCharacterEncoding("UTF-8");
+                response.setHeader("Content-Type", "application/json");
+                openProject(response, getParameter(request, "pid"));
             } else {
                 boolean value = super.process(path, request, response);
                 if (logger.isDebugEnabled()) logger.debug("< process '{}'", path);
                 return value;
             }
-            
+                
         } catch (RuntimeException e) {
             logger.error("runtime error", e.getMessage());
             respondError(response, e.getMessage());
