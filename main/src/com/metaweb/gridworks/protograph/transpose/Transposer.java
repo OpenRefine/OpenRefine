@@ -14,7 +14,6 @@ import com.metaweb.gridworks.model.Recon.Judgment;
 import com.metaweb.gridworks.protograph.AnonymousNode;
 import com.metaweb.gridworks.protograph.CellNode;
 import com.metaweb.gridworks.protograph.CellTopicNode;
-import com.metaweb.gridworks.protograph.FreebaseProperty;
 import com.metaweb.gridworks.protograph.FreebaseTopicNode;
 import com.metaweb.gridworks.protograph.Link;
 import com.metaweb.gridworks.protograph.Node;
@@ -101,7 +100,7 @@ public class Transposer {
         TransposedNode tnode = null;
         
         TransposedNode parentNode = context.parent == null ? null : context.parent.transposedNode;
-        FreebaseProperty property = context.parent == null ? null : context.link.property;
+        Link link = context.parent == null ? null : context.link;
         
         if (node instanceof CellNode) {
             CellNode node2 = (CellNode) node;
@@ -121,7 +120,7 @@ public class Transposer {
                 
                 tnode = nodeFactory.transposeCellNode(
                     parentNode,
-                    property,
+                    link,
                     node2, 
                     rowIndex,
                     cell
@@ -131,21 +130,21 @@ public class Transposer {
             if (node instanceof AnonymousNode) {
                 tnode = nodeFactory.transposeAnonymousNode(
                     parentNode,
-                    property,
+                    link,
                     (AnonymousNode) node,
                     rowIndex
                 );
             } else if (node instanceof FreebaseTopicNode) {
                 tnode = nodeFactory.transposeTopicNode(
                     parentNode,
-                    property,
+                    link,
                     (FreebaseTopicNode) node,
                     rowIndex
                 );
             } else if (node instanceof ValueNode) {
                 tnode = nodeFactory.transposeValueNode(
                     parentNode,
-                    property,
+                    link,
                     (ValueNode) node,
                     rowIndex
                 );
@@ -180,12 +179,12 @@ public class Transposer {
     }
     
     static class Context {
-        TransposedNode     transposedNode;
+        TransposedNode    transposedNode;
         List<Context>     subContexts;
-        Context         parent;
-        Link            link;
-        int                count;
-        int                limit;
+        Context           parent;
+        Link              link;
+        int               count;
+        int               limit;
         
         Context(Node node, Context parent, Link link, int limit) {
             this.parent = parent;

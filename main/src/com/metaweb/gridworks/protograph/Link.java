@@ -8,12 +8,14 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.Jsonizable;
 
 public class Link implements Jsonizable {
-    final public FreebaseProperty     property;
+    final public FreebaseProperty    property;
     final public Node                target;
+    final public boolean             load;
     
-    public Link(FreebaseProperty property, Node target) {
+    public Link(FreebaseProperty property, Node target, boolean load) {
         this.property = property;
         this.target = target;
+        this.load = load;
     }
     
     public FreebaseProperty getProperty() {

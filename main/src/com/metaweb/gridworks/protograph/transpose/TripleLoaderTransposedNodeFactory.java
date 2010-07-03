@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metaweb.gridworks.model.Cell;
@@ -22,7 +24,9 @@ import com.metaweb.gridworks.protograph.CellNode;
 import com.metaweb.gridworks.protograph.CellTopicNode;
 import com.metaweb.gridworks.protograph.CellValueNode;
 import com.metaweb.gridworks.protograph.FreebaseProperty;
+import com.metaweb.gridworks.protograph.FreebaseTopic;
 import com.metaweb.gridworks.protograph.FreebaseTopicNode;
+import com.metaweb.gridworks.protograph.Link;
 import com.metaweb.gridworks.protograph.ValueNode;
 
 public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory {
@@ -35,6 +39,11 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     protected Map<Long, String> newTopicVars = new HashMap<Long, String>();
     protected Set<Long> serializedRecons = new HashSet<Long>();
     
+    protected long contextID = 0;
+    protected int contextRowIndex;
+    protected int contextRefCount = 0;
+    protected JSONObject contextTreeRoot;
+    
     public TripleLoaderTransposedNodeFactory(Project project, Writer writer) {
         this.project = project;
         this.writer = writer;
@@ -45,6 +54,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         if (lastRootNode != null) {
             lastRootNode.write(null, null, project, -1, -1, null);
             lastRootNode = null;
+            
+            writeContextTreeNode();
         }
     }
     
@@ -61,73 +72,63 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
     }
     
-    protected void writeRecon(StringBuffer sb, Project project, int rowIndex, int cellIndex, Cell cell) {
+    protected void writeRecon(
+        StringBuffer sb, 
+        Project project, 
+        int rowIndex, 
+        int cellIndex, 
+        Cell cell
+    ) {
         Recon recon = cell.recon;
-        Column column = project.columnModel.getColumnByCellIndex(cellIndex);
         
-        sb.append("{ ");
-        sb.append("\"id\" : "); sb.append(Long.toString(recon.id));
+        sb.append("\"rec"); sb.append(Long.toString(recon.id)); sb.append("\"");
+        contextRefCount++;
         
         if (!serializedRecons.contains(recon.id)) {
             serializedRecons.add(recon.id);
             
-            String s = cell.value instanceof String ? (String) cell.value : cell.value.toString();
-                    
-            sb.append(", \"history_entry\" : "); sb.append(Long.toString(recon.judgmentHistoryEntry));
-            sb.append(", \"text\" : "); sb.append(JSONObject.quote(s));
-            sb.append(", \"column\" : "); sb.append(JSONObject.quote(column.getName()));
-            sb.append(", \"service\" : "); sb.append(JSONObject.quote(recon.service));
-            sb.append(", \"action\" : "); sb.append(JSONObject.quote(recon.judgmentAction));
-            sb.append(", \"batch\" : "); sb.append(Integer.toString(recon.judgmentBatchSize));
-            sb.append(", \"matchRank\" : "); sb.append(Integer.toString(recon.matchRank));
-        }
-        /*
-        sb.append(", \"row\" : [");
-        {
-            boolean first = true;
-            Row row = project.rows.get(rowIndex);
-            RowDependency rowDependency = project.recordModel.getRowDependency(rowIndex);
-            List<Integer> contextRows = rowDependency.contextRows;
+            Column column = project.columnModel.getColumnByCellIndex(cellIndex);
             
-            int maxColumns = project.columnModel.columns.size();
-            for (int c = 0; c < maxColumns; c++) {
-                Column column2 = project.columnModel.columns.get(c);
-                int cellIndex2 = column2.getCellIndex();
+            // qa:sample_group
+            {
+                StringBuffer sb2 = new StringBuffer();
                 
-                if (cellIndex2 != cellIndex) {
-                    Object value = row.getCellValue(cellIndex2);
-                    if (!ExpressionUtils.isNonBlankData(value) && contextRows != null) {
-                        for (int i = contextRows.size() - 1; i >= 0; i--) {
-                            int rowIndex2 = contextRows.get(i);
-                            Row row2 = project.rows.get(rowIndex2);
-                            
-                            value = row2.getCellValue(cellIndex2);
-                            if (ExpressionUtils.isNonBlankData(value)) {
-                                break;
-                            }
-                        }
-                    }
+                sb2.append("{ \"s\" : \"rec"); 
+                sb2.append(Long.toString(recon.id)); 
+                sb2.append("\", \"p\" : \"qa:sample_group\", \"o\" : ");
+                sb2.append(JSONObject.quote(column.getName()));
+                sb2.append(" }");
+                
+                writeLine(sb2.toString());
+            }
+            
+            // qa:recon_data
+            {
+                StringBuffer sb2 = new StringBuffer();
+                
+                String s = cell.value instanceof String ? (String) cell.value : cell.value.toString();
                     
-                    if (ExpressionUtils.isNonBlankData(value)) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            sb.append(",");
-                        }
-                        
-                        String s2 = value instanceof String ? (String) value : value.toString();
-                        
-                        sb.append("{\"c\":"); sb.append(JSONObject.quote(column2.getName()));
-                        sb.append(",\"v\":"); sb.append(JSONObject.quote(s2));
-                        sb.append("}");
-                    }
+                sb2.append("{ \"s\" : \"rec"); 
+                sb2.append(Long.toString(recon.id)); 
+                sb2.append("\", \"p\" : \"qa:recon_data\", \"o\" : { ");
+                
+                sb2.append(" \"history_entry\" : "); sb2.append(Long.toString(recon.judgmentHistoryEntry));
+                sb2.append(", \"text\" : "); sb2.append(JSONObject.quote(s));
+                sb2.append(", \"column\" : "); sb2.append(JSONObject.quote(column.getName()));
+                sb2.append(", \"service\" : "); sb2.append(JSONObject.quote(recon.service));
+                sb2.append(", \"action\" : "); sb2.append(JSONObject.quote(recon.judgmentAction));
+                sb2.append(", \"batch\" : "); sb2.append(Integer.toString(recon.judgmentBatchSize));
+                
+                if (recon.judgment == Judgment.Matched) {
+                    sb2.append(", \"matchRank\" : "); sb2.append(Integer.toString(recon.matchRank));
+                    sb2.append(", \"id\" : "); sb2.append(JSONObject.quote(recon.match.id));
                 }
+                
+                sb2.append(" } }");
+                
+                writeLine(sb2.toString());
             }
         }
-        sb.append("]");
-        */
-        
-        sb.append(" }");
     }
     
     protected void writeLine(
@@ -147,17 +148,19 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             if (subjectCell != null || objectCell != null) {
                 sb.append(", \"meta\" : { ");
                 
+                sb.append("\"recon\" : { ");
                 if (subjectCell != null) {
-                    sb.append("\"srecon\" : ");
+                    sb.append("\"s\" : ");
                     writeRecon(sb, project, subjectRowIndex, subjectCellIndex, subjectCell);
                 }
                 if (objectCell != null) {
                     if (subjectCell != null) {
                         sb.append(", ");
                     }
-                    sb.append("\"orecon\" : ");
+                    sb.append("\"o\" : ");
                     writeRecon(sb, project, objectRowIndex, objectCellIndex, objectCell);
                 }
+                sb.append(" }");
                 
                 sb.append(" }");
             }
@@ -183,8 +186,10 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                     
             if (subjectCell != null) {
                 sb.append(", \"meta\" : { ");
-                sb.append("\"srecon\" : ");
+                sb.append("\"recon\" : { ");
+                sb.append("\"s\" : ");
                 writeRecon(sb, project, subjectRowIndex, subjectCellIndex, subjectCell);
+                sb.append(" }");
                 sb.append(" }");
             }
             sb.append(" }");
@@ -193,20 +198,35 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
     }
     
-    protected interface WritingTransposedNode extends TransposedNode {
-        public Object write(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell);
+    abstract protected class WritingTransposedNode implements TransposedNode {
+        JSONObject jsonContextNode;
+        boolean load;
+        
+        public Object write(
+                String subject, String predicate, Project project,
+                int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+            return load ? internalWrite(subject, predicate, project, subjectRowIndex, subjectCellIndex, subjectCell) : null;
+        }
+        
+        abstract public Object internalWrite(
+            String subject, String predicate, Project project,
+            int subjectRowIndex, int subjectCellIndex, Cell subjectCell);
     }
     
-    abstract protected class TransposedNodeWithChildren implements WritingTransposedNode {
-        public List<FreebaseProperty> properties = new LinkedList<FreebaseProperty>();
+    abstract protected class TransposedNodeWithChildren extends WritingTransposedNode {
+        public List<Link> links = new LinkedList<Link>();
+        public List<Integer> rowIndices = new LinkedList<Integer>();
         public List<WritingTransposedNode> children = new LinkedList<WritingTransposedNode>();
         
         protected void writeChildren(String subject, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             for (int i = 0; i < children.size(); i++) {
                 WritingTransposedNode child = children.get(i);
-                String predicate = properties.get(i).id;
-                
-                child.write(subject, predicate, project, subjectRowIndex, subjectCellIndex, subjectCell);
+                Link link = links.get(i);
+                if (link.load) {
+                    String predicate = link.property.id;
+                    
+                    child.write(subject, predicate, project, subjectRowIndex, subjectCellIndex, subjectCell);
+                }
             }
         }
     }
@@ -215,30 +235,72 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         
         //protected AnonymousTransposedNode(AnonymousNode node) { }
         
-        public Object write(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+        public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             if (children.size() == 0 || subject == null) {
                 return null;
             }
             
             StringBuffer sb = new StringBuffer();
-            sb.append("{ ");
+            sb.append("{ \"s\" : \""); sb.append(subject); sb.append('"');
+            sb.append(", \"p\" : \""); sb.append(predicate); sb.append('"');
+            sb.append(", \"o\" : { ");
+            
+            StringBuffer sbRecon = new StringBuffer();
             
             boolean first = true;
+            boolean firstRecon = true;
+            
+            if (subjectCell.recon != null) {
+                sbRecon.append("\"s\" : ");
+                writeRecon(sbRecon, project, subjectRowIndex, subjectCellIndex, subjectCell);
+                
+                firstRecon = false;
+            }
+            
             for (int i = 0; i < children.size(); i++) {
-                Object c = children.get(i).write(null, null, project, subjectRowIndex, subjectCellIndex, null);
-                if (c != null) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        sb.append(", ");
+                WritingTransposedNode child = children.get(i);
+                Link link = links.get(i);
+                
+                if (link.load) {
+                    FreebaseProperty property = link.property;
+                    
+                    Object c = child.internalWrite(null, null, project, subjectRowIndex, subjectCellIndex, null);
+                    if (c != null) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            sb.append(", ");
+                        }
+                        sb.append("\"" + property.id + "\": ");
+                        sb.append(c instanceof String ? JSONObject.quote((String) c) : c.toString());
                     }
-                    sb.append("\"" + properties.get(i).id + "\": ");
-                    sb.append(c instanceof String ? JSONObject.quote((String) c) : c.toString());
+                    
+                    if (child instanceof CellTopicTransposedNode) {
+                        CellTopicTransposedNode child2 = (CellTopicTransposedNode) child;
+                        Recon recon = child2.cell.recon;
+                        
+                        if (recon != null &&
+                            (recon.judgment == Judgment.Matched || recon.judgment == Judgment.New)) {
+                            
+                            if (firstRecon) {
+                                firstRecon = false;
+                            } else {
+                                sbRecon.append(", ");
+                            }
+                            
+                            sbRecon.append("\""); sbRecon.append(property.id); sbRecon.append("\" : ");
+                            
+                            writeRecon(sbRecon, project, 
+                                rowIndices.get(i), child2.cellIndex, child2.cell);
+                        }
+                    }
                 }
             }
-            sb.append(" }");
+            sb.append(" }, \"meta\" : { \"recon\" : { ");
+            sb.append(sbRecon.toString());
+            sb.append(" } } }");
             
-            writeLine(subject, predicate, sb, project, subjectRowIndex, subjectCellIndex, subjectCell, -1, -1, null);
+            writeLine(sb.toString());
             
             return null;
         }
@@ -257,7 +319,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public Object write(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+        public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             String id = null;
             int objectRowIndex = -1;
             int objectCellIndex = -1;
@@ -307,7 +369,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
     }
     
-    protected class CellValueTransposedNode implements WritingTransposedNode {
+    protected class CellValueTransposedNode extends WritingTransposedNode {
         protected JSONObject obj;
         protected CellValueNode node;
         protected int rowIndex;
@@ -321,7 +383,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public Object write(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+        public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             if (subject != null) {
                 if ("/type/text".equals(node.lang)) {
                     writeLine(subject, predicate, cell.value, node.lang, project, 
@@ -337,7 +399,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
     }
     
-    protected class CellKeyTransposedNode implements WritingTransposedNode {
+    protected class CellKeyTransposedNode extends WritingTransposedNode {
         protected CellKeyNode node;
         protected int rowIndex;
         protected int cellIndex;
@@ -350,7 +412,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
-        public Object write(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+        public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             writeLine(subject, "key", node.namespace.id + "/" + cell.value, project, 
                 subjectRowIndex, subjectCellIndex, subjectCell, 
                 -1, -1, null);
@@ -366,7 +428,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.node = node;
         }
 
-        public Object write(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+        public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             writeLine(subject, predicate, node.topic.id, project, 
                 subjectRowIndex, subjectCellIndex, subjectCell, 
                 -1, -1, null);
@@ -377,14 +439,14 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
     }
 
-    protected class ValueTransposedNode implements WritingTransposedNode {
+    protected class ValueTransposedNode extends WritingTransposedNode {
         protected ValueNode node;
         
         public ValueTransposedNode(ValueNode node) {
             this.node = node;
         }
 
-        public Object write(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+        public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             if ("/type/text".equals(node.lang)) {
                 writeLine(subject, predicate, node.value, node.lang, project,
                     subjectRowIndex, subjectCellIndex, subjectCell);
@@ -400,29 +462,48 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     
     public TransposedNode transposeAnonymousNode(
             TransposedNode parentNode,
-            FreebaseProperty property, 
+            Link link, 
             AnonymousNode node, int rowIndex) {
         
+        WritingTransposedNode parentNode2 = (WritingTransposedNode) parentNode;
         WritingTransposedNode tnode = new AnonymousTransposedNode();
         
-        processTransposedNode(tnode, parentNode, property);
+        tnode.load = 
+            (parentNode2 == null || parentNode2.load) &&
+            (link == null || link.load);
+        
+        processTransposedNode(tnode, parentNode, link, rowIndex);
+        
+        tnode.jsonContextNode = addJsonContext(
+            parentNode2 != null ? parentNode2.jsonContextNode : null,
+            link != null ? link.property.id : null,
+            null
+        );
         
         return tnode;
     }
 
     public TransposedNode transposeCellNode(
             TransposedNode parentNode,
-            FreebaseProperty property, 
+            Link link, 
             CellNode node, 
             int rowIndex, 
             Cell cell) {
+        
+        WritingTransposedNode parentNode2 = (WritingTransposedNode) parentNode;
         
         Column column = project.columnModel.getColumnByName(node.columnName);
         int cellIndex = column != null ? column.getCellIndex() : -1;
         
         WritingTransposedNode tnode = null;
         if (node instanceof CellTopicNode) {
-            tnode = new CellTopicTransposedNode((CellTopicNode) node, rowIndex, cellIndex, cell);
+            if (cell.recon != null && 
+                    (cell.recon.judgment == Judgment.Matched ||
+                            cell.recon.judgment == Judgment.New)) {
+                
+                tnode = new CellTopicTransposedNode(
+                    (CellTopicNode) node, rowIndex, cellIndex, cell);
+            }
         } else if (node instanceof CellValueNode) {
             tnode = new CellValueTransposedNode((CellValueNode) node, rowIndex, cellIndex, cell);
         } else if (node instanceof CellKeyNode) {
@@ -430,31 +511,66 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
         
         if (tnode != null) {
-            processTransposedNode(tnode, parentNode, property);
+            tnode.load = 
+                (parentNode2 == null || parentNode2.load) &&
+                (link == null || link.load);
+            
+            processTransposedNode(tnode, parentNode, link, rowIndex);
+            
+            tnode.jsonContextNode = addJsonContext(
+                parentNode2 != null ? parentNode2.jsonContextNode : null,
+                link != null ? link.property.id : null,
+                cell,
+                rowIndex
+            );
         }
         return tnode;
     }
 
     public TransposedNode transposeTopicNode(
             TransposedNode parentNode,
-            FreebaseProperty property, 
-            FreebaseTopicNode node, int rowIndex) {
+            Link link, 
+            FreebaseTopicNode node,
+            int rowIndex) {
         
+        WritingTransposedNode parentNode2 = (WritingTransposedNode) parentNode;
         WritingTransposedNode tnode = new TopicTransposedNode(node);
         
-        processTransposedNode(tnode, parentNode, property);
+        tnode.load = 
+            (parentNode2 == null || parentNode2.load) &&
+            (link == null || link.load);
+        
+        processTransposedNode(tnode, parentNode, link, rowIndex);
+        
+        tnode.jsonContextNode = addJsonContext(
+            parentNode2 != null ? parentNode2.jsonContextNode : null,
+            link != null ? link.property.id : null,
+            node.topic
+        );
         
         return tnode;
     }
 
     public TransposedNode transposeValueNode(
             TransposedNode parentNode,
-            FreebaseProperty property, 
-            ValueNode node, int rowIndex) {
+            Link link, 
+            ValueNode node,
+            int rowIndex) {
         
+        WritingTransposedNode parentNode2 = (WritingTransposedNode) parentNode;
         WritingTransposedNode tnode = new ValueTransposedNode(node);
         
-        processTransposedNode(tnode, parentNode, property);
+        tnode.load = 
+            (parentNode2 == null || parentNode2.load) &&
+            (link == null || link.load);
+        
+        processTransposedNode(tnode, parentNode, link, rowIndex);
+        
+        tnode.jsonContextNode = addJsonContext(
+            parentNode2 != null ? parentNode2.jsonContextNode : null,
+            link != null ? link.property.id : null,
+            node.value
+        );
         
         return tnode;
     }
@@ -462,23 +578,125 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     protected void processTransposedNode(
         WritingTransposedNode  tnode, 
         TransposedNode         parentNode,
-        FreebaseProperty       property 
+        Link                   link,
+        int                    rowIndex 
     ) {
         if (parentNode != null) {
             if (parentNode instanceof TransposedNodeWithChildren) {
                 TransposedNodeWithChildren parentNode2 = (TransposedNodeWithChildren) parentNode;
+                parentNode2.rowIndices.add(rowIndex);
                 parentNode2.children.add(tnode);
-                parentNode2.properties.add(property);
+                parentNode2.links.add(link);
             }
         } else {
-            addRootNode(tnode);
+            addRootNode(tnode, rowIndex);
         }
     }
     
-    protected void addRootNode(WritingTransposedNode tnode) {
+    protected JSONObject addJsonContext(JSONObject parent, String key, Object value) {
+        JSONObject o = new JSONObject();
+        
+        try {
+            if (value instanceof FreebaseTopic) {
+                FreebaseTopic topic = (FreebaseTopic) value;
+                o.put("id", topic.id);
+                o.put("name", topic.name);
+            } else {
+                o.put("v", value);
+            }
+        } catch (JSONException e) {
+            // ignore
+        }
+        
+        connectJsonContext(parent, o, key);
+        return o;
+    }
+    
+    protected JSONObject addJsonContext(JSONObject parent, String key, Cell cell, int rowIndex) {
+        JSONObject o = new JSONObject();
+        
+        connectJsonContext(parent, o, key);
+        
+        try {
+            if (cell != null) {
+                o.put("v", cell.value);
+                if (cell.recon != null) {
+                    o.put("recon", "rec" + cell.recon.id);
+                    
+                    if (cell.recon.judgment == Judgment.Matched) {
+                        o.put("id", cell.recon.match.id);
+                        o.put("name", cell.recon.match.name);
+                    }
+                    
+                    // qa:display_context
+                    {
+                        StringBuffer sb2 = new StringBuffer();
+                        
+                        sb2.append("{ \"s\" : \"rec");
+                        sb2.append(Long.toString(cell.recon.id));
+                        sb2.append("\", \"p\" : \"qa:display_context\", \"o\" : \"ctx");
+                        sb2.append(Long.toString(contextID));
+                        sb2.append("\", \"meta\" : { \"row\" : ");
+                        sb2.append(Integer.toString(rowIndex));
+                        sb2.append(" } }");
+                        
+                        writeLine(sb2.toString());
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            // ignore
+        }
+        
+        return o;
+    }
+    
+    protected void connectJsonContext(JSONObject parent, JSONObject o, String key) {
+        try {
+            if (parent == null) {
+                contextTreeRoot = o;
+            } else {
+                JSONArray a = null;
+                if (parent.has(key)) {
+                    a = parent.getJSONArray(key);
+                } else {
+                    a = new JSONArray();
+                    parent.put(key, a);
+                }
+                
+                a.put(o);
+            }
+        } catch (JSONException e) {
+            // ignore
+        }
+    }
+    
+    protected void addRootNode(WritingTransposedNode tnode, int rowIndex) {
         if (lastRootNode != null) {
             lastRootNode.write(null, null, project, -1, -1, null);
+            writeContextTreeNode();
         }
         lastRootNode = tnode;
+        
+        contextTreeRoot = null;
+        contextRowIndex = rowIndex;
+        contextRefCount = 0;
+        contextID++;
+    }
+    
+    protected void writeContextTreeNode() {
+        if (contextTreeRoot != null && contextRefCount > 0) {
+            StringBuffer sb = new StringBuffer();
+            
+            sb.append("{ \"s\" : \"ctx"); 
+            sb.append(Long.toString(contextID)); 
+            sb.append("\", \"p\" : \"qa:context_data\", \"o\" : { \"row\" : ");
+            sb.append(Integer.toString(contextRowIndex));
+            sb.append(", \"data\" : ");
+            sb.append(contextTreeRoot.toString());
+            sb.append(" } } }");
+            
+            writeLine(sb.toString());
+        }
     }
 }

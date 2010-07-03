@@ -19,6 +19,7 @@ import com.metaweb.gridworks.protograph.CellTopicNode;
 import com.metaweb.gridworks.protograph.CellValueNode;
 import com.metaweb.gridworks.protograph.FreebaseProperty;
 import com.metaweb.gridworks.protograph.FreebaseTopicNode;
+import com.metaweb.gridworks.protograph.Link;
 import com.metaweb.gridworks.protograph.ValueNode;
 import com.metaweb.gridworks.util.JSONUtilities;
 
@@ -35,7 +36,7 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
     private static final String LANG = "lang";
     
     public MqlwriteLikeTransposedNodeFactory(Writer writer) {
-    	this.writer = writer;
+        this.writer = writer;
     }
     
     protected JSONArray getJSON() {
@@ -44,19 +45,19 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
     
     @Override
     public void flush() throws IOException {
-    	try {
-        	JSONWriter jsonWriter = new JSONWriter(writer);
-        	
-        	jsonWriter.array();
-        	for (JSONObject obj : rootObjects) {
-        		jsonWriter.value(obj);
-        	}
-        	jsonWriter.endArray();
-        	
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-    	writer.flush();
+        try {
+            JSONWriter jsonWriter = new JSONWriter(writer);
+            
+            jsonWriter.array();
+            for (JSONObject obj : rootObjects) {
+                jsonWriter.value(obj);
+            }
+            jsonWriter.endArray();
+            
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        writer.flush();
     }
     
     abstract protected class JsonTransposedNode implements TransposedNode {
@@ -152,8 +153,8 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
             if (obj == null) {
                 obj = new JSONObject();
                 try {
-                	JSONUtilities.putField(obj, VALUE, cell.value);
-                	
+                    JSONUtilities.putField(obj, VALUE, cell.value);
+                    
                     obj.put(TYPE, node.valueType);
                     if ("/type/text".equals(node.valueType)) {
                         obj.put(LANG, node.lang);
@@ -246,19 +247,19 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
     }    
     public TransposedNode transposeAnonymousNode(
             TransposedNode parentNode,
-            FreebaseProperty property, 
+            Link link, 
             AnonymousNode node, int rowIndex) {
         
         return new AnonymousTransposedNode(
             parentNode instanceof JsonObjectTransposedNode ? (JsonObjectTransposedNode) parentNode : null, 
-            property, 
+            link != null ? link.property : null,
             node
         );
     }
 
     public TransposedNode transposeCellNode(
             TransposedNode parentNode,
-            FreebaseProperty property, 
+            Link link, 
             CellNode node, 
             int rowIndex, Cell cell) {
         
@@ -272,31 +273,31 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
         }
         
         if (tnode != null) {
-            processTransposedNode(tnode, parentNode, property);
+            processTransposedNode(tnode, parentNode, link != null ? link.property : null);
         }
         return tnode;
     }
 
     public TransposedNode transposeTopicNode(
             TransposedNode parentNode,
-            FreebaseProperty property, 
+            Link link, 
             FreebaseTopicNode node, int rowIndex) {
         
         JsonTransposedNode tnode = new TopicTransposedNode(node);
         
-        processTransposedNode(tnode, parentNode, property);
+        processTransposedNode(tnode, parentNode, link != null ? link.property : null);
         
         return tnode;
     }
 
     public TransposedNode transposeValueNode(
             TransposedNode parentNode,
-            FreebaseProperty property, 
+            Link link, 
             ValueNode node, int rowIndex) {
         
         JsonTransposedNode tnode = new ValueTransposedNode(node);
         
-        processTransposedNode(tnode, parentNode, property);
+        processTransposedNode(tnode, parentNode, link != null ? link.property : null);
         
         return tnode;
     }
