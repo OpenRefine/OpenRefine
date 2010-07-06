@@ -36,12 +36,12 @@ abstract public class ProtographTransposeExporter implements Exporter {
     public void export(Project project, Properties options, Engine engine,
             Writer writer) throws IOException {
         
-        if (project.protograph != null) {
-            Protograph protograph = project.protograph;
-            
+        Protograph protograph = (Protograph) project.overlayModels.get("freebaseProtograph");
+        if (protograph != null) {
             TransposedNodeFactory nodeFactory = createNodeFactory(project, writer);
             
-            Transposer.transpose(project, engine.getAllFilteredRows(), protograph, protograph.getRootNode(0), nodeFactory, -1);
+            Transposer.transpose(project, engine.getAllFilteredRows(), 
+                    protograph, protograph.getRootNode(0), nodeFactory, -1);
             
             nodeFactory.flush();
         }

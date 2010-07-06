@@ -177,7 +177,7 @@ SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
             {   
                 onDone: function() {
                     DialogSystem.dismissUntil(self._level - 1);
-                    theProject.protograph = protograph;
+                    theProject.overlayModels.freebaseProtograph = protograph;
                 }
             }
         );

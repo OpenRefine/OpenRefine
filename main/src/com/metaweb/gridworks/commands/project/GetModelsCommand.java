@@ -13,6 +13,7 @@ import org.json.JSONWriter;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.expr.MetaParser;
 import com.metaweb.gridworks.expr.MetaParser.LanguageInfo;
+import com.metaweb.gridworks.model.OverlayModel;
 import com.metaweb.gridworks.model.Project;
 
 public class GetModelsCommand extends Command {
@@ -32,12 +33,17 @@ public class GetModelsCommand extends Command {
             writer.object();
             writer.key("columnModel"); project.columnModel.write(writer, options);
             writer.key("recordModel"); project.recordModel.write(writer, options);
-            writer.key("protograph"); 
-            if (project.protograph == null) {
-                writer.value(null);
-            } else {
-                project.protograph.write(writer, options);
+            
+            writer.key("overlayModels"); writer.object();
+            for (String modelName : project.overlayModels.keySet()) {
+                OverlayModel overlayModel = project.overlayModels.get(modelName);
+                if (overlayModel != null) {
+                    writer.key(modelName);
+                    
+                    project.overlayModels.get(modelName).write(writer, options);
+                }
             }
+            writer.endObject();
             
             writer.key("scripting"); writer.object();
             for (String languagePrefix : MetaParser.getLanguagePrefixes()) {

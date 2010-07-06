@@ -38,6 +38,10 @@ public class ExportRowsCommand extends Command {
         s_formatToExporter.put("mqlwrite", new MqlwriteLikeExporter());
     }
     
+    static public void registerExporter(String format, Exporter exporter) {
+        s_formatToExporter.put(format, exporter);
+    }
+    
     @SuppressWarnings("unchecked")
 	static public Properties getRequestParameters(HttpServletRequest request) {
         Properties options = new Properties();

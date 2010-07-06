@@ -34,7 +34,7 @@ public abstract class OperationRegistry {
     static final public Map<String, Class<? extends AbstractOperation>> s_opNameToClass = new HashMap<String, Class<? extends AbstractOperation>>();
     static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName = new HashMap<Class<? extends AbstractOperation>, String>();
     
-    static protected void register(String name, Class<? extends AbstractOperation> klass) {
+    static public void register(String name, Class<? extends AbstractOperation> klass) {
         s_opNameToClass.put(name, klass);
         s_opClassToName.put(klass, name);
     }

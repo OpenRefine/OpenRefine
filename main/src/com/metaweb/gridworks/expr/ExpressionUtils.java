@@ -4,14 +4,22 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import com.metaweb.gridworks.model.Cell;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
 
 public class ExpressionUtils {
+    static protected Set<Binder> s_binders = new HashSet<Binder>();
+    
+    static public void registerBinder(Binder binder) {
+        s_binders.add(binder);
+    }
+    
     static public Properties createBindings(Project project) {
         Properties bindings = new Properties();
         
@@ -20,6 +28,10 @@ public class ExpressionUtils {
         
         bindings.put("project", project);
         
+        for (Binder binder : s_binders) {
+            binder.initializeBindings(bindings, project);
+        }
+
         return bindings;
     }
     
@@ -44,6 +56,10 @@ public class ExpressionUtils {
             } else {
                 bindings.put("value", cell.value);
             }
+        }
+        
+        for (Binder binder : s_binders) {
+            binder.bind(bindings, row, rowIndex, columnName, cell);
         }
     }
     

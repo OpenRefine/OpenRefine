@@ -69,3 +69,16 @@ URL.looksLikeUrl = function(s) {
     }
     return false;
 };
+
+URL.getHostname = function(){
+    var url = location.href;  // entire url including querystring - also: window.location.href;
+    var baseURL = url.substring(0, url.indexOf('/',7));//7 is the length of http://
+    return baseURL;
+};
+
+URL.urlify = function(str) {
+    if(!str) {
+        return '';
+    }
+    return escape(str.replace(/\W/g, '_'));
+};

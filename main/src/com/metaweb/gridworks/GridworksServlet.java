@@ -28,6 +28,8 @@ public class GridworksServlet extends Butterfly {
 
     private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
 
+    static private GridworksServlet s_singleton;
+    
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
     // timer for periodically saving projects
@@ -112,7 +114,7 @@ public class GridworksServlet extends Butterfly {
         {"mqlwrite", "com.metaweb.gridworks.commands.freebase.MQLWriteCommand"},
         
         {"get-preference", "com.metaweb.gridworks.commands.GetPreferenceCommand"},
-        {"set-preference", "com.metaweb.gridworks.commands.SetPreferenceCommand"}
+        {"set-preference", "com.metaweb.gridworks.commands.SetPreferenceCommand"},
     };
 
     public static String getVersion() {
@@ -138,6 +140,8 @@ public class GridworksServlet extends Butterfly {
     @Override
     public void init() throws ServletException {
         super.init();
+        
+        s_singleton = this;
 
         logger.trace("> initialize");
 
@@ -249,29 +253,39 @@ public class GridworksServlet extends Butterfly {
         for (String[] command : commandNames) {
             String commandName = command[0];
             String className = command[1];
-            logger.debug("Loading command " + commandName + " class: " + className);
-            Command cmd;
-            try {
-                cmd = (Command) this.getClass().getClassLoader().loadClass(className).newInstance();
-                cmd.init(this);
-            } catch (InstantiationException e) {
-                logger.error("Failed to load command class " + className, e);
-                status = false;
-                continue;
-            } catch (IllegalAccessException e) {
-                logger.error("Failed to load command class " + className, e);
-                status = false;
-                continue;
-            } catch (ClassNotFoundException e) {
-                logger.error("Failed to load command class " + className, e);
-                status = false;
-                continue;
-            }
-            status |= registerCommand(commandName, cmd);
+            status |= registerOneCommand(commandName, className);
         }
         return status;
     }
-
+    
+    /**
+     * Register a single command given its class name.
+     *
+     * @param name
+     *            command verb for command
+     * @param className
+     *            class name of command class
+     * @return true if command was loaded and registered successfully
+     */
+    protected boolean registerOneCommand(String commandName, String className) {
+        logger.debug("Loading command " + commandName + " class: " + className);
+        Command cmd;
+        try {
+            cmd = (Command) this.getClass().getClassLoader().loadClass(className).newInstance();
+            
+            return registerOneCommand(commandName, cmd);
+        } catch (InstantiationException e) {
+            logger.error("Failed to load command class " + className, e);
+            return false;
+        } catch (IllegalAccessException e) {
+            logger.error("Failed to load command class " + className, e);
+            return false;
+        } catch (ClassNotFoundException e) {
+            logger.error("Failed to load command class " + className, e);
+            return false;
+        }
+    }
+    
     /**
      * Register a single command.
      *
@@ -281,17 +295,34 @@ public class GridworksServlet extends Butterfly {
      *            object implementing the command
      * @return true if command was loaded and registered successfully
      */
-    protected boolean registerCommand(String name, Command commandObject) {
+    protected boolean registerOneCommand(String name, Command commandObject) {
         if (commands.containsKey(name)) {
             return false;
         }
+        
+        commandObject.init(this);
         commands.put(name, commandObject);
+        
         return true;
     }
 
     // Currently only for test purposes
     protected boolean unregisterCommand(String verb) {
         return commands.remove(verb) != null;
+    }
+    
+    /**
+     * Register a single command. Used by extensions.
+     *
+     * @param name
+     *            command verb for command
+     * @param commandObject
+     *            object implementing the command
+     *            
+     * @return true if command was loaded and registered successfully
+     */
+    static public boolean registerCommand(String commandName, Command commandObject) {
+        return s_singleton.registerOneCommand(commandName, commandObject);
     }
 }
 

@@ -5,11 +5,17 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,17 +25,30 @@ import com.metaweb.gridworks.ProjectMetadata;
 import com.metaweb.gridworks.history.History;
 import com.metaweb.gridworks.process.ProcessManager;
 import com.metaweb.gridworks.protograph.Protograph;
+import com.metaweb.gridworks.util.ParsingUtilities;
 import com.metaweb.gridworks.util.Pool;
 
 public class Project {
-    final public long            id;
-
-    final public List<Row>       rows = new ArrayList<Row>();
-    final public ColumnModel     columnModel = new ColumnModel();
-    final public RecordModel     recordModel = new RecordModel();
-    public Protograph            protograph;
-
-    final public History         history;
+    final static protected Map<String, Class<? extends OverlayModel>> 
+        s_overlayModelClasses = new HashMap<String, Class<? extends OverlayModel>>();
+    
+    static public void registerOverlayModel(String modelName, Class<? extends OverlayModel> klass) {
+        s_overlayModelClasses.put(modelName, klass);
+    }
+    
+    static {
+        registerOverlayModel("freebaseProtograph", Protograph.class);
+    }
+    
+    final public long                       id;
+    final public List<Row>                  rows = new ArrayList<Row>();
+    
+    final public ColumnModel                columnModel = new ColumnModel();
+    final public RecordModel                recordModel = new RecordModel();
+    final public Map<String, OverlayModel>  overlayModels = new HashMap<String, OverlayModel>();
+    
+    final public History                    history;
+    
     transient public ProcessManager processManager = new ProcessManager();
     transient private Date _lastSave = new Date();
 
@@ -78,43 +97,58 @@ public class Project {
 
     protected void saveToWriter(Writer writer, Properties options) throws IOException {
         writer.write(GridworksServlet.getVersion()); writer.write('\n');
-
+        
         writer.write("columnModel=\n"); columnModel.save(writer, options);
         writer.write("history=\n"); history.save(writer, options);
-        if (protograph != null) {
-            writer.write("protograph="); protograph.save(writer, options); writer.write('\n');
+        
+        for (String modelName : overlayModels.keySet()) {
+            writer.write("overlayModel:");
+            writer.write(modelName);
+            writer.write("=");
+            
+            try {
+                JSONWriter jsonWriter = new JSONWriter(writer);
+                
+                overlayModels.get(modelName).write(jsonWriter, options);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            writer.write('\n');
         }
-
+        
         writer.write("rowCount="); writer.write(Integer.toString(rows.size())); writer.write('\n');
         for (Row row : rows) {
             row.save(writer, options); writer.write('\n');
         }
     }
-
+    
     static public Project loadFromReader(
         LineNumberReader reader,
         long id,
         Pool pool
     ) throws Exception {
         long start = System.currentTimeMillis();
-
+        
         /* String version = */ reader.readLine();
-
+        
         Project project = new Project(id);
         int maxCellCount = 0;
-
+        
         String line;
         while ((line = reader.readLine()) != null) {
             int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
+            String field = line.substring(0, equal);
             String value = line.substring(equal + 1);
-
+            
+            // backward compatibility
+            if ("protograph".equals(field)) {
+                field = "overlayModel:freebaseProtograph";
+            }
+            
             if ("columnModel".equals(field)) {
                 project.columnModel.load(reader);
             } else if ("history".equals(field)) {
                 project.history.load(project, reader);
-            } else if ("protograph".equals(field)) {
-                project.protograph = Protograph.load(project, value);
             } else if ("rowCount".equals(field)) {
                 int count = Integer.parseInt(value);
 
@@ -124,6 +158,22 @@ public class Project {
                         Row row = Row.load(line, pool);
                         project.rows.add(row);
                         maxCellCount = Math.max(maxCellCount, row.cells.size());
+                    }
+                }
+            } else if (field.startsWith("overlayModel:")) {
+                String modelName = field.substring("overlayModel:".length());
+                if (s_overlayModelClasses.containsKey(modelName)) {
+                    Class<? extends OverlayModel> klass = s_overlayModelClasses.get(modelName);
+                    
+                    try {
+                        Method loadMethod = klass.getMethod("load", Project.class, JSONObject.class);
+                        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(value);
+                    
+                        OverlayModel overlayModel = (OverlayModel) loadMethod.invoke(null, project, obj);
+                        
+                        project.overlayModels.put(modelName, overlayModel);
+                    } catch (Exception e) {
+                        logger.error("Failed to load overlay model " + modelName);
                     }
                 }
             }

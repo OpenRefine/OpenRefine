@@ -103,12 +103,12 @@ public class ControlFunctionRegistry {
         return s_nameToControl.entrySet();
     }
 
-    static protected void registerFunction(String name, Function f) {
+    static public void registerFunction(String name, Function f) {
         s_nameToFunction.put(name, f);
         s_functionToName.put(f, name);
     }
 
-    static protected void registerControl(String name, Control c) {
+    static public void registerControl(String name, Control c) {
         s_nameToControl.put(name, c);
         s_controlToName.put(c, name);
     }

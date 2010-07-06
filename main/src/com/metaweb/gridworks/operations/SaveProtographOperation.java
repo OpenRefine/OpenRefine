@@ -52,7 +52,7 @@ public class SaveProtographOperation extends AbstractOperation {
         
         return new HistoryEntry(historyEntryID, project, description, SaveProtographOperation.this, change);
     }
-
+    
     static public class ProtographChange implements Change {
         final protected Protograph _newProtograph;
         protected Protograph _oldProtograph;
@@ -63,14 +63,19 @@ public class SaveProtographOperation extends AbstractOperation {
         
         public void apply(Project project) {
             synchronized (project) {
-                _oldProtograph = project.protograph;
-                project.protograph = _newProtograph;
+                _oldProtograph = (Protograph) project.overlayModels.get("freebaseProtograph");
+                
+                project.overlayModels.put("freebaseProtograph", _newProtograph);
             }
         }
-
+        
         public void revert(Project project) {
             synchronized (project) {
-                project.protograph = _oldProtograph;
+                if (_oldProtograph == null) {
+                    project.overlayModels.remove("freebaseProtograph");
+                } else {
+                    project.overlayModels.put("freebaseProtograph", _oldProtograph);
+                }
             }
         }
         

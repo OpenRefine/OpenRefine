@@ -1,6 +1,5 @@
 package com.metaweb.gridworks.protograph;
 
-import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -10,11 +9,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.metaweb.gridworks.Jsonizable;
+import com.metaweb.gridworks.model.OverlayModel;
 import com.metaweb.gridworks.model.Project;
-import com.metaweb.gridworks.util.ParsingUtilities;
 
-public class Protograph implements Jsonizable {
+public class Protograph implements OverlayModel {
     final protected List<Node> _rootNodes = new LinkedList<Node>();
     
     public int getRootNodeCount() {
@@ -123,7 +121,7 @@ public class Protograph implements Jsonizable {
             o.getString("name")
         );
     }
-
+    
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("rootNodes"); writer.array();
@@ -135,19 +133,8 @@ public class Protograph implements Jsonizable {
         writer.endArray();
         writer.endObject();
     }
-
-    public void save(Writer writer, Properties options) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
-        try {
-            write(jsonWriter, options);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
     
-    static public Protograph load(Project project, String s) throws Exception {
-        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
-        
+    static public Protograph load(Project project, JSONObject obj) throws Exception {
         return reconstruct(obj);
     }
 }
