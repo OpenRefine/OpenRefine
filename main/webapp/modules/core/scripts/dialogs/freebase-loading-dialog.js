@@ -91,10 +91,13 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     var show_triples = function(cont) {
         $.post(
             "/command/preview-protograph?" + $.param({ project: theProject.id }),
-            { protograph: JSON.stringify(theProject.protograph), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+            {
+                protograph: JSON.stringify(theProject.overlayModels.freebaseProtograph || {}),
+                engine: JSON.stringify(ui.browsingEngine.getJSON())
+            },
             function(data) {
+                var body = self._elmts.dialogBody;
                 if ("tripleloader" in data) {
-                    var body = self._elmts.dialogBody;
                     body.html(
                         '<div class="freebase-loading-tripleloader-info"><table><tr>' +
                           '<td><div>Name this data load &not; <sup style="color: red">required</sup></div>' +

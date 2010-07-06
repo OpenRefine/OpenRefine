@@ -3,6 +3,195 @@ function MenuBar(div) {
     this._initializeUI();
 }
 
+MenuBar.MenuItems = [
+    {
+        "id" : "core/project",
+        "label" : "Project",
+        "submenu" : [
+            /*
+            {
+                "label": "Data Model",
+                "submenu": [
+                    {
+                        "label": "Denormalize Records",
+                        "click": function() { MenuBar.handlers.denormalizeRecords(); }
+                    }
+                ]
+            },
+            {},
+            */
+            {
+                "id" : "core/rename-project",
+                "label": "Rename...",
+                "click": function() { MenuBar.handlers.renameProject(); }
+            },
+            {},
+            {
+                "id" : "core/export",
+                "label": "Export Filtered Rows",
+                "submenu": [
+                    {
+                        "id" : "core/export-tsv",
+                        "label": "Tab-Separated Value",
+                        "click": function() { MenuBar.handlers.exportRows("tsv", "tsv"); }
+                    },
+                    {
+                        "id" : "core/export-csv",
+                        "label": "Comma-Separated Value",
+                        "click": function() { MenuBar.handlers.exportRows("csv", "csv"); }
+                    },
+                    {
+                        "id" : "core/export-html-table",
+                        "label": "HTML Table",
+                        "click": function() { MenuBar.handlers.exportRows("html", "html"); }
+                    },
+                    {
+                        "id" : "core/export-excel",
+                        "label": "Excel",
+                        "click": function() { MenuBar.handlers.exportRows("xls", "xls"); }
+                    },
+                    {},
+                    {
+                        "id" : "core/export-tripleloader",
+                        "label": "Tripleloader",
+                        "click": function() { MenuBar.handlers.exportTripleloader("tripleloader"); }
+                    },
+                    {
+                        "id" : "core/export-mqlwrite",
+                        "label": "MQLWrite",
+                        "click": function() { MenuBar.handlers.exportTripleloader("mqlwrite"); }
+                    },
+                    {},
+                    {
+                        "id" : "core/export-templating",
+                        "label": "Templating...",
+                        "click": function() { new TemplatingExporterDialog(); }
+                    }
+                ]
+            },
+            {
+                "id" : "core/export-project",
+                "label": "Export Project",
+                "click": function() { MenuBar.handlers.exportProject(); }
+            }
+        ]
+    },
+    {
+        "id" : "core/schemas",
+        "label" : "Schemas",
+        "submenu" : [
+            /*{
+                "id" : "core/auto-schema-alignment",
+                label: "Auto-Align with Freebase ...",
+                click: function() { MenuBar.handlers.autoSchemaAlignment(); }
+            },*/
+            {
+                "id" : "core/schema-alignment",
+                label: "Edit Schema Aligment Skeleton ...",
+                click: function() { MenuBar.handlers.editSchemaAlignment(false); }
+            },
+            {
+                "id" : "core/reset-schema-alignment",
+                label: "Reset Schema Alignment Skeleton ...",
+                click: function() { MenuBar.handlers.editSchemaAlignment(true); }
+            },
+            {},
+            {
+                "id" : "core/load-info-freebase",
+                label: "Load into Freebase ...",
+                click: function() { MenuBar.handlers.loadIntoFreebase(); }
+            }
+        ]
+    }
+];
+
+MenuBar._find = function(path, levels) {
+    var menuItems = MenuBar.MenuItems;
+    for (var p = 0; p < path.length && p < levels; p++) {
+        var segment = path[p];
+        var subMenuItems;
+        
+        for (var i = 0; i < menuItems.length; i++) {
+            var menuItem = menuItems[i];
+            if (menuItem.id == segment) {
+                if ("submenu" in menuItem) {
+                    subMenuItems = menuItem.submenu;
+                } else {
+                    return undefined;
+                }
+                break;
+            }
+        }
+        
+        if (subMenuItems) {
+            menuItems = subMenuItems;
+        } else {
+            return undefined;
+        }
+    }
+    
+    return menuItems;
+};
+
+MenuBar.appendTo = function(path, what) {
+    var menuItems = MenuBar._find(path, path.length);
+    if (menuItems) {
+        if (what instanceof Array) {
+            $.merge(menuItems, what);
+        } else {
+            menuItems.push(what);
+        }
+    }
+};
+
+MenuBar.insertBefore = function(path, what) {
+    var menuItems = MenuBar._find(path, path.length - 1);
+    if ((menuItems) && path.length > 0) {
+        var spliceArgs = [ 0, 0 ];
+        if (what instanceof Array) {
+            $.merge(spliceArgs, what);
+        } else {
+            spliceArgs.push(what);
+        }
+        
+        var segment = path[path.length - 1];
+        for (var i = 0; i < menuItems.length; i++) {
+            var menuItem = menuItems[i];
+            if (menuItem.id == segment) {
+                spliceArgs[0] = i;
+                break;
+            }
+        }
+        
+        Array.prototype.splice.apply(menuItems, spliceArgs);
+    }
+};
+
+MenuBar.insertAfter = function(path, what) {
+    var menuItems = MenuBar._find(path, path.length - 1);
+    if ((menuItems) && path.length > 0) {
+        var spliceArgs = [ menuItems.length, 0 ];
+        if (what instanceof Array) {
+            $.merge(spliceArgs, what);
+        } else {
+            spliceArgs.push(what);
+        }
+        
+        var segment = path[path.length - 1];
+        for (var i = 0; i < menuItems.length; i++) {
+            var menuItem = menuItems[i];
+            if (menuItem.id == segment) {
+                spliceArgs[0] = i + 1;
+                break;
+            }
+        }
+        
+        Array.prototype.splice.apply(menuItems, spliceArgs);
+    }
+};
+
+MenuBar.handlers = {};
+
 MenuBar.prototype.resize = function() {
 };
 
@@ -14,87 +203,10 @@ MenuBar.prototype._initializeUI = function() {
     this._innerDiv = $('<div></div>').addClass("menu-bar-inner").appendTo(this._div);
 
     var self = this;
-
-    this._createTopLevelMenuItem("Project", [
-        /*
-        {
-            "label": "Data Model",
-            "submenu": [
-                {
-                    "label": "Denormalize Records",
-                    "click": function() { self._doDenormalizeRecords(); }
-                }
-            ]
-        },
-        {},
-        */
-        {
-            "label": "Rename...",
-            "click": function() { self._renameProject(); }
-        },
-        {},
-        {
-            "label": "Export Filtered Rows",
-            "submenu": [
-                {
-                    "label": "Tab-Separated Value",
-                    "click": function() { self._doExportRows("tsv", "tsv"); }
-                },
-                {
-                    "label": "Comma-Separated Value",
-                    "click": function() { self._doExportRows("csv", "csv"); }
-                },
-                {
-                    "label": "HTML Table",
-                    "click": function() { self._doExportRows("html", "html"); }
-                },
-                {
-                    "label": "Excel",
-                    "click": function() { self._doExportRows("xls", "xls"); }
-                },
-                {},
-                {
-                    "label": "Tripleloader",
-                    "click": function() { self._doExportTripleloader("tripleloader"); }
-                },
-                {
-                    "label": "MQLWrite",
-                    "click": function() { self._doExportTripleloader("mqlwrite"); }
-                },
-                {},
-                {
-                    "label": "Templating...",
-                    "click": function() {
-                         new TemplatingExporterDialog();
-                     }
-                }
-            ]
-        },
-        {
-            "label": "Export Project",
-            "click": function() { self._exportProject(); }
-        }
-    ]);
-    this._createTopLevelMenuItem("Schemas", [
-        /*{
-            label: "Auto-Align with Freebase ...",
-            click: function() { self._doAutoSchemaAlignment(); }
-        },*/
-        {
-            label: "Edit Schema Aligment Skeleton ...",
-            click: function() { self._doEditSchemaAlignment(false); }
-        },
-        {
-            label: "Reset Schema Alignment Skeleton ...",
-            click: function() { self._doEditSchemaAlignment(true); }
-        },
-        {},
-        {
-            label: "Load into Freebase ...",
-            click: function() { self._doLoadIntoFreebase(); }
-        }
-    ]);
-
+    for (var i = 0; i < MenuBar.MenuItems.length; i++) {
+        var menuItem = MenuBar.MenuItems[i];
+        this._createTopLevelMenuItem(menuItem.label, menuItem.submenu);
+    }
     this._wireAllMenuItemsInactive();
 };
 
@@ -190,7 +302,7 @@ MenuBar.prototype._doDenormalizeRecords = function() {
 };
 
 MenuBar.prototype._doExportTripleloader = function(format) {
-    if (!theProject.protograph) {
+    if (!theProject.overlayModels.freebaseProtograph) {
         alert(
             "You haven't done any schema alignment yet,\nso there is no triple to export.\n\n" +
             "Use the Schemas > Edit Schema Alignment Skeleton...\ncommand to align your data with Freebase schemas first."
@@ -200,7 +312,7 @@ MenuBar.prototype._doExportTripleloader = function(format) {
     }
 };
 
-MenuBar.prototype._doExportRows = function(format, ext) {
+MenuBar.handlers.exportRows = function(format, ext) {
     var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
     var form = document.createElement("form");
     $(form)
@@ -226,11 +338,11 @@ MenuBar.prototype._doExportRows = function(format, ext) {
 
     window.open("about:blank", "gridworks-export");
     form.submit();
-
+    
     document.body.removeChild(form);
 };
 
-MenuBar.prototype._exportProject = function() {
+MenuBar.handlers.exportProject = function() {
     var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
     var form = document.createElement("form");
     $(form)
@@ -251,7 +363,7 @@ MenuBar.prototype._exportProject = function() {
     document.body.removeChild(form);
 };
 
-MenuBar.prototype._renameProject = function() {
+MenuBar.handlers.renameProject = function() {
     var name = window.prompt("Rename Project", theProject.metadata.name);
     if (name == null) {
         return;
@@ -278,14 +390,16 @@ MenuBar.prototype._renameProject = function() {
     });
 };
 
-MenuBar.prototype._doAutoSchemaAlignment = function() {
+MenuBar.handlers.autoSchemaAlignment = function() {
     //SchemaAlignment.autoAlign();
 };
 
-MenuBar.prototype._doEditSchemaAlignment = function(reset) {
-    new SchemaAlignmentDialog(reset ? null : theProject.protograph, function(newProtograph) {});
+MenuBar.handlers.editSchemaAlignment = function(reset) {
+    new SchemaAlignmentDialog(
+        reset ? null : theProject.overlayModels.freebaseProtograph, function(newProtograph) {});
 };
 
-MenuBar.prototype._doLoadIntoFreebase = function() {
+MenuBar.handlers.loadIntoFreebase = function() {
     new FreebaseLoadingDialog();
 };
+
