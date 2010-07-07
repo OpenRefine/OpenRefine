@@ -129,7 +129,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
             } else if (START.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
-                startProject(response, getParameter(request, "pid"), getUserId(request), getParameter(request, "lock"), getData(request), getParameter(request, "metadata"), getInteger(request, "rev"));
+                startProject(response, getParameter(request, "pid"), getUserId(request), getParameter(request, "lock"), getData(request), getParameter(request, "metadata"), getList(request, "transformations"));
             } else if (OPEN.equals(path)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-Type", "application/json");
@@ -165,7 +165,7 @@ public abstract class GridworksBroker extends ButterflyModuleImpl {
     
     protected abstract void releaseLock(HttpServletResponse response, String pid, String uid, String lock) throws Exception;
 
-    protected abstract void startProject(HttpServletResponse response, String pid, String uid, String lock, byte[] data, String metadata, int rev) throws Exception;
+    protected abstract void startProject(HttpServletResponse response, String pid, String uid, String lock, byte[] data, String metadata, List<String> transformations) throws Exception;
 
     protected abstract void addTransformations(HttpServletResponse response, String pid, String uid, String lock, List<String> transformations) throws Exception;
     

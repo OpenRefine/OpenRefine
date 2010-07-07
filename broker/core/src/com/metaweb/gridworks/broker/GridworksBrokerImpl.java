@@ -308,7 +308,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
     // ----------------------------------------------------------------------------------------------------
 
     @Override
-    protected void startProject(HttpServletResponse response, String pid, String uid, String lid, byte[] data, String metadata, int rev) throws Exception {
+    protected void startProject(HttpServletResponse response, String pid, String uid, String lid, byte[] data, String metadata, List<String> transformations) throws Exception {
         
         Transaction txn = env.beginTransaction(null, null);
 
@@ -323,7 +323,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
                 throw new RuntimeException("The lock you have is not enough to start a project");
             }
             
-            projectById.put(txn, new Project(pid, data, metadata, rev));
+            projectById.put(txn, new Project(pid, data, metadata, transformations));
             txn.commit();
         } finally {
             if (txn != null) {
@@ -478,7 +478,7 @@ public class GridworksBrokerImpl extends GridworksBroker {
         @PrimaryKey
         String pid;
 
-        List<String> transformations = new ArrayList<String>(); 
+        List<String> transformations; 
         
         byte[] data;
 
@@ -486,11 +486,12 @@ public class GridworksBrokerImpl extends GridworksBroker {
         
         int rev;
 
-        Project(String pid, byte[] data, String metadata, int rev) {
+        Project(String pid, byte[] data, String metadata, List<String> transformations) {
             this.pid = pid;
             this.data = data;
             this.metadata = metadata;
-            this.rev = rev;
+            this.transformations = (transformations != null) ? transformations : new ArrayList<String>();
+            this.rev = this.transformations.size();
         }
         
         @SuppressWarnings("unused")

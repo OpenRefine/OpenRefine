@@ -291,6 +291,7 @@ public class GridworksBrokerTests {
             String user2 = "testuser2";
             String data = "blah";
             String metadata = "{}";
+            String transformations = "[]";
             String rev = "0";
             
             logger.info("--- obtain ALL lock on project ---");
@@ -299,7 +300,7 @@ public class GridworksBrokerTests {
             String lock = result.getString("lock");
 
             logger.info("--- start project ---");
-            success(broker, request, response, START, "pid", project, "uid", user, "lock", lock, "data", data, "metadata", metadata, "rev", rev);
+            success(broker, request, response, START, "pid", project, "uid", user, "lock", lock, "data", data, "metadata", metadata, "transformations", transformations);
 
             logger.info("--- verify project state contains lock ---");
             result = success(broker, request, response, GET_STATE, "pid", project, "uid", user, "rev", rev);
