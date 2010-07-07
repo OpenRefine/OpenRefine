@@ -190,6 +190,10 @@ public class GridworksBrokerImpl extends GridworksBroker {
             
             try {
                 if (locktype == ALL) {
+                    if (lockvalue.length() > 0) {
+                        throw new RuntimeException("Hmm, seems like you're calling an ALL with a specific value, are you sure you didn't want another type of lock?");
+                    }
+
                     for (Lock l : cursor) {
                         if (!l.uid.equals(uid)) {
                             blocker = l;
@@ -202,10 +206,15 @@ public class GridworksBrokerImpl extends GridworksBroker {
                         }
                     }
                 } else if (locktype == COL) {
+                    if (lockvalue.indexOf(',') > -1) {
+                        throw new RuntimeException("Hmm, seems like you're calling a COL lock with a CELL value");
+                    }
+
                     for (Lock l : cursor) {
                         if (!l.uid.equals(uid)) {
                             if (l.type == ALL || 
-                               (l.type == COL && l.value.equals(lockvalue))) {
+                               (l.type == COL && l.value.equals(lockvalue)) ||
+                               (l.type == CELL && l.value.split(",")[0].equals(lockvalue))) {
                                 blocker = l;
                                 break;
                             }
@@ -218,6 +227,10 @@ public class GridworksBrokerImpl extends GridworksBroker {
                         }
                     }
                 } else if (locktype == CELL) {
+                    if (lockvalue.indexOf(',') == -1) {
+                        throw new RuntimeException("Hmm, seems like you're calling a CELL lock without specifying row and column: format must be 'row,column'");
+                    }
+
                     for (Lock l : cursor) {
                         if (!l.uid.equals(uid)) {
                             if (l.type == ALL || 
@@ -227,7 +240,9 @@ public class GridworksBrokerImpl extends GridworksBroker {
                                 break;
                             }
                         } else {
-                            if (l.type == CELL && l.value.equals(lockvalue)) {
+                            if (l.type == ALL || 
+                               (l.type == COL && l.value.equals(lockvalue.split(",")[0])) || 
+                               (l.type == CELL && l.value.equals(lockvalue))) {
                                 lock = l;
                                 break;
                             }

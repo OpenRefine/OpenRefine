@@ -43,15 +43,13 @@ public class GridworksBrokerTests {
     Logger logger;
     File data;
     
-    @BeforeSuite
-    public void suite_init() {
+    @BeforeSuite public void suite_init() {
         System.setProperty("log4j.configuration", "tests.log4j.properties");
         data = new File("data");
         if (!data.exists()) data.mkdirs();
     }
 
-    @AfterSuite
-    public void suite_destroy() {
+    @AfterSuite public void suite_destroy() {
         for (File f : data.listFiles()) {
             f.delete();
         }
@@ -63,8 +61,7 @@ public class GridworksBrokerTests {
     ServletConfig config = null;
     GridworksBroker broker = null;
     
-    @BeforeTest
-    public void test_init() throws Exception {
+    @BeforeTest public void test_init() throws Exception {
         logger = LoggerFactory.getLogger(this.getClass());
         config = mock(ServletConfig.class);
         when(config.getInitParameter("gridworks.data")).thenReturn(data.getAbsolutePath());
@@ -74,8 +71,7 @@ public class GridworksBrokerTests {
         broker.init(config);
     }
 
-    @AfterTest
-    public void test_destroy() throws Exception {
+    @AfterTest public void test_destroy() throws Exception {
         broker.destroy();
         broker = null;
         config = null;
@@ -87,27 +83,23 @@ public class GridworksBrokerTests {
     HttpServletResponse response = null;
     StringWriter writer = null;
     
-    @BeforeMethod
-    public void setup() throws Exception {
+    @BeforeMethod public void setup() throws Exception {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
     }
 
-    @AfterMethod
-    public void teardown() throws Exception {
+    @AfterMethod public void teardown() throws Exception {
         response = null;
         request = null;
     }
     
     // ------------------------------------------------------------------------------------
 
-    @Test
-    public void testLifeCycle() {
+    @Test public void testLifeCycle() {
         Assert.assertTrue(true);
     }
 
-    @Test
-    public void testService() {
+    @Test public void testService() {
         try {
             success(broker, request, response, EXPIRE);
         } catch (Exception e) {
@@ -115,8 +107,7 @@ public class GridworksBrokerTests {
         }
     }
 
-    @Test
-    public void testObtainLockFailure() {
+    @Test public void testObtainLockFailure() {
         try {
             failure(broker, request, response, OBTAIN_LOCK);
         } catch (Exception e) {
@@ -124,8 +115,7 @@ public class GridworksBrokerTests {
         }
     }
 
-    @Test
-    public void testReleaseLockFailure() {
+    @Test public void testReleaseLockFailure() {
         try {
             failure(broker, request, response, RELEASE_LOCK);
         } catch (Exception e) {
@@ -133,10 +123,170 @@ public class GridworksBrokerTests {
         }
     }
 
-    @Test
-    public void testStartProject() {
+    @Test public void testGetStateFailure() {
         try {
-            String project = "proj1";
+            failure(broker, request, response, GET_STATE, "pid", "project1934983948", "uid", "testuser", "rev", "0");
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test public void testBrokenAllLockFailure() {
+        try {
+            failure(broker, request, response, OBTAIN_LOCK, "pid", "project", "uid", "testuser", "locktype", Integer.toString(ALL), "lockvalue", "1");
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+    
+    @Test public void testBrokenColLockFailure() {
+        try {
+            failure(broker, request, response, OBTAIN_LOCK, "pid", "project", "uid", "testuser", "locktype", Integer.toString(COL), "lockvalue", "1,1");
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+    
+    @Test public void testBrokenCellLockFailure() {
+        try {
+            failure(broker, request, response, OBTAIN_LOCK, "pid", "project", "uid", "testuser", "locktype", Integer.toString(CELL), "lockvalue", "1");
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+    
+    @Test public void testLockSimple() {
+        String project = "proj0";
+        String user = "testuser";
+        
+        try {
+            logger.info("--- obtain ALL lock on project ---");
+            JSONObject result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
+            assertJSON(result, "uid", "testuser");
+            String lock = result.getString("lock");
+    
+            logger.info("--- obtain ALL lock on project ---");
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
+
+            logger.info("--- obtain COL lock on project ---");
+            result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(COL), "lockvalue", "1");
+            assertJSON(result, "uid", "testuser");
+            lock = result.getString("lock");
+    
+            logger.info("--- release COL lock on project ---");
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
+
+            logger.info("--- obtain CELL lock on project ---");
+            result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(CELL), "lockvalue", "1,1");
+            assertJSON(result, "uid", "testuser");
+            lock = result.getString("lock");
+            
+            logger.info("--- release CELL lock on project ---");
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+    
+    @Test public void testLocksAllBlocks() {
+        String project = "proj1";
+        String user = "testuser";
+        String user2 = "testuser2";
+
+        try {
+            logger.info("--- obtain ALL lock on project ---");
+            JSONObject result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
+            assertJSON(result, "uid", user);
+            String lock = result.getString("lock");
+
+            logger.info("--- another using asking for any lock will fail ---");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(ALL), "lockvalue", "");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(COL), "lockvalue", "1");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(CELL), "lockvalue", "1,1");
+
+            logger.info("--- same user asking for lower capable locks will return the ALL one ---");
+            result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(COL), "lockvalue", "1");
+            String lock2 = result.getString("lock");
+            Assert.assertEquals(lock, lock2);
+            
+            result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(CELL), "lockvalue", "1,1");
+            lock2 = result.getString("lock");
+            Assert.assertEquals(lock, lock2);
+            
+            logger.info("--- release the ALL lock ---");
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test public void testLocksColBlocks() {
+        String project = "proj2";
+        String user = "testuser";
+        String user2 = "testuser2";
+
+        try {
+            logger.info("--- obtain COL lock on project ---");
+            JSONObject result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(COL), "lockvalue", "1");
+            String lock = result.getString("lock");
+
+            logger.info("--- other user must fail to obtain lock on the same COL or ALL ---");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(ALL), "lockvalue", "");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(COL), "lockvalue", "1");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(CELL), "lockvalue", "1,1");
+            
+            logger.info("--- but succeed in getting a COL lock on another column or cell ---");
+            result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(COL), "lockvalue", "2");
+            String lock2 = result.getString("lock");
+            
+            logger.info("--- now it's our first user's turn to fail to get lock ---");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(COL), "lockvalue", "2");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(CELL), "lockvalue", "2,1");
+            
+            logger.info("--- release the locks ---");
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user2, "lock", lock2);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test public void testLocksCellBlocks() {
+        String project = "proj3";
+        String user = "testuser";
+        String user2 = "testuser2";
+
+        try {
+            logger.info("--- obtain CELL lock on project ---");
+            JSONObject result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(CELL), "lockvalue", "1,1");
+            String lock = result.getString("lock");
+
+            logger.info("--- other user must fail to obtain lock on the same CELL, COL or ALL ---");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(ALL), "lockvalue", "");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(COL), "lockvalue", "1");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(CELL), "lockvalue", "1,1");
+            
+            logger.info("--- but succeed in getting a CELL lock on a cell in another column ---");
+            result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(CELL), "lockvalue", "2,1");
+            String lock2 = result.getString("lock");
+            
+            logger.info("--- now it's our first user's turn to fail to get lock ---");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(COL), "lockvalue", "2");
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(CELL), "lockvalue", "2,1");
+            
+            logger.info("--- release the locks ---");
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user, "lock", lock);
+            success(broker, request, response, RELEASE_LOCK, "pid", project, "uid", user2, "lock", lock2);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+    
+    @Test public void testCompleteProjectLifeCycle() {
+        try {
+            String project = "proj4";
             String user = "testuser";
             String user2 = "testuser2";
             String data = "blah";
@@ -145,7 +295,7 @@ public class GridworksBrokerTests {
             
             logger.info("--- obtain ALL lock on project ---");
             JSONObject result = success(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user, "locktype", Integer.toString(ALL), "lockvalue", "");
-            assertJSON(result, "uid", "testuser");
+            assertJSON(result, "uid", user);
             String lock = result.getString("lock");
 
             logger.info("--- start project ---");
@@ -223,7 +373,7 @@ public class GridworksBrokerTests {
             assertJSON(t, "op_value", column + "," + cell);
             
             logger.info("--- make sure another user fails to acquire ALL lock ---");
-            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(ALL), "lockvalue", column);
+            failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(ALL), "lockvalue", "");
 
             logger.info("--- make sure another user fails to acquire COL lock on the same column ---");
             failure(broker, request, response, OBTAIN_LOCK, "pid", project, "uid", user2, "locktype", Integer.toString(COL), "lockvalue", column);
