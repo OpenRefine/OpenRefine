@@ -1,5 +1,8 @@
 body {
-    background: #f4f7fa;
+    background-color: #f4f7fa;
+    background-image: url('../images/gridworks-watermark.png');
+    background-repeat: no-repeat;
+    background-position: left top;
 }
 #body {
     padding: 40px;
