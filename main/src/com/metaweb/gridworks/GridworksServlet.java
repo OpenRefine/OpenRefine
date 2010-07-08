@@ -29,6 +29,7 @@ public class GridworksServlet extends Butterfly {
     private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
 
     static private GridworksServlet s_singleton;
+    static private File             s_dataDir;
     
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
@@ -153,7 +154,8 @@ public class GridworksServlet extends Butterfly {
 
         registerCommands(commandNames);
 
-        FileProjectManager.initialize(new File(data));
+        s_dataDir = new File(data);
+        FileProjectManager.initialize(s_dataDir);
 
         if (_timer == null) {
             _timer = new Timer("autosave");
@@ -232,6 +234,13 @@ public class GridworksServlet extends Butterfly {
 
     public File getTempFile(String name) {
         return new File(getTempDir(), name);
+    }
+    
+    public File getCacheDir(String name) {
+        File dir = new File(new File(s_dataDir, "cache"), name);
+        dir.mkdirs();
+        
+        return dir;
     }
 
     public String getConfiguration(String name, String def) {
