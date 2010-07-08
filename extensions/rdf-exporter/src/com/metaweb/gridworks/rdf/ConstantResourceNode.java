@@ -15,46 +15,46 @@ import com.metaweb.gridworks.model.Row;
 
 public class ConstantResourceNode extends ResourceNode{
 
-	private String uri;
+    private String uri;
 
 
-	public String getUri() {
-		return uri;
-	}
+    public String getUri() {
+        return uri;
+    }
 
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
-	
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+    
 
-	public ConstantResourceNode(String uri){
-		this.uri = uri;
-	}
+    public ConstantResourceNode(String uri){
+        this.uri = uri;
+    }
 
-	@Override
-	public Resource createResource(URI baseUri, Model model, Project project,
-			Row row, int rowIndex,Resource[] blanks) {
-		if(this.uri!=null & this.uri.length()>0){
-			String tmp;
-			try {
-				tmp = Util.getUri(baseUri, this.uri);
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-			Resource r =  model.createResource(tmp);
-			return r;
-		}else{
-			return null;
-		}
-	}
+    @Override
+    public Resource createResource(URI baseUri, Model model, Project project,
+            Row row, int rowIndex,Resource[] blanks) {
+        if(this.uri!=null & this.uri.length()>0){
+            String tmp;
+            try {
+                tmp = Util.getUri(baseUri, this.uri);
+            } catch (URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return null;
+            }
+            Resource r =  model.createResource(tmp);
+            return r;
+        }else{
+            return null;
+        }
+    }
 
-	@Override
-	protected void writeNode(JSONWriter writer, Properties options)
-			throws JSONException {
-		writer.key("nodeType"); writer.value("resource");
-		writer.key("uri"); writer.value(uri);
-	}
-	
+    @Override
+    protected void writeNode(JSONWriter writer, Properties options)
+            throws JSONException {
+        writer.key("nodeType"); writer.value("resource");
+        writer.key("uri"); writer.value(uri);
+    }
+    
 }

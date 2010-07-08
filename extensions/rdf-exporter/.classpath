@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="module/MOD-INF/lib/lucene-core-3.0.1.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/xercesImpl-2.7.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gridworks-server"/>
+	<classpathentry kind="lib" path="/gridworks/webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="/gridworks/webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>

@@ -19,7 +19,7 @@ import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class SaveRdfSchemaCommand extends Command{
 
-	@Override
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         

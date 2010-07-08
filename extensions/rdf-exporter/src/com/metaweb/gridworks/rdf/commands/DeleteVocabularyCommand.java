@@ -16,27 +16,27 @@ import com.metaweb.gridworks.rdf.vocab.VocabularyManager;
 
 public class DeleteVocabularyCommand extends Command{
 
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String uri = request.getParameter("uri");
-		try {	
-			VocabularyManager.singleton.deleteVocabulary(uri);
-			respondJSON(response, new Jsonizable() {
-				
-				@Override
-				public void write(JSONWriter writer, Properties options)
-						throws JSONException {
-					writer.object();
-					writer.key("code"); writer.value("ok");
-					writer.endObject();
-				}
-			});
-		} catch (JSONException e) {
-			respondException(response, e);
-		} catch (Exception e){
-			respondException(response, e);
-		}
-	}
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String uri = request.getParameter("uri");
+        try {    
+            VocabularyManager.getSingleton(servlet).deleteVocabulary(uri);
+            respondJSON(response, new Jsonizable() {
+                
+                @Override
+                public void write(JSONWriter writer, Properties options)
+                        throws JSONException {
+                    writer.object();
+                    writer.key("code"); writer.value("ok");
+                    writer.endObject();
+                }
+            });
+        } catch (JSONException e) {
+            respondException(response, e);
+        } catch (Exception e){
+            respondException(response, e);
+        }
+    }
 
 }

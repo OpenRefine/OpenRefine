@@ -19,81 +19,81 @@ import com.metaweb.gridworks.rdf.vocab.VocabularyManager;
 
 public class SuggestTermCommand extends Command{
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		
-		response.setHeader("Content-Type", "application/json");
-		JSONWriter writer = new JSONWriter(response.getWriter());
-		
-		String type = request.getParameter("type_strict");
-		
-		String prefix = request.getParameter("prefix");
-		try{
-			writer.object();
-			
-			writer.key("prefix");
-			writer.value(prefix);
-			
-			writer.key("result");
-			writer.array();
-			List<RDFNode> nodes;
-			if(type!=null && type.trim().equals("property")){
-				nodes = VocabularyManager.singleton.searchProperties(prefix);
-			}else{
-				nodes = VocabularyManager.singleton.searchClasses(prefix);
-			}
-			for(RDFNode c:nodes){
-				c.writeAsSearchResult(writer);
-			}
-			writer.endArray();
-			writer.endObject();
-		}catch(Exception e){
-			e.printStackTrace();
-			throw new ServletException(e);
-		}
-	}
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        
+        response.setHeader("Content-Type", "application/json");
+        JSONWriter writer = new JSONWriter(response.getWriter());
+        
+        String type = request.getParameter("type_strict");
+        
+        String prefix = request.getParameter("prefix");
+        try{
+            writer.object();
+            
+            writer.key("prefix");
+            writer.value(prefix);
+            
+            writer.key("result");
+            writer.array();
+            List<RDFNode> nodes;
+            if(type!=null && type.trim().equals("property")){
+                nodes = VocabularyManager.getSingleton(servlet).searchProperties(prefix);
+            }else{
+                nodes = VocabularyManager.getSingleton(servlet).searchClasses(prefix);
+            }
+            for(RDFNode c:nodes){
+                c.writeAsSearchResult(writer);
+            }
+            writer.endArray();
+            writer.endObject();
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new ServletException(e);
+        }
+    }
 
-	
+    
 }
 
 class Result implements Jsonizable{
 
-	private List<String[]> results = new ArrayList<String[]>();
-	private String prefix;
-	
-	Result(String p){
-		this.prefix = p;
-	}
-	void addResult(String id, String name){
-		String[] res = new String[] {id,name};
-		results.add(res);
-	}
-	@Override
-	public void write(JSONWriter writer, Properties options)
-			throws JSONException {
-		writer.object();
-		
-		
-		writer.key("prefix");
-		writer.value(prefix);
-		
-		writer.key("result");
-		writer.array();
-		for(String[] res:results){
-			writer.object();
-			
-			writer.key("id");
-			writer.value(res[0]);
-			
-			writer.key("name");
-			writer.value(res[1]);
-			
-			writer.endObject();
-		}
-		writer.endArray();
-		writer.endObject();
-	}
-	
+    private List<String[]> results = new ArrayList<String[]>();
+    private String prefix;
+    
+    Result(String p){
+        this.prefix = p;
+    }
+    void addResult(String id, String name){
+        String[] res = new String[] {id,name};
+        results.add(res);
+    }
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        writer.object();
+        
+        
+        writer.key("prefix");
+        writer.value(prefix);
+        
+        writer.key("result");
+        writer.array();
+        for(String[] res:results){
+            writer.object();
+            
+            writer.key("id");
+            writer.value(res[0]);
+            
+            writer.key("name");
+            writer.value(res[1]);
+            
+            writer.endObject();
+        }
+        writer.endArray();
+        writer.endObject();
+    }
+    
 }

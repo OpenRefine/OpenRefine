@@ -11,5 +11,5 @@ import com.metaweb.gridworks.model.Row;
 
 public interface Node extends Jsonizable{
 
-	RDFNode createNode(URI baseUri,Model model,Project project,Row row,int rowIndex,Resource[] blanks);
+    RDFNode createNode(URI baseUri,Model model,Project project,Row row,int rowIndex,Resource[] blanks);
 }
