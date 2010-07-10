@@ -51,7 +51,6 @@ public class Protograph implements OverlayModel {
                 if (o.has("type")) {
                     node = new CellTopicNode(
                         columnName,
-                        o.getBoolean("createForNoReconMatch"),
                         reconstructType(o.getJSONObject("type"))
                     );
                 }

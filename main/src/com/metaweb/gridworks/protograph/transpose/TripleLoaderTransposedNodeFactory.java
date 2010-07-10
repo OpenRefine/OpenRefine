@@ -97,7 +97,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                 sb2.append(Long.toString(recon.id)); 
                 sb2.append("\", \"p\" : \"qa:sample_group\", \"o\" : ");
                 sb2.append(JSONObject.quote(column.getName()));
-                sb2.append(" }");
+                sb2.append(", \"ignore\" : true }");
                 
                 writeLine(sb2.toString());
             }
@@ -110,7 +110,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                     
                 sb2.append("{ \"s\" : \"rec"); 
                 sb2.append(Long.toString(recon.id)); 
-                sb2.append("\", \"p\" : \"qa:recon_data\", \"o\" : { ");
+                sb2.append("\", \"p\" : \"qa:recon_data\", \"ignore\" : true, \"o\" : { ");
                 
                 sb2.append(" \"history_entry\" : "); sb2.append(Long.toString(recon.judgmentHistoryEntry));
                 sb2.append(", \"text\" : "); sb2.append(JSONObject.quote(s));
@@ -135,7 +135,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             String subject, String predicate, Object object, 
             Project project, 
             int subjectRowIndex, int subjectCellIndex, Cell subjectCell, 
-            int objectRowIndex, int objectCellIndex, Cell objectCell
+            int objectRowIndex, int objectCellIndex, Cell objectCell,
+            boolean ignore
         ) {
         if (subject != null && object != null) {
             String s = object instanceof String ? 
@@ -164,6 +165,9 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                 
                 sb.append(" }");
             }
+            if (ignore) {
+                sb.append(", \"ignore\" : true");
+            }
             sb.append(" }");
                     
             writeLine(sb.toString());
@@ -172,7 +176,8 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     
     protected void writeLine(
         String subject, String predicate, Object object, String lang, 
-        Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell
+        Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell,
+        boolean ignore
     ) {
         if (subject != null && object != null) {
             String s = object instanceof String ? 
@@ -192,6 +197,9 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                 sb.append(" }");
                 sb.append(" }");
             }
+            if (ignore) {
+                sb.append(", \"ignore\" : true");
+            }
             sb.append(" }");
                     
             writeLine(sb.toString());
@@ -205,7 +213,10 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         public Object write(
                 String subject, String predicate, Project project,
                 int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
-            return load ? internalWrite(subject, predicate, project, subjectRowIndex, subjectCellIndex, subjectCell) : null;
+            
+            return internalWrite(
+                subject, predicate, project, 
+                subjectRowIndex, subjectCellIndex, subjectCell);
         }
         
         abstract public Object internalWrite(
@@ -218,15 +229,17 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         public List<Integer> rowIndices = new LinkedList<Integer>();
         public List<WritingTransposedNode> children = new LinkedList<WritingTransposedNode>();
         
-        protected void writeChildren(String subject, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+        protected void writeChildren(
+            String subject, Project project,
+            int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
+            
             for (int i = 0; i < children.size(); i++) {
                 WritingTransposedNode child = children.get(i);
                 Link link = links.get(i);
-                if (link.load) {
-                    String predicate = link.property.id;
-                    
-                    child.write(subject, predicate, project, subjectRowIndex, subjectCellIndex, subjectCell);
-                }
+                String predicate = link.property.id;
+                
+                child.write(subject, predicate, project, 
+                    subjectRowIndex, subjectCellIndex, subjectCell);
             }
         }
     }
@@ -261,38 +274,36 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                 WritingTransposedNode child = children.get(i);
                 Link link = links.get(i);
                 
-                if (link.load) {
-                    FreebaseProperty property = link.property;
-                    
-                    Object c = child.internalWrite(null, null, project, subjectRowIndex, subjectCellIndex, null);
-                    if (c != null) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            sb.append(", ");
-                        }
-                        sb.append("\"" + property.id + "\": ");
-                        sb.append(c instanceof String ? JSONObject.quote((String) c) : c.toString());
+                FreebaseProperty property = link.property;
+                
+                Object c = child.internalWrite(null, null, project, subjectRowIndex, subjectCellIndex, null);
+                if (c != null) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        sb.append(", ");
                     }
+                    sb.append("\"" + property.id + "\": ");
+                    sb.append(c instanceof String ? JSONObject.quote((String) c) : c.toString());
+                }
+                
+                if (child instanceof CellTopicTransposedNode) {
+                    CellTopicTransposedNode child2 = (CellTopicTransposedNode) child;
+                    Recon recon = child2.cell.recon;
                     
-                    if (child instanceof CellTopicTransposedNode) {
-                        CellTopicTransposedNode child2 = (CellTopicTransposedNode) child;
-                        Recon recon = child2.cell.recon;
+                    if (recon != null &&
+                        (recon.judgment == Judgment.Matched || recon.judgment == Judgment.New)) {
                         
-                        if (recon != null &&
-                            (recon.judgment == Judgment.Matched || recon.judgment == Judgment.New)) {
-                            
-                            if (firstRecon) {
-                                firstRecon = false;
-                            } else {
-                                sbRecon.append(", ");
-                            }
-                            
-                            sbRecon.append("\""); sbRecon.append(property.id); sbRecon.append("\" : ");
-                            
-                            writeRecon(sbRecon, project, 
-                                rowIndices.get(i), child2.cellIndex, child2.cell);
+                        if (firstRecon) {
+                            firstRecon = false;
+                        } else {
+                            sbRecon.append(", ");
                         }
+                        
+                        sbRecon.append("\""); sbRecon.append(property.id); sbRecon.append("\" : ");
+                        
+                        writeRecon(sbRecon, project, 
+                            rowIndices.get(i), child2.cellIndex, child2.cell);
                     }
                 }
             }
@@ -321,49 +332,45 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             String id = null;
-            int objectRowIndex = -1;
-            int objectCellIndex = -1;
-            Cell objectCell = null;
-            
-            if (cell.recon != null &&
-                cell.recon.judgment == Recon.Judgment.Matched &&
-                cell.recon.match != null) {
+            if (cell.recon != null && cell.recon.judgment != Recon.Judgment.None) {
+                int objectRowIndex = rowIndex;
+                int objectCellIndex = cellIndex;
+                Cell objectCell = cell;
                 
-                objectRowIndex = rowIndex;
-                objectCellIndex = cellIndex;
-                objectCell = cell;
-                id = cell.recon.match.id;
-            } else if (node.createForNoReconMatch || 
-                    (cell.recon != null && cell.recon.judgment == Judgment.New)) {
-                if (cell.recon != null && newTopicVars.containsKey(cell.recon.id)) {
-                    id = newTopicVars.get(cell.recon.id);
+                if (cell.recon.judgment == Recon.Judgment.Matched) {
+                    id = cell.recon.match.id;
+                    
+                } else if (cell.recon.judgment == Judgment.New) {
+                    if (newTopicVars.containsKey(cell.recon.id)) {
+                        id = newTopicVars.get(cell.recon.id);
+                    } else {
+                        long var = 0;
+                        if (varPool.containsKey(node.columnName)) {
+                            var = varPool.get(node.columnName);
+                        }
+                        varPool.put(node.columnName, var + 1);
+                        
+                        id = "$" + node.columnName.replaceAll("\\W+", "_") + "_" + var;
+                        
+                        writeLine(id, "type", node.type.id, project, rowIndex, cellIndex, cell, -1, -1, (Cell) null, !load);
+                        writeLine(id, "name", cell.value, project, -1, -1, (Cell) null, -1, -1, (Cell) null, !load);
+                        
+                        if (cell.recon != null) {
+                            newTopicVars.put(cell.recon.id, id);
+                        }
+                    }
                 } else {
-                    long var = 0;
-                    if (varPool.containsKey(node.columnName)) {
-                        var = varPool.get(node.columnName);
-                    }
-                    varPool.put(node.columnName, var + 1);
-                    
-                    id = "$" + node.columnName.replaceAll("\\W+", "_") + "_" + var;
-                    
-                    writeLine(id, "type", node.type.id, project, -1, -1, (Cell) null, -1, -1, (Cell) null);
-                    writeLine(id, "name", cell.value, project, -1, -1, (Cell) null, -1, -1, (Cell) null);
-                    
-                    if (cell.recon != null) {
-                        newTopicVars.put(cell.recon.id, id);
-                    }
+                    return null;
                 }
-            } else {
-                return null;
+                
+                if (subject != null) {
+                    writeLine(subject, predicate, id, project, 
+                            subjectRowIndex, subjectCellIndex, subjectCell, 
+                            objectRowIndex, objectCellIndex, objectCell, !load);
+                }
+                
+                writeChildren(id, project, objectRowIndex, objectCellIndex, objectCell);
             }
-            
-            if (subject != null) {
-                writeLine(subject, predicate, id, project, 
-                        subjectRowIndex, subjectCellIndex, subjectCell, 
-                        objectRowIndex, objectCellIndex, objectCell);
-            }
-            
-            writeChildren(id, project, objectRowIndex, objectCellIndex, objectCell);
             
             return id;
         }
@@ -387,11 +394,11 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             if (subject != null) {
                 if ("/type/text".equals(node.lang)) {
                     writeLine(subject, predicate, cell.value, node.lang, project, 
-                            subjectRowIndex, subjectCellIndex, subjectCell);
+                            subjectRowIndex, subjectCellIndex, subjectCell, !load);
                 } else {
                     writeLine(subject, predicate, cell.value, project, 
                             subjectRowIndex, subjectCellIndex, subjectCell, 
-                            -1, -1, null);
+                            -1, -1, null, !load);
                 }
             }
             
@@ -415,7 +422,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             writeLine(subject, "key", node.namespace.id + "/" + cell.value, project, 
                 subjectRowIndex, subjectCellIndex, subjectCell, 
-                -1, -1, null);
+                -1, -1, null, !load);
             
             return null;
         }
@@ -431,7 +438,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             writeLine(subject, predicate, node.topic.id, project, 
                 subjectRowIndex, subjectCellIndex, subjectCell, 
-                -1, -1, null);
+                -1, -1, null, !load);
             
             writeChildren(node.topic.id, project, -1, -1, null);
             
@@ -449,11 +456,11 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             if ("/type/text".equals(node.lang)) {
                 writeLine(subject, predicate, node.value, node.lang, project,
-                    subjectRowIndex, subjectCellIndex, subjectCell);
+                    subjectRowIndex, subjectCellIndex, subjectCell, !load);
             } else {
                 writeLine(subject, predicate, node.value, project, 
                     subjectRowIndex, subjectCellIndex, subjectCell, 
-                    -1, -1, null);
+                    -1, -1, null, !load);
             }
             
             return node.value;
@@ -632,7 +639,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                     {
                         StringBuffer sb2 = new StringBuffer();
                         
-                        sb2.append("{ \"s\" : \"rec");
+                        sb2.append("{ \"ignore\" : true, \"s\" : \"rec");
                         sb2.append(Long.toString(cell.recon.id));
                         sb2.append("\", \"p\" : \"qa:display_context\", \"o\" : \"ctx");
                         sb2.append(Long.toString(contextID));
@@ -688,7 +695,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         if (contextTreeRoot != null && contextRefCount > 0) {
             StringBuffer sb = new StringBuffer();
             
-            sb.append("{ \"s\" : \"ctx"); 
+            sb.append("{ \"ignore\" : true, \"s\" : \"ctx"); 
             sb.append(Long.toString(contextID)); 
             sb.append("\", \"p\" : \"qa:context_data\", \"o\" : { \"row\" : ");
             sb.append(Integer.toString(contextRowIndex));

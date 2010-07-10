@@ -8,18 +8,15 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 public class CellTopicNode extends CellNode implements NodeWithLinks {
-    final public boolean        createForNoReconMatch;
     final public FreebaseType   type;
     final public List<Link>     links = new LinkedList<Link>();
 
     public CellTopicNode(
-        String            columnName,
-        boolean         createForNoReconMatch, 
+        String           columnName,
         FreebaseType     type
     ) {
         super(columnName);
         
-        this.createForNoReconMatch = createForNoReconMatch;
         this.type = type;
     }
     
@@ -29,8 +26,7 @@ public class CellTopicNode extends CellNode implements NodeWithLinks {
         writer.object();
         writer.key("nodeType"); writer.value("cell-as-topic");
         writer.key("columnName"); writer.value(columnName);
-        writer.key("createForNoReconMatch"); writer.value(createForNoReconMatch);
-        if (createForNoReconMatch && type != null) {
+        if (type != null) {
             writer.key("type"); type.write(writer, options);
         }
         if (links != null) {
