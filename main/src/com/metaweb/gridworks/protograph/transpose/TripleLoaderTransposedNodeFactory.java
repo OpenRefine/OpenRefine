@@ -701,7 +701,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             sb.append(Integer.toString(contextRowIndex));
             sb.append(", \"data\" : ");
             sb.append(contextTreeRoot.toString());
-            sb.append(" } } }");
+            sb.append(" } }");
             
             writeLine(sb.toString());
         }
