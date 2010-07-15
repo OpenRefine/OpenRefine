@@ -18,6 +18,8 @@ import com.metaweb.gridworks.model.Column;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Recon;
 import com.metaweb.gridworks.model.Recon.Judgment;
+import com.metaweb.gridworks.model.recon.ReconConfig;
+import com.metaweb.gridworks.model.recon.StandardReconConfig;
 import com.metaweb.gridworks.protograph.AnonymousNode;
 import com.metaweb.gridworks.protograph.CellKeyNode;
 import com.metaweb.gridworks.protograph.CellNode;
@@ -122,6 +124,12 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                 if (recon.judgment == Judgment.Matched) {
                     sb2.append(", \"matchRank\" : "); sb2.append(Integer.toString(recon.matchRank));
                     sb2.append(", \"id\" : "); sb2.append(JSONObject.quote(recon.match.id));
+                }
+                
+                ReconConfig reconConfig = column.getReconConfig();
+                if (reconConfig != null && reconConfig instanceof StandardReconConfig) {
+                    StandardReconConfig standardReconConfig = (StandardReconConfig) reconConfig;
+                    sb2.append(", \"type\" : "); sb2.append(JSONObject.quote(standardReconConfig.typeID));
                 }
                 
                 sb2.append(" } }");
