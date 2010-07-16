@@ -145,8 +145,14 @@ public class FreebaseUtils {
         return EntityUtils.toString(httpResponse.getEntity());
     }
 
-    public static String uploadTriples(HttpServletRequest request, String graph, String source_name, String source_id, String triples) 
-        throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, JSONException, IOException {
+    public static String uploadTriples(
+        HttpServletRequest request,
+        String graph,
+        String source_name,
+        String source_id,
+        String mdo_id,
+        String triples
+    ) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, JSONException, IOException {
         
         Provider provider = OAuthUtilities.getProvider(FREEBASE_HOST);
         
@@ -168,11 +174,15 @@ public class FreebaseUtils {
                 List<NameValuePair> formparams = new ArrayList<NameValuePair>();
                 formparams.add(new BasicNameValuePair("user", user_info.getString("id")));
                 formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
-                formparams.add(new BasicNameValuePair("operator", GRIDWORKS_ID));
+                formparams.add(new BasicNameValuePair("operator", user_info.getString("id")));
+                formparams.add(new BasicNameValuePair("software_tool_used", GRIDWORKS_ID));
                 formparams.add(new BasicNameValuePair("mdo_info", mdo_info.toString()));
                 formparams.add(new BasicNameValuePair("graphport", graph));
                 formparams.add(new BasicNameValuePair("payload", triples));
                 formparams.add(new BasicNameValuePair("check_params", "false"));
+                if (mdo_id != null) {
+                    formparams.add(new BasicNameValuePair("mdo_guid", mdo_id));
+                }
                 UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
     
                 HttpPost httpRequest = new HttpPost(FREEQ_URL);

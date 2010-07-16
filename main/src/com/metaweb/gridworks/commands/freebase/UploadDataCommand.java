@@ -2,6 +2,7 @@ package com.metaweb.gridworks.commands.freebase;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -17,9 +18,11 @@ import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.exporters.ProtographTransposeExporter.TripleLoaderExporter;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.util.FreebaseUtils;
+import com.metaweb.gridworks.util.ParsingUtilities;
 
 public class UploadDataCommand extends Command {
-
+    final static protected String s_dataLoadJobIDPref = "core/freebaseDataLoadJobID";
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -35,17 +38,42 @@ public class UploadDataCommand extends Command {
             String source_name = request.getParameter("source_name");
             String source_id = request.getParameter("source_id");
             String graph = request.getParameter("graph");
-                        
-            String result = FreebaseUtils.uploadTriples(request, graph, source_name, source_id, triples.toString());
-
+            String mdo_id = null;
+            
+            try {
+                Integer jobID = (Integer) project.getMetadata().getPreferenceStore().get(s_dataLoadJobIDPref);
+                if (jobID != null) {
+                    URL url = new URL("http://gridworks-loads.freebaseapps.com/job_id_to_mdo?job=" + jobID);
+                    String s = ParsingUtilities.inputStreamToString(url.openConnection().getInputStream());
+                    
+                    if (!s.equals("null")) {
+                        mdo_id = s;
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+            
+            String uploadResponse = FreebaseUtils.uploadTriples(
+                request, graph, source_name, source_id, mdo_id, triples.toString());
+            
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             
             try {
-                new JSONObject(result);
-                response.getWriter().write(result);
+                JSONObject obj = new JSONObject(uploadResponse);
+                if (obj.has("result") && !obj.isNull("result")) {
+                    JSONObject result = obj.getJSONObject("result");
+                    if (result.has("job_id") && !result.isNull("job_id")) {
+                        Integer jobID = result.getInt("job_id");
+                        
+                        project.getMetadata().getPreferenceStore().put(
+                            s_dataLoadJobIDPref, jobID);
+                    }
+                }
+                response.getWriter().write(uploadResponse);
             } catch (JSONException e) {
-                respond(response,"500 Error", result);
+                respond(response,"500 Error", uploadResponse);
             }
             
         } catch (Exception e) {
