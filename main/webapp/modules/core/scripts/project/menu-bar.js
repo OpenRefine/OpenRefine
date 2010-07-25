@@ -292,23 +292,14 @@ MenuBar.prototype._deactivateMenu = function() {
     this._mode = "inactive";
 };
 
-MenuBar.prototype._doDenormalizeRecords = function() {
-    Gridworks.postProcess(
-        "denormalize",
-        {},
-        null,
-        { modelsChanged: true }
-    );
-};
-
-MenuBar.prototype._doExportTripleloader = function(format) {
+MenuBar.handlers.exportTripleloader = function(format) {
     if (!theProject.overlayModels.freebaseProtograph) {
         alert(
             "You haven't done any schema alignment yet,\nso there is no triple to export.\n\n" +
             "Use the Schemas > Edit Schema Alignment Skeleton...\ncommand to align your data with Freebase schemas first."
         );
     } else {
-        this._doExportRows(format, "txt");
+        MenuBar.handlers.exportRows(format, "txt");
     }
 };
 
