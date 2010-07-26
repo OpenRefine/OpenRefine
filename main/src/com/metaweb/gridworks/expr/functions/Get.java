@@ -8,6 +8,7 @@ import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.ExpressionUtils;
 import com.metaweb.gridworks.expr.HasFields;
+import com.metaweb.gridworks.expr.HasFieldsList;
 import com.metaweb.gridworks.gel.Function;
 
 public class Get implements Function {
@@ -19,16 +20,19 @@ public class Get implements Function {
             Object to = (args.length == 3) ? args[2] : null;
             
             if (v != null && from != null) {
-                if (v instanceof HasFields) {
-                    if (from instanceof String) {
-                        return ((HasFields) v).getField((String) from, bindings);
-                    }
+                if (v instanceof HasFields && from instanceof String) {
+                    return ((HasFields) v).getField((String) from, bindings);
                 } else {
                     if (from instanceof Number && (to == null || to instanceof Number)) {
-                        if (v.getClass().isArray() || v instanceof List<?>) {
-                            int length = v.getClass().isArray() ? 
-                                ((Object[]) v).length :
-                                ExpressionUtils.toObjectList(v).size();
+                        if (v.getClass().isArray() || v instanceof List<?> || v instanceof HasFieldsList) {
+                            int length = 0;
+                            if (v.getClass().isArray()) { 
+                                length = ((Object[]) v).length;
+                            } else if (v instanceof HasFieldsList) {
+                                length = ((HasFieldsList) v).length();
+                            } else {
+                                length = ExpressionUtils.toObjectList(v).size();
+                            }
                             
                             int start = ((Number) from).intValue();
                             if (start < 0) {
@@ -37,10 +41,13 @@ public class Get implements Function {
                             start = Math.min(length, Math.max(0, start));
                             
                             if (to == null) {
-                                return start >= length ? null :
-                                    (v.getClass().isArray() ? 
-                                        ((Object[]) v)[start] :
-                                        ExpressionUtils.toObjectList(v).get(start));
+                                if (v.getClass().isArray()) {
+                                    return ((Object[]) v)[start];
+                                } else if (v instanceof HasFieldsList) {
+                                    return ((HasFieldsList) v).get(start);
+                                } else {
+                                    return ExpressionUtils.toObjectList(v).get(start);
+                                }
                             } else {
                                 int end = (to != null) ? ((Number) to).intValue() : length;
                                             
@@ -56,6 +63,8 @@ public class Get implements Function {
                                         System.arraycopy((Object[]) v, start, a2, 0, end - start);
                                         
                                         return a2;
+                                    } else if (v instanceof HasFieldsList) {
+                                        return ((HasFieldsList) v).getSubList(start, end);
                                     } else {
                                         return ExpressionUtils.toObjectList(v).subList(start, end);
                                     }

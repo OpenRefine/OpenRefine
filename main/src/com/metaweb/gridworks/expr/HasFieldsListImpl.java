@@ -31,4 +31,11 @@ public class HasFieldsListImpl extends ArrayList<HasFields> implements HasFields
         int c = size();
         return (c > 0 && get(0).fieldAlsoHasFields(name));
     }
+    
+    public HasFieldsList getSubList(int fromIndex, int toIndex) {
+        HasFieldsListImpl subList = new HasFieldsListImpl();
+        subList.addAll(this.subList(fromIndex, toIndex));
+        
+        return subList;
+    }
 }

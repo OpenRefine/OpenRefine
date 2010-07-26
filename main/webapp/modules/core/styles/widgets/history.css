@@ -81,6 +81,7 @@ a.history-entry:hover {
     height: 400px;
     padding: 2px;
     border: 1px inset;
+    max-width: 400px !important;
     overflow: auto;
 }
 textarea.history-operation-json {

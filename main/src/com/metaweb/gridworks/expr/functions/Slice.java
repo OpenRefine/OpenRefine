@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.metaweb.gridworks.expr.ExpressionUtils;
+import com.metaweb.gridworks.expr.HasFieldsList;
 import com.metaweb.gridworks.gel.Function;
 
 public class Slice implements Function {
@@ -18,10 +19,15 @@ public class Slice implements Function {
             Object to = (args.length == 3) ? args[2] : null;
             
             if (v != null && from != null && from instanceof Number && (to == null || to instanceof Number)) {
-                if (v.getClass().isArray() || v instanceof List<?>) {
-                    int length = v.getClass().isArray() ? 
-                            ((Object[]) v).length :
-                            ExpressionUtils.toObjectList(v).size();
+                if (v.getClass().isArray() || v instanceof List<?> || v instanceof HasFieldsList) {
+                    int length = 0;
+                    if (v.getClass().isArray()) { 
+                        length = ((Object[]) v).length;
+                    } else if (v instanceof HasFieldsList) {
+                        length = ((HasFieldsList) v).length();
+                    } else {
+                        length = ExpressionUtils.toObjectList(v).size();
+                    }
                     
                     int start = ((Number) from).intValue();
                     int end = (to != null) ? ((Number) to).intValue() : length;
@@ -42,6 +48,8 @@ public class Slice implements Function {
                         System.arraycopy((Object[]) v, start, a2, 0, end - start);
                         
                         return a2;
+                    } else if (v instanceof HasFieldsList) {
+                        return ((HasFieldsList) v).getSubList(start, end);
                     } else {
                         return ExpressionUtils.toObjectList(v).subList(start, end);
                     }
