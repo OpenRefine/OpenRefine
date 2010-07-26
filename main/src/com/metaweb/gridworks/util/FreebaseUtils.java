@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metaweb.gridworks.GridworksServlet;
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.oauth.Credentials;
 import com.metaweb.gridworks.oauth.OAuthUtilities;
 import com.metaweb.gridworks.oauth.Provider;
@@ -185,7 +186,7 @@ public class FreebaseUtils {
                 }
                 UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
     
-                HttpPost httpRequest = new HttpPost(FREEQ_URL);
+                HttpPost httpRequest = new HttpPost(getFreeQUrl());
                 httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
                 httpRequest.setEntity(entity);
                 
@@ -240,5 +241,10 @@ public class FreebaseUtils {
         }
         
         return allowed;
+    }
+    
+    static public String getFreeQUrl() {
+    	String url = (String) ProjectManager.singleton.getPreferenceStore().get("freebase.freeq");
+    	return url != null ? url : FREEQ_URL;
     }
 }

@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.commands.expr;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,10 @@ import com.metaweb.gridworks.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
     
+	static protected List<String> toExpressionList(Object o) {
+        return o == null ? new ArrayList<String>() : ((TopList) o).getList();
+	}
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -25,15 +30,10 @@ public class GetExpressionHistoryCommand extends Command {
         try {
             Project project = getProject(request);
             
-            List<String> localExpressions = 
-                ((TopList) project.getMetadata().getPreferenceStore().get("expressions"))
-                    .getList();
-            
+            List<String> localExpressions = toExpressionList(project.getMetadata().getPreferenceStore().get("scripting.expressions"));
             localExpressions = localExpressions.size() > 20 ? localExpressions.subList(0, 20) : localExpressions;
             
-            List<String> globalExpressions =
-                ((TopList) ProjectManager.singleton.getPreferenceStore().get("expressions"))
-                    .getList();
+            List<String> globalExpressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
             
             Set<String> done = new HashSet<String>();
             

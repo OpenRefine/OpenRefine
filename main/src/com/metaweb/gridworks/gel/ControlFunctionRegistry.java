@@ -64,8 +64,11 @@ import com.metaweb.gridworks.expr.functions.strings.Trim;
 import com.metaweb.gridworks.expr.functions.strings.Unescape;
 import com.metaweb.gridworks.expr.functions.strings.Unicode;
 import com.metaweb.gridworks.expr.functions.strings.UnicodeType;
+import com.metaweb.gridworks.gel.controls.Filter;
 import com.metaweb.gridworks.gel.controls.ForEach;
+import com.metaweb.gridworks.gel.controls.ForEachIndex;
 import com.metaweb.gridworks.gel.controls.ForNonBlank;
+import com.metaweb.gridworks.gel.controls.ForRange;
 import com.metaweb.gridworks.gel.controls.If;
 import com.metaweb.gridworks.gel.controls.IsBlank;
 import com.metaweb.gridworks.gel.controls.IsError;
@@ -188,6 +191,9 @@ public class ControlFunctionRegistry {
         registerControl("if", new If());
         registerControl("with", new With());
         registerControl("forEach", new ForEach());
+        registerControl("forEachIndex", new ForEachIndex());
+        registerControl("forRange", new ForRange());
+        registerControl("filter", new Filter());
         registerControl("forNonBlank", new ForNonBlank());
 
         registerControl("isNull", new IsNull());

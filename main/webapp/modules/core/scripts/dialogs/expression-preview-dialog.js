@@ -328,9 +328,9 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
         
         $(tr.insertCell(0)).attr("width", "1%").html((this._rowIndices[i] + 1) + ".");
         
-        renderValue($(tr.insertCell(1)), this._values[i]);
+        renderValue($(tr.insertCell(1)).addClass("expression-preview-value"), this._values[i]);
         
-        var tdValue = $(tr.insertCell(2));
+        var tdValue = $(tr.insertCell(2)).addClass("expression-preview-value");
         if (this._results !== null) {
             var v = this._results[i];
             renderValue(tdValue, v);

@@ -82,7 +82,7 @@ ReconciliationManager.save = function(f) {
         async: false,
         type: "POST",
         url: "/command/set-preference?" + $.param({ 
-            name: "standard-reconciliation-services" 
+            name: "reconciliation.standardServices" 
         }),
         data: { "value" : JSON.stringify(ReconciliationManager.standardServices) },
         success: function(data) {
@@ -101,7 +101,7 @@ ReconciliationManager.save = function(f) {
     $.ajax({
         async: false,
         url: "/command/get-preference?" + $.param({ 
-            name: "standard-reconciliation-services" 
+            name: "reconciliation.standardServices" 
         }),
         success: function(data) {
             if (data.value && data.value != "null") {
@@ -109,7 +109,7 @@ ReconciliationManager.save = function(f) {
                 ReconciliationManager._rebuildMap();
             } else {
                 ReconciliationManager.registerStandardService(
-                    "http://standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");
+                    "http://1.standard-reconcile.freebaseapps.com/reconcile");
             }
         },
         dataType: "json"

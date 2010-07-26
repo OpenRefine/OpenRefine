@@ -21,10 +21,10 @@ public class LogExpressionCommand extends Command {
             Project project = getProject(request);
             String expression = request.getParameter("expression");
             
-            ((TopList) project.getMetadata().getPreferenceStore().get("expressions"))
+            ((TopList) project.getMetadata().getPreferenceStore().get("scripting.expressions"))
                 .add(expression);
 
-            ((TopList) ProjectManager.singleton.getPreferenceStore().get("expressions"))
+            ((TopList) ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"))
                 .add(expression);
             
             response.setCharacterEncoding("UTF-8");

@@ -33,6 +33,11 @@ td.expression-preview-heading {
     font-weight: bold;
 }
 
+td.expression-preview-value {
+    max-width: 250px !important;
+    overflow-x: hidden;
+}
+
 .expression-preview-special-value {
     color: #aaa;
 }
