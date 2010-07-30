@@ -320,6 +320,15 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 }
             ]
         },
+        {
+            label: "Transpose",
+            submenu: [
+                {
+                    label: "Cells Across Columns into Rows",
+                    click: function() { self._doTransposeColumnsIntoRows(); }
+                }
+            ]
+        },
         {},
         (
             this._dataTableView._getSortingCriterionForColumn(this._column.name) == null ?
@@ -1081,6 +1090,74 @@ DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
     });
     
     footerElmts.cancelButton.click(dismiss);
+};
+
+DataTableColumnHeaderUI.prototype._doTransposeColumnsIntoRows = function() {
+    var self = this;
+    var dialog = $(DOM.loadHTML("core", "scripts/views/data-table/transpose-columns-into-rows.html"));
+
+    var elmts = DOM.bind(dialog);
+    elmts.dialogHeader.text('Transpose Cells Across Columns into Rows');
+    
+    var level = DialogSystem.showDialog(dialog);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
+    var columns = theProject.columnModel.columns;
+    
+    elmts.cancelButton.click(function() { dismiss(); });
+    elmts.okButton.click(function() {
+        var config = {
+            startColumnName: elmts.fromColumnSelect[0].value,
+            columnCount: elmts.toColumnSelect[0].value,
+            combinedColumnName: $.trim(elmts.combinedColumnNameInput[0].value),
+            prependColumnName: elmts.prependColumnNameCheckbox[0].checked,
+            separator: elmts.separatorInput[0].value,
+            ignoreBlankCells: elmts.ignoreBlankCellsCheckbox[0].checked
+        };
+        
+        Gridworks.postProcess(
+            "transpose-columns-into-rows", 
+            config,
+            null,
+            { modelsChanged: true }
+        );
+        dismiss();
+    });
+    
+    for (var i = 0; i < columns.length; i++) {
+        var column = columns[i];
+        var option = $('<option>').attr("value", column.name).text(column.name).appendTo(elmts.fromColumnSelect);
+        if (column.name == this._column.name) {
+            option.attr("selected", "true");
+        }
+    }
+    
+    var populateToColumn = function() {
+        elmts.toColumnSelect.empty();
+        
+        var toColumnName = elmts.fromColumnSelect[0].value;
+        
+        var j = 0;
+        for (; j < columns.length; j++) {
+            var column = columns[j];
+            if (column.name == toColumnName) {
+                break;
+            }
+        }
+        
+        for (var k = j + 1; k < columns.length; k++) {
+            var column = columns[k];
+            var option = $('<option>').attr("value", k - j + 1).text(column.name).appendTo(elmts.toColumnSelect);
+            if (k == columns.length - 1) {
+                option.attr("selected", "true");
+            }
+        }
+    };
+    populateToColumn();
+    
+    elmts.fromColumnSelect.bind("change", populateToColumn);
 };
 
 DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, hasOtherCriteria) {

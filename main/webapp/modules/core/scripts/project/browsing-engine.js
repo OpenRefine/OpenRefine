@@ -127,6 +127,10 @@ BrowsingEngine.prototype._updateFacetOrder = function() {
     this._facets = newFacets;
 };
 
+BrowsingEngine.prototype.getMode = function() {
+    return this._elmts.modeSelectors.find("input:checked")[0].value;
+};
+
 BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
     var a = {
         facets: [],
