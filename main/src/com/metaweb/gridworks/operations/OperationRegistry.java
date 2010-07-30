@@ -12,6 +12,7 @@ import com.metaweb.gridworks.operations.cell.MassEditOperation;
 import com.metaweb.gridworks.operations.cell.MultiValuedCellJoinOperation;
 import com.metaweb.gridworks.operations.cell.MultiValuedCellSplitOperation;
 import com.metaweb.gridworks.operations.cell.TextTransformOperation;
+import com.metaweb.gridworks.operations.cell.TransposeColumnsIntoRowsOperation;
 import com.metaweb.gridworks.operations.column.ColumnAdditionOperation;
 import com.metaweb.gridworks.operations.column.ColumnRemovalOperation;
 import com.metaweb.gridworks.operations.column.ColumnRenameOperation;
@@ -49,6 +50,7 @@ public abstract class OperationRegistry {
         
         register("multivalued-cell-join", MultiValuedCellJoinOperation.class);
         register("multivalued-cell-split", MultiValuedCellSplitOperation.class);
+        register("transpose-columns-into-rows", TransposeColumnsIntoRowsOperation.class);
         
         register("column-addition", ColumnAdditionOperation.class);
         register("column-removal", ColumnRemovalOperation.class);
