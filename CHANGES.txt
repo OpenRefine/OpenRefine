@@ -1,3 +1,24 @@
+Ongoing
+
+Major Changes:
+- New extension architecture.
+- Generalized reconciliation framework that allows plugging in standard reconciliation services.
+- Support for QA on data loads into Freebase.
+
+Features:
+- New commands: Transpose Cells in Columns into Rows
+- New GEL functions: smartSplit
+- New GEL controls: forEachIndex, forRange, filter
+- New GEL parameters:
+  - preserveAllTokens on split function
+- New exporters: to RDF (as extension)
+- In CSV and TSV importers, added support for ignoring quotation marks
+- Regexp groups capturing GEL function
+
+Fixes:
+- TSV/CSV exporter bug: Gridworks crashed when there were empty cells.
+- Issue 69: ControlFunctionRegistry now correctly registers Chomp expression as "chomp" key.
+
 1.1 Release (May 27, 2010)
 
 Features:
