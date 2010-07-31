@@ -17,9 +17,14 @@ import edu.mit.simile.butterfly.MountPoint;
 public class ClientSideResourceManager {
     final static Logger logger = LoggerFactory.getLogger("gridworks_clientSideResourceManager");
     
+    static public class QualifiedPath {
+        public ButterflyModule  module;
+        public String           path;
+        public String           fullPath;
+    }
     static public class ClientSideResourceBundle {
         final protected Set<String>     _pathSet = new HashSet<String>();
-        final protected List<String>    _pathList = new ArrayList<String>();
+        final protected List<QualifiedPath>      _pathList = new ArrayList<QualifiedPath>();
     }
     
     final static protected Map<String, ClientSideResourceBundle> s_bundles
@@ -43,18 +48,23 @@ public class ClientSideResourceManager {
                 break;
             }
             if (!bundle._pathSet.contains(fullPath)) {
+                QualifiedPath qualifiedPath = new QualifiedPath();
+                qualifiedPath.module = module;
+                qualifiedPath.path = path;
+                qualifiedPath.fullPath = fullPath;
+                
                 bundle._pathSet.add(fullPath);
-                bundle._pathList.add(fullPath);
+                bundle._pathList.add(qualifiedPath);
             }
         }
     }
     
-    static public String[] getPaths(String bundleName) {
+    static public QualifiedPath[] getPaths(String bundleName) {
         ClientSideResourceBundle bundle = s_bundles.get(bundleName);
         if (bundle == null) {
-            return new String[] {};
+            return new QualifiedPath[] {};
         } else {
-            String[] paths = new String[bundle._pathList.size()];
+            QualifiedPath[] paths = new QualifiedPath[bundle._pathList.size()];
             bundle._pathList.toArray(paths);
             return paths;
         }

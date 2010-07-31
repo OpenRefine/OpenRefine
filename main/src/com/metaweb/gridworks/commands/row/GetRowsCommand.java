@@ -1,6 +1,7 @@
 package com.metaweb.gridworks.commands.row;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -30,10 +31,21 @@ public class GetRowsCommand extends Command {
 	
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        internalRespond(request, response);
+    }
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        internalRespond(request, response);
+    }
+    
+    protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
+            String callback = request.getParameter("callback");
             
             int start = Math.min(project.rows.size(), Math.max(0, getIntegerParameter(request, "start", 0)));
             int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
@@ -45,12 +57,18 @@ public class GetRowsCommand extends Command {
             options.put("pool", pool);
             
             response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
+            response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
             
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            writer.object();
+            PrintWriter writer = response.getWriter();
+            if (callback != null) {
+                writer.write(callback);
+                writer.write("(");
+            }
             
-            RowWritingVisitor rwv = new RowWritingVisitor(start, limit, writer, options);
+            JSONWriter jsonWriter = new JSONWriter(writer);
+            jsonWriter.object();
+            
+            RowWritingVisitor rwv = new RowWritingVisitor(start, limit, jsonWriter, options);
             
             JSONObject sortingJson = null;
             try{
@@ -73,12 +91,12 @@ public class GetRowsCommand extends Command {
             		}
                 }
                 
-                writer.key("mode"); writer.value("row-based");
-                writer.key("rows"); writer.array();
+                jsonWriter.key("mode"); jsonWriter.value("row-based");
+                jsonWriter.key("rows"); jsonWriter.array();
                 filteredRows.accept(project, visitor);
-                writer.endArray();
-                writer.key("filtered"); writer.value(rwv.total);
-                writer.key("total"); writer.value(project.rows.size());
+                jsonWriter.endArray();
+                jsonWriter.key("filtered"); jsonWriter.value(rwv.total);
+                jsonWriter.key("total"); jsonWriter.value(project.rows.size());
             } else {
                 FilteredRecords filteredRecords = engine.getFilteredRecords();
                 RecordVisitor visitor = rwv;
@@ -92,20 +110,24 @@ public class GetRowsCommand extends Command {
             		}
                 }
                 
-                writer.key("mode"); writer.value("record-based");
-                writer.key("rows"); writer.array();
+                jsonWriter.key("mode"); jsonWriter.value("record-based");
+                jsonWriter.key("rows"); jsonWriter.array();
                 filteredRecords.accept(project, visitor);
-                writer.endArray();
-                writer.key("filtered"); writer.value(rwv.total);
-                writer.key("total"); writer.value(project.recordModel.getRecordCount());
+                jsonWriter.endArray();
+                jsonWriter.key("filtered"); jsonWriter.value(rwv.total);
+                jsonWriter.key("total"); jsonWriter.value(project.recordModel.getRecordCount());
             }
             
             
-            writer.key("start"); writer.value(start);
-            writer.key("limit"); writer.value(limit);
-            writer.key("pool"); pool.write(writer, options);
+            jsonWriter.key("start"); jsonWriter.value(start);
+            jsonWriter.key("limit"); jsonWriter.value(limit);
+            jsonWriter.key("pool"); pool.write(jsonWriter, options);
             
-            writer.endObject();
+            jsonWriter.endObject();
+            
+            if (callback != null) {
+                writer.write(")");
+            }
         } catch (Exception e) {
             respondException(response, e);
         }

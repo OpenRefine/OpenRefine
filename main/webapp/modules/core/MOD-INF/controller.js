@@ -1,6 +1,7 @@
 var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.com.metaweb.gridworks.ClientSideResourceManager;
+var bundle = true;
 
 var templatedFiles = {
     // Requests with last path segments mentioned here 
@@ -18,8 +19,6 @@ function init() {
         "project/scripts",
         module,
         [
-            "wirings.js",
-            
             "externals/jquery-1.4.2.min.js",
             "externals/jquery.cookie.js",
             "externals/suggest/suggest-1.2.min.js",
@@ -136,13 +135,71 @@ function process(path, request, response) {
     
         var slash = path.lastIndexOf("/");
         var lastSegment = slash >= 0 ? path.substring(slash + 1) : path;
-        if (lastSegment in templatedFiles) {
-            var context = {};
-            context.scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
-            context.styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
-            context.projectID = request.getParameter("project");
+        
+        if (path.endsWith("-bundle.js")) {
+            lastSegment = lastSegment.substring(0, lastSegment.length - "-bundle.js".length);
             
-            send(request, response, path + ".vt", context);
+            response.setContentType("text/javascript");
+            response.setCharacterEncoding(encoding);
+            
+            var output = response.getWriter();
+            try {
+                var paths = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
+                for each (var qualifiedPath in paths) {
+                    var input = null;
+                    try {
+                        var url = qualifiedPath.module.getResource(qualifiedPath.path);
+                        var urlConnection = url.openConnection();
+                        
+                        input = new Packages.java.io.BufferedReader(
+                            new Packages.java.io.InputStreamReader(urlConnection.getInputStream()));
+                            
+                        output.write("/* ===== "); 
+                        output.write(qualifiedPath.fullPath); 
+                        output.write(" ===== */\n\n");
+                        
+                        Packages.org.apache.commons.io.IOUtils.copy(input, output);
+                        
+                        output.write("\n\n");
+                    } catch (e) {
+                        // silent
+                    } finally {
+                        if (input != null) input.close();
+                    }
+                }
+            } catch (e) {
+                // silent
+            } finally {
+                butterfly.responded();
+            }
+            return true;
+        } else {
+            if (lastSegment in templatedFiles) {
+                var context = {};
+                context.projectID = request.getParameter("project");
+                
+                var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
+                var styleInjection = [];
+                for each (var qualifiedPath in styles) {
+                    styleInjection.push(
+                        '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath + '" />');
+                }
+                context.styleInjection = styleInjection.join("\n");
+                
+                if (bundle) {
+                    context.scriptInjection = '<script type="text/javascript" src="' + path + '-bundle.js"></script>';
+                } else {
+                    var scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
+                    var scriptInjection = [];
+                    for each (var qualifiedPath in scripts) {
+                        scriptInjection.push(
+                            '<script type="text/javascript" src="' + qualifiedPath.fullPath + '"></script>');
+                    }
+                    context.scriptInjection = scriptInjection.join("\n");
+                }
+            
+                send(request, response, path + ".vt", context);
+            }
         }
     }
 }

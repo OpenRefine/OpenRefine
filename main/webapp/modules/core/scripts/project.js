@@ -346,7 +346,7 @@ Gridworks.fetchRows = function(start, limit, onDone, sorting) {
     }
     
     $.post(
-        "/command/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }),
+        "/command/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }) + "&callback=?",
         body,
         function(data) {
             theProject.rowModel = data;
@@ -367,7 +367,7 @@ Gridworks.fetchRows = function(start, limit, onDone, sorting) {
                 onDone();
             }
         },
-        "json"
+        "jsonp"
     );
 };
 
