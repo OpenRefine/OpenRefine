@@ -416,13 +416,6 @@ public abstract class ProjectManager {
     * @param ps
     */
    static protected void preparePreferenceStore(PreferenceStore ps) {
-       ps.put("expressions", new TopList(s_expressionHistoryMax));
+       ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
    }
-
-
-
-
-
-
-
 }
