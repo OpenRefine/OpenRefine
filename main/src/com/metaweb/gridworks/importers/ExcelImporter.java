@@ -6,9 +6,11 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -28,19 +30,20 @@ import com.metaweb.gridworks.model.Recon.Judgment;
 
 public class ExcelImporter implements Importer {
     protected boolean _xmlBased;
-
+    
     public boolean takesReader() {
         return false;
     }
-
+    
     public void read(Reader reader, Project project, Properties options) throws Exception {
         throw new UnsupportedOperationException();
     }
-
+    
     public void read(InputStream inputStream, Project project, Properties options) throws Exception {
         int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
-        int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
-        int skip = ImporterUtilities.getIntegerOption("skip",options,0);
+        int headerLines = ImporterUtilities.getIntegerOption("header-lines", options, 1);
+        int limit = ImporterUtilities.getIntegerOption("limit", options, -1);
+        int skip = ImporterUtilities.getIntegerOption("skip", options, 0);
 
         Workbook wb = null;
         try {
@@ -54,20 +57,20 @@ public class ExcelImporter implements Importer {
                 e
             );
         }
-
+        
         Sheet sheet = wb.getSheetAt(0);
-
+        
         int firstRow = sheet.getFirstRowNum();
         int lastRow = sheet.getLastRowNum();
-        int r = firstRow;
-
-        List<Integer>    nonBlankIndices = null;
-        List<String>     nonBlankHeaderStrings = null;
-
-        /*
-         *  Find the header row
-         */
-        for (; r <= lastRow; r++) {
+        
+        List<String>         columnNames = new ArrayList<String>();
+        Set<String>          columnNameSet = new HashSet<String>();
+        Map<String, Integer> columnRootNameToIndex = new HashMap<String, Integer>();
+        
+        int                  rowsWithData = 0;
+        Map<String, Recon>   reconMap = new HashMap<String, Recon>();
+        
+        for (int r = firstRow; r <= lastRow; r++) {
             org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
             if (row == null) {
                 continue;
@@ -75,166 +78,80 @@ public class ExcelImporter implements Importer {
                 ignoreLines--;
                 continue;
             }
-
+            
             short firstCell = row.getFirstCellNum();
             short lastCell = row.getLastCellNum();
-            if (firstCell >= 0 && firstCell <= lastCell) {
-                nonBlankIndices = new ArrayList<Integer>(lastCell - firstCell + 1);
-                nonBlankHeaderStrings = new ArrayList<String>(lastCell - firstCell + 1);
-
+            if (firstCell < 0 || firstCell > lastCell) {
+                continue;
+            }
+            
+            /*
+             *  Still processing header lines
+             */
+            if (headerLines > 0) {
+                headerLines--;
+                
                 for (int c = firstCell; c <= lastCell; c++) {
                     org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
                     if (cell != null) {
                         String text = cell.getStringCellValue().trim();
                         if (text.length() > 0) {
-                            nonBlankIndices.add((int) c);
-                            nonBlankHeaderStrings.add(text);
+                            while (columnNames.size() < c + 1) {
+                                columnNames.add(null);
+                            }
+                            
+                            String existingName = columnNames.get(c);
+                            String name = (existingName == null) ? text : (existingName + " " + text);
+                            
+                            columnNames.set(c, name);
                         }
                     }
                 }
-
-                if (nonBlankIndices.size() > 0) {
-                    r++;
-                    break;
-                }
-            }
-        }
-
-        if (nonBlankIndices == null || nonBlankIndices.size() == 0) {
-            return;
-        }
-
-        /*
-         *  Create columns
-         */
-        Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
-        for (int c = 0; c < nonBlankIndices.size(); c++) {
-            String cell = nonBlankHeaderStrings.get(c);
-            if (nameToIndex.containsKey(cell)) {
-                int index = nameToIndex.get(cell);
-                nameToIndex.put(cell, index + 1);
-
-                cell = cell.contains(" ") ? (cell + " " + index) : (cell + index);
-            } else {
-                nameToIndex.put(cell, 2);
-            }
-
-            Column column = new Column(c, cell);
-            project.columnModel.columns.add(column);
-        }
-
-        /*
-         *  Now process the data rows
-         */
-        int rowsWithData = 0;
-        Map<String, Recon> reconMap = new HashMap<String, Recon>();
-
-        for (; r <= lastRow; r++) {
-            org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
-            if (row == null) {
-                continue;
-            }
-
-            short firstCell = row.getFirstCellNum();
-            short lastCell = row.getLastCellNum();
-            if (firstCell >= 0 && firstCell <= lastCell) {
-                Row newRow = new Row(nonBlankIndices.size());
-                boolean hasData = false;
-
-                for (int c = 0; c < nonBlankIndices.size(); c++) {
-                    if (c < firstCell || c > lastCell) {
-                        continue;
+                
+                if (headerLines == 0) {
+                    for (int i = 0; i < columnNames.size(); i++) {
+                        String rootName = columnNames.get(i);
+                        if (rootName == null) {
+                            continue;
+                        }
+                        setUnduplicatedColumnName(rootName, columnNames, i, columnNameSet, columnRootNameToIndex);
                     }
-
+                }
+                
+            /*
+             *  Processing data rows
+             */
+            } else {
+                Row newRow = new Row(columnNames.size());
+                boolean hasData = false;
+                
+                for (int c = firstCell; c <= lastCell; c++) {
                     org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
                     if (cell == null) {
                         continue;
                     }
-
-                    int cellType = cell.getCellType();
-                    if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR ||
-                        cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
-                        continue;
-                    }
-                    if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
-                        cellType = cell.getCachedFormulaResultType();
-                    }
-
-                    Serializable value = null;
-                    if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
-                        value = cell.getBooleanCellValue();
-                    } else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {
-                        double d = cell.getNumericCellValue();
-
-                        if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                            value = HSSFDateUtil.getJavaDate(d);
-                        } else {
-                            value = d;
+                    
+                    Cell ourCell = extractCell(cell, reconMap);
+                    if (ourCell != null) {
+                        while (columnNames.size() < c + 1) {
+                            columnNames.add(null);
                         }
-                    } else {
-                        String text = cell.getStringCellValue().trim();
-                        if (text.length() > 0) {
-                            value = text;
+                        if (columnNames.get(c) == null) {
+                            setUnduplicatedColumnName("Column", columnNames, c, columnNameSet, columnRootNameToIndex);
                         }
-                    }
-
-                    if (value != null) {
-                        Recon recon = null;
-
-                        Hyperlink hyperlink = cell.getHyperlink();
-                        if (hyperlink != null) {
-                            String url = hyperlink.getAddress();
-
-                            if (url.startsWith("http://") ||
-                                url.startsWith("https://")) {
-
-                                final String sig = "freebase.com/view";
-
-                                int i = url.indexOf(sig);
-                                if (i > 0) {
-                                    String id = url.substring(i + sig.length());
-
-                                    int q = id.indexOf('?');
-                                    if (q > 0) {
-                                        id = id.substring(0, q);
-                                    }
-                                    int h = id.indexOf('#');
-                                    if (h > 0) {
-                                        id = id.substring(0, h);
-                                    }
-
-                                    if (reconMap.containsKey(id)) {
-                                        recon = reconMap.get(id);
-                                        recon.judgmentBatchSize++;
-                                    } else {
-                                        recon = new Recon(0, null, null);
-                                        recon.service = "import";
-                                        recon.match = new ReconCandidate(id, value.toString(), new String[0], 100);
-                                        recon.matchRank = 0;
-                                        recon.judgment = Judgment.Matched;
-                                        recon.judgmentAction = "auto";
-                                        recon.judgmentBatchSize = 1;
-                                        recon.addCandidate(recon.match);
-
-                                        reconMap.put(id, recon);
-                                    }
-
-                                }
-                            }
-                        }
-
-                        newRow.setCell(c, new Cell(value, recon));
+                        
+                        newRow.setCell(c, ourCell);
                         hasData = true;
                     }
                 }
-
+                
                 if (hasData) {
                     rowsWithData++;
-
+                    
                     if (skip <= 0 || rowsWithData > skip) {
                         project.rows.add(newRow);
                         project.columnModel.setMaxCellIndex(newRow.cells.size());
-
+                        
                         if (limit > 0 && project.rows.size() >= limit) {
                             break;
                         }
@@ -242,8 +159,120 @@ public class ExcelImporter implements Importer {
                 }
             }
         }
+        
+        /*
+         *  Create columns
+         */
+        for (int c = 0; c < columnNames.size(); c++) {
+            String name = columnNames.get(c);
+            if (name != null) {
+                Column column = new Column(c, name);
+                project.columnModel.columns.add(column);
+            }
+        }
     }
-
+    
+    protected void setUnduplicatedColumnName(
+        String rootName, List<String> columnNames, int index, Set<String> columnNameSet, Map<String, Integer> columnRootNameToIndex) {
+        if (columnNameSet.contains(rootName)) {
+            int startIndex = columnRootNameToIndex.containsKey(rootName) ? columnRootNameToIndex.get(rootName) : 2;
+            while (true) {
+                String name = rootName + " " + startIndex;
+                if (columnNameSet.contains(name)) {
+                    startIndex++;
+                } else {
+                    columnNames.set(index, name);
+                    columnNameSet.add(name);
+                    break;
+                }
+            }
+            
+            columnRootNameToIndex.put(rootName, startIndex + 1);
+        } else {
+            columnNames.set(index, rootName);
+            columnNameSet.add(rootName);
+        }
+    }
+    
+    protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, Map<String, Recon> reconMap) {
+        int cellType = cell.getCellType();
+        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR ||
+            cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
+            return null;
+        }
+        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
+            cellType = cell.getCachedFormulaResultType();
+        }
+        
+        Serializable value = null;
+        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
+            value = cell.getBooleanCellValue();
+        } else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {
+            double d = cell.getNumericCellValue();
+            
+            if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                value = HSSFDateUtil.getJavaDate(d);
+            } else {
+                value = d;
+            }
+        } else {
+            String text = cell.getStringCellValue().trim();
+            if (text.length() > 0) {
+                value = text;
+            }
+        }
+        
+        if (value != null) {
+            Recon recon = null;
+            
+            Hyperlink hyperlink = cell.getHyperlink();
+            if (hyperlink != null) {
+                String url = hyperlink.getAddress();
+                
+                if (url.startsWith("http://") ||
+                    url.startsWith("https://")) {
+                    
+                    final String sig = "freebase.com/view";
+                    
+                    int i = url.indexOf(sig);
+                    if (i > 0) {
+                        String id = url.substring(i + sig.length());
+                        
+                        int q = id.indexOf('?');
+                        if (q > 0) {
+                            id = id.substring(0, q);
+                        }
+                        int h = id.indexOf('#');
+                        if (h > 0) {
+                            id = id.substring(0, h);
+                        }
+                        
+                        if (reconMap.containsKey(id)) {
+                            recon = reconMap.get(id);
+                            recon.judgmentBatchSize++;
+                        } else {
+                            recon = new Recon(0, null, null);
+                            recon.service = "import";
+                            recon.match = new ReconCandidate(id, value.toString(), new String[0], 100);
+                            recon.matchRank = 0;
+                            recon.judgment = Judgment.Matched;
+                            recon.judgmentAction = "auto";
+                            recon.judgmentBatchSize = 1;
+                            recon.addCandidate(recon.match);
+                            
+                            reconMap.put(id, recon);
+                        }
+                        
+                    }
+                }
+            }
+            
+            return new Cell(value, recon);
+        } else {
+            return null;
+        }
+    }
+    
     public boolean canImportData(String contentType, String fileName) {
         if (contentType != null) {
             contentType = contentType.toLowerCase().trim();
