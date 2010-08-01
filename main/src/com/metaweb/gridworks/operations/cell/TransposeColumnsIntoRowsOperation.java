@@ -73,6 +73,12 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+        if (_combinedColumnName != null && 
+            !_combinedColumnName.isEmpty() &&
+            project.columnModel.getColumnByName(_combinedColumnName) != null) {
+            throw new Exception("Another column already named " + _combinedColumnName);
+        }
+
         List<Column> newColumns = new ArrayList<Column>();
         List<Column> oldColumns = project.columnModel.columns;
         

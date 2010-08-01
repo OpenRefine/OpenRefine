@@ -31,14 +31,9 @@ public class ProcessManager implements Jsonizable {
         writer.endObject();
     }
 
-    public HistoryEntry queueProcess(Process process) {
+    public HistoryEntry queueProcess(Process process) throws Exception {
         if (process.isImmediate() && _processes.size() == 0) {
-            try {
-                return process.performImmediate();
-            } catch (Exception e) {
-                // TODO: Not sure what to do yet
-                e.printStackTrace();
-            }
+            return process.performImmediate();
         } else {
             _processes.add(process);
             
@@ -47,14 +42,9 @@ public class ProcessManager implements Jsonizable {
         return null;
     }
     
-    public boolean queueProcess(HistoryProcess process) {
+    public boolean queueProcess(HistoryProcess process) throws Exception {
         if (process.isImmediate() && _processes.size() == 0) {
-            try {
-                return process.performImmediate() != null;
-            } catch (Exception e) {
-                // TODO: Not sure what to do yet
-                e.printStackTrace();
-            }
+            return process.performImmediate() != null;
         } else {
             _processes.add(process);
             

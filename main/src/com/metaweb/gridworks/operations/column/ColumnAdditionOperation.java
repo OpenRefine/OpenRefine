@@ -105,6 +105,9 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         if (column == null) {
             throw new Exception("No column named " + _baseColumnName);
         }
+        if (project.columnModel.getColumnByName(_newColumnName) != null) {
+            throw new Exception("Another column already named " + _newColumnName);
+        }
         
         List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
         

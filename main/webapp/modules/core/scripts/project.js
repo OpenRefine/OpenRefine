@@ -243,6 +243,8 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
                 } catch (e) {
                     Gridworks.reportException(e);
                 }
+            } else {
+                alert(o.message);
             }
         } else {
             if ("onDone" in callbacks) {

@@ -31,10 +31,14 @@ public class UndoRedoCommand extends Command {
             }
         }
         
-        boolean done = lastDoneID == -1 ||
-            project.processManager.queueProcess(
-                new HistoryProcess(project, lastDoneID));
-
-        respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
+        try {
+            boolean done = lastDoneID == -1 ||
+                project.processManager.queueProcess(
+                    new HistoryProcess(project, lastDoneID));
+            
+            respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
+        } catch (Exception e) {
+            respondException(response, e);
+        }
     }
 }
