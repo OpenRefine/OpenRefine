@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Freebase Gridworks - Preferences</title>
+    
+    <script type="text/javascript" src="wirings.js"></script>
+    $scriptInjection
+    
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+    $styleInjection
+    
+</head>
+<body>
+    <div id="header">
+        <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
+        <div id="path"><span class="app-path-section"><a href="./index.html">Gridworks</a></span><span class="app-path-section">Preferences</span></div>
+    </div>
+    
+    <div id="body">
+        <div id="loading-message"><img src="images/large-spinner.gif" /> starting up ...</div>
+    </div>
+</body>
+</html>

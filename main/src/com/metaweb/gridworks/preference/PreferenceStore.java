@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,11 +17,19 @@ public class PreferenceStore implements Jsonizable {
     protected Map<String, Object> _prefs = new HashMap<String, Object>();
     
     public void put(String key, Object value) {
-        _prefs.put(key, value);
+        if (value == null) {
+            _prefs.remove(key);
+        } else {
+            _prefs.put(key, value);
+        }
     }
     
     public Object get(String key) {
         return _prefs.get(key);
+    }
+    
+    public Set<String> getKeys() {
+        return _prefs.keySet();
     }
     
     @Override
@@ -58,13 +67,12 @@ public class PreferenceStore implements Jsonizable {
         }
     }
     
-    @SuppressWarnings("unchecked")
     static public Object loadObject(Object o) {
         if (o instanceof JSONObject) {
             try {
                 JSONObject obj2 = (JSONObject) o;
                 String className = obj2.getString("class");
-                Class klass = Class.forName(className);
+                Class<?> klass = Class.forName(className);
                 Method method = klass.getMethod("load", JSONObject.class);
                 
                 return method.invoke(null, obj2);

@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.metaweb.gridworks.ProjectManager;
 import com.metaweb.gridworks.browsing.DecoratedValue;
 import com.metaweb.gridworks.browsing.FilteredRecords;
 import com.metaweb.gridworks.browsing.FilteredRows;
@@ -71,7 +72,7 @@ public class ListFacet implements Facet {
         
         if (_errorMessage != null) {
             writer.key("error"); writer.value(_errorMessage);
-        } else if (_choices.size() > 2000) {
+        } else if (_choices.size() > getLimit()) {
             writer.key("error"); writer.value("Too many choices");
         } else {
             writer.key("choices"); writer.array();
@@ -97,6 +98,23 @@ public class ListFacet implements Facet {
         }
         
         writer.endObject();
+    }
+    
+    protected int getLimit() {
+        Object v = ProjectManager.singleton.getPreferenceStore().get("ui.browsing.listFacet.limit");
+        if (v != null) {
+            if (v instanceof Number) {
+                return ((Number) v).intValue();
+            } else {
+                try {
+                    int n = Integer.parseInt(v.toString());
+                    return n;
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+        }
+        return 2000;
     }
 
     @Override

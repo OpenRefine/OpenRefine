@@ -6,7 +6,8 @@ var bundle = true;
 var templatedFiles = {
     // Requests with last path segments mentioned here 
     // will get served from .vt files with the same names
-    "project" : true
+    "project" : true,
+    "preferences" : true
 };
 
 /*
@@ -111,6 +112,32 @@ function init() {
             "styles/reconciliation/standard-service-panel.css",
             
             "styles/protograph/schema-alignment-dialog.css"
+        ]
+    );
+    
+    ClientSideResourceManager.addPaths(
+        "preferences/scripts",
+        module,
+        [
+            "externals/jquery-1.4.2.min.js",
+            "externals/jquery.cookie.js",
+            "externals/suggest/suggest-1.2.min.js",
+            "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
+            "externals/imgareaselect/jquery.imgareaselect.js",
+            "externals/date.js",
+            "scripts/preferences.js"
+        ]
+    );
+    ClientSideResourceManager.addPaths(
+        "preferences/styles",
+        module,
+        [
+            "externals/suggest/css/suggest-1.2.min.css",
+            "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
+            
+            "styles/common.css",
+            "styles/jquery-ui-overrides.css",
+            "styles/preferences.css"
         ]
     );
 }

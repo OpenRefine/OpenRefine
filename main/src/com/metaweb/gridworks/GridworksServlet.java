@@ -116,6 +116,7 @@ public class GridworksServlet extends Butterfly {
         {"mqlwrite", "com.metaweb.gridworks.commands.freebase.MQLWriteCommand"},
         
         {"get-preference", "com.metaweb.gridworks.commands.GetPreferenceCommand"},
+        {"get-all-preferences", "com.metaweb.gridworks.commands.GetAllPreferencesCommand"},
         {"set-preference", "com.metaweb.gridworks.commands.SetPreferenceCommand"},
     };
 
