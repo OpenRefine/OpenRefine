@@ -6,7 +6,6 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.Properties;
 
-
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -16,7 +15,6 @@ import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.exporters.Exporter;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.rdf.ConstantBlankNode;
 import com.metaweb.gridworks.rdf.Node;
 import com.metaweb.gridworks.rdf.RdfSchema;
 import com.metaweb.gridworks.rdf.Util;
@@ -37,11 +35,10 @@ public class RdfExporter implements Exporter{
         Node root = schema.getRoot();
         
         Resource[] blanks = new Resource[schema.get_blanks().size()];
-        int i=0;
-        for (ConstantBlankNode b : schema.get_blanks()){
+        for (int i = 0; i < blanks.length; i++) {
             blanks[i] = model.createResource();
-            i +=1;
         }
+        
         RowVisitor visitor = new RdfRowVisitor(model, baseUri, root,blanks);
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, visitor);
@@ -57,12 +54,10 @@ public class RdfExporter implements Exporter{
         Node root = schema.getRoot();
         
         Resource[] blanks = new Resource[schema.get_blanks().size()];
-        int i = 0;
-        
-        for (ConstantBlankNode b : schema.get_blanks()){
+        for (int i = 0; i < blanks.length; i++) {
             blanks[i] = model.createResource();
-            i +=1;
         }
+
         RowVisitor visitor = new RdfRowVisitor(model, baseUri, root,blanks);
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, visitor);

@@ -20,7 +20,6 @@ import com.metaweb.gridworks.browsing.RowVisitor;
 import com.metaweb.gridworks.commands.Command;
 import com.metaweb.gridworks.model.Project;
 import com.metaweb.gridworks.model.Row;
-import com.metaweb.gridworks.rdf.ConstantBlankNode;
 import com.metaweb.gridworks.rdf.Node;
 import com.metaweb.gridworks.rdf.RdfSchema;
 import com.metaweb.gridworks.util.ParsingUtilities;
@@ -47,11 +46,10 @@ public class PreviewRdfCommand extends Command {
             Node root = schema.getRoot();
             
             Resource[] blanks = new Resource[schema.get_blanks().size()];
-            int i=0;
-            for (ConstantBlankNode b : schema.get_blanks()){
+            for (int i = 0; i < blanks.length; i++) {
                 blanks[i] = model.createResource();
-                i +=1;
             }
+            
             RowVisitor visitor = new RdfRowVisitor(model, baseUri, root,blanks,20);
             
             filteredRows.accept(project, visitor);
