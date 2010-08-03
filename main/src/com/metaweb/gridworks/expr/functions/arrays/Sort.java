@@ -28,7 +28,7 @@ public class Sort implements Function {
                     
                     return r;
                 } else if (v instanceof List<?>) {
-                    List<? extends Comparable> a = (List<? extends Comparable>) v;
+                    List<? extends Comparable<Object>> a = (List<? extends Comparable<Object>>) v;
                     Collections.sort(a);
                     
                     return a;

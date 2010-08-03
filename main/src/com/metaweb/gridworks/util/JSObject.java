@@ -20,12 +20,11 @@ import org.json.JSONObject;
 public class JSObject extends Properties {
     private static final long serialVersionUID = 5864375136126385719L;
 
-    @SuppressWarnings("unchecked")
     static public void writeJSObject(IndentWriter writer, JSObject jso) throws IOException, JSONException {
         writer.println("{");
         writer.indent();
         {
-            Enumeration e = jso.propertyNames();
+            Enumeration<?> e = jso.propertyNames();
             while (e.hasMoreElements()) {
                 String name = (String) e.nextElement();
                 Object value = jso.get(name);
@@ -45,12 +44,11 @@ public class JSObject extends Properties {
         writer.print("}");
     }
     
-    @SuppressWarnings("unchecked")
-    static public void writeCollection(IndentWriter writer, Collection c) throws IOException, JSONException {
+    static public void writeCollection(IndentWriter writer, Collection<?> c) throws IOException, JSONException {
         writer.println("[");
         writer.indent();
         {
-            Iterator i = c.iterator();
+            Iterator<?> i = c.iterator();
             while (i.hasNext()) {
                 writeObject(writer, i.next());
                 if (i.hasNext()) {
@@ -108,7 +106,6 @@ public class JSObject extends Properties {
         writer.print("]");
     }
     
-    @SuppressWarnings("unchecked")
     static public void writeObject(IndentWriter writer, Object o) throws IOException, JSONException {
         if (o == null) {
             writer.print("null");
@@ -118,7 +115,7 @@ public class JSObject extends Properties {
             writer.print(((Number) o).toString());
             
         } else if (o instanceof Collection) {
-            writeCollection(writer, (Collection) o);
+            writeCollection(writer, (Collection<?>) o);
         } else if (o instanceof JSONArray) {
             writeJSONArray(writer, (JSONArray) o);
         } else if (o instanceof JSObject) {

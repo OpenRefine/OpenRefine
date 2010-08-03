@@ -201,8 +201,7 @@ class GridworksServer extends Server {
         scanner.setReportExistingFilesOnStartup(false);
 
         scanner.addListener(new Scanner.BulkListener() {
-            @SuppressWarnings("unchecked")
-            public void filesChanged(List changedFiles) {
+            public void filesChanged(@SuppressWarnings("rawtypes") List changedFiles) {
                 try {
                     logger.info("Stopping context: " + contextRoot.getAbsolutePath());
                     context.stop();
@@ -362,7 +361,6 @@ class GridworksClient extends JFrame implements ActionListener {
     
     private URI uri;
     
-    @SuppressWarnings("unchecked")
     public void init(String host, int port) throws Exception {
 
         uri = new URI("http://" + host + ":" + port + "/");
@@ -380,7 +378,7 @@ class GridworksClient extends JFrame implements ActionListener {
             m.add(mi);
             mb.add(m);
 
-            Class applicationClass = Class.forName("com.apple.eawt.Application"); 
+            Class<?> applicationClass = Class.forName("com.apple.eawt.Application"); 
             Object macOSXApplication = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
             Method setDefaultMenuBar = applicationClass.getDeclaredMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
             setDefaultMenuBar.invoke(macOSXApplication, new Object[] { mb });
