@@ -1,6 +1,6 @@
 var html = "text/html";
 var encoding = "UTF-8";
-var ClientSideResourceManager = Packages.com.metaweb.gridworks.ClientSideResourceManager;
+var ClientSideResourceManager = Packages.com.google.gridworks.ClientSideResourceManager;
 var bundle = true;
 
 var templatedFiles = {

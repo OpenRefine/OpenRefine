@@ -1,6 +1,6 @@
 var html = "text/html";
 var encoding = "UTF-8";
-var ClientSideResourceManager = Packages.com.metaweb.gridworks.ClientSideResourceManager;
+var ClientSideResourceManager = Packages.com.google.gridworks.ClientSideResourceManager;
 
 /*
  * Function invoked to initialize the extension.
@@ -39,7 +39,7 @@ function process(path, request, response) {
         // here's how to pass things into the .vt templates
         context.someList = ["Superior","Michigan","Huron","Erie","Ontario"];
         context.someString = "foo";
-        context.someInt = Packages.com.metaweb.gridworks.sampleExtension.SampleUtil.stringArrayLength(context.someList);
+        context.someInt = Packages.com.google.gridworks.sampleExtension.SampleUtil.stringArrayLength(context.someList);
         
         send(request, response, "index.vt", context);
     }

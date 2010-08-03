@@ -1,5 +1,5 @@
 
-importPackage(com.metaweb.gridworks.rdf.commands);
+importPackage(com.google.gridworks.rdf.commands);
 
 /*
  * Function invoked to initialize the extension.
@@ -8,21 +8,21 @@ function init() {
     /*
      *  Attach an rdf schema to each project.
      */
-    Packages.com.metaweb.gridworks.model.Project.registerOverlayModel(
+    Packages.com.google.gridworks.model.Project.registerOverlayModel(
         "rdfSchema",
-        Packages.com.metaweb.gridworks.rdf.RdfSchema);
+        Packages.com.google.gridworks.rdf.RdfSchema);
     
     /*
      *  Operations
      */
-    Packages.com.metaweb.gridworks.operations.OperationRegistry.register(
-        "save-rdf-schema", Packages.com.metaweb.gridworks.rdf.operations.SaveRdfSchemaOperation);
+    Packages.com.google.gridworks.operations.OperationRegistry.register(
+        "save-rdf-schema", Packages.com.google.gridworks.rdf.operations.SaveRdfSchemaOperation);
     
     /*
      *  Exporters
      */
-    var ExportRowsCommand = Packages.com.metaweb.gridworks.commands.project.ExportRowsCommand;
-    var RdfExporter = Packages.com.metaweb.gridworks.rdf.exporters.RdfExporter;
+    var ExportRowsCommand = Packages.com.google.gridworks.commands.project.ExportRowsCommand;
+    var RdfExporter = Packages.com.google.gridworks.rdf.exporters.RdfExporter;
     
     ExportRowsCommand.registerExporter("rdf", new RdfExporter("RDF/XML"));
     ExportRowsCommand.registerExporter("n3", new RdfExporter("N3"));
@@ -30,16 +30,16 @@ function init() {
     /*
      *  GEL Functions and Binders
      */
-    Packages.com.metaweb.gridworks.gel.ControlFunctionRegistry.registerFunction(
-        "urlify", new Packages.com.metaweb.gridworks.rdf.expr.functions.strings.Urlify());
+    Packages.com.google.gridworks.gel.ControlFunctionRegistry.registerFunction(
+        "urlify", new Packages.com.google.gridworks.rdf.expr.functions.strings.Urlify());
         
-    Packages.com.metaweb.gridworks.expr.ExpressionUtils.registerBinder(
-        new Packages.com.metaweb.gridworks.rdf.expr.RdfBinder());
+    Packages.com.google.gridworks.expr.ExpressionUtils.registerBinder(
+        new Packages.com.google.gridworks.rdf.expr.RdfBinder());
         
     /*
      *  Commands
      */
-    var GridworksServlet = Packages.com.metaweb.gridworks.GridworksServlet;
+    var GridworksServlet = Packages.com.google.gridworks.GridworksServlet;
     GridworksServlet.registerCommand("save-rdf-schema", new SaveRdfSchemaCommand());
     GridworksServlet.registerCommand("preview-rdf",new PreviewRdfCommand());
     GridworksServlet.registerCommand("save-baseURI",new SaveBaseURI());
@@ -51,7 +51,7 @@ function init() {
     /*
      *  Client-side Resources
      */
-    var ClientSideResourceManager = Packages.com.metaweb.gridworks.ClientSideResourceManager;
+    var ClientSideResourceManager = Packages.com.google.gridworks.ClientSideResourceManager;
     
     // Script files to inject into /project page
     ClientSideResourceManager.addPaths(
