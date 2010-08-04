@@ -38,16 +38,16 @@
   -------
 
   This software was created by Metaweb Technology Inc. and originally written
-  and conceived by David Huynh <david@metaweb.com>.
+  and conceived by David Huynh <dfhuynh@google.com>.
   
   This is the full list of contributors (in chronological order):
 
-   - David Huynh <david@metaweb.com>
-   - Stefano Mazzocchi <stefano@metaweb.com>
-   - Vishal Talwar <vishal@metaweb.com> 
-   - Jeff Fry <jfry@metaweb.com>
-   - Will Moffat <willmoffat@metaweb.com>
-   - James Home <jh@metaweb.com>
+   - David Huynh <dfhuynh@google.com>
+   - Stefano Mazzocchi <stefanom@google.com>
+   - Vishal Talwar <vtalwar@google.com> 
+   - Jeff Fry <jfry@google.com>
+   - Will Moffat <wdm@google.com>
+   - James Home <jameshome@google.com>
    - Iain Sproat <iainsproat@gmail.com>
      
 

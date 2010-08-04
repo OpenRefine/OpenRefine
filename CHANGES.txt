@@ -14,6 +14,7 @@ Features:
 - New exporters: to RDF (as extension)
 - In CSV and TSV importers, added support for ignoring quotation marks
 - Regexp groups capturing GEL function
+- Text facet's choice count limit is now configurable through preference page
 
 Fixes:
 - TSV/CSV exporter bug: Gridworks crashed when there were empty cells.

@@ -228,14 +228,14 @@
         <jarbundler 
                 dir="${mac.dir}"
                 name="Gridworks"
-                mainclass="com.metaweb.gridworks.Gridworks" 
+                mainclass="com.google.gridworks.Gridworks" 
                 icon="${graphics.dir}/icon/gridworks.icns"
                 version="${version}"
                 infostring="Gridworks ${version}"
                 aboutmenuname="Gridworks"
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
                 jvmversion="1.6+"
-                bundleid="com.metaweb.gridworks.Gridworks"
+                bundleid="com.google.gridworks.Gridworks"
                 vmoptions="-Xms256M -Xmx1024M -Dgridworks.version=${revision}"
                 antialiasedgraphics="true"
                 antialiasedtext="true"
@@ -267,7 +267,7 @@
                jarPath="server/lib/${fullname}-server.jar" 
                dontWrapJar="true"
                icon="${graphics.dir}/icon/gridworks.ico">
-            <classPath mainClass="com.metaweb.gridworks.Gridworks">
+            <classPath mainClass="com.google.gridworks.Gridworks">
                 <cp>server/lib/*.jar</cp>
             </classPath>
             <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
