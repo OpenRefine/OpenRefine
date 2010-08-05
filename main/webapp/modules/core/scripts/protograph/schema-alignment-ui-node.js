@@ -3,6 +3,11 @@ SchemaAlignmentDialog.UINode = function(dialog, node, table, options) {
     this._node = node;
     this._options = options;
     
+    if ("columnName" in this._node) {
+        this._node.columnNames = [ this._node.columnName ];
+        delete this._node.columnName;
+    }
+    
     this._linkUIs = [];
     this._detailsRendered = false;
     
@@ -74,13 +79,19 @@ SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
         this._node.nodeType == "cell-as-value" || 
         this._node.nodeType == "cell-as-key") {
         
-        if ("columnName" in this._node) {
-            a.html(" cell");
+        if ("columnNames" in this._node) {
+            for (var c = 0; c < this._node.columnNames.length; c++) {
+                if (c > 0) {
+                    $('<span>').text(", ").appendTo(a);
+                }
+                
+                $('<span>')
+                    .text(this._node.columnNames[c])
+                    .addClass("schema-alignment-node-column")
+                    .appendTo(a);
+            }
             
-            $('<span></span>')
-                .text(this._node.columnName)
-                .addClass("schema-alignment-node-column")
-                .prependTo(a);
+            $('<span>').text(this._node.columnNames.length > 1 ? " cells" : " cell").appendTo(a);
         } else {
             a.html(this._options.mustBeCellTopic ? "Which column?" : "Configure...");
         }
@@ -229,7 +240,7 @@ SchemaAlignmentDialog.UINode.prototype._showColumnPopupMenu = function(elmt) {
             label: columns[index].name,
             click: function() {
                 self._node.nodeType = "cell-as-topic";
-                self._node.columnName = columns[index].name;
+                self._node.columnNames = [ columns[index].name ];
                 self._showExpandable();
                 self._renderMain();
             }
@@ -398,11 +409,18 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         .attr("cellpadding", "0")
         .appendTo(elmts.divColumns)[0];
         
+    var columnMap = {};
+    if ("columnNames" in self._node) {
+        for (var i = 0; i < self._node.columnNames.length; i++) {
+            columnMap[self._node.columnNames[i]] = true;
+        }
+    }
+        
     var makeColumnChoice = function(column, columnIndex) {
         var tr = tableColumns.insertRow(tableColumns.rows.length);
         
         var radio = $('<input />')
-            .attr("type", "radio")
+            .attr("type", "checkbox")
             .attr("value", column.name)
             .attr("name", "schema-align-node-dialog-column")
             .appendTo(tr.insertCell(0))
@@ -420,9 +438,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                 }
             });
             
-        if ((!("columnName" in self._node) || !self._node.columnName) && columnIndex === 0) {
-            radio.attr("checked", "true");
-        } else if (column.name == self._node.columnName) {
+        if (column.name in columnMap) {
             radio.attr("checked", "true");
         }
             
@@ -539,7 +555,14 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         };
         if (node.nodeType == "cell-as") {
             node.nodeType = $("input[name='schema-align-node-dialog-node-subtype']:checked")[0].value;
-            node.columnName = $("input[name='schema-align-node-dialog-column']:checked")[0].value;
+            node.columnNames = $("input[name='schema-align-node-dialog-column']:checked").map(function() {
+                return this.getAttribute("value");
+            }).get();
+            
+            if (node.columnNames.length == 0) {
+                alert("You must select at least one column.");
+                return null;
+            }
             
             if (node.nodeType == "cell-as-topic") {
                 node.createForNoReconMatch = elmts.radioNodeTypeCellAsTopicCreate[0].checked;
@@ -631,14 +654,14 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
     var getLinks = false;
     
     if (this._node.nodeType.match(/^cell-as-/)) {
-        if (!("columnName" in this._node) || !this._node.columnName) {
+        if (!("columnNames" in this._node) || !this._node.columnNames) {
             return null;
         }
             
         if (this._node.nodeType == "cell-as-topic") {
             result = {
                 nodeType: this._node.nodeType,
-                columnName: this._node.columnName,
+                columnNames: this._node.columnNames,
                 type: "type" in this._node ? cloneDeep(this._node.type) : { "id" : "/common/topic", "name" : "Topic", "cvt" : false },
                 createForNoReconMatch: "createForNoReconMatch" in this._node ? this._node.createForNoReconMatch : true
             };
@@ -646,7 +669,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
         } else if (this._node.nodeType == "cell-as-value") {
             result = {
                 nodeType: this._node.nodeType,
-                columnName: this._node.columnName,
+                columnNames: this._node.columnNames,
                 valueType: "valueType" in this._node ? this._node.valueType : "/type/text",
                 lang: "lang" in this._node ? this._node.lang : "/lang/en"
             };
@@ -656,7 +679,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
             }
             result = {
                 nodeType: this._node.nodeType,
-                columnName: this._node.columnName,
+                columnNames: this._node.columnNames,
                 type: cloneDeep(this._node.namespace)
             };
         }

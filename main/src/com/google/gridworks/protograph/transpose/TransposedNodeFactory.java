@@ -21,6 +21,7 @@ public interface TransposedNodeFactory {
         Link link, 
         CellNode node, 
         int rowIndex,
+        int cellIndex,
         Cell cell
     );
     

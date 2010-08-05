@@ -10,11 +10,13 @@ import com.google.gridworks.Jsonizable;
 public class Link implements Jsonizable {
     final public FreebaseProperty    property;
     final public Node                target;
+    final public Condition           condition;
     final public boolean             load;
     
-    public Link(FreebaseProperty property, Node target, boolean load) {
+    public Link(FreebaseProperty property, Node target, Condition condition, boolean load) {
         this.property = property;
         this.target = target;
+        this.condition = condition;
         this.load = load;
     }
     

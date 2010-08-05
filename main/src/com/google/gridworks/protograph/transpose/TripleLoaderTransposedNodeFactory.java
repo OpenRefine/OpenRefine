@@ -352,17 +352,19 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                     if (newTopicVars.containsKey(cell.recon.id)) {
                         id = newTopicVars.get(cell.recon.id);
                     } else {
-                        long var = 0;
-                        if (varPool.containsKey(node.columnName)) {
-                            var = varPool.get(node.columnName);
-                        }
-                        varPool.put(node.columnName, var + 1);
+                        Column column = project.columnModel.getColumnByCellIndex(cellIndex);
+                        String columnName = column.getName();
                         
-                        id = "$" + node.columnName.replaceAll("\\W+", "_") + "_" + var;
+                        long var = 0;
+                        if (varPool.containsKey(columnName)) {
+                            var = varPool.get(columnName);
+                        }
+                        varPool.put(columnName, var + 1);
+                        
+                        id = "$" + columnName.replaceAll("\\W+", "_") + "_" + var;
                         
                         String typeID = node.type.id;
                         
-                        Column column = project.columnModel.getColumnByName(node.columnName);
                         ReconConfig reconConfig = column.getReconConfig();
                         if (reconConfig instanceof StandardReconConfig) {
                             typeID = ((StandardReconConfig) reconConfig).typeID;
@@ -510,13 +512,11 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             TransposedNode parentNode,
             Link link, 
             CellNode node, 
-            int rowIndex, 
+            int rowIndex,
+            int cellIndex,
             Cell cell) {
         
         WritingTransposedNode parentNode2 = (WritingTransposedNode) parentNode;
-        
-        Column column = project.columnModel.getColumnByName(node.columnName);
-        int cellIndex = column != null ? column.getCellIndex() : -1;
         
         WritingTransposedNode tnode = null;
         if (node instanceof CellTopicNode) {

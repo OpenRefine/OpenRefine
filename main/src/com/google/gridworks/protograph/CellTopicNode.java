@@ -12,11 +12,8 @@ public class CellTopicNode extends CellNode implements NodeWithLinks {
     final public List<Link>     links = new LinkedList<Link>();
 
     public CellTopicNode(
-        String           columnName,
-        FreebaseType     type
+        FreebaseType type
     ) {
-        super(columnName);
-        
         this.type = type;
     }
     
@@ -25,7 +22,12 @@ public class CellTopicNode extends CellNode implements NodeWithLinks {
 
         writer.object();
         writer.key("nodeType"); writer.value("cell-as-topic");
-        writer.key("columnName"); writer.value(columnName);
+        writer.key("columnNames");
+        writer.array();
+        for (String name : columnNames) {
+            writer.value(name);
+        }
+        writer.endArray();
         if (type != null) {
             writer.key("type"); type.write(writer, options);
         }

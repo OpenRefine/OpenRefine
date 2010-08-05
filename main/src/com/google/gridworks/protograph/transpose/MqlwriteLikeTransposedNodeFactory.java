@@ -261,7 +261,9 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
             TransposedNode parentNode,
             Link link, 
             CellNode node, 
-            int rowIndex, Cell cell) {
+            int rowIndex,
+            int cellIndex,
+            Cell cell) {
         
         JsonTransposedNode tnode = null;
         if (node instanceof CellTopicNode) {

@@ -45,26 +45,33 @@ public class Protograph implements OverlayModel {
         
         String nodeType = o.getString("nodeType");
         if (nodeType.startsWith("cell-as-")) {
-            String columnName = o.getString("columnName");
-            
             if ("cell-as-topic".equals(nodeType)) {
                 if (o.has("type")) {
                     node = new CellTopicNode(
-                        columnName,
                         reconstructType(o.getJSONObject("type"))
                     );
                 }
             } else if ("cell-as-value".equals(nodeType)) {
                 node = new CellValueNode(
-                    columnName,
                     o.getString("valueType"),
                     o.getString("lang")
                 );
             } else if ("cell-as-key".equals(nodeType)) {
                 node = new CellKeyNode(
-                    columnName,
                     reconstructTopic(o.getJSONObject("namespace"))
                 );
+            }
+            
+            if (o.has("columnName") && !o.isNull("columnName")) {
+                ((CellNode) node).columnNames.add(o.getString("columnName"));
+            }
+            if (o.has("columnNames") && !o.isNull("columnNames")) {
+                JSONArray columnNames = o.getJSONArray("columnNames");
+                int count = columnNames.length();
+                
+                for (int c = 0; c < count; c++) {
+                    ((CellNode) node).columnNames.add(columnNames.getString(c));
+                }
             }
         } else if ("topic".equals(nodeType)) {
             node = new FreebaseTopicNode(reconstructTopic(o.getJSONObject("topic")));
@@ -86,11 +93,20 @@ public class Protograph implements OverlayModel {
             
             for (int j = 0; j < linkCount; j++) {
                 JSONObject oLink = links.getJSONObject(j);
+                Condition condition = null;
+                
+                if (oLink.has("condition") && !oLink.isNull("condition")) {
+                    JSONObject oCondition = oLink.getJSONObject("condition");
+                    if (oCondition.has("columnName") && !oCondition.isNull("columnName")) {
+                        condition = new BooleanColumnCondition(oCondition.getString("columnName"));
+                    }
+                }
                 
                 node2.addLink(new Link(
                     reconstructProperty(oLink.getJSONObject("property")),
                     oLink.has("target") && !oLink.isNull("target") ? 
                         reconstructNode(oLink.getJSONObject("target")) : null,
+                    condition,
                     oLink.has("load") && !oLink.isNull("load") ?
                         oLink.getBoolean("load") : true
                 ));
