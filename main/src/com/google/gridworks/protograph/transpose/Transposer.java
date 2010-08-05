@@ -105,25 +105,27 @@ public class Transposer {
         if (node instanceof CellNode) {
             CellNode node2 = (CellNode) node;
             Column column = project.columnModel.getColumnByName(node2.columnName);
-            Cell cell = row.getCell(column.getCellIndex());
-            if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                if (node2 instanceof CellTopicNode &&
-                    (cell.recon == null || cell.recon.judgment == Judgment.None)) {
+            if (column != null) {
+                Cell cell = row.getCell(column.getCellIndex());
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                    if (node2 instanceof CellTopicNode &&
+                        (cell.recon == null || cell.recon.judgment == Judgment.None)) {
+                            return;
+                    }
+                    
+                    context.count++;
+                    if (context.limit > 0 && context.count > context.limit) {
                         return;
+                    }
+                    
+                    tnode = nodeFactory.transposeCellNode(
+                        parentNode,
+                        link,
+                        node2, 
+                        rowIndex,
+                        cell
+                    );
                 }
-                
-                context.count++;
-                if (context.limit > 0 && context.count > context.limit) {
-                    return;
-                }
-                
-                tnode = nodeFactory.transposeCellNode(
-                    parentNode,
-                    link,
-                    node2, 
-                    rowIndex,
-                    cell
-                );
             }
         } else {
             if (node instanceof AnonymousNode) {

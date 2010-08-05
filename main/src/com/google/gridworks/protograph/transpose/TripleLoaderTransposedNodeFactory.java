@@ -360,7 +360,15 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                         
                         id = "$" + node.columnName.replaceAll("\\W+", "_") + "_" + var;
                         
-                        writeLine(id, "type", node.type.id, project, rowIndex, cellIndex, cell, -1, -1, (Cell) null, !load);
+                        String typeID = node.type.id;
+                        
+                        Column column = project.columnModel.getColumnByName(node.columnName);
+                        ReconConfig reconConfig = column.getReconConfig();
+                        if (reconConfig instanceof StandardReconConfig) {
+                            typeID = ((StandardReconConfig) reconConfig).typeID;
+                        }
+                        
+                        writeLine(id, "type", typeID, project, rowIndex, cellIndex, cell, -1, -1, (Cell) null, !load);
                         writeLine(id, "name", cell.value, project, -1, -1, (Cell) null, -1, -1, (Cell) null, !load);
                         
                         if (cell.recon != null) {

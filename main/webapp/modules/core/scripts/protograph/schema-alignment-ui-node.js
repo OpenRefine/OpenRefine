@@ -542,21 +542,17 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             node.columnName = $("input[name='schema-align-node-dialog-column']:checked")[0].value;
             
             if (node.nodeType == "cell-as-topic") {
-                if (elmts.radioNodeTypeCellAsTopicCreate[0].checked) {
-                    node.createForNoReconMatch = true;
-                    
-                    var t = elmts.cellAsTopicNodeTypeInput.data("data.suggest");
-                    if (!(t)) {
-                        alert("For creating a new graph node, you need to specify a type for it.");
-                        return null;
-                    }
-                    node.type = {
-                        id: t.id,
-                        name: t.name
-                    };
-                } else {
-                    node.createForNoReconMatch = false;
+                node.createForNoReconMatch = elmts.radioNodeTypeCellAsTopicCreate[0].checked;
+                
+                var t = elmts.cellAsTopicNodeTypeInput.data("data.suggest");
+                if (!(t) && node.createForNoReconMatch) {
+                    alert("For creating a new graph node, you need to specify a type for it.");
+                    return null;
                 }
+                node.type = {
+                    id: t.id,
+                    name: t.name
+                };
             } else if (node.nodeType == "cell-as-value") {
                 node.valueType = elmts.cellAsValueTypeSelect[0].value;
                 
