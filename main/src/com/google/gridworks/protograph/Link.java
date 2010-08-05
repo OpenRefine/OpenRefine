@@ -37,6 +37,10 @@ public class Link implements Jsonizable {
             writer.key("target");
             target.write(writer, options);
         }
+        if (condition != null) {
+            writer.key("condition");
+            condition.write(writer, options);
+        }
         writer.endObject();
     }
 

@@ -124,32 +124,9 @@ HistoryWidget.prototype._extractOperations = function() {
 
 HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("800px");
+    var frame = $(DOM.loadHTML("core", "scripts/widgets/history-extract-dialog.html"));
+    var elmts = DOM.bind(frame);
     
-    var header = $('<div></div>').addClass("dialog-header").text("Extract Operations").appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    var html = $(
-        '<div class="grid-layout layout-normal layout-full"><table>' +
-            '<tr><td colspan="2">' +
-                'The following JSON code encodes the operations you have done that can be abstracted. ' +
-                'You can copy and save it in order to apply the same operations in the future.' +
-            '</td></tr>' +
-            '<tr>' +
-                '<td width="50%" style="vertical-align: top">' +
-                    '<div class="extract-operation-dialog-entries"><table cellspacing="5" bind="entryTable"></table></div>' +
-                '</td>' +
-                '<td width="50%" style="vertical-align: top">' +
-                    '<div class="input-container"><textarea wrap="off" class="history-operation-json" bind="textarea" /></div>' +
-                '</td>' +
-            '</tr>' +
-        '</table></div>'
-    ).appendTo(body);
-    
-    var elmts = DOM.bind(html);
-        
     var entryTable = elmts.entryTable[0];
     var createEntry = function(entry) {
         var tr = entryTable.insertRow(entryTable.rows.length);
@@ -186,9 +163,23 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     };
     updateJson();
     
-    $('<button></button>').text("Close").click(function() {
-        DialogSystem.dismissUntil(level - 1);
-    }).appendTo(footer);
+    elmts.closeButton.click(function() { DialogSystem.dismissUntil(level - 1); });
+    elmts.selectAllButton.click(function() {
+        for (var i = 0; i < json.entries.length; i++) {
+            json.entries[i].selected = true;
+        }
+        
+        frame.find('input[type="checkbox"]').attr("checked", "true");
+        updateJson();
+    });
+    elmts.unselectAllButton.click(function() {
+        for (var i = 0; i < json.entries.length; i++) {
+            json.entries[i].selected = false;
+        }
+        
+        frame.find('input[type="checkbox"]').removeAttr("checked");
+        updateJson();
+    });
     
     var level = DialogSystem.showDialog(frame);
     

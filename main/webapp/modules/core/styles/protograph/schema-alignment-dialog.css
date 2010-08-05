@@ -101,12 +101,12 @@ div.schema-alignment-dialog-preview {
  *--------------------------------------------------
  */
 
-.schema-alignment-link-menu-type-search {
-    padding: 8px;
-}
-
-.schema-alignment-link-menu-type-search2 {
+.schema-alignment-link-menu-section {
     padding: 8px;
     border-bottom: 1px solid #ddd;
     margin-bottom: 3px;
+}
+
+.schema-alignment-link-menu-section-last {
+    padding: 8px;
 }

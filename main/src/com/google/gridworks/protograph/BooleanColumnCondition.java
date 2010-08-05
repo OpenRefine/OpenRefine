@@ -1,5 +1,10 @@
 package com.google.gridworks.protograph;
 
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.google.gridworks.model.Column;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.model.Row;
@@ -28,4 +33,10 @@ public class BooleanColumnCondition implements Condition {
         return false;
     }
 
+    @Override
+    public void write(JSONWriter writer, Properties options) throws JSONException {
+        writer.object();
+        writer.key("columnName"); writer.value(columnName);
+        writer.endObject();
+    }
 }

@@ -49,7 +49,9 @@ SchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentUINo
 SchemaAlignmentDialog.UILink.prototype._renderMain = function() {
     $(this._tdMain).empty();
     
-    var label = this._link.property !== null ? this._link.property.id : "property?";
+    var label = this._link.property !== null ? 
+        (this._link.property.id + ((this._link.condition) ? " [?]" : "")) : 
+        "property?";
     
     var self = this;
     
@@ -98,7 +100,7 @@ SchemaAlignmentDialog.UILink.prototype._startEditProperty = function(elmt) {
     var sourceTypeID = this._parentUINode.getExpectedType();
     var targetNode = this._targetUI._node;
     var targetTypeID = "type" in targetNode && targetNode.type !== null ? targetNode.type.id : null;
-    var targetTypeName = "columnName" in targetNode ? targetNode.columnName : null;
+    var targetTypeName = "columnNames" in targetNode ? targetNode.columnNames[0] : null;
     
     if (sourceTypeID !== null) {
         var self = this;
@@ -191,13 +193,46 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
                 name: p.name
             };
         }
+        
+        var conditionColumnName = conditionalSelect[0].value;
+        if (conditionColumnName != "") {
+            self._link.condition = { columnName: conditionColumnName };
+        } else {
+            delete self._link.condition;
+        }
+        
         self._configureTarget();
     };
     
-    var divSearch;
+    var divConditional = $('<div>')
+        .addClass("schema-alignment-link-menu-section")
+        .html("Assert link when 'true' is found in column<br/>").appendTo(menu);
+        
+    var conditionalSelect = $('<select>').appendTo(divConditional);
+    $('<option>')
+        .text("(always assert)")
+        .attr("value", "")
+        .attr("name", "schema-alignment-link-menu-condition")
+        .appendTo(conditionalSelect);
+        
+    for (var c = 0; c < theProject.columnModel.columns.length; c++) {
+        var column = theProject.columnModel.columns[c];
+        var option = $('<option>')
+            .text(column.name)
+            .attr("value", column.name)
+            .attr("name", "schema-alignment-link-menu-condition")
+            .appendTo(conditionalSelect);
+            
+        if ((self._link.condition) && column.name == self._link.condition.columnName) {
+            option.attr("selected", "true");
+        }
+    }
     
+    var divSearch;
     if (suggestions.length > 0) {
-        divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search2").html('<div>Search for a property or pick one below</div>').appendTo(menu);
+        divSearch = $('<div>')
+            .addClass("schema-alignment-link-menu-section")
+            .html('<div>Search for a property or pick one below</div>').appendTo(menu);
         
         var createSuggestion = function(suggestion) {
             var menuItem = MenuSystem.createMenuItem().appendTo(menu);
@@ -225,7 +260,9 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
             createSuggestion(suggestions[i]);
         }
     } else {
-        divSearch = $('<div>').addClass("schema-alignment-link-menu-type-search").html('<div>Search for a property</div>').appendTo(menu);
+        divSearch = $('<div>')
+            .addClass("schema-alignment-link-menu-section-last")
+            .html('<div>Search for a property</div>').appendTo(menu);
     }
     var input = $('<input />').appendTo($('<div>').appendTo(divSearch));
     
@@ -235,19 +272,9 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     var suggestOptions = {
         type : '/type/property'
     };
-    if (this._link.target !== null && "type" in this._link.target && this._link.target.type !== null) {
-        /*
-        suggestOptions.mql_filter = [{
-            "/type/property/expected_type" : {
-                id: this._link.target.type.id
-            }
-        }];
-        */
-    } else {
-        var sourceTypeID = this._parentUINode.getExpectedType();
-        if (sourceTypeID !== null) {
-            suggestOptions.ac_param = { schema: sourceTypeID };
-        }
+    var sourceTypeID = this._parentUINode.getExpectedType();
+    if (sourceTypeID !== null) {
+        suggestOptions.ac_param = { schema: sourceTypeID };
     }
     input.suggestP(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });
     
@@ -260,10 +287,14 @@ SchemaAlignmentDialog.UILink.prototype.getJSON = function() {
         
         var targetJSON = this._targetUI.getJSON();
         if (targetJSON !== null) {
-            return {
+            var json = {
                 property: cloneDeep(this._link.property),
                 target: targetJSON
             };
+            if (this._link.condition) {
+                json.condition = cloneDeep(this._link.condition);
+            }
+            return json;
         }
     }
     return null;
