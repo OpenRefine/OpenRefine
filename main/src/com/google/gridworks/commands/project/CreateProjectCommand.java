@@ -43,7 +43,10 @@ import com.google.gridworks.ProjectManager;
 import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.commands.Command;
 import com.google.gridworks.importers.Importer;
+import com.google.gridworks.importers.ReaderImporter;
+import com.google.gridworks.importers.StreamImporter;
 import com.google.gridworks.importers.TsvCsvImporter;
+import com.google.gridworks.importers.UrlImporter;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.util.IOUtils;
 import com.google.gridworks.util.ParsingUtilities;
@@ -400,39 +403,42 @@ public class CreateProjectCommand extends Command {
         return result;
     }
 
-    protected void internalImportURL(
-        HttpServletRequest    request,
-        Project               project,
-        Properties            options,
-        String                urlString
-    ) throws Exception {
+    protected void internalImportURL(HttpServletRequest request,
+            Project project, Properties options, String urlString)
+            throws Exception {
         URL url = new URL(urlString);
         URLConnection connection = null;
 
-        try {
-            connection = url.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.connect();
-        } catch (Exception e) {
-            throw new Exception("Cannot connect to " + urlString, e);
-        }
+        // Try for a URL importer first
+        Importer importer = guessUrlImporter(url);
+        if (importer instanceof UrlImporter) {
+            ((UrlImporter) importer).read(url, project, options);
+            return;
+        } else {
+            // If we couldn't find one, try opening URL and treating as a stream
+            try {
+                connection = url.openConnection();
+                connection.setConnectTimeout(5000);
+                connection.connect();
+            } catch (Exception e) {
+                throw new Exception("Cannot connect to " + urlString, e);
+            }
 
-        InputStream inputStream = null;
-        try {
-            inputStream = connection.getInputStream();
-        } catch (Exception e) {
-            throw new Exception("Cannot retrieve content from " + url, e);
-        }
+            InputStream inputStream = null;
+            try {
+                inputStream = connection.getInputStream();
+            } catch (Exception e) {
+                throw new Exception("Cannot retrieve content from " + url, e);
+            }
 
-        try {
-            Importer importer = guessImporter(
-                connection.getContentType(),
-                url.getPath()
-            );
-
-            internalInvokeImporter(project, importer, options, inputStream, connection.getContentEncoding());
-        } finally {
-            inputStream.close();
+            try {
+                importer = guessImporter(connection.getContentType(), 
+                        url.getPath());
+                internalInvokeImporter(project, importer, options, inputStream,
+                        connection.getContentEncoding());
+            } finally {
+                inputStream.close();
+            }
         }
     }
 
@@ -443,7 +449,7 @@ public class CreateProjectCommand extends Command {
         InputStream rawInputStream,
         String      encoding
     ) throws Exception {
-        if (importer.takesReader()) {
+        if (importer instanceof ReaderImporter) {
 
             BufferedInputStream inputStream = new BufferedInputStream(rawInputStream);
 
@@ -482,28 +488,45 @@ public class CreateProjectCommand extends Command {
                         new InputStreamReader(inputStream);
             }
 
-            importer.read(reader, project, options);
+            ((ReaderImporter) importer).read(reader, project, options);
         } else {
-            importer.read(rawInputStream, project, options);
+            ((StreamImporter) importer).read(rawInputStream, project, options);
         }
     }
 
     protected void internalInvokeImporter(
-        Project     project,
-        Importer    importer,
-        Properties  options,
-        Reader      reader
+        Project        project,
+        ReaderImporter importer,
+        Properties     options,
+        Reader         reader
     ) throws Exception {
         importer.read(reader, project, options);
     }
 
-    protected Importer guessImporter(String contentType, String fileName) {
-        for(Importer i : importers.values()){
+    protected Importer guessImporter(String contentType, String fileName, boolean provideDefault) {
+        for (Importer i : importers.values()){
             if(i.canImportData(contentType, fileName)){
                 return i;
             }
         }
+        if (provideDefault) {
+            return new TsvCsvImporter(); // default
+        } else {
+            return null;
+        }
+    }
+    
+    protected Importer guessImporter(String contentType, String filename) {
+        return guessImporter(contentType, filename, true);
+    }
 
-        return new TsvCsvImporter(); //default
+    protected Importer guessUrlImporter(URL url) {
+        for (Importer importer : importers.values()){
+            if (importer instanceof UrlImporter 
+                    && ((UrlImporter) importer).canImportData(url)) {
+                return importer;
+            }
+        }
+        return null;
     }
 }

@@ -2,10 +2,11 @@ package com.google.gridworks.importers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.util.Properties;
 
 import org.marc4j.MarcPermissiveStreamReader;
@@ -15,27 +16,23 @@ import org.marc4j.marc.Record;
 
 import com.google.gridworks.model.Project;
 
-public class MarcImporter implements Importer {
+public class MarcImporter implements StreamImporter {
 
-    public boolean takesReader() {
-        return false;
-    }
-
-    public void read(Reader reader, Project project, Properties options)
-        throws Exception {
-
-        throw new UnsupportedOperationException();
-    }
-
+    @Override
     public void read(
         InputStream inputStream,
         Project project,
         Properties options
-    ) throws Exception {
+    ) throws ImportException {
         int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
         int skip = ImporterUtilities.getIntegerOption("skip",options,0);
 
-        File tempFile = File.createTempFile("gridworks-import-", ".marc.xml");
+        File tempFile;
+        try {
+            tempFile = File.createTempFile("gridworks-import-", ".marc.xml");
+        } catch (IOException e) {
+            throw new ImportException("Unexpected error creating temp file",e);
+        }
         try {
             OutputStream os = new FileOutputStream(tempFile);
             try {
@@ -62,20 +59,31 @@ public class MarcImporter implements Importer {
                 }
                 writer.close();
             } finally {
-                os.close();
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    // Just ignore - not much we can do anyway
+                }
             }
 
             InputStream is = new FileInputStream(tempFile);
             try {
                 new XmlImporter().read(is, project, options);
             } finally {
-                is.close();
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    // Just ignore - not much we can do anyway
+                }
             }
+        } catch (FileNotFoundException e) {
+            throw new ImportException("Input file not found", e);
         } finally {
             tempFile.delete();
         }
     }
 
+    @Override
     public boolean canImportData(String contentType, String fileName) {
         if (contentType != null) {
             contentType = contentType.toLowerCase().trim();

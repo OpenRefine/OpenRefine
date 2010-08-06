@@ -2,7 +2,6 @@ package com.google.gridworks.importers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,18 +27,11 @@ import com.google.gridworks.model.ReconCandidate;
 import com.google.gridworks.model.Row;
 import com.google.gridworks.model.Recon.Judgment;
 
-public class ExcelImporter implements Importer {
+public class ExcelImporter implements StreamImporter {
     protected boolean _xmlBased;
-    
-    public boolean takesReader() {
-        return false;
-    }
-    
-    public void read(Reader reader, Project project, Properties options) throws Exception {
-        throw new UnsupportedOperationException();
-    }
-    
-    public void read(InputStream inputStream, Project project, Properties options) throws Exception {
+
+    @Override
+    public void read(InputStream inputStream, Project project, Properties options) throws ImportException {
         int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
         int headerLines = ImporterUtilities.getIntegerOption("header-lines", options, 1);
         int limit = ImporterUtilities.getIntegerOption("limit", options, -1);
@@ -51,7 +43,7 @@ public class ExcelImporter implements Importer {
                 new XSSFWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
-            throw new Exception(
+            throw new ImportException(
                 "Attempted to parse file as Excel file but failed. " +
                 "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
                 e
@@ -94,8 +86,9 @@ public class ExcelImporter implements Importer {
                 for (int c = firstCell; c <= lastCell; c++) {
                     org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
                     if (cell != null) {
-                        String text = cell.getStringCellValue().trim();
-                        if (text.length() > 0) {
+                        Serializable value = extractCell(cell);
+                        String text = value != null ? value.toString() : null;
+                        if (text != null && text.length() > 0) {
                             while (columnNames.size() < c + 1) {
                                 columnNames.add(null);
                             }
@@ -194,7 +187,7 @@ public class ExcelImporter implements Importer {
         }
     }
     
-    protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, Map<String, Recon> reconMap) {
+    protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
         int cellType = cell.getCellType();
         if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR ||
             cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
@@ -221,6 +214,12 @@ public class ExcelImporter implements Importer {
                 value = text;
             }
         }
+        
+        return value;
+    }
+    
+    protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, Map<String, Recon> reconMap) {
+        Serializable value = extractCell(cell);
         
         if (value != null) {
             Recon recon = null;
@@ -273,6 +272,7 @@ public class ExcelImporter implements Importer {
         }
     }
     
+    @Override
     public boolean canImportData(String contentType, String fileName) {
         if (contentType != null) {
             contentType = contentType.toLowerCase().trim();

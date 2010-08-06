@@ -1,6 +1,6 @@
 package com.google.gridworks.importers;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +14,8 @@ import org.jrdf.SortedMemoryJRDFFactory;
 import org.jrdf.collection.MemMapFactory;
 import org.jrdf.graph.Graph;
 import org.jrdf.graph.Triple;
+import org.jrdf.parser.ParseException;
+import org.jrdf.parser.StatementHandlerException;
 import org.jrdf.parser.line.GraphLineParser;
 import org.jrdf.parser.line.LineHandler;
 import org.jrdf.parser.ntriples.NTriplesParserFactory;
@@ -29,25 +31,33 @@ import com.google.gridworks.model.ModelException;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.model.Row;
 
-public class RdfTripleImporter implements Importer{
-    JRDFFactory JrdfFactory;
-    NTriplesParserFactory nTriplesParserFactory;
-    MemMapFactory newMapFactory;
+public class RdfTripleImporter implements ReaderImporter{
+    private JRDFFactory             _jrdfFactory;
+    private NTriplesParserFactory   _nTriplesParserFactory;
+    private MemMapFactory           _newMapFactory;
 
     public RdfTripleImporter(){
-        JrdfFactory = SortedMemoryJRDFFactory.getFactory();
-        nTriplesParserFactory = new NTriplesParserFactory();
-        newMapFactory = new MemMapFactory();
+        _jrdfFactory = SortedMemoryJRDFFactory.getFactory();
+        _nTriplesParserFactory = new NTriplesParserFactory();
+        _newMapFactory = new MemMapFactory();
     }
 
     @Override
-    public void read(Reader reader, Project project, Properties options) throws Exception {
+    public void read(Reader reader, Project project, Properties options) throws ImportException {
         String baseUrl = options.getProperty("base-url");
 
-        Graph graph = JrdfFactory.getNewGraph();
-        LineHandler lineHandler = nTriplesParserFactory.createParser(graph, newMapFactory);
+        Graph graph = _jrdfFactory.getNewGraph();
+        LineHandler lineHandler = _nTriplesParserFactory.createParser(graph, _newMapFactory);
         GraphLineParser parser = new GraphLineParser(graph, lineHandler);
-        parser.parse(reader, baseUrl); // fills JRDF graph
+        try {
+            parser.parse(reader, baseUrl); // fills JRDF graph
+        } catch (IOException e) {
+            throw new ImportException("i/o error while parsing RDF",e);
+        } catch (ParseException e) {
+            throw new ImportException("error parsing RDF",e);
+        } catch (StatementHandlerException e) {
+            throw new ImportException("error parsing RDF",e);
+        } 
 
         Map<String, List<Row>> subjectToRows = new HashMap<String, List<Row>>();
 
@@ -64,62 +74,53 @@ public class RdfTripleImporter implements Importer{
 
                 Column column = project.columnModel.getColumnByName(predicate);
                 if (column == null) {
-                	column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
-                	try {
-            			project.columnModel.addColumn(-1, column, true);
-            		} catch (ModelException e) {
-            			// ignore
-            		}
+                    column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
+                    try {
+                        project.columnModel.addColumn(-1, column, true);
+                    } catch (ModelException e) {
+                        // ignore
+                    }
                 }
 
                 int cellIndex = column.getCellIndex();
                 if (subjectToRows.containsKey(subject)) {
-                	List<Row> rows = subjectToRows.get(subject);
-                	for (Row row : rows) {
-                		if (!ExpressionUtils.isNonBlankData(row.getCellValue(cellIndex))) {
-                        	row.setCell(cellIndex, new Cell(object, null));
-                        	object = null;
-                        	break;
-                		}
-                	}
+                    List<Row> rows = subjectToRows.get(subject);
+                    for (Row row : rows) {
+                        if (!ExpressionUtils.isNonBlankData(row.getCellValue(cellIndex))) {
+                            row.setCell(cellIndex, new Cell(object, null));
+                            object = null;
+                            break;
+                        }
+                    }
 
-                	if (object != null) {
-                    	Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
-                    	rows.add(row);
+                    if (object != null) {
+                        Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
+                        rows.add(row);
 
-                    	row.setCell(cellIndex, new Cell(object, null));
-                	}
+                        row.setCell(cellIndex, new Cell(object, null));
+                    }
                 } else {
-                	List<Row> rows = new ArrayList<Row>();
-                	subjectToRows.put(subject, rows);
+                    List<Row> rows = new ArrayList<Row>();
+                    subjectToRows.put(subject, rows);
 
-                	Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
-                	rows.add(row);
+                    Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
+                    rows.add(row);
 
-                	row.setCell(subjectColumn.getCellIndex(), new Cell(subject, null));
-                	row.setCell(cellIndex, new Cell(object, null));
+                    row.setCell(subjectColumn.getCellIndex(), new Cell(subject, null));
+                    row.setCell(cellIndex, new Cell(object, null));
                 }
             }
 
             for (Entry<String, List<Row>> entry : subjectToRows.entrySet()) {
-            	project.rows.addAll(entry.getValue());
+                project.rows.addAll(entry.getValue());
             }
         } finally {
             triples.iterator().close();
         }
     }
 
+    
     @Override
-    public void read(InputStream inputStream, Project project, Properties options) throws Exception {
-        // TODO
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean takesReader() {
-        return true;
-    }
-
     public boolean canImportData(String contentType, String fileName) {
         if (contentType != null) {
             contentType = contentType.toLowerCase().trim();

@@ -19,8 +19,10 @@ import com.google.gridworks.model.Cell;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.model.Row;
 
-public class TsvCsvImporter implements Importer {
-    public void read(Reader reader, Project project, Properties options) throws Exception {
+public class TsvCsvImporter implements ReaderImporter,StreamImporter {
+    
+    @Override
+    public void read(Reader reader, Project project, Properties options) throws ImportException {
         boolean splitIntoColumns = ImporterUtilities.getBooleanOption("split-into-columns", options, true);
 
         String sep = options.getProperty("separator"); // auto-detect if not present
@@ -33,11 +35,15 @@ public class TsvCsvImporter implements Importer {
         boolean ignoreQuotes = ImporterUtilities.getBooleanOption("ignore-quotes", options, false);
 
         LineNumberReader lnReader = new LineNumberReader(reader);
-
-        read(lnReader, project, sep,
-            limit, skip, ignoreLines, headerLines,
-            guessValueType, splitIntoColumns, ignoreQuotes
-        );
+        
+        try {
+            read(lnReader, project, sep,
+                limit, skip, ignoreLines, headerLines,
+                guessValueType, splitIntoColumns, ignoreQuotes
+            );
+        } catch (IOException e) {
+            throw new ImportException("Import failed",e);
+        }
     }
 
     /**
@@ -170,18 +176,22 @@ public class TsvCsvImporter implements Importer {
         return cells;
     }
 
-    public void read(InputStream inputStream, Project project, Properties options) throws Exception {
+    @Override
+    public void read(InputStream inputStream, Project project,
+            Properties options) throws ImportException {
         read(new InputStreamReader(inputStream), project, options);
     }
 
-    public boolean takesReader() {
-        return true;
-    }
-
+    @Override
     public boolean canImportData(String contentType, String fileName) {
         if (contentType != null) {
             contentType = contentType.toLowerCase().trim();
-            return false;
+            return
+                "text/plain".equals(contentType) ||
+                "text/csv".equals(contentType) ||
+                "text/x-csv".equals(contentType) ||
+                "text/tab-separated-value".equals(contentType);
+            
         } else if (fileName != null) {
             fileName = fileName.toLowerCase();
             if (fileName.endsWith(".tsv")) {

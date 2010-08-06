@@ -1,6 +1,10 @@
 package com.google.gridworks;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -23,7 +27,8 @@ public class ProjectMetadata implements Jsonizable {
     private String         _encoding;
     private int            _encodingConfidence;
     
-    private PreferenceStore _preferenceStore = new PreferenceStore();
+    private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
+    private PreferenceStore             _preferenceStore = new PreferenceStore();
 
     final Logger logger = LoggerFactory.getLogger("project_metadata");
 
@@ -51,13 +56,20 @@ public class ProjectMetadata implements Jsonizable {
 
             writer.key("encoding"); writer.value(_encoding);
             writer.key("encodingConfidence"); writer.value(_encodingConfidence);
+            
+            writer.key("customMetadata"); writer.object();
+            for (String key : _customMetadata.keySet()) {
+                Serializable value = _customMetadata.get(key);
+                writer.key(key);
+                writer.value(value);
+            }
+            writer.endObject();
+            
             writer.key("preferences"); _preferenceStore.write(writer, options);
         }
         writer.endObject();
     }
-
-
-
+    
     public void write(JSONWriter jsonWriter) throws Exception {
         Properties options = new Properties();
         options.setProperty("mode", "save");
@@ -87,6 +99,24 @@ public class ProjectMetadata implements Jsonizable {
             try {
                 ((TopList) pm._preferenceStore.get("expressions"))
                     .load(obj.getJSONArray("expressions"));
+            } catch (JSONException e) {
+                // ignore
+            }
+        }
+        
+        if (obj.has("customMetadata") && !obj.isNull("customMetadata")) {
+            try {
+                JSONObject obj2 = obj.getJSONObject("customMetadata");
+                
+                @SuppressWarnings("unchecked")
+                Iterator<String> keys = obj2.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    Object value = obj2.get(key);
+                    if (value != null && value instanceof Serializable) {
+                        pm._customMetadata.put(key, (Serializable) value);
+                    }
+                }
             } catch (JSONException e) {
                 // ignore
             }
@@ -152,5 +182,17 @@ public class ProjectMetadata implements Jsonizable {
 
     public PreferenceStore getPreferenceStore() {
         return _preferenceStore;
+    }
+    
+    public Serializable getCustomMetadata(String key) {
+        return _customMetadata.get(key);
+    }
+    
+    public void setCustomMetadata(String key, Serializable value) {
+        if (value == null) {
+            _customMetadata.remove(key);
+        } else {
+            _customMetadata.put(key, value);
+        }
     }
 }
