@@ -31,7 +31,6 @@ public class ParsingUtilities {
             if (query.startsWith("?")) {
                 query = query.substring(1);
             }
-
             parseParameters(options,query);
         }
         return options;

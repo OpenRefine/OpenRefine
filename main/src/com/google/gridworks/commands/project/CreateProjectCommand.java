@@ -173,7 +173,8 @@ public class CreateProjectCommand extends Command {
     ) throws Exception {
 
         ServletFileUpload upload = new ServletFileUpload();
-        String url = null;
+        String url = options.getProperty("url");
+        boolean imported = false;
 
         FileItemIterator iter = upload.getItemIterator(request);
         while (iter.hasNext()) {
@@ -185,25 +186,29 @@ public class CreateProjectCommand extends Command {
                     Reader reader = new InputStreamReader(stream,"UTF-8");
                     try {
                         internalInvokeImporter(project, new TsvCsvImporter(), options, reader);
+                        imported = true;
                     } finally {
                         reader.close();
                     }
-                } else if (name.equals("url")) {
+                } else if (name.equals("project-url")) {
                     url = Streams.asString(stream);
                 } else {
                     options.put(name, Streams.asString(stream));
                 }
             } else {
                 String fileName = item.getName().toLowerCase();
-                try {
-                    internalImportFile(project, options, fileName, stream);
-                } finally {
-                    stream.close();
+                if (fileName.length() > 0) {
+                    try {
+                        internalImportFile(project, options, fileName, stream);
+                        imported = true;
+                    } finally {
+                        stream.close();
+                    }
                 }
             }
         }
 
-        if (url != null && url.length() > 0) {
+        if (!imported && url != null && url.length() > 0) {
             internalImportURL(request, project, options, url);
         }
     }
@@ -230,7 +235,7 @@ public class CreateProjectCommand extends Command {
     protected void internalImportFile(
         Project     project,
         Properties  options,
-        String    fileName,
+        String      fileName,
         InputStream inputStream
     ) throws Exception {
 
@@ -413,7 +418,6 @@ public class CreateProjectCommand extends Command {
         Importer importer = guessUrlImporter(url);
         if (importer instanceof UrlImporter) {
             ((UrlImporter) importer).read(url, project, options);
-            return;
         } else {
             // If we couldn't find one, try opening URL and treating as a stream
             try {
@@ -432,10 +436,9 @@ public class CreateProjectCommand extends Command {
             }
 
             try {
-                importer = guessImporter(connection.getContentType(), 
-                        url.getPath());
-                internalInvokeImporter(project, importer, options, inputStream,
-                        connection.getContentEncoding());
+                importer = guessImporter(connection.getContentType(), url.getPath());
+                
+                internalInvokeImporter(project, importer, options, inputStream, connection.getContentEncoding());
             } finally {
                 inputStream.close();
             }

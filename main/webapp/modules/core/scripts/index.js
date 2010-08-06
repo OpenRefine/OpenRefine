@@ -1,22 +1,24 @@
 function onClickUploadFileButton(evt) {
     var projectName = $("#project-name-input")[0].value;
+    var dataURL = $.trim($("#project-url-input")[0].value);
     if (! $.trim(projectName).length) {
         window.alert("You must specify a project name.");
 
-    } else if ($("#project-file-input")[0].files.length === 0) {
-        window.alert("You must specify select a file to upload.");
+    } else if ($("#project-file-input")[0].files.length === 0 && ! dataURL.length) {
+        window.alert("You must specify a data file to upload or a URL to retrieve.");
 
     } else {
         $("#file-upload-form").attr("action",
             "/command/create-project-from-upload?" + [
+                "url=" +                escape(dataURL),
                 "split-into-columns=" + $("#split-into-columns-input")[0].checked,
-                "separator=" + $("#separator-input")[0].value,
-                "ignore=" + $("#ignore-input")[0].value,
-                "header-lines=" + $("#header-lines-input")[0].value,
-                "skip=" + $("#skip-input")[0].value,
-                "limit=" + $("#limit-input")[0].value,
-                "guess-value-type=" + $("#guess-value-type-input")[0].checked,
-        "ignore-quotes=" + $("#ignore-quotes-input")[0].checked
+                "separator=" +          $("#separator-input")[0].value,
+                "ignore=" +             $("#ignore-input")[0].value,
+                "header-lines=" +       $("#header-lines-input")[0].value,
+                "skip=" +               $("#skip-input")[0].value,
+                "limit=" +              $("#limit-input")[0].value,
+                "guess-value-type=" +   $("#guess-value-type-input")[0].checked,
+                "ignore-quotes=" +      $("#ignore-quotes-input")[0].checked
             ].join("&"));
 
         return true;

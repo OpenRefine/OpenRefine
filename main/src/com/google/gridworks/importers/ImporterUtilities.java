@@ -52,7 +52,7 @@ public class ImporterUtilities {
         if (options.containsKey(name)) {
             String s = options.getProperty(name);
             try {
-                value = Boolean.parseBoolean(s);
+                value = s.equalsIgnoreCase("on") || s.equals("1") || Boolean.parseBoolean(s);
             } catch (Exception e) {
             }
         }

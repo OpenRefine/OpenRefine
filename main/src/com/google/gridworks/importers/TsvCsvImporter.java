@@ -24,7 +24,7 @@ public class TsvCsvImporter implements ReaderImporter,StreamImporter {
     @Override
     public void read(Reader reader, Project project, Properties options) throws ImportException {
         boolean splitIntoColumns = ImporterUtilities.getBooleanOption("split-into-columns", options, true);
-
+        
         String sep = options.getProperty("separator"); // auto-detect if not present
         int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
         int headerLines = ImporterUtilities.getIntegerOption("header-lines", options, 1);
