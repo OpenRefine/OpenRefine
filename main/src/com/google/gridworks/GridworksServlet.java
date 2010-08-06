@@ -71,6 +71,8 @@ public class GridworksServlet extends Butterfly {
         {"mass-edit", "com.google.gridworks.commands.cell.MassEditCommand"},
         {"join-multi-value-cells", "com.google.gridworks.commands.cell.JoinMultiValueCellsCommand"},
         {"split-multi-value-cells", "com.google.gridworks.commands.cell.SplitMultiValueCellsCommand"},
+        {"fill-down", "com.google.gridworks.commands.cell.FillDownCommand"},
+        {"blank-down", "com.google.gridworks.commands.cell.BlankDownCommand"},
         {"transpose-columns-into-rows", "com.google.gridworks.commands.cell.TransposeColumnsIntoRowsCommand"},
 
         {"add-column", "com.google.gridworks.commands.column.AddColumnCommand"},

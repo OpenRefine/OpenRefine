@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.google.gridworks.model.AbstractOperation;
 import com.google.gridworks.model.Project;
+import com.google.gridworks.operations.cell.FillDownOperation;
 import com.google.gridworks.operations.cell.MassEditOperation;
 import com.google.gridworks.operations.cell.MultiValuedCellJoinOperation;
 import com.google.gridworks.operations.cell.MultiValuedCellSplitOperation;
@@ -50,6 +51,7 @@ public abstract class OperationRegistry {
         
         register("multivalued-cell-join", MultiValuedCellJoinOperation.class);
         register("multivalued-cell-split", MultiValuedCellSplitOperation.class);
+        register("fill-down", FillDownOperation.class);
         register("transpose-columns-into-rows", TransposeColumnsIntoRowsOperation.class);
         
         register("column-addition", ColumnAdditionOperation.class);

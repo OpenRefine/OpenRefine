@@ -280,6 +280,15 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 },
                 {},
                 {
+                    label: "Fill Down",
+                    click: function() { self._doFillDown(); }
+                },
+                {
+                    label: "Blank Down",
+                    click: function() { self._doBlankDown(); }
+                },
+                {},
+                {
                     label: "Split Multi-Valued Cells ...",
                     click: function() { self._doSplitMultiValueCells(); }
                 },
@@ -923,6 +932,28 @@ DataTableColumnHeaderUI.prototype._doRenameColumn = function() {
             { modelsChanged: true }
         );
     }
+};
+
+DataTableColumnHeaderUI.prototype._doFillDown = function() {
+    Gridworks.postProcess(
+        "fill-down", 
+        {
+            columnName: this._column.name
+        },
+        null,
+        { modelsChanged: true }
+    );
+};
+
+DataTableColumnHeaderUI.prototype._doBlankDown = function() {
+    Gridworks.postProcess(
+        "blank-down", 
+        {
+            columnName: this._column.name
+        },
+        null,
+        { modelsChanged: true }
+    );
 };
 
 DataTableColumnHeaderUI.prototype._doJoinMultiValueCells = function() {
