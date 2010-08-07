@@ -12,7 +12,8 @@ Features:
   - Transpose Cells in Columns into Rows
   - Move Column to Beginning, Move Column to End, Move Column Left, Move Column Right
 - GEL:
-  - New functions: smartSplit
+  - JSON support
+  - New functions: smartSplit, escape, parseJson, hasField
   - New controls: forEachIndex, forRange, filter
   - New parameters:
     - preserveAllTokens on split function
