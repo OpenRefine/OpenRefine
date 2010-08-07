@@ -3,6 +3,9 @@ package com.google.gridworks.browsing.filters;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import com.google.gridworks.browsing.RowFilter;
 import com.google.gridworks.browsing.util.RowEvaluable;
 import com.google.gridworks.expr.ExpressionUtils;
@@ -53,6 +56,20 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
                 for (Object v : ExpressionUtils.toObjectCollection(value)) {
                     if (checkValue(v)) {
                         return true;
+                    }
+                }
+                return false;
+            } else if (value instanceof JSONArray) {
+                JSONArray a = (JSONArray) value;
+                int l = a.length();
+                
+                for (int i = 0; i < l; i++) {
+                    try {
+                        if (checkValue(a.get(i))) {
+                            return true;
+                        }
+                    } catch (JSONException e) {
+                        // ignore
                     }
                 }
                 return false;

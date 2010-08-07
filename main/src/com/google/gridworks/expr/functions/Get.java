@@ -3,7 +3,9 @@ package com.google.gridworks.expr.functions;
 import java.util.List;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.gridworks.expr.ExpressionUtils;
@@ -22,14 +24,26 @@ public class Get implements Function {
             if (v != null && from != null) {
                 if (v instanceof HasFields && from instanceof String) {
                     return ((HasFields) v).getField((String) from, bindings);
+                } else if (v instanceof JSONObject && from instanceof String) {
+                    try {
+                        return ((JSONObject) v).get((String) from);
+                    } catch (JSONException e) {
+                        // ignore; will return null
+                    }
                 } else {
                     if (from instanceof Number && (to == null || to instanceof Number)) {
-                        if (v.getClass().isArray() || v instanceof List<?> || v instanceof HasFieldsList) {
+                        if (v.getClass().isArray() || 
+                            v instanceof List<?> || 
+                            v instanceof HasFieldsList || 
+                            v instanceof JSONArray) {
+                            
                             int length = 0;
                             if (v.getClass().isArray()) { 
                                 length = ((Object[]) v).length;
                             } else if (v instanceof HasFieldsList) {
                                 length = ((HasFieldsList) v).length();
+                            } else if (v instanceof JSONArray) {
+                                length = ((JSONArray) v).length();
                             } else {
                                 length = ExpressionUtils.toObjectList(v).size();
                             }
@@ -45,6 +59,12 @@ public class Get implements Function {
                                     return ((Object[]) v)[start];
                                 } else if (v instanceof HasFieldsList) {
                                     return ((HasFieldsList) v).get(start);
+                                } else if (v instanceof JSONArray) {
+                                    try {
+                                        return ((JSONArray) v).get(start);
+                                    } catch (JSONException e) {
+                                        // ignore; will return null
+                                    }
                                 } else {
                                     return ExpressionUtils.toObjectList(v).get(start);
                                 }
@@ -65,6 +85,19 @@ public class Get implements Function {
                                         return a2;
                                     } else if (v instanceof HasFieldsList) {
                                         return ((HasFieldsList) v).getSubList(start, end);
+                                    } else if (v instanceof JSONArray) {
+                                        JSONArray a = (JSONArray) v;
+                                        Object[] a2 = new Object[end - start];
+                                        
+                                        for (int i = 0; i < a2.length; i++) {
+                                            try {
+                                                a2[i] = a.get(start + i);
+                                            } catch (JSONException e) {
+                                                // ignore
+                                            }
+                                        }
+                                        
+                                        return a2;
                                     } else {
                                         return ExpressionUtils.toObjectList(v).subList(start, end);
                                     }

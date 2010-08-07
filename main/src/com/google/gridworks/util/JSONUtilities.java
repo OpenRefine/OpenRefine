@@ -129,4 +129,15 @@ public class JSONUtilities {
     		obj.put(key, value.toString());
     	}
     }
+    
+    static public Object[] toArray(JSONArray a) throws JSONException {
+        int l = a.length();
+        
+        Object[] a2 = new Object[l];
+        for (int i = 0; i < l; i++) {
+            a2[i] = a.get(i);
+        }
+        
+        return a2;
+    }
 }

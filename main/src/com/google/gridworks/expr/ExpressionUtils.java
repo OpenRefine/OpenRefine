@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.google.gridworks.model.Cell;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.model.Row;
@@ -108,9 +111,15 @@ public class ExpressionUtils {
     }
     
     static public Serializable wrapStorable(Object v) {
-        return isStorable(v) ? 
-            (Serializable) v : 
-            new EvalError(v.getClass().getSimpleName() + " value not storable");
+        if (v instanceof JSONArray) {
+            return ((JSONArray) v).toString();
+        } else if (v instanceof JSONObject) {
+            return ((JSONObject) v).toString();
+        } else {
+            return isStorable(v) ? 
+                (Serializable) v : 
+                new EvalError(v.getClass().getSimpleName() + " value not storable");
+        }
     }
     
     static public boolean isArray(Object v) {

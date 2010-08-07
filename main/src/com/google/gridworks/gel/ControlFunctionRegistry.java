@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import com.google.gridworks.expr.functions.Cross;
 import com.google.gridworks.expr.functions.FacetCount;
 import com.google.gridworks.expr.functions.Get;
+import com.google.gridworks.expr.functions.HasField;
 import com.google.gridworks.expr.functions.Jsonize;
 import com.google.gridworks.expr.functions.Length;
 import com.google.gridworks.expr.functions.Slice;
@@ -39,6 +40,7 @@ import com.google.gridworks.expr.functions.strings.Chomp;
 import com.google.gridworks.expr.functions.strings.Contains;
 import com.google.gridworks.expr.functions.strings.Diff;
 import com.google.gridworks.expr.functions.strings.EndsWith;
+import com.google.gridworks.expr.functions.strings.Escape;
 import com.google.gridworks.expr.functions.strings.Fingerprint;
 import com.google.gridworks.expr.functions.strings.IndexOf;
 import com.google.gridworks.expr.functions.strings.LastIndexOf;
@@ -46,6 +48,7 @@ import com.google.gridworks.expr.functions.strings.MD5;
 import com.google.gridworks.expr.functions.strings.Match;
 import com.google.gridworks.expr.functions.strings.NGram;
 import com.google.gridworks.expr.functions.strings.NGramFingerprint;
+import com.google.gridworks.expr.functions.strings.ParseJson;
 import com.google.gridworks.expr.functions.strings.Partition;
 import com.google.gridworks.expr.functions.strings.Phonetic;
 import com.google.gridworks.expr.functions.strings.RPartition;
@@ -128,6 +131,7 @@ public class ControlFunctionRegistry {
         registerFunction("toLowercase", new ToLowercase());
         registerFunction("toTitlecase", new ToTitlecase());
 
+        registerFunction("hasField", new HasField());
         registerFunction("get", new Get());
         registerFunction("slice", new Slice());
         registerFunction("substring", new Slice());
@@ -142,6 +146,7 @@ public class ControlFunctionRegistry {
         registerFunction("trim", new Trim());
         registerFunction("strip", new Trim());
         registerFunction("contains", new Contains());
+        registerFunction("escape", new Escape());
         registerFunction("unescape", new Unescape());
         registerFunction("length", new Length());
         registerFunction("sha1", new SHA1());
@@ -155,6 +160,7 @@ public class ControlFunctionRegistry {
         registerFunction("phonetic", new Phonetic());
         registerFunction("reinterpret", new Reinterpret());
         registerFunction("jsonize", new Jsonize());
+        registerFunction("parseJson", new ParseJson());
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
 

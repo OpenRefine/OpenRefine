@@ -2,6 +2,9 @@ package com.google.gridworks.gel.ast;
 
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.gridworks.expr.EvalError;
 import com.google.gridworks.expr.Evaluable;
 import com.google.gridworks.expr.ExpressionUtils;
@@ -29,6 +32,12 @@ public class FieldAccessorExpr implements Evaluable {
             return new EvalError("Cannot retrieve field from null");
         } else if (o instanceof HasFields) {
             return ((HasFields) o).getField(_fieldName, bindings);
+        } else if (o instanceof JSONObject) {
+            try {
+                return ((JSONObject) o).get(_fieldName);
+            } catch (JSONException e) {
+                return new EvalError("Object does not have any field, including " + _fieldName);
+            }
         } else {
             return new EvalError("Object does not have any field, including " + _fieldName);
         }

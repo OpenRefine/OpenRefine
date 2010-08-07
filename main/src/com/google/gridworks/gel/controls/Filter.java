@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -30,7 +31,7 @@ public class Filter implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (!ExpressionUtils.isArrayOrCollection(o)) {
+        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof JSONArray)) {
             return new EvalError("First argument is not an array");
         }
         
@@ -49,7 +50,26 @@ public class Filter implements Control {
                     
                     Object r = args[2].evaluate(bindings);
                     if (r instanceof Boolean && ((Boolean) r).booleanValue()) {
-                    	results.add(v);
+                        results.add(v);
+                    }
+                }
+            } else if (o instanceof JSONArray) {
+                JSONArray a = (JSONArray) o;
+                int l = a.length();
+                
+                results = new ArrayList<Object>(l);
+                for (int i = 0; i < l; i++) {
+                    try {
+                        Object v = a.get(i);
+                        
+                        bindings.put(name, v);
+                        
+                        Object r = args[2].evaluate(bindings);
+                        if (r instanceof Boolean && ((Boolean) r).booleanValue()) {
+                            results.add(v);
+                        }
+                    } catch (JSONException e) {
+                        results.add(new EvalError(e.getMessage()));
                     }
                 }
             } else {

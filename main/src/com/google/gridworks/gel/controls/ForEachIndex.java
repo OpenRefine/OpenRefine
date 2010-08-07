@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -32,7 +33,7 @@ public class ForEachIndex implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (!ExpressionUtils.isArrayOrCollection(o)) {
+        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof JSONArray)) {
             return new EvalError("First argument to forEach is not an array");
         }
         
@@ -50,14 +51,33 @@ public class ForEachIndex implements Control {
                 results = new ArrayList<Object>(values.length);
                 
                 for (int i = 0; i < values.length; i++) {
-                	Object v = values[i];
-                	
-                	bindings.put(indexName, i);
+                    Object v = values[i];
+                    
+                    bindings.put(indexName, i);
                     bindings.put(elementName, v);
                     
                     Object r = args[3].evaluate(bindings);
                     
                     results.add(r);
+                }
+            } else if (o instanceof JSONArray) {
+                JSONArray a = (JSONArray) o;
+                int l = a.length();
+                
+                results = new ArrayList<Object>(l);
+                for (int i = 0; i < l; i++) {
+                    try {
+                        Object v = a.get(i);
+                        
+                        bindings.put(indexName, i);
+                        bindings.put(elementName, v);
+                        
+                        Object r = args[3].evaluate(bindings);
+                        
+                        results.add(r);
+                    } catch (JSONException e) {
+                        results.add(new EvalError(e.getMessage()));
+                    }
                 }
             } else {
                 List<Object> list = ExpressionUtils.toObjectList(o);

@@ -62,8 +62,10 @@ public class PreferenceStore implements Jsonizable {
             Iterator<String> i = entries.keys();
             while (i.hasNext()) {
                 String key = i.next();
-                Object o = entries.get(key);
-                _prefs.put(key, loadObject(o));
+                if (!entries.isNull(key)) {
+                    Object o = entries.get(key);
+                    _prefs.put(key, loadObject(o));
+                }
             }
         }
     }

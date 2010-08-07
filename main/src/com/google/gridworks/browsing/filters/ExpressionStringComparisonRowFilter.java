@@ -1,6 +1,10 @@
 package com.google.gridworks.browsing.filters;
 
+import java.util.Collection;
 import java.util.Properties;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import com.google.gridworks.browsing.RowFilter;
 import com.google.gridworks.expr.Evaluable;
@@ -39,6 +43,27 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
                         return true;
                     }
                 }
+            } else if (value instanceof Collection<?>) {
+                for (Object v : ExpressionUtils.toObjectCollection(value)) {
+                    if (checkValue(v.toString())) {
+                        return true;
+                    }
+                }
+                return false;
+            } else if (value instanceof JSONArray) {
+                JSONArray a = (JSONArray) value;
+                int l = a.length();
+                
+                for (int i = 0; i < l; i++) {
+                    try {
+                        if (checkValue(a.get(i).toString())) {
+                            return true;
+                        }
+                    } catch (JSONException e) {
+                        // ignore
+                    }
+                }
+                return false;
             } else {
                 if (checkValue(value instanceof String ? ((String) value) : value.toString())) {
                     return true;

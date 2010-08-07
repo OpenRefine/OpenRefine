@@ -3,6 +3,7 @@ package com.google.gridworks.expr.functions.arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -18,33 +19,48 @@ public class Join implements Function {
             Object v = args[0];
             Object s = args[1];
             
-            if (v != null && (v.getClass().isArray() || v instanceof List<?>) &&
-                s != null && s instanceof String) {
-                
+            if (v != null && s != null && s instanceof String) {
                 String separator = (String) s;
                 
-                StringBuffer sb = new StringBuffer();
-                if (v.getClass().isArray()) {
-                    for (Object o : (Object[]) v) {
-                        if (o != null) {
+                if (v.getClass().isArray() || v instanceof List<?> || v instanceof JSONArray) {
+                    StringBuffer sb = new StringBuffer();
+                    if (v.getClass().isArray()) {
+                        for (Object o : (Object[]) v) {
+                            if (o != null) {
+                                if (sb.length() > 0) {
+                                    sb.append(separator);
+                                }
+                                sb.append(o.toString());
+                            }
+                        }
+                    } else if (v instanceof JSONArray) {
+                        JSONArray a = (JSONArray) v;
+                        int l = a.length();
+                        
+                        for (int i = 0; i < l; i++) {
                             if (sb.length() > 0) {
                                 sb.append(separator);
                             }
-                            sb.append(o.toString());
-                        }
-                    }
-                } else {
-                    for (Object o : ExpressionUtils.toObjectList(v)) {
-                        if (o != null) {
-                            if (sb.length() > 0) {
-                                sb.append(separator);
+                            try {
+                                sb.append(a.get(i).toString());
+                            } catch (JSONException e) {
+                                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + 
+                                    " cannot retrieve element " + i + " of array");
                             }
-                            sb.append(o.toString());
+                        }
+                    } else {
+                        for (Object o : ExpressionUtils.toObjectList(v)) {
+                            if (o != null) {
+                                if (sb.length() > 0) {
+                                    sb.append(separator);
+                                }
+                                sb.append(o.toString());
+                            }
                         }
                     }
+                    
+                    return sb.toString();
                 }
-                
-                return sb.toString();
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array and a string");

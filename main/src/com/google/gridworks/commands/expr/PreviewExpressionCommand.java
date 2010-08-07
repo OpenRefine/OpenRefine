@@ -149,6 +149,10 @@ public class PreviewExpressionCommand extends Command {
                     sb.append("[object Cell]");
                 } else if (v instanceof WrappedRow) {
                     sb.append("[object Row]");
+                } else if (v instanceof JSONObject) {
+                   sb.append(((JSONObject) v).toString());
+                } else if (v instanceof JSONArray) {
+                    sb.append(((JSONArray) v).toString());
                 } else if (ExpressionUtils.isArray(v)) {
                     Object[] a = (Object[]) v;
                     sb.append("[ ");
@@ -184,6 +188,13 @@ public class PreviewExpressionCommand extends Command {
                         sb.append(JSONObject.quote((String) v));
                     } else {
                         sb.append((String) v);
+                    }
+                } else if (v instanceof Double || v instanceof Float) {
+                    Number n = (Number) v;
+                    if (n.doubleValue() - n.longValue() == 0.0) {
+                        sb.append(n.longValue());
+                    } else {
+                        sb.append(n.doubleValue());
                     }
                 } else {
                     sb.append(v.toString());

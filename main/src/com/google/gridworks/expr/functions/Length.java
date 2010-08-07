@@ -3,10 +3,12 @@ package com.google.gridworks.expr.functions;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.gridworks.expr.EvalError;
+import com.google.gridworks.expr.HasFieldsList;
 import com.google.gridworks.gel.ControlFunctionRegistry;
 import com.google.gridworks.gel.Function;
 
@@ -22,6 +24,10 @@ public class Length implements Function {
                     return a.length;
                 } else if (v instanceof Collection<?>) {
                     return ((Collection<?>) v).size();
+                } else if (v instanceof HasFieldsList) {
+                    return ((HasFieldsList) v).length();
+                } else if (v instanceof JSONArray) {
+                    return ((JSONArray) v).length();
                 } else {
                     String s = (v instanceof String ? (String) v : v.toString());
                     return s.length();
