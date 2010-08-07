@@ -95,9 +95,9 @@ public class ProjectMetadata implements Jsonizable {
             }
         }
         
-        if (obj.has("expressions") && !obj.isNull("expressions")) {
+        if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
             try {
-                ((TopList) pm._preferenceStore.get("expressions"))
+                ((TopList) pm._preferenceStore.get("scripting.expressions"))
                     .load(obj.getJSONArray("expressions"));
             } catch (JSONException e) {
                 // ignore

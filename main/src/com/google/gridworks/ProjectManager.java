@@ -344,7 +344,7 @@ public abstract class ProjectManager {
      * @return
      */
     public List<String> getExpressions() {
-        return ((TopList) _preferenceStore.get("expressions")).getList();
+        return ((TopList) _preferenceStore.get("scripting.expressions")).getList();
     }
 
     /**
@@ -406,7 +406,7 @@ public abstract class ProjectManager {
      */
     public void addLatestExpression(String s) {
         synchronized (this) {
-            ((TopList) _preferenceStore.get("expressions")).add(s);
+            ((TopList) _preferenceStore.get("scripting.expressions")).add(s);
         }
     }
 

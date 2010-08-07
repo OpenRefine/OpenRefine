@@ -29,6 +29,7 @@ import com.google.gridworks.model.Project;
 import com.google.gridworks.preference.TopList;
 
 public class FileProjectManager extends ProjectManager {
+    final static protected String s_projectDirNameSuffix = ".project";
 
     protected File                       _workspaceDir;
 
@@ -48,6 +49,7 @@ public class FileProjectManager extends ProjectManager {
         _workspaceDir.mkdirs();
 
         load();
+        recover();
     }
 
     public File getWorkspaceDir() {
@@ -55,7 +57,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     static public File getProjectDir(File workspaceDir, long projectID) {
-        File dir = new File(workspaceDir, projectID + ".project");
+        File dir = new File(workspaceDir, projectID + s_projectDirNameSuffix);
         if (!dir.exists()) {
             dir.mkdir();
         }
@@ -309,8 +311,8 @@ public class FileProjectManager extends ProjectManager {
                     _preferenceStore.load(obj.getJSONObject("preferences"));
                 }
 
-                if (obj.has("expressions") && !obj.isNull("expressions")) {
-                    ((TopList) _preferenceStore.get("expressions"))
+                if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
+                    ((TopList) _preferenceStore.get("scripting.expressions"))
                         .load(obj.getJSONArray("expressions"));
                 }
 
@@ -330,7 +332,35 @@ public class FileProjectManager extends ProjectManager {
 
         return found;
     }
-
+    
+    protected void recover() {
+        for (File file : _workspaceDir.listFiles()) {
+            if (file.isDirectory() && !file.isHidden()) {
+                String name = file.getName();
+                if (file.getName().endsWith(s_projectDirNameSuffix)) {
+                    String idString = name.substring(0, name.length() - s_projectDirNameSuffix.length());
+                    long id = -1;
+                    try {
+                        id = Long.parseLong(idString);
+                    } catch (NumberFormatException e) {
+                        // ignore
+                    }
+                    
+                    if (id > 0 && !_projectsMetadata.containsKey(id)) {
+                        if (loadProjectMetadata(id)) {
+                            logger.info(
+                                "Recovered project named " + 
+                                    getProjectMetadata(id).getName() +
+                                        " in directory " + name);
+                        } else {
+                            logger.warn("Failed to recover project in directory " + name);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     public HistoryEntryManager getHistoryEntryManager(){
         return new FileHistoryEntryManager();
     }
