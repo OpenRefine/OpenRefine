@@ -10,6 +10,7 @@ Features:
   - Fill Down
   - Blank Down
   - Transpose Cells in Columns into Rows
+  - Move Column to Beginning, Move Column to End, Move Column Left, Move Column Right
 - GEL:
   - New functions: smartSplit
   - New controls: forEachIndex, forRange, filter
