@@ -78,6 +78,7 @@ public class GridworksServlet extends Butterfly {
         {"add-column", "com.google.gridworks.commands.column.AddColumnCommand"},
         {"remove-column", "com.google.gridworks.commands.column.RemoveColumnCommand"},
         {"rename-column", "com.google.gridworks.commands.column.RenameColumnCommand"},
+        {"move-column", "com.google.gridworks.commands.column.MoveColumnCommand"},
         {"split-column", "com.google.gridworks.commands.column.SplitColumnCommand"},
         {"extend-data", "com.google.gridworks.commands.column.ExtendDataCommand"},
 

@@ -15,6 +15,7 @@ import com.google.gridworks.operations.cell.MultiValuedCellSplitOperation;
 import com.google.gridworks.operations.cell.TextTransformOperation;
 import com.google.gridworks.operations.cell.TransposeColumnsIntoRowsOperation;
 import com.google.gridworks.operations.column.ColumnAdditionOperation;
+import com.google.gridworks.operations.column.ColumnMoveOperation;
 import com.google.gridworks.operations.column.ColumnRemovalOperation;
 import com.google.gridworks.operations.column.ColumnRenameOperation;
 import com.google.gridworks.operations.column.ColumnSplitOperation;
@@ -57,6 +58,7 @@ public abstract class OperationRegistry {
         register("column-addition", ColumnAdditionOperation.class);
         register("column-removal", ColumnRemovalOperation.class);
         register("column-rename", ColumnRenameOperation.class);
+        register("column-move", ColumnMoveOperation.class);
         register("column-split", ColumnSplitOperation.class);
         register("extend-data", ExtendDataOperation.class);
         

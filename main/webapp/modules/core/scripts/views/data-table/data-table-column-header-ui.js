@@ -326,6 +326,23 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {
                     label: "Remove This Column",
                     click: function() { self._doRemoveColumn(); }
+                },
+                {},
+                {
+                    label: "Move Column to Beginning",
+                    click: function() { self._doMoveColumnTo(0); }
+                },
+                {
+                    label: "Move Column to End",
+                    click: function() { self._doMoveColumnTo(theProject.columnModel.columns.length - 1); }
+                },
+                {
+                    label: "Move Column Left",
+                    click: function() { self._doMoveColumnBy(-1); }
+                },
+                {
+                    label: "Move Column Right",
+                    click: function() { self._doMoveColumnBy(1); }
                 }
             ]
         },
@@ -932,6 +949,30 @@ DataTableColumnHeaderUI.prototype._doRenameColumn = function() {
             { modelsChanged: true }
         );
     }
+};
+
+DataTableColumnHeaderUI.prototype._doMoveColumnTo = function(index) {
+    Gridworks.postProcess(
+        "move-column", 
+        {
+            columnName: this._column.name,
+            index: index
+        },
+        null,
+        { modelsChanged: true }
+    );
+};
+
+DataTableColumnHeaderUI.prototype._doMoveColumnBy = function(change) {
+    Gridworks.postProcess(
+        "move-column", 
+        {
+            columnName: this._column.name,
+            index: Gridworks.columnNameToColumnIndex(this._column.name) + change
+        },
+        null,
+        { modelsChanged: true }
+    );
 };
 
 DataTableColumnHeaderUI.prototype._doFillDown = function() {
