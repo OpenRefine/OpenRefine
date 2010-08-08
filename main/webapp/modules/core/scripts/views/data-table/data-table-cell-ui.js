@@ -252,24 +252,9 @@ DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params
 
 DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("400px");
-    
-    var header = $('<div></div>').addClass("dialog-header").text("Search for Match").appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    var html = $(
-        '<div class="grid-layout layout-normal layout-full"><table>' +
-            '<tr><td colspan="2">Search Freebase for topic to match ' + this._cell.v + '</td></tr>' +
-            '<tr>' +
-                '<td><input bind="input" /></td>' +
-                '<td><input type="checkbox" checked="true" bind="checkSimilar" /> Match other cells with same content</td>' +
-            '</tr>' +
-        '</table></div>'
-    ).appendTo(body);
-    
-    var elmts = DOM.bind(html);
+    var frame = $(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-search-for-match.html"));
+    var elmts = DOM.bind(frame);
+    elmts.cellTextSpan.text(this._cell.v);
     
     var match = null;
     var commit = function() {
@@ -299,18 +284,14 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
         }
     };
     
-    $('<button></button>').text("Match").click(commit).appendTo(footer);
-    $('<button></button>').text("Cancel").click(function() {
-        DialogSystem.dismissUntil(level - 1);
-    }).appendTo(footer);
+    elmts.okButton.click(commit);
+    elmts.cancelButton.click(function() { DialogSystem.dismissUntil(level - 1); });
     
     var level = DialogSystem.showDialog(frame);
     
     elmts.input
         .attr("value", this._cell.v)
-        .suggest(suggestOptions || {
-            all_types: true
-        })
+        .suggest(suggestOptions || { all_types: true })
         .bind("fb-select", function(e, data) {
             match = data;
             commit();
@@ -367,12 +348,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
         .width(preview.width)
         .css("background", "none")
         .css("border", "none")
-        .html(
-            '<div class="data-table-topic-popup-header">' +
-                '<button title="Match topic to this cell" bind="matchButton">Match</button> ' +
-                '<button title="Match topic to all visible cells with same content" bind="matchSimilarButton">Match Similar</button>' +
-            '</div>'
-        );
+        .html(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-preview-popup-header.html"));
 
     var iframe = $('<iframe></iframe>')
         .addClass("data-table-topic-popup-iframe")
@@ -401,40 +377,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     var originalContent = !this._cell || ("v" in this._cell && this._cell.v === null) ? "" : this._cell.v;
     
     var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
-    menu.html(
-        '<table class="grid-layout layout-tighest layout-full data-table-cell-editor-layout">' +
-            '<tr>' +
-                '<td colspan="5">' +
-                    '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
-                '</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td width="1%" align="center">' +
-                    '<button bind="okButton">Apply</button><br/>' +
-                    '<span class="data-table-cell-editor-key">Enter</span>' +
-                '</td>' +
-                '<td width="1%" align="center">' +
-                    '<button bind="cancelButton">Cancel</button><br/>' +
-                    '<span class="data-table-cell-editor-key">Esc</span>' +
-                '</td>' +
-                '<td>' +
-                    '<select bind="typeSelect">' +
-                        '<option value="text">text</option>' +
-                        '<option value="number">number</option>' +
-                        '<option value="boolean">boolean</option>' +
-                        '<option value="date">date</option>' +
-                    '</select>' +
-                '</td>' +
-                '<td width="1%">' +
-                    '<input type="checkbox" bind="applyOthersCheckbox" />' +
-                '</td>' +
-                '<td>' +
-                    'apply to other cells with<br/>' +
-                    'same content <span class="data-table-cell-editor-key">(Ctrl-Enter)</span>' +
-                '</td>' +
-            '</tr>' +
-        '</table>'
-    );
+    menu.html(DOM.loadHTML("core", "scripts/views/data-table/cell-editor.html"));
     var elmts = DOM.bind(menu);
     
     MenuSystem.showMenu(menu, function(){});

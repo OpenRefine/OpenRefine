@@ -13,20 +13,10 @@ DataTableColumnHeaderUI.prototype.getColumn = function() {
 
 DataTableColumnHeaderUI.prototype._render = function() {
     var self = this;
+    var td = $(this._td);
     
-    var html = $(
-        '<table class="column-header-layout">' +
-            '<tr>' +
-                '<td width="1%">' +
-                    '<a class="column-header-menu" bind="dropdownMenu">&nbsp;</a>' +
-                '</td>' +
-                '<td bind="nameContainer"></td>' +
-            '</tr>' +
-        '</table>' +
-        '<div style="display:none;" bind="reconStatsContainer"></div>'
-    ).appendTo(this._td);
-    
-    var elmts = DOM.bind(html);
+    td.html(DOM.loadHTML("core", "scripts/views/data-table/column-header.html"));
+    var elmts = DOM.bind(td);
     
     elmts.nameContainer.text(this._column.name);
     elmts.dropdownMenu.click(function() {
@@ -670,74 +660,40 @@ DataTableColumnHeaderUI.prototype._doTextTransform = function(expression, onErro
 
 DataTableColumnHeaderUI.prototype._doTextTransformPrompt = function() {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("700px");
+    var frame = $(
+        DOM.loadHTML("core", "scripts/views/data-table/text-transform-dialog.html")
+            .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
+            
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text("Custom text transform on column " + this._column.name);
     
-    var header = $('<div></div>').addClass("dialog-header").text("Custom text transform on column " + this._column.name).appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    body.html(
-        '<div class="grid-layout layout-tight layout-full"><table>' +
-            '<tr>' +
-                '<td colspan="4">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
-            '</tr>' +
-            '<tr style="white-space: pre;">' +
-                '<td width="1%">' +
-                    'On error' +
-                '</td>' +
-                '<td>' +
-                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="set-to-blank" checked /> set to blank<br/>' +
-                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="store-error" /> store error<br/>' +
-                    '<input type="radio" name="text-transform-dialog-onerror-choice" value="keep-original" /> keep original' +
-                '</td>' +
-                '<td width="1%">' +
-                    '<input type="checkbox" bind="repeatCheckbox" />' +
-                '</td>' +
-                '<td>' +
-                    'Re-transform until no change<br/>' +
-                    'up to <input bind="repeatCountInput" value="10" size="3" /> times' +
-                '</td>' +
-            '</tr>' +
-        '</table>'
-    );
-    var bodyElmts = DOM.bind(body);
-    
-    footer.html(
-        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-        '<button bind="cancelButton">Cancel</button>'
-    );
-    var footerElmts = DOM.bind(footer);
-        
     var level = DialogSystem.showDialog(frame);
-    var dismiss = function() {
-        DialogSystem.dismissUntil(level - 1);
-    };
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
-    footerElmts.okButton.click(function() {
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
         self._doTextTransform(
             previewWidget.getExpression(true),
             $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
-            bodyElmts.repeatCheckbox[0].checked,
-            bodyElmts.repeatCountInput[0].value
+            elmts.repeatCheckbox[0].checked,
+            elmts.repeatCountInput[0].value
         );
         dismiss();
     });
-    footerElmts.cancelButton.click(dismiss);
     
     var o = DataTableView.sampleVisibleRows(this._column);
     var previewWidget = new ExpressionPreviewDialog.Widget(
-        bodyElmts, 
+        elmts,
         this._column.cellIndex,
         o.rowIndices,
         o.values,
         null
     );
     previewWidget._prepareUpdate = function(params) {
-        params.repeat = bodyElmts.repeatCheckbox[0].checked;
-        params.repeatCount = bodyElmts.repeatCountInput[0].value;
+        params.repeat = elmts.repeatCheckbox[0].checked;
+        params.repeatCount = elmts.repeatCountInput[0].value;
     };
-    bodyElmts.repeatCheckbox.click(function() {
+    elmts.repeatCheckbox.click(function() {
         previewWidget.update();
     });
 };
@@ -828,53 +784,19 @@ DataTableColumnHeaderUI.prototype._doSearchToMatch = function() {
 
 DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("700px");
+    var frame = $(
+        DOM.loadHTML("core", "scripts/views/data-table/add-column-dialog.html")
+            .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
+            
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text("Add column based on column " + this._column.name);
     
-    var header = $('<div></div>').addClass("dialog-header").text("Add Column Based on Column " + this._column.name).appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    body.html(
-        '<div class="grid-layout layout-normal layout-full"><table cols="2">' +
-            '<tr>' +
-                '<td width="1%" style="white-space: pre;">' +
-                    'New column name' +
-                '</td>' +
-                '<td>' +
-                    '<input bind="columnNameInput" size="40" />' +
-                '</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td width="1%" style="white-space: pre;">' +
-                    'On error' +
-                '</td>' +
-                '<td>' +
-                    '<input type="radio" name="create-column-dialog-onerror-choice" value="set-to-blank" checked /> set to blank ' +
-                    '<input type="radio" name="create-column-dialog-onerror-choice" value="store-error" /> store error ' +
-                    '<input type="radio" name="create-column-dialog-onerror-choice" value="keep-original" /> keep original' +
-                '</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td colspan="2">' + ExpressionPreviewDialog.generateWidgetHtml() + '</td>' +
-            '</tr>' +
-        '</table></div>'
-    );
-    var bodyElmts = DOM.bind(body);
-    
-    footer.html(
-        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-        '<button bind="cancelButton">Cancel</button>'
-    );
-    var footerElmts = DOM.bind(footer);
-        
     var level = DialogSystem.showDialog(frame);
-    var dismiss = function() {
-        DialogSystem.dismissUntil(level - 1);
-    };
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
-    footerElmts.okButton.click(function() {
-        var columnName = $.trim(bodyElmts.columnNameInput[0].value);
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
+        var columnName = $.trim(elmts.columnNameInput[0].value);
         if (!columnName.length) {
             alert("You must enter a column name.");
             return;
@@ -894,11 +816,10 @@ DataTableColumnHeaderUI.prototype._doAddColumn = function(initialExpression) {
         );
         dismiss();
     });
-    footerElmts.cancelButton.click(dismiss);
     
     var o = DataTableView.sampleVisibleRows(this._column);
     var previewWidget = new ExpressionPreviewDialog.Widget(
-        bodyElmts, 
+        elmts, 
         this._column.cellIndex,
         o.rowIndices,
         o.values,
@@ -1036,100 +957,32 @@ DataTableColumnHeaderUI.prototype._doSplitMultiValueCells = function() {
 
 DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("600px");
+    var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-column-dialog.html"));
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text("Split column " + this._column.name + " into several columns");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Split Column " + this._column.name + " into Several Columns").appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    body.html(
-        '<div class="grid-layout layout-looser layout-full"><table><tr>' +
-            '<td>' +
-                '<div class="grid-layout layout-tighter"><table>' +
-                    '<tr>' +
-                        '<td colspan="3"><h3>How to Split Column</h3></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                        '<td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" /></td>' +
-                        '<td colspan="2">by separator</td>' +
-                    '</tr>' +
-                    '<tr><td></td>' +
-                        '<td>Separator</td>' +
-                        '<td style="white-space: pre;">' +
-                            '<input size="15" value="," bind="separatorInput" /> ' +
-                            '<input type="checkbox" bind="regexInput" /> regular expression' +
-                        '</td>' +
-                    '</tr>' +
-                    '<tr><td></td>' +
-                        '<td>Split into</td>' +
-                        '<td style="white-space: pre;"><input size="3" bind="maxColumnsInput" /> ' +
-                            'columns at most (leave blank for no limit)</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                        '<td width="1%"><input type="radio" name="split-by-mode" value="lengths" /></td>' +
-                        '<td colspan="2">by field lengths</td>' +
-                    '</tr>' +
-                    '<tr><td></td>' +
-                        '<td colspan="2">' +
-                            '<textarea style="width: 100%;" bind="lengthsTextarea"></textarea>' +
-                        '</td>' +
-                    '</tr>' +
-                    '<tr><td></td>' +
-                        '<td colspan="2">' +
-                            'List of integers separated by commas, e.g., 5, 7, 15' +
-                        '</td>' +
-                    '</tr>' +
-                '</table></div>' +
-            '</td>' +
-            '<td>' +
-                '<div class="grid-layout layout-tighter"><table>' +
-                    '<tr>' +
-                        '<td colspan="3"><h3>After Splitting</h3></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                        '<td width="1%"><input type="checkbox" checked="true" bind="guessCellTypeInput" /></td>' +
-                        '<td colspan="2">Guess cell type</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                        '<td width="1%"><input type="checkbox" checked="true" bind="removeColumnInput" /></td>' +
-                        '<td colspan="2">Remove this column</td>' +
-                    '</tr>' +
-                '</table></div>' +
-            '</td>' +
-        '</table></div>'
-    );
-    var bodyElmts = DOM.bind(body);
-    
-    footer.html(
-        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-        '<button bind="cancelButton">Cancel</button>'
-    );
-    var footerElmts = DOM.bind(footer);
-        
     var level = DialogSystem.showDialog(frame);
-    var dismiss = function() {
-        DialogSystem.dismissUntil(level - 1);
-    };
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
-    footerElmts.okButton.click(function() {
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
         var mode = $("input[name='split-by-mode']:checked")[0].value;
         var config = {
             columnName: self._column.name,
             mode: mode,
-            guessCellType: bodyElmts.guessCellTypeInput[0].checked,
-            removeOriginalColumn: bodyElmts.removeColumnInput[0].checked
+            guessCellType: elmts.guessCellTypeInput[0].checked,
+            removeOriginalColumn: elmts.removeColumnInput[0].checked
         };
         if (mode == "separator") {
-            config.separator = bodyElmts.separatorInput[0].value;
+            config.separator = elmts.separatorInput[0].value;
             if (!(config.separator)) {
                 alert("Please specify a separator.");
                 return;
             }
 
-            config.regex = bodyElmts.regexInput[0].checked;
+            config.regex = elmts.regexInput[0].checked;
             
-            var s = bodyElmts.maxColumnsInput[0].value;
+            var s = elmts.maxColumnsInput[0].value;
             if (s) {
                 var n = parseInt(s,10);
                 if (!isNaN(n)) {
@@ -1137,7 +990,7 @@ DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
                 }
             }
         } else {
-            var s = "[" + bodyElmts.lengthsTextarea[0].value + "]";
+            var s = "[" + elmts.lengthsTextarea[0].value + "]";
             try {
                 var a = JSON.parse(s);
             } catch (e) {
@@ -1164,8 +1017,6 @@ DataTableColumnHeaderUI.prototype._doSplitColumn = function() {
         );
         dismiss();
     });
-    
-    footerElmts.cancelButton.click(dismiss);
 };
 
 DataTableColumnHeaderUI.prototype._doTransposeColumnsIntoRows = function() {
@@ -1264,8 +1115,6 @@ DataTableColumnHeaderUI.prototype._doTransposeRowsIntoColumns = function() {
 };
 
 DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, hasOtherCriteria) {
-    var self = this;
-    
     criterion = criterion || {
         column: this._column.name,
         valueType: "string",
@@ -1274,61 +1123,19 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
         blankPosition: 2
     };
     
-    var frame = DialogSystem.createDialog();
-    frame.width("400px");
+    var self = this;
+    var frame = $(DOM.loadHTML("core", "scripts/views/data-table/sorting-criterion-dialog.html"));
+    var elmts = DOM.bind(frame);
     
-    var header = $('<div></div>').addClass("dialog-header").text("Sort by " + this._column.name).appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    elmts.dialogHeader.text('Sort by ' + this._column.name);
     
-    body.html(
-        '<div class="grid-layout layout-normal layout-full "><table>' +
-            '<tr>' +
-                '<td>Sort cell values as</td>' +
-                '<td>Position blanks and errors</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td>' +
-                    '<div class="grid-layout layout-tightest grid-layout-for-text" bind="valueTypeOptions"><table>' +
-                        '<tr>' +
-                            '<td width="1"><input type="radio" name="sorting-dialog-value-type" value="string" /></td>' +
-                            '<td>text <input type="checkbox" class="inline" bind="caseSensitiveCheckbox" /> case-sensitive</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td width="1"><input type="radio" name="sorting-dialog-value-type" value="number" /></td>' +
-                            '<td>numbers</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td width="1"><input type="radio" name="sorting-dialog-value-type" value="date" /></td>' +
-                            '<td>dates</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td width="1"><input type="radio" name="sorting-dialog-value-type" value="boolean" /></td>' +
-                            '<td>booleans</td>' +
-                        '</tr>' +
-                    '</table></div>' +
-                '</td>' +
-                '<td>' +
-                    '<ul class="sorting-dialog-blank-error-positions" bind="blankErrorPositions"></ul>' +
-                    '<p>Drag and drop to re-order</p>' +
-                '</td>' +
-            '</tr>' +
-            '<tr><td colspan="2" bind="directionOptions">' +
-                '<input type="radio" class="inline" name="sorting-dialog-direction" value="forward" /><label id="sorting-dialog-direction-forward">forward</label> ' +
-                '<input type="radio" class="inline" name="sorting-dialog-direction" value="reverse" /><label id="sorting-dialog-direction-reverse">reverse</label> ' +
-                '<span bind="sortAloneContainer" style="display:none;"><input type="checkbox" class="inline" /><label>sort by this column alone</label></span>' +
-            '</td></tr>' +
-        '</table></div>'
-    );
-    
-    var bodyElmts = DOM.bind(body);
-    
-    bodyElmts.valueTypeOptions.find("input[type='radio'][value='" + criterion.valueType + "']")
+    elmts.valueTypeOptions
+        .find("input[type='radio'][value='" + criterion.valueType + "']")
         .attr("checked", "checked");
         
     var setValueType = function(valueType) {
-        var forward = $("#sorting-dialog-direction-forward");
-        var reverse = $("#sorting-dialog-direction-reverse");
+        var forward = elmts.directionForwardLabel;
+        var reverse = elmts.directionReverseLabel;
         if (valueType == "string") {
             forward.html("a - z");
             reverse.html("z - a");
@@ -1343,19 +1150,22 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
             reverse.html("true then false");
         }
     };
-    bodyElmts.valueTypeOptions.find("input[type='radio']").change(function() {
-        setValueType(this.value);
-    });
+    elmts.valueTypeOptions
+        .find("input[type='radio']")
+        .change(function() {
+            setValueType(this.value);
+        });
        
     if (criterion.valueType == "string" && criterion.caseSensitive) {
-        bodyElmts.caseSensitiveCheckbox.attr("checked", "checked");
+        elmts.caseSensitiveCheckbox.attr("checked", "checked");
     }
     
-    bodyElmts.directionOptions.find("input[type='radio'][value='" + (criterion.reverse ? "reverse" : "forward") + "']")
+    elmts.directionOptions
+        .find("input[type='radio'][value='" + (criterion.reverse ? "reverse" : "forward") + "']")
         .attr("checked", "checked");
 
     if (hasOtherCriteria) {
-        bodyElmts.sortAloneContainer.show();
+        elmts.sortAloneContainer.show();
     }
     
     var validValuesHtml = '<li kind="value">Valid Values</li>';
@@ -1379,31 +1189,23 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
             positionsHtml = [ validValuesHtml, blankValuesHtml, errorValuesHtml ];
         }
     }
-    bodyElmts.blankErrorPositions.html(positionsHtml.join("")).sortable().disableSelection();
+    elmts.blankErrorPositions.html(positionsHtml.join("")).sortable().disableSelection();
     
-    footer.html(
-        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-        '<button bind="cancelButton">Cancel</button>'
-    );
-    var footerElmts = DOM.bind(footer);
-        
     var level = DialogSystem.showDialog(frame);
-    var dismiss = function() {
-        DialogSystem.dismissUntil(level - 1);
-    };
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
     setValueType(criterion.valueType); 
     
-    footerElmts.cancelButton.click(dismiss);
-    footerElmts.okButton.click(function() {
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
         var criterion2 = {
             column: self._column.name,
-            valueType: bodyElmts.valueTypeOptions.find("input[type='radio']:checked")[0].value,
-            reverse: bodyElmts.directionOptions.find("input[type='radio']:checked")[0].value == "reverse"
+            valueType: elmts.valueTypeOptions.find("input[type='radio']:checked")[0].value,
+            reverse: elmts.directionOptions.find("input[type='radio']:checked")[0].value == "reverse"
         };
         
         var valuePosition, blankPosition, errorPosition;
-        bodyElmts.blankErrorPositions.find("li").each(function(index, elmt) {
+        elmts.blankErrorPositions.find("li").each(function(index, elmt) {
             var kind = this.getAttribute("kind");
             if (kind == "value") {
                 valuePosition = index;
@@ -1417,11 +1219,11 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
         criterion2.errorPosition = errorPosition - valuePosition;
         
         if (criterion2.valueType == "string") {
-            criterion2.caseSensitive = bodyElmts.caseSensitiveCheckbox[0].checked;
+            criterion2.caseSensitive = elmts.caseSensitiveCheckbox[0].checked;
         }
         
         self._dataTableView._addSortingCriterion(
-            criterion2, bodyElmts.sortAloneContainer.find("input")[0].checked);
+            criterion2, elmts.sortAloneContainer.find("input")[0].checked);
             
         dismiss();
     });
