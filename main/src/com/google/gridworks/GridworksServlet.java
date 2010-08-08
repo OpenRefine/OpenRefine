@@ -74,6 +74,7 @@ public class GridworksServlet extends Butterfly {
         {"fill-down", "com.google.gridworks.commands.cell.FillDownCommand"},
         {"blank-down", "com.google.gridworks.commands.cell.BlankDownCommand"},
         {"transpose-columns-into-rows", "com.google.gridworks.commands.cell.TransposeColumnsIntoRowsCommand"},
+        {"transpose-rows-into-columns", "com.google.gridworks.commands.cell.TransposeRowsIntoColumnsCommand"},
 
         {"add-column", "com.google.gridworks.commands.column.AddColumnCommand"},
         {"remove-column", "com.google.gridworks.commands.column.RemoveColumnCommand"},

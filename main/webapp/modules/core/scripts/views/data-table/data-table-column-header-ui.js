@@ -352,6 +352,10 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                 {
                     label: "Cells Across Columns into Rows",
                     click: function() { self._doTransposeColumnsIntoRows(); }
+                },
+                {
+                    label: "Cells in Rows into Columns",
+                    click: function() { self._doTransposeRowsIntoColumns(); }
                 }
             ]
         },
@@ -1230,6 +1234,33 @@ DataTableColumnHeaderUI.prototype._doTransposeColumnsIntoRows = function() {
     populateToColumn();
     
     elmts.fromColumnSelect.bind("change", populateToColumn);
+};
+
+DataTableColumnHeaderUI.prototype._doTransposeRowsIntoColumns = function() {
+    var rowCount = window.prompt("How many rows to transpose?", "2");
+    if (rowCount != null) {
+        try {
+            rowCount = parseInt(rowCount);
+        } catch (e) {
+            // ignore
+        }
+        
+        if (isNaN(rowCount) || rowCount < 2) {
+            alert("Expected an integer at least 2.");
+        } else {
+            var config = {
+                columnName: this._column.name,
+                rowCount: rowCount
+            };
+
+            Gridworks.postProcess(
+                "transpose-rows-into-columns", 
+                config,
+                null,
+                { modelsChanged: true }
+            );
+        }
+    }
 };
 
 DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, hasOtherCriteria) {
