@@ -153,3 +153,88 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
     
     return level;
 };
+
+MenuSystem.find = function(rootItems, path, levels) {
+    var menuItems = rootItems;
+    for (var p = 0; p < path.length && p < levels; p++) {
+        var segment = path[p];
+        var subMenuItems;
+        
+        for (var i = 0; i < menuItems.length; i++) {
+            var menuItem = menuItems[i];
+            if (menuItem.id == segment) {
+                if ("submenu" in menuItem) {
+                    subMenuItems = menuItem.submenu;
+                } else {
+                    return undefined;
+                }
+                break;
+            }
+        }
+        
+        if (subMenuItems) {
+            menuItems = subMenuItems;
+        } else {
+            return undefined;
+        }
+    }
+    
+    return menuItems;   
+};
+
+MenuSystem.appendTo = function(rootItems, path, what) {
+    var menuItems = MenuSystem.find(rootItems, path, path.length);
+    if (menuItems) {
+        if (what instanceof Array) {
+            $.merge(menuItems, what);
+        } else {
+            menuItems.push(what);
+        }
+    }
+};
+
+MenuSystem.insertBefore = function(rootItems, path, what) {
+    var menuItems = MenuSystem.find(rootItems, path, path.length - 1);
+    if ((menuItems) && path.length > 0) {
+        var spliceArgs = [ 0, 0 ];
+        if (what instanceof Array) {
+            $.merge(spliceArgs, what);
+        } else {
+            spliceArgs.push(what);
+        }
+        
+        var segment = path[path.length - 1];
+        for (var i = 0; i < menuItems.length; i++) {
+            var menuItem = menuItems[i];
+            if (menuItem.id == segment) {
+                spliceArgs[0] = i;
+                break;
+            }
+        }
+        
+        Array.prototype.splice.apply(menuItems, spliceArgs);
+    }
+};
+
+MenuSystem.insertAfter = function(rootItems, path, what) {
+    var menuItems = MenuSystem.find(rootItems, path, path.length - 1);
+    if ((menuItems) && path.length > 0) {
+        var spliceArgs = [ menuItems.length, 0 ];
+        if (what instanceof Array) {
+            $.merge(spliceArgs, what);
+        } else {
+            spliceArgs.push(what);
+        }
+        
+        var segment = path[path.length - 1];
+        for (var i = 0; i < menuItems.length; i++) {
+            var menuItem = menuItems[i];
+            if (menuItem.id == segment) {
+                spliceArgs[0] = i + 1;
+                break;
+            }
+        }
+        
+        Array.prototype.splice.apply(menuItems, spliceArgs);
+    }
+};

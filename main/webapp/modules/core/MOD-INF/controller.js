@@ -55,8 +55,12 @@ function init() {
             "scripts/facets/text-search-facet.js",
 
             "scripts/views/data-table/data-table-view.js",
-            "scripts/views/data-table/data-table-cell-ui.js",
-            "scripts/views/data-table/data-table-column-header-ui.js",
+            "scripts/views/data-table/cell-ui.js",
+            "scripts/views/data-table/column-header-ui.js",
+            "scripts/views/data-table/menu-facets.js",
+            "scripts/views/data-table/menu-edit-cells.js",
+            "scripts/views/data-table/menu-edit-column.js",
+            "scripts/views/data-table/menu-reconcile.js",
 
             "scripts/reconciliation/recon-manager.js",
             "scripts/reconciliation/recon-dialog.js",
