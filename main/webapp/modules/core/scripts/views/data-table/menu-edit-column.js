@@ -1,4 +1,5 @@
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
+    var columnIndex = Gridworks.columnNameToColumnIndex(column.name);
     var doAddColumn = function() {
         var frame = $(
             DOM.loadHTML("core", "scripts/views/data-table/add-column-dialog.html")
