@@ -528,7 +528,11 @@
         <delete dir="${broker.appengine.dir}/module/MOD-INF/classes" />
     </target>
 
-    <target name="distclean" depends="clean">
+    <target name="clean_extensions">
+      <ant dir="extensions/" target="clean" />
+    </target>
+
+    <target name="distclean" depends="clean, clean_extensions">
         <delete dir="${build.dir}" />
         <delete dir="${dist.dir}" />
         <delete dir="${tools.dir}" />
