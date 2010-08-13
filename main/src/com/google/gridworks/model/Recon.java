@@ -48,7 +48,8 @@ public class Recon implements HasFields, Jsonizable {
     static final public int Feature_nameMatch = 1;
     static final public int Feature_nameLevenshtein = 2;
     static final public int Feature_nameWordDistance = 3;
-    static final public int Feature_max = 4;
+    static final public int Feature_qaResult = 4;
+    static final public int Feature_max = 5;
 
     static final protected Map<String, Integer> s_featureMap = new HashMap<String, Integer>();
     static {
@@ -56,6 +57,7 @@ public class Recon implements HasFields, Jsonizable {
         s_featureMap.put("nameMatch", Feature_nameMatch);
         s_featureMap.put("nameLevenshtein", Feature_nameLevenshtein);
         s_featureMap.put("nameWordDistance", Feature_nameWordDistance);
+        s_featureMap.put("qaResult", Feature_qaResult);
     }
     
     final public long            id;
@@ -93,9 +95,25 @@ public class Recon implements HasFields, Jsonizable {
         this.judgmentHistoryEntry = judgmentHistoryEntry;
     }
     
+    public Recon dup() {
+        Recon r = new Recon(id, judgmentHistoryEntry);
+        r.identifierSpace = identifierSpace;
+        r.schemaSpace = schemaSpace;
+        
+        copyTo(r);
+        
+        return r;
+    }
+    
     public Recon dup(long judgmentHistoryEntry) {
         Recon r = new Recon(judgmentHistoryEntry, identifierSpace, schemaSpace);
         
+        copyTo(r);
+        
+        return r;
+    }
+    
+    protected void copyTo(Recon r) {
         System.arraycopy(features, 0, r.features, 0, features.length);
         
         if (candidates != null) {
@@ -111,8 +129,6 @@ public class Recon implements HasFields, Jsonizable {
         
         r.match = match;
         r.matchRank = matchRank;
-        
-        return r;
     }
     
     public void addCandidate(ReconCandidate candidate) {
@@ -213,13 +229,13 @@ public class Recon implements HasFields, Jsonizable {
         
         writer.object();
         writer.key("id"); writer.value(id);
-        writer.key("service"); writer.value(service);
-        writer.key("identifierSpace"); writer.value(identifierSpace);
-        writer.key("schemaSpace"); writer.value(schemaSpace);
-        
         if (saveMode) {
             writer.key("judgmentHistoryEntry"); writer.value(judgmentHistoryEntry);
         }
+        
+        writer.key("service"); writer.value(service);
+        writer.key("identifierSpace"); writer.value(identifierSpace);
+        writer.key("schemaSpace"); writer.value(schemaSpace);
         
         writer.key("j"); writer.value(judgmentToString());
         if (match != null) {
@@ -283,6 +299,9 @@ public class Recon implements HasFields, Jsonizable {
                 id = jp.getLongValue();
             } else if ("judgmentHistoryEntry".equals(fieldName)) {
                 judgmentHistoryEntry = jp.getLongValue();
+                if (recon != null) {
+                    recon.judgmentHistoryEntry = judgmentHistoryEntry;
+                }
             } else {
                 if (recon == null) {
                     recon = new Recon(id, judgmentHistoryEntry);

@@ -30,7 +30,10 @@ public class Pool implements Jsonizable {
     
     public void pool(Recon recon) {
         recons.put(Long.toString(recon.id), recon);
-        
+        poolReconCandidates(recon);
+    }
+    
+    public void poolReconCandidates(Recon recon) {
         if (recon.match != null) {
             pool(recon.match);
         }

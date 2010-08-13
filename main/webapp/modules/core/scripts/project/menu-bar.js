@@ -100,6 +100,11 @@ MenuBar.MenuItems = [
                 "id" : "core/load-info-freebase",
                 label: "Load into Freebase ...",
                 click: function() { MenuBar.handlers.loadIntoFreebase(); }
+            },
+            {
+                "id" : "core/import-qa-data",
+                label: "Import QA Data",
+                click: function() { MenuBar.handlers.importQAData(); }
             }
         ]
     }
@@ -321,3 +326,11 @@ MenuBar.handlers.loadIntoFreebase = function() {
     new FreebaseLoadingDialog();
 };
 
+MenuBar.handlers.importQAData = function() {
+    Gridworks.postProcess(
+        "import-qa-data",
+        {},
+        {},
+        { cellsChanged: true }
+    );
+};

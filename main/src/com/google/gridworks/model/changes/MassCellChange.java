@@ -87,7 +87,9 @@ public class MassCellChange implements Change {
     }
     
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("commonColumnName="); writer.write(_commonColumnName); writer.write('\n');
+        if (_commonColumnName != null) {
+            writer.write("commonColumnName="); writer.write(_commonColumnName); writer.write('\n');
+        }
         writer.write("updateRowContextDependencies="); writer.write(Boolean.toString(_updateRowContextDependencies)); writer.write('\n');
         writer.write("cellChangeCount="); writer.write(Integer.toString(_cellChanges.length)); writer.write('\n');
         for (CellChange c : _cellChanges) {

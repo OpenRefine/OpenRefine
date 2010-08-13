@@ -116,6 +116,7 @@ public class GridworksServlet extends Butterfly {
         {"user-badges", "com.google.gridworks.commands.auth.GetUserBadgesCommand"},
 
         {"upload-data", "com.google.gridworks.commands.freebase.UploadDataCommand"},
+        {"import-qa-data", "com.google.gridworks.commands.freebase.ImportQADataCommand"},
         {"mqlread", "com.google.gridworks.commands.freebase.MQLReadCommand"},
         {"mqlwrite", "com.google.gridworks.commands.freebase.MQLWriteCommand"},
         

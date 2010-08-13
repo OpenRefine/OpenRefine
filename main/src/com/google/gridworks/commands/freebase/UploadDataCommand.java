@@ -21,7 +21,7 @@ import com.google.gridworks.util.FreebaseUtils;
 import com.google.gridworks.util.ParsingUtilities;
 
 public class UploadDataCommand extends Command {
-    final static protected String s_dataLoadJobIDPref = "core/freebaseDataLoadJobID";
+    final static public String s_dataLoadJobIDPref = "core/freebaseDataLoadJobID";
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)

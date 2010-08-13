@@ -21,6 +21,7 @@ import com.google.gridworks.operations.column.ColumnRemovalOperation;
 import com.google.gridworks.operations.column.ColumnRenameOperation;
 import com.google.gridworks.operations.column.ColumnSplitOperation;
 import com.google.gridworks.operations.column.ExtendDataOperation;
+import com.google.gridworks.operations.recon.ImportQADataOperation;
 import com.google.gridworks.operations.recon.ReconDiscardJudgmentsOperation;
 import com.google.gridworks.operations.recon.ReconJudgeSimilarCellsOperation;
 import com.google.gridworks.operations.recon.ReconMarkNewTopicsOperation;
@@ -72,6 +73,8 @@ public abstract class OperationRegistry {
         register("save-protograph", SaveProtographOperation.class);
         register("text-transform", TextTransformOperation.class);
         register("mass-edit", MassEditOperation.class);
+        
+        register("import-qa-data", ImportQADataOperation.class);
         
         register("denormalize", DenormalizeOperation.class);
     }

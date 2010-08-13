@@ -211,6 +211,50 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ]
         },
         {
+            label: "QA Facets",
+            submenu: [
+                {
+                    label: "QA Results",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : column.name + " QA Results",
+                                "columnName" : column.name, 
+                                "expression" : "cell.recon.features.qaResult"
+                            }
+                        );
+                    }
+                },
+                {
+                    label: "Judgment Actions",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : column.name + " Judgment Actions",
+                                "columnName" : column.name, 
+                                "expression" : "cell.recon.judgmentAction"
+                            }
+                        );
+                    }
+                },
+                {
+                    label: "Judgment History Entries",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list", 
+                            {
+                                "name" : column.name + " History Entries",
+                                "columnName" : column.name, 
+                                "expression" : "cell.recon.judgmentHistoryEntry"
+                            }
+                        );
+                    }
+                }
+            ]
+        },
+        {
             label: "Actions",
             submenu: [
                 {
