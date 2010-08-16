@@ -48,13 +48,13 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
     }
 
     protected String getBriefDescription(Project project) {
-        return "Fill down cells in column " + _columnName;
+        return "Blank down cells in column " + _columnName;
     }
 
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Fill down " + cellChanges.size() + 
+        return "Blank down " + cellChanges.size() + 
             " cells in column " + column.getName();
     }
 
