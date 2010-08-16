@@ -14,7 +14,7 @@ Features:
   - Move Column to Beginning, Move Column to End, Move Column Left, Move Column Right
 - GEL:
   - JSON support
-  - New functions: smartSplit, escape, parseJson, hasField
+  - New functions: smartSplit, escape, parseJson, hasField, uniques
   - New controls: forEachIndex, forRange, filter
   - New parameters:
     - preserveAllTokens on split function
