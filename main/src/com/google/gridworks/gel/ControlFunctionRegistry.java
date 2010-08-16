@@ -19,6 +19,7 @@ import com.google.gridworks.expr.functions.Type;
 import com.google.gridworks.expr.functions.arrays.Join;
 import com.google.gridworks.expr.functions.arrays.Reverse;
 import com.google.gridworks.expr.functions.arrays.Sort;
+import com.google.gridworks.expr.functions.arrays.Uniques;
 import com.google.gridworks.expr.functions.booleans.And;
 import com.google.gridworks.expr.functions.booleans.Not;
 import com.google.gridworks.expr.functions.booleans.Or;
@@ -171,6 +172,7 @@ public class ControlFunctionRegistry {
         registerFunction("join", new Join());
         registerFunction("reverse", new Reverse());
         registerFunction("sort", new Sort());
+        registerFunction("uniques", new Uniques());
 
         registerFunction("now", new Now());
         registerFunction("inc", new Inc());
