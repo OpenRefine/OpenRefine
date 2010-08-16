@@ -24,7 +24,6 @@ public class DatePart implements Function {
             } else {
                 Calendar c = Calendar.getInstance();
                 c.setTime((Date) args[0]);
-                
                 return getPart(c, part);
             }
         }
@@ -42,23 +41,18 @@ public class DatePart implements Function {
             return c.get(Calendar.MINUTE);
         } else if ("seconds".equals(part) || "sec".equals(part) || "s".equals(part)) {
             return c.get(Calendar.SECOND);
-            
         } else if ("years".equals(part) || "year".equals(part)) {
             return c.get(Calendar.YEAR);
         } else if ("months".equals(part) || "month".equals(part)) { // avoid 'm' to avoid confusion with minute
-            return c.get(Calendar.MONTH);
+            return c.get(Calendar.MONTH) + 1; // ISSUE 115 - people expect January to be 1 not 0
         } else if ("weeks".equals(part) || "week".equals(part) || "w".equals(part)) {
             return c.get(Calendar.WEEK_OF_MONTH);
         } else if ("days".equals(part) || "day".equals(part) || "d".equals(part)) {
             return c.get(Calendar.DAY_OF_MONTH);
         } else if ("weekday".equals(part)) {
-            int r = c.get(Calendar.DAY_OF_WEEK);
-            
-            return s_daysOfWeek[r];
-            
+            return s_daysOfWeek[c.get(Calendar.DAY_OF_WEEK)];
         } else if ("time".equals(part)) {
             return c.getTimeInMillis();
-            
         } else {
             return new EvalError("Date unit '" + part + "' not recognized.");
         }
