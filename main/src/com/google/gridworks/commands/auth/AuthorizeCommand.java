@@ -79,18 +79,7 @@ public class AuthorizeCommand extends Command {
                     // no matter the result, we need to remove the request token
                     Credentials.deleteCredentials(request, response, provider, Credentials.Type.REQUEST);
                     
-                    if (access_credentials == null) {
-
-                        // in some circumstances, a request token is present in the user cookies
-                        // but it's not valid to obtain an access token (for example, if the user first
-                        // denied access and then changed her mind and wanted to do the oauth dance again).
-                        // So we need to reset the dance by removing the request token from the cookies
-                        // redirect back to here.
-
-                        response.sendRedirect(callbackURL);
-                    } else {
-                        Credentials.setCredentials(request, response, access_credentials, Credentials.Type.ACCESS, 30 * 24 * 3600);
-                    }
+                    Credentials.setCredentials(request, response, access_credentials, Credentials.Type.ACCESS, 30 * 24 * 3600);
 
                     finish(response);
                 }
