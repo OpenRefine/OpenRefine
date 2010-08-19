@@ -177,6 +177,7 @@ public class FreebaseUtils {
                 formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
                 formparams.add(new BasicNameValuePair("operator", user_info.getString("id")));
                 formparams.add(new BasicNameValuePair("software_tool_used", GRIDWORKS_ID));
+                formparams.add(new BasicNameValuePair("rabj", "true"));
                 formparams.add(new BasicNameValuePair("mdo_info", mdo_info.toString()));
                 formparams.add(new BasicNameValuePair("graphport", graph));
                 formparams.add(new BasicNameValuePair("payload", triples));
