@@ -210,7 +210,7 @@
         
         <copy file="${build.dir}/${fullname}.jar" tofile="${built.webapp.dir}/WEB-INF/lib/${fullname}.jar"/>
         
-        <replace file="${built.webapp.dir}/scripts/version.js">
+        <replace file="${built.webapp.dir}/modules/core/scripts/version.js">
             <replacefilter token="$VERSION" value="${version}"/>
             <replacefilter token="$REVISION" value="${revision}"/>
         </replace>
