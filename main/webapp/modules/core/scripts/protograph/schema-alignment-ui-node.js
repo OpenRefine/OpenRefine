@@ -680,7 +680,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
             result = {
                 nodeType: this._node.nodeType,
                 columnNames: this._node.columnNames,
-                type: cloneDeep(this._node.namespace)
+                namespace: cloneDeep(this._node.namespace)
             };
         }
     } else if (this._node.nodeType == "topic") {
