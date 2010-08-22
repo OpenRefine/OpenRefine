@@ -44,6 +44,51 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         );    
     };
 
+    var doAddColumnByFetchingURLs = function() {
+        var frame = $(
+            DOM.loadHTML("core", "scripts/views/data-table/add-column-by-fetching-urls-dialog.html")
+                .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
+
+        var elmts = DOM.bind(frame);
+        elmts.dialogHeader.text("Add column by fetching URLs based on column " + column.name);
+
+        var level = DialogSystem.showDialog(frame);
+        var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+        elmts.cancelButton.click(dismiss);
+        elmts.okButton.click(function() {
+            var columnName = $.trim(elmts.columnNameInput[0].value);
+            if (!columnName.length) {
+                alert("You must enter a column name.");
+                return;
+            }
+
+            Gridworks.postCoreProcess(
+                "add-column-by-fetching-urls", 
+                {
+                    baseColumnName: column.name, 
+                    urlExpression: previewWidget.getExpression(true), 
+                    newColumnName: columnName, 
+                    columnInsertIndex: columnIndex + 1,
+                    delay: elmts.throttleDelayInput[0].value,
+                    onError: $('input[name="dialog-onerror-choice"]:checked')[0].value
+                },
+                null,
+                { modelsChanged: true }
+            );
+            dismiss();
+        });
+
+        var o = DataTableView.sampleVisibleRows(column);
+        var previewWidget = new ExpressionPreviewDialog.Widget(
+            elmts, 
+            column.cellIndex,
+            o.rowIndices,
+            o.values,
+            null
+        );
+    };
+    
     var doAddColumnFromFreebase = function() {
         var o = DataTableView.sampleVisibleRows(column);
         new ExtendDataPreviewDialog(
@@ -184,6 +229,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             label: "Split into Several Columns ...",
             click: doSplitColumn
         },
+        {},
         {
             label: "Add Column Based on This Column ...",
             click: doAddColumn
@@ -191,6 +237,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {
             label: "Add Columns From Freebase ...",
             click: doAddColumnFromFreebase
+        },
+        {
+            label: "Add Column By Fetching URLs ...",
+            click: doAddColumnByFetchingURLs
         },
         {},
         {

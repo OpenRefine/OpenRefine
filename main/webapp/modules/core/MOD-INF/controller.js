@@ -55,6 +55,7 @@ function registerCommands() {
     GS.registerCommand(module, "move-column", new Packages.com.google.gridworks.commands.column.MoveColumnCommand());
     GS.registerCommand(module, "split-column", new Packages.com.google.gridworks.commands.column.SplitColumnCommand());
     GS.registerCommand(module, "extend-data", new Packages.com.google.gridworks.commands.column.ExtendDataCommand());
+    GS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.gridworks.commands.column.AddColumnByFetchingURLsCommand());
 
     GS.registerCommand(module, "denormalize", new Packages.com.google.gridworks.commands.row.DenormalizeCommand());
 
