@@ -23,7 +23,7 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 public class GridworksServlet extends Butterfly {
 
-    static private final String VERSION = "1.0";
+    static private final String VERSION = "1.5";
 
     private static final long serialVersionUID = 2386057901503517403L;
 
