@@ -23,6 +23,19 @@ public class RdfSchema implements OverlayModel {
     public List<ConstantBlankNode> get_blanks() {
         return _blanks;
     }
+    
+    @Override
+    public void onBeforeSave() {
+    }
+    
+    @Override
+    public void onAfterSave() {
+    }
+    
+    
+    @Override
+    public void dispose() {
+    }
 
     protected URI baseUri;
 

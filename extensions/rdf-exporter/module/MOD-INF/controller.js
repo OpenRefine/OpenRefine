@@ -21,11 +21,11 @@ function init() {
     /*
      *  Exporters
      */
-    var ExportRowsCommand = Packages.com.google.gridworks.commands.project.ExportRowsCommand;
+    var ExporterRegistry = Packages.com.google.gridworks.exporters.ExporterRegistry;
     var RdfExporter = Packages.com.google.gridworks.rdf.exporters.RdfExporter;
     
-    ExportRowsCommand.registerExporter("rdf", new RdfExporter("RDF/XML"));
-    ExportRowsCommand.registerExporter("n3", new RdfExporter("N3"));
+    ExporterRegistry.registerExporter("rdf", new RdfExporter("RDF/XML"));
+    ExporterRegistry.registerExporter("n3", new RdfExporter("N3"));
     
     /*
      *  GEL Functions and Binders
