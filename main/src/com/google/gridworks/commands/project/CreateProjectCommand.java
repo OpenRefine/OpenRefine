@@ -43,6 +43,7 @@ import com.google.gridworks.ProjectManager;
 import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.commands.Command;
 import com.google.gridworks.importers.Importer;
+import com.google.gridworks.importers.ImporterRegistry;
 import com.google.gridworks.importers.ReaderImporter;
 import com.google.gridworks.importers.StreamImporter;
 import com.google.gridworks.importers.TsvCsvImporter;
@@ -56,71 +57,6 @@ import com.ibm.icu.text.CharsetMatch;
 public class CreateProjectCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("create-project_command");
-
-    static final private Map<String, Importer> importers = new HashMap<String, Importer>();
-
-    private static final String[][] importerNames = {
-        {"ExcelImporter", "com.google.gridworks.importers.ExcelImporter"},
-        {"XmlImporter", "com.google.gridworks.importers.XmlImporter"},
-        {"RdfTripleImporter", "com.google.gridworks.importers.RdfTripleImporter"},
-        {"MarcImporter", "com.google.gridworks.importers.MarcImporter"},
-        {"TsvCsvImporter", "com.google.gridworks.importers.TsvCsvImporter"},
-    };
-
-    static {
-        registerImporters(importerNames);
-    }
-
-    static public boolean registerImporters(String[][] importers) {
-        boolean status = true;
-        for (String[] importer : importerNames) {
-            String importerName = importer[0];
-            String className = importer[1];
-            logger.debug("Loading command " + importerName + " class: " + className);
-            Importer cmd;
-            try {
-                // TODO: May need to use the servlet container's class loader here
-                cmd = (Importer) Class.forName(className).newInstance();
-            } catch (InstantiationException e) {
-                logger.error("Failed to load importer class " + className, e);
-                status = false;
-                continue;
-            } catch (IllegalAccessException e) {
-                logger.error("Failed to load importer class " + className, e);
-                status = false;
-                continue;
-            } catch (ClassNotFoundException e) {
-                logger.error("Failed to load importer class " + className, e);
-                status = false;
-                continue;
-            }
-            status |= registerImporter(importerName, cmd);
-        }
-        return status;
-    }
-
-    /**
-     * Register a single importer.
-     *
-     * @param name
-     *            importer verb for importer
-     * @param commandObject
-     *            object implementing the importer
-     * @return true if importer was loaded and registered successfully
-     */
-    static public boolean registerImporter(String name,
-            Importer importerObject) {
-        if (importers.containsKey(name)) {
-            return false;
-        }
-        importers.put(name, importerObject);
-        return true;
-    }
-
-    // Currently only for test purposes
-    static protected boolean unregisterImporter(String verb) {
-        return importers.remove(verb) != null;
-    }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -369,7 +305,7 @@ public class CreateProjectCommand extends Command {
     }
 
     private void load(Project project, Properties options, String fileName, InputStream inputStream) throws Exception {
-        Importer importer = guessImporter(null, fileName);
+        Importer importer = ImporterRegistry.guessImporter(null, fileName);
         internalInvokeImporter(project, importer, options, inputStream, null);
     }
 
@@ -415,7 +351,7 @@ public class CreateProjectCommand extends Command {
         URLConnection connection = null;
 
         // Try for a URL importer first
-        Importer importer = guessUrlImporter(url);
+        Importer importer = ImporterRegistry.guessUrlImporter(url);
         if (importer instanceof UrlImporter) {
             ((UrlImporter) importer).read(url, project, options);
         } else {
@@ -436,7 +372,7 @@ public class CreateProjectCommand extends Command {
             }
 
             try {
-                importer = guessImporter(connection.getContentType(), url.getPath());
+                importer = ImporterRegistry.guessImporter(connection.getContentType(), url.getPath());
                 
                 internalInvokeImporter(project, importer, options, inputStream, connection.getContentEncoding());
             } finally {
@@ -506,30 +442,4 @@ public class CreateProjectCommand extends Command {
         importer.read(reader, project, options);
     }
 
-    protected Importer guessImporter(String contentType, String fileName, boolean provideDefault) {
-        for (Importer i : importers.values()){
-            if(i.canImportData(contentType, fileName)){
-                return i;
-            }
-        }
-        if (provideDefault) {
-            return new TsvCsvImporter(); // default
-        } else {
-            return null;
-        }
-    }
-    
-    protected Importer guessImporter(String contentType, String filename) {
-        return guessImporter(contentType, filename, true);
-    }
-
-    protected Importer guessUrlImporter(URL url) {
-        for (Importer importer : importers.values()){
-            if (importer instanceof UrlImporter 
-                    && ((UrlImporter) importer).canImportData(url)) {
-                return importer;
-            }
-        }
-        return null;
-    }
 }

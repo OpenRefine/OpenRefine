@@ -1,10 +1,8 @@
 package com.google.gridworks.commands.project;
 
- import java.io.IOException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -16,32 +14,11 @@ import com.google.gridworks.browsing.Engine;
 import com.google.gridworks.commands.Command;
 import com.google.gridworks.exporters.CsvExporter;
 import com.google.gridworks.exporters.Exporter;
-import com.google.gridworks.exporters.HtmlTableExporter;
-import com.google.gridworks.exporters.TemplatingExporter;
-import com.google.gridworks.exporters.XlsExporter;
-import com.google.gridworks.exporters.ProtographTransposeExporter.MqlwriteLikeExporter;
-import com.google.gridworks.exporters.ProtographTransposeExporter.TripleLoaderExporter;
+import com.google.gridworks.exporters.ExporterRegistry;
 import com.google.gridworks.model.Project;
 
 public class ExportRowsCommand extends Command {
 
-    static final protected Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();
-
-    static {
-        s_formatToExporter.put("html", new HtmlTableExporter());
-        s_formatToExporter.put("xls", new XlsExporter());
-        s_formatToExporter.put("csv", new CsvExporter());
-        
-        s_formatToExporter.put("template", new TemplatingExporter());
-        
-        s_formatToExporter.put("tripleloader", new TripleLoaderExporter());
-        s_formatToExporter.put("mqlwrite", new MqlwriteLikeExporter());
-    }
-    
-    static public void registerExporter(String format, Exporter exporter) {
-        s_formatToExporter.put(format, exporter);
-    }
-    
     @SuppressWarnings("unchecked")
 	static public Properties getRequestParameters(HttpServletRequest request) {
         Properties options = new Properties();
@@ -64,7 +41,7 @@ public class ExportRowsCommand extends Command {
             String format = request.getParameter("format");
             Properties options = getRequestParameters(request);
 
-            Exporter exporter = s_formatToExporter.get(format.toLowerCase());
+            Exporter exporter = ExporterRegistry.getExporter(format);
             if (exporter == null){
                 exporter = new CsvExporter('\t');
             }
