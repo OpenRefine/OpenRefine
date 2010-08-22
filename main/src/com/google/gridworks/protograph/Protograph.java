@@ -23,6 +23,19 @@ public class Protograph implements OverlayModel {
         return _rootNodes.get(index);
     }
     
+    @Override
+    public void onBeforeSave() {
+    }
+    
+    @Override
+    public void onAfterSave() {
+    }
+    
+    
+    @Override
+    public void dispose() {
+    }
+    
     static public Protograph reconstruct(JSONObject o) throws JSONException {
         Protograph g = new Protograph();
         

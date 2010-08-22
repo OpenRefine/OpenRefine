@@ -67,6 +67,16 @@ public class Project {
         this.id = id;
         this.history = new History(this);
     }
+    
+    public void dispose() {
+        for (OverlayModel overlayModel : overlayModels.values()) {
+            try {
+                overlayModel.dispose();
+            } catch (Exception e) {
+                logger.warn("Error signaling overlay model before disposing", e);
+            }
+        }
+    }
 
     public Date getLastSave(){
         return this._lastSave;
@@ -83,6 +93,14 @@ public class Project {
     }
 
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
+        for (OverlayModel overlayModel : overlayModels.values()) {
+            try {
+                overlayModel.onBeforeSave();
+            } catch (Exception e) {
+                logger.warn("Error signaling overlay model before saving", e);
+            }
+        }
+        
         Writer writer = new OutputStreamWriter(out);
         try {
             Properties options = new Properties();
@@ -92,6 +110,14 @@ public class Project {
             saveToWriter(writer, options);
         } finally {
             writer.flush();
+        }
+        
+        for (OverlayModel overlayModel : overlayModels.values()) {
+            try {
+                overlayModel.onAfterSave();
+            } catch (Exception e) {
+                logger.warn("Error signaling overlay model after saving", e);
+            }
         }
     }
 

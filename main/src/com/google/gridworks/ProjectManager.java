@@ -61,6 +61,17 @@ public abstract class ProjectManager {
 
         preparePreferenceStore(_preferenceStore);
     }
+    
+    public void dispose() {
+        save(true); // complete save
+
+        for (Project project : _projects.values()) {
+            project.dispose();
+        }
+        
+        _projects.clear();
+        _projectsMetadata.clear();
+    }
 
     /**
      * Registers the project in the memory of the current session
@@ -211,7 +222,7 @@ public abstract class ProjectManager {
                          *  It's been a while since the project was last saved and it hasn't been
                          *  modified. We can safely remove it from the cache to save some memory.
                          */
-                        _projects.remove(id);
+                        _projects.remove(id).dispose();
                     }
                 }
             }
@@ -374,11 +385,11 @@ public abstract class ProjectManager {
      * @param projectID
      */
     protected void removeProject(long projectID){
+        if (_projects.containsKey(projectID)) {
+            _projects.remove(projectID).dispose();
+        }
         if (_projectsMetadata.containsKey(projectID)) {
             _projectsMetadata.remove(projectID);
-        }
-        if (_projects.containsKey(projectID)) {
-            _projects.remove(projectID);
         }
     }
 

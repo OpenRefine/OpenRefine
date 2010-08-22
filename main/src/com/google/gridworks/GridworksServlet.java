@@ -182,7 +182,7 @@ public class GridworksServlet extends Butterfly {
             _timer = null;
         }
         if (ProjectManager.singleton != null) {
-            ProjectManager.singleton.save(true); // complete save
+            ProjectManager.singleton.dispose();
             ProjectManager.singleton = null;
         }
 
