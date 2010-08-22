@@ -15,7 +15,7 @@ HistoryWidget.prototype.resize = function() {
 HistoryWidget.prototype.update = function(onDone) {
     var self = this;
     Ajax.chainGetJSON(
-        "/command/get-history?" + $.param({ project: theProject.id }), null,
+        "/command/core/get-history?" + $.param({ project: theProject.id }), null,
         function(data) {
             self._data = data;
             self._render();
@@ -100,7 +100,7 @@ HistoryWidget.prototype._render = function() {
 HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
     var self = this;
     
-    Gridworks.postProcess(
+    Gridworks.postCoreProcess(
         "undo-redo",
         { lastDoneID: lastDoneID },
         null,
@@ -111,7 +111,7 @@ HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) 
 HistoryWidget.prototype._extractOperations = function() {
     var self = this;
     $.getJSON(
-        "/command/get-operations?" + $.param({ project: theProject.id }), 
+        "/command/core/get-operations?" + $.param({ project: theProject.id }), 
         null,
         function(data) {
             if ("entries" in data) {
@@ -218,7 +218,7 @@ HistoryWidget.prototype._showApplyOperationsDialog = function() {
             return;
         }
         
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "apply-operations",
             {},
             { operations: JSON.stringify(json) },

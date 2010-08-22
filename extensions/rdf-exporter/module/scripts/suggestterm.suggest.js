@@ -74,7 +74,7 @@
      $.extend($.suggest.suggestterm, {
          defaults:  $.extend(true, {}, $.suggest.suggest.defaults, {
              service_url: "",
-             service_path: "/command/suggest-term",
+             service_path: "/command/rdf-exporter-extension/suggest-term",
              type_strict:"classes",
              suggest_new:"Add it"
          })

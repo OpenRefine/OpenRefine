@@ -135,11 +135,11 @@ Gridworks.setTitle = function(status) {
 
 Gridworks.reinitializeProjectData = function(f) {
     Ajax.chainGetJSON(
-        "/command/get-project-metadata?" + $.param({ project: theProject.id }), null,
+        "/command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
         function(data) {
             theProject.metadata = data;
         },
-        "/command/get-models?" + $.param({ project: theProject.id }), null,
+        "/command/core/get-models?" + $.param({ project: theProject.id }), null,
         function(data) {
             for (var n in data) {
                 if (data.hasOwnProperty(n)) {
@@ -209,7 +209,11 @@ Gridworks.update = function(options, onFinallyDone) {
     }, 500);
 };
 
-Gridworks.postProcess = function(command, params, body, updateOptions, callbacks) {
+Gridworks.postCoreProcess = function(command, params, body, updateOptions, callbacks) {
+    Gridworks.postProcess("core", command, params, body, updateOptions, callbacks);
+};
+
+Gridworks.postProcess = function(moduleName, command, params, body, updateOptions, callbacks) {
     updateOptions = updateOptions || {};
     callbacks = callbacks || {};
     
@@ -277,7 +281,7 @@ Gridworks.postProcess = function(command, params, body, updateOptions, callbacks
     Gridworks.setAjaxInProgress();
     
     $.post(
-        "/command/" + command + "?" + $.param(params),
+        "/command/" + moduleName + "/" + command + "?" + $.param(params),
         body,
         onDone,
         "json"
@@ -358,7 +362,7 @@ Gridworks.fetchRows = function(start, limit, onDone, sorting) {
     }
     
     $.post(
-        "/command/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }) + "&callback=?",
+        "/command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }) + "&callback=?",
         body,
         function(data) {
             theProject.rowModel = data;

@@ -10,11 +10,101 @@ var templatedFiles = {
     "preferences" : true
 };
 
+function registerCommands() {
+    var GS = Packages.com.google.gridworks.GridworksServlet;
+    
+    GS.registerCommand(module, "create-project-from-upload", new Packages.com.google.gridworks.commands.project.CreateProjectCommand());
+    GS.registerCommand(module, "import-project", new Packages.com.google.gridworks.commands.project.ImportProjectCommand());
+    GS.registerCommand(module, "export-project", new Packages.com.google.gridworks.commands.project.ExportProjectCommand());
+    GS.registerCommand(module, "export-rows", new Packages.com.google.gridworks.commands.project.ExportRowsCommand());
+
+    GS.registerCommand(module, "get-project-metadata", new Packages.com.google.gridworks.commands.project.GetProjectMetadataCommand());
+    GS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.gridworks.commands.workspace.GetAllProjectMetadataCommand());
+
+    GS.registerCommand(module, "delete-project", new Packages.com.google.gridworks.commands.project.DeleteProjectCommand());
+    GS.registerCommand(module, "rename-project", new Packages.com.google.gridworks.commands.project.RenameProjectCommand());
+
+    GS.registerCommand(module, "get-models", new Packages.com.google.gridworks.commands.project.GetModelsCommand());
+    GS.registerCommand(module, "get-rows", new Packages.com.google.gridworks.commands.row.GetRowsCommand());
+    GS.registerCommand(module, "get-processes", new Packages.com.google.gridworks.commands.history.GetProcessesCommand());
+    GS.registerCommand(module, "get-history", new Packages.com.google.gridworks.commands.history.GetHistoryCommand());
+    GS.registerCommand(module, "get-operations", new Packages.com.google.gridworks.commands.history.GetOperationsCommand());
+    GS.registerCommand(module, "get-columns-info", new Packages.com.google.gridworks.commands.column.GetColumnsInfoCommand());
+    GS.registerCommand(module, "get-scatterplot", new Packages.com.google.gridworks.commands.browsing.GetScatterplotCommand());
+
+    GS.registerCommand(module, "undo-redo", new Packages.com.google.gridworks.commands.history.UndoRedoCommand());
+    GS.registerCommand(module, "apply-operations", new Packages.com.google.gridworks.commands.history.ApplyOperationsCommand());
+    GS.registerCommand(module, "cancel-processes", new Packages.com.google.gridworks.commands.history.CancelProcessesCommand());
+
+    GS.registerCommand(module, "compute-facets", new Packages.com.google.gridworks.commands.browsing.ComputeFacetsCommand());
+    GS.registerCommand(module, "compute-clusters", new Packages.com.google.gridworks.commands.browsing.ComputeClustersCommand());
+
+    GS.registerCommand(module, "edit-one-cell", new Packages.com.google.gridworks.commands.cell.EditOneCellCommand());
+    GS.registerCommand(module, "text-transform", new Packages.com.google.gridworks.commands.cell.TextTransformCommand());
+    GS.registerCommand(module, "mass-edit", new Packages.com.google.gridworks.commands.cell.MassEditCommand());
+    GS.registerCommand(module, "join-multi-value-cells", new Packages.com.google.gridworks.commands.cell.JoinMultiValueCellsCommand());
+    GS.registerCommand(module, "split-multi-value-cells", new Packages.com.google.gridworks.commands.cell.SplitMultiValueCellsCommand());
+    GS.registerCommand(module, "fill-down", new Packages.com.google.gridworks.commands.cell.FillDownCommand());
+    GS.registerCommand(module, "blank-down", new Packages.com.google.gridworks.commands.cell.BlankDownCommand());
+    GS.registerCommand(module, "transpose-columns-into-rows", new Packages.com.google.gridworks.commands.cell.TransposeColumnsIntoRowsCommand());
+    GS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.gridworks.commands.cell.TransposeRowsIntoColumnsCommand());
+
+    GS.registerCommand(module, "add-column", new Packages.com.google.gridworks.commands.column.AddColumnCommand());
+    GS.registerCommand(module, "remove-column", new Packages.com.google.gridworks.commands.column.RemoveColumnCommand());
+    GS.registerCommand(module, "rename-column", new Packages.com.google.gridworks.commands.column.RenameColumnCommand());
+    GS.registerCommand(module, "move-column", new Packages.com.google.gridworks.commands.column.MoveColumnCommand());
+    GS.registerCommand(module, "split-column", new Packages.com.google.gridworks.commands.column.SplitColumnCommand());
+    GS.registerCommand(module, "extend-data", new Packages.com.google.gridworks.commands.column.ExtendDataCommand());
+
+    GS.registerCommand(module, "denormalize", new Packages.com.google.gridworks.commands.row.DenormalizeCommand());
+
+    GS.registerCommand(module, "reconcile", new Packages.com.google.gridworks.commands.recon.ReconcileCommand());
+    GS.registerCommand(module, "recon-match-best-candidates", new Packages.com.google.gridworks.commands.recon.ReconMatchBestCandidatesCommand());
+    GS.registerCommand(module, "recon-mark-new-topics", new Packages.com.google.gridworks.commands.recon.ReconMarkNewTopicsCommand());
+    GS.registerCommand(module, "recon-discard-judgments", new Packages.com.google.gridworks.commands.recon.ReconDiscardJudgmentsCommand());
+    GS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.gridworks.commands.recon.ReconMatchSpecificTopicCommand());
+    GS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.gridworks.commands.recon.ReconJudgeOneCellCommand());
+    GS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.gridworks.commands.recon.ReconJudgeSimilarCellsCommand());
+
+    GS.registerCommand(module, "annotate-one-row", new Packages.com.google.gridworks.commands.row.AnnotateOneRowCommand());
+    GS.registerCommand(module, "annotate-rows", new Packages.com.google.gridworks.commands.row.AnnotateRowsCommand());
+    GS.registerCommand(module, "remove-rows", new Packages.com.google.gridworks.commands.row.RemoveRowsCommand());
+    GS.registerCommand(module, "reorder-rows", new Packages.com.google.gridworks.commands.row.ReorderRowsCommand());
+
+    GS.registerCommand(module, "save-protograph", new Packages.com.google.gridworks.commands.freebase.SaveProtographCommand());
+
+    GS.registerCommand(module, "get-expression-language-info", new Packages.com.google.gridworks.commands.expr.GetExpressionLanguageInfoCommand());
+    GS.registerCommand(module, "get-expression-history", new Packages.com.google.gridworks.commands.expr.GetExpressionHistoryCommand());
+    GS.registerCommand(module, "log-expression", new Packages.com.google.gridworks.commands.expr.LogExpressionCommand());
+
+    GS.registerCommand(module, "preview-expression", new Packages.com.google.gridworks.commands.expr.PreviewExpressionCommand());
+    GS.registerCommand(module, "preview-extend-data", new Packages.com.google.gridworks.commands.column.PreviewExtendDataCommand());
+    GS.registerCommand(module, "preview-protograph", new Packages.com.google.gridworks.commands.freebase.PreviewProtographCommand());
+
+    GS.registerCommand(module, "guess-types-of-column", new Packages.com.google.gridworks.commands.freebase.GuessTypesOfColumnCommand());
+
+    GS.registerCommand(module, "check-authorization", new Packages.com.google.gridworks.commands.auth.CheckAuthorizationCommand());
+    GS.registerCommand(module, "authorize", new Packages.com.google.gridworks.commands.auth.AuthorizeCommand());
+    GS.registerCommand(module, "deauthorize", new Packages.com.google.gridworks.commands.auth.DeAuthorizeCommand());
+    GS.registerCommand(module, "user-badges", new Packages.com.google.gridworks.commands.auth.GetUserBadgesCommand());
+
+    GS.registerCommand(module, "upload-data", new Packages.com.google.gridworks.commands.freebase.UploadDataCommand());
+    GS.registerCommand(module, "import-qa-data", new Packages.com.google.gridworks.commands.freebase.ImportQADataCommand());
+    GS.registerCommand(module, "mqlread", new Packages.com.google.gridworks.commands.freebase.MQLReadCommand());
+    GS.registerCommand(module, "mqlwrite", new Packages.com.google.gridworks.commands.freebase.MQLWriteCommand());
+
+    GS.registerCommand(module, "get-preference", new Packages.com.google.gridworks.commands.GetPreferenceCommand());
+    GS.registerCommand(module, "get-all-preferences", new Packages.com.google.gridworks.commands.GetAllPreferencesCommand());
+    GS.registerCommand(module, "set-preference", new Packages.com.google.gridworks.commands.SetPreferenceCommand());
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
 function init() {
     // Packages.java.lang.System.err.println("Initializing by script " + module);
+    
+    registerCommands();
     
     ClientSideResourceManager.addPaths(
         "project/scripts",

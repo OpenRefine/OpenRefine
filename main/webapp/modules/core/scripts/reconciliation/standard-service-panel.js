@@ -12,7 +12,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
     var dismissBusy = DialogSystem.showBusy();
     
     $.post(
-        "/command/guess-types-of-column?" + $.param({
+        "/command/core/guess-types-of-column?" + $.param({
             project: theProject.id, 
             columnName: this._column.name,
             service: this._service.url
@@ -271,7 +271,7 @@ ReconStandardServicePanel.prototype.start = function() {
         }
     );
     
-    Gridworks.postProcess(
+    Gridworks.postCoreProcess(
         "reconcile",
         {},
         {

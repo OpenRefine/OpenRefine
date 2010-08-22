@@ -808,7 +808,7 @@ RdfSchemaAlignmentDialog.RdfResourceDialog = function(elmt,lookFor,onDone,defaul
 	});*/
 	//Autocomplete
 	/*elmts.newResourceUri.autoComplete({
-		script:'/command/search-vocabularies?type=' + lookFor + '&',
+		script:'/command/rdf-exporter-extension/search-vocabularies?type=' + lookFor + '&',
 		varname:'input',
 		json:true,
 		shownoresults:true,

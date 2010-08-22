@@ -202,7 +202,7 @@ ClusteringDialog.prototype._cluster = function() {
     this._elmts.resultSummary.empty();
 
     $.post(
-        "/command/compute-clusters?" + $.param({ project: theProject.id }),
+        "/command/core/compute-clusters?" + $.param({ project: theProject.id }),
         { 
             engine: JSON.stringify(ui.browsingEngine.getJSON()), 
             clusterer: JSON.stringify({ 
@@ -293,7 +293,7 @@ ClusteringDialog.prototype._apply = function(onDone) {
     }
     
     if (edits.length > 0) {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "mass-edit",
             {},
             {

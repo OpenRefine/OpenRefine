@@ -4,7 +4,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doReconDiscardJudgments = function() {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "recon-discard-judgments",
             { columnName: column.name },
             null,
@@ -13,7 +13,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doReconMatchBestCandidates = function() {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "recon-match-best-candidates",
             { columnName: column.name },
             null,
@@ -22,7 +22,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doReconMarkNewTopics = function(shareNewTopics) {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "recon-mark-new-topics",
             { columnName: column.name, shareNewTopics: shareNewTopics },
             null,
@@ -56,7 +56,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 function(o) {
                     var types = "result" in o ? o.result.type : [];
 
-                    Gridworks.postProcess(
+                    Gridworks.postCoreProcess(
                         "recon-match-specific-topic-to-cells",
                         {
                             columnName: column.name,

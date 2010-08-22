@@ -495,7 +495,7 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
             edit.from = [ originalContent ];
         }
         
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "mass-edit",
             {},
             {

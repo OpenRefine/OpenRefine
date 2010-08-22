@@ -2,7 +2,7 @@ var preferenceUIs = [];
 
 function onLoad() {
     $.post(
-        "/command/get-all-preferences",
+        "/command/core/get-all-preferences",
         null,
         populatePreferences,
         "json"
@@ -33,7 +33,7 @@ function populatePreferences(prefs) {
                 preferenceUIs.push(new PreferenceUI(tr, key, value));
                 
                 $.post(
-                    "/command/set-preference",
+                    "/command/core/set-preference",
                     {
                         name : key,
                         value : JSON.stringify(value)
@@ -66,7 +66,7 @@ function PreferenceUI(tr, key, value) {
         if (newValue != null) {
             $(td1).text(newValue);
             $.post(
-                "/command/set-preference",
+                "/command/core/set-preference",
                 {
                     name : key,
                     value : JSON.stringify(newValue)
@@ -84,7 +84,7 @@ function PreferenceUI(tr, key, value) {
     $('<button>').text("Delete").appendTo(td2).click(function() {
         if (window.confirm("Delete preference key " + key + "?")) {
             $.post(
-                "/command/set-preference",
+                "/command/core/set-preference",
                 {
                     name : key
                 },

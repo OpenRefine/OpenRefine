@@ -241,7 +241,7 @@ MenuBar.handlers.exportRows = function(format, ext) {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-rows/" + name + "." + ext)
+        .attr("action", "/command/core/export-rows/" + name + "." + ext)
         .attr("target", "gridworks-export");
 
     $('<input />')
@@ -271,7 +271,7 @@ MenuBar.handlers.exportProject = function() {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-project/" + name + ".gridworks.tar.gz")
+        .attr("action", "/command/core/export-project/" + name + ".gridworks.tar.gz")
         .attr("target", "gridworks-export");
     $('<input />')
         .attr("name", "project")
@@ -299,7 +299,7 @@ MenuBar.handlers.renameProject = function() {
 
     $.ajax({
         type: "POST",
-        url: "/command/rename-project",
+        url: "/command/core/rename-project",
         data: { "project" : theProject.id, "name" : name },
         dataType: "json",
         success: function (data) {
@@ -327,7 +327,7 @@ MenuBar.handlers.loadIntoFreebase = function() {
 };
 
 MenuBar.handlers.importQAData = function() {
-    Gridworks.postProcess(
+    Gridworks.postCoreProcess(
         "import-qa-data",
         {},
         {},

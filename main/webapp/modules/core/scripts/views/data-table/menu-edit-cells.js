@@ -1,6 +1,6 @@
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var doTextTransform = function(expression, onError, repeat, repeatCount) {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "text-transform",
             {
                 columnName: column.name, 
@@ -54,7 +54,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
     
     var doFillDown = function() {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "fill-down", 
             {
                 columnName: column.name
@@ -65,7 +65,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doBlankDown = function() {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "blank-down", 
             {
                 columnName: column.name
@@ -78,7 +78,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
    var doJoinMultiValueCells = function() {
         var separator = window.prompt("Enter separator to use between values", ", ");
         if (separator !== null) {
-            Gridworks.postProcess(
+            Gridworks.postCoreProcess(
                 "join-multi-value-cells", 
                 {
                     columnName: column.name,
@@ -94,7 +94,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var doSplitMultiValueCells = function() {
         var separator = window.prompt("What separator currently separates the values?", ",");
         if (separator !== null) {
-            Gridworks.postProcess(
+            Gridworks.postCoreProcess(
                 "split-multi-value-cells", 
                 {
                     columnName: column.name,
@@ -194,7 +194,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 ignoreBlankCells: elmts.ignoreBlankCellsCheckbox[0].checked
             };
 
-            Gridworks.postProcess(
+            Gridworks.postCoreProcess(
                 "transpose-columns-into-rows", 
                 config,
                 null,
@@ -254,7 +254,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     rowCount: rowCount
                 };
 
-                Gridworks.postProcess(
+                Gridworks.postCoreProcess(
                     "transpose-rows-into-columns", 
                     config,
                     null,

@@ -15,7 +15,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     var loadButton = this._elmts.loadButton;
     
     var check_authorization = function(cont) {
-        $.get("/command/check-authorization/" + provider, function(data) {
+        $.get("/command/core/check-authorization/" + provider, function(data) {
             if ("status" in data && data.code == "/api/status/ok") {
                 authorization.html('Signed in as: <a target="_new" href="http://www.freebase.com/view/user/' + data.username + '">' + data.username + '</a> | <a href="javascript:{}" bind="signout">Sign Out</a>').show();
                 DOM.bind(authorization).signout.click(function() {
@@ -42,7 +42,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     };
     
     var check_allowed = function(user_id, cont) {
-        $.get("/command/user-badges/" + provider, 
+        $.get("/command/core/user-badges/" + provider, 
             { "user_id" : user_id }, 
             function(data) {
                 if ("status" in data && data.code == "/api/status/ok") {
@@ -74,7 +74,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
             "guid":   null
         }];
 
-        $.post("/command/mqlwrite/" + provider, 
+        $.post("/command/core/mqlwrite/" + provider, 
             { "query" : JSON.stringify(mql_query) }, 
             function(data) {
                 if ("status" in data && data.code == "/api/status/ok") {
@@ -90,7 +90,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     
     var show_triples = function(cont) {
         $.post(
-            "/command/preview-protograph?" + $.param({ project: theProject.id }),
+            "/command/core/preview-protograph?" + $.param({ project: theProject.id }),
             {
                 protograph: JSON.stringify(theProject.overlayModels.freebaseProtograph || {}),
                 engine: JSON.stringify(ui.browsingEngine.getJSON())
@@ -165,7 +165,7 @@ FreebaseLoadingDialog.prototype._load = function() {
     var doLoad = function() {
         var dismissBusy = DialogSystem.showBusy();
         
-        $.post("/command/upload-data", 
+        $.post("/command/core/upload-data", 
             {
                 project: theProject.id, 
                 "graph" : (freebase) ? "otg" : "sandbox",

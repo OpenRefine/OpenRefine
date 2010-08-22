@@ -40,13 +40,13 @@ function init() {
      *  Commands
      */
     var GridworksServlet = Packages.com.google.gridworks.GridworksServlet;
-    GridworksServlet.registerCommand("save-rdf-schema", new SaveRdfSchemaCommand());
-    GridworksServlet.registerCommand("preview-rdf",new PreviewRdfCommand());
-    GridworksServlet.registerCommand("save-baseURI",new SaveBaseURI());
-    GridworksServlet.registerCommand("suggest-term",new SuggestTermCommand());
-    GridworksServlet.registerCommand("import-vocabulary",new ImportVocabularyCommand());
-    GridworksServlet.registerCommand("list-vocabularies",new ListVocabulariesCommand());
-    GridworksServlet.registerCommand("delete-vocabulary",new DeleteVocabularyCommand());
+    GridworksServlet.registerCommand(module, "save-rdf-schema", new SaveRdfSchemaCommand());
+    GridworksServlet.registerCommand(module, "preview-rdf", new PreviewRdfCommand());
+    GridworksServlet.registerCommand(module, "save-baseURI", new SaveBaseURI());
+    GridworksServlet.registerCommand(module, "suggest-term", new SuggestTermCommand());
+    GridworksServlet.registerCommand(module, "import-vocabulary", new ImportVocabularyCommand());
+    GridworksServlet.registerCommand(module, "list-vocabularies", new ListVocabulariesCommand());
+    GridworksServlet.registerCommand(module, "delete-vocabulary", new DeleteVocabularyCommand());
         
     /*
      *  Client-side Resources

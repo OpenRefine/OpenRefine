@@ -129,6 +129,6 @@ public class AuthorizeCommand extends Command {
                 throw new RuntimeException("neither the 'host' nor 'referer' headers were present in the HTTP response, I can't determine what URL gridworks is listening to.");
             }
         }
-        return "http://" + host + "/command/authorize/" + provider.getHost();
+        return "http://" + host + "/command/core/authorize/" + provider.getHost();
     }
 }

@@ -218,7 +218,7 @@ tool_download() {
 load_data() {
     FILE=$1
     NAME=$2
-    URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/command/create-project-from-upload"
+    URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/command/core/create-project-from-upload"
     CURL="`which curl 2> /dev/null`"
     
     if [ -z "$CURL" ]; then

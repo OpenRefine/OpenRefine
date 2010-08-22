@@ -23,7 +23,7 @@ public class GridworksServletStub extends GridworksServlet {
     }
 
     public String wrapGetCommandName(HttpServletRequest request){
-        return super.getCommandName(request);
+        return super.getCommandKey(request);
     }
 
     //-------------------helper methods--------------
@@ -32,8 +32,8 @@ public class GridworksServletStub extends GridworksServlet {
      * @param commandName
      * @param command
      */
-    public void insertCommand( String commandName, Command command ){
-        registerCommand(commandName, command);
+    public void insertCommand(String commandName, Command command ){
+        registerOneCommand("core/" + commandName, command);
     }
 
     /**

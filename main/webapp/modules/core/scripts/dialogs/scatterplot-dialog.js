@@ -52,7 +52,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
         var params = {
             project: theProject.id
         };
-        $.getJSON("/command/get-columns-info?" + $.param(params),function(data) {
+        $.getJSON("/command/core/get-columns-info?" + $.param(params),function(data) {
             if (data === null || typeof data.length == 'undefined') {
                 container.html("Error calling 'get-columns-info'");
                 return;
@@ -89,7 +89,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                     engine: JSON.stringify(ui.browsingEngine.getJSON()), 
                     plotter: JSON.stringify(plotter_params) 
                 };
-                var url = "/command/get-scatterplot?" + $.param(params);
+                var url = "/command/core/get-scatterplot?" + $.param(params);
 
                 var attrs = [
                     'width="' + self._plot_size + '"',

@@ -41,6 +41,7 @@ RdfSchemaAlignmentDialog.prototype._constructFooter = function(footer) {
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
     	var schema = self.getJSON();
     	Gridworks.postProcess(
+    	        "rdf-exporter-extension",
                 "save-rdf-schema",
                 {},
                 { schema: JSON.stringify(schema) },
@@ -100,7 +101,7 @@ RdfSchemaAlignmentDialog.prototype._previewRdf = function(){
 	var schema = this.getJSON();
 	self._previewPane.empty().html('<img src="images/large-spinner.gif" title="loading..."/>');
 	$.post(
-	    "/command/preview-rdf?" + $.param({ project: theProject.id }),
+	    "/command/rdf-exporter-extension/preview-rdf?" + $.param({ project: theProject.id }),
         { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
         	self._previewPane.empty();
@@ -160,7 +161,7 @@ RdfSchemaAlignmentDialog.prototype._listVocabularies = function(){
 	self._renderVocabularyFooter();
 	
 	
-	$.get("/command/list-vocabularies",{},function(o){
+	$.get("/command/rdf-exporter-extension/list-vocabularies",{},function(o){
 		var vocab_table = $('<table></table>').width('100%').addClass('data-table')[0];
 		var tr = vocab_table.insertRow(vocab_table.rows.length);
 		$(tr).addClass('');
@@ -212,7 +213,7 @@ RdfSchemaAlignmentDialog.prototype._renderVocabularyFooter = function(){
     		return ;
     	}
 		var dismissBusy = DialogSystem.showBusy('Importing vocabulary from: ' + url);
-    	$.get("/command/import-vocabulary",{prefix:prefix,namespace:namespace,url:url},function(data){
+    	$.get("/command/rdf-exporter-extension/import-vocabulary",{prefix:prefix,namespace:namespace,url:url},function(data){
     		dismissBusy();
     		if (data.code === "error"){
     			alert('Error:' + data.message)
@@ -228,7 +229,7 @@ RdfSchemaAlignmentDialog.prototype._renderVocabularyFooter = function(){
 RdfSchemaAlignmentDialog.prototype._deleteVocabulary = function(uri){
 	var self = this;
 	var dismissBusy = DialogSystem.showBusy('Deleteing vocabulary: ' + uri);
-	$.post("/command/delete-vocabulary",{uri:uri},function(data){
+	$.post("/command/rdf-exporter-extension/delete-vocabulary",{uri:uri},function(data){
 		dismissBusy();
 		if (data.code === "error"){
 			alert('Error:' + data.message)
@@ -289,7 +290,7 @@ RdfSchemaAlignmentDialog.prototype._editBaseUri = function(src){
 RdfSchemaAlignmentDialog.prototype._replaceBaseUri = function(newBaseUri){
 	var self = this;
 	RdfSchemaAlignment._defaultNamespace = newBaseUri;
-	$.post("/command/save-baseURI?" + $.param({project: theProject.id }),{baseURI:newBaseUri},function(data){
+	$.post("/command/rdf-exporter-extension/save-baseURI?" + $.param({project: theProject.id }),{baseURI:newBaseUri},function(data){
 		if (data.code === "error"){
 			alert('Error:' + data.message)
 		}else{

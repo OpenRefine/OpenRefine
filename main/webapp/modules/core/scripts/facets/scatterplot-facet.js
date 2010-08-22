@@ -240,7 +240,7 @@ ScatterplotFacet.prototype._formulateImageUrl = function(engineConfig, conf) {
         engine: JSON.stringify(engineConfig), 
         plotter: JSON.stringify(options) 
     };
-    return "/command/get-scatterplot?" + $.param(params);
+    return "/command/core/get-scatterplot?" + $.param(params);
 };
 
 ScatterplotFacet.prototype.updateState = function(data) {

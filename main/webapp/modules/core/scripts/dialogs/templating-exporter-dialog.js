@@ -46,7 +46,7 @@ TemplatingExporterDialog.prototype._dismiss = function() {
 TemplatingExporterDialog.prototype._updatePreview = function() {
     var self = this;
     $.post(
-        "/command/export-rows/preview.txt",
+        "/command/core/export-rows/preview.txt",
         {
             "project" : theProject.id, 
             "format" : "template",
@@ -71,7 +71,7 @@ TemplatingExporterDialog.prototype._export = function() {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-rows/" + name + ".txt")
+        .attr("action", "/command/core/export-rows/" + name + ".txt")
         .attr("target", "gridworks-export");
         
     var appendField = function(name, value) {

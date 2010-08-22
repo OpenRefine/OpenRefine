@@ -32,7 +32,7 @@ public class GridworksServletTests extends GridworksTest {
 
     //variables
     final static private String TEST_COMMAND_NAME = "test-command";
-    final static private String TEST_COMMAND_PATH = "/command/test-command/foobar";
+    final static private String TEST_COMMAND_PATH = "/command/core/test-command/foobar";
     final static private String BAD_COMMAND_PATH = "/command-does-not-exist";
 
     final static private String POST = "POST";

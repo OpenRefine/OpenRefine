@@ -69,7 +69,7 @@
       },
       
       signin : function(success, provider, width, height) {
-        var newwin = window.Sign.popup("/command/authorize/" + provider, width, height);
+        var newwin = window.Sign.popup("/command/core/authorize/" + provider, width, height);
         
         if (newwin !== null) {
             newwin.opener = window;
@@ -80,7 +80,7 @@
             window.location.reload();
           } else {
             $.ajax({
-              url: "/command/check-authorization/" + provider,
+              url: "/command/core/check-authorization/" + provider,
               dataType: "json",
               success: function(data) {
                 window.user = data;
@@ -105,7 +105,7 @@
       
       signout : function(success,provider) {
         $.ajax({
-          url: "/command/deauthorize/" + provider,
+          url: "/command/core/deauthorize/" + provider,
           success: function() {
             if (typeof success == 'undefined') {
               window.location.reload();

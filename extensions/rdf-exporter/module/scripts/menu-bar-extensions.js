@@ -46,7 +46,7 @@ RdfExporterMenuBar.rdfExportRows = function(format, ext) {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/export-rows/" + name + "." + ext)
+        .attr("action", "/command/core/export-rows/" + name + "." + ext)
         .attr("target", "gridworks-export");
 
     $('<input />')

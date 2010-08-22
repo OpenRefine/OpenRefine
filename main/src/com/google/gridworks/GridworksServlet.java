@@ -19,6 +19,7 @@ import com.google.gridworks.commands.Command;
 import com.google.gridworks.io.FileProjectManager;
 
 import edu.mit.simile.butterfly.Butterfly;
+import edu.mit.simile.butterfly.ButterflyModule;
 
 public class GridworksServlet extends Butterfly {
 
@@ -37,93 +38,6 @@ public class GridworksServlet extends Butterfly {
     static private Timer _timer;
 
     final static Logger logger = LoggerFactory.getLogger("gridworks");
-
-    // TODO: This belongs in an external config file somewhere
-    private static final String[][] commandNames = {
-        {"create-project-from-upload", "com.google.gridworks.commands.project.CreateProjectCommand"},
-        {"import-project", "com.google.gridworks.commands.project.ImportProjectCommand"},
-        {"export-project", "com.google.gridworks.commands.project.ExportProjectCommand"},
-        {"export-rows", "com.google.gridworks.commands.project.ExportRowsCommand"},
-
-        {"get-project-metadata", "com.google.gridworks.commands.project.GetProjectMetadataCommand"},
-        {"get-all-project-metadata", "com.google.gridworks.commands.workspace.GetAllProjectMetadataCommand"},
-
-        {"delete-project", "com.google.gridworks.commands.project.DeleteProjectCommand"},
-        {"rename-project", "com.google.gridworks.commands.project.RenameProjectCommand"},
-
-        {"get-models", "com.google.gridworks.commands.project.GetModelsCommand"},
-        {"get-rows", "com.google.gridworks.commands.row.GetRowsCommand"},
-        {"get-processes", "com.google.gridworks.commands.history.GetProcessesCommand"},
-        {"get-history", "com.google.gridworks.commands.history.GetHistoryCommand"},
-        {"get-operations", "com.google.gridworks.commands.history.GetOperationsCommand"},
-        {"get-columns-info", "com.google.gridworks.commands.column.GetColumnsInfoCommand"},
-        {"get-scatterplot", "com.google.gridworks.commands.browsing.GetScatterplotCommand"},
-
-        {"undo-redo", "com.google.gridworks.commands.history.UndoRedoCommand"},
-        {"apply-operations", "com.google.gridworks.commands.history.ApplyOperationsCommand"},
-        {"cancel-processes", "com.google.gridworks.commands.history.CancelProcessesCommand"},
-
-        {"compute-facets", "com.google.gridworks.commands.browsing.ComputeFacetsCommand"},
-        {"compute-clusters", "com.google.gridworks.commands.browsing.ComputeClustersCommand"},
-
-        {"edit-one-cell", "com.google.gridworks.commands.cell.EditOneCellCommand"},
-        {"text-transform", "com.google.gridworks.commands.cell.TextTransformCommand"},
-        {"mass-edit", "com.google.gridworks.commands.cell.MassEditCommand"},
-        {"join-multi-value-cells", "com.google.gridworks.commands.cell.JoinMultiValueCellsCommand"},
-        {"split-multi-value-cells", "com.google.gridworks.commands.cell.SplitMultiValueCellsCommand"},
-        {"fill-down", "com.google.gridworks.commands.cell.FillDownCommand"},
-        {"blank-down", "com.google.gridworks.commands.cell.BlankDownCommand"},
-        {"transpose-columns-into-rows", "com.google.gridworks.commands.cell.TransposeColumnsIntoRowsCommand"},
-        {"transpose-rows-into-columns", "com.google.gridworks.commands.cell.TransposeRowsIntoColumnsCommand"},
-
-        {"add-column", "com.google.gridworks.commands.column.AddColumnCommand"},
-        {"remove-column", "com.google.gridworks.commands.column.RemoveColumnCommand"},
-        {"rename-column", "com.google.gridworks.commands.column.RenameColumnCommand"},
-        {"move-column", "com.google.gridworks.commands.column.MoveColumnCommand"},
-        {"split-column", "com.google.gridworks.commands.column.SplitColumnCommand"},
-        {"extend-data", "com.google.gridworks.commands.column.ExtendDataCommand"},
-
-        {"denormalize", "com.google.gridworks.commands.row.DenormalizeCommand"},
-
-        {"reconcile", "com.google.gridworks.commands.recon.ReconcileCommand"},
-        {"recon-match-best-candidates", "com.google.gridworks.commands.recon.ReconMatchBestCandidatesCommand"},
-        {"recon-mark-new-topics", "com.google.gridworks.commands.recon.ReconMarkNewTopicsCommand"},
-        {"recon-discard-judgments", "com.google.gridworks.commands.recon.ReconDiscardJudgmentsCommand"},
-        {"recon-match-specific-topic-to-cells", "com.google.gridworks.commands.recon.ReconMatchSpecificTopicCommand"},
-        {"recon-judge-one-cell", "com.google.gridworks.commands.recon.ReconJudgeOneCellCommand"},
-        {"recon-judge-similar-cells", "com.google.gridworks.commands.recon.ReconJudgeSimilarCellsCommand"},
-
-        {"annotate-one-row", "com.google.gridworks.commands.row.AnnotateOneRowCommand"},
-        {"annotate-rows", "com.google.gridworks.commands.row.AnnotateRowsCommand"},
-        {"remove-rows", "com.google.gridworks.commands.row.RemoveRowsCommand"},
-        {"reorder-rows", "com.google.gridworks.commands.row.ReorderRowsCommand"},
-
-        {"save-protograph", "com.google.gridworks.commands.freebase.SaveProtographCommand"},
-
-        {"get-expression-language-info", "com.google.gridworks.commands.expr.GetExpressionLanguageInfoCommand"},
-        {"get-expression-history", "com.google.gridworks.commands.expr.GetExpressionHistoryCommand"},
-        {"log-expression", "com.google.gridworks.commands.expr.LogExpressionCommand"},
-
-        {"preview-expression", "com.google.gridworks.commands.expr.PreviewExpressionCommand"},
-        {"preview-extend-data", "com.google.gridworks.commands.column.PreviewExtendDataCommand"},
-        {"preview-protograph", "com.google.gridworks.commands.freebase.PreviewProtographCommand"},
-
-        {"guess-types-of-column", "com.google.gridworks.commands.freebase.GuessTypesOfColumnCommand"},
-
-        {"check-authorization", "com.google.gridworks.commands.auth.CheckAuthorizationCommand"},
-        {"authorize", "com.google.gridworks.commands.auth.AuthorizeCommand"},
-        {"deauthorize", "com.google.gridworks.commands.auth.DeAuthorizeCommand"},
-        {"user-badges", "com.google.gridworks.commands.auth.GetUserBadgesCommand"},
-
-        {"upload-data", "com.google.gridworks.commands.freebase.UploadDataCommand"},
-        {"import-qa-data", "com.google.gridworks.commands.freebase.ImportQADataCommand"},
-        {"mqlread", "com.google.gridworks.commands.freebase.MQLReadCommand"},
-        {"mqlwrite", "com.google.gridworks.commands.freebase.MQLWriteCommand"},
-        
-        {"get-preference", "com.google.gridworks.commands.GetPreferenceCommand"},
-        {"get-all-preferences", "com.google.gridworks.commands.GetAllPreferencesCommand"},
-        {"set-preference", "com.google.gridworks.commands.SetPreferenceCommand"},
-    };
 
     public static String getVersion() {
         return VERSION;
@@ -159,8 +73,6 @@ public class GridworksServlet extends Butterfly {
             throw new ServletException("can't find servlet init config 'gridworks.data', I have to give up initializing");
         }
 
-        registerCommands(commandNames);
-
         s_dataDir = new File(data);
         FileProjectManager.initialize(s_dataDir);
 
@@ -195,18 +107,18 @@ public class GridworksServlet extends Butterfly {
 
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getPathInfo().startsWith("/command")) {
-            String commandName = getCommandName(request);
-            Command command = commands.get(commandName);
+        if (request.getPathInfo().startsWith("/command/")) {
+            String commandKey = getCommandKey(request);
+            Command command = commands.get(commandKey);
             if (command != null) {
                 if (request.getMethod().equals("GET")) {
-                    logger.trace("> GET {}", commandName);
+                    logger.trace("> GET {}", commandKey);
                     command.doGet(request, response);
-                    logger.trace("< GET {}", commandName);
+                    logger.trace("< GET {}", commandKey);
                 } else if (request.getMethod().equals("POST")) {
-                    logger.trace("> POST {}", commandName);
+                    logger.trace("> POST {}", commandKey);
                     command.doPost(request, response);
-                    logger.trace("< POST {}", commandName);
+                    logger.trace("< POST {}", commandKey);
                 } else {
                     response.sendError(405);
                 }
@@ -218,13 +130,20 @@ public class GridworksServlet extends Butterfly {
         }
     }
 
-    protected String getCommandName(HttpServletRequest request) {
-        // Remove extraneous path segments that might be there for other purposes,
-        // e.g., for /export-rows/filename.ext, export-rows is the command while
-        // filename.ext is only for the browser to prompt a convenient filename.
-        String commandName = request.getPathInfo().substring("/command/".length());
-        int slash = commandName.indexOf('/');
-        return slash > 0 ? commandName.substring(0, slash) : commandName;
+    protected String getCommandKey(HttpServletRequest request) {
+        // A command path has this format: /command/module-name/command-name/...
+        
+        String path = request.getPathInfo().substring("/command/".length());
+        
+        int slash1 = path.indexOf('/');
+        if (slash1 >= 0) {
+            int slash2 = path.indexOf('/', slash1 + 1);
+            if (slash2 > 0) {
+                path = path.substring(0, slash2);
+            }
+        }
+        
+        return path;
     }
 
     private File tempDir = null;
@@ -253,71 +172,33 @@ public class GridworksServlet extends Butterfly {
     public String getConfiguration(String name, String def) {
         return null;
     }
-
-    /**
-     * Register an array of commands
-     *
-     * @param commands
-     *            An array of arrays containing pairs of strings with the
-     *            command name in the first element of the tuple and the fully
-     *            qualified class name of the class implementing the command in
-     *            the second.
-     * @return false if any commands failed to load
-     */
-    private boolean registerCommands(String[][] commands) {
-        boolean status = true;
-        for (String[] command : commandNames) {
-            String commandName = command[0];
-            String className = command[1];
-            status |= registerOneCommand(commandName, className);
-        }
-        return status;
-    }
     
     /**
-     * Register a single command given its class name.
+     * Register a single command.
      *
-     * @param name
-     *            command verb for command
-     * @param className
-     *            class name of command class
+     * @param module the module the command belongs to
+     * @param name command verb for command
+     * @param commandObject object implementing the command
      * @return true if command was loaded and registered successfully
      */
-    protected boolean registerOneCommand(String commandName, String className) {
-        logger.debug("Loading command " + commandName + " class: " + className);
-        Command cmd;
-        try {
-            cmd = (Command) this.getClass().getClassLoader().loadClass(className).newInstance();
-            
-            return registerOneCommand(commandName, cmd);
-        } catch (InstantiationException e) {
-            logger.error("Failed to load command class " + className, e);
-            return false;
-        } catch (IllegalAccessException e) {
-            logger.error("Failed to load command class " + className, e);
-            return false;
-        } catch (ClassNotFoundException e) {
-            logger.error("Failed to load command class " + className, e);
-            return false;
-        }
+    protected boolean registerOneCommand(ButterflyModule module, String name, Command commandObject) {
+        return registerOneCommand(module.getName() + "/" + name, commandObject);
     }
     
     /**
      * Register a single command.
      *
-     * @param name
-     *            command verb for command
-     * @param commandObject
-     *            object implementing the command
+     * @param path path for command
+     * @param commandObject object implementing the command
      * @return true if command was loaded and registered successfully
      */
-    protected boolean registerOneCommand(String name, Command commandObject) {
-        if (commands.containsKey(name)) {
+    protected boolean registerOneCommand(String path, Command commandObject) {
+        if (commands.containsKey(path)) {
             return false;
         }
         
         commandObject.init(this);
-        commands.put(name, commandObject);
+        commands.put(path, commandObject);
         
         return true;
     }
@@ -330,15 +211,14 @@ public class GridworksServlet extends Butterfly {
     /**
      * Register a single command. Used by extensions.
      *
-     * @param name
-     *            command verb for command
-     * @param commandObject
-     *            object implementing the command
+     * @param module the module the command belongs to
+     * @param name command verb for command
+     * @param commandObject object implementing the command
      *            
      * @return true if command was loaded and registered successfully
      */
-    static public boolean registerCommand(String commandName, Command commandObject) {
-        return s_singleton.registerOneCommand(commandName, commandObject);
+    static public boolean registerCommand(ButterflyModule module, String commandName, Command commandObject) {
+        return s_singleton.registerOneCommand(module, commandName, commandObject);
     }
     
     static public Class<?> getClass(String className) throws ClassNotFoundException {
@@ -348,4 +228,3 @@ public class GridworksServlet extends Butterfly {
         return Class.forName(className);
     }
 }
-

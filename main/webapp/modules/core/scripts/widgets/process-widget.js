@@ -45,7 +45,7 @@ ProcessWidget.prototype.update = function(updateOptions, onDone) {
     
     var self = this;
     Ajax.chainGetJSON(
-        "/command/get-processes?" + $.param({ project: theProject.id }), null,
+        "/command/core/get-processes?" + $.param({ project: theProject.id }), null,
         function(data) {
             self._latestHistoryEntry = null;
             self._render(data);
@@ -72,7 +72,7 @@ ProcessWidget.prototype.showUndo = function(historyEntry) {
 
 ProcessWidget.prototype.undo = function() {
     if (this._latestHistoryEntry !== null) {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "undo-redo",
             { undoID: this._latestHistoryEntry.id },
             null,
@@ -84,7 +84,7 @@ ProcessWidget.prototype.undo = function() {
 ProcessWidget.prototype._cancelAll = function() {
     var self = this;
     $.post(
-        "/command/cancel-processes?" + $.param({ project: theProject.id }), 
+        "/command/core/cancel-processes?" + $.param({ project: theProject.id }), 
         null,
         function(o) {
             self._data = null;

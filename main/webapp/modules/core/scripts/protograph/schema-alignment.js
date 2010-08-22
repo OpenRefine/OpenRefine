@@ -169,7 +169,7 @@ SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         var protograph = self.getJSON();
         
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "save-protograph",
             {},
             { protograph: JSON.stringify(protograph) },
@@ -263,7 +263,7 @@ SchemaAlignmentDialog.prototype.preview = function() {
     
     var protograph = this.getJSON();
     $.post(
-        "/command/preview-protograph?" + $.param({ project: theProject.id }),
+        "/command/core/preview-protograph?" + $.param({ project: theProject.id }),
         { protograph: JSON.stringify(protograph), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
             if ("mqllike" in data) {

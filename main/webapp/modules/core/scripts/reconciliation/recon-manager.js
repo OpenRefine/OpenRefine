@@ -81,7 +81,7 @@ ReconciliationManager.save = function(f) {
     $.ajax({
         async: false,
         type: "POST",
-        url: "/command/set-preference?" + $.param({ 
+        url: "/command/core/set-preference?" + $.param({ 
             name: "reconciliation.standardServices" 
         }),
         data: { "value" : JSON.stringify(ReconciliationManager.standardServices) },
@@ -100,7 +100,7 @@ ReconciliationManager.save = function(f) {
     
     $.ajax({
         async: false,
-        url: "/command/get-preference?" + $.param({ 
+        url: "/command/core/get-preference?" + $.param({ 
             name: "reconciliation.standardServices" 
         }),
         success: function(data) {

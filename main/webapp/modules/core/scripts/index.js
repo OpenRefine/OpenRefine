@@ -9,7 +9,7 @@ function onClickUploadFileButton(evt) {
 
     } else {
         $("#file-upload-form").attr("action",
-            "/command/create-project-from-upload?" + [
+            "/command/core/create-project-from-upload?" + [
                 "url=" +                escape(dataURL),
                 "split-into-columns=" + $("#split-into-columns-input")[0].checked,
                 "separator=" +          $("#separator-input")[0].value,
@@ -72,7 +72,7 @@ function isThereNewRelease() {
 
 function fetchProjects() {
     $.getJSON(
-        "/command/get-all-project-metadata",
+        "/command/core/get-all-project-metadata",
         null,
         function(data) {
             renderProjects(data);
@@ -135,7 +135,7 @@ function renderProjects(data) {
 
                     $.ajax({
                         type: "POST",
-                        url: "/command/rename-project",
+                        url: "/command/core/rename-project",
                         data: { "project" : project.id, "name" : name },
                         dataType: "json",
                         success: function (data) {
@@ -163,7 +163,7 @@ function renderProjects(data) {
                 if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
                     $.ajax({
                         type: "POST",
-                        url: "/command/delete-project",
+                        url: "/command/core/delete-project",
                         data: { "project" : project.id },
                         dataType: "json",
                         success: function (data) {

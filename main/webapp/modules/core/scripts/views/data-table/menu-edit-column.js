@@ -19,7 +19,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 return;
             }
 
-            Gridworks.postProcess(
+            Gridworks.postCoreProcess(
                 "add-column", 
                 {
                     baseColumnName: column.name, 
@@ -51,7 +51,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             columnIndex, 
             o.rowIndices, 
             function(extension) {
-                Gridworks.postProcess(
+                Gridworks.postCoreProcess(
                     "extend-data", 
                     {
                         baseColumnName: column.name,
@@ -67,7 +67,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doRemoveColumn = function() {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "remove-column", 
             {
                 columnName: column.name
@@ -80,7 +80,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var doRenameColumn = function() {
         var newColumnName = window.prompt("Enter new column name", column.name);
         if (newColumnName !== null) {
-            Gridworks.postProcess(
+            Gridworks.postCoreProcess(
                 "rename-column", 
                 {
                     oldColumnName: column.name,
@@ -93,7 +93,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doMoveColumnTo = function(index) {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "move-column", 
             {
                 columnName: column.name,
@@ -105,7 +105,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doMoveColumnBy = function(change) {
-        Gridworks.postProcess(
+        Gridworks.postCoreProcess(
             "move-column", 
             {
                 columnName: column.name,
@@ -169,7 +169,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 config.fieldLengths = JSON.stringify(lengths);
             }
 
-            Gridworks.postProcess(
+            Gridworks.postCoreProcess(
                 "split-column", 
                 config,
                 null,

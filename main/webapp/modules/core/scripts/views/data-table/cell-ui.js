@@ -303,7 +303,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
 DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyParams, columnStatsChanged) {
     var self = this;
 
-    Gridworks.postProcess(
+    Gridworks.postCoreProcess(
         command, 
         params, 
         bodyParams,
@@ -324,7 +324,7 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyPa
 };
 
 DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, bodyParams, columnStatsChanged) {
-    Gridworks.postProcess(
+    Gridworks.postCoreProcess(
         command, 
         params, 
         bodyParams,
@@ -410,7 +410,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         MenuSystem.dismissAll();
         
         if (applyOthers) {
-            Gridworks.postProcess(
+            Gridworks.postCoreProcess(
                 "mass-edit",
                 {},
                 {
@@ -425,7 +425,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
                 { cellsChanged: true }
             );            
         } else {
-            Gridworks.postProcess(
+            Gridworks.postCoreProcess(
                 "edit-one-cell", 
                 {
                     row: self._rowIndex,
