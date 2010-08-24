@@ -6,6 +6,7 @@ var bundle = true;
 var templatedFiles = {
     // Requests with last path segments mentioned here 
     // will get served from .vt files with the same names
+    "index" : true,
     "project" : true,
     "preferences" : true
 };
@@ -106,6 +107,31 @@ function init() {
     // Packages.java.lang.System.err.println("Initializing by script " + module);
     
     registerCommands();
+    
+    ClientSideResourceManager.addPaths(
+        "index/scripts",
+        module,
+        [
+            "externals/jquery-1.4.2.min.js",
+            "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
+            "externals/date.js",
+            "scripts/util/string.js",
+            "scripts/version.js",
+            "scripts/index.js"
+        ]
+    );
+    
+    ClientSideResourceManager.addPaths(
+        "index/styles",
+        module,
+        [
+            "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
+            "styles/common.css",
+            "styles/freebase.css",
+            "styles/index.css",
+            "styles/jquery-ui-overrides.css"
+        ]
+    );
     
     ClientSideResourceManager.addPaths(
         "project/scripts",
@@ -251,7 +277,9 @@ function process(path, request, response) {
             "text/javascript"
         );
     } else {
-        if (path.endsWith("/")) {
+        if (path == "/" || path == "") {
+            path = "/index";
+        } else if (path.endsWith("/")) {
             path = path.substring(0, path.length - 1);
         }
     

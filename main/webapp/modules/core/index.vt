@@ -5,21 +5,8 @@
 
     <link rel="icon" type="image/png" href="images/favicon.png">
 
-    <link type="text/css" rel="stylesheet" href="externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css" />
-
-    <link rel="stylesheet" href="/styles/common.css" />
-    <link rel="stylesheet" href="/styles/freebase.css" />
-    <link rel="stylesheet" href="/styles/index.css" />
-    <link rel="stylesheet" href="/styles/jquery-ui-overrides.css" />
-
-    <script type="text/javascript" src="externals/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="externals/jquery-ui/jquery-ui-1.8.custom.min.js"></script>
-    <script type="text/javascript" src="externals/date.js"></script>
-
-    <script type="text/javascript" src="scripts/util/string.js"></script>
-    <script type="text/javascript" src="scripts/version.js"></script>
-    <script type="text/javascript" src="scripts/index.js"></script>
-
+    $scriptInjection
+    $styleInjection
 </head>
 <body>
     <div id="header">
