@@ -102,6 +102,11 @@ MenuBar.MenuItems = [
                 click: function() { MenuBar.handlers.loadIntoFreebase(); }
             },
             {
+                "id" : "core/browse-load",
+                label: "Browse to Data Load ...",
+                click: function() { MenuBar.handlers.browseToDataLoad(); }
+            },
+            {
                 "id" : "core/import-qa-data",
                 label: "Import QA Data",
                 click: function() { MenuBar.handlers.importQAData(); }
@@ -324,6 +329,35 @@ MenuBar.handlers.editSchemaAlignment = function(reset) {
 
 MenuBar.handlers.loadIntoFreebase = function() {
     new FreebaseLoadingDialog();
+};
+
+MenuBar.handlers.browseToDataLoad = function() {
+    // The form has to be created as part of the click handler. If you create it
+    // inside the getJSON success handler, it won't work.
+    
+    var form = document.createElement("form");
+    $(form)
+        .css("display", "none")
+        .attr("method", "GET")
+        .attr("target", "dataload");
+
+    document.body.appendChild(form);
+    var w = window.open("about:blank", "dataload");
+    
+    $.getJSON(
+        "/command/core/get-preference?" + $.param({ project: theProject.id, name: "freebase.load.jobID" }),
+        null,
+        function(data) {
+            if (data.value == null) {
+                alert("You have not tried to load the data in this project into Freebase yet.");
+            } else {
+                $(form).attr("action", "http://gridworks-loads.freebaseapps.com/load/" + data.value);
+                form.submit();
+                w.focus();
+            }
+            document.body.removeChild(form);
+        }
+    );
 };
 
 MenuBar.handlers.importQAData = function() {

@@ -17,11 +17,13 @@ import com.google.gridworks.browsing.Engine;
 import com.google.gridworks.commands.Command;
 import com.google.gridworks.exporters.ProtographTransposeExporter.TripleLoaderExporter;
 import com.google.gridworks.model.Project;
+import com.google.gridworks.preference.PreferenceStore;
 import com.google.gridworks.util.FreebaseUtils;
 import com.google.gridworks.util.ParsingUtilities;
 
 public class UploadDataCommand extends Command {
-    final static public String s_dataLoadJobIDPref = "core/freebaseDataLoadJobID";
+    final static public String s_dataLoadJobIDPref = "freebase.load.jobID";
+    final static public String s_dataLoadJobNamePref = "freebase.load.jobName";
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -31,6 +33,8 @@ public class UploadDataCommand extends Command {
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
+            PreferenceStore preferenceStore = project.getMetadata().getPreferenceStore();
+            
             TripleLoaderExporter exporter = new TripleLoaderExporter();
             StringWriter triples = new StringWriter(10 * 1024 * 1024);
             exporter.export(project, new Properties(), engine, triples);
@@ -40,8 +44,10 @@ public class UploadDataCommand extends Command {
             String graph = request.getParameter("graph");
             String mdo_id = null;
             
+            preferenceStore.put(s_dataLoadJobNamePref, source_name);
+            
             try {
-                Integer jobID = (Integer) project.getMetadata().getPreferenceStore().get(s_dataLoadJobIDPref);
+                Integer jobID = (Integer) preferenceStore.get(s_dataLoadJobIDPref);
                 if (jobID != null) {
                     URL url = new URL("http://gridworks-loads.freebaseapps.com/job_id_to_mdo?job=" + jobID);
                     String s = ParsingUtilities.inputStreamToString(url.openConnection().getInputStream());

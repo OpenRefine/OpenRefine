@@ -9,7 +9,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     this._elmts = DOM.bind(dialog);
     this._elmts.cancelButton.click(function() { self._dismiss(); });
     this._elmts.selector.buttonset();
-
+    
     var provider = "www.freebase.com";
     var authorization = this._elmts.authorization;
     var loadButton = this._elmts.loadButton;
@@ -126,6 +126,16 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                         make_topic(val, "/dataworld/information_source");
                     });
 
+                    $.getJSON(
+                        "/command/core/get-preference?" + $.param({ project: theProject.id, name: "freebase.load.jobName" }),
+                        null,
+                        function(data) {
+                            if (data.value != null) {
+                                self._elmts.source_name[0].value = data.value;
+                            }
+                        }
+                    );
+
                     if (typeof cont == "function") cont();
                 } else {
                     body.html(
@@ -159,7 +169,7 @@ FreebaseLoadingDialog.prototype._load = function() {
     var freebase = self._elmts.freebase.attr("checked");
 
     var get_peacock_url = function(url) {
-        return "http://gridworks-loads.freebaseapps.com/job/" + url.split("/").slice(-1)[0];
+        return "http://gridworks-loads.freebaseapps.com/load/" + url.split("/").slice(-1)[0];
     };
     
     var doLoad = function() {
