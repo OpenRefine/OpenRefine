@@ -10,18 +10,52 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     this._elmts = DOM.bind(dialog);
     this._elmts.controls.find("textarea").keyup(function() { self._scheduleUpdate(); });
     
-    this._elmts.prefixTextarea[0].value = '{\n  "rows" : [\n';
-    this._elmts.suffixTextarea[0].value = '\n  ]\n}';
-    this._elmts.separatorTextarea[0].value = ',\n';
-    this._elmts.templateTextarea[0].value = '    {' +
-        $.map(theProject.columnModel.columns, function(column, i) {
-            return '\n      "' + column.name + '" : {{jsonize(cells["' + column.name + '"].value)}}';
-        }).join(',') + '\n    }';
-    
     this._elmts.exportButton.click(function() { self._export(); self._dismiss(); });
     this._elmts.cancelButton.click(function() { self._dismiss(); });
+    this._elmts.resetButton.click(function() {
+        self._fillInTemplate(self._createDefaultTemplate());
+        self._updatePreview();
+    });
+    
+    this._getSavedTemplate(function(t) {
+        self._fillInTemplate(t || self._createDefaultTemplate());
+        self._updatePreview();
+    });
     
     this._level = DialogSystem.showDialog(dialog);
+};
+
+TemplatingExporterDialog.prototype._getSavedTemplate = function(f) {
+    $.getJSON(
+        "/command/core/get-preference?" + $.param({ project: theProject.id, name: "exporters.templating.template" }),
+        null,
+        function(data) {
+            if (data.value != null) {
+                f(JSON.parse(data.value));
+            } else {
+                f(null);
+            }
+        }
+    );
+};
+
+TemplatingExporterDialog.prototype._createDefaultTemplate = function() {
+    return {
+        prefix: '{\n  "rows" : [\n',
+        suffix: '\n  ]\n}',
+        separator: ',\n',
+        template: '    {' +
+            $.map(theProject.columnModel.columns, function(column, i) {
+                return '\n      "' + column.name + '" : {{jsonize(cells["' + column.name + '"].value)}}';
+            }).join(',') + '\n    }'
+    };
+};
+
+TemplatingExporterDialog.prototype._fillInTemplate = function(t) {
+    this._elmts.prefixTextarea[0].value = t.prefix;
+    this._elmts.suffixTextarea[0].value = t.suffix;
+    this._elmts.separatorTextarea[0].value = t.separator;
+    this._elmts.templateTextarea[0].value = t.template;
 };
 
 TemplatingExporterDialog.prototype._scheduleUpdate = function() {
@@ -56,6 +90,7 @@ TemplatingExporterDialog.prototype._updatePreview = function() {
             "suffix" : this._elmts.suffixTextarea[0].value,
             "separator" : this._elmts.separatorTextarea[0].value,
             "template" : this._elmts.templateTextarea[0].value,
+            "preview" : true,
             "limit" : "20"
         },
         function (data) {

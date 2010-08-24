@@ -17,10 +17,15 @@
           <div class="input-container"><textarea bind="previewTextarea" class="code" wrap="off" style="height: 40em;"></textarea></div>
         </td>
       </tr>
-    </table></div>'
+    </table></div>
   </div>
-  <div class="dialog-footer" bind="dialogFooter">
-    <button bind="exportButton">Export</button>
-    <button bind="cancelButton">Cancel</button>
-  </div>
+  <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-normal layout-full"><table><tr>
+    <td align="left">
+      <button bind="resetButton">Reset Template</button>
+    </td>
+    <td style="text-align: right;">
+      <button bind="exportButton">Export</button>
+      <button bind="cancelButton">Cancel</button>
+    </td>
+  </tr></table></div></div>
 </div>
