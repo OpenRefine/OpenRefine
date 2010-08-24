@@ -59,6 +59,8 @@
     <property name="broker.dir" value="${basedir}/broker" />
     <property name="broker.core.dir" value="${broker.dir}/core" />
     <property name="broker.appengine.dir" value="${broker.dir}/appengine" />
+
+    <property name="extensions.dir" value="${basedir}/extensions" />
     
     <property name="tests.dir" value="${main.dir}/tests" />
     <property name="server.tests.dir" value="${tests.dir}/server" />
@@ -209,11 +211,24 @@
         </copy>
         
         <copy file="${build.dir}/${fullname}.jar" tofile="${built.webapp.dir}/WEB-INF/lib/${fullname}.jar"/>
+
+        <copy todir="${built.webapp.dir}/extensions">
+            <fileset dir="${extensions.dir}">
+                <include name="**/*"/>
+                <exclude name="**/build.xml"/>
+                <exclude name="**/src/**"/>
+            </fileset>
+        </copy>
         
         <replace file="${built.webapp.dir}/modules/core/scripts/version.js">
             <replacefilter token="$VERSION" value="${version}"/>
             <replacefilter token="$REVISION" value="${revision}"/>
         </replace>
+
+        <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
+            <replacefilter token="../../extensions/" value="extensions"/>
+        </replace>
+
     </target>
     
     <target name="mac" depends="jar, prepare_webapp">
