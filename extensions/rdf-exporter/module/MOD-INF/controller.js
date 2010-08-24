@@ -15,8 +15,8 @@ function init() {
     /*
      *  Operations
      */
-    Packages.com.google.gridworks.operations.OperationRegistry.register(
-        "save-rdf-schema", Packages.com.google.gridworks.rdf.operations.SaveRdfSchemaOperation);
+    Packages.com.google.gridworks.operations.OperationRegistry.registerOperation(
+        module, "save-rdf-schema", Packages.com.google.gridworks.rdf.operations.SaveRdfSchemaOperation);
     
     /*
      *  Exporters
