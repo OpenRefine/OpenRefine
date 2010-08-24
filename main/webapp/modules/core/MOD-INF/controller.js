@@ -100,6 +100,43 @@ function registerCommands() {
     GS.registerCommand(module, "set-preference", new Packages.com.google.gridworks.commands.SetPreferenceCommand());
 }
 
+function registerOperations() {
+    var OR = Packages.com.google.gridworks.operations.OperationRegistry;
+    
+    OR.registerOperation(module, "text-transform", Packages.com.google.gridworks.operations.cell.TextTransformOperation);
+    OR.registerOperation(module, "mass-edit", Packages.com.google.gridworks.operations.cell.MassEditOperation);
+    
+    OR.registerOperation(module, "multivalued-cell-join", Packages.com.google.gridworks.operations.cell.MultiValuedCellJoinOperation);
+    OR.registerOperation(module, "multivalued-cell-split", Packages.com.google.gridworks.operations.cell.MultiValuedCellSplitOperation);
+    OR.registerOperation(module, "fill-down", Packages.com.google.gridworks.operations.cell.FillDownOperation);
+    OR.registerOperation(module, "blank-down", Packages.com.google.gridworks.operations.cell.BlankDownOperation);
+    OR.registerOperation(module, "transpose-columns-into-rows", Packages.com.google.gridworks.operations.cell.TransposeColumnsIntoRowsOperation);
+    OR.registerOperation(module, "transpose-rows-into-columns", Packages.com.google.gridworks.operations.cell.TransposeRowsIntoColumnsOperation);
+    
+    OR.registerOperation(module, "column-addition", Packages.com.google.gridworks.operations.column.ColumnAdditionOperation);
+    OR.registerOperation(module, "column-removal", Packages.com.google.gridworks.operations.column.ColumnRemovalOperation);
+    OR.registerOperation(module, "column-rename", Packages.com.google.gridworks.operations.column.ColumnRenameOperation);
+    OR.registerOperation(module, "column-move", Packages.com.google.gridworks.operations.column.ColumnMoveOperation);
+    OR.registerOperation(module, "column-split", Packages.com.google.gridworks.operations.column.ColumnSplitOperation);
+    OR.registerOperation(module, "extend-data", Packages.com.google.gridworks.operations.column.ExtendDataOperation);
+    OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.gridworks.operations.column.ColumnAdditionByFetchingURLsOperation);
+    
+    OR.registerOperation(module, "row-removal", Packages.com.google.gridworks.operations.row.RowRemovalOperation);
+    OR.registerOperation(module, "row-star", Packages.com.google.gridworks.operations.row.RowStarOperation);
+    OR.registerOperation(module, "row-flag", Packages.com.google.gridworks.operations.row.RowFlagOperation);
+    OR.registerOperation(module, "row-reorder", Packages.com.google.gridworks.operations.row.RowReorderOperation);
+    
+    OR.registerOperation(module, "recon", Packages.com.google.gridworks.operations.recon.ReconOperation);
+    OR.registerOperation(module, "recon-mark-new-topics", Packages.com.google.gridworks.operations.recon.ReconMarkNewTopicsOperation);
+    OR.registerOperation(module, "recon-match-best-candidates", Packages.com.google.gridworks.operations.recon.ReconMatchBestCandidatesOperation);
+    OR.registerOperation(module, "recon-discard-judgments", Packages.com.google.gridworks.operations.recon.ReconDiscardJudgmentsOperation);
+    OR.registerOperation(module, "recon-match-specific-topic-to-cells", Packages.com.google.gridworks.operations.recon.ReconMatchSpecificTopicOperation);
+    OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.gridworks.operations.recon.ReconJudgeSimilarCellsOperation);
+    OR.registerOperation(module, "import-qa-data", Packages.com.google.gridworks.operations.recon.ImportQADataOperation);
+    
+    OR.registerOperation(module, "save-protograph", Packages.com.google.gridworks.operations.SaveProtographOperation);
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
@@ -107,6 +144,7 @@ function init() {
     // Packages.java.lang.System.err.println("Initializing by script " + module);
     
     registerCommands();
+    registerOperations();
     
     ClientSideResourceManager.addPaths(
         "index/scripts",
