@@ -181,7 +181,7 @@ ReconDialog.prototype._onAddNamespacedService = function() {
         var namespaceData = elmts.namespaceInput.data("data.suggest");
         var typeData = elmts.typeInput.data("data.suggest");
         if (namespaceData) {
-            var url = "http://1.standard-reconcile.dfhuynh.user.dev.freebaseapps.com/namespace_reconcile?namespace=" + 
+            var url = "http://2.standard-reconcile.dfhuynh.user.dev.freebaseapps.com/namespace_reconcile?namespace=" + 
                 escape(namespaceData.id);
             if (typeData) {
                 url += "&type=" + typeData.id;
