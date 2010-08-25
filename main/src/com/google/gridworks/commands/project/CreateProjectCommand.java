@@ -372,7 +372,13 @@ public class CreateProjectCommand extends Command {
             }
 
             try {
-                importer = ImporterRegistry.guessImporter(connection.getContentType(), url.getPath());
+                String contentType = connection.getContentType();
+                int semicolon = contentType.indexOf(';');
+                if (semicolon >= 0) {
+                    contentType = contentType.substring(0, semicolon);
+                }
+                
+                importer = ImporterRegistry.guessImporter(contentType, url.getPath());
                 
                 internalInvokeImporter(project, importer, options, inputStream, connection.getContentEncoding());
             } finally {
