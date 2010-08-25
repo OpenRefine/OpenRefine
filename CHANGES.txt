@@ -11,7 +11,7 @@ Features:
   - Blank Down
   - Transpose Cells in Columns into Rows
   - Transpose Cells in Rows into Columns (Issue 82)
-  - Move Column to Beginning, Move Column to End, Move Column Left, Move Column Right
+  - Move Column to Beginning, Move Column to End, Move Column Left, Move Column Right, Reorder Columns
   - Add Column by Fetching URLs
 - GEL:
   - JSON support
