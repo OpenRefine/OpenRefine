@@ -57,6 +57,7 @@ function registerCommands() {
     GS.registerCommand(module, "split-column", new Packages.com.google.gridworks.commands.column.SplitColumnCommand());
     GS.registerCommand(module, "extend-data", new Packages.com.google.gridworks.commands.column.ExtendDataCommand());
     GS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.gridworks.commands.column.AddColumnByFetchingURLsCommand());
+    GS.registerCommand(module, "reorder-columns", new Packages.com.google.gridworks.commands.column.ReorderColumnsCommand());
 
     GS.registerCommand(module, "denormalize", new Packages.com.google.gridworks.commands.row.DenormalizeCommand());
 
@@ -120,6 +121,7 @@ function registerOperations() {
     OR.registerOperation(module, "column-split", Packages.com.google.gridworks.operations.column.ColumnSplitOperation);
     OR.registerOperation(module, "extend-data", Packages.com.google.gridworks.operations.column.ExtendDataOperation);
     OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.gridworks.operations.column.ColumnAdditionByFetchingURLsOperation);
+    OR.registerOperation(module, "column-reorder", Packages.com.google.gridworks.operations.column.ColumnReorderOperation);
     
     OR.registerOperation(module, "row-removal", Packages.com.google.gridworks.operations.row.RowRemovalOperation);
     OR.registerOperation(module, "row-star", Packages.com.google.gridworks.operations.row.RowStarOperation);
@@ -228,6 +230,7 @@ function init() {
             "scripts/dialogs/scatterplot-dialog.js",
             "scripts/dialogs/extend-data-preview-dialog.js",
             "scripts/dialogs/templating-exporter-dialog.js",
+            "scripts/dialogs/column-reordering-dialog.js",
 
             "scripts/protograph/schema-alignment.js",
             "scripts/protograph/schema-alignment-ui-node.js",
@@ -266,6 +269,7 @@ function init() {
             "styles/dialogs/scatterplot-dialog.css",
             "styles/dialogs/freebase-loading-dialog.css",
             "styles/dialogs/extend-data-preview-dialog.css",
+            "styles/dialogs/column-reordering-dialog.css",
             
             "styles/reconciliation/recon-dialog.css",
             "styles/reconciliation/standard-service-panel.css",

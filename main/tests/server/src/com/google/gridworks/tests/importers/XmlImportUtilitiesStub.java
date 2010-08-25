@@ -26,7 +26,7 @@ public class XmlImportUtilitiesStub extends XmlImportUtilities {
         super.processRecord(project, parser, rootColumnGroup);
     }
 
-    public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName, String text, int commonStartingRowIndex){
-        super.addCell(project, columnGroup, record, columnLocalName, text, commonStartingRowIndex);
+    public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName, String text, int commonStartingRowIndex) {
+        super.addCell(project, columnGroup, record, columnLocalName, text);
     }
 }

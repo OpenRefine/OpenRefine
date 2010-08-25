@@ -52,14 +52,14 @@ public class XmlImporter implements StreamImporter {
             }
         }
 
-        if(recordPath == null)
+        if (recordPath == null)
             return;
-
+        
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
 
         XmlImportUtilities.importXml(pis, project, recordPath, rootColumnGroup);
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-
+        
         project.columnModel.update();
     }
 

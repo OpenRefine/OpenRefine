@@ -502,6 +502,16 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 }
             ]
         },
+        {   label: "Edit Columns",
+            submenu: [
+                {
+                    label: "Re-order Columns",
+                    click: function() {
+                        new ColumnReorderingDialog();
+                    }
+                }
+            ]
+        },
         {   label: "View",
             submenu: [
                 {
@@ -522,7 +532,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 }
             ]
         }
-    ], elmt, { width: "80px", horizontal: false });
+    ], elmt, { width: "120px", horizontal: false });
 };
 
 DataTableView.prototype._createSortingMenu = function(elmt) {

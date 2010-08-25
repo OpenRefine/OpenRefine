@@ -54,6 +54,7 @@ public class XmlImportUtilities {
     static public class ImportColumnGroup extends ImportVertical {
         public Map<String, ImportColumnGroup> subgroups = new HashMap<String, ImportColumnGroup>();
         public Map<String, ImportColumn> columns = new HashMap<String, ImportColumn>();
+        public int nextRowIndex;
 
         @Override
         void tabulate() {
@@ -73,11 +74,13 @@ public class XmlImportUtilities {
      *
      */
     static public class ImportColumn extends ImportVertical {
-        public int cellIndex;
-        public boolean blankOnFirstRow;
+        public int      cellIndex;
+        public int      nextRowIndex;
+        public boolean  blankOnFirstRow;
 
-        public ImportColumn(){}
-        public ImportColumn(String name){ //required for testing
+        public ImportColumn() {}
+        
+        public ImportColumn(String name) { //required for testing
             super.name = name;
         }
 
@@ -93,7 +96,6 @@ public class XmlImportUtilities {
      */
     static public class ImportRecord {
         public List<List<Cell>> rows = new LinkedList<List<Cell>>();
-        public List<Integer> columnEmptyRowIndices = new ArrayList<Integer>();
     }
 
     static public String[] detectPathFromTag(InputStream inputStream, String tag) {
@@ -319,6 +321,7 @@ public class XmlImportUtilities {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             // silent
         }
     }
@@ -437,15 +440,19 @@ public class XmlImportUtilities {
         if (record.rows.size() > 0) {
             for (List<Cell> row : record.rows) {
                 Row realRow = new Row(row.size());
+                int cellCount = 0;
 
                 for (int c = 0; c < row.size(); c++) {
                     Cell cell = row.get(c);
                     if (cell != null) {
                         realRow.setCell(c, cell);
+                        cellCount++;
                     }
                 }
-
-                project.rows.add(realRow);
+                
+                if (cellCount > 0) {
+                    project.rows.add(realRow);
+                }
             }
         }
     }
@@ -472,16 +479,9 @@ public class XmlImportUtilities {
                 project,
                 columnGroup,
                 composeName(parser.getPrefix(), parser.getLocalName()));
-
-        int commonStartingRowIndex = 0;
-        for (ImportColumn column : thisColumnGroup.columns.values()) {
-            if (column.cellIndex < record.columnEmptyRowIndices.size()) {
-                commonStartingRowIndex = Math.max(
-                        commonStartingRowIndex,
-                        record.columnEmptyRowIndices.get(column.cellIndex));
-            }
-        }
-
+        
+        thisColumnGroup.nextRowIndex = Math.max(thisColumnGroup.nextRowIndex, columnGroup.nextRowIndex);
+        
         int attributeCount = parser.getAttributeCount();
         for (int i = 0; i < attributeCount; i++) {
             String text = parser.getAttributeValue(i).trim();
@@ -491,8 +491,7 @@ public class XmlImportUtilities {
                     thisColumnGroup,
                     record,
                     composeName(parser.getAttributePrefix(i), parser.getAttributeLocalName(i)),
-                    text,
-                    commonStartingRowIndex
+                    text
                 );
             }
         }
@@ -515,25 +514,22 @@ public class XmlImportUtilities {
                         thisColumnGroup,
                         record,
                         null,
-                        parser.getText(),
-                        commonStartingRowIndex
+                        parser.getText()
                     );
                 }
             } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                 break;
             }
         }
-
-        if (commonStartingRowIndex < record.rows.size()) {
-            List<Cell> startingRow = record.rows.get(commonStartingRowIndex);
-
-            for (ImportColumn c : thisColumnGroup.columns.values()) {
-                int cellIndex = c.cellIndex;
-                if (cellIndex >= startingRow.size() || startingRow.get(cellIndex) == null) {
-                    c.blankOnFirstRow = true;
-                }
-            }
+        
+        int nextRowIndex = thisColumnGroup.nextRowIndex;
+        for (ImportColumn column2 : thisColumnGroup.columns.values()) {
+            nextRowIndex = Math.max(nextRowIndex, column2.nextRowIndex);
         }
+        for (ImportColumnGroup columnGroup2 : thisColumnGroup.subgroups.values()) {
+            nextRowIndex = Math.max(nextRowIndex, columnGroup2.nextRowIndex);
+        }
+        thisColumnGroup.nextRowIndex = nextRowIndex;
     }
 
     static protected void addCell(
@@ -541,38 +537,32 @@ public class XmlImportUtilities {
         ImportColumnGroup columnGroup,
         ImportRecord record,
         String columnLocalName,
-        String text,
-        int commonStartingRowIndex
+        String text
     ) {
         if (text == null || ((String) text).isEmpty()) {
             return;
         }
-
+        
         Serializable value = ImporterUtilities.parseCellValue(text);
-
+        
         ImportColumn column = getColumn(project, columnGroup, columnLocalName);
         int cellIndex = column.cellIndex;
-
-        while (cellIndex >= record.columnEmptyRowIndices.size()) {
-            record.columnEmptyRowIndices.add(commonStartingRowIndex);
-        }
-        int rowIndex = record.columnEmptyRowIndices.get(cellIndex);
-
+        
+        int rowIndex = Math.max(columnGroup.nextRowIndex, column.nextRowIndex);
         while (rowIndex >= record.rows.size()) {
             record.rows.add(new ArrayList<Cell>());
         }
+        
         List<Cell> row = record.rows.get(rowIndex);
-
         while (cellIndex >= row.size()) {
             row.add(null);
         }
-
+        
         logger.trace("Adding cell with value : \"" + value + "\" to row : " + rowIndex + " at cell index : " + (cellIndex-1));
-
-        row.set(cellIndex-1, new Cell(value, null));
-
-        record.columnEmptyRowIndices.set(cellIndex, rowIndex + 1);
-
+        
+        row.set(cellIndex, new Cell(value, null));
+        
+        column.nextRowIndex = rowIndex + 1;
         column.nonBlankCount++;
     }
 
@@ -604,7 +594,8 @@ public class XmlImportUtilities {
             (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
 
         newColumn.cellIndex = project.columnModel.allocateNewCellIndex();
-
+        newColumn.nextRowIndex = columnGroup.nextRowIndex;
+        
         return newColumn;
     }
 
@@ -635,6 +626,8 @@ public class XmlImportUtilities {
             (localName == null ? "Text" : localName) :
             (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
 
+        newGroup.nextRowIndex = columnGroup.nextRowIndex;
+        
         return newGroup;
     }
 }

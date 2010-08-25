@@ -1,5 +1,6 @@
 package com.google.gridworks.util;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -139,5 +140,16 @@ public class JSONUtilities {
         }
         
         return a2;
+    }
+    
+    static public List<String> toStringList(JSONArray a) throws JSONException {
+        int l = a.length();
+        
+        List<String> list = new ArrayList<String>();
+        for (int i = 0; i < l; i++) {
+            list.add(a.getString(i));
+        }
+        
+        return list;
     }
 }

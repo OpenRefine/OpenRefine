@@ -1,0 +1,14 @@
+.column-reordering-dialog-column {
+    border: 1px solid #aaa;
+    background: #eee;
+    padding: 3px;
+    margin: 2px;
+    cursor: move;
+}
+
+.column-reordering-dialog-column-container {
+    height: 500px;
+    border: 1px solid #eee;
+    padding: 10px;
+    overflow: auto;
+}
