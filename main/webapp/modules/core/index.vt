@@ -12,7 +12,7 @@
     <div id="header">
       <span id="gridworks-version"></span>
       <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
-      <div id="path"><span class="app-path-section"><a href="./index.html">Gridworks</a></span></div>
+      <div id="path"><span class="app-path-section"><a href="./">Gridworks</a></span></div>
     </div>
 
     <div id="body">
