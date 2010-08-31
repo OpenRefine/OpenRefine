@@ -1,5 +1,6 @@
 package com.google.gridworks.expr.functions.strings;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
@@ -20,12 +21,12 @@ public class Diff implements Function {
             if (o1 != null && o2 != null) {
                 if (o1 instanceof String && o2 instanceof String) {
                     return StringUtils.difference((String) o1,(String) o2);
-                } else if (o1 instanceof Date && args.length == 3) {
+                } else if ((o1 instanceof Date || o1 instanceof Calendar) && args.length == 3) {
                     Object o3 = args[3];
                     if (o3 != null && o3 instanceof String) {
                         try {
                             String unit = ((String) o3).toLowerCase();
-                            Date c1 = (Date) o1;
+                            Date c1 = (o1 instanceof Date) ? (Date) o1 : ((Calendar) o1).getTime();
                             Date c2 = (o2 instanceof Date) ? (Date) o2 : CalendarParser.parse((o2 instanceof String) ? (String) o2 : o2.toString()).getTime();
                             long delta = (c1.getTime() - c2.getTime()) / 1000;
                             if ("seconds".equals(unit)) return delta;
