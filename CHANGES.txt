@@ -4,6 +4,7 @@ Major Changes:
 - New extension architecture.
 - Generalized reconciliation framework that allows plugging in standard reconciliation services.
 - Support for QA on data loads into Freebase.
+- Timeline Facet (Issue 40,95)
 
 Features:
 - New commands:
@@ -32,6 +33,8 @@ Fixes:
 - TSV/CSV exporter bug: Gridworks crashed when there were empty cells.
 - Issue 69: ControlFunctionRegistry now correctly registers Chomp expression as "chomp" key.
 - Issue 66: Records not excluded with inverted text facet
+- Issue 99: Diff for dates fails with "unknown error" always
+- Issue 113: Export filtered rows as tsv or csv fails; html and excel OK
 
 1.1 Release (May 27, 2010)
 
