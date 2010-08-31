@@ -124,7 +124,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     label: "Collapse whitespace",
-                    click: function() { doTextTransform("value.replaceRegexp('\\s+', ' ')", "store-blank", false, ""); }
+                    click: function() { doTextTransform("value.replace(/\\s+/,' ')", "store-blank", false, ""); }
                 },
                 {},
                 {
