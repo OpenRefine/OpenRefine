@@ -42,7 +42,7 @@ public class ExportRowsCommand extends Command {
             Properties options = getRequestParameters(request);
 
             Exporter exporter = ExporterRegistry.getExporter(format);
-            if (exporter == null){
+            if (exporter == null) {
                 exporter = new CsvExporter('\t');
             }
 
