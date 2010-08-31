@@ -8,77 +8,31 @@ import org.json.JSONWriter;
 
 import com.google.gridworks.browsing.FilteredRecords;
 import com.google.gridworks.browsing.FilteredRows;
-import com.google.gridworks.browsing.RecordFilter;
 import com.google.gridworks.browsing.RowFilter;
-import com.google.gridworks.browsing.filters.AnyRowRecordFilter;
-import com.google.gridworks.browsing.filters.ExpressionNumberComparisonRowFilter;
-import com.google.gridworks.browsing.util.ExpressionBasedRowEvaluable;
-import com.google.gridworks.browsing.util.ExpressionNumericValueBinner;
-import com.google.gridworks.browsing.util.NumericBinIndex;
-import com.google.gridworks.browsing.util.NumericBinRecordIndex;
-import com.google.gridworks.browsing.util.NumericBinRowIndex;
+import com.google.gridworks.browsing.filters.ExpressionTimeComparisonRowFilter;
+import com.google.gridworks.browsing.util.ExpressionTimeValueBinner;
 import com.google.gridworks.browsing.util.RowEvaluable;
-import com.google.gridworks.expr.Evaluable;
+import com.google.gridworks.browsing.util.TimeBinIndex;
+import com.google.gridworks.browsing.util.TimeBinRecordIndex;
+import com.google.gridworks.browsing.util.TimeBinRowIndex;
 import com.google.gridworks.expr.MetaParser;
 import com.google.gridworks.expr.ParsingException;
 import com.google.gridworks.model.Column;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.util.JSONUtilities;
 
-public class RangeFacet implements Facet {
-    /*
-     * Configuration, from the client side
-     */
-    protected String     _name;       // name of facet
-    protected String     _expression; // expression to compute numeric value(s) per row
-    protected String     _columnName; // column to base expression on, if any
+public class TimeRangeFacet extends RangeFacet {
+	    
+    protected boolean   _selectTime; // whether the time selection applies, default true
+    protected boolean   _selectNonTime;
+            
+    protected int       _baseTimeCount;
+    protected int       _baseNonTimeCount;
     
-    protected double    _from; // the numeric selection
-    protected double    _to;
+    protected int       _timeCount;
+    protected int       _nonTimeCount;
     
-    protected boolean   _selectNumeric; // whether the numeric selection applies, default true
-    protected boolean   _selectNonNumeric;
-    protected boolean   _selectBlank;
-    protected boolean   _selectError;
-    
-    /*
-     * Derived configuration data
-     */
-    protected int        _cellIndex;
-    protected Evaluable  _eval;
-    protected String     _errorMessage;
-    protected boolean    _selected; // false if we're certain that all rows will match
-                                    // and there isn't any filtering to do
-    
-    /*
-     * Computed data, to return to the client side
-     */
-    protected double    _min;
-    protected double    _max;
-    protected double    _step;
-    protected int[]     _baseBins;
-    protected int[]     _bins;
-    
-    protected int       _baseNumericCount;
-    protected int       _baseNonNumericCount;
-    protected int       _baseBlankCount;
-    protected int       _baseErrorCount;
-    
-    protected int       _numericCount;
-    protected int       _nonNumericCount;
-    protected int       _blankCount;
-    protected int       _errorCount;
-    
-    public RangeFacet() {
-    }
-
-    protected static final String MIN = "min";
-    protected static final String MAX = "max";
-    protected static final String TO = "to";
-    protected static final String FROM = "from";
-    
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
+    public void write(JSONWriter writer, Properties options) throws JSONException {
         
         writer.object();
         writer.key("name"); writer.value(_name);
@@ -92,7 +46,7 @@ public class RangeFacet implements Facet {
                 writer.key(MIN); writer.value(_min);
                 writer.key(MAX); writer.value(_max);
                 writer.key("step"); writer.value(_step);
-                
+                                
                 writer.key("bins"); writer.array();
                 for (int b : _bins) {
                     writer.value(b);
@@ -109,13 +63,13 @@ public class RangeFacet implements Facet {
                 writer.key(TO); writer.value(_to);
             }
             
-            writer.key("baseNumericCount"); writer.value(_baseNumericCount);
-            writer.key("baseNonNumericCount"); writer.value(_baseNonNumericCount);
+            writer.key("baseTimeCount"); writer.value(_baseTimeCount);
+            writer.key("baseNonTimeCount"); writer.value(_baseNonTimeCount);
             writer.key("baseBlankCount"); writer.value(_baseBlankCount);
             writer.key("baseErrorCount"); writer.value(_baseErrorCount);
             
-            writer.key("numericCount"); writer.value(_numericCount);
-            writer.key("nonNumericCount"); writer.value(_nonNumericCount);
+            writer.key("timeCount"); writer.value(_timeCount);
+            writer.key("nonTimeCount"); writer.value(_nonTimeCount);
             writer.key("blankCount"); writer.value(_blankCount);
             writer.key("errorCount"); writer.value(_errorCount);
         }
@@ -150,23 +104,23 @@ public class RangeFacet implements Facet {
             _selected = true;
         }
         
-        _selectNumeric = JSONUtilities.getBoolean(o, "selectNumeric", true);
-        _selectNonNumeric = JSONUtilities.getBoolean(o, "selectNonNumeric", true);
+        _selectTime = JSONUtilities.getBoolean(o, "selectTime", true);
+        _selectNonTime = JSONUtilities.getBoolean(o, "selectNonTime", true);
         _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", true);
         _selectError = JSONUtilities.getBoolean(o, "selectError", true);
         
-        if (!_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError) {
+        if (!_selectTime || !_selectNonTime || !_selectBlank || !_selectError) {
             _selected = true;
         }
     }
 
     public RowFilter getRowFilter(Project project) {
         if (_eval != null && _errorMessage == null && _selected) {
-            return new ExpressionNumberComparisonRowFilter(
-        		getRowEvaluable(project), _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+            return new ExpressionTimeComparisonRowFilter(
+        		getRowEvaluable(project), _selectTime, _selectNonTime, _selectBlank, _selectError) {
                 
-                protected boolean checkValue(double d) {
-                    return d >= _from && d < _to;
+                protected boolean checkValue(long t) {
+                    return t >= _from && t < _to;
                 };
             };
         } else {
@@ -174,28 +128,21 @@ public class RangeFacet implements Facet {
         }
     }
 
-    @Override
-    public RecordFilter getRecordFilter(Project project) {
-    	RowFilter rowFilter = getRowFilter(project);
-    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
-    }
-
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
             
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
-            String key = "numeric-bin:row-based:" + _expression;
-            NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+            String key = "time-bin:row-based:" + _expression;
+            TimeBinIndex index = (TimeBinIndex) column.getPrecompute(key);
             if (index == null) {
-                index = new NumericBinRowIndex(project, rowEvaluable);
+                index = new TimeBinRowIndex(project, rowEvaluable);
                 column.setPrecompute(key, index);
             }
             
             retrieveDataFromBaseBinIndex(index);
-            
-            ExpressionNumericValueBinner binner = 
-                new ExpressionNumericValueBinner(rowEvaluable, index);
+                        
+            ExpressionTimeValueBinner binner = new ExpressionTimeValueBinner(rowEvaluable, index);
             
             filteredRows.accept(project, binner);
             retrieveDataFromBinner(binner);
@@ -207,36 +154,31 @@ public class RangeFacet implements Facet {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
             
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
-            String key = "numeric-bin:record-based:" + _expression;
-            NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+            String key = "time-bin:record-based:" + _expression;
+            TimeBinIndex index = (TimeBinIndex) column.getPrecompute(key);
             if (index == null) {
-                index = new NumericBinRecordIndex(project, rowEvaluable);
+                index = new TimeBinRecordIndex(project, rowEvaluable);
                 column.setPrecompute(key, index);
             }
             
             retrieveDataFromBaseBinIndex(index);
             
-            ExpressionNumericValueBinner binner = 
-                new ExpressionNumericValueBinner(rowEvaluable, index);
+            ExpressionTimeValueBinner binner = new ExpressionTimeValueBinner(rowEvaluable, index);
             
             filteredRecords.accept(project, binner);
             
             retrieveDataFromBinner(binner);
         }
     }
-    
-    protected RowEvaluable getRowEvaluable(Project project) {
-    	return new ExpressionBasedRowEvaluable(_columnName, _cellIndex, _eval);
-    }
-    
-    protected void retrieveDataFromBaseBinIndex(NumericBinIndex index) {
+        
+    protected void retrieveDataFromBaseBinIndex(TimeBinIndex index) {
         _min = index.getMin();
         _max = index.getMax();
         _step = index.getStep();
         _baseBins = index.getBins();
         
-        _baseNumericCount = index.getNumericRowCount();
-        _baseNonNumericCount = index.getNonNumericRowCount();
+        _baseTimeCount = index.getTimeRowCount();
+        _baseNonTimeCount = index.getNonTimeRowCount();
         _baseBlankCount = index.getBlankRowCount();
         _baseErrorCount = index.getErrorRowCount();
         
@@ -249,10 +191,10 @@ public class RangeFacet implements Facet {
         }
     }
     
-    protected void retrieveDataFromBinner(ExpressionNumericValueBinner binner) {
+    protected void retrieveDataFromBinner(ExpressionTimeValueBinner binner) {
         _bins = binner.bins;
-        _numericCount = binner.numericCount;
-        _nonNumericCount = binner.nonNumericCount;
+        _timeCount = binner.timeCount;
+        _nonTimeCount = binner.nonTimeCount;
         _blankCount = binner.blankCount;
         _errorCount = binner.errorCount;
     }

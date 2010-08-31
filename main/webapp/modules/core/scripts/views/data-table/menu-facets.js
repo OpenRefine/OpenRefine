@@ -50,6 +50,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             }
         },
         {
+            id: "core/time-facet",
+            label: "Timeline Facet",
+            click: function() {
+                ui.browsingEngine.addFacet(
+                    "timerange",
+                    {
+                        "name": column.name,
+                        "columnName": column.name,
+                        "expression": "value",
+                        "mode": "range"
+                    }
+                );
+            }
+        },
+        {
             id: "core/scatterplot-facet",
             label: "Scatterplot Facet",
             click: function() {

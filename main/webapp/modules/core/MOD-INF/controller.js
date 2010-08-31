@@ -208,6 +208,7 @@ function init() {
 
             "scripts/facets/list-facet.js",
             "scripts/facets/range-facet.js",
+            "scripts/facets/timerange-facet.js",
             "scripts/facets/scatterplot-facet.js",
             "scripts/facets/text-search-facet.js",
 

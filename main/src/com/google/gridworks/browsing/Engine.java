@@ -15,6 +15,7 @@ import com.google.gridworks.browsing.facets.ListFacet;
 import com.google.gridworks.browsing.facets.RangeFacet;
 import com.google.gridworks.browsing.facets.ScatterplotFacet;
 import com.google.gridworks.browsing.facets.TextSearchFacet;
+import com.google.gridworks.browsing.facets.TimeRangeFacet;
 import com.google.gridworks.browsing.util.ConjunctiveFilteredRecords;
 import com.google.gridworks.browsing.util.ConjunctiveFilteredRows;
 import com.google.gridworks.browsing.util.FilteredRecordsAsFilteredRows;
@@ -154,6 +155,8 @@ public class Engine implements Jsonizable {
                     facet = new ListFacet();
                 } else if ("range".equals(type)) {
                     facet = new RangeFacet();
+                } else if ("timerange".equals(type)) {
+                    facet = new TimeRangeFacet();
                 } else if ("scatterplot".equals(type)) {
                     facet = new ScatterplotFacet();
                 } else if ("text".equals(type)) {

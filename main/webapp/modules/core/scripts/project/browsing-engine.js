@@ -15,6 +15,9 @@ function BrowsingEngine(div, facetConfigs) {
                 case "range":
                     facet = RangeFacet.reconstruct(elmt, facetConfig);
                     break;
+                case "timerange":
+                    facet = TimeRangeFacet.reconstruct(elmt, facetConfig);
+                    break;
                 case "scatterplot":
                     facet = ScatterplotFacet.reconstruct(elmt, facetConfig);
                     break;
@@ -151,6 +154,9 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
     switch (type) {
         case "range":
             facet = new RangeFacet(elmt, config, options);
+            break;
+        case "timerange":
+            facet = new TimeRangeFacet(elmt, config, options);
             break;
         case "scatterplot":
             facet = new ScatterplotFacet(elmt, config, options);
