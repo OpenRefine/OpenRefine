@@ -22,7 +22,7 @@ public class Diff implements Function {
                 if (o1 instanceof String && o2 instanceof String) {
                     return StringUtils.difference((String) o1,(String) o2);
                 } else if ((o1 instanceof Date || o1 instanceof Calendar) && args.length == 3) {
-                    Object o3 = args[3];
+                    Object o3 = args[2];
                     if (o3 != null && o3 instanceof String) {
                         try {
                             String unit = ((String) o3).toLowerCase();
