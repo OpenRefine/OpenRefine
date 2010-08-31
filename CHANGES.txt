@@ -4,7 +4,7 @@ Major Changes:
 - New extension architecture.
 - Generalized reconciliation framework that allows plugging in standard reconciliation services.
 - Support for QA on data loads into Freebase.
-- Timeline Facet (Issue 40,95)
+- Timeline Facet (Issue 40 and 95)
 
 Features:
 - New commands:
@@ -35,6 +35,7 @@ Fixes:
 - Issue 66: Records not excluded with inverted text facet
 - Issue 99: Diff for dates fails with "unknown error" always
 - Issue 113: Export filtered rows as tsv or csv fails; html and excel OK
+- Issue 116: CSV/TSV export data includes blank fields for deleted columns
 
 1.1 Release (May 27, 2010)
 
