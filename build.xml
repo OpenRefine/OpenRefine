@@ -532,7 +532,11 @@
 
     <!-- ================================================================== -->
 
-    <target name="clean">
+    <target name="clean_extensions">
+      <ant dir="extensions/" target="clean" />
+    </target>
+
+    <target name="clean" depends="clean_extensions">
         <delete file="${build.dir}/${fullname}.jar" />
         <delete file="${build.dir}/${fullname}-server.jar" />
         <delete dir="${server.classes.dir}" />
@@ -543,11 +547,7 @@
         <delete dir="${broker.appengine.dir}/module/MOD-INF/classes" />
     </target>
 
-    <target name="clean_extensions">
-      <ant dir="extensions/" target="clean" />
-    </target>
-
-    <target name="distclean" depends="clean, clean_extensions">
+    <target name="distclean" depends="clean">
         <delete dir="${build.dir}" />
         <delete dir="${dist.dir}" />
         <delete dir="${tools.dir}" />
