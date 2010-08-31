@@ -56,8 +56,10 @@ public class CsvExporter implements Exporter{
             }
 
             public boolean visit(Project project, int rowIndex, Row row) {
-                String[] cols = new String[project.columnModel.columns.size()];
-                String[] vals = new String[row.cells.size()];
+                int size = project.columnModel.columns.size();
+
+                String[] cols = new String[size];
+                String[] vals = new String[size];
 
                 int i = 0;
                 for (Column col : project.columnModel.columns) {
