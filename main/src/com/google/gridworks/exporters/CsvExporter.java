@@ -22,11 +22,11 @@ public class CsvExporter implements Exporter{
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
     char separator;
 
-    public CsvExporter(){
+    public CsvExporter() {
         separator = ','; //Comma separated-value is default
     }
 
-    public CsvExporter(char separator){
+    public CsvExporter(char separator) {
         this.separator = separator;
     }
 
@@ -49,7 +49,7 @@ public class CsvExporter implements Exporter{
             boolean printColumnHeader = true;
             boolean isFirstRow = true; //the first row should also add the column headers
 
-            public RowVisitor init(CSVWriter writer, boolean printColumnHeader){
+            public RowVisitor init(CSVWriter writer, boolean printColumnHeader) {
                 this.csvWriter = writer;
                 this.printColumnHeader = printColumnHeader;
                 return this;
@@ -60,18 +60,18 @@ public class CsvExporter implements Exporter{
                 String[] vals = new String[row.cells.size()];
 
                 int i = 0;
-                for(Column col : project.columnModel.columns){
+                for (Column col : project.columnModel.columns) {
                     int cellIndex = col.getCellIndex();
                     cols[i] = col.getName();
 
                     Object value = row.getCellValue(cellIndex);
-                    if(value != null){
+                    if (value != null) {
                         vals[i] = value instanceof String ? (String) value : value.toString();
                     }
                     i++;
                 }
 
-                if( printColumnHeader && isFirstRow ){
+                if (printColumnHeader && isFirstRow) {
                     csvWriter.writeNext(cols,false);
                     isFirstRow = false; //switch off flag
                 }
