@@ -31,6 +31,7 @@ Features:
 
 Fixes:
 - TSV/CSV exporter bug: Gridworks crashed when there were empty cells.
+- Issue 29: Delievered "Collapse whitespace" transformation does not work
 - Issue 69: ControlFunctionRegistry now correctly registers Chomp expression as "chomp" key.
 - Issue 66: Records not excluded with inverted text facet
 - Issue 99: Diff for dates fails with "unknown error" always
