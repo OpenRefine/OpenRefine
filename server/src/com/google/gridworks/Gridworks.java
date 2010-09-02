@@ -239,6 +239,7 @@ class GridworksServer extends Server {
         ServletHolder servlet = context.getServletHandler().getServlet("gridworks");
         if (servlet != null) {
             servlet.setInitParameter("gridworks.data", getDataDir());
+            servlet.setInitParameter("butterfly.modules.path", getDataDir() + "/extensions");
             servlet.setInitOrder(1);
             servlet.doStart();
         }
