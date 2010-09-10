@@ -261,6 +261,11 @@ public class DataExtensionChange implements Change {
         }
         writer.write("dataExtensionCount="); writer.write(Integer.toString(_dataExtensions.size())); writer.write('\n');
         for (DataExtension dataExtension : _dataExtensions) {
+            if (dataExtension == null) {
+                writer.write('\n');
+                continue;
+            }
+            
             writer.write(Integer.toString(dataExtension.data.length)); writer.write('\n');
             
             for (Object[] values : dataExtension.data) {
@@ -362,6 +367,11 @@ public class DataExtensionChange implements Change {
                     line = reader.readLine();
                     
                     if (line == null) continue;
+                    
+                    if (line.length() == 0) {
+                        dataExtensions.add(null);
+                        continue;
+                    }
                     
                     int rowCount = Integer.parseInt(line);
                     Object[][] data = new Object[rowCount][];
