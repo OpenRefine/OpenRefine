@@ -53,7 +53,7 @@ public class FreebaseTimeCommonsHttpOAuthConsumer extends CommonsHttpOAuthConsum
             HttpEntity entity = response.getEntity();
             if (entity != null) {
                 time = Long.parseLong(EntityUtils.toString(entity),10);
-                logger.info("Got remote timestamp {}", time);
+                logger.debug("Got remote timestamp {}", time);
             }
         } catch (IOException e) {
             logger.warn("Error obtaining the synchronized remote timestamp, defaulting to the local one",e);
