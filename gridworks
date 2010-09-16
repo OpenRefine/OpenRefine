@@ -106,7 +106,7 @@ check_downloaders() {
     CURL="`which curl 2> /dev/null`"
     WGET="`which wget 2> /dev/null`"
     
-    if [ -z "$CURL"  -a   -z "$WGET" ] ; then
+    if [ -z "$CURL" ] && [ -z "$WGET" ] ; then
         error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
     fi
 }
@@ -125,7 +125,7 @@ check_python() {
         error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
     fi
     PYTHON_VERSION="`python --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
-    if [ "$PYTHON_VERSION" != "2.5"  -a   "$PYTHON_VERSION" != "2.6" ] ; then
+    if [ "$PYTHON_VERSION" != "2.5" ] && [ "$PYTHON_VERSION" != "2.6" ] ; then
         error "This action requires python version 2.5.x or 2.6.x. You can download it for free at http://www.python.org/"
     fi
 }
@@ -158,17 +158,17 @@ get_version() {
 
     NUM_VERSION=`echo $VERSION | sed -E 's/[a-zA-Z]+/./g'`
     
-    if [ "${NUM_VERSION}" == "" ] ; then
+    if [ "${NUM_VERSION}" = "" ] ; then
         fail "${VERSION} is not a valid version number"
     fi
     
-    if [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'`" == "${NUM_VERSION}" ] ; then
+    if [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}"
-    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+$'`" == "${NUM_VERSION}" ] ; then
+    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}.0"
-    elif [ "`echo "${NUM_VERSION}" | egrep ''^[0-9]+\.[0-9]+$''`" == "${NUM_VERSION}" ] ; then
+    elif [ "`echo "${NUM_VERSION}" | egrep ''^[0-9]+\.[0-9]+$''`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}.0.0"
-    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+$'`" == "${NUM_VERSION}" ] ; then
+    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+$'`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}.0.0.0"
     else 
         fail "${VERSION} is not a valid version number"
@@ -297,11 +297,11 @@ appengine_prepare() {
 launch4j_prepare() {
     tools_prepare
     
-    if [ "$OS" == "macosx" ] ; then
+    if [ "$OS" = "macosx" ] ; then
         LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-macosx.tgz"
-    elif [ "$OS" == "windows" ] ; then
+    elif [ "$OS" = "windows" ] ; then
         LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-linux.tgz"
-    elif [ "$OS" == "linux" ] ; then
+    elif [ "$OS" = "linux" ] ; then
         LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-win32.zip"
     fi
     
