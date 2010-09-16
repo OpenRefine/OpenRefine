@@ -554,7 +554,7 @@ ui_test() {
     
     echo ""
     echo "Killing Gridworks"
-    kill -9 $GRIDWORKS_PID
+    /bin/kill -9 $GRIDWORKS_PID
     echo "Cleaning up"
     rm -rf $GRIDWORKS_DATA_DIR
 }
