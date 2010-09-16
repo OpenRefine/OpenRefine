@@ -97,7 +97,7 @@ load_configs() {
 }
     
 check_macosx() {
-    if ! $DARWIN ; then
+    if [ "$OS" != "macosx" ] ; then
         error "This action can only run on MacOSX"
     fi
 }
@@ -106,7 +106,7 @@ check_downloaders() {
     CURL="`which curl 2> /dev/null`"
     WGET="`which wget 2> /dev/null`"
     
-    if [ -z "$CURL"  -a   -z "$WGET" ]; then
+    if [ -z "$CURL"  -a   -z "$WGET" ] ; then
         error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
     fi
 }
@@ -114,18 +114,18 @@ check_downloaders() {
 check_unzip() {
     UNZIP="`which unzip 2> /dev/null`"
     
-    if [ -z "$UNZIP" ]; then
+    if [ -z "$UNZIP" ] ; then
         error "We need 'unzip' present in PATH to expand external dependencies."
     fi
 }
     
 check_python() {
     PYTHON="`which python 2> /dev/null`"
-    if [ -z "$PYTHON" ]; then
+    if [ -z "$PYTHON" ] ; then
         error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
     fi
     PYTHON_VERSION="`python --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
-    if [ "$PYTHON_VERSION" != "2.5"  -a   "$PYTHON_VERSION" != "2.6" ]; then
+    if [ "$PYTHON_VERSION" != "2.5"  -a   "$PYTHON_VERSION" != "2.6" ] ; then
         error "This action requires python version 2.5.x or 2.6.x. You can download it for free at http://www.python.org/"
     fi
 }
@@ -133,7 +133,7 @@ check_python() {
 check_pywin32() {
     PYWIN32="`$PYTHON -c 'import win32api' 2>&1`"
 
-    if [ ! -z "$PYWIN32" ]; then
+    if [ ! -z "$PYWIN32" ] ; then
         error "This action requires you to have 'pywin32' windows extensions for Python installed on your machine. You can download it for free at http://sourceforge.net/projects/pywin32/"
     fi
 }
@@ -142,9 +142,9 @@ check_running() {
     check_downloaders
     URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/"
     
-    if [ "$CURL" ]; then
+    if [ "$CURL" ] ; then
         NOT_RUNNING=`curl -s $URL > /dev/null || echo not_running`
-    elif [ "$WGET" ]; then
+    elif [ "$WGET" ] ; then
         NOT_RUNNING=`wget -q -O - $URL > /dev/null || echo not_running`
     fi    
 }
@@ -152,27 +152,33 @@ check_running() {
 get_version() {
     VERSION="$1"
     
-    if [ -z "$VERSION" ]; then
+    if [ -z "$VERSION" ] ; then
         fail "Must specify a version number"
     fi
+
+    NUM_VERSION=`echo $VERSION | sed -E 's/[a-zA-Z]+/./g'`
     
-    if [[ "${VERSION}" == *.*.*.* ]]; then
-        FULL_VERSION="${VERSION}"
-    elif [[ "${VERSION}" == *.*.* ]]; then
-        FULL_VERSION="${VERSION}.0"
-    elif [[ "${VERSION}" == *.* ]]; then
-        FULL_VERSION="${VERSION}.0.0"
-    else
-        FULL_VERSION="${VERSION}.0.0.0"
+    if [ "${NUM_VERSION}" == "" ] ; then
+        fail "${VERSION} is not a valid version number"
     fi
     
-    NUM_VERSION=`echo $VERSION | sed 's/[a-zA-Z]//g'`
+    if [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'`" == "${NUM_VERSION}" ] ; then
+        FULL_VERSION="${NUM_VERSION}"
+    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+$'`" == "${NUM_VERSION}" ] ; then
+        FULL_VERSION="${NUM_VERSION}.0"
+    elif [ "`echo "${NUM_VERSION}" | egrep ''^[0-9]+\.[0-9]+$''`" == "${NUM_VERSION}" ] ; then
+        FULL_VERSION="${NUM_VERSION}.0.0"
+    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+$'`" == "${NUM_VERSION}" ] ; then
+        FULL_VERSION="${NUM_VERSION}.0.0.0"
+    else 
+        fail "${VERSION} is not a valid version number"
+    fi
 }
 
 get_revision() {
-    if [ -d ".svn" ]; then
+    if [ -d ".svn" ] ; then
         INFO=`svn info`
-    elif [ -d ".git" ]; then
+    elif [ -d ".git" ] ; then
         INFO=`git svn info`
     else
         error "cannot obtain revision, exiting!"
@@ -187,9 +193,9 @@ download() {
     
     check_downloaders
     
-    if [ "$CURL" ]; then
+    if [ "$CURL" ] ; then
         curl -L -o $DEST $URL || exit "Error while downloading $URL"
-    elif [ "$WGET" ]; then
+    elif [ "$WGET" ] ; then
         wget -O $DEST $URL || error "Error while downloading $URL"
     fi
 }
@@ -200,14 +206,14 @@ tool_download() {
     DIR=$3
     
     cd $GRIDWORKS_TOOLS_DIR
-        if [ ! -f "$FILE" ]; then
+        if [ ! -f "$FILE" ] ; then
             download $URL $FILE
         fi
-        if [ ! -d "$DIR" ]; then
-            if [ -z "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" ]; then
+        if [ ! -d "$DIR" ] ; then
+            if [ -z "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" ] ; then
                 tar xzf $FILE || error "Error while expanding $FILE"
             fi
-            if [ -z "`echo $FILE | sed 's@.*.zip$@@'`" ]; then
+            if [ -z "`echo $FILE | sed 's@.*.zip$@@'`" ] ; then
                 check_unzip
                 $UNZIP -q $FILE || error "Error while expanding $FILE"
             fi
@@ -221,7 +227,7 @@ load_data() {
     URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/command/core/create-project-from-upload"
     CURL="`which curl 2> /dev/null`"
     
-    if [ -z "$CURL" ]; then
+    if [ -z "$CURL" ] ; then
         error "We need 'curl' present in PATH to upload data to gridworks."
     else
         curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to Gridworks"
@@ -232,19 +238,19 @@ load_data() {
 # ----------------------------------------------------------------------------------------------
 
 build_prepare() {
-    if [ ! -d $GRIDWORKS_BUILD_DIR ]; then 
+    if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
         mkdir $GRIDWORKS_BUILD_DIR || error "Error while making directory $GRIDWORKS_BUILD_DIR"
     fi
 }
 
 dist_prepare() {
-    if [ ! -d $GRIDWORKS_DIST_DIR ]; then 
+    if [ ! -d $GRIDWORKS_DIST_DIR ] ; then 
         mkdir $GRIDWORKS_DIST_DIR || error "Error while making directory $GRIDWORKS_DIST_DIR"
     fi
 }
 
 tools_prepare() {
-    if [ ! -d $GRIDWORKS_TOOLS_DIR ]; then 
+    if [ ! -d $GRIDWORKS_TOOLS_DIR ] ; then 
         mkdir $GRIDWORKS_TOOLS_DIR || error "Error while making directory $GRIDWORKS_TOOLS_DIR"
     fi
 }
@@ -257,17 +263,17 @@ ant_prepare() {
     ANT_DIR="apache-ant-1.8.1"
     
     ANT="`which ant 2> /dev/null`"
-    if [ -z "$ANT" ]; then
-        if [ -z "$ANT_HOME" ]; then
+    if [ -z "$ANT" ] ; then
+        if [ -z "$ANT_HOME" ] ; then
             cd $GRIDWORKS_TOOLS_DIR
-                if [ ! -f "$ANT_FILE" ]; then
+                if [ ! -f "$ANT_FILE" ] ; then
                     download $ANT_URL $ANT_FILE
                 fi
-                if [ ! -d "$ANT_DIR" ]; then
+                if [ ! -d "$ANT_DIR" ] ; then
                     tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
                 fi
                 export ANT_HOME="`pwd`/$ANT_DIR"
-                if $CYGWIN ; then
+                if [ "$OS" = "windows" ] ; then
                     export ANT_HOME=`cygpath --unix "$ANT_HOME"`
                 fi
             cd ..
@@ -277,9 +283,9 @@ ant_prepare() {
 }
 
 appengine_prepare() {
-    if [ -z "$APPENGINE_HOME" ]; then
+    if [ -z "$APPENGINE_HOME" ] ; then
         error "You have to have the APPENGINE_HOME environment variable set and pointing to the local installation of the Google AppEngine SDK."
-    elif [ ! -f "$APPENGINE_HOME/bin/appcfg.sh" ]; then
+    elif [ ! -f "$APPENGINE_HOME/bin/appcfg.sh" ] ; then
         error "Environment variable APPENGINE_HOME is set to '$APPENGINE_HOME' which doesn't point to a valid Google App Engine SDK."
     fi
     APPENGINE="$APPENGINE_HOME/bin/appcfg.sh"
@@ -291,7 +297,14 @@ appengine_prepare() {
 launch4j_prepare() {
     tools_prepare
     
-    LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-macosx.tgz"
+    if [ "$OS" == "macosx" ] ; then
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-macosx.tgz"
+    elif [ "$OS" == "windows" ] ; then
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-linux.tgz"
+    elif [ "$OS" == "linux" ] ; then
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-win32.zip"
+    fi
+    
     LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
     LAUNCH4J_DIR="launch4j"
     
@@ -318,17 +331,17 @@ virtualenv_prepare() {
     tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
     
     PYTHON_LOCAL="$GRIDWORKS_TOOLS_DIR/python"
-    if $CYGWIN ; then
+    if [ "$OS" = "windows" ] ; then
         PYTHON_LOCAL="${PYTHON_LOCAL}_win"
     fi
     
-    if [ ! -d "$PYTHON_LOCAL" ]; then
+    if [ ! -d "$PYTHON_LOCAL" ] ; then
         $PYTHON $GRIDWORKS_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
     fi
     
     PYTHON_HOME="`pwd`/$PYTHON_LOCAL"
 
-    if $CYGWIN ; then
+    if [ "$OS" = "windows" ] ; then
         PYTHON="$PYTHON_HOME/Scripts/python.exe"
         PYTHON_INSTALL="$PYTHON_HOME/Scripts/easy_install.exe"
     else 
@@ -339,19 +352,19 @@ virtualenv_prepare() {
     
 windmill_prepare() {
     WINDMILL="`which windmill 2> /dev/null`"
-    if [ -z "$WINDMILL" ]; then
+    if [ -z "$WINDMILL" ] ; then
         check_python
         tools_prepare
         virtualenv_prepare
 
-        if $CYGWIN ; then
+        if [ "$OS" = "windows" ] ; then
             check_pywin32
             WINDMILL="$PYTHON_HOME/Scripts/windmill.exe"
         else 
             WINDMILL="$PYTHON_HOME/bin/windmill"
         fi
         
-        if [ ! -f "$WINDMILL" ]; then
+        if [ ! -f "$WINDMILL" ] ; then
             "$PYTHON_INSTALL" windmill
         fi
     fi    
@@ -394,7 +407,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dnum_version="$NUM_VERSION" -Dfull_version="$FULL_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
+    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -421,7 +434,6 @@ dist() {
 }
 
 windows_dist() {
-    check_macosx
     dist_prepare
     get_version $1
     get_revision
@@ -456,7 +468,7 @@ mac_dist() {
     
     SIZE=60
     
-    if [ -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" ]; then
+    if [ -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" ] ; then
         rm "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
     fi
     
@@ -494,7 +506,7 @@ mac_dist() {
     sync
     hdiutil detach $DEVICE
     
-    if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ]; then
+    if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ] ; then
         rm "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
     fi
     
@@ -523,7 +535,7 @@ ui_test() {
     echo "Waiting for Gridworks to load..."
     sleep 5
     check_running
-    if [ ! -z "$NOT_RUNNING" ]; then
+    if [ ! -z "$NOT_RUNNING" ] ; then
         sleep 10
     fi
     echo "... proceed with the tests."
@@ -534,7 +546,7 @@ ui_test() {
     echo ""
     
     echo "Starting Windmill..."
-    if [ -z "$INTERACTIVE" ]; then
+    if [ -z "$INTERACTIVE" ] ; then
         "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/client/src exit
     else
         "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/
@@ -553,7 +565,7 @@ server_test() {
     
     CLASSPATH="$GRIDWORKS_TEST_DIR/server/classes${SEP}$GRIDWORKS_WEBAPP/WEB-INF/classes${SEP}$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_TEST_DIR/server/lib/*${SEP}$GRIDWORKS_LIB_DIR/*${SEP}$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
 
-    if [ -z "$1" ]; then
+    if [ -z "$1" ] ; then
         TESTS="-excludegroups broken $GRIDWORKS_TEST_DIR/server/conf/tests.xml"
     else 
         TESTS="-testclass $1"
@@ -572,39 +584,39 @@ run() {
     
     check_running
     
-    if [ -z "$NOT_RUNNING" ]; then
+    if [ -z "$NOT_RUNNING" ] ; then
         warn "Gridworks is already running."
     fi
     
-    if [ ! -d $GRIDWORKS_CLASSES_DIR ]; then
+    if [ ! -d $GRIDWORKS_CLASSES_DIR ] ; then
         IS_JAR=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
-        if [ -z "$IS_JAR" ]; then
+        if [ -z "$IS_JAR" ] ; then
             ant build
             echo ""
         fi
     fi
             
-    if [ -d $GRIDWORKS_CLASSES_DIR ]; then
+    if [ -d $GRIDWORKS_CLASSES_DIR ] ; then
         add_option "-Dgridworks.autoreload=true -Dbutterfly.autoreload=true"
     fi
 
-    if $DARWIN ; then
+    if [ "$OS" = "macosx" ] ; then
         add_option "-Xdock:name=Gridworks -Xdock:icon=graphics/icon/gridworks.icns"
     fi
     
-    if [ "$GRIDWORKS_DATA_DIR" ]; then
+    if [ "$GRIDWORKS_DATA_DIR" ] ; then
         add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
     fi
 
-    if [ "$GRIDWORKS_WEBAPP" ]; then
+    if [ "$GRIDWORKS_WEBAPP" ] ; then
         add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
     fi
                     
-    if [ "$GRIDWORKS_PORT" ]; then
+    if [ "$GRIDWORKS_PORT" ] ; then
         add_option "-Dgridworks.port=$GRIDWORKS_PORT"
     fi
     
-    if [ "$GRIDWORKS_HOST" ]; then
+    if [ "$GRIDWORKS_HOST" ] ; then
         add_option "-Dgridworks.host=$GRIDWORKS_HOST"
     fi
                     
@@ -618,7 +630,7 @@ run() {
     echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
 
-    if [ -z "$FORK" ]; then
+    if [ -z "$FORK" ] ; then
         exec $RUN_CMD
     else
         $RUN_CMD &
@@ -640,16 +652,16 @@ broker_run() {
             
     check_running
     
-    if [ -z "$NOT_RUNNING" ]; then
+    if [ -z "$NOT_RUNNING" ] ; then
         warn "Gridworks Broker is already running."
     fi
 
-    if [ ! -d "broker/core/WEB-INF/lib" ]; then
+    if [ ! -d "broker/core/WEB-INF/lib" ] ; then
         broker_build
         echo ""
     fi
 
-    if [ -d $GRIDWORKS_CLASSES_DIR ]; then
+    if [ -d $GRIDWORKS_CLASSES_DIR ] ; then
         add_option "-Dgridworks.autoreload=true -Dbutterfly.autoreload=true"
         add_option "-Dgridworks.development=true"
     fi
@@ -670,7 +682,7 @@ broker_run() {
     echo "Starting Gridworks Broker at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
     echo ""
 
-    if [ -z "$FORK" ]; then
+    if [ -z "$FORK" ] ; then
         exec $RUN_CMD
     else
         $RUN_CMD &
@@ -685,11 +697,11 @@ broker_appengine_build() {
     
     ANT_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
 
-    if [ "$1" ]; then
+    if [ "$1" ] ; then
         ANT_PARAMS="$ANT_PARAMS -Dappengine.app_id=$1"
     fi
     
-    if [ "$2" ]; then
+    if [ "$2" ] ; then
         ANT_PARAMS="$ANT_PARAMS -Dappengine.version=$2"
     fi
         
@@ -771,15 +783,14 @@ OPTS=""
 
 SYSTEM=`uname`
 
-CYGWIN=false
-DARWIN=false
 case "$SYSTEM" in
-  CYGWIN*) CYGWIN=true ;;
-  Darwin*) DARWIN=true ;;
+  CYGWIN*) OS="windows" ;;
+  Darwin*) OS="macosx"  ;;
+  Linux*)  OS="linux"   ;;
 esac
 
 SEP=":" 
-if $CYGWIN ; then
+if [ "$OS" = "windows" ] ; then
     SEP=";" 
 fi
 
@@ -789,16 +800,16 @@ load_configs gridworks.ini
 
 # ----- Make sure there is an appropriate java environment is available -------------
 
-if $DARWIN ; then
-    if [ -z "$JAVA_HOME" ]; then
+if [ "$OS" = "macosx" ] ; then
+    if [ -z "$JAVA_HOME" ] ; then
         # Mac OS X defaults to Java 5. So update JAVA_HOME unless the user manually set it.
         export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
     fi
 fi
 
 JAVA="`which java 2> /dev/null`"
-if [ -z "$JAVA" ]; then
-    if [ "$JAVA_HOME" ]; then
+if [ -z "$JAVA" ] ; then
+    if [ "$JAVA_HOME" ] ; then
         JAVA="$JAVA_HOME/bin/java"
         if [ ! -f "$JAVA" ] ; then
             error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
@@ -809,7 +820,7 @@ if [ -z "$JAVA" ]; then
 fi
 
 JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1\.6`
-if [ -z "$JAVA_VERSION" ]; then
+if [ -z "$JAVA_VERSION" ] ; then
     error "Gridworks requires Java version 6 or later. If you have multiple versions of Java installed, please set JAVA_HOME to the correct version."
 fi
 
@@ -831,68 +842,68 @@ while [ $# -ne 0 ] ; do
   esac
 done
 
-if [ $# -ne 0 ]; then
+if [ $# -ne 0 ] ; then
     ACTION=$1; shift
 fi
 
-if [ -z "$ACTION" ]; then
+if [ -z "$ACTION" ] ; then
     ACTION="run"
 fi
 
 # ----- Verify and Set Required Environment Variables -------------------------
 
-if [ -z "$JAVA_OPTIONS" ]; then
+if [ -z "$JAVA_OPTIONS" ] ; then
   JAVA_OPTIONS=""
 fi
 add_option "$JAVA_OPTIONS"
 
-if [ -z "$GRIDWORKS_MEMORY" ]; then
+if [ -z "$GRIDWORKS_MEMORY" ] ; then
     GRIDWORKS_MEMORY="1024M"
 fi
 add_option "-Xms256M -Xmx$GRIDWORKS_MEMORY -Dgridworks.memory=$GRIDWORKS_MEMORY -XX:MaxPermSize=256m -XX:+CMSClassUnloadingEnabled"
 
-if [ -z "$GRIDWORKS_PORT" ]; then
+if [ -z "$GRIDWORKS_PORT" ] ; then
     GRIDWORKS_PORT="3333"
 fi
 
-if [ -z "$GRIDWORKS_HOST" ]; then
+if [ -z "$GRIDWORKS_HOST" ] ; then
     GRIDWORKS_HOST="127.0.0.1"
 fi
 
-if [ -z "$GRIDWORKS_WEBAPP" ]; then
+if [ -z "$GRIDWORKS_WEBAPP" ] ; then
     GRIDWORKS_WEBAPP="main/webapp"
 fi
 
-if [ -z "$GRIDWORKS_TEST_DIR" ]; then
+if [ -z "$GRIDWORKS_TEST_DIR" ] ; then
     GRIDWORKS_TEST_DIR="main/tests"
 fi
 
-if [ -z "$GRIDWORKS_CLASSES_DIR" ]; then
+if [ -z "$GRIDWORKS_CLASSES_DIR" ] ; then
     GRIDWORKS_CLASSES_DIR="server/classes"
 fi
 
-if [ -z "$GRIDWORKS_LIB_DIR" ]; then
+if [ -z "$GRIDWORKS_LIB_DIR" ] ; then
     GRIDWORKS_LIB_DIR="server/lib"
 fi
 
-if [ -z "$GRIDWORKS_BUILD_DIR" ]; then
+if [ -z "$GRIDWORKS_BUILD_DIR" ] ; then
     GRIDWORKS_BUILD_DIR="build"
 fi
 
-if [ -z "$GRIDWORKS_TOOLS_DIR" ]; then
+if [ -z "$GRIDWORKS_TOOLS_DIR" ] ; then
     GRIDWORKS_TOOLS_DIR="tools"
 fi
 
-if [ -z "$GRIDWORKS_DIST_DIR" ]; then
+if [ -z "$GRIDWORKS_DIST_DIR" ] ; then
     GRIDWORKS_DIST_DIR="dist"
 fi
 
-if [ -z "$GRIDWORKS_VERBOSITY" ]; then
+if [ -z "$GRIDWORKS_VERBOSITY" ] ; then
     GRIDWORKS_VERBOSITY="info"
 fi
 add_option "-Dgridworks.verbosity=$GRIDWORKS_VERBOSITY"
 
-if [ -z "$JYTHONPATH" ]; then
+if [ -z "$JYTHONPATH" ] ; then
     JYTHONPATH="$GRIDWORKS_WEBAPP/WEB-INF/lib/jython"
 else
     JYTHONPATH="$GRIDWORKS_WEBAPP/WEB-INF/lib/jython${SEP}$JYTHONPATH"
