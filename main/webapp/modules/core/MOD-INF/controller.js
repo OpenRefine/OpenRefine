@@ -99,6 +99,7 @@ function registerCommands() {
     GS.registerCommand(module, "get-preference", new Packages.com.google.gridworks.commands.GetPreferenceCommand());
     GS.registerCommand(module, "get-all-preferences", new Packages.com.google.gridworks.commands.GetAllPreferencesCommand());
     GS.registerCommand(module, "set-preference", new Packages.com.google.gridworks.commands.SetPreferenceCommand());
+    GS.registerCommand(module, "open-workspace-dir", new Packages.com.google.gridworks.commands.OpenWorkspaceDirCommand());
 }
 
 function registerOperations() {

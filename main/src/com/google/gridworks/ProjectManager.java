@@ -66,7 +66,9 @@ public abstract class ProjectManager {
         save(true); // complete save
 
         for (Project project : _projects.values()) {
-            project.dispose();
+            if (project != null) {
+                project.dispose();
+            }
         }
         
         _projects.clear();

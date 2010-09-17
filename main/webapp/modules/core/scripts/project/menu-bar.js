@@ -73,6 +73,12 @@ MenuBar.MenuItems = [
                 "id" : "core/export-project",
                 "label": "Export Project",
                 "click": function() { MenuBar.handlers.exportProject(); }
+            },
+            {},
+            {
+                "id" : "core/open-workspace-dir",
+                "label": "Open Workspace Directory",
+                "click": function() { MenuBar.handlers.openWorkspaceDir(); }
             }
         ]
     },
@@ -313,6 +319,19 @@ MenuBar.handlers.renameProject = function() {
                 Gridworks.setTitle();
             } else {
                 alert("Failed to rename project: " + data.message);
+            }
+        }
+    });
+};
+
+MenuBar.handlers.openWorkspaceDir = function() {
+    $.ajax({
+        type: "POST",
+        url: "/command/core/open-workspace-dir",
+        dataType: "json",
+        success: function (data) {
+            if (data.code != "ok" && "message" in data) {
+                alert(data.message);
             }
         }
     });
