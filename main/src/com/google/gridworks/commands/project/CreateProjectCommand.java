@@ -74,15 +74,15 @@ public class CreateProjectCommand extends Command {
             Properties options = ParsingUtilities.parseUrlParameters(request);
 
             Project project = new Project();
+            ProjectMetadata pm = new ProjectMetadata();
 
-            internalImport(request, project, options);
+            internalImport(request, project, pm, options);
 
             /*
              * The import process above populates options with parameters
              * in the POST body. That's why we're constructing the project
              * metadata object after calling internalImport().
              */
-            ProjectMetadata pm = new ProjectMetadata();
             pm.setName(options.getProperty("project-name"));
             pm.setPassword(options.getProperty("project-password"));
             pm.setEncoding(options.getProperty("encoding"));
@@ -105,6 +105,7 @@ public class CreateProjectCommand extends Command {
     protected void internalImport(
         HttpServletRequest    request,
         Project               project,
+        ProjectMetadata       metadata,
         Properties            options
     ) throws Exception {
 
@@ -121,7 +122,7 @@ public class CreateProjectCommand extends Command {
                 if (name.equals("raw-text")) {
                     Reader reader = new InputStreamReader(stream,"UTF-8");
                     try {
-                        internalInvokeImporter(project, new TsvCsvImporter(), options, reader);
+                        internalInvokeImporter(project, new TsvCsvImporter(), metadata, options, reader);
                         imported = true;
                     } finally {
                         reader.close();
@@ -135,7 +136,7 @@ public class CreateProjectCommand extends Command {
                 String fileName = item.getName().toLowerCase();
                 if (fileName.length() > 0) {
                     try {
-                        internalImportFile(project, options, fileName, stream);
+                        internalImportFile(project, metadata, options, fileName, stream);
                         imported = true;
                     } finally {
                         stream.close();
@@ -145,7 +146,7 @@ public class CreateProjectCommand extends Command {
         }
 
         if (!imported && url != null && url.length() > 0) {
-            internalImportURL(request, project, options, url);
+            internalImportURL(request, project, metadata, options, url);
         }
     }
 
@@ -169,10 +170,11 @@ public class CreateProjectCommand extends Command {
     }
 
     protected void internalImportFile(
-        Project     project,
-        Properties  options,
-        String      fileName,
-        InputStream inputStream
+        Project         project,
+        ProjectMetadata metadata,
+        Properties      options,
+        String          fileName,
+        InputStream     inputStream
     ) throws Exception {
 
         logger.info("Importing '{}'", fileName);
@@ -264,7 +266,7 @@ public class CreateProjectCommand extends Command {
                             String name = te.getName();
                             String ext = getExtension(name)[1];
                             if (exts.contains(ext)) {
-                                internalImportFile(project, options, name, sis);
+                                internalImportFile(project, metadata, options, name, sis);
                             }
                         }
                     }
@@ -276,7 +278,7 @@ public class CreateProjectCommand extends Command {
                             String name = ze.getName();
                             String ext = getExtension(name)[1];
                             if (exts.contains(ext)) {
-                                internalImportFile(project, options, name, sis);
+                                internalImportFile(project, metadata, options, name, sis);
                             }
                         }
                     }
@@ -288,11 +290,11 @@ public class CreateProjectCommand extends Command {
             }
 
         } else if (fileName.endsWith(".gz")) {
-            internalImportFile(project, options, getExtension(fileName)[0], new GZIPInputStream(inputStream));
+            internalImportFile(project, metadata, options, getExtension(fileName)[0], new GZIPInputStream(inputStream));
         } else if (fileName.endsWith(".bz2")) {
-            internalImportFile(project, options, getExtension(fileName)[0], new CBZip2InputStream(inputStream));
+            internalImportFile(project, metadata, options, getExtension(fileName)[0], new CBZip2InputStream(inputStream));
         } else {
-            load(project, options, fileName, inputStream);
+            load(project, metadata, options, fileName, inputStream);
         }
     }
 
@@ -304,9 +306,9 @@ public class CreateProjectCommand extends Command {
         }
     }
 
-    private void load(Project project, Properties options, String fileName, InputStream inputStream) throws Exception {
+    private void load(Project project, ProjectMetadata metadata, Properties options, String fileName, InputStream inputStream) throws Exception {
         Importer importer = ImporterRegistry.guessImporter(null, fileName);
-        internalInvokeImporter(project, importer, options, inputStream, null);
+        internalInvokeImporter(project, importer, metadata, options, inputStream, null);
     }
 
     private File save(InputStream is) throws IOException {
@@ -344,16 +346,20 @@ public class CreateProjectCommand extends Command {
         return result;
     }
 
-    protected void internalImportURL(HttpServletRequest request,
-            Project project, Properties options, String urlString)
-            throws Exception {
+    protected void internalImportURL(
+        HttpServletRequest request,
+        Project project,
+        ProjectMetadata metadata,
+        Properties options,
+        String urlString) throws Exception {
+        
         URL url = new URL(urlString);
         URLConnection connection = null;
 
         // Try for a URL importer first
         Importer importer = ImporterRegistry.guessUrlImporter(url);
         if (importer instanceof UrlImporter) {
-            ((UrlImporter) importer).read(url, project, options);
+            ((UrlImporter) importer).read(url, project, metadata, options);
         } else {
             // If we couldn't find one, try opening URL and treating as a stream
             try {
@@ -380,7 +386,7 @@ public class CreateProjectCommand extends Command {
                 
                 importer = ImporterRegistry.guessImporter(contentType, url.getPath());
                 
-                internalInvokeImporter(project, importer, options, inputStream, connection.getContentEncoding());
+                internalInvokeImporter(project, importer, metadata, options, inputStream, connection.getContentEncoding());
             } finally {
                 inputStream.close();
             }
@@ -388,11 +394,12 @@ public class CreateProjectCommand extends Command {
     }
 
     protected void internalInvokeImporter(
-        Project     project,
-        Importer    importer,
-        Properties  options,
-        InputStream rawInputStream,
-        String      encoding
+        Project         project,
+        Importer        importer,
+        ProjectMetadata metadata,
+        Properties      options,
+        InputStream     rawInputStream,
+        String          encoding
     ) throws Exception {
         if (importer instanceof ReaderImporter) {
 
@@ -433,19 +440,20 @@ public class CreateProjectCommand extends Command {
                         new InputStreamReader(inputStream);
             }
 
-            ((ReaderImporter) importer).read(reader, project, options);
+            ((ReaderImporter) importer).read(reader, project, metadata, options);
         } else {
-            ((StreamImporter) importer).read(rawInputStream, project, options);
+            ((StreamImporter) importer).read(rawInputStream, project, metadata, options);
         }
     }
 
     protected void internalInvokeImporter(
-        Project        project,
-        ReaderImporter importer,
-        Properties     options,
-        Reader         reader
+        Project         project,
+        ReaderImporter  importer,
+        ProjectMetadata metadata,
+        Properties      options,
+        Reader          reader
     ) throws Exception {
-        importer.read(reader, project, options);
+        importer.read(reader, project, metadata, options);
     }
 
 }

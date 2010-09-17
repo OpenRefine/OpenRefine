@@ -14,6 +14,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.importers.XmlImporter;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.model.Row;
@@ -223,7 +224,7 @@ public class XmlImporterTests extends GridworksTest {
         }
 
         try {
-            SUT.read(inputStream, project, options);
+            SUT.read(inputStream, project, new ProjectMetadata(), options);
         } catch (Exception e) {
             Assert.fail();
         }

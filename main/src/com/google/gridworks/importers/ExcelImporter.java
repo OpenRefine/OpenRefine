@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.model.Cell;
 import com.google.gridworks.model.Column;
 import com.google.gridworks.model.Project;
@@ -31,7 +32,7 @@ public class ExcelImporter implements StreamImporter {
     protected boolean _xmlBased;
 
     @Override
-    public void read(InputStream inputStream, Project project, Properties options) throws ImportException {
+    public void read(InputStream inputStream, Project project, ProjectMetadata metadata, Properties options) throws ImportException {
         int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
         int headerLines = ImporterUtilities.getIntegerOption("header-lines", options, 1);
         int limit = ImporterUtilities.getIntegerOption("limit", options, -1);

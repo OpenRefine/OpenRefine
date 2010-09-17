@@ -9,6 +9,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.importers.XmlImportUtilities.ImportColumnGroup;
 import com.google.gridworks.model.Project;
 
@@ -22,7 +23,7 @@ public class XmlImporter implements StreamImporter {
     public void read(
         InputStream inputStream,
         Project project,
-        Properties options
+        ProjectMetadata metadata, Properties options
     ) throws ImportException {
         logger.trace("XmlImporter.read");
         PushbackInputStream pis = new PushbackInputStream(inputStream,BUFFER_SIZE);

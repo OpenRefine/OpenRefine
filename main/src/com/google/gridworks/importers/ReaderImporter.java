@@ -3,6 +3,7 @@ package com.google.gridworks.importers;
 import java.io.Reader;
 import java.util.Properties;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.model.Project;
 
 /**
@@ -18,10 +19,12 @@ public interface ReaderImporter extends Importer {
      *            the correct point and ready to go.
      * @param project
      *            project which will contain data
+     * @param metadata
+     *            metadata of new project
      * @param options
      *            set of properties with import options
      * @throws ImportException
      */
-    public void read(Reader reader, Project project, Properties options)
+    public void read(Reader reader, Project project, ProjectMetadata metadata, Properties options)
             throws ImportException;
 }

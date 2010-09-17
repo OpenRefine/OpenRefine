@@ -18,6 +18,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.importers.TsvCsvImporter;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.tests.GridworksTest;
@@ -464,7 +465,7 @@ public class TsvCsvImporterTests extends GridworksTest {
         whenGetIntegerOption("ignore-quotes",properties,0);
 
         try {
-            SUT.read(reader, project, properties);
+            SUT.read(reader, project, new ProjectMetadata(), properties);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -497,7 +498,7 @@ public class TsvCsvImporterTests extends GridworksTest {
         whenGetBooleanOption("ignore-quotes",properties,true);
 
         try {
-            SUT.read(reader, project, properties);
+            SUT.read(reader, project, new ProjectMetadata(), properties);
         } catch (Exception e) {
             Assert.fail();
         }

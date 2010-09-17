@@ -14,6 +14,7 @@ import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
 import org.marc4j.marc.Record;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.model.Project;
 
 public class MarcImporter implements StreamImporter {
@@ -22,7 +23,7 @@ public class MarcImporter implements StreamImporter {
     public void read(
         InputStream inputStream,
         Project project,
-        Properties options
+        ProjectMetadata metadata, Properties options
     ) throws ImportException {
         int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
         int skip = ImporterUtilities.getIntegerOption("skip",options,0);
@@ -68,7 +69,7 @@ public class MarcImporter implements StreamImporter {
 
             InputStream is = new FileInputStream(tempFile);
             try {
-                new XmlImporter().read(is, project, options);
+                new XmlImporter().read(is, project, metadata, options);
             } finally {
                 try {
                     is.close();

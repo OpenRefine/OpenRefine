@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 
 import au.com.bytecode.opencsv.CSVParser;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.expr.ExpressionUtils;
 import com.google.gridworks.model.Cell;
 import com.google.gridworks.model.Project;
@@ -22,7 +23,7 @@ import com.google.gridworks.model.Row;
 public class TsvCsvImporter implements ReaderImporter,StreamImporter {
     
     @Override
-    public void read(Reader reader, Project project, Properties options) throws ImportException {
+    public void read(Reader reader, Project project, ProjectMetadata metadata, Properties options) throws ImportException {
         boolean splitIntoColumns = ImporterUtilities.getBooleanOption("split-into-columns", options, true);
         
         String sep = options.getProperty("separator"); // auto-detect if not present
@@ -178,8 +179,8 @@ public class TsvCsvImporter implements ReaderImporter,StreamImporter {
 
     @Override
     public void read(InputStream inputStream, Project project,
-            Properties options) throws ImportException {
-        read(new InputStreamReader(inputStream), project, options);
+            ProjectMetadata metadata, Properties options) throws ImportException {
+        read(new InputStreamReader(inputStream), project, metadata, options);
     }
 
     @Override

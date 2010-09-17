@@ -24,6 +24,7 @@ import static org.jrdf.graph.AnyObjectNode.ANY_OBJECT_NODE;
 import static org.jrdf.graph.AnyPredicateNode.ANY_PREDICATE_NODE;
 import static org.jrdf.graph.AnySubjectNode.ANY_SUBJECT_NODE;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.expr.ExpressionUtils;
 import com.google.gridworks.model.Cell;
 import com.google.gridworks.model.Column;
@@ -43,7 +44,7 @@ public class RdfTripleImporter implements ReaderImporter{
     }
 
     @Override
-    public void read(Reader reader, Project project, Properties options) throws ImportException {
+    public void read(Reader reader, Project project, ProjectMetadata metadata, Properties options) throws ImportException {
         String baseUrl = options.getProperty("base-url");
 
         Graph graph = _jrdfFactory.getNewGraph();

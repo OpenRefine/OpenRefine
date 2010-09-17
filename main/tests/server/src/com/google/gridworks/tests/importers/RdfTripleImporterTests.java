@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.gridworks.ProjectMetadata;
 import com.google.gridworks.importers.RdfTripleImporter;
 import com.google.gridworks.model.Project;
 import com.google.gridworks.tests.GridworksTest;
@@ -41,7 +42,7 @@ public class RdfTripleImporterTests extends GridworksTest {
         StringReader reader = new StringReader(sampleRdf);
 
         try {
-            SUT.read(reader, project, options);
+            SUT.read(reader, project, new ProjectMetadata(), options);
             project.update();
         } catch (Exception e) {
             Assert.fail();
@@ -64,7 +65,7 @@ public class RdfTripleImporterTests extends GridworksTest {
         StringReader reader = new StringReader(sampleRdf);
 
         try {
-            SUT.read(reader, project, options);
+            SUT.read(reader, project, new ProjectMetadata(), options);
             project.update();
         } catch (Exception e) {
             Assert.fail();
@@ -106,7 +107,7 @@ public class RdfTripleImporterTests extends GridworksTest {
         StringReader reader = new StringReader(sampleRdf);
 
         try {
-            SUT.read(reader, project, options);
+            SUT.read(reader, project, new ProjectMetadata(), options);
             project.update();
         } catch (Exception e) {
             Assert.fail();
@@ -141,7 +142,7 @@ public class RdfTripleImporterTests extends GridworksTest {
         StringReader reader = new StringReader(sampleRdf);
 
         try {
-            SUT.read(reader, project, options);
+            SUT.read(reader, project, new ProjectMetadata(), options);
             project.update();
         } catch (Exception e) {
             Assert.fail();
