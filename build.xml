@@ -187,11 +187,15 @@
 
     <!-- ================================================================== -->
 
-    <target name="jar_server" depends="build_server">
+    <target name="prepare_jar">
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+    <target name="jar_server" depends="prepare_jar, build_server">
         <jar destfile="${build.dir}/${fullname}-server.jar" basedir="${server.classes.dir}"/>
     </target>
     
-    <target name="jar_webapp" depends="build_webapp">
+    <target name="jar_webapp" depends="prepare_jar, build_webapp">
         <jar destfile="${build.dir}/${fullname}.jar" basedir="${webapp.classes.dir}"/>
     </target>
 
