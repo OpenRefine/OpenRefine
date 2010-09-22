@@ -1,0 +1,48 @@
+package com.google.refine.commands.workspace;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Map.Entry;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
+
+import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.commands.Command;
+
+public class GetAllProjectMetadataCommand extends Command {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
+            
+            JSONWriter writer = new JSONWriter(response.getWriter());
+            Properties options = new Properties();
+            
+            writer.object();
+            writer.key("projects");
+                writer.object();
+                Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
+                for (Entry<Long,ProjectMetadata> e : m.entrySet()) {
+                    ProjectMetadata pm = e.getValue();
+                    if (pm != null) {
+                        writer.key(e.getKey().toString());
+                        e.getValue().write(writer, options);
+                    }
+                }
+                writer.endObject();
+            writer.endObject();
+        } catch (JSONException e) {
+            respondException(response, e);
+        }
+    }
+}

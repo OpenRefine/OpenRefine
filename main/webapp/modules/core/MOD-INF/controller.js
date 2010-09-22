@@ -1,6 +1,6 @@
 var html = "text/html";
 var encoding = "UTF-8";
-var ClientSideResourceManager = Packages.com.google.gridworks.ClientSideResourceManager;
+var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
 var bundle = true;
 
 var templatedFiles = {
@@ -12,132 +12,132 @@ var templatedFiles = {
 };
 
 function registerCommands() {
-    var GS = Packages.com.google.gridworks.GridworksServlet;
+    var GS = Packages.com.google.refine.GridworksServlet;
     
-    GS.registerCommand(module, "create-project-from-upload", new Packages.com.google.gridworks.commands.project.CreateProjectCommand());
-    GS.registerCommand(module, "import-project", new Packages.com.google.gridworks.commands.project.ImportProjectCommand());
-    GS.registerCommand(module, "export-project", new Packages.com.google.gridworks.commands.project.ExportProjectCommand());
-    GS.registerCommand(module, "export-rows", new Packages.com.google.gridworks.commands.project.ExportRowsCommand());
+    GS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
+    GS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
+    GS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
+    GS.registerCommand(module, "export-rows", new Packages.com.google.refine.commands.project.ExportRowsCommand());
 
-    GS.registerCommand(module, "get-project-metadata", new Packages.com.google.gridworks.commands.project.GetProjectMetadataCommand());
-    GS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.gridworks.commands.workspace.GetAllProjectMetadataCommand());
+    GS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
+    GS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
 
-    GS.registerCommand(module, "delete-project", new Packages.com.google.gridworks.commands.project.DeleteProjectCommand());
-    GS.registerCommand(module, "rename-project", new Packages.com.google.gridworks.commands.project.RenameProjectCommand());
+    GS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
+    GS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
 
-    GS.registerCommand(module, "get-models", new Packages.com.google.gridworks.commands.project.GetModelsCommand());
-    GS.registerCommand(module, "get-rows", new Packages.com.google.gridworks.commands.row.GetRowsCommand());
-    GS.registerCommand(module, "get-processes", new Packages.com.google.gridworks.commands.history.GetProcessesCommand());
-    GS.registerCommand(module, "get-history", new Packages.com.google.gridworks.commands.history.GetHistoryCommand());
-    GS.registerCommand(module, "get-operations", new Packages.com.google.gridworks.commands.history.GetOperationsCommand());
-    GS.registerCommand(module, "get-columns-info", new Packages.com.google.gridworks.commands.column.GetColumnsInfoCommand());
-    GS.registerCommand(module, "get-scatterplot", new Packages.com.google.gridworks.commands.browsing.GetScatterplotCommand());
+    GS.registerCommand(module, "get-models", new Packages.com.google.refine.commands.project.GetModelsCommand());
+    GS.registerCommand(module, "get-rows", new Packages.com.google.refine.commands.row.GetRowsCommand());
+    GS.registerCommand(module, "get-processes", new Packages.com.google.refine.commands.history.GetProcessesCommand());
+    GS.registerCommand(module, "get-history", new Packages.com.google.refine.commands.history.GetHistoryCommand());
+    GS.registerCommand(module, "get-operations", new Packages.com.google.refine.commands.history.GetOperationsCommand());
+    GS.registerCommand(module, "get-columns-info", new Packages.com.google.refine.commands.column.GetColumnsInfoCommand());
+    GS.registerCommand(module, "get-scatterplot", new Packages.com.google.refine.commands.browsing.GetScatterplotCommand());
 
-    GS.registerCommand(module, "undo-redo", new Packages.com.google.gridworks.commands.history.UndoRedoCommand());
-    GS.registerCommand(module, "apply-operations", new Packages.com.google.gridworks.commands.history.ApplyOperationsCommand());
-    GS.registerCommand(module, "cancel-processes", new Packages.com.google.gridworks.commands.history.CancelProcessesCommand());
+    GS.registerCommand(module, "undo-redo", new Packages.com.google.refine.commands.history.UndoRedoCommand());
+    GS.registerCommand(module, "apply-operations", new Packages.com.google.refine.commands.history.ApplyOperationsCommand());
+    GS.registerCommand(module, "cancel-processes", new Packages.com.google.refine.commands.history.CancelProcessesCommand());
 
-    GS.registerCommand(module, "compute-facets", new Packages.com.google.gridworks.commands.browsing.ComputeFacetsCommand());
-    GS.registerCommand(module, "compute-clusters", new Packages.com.google.gridworks.commands.browsing.ComputeClustersCommand());
+    GS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
+    GS.registerCommand(module, "compute-clusters", new Packages.com.google.refine.commands.browsing.ComputeClustersCommand());
 
-    GS.registerCommand(module, "edit-one-cell", new Packages.com.google.gridworks.commands.cell.EditOneCellCommand());
-    GS.registerCommand(module, "text-transform", new Packages.com.google.gridworks.commands.cell.TextTransformCommand());
-    GS.registerCommand(module, "mass-edit", new Packages.com.google.gridworks.commands.cell.MassEditCommand());
-    GS.registerCommand(module, "join-multi-value-cells", new Packages.com.google.gridworks.commands.cell.JoinMultiValueCellsCommand());
-    GS.registerCommand(module, "split-multi-value-cells", new Packages.com.google.gridworks.commands.cell.SplitMultiValueCellsCommand());
-    GS.registerCommand(module, "fill-down", new Packages.com.google.gridworks.commands.cell.FillDownCommand());
-    GS.registerCommand(module, "blank-down", new Packages.com.google.gridworks.commands.cell.BlankDownCommand());
-    GS.registerCommand(module, "transpose-columns-into-rows", new Packages.com.google.gridworks.commands.cell.TransposeColumnsIntoRowsCommand());
-    GS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.gridworks.commands.cell.TransposeRowsIntoColumnsCommand());
+    GS.registerCommand(module, "edit-one-cell", new Packages.com.google.refine.commands.cell.EditOneCellCommand());
+    GS.registerCommand(module, "text-transform", new Packages.com.google.refine.commands.cell.TextTransformCommand());
+    GS.registerCommand(module, "mass-edit", new Packages.com.google.refine.commands.cell.MassEditCommand());
+    GS.registerCommand(module, "join-multi-value-cells", new Packages.com.google.refine.commands.cell.JoinMultiValueCellsCommand());
+    GS.registerCommand(module, "split-multi-value-cells", new Packages.com.google.refine.commands.cell.SplitMultiValueCellsCommand());
+    GS.registerCommand(module, "fill-down", new Packages.com.google.refine.commands.cell.FillDownCommand());
+    GS.registerCommand(module, "blank-down", new Packages.com.google.refine.commands.cell.BlankDownCommand());
+    GS.registerCommand(module, "transpose-columns-into-rows", new Packages.com.google.refine.commands.cell.TransposeColumnsIntoRowsCommand());
+    GS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.refine.commands.cell.TransposeRowsIntoColumnsCommand());
 
-    GS.registerCommand(module, "add-column", new Packages.com.google.gridworks.commands.column.AddColumnCommand());
-    GS.registerCommand(module, "remove-column", new Packages.com.google.gridworks.commands.column.RemoveColumnCommand());
-    GS.registerCommand(module, "rename-column", new Packages.com.google.gridworks.commands.column.RenameColumnCommand());
-    GS.registerCommand(module, "move-column", new Packages.com.google.gridworks.commands.column.MoveColumnCommand());
-    GS.registerCommand(module, "split-column", new Packages.com.google.gridworks.commands.column.SplitColumnCommand());
-    GS.registerCommand(module, "extend-data", new Packages.com.google.gridworks.commands.column.ExtendDataCommand());
-    GS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.gridworks.commands.column.AddColumnByFetchingURLsCommand());
-    GS.registerCommand(module, "reorder-columns", new Packages.com.google.gridworks.commands.column.ReorderColumnsCommand());
+    GS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
+    GS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
+    GS.registerCommand(module, "rename-column", new Packages.com.google.refine.commands.column.RenameColumnCommand());
+    GS.registerCommand(module, "move-column", new Packages.com.google.refine.commands.column.MoveColumnCommand());
+    GS.registerCommand(module, "split-column", new Packages.com.google.refine.commands.column.SplitColumnCommand());
+    GS.registerCommand(module, "extend-data", new Packages.com.google.refine.commands.column.ExtendDataCommand());
+    GS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
+    GS.registerCommand(module, "reorder-columns", new Packages.com.google.refine.commands.column.ReorderColumnsCommand());
 
-    GS.registerCommand(module, "denormalize", new Packages.com.google.gridworks.commands.row.DenormalizeCommand());
+    GS.registerCommand(module, "denormalize", new Packages.com.google.refine.commands.row.DenormalizeCommand());
 
-    GS.registerCommand(module, "reconcile", new Packages.com.google.gridworks.commands.recon.ReconcileCommand());
-    GS.registerCommand(module, "recon-match-best-candidates", new Packages.com.google.gridworks.commands.recon.ReconMatchBestCandidatesCommand());
-    GS.registerCommand(module, "recon-mark-new-topics", new Packages.com.google.gridworks.commands.recon.ReconMarkNewTopicsCommand());
-    GS.registerCommand(module, "recon-discard-judgments", new Packages.com.google.gridworks.commands.recon.ReconDiscardJudgmentsCommand());
-    GS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.gridworks.commands.recon.ReconMatchSpecificTopicCommand());
-    GS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.gridworks.commands.recon.ReconJudgeOneCellCommand());
-    GS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.gridworks.commands.recon.ReconJudgeSimilarCellsCommand());
+    GS.registerCommand(module, "reconcile", new Packages.com.google.refine.commands.recon.ReconcileCommand());
+    GS.registerCommand(module, "recon-match-best-candidates", new Packages.com.google.refine.commands.recon.ReconMatchBestCandidatesCommand());
+    GS.registerCommand(module, "recon-mark-new-topics", new Packages.com.google.refine.commands.recon.ReconMarkNewTopicsCommand());
+    GS.registerCommand(module, "recon-discard-judgments", new Packages.com.google.refine.commands.recon.ReconDiscardJudgmentsCommand());
+    GS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.refine.commands.recon.ReconMatchSpecificTopicCommand());
+    GS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.refine.commands.recon.ReconJudgeOneCellCommand());
+    GS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.refine.commands.recon.ReconJudgeSimilarCellsCommand());
 
-    GS.registerCommand(module, "annotate-one-row", new Packages.com.google.gridworks.commands.row.AnnotateOneRowCommand());
-    GS.registerCommand(module, "annotate-rows", new Packages.com.google.gridworks.commands.row.AnnotateRowsCommand());
-    GS.registerCommand(module, "remove-rows", new Packages.com.google.gridworks.commands.row.RemoveRowsCommand());
-    GS.registerCommand(module, "reorder-rows", new Packages.com.google.gridworks.commands.row.ReorderRowsCommand());
+    GS.registerCommand(module, "annotate-one-row", new Packages.com.google.refine.commands.row.AnnotateOneRowCommand());
+    GS.registerCommand(module, "annotate-rows", new Packages.com.google.refine.commands.row.AnnotateRowsCommand());
+    GS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
+    GS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
 
-    GS.registerCommand(module, "save-protograph", new Packages.com.google.gridworks.commands.freebase.SaveProtographCommand());
+    GS.registerCommand(module, "save-protograph", new Packages.com.google.refine.commands.freebase.SaveProtographCommand());
 
-    GS.registerCommand(module, "get-expression-language-info", new Packages.com.google.gridworks.commands.expr.GetExpressionLanguageInfoCommand());
-    GS.registerCommand(module, "get-expression-history", new Packages.com.google.gridworks.commands.expr.GetExpressionHistoryCommand());
-    GS.registerCommand(module, "log-expression", new Packages.com.google.gridworks.commands.expr.LogExpressionCommand());
+    GS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
+    GS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
+    GS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
 
-    GS.registerCommand(module, "preview-expression", new Packages.com.google.gridworks.commands.expr.PreviewExpressionCommand());
-    GS.registerCommand(module, "preview-extend-data", new Packages.com.google.gridworks.commands.column.PreviewExtendDataCommand());
-    GS.registerCommand(module, "preview-protograph", new Packages.com.google.gridworks.commands.freebase.PreviewProtographCommand());
+    GS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
+    GS.registerCommand(module, "preview-extend-data", new Packages.com.google.refine.commands.column.PreviewExtendDataCommand());
+    GS.registerCommand(module, "preview-protograph", new Packages.com.google.refine.commands.freebase.PreviewProtographCommand());
 
-    GS.registerCommand(module, "guess-types-of-column", new Packages.com.google.gridworks.commands.freebase.GuessTypesOfColumnCommand());
+    GS.registerCommand(module, "guess-types-of-column", new Packages.com.google.refine.commands.freebase.GuessTypesOfColumnCommand());
 
-    GS.registerCommand(module, "check-authorization", new Packages.com.google.gridworks.commands.auth.CheckAuthorizationCommand());
-    GS.registerCommand(module, "authorize", new Packages.com.google.gridworks.commands.auth.AuthorizeCommand());
-    GS.registerCommand(module, "deauthorize", new Packages.com.google.gridworks.commands.auth.DeAuthorizeCommand());
-    GS.registerCommand(module, "user-badges", new Packages.com.google.gridworks.commands.auth.GetUserBadgesCommand());
+    GS.registerCommand(module, "check-authorization", new Packages.com.google.refine.commands.auth.CheckAuthorizationCommand());
+    GS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
+    GS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
+    GS.registerCommand(module, "user-badges", new Packages.com.google.refine.commands.auth.GetUserBadgesCommand());
 
-    GS.registerCommand(module, "upload-data", new Packages.com.google.gridworks.commands.freebase.UploadDataCommand());
-    GS.registerCommand(module, "import-qa-data", new Packages.com.google.gridworks.commands.freebase.ImportQADataCommand());
-    GS.registerCommand(module, "mqlread", new Packages.com.google.gridworks.commands.freebase.MQLReadCommand());
-    GS.registerCommand(module, "mqlwrite", new Packages.com.google.gridworks.commands.freebase.MQLWriteCommand());
+    GS.registerCommand(module, "upload-data", new Packages.com.google.refine.commands.freebase.UploadDataCommand());
+    GS.registerCommand(module, "import-qa-data", new Packages.com.google.refine.commands.freebase.ImportQADataCommand());
+    GS.registerCommand(module, "mqlread", new Packages.com.google.refine.commands.freebase.MQLReadCommand());
+    GS.registerCommand(module, "mqlwrite", new Packages.com.google.refine.commands.freebase.MQLWriteCommand());
 
-    GS.registerCommand(module, "get-preference", new Packages.com.google.gridworks.commands.GetPreferenceCommand());
-    GS.registerCommand(module, "get-all-preferences", new Packages.com.google.gridworks.commands.GetAllPreferencesCommand());
-    GS.registerCommand(module, "set-preference", new Packages.com.google.gridworks.commands.SetPreferenceCommand());
-    GS.registerCommand(module, "open-workspace-dir", new Packages.com.google.gridworks.commands.OpenWorkspaceDirCommand());
+    GS.registerCommand(module, "get-preference", new Packages.com.google.refine.commands.GetPreferenceCommand());
+    GS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
+    GS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
+    GS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
 }
 
 function registerOperations() {
-    var OR = Packages.com.google.gridworks.operations.OperationRegistry;
+    var OR = Packages.com.google.refine.operations.OperationRegistry;
     
-    OR.registerOperation(module, "text-transform", Packages.com.google.gridworks.operations.cell.TextTransformOperation);
-    OR.registerOperation(module, "mass-edit", Packages.com.google.gridworks.operations.cell.MassEditOperation);
+    OR.registerOperation(module, "text-transform", Packages.com.google.refine.operations.cell.TextTransformOperation);
+    OR.registerOperation(module, "mass-edit", Packages.com.google.refine.operations.cell.MassEditOperation);
     
-    OR.registerOperation(module, "multivalued-cell-join", Packages.com.google.gridworks.operations.cell.MultiValuedCellJoinOperation);
-    OR.registerOperation(module, "multivalued-cell-split", Packages.com.google.gridworks.operations.cell.MultiValuedCellSplitOperation);
-    OR.registerOperation(module, "fill-down", Packages.com.google.gridworks.operations.cell.FillDownOperation);
-    OR.registerOperation(module, "blank-down", Packages.com.google.gridworks.operations.cell.BlankDownOperation);
-    OR.registerOperation(module, "transpose-columns-into-rows", Packages.com.google.gridworks.operations.cell.TransposeColumnsIntoRowsOperation);
-    OR.registerOperation(module, "transpose-rows-into-columns", Packages.com.google.gridworks.operations.cell.TransposeRowsIntoColumnsOperation);
+    OR.registerOperation(module, "multivalued-cell-join", Packages.com.google.refine.operations.cell.MultiValuedCellJoinOperation);
+    OR.registerOperation(module, "multivalued-cell-split", Packages.com.google.refine.operations.cell.MultiValuedCellSplitOperation);
+    OR.registerOperation(module, "fill-down", Packages.com.google.refine.operations.cell.FillDownOperation);
+    OR.registerOperation(module, "blank-down", Packages.com.google.refine.operations.cell.BlankDownOperation);
+    OR.registerOperation(module, "transpose-columns-into-rows", Packages.com.google.refine.operations.cell.TransposeColumnsIntoRowsOperation);
+    OR.registerOperation(module, "transpose-rows-into-columns", Packages.com.google.refine.operations.cell.TransposeRowsIntoColumnsOperation);
     
-    OR.registerOperation(module, "column-addition", Packages.com.google.gridworks.operations.column.ColumnAdditionOperation);
-    OR.registerOperation(module, "column-removal", Packages.com.google.gridworks.operations.column.ColumnRemovalOperation);
-    OR.registerOperation(module, "column-rename", Packages.com.google.gridworks.operations.column.ColumnRenameOperation);
-    OR.registerOperation(module, "column-move", Packages.com.google.gridworks.operations.column.ColumnMoveOperation);
-    OR.registerOperation(module, "column-split", Packages.com.google.gridworks.operations.column.ColumnSplitOperation);
-    OR.registerOperation(module, "extend-data", Packages.com.google.gridworks.operations.column.ExtendDataOperation);
-    OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.gridworks.operations.column.ColumnAdditionByFetchingURLsOperation);
-    OR.registerOperation(module, "column-reorder", Packages.com.google.gridworks.operations.column.ColumnReorderOperation);
+    OR.registerOperation(module, "column-addition", Packages.com.google.refine.operations.column.ColumnAdditionOperation);
+    OR.registerOperation(module, "column-removal", Packages.com.google.refine.operations.column.ColumnRemovalOperation);
+    OR.registerOperation(module, "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
+    OR.registerOperation(module, "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
+    OR.registerOperation(module, "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
+    OR.registerOperation(module, "extend-data", Packages.com.google.refine.operations.column.ExtendDataOperation);
+    OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
+    OR.registerOperation(module, "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
     
-    OR.registerOperation(module, "row-removal", Packages.com.google.gridworks.operations.row.RowRemovalOperation);
-    OR.registerOperation(module, "row-star", Packages.com.google.gridworks.operations.row.RowStarOperation);
-    OR.registerOperation(module, "row-flag", Packages.com.google.gridworks.operations.row.RowFlagOperation);
-    OR.registerOperation(module, "row-reorder", Packages.com.google.gridworks.operations.row.RowReorderOperation);
+    OR.registerOperation(module, "row-removal", Packages.com.google.refine.operations.row.RowRemovalOperation);
+    OR.registerOperation(module, "row-star", Packages.com.google.refine.operations.row.RowStarOperation);
+    OR.registerOperation(module, "row-flag", Packages.com.google.refine.operations.row.RowFlagOperation);
+    OR.registerOperation(module, "row-reorder", Packages.com.google.refine.operations.row.RowReorderOperation);
     
-    OR.registerOperation(module, "recon", Packages.com.google.gridworks.operations.recon.ReconOperation);
-    OR.registerOperation(module, "recon-mark-new-topics", Packages.com.google.gridworks.operations.recon.ReconMarkNewTopicsOperation);
-    OR.registerOperation(module, "recon-match-best-candidates", Packages.com.google.gridworks.operations.recon.ReconMatchBestCandidatesOperation);
-    OR.registerOperation(module, "recon-discard-judgments", Packages.com.google.gridworks.operations.recon.ReconDiscardJudgmentsOperation);
-    OR.registerOperation(module, "recon-match-specific-topic-to-cells", Packages.com.google.gridworks.operations.recon.ReconMatchSpecificTopicOperation);
-    OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.gridworks.operations.recon.ReconJudgeSimilarCellsOperation);
-    OR.registerOperation(module, "import-qa-data", Packages.com.google.gridworks.operations.recon.ImportQADataOperation);
+    OR.registerOperation(module, "recon", Packages.com.google.refine.operations.recon.ReconOperation);
+    OR.registerOperation(module, "recon-mark-new-topics", Packages.com.google.refine.operations.recon.ReconMarkNewTopicsOperation);
+    OR.registerOperation(module, "recon-match-best-candidates", Packages.com.google.refine.operations.recon.ReconMatchBestCandidatesOperation);
+    OR.registerOperation(module, "recon-discard-judgments", Packages.com.google.refine.operations.recon.ReconDiscardJudgmentsOperation);
+    OR.registerOperation(module, "recon-match-specific-topic-to-cells", Packages.com.google.refine.operations.recon.ReconMatchSpecificTopicOperation);
+    OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
+    OR.registerOperation(module, "import-qa-data", Packages.com.google.refine.operations.recon.ImportQADataOperation);
     
-    OR.registerOperation(module, "save-protograph", Packages.com.google.gridworks.operations.SaveProtographOperation);
+    OR.registerOperation(module, "save-protograph", Packages.com.google.refine.operations.SaveProtographOperation);
 }
 
 /*

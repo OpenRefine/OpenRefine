@@ -1,0 +1,33 @@
+package com.google.refine.expr.functions.strings;
+
+import java.util.Properties;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONException;
+import org.json.JSONWriter;
+
+import com.google.refine.expr.EvalError;
+import com.google.refine.gel.ControlFunctionRegistry;
+import com.google.refine.gel.Function;
+
+public class SHA1 implements Function {
+
+    public Object call(Properties bindings, Object[] args) {
+        if (args.length == 1 && args[0] != null) {
+            Object o = args[0];
+            String s = (o instanceof String) ? (String) o : o.toString();
+            return DigestUtils.shaHex(s);
+        }
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+    }
+    
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("description"); writer.value("Returns the SHA-1 hash of s");
+        writer.key("params"); writer.value("string s");
+        writer.key("returns"); writer.value("string");
+        writer.endObject();
+    }
+}

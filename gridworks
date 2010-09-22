@@ -622,7 +622,7 @@ run() {
                     
     CLASSPATH="$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_LIB_DIR/*"
 
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.gridworks.Gridworks"
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Gridworks"
 
     #echo "$RUN_CMD"
     #echo ""
@@ -674,7 +674,7 @@ broker_run() {
                     
     CLASSPATH="$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_LIB_DIR/*"
 
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.gridworks.Gridworks"
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Gridworks"
 
     #echo "$RUN_CMD"
     #echo ""

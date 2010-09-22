@@ -11,13 +11,11 @@
     <echo message="Building extensions" />
     <ant dir="sample-extension/" target="build" />
     <ant dir="jython/" target="build" />
-    <ant dir="rdf-exporter/" target="build" />
   </target>
 
   <target name="clean">
     <echo message="cleaning extensions" />
     <ant dir="sample-extension/" target="clean" />
     <ant dir="jython/" target="clean" />
-    <ant dir="rdf-exporter/" target="clean" />
   </target>
 </project>

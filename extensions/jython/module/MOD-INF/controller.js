@@ -1,10 +1,10 @@
 function init() {
     // Packages.java.lang.System.err.println("Initializing jython extension");
     
-    Packages.com.google.gridworks.expr.MetaParser.registerLanguageParser(
+    Packages.com.google.refine.expr.MetaParser.registerLanguageParser(
         "jython",
         "Jython",
-        Packages.com.google.gridworks.jython.JythonEvaluable.createParser(),
+        Packages.com.google.refine.jython.JythonEvaluable.createParser(),
         "return value"
     );
 }
