@@ -319,5 +319,5 @@ ScatterplotFacet.prototype._remove = function() {
 };
 
 ScatterplotFacet.prototype._updateRest = function() {
-    Gridworks.update({ engineChanged: true });
+    Refine.update({ engineChanged: true });
 };

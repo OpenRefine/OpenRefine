@@ -293,7 +293,7 @@ ClusteringDialog.prototype._apply = function(onDone) {
     }
     
     if (edits.length > 0) {
-        Gridworks.postCoreProcess(
+        Refine.postCoreProcess(
             "mass-edit",
             {},
             {

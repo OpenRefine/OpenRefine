@@ -72,7 +72,7 @@ ProcessWidget.prototype.showUndo = function(historyEntry) {
 
 ProcessWidget.prototype.undo = function() {
     if (this._latestHistoryEntry !== null) {
-        Gridworks.postCoreProcess(
+        Refine.postCoreProcess(
             "undo-redo",
             { undoID: this._latestHistoryEntry.id },
             null,
@@ -101,7 +101,7 @@ ProcessWidget.prototype._render = function(newData) {
     this._div.stop(true, false).empty();
     
     if (!newData.processes.length) {
-        Gridworks.setTitle();
+        Refine.setTitle();
         this._div.hide();
     } else {
         this._div.show();
@@ -130,7 +130,7 @@ ProcessWidget.prototype._render = function(newData) {
             if (process.status == "pending") {
                 div.text(process.description + " (pending)");
             } else {
-                Gridworks.setTitle(process.progress + "%");
+                Refine.setTitle(process.progress + "%");
                 div.text(process.description + " (" + process.progress + "%)");
             }
         };
@@ -190,12 +190,12 @@ ProcessWidget.prototype._runOnDones = function() {
     this._updateOptions = {};
     this._onDones = [];
     
-    Gridworks.update(updateOptions, function() {
+    Refine.update(updateOptions, function() {
         for (var i = 0; i < onDones.length; i++) {
             try {
                 onDones[i]();
             } catch (e) {
-                Gridworks.reportException(e);
+                Refine.reportException(e);
             }
         }
     });

@@ -44,7 +44,7 @@ DialogSystem.dismissUntil = function(level) {
             try {
                 layer.onCancel();
             } catch (e) {
-                Gridworks.reportException(e);
+                Refine.reportException(e);
             }
         }
     }

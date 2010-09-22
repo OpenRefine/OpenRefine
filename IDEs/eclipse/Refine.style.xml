@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <profiles version="11">
-<profile kind="CodeFormatterProfile" name="Gridworks" version="11">
+<profile kind="CodeFormatterProfile" name="Google Refine" version="11">
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_if" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_colon_in_assert" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.brace_position_for_enum_constant" value="end_of_line"/>

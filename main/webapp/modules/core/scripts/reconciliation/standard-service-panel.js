@@ -271,7 +271,7 @@ ReconStandardServicePanel.prototype.start = function() {
         }
     );
     
-    Gridworks.postCoreProcess(
+    Refine.postCoreProcess(
         "reconcile",
         {},
         {

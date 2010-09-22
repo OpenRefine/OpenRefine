@@ -52,7 +52,7 @@ body {
     padding: 0px;
     font-size: 11px;
 }
-.left-panel .gridworks-tabs.ui-tabs .ui-tabs-panel {
+.left-panel .refine-tabs.ui-tabs .ui-tabs-panel {
     padding: 7px;
     overflow: hidden;
 }

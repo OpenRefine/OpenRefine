@@ -55,7 +55,7 @@
         true,
         {},
         $.suggest.suggest.defaults, {
-            service_url: Gridworks.gridworksHelperService,
+            service_url: Refine.refineHelperService,
             service_path: "/suggest_property",
             flyout_service_url: "http://www.freebase.com",
             css: { pane: "fbs-pane fbs-pane-property" }

@@ -280,7 +280,7 @@ DataTableView.prototype._renderDataTable = function(table) {
             .click(function() {
                 var newStarred = !row.starred;
                 
-                Gridworks.postCoreProcess(
+                Refine.postCoreProcess(
                     "annotate-one-row",
                     { row: row.i, starred: newStarred },
                     null,
@@ -301,7 +301,7 @@ DataTableView.prototype._renderDataTable = function(table) {
             .click(function() {
                 var newFlagged = !row.flagged;
 
-                Gridworks.postCoreProcess(
+                Refine.postCoreProcess(
                     "annotate-one-row",
                     { row: row.i, flagged: newFlagged },
                     null,
@@ -354,7 +354,7 @@ DataTableView.prototype._renderDataTable = function(table) {
 
 DataTableView.prototype._showRows = function(start, onDone) {
     var self = this;
-    Gridworks.fetchRows(start, this._pageSize, function() {
+    Refine.fetchRows(start, this._pageSize, function() {
         self.render();
         
         if (onDone) {
@@ -471,33 +471,33 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 {
                     label: "Star Rows",
                     click: function() {
-                        Gridworks.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
+                        Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
                     }
                 },
                 {
                     label: "Unstar Rows",
                     click: function() {
-                        Gridworks.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
+                        Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
                     }
                 },
                 {},
                 {
                     label: "Flag Rows",
                     click: function() {
-                        Gridworks.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
+                        Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
                     }
                 },
                 {
                     label: "Unflag Rows",
                     click: function() {
-                        Gridworks.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
+                        Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
                     }
                 },
                 {},
                 {
                     label: "Remove All Matching Rows",
                     click: function() {
-                        Gridworks.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
+                        Refine.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
                     }
                 }
             ]
@@ -548,7 +548,7 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
         {
             "label" : "Reorder Rows Permanently",
             "click" : function() {
-                Gridworks.postCoreProcess(
+                Refine.postCoreProcess(
                     "reorder-rows",
                     null,
                     { "sorting" : JSON.stringify(self._sorting) }, 

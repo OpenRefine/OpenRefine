@@ -107,7 +107,7 @@ BrowsingEngine.prototype._initializeUI = function() {
         
     this._elmts.modeSelectors.buttonset();
     this._elmts.modeSelectors.find("input").change(function() {
-        Gridworks.update({ engineChanged: true });
+        Refine.update({ engineChanged: true });
     });
     
     this._elmts.refreshLink.click(function() { self.update(); });
@@ -170,7 +170,7 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
     
     this._facets.push({ elmt: elmt, facet: facet });
     
-    Gridworks.update({ engineChanged: true });
+    Refine.update({ engineChanged: true });
 };
 
 BrowsingEngine.prototype._createFacetContainer = function() {
@@ -205,7 +205,7 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
     }
     
     if (update) {
-        Gridworks.update({ engineChanged: true });
+        Refine.update({ engineChanged: true });
     }
 };
 
@@ -251,7 +251,7 @@ BrowsingEngine.prototype.reset = function() {
         this._facets[i].facet.reset();
     }
     
-    Gridworks.update({ engineChanged: true });
+    Refine.update({ engineChanged: true });
 };
 
 BrowsingEngine.prototype.remove = function() {
@@ -270,5 +270,5 @@ BrowsingEngine.prototype.remove = function() {
         }
     }, 300);
     
-    Gridworks.update({ engineChanged: true });
+    Refine.update({ engineChanged: true });
 };

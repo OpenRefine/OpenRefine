@@ -39,7 +39,7 @@ Apache License 2.0
 ------------------
 
 licenses/apache2.0.LICENSE.txt
-    calendar-parser (package com.google.gridworks.expr.util)
+    calendar-parser (package com.google.refine.expr.util)
     ant-tools 
     commons-lang
     commons-codec

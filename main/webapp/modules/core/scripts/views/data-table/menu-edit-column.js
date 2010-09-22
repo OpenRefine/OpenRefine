@@ -1,5 +1,5 @@
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
-    var columnIndex = Gridworks.columnNameToColumnIndex(column.name);
+    var columnIndex = Refine.columnNameToColumnIndex(column.name);
     var doAddColumn = function() {
         var frame = $(
             DOM.loadHTML("core", "scripts/views/data-table/add-column-dialog.html")
@@ -19,7 +19,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 return;
             }
 
-            Gridworks.postCoreProcess(
+            Refine.postCoreProcess(
                 "add-column", 
                 {
                     baseColumnName: column.name, 
@@ -63,7 +63,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 return;
             }
 
-            Gridworks.postCoreProcess(
+            Refine.postCoreProcess(
                 "add-column-by-fetching-urls", 
                 {
                     baseColumnName: column.name, 
@@ -96,7 +96,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             columnIndex, 
             o.rowIndices, 
             function(extension) {
-                Gridworks.postCoreProcess(
+                Refine.postCoreProcess(
                     "extend-data", 
                     {
                         baseColumnName: column.name,
@@ -112,7 +112,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doRemoveColumn = function() {
-        Gridworks.postCoreProcess(
+        Refine.postCoreProcess(
             "remove-column", 
             {
                 columnName: column.name
@@ -125,7 +125,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var doRenameColumn = function() {
         var newColumnName = window.prompt("Enter new column name", column.name);
         if (newColumnName !== null) {
-            Gridworks.postCoreProcess(
+            Refine.postCoreProcess(
                 "rename-column", 
                 {
                     oldColumnName: column.name,
@@ -138,7 +138,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doMoveColumnTo = function(index) {
-        Gridworks.postCoreProcess(
+        Refine.postCoreProcess(
             "move-column", 
             {
                 columnName: column.name,
@@ -150,11 +150,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
 
     var doMoveColumnBy = function(change) {
-        Gridworks.postCoreProcess(
+        Refine.postCoreProcess(
             "move-column", 
             {
                 columnName: column.name,
-                index: Gridworks.columnNameToColumnIndex(column.name) + change
+                index: Refine.columnNameToColumnIndex(column.name) + change
             },
             null,
             { modelsChanged: true }
@@ -214,7 +214,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 config.fieldLengths = JSON.stringify(lengths);
             }
 
-            Gridworks.postCoreProcess(
+            Refine.postCoreProcess(
                 "split-column", 
                 config,
                 null,

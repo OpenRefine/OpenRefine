@@ -36,7 +36,7 @@ ColumnReorderingDialog.prototype._dismiss = function() {
 ColumnReorderingDialog.prototype._commit = function() {
     var columnNames = this._elmts.columnContainer.find('div').map(function() { return this.getAttribute("column"); }).get();
     
-    Gridworks.postCoreProcess(
+    Refine.postCoreProcess(
         "reorder-columns",
         null,
         { "columnNames" : JSON.stringify(columnNames) }, 

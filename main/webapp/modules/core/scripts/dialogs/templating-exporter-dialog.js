@@ -107,7 +107,7 @@ TemplatingExporterDialog.prototype._export = function() {
         .css("display", "none")
         .attr("method", "post")
         .attr("action", "/command/core/export-rows/" + name + ".txt")
-        .attr("target", "gridworks-export");
+        .attr("target", "refine-export");
         
     var appendField = function(name, value) {
         $('<textarea />')
@@ -127,7 +127,7 @@ TemplatingExporterDialog.prototype._export = function() {
 
     document.body.appendChild(form);
 
-    window.open("about:blank", "gridworks-export");
+    window.open("about:blank", "refine-export");
     form.submit();
 
     document.body.removeChild(form);

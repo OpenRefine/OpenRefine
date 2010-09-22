@@ -169,7 +169,7 @@ SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
     $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         var protograph = self.getJSON();
         
-        Gridworks.postCoreProcess(
+        Refine.postCoreProcess(
             "save-protograph",
             {},
             { protograph: JSON.stringify(protograph) },
@@ -198,7 +198,7 @@ SchemaAlignmentDialog.prototype._constructBody = function(body) {
     '</p>').appendTo(body);
     
     $(
-        '<div id="schema-alignment-tabs" class="gridworks-tabs">' +
+        '<div id="schema-alignment-tabs" class="refine-tabs">' +
             '<ul>' +
                 '<li><a href="#schema-alignment-tabs-protograph">Skeleton</a></li>' +
                 '<li><a href="#schema-alignment-tabs-preview-mqllike">MQL-like Preview</a></li>' +

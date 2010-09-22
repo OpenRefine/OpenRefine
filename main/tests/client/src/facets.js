@@ -7,7 +7,7 @@ var test_facets = new function() {
 	
     // test opening Food project
     test = newTest();
-    assert (test, "assertText", { jquery: '("h1")[0]', validator: "Welcome to Gridworks" });
+    assert (test, "assertText", { jquery: '("h1")[0]', validator: "Welcome to Google Refine" });
     this.test_home_page = test;
     
     // make sure the dataset was loaded properly

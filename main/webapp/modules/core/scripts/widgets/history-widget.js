@@ -39,7 +39,7 @@ HistoryWidget.prototype._render = function() {
             '<div class="history-panel-help" bind="helpDiv">' +
                 '<h1>Don\'t worry ...</h1>' +
                 '<p>about making mistakes. Every change you make will be shown here, and you can undo changes at any point.</p>' +
-                '<p><a href="http://wiki.freebase.com/index.php?title=Gridworks" target="_blank">Learn more &raquo;</a></p>' +
+                '<p><a href="http://code.google.com/p/google-refine/wiki/GettingStarted?tm=6" target="_blank">Learn more &raquo;</a></p>' +
             '</div>' +
             '<div class="history-panel-body" bind="bodyDiv">' +
                 '<div class="history-past" bind="pastDiv"></div>' +
@@ -100,7 +100,7 @@ HistoryWidget.prototype._render = function() {
 HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
     var self = this;
     
-    Gridworks.postCoreProcess(
+    Refine.postCoreProcess(
         "undo-redo",
         { lastDoneID: lastDoneID },
         null,
@@ -218,7 +218,7 @@ HistoryWidget.prototype._showApplyOperationsDialog = function() {
             return;
         }
         
-        Gridworks.postCoreProcess(
+        Refine.postCoreProcess(
             "apply-operations",
             {},
             { operations: JSON.stringify(json) },
@@ -227,7 +227,7 @@ HistoryWidget.prototype._showApplyOperationsDialog = function() {
                 onDone: function(o) {
                     if (o.code == "pending") {
                         // Something might have already been done and so it's good to update
-                        Gridworks.update({ everythingChanged: true });
+                        Refine.update({ everythingChanged: true });
                     }
                 }
             }

@@ -495,7 +495,7 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
             edit.from = [ originalContent ];
         }
         
-        Gridworks.postCoreProcess(
+        Refine.postCoreProcess(
             "mass-edit",
             {},
             {
@@ -610,7 +610,7 @@ ListFacet.prototype._remove = function() {
 };
 
 ListFacet.prototype._updateRest = function() {
-    Gridworks.update({ engineChanged: true });
+    Refine.update({ engineChanged: true });
 };
 
 ListFacet.prototype._editExpression = function() {
@@ -619,7 +619,7 @@ ListFacet.prototype._editExpression = function() {
             ("Edit Facet's Expression based on Column " + this._config.columnName) : 
             "Edit Facet's Expression";
     
-    var column = Gridworks.columnNameToColumn(this._config.columnName);
+    var column = Refine.columnNameToColumn(this._config.columnName);
     var o = DataTableView.sampleVisibleRows(column);
     
     new ExpressionPreviewDialog(

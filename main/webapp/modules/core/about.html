@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>About Freebase Gridworks</title>
+    <title>About Google Refine</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="/styles/common.css" />
     <link rel="stylesheet" href="/styles/index.css" />
@@ -9,9 +9,9 @@
     <script type="text/javascript" src="externals/jquery-1.4.2.min.js"></script>
     <script>
       $(function() {
-          if (GridworksVersion && GridworksVersion.version) {
-              if (GridworksVersion.version != "$VERSION") {
-                  $("#version").text("Version " + GridworksVersion.version + " [" + GridworksVersion.revision + "]").show();
+          if (GoogleRefineVersion && GoogleRefineVersion.version) {
+              if (GoogleRefineVersion.version != "$VERSION") {
+                  $("#version").text("Version " + GoogleRefineVersion.version + " [" + GoogleRefineVersion.revision + "]").show();
               }
           }
       });
@@ -66,29 +66,30 @@
 <body>
     <div id="header">
       <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
-      <div id="path"><span class="app-path-section"><a href="./">Gridworks</a></span></div>
+      <div id="path"><span class="app-path-section"><a href="./">Google Refine</a></span></div>
     </div>
 
     <div id="body">
-        <h1>About Free<b>base</b> Grid<b>works</b></h1>
+        <h1>About Google Refine</h1>
         <h2 id="version" style="display: none"></h2>
         
         <div id="about">
             
             <p>
-                Freebase Gridworks is a power tool that allows you to load data, 
+                Google Refine is a power tool that allows you to load data, 
   understand it, clean it up, reconcile it internally, and augment it 
-  with data coming from Freebase. All with the comfort and privacy of 
+  with data coming from Freebase and other web sources. All with the comfort and privacy of 
   your own computer.</p>
   
             <p>
-                It was originally developed by <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>
+                It was originally developed by <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>.
+                Metaweb was acquired by <a href="http://www.google.com/">Google, Inc.</a>, in July 2010.
             </p>
             
             <h2>License</h2>
             
 <pre class="license">/*
- * Copyright (c) 2010, Metaweb Technologies, Inc. All rights reserved.
+ * Copyright (c) 2010, Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,11 +103,11 @@
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
  * 
- * THIS SOFTWARE IS PROVIDED BY METAWEB TECHNOLOGIES AND CONTRIBUTORS
+ * THIS SOFTWARE IS PROVIDED BY GOOGLE, INC. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL METAWEB
- * TECHNOLOGIES OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL GOOGLE,
+ * INC. OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
@@ -123,7 +124,7 @@
 ------------------
 
 licenses/apache2.0.LICENSE.txt
-    calendar-parser (package com.google.gridworks.expr.util)
+    calendar-parser (package com.google.refine.expr.util)
     ant-tools 
     commons-lang
     commons-codec
@@ -219,12 +220,6 @@ Flag icon
                 <li><a href="http://www.paolociccarese.info/">Paolo Ciccarese</a></li>
             </ul>
         </div>
-    </div>
-
-    <div id="footer">
-        <a href="about.html">About Freebase Gridworks</a>
-        &bull; 
-        &copy; 2010 <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>
     </div>
 </body>
 </html>

@@ -359,7 +359,7 @@ TimeRangeFacet.prototype._remove = function() {
 };
 
 TimeRangeFacet.prototype._updateRest = function() {
-    Gridworks.update({ engineChanged: true });
+    Refine.update({ engineChanged: true });
 };
 
 TimeRangeFacet.prototype._editExpression = function() {
@@ -368,7 +368,7 @@ TimeRangeFacet.prototype._editExpression = function() {
             ("Edit Facet's Expression based on Column " + this._config.columnName) : 
             "Edit Facet's Expression";
     
-    var column = Gridworks.columnNameToColumn(this._config.columnName);
+    var column = Refine.columnNameToColumn(this._config.columnName);
     var o = DataTableView.sampleVisibleRows(column);
     
     new ExpressionPreviewDialog(

@@ -253,7 +253,7 @@ MenuBar.handlers.exportRows = function(format, ext) {
         .css("display", "none")
         .attr("method", "post")
         .attr("action", "/command/core/export-rows/" + name + "." + ext)
-        .attr("target", "gridworks-export");
+        .attr("target", "refine-export");
 
     $('<input />')
         .attr("name", "engine")
@@ -270,7 +270,7 @@ MenuBar.handlers.exportRows = function(format, ext) {
 
     document.body.appendChild(form);
 
-    window.open("about:blank", "gridworks-export");
+    window.open("about:blank", "refine-export");
     form.submit();
     
     document.body.removeChild(form);
@@ -282,8 +282,8 @@ MenuBar.handlers.exportProject = function() {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/core/export-project/" + name + ".gridworks.tar.gz")
-        .attr("target", "gridworks-export");
+        .attr("action", "/command/core/export-project/" + name + ".google-refine.tar.gz")
+        .attr("target", "refine-export");
     $('<input />')
         .attr("name", "project")
         .attr("value", theProject.id)
@@ -291,7 +291,7 @@ MenuBar.handlers.exportProject = function() {
 
     document.body.appendChild(form);
 
-    window.open("about:blank", "gridworks-export");
+    window.open("about:blank", "refine-export");
     form.submit();
 
     document.body.removeChild(form);
@@ -316,7 +316,7 @@ MenuBar.handlers.renameProject = function() {
         success: function (data) {
             if (data && typeof data.code != 'undefined' && data.code == "ok") {
                 theProject.metadata.name = name;
-                Gridworks.setTitle();
+                Refine.setTitle();
             } else {
                 alert("Failed to rename project: " + data.message);
             }
@@ -380,7 +380,7 @@ MenuBar.handlers.browseToDataLoad = function() {
 };
 
 MenuBar.handlers.importQAData = function() {
-    Gridworks.postCoreProcess(
+    Refine.postCoreProcess(
         "import-qa-data",
         {},
         {},

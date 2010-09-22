@@ -2,11 +2,11 @@
 
 <!--+
     |
-    |  Gridworks Extensions Build File    
+    |  Google Refine Extensions Build File    
     |                
     +-->
     
-<project name="gridworks-extensions" default="build" basedir=".">
+<project name="google-refine-extensions" default="build" basedir=".">
   <target name="build">
     <echo message="Building extensions" />
     <ant dir="sample-extension/" target="build" />

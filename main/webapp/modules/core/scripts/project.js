@@ -1,11 +1,11 @@
 var theProject;
 var ui = {};
 
-var Gridworks = {
-    gridworksHelperService: "http://6.gridworks-helper.dfhuynh.user.dev.freebaseapps.com"
+var Refine = {
+    refineHelperService: "http://6.gridworks-helper.dfhuynh.user.dev.freebaseapps.com"
 };
 
-Gridworks.reportException = function(e) {
+Refine.reportException = function(e) {
     if (window.console) {
         console.log(e);
     }
@@ -71,22 +71,22 @@ function initializeUI(uiState) {
     $('<span class="app-path-section" id="project-name-in-path"></span>').appendTo(path);
     $('<a href="javascript:{}" class="permalink">permalink</a>')
         .mouseenter(function() {
-            this.href = Gridworks.getPermanentLink();
+            this.href = Refine.getPermanentLink();
         }).appendTo(path);
     
-    Gridworks.setTitle();
+    Refine.setTitle();
 
     var body = $("#body").empty().html(
         '<div bind="viewPanel" class="view-panel"></div>' +
         '<div bind="processPanel" class="process-panel"></div>' +
         '<div bind="leftPanel" class="left-panel">' +
-            '<div bind="leftPanelTabs" class="gridworks-tabs">' +
+            '<div bind="leftPanelTabs" class="refine-tabs">' +
                 '<ul>' +
-                    '<li><a href="#gridworks-tabs-facets">Facet/Filter</a></li>' +
-                    '<li><a href="#gridworks-tabs-history" bind="historyTabHeader">Undo/Redo</a></li>' +
+                    '<li><a href="#refine-tabs-facets">Facet/Filter</a></li>' +
+                    '<li><a href="#refine-tabs-history" bind="historyTabHeader">Undo/Redo</a></li>' +
                 '</ul>' +
-                '<div id="gridworks-tabs-facets" bind="facetPanel" class="facet-panel"></div>' +
-                '<div id="gridworks-tabs-history" bind="historyPanel" class="history-panel"></div>' +
+                '<div id="refine-tabs-facets" bind="facetPanel" class="facet-panel"></div>' +
+                '<div id="refine-tabs-history" bind="historyPanel" class="history-panel"></div>' +
             '</div>' +
         '</div>' +
         '<div class="menu-bar-container" bind="menuBarContainer"><div bind="menuBarPanel" class="menu-bar"></div></div>'
@@ -116,11 +116,11 @@ function initializeUI(uiState) {
     $(window).bind("resize", resizeAll);
     
     if (uiState.facets) {
-        Gridworks.update({ engineChanged: true });
+        Refine.update({ engineChanged: true });
     }
 }
 
-Gridworks.setTitle = function(status) {
+Refine.setTitle = function(status) {
     var title = theProject.metadata.name + " - Gridworks";
     if (status) {
         title = status + " - " + title;
@@ -133,7 +133,7 @@ Gridworks.setTitle = function(status) {
     $('<a href="#">' + theProject.metadata.name + '</a>').appendTo(name);
 };
 
-Gridworks.reinitializeProjectData = function(f) {
+Refine.reinitializeProjectData = function(f) {
     Ajax.chainGetJSON(
         "/command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
         function(data) {
@@ -155,7 +155,7 @@ Gridworks.reinitializeProjectData = function(f) {
  *  Utility state functions
  */
  
-Gridworks.createUpdateFunction = function(options, onFinallyDone) {
+Refine.createUpdateFunction = function(options, onFinallyDone) {
     var functions = [];
     var pushFunction = function(f) {
         var index = functions.length;
@@ -168,7 +168,7 @@ Gridworks.createUpdateFunction = function(options, onFinallyDone) {
         ui.historyWidget.update(onDone);
     });
     if (options.everythingChanged || options.modelsChanged || options.columnStatsChanged) {
-        pushFunction(Gridworks.reinitializeProjectData);
+        pushFunction(Refine.reinitializeProjectData);
     }
     if (options.everythingChanged || options.modelsChanged || options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged) {
         pushFunction(function(onDone) {
@@ -184,14 +184,14 @@ Gridworks.createUpdateFunction = function(options, onFinallyDone) {
     return functions[0];
 };
 
-Gridworks.update = function(options, onFinallyDone) {
+Refine.update = function(options, onFinallyDone) {
     var done = false;
     var dismissBusy = null;
     
-    Gridworks.setAjaxInProgress();
+    Refine.setAjaxInProgress();
     
-    Gridworks.createUpdateFunction(options, function() {
-        Gridworks.clearAjaxInProgress();
+    Refine.createUpdateFunction(options, function() {
+        Refine.clearAjaxInProgress();
         
         done = true;
         if (dismissBusy) {
@@ -209,11 +209,11 @@ Gridworks.update = function(options, onFinallyDone) {
     }, 500);
 };
 
-Gridworks.postCoreProcess = function(command, params, body, updateOptions, callbacks) {
-    Gridworks.postProcess("core", command, params, body, updateOptions, callbacks);
+Refine.postCoreProcess = function(command, params, body, updateOptions, callbacks) {
+    Refine.postProcess("core", command, params, body, updateOptions, callbacks);
 };
 
-Gridworks.postProcess = function(moduleName, command, params, body, updateOptions, callbacks) {
+Refine.postProcess = function(moduleName, command, params, body, updateOptions, callbacks) {
     updateOptions = updateOptions || {};
     callbacks = callbacks || {};
     
@@ -238,14 +238,14 @@ Gridworks.postProcess = function(moduleName, command, params, body, updateOption
             dismissBusy();
         }
         
-        Gridworks.clearAjaxInProgress();
+        Refine.clearAjaxInProgress();
         
         if (o.code == "error") {
             if ("onError" in callbacks) {
                 try {
                     callbacks.onError(o);
                 } catch (e) {
-                    Gridworks.reportException(e);
+                    Refine.reportException(e);
                 }
             } else {
                 alert(o.message);
@@ -255,12 +255,12 @@ Gridworks.postProcess = function(moduleName, command, params, body, updateOption
                 try {
                     callbacks.onDone(o);
                 } catch (e) {
-                    Gridworks.reportException(e);
+                    Refine.reportException(e);
                 }
             }
             
             if (o.code == "ok") {
-                Gridworks.update(updateOptions, callbacks.onFinallyDone);
+                Refine.update(updateOptions, callbacks.onFinallyDone);
                 
                 if ("historyEntry" in o) {
                     ui.processWidget.showUndo(o.historyEntry);
@@ -270,7 +270,7 @@ Gridworks.postProcess = function(moduleName, command, params, body, updateOption
                     try {
                         callbacks.onPending(o);
                     } catch (e) {
-                        Gridworks.reportException(e);
+                        Refine.reportException(e);
                     }
                 }
                 ui.processWidget.update(updateOptions, callbacks.onFinallyDone);
@@ -278,7 +278,7 @@ Gridworks.postProcess = function(moduleName, command, params, body, updateOption
         }
     }
     
-    Gridworks.setAjaxInProgress();
+    Refine.setAjaxInProgress();
     
     $.post(
         "/command/" + moduleName + "/" + command + "?" + $.param(params),
@@ -294,11 +294,11 @@ Gridworks.postProcess = function(moduleName, command, params, body, updateOption
     }, 500);
 };
 
-Gridworks.setAjaxInProgress = function() {
+Refine.setAjaxInProgress = function() {
     $(document.body).attr("ajax_in_progress", "true");
 };
 
-Gridworks.clearAjaxInProgress = function() {
+Refine.clearAjaxInProgress = function() {
     $(document.body).attr("ajax_in_progress", "false");
 };
 
@@ -306,7 +306,7 @@ Gridworks.clearAjaxInProgress = function() {
  *  Utility model functions
  */
  
-Gridworks.cellIndexToColumn = function(cellIndex) {
+Refine.cellIndexToColumn = function(cellIndex) {
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
         var column = columns[i];
@@ -316,7 +316,7 @@ Gridworks.cellIndexToColumn = function(cellIndex) {
     }
     return null;
 };
-Gridworks.columnNameToColumn = function(columnName) {
+Refine.columnNameToColumn = function(columnName) {
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
         var column = columns[i];
@@ -326,7 +326,7 @@ Gridworks.columnNameToColumn = function(columnName) {
     }
     return null;
 };
-Gridworks.columnNameToColumnIndex = function(columnName) {
+Refine.columnNameToColumnIndex = function(columnName) {
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
         var column = columns[i];
@@ -337,7 +337,7 @@ Gridworks.columnNameToColumnIndex = function(columnName) {
     return -1;
 };
 
-Gridworks.preparePool = function(pool) {
+Refine.preparePool = function(pool) {
     for (var id in pool.recons) {
         if (pool.recons.hasOwnProperty(id)) {        
             var recon = pool.recons[id];
@@ -353,7 +353,7 @@ Gridworks.preparePool = function(pool) {
     }
 };
 
-Gridworks.fetchRows = function(start, limit, onDone, sorting) {
+Refine.fetchRows = function(start, limit, onDone, sorting) {
     var body = {
         engine: JSON.stringify(ui.browsingEngine.getJSON())
     };
@@ -368,7 +368,7 @@ Gridworks.fetchRows = function(start, limit, onDone, sorting) {
             theProject.rowModel = data;
             
             // Un-pool objects
-            Gridworks.preparePool(data.pool);
+            Refine.preparePool(data.pool);
             for (var r = 0; r < data.rows.length; r++) {
                 var row = data.rows[r];
                 for (var c = 0; c < row.cells.length; c++) {
@@ -387,7 +387,7 @@ Gridworks.fetchRows = function(start, limit, onDone, sorting) {
     );
 };
 
-Gridworks.getPermanentLink = function() {
+Refine.getPermanentLink = function() {
     var params = [
         "project=" + escape(theProject.id),
         "ui=" + escape(JSON.stringify({
@@ -412,7 +412,7 @@ function onLoad() {
             }
         }
         
-        Gridworks.reinitializeProjectData(function() {
+        Refine.reinitializeProjectData(function() {
             initializeUI(uiState);
         });
     }

@@ -54,7 +54,7 @@ function formatDate(d) {
 }
 
 function isThereNewRelease() {
-    var thisRevision = GridworksVersion.revision;
+    var thisRevision = GoogleRefineVersion.revision;
 
     var revision_pattern = /r([0-9]+)/;
 
@@ -62,10 +62,10 @@ function isThereNewRelease() {
         return false;
     }
 
-    var latestRevision = GridworksReleases.releases[0].revision;
+    var latestRevision = GoogleRefineReleases.releases[0].revision;
 
     var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
-    var latestRev = parseInt(revision_pattern.exec(GridworksReleases.releases[0].revision)[1],10);
+    var latestRev = parseInt(revision_pattern.exec(GoogleRefineReleases.releases[0].revision)[1],10);
 
     return latestRev > thisRev;
 }
@@ -203,19 +203,19 @@ function onLoad() {
         $("#more-options").show();
     });
 
-    var version = (GridworksVersion.version != "$VERSION") ? "Version " + GridworksVersion.version + "-" + GridworksVersion.revision : "";
-    $("#gridworks-version").text(version);
+    var version = (GoogleRefineVersion.version != "$VERSION") ? "Version " + GoogleRefineVersion.version + "-" + GoogleRefineVersion.revision : "";
+    $("#google-refine-version").text(version);
 
     var script = $('<script></script>')
-        .attr("src", "http://freebase-gridworks.googlecode.com/svn/support/releases.js")
+        .attr("src", "http://google-refine.googlecode.com/svn/support/releases2.js")
         .attr("type", "text/javascript")
         .appendTo(document.body);
 
     var poll = function() {
-        if ("GridworksReleases" in window) {
+        if ("GoogleRefineReleases" in window) {
             if (isThereNewRelease()) {
                 $('<div id="version-message">' +
-                    'New version "' + GridworksReleases.releases[0].description + '" <a href="' + GridworksReleases.homepage + '">available for download here</a>.' +
+                    'New version "' + GoogleRefineReleases.releases[0].description + '" <a href="' + GoogleRefineReleases.homepage + '">available for download here</a>.' +
                   '</div>').appendTo(document.body);
             }
         } else {

@@ -240,7 +240,7 @@ DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params
         "recon-judge-similar-cells",
         params || {},
         $.extend(bodyParams || {}, {
-            columnName: Gridworks.cellIndexToColumn(this._cellIndex).name,
+            columnName: Refine.cellIndexToColumn(this._cellIndex).name,
             similarValue: this._cell.v,
             judgment: judgment,
             identifierSpace: (this._cell.r) ? this._cell.r.identifierSpace : null,
@@ -270,7 +270,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
             
             if (elmts.checkSimilar[0].checked) {
                 params.similarValue = self._cell.v;
-                params.columnName = Gridworks.cellIndexToColumn(self._cellIndex).name;
+                params.columnName = Refine.cellIndexToColumn(self._cellIndex).name;
 
                 self._postProcessSeveralCells("recon-judge-similar-cells", {}, params, true);
             } else {
@@ -303,14 +303,14 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
 DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyParams, columnStatsChanged) {
     var self = this;
 
-    Gridworks.postCoreProcess(
+    Refine.postCoreProcess(
         command, 
         params, 
         bodyParams,
         { columnStatsChanged: columnStatsChanged },
         {
             onDone: function(o) {
-                Gridworks.preparePool(o.pool);
+                Refine.preparePool(o.pool);
                 if (o.cell.r) {
                     o.cell.r = o.pool.recons[o.cell.r];
                 }
@@ -324,7 +324,7 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyPa
 };
 
 DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, bodyParams, columnStatsChanged) {
-    Gridworks.postCoreProcess(
+    Refine.postCoreProcess(
         command, 
         params, 
         bodyParams,
@@ -410,11 +410,11 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         MenuSystem.dismissAll();
         
         if (applyOthers) {
-            Gridworks.postCoreProcess(
+            Refine.postCoreProcess(
                 "mass-edit",
                 {},
                 {
-                    columnName: Gridworks.cellIndexToColumn(self._cellIndex).name,
+                    columnName: Refine.cellIndexToColumn(self._cellIndex).name,
                     expression: "value",
                     edits: JSON.stringify([{
                         from: [ originalContent ],
@@ -425,7 +425,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
                 { cellsChanged: true }
             );            
         } else {
-            Gridworks.postCoreProcess(
+            Refine.postCoreProcess(
                 "edit-one-cell", 
                 {
                     row: self._rowIndex,
@@ -437,7 +437,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
                 {},
                 {
                     onDone: function(o) {
-                        Gridworks.preparePool(o.pool);
+                        Refine.preparePool(o.pool);
                         if (o.cell.r) {
                             o.cell.r = o.pool.recons[o.cell.r];
                         }

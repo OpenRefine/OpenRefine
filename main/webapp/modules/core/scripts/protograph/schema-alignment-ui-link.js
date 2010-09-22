@@ -143,7 +143,7 @@ SchemaAlignmentDialog.UILink._getPropertiesOfType = function(typeID, targetTypeI
     }
     
     $.getJSON(
-        Gridworks.gridworksHelperService + "/get_properties_of_type?" + $.param(params) + "&callback=?",
+        Refine.refineHelperService + "/get_properties_of_type?" + $.param(params) + "&callback=?",
         null,
         function(data) {
             if (done) return;

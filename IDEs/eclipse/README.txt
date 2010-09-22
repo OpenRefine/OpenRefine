@@ -1,26 +1,26 @@
 
-                                 Gridworks Helpers for Eclipse
-                                 -----------------------------
+                                 Google Refine for Eclipse
+                                 -------------------------
                                  
                         
   This file contains Eclipse-specific help files that can get simplify your life 
-  developing Gridworks with Eclipse (http://www.eclipse.org/).
+  developing Google Refine with Eclipse (http://www.eclipse.org/).
   
   
   Launch Files (*.launch)
   -----------------------
   
-  These are files that help you running Gridworks directly from eclipse without having to execute
+  These are files that help you running Google Refine directly from eclipse without having to execute
   the shell scripts.
   
   To run, right click on the files directly from Eclipse, then do "Run As -> <name>".
   
   
   
-  Code Style Format Configurations (Gridworks.style.xml)
+  Code Style Format Configurations (Refine.style.xml)
   ------------------------------------------------------
   
-  This is the code formatting configurations that all Gridworks developers should follow.
+  This is the code formatting configurations that all Google Refine developers should follow.
   
   To import, open the Eclipse preferences, then follow to "Java > Code Style > Formatter"
   and click the "Import" button and load the file.  
@@ -33,6 +33,6 @@
    Thank you for your interest.
    
    
-                                             The Freebase Gridworks Development Team
-                                           http://code.google.com/p/freebase-gridworks/
+                                             The Google Refine Development Team
+                                           http://code.google.com/p/google-refine/
                                            

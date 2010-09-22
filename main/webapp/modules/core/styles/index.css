@@ -1,6 +1,6 @@
 body {
     background-color: #f4f7fa;
-    background-image: url('../images/gridworks-watermark.png');
+    background-image: url('../images/google-refine-watermark.png');
     background-repeat: no-repeat;
     background-position: left top;
 }
@@ -12,7 +12,7 @@ body {
     vertical-align: top;
 }
 
-#gridworks-version {
+#google-refine-version {
     float: right;
     color: #aaa;
     margin: 5px;

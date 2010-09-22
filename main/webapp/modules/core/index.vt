@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>Freebase Gridworks</title>
+    <title>Google Refine</title>
 
     <link rel="icon" type="image/png" href="images/favicon.png">
 
@@ -10,22 +10,20 @@
 </head>
 <body>
     <div id="header">
-      <span id="gridworks-version"></span>
+      <span id="google-refine-version"></span>
       <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
-      <div id="path"><span class="app-path-section"><a href="./">Gridworks</a></span></div>
+      <div id="path"><span class="app-path-section"><a href="./">Google Refine</a></span></div>
     </div>
 
     <div id="body">
       <div class="grid-layout layout-loose"><table>
         <tr>
           <td id="welcome-panel">
-            <h1>Welcome to Gridworks</h1>
-            <p>Freebase Gridworks is a power tool that allows you to load data, understand it,
+            <h1>Welcome to Google Refine</h1>
+            <p>Google Refine is a power tool that allows you to load data, understand it,
               clean it up, reconcile it internally, augment it with data coming from
               <a href="http://www.freebase.com/" class="quiet-link">Freebase</a>, and optionally
               contribute your data to Freebase for others to use.
-            </p>
-            <p>It was originally developed by <a href="http://www.metaweb.com/" class="quiet-link">Metaweb</a>.
             </p>
             <p><a href="about.html" class="quiet-link">Credits and Licenses &raquo;</a>
             </p>
@@ -111,7 +109,7 @@
                 <div id="form-tabs-import-project" class="round-corners">
                   <a class="form-tab-link" href="javascript:showHide('project-upload-form', 'file-upload-form')">or Create a New Project</a>
                   <h1>Import an Existing Project</h1>
-                  <p>Import an existing Gridworks .tar or .tar.gz file:</p>
+                  <p>Import an existing Google Refine .tar or .tar.gz file:</p>
                   <div class="grid-layout layout-tight"><table>
                       <tr><td class="field-label">Project File:</td><td><input type="file" id="project-tar-file-input" name="project-file" /></td></tr>
                       <tr><td class="field-label">Rename (optional):</td><td><input type="text" size="30" id="project-name-input" name="project-name" /></td></tr>

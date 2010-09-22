@@ -130,5 +130,5 @@ TextSearchFacet.prototype._scheduleUpdate = function() {
 };
 
 TextSearchFacet.prototype._updateRest = function() {
-    Gridworks.update({ engineChanged: true });
+    Refine.update({ engineChanged: true });
 };

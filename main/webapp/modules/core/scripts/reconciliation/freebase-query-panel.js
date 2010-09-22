@@ -91,7 +91,7 @@ ReconFreebaseQueryPanel.prototype.start = function() {
         };
     }
     
-    Gridworks.postCoreProcess(
+    Refine.postCoreProcess(
         "reconcile",
         {},
         bodyParams,

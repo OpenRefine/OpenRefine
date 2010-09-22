@@ -39,7 +39,7 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
     var done = false;
     
     $.getJSON(
-        Gridworks.gridworksHelperService + "/get_properties_of_type?type=" + typeID + "&callback=?",
+        Refine.refineHelperService + "/get_properties_of_type?type=" + typeID + "&callback=?",
         null,
         function(data) {
             if (done) return;

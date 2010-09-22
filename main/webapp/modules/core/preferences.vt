@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Freebase Gridworks - Preferences</title>
+    <title>Google Refine - Preferences</title>
     
     <script type="text/javascript" src="wirings.js"></script>
     $scriptInjection
@@ -14,7 +14,7 @@
 <body>
     <div id="header">
         <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
-        <div id="path"><span class="app-path-section"><a href="./">Gridworks</a></span><span class="app-path-section">Preferences</span></div>
+        <div id="path"><span class="app-path-section"><a href="./">Google Refine</a></span><span class="app-path-section">Preferences</span></div>
     </div>
     
     <div id="body">
