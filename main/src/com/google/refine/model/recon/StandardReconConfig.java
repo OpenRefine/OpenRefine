@@ -31,7 +31,7 @@ import com.google.refine.protograph.FreebaseProperty;
 import com.google.refine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
-    final static Logger logger = LoggerFactory.getLogger("gridworks-standard-recon");
+    final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
     
     static public class ColumnDetail {
         final public String columnName;

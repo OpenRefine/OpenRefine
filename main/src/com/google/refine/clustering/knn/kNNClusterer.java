@@ -76,7 +76,7 @@ public class kNNClusterer extends Clusterer {
                 JSONObject params = o.getJSONObject("params");
                 _radius = params.getDouble("radius");
             } catch (JSONException e) {
-                //Gridworks.warn("No parameters found, using defaults");
+                //Refine.warn("No parameters found, using defaults");
             }
         }
         

@@ -126,7 +126,7 @@ public class AuthorizeCommand extends Command {
                     throw new RuntimeException("referrer '" + referrer + "' can't be parsed as a URL");
                 }
             } else {
-                throw new RuntimeException("neither the 'host' nor 'referer' headers were present in the HTTP response, I can't determine what URL gridworks is listening to.");
+                throw new RuntimeException("neither the 'host' nor 'referer' headers were present in the HTTP response, I can't determine what URL Google Refine is listening to.");
             }
         }
         return "http://" + host + "/command/core/authorize/" + provider.getHost();

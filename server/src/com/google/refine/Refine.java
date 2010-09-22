@@ -46,7 +46,7 @@ public class Refine {
     static private int port;
     static private String host;
 
-    final static Logger logger = LoggerFactory.getLogger("gridworks");
+    final static Logger logger = LoggerFactory.getLogger("refine");
         
     public static void main(String[] args) throws Exception {
         
@@ -67,14 +67,14 @@ public class Refine {
         }
         
         // set the log verbosity level
-        org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("gridworks.verbosity","info")));
+        org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("refine.verbosity","info")));
 
-        port = Configurations.getInteger("gridworks.port",DEFAULT_PORT);
-        host = Configurations.get("gridworks.host",DEFAULT_HOST);
+        port = Configurations.getInteger("refine.port",DEFAULT_PORT);
+        host = Configurations.get("refine.host",DEFAULT_HOST);
 
-        Refine gridworks = new Refine();
+        Refine refine = new Refine();
         
-        gridworks.init(args);
+        refine.init(args);
     }
 
     public void init(String[] args) throws Exception {
@@ -82,7 +82,7 @@ public class Refine {
         RefineServer server = new RefineServer();
         server.init(host,port);
 
-        boolean headless = Configurations.getBoolean("gridworks.headless",false);
+        boolean headless = Configurations.getBoolean("refine.headless",false);
         if (!headless) {
             try {
                 RefineClient client = new RefineClient();
@@ -105,19 +105,19 @@ public class Refine {
 
 class RefineServer extends Server {
     
-    final static Logger logger = LoggerFactory.getLogger("gridworks_server");
+    final static Logger logger = LoggerFactory.getLogger("refine_server");
         
     private ThreadPoolExecutor threadPool;
     
     public void init(String host, int port) throws Exception {
         logger.info("Starting Server bound to '" + host + ":" + port + "'");
 
-        String memory = Configurations.get("gridworks.memory");
+        String memory = Configurations.get("refine.memory");
         if (memory != null) logger.info("Max memory size: " + memory);
         
-        int maxThreads = Configurations.getInteger("gridworks.queue.size", 30);
-        int maxQueue = Configurations.getInteger("gridworks.queue.max_size", 300);
-        long keepAliveTime = Configurations.getInteger("gridworks.queue.idle_time", 60);
+        int maxThreads = Configurations.getInteger("refine.queue.size", 30);
+        int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
+        long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
 
         LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
         
@@ -128,11 +128,11 @@ class RefineServer extends Server {
         Connector connector = new SocketConnector();
         connector.setPort(port);
         connector.setHost(host);
-        connector.setMaxIdleTime(Configurations.getInteger("gridworks.connection.max_idle_time",60000));
+        connector.setMaxIdleTime(Configurations.getInteger("refine.connection.max_idle_time",60000));
         connector.setStatsOn(false);
         this.addConnector(connector);
 
-        File webapp = new File(Configurations.get("gridworks.webapp","main/webapp"));
+        File webapp = new File(Configurations.get("refine.webapp","main/webapp"));
 
         if (!isWebapp(webapp)) {
             webapp = new File("main/webapp");
@@ -145,7 +145,7 @@ class RefineServer extends Server {
             }
         }
 
-        final String contextPath = Configurations.get("gridworks.context_path","/");
+        final String contextPath = Configurations.get("refine.context_path","/");
         
         logger.info("Initializing context: '" + contextPath + "' from '" + webapp.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
@@ -156,7 +156,7 @@ class RefineServer extends Server {
         this.setSendServerVersion(true);
 
         // Enable context autoreloading
-        if (Configurations.getBoolean("gridworks.autoreload",false)) {
+        if (Configurations.getBoolean("refine.autoreload",false)) {
             scanForUpdates(webapp, context);
         }
         
@@ -196,7 +196,7 @@ class RefineServer extends Server {
         logger.info("Starting autoreloading scanner... ");
 
         Scanner scanner = new Scanner();
-        scanner.setScanInterval(Configurations.getInteger("gridworks.scanner.period",1));
+        scanner.setScanInterval(Configurations.getInteger("refine.scanner.period",1));
         scanner.setScanDirs(scanList);
         scanner.setReportExistingFilesOnStartup(false);
 
@@ -236,18 +236,18 @@ class RefineServer extends Server {
     // NOTE: this is done *after* starting the server because jetty might override the init
     // parameters if we set them in the webapp context upon reading the web.xml file    
     static private void configure(WebAppContext context) throws Exception {
-        ServletHolder servlet = context.getServletHandler().getServlet("gridworks");
+        ServletHolder servlet = context.getServletHandler().getServlet("refine");
         if (servlet != null) {
-            servlet.setInitParameter("gridworks.data", getDataDir());
+            servlet.setInitParameter("refine.data", getDataDir());
             servlet.setInitParameter("butterfly.modules.path", getDataDir() + "/extensions");
             servlet.setInitOrder(1);
             servlet.doStart();
         }
 
-        servlet = context.getServletHandler().getServlet("gridworks-broker");
+        servlet = context.getServletHandler().getServlet("refine-broker");
         if (servlet != null) {
-            servlet.setInitParameter("gridworks.data", getDataDir() + "/broker");
-            servlet.setInitParameter("gridworks.development", Configurations.get("gridworks.development","false"));
+            servlet.setInitParameter("refine.data", getDataDir() + "/broker");
+            servlet.setInitParameter("refine.development", Configurations.get("refine.development","false"));
             servlet.setInitOrder(1);
             servlet.doStart();
         }
@@ -255,7 +255,7 @@ class RefineServer extends Server {
 
     static private String getDataDir() {
         
-        String data_dir = Configurations.get("gridworks.data_dir");
+        String data_dir = Configurations.get("refine.data_dir");
         if (data_dir != null) {
             return data_dir;
         }

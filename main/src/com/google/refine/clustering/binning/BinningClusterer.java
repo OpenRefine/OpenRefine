@@ -61,7 +61,7 @@ public class BinningClusterer extends Clusterer {
                     _params = new Object[1];
                     _params[0] = size;
                 } catch (JSONException e) {
-                    //Gridworks.warn("No params specified, using default");
+                    //Refine.warn("No params specified, using default");
                 }
             }
         }

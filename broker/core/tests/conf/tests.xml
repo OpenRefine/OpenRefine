@@ -1,9 +1,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
  
-<suite name="Gridworks Broker Unit Tests">
+<suite name="Google Refine Broker Unit Tests">
   <test name="tests">
     <packages>
-      <package name="com.google.gridworks.broker.tests.*"/>
+      <package name="com.google.refine.broker.tests.*"/>
     </packages>
     <groups>
       <run>

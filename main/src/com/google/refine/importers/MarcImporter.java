@@ -30,7 +30,7 @@ public class MarcImporter implements StreamImporter {
 
         File tempFile;
         try {
-            tempFile = File.createTempFile("gridworks-import-", ".marc.xml");
+            tempFile = File.createTempFile("refine-import-", ".marc.xml");
         } catch (IOException e) {
             throw new ImportException("Unexpected error creating temp file",e);
         }

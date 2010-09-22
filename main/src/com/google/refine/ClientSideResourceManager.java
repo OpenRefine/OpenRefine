@@ -15,7 +15,7 @@ import edu.mit.simile.butterfly.MountPoint;
 
 
 public class ClientSideResourceManager {
-    final static Logger logger = LoggerFactory.getLogger("gridworks_clientSideResourceManager");
+    final static Logger logger = LoggerFactory.getLogger("refine_clientSideResourceManager");
     
     static public class QualifiedPath {
         public ButterflyModule  module;

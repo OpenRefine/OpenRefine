@@ -2,11 +2,11 @@
 
 <!--+
     |
-    |  Gridworks Extension Jython Build File    
+    |  Google Refine Extension Jython Build File    
     |                
     +-->
     
-<project name="gridworks-jython" default="build" basedir=".">
+<project name="refine-jython" default="build" basedir=".">
 
     <property environment="env"/>
 
@@ -28,11 +28,11 @@
 
     <property name="fullname" value="${name}-${version}-${revision}" />
     
-    <property name="gridworks.dir" value="${basedir}/../../main" />
-    <property name="gridworks.webinf.dir" value="${gridworks.dir}/webapp/WEB-INF" />
-    <property name="gridworks.modinf.dir" value="${gridworks.dir}/webapp/modules/core/MOD-INF" />
-    <property name="gridworks.classes.dir" value="${gridworks.webinf.dir}/classes" />
-    <property name="gridworks.lib.dir" value="${gridworks.webinf.dir}/lib" />
+    <property name="refine.dir" value="${basedir}/../../main" />
+    <property name="refine.webinf.dir" value="${refine.dir}/webapp/WEB-INF" />
+    <property name="refine.modinf.dir" value="${refine.dir}/webapp/modules/core/MOD-INF" />
+    <property name="refine.classes.dir" value="${refine.webinf.dir}/classes" />
+    <property name="refine.lib.dir" value="${refine.webinf.dir}/lib" />
     
     <property name="src.dir" value="${basedir}/src" />
     <property name="module.dir" value="${basedir}/module" />
@@ -44,10 +44,10 @@
         <fileset dir="${lib.dir}">
             <include name="**/*.jar" />
         </fileset>
-        <fileset dir="${gridworks.lib.dir}">
+        <fileset dir="${refine.lib.dir}">
             <include name="**/*.jar" />
         </fileset>
-        <pathelement path="${gridworks.classes.dir}"/>
+        <pathelement path="${refine.classes.dir}"/>
     </path>
             
     <target name="build_java">

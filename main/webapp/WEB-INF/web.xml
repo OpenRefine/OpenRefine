@@ -19,12 +19,12 @@
     </context-param>
      
     <servlet>
-        <servlet-name>gridworks</servlet-name>
+        <servlet-name>refine</servlet-name>
         <servlet-class>com.google.refine.RefineServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>gridworks</servlet-name>
+        <servlet-name>refine</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
         

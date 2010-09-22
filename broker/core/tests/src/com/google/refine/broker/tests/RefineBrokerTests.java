@@ -58,8 +58,8 @@ public class RefineBrokerTests {
     @BeforeTest public void test_init() throws Exception {
         logger = LoggerFactory.getLogger(this.getClass());
         config = mock(ServletConfig.class);
-        when(config.getInitParameter("gridworks.data")).thenReturn(data.getAbsolutePath());
-        when(config.getInitParameter("gridworks.development")).thenReturn("true");
+        when(config.getInitParameter("refine.data")).thenReturn(data.getAbsolutePath());
+        when(config.getInitParameter("refine.development")).thenReturn("true");
 
         broker = new RefineBrokerImpl();
         broker.init(config);

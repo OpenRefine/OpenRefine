@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 
 /**
- * This class contains all the code shared by various implementations of a Gridworks Broker.
+ * This class contains all the code shared by various implementations of a Google Refine Broker.
  * 
- * A broker is a server used by multiple Gridworks installations to enable collaborative
+ * A broker is a server used by multiple Google Refine installations to enable collaborative
  * development over the same project.
  * 
  * Broker implementations differ in how they store their state but all of them are required
@@ -57,7 +57,7 @@ public abstract class RefineBroker extends ButterflyModuleImpl {
     static final public int COL = 1;
     static final public int CELL = 2;
     
-    static final protected Logger logger = LoggerFactory.getLogger("gridworks.broker");
+    static final protected Logger logger = LoggerFactory.getLogger("refine.broker");
     
     static final protected String USER_INFO_URL = "http://www.freebase.com/api/service/user_info";
     static final protected String DELEGATED_OAUTH_HEADER = "X-Freebase-Credentials";
@@ -87,7 +87,7 @@ public abstract class RefineBroker extends ButterflyModuleImpl {
     public void init(ServletConfig config) throws Exception {
         super.init(config);
         httpclient = getHttpClient();
-        developmentMode = Boolean.parseBoolean(config.getInitParameter("gridworks.development"));
+        developmentMode = Boolean.parseBoolean(config.getInitParameter("refine.development"));
         if (developmentMode) logger.warn("Running in development mode");
     }
 
@@ -195,7 +195,7 @@ public abstract class RefineBroker extends ButterflyModuleImpl {
 
         HttpPost httpRequest = new HttpPost(USER_INFO_URL);
         httpRequest.setHeader(OAUTH_HEADER, oauth);
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks Broker");
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Google Refine Broker");
         httpRequest.setEntity(entity);
                 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();

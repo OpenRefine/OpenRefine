@@ -43,7 +43,7 @@ public class GetColumnsInfoCommand extends Command {
             }
             writer.endArray();
             
-            //Gridworks.log("Obtained columns info in " + (System.currentTimeMillis() - start) + "ms");
+            //Refine.log("Obtained columns info in " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);

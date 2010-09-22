@@ -27,7 +27,7 @@ abstract public class MetaParser {
     static {
         s_languages = new HashMap<String, LanguageInfo>();
         
-        registerLanguageParser("gel", "Gridworks Expression Language (GEL)", new LanguageSpecificParser() {
+        registerLanguageParser("gel", "Google Refine Expression Language (GREL)", new LanguageSpecificParser() {
             
             @Override
             public Evaluable parse(String s) throws ParsingException {

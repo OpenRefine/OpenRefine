@@ -37,7 +37,7 @@ public class RefineServlet extends Butterfly {
     // timer for periodically saving projects
     static private Timer _timer;
 
-    final static Logger logger = LoggerFactory.getLogger("gridworks");
+    final static Logger logger = LoggerFactory.getLogger("refine");
 
     public static String getVersion() {
         return VERSION;
@@ -67,10 +67,10 @@ public class RefineServlet extends Butterfly {
 
         logger.trace("> initialize");
 
-        String data = getInitParameter("gridworks.data");
+        String data = getInitParameter("refine.data");
 
         if (data == null) {
-            throw new ServletException("can't find servlet init config 'gridworks.data', I have to give up initializing");
+            throw new ServletException("can't find servlet init config 'refine.data', I have to give up initializing");
         }
 
         s_dataDir = new File(data);
@@ -224,6 +224,9 @@ public class RefineServlet extends Butterfly {
     static public Class<?> getClass(String className) throws ClassNotFoundException {
         if (className.startsWith("com.metaweb.")) {
             className = "com.google." + className.substring("com.metaweb.".length());
+        }
+        if (className.startsWith("com.google.gridworks.")) {
+            className = "com.google.refine." + className.substring("com.google.gridworks.".length());
         }
         return Class.forName(className);
     }

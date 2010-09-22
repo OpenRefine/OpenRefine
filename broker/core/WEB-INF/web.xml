@@ -7,12 +7,12 @@
 <web-app>
      
     <servlet>
-        <servlet-name>gridworks-broker</servlet-name>
+        <servlet-name>refine-broker</servlet-name>
         <servlet-class>edu.mit.simile.butterfly.Butterfly</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>gridworks-broker</servlet-name>
+        <servlet-name>refine-broker</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
         

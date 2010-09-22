@@ -31,7 +31,7 @@ import com.google.refine.broker.RefineBroker;
 
 public class AppEngineRefineBrokerImpl extends RefineBroker {
                 
-    protected static final Logger logger = LoggerFactory.getLogger("gridworks.broker.appengine");
+    protected static final Logger logger = LoggerFactory.getLogger("refine.broker.appengine");
     
     PersistenceManagerFactory pmfInstance;
     

@@ -34,7 +34,7 @@ import com.sleepycat.persist.model.SecondaryKey;
 
 public class RefineBrokerImpl extends RefineBroker {
                 
-    protected static final Logger logger = LoggerFactory.getLogger("gridworks.broker.local");
+    protected static final Logger logger = LoggerFactory.getLogger("refine.broker.local");
     
     Environment env;
     
@@ -59,7 +59,7 @@ public class RefineBrokerImpl extends RefineBroker {
         expirer = new Expirer();
         timer.schedule(expirer, 0, LOCK_EXPIRATION_CHECK_DELAY);
         
-        String dataDir = config.getInitParameter("gridworks.data");
+        String dataDir = config.getInitParameter("refine.data");
         if (dataDir == null) dataDir = "data";
         File dataPath = new File(dataDir);
         if (!dataPath.exists()) dataPath.mkdirs();
