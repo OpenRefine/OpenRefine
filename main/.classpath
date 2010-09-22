@@ -38,6 +38,6 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
 	<classpathentry kind="lib" path="tests/server/lib/mockito-all-1.8.4.jar" sourcepath="tests/server/lib-src/mockito-all-1.8.4-sources.jar"/>
 	<classpathentry kind="lib" path="tests/server/lib/testng-5.12.1.jar" sourcepath="tests/server/lib-src/testng-5.12.1-sources.jar"/>
-	<classpathentry kind="lib" path="/gridworks-server/lib/servlet-api-2.5.jar" sourcepath="/gridworks-server/lib-src/servlet-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/grefine-server/lib/servlet-api-2.5.jar" sourcepath="/grefine-server/lib-src/servlet-api-2.5-sources.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
