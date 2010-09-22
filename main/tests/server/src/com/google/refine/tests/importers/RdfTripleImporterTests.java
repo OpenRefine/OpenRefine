@@ -12,10 +12,10 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.RdfTripleImporter;
 import com.google.refine.model.Project;
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 
 
-public class RdfTripleImporterTests extends GridworksTest {
+public class RdfTripleImporterTests extends RefineTest {
     
     @BeforeTest
     public void init() {

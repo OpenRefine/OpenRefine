@@ -11,7 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.google.refine.GridworksServlet;
+import com.google.refine.RefineServlet;
 import com.google.refine.Jsonizable;
 
 public class PreferenceStore implements Jsonizable {
@@ -75,7 +75,7 @@ public class PreferenceStore implements Jsonizable {
             try {
                 JSONObject obj2 = (JSONObject) o;
                 String className = obj2.getString("class");
-                Class<?> klass = GridworksServlet.getClass(className);
+                Class<?> klass = RefineServlet.getClass(className);
                 Method method = klass.getMethod("load", JSONObject.class);
                 
                 return method.invoke(null, obj2);

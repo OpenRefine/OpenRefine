@@ -18,9 +18,9 @@ import com.google.refine.importers.ImporterUtilities;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 
-public class ImporterUtilitiesTests extends GridworksTest {
+public class ImporterUtilitiesTests extends RefineTest {
     
     @BeforeTest
     public void init() {

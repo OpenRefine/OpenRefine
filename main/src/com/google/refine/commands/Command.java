@@ -16,7 +16,7 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.GridworksServlet;
+import com.google.refine.RefineServlet;
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
@@ -34,9 +34,9 @@ public abstract class Command {
 
     final static protected Logger logger = LoggerFactory.getLogger("command");
 
-    protected GridworksServlet servlet;
+    protected RefineServlet servlet;
     
-    public void init(GridworksServlet servlet) {
+    public void init(RefineServlet servlet) {
         this.servlet = servlet;
     }
     

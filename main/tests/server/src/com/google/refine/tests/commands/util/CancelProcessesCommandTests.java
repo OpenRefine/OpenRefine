@@ -24,9 +24,9 @@ import com.google.refine.ProjectManager;
 import com.google.refine.commands.history.CancelProcessesCommand;
 import com.google.refine.model.Project;
 import com.google.refine.process.ProcessManager;
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 
-public class CancelProcessesCommandTests extends GridworksTest {
+public class CancelProcessesCommandTests extends RefineTest {
 
     @BeforeTest
     public void init() {

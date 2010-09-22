@@ -32,7 +32,7 @@ import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 import com.sleepycat.persist.model.SecondaryKey;
 
-public class GridworksBrokerImpl extends GridworksBroker {
+public class RefineBrokerImpl extends RefineBroker {
                 
     protected static final Logger logger = LoggerFactory.getLogger("gridworks.broker.local");
     

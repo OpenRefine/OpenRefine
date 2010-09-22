@@ -12,94 +12,94 @@ var templatedFiles = {
 };
 
 function registerCommands() {
-    var GS = Packages.com.google.refine.GridworksServlet;
+    var RS = Packages.com.google.refine.RefineServlet;
     
-    GS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
-    GS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
-    GS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
-    GS.registerCommand(module, "export-rows", new Packages.com.google.refine.commands.project.ExportRowsCommand());
+    RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
+    RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
+    RS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
+    RS.registerCommand(module, "export-rows", new Packages.com.google.refine.commands.project.ExportRowsCommand());
 
-    GS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
-    GS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
+    RS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
+    RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
 
-    GS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
-    GS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
+    RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
+    RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
 
-    GS.registerCommand(module, "get-models", new Packages.com.google.refine.commands.project.GetModelsCommand());
-    GS.registerCommand(module, "get-rows", new Packages.com.google.refine.commands.row.GetRowsCommand());
-    GS.registerCommand(module, "get-processes", new Packages.com.google.refine.commands.history.GetProcessesCommand());
-    GS.registerCommand(module, "get-history", new Packages.com.google.refine.commands.history.GetHistoryCommand());
-    GS.registerCommand(module, "get-operations", new Packages.com.google.refine.commands.history.GetOperationsCommand());
-    GS.registerCommand(module, "get-columns-info", new Packages.com.google.refine.commands.column.GetColumnsInfoCommand());
-    GS.registerCommand(module, "get-scatterplot", new Packages.com.google.refine.commands.browsing.GetScatterplotCommand());
+    RS.registerCommand(module, "get-models", new Packages.com.google.refine.commands.project.GetModelsCommand());
+    RS.registerCommand(module, "get-rows", new Packages.com.google.refine.commands.row.GetRowsCommand());
+    RS.registerCommand(module, "get-processes", new Packages.com.google.refine.commands.history.GetProcessesCommand());
+    RS.registerCommand(module, "get-history", new Packages.com.google.refine.commands.history.GetHistoryCommand());
+    RS.registerCommand(module, "get-operations", new Packages.com.google.refine.commands.history.GetOperationsCommand());
+    RS.registerCommand(module, "get-columns-info", new Packages.com.google.refine.commands.column.GetColumnsInfoCommand());
+    RS.registerCommand(module, "get-scatterplot", new Packages.com.google.refine.commands.browsing.GetScatterplotCommand());
 
-    GS.registerCommand(module, "undo-redo", new Packages.com.google.refine.commands.history.UndoRedoCommand());
-    GS.registerCommand(module, "apply-operations", new Packages.com.google.refine.commands.history.ApplyOperationsCommand());
-    GS.registerCommand(module, "cancel-processes", new Packages.com.google.refine.commands.history.CancelProcessesCommand());
+    RS.registerCommand(module, "undo-redo", new Packages.com.google.refine.commands.history.UndoRedoCommand());
+    RS.registerCommand(module, "apply-operations", new Packages.com.google.refine.commands.history.ApplyOperationsCommand());
+    RS.registerCommand(module, "cancel-processes", new Packages.com.google.refine.commands.history.CancelProcessesCommand());
 
-    GS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
-    GS.registerCommand(module, "compute-clusters", new Packages.com.google.refine.commands.browsing.ComputeClustersCommand());
+    RS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
+    RS.registerCommand(module, "compute-clusters", new Packages.com.google.refine.commands.browsing.ComputeClustersCommand());
 
-    GS.registerCommand(module, "edit-one-cell", new Packages.com.google.refine.commands.cell.EditOneCellCommand());
-    GS.registerCommand(module, "text-transform", new Packages.com.google.refine.commands.cell.TextTransformCommand());
-    GS.registerCommand(module, "mass-edit", new Packages.com.google.refine.commands.cell.MassEditCommand());
-    GS.registerCommand(module, "join-multi-value-cells", new Packages.com.google.refine.commands.cell.JoinMultiValueCellsCommand());
-    GS.registerCommand(module, "split-multi-value-cells", new Packages.com.google.refine.commands.cell.SplitMultiValueCellsCommand());
-    GS.registerCommand(module, "fill-down", new Packages.com.google.refine.commands.cell.FillDownCommand());
-    GS.registerCommand(module, "blank-down", new Packages.com.google.refine.commands.cell.BlankDownCommand());
-    GS.registerCommand(module, "transpose-columns-into-rows", new Packages.com.google.refine.commands.cell.TransposeColumnsIntoRowsCommand());
-    GS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.refine.commands.cell.TransposeRowsIntoColumnsCommand());
+    RS.registerCommand(module, "edit-one-cell", new Packages.com.google.refine.commands.cell.EditOneCellCommand());
+    RS.registerCommand(module, "text-transform", new Packages.com.google.refine.commands.cell.TextTransformCommand());
+    RS.registerCommand(module, "mass-edit", new Packages.com.google.refine.commands.cell.MassEditCommand());
+    RS.registerCommand(module, "join-multi-value-cells", new Packages.com.google.refine.commands.cell.JoinMultiValueCellsCommand());
+    RS.registerCommand(module, "split-multi-value-cells", new Packages.com.google.refine.commands.cell.SplitMultiValueCellsCommand());
+    RS.registerCommand(module, "fill-down", new Packages.com.google.refine.commands.cell.FillDownCommand());
+    RS.registerCommand(module, "blank-down", new Packages.com.google.refine.commands.cell.BlankDownCommand());
+    RS.registerCommand(module, "transpose-columns-into-rows", new Packages.com.google.refine.commands.cell.TransposeColumnsIntoRowsCommand());
+    RS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.refine.commands.cell.TransposeRowsIntoColumnsCommand());
 
-    GS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
-    GS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
-    GS.registerCommand(module, "rename-column", new Packages.com.google.refine.commands.column.RenameColumnCommand());
-    GS.registerCommand(module, "move-column", new Packages.com.google.refine.commands.column.MoveColumnCommand());
-    GS.registerCommand(module, "split-column", new Packages.com.google.refine.commands.column.SplitColumnCommand());
-    GS.registerCommand(module, "extend-data", new Packages.com.google.refine.commands.column.ExtendDataCommand());
-    GS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
-    GS.registerCommand(module, "reorder-columns", new Packages.com.google.refine.commands.column.ReorderColumnsCommand());
+    RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
+    RS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
+    RS.registerCommand(module, "rename-column", new Packages.com.google.refine.commands.column.RenameColumnCommand());
+    RS.registerCommand(module, "move-column", new Packages.com.google.refine.commands.column.MoveColumnCommand());
+    RS.registerCommand(module, "split-column", new Packages.com.google.refine.commands.column.SplitColumnCommand());
+    RS.registerCommand(module, "extend-data", new Packages.com.google.refine.commands.column.ExtendDataCommand());
+    RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
+    RS.registerCommand(module, "reorder-columns", new Packages.com.google.refine.commands.column.ReorderColumnsCommand());
 
-    GS.registerCommand(module, "denormalize", new Packages.com.google.refine.commands.row.DenormalizeCommand());
+    RS.registerCommand(module, "denormalize", new Packages.com.google.refine.commands.row.DenormalizeCommand());
 
-    GS.registerCommand(module, "reconcile", new Packages.com.google.refine.commands.recon.ReconcileCommand());
-    GS.registerCommand(module, "recon-match-best-candidates", new Packages.com.google.refine.commands.recon.ReconMatchBestCandidatesCommand());
-    GS.registerCommand(module, "recon-mark-new-topics", new Packages.com.google.refine.commands.recon.ReconMarkNewTopicsCommand());
-    GS.registerCommand(module, "recon-discard-judgments", new Packages.com.google.refine.commands.recon.ReconDiscardJudgmentsCommand());
-    GS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.refine.commands.recon.ReconMatchSpecificTopicCommand());
-    GS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.refine.commands.recon.ReconJudgeOneCellCommand());
-    GS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.refine.commands.recon.ReconJudgeSimilarCellsCommand());
+    RS.registerCommand(module, "reconcile", new Packages.com.google.refine.commands.recon.ReconcileCommand());
+    RS.registerCommand(module, "recon-match-best-candidates", new Packages.com.google.refine.commands.recon.ReconMatchBestCandidatesCommand());
+    RS.registerCommand(module, "recon-mark-new-topics", new Packages.com.google.refine.commands.recon.ReconMarkNewTopicsCommand());
+    RS.registerCommand(module, "recon-discard-judgments", new Packages.com.google.refine.commands.recon.ReconDiscardJudgmentsCommand());
+    RS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.refine.commands.recon.ReconMatchSpecificTopicCommand());
+    RS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.refine.commands.recon.ReconJudgeOneCellCommand());
+    RS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.refine.commands.recon.ReconJudgeSimilarCellsCommand());
 
-    GS.registerCommand(module, "annotate-one-row", new Packages.com.google.refine.commands.row.AnnotateOneRowCommand());
-    GS.registerCommand(module, "annotate-rows", new Packages.com.google.refine.commands.row.AnnotateRowsCommand());
-    GS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
-    GS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
+    RS.registerCommand(module, "annotate-one-row", new Packages.com.google.refine.commands.row.AnnotateOneRowCommand());
+    RS.registerCommand(module, "annotate-rows", new Packages.com.google.refine.commands.row.AnnotateRowsCommand());
+    RS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
+    RS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
 
-    GS.registerCommand(module, "save-protograph", new Packages.com.google.refine.commands.freebase.SaveProtographCommand());
+    RS.registerCommand(module, "save-protograph", new Packages.com.google.refine.commands.freebase.SaveProtographCommand());
 
-    GS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
-    GS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
-    GS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
+    RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
+    RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
+    RS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
 
-    GS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
-    GS.registerCommand(module, "preview-extend-data", new Packages.com.google.refine.commands.column.PreviewExtendDataCommand());
-    GS.registerCommand(module, "preview-protograph", new Packages.com.google.refine.commands.freebase.PreviewProtographCommand());
+    RS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
+    RS.registerCommand(module, "preview-extend-data", new Packages.com.google.refine.commands.column.PreviewExtendDataCommand());
+    RS.registerCommand(module, "preview-protograph", new Packages.com.google.refine.commands.freebase.PreviewProtographCommand());
 
-    GS.registerCommand(module, "guess-types-of-column", new Packages.com.google.refine.commands.freebase.GuessTypesOfColumnCommand());
+    RS.registerCommand(module, "guess-types-of-column", new Packages.com.google.refine.commands.freebase.GuessTypesOfColumnCommand());
 
-    GS.registerCommand(module, "check-authorization", new Packages.com.google.refine.commands.auth.CheckAuthorizationCommand());
-    GS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
-    GS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
-    GS.registerCommand(module, "user-badges", new Packages.com.google.refine.commands.auth.GetUserBadgesCommand());
+    RS.registerCommand(module, "check-authorization", new Packages.com.google.refine.commands.auth.CheckAuthorizationCommand());
+    RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
+    RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
+    RS.registerCommand(module, "user-badges", new Packages.com.google.refine.commands.auth.GetUserBadgesCommand());
 
-    GS.registerCommand(module, "upload-data", new Packages.com.google.refine.commands.freebase.UploadDataCommand());
-    GS.registerCommand(module, "import-qa-data", new Packages.com.google.refine.commands.freebase.ImportQADataCommand());
-    GS.registerCommand(module, "mqlread", new Packages.com.google.refine.commands.freebase.MQLReadCommand());
-    GS.registerCommand(module, "mqlwrite", new Packages.com.google.refine.commands.freebase.MQLWriteCommand());
+    RS.registerCommand(module, "upload-data", new Packages.com.google.refine.commands.freebase.UploadDataCommand());
+    RS.registerCommand(module, "import-qa-data", new Packages.com.google.refine.commands.freebase.ImportQADataCommand());
+    RS.registerCommand(module, "mqlread", new Packages.com.google.refine.commands.freebase.MQLReadCommand());
+    RS.registerCommand(module, "mqlwrite", new Packages.com.google.refine.commands.freebase.MQLWriteCommand());
 
-    GS.registerCommand(module, "get-preference", new Packages.com.google.refine.commands.GetPreferenceCommand());
-    GS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
-    GS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
-    GS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
+    RS.registerCommand(module, "get-preference", new Packages.com.google.refine.commands.GetPreferenceCommand());
+    RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
+    RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
+    RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
 }
 
 function registerOperations() {

@@ -6,14 +6,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.refine.GridworksServlet;
+import com.google.refine.RefineServlet;
 import com.google.refine.commands.Command;
 
 /**
- * Exposes protected methods of com.google.refine.GridworksServlet as public for unit testing
+ * Exposes protected methods of com.google.refine.RefineServlet as public for unit testing
  *
  */
-public class GridworksServletStub extends GridworksServlet {
+public class RefineServletStub extends RefineServlet {
 
     //requirement of extending HttpServlet, not required for testing
     private static final long serialVersionUID = 1L;

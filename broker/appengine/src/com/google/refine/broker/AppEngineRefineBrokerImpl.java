@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.appengine.api.datastore.Text;
 import com.google.refine.appengine.AppEngineClientConnectionManager;
-import com.google.refine.broker.GridworksBroker;
+import com.google.refine.broker.RefineBroker;
 
-public class AppEngineGridworksBrokerImpl extends GridworksBroker {
+public class AppEngineRefineBrokerImpl extends RefineBroker {
                 
     protected static final Logger logger = LoggerFactory.getLogger("gridworks.broker.appengine");
     

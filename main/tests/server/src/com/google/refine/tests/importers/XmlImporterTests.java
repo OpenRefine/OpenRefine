@@ -18,10 +18,10 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.XmlImporter;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 
 
-public class XmlImporterTests extends GridworksTest {
+public class XmlImporterTests extends RefineTest {
 
     @BeforeTest
     public void init() {

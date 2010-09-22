@@ -18,10 +18,10 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.history.History;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 
 
-public class HistoryTests extends GridworksTest {
+public class HistoryTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

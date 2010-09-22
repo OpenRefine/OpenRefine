@@ -159,7 +159,7 @@ if ""%ACTION%"" == ""run"" goto doRun
 
 :doRun
 set CLASSPATH="%GRIDWORKS_CLASSES_DIR%;%GRIDWORKS_LIB_DIR%\*"
-"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%GRIDWORKS_LIB_DIR%/native/windows com.google.refine.Gridworks
+"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%GRIDWORKS_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
 
 :doAnt

@@ -21,7 +21,7 @@ import com.google.refine.io.FileProjectManager;
 import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
-public class GridworksServlet extends Butterfly {
+public class RefineServlet extends Butterfly {
 
     static private final String VERSION = "1.5";
 
@@ -29,7 +29,7 @@ public class GridworksServlet extends Butterfly {
 
     private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
 
-    static private GridworksServlet s_singleton;
+    static private RefineServlet s_singleton;
     static private File             s_dataDir;
     
     static final private Map<String, Command> commands = new HashMap<String, Command>();

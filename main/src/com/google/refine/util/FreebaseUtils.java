@@ -27,7 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.refine.GridworksServlet;
+import com.google.refine.RefineServlet;
 import com.google.refine.ProjectManager;
 import com.google.refine.oauth.Credentials;
 import com.google.refine.oauth.OAuthUtilities;
@@ -60,7 +60,7 @@ public class FreebaseUtils {
         OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
         
         HttpGet httpRequest = new HttpGet(getUserInfoURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + RefineServlet.getVersion());
         
         // this is required by the Metaweb API to avoid XSS
         httpRequest.setHeader("X-Requested-With", "1");
@@ -103,7 +103,7 @@ public class FreebaseUtils {
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
         HttpPost httpRequest = new HttpPost(getMQLReadURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + RefineServlet.getVersion());
         httpRequest.setEntity(entity);
 
         // this is required by the Metaweb API to avoid XSS
@@ -129,7 +129,7 @@ public class FreebaseUtils {
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
         HttpPost httpRequest = new HttpPost(getMQLWriteURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + RefineServlet.getVersion());
         httpRequest.setEntity(entity);
 
         // this is required by the Metaweb API to avoid XSS
@@ -188,7 +188,7 @@ public class FreebaseUtils {
                 UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
     
                 HttpPost httpRequest = new HttpPost(getFreeQUrl());
-                httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + GridworksServlet.getVersion());
+                httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + RefineServlet.getVersion());
                 httpRequest.setEntity(entity);
                 
                 HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));

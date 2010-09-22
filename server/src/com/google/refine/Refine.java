@@ -35,10 +35,10 @@ import com.codeberry.jdatapath.JDataPathSystem;
 import com.google.util.threads.ThreadPoolExecutorAdapter;
 
 /**
- * Main class for Gridworks server application.  Starts an instance of the
- * Jetty HTTP server / servlet container (inner class Gridworks Server).
+ * Main class for Refine server application.  Starts an instance of the
+ * Jetty HTTP server / servlet container (inner class Refine Server).
  */
-public class Gridworks {
+public class Refine {
     
     static private final String DEFAULT_HOST = "127.0.0.1";
     static private final int DEFAULT_PORT = 3333;
@@ -72,23 +72,23 @@ public class Gridworks {
         port = Configurations.getInteger("gridworks.port",DEFAULT_PORT);
         host = Configurations.get("gridworks.host",DEFAULT_HOST);
 
-        Gridworks gridworks = new Gridworks();
+        Refine gridworks = new Refine();
         
         gridworks.init(args);
     }
 
     public void init(String[] args) throws Exception {
 
-        GridworksServer server = new GridworksServer();
+        RefineServer server = new RefineServer();
         server.init(host,port);
 
         boolean headless = Configurations.getBoolean("gridworks.headless",false);
         if (!headless) {
             try {
-                GridworksClient client = new GridworksClient();
+                RefineClient client = new RefineClient();
                 client.init(host,port);
             } catch (Exception e) {
-                logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Gridworks.");
+                logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Refine.");
             }
         }
         
@@ -101,9 +101,9 @@ public class Gridworks {
     }
 }
 
-/* -------------- Gridworks Server ----------------- */
+/* -------------- Refine Server ----------------- */
 
-class GridworksServer extends Server {
+class RefineServer extends Server {
     
     final static Logger logger = LoggerFactory.getLogger("gridworks_server");
         
@@ -352,9 +352,9 @@ class GridworksServer extends Server {
     
 }
 
-/* -------------- Gridworks Client ----------------- */
+/* -------------- Refine Client ----------------- */
 
-class GridworksClient extends JFrame implements ActionListener {
+class RefineClient extends JFrame implements ActionListener {
     
     private static final long serialVersionUID = 7886547342175227132L;
 
@@ -374,7 +374,7 @@ class GridworksClient extends JFrame implements ActionListener {
 
             JMenuBar mb = new JMenuBar(); 
             JMenu m = new JMenu("Open");
-            JMenuItem mi = new JMenuItem("Open New Gridworks Window...");
+            JMenuItem mi = new JMenuItem("Open New Refine Window...");
             mi.addActionListener(this);
             m.add(mi);
             mb.add(m);
@@ -387,7 +387,7 @@ class GridworksClient extends JFrame implements ActionListener {
             // FIXME(SM): this part below doesn't seem to work, I get a NPE but I have *no* idea why, suggestions?
             
 //            PopupMenu dockMenu = new PopupMenu("dock");
-//            MenuItem mmi = new MenuItem("Open new Gridworks Window...");
+//            MenuItem mmi = new MenuItem("Open new Refine Window...");
 //            mmi.addActionListener(this);
 //            dockMenu.add(mmi);
 //            this.add(dockMenu);

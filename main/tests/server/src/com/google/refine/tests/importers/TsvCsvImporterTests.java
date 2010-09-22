@@ -21,9 +21,9 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.TsvCsvImporter;
 import com.google.refine.model.Project;
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 
-public class TsvCsvImporterTests extends GridworksTest {
+public class TsvCsvImporterTests extends RefineTest {
 
     @BeforeTest
     public void init() {

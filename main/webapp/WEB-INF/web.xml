@@ -20,7 +20,7 @@
      
     <servlet>
         <servlet-name>gridworks</servlet-name>
-        <servlet-class>com.google.refine.GridworksServlet</servlet-class>
+        <servlet-class>com.google.refine.RefineServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

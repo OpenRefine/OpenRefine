@@ -23,7 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.never;
 
-public class ProjectManagerTests extends GridworksTest {
+public class ProjectManagerTests extends RefineTest {
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;

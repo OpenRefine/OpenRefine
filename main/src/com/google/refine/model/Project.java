@@ -19,7 +19,7 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.GridworksServlet;
+import com.google.refine.RefineServlet;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.History;
@@ -122,7 +122,7 @@ public class Project {
     }
 
     protected void saveToWriter(Writer writer, Properties options) throws IOException {
-        writer.write(GridworksServlet.getVersion()); writer.write('\n');
+        writer.write(RefineServlet.getVersion()); writer.write('\n');
         
         writer.write("columnModel=\n"); columnModel.save(writer, options);
         writer.write("history=\n"); history.save(writer, options);

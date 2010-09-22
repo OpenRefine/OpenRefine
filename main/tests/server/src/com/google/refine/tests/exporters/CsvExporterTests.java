@@ -23,9 +23,9 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 
-public class CsvExporterTests extends GridworksTest {
+public class CsvExporterTests extends RefineTest {
 
     @BeforeTest
     public void init() {

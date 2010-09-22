@@ -16,7 +16,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.google.refine.GridworksServlet;
+import com.google.refine.RefineServlet;
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
@@ -68,7 +68,7 @@ public class History implements Jsonizable {
     }
 
     static public void writeOneChange(Writer writer, Change change, Properties options) throws IOException {
-        writer.write(GridworksServlet.getVersion()); writer.write('\n');
+        writer.write(RefineServlet.getVersion()); writer.write('\n');
         writer.write(change.getClass().getName()); writer.write('\n');
 
         change.save(writer, options);
@@ -76,7 +76,7 @@ public class History implements Jsonizable {
 
     @SuppressWarnings("unchecked")
     static public Class<? extends Change> getChangeClass(String className) throws ClassNotFoundException {
-        return (Class<? extends Change>) GridworksServlet.getClass(className);
+        return (Class<? extends Change>) RefineServlet.getClass(className);
     }
 
     protected long               _projectID;

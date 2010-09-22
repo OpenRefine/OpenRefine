@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.commands.Command;
 
-public class GridworksServletTests extends GridworksTest {
+public class RefineServletTests extends RefineTest {
     
     @BeforeTest
     public void init() {
@@ -28,7 +28,7 @@ public class GridworksServletTests extends GridworksTest {
     }
         
     //System under test
-    GridworksServletStub SUT = null;
+    RefineServletStub SUT = null;
 
     //variables
     final static private String TEST_COMMAND_NAME = "test-command";
@@ -50,7 +50,7 @@ public class GridworksServletTests extends GridworksTest {
         response = mock(HttpServletResponse.class);
         command = mock(Command.class);
 
-        SUT = new GridworksServletStub();
+        SUT = new RefineServletStub();
         SUT.insertCommand(TEST_COMMAND_NAME,command); //inject mock into command container
     }
 
@@ -65,11 +65,11 @@ public class GridworksServletTests extends GridworksTest {
     }
     
     //-------------------AutoSaveTimerTask tests-----------
-    //TODO would need to mock Timer and inject it into GridworksServlet.  Also need to deal with ProjectManager.singleton
+    //TODO would need to mock Timer and inject it into RefineServlet.  Also need to deal with ProjectManager.singleton
     //-------------------init tests------------------------
-    //TODO need to stub super.init(), mock Timer and inject it into GridworksServlet
+    //TODO need to stub super.init(), mock Timer and inject it into RefineServlet
     //-------------------destroy tests---------------------
-    //TODO need to mock Timer and inject it into GridworksServlet.  Also need to deal with ProjectManager.singleton
+    //TODO need to mock Timer and inject it into RefineServlet.  Also need to deal with ProjectManager.singleton
 
     //--------------------doGet tests----------------------
     @Test

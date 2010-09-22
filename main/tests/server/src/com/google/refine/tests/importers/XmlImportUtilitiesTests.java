@@ -23,10 +23,10 @@ import com.google.refine.importers.XmlImportUtilities.ImportColumnGroup;
 import com.google.refine.importers.XmlImportUtilities.ImportRecord;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 
 
-public class XmlImportUtilitiesTests extends GridworksTest {
+public class XmlImportUtilitiesTests extends RefineTest {
 
     @BeforeTest
     public void init() {

@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.google.refine.GridworksServlet;
+import com.google.refine.RefineServlet;
 import com.google.refine.Jsonizable;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
@@ -62,7 +62,7 @@ public class Pool implements Jsonizable {
     }
     
     public void save(Writer writer) throws IOException {
-        writer.write(GridworksServlet.getVersion()); writer.write('\n');
+        writer.write(RefineServlet.getVersion()); writer.write('\n');
 
         Properties options = new Properties();
         options.setProperty("mode", "save");

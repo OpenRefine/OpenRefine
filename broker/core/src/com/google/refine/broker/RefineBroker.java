@@ -43,7 +43,7 @@ import edu.mit.simile.butterfly.ButterflyModuleImpl;
  * to extend this abstract class and implement the services that are called via HTTP.
  * 
  */
-public abstract class GridworksBroker extends ButterflyModuleImpl {
+public abstract class RefineBroker extends ButterflyModuleImpl {
     
     static final public String GET_STATE = "get_state";
     static final public String EXPIRE = "expire";

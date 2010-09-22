@@ -9,7 +9,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-public class GridworksTest {
+public class RefineTest {
 
     protected Logger logger;
 

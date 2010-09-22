@@ -1,6 +1,6 @@
 package com.google.refine.broker.tests;
 
-import static com.google.refine.broker.GridworksBroker.*;
+import static com.google.refine.broker.RefineBroker.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,10 +29,10 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.broker.GridworksBroker;
-import com.google.refine.broker.GridworksBrokerImpl;
+import com.google.refine.broker.RefineBroker;
+import com.google.refine.broker.RefineBrokerImpl;
 
-public class GridworksBrokerTests {
+public class RefineBrokerTests {
 
     Logger logger;
     File data;
@@ -53,7 +53,7 @@ public class GridworksBrokerTests {
     // ------------------------------------------------------------------------------------
     
     ServletConfig config = null;
-    GridworksBroker broker = null;
+    RefineBroker broker = null;
     
     @BeforeTest public void test_init() throws Exception {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -61,7 +61,7 @@ public class GridworksBrokerTests {
         when(config.getInitParameter("gridworks.data")).thenReturn(data.getAbsolutePath());
         when(config.getInitParameter("gridworks.development")).thenReturn("true");
 
-        broker = new GridworksBrokerImpl();
+        broker = new RefineBrokerImpl();
         broker.init(config);
     }
 
@@ -406,15 +406,15 @@ public class GridworksBrokerTests {
         Assert.assertEquals(o.get(name), value);
     }
     
-    private JSONObject success(GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
+    private JSONObject success(RefineBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
         return call(true, broker, request, response, service, params);
     }
 
-    private JSONObject failure(GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
+    private JSONObject failure(RefineBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
         return call(false, broker, request, response, service, params);
     }
     
-    private JSONObject call(boolean successful, GridworksBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
+    private JSONObject call(boolean successful, RefineBroker broker, HttpServletRequest request, HttpServletResponse response, String service, String... params) throws Exception {
         if (params != null) {
             for (int i = 0; i < params.length; ) {
                 String name = params[i++];

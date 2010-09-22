@@ -7,10 +7,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.tests.GridworksTest;
+import com.google.refine.tests.RefineTest;
 import com.google.refine.util.ParsingUtilities;
 
-public class ParsingUtilitiesTests extends GridworksTest {
+public class ParsingUtilitiesTests extends RefineTest {
     
     @BeforeTest
     public void init() {
