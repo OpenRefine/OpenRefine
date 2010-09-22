@@ -254,11 +254,12 @@ class RefineServer extends Server {
     }
 
     static private String getDataDir() {
-        
         String data_dir = Configurations.get("refine.data_dir");
         if (data_dir != null) {
             return data_dir;
         }
+        
+        File dataDir = null;
         
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
@@ -268,10 +269,10 @@ class RefineServer extends Server {
                 // so we're using a library that uses JNI to ask directly the win32 APIs, 
                 // it's not elegant but it's the safest bet.
                 
-                DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Gridworks");
-                File data = new File(fixWindowsUnicodePath(localDataPath.getPath()));
-                data.mkdirs();
-                return data.getAbsolutePath();
+                DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Google");
+                
+                dataDir = new File(new File(fixWindowsUnicodePath(localDataPath.getPath())), "Refine");
+                
             } catch (Error e) {
                 /*
                  *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
@@ -298,18 +299,15 @@ class RefineServer extends Server {
                     parentDir = new File(".");
                 }
                 
-                File data = new File(parentDir, "Gridworks");
-                data.mkdirs();
-                
-                return data.getAbsolutePath();
+                dataDir = new File(new File(parentDir, "Google"), "Refine");
             }
         } else if (os.contains("mac os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
-            String data_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks"; 
-            File data = new File(data_home);
-            data.mkdirs();
-            return data.getAbsolutePath();
+            String data_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine"; 
+            
+            dataDir = new File(data_home);
+            
         } else { // most likely a UNIX flavor
             // start with the XDG environment
             // see http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
@@ -319,10 +317,29 @@ class RefineServer extends Server {
                 if (home == null) home = ".";
                 data_home = home + "/.local/share";
             }
-            File data = new File(data_home + "/gridworks");
-            data.mkdirs();
-            return data.getAbsolutePath();
+            
+            dataDir = new File(data_home + "/google-refine");
         }
+        
+        // If refine data dir doesn't exist, try to find and move gridworks data dir over
+        if (!dataDir.exists()) {
+            File gridworksDir;
+            if (dataDir.getName().equals("Refine")) {
+                gridworksDir = new File(dataDir.getParentFile().getParentFile(), "Gridworks");
+            } else if (dataDir.getName().startsWith(".")) {
+                gridworksDir = new File(dataDir.getParent(), ".gridworks");
+            } else {
+                gridworksDir = new File(dataDir.getParent(), ".gridworks");
+            }
+            
+            if (gridworksDir.exists()) {
+                gridworksDir.renameTo(dataDir);
+            } else {
+                dataDir.mkdirs();
+            }
+        }
+        
+        return dataDir.getAbsolutePath();
     }
     
     /**
