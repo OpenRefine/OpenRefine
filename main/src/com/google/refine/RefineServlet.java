@@ -2,7 +2,9 @@ package com.google.refine;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -221,13 +223,57 @@ public class RefineServlet extends Butterfly {
         return s_singleton.registerOneCommand(module, commandName, commandObject);
     }
     
+    static private class ClassMapping {
+        final String from;
+        final String to;
+        
+        ClassMapping(String from, String to) {
+            this.from = from;
+            this.to = to;
+        }
+    }
+    
+    static final private List<ClassMapping> classMappings = new ArrayList<ClassMapping>();
+    
+    /**
+     * Add a mapping that determines how old class names can be updated to newer
+     * class names. Such updates are desirable as the Java code changes from version
+     * to version. If the "from" argument ends with *, then it's considered a prefix;
+     * otherwise, it's an exact string match.
+     * 
+     * @param from
+     * @param to
+     */
+    static public void registerClassMapping(String from, String to) {
+        classMappings.add(new ClassMapping(from, to.endsWith("*") ? to.substring(0, to.length() - 1) : to));
+    }
+    
+    static {
+        registerClassMapping("com.metaweb.*", "com.google.*");
+        registerClassMapping("com.google.gridworks.*", "com.google.refine.*");
+    }
+    
+    static final private Map<String, String> classMappingsCache  = new HashMap<String, String>();
     static public Class<?> getClass(String className) throws ClassNotFoundException {
-        if (className.startsWith("com.metaweb.")) {
-            className = "com.google." + className.substring("com.metaweb.".length());
+        String toClassName = classMappingsCache.get(className);
+        if (toClassName == null) {
+            toClassName = className;
+            
+            for (ClassMapping m : classMappings) {
+                if (m.from.endsWith("*")) {
+                    if (toClassName.startsWith(m.from.substring(0, m.from.length() - 1))) {
+                        toClassName = m.to + toClassName.substring(m.from.length() - 1);
+                    }
+                } else {
+                    if (m.from.equals(toClassName)) {
+                        toClassName = m.to;
+                    }
+                }
+            }
+            
+            classMappingsCache.put(className, toClassName);
         }
-        if (className.startsWith("com.google.gridworks.")) {
-            className = "com.google.refine." + className.substring("com.google.gridworks.".length());
-        }
-        return Class.forName(className);
+        
+        return Class.forName(toClassName);
     }
 }

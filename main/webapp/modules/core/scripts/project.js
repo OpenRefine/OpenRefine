@@ -121,7 +121,7 @@ function initializeUI(uiState) {
 }
 
 Refine.setTitle = function(status) {
-    var title = theProject.metadata.name + " - Gridworks";
+    var title = theProject.metadata.name + " - Google Refine";
     if (status) {
         title = status + " - " + title;
     }
