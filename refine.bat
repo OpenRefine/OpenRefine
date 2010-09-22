@@ -22,10 +22,10 @@ echo where [options] include:
 echo.
 echo  /? print this message and exit
 echo.
-echo  /p <port> the port that Gridworks will listen to
+echo  /p <port> the port that Google Refine will listen to
 echo     default: 3333
 echo.
-echo  /i <interface> the host interface gridworks should bind to
+echo  /i <interface> the host interface Google Refine should bind to
 echo     default: 127.0.0.1
 echo.
 echo  /w <path> path to the webapp
@@ -40,8 +40,8 @@ echo  /x enable JMX monitoring (for jconsole and friends)
 echo.
 echo and <action> is one of
 echo.
-echo   build ..................... Build Gridworks      
-echo   run ....................... Run Gridworks
+echo   build ..................... Build Google Refine      
+echo   run ....................... Run Google Refine
 echo.
 echo   clean ..................... Clean compiled classes
 echo   distclean ................. Remove all generated files
@@ -49,7 +49,7 @@ echo.
 goto end
 
 :fail
-echo Type 'gridworks /h' for usage.
+echo Type 'refine /h' for usage.
 goto end
 
 :endUtils
@@ -69,7 +69,7 @@ rem --- Read ini file --------------------------------------------
 
 set OPTS=
 
-for /f "tokens=1,2 delims==" %%a in (gridworks.ini) do ( 
+for /f "tokens=1,2 delims==" %%a in (refine.ini) do ( 
     set %%a=%%b 
 ) 
 
@@ -88,19 +88,19 @@ if ""%1"" == ""/x"" goto arg-x
 goto endArgumentParsing
 
 :arg-p
-set GRIDWORKS_PORT=%2
+set REFINE_PORT=%2
 goto shift2loop
 
 :arg-i
-set GRIDWORKS_HOST=%2
+set REFINE_HOST=%2
 goto shift2loop
 
 :arg-w
-set GRIDWORKS_WEBAPP=%2
+set REFINE_WEBAPP=%2
 goto shift2loop
 
 :arg-m
-set GRIDWORKS_MEMORY=%2
+set REFINE_MEMORY=%2
 goto shift2loop
 
 :arg-d
@@ -125,27 +125,27 @@ set JAVA_OPTIONS=
 :gotJavaOptions
 set OPTS=%OPTS% %JAVA_OPTIONS%
 
-if not "%GRIDWORKS_MEMORY%" == "" goto gotMemory
-set GRIDWORKS_MEMORY=1024M
+if not "%REFINE_MEMORY%" == "" goto gotMemory
+set REFINE_MEMORY=1024M
 :gotMemory
-set OPTS=%OPTS% -Xms256M -Xmx%GRIDWORKS_MEMORY% -Dgridworks.memory=%GRIDWORKS_MEMORY%
+set OPTS=%OPTS% -Xms256M -Xmx%REFINE_MEMORY% -Drefine.memory=%REFINE_MEMORY%
 
-if not "%GRIDWORKS_PORT%" == "" goto gotPort
-set GRIDWORKS_PORT=3333
+if not "%REFINE_PORT%" == "" goto gotPort
+set REFINE_PORT=3333
 :gotPort
-set OPTS=%OPTS% -Dgridworks.port=%GRIDWORKS_PORT%
+set OPTS=%OPTS% -Drefine.port=%REFINE_PORT%
 
-if not "%GRIDWORKS_HOST%" == "" goto gotHost
-set GRIDWORKS_HOST=127.0.0.1
+if not "%REFINE_HOST%" == "" goto gotHost
+set REFINE_HOST=127.0.0.1
 :gotHOST
-set OPTS=%OPTS% -Dgridworks.host=%GRIDWORKS_HOST%
+set OPTS=%OPTS% -Drefine.host=%REFINE_HOST%
 
-if not "%GRIDWORKS_CLASSES_DIR%" == "" goto gotClassesDir
-set GRIDWORKS_CLASSES_DIR=server\classes
+if not "%REFINE_CLASSES_DIR%" == "" goto gotClassesDir
+set REFINE_CLASSES_DIR=server\classes
 :gotClassesDir
 
-if not "%GRIDWORKS_LIB_DIR%" == "" goto gotLibDir
-set GRIDWORKS_LIB_DIR=server\lib
+if not "%REFINE_LIB_DIR%" == "" goto gotLibDir
+set REFINE_LIB_DIR=server\lib
 :gotLibDir
 
 rem ----- Respond to the action ----------------------------------------------------------
@@ -158,8 +158,8 @@ if ""%ACTION%"" == ""distclean"" goto doAnt
 if ""%ACTION%"" == ""run"" goto doRun
 
 :doRun
-set CLASSPATH="%GRIDWORKS_CLASSES_DIR%;%GRIDWORKS_LIB_DIR%\*"
-"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%GRIDWORKS_LIB_DIR%/native/windows com.google.refine.Refine
+set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
+"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
 
 :doAnt

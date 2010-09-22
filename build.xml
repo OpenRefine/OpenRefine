@@ -2,11 +2,11 @@
 
 <!--+
     |
-    |  Gridworks Build File    
-    |                
+    |  Google Refine Build File
+    |
     +-->
     
-<project name="gridworks" default="build" basedir=".">
+<project name="google-refine" default="build" basedir=".">
 
     <property environment="env"/>
 
@@ -30,7 +30,7 @@
         <not><isset property="dist.dir"/></not>
     </condition>
 
-    <condition property="appengine.app_id" value="gridworks-broker">
+    <condition property="appengine.app_id" value="google-refine-broker">
         <not><isset property="appengine.app_id"/></not>
     </condition>
 
@@ -42,7 +42,7 @@
         <not><isset property="appengine.sdk.dir"/></not>
     </condition>
 
-    <property name="fullname" value="gridworks-${version}-${revision}" />
+    <property name="fullname" value="google-refine-${version}-${revision}" />
     
     <property name="main.dir" value="${basedir}/main" />
 
@@ -81,7 +81,7 @@
 
     <property name="mac.dir" value="${build.dir}/mac" />
     <property name="windows.dir" value="${build.dir}/windows" />
-    <property name="linux.name" value="gridworks-${version}" />
+    <property name="linux.name" value="google-refine-${version}" />
     <property name="linux.dir" value="${build.dir}/linux/${linux.name}" />
     
     <!-- ================================================================== -->
@@ -246,16 +246,16 @@
         
         <jarbundler 
                 dir="${mac.dir}"
-                name="Gridworks"
-                mainclass="com.google.gridworks.Gridworks" 
-                icon="${graphics.dir}/icon/gridworks.icns"
+                name="Google Refine"
+                mainclass="com.google.refine.Refine" 
+                icon="${graphics.dir}/icon/google-refine.icns"
                 version="${version}"
-                infostring="Gridworks ${version}"
-                aboutmenuname="Gridworks"
+                infostring="Google Refine ${version}"
+                aboutmenuname="Google Refine"
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
                 jvmversion="1.6+"
-                bundleid="com.google.gridworks.Gridworks"
-                vmoptions="-Xms256M -Xmx1024M -Dgridworks.version=${revision}"
+                bundleid="com.google.refine.Refine"
+                vmoptions="-Xms256M -Xmx1024M -Drefine.version=${revision}"
                 antialiasedgraphics="true"
                 antialiasedtext="true"
                 liveresize="true"
@@ -282,27 +282,27 @@
         <launch4j>
           <config 
                headerType="console" 
-               outfile="${windows.dir}/Gridworks.exe" 
+               outfile="${windows.dir}/google-refine.exe" 
                jarPath="server/lib/${fullname}-server.jar" 
                dontWrapJar="true"
-               icon="${graphics.dir}/icon/gridworks.ico">
-            <classPath mainClass="com.google.gridworks.Gridworks">
+               icon="${graphics.dir}/icon/google-refine.ico">
+            <classPath mainClass="com.google.refine.Refine">
                 <cp>server/lib/*.jar</cp>
             </classPath>
             <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
-                <opt>-Djava.library.path=server/lib/native/windows -Dgridworks.version=${revision}</opt>
+                <opt>-Djava.library.path=server/lib/native/windows -Drefine.version=${revision}</opt>
             </jre>
             <versionInfo
                 fileVersion="${full_version}"
                 txtFileVersion="${version}"
-                fileDescription="gridworks"
-                copyright="Copyright (c) 2010, Metaweb Technologies, Inc."
+                fileDescription="google-refine"
+                copyright="Copyright (c) 2010, Google, Inc."
                 productVersion="${full_version}"
                 txtProductVersion="${full_version}"
-                productName="Gridworks"
-                companyName="Metaweb Technologies, Inc."
-                internalName="gridworks"
-                originalFilename="gridworks.exe" 
+                productName="Google Refine"
+                companyName="Google, Inc."
+                internalName="google-refine"
+                originalFilename="google-refine.exe" 
             />
           </config>
         </launch4j>     
@@ -330,13 +330,13 @@
             </fileset>
         </copy>
 
-        <copy file="${conf.dir}/gridworks.l4j.ini" tofile="${windows.dir}/gridworks.l4j.ini"/>
-        <copy file="${basedir}/gridworks.bat" tofile="${windows.dir}/gridworks.bat"/>
-        <copy file="${basedir}/gridworks.ini" tofile="${windows.dir}/gridworks.ini"/>
+        <copy file="${conf.dir}/google-refine.l4j.ini" tofile="${windows.dir}/google-refine.l4j.ini"/>
+        <copy file="${basedir}/refine.bat" tofile="${windows.dir}/refine.bat"/>
+        <copy file="${basedir}/refine.ini" tofile="${windows.dir}/refine.ini"/>
         <copy file="${basedir}/README.txt" tofile="${windows.dir}/README.txt"/>
         <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
         
-        <zip destfile="${dist.dir}/gridworks-${version}-${revision}.zip" basedir="${windows.dir}"/>                
+        <zip destfile="${dist.dir}/google-refine-${version}-${revision}.zip" basedir="${windows.dir}"/>                
     </target>
     
     <target name="linux" depends="jar, prepare_webapp">
@@ -361,18 +361,18 @@
                 <include name="**"/>
             </fileset>
         </copy>
-        <copy file="${basedir}/gridworks.ini" tofile="${linux.dir}/gridworks.ini"/>
+        <copy file="${basedir}/refine.ini" tofile="${linux.dir}/refine.ini"/>
         <copy file="${basedir}/LICENSE.txt" tofile="${linux.dir}/LICENSE.txt"/>
         <copy file="${basedir}/README.txt" tofile="${linux.dir}/README.txt"/>
-        <copy file="${basedir}/gridworks" tofile="${linux.dir}/gridworks"/>
+        <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
         
-        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/gridworks-${version}-${revision}.tar.gz">
+        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/google-refine-${version}-${revision}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
-               <include name="${linux.name}/gridworks"/>
+               <include name="${linux.name}/refine"/>
            </tarfileset>        
            <tarfileset dir="${linux.dir}/..">
                <include name="${linux.name}/**"/>
-               <exclude name="${linux.name}/gridworks"/>
+               <exclude name="${linux.name}/refine"/>
            </tarfileset>        
         </tar>
     </target>

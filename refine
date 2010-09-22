@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ########################################################## 
-#               Gridworks Control System                 #
+#               Google Refine Control System             #
 ##########################################################
 
 # -------------- utility functions ----------------------
@@ -31,10 +31,10 @@ where [options] include:
 
   -h print this message and exit
   
-  -p <port> the port that gridworks will listen to
+  -p <port> the port that Google Refine will listen to
      default: 3333
 
-  -i <interface> the host interface gridworks should bind to
+  -i <interface> the host interface Google Refine should bind to
      default: 127.0.0.1
 
   -w <path> path to the webapp
@@ -55,22 +55,22 @@ where [options] include:
   
 and <action> is one of
 
-   build ............................... Build Gridworks      
-   run ................................. Run Gridworks [default]
+   build ............................... Build Google Refine      
+   run ................................. Run Google Refine [default]
 
-   test ................................ Run all Gridworks tests
+   test ................................ Run all Google Refine tests
    server_test ......................... Run only the server tests
    ui_test ............................. Run only the UI tests
 
-   broker .............................. Run Gridworks Broker
+   broker .............................. Run Google Refine Broker
    
-   broker_appengine_run <id> <ver> ..... Run Gridworks Broker for Google App Engine in local server
-   broker_appengine_upload <id> <ver> .. Upload Gridworks to Google App Engine
+   broker_appengine_run <id> <ver> ..... Run Google Refine Broker for Google App Engine in local server
+   broker_appengine_upload <id> <ver> .. Upload Google Refine to Google App Engine
    
-   findbugs ............................ Run Findbugs against Gridworks     
-   pmd ................................. Run PMD against Gridworks     
-   cpd ................................. Run Copy/Paste Detection against Gridworks     
-   jslint .............................. Run JSlint against Gridworks
+   findbugs ............................ Run Findbugs against Google Refine
+   pmd ................................. Run PMD against Google Refine
+   cpd ................................. Run Copy/Paste Detection against Google Refine
+   jslint .............................. Run JSlint against Google Refine
 
    whitespace <extension> .............. Normalize whitespace in files with the given extension
 
@@ -140,7 +140,7 @@ check_pywin32() {
 
 check_running() {
     check_downloaders
-    URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/"
+    URL="http://${REFINE_HOST}:${REFINE_PORT}/"
     
     if [ "$CURL" ] ; then
         NOT_RUNNING=`curl -s $URL > /dev/null || echo not_running`
@@ -205,7 +205,7 @@ tool_download() {
     FILE=$2
     DIR=$3
     
-    cd $GRIDWORKS_TOOLS_DIR
+    cd $REFINE_TOOLS_DIR
         if [ ! -f "$FILE" ] ; then
             download $URL $FILE
         fi
@@ -224,13 +224,13 @@ tool_download() {
 load_data() {
     FILE=$1
     NAME=$2
-    URL="http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/command/core/create-project-from-upload"
+    URL="http://${REFINE_HOST}:${REFINE_PORT}/command/core/create-project-from-upload"
     CURL="`which curl 2> /dev/null`"
     
     if [ -z "$CURL" ] ; then
-        error "We need 'curl' present in PATH to upload data to gridworks."
+        error "We need 'curl' present in PATH to upload data to Google Refine."
     else
-        curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to Gridworks"
+        curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to Google Refine"
         echo "Loaded $FILE as $NAME"
     fi
 }
@@ -238,20 +238,20 @@ load_data() {
 # ----------------------------------------------------------------------------------------------
 
 build_prepare() {
-    if [ ! -d $GRIDWORKS_BUILD_DIR ] ; then 
-        mkdir $GRIDWORKS_BUILD_DIR || error "Error while making directory $GRIDWORKS_BUILD_DIR"
+    if [ ! -d $REFINE_BUILD_DIR ] ; then 
+        mkdir $REFINE_BUILD_DIR || error "Error while making directory $REFINE_BUILD_DIR"
     fi
 }
 
 dist_prepare() {
-    if [ ! -d $GRIDWORKS_DIST_DIR ] ; then 
-        mkdir $GRIDWORKS_DIST_DIR || error "Error while making directory $GRIDWORKS_DIST_DIR"
+    if [ ! -d $REFINE_DIST_DIR ] ; then 
+        mkdir $REFINE_DIST_DIR || error "Error while making directory $REFINE_DIST_DIR"
     fi
 }
 
 tools_prepare() {
-    if [ ! -d $GRIDWORKS_TOOLS_DIR ] ; then 
-        mkdir $GRIDWORKS_TOOLS_DIR || error "Error while making directory $GRIDWORKS_TOOLS_DIR"
+    if [ ! -d $REFINE_TOOLS_DIR ] ; then 
+        mkdir $REFINE_TOOLS_DIR || error "Error while making directory $REFINE_TOOLS_DIR"
     fi
 }
                         
@@ -265,7 +265,7 @@ ant_prepare() {
     ANT="`which ant 2> /dev/null`"
     if [ -z "$ANT" ] ; then
         if [ -z "$ANT_HOME" ] ; then
-            cd $GRIDWORKS_TOOLS_DIR
+            cd $REFINE_TOOLS_DIR
                 if [ ! -f "$ANT_FILE" ] ; then
                     download $ANT_URL $ANT_FILE
                 fi
@@ -330,13 +330,13 @@ virtualenv_prepare() {
 
     tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
     
-    PYTHON_LOCAL="$GRIDWORKS_TOOLS_DIR/python"
+    PYTHON_LOCAL="$REFINE_TOOLS_DIR/python"
     if [ "$OS" = "windows" ] ; then
         PYTHON_LOCAL="${PYTHON_LOCAL}_win"
     fi
     
     if [ ! -d "$PYTHON_LOCAL" ] ; then
-        $PYTHON $GRIDWORKS_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
+        $PYTHON $REFINE_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
     fi
     
     PYTHON_HOME="`pwd`/$PYTHON_LOCAL"
@@ -417,16 +417,16 @@ dist() {
     windows_dist $1
     linux_dist $1
     
-    echo "All distributions were built and are located at $GRIDWORKS_DIST_DIR"
+    echo "All distributions were built and are located at $REFINE_DIST_DIR"
     echo 
-    echo "Upload them to the distibution site, then prepend the GridworksReleases array at"
+    echo "Upload them to the distibution site, then prepend the GoogleRefineReleases array at"
     echo
-    echo "   http://code.google.com/p/freebase-gridworks/source/browse/support/releases.js"
+    echo "   http://code.google.com/p/google-refine/source/browse/support/releases2.js"
     echo
     echo "with"
     echo 
     echo "    {"
-    echo "        \"description\": \"Gridworks ${VERSION}\","
+    echo "        \"description\": \"Google Refine ${VERSION}\","
     echo "        \"version\": \"${VERSION}\","
     echo "        \"revision\": \"${REVISION}\""
     echo "    },"
@@ -440,7 +440,7 @@ windows_dist() {
 
     launch4j_prepare
     
-    ANT_PARAMS="-Dlaunch4j.dir=${GRIDWORKS_TOOLS_DIR}/${LAUNCH4J_DIR}"
+    ANT_PARAMS="-Dlaunch4j.dir=${REFINE_TOOLS_DIR}/${LAUNCH4J_DIR}"
     ant windows
 }
 
@@ -460,23 +460,23 @@ mac_dist() {
 
     jarbundler_prepare
     
-    ANT_PARAMS="-Djarbundler.dir=${GRIDWORKS_TOOLS_DIR}/${JARBUNDLER_DIR}"
+    ANT_PARAMS="-Djarbundler.dir=${REFINE_TOOLS_DIR}/${JARBUNDLER_DIR}"
     ant mac
 
-    mkdir -p "$GRIDWORKS_BUILD_DIR/mac/.background"
-    cp graphics/dmg_background/dmg_background.png "$GRIDWORKS_BUILD_DIR/mac/.background/dmg_background.png"
+    mkdir -p "$REFINE_BUILD_DIR/mac/.background"
+    cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
     
     SIZE=60
     
-    if [ -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" ] ; then
-        rm "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
+        rm "$REFINE_BUILD_DIR/temp_refine.dmg"
     fi
     
-    TITLE="Gridworks $VERSION"
+    TITLE="Google Refine $VERSION"
     echo "Building MacOSX DMG for $TITLE"
-    hdiutil create -srcfolder "$GRIDWORKS_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" || error "can't create empty DMG"
-    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}'`
-    hdiutil attach "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" || error "Can't attach temp DMG"
+    hdiutil create -srcfolder "$REFINE_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$REFINE_BUILD_DIR/temp_refine.dmg" || error "can't create empty DMG"
+    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}'`
+    hdiutil attach "$REFINE_BUILD_DIR/temp_refine.dmg" || error "Can't attach temp DMG"
     
     echo '
        tell application "Finder"
@@ -491,7 +491,7 @@ mac_dist() {
             set icon size of theViewOptions to 100
             set background picture of theViewOptions to file ".background:dmg_background.png"
             make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
-            set position of item "Gridworks" of container window to {170, 175}
+            set position of item "Google Refine" of container window to {170, 175}
             set position of item "Applications" of container window to {380, 175}
             close
             open               
@@ -506,14 +506,14 @@ mac_dist() {
     sync
     hdiutil detach $DEVICE
     
-    if [ -f "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" ] ; then
-        rm "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg"
+    if [ -f "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" ] ; then
+        rm "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg"
     fi
     
-    hdiutil convert "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg" -format UDZO -imagekey zlib-level=9 -o "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
-    hdiutil internet-enable -yes "$GRIDWORKS_DIST_DIR/gridworks-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
+    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
+    hdiutil internet-enable -yes "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
     
-    rm -f "$GRIDWORKS_BUILD_DIR/temp_gridworks.dmg"
+    rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
 }
 
 test() {
@@ -526,13 +526,13 @@ ui_test() {
     
     windmill_prepare
     
-    GRIDWORKS_DATA_DIR="${TMPDIR}/gridworks-tests"
+    REFINE_DATA_DIR="${TMPDIR}/google-refine-tests"
     
-    add_option "-Dgridworks.headless=true"
+    add_option "-Drefine.headless=true"
     
     run fork
     
-    echo "Waiting for Gridworks to load..."
+    echo "Waiting for Google Refine to load..."
     sleep 5
     check_running
     if [ ! -z "$NOT_RUNNING" ] ; then
@@ -541,37 +541,37 @@ ui_test() {
     echo "... proceed with the tests."
     echo ""
     
-    load_data "$GRIDWORKS_TEST_DIR/data/food.csv" "Food"
+    load_data "$REFINE_TEST_DIR/data/food.csv" "Food"
     sleep 3
     echo ""
     
     echo "Starting Windmill..."
     if [ -z "$INTERACTIVE" ] ; then
-        "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/ jsdir=$GRIDWORKS_TEST_DIR/client/src exit
+        "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/ jsdir=$REFINE_TEST_DIR/client/src exit
     else
-        "$WINDMILL" firefox firebug loglevel=WARN http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/
+        "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/
     fi
     
     echo ""
-    echo "Killing Gridworks"
-    /bin/kill -9 $GRIDWORKS_PID
+    echo "Killing Google Refine"
+    /bin/kill -9 $REFINE_PID
     echo "Cleaning up"
-    rm -rf $GRIDWORKS_DATA_DIR
+    rm -rf $REFINE_DATA_DIR
 }
 
 server_test() {
     ant build_tests
     echo ""
     
-    CLASSPATH="$GRIDWORKS_TEST_DIR/server/classes${SEP}$GRIDWORKS_WEBAPP/WEB-INF/classes${SEP}$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_TEST_DIR/server/lib/*${SEP}$GRIDWORKS_LIB_DIR/*${SEP}$GRIDWORKS_WEBAPP/WEB-INF/lib/*"
+    CLASSPATH="$REFINE_TEST_DIR/server/classes${SEP}$REFINE_WEBAPP/WEB-INF/classes${SEP}$REFINE_CLASSES_DIR${SEP}$REFINE_TEST_DIR/server/lib/*${SEP}$REFINE_LIB_DIR/*${SEP}$REFINE_WEBAPP/WEB-INF/lib/*"
 
     if [ -z "$1" ] ; then
-        TESTS="-excludegroups broken $GRIDWORKS_TEST_DIR/server/conf/tests.xml"
+        TESTS="-excludegroups broken $REFINE_TEST_DIR/server/conf/tests.xml"
     else 
         TESTS="-testclass $1"
     fi
     
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.testng.TestNG -d $GRIDWORKS_BUILD_DIR/server_tests -listener org.testng.reporters.DotTestListener $TESTS"
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.testng.TestNG -d $REFINE_BUILD_DIR/server_tests -listener org.testng.reporters.DotTestListener $TESTS"
     
     #echo "$RUN_CMD"
     #echo ""
@@ -585,56 +585,56 @@ run() {
     check_running
     
     if [ -z "$NOT_RUNNING" ] ; then
-        warn "Gridworks is already running."
+        warn "Google Refine is already running."
     fi
     
-    if [ ! -d $GRIDWORKS_CLASSES_DIR ] ; then
-        IS_JAR=`ls $GRIDWORKS_LIB_DIR | grep gridworks`
+    if [ ! -d $REFINE_CLASSES_DIR ] ; then
+        IS_JAR=`ls $REFINE_LIB_DIR | grep google-refine`
         if [ -z "$IS_JAR" ] ; then
             ant build
             echo ""
         fi
     fi
             
-    if [ -d $GRIDWORKS_CLASSES_DIR ] ; then
-        add_option "-Dgridworks.autoreload=true -Dbutterfly.autoreload=true"
+    if [ -d $REFINE_CLASSES_DIR ] ; then
+        add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
     fi
 
     if [ "$OS" = "macosx" ] ; then
-        add_option "-Xdock:name=Gridworks -Xdock:icon=graphics/icon/gridworks.icns"
+        add_option "-Xdock:name=GoogleRefine -Xdock:icon=graphics/icon/google-refine.icns"
     fi
     
-    if [ "$GRIDWORKS_DATA_DIR" ] ; then
-        add_option "-Dgridworks.data_dir=$GRIDWORKS_DATA_DIR"
+    if [ "$REFINE_DATA_DIR" ] ; then
+        add_option "-Drefine.data_dir=$REFINE_DATA_DIR"
     fi
 
-    if [ "$GRIDWORKS_WEBAPP" ] ; then
-        add_option "-Dgridworks.webapp=$GRIDWORKS_WEBAPP"
+    if [ "$REFINE_WEBAPP" ] ; then
+        add_option "-Drefine.webapp=$REFINE_WEBAPP"
     fi
                     
-    if [ "$GRIDWORKS_PORT" ] ; then
-        add_option "-Dgridworks.port=$GRIDWORKS_PORT"
+    if [ "$REFINE_PORT" ] ; then
+        add_option "-Drefine.port=$REFINE_PORT"
     fi
     
-    if [ "$GRIDWORKS_HOST" ] ; then
-        add_option "-Dgridworks.host=$GRIDWORKS_HOST"
+    if [ "$REFINE_HOST" ] ; then
+        add_option "-Drefine.host=$REFINE_HOST"
     fi
                     
-    CLASSPATH="$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_LIB_DIR/*"
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
     #echo "$RUN_CMD"
     #echo ""
   
-    echo "Starting Gridworks at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
+    echo "Starting Google Refine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
         exec $RUN_CMD
     else
         $RUN_CMD &
-        GRIDWORKS_PID="$!"
+        REFINE_PID="$!"
     fi
 }
     
@@ -647,13 +647,13 @@ broker_build() {
 broker_run() {
     FORK=$1
 
-    GRIDWORKS_HOST=127.0.0.1
-    GRIDWORKS_PORT=3334
+    REFINE_HOST=127.0.0.1
+    REFINE_PORT=3334
             
     check_running
     
     if [ -z "$NOT_RUNNING" ] ; then
-        warn "Gridworks Broker is already running."
+        warn "Google Refine Broker is already running."
     fi
 
     if [ ! -d "broker/core/WEB-INF/lib" ] ; then
@@ -661,32 +661,32 @@ broker_run() {
         echo ""
     fi
 
-    if [ -d $GRIDWORKS_CLASSES_DIR ] ; then
-        add_option "-Dgridworks.autoreload=true -Dbutterfly.autoreload=true"
-        add_option "-Dgridworks.development=true"
+    if [ -d $REFINE_CLASSES_DIR ] ; then
+        add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
+        add_option "-Drefine.development=true"
     fi
                     
-    add_option "-Dgridworks.webapp=broker/core"
-    add_option "-Dgridworks.headless=true"
+    add_option "-Drefine.webapp=broker/core"
+    add_option "-Drefine.headless=true"
 
-    add_option "-Dgridworks.port=$GRIDWORKS_PORT"
-    add_option "-Dgridworks.host=0.0.0.0"
+    add_option "-Drefine.port=$REFINE_PORT"
+    add_option "-Drefine.host=0.0.0.0"
                     
-    CLASSPATH="$GRIDWORKS_CLASSES_DIR${SEP}$GRIDWORKS_LIB_DIR/*"
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
     #echo "$RUN_CMD"
     #echo ""
   
-    echo "Starting Gridworks Broker at 'http://${GRIDWORKS_HOST}:${GRIDWORKS_PORT}/'"
+    echo "Starting Google Refine Broker at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
         exec $RUN_CMD
     else
         $RUN_CMD &
-        GRIDWORKS_PID="$!"
+        REFINE_PID="$!"
     fi
     
 }
@@ -710,48 +710,48 @@ broker_appengine_build() {
        
 broker_appengine_upload() {
     broker_appengine_build $1 $2
-    "$APPENGINE" update "$GRIDWORKS_BUILD_DIR/broker/appengine"
+    "$APPENGINE" update "$REFINE_BUILD_DIR/broker/appengine"
 }
 
 broker_appengine_run() {
     broker_appengine_build $1 $2
-    "$APPENGINE_LOCAL" "$GRIDWORKS_BUILD_DIR/broker/appengine"
+    "$APPENGINE_LOCAL" "$REFINE_BUILD_DIR/broker/appengine"
 }
     
 findbugs() {
     findbugs_prepare
     
-    ANT_PARAMS="-Dfindbugs.dir=${GRIDWORKS_TOOLS_DIR}/${FINDBUGS_DIR}"
+    ANT_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
     ant findbugs
     
-    open "$GRIDWORKS_BUILD_DIR/reports/findbugs.html"
+    open "$REFINE_BUILD_DIR/reports/findbugs.html"
 }    
 
 pmd() {
     pmd_prepare
     
-    ANT_PARAMS="-Dpmd.dir=${GRIDWORKS_TOOLS_DIR}/${PMD_DIR}"
+    ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
     ant pmd
     
-    open "$GRIDWORKS_BUILD_DIR/reports/pmd.html"
+    open "$REFINE_BUILD_DIR/reports/pmd.html"
 }    
 
 cpd() {
     pmd_prepare
     
-    ANT_PARAMS="-Dpmd.dir=${GRIDWORKS_TOOLS_DIR}/${PMD_DIR}"
+    ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
     ant cpd
 
-    open "$GRIDWORKS_BUILD_DIR/reports/cpd.txt"
+    open "$REFINE_BUILD_DIR/reports/cpd.txt"
 }    
 
 jslint() {
     jslint_prepare
 
-    ANT_PARAMS="-Djslint.dir=${GRIDWORKS_TOOLS_DIR}/${JSLINT_DIR}"
+    ANT_PARAMS="-Djslint.dir=${REFINE_TOOLS_DIR}/${JSLINT_DIR}"
     ant jslint
 
-    open "$GRIDWORKS_BUILD_DIR/reports/jslint.txt"
+    open "$REFINE_BUILD_DIR/reports/jslint.txt"
 }
 
 whitespace() {
@@ -796,7 +796,7 @@ fi
 
 # ----- Load configurations -------------------------------------
 
-load_configs gridworks.ini
+load_configs refine.ini
 
 # ----- Make sure there is an appropriate java environment is available -------------
 
@@ -821,7 +821,7 @@ fi
 
 JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1\.6`
 if [ -z "$JAVA_VERSION" ] ; then
-    error "Gridworks requires Java version 6 or later. If you have multiple versions of Java installed, please set JAVA_HOME to the correct version."
+    error "Google Refine requires Java version 6 or later. If you have multiple versions of Java installed, please set JAVA_HOME to the correct version."
 fi
 
 # ----- Parse the command line args ------------------------------------------
@@ -829,12 +829,12 @@ fi
 while [ $# -ne 0 ] ; do
   case "$1" in
     -h) usage;;
-    -p) shift; GRIDWORKS_PORT="$1"; shift; continue;;
-    -i) shift; GRIDWORKS_HOST="$1"; shift; continue;;
-    -w) shift; GRIDWORKS_WEBAPP="$1"; shift; continue;;
-    -d) shift; GRIDWORKS_DATA_DIR="$1"; shift; continue;;
-    -m) shift; GRIDWORKS_MEMORY="$1"; shift; continue;;
-    -v) shift; GRIDWORKS_VERBOSITY="$1"; shift; continue;;
+    -p) shift; REFINE_PORT="$1"; shift; continue;;
+    -i) shift; REFINE_HOST="$1"; shift; continue;;
+    -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
+    -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
+    -m) shift; REFINE_MEMORY="$1"; shift; continue;;
+    -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
@@ -857,56 +857,56 @@ if [ -z "$JAVA_OPTIONS" ] ; then
 fi
 add_option "$JAVA_OPTIONS"
 
-if [ -z "$GRIDWORKS_MEMORY" ] ; then
-    GRIDWORKS_MEMORY="1024M"
+if [ -z "$REFINE_MEMORY" ] ; then
+    REFINE_MEMORY="1024M"
 fi
-add_option "-Xms256M -Xmx$GRIDWORKS_MEMORY -Dgridworks.memory=$GRIDWORKS_MEMORY -XX:MaxPermSize=256m -XX:+CMSClassUnloadingEnabled"
+add_option "-Xms256M -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY -XX:MaxPermSize=256m -XX:+CMSClassUnloadingEnabled"
 
-if [ -z "$GRIDWORKS_PORT" ] ; then
-    GRIDWORKS_PORT="3333"
-fi
-
-if [ -z "$GRIDWORKS_HOST" ] ; then
-    GRIDWORKS_HOST="127.0.0.1"
+if [ -z "$REFINE_PORT" ] ; then
+    REFINE_PORT="3333"
 fi
 
-if [ -z "$GRIDWORKS_WEBAPP" ] ; then
-    GRIDWORKS_WEBAPP="main/webapp"
+if [ -z "$REFINE_HOST" ] ; then
+    REFINE_HOST="127.0.0.1"
 fi
 
-if [ -z "$GRIDWORKS_TEST_DIR" ] ; then
-    GRIDWORKS_TEST_DIR="main/tests"
+if [ -z "$REFINE_WEBAPP" ] ; then
+    REFINE_WEBAPP="main/webapp"
 fi
 
-if [ -z "$GRIDWORKS_CLASSES_DIR" ] ; then
-    GRIDWORKS_CLASSES_DIR="server/classes"
+if [ -z "$REFINE_TEST_DIR" ] ; then
+    REFINE_TEST_DIR="main/tests"
 fi
 
-if [ -z "$GRIDWORKS_LIB_DIR" ] ; then
-    GRIDWORKS_LIB_DIR="server/lib"
+if [ -z "$REFINE_CLASSES_DIR" ] ; then
+    REFINE_CLASSES_DIR="server/classes"
 fi
 
-if [ -z "$GRIDWORKS_BUILD_DIR" ] ; then
-    GRIDWORKS_BUILD_DIR="build"
+if [ -z "$REFINE_LIB_DIR" ] ; then
+    REFINE_LIB_DIR="server/lib"
 fi
 
-if [ -z "$GRIDWORKS_TOOLS_DIR" ] ; then
-    GRIDWORKS_TOOLS_DIR="tools"
+if [ -z "$REFINE_BUILD_DIR" ] ; then
+    REFINE_BUILD_DIR="build"
 fi
 
-if [ -z "$GRIDWORKS_DIST_DIR" ] ; then
-    GRIDWORKS_DIST_DIR="dist"
+if [ -z "$REFINE_TOOLS_DIR" ] ; then
+    REFINE_TOOLS_DIR="tools"
 fi
 
-if [ -z "$GRIDWORKS_VERBOSITY" ] ; then
-    GRIDWORKS_VERBOSITY="info"
+if [ -z "$REFINE_DIST_DIR" ] ; then
+    REFINE_DIST_DIR="dist"
 fi
-add_option "-Dgridworks.verbosity=$GRIDWORKS_VERBOSITY"
+
+if [ -z "$REFINE_VERBOSITY" ] ; then
+    REFINE_VERBOSITY="info"
+fi
+add_option "-Drefine.verbosity=$REFINE_VERBOSITY"
 
 if [ -z "$JYTHONPATH" ] ; then
-    JYTHONPATH="$GRIDWORKS_WEBAPP/WEB-INF/lib/jython"
+    JYTHONPATH="$REFINE_WEBAPP/WEB-INF/lib/jython"
 else
-    JYTHONPATH="$GRIDWORKS_WEBAPP/WEB-INF/lib/jython${SEP}$JYTHONPATH"
+    JYTHONPATH="$REFINE_WEBAPP/WEB-INF/lib/jython${SEP}$JYTHONPATH"
 fi
 add_option "-Dpython.path=$JYTHONPATH"
 

@@ -1,44 +1,45 @@
 
 
 
-                             F r e e b a s e     G r i d w o r k s
-                            ---------------------------------------
+                                G o o g l e   R e f i n e
+                               ---------------------------
 
 
                                     
   What is this?
   -------------
   
-  Freebase Gridworks is a power tool that allows you to load data, 
-  understand it, clean it up, reconcile it internally, and augment it 
-  with data coming from Freebase. All with the comfort and privacy of 
+  Google Refine is a power tool that allows you to load data, understand it,
+  clean it up, reconcile it internally, and augment it with data coming from
+  Freebase or other web sources. All with the comfort and privacy of 
   your own computer.
 
 
   
-  Where can I get more information on Gridworks?
+  Where can I get more information on Google Refine?
   ----------------------------------------------
   
-  Look at the Gridworks web site
+  Look at the Google Refine web site
   
-    http://code.google.com/p/freebase-gridworks/
+    http://code.google.com/p/google-refine/
 
 
 
   Licensing and legal issues
   --------------------------
 
-  Freebase Gridworks is open source software and is licensed under the BSD license
+  Google Refine is open source software and is licensed under the BSD license
   located in the LICENSE.txt. See that file also for information on open source
-  libraries that Gridworks depends on.
+  libraries that Google Refine depends on.
   
 
 
   Credits
   -------
 
-  This software was created by Metaweb Technology Inc. and originally written
-  and conceived by David Huynh <dfhuynh@google.com>.
+  This software was created by Metaweb Technologies, Inc. and originally written
+  and conceived by David Huynh <dfhuynh@google.com>. Metaweb Technologies, Inc.
+  was acquired by Google, Inc. in July 2010.
   
   This is the full list of contributors (in chronological order):
 
@@ -57,5 +58,5 @@
    Thank you for your interest.
    
    
-                                             The Freebase Gridworks Development Team
-                                           http://code.google.com/p/freebase-gridworks/
+                                             The Google Refine Development Team
+                                           http://code.google.com/p/google-refine/
