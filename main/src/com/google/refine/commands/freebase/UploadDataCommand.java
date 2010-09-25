@@ -49,7 +49,7 @@ public class UploadDataCommand extends Command {
             try {
                 Integer jobID = (Integer) preferenceStore.get(s_dataLoadJobIDPref);
                 if (jobID != null) {
-                    URL url = new URL("http://gridworks-loads.freebaseapps.com/job_id_to_mdo?job=" + jobID);
+                    URL url = new URL("http://refinery.freebaseapps.com/job_id_to_mdo?job=" + jobID);
                     String s = ParsingUtilities.inputStreamToString(url.openConnection().getInputStream());
                     
                     if (!s.equals("null")) {

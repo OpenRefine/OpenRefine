@@ -370,7 +370,7 @@ MenuBar.handlers.browseToDataLoad = function() {
             if (data.value == null) {
                 alert("You have not tried to load the data in this project into Freebase yet.");
             } else {
-                $(form).attr("action", "http://gridworks-loads.freebaseapps.com/load/" + data.value);
+                $(form).attr("action", "http://refinery.freebaseapps.com/load/" + data.value);
                 form.submit();
                 w.focus();
             }

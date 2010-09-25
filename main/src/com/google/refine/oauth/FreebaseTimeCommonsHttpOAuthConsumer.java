@@ -25,7 +25,7 @@ public class FreebaseTimeCommonsHttpOAuthConsumer extends CommonsHttpOAuthConsum
     private static final int SOCKET_TIMEOUT = 3000;
     private static final int CONNECTION_TIMEOUT = 3000;
     
-    private static final String TIMER_URL = "http://gridworks-gadgets.freebaseapps.com/time";
+    private static final String TIMER_URL = "http://refinery.freebaseapps.com/time";
     
     public FreebaseTimeCommonsHttpOAuthConsumer(String consumerKey, String consumerSecret) {
         super(consumerKey, consumerSecret);

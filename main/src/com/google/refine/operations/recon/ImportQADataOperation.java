@@ -54,7 +54,7 @@ public class ImportQADataOperation extends AbstractOperation {
 
         Map<Long, String> reconIDToResult = new HashMap<Long, String>();
         
-        URL url = new URL("http://gridworks-loads.dfhuynh.user.dev.freebaseapps.com/get_answers/" + jobID);
+        URL url = new URL("http://refinery.freebaseapps.com/get_answers/" + jobID);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(30000); // 30 seconds
         
