@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
-import com.google.refine.importers.XmlImportUtilities.ImportColumnGroup;
+import com.google.refine.importers.TreeImporter.ImportColumnGroup;
 import com.google.refine.model.Project;
 
 public class XmlImporter implements StreamImporter {

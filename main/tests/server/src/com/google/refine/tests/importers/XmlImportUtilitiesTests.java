@@ -18,9 +18,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.importers.XmlImportUtilities.ImportColumn;
-import com.google.refine.importers.XmlImportUtilities.ImportColumnGroup;
-import com.google.refine.importers.XmlImportUtilities.ImportRecord;
+import com.google.refine.importers.TreeImporter.ImportColumn;
+import com.google.refine.importers.TreeImporter.ImportColumnGroup;
+import com.google.refine.importers.TreeImporter.ImportRecord;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
