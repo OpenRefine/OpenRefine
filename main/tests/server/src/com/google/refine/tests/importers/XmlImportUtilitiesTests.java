@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -22,6 +18,7 @@ import org.testng.annotations.Test;
 import com.google.refine.importers.TreeImporter.ImportColumn;
 import com.google.refine.importers.TreeImporter.ImportColumnGroup;
 import com.google.refine.importers.TreeImporter.ImportRecord;
+import com.google.refine.importers.parsers.TreeParser;
 import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -37,7 +34,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
     //dependencies
     Project project;
-    XMLStreamReader parser;
+    TreeParser parser;
     ImportColumnGroup columnGroup;
     ImportRecord record;
     ByteArrayInputStream inputStream;
@@ -69,9 +66,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void detectPathFromTagTest(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         String tag = "library";
-        //createParser();
-        XmlParser xmlParser = new XmlParser(inputStream);
-        String[] response = XmlImportUtilitiesStub.detectPathFromTag(xmlParser, tag);
+        createParser();
+
+        String[] response = XmlImportUtilitiesStub.detectPathFromTag(parser, tag);
         Assert.assertNotNull(response);
         Assert.assertEquals(response.length, 1);
         Assert.assertEquals(response[0], "library");
@@ -82,9 +79,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         String tag = "book";
         
-        //createParser();
-        XmlParser xmlParser = new XmlParser(inputStream);
-        String[] response = XmlImportUtilitiesStub.detectPathFromTag(xmlParser, tag);
+        createParser();
+
+        String[] response = XmlImportUtilitiesStub.detectPathFromTag(parser, tag);
         Assert.assertNotNull(response);
         Assert.assertEquals(response.length, 2);
         Assert.assertEquals(response[0], "library");
@@ -94,13 +91,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
     @Test
     public void detectRecordElementTest(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        //createParser();
-        XmlParser xmlParser = new XmlParser(inputStream);
+        createParser();
+
         String tag="library";
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(xmlParser, tag);
+            response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (ServletException e) {
             Assert.fail(e.getMessage());
         }
@@ -112,13 +109,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
     @Test
     public void detectRecordElementCanHandleWithNestedElements(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-      //createParser();
-        XmlParser xmlParser = new XmlParser(inputStream);
+        createParser();
+
         String tag="book";
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(xmlParser, tag);
+            response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (ServletException e) {
             Assert.fail(e.getMessage());
         }
@@ -131,13 +128,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
     @Test
     public void detectRecordElementIsNullForUnfoundTag(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-      //createParser();
-        XmlParser xmlParser = new XmlParser(inputStream);
+        createParser();
+
         String tag="";
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(xmlParser, tag);
+            response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (ServletException e) {
             Assert.fail(e.getMessage());
         }
@@ -234,7 +231,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         try {
             SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup);
-        } catch (XMLStreamException e) {
+        } catch (ServletException e) {
             Assert.fail();
         }
 
@@ -253,7 +250,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         try {
             SUT.processRecordWrapper(project, parser, columnGroup);
-        } catch (XMLStreamException e) {
+        } catch (ServletException e) {
             Assert.fail();
         }
         log(project);
@@ -274,7 +271,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         try {
             SUT.processRecordWrapper(project, parser, columnGroup);
-        } catch (XMLStreamException e) {
+        } catch (ServletException e) {
             Assert.fail();
         }
         log(project);
@@ -299,7 +296,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         try {
             SUT.processRecordWrapper(project, parser, columnGroup);
-        } catch (XMLStreamException e) {
+        } catch (ServletException e) {
             Assert.fail();
         }
         log(project);
@@ -323,7 +320,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         try {
             SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record);
-        } catch (XMLStreamException e) {
+        } catch (ServletException e) {
             Assert.fail();
         }
         log(project);
@@ -382,18 +379,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void ParserSkip(){
         try {
             parser.next(); //move parser forward once e.g. skip the START_DOCUMENT parser event
-        } catch (XMLStreamException e1) {
+        } catch (ServletException e1) {
             Assert.fail();
         }
     }
 
     public void createParser(){
-        try {
-            parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        } catch (XMLStreamException e1) {
-            Assert.fail();
-        } catch (FactoryConfigurationError e1) {
-            Assert.fail();
-        }
+            parser = new XmlParser(inputStream);
     }
 }

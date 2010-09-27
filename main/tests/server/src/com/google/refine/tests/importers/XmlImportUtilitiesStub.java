@@ -3,8 +3,6 @@ package com.google.refine.tests.importers;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import com.google.refine.importers.XmlImportUtilities;
 import com.google.refine.importers.parsers.TreeParser;
@@ -16,15 +14,15 @@ public class XmlImportUtilitiesStub extends XmlImportUtilities {
         return super.detectRecordElement(parser, tag);
     }
 
-    public void ProcessSubRecordWrapper(Project project, XMLStreamReader parser, ImportColumnGroup columnGroup, ImportRecord record) throws XMLStreamException{
+    public void ProcessSubRecordWrapper(Project project, TreeParser parser, ImportColumnGroup columnGroup, ImportRecord record) throws ServletException{
         super.processSubRecord(project, parser, columnGroup, record);
     }
 
-    public void findRecordWrapper(Project project, XMLStreamReader parser, String[] recordPath, int pathIndex, ImportColumnGroup rootColumnGroup) throws XMLStreamException{
+    public void findRecordWrapper(Project project, TreeParser parser, String[] recordPath, int pathIndex, ImportColumnGroup rootColumnGroup) throws ServletException{
         super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup);
     }
 
-    public void processRecordWrapper(Project project, XMLStreamReader parser, ImportColumnGroup rootColumnGroup) throws XMLStreamException{
+    public void processRecordWrapper(Project project, TreeParser parser, ImportColumnGroup rootColumnGroup) throws ServletException{
         super.processRecord(project, parser, rootColumnGroup);
     }
 

@@ -9,15 +9,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.importers.parsers.TreeParser;
+import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -112,11 +111,12 @@ public class XmlImportUtilities extends TreeImporter {
         List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
 
         try {
-            XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            //XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            TreeParser parser = new XmlParser(inputStream);
 
             while (parser.hasNext()) {
                 int eventType = parser.next();
-                if (eventType == XMLStreamConstants.START_ELEMENT) {
+                if (eventType == XMLStreamConstants.START_ELEMENT) {//FIXME uses Xml, and is not generic
                     RecordElementCandidate candidate =
                         detectRecordElement(
                             parser,
@@ -141,7 +141,7 @@ public class XmlImportUtilities extends TreeImporter {
         return null;
     }
 
-    static protected RecordElementCandidate detectRecordElement(XMLStreamReader parser, String[] path) {
+    static protected RecordElementCandidate detectRecordElement(TreeParser parser, String[] path) {
         logger.trace("detectRecordElement(XMLStreamReader, String[])");
         List<RecordElementCandidate> descendantCandidates = new ArrayList<RecordElementCandidate>();
 
@@ -152,13 +152,13 @@ public class XmlImportUtilities extends TreeImporter {
         try {
             while (parser.hasNext()) {
                 int eventType = parser.next();
-                if (eventType == XMLStreamConstants.END_ELEMENT) {
+                if (eventType == XMLStreamConstants.END_ELEMENT) {//FIXME uses Xml, and is not generic
                     break;
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {//FIXME uses Xml, and is not generic
                     if (parser.getText().trim().length() > 0) {
                         textNodeCount++;
                     }
-                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {//FIXME uses Xml, and is not generic
                     childElementNodeCount++;
 
                     String tagName = parser.getLocalName();
@@ -234,18 +234,18 @@ public class XmlImportUtilities extends TreeImporter {
 
     
 
-    static public void importXml(
+    static public void importXml(  //FIXME could do with a name change to 'importTreeData' or similar
         InputStream inputStream,
         Project project,
         String[] recordPath,
         ImportColumnGroup rootColumnGroup
     ) {
         try {
-            XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            TreeParser parser = new XmlParser(inputStream);
 
             while (parser.hasNext()) {
                 int eventType = parser.next();
-                if (eventType == XMLStreamConstants.START_ELEMENT) {
+                if (eventType == XMLStreamConstants.START_ELEMENT) {  //FIXME uses Xml, and is not generic
                     findRecord(project, parser, recordPath, 0, rootColumnGroup);
                 }
             }
@@ -268,12 +268,13 @@ public class XmlImportUtilities extends TreeImporter {
      */
     static protected void findRecord(
         Project project,
-        XMLStreamReader parser,
+        //XMLStreamReader parser,
+        TreeParser parser,
         String[] recordPath,
         int pathIndex,
         ImportColumnGroup rootColumnGroup
-    ) throws XMLStreamException {
-        if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT){
+    ) throws ServletException {
+        if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT){//FIXME uses Xml, and is not generic
             logger.warn("Cannot use findRecord method for START_DOCUMENT event");
             return;
         }
@@ -282,9 +283,9 @@ public class XmlImportUtilities extends TreeImporter {
             if (pathIndex < recordPath.length - 1) {
                 while (parser.hasNext()) {
                     int eventType = parser.next();
-                    if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    if (eventType == XMLStreamConstants.START_ELEMENT) {//FIXME uses Xml, and is not generic
                         findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup);
-                    } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    } else if (eventType == XMLStreamConstants.END_ELEMENT) {//FIXME uses Xml, and is not generic
                         break;
                     }
                 }
@@ -296,12 +297,12 @@ public class XmlImportUtilities extends TreeImporter {
         }
     }
 
-    static protected void skip(XMLStreamReader parser) throws XMLStreamException {
+    static protected void skip(TreeParser parser) throws ServletException {
         while (parser.hasNext()) {
             int eventType = parser.next();
-            if (eventType == XMLStreamConstants.START_ELEMENT) {
+            if (eventType == XMLStreamConstants.START_ELEMENT) { //FIXME uses Xml, and is not generic
                 skip(parser);
-            } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+            } else if (eventType == XMLStreamConstants.END_ELEMENT) { //FIXME uses Xml, and is not generic
                 return;
             }
         }
@@ -317,9 +318,9 @@ public class XmlImportUtilities extends TreeImporter {
      */
     static protected void processRecord(
         Project project,
-        XMLStreamReader parser,
+        TreeParser parser,
         ImportColumnGroup rootColumnGroup
-    ) throws XMLStreamException {
+    ) throws ServletException {
         ImportRecord record = new ImportRecord();
 
         processSubRecord(project, parser, rootColumnGroup, record);
@@ -354,10 +355,10 @@ public class XmlImportUtilities extends TreeImporter {
      */
     static protected void processSubRecord(
         Project project,
-        XMLStreamReader parser,
+        TreeParser parser,
         ImportColumnGroup columnGroup,
         ImportRecord record
-    ) throws XMLStreamException {
+    ) throws ServletException {
         ImportColumnGroup thisColumnGroup = getColumnGroup(
                 project,
                 columnGroup,

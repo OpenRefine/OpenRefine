@@ -51,4 +51,22 @@ public class XmlParser implements TreeParser{
     public String getPrefix(){
         return parser.getPrefix();
     }
+    
+    public String getText(){
+        return parser.getText();
+    }
+    
+    public int getAttributeCount(){
+        return parser.getAttributeCount();
+    }
+    
+    public String getAttributeValue(int index){
+        return parser.getAttributeValue(index);
+    }
+    public String getAttributePrefix(int index){
+        return parser.getAttributePrefix(index);
+    }
+    public String getAttributeLocalName(int index){
+        return parser.getAttributeLocalName(index);
+    }
 }
