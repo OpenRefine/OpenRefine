@@ -16,16 +16,6 @@
   To run, right click on the files directly from Eclipse, then do "Run As -> <name>".
   
   
-  
-  Code Style Format Configurations (Refine.style.xml)
-  ------------------------------------------------------
-  
-  This is the code formatting configurations that all Google Refine developers should follow.
-  
-  To import, open the Eclipse preferences, then follow to "Java > Code Style > Formatter"
-  and click the "Import" button and load the file.  
-
-
 
                                            - o -                                                
   

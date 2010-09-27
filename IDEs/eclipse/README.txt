@@ -7,15 +7,6 @@
   developing Google Refine with Eclipse (http://www.eclipse.org/).
   
   
-  Launch Files (*.launch)
-  -----------------------
-  
-  These are files that help you running Google Refine directly from eclipse without having to execute
-  the shell scripts.
-  
-  To run, right click on the files directly from Eclipse, then do "Run As -> <name>".
-  
-  
   
   Code Style Format Configurations (Refine.style.xml)
   ------------------------------------------------------
