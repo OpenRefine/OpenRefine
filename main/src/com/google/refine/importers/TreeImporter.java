@@ -16,7 +16,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 
-public class TreeImporter {
+public abstract class TreeImporter {
     final static Logger logger = LoggerFactory.getLogger("TreeImporter");
     
     /**
@@ -90,7 +90,7 @@ public class TreeImporter {
         public List<List<Cell>> rows = new LinkedList<List<Cell>>();
     }
     
-    static public void sortRecordElementCandidates(List<RecordElementCandidate> list) {
+    static protected void sortRecordElementCandidates(List<RecordElementCandidate> list) {
         Collections.sort(list, new Comparator<RecordElementCandidate>() {
             public int compare(RecordElementCandidate o1, RecordElementCandidate o2) {
                 return o2.count - o1.count;

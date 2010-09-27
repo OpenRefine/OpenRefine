@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -21,6 +22,7 @@ import org.testng.annotations.Test;
 import com.google.refine.importers.TreeImporter.ImportColumn;
 import com.google.refine.importers.TreeImporter.ImportColumnGroup;
 import com.google.refine.importers.TreeImporter.ImportRecord;
+import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
@@ -67,8 +69,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void detectPathFromTagTest(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         String tag = "library";
-
-        String[] response = XmlImportUtilitiesStub.detectPathFromTag(inputStream, tag);
+        //createParser();
+        XmlParser xmlParser = new XmlParser(inputStream);
+        String[] response = XmlImportUtilitiesStub.detectPathFromTag(xmlParser, tag);
         Assert.assertNotNull(response);
         Assert.assertEquals(response.length, 1);
         Assert.assertEquals(response[0], "library");
@@ -78,7 +81,10 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void detectPathFromTagWithNestedElement(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         String tag = "book";
-        String[] response = XmlImportUtilitiesStub.detectPathFromTag(inputStream, tag);
+        
+        //createParser();
+        XmlParser xmlParser = new XmlParser(inputStream);
+        String[] response = XmlImportUtilitiesStub.detectPathFromTag(xmlParser, tag);
         Assert.assertNotNull(response);
         Assert.assertEquals(response.length, 2);
         Assert.assertEquals(response[0], "library");
@@ -88,14 +94,15 @@ public class XmlImportUtilitiesTests extends RefineTest {
     @Test
     public void detectRecordElementTest(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        createParser();
+        //createParser();
+        XmlParser xmlParser = new XmlParser(inputStream);
         String tag="library";
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(parser, tag);
-        } catch (XMLStreamException e) {
-            Assert.fail();
+            response = SUT.detectRecordElementWrapper(xmlParser, tag);
+        } catch (ServletException e) {
+            Assert.fail(e.getMessage());
         }
         Assert.assertNotNull(response);
         Assert.assertEquals(response.size(), 1);
@@ -105,14 +112,15 @@ public class XmlImportUtilitiesTests extends RefineTest {
     @Test
     public void detectRecordElementCanHandleWithNestedElements(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        createParser();
+      //createParser();
+        XmlParser xmlParser = new XmlParser(inputStream);
         String tag="book";
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(parser, tag);
-        } catch (XMLStreamException e) {
-            Assert.fail();
+            response = SUT.detectRecordElementWrapper(xmlParser, tag);
+        } catch (ServletException e) {
+            Assert.fail(e.getMessage());
         }
         Assert.assertNotNull(response);
         Assert.assertEquals(response.size(), 2);
@@ -123,14 +131,15 @@ public class XmlImportUtilitiesTests extends RefineTest {
     @Test
     public void detectRecordElementIsNullForUnfoundTag(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        createParser();
+      //createParser();
+        XmlParser xmlParser = new XmlParser(inputStream);
         String tag="";
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(parser, tag);
-        } catch (XMLStreamException e) {
-            Assert.fail();
+            response = SUT.detectRecordElementWrapper(xmlParser, tag);
+        } catch (ServletException e) {
+            Assert.fail(e.getMessage());
         }
         Assert.assertNull(response);
     }

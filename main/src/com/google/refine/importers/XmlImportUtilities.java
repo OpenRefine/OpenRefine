@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -16,6 +17,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.importers.parsers.TreeParser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -23,13 +25,11 @@ import com.google.refine.model.Row;
 public class XmlImportUtilities extends TreeImporter {
     final static Logger logger = LoggerFactory.getLogger("XmlImporterUtilities");
 
-    static public String[] detectPathFromTag(InputStream inputStream, String tag) {
+    static public String[] detectPathFromTag(TreeParser parser, String tag) {
         try {
-            XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-
             while (parser.hasNext()) {
                 int eventType = parser.next();
-                if (eventType == XMLStreamConstants.START_ELEMENT) {
+                if (eventType == XMLStreamConstants.START_ELEMENT) { //FIXME uses Xml
                     List<String> path = detectRecordElement(parser, tag);
                     if (path != null) {
                         String[] path2 = new String[path.size()];
@@ -47,13 +47,13 @@ public class XmlImportUtilities extends TreeImporter {
 
         return null;
     }
-
+    
     /**
      * Looks for an element with the given tag name in the Xml being parsed, returning the path hierarchy to reach it.
      *
      * @param parser
      * @param tag
-     *         The Xml element name (can be qualified) to search for
+     *         The element name (can be qualified) to search for
      * @return
      *         If the tag is found, an array of strings is returned.
      *         If the tag is at the top level, the tag will be the only item in the array.
@@ -61,33 +61,43 @@ public class XmlImportUtilities extends TreeImporter {
      *         Null if the the tag is not found.
      * @throws XMLStreamException
      */
-    static protected List<String> detectRecordElement(XMLStreamReader parser, String tag) throws XMLStreamException {
-        if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT)
-            parser.next();
-        String localName = parser.getLocalName();
-        String fullName = composeName(parser.getPrefix(), localName);
-        if (tag.equals(parser.getLocalName()) || tag.equals(fullName)) {
-            List<String> path = new LinkedList<String>();
-            path.add(localName);
+    static protected List<String> detectRecordElement(TreeParser parser, String tag) throws ServletException {
+        try{
+            if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT) //FIXME uses Xml, and is not generic
+                parser.next();
+        
+            String localName = parser.getLocalName();
+            String fullName = composeName(parser.getPrefix(), localName);
+            if (tag.equals(parser.getLocalName()) || tag.equals(fullName)) {
+                List<String> path = new LinkedList<String>();
+                path.add(localName);
 
-            return path;
-        }
+                return path;
+            }
 
-        while (parser.hasNext()) {
-            int eventType = parser.next();
-            if (eventType == XMLStreamConstants.END_ELEMENT) {
-                break;
-            } else if (eventType == XMLStreamConstants.START_ELEMENT) {
-                List<String> path = detectRecordElement(parser, tag);
-                if (path != null) {
-                    path.add(0, localName);
-                    return path;
+            while (parser.hasNext()) {
+                int eventType = parser.next();
+                if (eventType == XMLStreamConstants.END_ELEMENT) {  //FIXME uses Xml, and is not generic
+                    break;
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) { //FIXME uses Xml, and is not generic
+                    List<String> path = detectRecordElement(parser, tag);
+                    if (path != null) {
+                        path.add(0, localName);
+                        return path;
+                    }
                 }
             }
+        }catch(ServletException e){
+            // silent
+            // e.printStackTrace();
         }
         return null;
     }
-
+    
+    static protected String composeName(String prefix, String localName) {
+        return prefix != null && prefix.length() > 0 ? (prefix + ":" + localName) : localName;
+    }
+    
     /**
      * Seeks for recurring XML element in an InputStream
      * which are likely candidates for being data records
@@ -332,10 +342,6 @@ public class XmlImportUtilities extends TreeImporter {
                 }
             }
         }
-    }
-
-    static protected String composeName(String prefix, String localName) {
-        return prefix != null && prefix.length() > 0 ? (prefix + ":" + localName) : localName;
     }
 
     /**

@@ -2,15 +2,17 @@ package com.google.refine.tests.importers;
 
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import com.google.refine.importers.XmlImportUtilities;
+import com.google.refine.importers.parsers.TreeParser;
 import com.google.refine.model.Project;
 
 public class XmlImportUtilitiesStub extends XmlImportUtilities {
     
-    public List<String> detectRecordElementWrapper(XMLStreamReader parser, String tag) throws XMLStreamException{
+    public List<String> detectRecordElementWrapper(TreeParser parser, String tag) throws ServletException{
         return super.detectRecordElement(parser, tag);
     }
 

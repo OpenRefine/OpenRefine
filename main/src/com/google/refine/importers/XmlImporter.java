@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.TreeImporter.ImportColumnGroup;
+import com.google.refine.importers.parsers.TreeParser;
+import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Project;
 
 public class XmlImporter implements StreamImporter {
@@ -44,9 +46,19 @@ public class XmlImporter implements StreamImporter {
             }
             
             if (options.containsKey("importer-record-tag")) {
-                recordPath = XmlImportUtilities.detectPathFromTag(
-                        new ByteArrayInputStream(buffer, 0, bytes_read),
+                InputStream iStream = new ByteArrayInputStream(buffer, 0, bytes_read);
+
+                TreeParser parser = null;
+                try{
+                    parser = new XmlParser(iStream);
+                    recordPath = XmlImportUtilities.detectPathFromTag(
+                        parser,
                         options.getProperty("importer-record-tag"));
+                }catch(Exception e){
+                    // silent
+                    // e.printStackTrace();
+                }
+                
             } else {
                 recordPath = XmlImportUtilities.detectRecordElement(
                         new ByteArrayInputStream(buffer, 0, bytes_read));
