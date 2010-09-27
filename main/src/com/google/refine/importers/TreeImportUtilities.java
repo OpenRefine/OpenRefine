@@ -17,7 +17,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 
 public abstract class TreeImportUtilities {
-    final static Logger logger = LoggerFactory.getLogger("TreeImporter");
+    final static Logger logger = LoggerFactory.getLogger("TreeImportUtilities");
 
     /**
      * An element which holds sub-elements we
