@@ -1,6 +1,7 @@
 package com.google.refine.browsing.util;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -46,11 +47,11 @@ abstract public class TimeBinIndex {
 		1000*60*60,         // hour
 		1000*60*60*24,      // day
 		1000*60*60*24*7,    // week
-		1000*2629746,       // month (average Gregorian year / 12)
-		1000*31556952,      // year (average Gregorian year)
-		1000*31556952*10,   // decade 
-		1000*31556952*100,  // century 
-		1000*31556952*1000, // millennium 
+		1000l*2629746l,       // month (average Gregorian year / 12)
+		1000l*31556952l,      // year (average Gregorian year)
+		1000l*31556952l*10l,   // decade 
+		1000l*31556952l*100l,  // century 
+		1000l*31556952l*1000l, // millennium 
     };
                       
     abstract protected void iterate(Project project, RowEvaluable rowEvaluable, List<Long> allValues);
@@ -145,6 +146,10 @@ abstract public class TimeBinIndex {
                     if (ExpressionUtils.isError(v)) {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
+                        if (v instanceof Calendar) {
+                        	v = ((Calendar) v).getTime();
+                        }
+                        
                         if (v instanceof Date) {
                             _hasTime = true;
                             processValue(((Date) v).getTime(), allValues);
@@ -162,6 +167,10 @@ abstract public class TimeBinIndex {
                     if (ExpressionUtils.isError(v)) {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
+                        if (v instanceof Calendar) {
+                        	v = ((Calendar) v).getTime();
+                        }
+
                         if (v instanceof Date) {
                             _hasTime = true;
                             processValue(((Date) v).getTime(), allValues);
@@ -174,6 +183,10 @@ abstract public class TimeBinIndex {
                 }
             } else {
                 _totalValueCount++;
+
+                if (value instanceof Calendar) {
+                	value = ((Calendar) value).getTime();
+                }
 
                 if (value instanceof Date) {
                     _hasTime = true;
