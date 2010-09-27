@@ -1,6 +1,5 @@
 package com.google.refine.importers;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,12 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.importers.parsers.TreeParser;
-import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-public class XmlImportUtilities extends TreeImporter {
+public class XmlImportUtilities extends TreeImportUtilities {
     final static Logger logger = LoggerFactory.getLogger("XmlImporterUtilities");
 
     static public String[] detectPathFromTag(TreeParser parser, String tag) {
@@ -46,7 +44,7 @@ public class XmlImportUtilities extends TreeImporter {
 
         return null;
     }
-    
+
     /**
      * Looks for an element with the given tag name in the Xml being parsed, returning the path hierarchy to reach it.
      *
@@ -64,7 +62,7 @@ public class XmlImportUtilities extends TreeImporter {
         try{
             if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT) //FIXME uses Xml, and is not generic
                 parser.next();
-        
+
             String localName = parser.getLocalName();
             String fullName = composeName(parser.getPrefix(), localName);
             if (tag.equals(parser.getLocalName()) || tag.equals(fullName)) {
@@ -92,11 +90,11 @@ public class XmlImportUtilities extends TreeImporter {
         }
         return null;
     }
-    
+
     static protected String composeName(String prefix, String localName) {
         return prefix != null && prefix.length() > 0 ? (prefix + ":" + localName) : localName;
     }
-    
+
     /**
      * Seeks for recurring XML element in an InputStream
      * which are likely candidates for being data records
@@ -106,14 +104,11 @@ public class XmlImportUtilities extends TreeImporter {
      *              The path to the most numerous of the possible candidates.
      *              null if no candidates were found (less than 6 recurrences)
      */
-    static public String[] detectRecordElement(InputStream inputStream) {
+    static public String[] detectRecordElement(TreeParser parser) {
         logger.trace("detectRecordElement(inputStream)");
         List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
 
         try {
-            //XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-            TreeParser parser = new XmlParser(inputStream);
-
             while (parser.hasNext()) {
                 int eventType = parser.next();
                 if (eventType == XMLStreamConstants.START_ELEMENT) {//FIXME uses Xml, and is not generic
@@ -232,17 +227,15 @@ public class XmlImportUtilities extends TreeImporter {
         return null;
     }
 
-    
 
-    static public void importXml(  //FIXME could do with a name change to 'importTreeData' or similar
-        InputStream inputStream,
+
+    static public void importTreeData(
+        TreeParser parser,
         Project project,
         String[] recordPath,
         ImportColumnGroup rootColumnGroup
     ) {
         try {
-            TreeParser parser = new XmlParser(inputStream);
-
             while (parser.hasNext()) {
                 int eventType = parser.next();
                 if (eventType == XMLStreamConstants.START_ELEMENT) {  //FIXME uses Xml, and is not generic
@@ -337,7 +330,7 @@ public class XmlImportUtilities extends TreeImporter {
                         cellCount++;
                     }
                 }
-                
+
                 if (cellCount > 0) {
                     project.rows.add(realRow);
                 }
@@ -363,9 +356,9 @@ public class XmlImportUtilities extends TreeImporter {
                 project,
                 columnGroup,
                 composeName(parser.getPrefix(), parser.getLocalName()));
-        
+
         thisColumnGroup.nextRowIndex = Math.max(thisColumnGroup.nextRowIndex, columnGroup.nextRowIndex);
-        
+
         int attributeCount = parser.getAttributeCount();
         for (int i = 0; i < attributeCount; i++) {
             String text = parser.getAttributeValue(i).trim();
@@ -405,7 +398,7 @@ public class XmlImportUtilities extends TreeImporter {
                 break;
             }
         }
-        
+
         int nextRowIndex = thisColumnGroup.nextRowIndex;
         for (ImportColumn column2 : thisColumnGroup.columns.values()) {
             nextRowIndex = Math.max(nextRowIndex, column2.nextRowIndex);
@@ -418,5 +411,5 @@ public class XmlImportUtilities extends TreeImporter {
 
 
 
-    
+
 }

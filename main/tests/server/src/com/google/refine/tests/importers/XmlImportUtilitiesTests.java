@@ -15,9 +15,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.importers.TreeImporter.ImportColumn;
-import com.google.refine.importers.TreeImporter.ImportColumnGroup;
-import com.google.refine.importers.TreeImporter.ImportRecord;
+import com.google.refine.importers.TreeImportUtilities.ImportColumn;
+import com.google.refine.importers.TreeImportUtilities.ImportColumnGroup;
+import com.google.refine.importers.TreeImportUtilities.ImportRecord;
 import com.google.refine.importers.parsers.TreeParser;
 import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Project;
@@ -78,7 +78,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void detectPathFromTagWithNestedElement(){
         loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         String tag = "book";
-        
+
         createParser();
 
         String[] response = XmlImportUtilitiesStub.detectPathFromTag(parser, tag);
@@ -145,7 +145,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void detectRecordElementRegressionTest(){
         loadSampleXml();
 
-        String[] path = XmlImportUtilitiesStub.detectRecordElement(inputStream);
+        String[] path = XmlImportUtilitiesStub.detectRecordElement(new XmlParser(inputStream));
         Assert.assertNotNull(path);
         Assert.assertEquals(path.length, 2);
         Assert.assertEquals(path[0], "library");
@@ -157,7 +157,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadSampleXml();
 
         String[] recordPath = new String[]{"library","book"};
-        XmlImportUtilitiesStub.importXml(inputStream, project, recordPath, columnGroup );
+        XmlImportUtilitiesStub.importTreeData(new XmlParser(inputStream), project, recordPath, columnGroup );
 
         log(project);
         assertProjectCreated(project, 0, 6);
@@ -177,7 +177,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadXml(XmlImporterTests.getSampleWithVaryingStructure());
 
         String[] recordPath = new String[]{"library", "book"};
-        XmlImportUtilitiesStub.importXml(inputStream, project, recordPath, columnGroup);
+        XmlImportUtilitiesStub.importTreeData(new XmlParser(inputStream), project, recordPath, columnGroup);
 
         log(project);
         assertProjectCreated(project, 0, 6);
@@ -277,13 +277,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
         log(project);
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 2);
-        
+
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(), 4);
         Assert.assertNotNull(row.getCell(2));
         Assert.assertEquals(row.getCell(2).value, "author1");
-        
+
         row = project.rows.get(1);
         Assert.assertEquals(row.getCell(2).value, "author2");
     }

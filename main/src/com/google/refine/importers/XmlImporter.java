@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
-import com.google.refine.importers.TreeImporter.ImportColumnGroup;
+import com.google.refine.importers.TreeImportUtilities.ImportColumnGroup;
 import com.google.refine.importers.parsers.TreeParser;
 import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Project;
@@ -34,7 +34,7 @@ public class XmlImporter implements StreamImporter {
         {
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytes_read = 0;
-            try {
+            try {//fill the buffer with data
                 while (bytes_read < BUFFER_SIZE) {
                     int c = pis.read(buffer, bytes_read, BUFFER_SIZE - bytes_read);
                     if (c == -1) break;
@@ -44,13 +44,11 @@ public class XmlImporter implements StreamImporter {
             } catch (IOException e) {
                 throw new ImportException("Read error",e);
             }
-            
-            if (options.containsKey("importer-record-tag")) {
-                InputStream iStream = new ByteArrayInputStream(buffer, 0, bytes_read);
 
-                TreeParser parser = null;
+            InputStream iStream = new ByteArrayInputStream(buffer, 0, bytes_read);
+            TreeParser parser = new XmlParser(iStream);
+            if (options.containsKey("importer-record-tag")) {
                 try{
-                    parser = new XmlParser(iStream);
                     recordPath = XmlImportUtilities.detectPathFromTag(
                         parser,
                         options.getProperty("importer-record-tag"));
@@ -58,21 +56,18 @@ public class XmlImporter implements StreamImporter {
                     // silent
                     // e.printStackTrace();
                 }
-                
             } else {
-                recordPath = XmlImportUtilities.detectRecordElement(
-                        new ByteArrayInputStream(buffer, 0, bytes_read));
+                recordPath = XmlImportUtilities.detectRecordElement(parser);
             }
         }
 
         if (recordPath == null)
             return;
-        
-        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
 
-        XmlImportUtilities.importXml(pis, project, recordPath, rootColumnGroup);
+        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
+        XmlImportUtilities.importTreeData(new XmlParser(pis), project, recordPath, rootColumnGroup);
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-        
+
         project.columnModel.update();
     }
 
