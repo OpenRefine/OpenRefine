@@ -5,7 +5,7 @@
 <listEntry value="/refine/src/main/webapp/WEB-INF/classes"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.testng.remote.RemoteTestNG"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="refine"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="grefine"/>
 <mapAttribute key="org.testng.eclipse.ALL_CLASS_METHODS"/>
 <listAttribute key="org.testng.eclipse.CLASS_TEST_LIST"/>
 <stringAttribute key="org.testng.eclipse.COMPLIANCE_LEVEL" value="JDK"/>

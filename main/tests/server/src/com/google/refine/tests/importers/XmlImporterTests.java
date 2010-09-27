@@ -62,8 +62,8 @@ public class XmlImporterTests extends RefineTest {
 
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
     }
 
     @Test
@@ -75,10 +75,10 @@ public class XmlImporterTests extends RefineTest {
 
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertEquals(row.cells.size(), 5);
         Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
-        Assert.assertEquals(project.rows.get(1).getCell(1).value, "Author 1, Another");
+        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
+        Assert.assertEquals(project.rows.get(1).getCell(2).value, "Author 1, Another");
     }
 
     @Test
@@ -91,9 +91,9 @@ public class XmlImporterTests extends RefineTest {
 
         Row row = project.rows.get(3);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 4);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "With line\n break");
+        Assert.assertEquals(row.cells.size(), 5);
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "With line\n break");
     }
 
     @Test
@@ -107,11 +107,11 @@ public class XmlImporterTests extends RefineTest {
 
         Row row0 = project.rows.get(0);
         Assert.assertNotNull(row0);
-        Assert.assertEquals(row0.cells.size(),4);
+        Assert.assertEquals(row0.cells.size(),5);
 
         Row row5  = project.rows.get(5);
         Assert.assertNotNull(row5);
-        Assert.assertEquals(row5.cells.size(),5);
+        Assert.assertEquals(row5.cells.size(),6);
     }
 
     @Test
