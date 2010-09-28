@@ -1,5 +1,6 @@
 package com.google.refine.commands;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
@@ -21,12 +22,17 @@ public class OpenWorkspaceDirCommand extends Command {
             respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace directory can only be opened on the local machine where Google Refine is run.\" }");
         } else if (ProjectManager.singleton instanceof FileProjectManager) {
             File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
-            
-            Runtime.getRuntime().exec(
-                "open .",
-                new String[] {},
-                dir
-            );
+
+            if (Desktop.isDesktopSupported()) {
+            	Desktop desktop = Desktop.getDesktop();
+            	desktop.open(dir);
+            } else /* if Mac */ {
+            	Process p = Runtime.getRuntime().exec(
+            			"open .",
+            			new String[] {},
+            			dir
+            	);
+            }
             
             respond(response, "{ \"code\" : \"ok\" }");
         } else {
