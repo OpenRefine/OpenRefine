@@ -427,13 +427,13 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         } else {
             Refine.postCoreProcess(
                 "edit-one-cell", 
+                {},
                 {
                     row: self._rowIndex,
                     cell: self._cellIndex,
                     value: value,
                     type: type
-                }, 
-                null,
+                },
                 {},
                 {
                     onDone: function(o) {
