@@ -5,6 +5,7 @@ import java.io.InputStream;
 import javax.servlet.ServletException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -23,13 +24,32 @@ public class XmlParser implements TreeParser{
         }
     }
     
-    public int next() throws ServletException{
+    public TreeParserToken next() throws ServletException{
         try {
-            return parser.next();
+            if(!parser.hasNext())
+                throw new ServletException("End of XML stream");
         } catch (XMLStreamException e) {
-            //TODO log and return 
             throw new ServletException(e.getMessage());
-        } 
+        }
+        
+        int currentToken = -1;
+        try {
+            currentToken = parser.next();
+        } catch (XMLStreamException e) {
+            throw new ServletException(e.getMessage());
+        }
+        
+        return convertToTreeParserToken(currentToken);
+    }
+    
+    protected TreeParserToken convertToTreeParserToken(int token) throws ServletException {
+        switch(token){
+            case XMLStreamConstants.START_ELEMENT: return TreeParserToken.StartEntity;
+            case XMLStreamConstants.END_ELEMENT: return TreeParserToken.EndEntity;
+            case XMLStreamConstants.CHARACTERS: return TreeParserToken.Value;
+            //TODO
+            default: throw new ServletException("Not yet implemented");
+        }
     }
     
     public int getEventType(){

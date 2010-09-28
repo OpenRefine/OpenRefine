@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.importers.parsers.TreeParser;
+import com.google.refine.importers.parsers.TreeParserToken;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -25,8 +26,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
     static public String[] detectPathFromTag(TreeParser parser, String tag) {
         try {
             while (parser.hasNext()) {
-                int eventType = parser.next();
-                if (eventType == XMLStreamConstants.START_ELEMENT) { //FIXME uses Xml
+                TreeParserToken eventType = parser.next();
+                if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
                     List<String> path = detectRecordElement(parser, tag);
                     if (path != null) {
                         String[] path2 = new String[path.size()];
@@ -73,10 +74,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
             }
 
             while (parser.hasNext()) {
-                int eventType = parser.next();
-                if (eventType == XMLStreamConstants.END_ELEMENT) {  //FIXME uses Xml, and is not generic
+                TreeParserToken eventType = parser.next();
+                if (eventType == TreeParserToken.EndEntity) {//XMLStreamConstants.END_ELEMENT) {
                     break;
-                } else if (eventType == XMLStreamConstants.START_ELEMENT) { //FIXME uses Xml, and is not generic
+                } else if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
                     List<String> path = detectRecordElement(parser, tag);
                     if (path != null) {
                         path.add(0, localName);
@@ -110,8 +111,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
         try {
             while (parser.hasNext()) {
-                int eventType = parser.next();
-                if (eventType == XMLStreamConstants.START_ELEMENT) {//FIXME uses Xml, and is not generic
+                TreeParserToken eventType = parser.next();
+                if (eventType == TreeParserToken.StartEntity){ //XMLStreamConstants.START_ELEMENT) {
                     RecordElementCandidate candidate =
                         detectRecordElement(
                             parser,
@@ -146,14 +147,14 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
         try {
             while (parser.hasNext()) {
-                int eventType = parser.next();
-                if (eventType == XMLStreamConstants.END_ELEMENT) {//FIXME uses Xml, and is not generic
+                TreeParserToken eventType = parser.next();
+                if (eventType == TreeParserToken.EndEntity) {//XMLStreamConstants.END_ELEMENT) {
                     break;
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {//FIXME uses Xml, and is not generic
+                } else if (eventType == TreeParserToken.Value) {//XMLStreamConstants.CHARACTERS) {
                     if (parser.getText().trim().length() > 0) {
                         textNodeCount++;
                     }
-                } else if (eventType == XMLStreamConstants.START_ELEMENT) {//FIXME uses Xml, and is not generic
+                } else if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
                     childElementNodeCount++;
 
                     String tagName = parser.getLocalName();
@@ -237,8 +238,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
     ) {
         try {
             while (parser.hasNext()) {
-                int eventType = parser.next();
-                if (eventType == XMLStreamConstants.START_ELEMENT) {  //FIXME uses Xml, and is not generic
+                TreeParserToken eventType = parser.next();
+                if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
                     findRecord(project, parser, recordPath, 0, rootColumnGroup);
                 }
             }
@@ -275,10 +276,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
         if (tagName.equals(recordPath[pathIndex])) {
             if (pathIndex < recordPath.length - 1) {
                 while (parser.hasNext()) {
-                    int eventType = parser.next();
-                    if (eventType == XMLStreamConstants.START_ELEMENT) {//FIXME uses Xml, and is not generic
+                    TreeParserToken eventType = parser.next();
+                    if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
                         findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup);
-                    } else if (eventType == XMLStreamConstants.END_ELEMENT) {//FIXME uses Xml, and is not generic
+                    } else if (eventType == TreeParserToken.EndEntity) {//XMLStreamConstants.END_ELEMENT) {
                         break;
                     }
                 }
@@ -292,10 +293,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
     static protected void skip(TreeParser parser) throws ServletException {
         while (parser.hasNext()) {
-            int eventType = parser.next();
-            if (eventType == XMLStreamConstants.START_ELEMENT) { //FIXME uses Xml, and is not generic
+            TreeParserToken eventType = parser.next();
+            if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
                 skip(parser);
-            } else if (eventType == XMLStreamConstants.END_ELEMENT) { //FIXME uses Xml, and is not generic
+            } else if (eventType == TreeParserToken.EndEntity) { //XMLStreamConstants.END_ELEMENT) {
                 return;
             }
         }
@@ -374,8 +375,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
         }
 
         while (parser.hasNext()) {
-            int eventType = parser.next();
-            if (eventType == XMLStreamConstants.START_ELEMENT) {
+            TreeParserToken eventType = parser.next();
+            if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
                 processSubRecord(
                     project,
                     parser,
@@ -383,7 +384,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                     record
                 );
             } else if (//eventType == XMLStreamConstants.CDATA ||
-                        eventType == XMLStreamConstants.CHARACTERS) {
+                        eventType == TreeParserToken.Value) { //XMLStreamConstants.CHARACTERS) {
                 String text = parser.getText().trim();
                 if (text.length() > 0) {
                     addCell(
@@ -394,7 +395,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                         parser.getText()
                     );
                 }
-            } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+            } else if (eventType == TreeParserToken.EndEntity) { //XMLStreamConstants.END_ELEMENT) {
                 break;
             }
         }

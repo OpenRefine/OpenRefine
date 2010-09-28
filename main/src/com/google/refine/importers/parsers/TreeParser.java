@@ -3,8 +3,8 @@ package com.google.refine.importers.parsers;
 import javax.servlet.ServletException;
 
 public interface TreeParser {
-    public int next() throws ServletException;
-    public int getEventType();
+    public TreeParserToken next() throws ServletException;
+    public int getEventType(); //aka getCurrentToken
     public boolean hasNext() throws ServletException;
     public String getLocalName();
     public String getPrefix();

@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 
 public class JSONParser implements TreeParser{
 	JsonFactory factory = new JsonFactory();
@@ -78,9 +79,32 @@ public class JSONParser implements TreeParser{
 	}
 
 	@Override
-	public int next() throws ServletException {
-		// TODO Auto-generated method stub
-		return 0;
+	public TreeParserToken next() throws ServletException {
+		JsonToken next;
+        try {
+            next = parser.nextToken();
+        } catch (JsonParseException e) {
+            throw new ServletException(e.getMessage());
+        } catch (IOException e) {
+            throw new ServletException(e.getMessage());
+        }
+        
+		if(next == null)
+		    throw new ServletException("No more Json Tokens in stream");
+		
+		return convertToTreeParserToken(next);
+	}
+	
+	protected TreeParserToken convertToTreeParserToken(JsonToken token) throws ServletException{
+	    switch(token){
+            case START_ARRAY: return TreeParserToken.StartEntity;
+            case END_ARRAY: return TreeParserToken.EndEntity;
+            case START_OBJECT: return TreeParserToken.StartEntity;
+            case END_OBJECT: return TreeParserToken.EndEntity;
+            case VALUE_STRING: return TreeParserToken.Value;
+            //TODO finish the rest of the cases
+            default: throw new ServletException("Not yet implemented");
+        }
 	}
 
 }
