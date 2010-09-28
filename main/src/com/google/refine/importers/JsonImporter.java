@@ -13,7 +13,6 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.TreeImportUtilities.ImportColumnGroup;
 import com.google.refine.importers.parsers.JSONParser;
 import com.google.refine.importers.parsers.TreeParser;
-import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Project;
 
 public class JsonImporter implements StreamImporter{
@@ -65,7 +64,7 @@ public class JsonImporter implements StreamImporter{
             return;
 
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        XmlImportUtilities.importTreeData(new XmlParser(pis), project, recordPath, rootColumnGroup);
+        XmlImportUtilities.importTreeData(new JSONParser(pis), project, recordPath, rootColumnGroup);
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
 
         project.columnModel.update();
