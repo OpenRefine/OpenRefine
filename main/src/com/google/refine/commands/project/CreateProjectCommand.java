@@ -421,13 +421,16 @@ public class CreateProjectCommand extends Command {
             CharsetMatch[] charsetMatches = detector.setText(bytes).detectAll();
             for (CharsetMatch charsetMatch : charsetMatches) {
                 try {
-                    reader = new InputStreamReader(inputStream, charsetMatch.getName());
-
-                    options.setProperty("encoding", charsetMatch.getName());
-                    options.setProperty("encoding_confidence", Integer.toString(charsetMatch.getConfidence()));
-
-                    logger.info("Best encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
-
+                    int confidence = charsetMatch.getConfidence();
+                    if (confidence >= 50) {
+                        reader = new InputStreamReader(inputStream, charsetMatch.getName());
+    
+                        options.setProperty("encoding", charsetMatch.getName());
+                        options.setProperty("encoding_confidence", Integer.toString(confidence));
+    
+                        logger.info("Best encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
+                    }
+                    
                     break;
                 } catch (UnsupportedEncodingException e) {
                     // silent
