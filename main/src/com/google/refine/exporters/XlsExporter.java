@@ -105,7 +105,12 @@ public class XlsExporter implements Exporter {
                                     } else if (v instanceof Calendar) {
                                         c.setCellValue((Calendar) v);
                                     } else if (v instanceof String) {
-                                        c.setCellValue((String) v);
+                                        String s = (String) v;
+                                        if (s.length() > 32767) {
+                                            // The maximum length of cell contents (text) is 32,767 characters
+                                            s = s.substring(0, 32767);
+                                        }
+                                        c.setCellValue(s);
                                     }
                                 }
                             }
