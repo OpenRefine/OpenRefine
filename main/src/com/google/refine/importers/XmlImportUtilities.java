@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class XmlImportUtilities extends TreeImportUtilities {
-    final static Logger logger = LoggerFactory.getLogger("XmlImporterUtilities");
+    final static Logger logger = LoggerFactory.getLogger("XmlImportUtilities");
 
     static public String[] detectPathFromTag(TreeParser parser, String tag) {
         try {
@@ -47,7 +45,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * Looks for an element with the given tag name in the Xml being parsed, returning the path hierarchy to reach it.
+     * Looks for an element with the given tag name in the Tree data being parsed, returning the path hierarchy to reach it.
      *
      * @param parser
      * @param tag
@@ -56,12 +54,12 @@ public class XmlImportUtilities extends TreeImportUtilities {
      *         If the tag is found, an array of strings is returned.
      *         If the tag is at the top level, the tag will be the only item in the array.
      *         If the tag is nested beneath the top level, the array is filled with the hierarchy with the tag name at the last index
-     *         Null if the the tag is not found.
-     * @throws XMLStreamException
+     *         null if the the tag is not found.
+     * @throws ServletException
      */
     static protected List<String> detectRecordElement(TreeParser parser, String tag) throws ServletException {
         try{
-            if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT) //FIXME uses Xml, and is not generic
+            if(parser.getEventType() == TreeParserToken.StartDocument)//XMLStreamConstants.START_DOCUMENT)
                 parser.next();
 
             String localName = parser.getLocalName();
@@ -97,10 +95,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * Seeks for recurring XML element in an InputStream
+     * Seeks for recurring element in a parsed document
      * which are likely candidates for being data records
-     * @param inputStream
-     *              The XML data as a stream
+     * @param parser
+     *              The parser loaded with tree data
      * @return
      *              The path to the most numerous of the possible candidates.
      *              null if no candidates were found (less than 6 recurrences)
@@ -133,12 +131,12 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
             return candidates.get(0).path;
         }
-        logger.info("No candidate elements were found in Xml - at least 6 similar elements are required");
+        logger.info("No candidate elements were found in data - at least 6 similar elements are required");
         return null;
     }
 
     static protected RecordElementCandidate detectRecordElement(TreeParser parser, String[] path) {
-        logger.trace("detectRecordElement(XMLStreamReader, String[])");
+        logger.trace("detectRecordElement(TreeParser, String[])");
         List<RecordElementCandidate> descendantCandidates = new ArrayList<RecordElementCandidate>();
 
         Map<String, Integer> immediateChildCandidateMap = new HashMap<String, Integer>();
@@ -258,17 +256,16 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param recordPath
      * @param pathIndex
      * @param rootColumnGroup
-     * @throws XMLStreamException
+     * @throws ServletException
      */
     static protected void findRecord(
         Project project,
-        //XMLStreamReader parser,
         TreeParser parser,
         String[] recordPath,
         int pathIndex,
         ImportColumnGroup rootColumnGroup
     ) throws ServletException {
-        if(parser.getEventType() == XMLStreamConstants.START_DOCUMENT){//FIXME uses Xml, and is not generic
+        if(parser.getEventType() == TreeParserToken.EndDocument){//XMLStreamConstants.START_DOCUMENT){
             logger.warn("Cannot use findRecord method for START_DOCUMENT event");
             return;
         }
@@ -303,12 +300,12 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * processRecord parsesXml for a single element and it's sub-elements,
+     * processRecord parses Tree data for a single element and it's sub-elements,
      * adding the parsed data as a row to the project
      * @param project
      * @param parser
      * @param rootColumnGroup
-     * @throws XMLStreamException
+     * @throws ServletException
      */
     static protected void processRecord(
         Project project,
@@ -345,7 +342,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param parser
      * @param columnGroup
      * @param record
-     * @throws XMLStreamException
+     * @throws ServletException
      */
     static protected void processSubRecord(
         Project project,

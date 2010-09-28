@@ -49,9 +49,8 @@ public class JSONParser implements TreeParser{
 	}
 
 	@Override
-	public int getEventType() {
-		// TODO Auto-generated method stub
-		return 0;
+	public TreeParserToken getEventType() throws ServletException {
+		return this.convertToTreeParserToken(parser.getCurrentToken());
 	}
 
 	@Override
@@ -102,6 +101,9 @@ public class JSONParser implements TreeParser{
             case START_OBJECT: return TreeParserToken.StartEntity;
             case END_OBJECT: return TreeParserToken.EndEntity;
             case VALUE_STRING: return TreeParserToken.Value;
+            //Json does not have START_DOCUMENT
+            //Json does not have END_DOCUMENT
+            
             //TODO finish the rest of the cases
             default: throw new ServletException("Not yet implemented");
         }

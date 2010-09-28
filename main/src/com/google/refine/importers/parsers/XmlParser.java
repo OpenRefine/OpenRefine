@@ -47,13 +47,15 @@ public class XmlParser implements TreeParser{
             case XMLStreamConstants.START_ELEMENT: return TreeParserToken.StartEntity;
             case XMLStreamConstants.END_ELEMENT: return TreeParserToken.EndEntity;
             case XMLStreamConstants.CHARACTERS: return TreeParserToken.Value;
+            case XMLStreamConstants.START_DOCUMENT: return TreeParserToken.StartDocument;
+            case XMLStreamConstants.END_DOCUMENT: return TreeParserToken.EndDocument;
             //TODO
             default: throw new ServletException("Not yet implemented");
         }
     }
     
-    public int getEventType(){
-        return parser.getEventType();
+    public TreeParserToken getEventType() throws ServletException{
+        return this.convertToTreeParserToken(parser.getEventType());
     }
     
     public boolean hasNext() throws ServletException{
