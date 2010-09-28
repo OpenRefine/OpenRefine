@@ -35,9 +35,9 @@ public class Scanner {
     }
     
     static public class NumberToken extends Token {
-        final public double value;
+        final public Number value;
         
-        public NumberToken(int start, int end, String text, double value) {
+        public NumberToken(int start, int end, String text, Number value) {
             super(start, end, TokenType.Number, text);
             this.value = value;
         }
@@ -94,34 +94,44 @@ public class Scanner {
         String detail = null;
         
         if (Character.isDigit(c)) { // number literal
-            double value = 0;
+            long value = 0;
             
             while (_index < _limit && Character.isDigit(c = _text.charAt(_index))) {
                 value = value * 10 + (c - '0');
                 _index++;
             }
             
-            if (_index < _limit && c == '.') {
-                _index++;
-                
-                double division = 1;
-                while (_index < _limit && Character.isDigit(c = _text.charAt(_index))) {
-                    value = value * 10 + (c - '0');
-                    division *= 10;
+            if (_index < _limit && (c == '.' || c == 'e')) {
+                double value2 = value;
+                if (c == '.') {
                     _index++;
+                    
+                    double division = 1;
+                    while (_index < _limit && Character.isDigit(c = _text.charAt(_index))) {
+                        value2 = value2 * 10 + (c - '0');
+                        division *= 10;
+                        _index++;
+                    }
+                    
+                    value2 /= division;
                 }
                 
-                value /= division;
+                // TODO: support exponent e notation
+                
+                return new NumberToken(
+                    start, 
+                    _index, 
+                    _text.substring(start, _index),
+                    value2
+                );
+            } else {
+                return new NumberToken(
+                    start, 
+                    _index, 
+                    _text.substring(start, _index),
+                    value
+                );
             }
-            
-            // TODO: support exponent e notation
-            
-            return new NumberToken(
-                start, 
-                _index, 
-                _text.substring(start, _index),
-                value
-            );
         } else if (c == '"' || c == '\'') { 
             /*
              *  String Literal

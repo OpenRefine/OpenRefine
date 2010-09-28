@@ -29,23 +29,47 @@ public class OperatorCallExpr implements Evaluable {
         
         if (args.length == 2) {
             if (args[0] != null && args[1] != null) {
-                if (args[0] instanceof Number && args[1] instanceof Number) {
+                if (isIntegral(args[0]) && isIntegral(args[1])) {
+                    long n1 = ((Number) args[0]).longValue();
+                    long n2 = ((Number) args[1]).longValue();
+                    
                     if ("+".equals(_op)) {
-                        return ((Number) args[0]).doubleValue() + ((Number) args[1]).doubleValue();
+                        return n1 + n2;
                     } else if ("-".equals(_op)) {
-                        return ((Number) args[0]).doubleValue() - ((Number) args[1]).doubleValue();
+                        return n1 - n2;
                     } else if ("*".equals(_op)) {
-                        return ((Number) args[0]).doubleValue() * ((Number) args[1]).doubleValue();
+                        return n1 * n2;
                     } else if ("/".equals(_op)) {
-                        return ((Number) args[0]).doubleValue() / ((Number) args[1]).doubleValue();
+                        return n1 / n2;
                     } else if (">".equals(_op)) {
-                        return ((Number) args[0]).doubleValue() > ((Number) args[1]).doubleValue();
+                        return n1 > n2;
                     } else if (">=".equals(_op)) {
-                        return ((Number) args[0]).doubleValue() >= ((Number) args[1]).doubleValue();
+                        return n1 >= n2;
                     } else if ("<".equals(_op)) {
-                        return ((Number) args[0]).doubleValue() < ((Number) args[1]).doubleValue();
+                        return n1 < n2;
                     } else if ("<=".equals(_op)) {
-                        return ((Number) args[0]).doubleValue() <= ((Number) args[1]).doubleValue();
+                        return n1 <= n2;
+                    }
+                } else if (args[0] instanceof Number && args[1] instanceof Number) {
+                    double n1 = ((Number) args[0]).doubleValue();
+                    double n2 = ((Number) args[1]).doubleValue();
+                    
+                    if ("+".equals(_op)) {
+                        return n1 + n2;
+                    } else if ("-".equals(_op)) {
+                        return n1 - n2;
+                    } else if ("*".equals(_op)) {
+                        return n1 * n2;
+                    } else if ("/".equals(_op)) {
+                        return n1 / n2;
+                    } else if (">".equals(_op)) {
+                        return n1 > n2;
+                    } else if (">=".equals(_op)) {
+                        return n1 >= n2;
+                    } else if ("<".equals(_op)) {
+                        return n1 < n2;
+                    } else if ("<=".equals(_op)) {
+                        return n1 <= n2;
                     }
                 }
                 
@@ -85,5 +109,9 @@ public class OperatorCallExpr implements Evaluable {
         }
         
         return sb.toString();
+    }
+    
+    private boolean isIntegral(Object n) {
+        return n instanceof Long || n instanceof Integer;
     }
 }

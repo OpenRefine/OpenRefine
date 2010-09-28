@@ -155,7 +155,10 @@ public class Parser {
             next(true);
             
             if (_token != null && _token.type == TokenType.Number) {
-                eval = new LiteralExpr(-((NumberToken)_token).value);
+                Number n = ((NumberToken)_token).value;
+                
+                eval = new LiteralExpr(n instanceof Long ? -n.longValue() : -n.doubleValue());
+                
                 next(false);
             } else {
                 throw makeException("Bad negative number");
