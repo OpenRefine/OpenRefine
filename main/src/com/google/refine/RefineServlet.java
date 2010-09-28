@@ -25,7 +25,7 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
 
-    static private final String VERSION = "1.5";
+    static private final String VERSION = "2.0";
 
     private static final long serialVersionUID = 2386057901503517403L;
 
