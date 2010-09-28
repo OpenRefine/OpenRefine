@@ -49,8 +49,11 @@ public class XmlParser implements TreeParser{
             case XMLStreamConstants.CHARACTERS: return TreeParserToken.Value;
             case XMLStreamConstants.START_DOCUMENT: return TreeParserToken.StartDocument;
             case XMLStreamConstants.END_DOCUMENT: return TreeParserToken.EndDocument;
+            
             //TODO
-            default: throw new ServletException("Not yet implemented");
+            default:
+                return TreeParserToken.Ignorable;
+                //throw new ServletException("Not yet implemented");
         }
     }
     
