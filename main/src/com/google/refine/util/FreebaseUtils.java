@@ -23,12 +23,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.refine.RefineServlet;
 import com.google.refine.ProjectManager;
+import com.google.refine.RefineServlet;
 import com.google.refine.oauth.Credentials;
 import com.google.refine.oauth.OAuthUtilities;
 import com.google.refine.oauth.Provider;
@@ -39,8 +38,9 @@ public class FreebaseUtils {
     static final public String FREEBASE_SANDBOX_HOST = "www.sandbox-freebase.com";
     
     static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/gridworks";
+    //static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/refine";
     
-    static final private String GRIDWORKS_ID = "/en/gridworks";
+    static final private String AGENT_ID = "/en/google_refine";
     
     private static String getUserInfoURL(String host) {
         return "http://" + host + "/api/service/user_info";
@@ -54,13 +54,17 @@ public class FreebaseUtils {
         return "http://" + host + "/api/service/mqlread";
     }
     
+    private static String getUserAgent() {
+        return "Google Refine " + RefineServlet.getVersion();        
+    }
+    
     public static String getUserInfo(Credentials credentials, Provider provider) 
         throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException {
         
         OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
         
         HttpGet httpRequest = new HttpGet(getUserInfoURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + RefineServlet.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getUserAgent());
         
         // this is required by the Metaweb API to avoid XSS
         httpRequest.setHeader("X-Requested-With", "1");
@@ -103,7 +107,7 @@ public class FreebaseUtils {
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
         HttpPost httpRequest = new HttpPost(getMQLReadURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + RefineServlet.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getUserAgent());
         httpRequest.setEntity(entity);
 
         // this is required by the Metaweb API to avoid XSS
@@ -129,7 +133,7 @@ public class FreebaseUtils {
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
         HttpPost httpRequest = new HttpPost(getMQLWriteURL(provider.getHost()));
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + RefineServlet.getVersion());
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getUserAgent());
         httpRequest.setEntity(entity);
 
         // this is required by the Metaweb API to avoid XSS
@@ -148,7 +152,7 @@ public class FreebaseUtils {
 
     public static String uploadTriples(
         HttpServletRequest request,
-        String graph,
+        String qa,
         String source_name,
         String source_id,
         String mdo_id,
@@ -168,82 +172,52 @@ public class FreebaseUtils {
         JSONObject user_info = new JSONObject(getUserInfo(credentials, provider));
         if (user_info.has("username")) {
 
-            String user_id = user_info.getString("id");
-            boolean allowed = isAllowedToWrite(provider, graph, user_id);
-            
-            if (allowed) {
-                List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-                formparams.add(new BasicNameValuePair("user", user_info.getString("id")));
-                formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
-                formparams.add(new BasicNameValuePair("operator", user_info.getString("id")));
-                formparams.add(new BasicNameValuePair("software_tool_used", GRIDWORKS_ID));
-                formparams.add(new BasicNameValuePair("rabj", "true"));
-                formparams.add(new BasicNameValuePair("mdo_info", mdo_info.toString()));
-                formparams.add(new BasicNameValuePair("graphport", graph));
-                formparams.add(new BasicNameValuePair("payload", triples));
-                formparams.add(new BasicNameValuePair("check_params", "false"));
-                if (mdo_id != null) {
-                    formparams.add(new BasicNameValuePair("mdo_guid", mdo_id));
-                }
-                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
-    
-                HttpPost httpRequest = new HttpPost(getFreeQUrl());
-                httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Gridworks " + RefineServlet.getVersion());
-                httpRequest.setEntity(entity);
-                
-                HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));
-                surrogateRequest.setEntity(entity);
-                
-                OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
-    
-                consumer.sign(surrogateRequest);
-    
-                Header[] h = surrogateRequest.getHeaders("Authorization");
-                if (h.length > 0) {
-                    httpRequest.setHeader("X-Freebase-Credentials", h[0].getValue());
-                } else {
-                    throw new RuntimeException("Couldn't find the oauth signature header in the surrogate request");
-                }
-                
-                // execute the request
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpResponse httpResponse = httpClient.execute(httpRequest);
-                
-                // return the results
-                return EntityUtils.toString(httpResponse.getEntity());
-            } else {
-                throw new RuntimeException("User '" + user_id + "' is not allowed to write to '" + graph + "' with Gridworks");
+            List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+            formparams.add(new BasicNameValuePair("user", user_info.getString("id")));
+            formparams.add(new BasicNameValuePair("action_type", "LOAD_TRIPLE"));
+            formparams.add(new BasicNameValuePair("operator", user_info.getString("id")));
+            formparams.add(new BasicNameValuePair("software_tool_used", AGENT_ID));
+            formparams.add(new BasicNameValuePair("mdo_info", mdo_info.toString()));
+            formparams.add(new BasicNameValuePair("graphport", "sandbox"));
+            formparams.add(new BasicNameValuePair("payload", triples));
+            formparams.add(new BasicNameValuePair("check_params", "false"));
+            if (mdo_id != null) {
+                formparams.add(new BasicNameValuePair("mdo_guid", mdo_id));
             }
+            if (Boolean.parseBoolean(qa)) {
+                formparams.add(new BasicNameValuePair("rabj", "true"));
+            }
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
+
+            HttpPost httpRequest = new HttpPost(getFreeQUrl());
+            httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Google Refine " + RefineServlet.getVersion());
+            httpRequest.setEntity(entity);
+            
+            HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));
+            surrogateRequest.setEntity(entity);
+            
+            OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
+
+            consumer.sign(surrogateRequest);
+
+            Header[] h = surrogateRequest.getHeaders("Authorization");
+            if (h.length > 0) {
+                httpRequest.setHeader("X-Freebase-Credentials", h[0].getValue());
+            } else {
+                throw new RuntimeException("Couldn't find the oauth signature header in the surrogate request");
+            }
+            
+            // execute the request
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpResponse httpResponse = httpClient.execute(httpRequest);
+            
+            // return the results
+            return EntityUtils.toString(httpResponse.getEntity());
         } else {
             throw new RuntimeException("Invalid credentials");
         }
     }
-    
-    private static boolean isAllowedToWrite(Provider provider, String graph, String user_id) throws JSONException, ClientProtocolException, IOException {
-        if ("sandbox".equals(graph)) return true;
         
-        JSONObject user_badges = new JSONObject(getUserBadges(provider, user_id));
-        JSONObject result = user_badges.getJSONObject("result");
-        
-        if (result == null) {
-            throw new RuntimeException("Error evaluating badges for user '" + user_id + "'");
-        }
-
-        boolean allowed = false;
-        
-        JSONArray badges = result.getJSONArray("!/type/usergroup/member");
-        for (int i = 0; i < badges.length(); i++) {
-            JSONObject o = badges.getJSONObject(i);
-            String id = o.getString("id");
-            if ("/en/metaweb_staff".equals(id)) {
-                allowed = true;
-                break;
-            }
-        }
-        
-        return allowed;
-    }
-    
     static public String getFreeQUrl() {
     	String url = (String) ProjectManager.singleton.getPreferenceStore().get("freebase.freeq");
     	return url != null ? url : FREEQ_URL;

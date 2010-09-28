@@ -15,6 +15,30 @@
     padding: 0.3em 0.5em 0.5em 0.5em;
 }
     
+.freebase-loading-tripleloader-message h2 {
+	text-align: center;
+	font-size: 150%;
+	margin-top: 3em;
+    font-weight: normal;
+}
+
+.freebase-loading-tripleloader-message h2 span {
+	font-size; 130%;
+	font-weight: bold;
+}
+
+.freebase-loading-tripleloader-message h4 {
+    text-align: center;
+    font-size: 120%;
+    margin-top: 2em;
+    font-weight: normal;
+}
+
+.freebase-loading-tripleloader-message a {
+    font-size: 120%;
+    font-weight: bold;
+}
+
 .freebase-loading-authorization {
     margin: 0em 2em;
     padding: 0.6em 0.8em;

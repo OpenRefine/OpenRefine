@@ -8,7 +8,6 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/freebase-loading-dialog.html"));
     this._elmts = DOM.bind(dialog);
     this._elmts.cancelButton.click(function() { self._dismiss(); });
-    this._elmts.selector.buttonset();
     
     var provider = "www.freebase.com";
     var authorization = this._elmts.authorization;
@@ -40,30 +39,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
             }
         },"json");
     };
-    
-    var check_allowed = function(user_id, cont) {
-        $.get("/command/core/user-badges/" + provider, 
-            { "user_id" : user_id }, 
-            function(data) {
-                if ("status" in data && data.code == "/api/status/ok") {
-                    var badges = data.result['!/type/usergroup/member'];
-                    var allowed = false;
-                    for (var i = 0; i < badges.length; i++) {
-                        var id = badges[i].id;
-                        if (id == "/en/metaweb_staff") {
-                            allowed = true;
-                            break;
-                        }
-                    }
-                    if (typeof cont == "function") cont(allowed);
-                } else {
-                    self._show_error("Error checking if user is a staff member", data);
-                }
-            },
-            "json"
-        );
-    };
-    
+        
     var make_topic = function(new_topic_id, topic_type, cont) {
         var mql_query = [{
             "create": "unless_exists",
@@ -153,22 +129,14 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
         );
     };
 
-    show_triples(function() {
-        check_authorization(function(data) {
-            check_allowed(data.id, function(is_allowed) {
-                if (is_allowed) {
-                    $("#freebase-loading-graph-selector-freebase").removeAttr("disabled").button("refresh");
-                }
-            });
-        });
-    });
+    show_triples(check_authorization);
 };
 
 FreebaseLoadingDialog.prototype._load = function() {
     var self = this;
-    var freebase = self._elmts.freebase.attr("checked");
+    var qa = self._elmts.qaCheckbox.is(':checked');
 
-    var get_peacock_url = function(url) {
+    var get_refinery_url = function(url) {
         return "http://refinery.freebaseapps.com/load/" + url.split("/").slice(-1)[0];
     };
     
@@ -178,7 +146,7 @@ FreebaseLoadingDialog.prototype._load = function() {
         $.post("/command/core/upload-data", 
             {
                 project: theProject.id, 
-                "graph" : (freebase) ? "otg" : "sandbox",
+                "qa" : qa,
                 "engine" : JSON.stringify(ui.browsingEngine.getJSON()),
                 "source_name" : self._elmts.source_name.val(),
                 "source_id" : self._elmts.source_id.val()
@@ -190,8 +158,8 @@ FreebaseLoadingDialog.prototype._load = function() {
                 if ("status" in data && typeof data.status == "object" && "code" in data.status && data.status.code == 200) {
                     body.html(
                         '<div class="freebase-loading-tripleloader-message">' +
-                            '<h2>' + data.result.added + ' triples successfully scheduled for loading</h2>' + 
-                            '<h4>Follow the loading progress <a href="' + get_peacock_url(data.result.status_url) + '" target="_new">here</a>.</h4>' +
+                            '<h2><span>' + data.result.added + '</span> triples successfully scheduled for loading</h2>' + 
+                            '<h4>Follow the loading progress in the <a href="' + get_refinery_url(data.result.status_url) + '" target="_new">Freebase Refinery</a></h4>' +
                         '</div>'
                     );
                     self._end();
@@ -203,10 +171,10 @@ FreebaseLoadingDialog.prototype._load = function() {
         );
     };
         
-    if (freebase) {
+    if (qa) {
         var dialog = $(
             '<div id="freebase-confirmation-dialog" title="Are you sure?">' +
-                '<table><tr><td width="30%"><img src="/images/cop.png" width="140px"></td><td width="70%" style="text-align: center; vertical-align: middle; font-size: 120%">Are you sure this data is ready to be uploaded into <b>Freebase</b>?</td></tr></table>' +
+                '<table><tr><td width="30%"><img src="/images/cop.png" width="140px"></td><td width="70%" style="text-align: center; vertical-align: middle; font-size: 120%">Are you sure this data is ready to be tested for upload into <b>Freebase</b>?</td></tr></table>' +
             '</div>'
         ).dialog({
             resizable: false,
@@ -214,11 +182,11 @@ FreebaseLoadingDialog.prototype._load = function() {
             height: 230,
             modal: true,
             buttons: {
-                'yes, I know what I\'m doing': function() {
+                'yes, I\'m sure': function() {
                     $(this).dialog('close');
                     doLoad();
                 },
-                'cancel': function() {
+                'hmm, not really': function() {
                     $(this).dialog('close');
                 }
             }
@@ -233,12 +201,14 @@ FreebaseLoadingDialog.prototype._dismiss = function() {
 };
 
 FreebaseLoadingDialog.prototype._show_error = function(msg, error) {
+	console.log(error);
+	var self = this;
     var body = self._elmts.dialogBody;
     body.html(
         '<div class="freebase-loading-tripleloader-message">' +
             '<h2>' + msg + '</h2>' + 
-            '<p>' + error.message + '</p>' +
-            (('stack' in error) ? '<pre>' + error.stack.replace(/\\n/g,'\n').replace(/\\t/g,'\t') + '</p>' : "") +
+            (('message' in error) ? '<p>' + error.message + '</p>' : '<pre>' + JSON.stringify(error, null, 2) + '</pre>') +
+            (('stack' in error) ? '<pre>' + error.stack.replace(/\\n/g,'\n').replace(/\\t/g,'\t') + '</pre>' : "") +
         '</div>'
     );
     this._end();
@@ -250,6 +220,6 @@ FreebaseLoadingDialog.prototype._end = function() {
         self._dismiss();
     });
     self._elmts.cancelButton.hide();
+    self._elmts.qaCheckboxContainer.hide();
     self._elmts.authorization.hide();
-    self._elmts.selector.hide();
 };

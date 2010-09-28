@@ -41,7 +41,7 @@ public class UploadDataCommand extends Command {
 
             String source_name = request.getParameter("source_name");
             String source_id = request.getParameter("source_id");
-            String graph = request.getParameter("graph");
+            String qa = request.getParameter("qa");
             String mdo_id = null;
             
             preferenceStore.put(s_dataLoadJobNamePref, source_name);
@@ -61,7 +61,8 @@ public class UploadDataCommand extends Command {
             }
             
             String uploadResponse = FreebaseUtils.uploadTriples(
-                request, graph, source_name, source_id, mdo_id, triples.toString());
+                request, qa, source_name, source_id, mdo_id, triples.toString()
+            );
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
@@ -72,16 +73,13 @@ public class UploadDataCommand extends Command {
                     JSONObject result = obj.getJSONObject("result");
                     if (result.has("job_id") && !result.isNull("job_id")) {
                         Integer jobID = result.getInt("job_id");
-                        
-                        project.getMetadata().getPreferenceStore().put(
-                            s_dataLoadJobIDPref, jobID);
+                        project.getMetadata().getPreferenceStore().put(s_dataLoadJobIDPref, jobID);
                     }
                 }
                 response.getWriter().write(uploadResponse);
             } catch (JSONException e) {
                 respond(response,"500 Error", uploadResponse);
             }
-            
         } catch (Exception e) {
             respondException(response, e);
         } finally {

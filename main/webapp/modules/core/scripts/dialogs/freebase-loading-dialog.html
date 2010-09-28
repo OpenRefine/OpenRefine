@@ -11,12 +11,7 @@
         <div bind="authorization" class="freebase-loading-authorization"></div>
       </td>
       <td bind="right" style="text-align: right" width="40%" nowrap="true">
-        <span bind="selector" class="freebase-loading-graph-selector">
-          Load this data into
-          <input type="radio" bind="sandbox" id="freebase-loading-graph-selector-sandbox" name="graph-selector" checked="checked" value="sandbox"/><label class="sandbox" for="freebase-loading-graph-selector-sandbox" title="Load into the sandbox">sandbox</label>
-          <input type="radio" bind="freebase" id="freebase-loading-graph-selector-freebase" name="graph-selector" value="freebase" disabled="disabled"/><label class="freebase" for="freebase-loading-graph-selector-freebase" title="Load into Freebase">freebase</label>
-        </span>
-        
+        <span bind="qaCheckboxContainer">Ready to perform QA on this data? <input bind="qaCheckbox" type="checkbox" name="qa" value="qa"></span>
         <button bind="loadButton" id="freebase-loading-load" disabled="disabled">Load</button>
       </td>
     </tr></table>
