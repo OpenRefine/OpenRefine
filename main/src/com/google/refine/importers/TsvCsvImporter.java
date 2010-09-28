@@ -75,7 +75,7 @@ public class TsvCsvImporter implements ReaderImporter,StreamImporter {
         CSVParser parser = (sep != null && sep.length() > 0 && splitIntoColumns) ?
                         new CSVParser(sep.toCharArray()[0],//HACK changing string to char - won't work for multi-char separators.
                                 CSVParser.DEFAULT_QUOTE_CHARACTER,
-                                CSVParser.DEFAULT_ESCAPE_CHARACTER,
+                                (char) 0, // escape character
                                 CSVParser.DEFAULT_STRICT_QUOTES,
                                 CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
                                 ignoreQuotes) : null;
@@ -97,14 +97,14 @@ public class TsvCsvImporter implements ReaderImporter,StreamImporter {
                 if (tab >= 0) {
                     parser = new CSVParser('\t',
                             CSVParser.DEFAULT_QUOTE_CHARACTER,
-                            CSVParser.DEFAULT_ESCAPE_CHARACTER,
+                            (char) 0, // escape character
                             CSVParser.DEFAULT_STRICT_QUOTES,
                             CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
                             ignoreQuotes);
                 } else {
                     parser = new CSVParser(',',
                             CSVParser.DEFAULT_QUOTE_CHARACTER,
-                            CSVParser.DEFAULT_ESCAPE_CHARACTER,
+                            (char) 0, // escape character
                             CSVParser.DEFAULT_STRICT_QUOTES,
                             CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
                             ignoreQuotes);
