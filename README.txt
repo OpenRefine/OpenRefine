@@ -50,6 +50,8 @@
    - Will Moffat <wdm@google.com>
    - James Home <jameshome@google.com>
    - Iain Sproat <iainsproat@gmail.com>
+   - Tom Morris <tfmorris@gmail.com>
+   - Heather Campbell <campbellh@google.com>
      
 
                                   - o -
