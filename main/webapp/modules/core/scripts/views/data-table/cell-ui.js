@@ -32,6 +32,9 @@ DataTableCellUI.prototype._render = function() {
         $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
     } else if (!("r" in cell) || !cell.r) {
         if (typeof cell.v !== "string") {
+            if (typeof cell.v == "number") {
+                divContent.addClass("data-table-cell-content-numeric");
+            }
             $('<span>')
                 .addClass("data-table-value-nonstring")
                 .text(cell.v)

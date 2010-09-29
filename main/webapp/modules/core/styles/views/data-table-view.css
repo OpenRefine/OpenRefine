@@ -112,6 +112,10 @@ table.viewPanel-header td {
 div.data-table-cell-content {
     position: relative;
 }
+div.data-table-cell-content-numeric {
+    text-align: right;
+}
+
 a.data-table-cell-edit {
     position: absolute;
     top: 0px;
@@ -128,6 +132,11 @@ a.data-table-cell-edit {
 a.data-table-cell-edit:hover {
     background-position: -30px 0px;
 }
+div.data-table-cell-content-numeric > a.data-table-cell-edit {
+    left: 0px;
+    right: auto;
+}
+
 .data-table-value-nonstring {
     color: #880;
 }
