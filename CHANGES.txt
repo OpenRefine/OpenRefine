@@ -43,6 +43,7 @@ Fixes:
 - Issue 122: Exporting to Excel on attached project raises server exception
 - Issue 126: Large integers formatted in scientific notation in formulas
 - Issue 135: Hangs when setting cell value to large JSON string
+- Issue 138: Numbers should be right-justified
 
 1.1 Release (May 27, 2010)
 
