@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests/server/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="webapp/WEB-INF/lib-src/butterfly-trunk-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-codec-1.4.jar" sourcepath="webapp/WEB-INF/lib-src/commons-codec-1.4-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-lang-2.5.jar" sourcepath="webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar" sourcepath="webapp/WEB-INF/lib-src/commons-fileupload-1.2.1-sources.jar"/>

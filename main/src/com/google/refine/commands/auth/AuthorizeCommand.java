@@ -21,6 +21,7 @@ public class AuthorizeCommand extends Command {
     
     private static final String OAUTH_VERIFIER_PARAM = "oauth_verifier";
     
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // get the provider from the request

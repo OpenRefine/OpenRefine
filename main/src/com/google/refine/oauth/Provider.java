@@ -5,6 +5,9 @@ public abstract class Provider {
 
     protected String host;
     
+    public Provider() {
+    }
+
     public Provider(String host) {
         this.host = host;
     }

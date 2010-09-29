@@ -13,7 +13,9 @@ var templatedFiles = {
 
 function registerCommands() {
     var RS = Packages.com.google.refine.RefineServlet;
-    
+
+    RS.registerCommand(module, "get-version", new Packages.com.google.refine.commands.GetVersionCommand());
+
     RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
     RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
     RS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());

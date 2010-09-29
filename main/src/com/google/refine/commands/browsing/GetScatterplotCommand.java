@@ -32,6 +32,7 @@ public class GetScatterplotCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("get-scatterplot_command");
     
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         

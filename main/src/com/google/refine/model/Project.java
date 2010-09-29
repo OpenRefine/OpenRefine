@@ -122,7 +122,7 @@ public class Project {
     }
 
     protected void saveToWriter(Writer writer, Properties options) throws IOException {
-        writer.write(RefineServlet.getVersion()); writer.write('\n');
+        writer.write(RefineServlet.VERSION); writer.write('\n');
         
         writer.write("columnModel=\n"); columnModel.save(writer, options);
         writer.write("history=\n"); history.save(writer, options);

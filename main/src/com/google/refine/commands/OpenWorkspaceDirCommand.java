@@ -27,10 +27,10 @@ public class OpenWorkspaceDirCommand extends Command {
             	Desktop desktop = Desktop.getDesktop();
             	desktop.open(dir);
             } else /* if Mac */ {
-            	Process p = Runtime.getRuntime().exec(
-            			"open .",
-            			new String[] {},
-            			dir
+            	Runtime.getRuntime().exec(
+        			"open .",
+        			new String[] {},
+        			dir
             	);
             }
             

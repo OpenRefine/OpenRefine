@@ -29,6 +29,7 @@ import com.google.refine.util.Pool;
 
 public class GetRowsCommand extends Command {
 	
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         internalRespond(request, response);

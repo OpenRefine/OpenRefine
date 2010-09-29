@@ -13,6 +13,7 @@ import com.google.refine.oauth.Provider;
 
 public class DeAuthorizeCommand extends Command {
     
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         try {

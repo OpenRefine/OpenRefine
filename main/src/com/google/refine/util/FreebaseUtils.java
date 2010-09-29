@@ -35,7 +35,6 @@ import com.google.refine.oauth.Provider;
 public class FreebaseUtils {
 
     static final public String FREEBASE_HOST = "www.freebase.com";
-    static final public String FREEBASE_SANDBOX_HOST = "www.sandbox-freebase.com";
     
     static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/gridworks";
     //static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/refine";
@@ -55,7 +54,7 @@ public class FreebaseUtils {
     }
     
     private static String getUserAgent() {
-        return "Google Refine " + RefineServlet.getVersion();        
+        return RefineServlet.FULLNAME;        
     }
     
     public static String getUserInfo(Credentials credentials, Provider provider) 
@@ -190,7 +189,7 @@ public class FreebaseUtils {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
             HttpPost httpRequest = new HttpPost(getFreeQUrl());
-            httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Google Refine " + RefineServlet.getVersion());
+            httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getUserAgent());
             httpRequest.setEntity(entity);
             
             HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));

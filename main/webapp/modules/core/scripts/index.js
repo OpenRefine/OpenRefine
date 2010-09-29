@@ -203,19 +203,19 @@ function onLoad() {
         $("#more-options").show();
     });
 
-    var version = (GoogleRefineVersion.version != "$VERSION") ? "Version " + GoogleRefineVersion.version + "-" + GoogleRefineVersion.revision : "";
+    var version = (GoogleRefineVersion.version != "$VERSION") ? "Version " + GoogleRefineVersion.version + " [" + GoogleRefineVersion.revision + "]" : "Version <trunk>";
     $("#google-refine-version").text(version);
 
     var script = $('<script></script>')
-        .attr("src", "http://google-refine.googlecode.com/svn/support/releases2.js")
+        .attr("src", "http://google-refine.googlecode.com/svn/support/releases.js")
         .attr("type", "text/javascript")
         .appendTo(document.body);
 
     var poll = function() {
-        if ("GoogleRefineReleases" in window) {
+        if ("releases" in window) {
             if (isThereNewRelease()) {
                 $('<div id="version-message">' +
-                    'New version "' + GoogleRefineReleases.releases[0].description + '" <a href="' + GoogleRefineReleases.homepage + '">available for download here</a>.' +
+                    'New version "' + releases.releases[0].description + '" <a href="' + releases.homepage + '">available for download here</a>.' +
                   '</div>').appendTo(document.body);
             }
         } else {

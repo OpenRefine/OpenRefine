@@ -21,6 +21,7 @@ import com.google.refine.model.Project;
 
 public class GetColumnsInfoCommand extends Command {
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         

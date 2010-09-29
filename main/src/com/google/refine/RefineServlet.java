@@ -25,28 +25,28 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
 
-    static private final String VERSION = "2.0";
+    static public String VERSION = "";
+    static public String REVISION = "";
+    static public String FULLNAME = "Google Refine ";
 
-    private static final long serialVersionUID = 2386057901503517403L;
+    static public final String AGENT_ID = "/en/google_refine";
+    
+    static final long serialVersionUID = 2386057901503517403L;
 
-    private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
+    static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
 
     static private RefineServlet s_singleton;
-    static private File             s_dataDir;
+    static private File s_dataDir;
     
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
     // timer for periodically saving projects
     static private Timer _timer;
 
-    final static Logger logger = LoggerFactory.getLogger("refine");
+    static final Logger logger = LoggerFactory.getLogger("refine");
 
-    public static String getVersion() {
-        return VERSION;
-    }
-
-    final static protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
-
+    static final protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
+    
     static protected class AutoSaveTimerTask extends TimerTask {
         public void run() {
             try {
@@ -64,6 +64,12 @@ public class RefineServlet extends Butterfly {
     @Override
     public void init() throws ServletException {
         super.init();
+
+        VERSION = getInitParameter("refine.version");
+        REVISION = getInitParameter("refine.revision");
+        FULLNAME +=  VERSION + " [" + REVISION + "]";
+
+        logger.info("Starting " + FULLNAME + "...");
         
         s_singleton = this;
 
@@ -114,10 +120,12 @@ public class RefineServlet extends Butterfly {
             Command command = commands.get(commandKey);
             if (command != null) {
                 if (request.getMethod().equals("GET")) {
+                    if (!logger.isTraceEnabled()) logger.info("GET {}", request.getPathInfo());
                     logger.trace("> GET {}", commandKey);
                     command.doGet(request, response);
                     logger.trace("< GET {}", commandKey);
                 } else if (request.getMethod().equals("POST")) {
+                    if (!logger.isTraceEnabled()) logger.info("POST {}", request.getPathInfo());
                     logger.trace("> POST {}", commandKey);
                     command.doPost(request, response);
                     logger.trace("< POST {}", commandKey);

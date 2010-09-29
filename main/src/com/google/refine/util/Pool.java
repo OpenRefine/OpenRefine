@@ -62,7 +62,7 @@ public class Pool implements Jsonizable {
     }
     
     public void save(Writer writer) throws IOException {
-        writer.write(RefineServlet.getVersion()); writer.write('\n');
+        writer.write(RefineServlet.VERSION); writer.write('\n');
 
         Properties options = new Properties();
         options.setProperty("mode", "save");

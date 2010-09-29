@@ -68,7 +68,7 @@ public class History implements Jsonizable {
     }
 
     static public void writeOneChange(Writer writer, Change change, Properties options) throws IOException {
-        writer.write(RefineServlet.getVersion()); writer.write('\n');
+        writer.write(RefineServlet.VERSION); writer.write('\n');
         writer.write(change.getClass().getName()); writer.write('\n');
 
         change.save(writer, options);

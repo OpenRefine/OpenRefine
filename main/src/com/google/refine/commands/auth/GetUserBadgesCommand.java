@@ -16,8 +16,9 @@ import com.google.refine.util.FreebaseUtils;
 
 public class GetUserBadgesCommand extends Command {
     
-    final static Logger logger = LoggerFactory.getLogger("check-authorization_command");
+    final static Logger logger = LoggerFactory.getLogger("get-version_command");
     
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         try {

@@ -17,7 +17,7 @@ public class OAuthUtilities {
     static final private Map<String,Provider> providers = new HashMap<String,Provider>();
     static final private Map<String,String[]> infos = new HashMap<String,String[]>();
    
-    static private final String[] FREEBASE_OAUTH_INFO = { "#9202a8c04000641f80000000150979b7" , "8ded7babfad2f94f4c77e39bbd6c90f31939999b"};
+    static private final String[] FREEBASE_OAUTH_INFO = { "#9202a8c04000641f80000000185352db" , "4561ee02279e6f04ebd88a1557e4292489380adf"};
 
     static {
         Provider freebase = new FreebaseProvider(FreebaseUtils.FREEBASE_HOST);

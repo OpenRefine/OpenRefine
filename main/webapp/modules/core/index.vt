@@ -95,15 +95,14 @@
                         <div class="field-hint">use 0 if there is no header line</div>
                       </div>
 
-            <div class="field-group">
-              <div><input id="ignore-quotes-input" name="ignore-quotes" type="checkbox" />Ignore Quotation Marks </div>
-            <div class="field-hint">Ignore quotation marks,<br/>using all newlines and separators</div>
-            </div>
+                     <div class="field-group">
+                       <div><input id="ignore-quotes-input" name="ignore-quotes" type="checkbox" />Ignore Quotation Marks </div>
+                       <div class="field-hint">Ignore quotation marks,<br/>using all newlines and separators</div>
+                     </div>
                     </td>
                   </tr></table>
                 </div>
               </form>
-
 
               <form id="project-upload-form" method="post" enctype="multipart/form-data" action="/command/core/import-project" accept-charset="UTF-8" style="display:none;">
                 <div id="form-tabs-import-project" class="round-corners">
