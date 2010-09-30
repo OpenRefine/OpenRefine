@@ -413,9 +413,9 @@ ant() {
 # ----------------------------------------------------------------------------------------------
 
 dist() {
-    mac_dist $1
     windows_dist $1
     linux_dist $1
+    mac_dist $1
     
     echo "All distributions were built and are located at $REFINE_DIST_DIR"
     echo 
