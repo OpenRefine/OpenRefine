@@ -2,7 +2,7 @@ var theProject;
 var ui = {};
 
 var Refine = {
-    refineHelperService: "http://6.gridworks-helper.dfhuynh.user.dev.freebaseapps.com"
+    refineHelperService: "http://1.refine-helper.stefanomazzocchi.user.dev.freebaseapps.com/"
 };
 
 Refine.reportException = function(e) {
