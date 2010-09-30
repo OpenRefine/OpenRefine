@@ -36,8 +36,7 @@ public class FreebaseUtils {
 
     static final public String FREEBASE_HOST = "www.freebase.com";
     
-    static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/gridworks";
-    //static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/refine";
+    static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/refine";
     
     static final private String AGENT_ID = "/en/google_refine";
     
