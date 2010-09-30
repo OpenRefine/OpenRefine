@@ -44,6 +44,7 @@ Fixes:
 - Issue 126: Large integers formatted in scientific notation in formulas
 - Issue 135: Hangs when setting cell value to large JSON string
 - Issue 138: Numbers should be right-justified
+- Issue 146: In "Cluster and Edit Column", clicking on entry value to set "Merge?" checkbox does not reflect the final value of operation
 
 1.1 Release (May 27, 2010)
 
