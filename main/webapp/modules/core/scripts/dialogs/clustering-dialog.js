@@ -116,7 +116,10 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             var rowCount = 0;
             var onClick = function() {
               var parent = $(this).closest("tr");
-              parent.find("input[type='text']").val($(this).text());
+              var value = $(this).text();
+              cluster.value = value;
+              
+              parent.find("input[type='text']").val(value);
               parent.find("input:not(:checked)").attr('checked', true).change();
               return false;
             };
