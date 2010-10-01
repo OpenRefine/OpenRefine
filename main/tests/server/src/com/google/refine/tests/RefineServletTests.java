@@ -33,7 +33,7 @@ public class RefineServletTests extends RefineTest {
     //variables
     final static private String TEST_COMMAND_NAME = "test-command";
     final static private String TEST_COMMAND_PATH = "/command/core/test-command/foobar";
-    final static private String BAD_COMMAND_PATH = "/command-does-not-exist";
+    final static private String BAD_COMMAND_PATH = "/command/core/command-does-not-exist";
 
     final static private String POST = "POST";
     final static private String GET = "GET";
@@ -85,7 +85,7 @@ public class RefineServletTests extends RefineTest {
             Assert.fail();
         }
 
-        verifyGetCommandNameCalled();
+        verifyGetCommandNameCalled(3);
         try {
             verify(command,times(1)).doGet(request, response);
         } catch (ServletException e) {
@@ -108,7 +108,7 @@ public class RefineServletTests extends RefineTest {
             Assert.fail();
         }
 
-        verifyGetCommandNameCalled();
+        verifyGetCommandNameCalled(2);
         verifyError404Called();
 
     }
@@ -127,7 +127,7 @@ public class RefineServletTests extends RefineTest {
             Assert.fail();
         }
 
-        verifyGetCommandNameCalled();
+        verifyGetCommandNameCalled(3);
         try {
             verify(command,times(1)).doPost(request, response);
         } catch (ServletException e) {
@@ -150,7 +150,7 @@ public class RefineServletTests extends RefineTest {
             Assert.fail();
         }
 
-        verifyGetCommandNameCalled();
+        verifyGetCommandNameCalled(2);
         verifyError404Called();
     }
 
@@ -173,8 +173,8 @@ public class RefineServletTests extends RefineTest {
     protected void whenGetMethodThenReturn(String method){
         when(request.getMethod()).thenReturn(method);
     }
-    protected void verifyGetCommandNameCalled(){
-        verify(request,times(2)).getPathInfo();
+    protected void verifyGetCommandNameCalled(int times){
+        verify(request,times(times)).getPathInfo();
     }
     protected void verifyError404Called(){
         try {

@@ -122,6 +122,7 @@ public class ProjectManagerTests extends RefineTest {
 
         verify(metadata, times(1)).getModified();
         verify(project, times(2)).getLastSave();
+        verify(project, times(1)).dispose();
         verify(SUT, never()).saveProject(project);
         Assert.assertEquals(SUT.getProject(0), null);
         verifyNoMoreInteractions(project);
