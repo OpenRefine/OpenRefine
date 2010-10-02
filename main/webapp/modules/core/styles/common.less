@@ -1,3 +1,5 @@
+@import-less url("theme.less");
+
 html {
     font-size: 62.5%;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
@@ -146,53 +148,53 @@ img {
 }
 
 #header {
-    background: url(../images/header-background.png) repeat-x 0 0;
-    border-bottom: 1px solid #ffb800;
-    height: 32px;
-    padding-bottom: 1px;
+    height: 40px;
     position: relative;
     overflow: hidden;
+    background: white;
+    padding-left: 125px;
 }
-#logo {
-    float: left;
+#app-home-button {
+    position: absolute;
+    top: 50%;
+    margin-top: -16px;
+    left: 0px;
 }
 #path {
     position: absolute;
+    height: 40px;
     top: 50%;
     margin-top: -0.5em;
+    left: 125px;
+    right: 10px;
     line-height: 1em;
-    left: 70px;
-    height: 31px;
 }
 #path .app-path-section {
-    background: url(../images/path-delimiter.png) no-repeat center right;
-    padding: 18px 20px 20px 20px;
+    font-size: 150%;
+    margin: 0 0.5em;
+    padding: 0 0.5em;
 }
 #path a {
-    font-weight: bold;
     text-decoration: none;
-    color: #333;
 }
 #path a:hover {
     text-decoration: underline;
 }
 
-#path a.permalink {
-    padding: 18px 20px 20px 10px;
-    color: #ff6a00;
-}
-
-#footer {
-    font-size: 85%;
-    padding: 1em 0;
-    color: #666;
-    text-align: center;
-    border-top: 1px solid #ccc;
-}
-#footer a {
-    color: #448;
-}
-
 #body {
 }
 
+a.app-menu-button, #path a.app-menu-button {
+    text-decoration: none;
+    font-weight: bold;
+    padding: 4px 8px;
+    color: black;
+    background: #eee;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    cursor: pointer;
+}
+a.app-menu-button:hover, #path a.app-menu-button:hover {
+    text-decoration: none;
+    background: #white;
+}

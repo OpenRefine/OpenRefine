@@ -1,7 +1,7 @@
 var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
-var bundle = true;
+var bundle = false;
 
 var templatedFiles = {
     // Requests with last path segments mentioned here 
@@ -169,10 +169,10 @@ function init() {
         module,
         [
             "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
-            "styles/common.css",
+            "styles/common.less",
             "styles/freebase.css",
-            "styles/index.css",
-            "styles/jquery-ui-overrides.css"
+            "styles/index.less",
+            "styles/jquery-ui-overrides.less"
         ]
     );
     
@@ -205,7 +205,8 @@ function init() {
             "scripts/widgets/histogram-widget.js",
             "scripts/widgets/slider-widget.js",
 
-            "scripts/project/menu-bar.js",
+            "scripts/project/extension-bar.js",
+            "scripts/project/exporters.js",
             "scripts/project/browsing-engine.js",
             "scripts/project/scripting.js",
 
@@ -250,35 +251,35 @@ function init() {
             "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
             "externals/imgareaselect/css/imgareaselect-default.css",
     
-            "styles/common.css",
-            "styles/jquery-ui-overrides.css",
+            "styles/common.less",
+            "styles/jquery-ui-overrides.less",
     
-            "styles/util/menu.css",
-            "styles/util/dialog.css",
-            "styles/util/custom-suggest.css",
+            "styles/util/menu.less",
+            "styles/util/dialog.less",
+            "styles/util/custom-suggest.less",
 
-            "styles/project.css",
-            "styles/project/browsing.css",
-            "styles/project/process.css",
-            "styles/project/menu-bar.css",
+            "styles/project.less",
+            "styles/project/browsing.less",
+            "styles/project/process.less",
+            "styles/project/extension-bar.less",
             
-            "styles/widgets/history.css",
-            "styles/widgets/histogram-widget.css",
-            "styles/widgets/slider-widget.css",
+            "styles/widgets/history.less",
+            "styles/widgets/histogram-widget.less",
+            "styles/widgets/slider-widget.less",
             
-            "styles/views/data-table-view.css",
+            "styles/views/data-table-view.less",
             
-            "styles/dialogs/expression-preview-dialog.css",
-            "styles/dialogs/clustering-dialog.css",
-            "styles/dialogs/scatterplot-dialog.css",
-            "styles/dialogs/freebase-loading-dialog.css",
-            "styles/dialogs/extend-data-preview-dialog.css",
-            "styles/dialogs/column-reordering-dialog.css",
+            "styles/dialogs/expression-preview-dialog.less",
+            "styles/dialogs/clustering-dialog.less",
+            "styles/dialogs/scatterplot-dialog.less",
+            "styles/dialogs/freebase-loading-dialog.less",
+            "styles/dialogs/extend-data-preview-dialog.less",
+            "styles/dialogs/column-reordering-dialog.less",
             
-            "styles/reconciliation/recon-dialog.css",
-            "styles/reconciliation/standard-service-panel.css",
+            "styles/reconciliation/recon-dialog.less",
+            "styles/reconciliation/standard-service-panel.less",
             
-            "styles/protograph/schema-alignment-dialog.css"
+            "styles/protograph/schema-alignment-dialog.less"
         ]
     );
     
@@ -302,9 +303,9 @@ function init() {
             "externals/suggest/css/suggest-1.2.min.css",
             "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
             
-            "styles/common.css",
-            "styles/jquery-ui-overrides.css",
-            "styles/preferences.css"
+            "styles/common.less",
+            "styles/jquery-ui-overrides.less",
+            "styles/preferences.less"
         ]
     );
 }

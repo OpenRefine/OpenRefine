@@ -14,30 +14,32 @@ Refine.reportException = function(e) {
 function resize() {
     var header = $("#header");
     
-    ui.menuBarContainer.css("top", header.outerHeight() + "px");
-
     var leftPanelWidth = 300;
-    var leftPanelMargin = 7;
     var width = $(window).width();
-    var top = ui.menuBarContainer.offset().top + ui.menuBarContainer.outerHeight();
+    var top = $("#header").outerHeight();
     var height = $(window).height() - top;
     
-    ui.viewPanel
+    ui.leftPanel
+        .css("top", top + "px")
+        .css("left", "0px")
+        .css("height", height + "px")
+        .css("width", leftPanelWidth + "px");
+        
+    var leftPanelPaddings = ui.leftPanel.outerHeight(true) - ui.leftPanel.height();
+    var leftPanelTabsPaddings = ui.leftPanelTabs.outerHeight(true) - ui.leftPanelTabs.height();
+    ui.leftPanelTabs.height(ui.leftPanel.height() - leftPanelTabsPaddings - leftPanelPaddings);
+    
+    var rightPanelVPaddings = ui.rightPanel.outerHeight(true) - ui.rightPanel.height();
+    var rightPanelHPaddings = ui.rightPanel.outerWidth(true) - ui.rightPanel.width();
+    ui.rightPanel
         .css("top", top + "px")
         .css("left", leftPanelWidth + "px")
-        .css("height", height + "px")
-        .css("width", (width - leftPanelWidth) + "px");
+        .css("height", (height - rightPanelVPaddings) + "px")
+        .css("width", (width - leftPanelWidth - rightPanelHPaddings) + "px");
     
-    ui.leftPanel
-        .css("top", (top + leftPanelMargin) + "px")
-        .css("left", leftPanelMargin + "px")
-        .css("height", (height - 2 * leftPanelMargin) + "px")
-        .css("width", (leftPanelWidth - 2 * leftPanelMargin) + "px");
-        
-    var leftPanelTabsPaddings = ui.leftPanelTabs.outerHeight(true) - ui.leftPanelTabs.innerHeight();
-    ui.leftPanelTabs
-        .height(ui.leftPanel.height() - leftPanelTabsPaddings);
-        
+    
+    ui.viewPanel.height((height - ui.toolPanel.outerHeight() - rightPanelVPaddings) + "px");
+    
     var processPanelWidth = 400;
     ui.processPanel
         .css("width", processPanelWidth + "px")
@@ -49,7 +51,7 @@ function resizeTabs() {
     var headerHeight = ui.leftPanelTabs.find(".ui-tabs-nav").outerHeight(true);
     
     var visibleTabPanels = ui.leftPanelTabs.find(".ui-tabs-panel:not(.ui-tabs-hide)");
-    var paddings = visibleTabPanels.innerHeight(true) - visibleTabPanels.height();
+    var paddings = visibleTabPanels.outerHeight(true) - visibleTabPanels.height();
     
     var allTabPanels = ui.leftPanelTabs.find(".ui-tabs-panel");
     allTabPanels.height(totalHeight - headerHeight - paddings - 1);
@@ -59,7 +61,7 @@ function resizeAll() {
     resize();
     resizeTabs();
     
-    ui.menuBar.resize();
+    ui.extensionBar.resize();
     ui.browsingEngine.resize();
     ui.processWidget.resize();
     ui.historyWidget.resize();
@@ -67,34 +69,21 @@ function resizeAll() {
 }
 
 function initializeUI(uiState) {
-    var path = $("#path");
-    $('<span class="app-path-section" id="project-name-in-path"></span>').appendTo(path);
-    $('<a href="javascript:{}" class="permalink">permalink</a>')
-        .mouseenter(function() {
-            this.href = Refine.getPermanentLink();
-        }).appendTo(path);
+    $("#loading-message").hide();
+    $("#header-layout").show();
+    $("#body").show();
+    
+    $('#project-name-button').click(Refine._renameProject);
+    $('#project-permalink-button').mouseenter(function() {
+        this.href = Refine.getPermanentLink();
+    });
     
     Refine.setTitle();
 
-    var body = $("#body").empty().html(
-        '<div bind="viewPanel" class="view-panel"></div>' +
-        '<div bind="processPanel" class="process-panel"></div>' +
-        '<div bind="leftPanel" class="left-panel">' +
-            '<div bind="leftPanelTabs" class="refine-tabs">' +
-                '<ul>' +
-                    '<li><a href="#refine-tabs-facets">Facet/Filter</a></li>' +
-                    '<li><a href="#refine-tabs-history" bind="historyTabHeader">Undo/Redo</a></li>' +
-                '</ul>' +
-                '<div id="refine-tabs-facets" bind="facetPanel" class="facet-panel"></div>' +
-                '<div id="refine-tabs-history" bind="historyPanel" class="history-panel"></div>' +
-            '</div>' +
-        '</div>' +
-        '<div class="menu-bar-container" bind="menuBarContainer"><div bind="menuBarPanel" class="menu-bar"></div></div>'
-    );
-    ui = DOM.bind(body);
+    ui = DOM.bind($("#body"));
     
-    ui.menuBarContainer.css("top", $("#header").outerHeight() + "px");
-    ui.menuBar = new MenuBar(ui.menuBarPanel); // construct the menu first so we can resize everything else
+    ui.extensionBar = new ExtensionBar(ui.extensionBar); // construct the menu first so we can resize everything else
+    ui.exporterManager = new ExporterManager($("#export-button"));
     
     ui.leftPanelTabs.tabs({ selected: 0 });
     resize();
@@ -127,10 +116,7 @@ Refine.setTitle = function(status) {
     }
     document.title = title;
     
-    var name = $("#project-name-in-path");
-    name.empty();
-    name.text('project: ');
-    $('<a href="#">' + theProject.metadata.name + '</a>').appendTo(name);
+    $("#project-name-button").text(theProject.metadata.name);
 };
 
 Refine.reinitializeProjectData = function(f) {
@@ -149,6 +135,33 @@ Refine.reinitializeProjectData = function(f) {
         },
         f
     );
+};
+
+Refine._renameProject = function() {
+    var name = window.prompt("Rename Project", theProject.metadata.name);
+    if (name == null) {
+        return;
+    }
+
+    name = $.trim(name);
+    if (theProject.metadata.name == name || name.length == 0) {
+        return;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/command/core/rename-project",
+        data: { "project" : theProject.id, "name" : name },
+        dataType: "json",
+        success: function (data) {
+            if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                theProject.metadata.name = name;
+                Refine.setTitle();
+            } else {
+                alert("Failed to rename project: " + data.message);
+            }
+        }
+    });
 };
 
 /*

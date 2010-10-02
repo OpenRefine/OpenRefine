@@ -1,0 +1,101 @@
+@import-less url("theme.less");
+
+body {
+    background: white;
+}
+
+#body {
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+#header-layout {
+    display: none;
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+}
+#header-layout > tbody > tr > td {
+    padding: 0;
+}
+#header-layout-right {
+    text-align: right;
+}
+
+#project-name-button {
+  :hover {
+    background: #fffee0;
+  }
+}
+
+#project-permalink-button {
+}
+
+#loading-message {
+    text-align: center;
+    font-size: 300%;
+    color: #aaa;
+    padding: 1in;
+    font-style: italic;
+}
+
+#left-panel {
+    position: fixed;
+    overflow: hidden;
+    padding: 0px;
+    padding-top: @padding_tight;
+    font-size: 11px;
+    background: @fill_normal;
+}
+#right-panel {
+    position: fixed;
+    overflow: hidden;
+    padding: 0px;
+    padding-left: @padding_tight;
+    font-size: 11px;
+    background: @fill_accent;
+}
+
+#tool-panel {
+    padding: @padding_tight @padding_tight @padding_tight 0;
+}
+
+#tool-panel-layout {
+    width: 100%;
+    border-collapse: collapse;
+}
+#tool-panel-layout > tbody > tr >td {
+    padding: 0px;
+}
+
+#summary-bar-container {
+    padding: @padding_tight 0;
+}
+
+#extension-bar-container {
+    text-align: right;
+}
+
+#extension-bar {
+    padding: @padding_tight 0;
+}
+
+#view-panel {
+    background: white;
+    overflow: hidden;
+}
+#left-panel .refine-tabs.ui-tabs .ui-tabs-panel {
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    padding: @padding_loose;
+    overflow: hidden;
+}
+
+#facet-panel {
+    overflow: auto;
+}
+#history-panel {
+    overflow: auto;
+}

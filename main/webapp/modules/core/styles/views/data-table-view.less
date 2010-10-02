@@ -1,3 +1,5 @@
+@import-less url("../theme.less");
+
 .viewPanel-summary-row-count {
     font-size: 150%;
     font-weight: bold;
@@ -16,7 +18,7 @@ a.viewPanel-pagingControls-page.inaction {
 }
 
 .data-table-container {
-    border: 1px solid #ccc;
+    border-top: 1px solid @line_accent;
     overflow: auto;
 }
 
@@ -53,7 +55,8 @@ table.data-table td.column-header {
     background: #e8e8e8;
     cursor: pointer;
     padding: 5px 5px;
-    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: double #ccc;
     white-space: pre;
     font-weight: bold;
 }

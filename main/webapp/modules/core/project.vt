@@ -14,12 +14,42 @@
 </head>
 <body>
     <div id="header">
-        <a id="logo" href="http://www.freebase.com/" title="Freebase"><img alt="Freebase" src="images/freebase-headerlogo.png" /></a>
-        <div id="path"><span class="app-path-section"><a href="./">Google Refine</a></span></div>
+      <a id="app-home-button" href="./"><img alt="Google Refine" src="images/google-refine-home-button.png" /></a>
+      <div id="path"><table id="header-layout"><tr>
+        <td id="header-layout-left">
+          <span id="project-name-button" class="app-path-section" title="Click to rename project"></span>
+          <a id="project-permalink-button" href="javascript:{}" class="permalink">Permalink</a></td>
+        <td id="header-layout-right">
+          <a class="app-menu-button" bind="exportButton" id="export-button" href="#export">Export</a>
+        </td></tr>
+      </table></div>
     </div>
     
+    <div id="loading-message"><img src="images/large-spinner.gif" /> starting up ...</div>
+    
     <div id="body">
-        <div id="loading-message"><img src="images/large-spinner.gif" /> starting up ...</div>
+      <div bind="leftPanel" id="left-panel">
+        <div bind="leftPanelTabs" class="refine-tabs">
+          <ul>
+            <li><a href="#refine-tabs-facets">Facet/Filter</a></li>
+            <li><a href="#refine-tabs-history" bind="historyTabHeader">Undo/Redo</a></li>
+          </ul>
+          <div id="refine-tabs-facets" bind="facetPanel" id="facet-panel"></div>
+          <div id="refine-tabs-history" bind="historyPanel" id="history-panel"></div>
+        </div>
+      </div>
+      <div bind="rightPanel" id="right-panel">
+        <div bind="toolPanel" id="tool-panel"><table id="tool-panel-layout"><tr>
+          <td id="summary-bar-container"><div bind="summaryBar" id="summary-bar">
+            <!-- row/record counts displayed here-->
+          </div></td>
+          <td id="extension-bar-container"><div bind="extensionBar" id="extension-bar">Extensions:&nbsp;<span bind="menuContainer" id="extension-bar-menu-container"></span>&nbsp;<a>Customize...</a></div></td>
+        </tr></table></div>
+        
+        <div bind="viewPanel" id="view-panel"></div>
+      </div>
+        
+      <div bind="processPanel" id="process-panel"></div>
     </div>
 </body>
 </html>

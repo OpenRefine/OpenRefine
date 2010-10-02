@@ -1,3 +1,5 @@
+@import-less url("theme.less");
+
 .refine-tabs.ui-tabs {
     padding: 0;
 }
@@ -9,7 +11,7 @@
     color: inherit;
 }
 .refine-tabs.ui-tabs .ui-tabs-nav {
-    padding: 0;
+    padding: 0 @padding_normal;
 }
 .refine-tabs.ui-tabs .ui-widget-header {
     background: none;
@@ -26,35 +28,46 @@
 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-state-default, 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-default {
-    background: #C5D1D4;
+    background: none;
+    border: none;
 }
 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-state-default a, 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-state-default a:link, 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-state-default a:visited {
-    color: black;
+    color: @link_color;
+    font-weight: normal;
 }
 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-state-active, 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-active {
-    background: #DBE8EB;
-    border: none;
+    margin-top: 1px;
+    border: 1px solid @line_accent;
+    border-bottom: none;
+    background: white;
     color: black;
+    font-weight: bold;
 }
 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-state-active a, 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-state-active a:link, 
 .refine-tabs.ui-tabs .ui-tabs-nav .ui-state-active a:visited {
     color: black;
+    font-weight: bold;
+}
+
+.refine-tabs.ui-tabs .ui-corner-top {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.refine-tabs.ui-tabs .ui-corner-bottom {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .refine-tabs.ui-tabs .ui-tabs-panel {
     margin: 0px;
     padding: 15px;
-    border: 1px solid #DBE8EB;
-    background: #DBE8EB;
-    -moz-border-radius: 7px;
-    -webkit-border-radius: 7px;
-    -moz-border-radius-topleft: 0px;
-    -webkit-border-top-left-radius: 0px;
+    border: 1px solid @line_accent;
+    background: white;
 }
