@@ -84,7 +84,12 @@ public class XmlImporterTests extends RefineTest {
         RunTest(getMixedElementSample());
 
         log(project);
-        assertProjectCreated(project, 0, 0); //nothing imported
+        assertProjectCreated(project, 4, 6);
+        
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
     }
 
     @Test

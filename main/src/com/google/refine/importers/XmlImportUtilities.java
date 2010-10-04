@@ -181,11 +181,6 @@ public class XmlImportUtilities extends TreeImportUtilities {
             // e.printStackTrace();
         }
 
-        if (textNodeCount > 0 && childElementNodeCount > 0) {
-            // This is a mixed element
-            return null;
-        }
-
         if (immediateChildCandidateMap.size() > 0) {
             List<RecordElementCandidate> immediateChildCandidates = new ArrayList<RecordElementCandidate>(immediateChildCandidateMap.size());
             for (Entry<String, Integer> entry : immediateChildCandidateMap.entrySet()) {
