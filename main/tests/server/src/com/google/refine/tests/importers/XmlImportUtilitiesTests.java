@@ -396,7 +396,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
     public void ParserSkip(){
         try {
-            if(parser.getEventType() == TreeParserToken.StartDocument){
+            if(parser.getEventType() == TreeParserToken.Ignorable){
                 parser.next(); //move parser forward once e.g. skip the START_DOCUMENT parser event
             }
         } catch (ServletException e1) {

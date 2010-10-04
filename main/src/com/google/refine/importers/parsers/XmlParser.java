@@ -45,20 +45,25 @@ public class XmlParser implements TreeParser{
             throw new ServletException(e);
         }
         
-        return convertToTreeParserToken(currentToken);
+        return mapToTreeParserToken(currentToken);
     }
     
-    protected TreeParserToken convertToTreeParserToken(int token) throws ServletException {
+    protected TreeParserToken mapToTreeParserToken(int token) throws ServletException {
         switch(token){
-            //Xml does not have StartArray element type
-            //Xml does not have EndArray element type
             case XMLStreamConstants.START_ELEMENT: return TreeParserToken.StartEntity;
             case XMLStreamConstants.END_ELEMENT: return TreeParserToken.EndEntity;
             case XMLStreamConstants.CHARACTERS: return TreeParserToken.Value;
-            case XMLStreamConstants.START_DOCUMENT: return TreeParserToken.StartDocument;
-            case XMLStreamConstants.END_DOCUMENT: return TreeParserToken.EndDocument;
-            
-            //TODO
+            case XMLStreamConstants.START_DOCUMENT: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.END_DOCUMENT: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.SPACE: return TreeParserToken.Value;
+            case XMLStreamConstants.PROCESSING_INSTRUCTION: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.NOTATION_DECLARATION: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.NAMESPACE: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.ENTITY_REFERENCE: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.DTD: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.COMMENT: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.CDATA: return TreeParserToken.Ignorable;
+            case XMLStreamConstants.ATTRIBUTE: return TreeParserToken.Ignorable;
             default:
                 return TreeParserToken.Ignorable;
         }
@@ -66,7 +71,7 @@ public class XmlParser implements TreeParser{
     
     @Override
     public TreeParserToken getEventType() throws ServletException{
-        return this.convertToTreeParserToken(parser.getEventType());
+        return this.mapToTreeParserToken(parser.getEventType());
     }
     
     @Override

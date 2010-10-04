@@ -59,7 +59,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      */
     static protected List<String> detectRecordElement(TreeParser parser, String tag) throws ServletException {
         try{
-            if(parser.getEventType() == TreeParserToken.StartDocument)//XMLStreamConstants.START_DOCUMENT)
+            if(parser.getEventType() == TreeParserToken.Ignorable)//XMLStreamConstants.START_DOCUMENT)
                 parser.next();
 
             String localName = parser.getLocalName();
@@ -271,7 +271,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
     ) throws ServletException {
         logger.trace("findRecord(Project, TreeParser, String[], int, ImportColumnGroup");
         
-        if(parser.getEventType() == TreeParserToken.StartDocument){//XMLStreamConstants.START_DOCUMENT){
+        if(parser.getEventType() == TreeParserToken.Ignorable){//XMLStreamConstants.START_DOCUMENT){
             logger.warn("Cannot use findRecord method for START_DOCUMENT event");
             return;
         }
@@ -360,7 +360,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
     ) throws ServletException {
         logger.trace("processSubRecord(Project,TreeParser,ImportColumnGroup,ImportRecord)");
         
-        if(parser.getEventType() == TreeParserToken.StartDocument)
+        if(parser.getEventType() == TreeParserToken.Ignorable)
             return;
         
         ImportColumnGroup thisColumnGroup = getColumnGroup(
