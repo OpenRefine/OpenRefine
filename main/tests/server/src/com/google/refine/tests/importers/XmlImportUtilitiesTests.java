@@ -18,7 +18,9 @@ import org.testng.annotations.Test;
 import com.google.refine.importers.TreeImportUtilities.ImportColumn;
 import com.google.refine.importers.TreeImportUtilities.ImportColumnGroup;
 import com.google.refine.importers.TreeImportUtilities.ImportRecord;
+import com.google.refine.importers.parsers.JSONParser;
 import com.google.refine.importers.parsers.TreeParser;
+import com.google.refine.importers.parsers.TreeParserToken;
 import com.google.refine.importers.parsers.XmlParser;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -63,10 +65,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectPathFromTagTest(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
+    public void detectPathFromTagXmlTest(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
+
         String tag = "library";
-        createParser();
+        createXmlParser();
 
         String[] response = XmlImportUtilitiesStub.detectPathFromTag(parser, tag);
         Assert.assertNotNull(response);
@@ -75,11 +78,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectPathFromTagWithNestedElement(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
+    public void detectPathFromTagWithNestedElementXml(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         String tag = "book";
 
-        createParser();
+        createXmlParser();
 
         String[] response = XmlImportUtilitiesStub.detectPathFromTag(parser, tag);
         Assert.assertNotNull(response);
@@ -89,9 +92,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectRecordElementTest(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        createParser();
+    public void detectRecordElementXmlTest(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
+        createXmlParser();
 
         String tag="library";
 
@@ -107,9 +110,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectRecordElementCanHandleWithNestedElements(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        createParser();
+    public void detectRecordElementCanHandleWithNestedElementsXml(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
+        createXmlParser();
 
         String tag="book";
 
@@ -126,9 +129,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectRecordElementIsNullForUnfoundTag(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        createParser();
+    public void detectRecordElementIsNullForUnfoundTagXml(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
+        createXmlParser();
 
         String tag="";
 
@@ -142,7 +145,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectRecordElementRegressionTest(){
+    public void detectRecordElementRegressionXmlTest(){
         loadSampleXml();
 
         String[] path = XmlImportUtilitiesStub.detectRecordElement(new XmlParser(inputStream));
@@ -151,9 +154,20 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertEquals(path[0], "library");
         Assert.assertEquals(path[1], "book");
     }
+    
+    @Test
+    public void detectRecordElementRegressionJsonTest(){
+        loadSampleJson();
+
+        String[] path = XmlImportUtilitiesStub.detectRecordElement(new JSONParser(inputStream));
+        Assert.assertNotNull(path);
+        Assert.assertEquals(path.length, 2);
+        Assert.assertEquals(path[0], "__anonymous__");
+        Assert.assertEquals(path[1], "__anonymous__");
+    }
 
     @Test
-    public void importXmlTest(){
+    public void importTreeDataXmlTest(){
         loadSampleXml();
 
         String[] recordPath = new String[]{"library","book"};
@@ -174,7 +188,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
     @Test
     public void importXmlWithVaryingStructureTest(){
-        loadXml(XmlImporterTests.getSampleWithVaryingStructure());
+        loadData(XmlImporterTests.getSampleWithVaryingStructure());
 
         String[] recordPath = new String[]{"library", "book"};
         XmlImportUtilitiesStub.importTreeData(new XmlParser(inputStream), project, recordPath, columnGroup);
@@ -221,9 +235,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void findRecordTest(){
+    public void findRecordTestXml(){
         loadSampleXml();
-        createParser();
+        createXmlParser();
         ParserSkip();
 
         String[] recordPath = new String[]{"library","book"};
@@ -243,9 +257,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void processRecordTest(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        createParser();
+    public void processRecordTestXml(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
+        createXmlParser();
         ParserSkip();
 
         try {
@@ -264,9 +278,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void processRecordTestDuplicateColumns(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><author>author2</author><genre>genre1</genre></book></library>");
-        createParser();
+    public void processRecordTestDuplicateColumnsXml(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><authors><author>author1</author><author>author2</author></authors><genre>genre1</genre></book></library>");
+        createXmlParser();
         ParserSkip();
 
         try {
@@ -289,9 +303,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void processRecordTestNestedElement(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>author1</author-name><author-dob>a date</author-dob></author><genre>genre1</genre></book></library>");
-        createParser();
+    public void processRecordTestNestedElementXml(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>author1</author-name><author-dob>a date</author-dob></author><genre>genre1</genre></book></library>");
+        createXmlParser();
         ParserSkip();
 
         try {
@@ -313,9 +327,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
 
     @Test
-    public void processSubRecordTest(){
-        loadXml("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
-        createParser();
+    public void processSubRecordTestXml(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
+        createXmlParser();
         ParserSkip();
 
         try {
@@ -365,10 +379,14 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
     //----------------helpers-------------
     public void loadSampleXml(){
-        loadXml( XmlImporterTests.getSample() );
+        loadData( XmlImporterTests.getSample() );
+    }
+    
+    public void loadSampleJson(){
+        loadData( JsonImporterTests.getSample() );
     }
 
-    public void loadXml(String xml){
+    public void loadData(String xml){
         try {
             inputStream = new ByteArrayInputStream( xml.getBytes( "UTF-8" ) );
         } catch (UnsupportedEncodingException e1) {
@@ -378,13 +396,18 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
     public void ParserSkip(){
         try {
-            parser.next(); //move parser forward once e.g. skip the START_DOCUMENT parser event
+            if(parser.getEventType() == TreeParserToken.StartDocument){
+                parser.next(); //move parser forward once e.g. skip the START_DOCUMENT parser event
+            }
         } catch (ServletException e1) {
             Assert.fail();
         }
     }
 
-    public void createParser(){
-            parser = new XmlParser(inputStream);
+    public void createXmlParser(){
+        parser = new XmlParser(inputStream);
+    }
+    public void createJsonParser(){
+        parser = new JSONParser(inputStream);
     }
 }

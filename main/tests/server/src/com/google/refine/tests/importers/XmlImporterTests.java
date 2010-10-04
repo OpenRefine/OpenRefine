@@ -140,8 +140,10 @@ public class XmlImporterTests extends RefineTest {
 
     public static String getElementWithDuplicateSubElement(int id){
         return "<book id=\"" + id + "\">" +
+        "<authors>" +
         "<author>Author " + id + ", The</author>" +
         "<author>Author " + id + ", Another</author>" +
+        "</authors>" +
         "<title>Book title " + id + "</title>" +
         "<publish_date>2010-05-26</publish_date>" +
         "</book>";

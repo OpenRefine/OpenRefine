@@ -168,8 +168,6 @@ public abstract class TreeImportUtilities {
                 row.add(null);
             }
 
-            logger.trace("Adding cell with value : \"" + value + "\" to row : " + rowIndex + " at cell index : " + (cellIndex-1));
-
             row.set(cellIndex, new Cell(value, null));
 
             column.nextRowIndex = rowIndex + 1;

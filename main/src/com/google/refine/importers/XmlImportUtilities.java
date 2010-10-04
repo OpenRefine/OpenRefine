@@ -110,7 +110,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         try {
             while (parser.hasNext()) {
                 TreeParserToken eventType = parser.next();
-                if (eventType == TreeParserToken.StartEntity){ //XMLStreamConstants.START_ELEMENT) {
+                if (eventType == TreeParserToken.StartEntity) {
                     RecordElementCandidate candidate =
                         detectRecordElement(
                             parser,
@@ -146,13 +146,17 @@ public class XmlImportUtilities extends TreeImportUtilities {
         try {
             while (parser.hasNext()) {
                 TreeParserToken eventType = parser.next();
-                if (eventType == TreeParserToken.EndEntity) {//XMLStreamConstants.END_ELEMENT) {
+                if (eventType == TreeParserToken.EndEntity ) {
                     break;
-                } else if (eventType == TreeParserToken.Value) {//XMLStreamConstants.CHARACTERS) {
-                    if (parser.getText().trim().length() > 0) {
-                        textNodeCount++;
+                } else if (eventType == TreeParserToken.Value) {
+                    try{
+                        if (parser.getText().trim().length() > 0) {
+                            textNodeCount++;
+                        }
+                    }catch(Exception e){
+                        //silent
                     }
-                } else if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
+                } else if (eventType == TreeParserToken.StartEntity) {
                     childElementNodeCount++;
 
                     String tagName = parser.getLocalName();
@@ -234,15 +238,15 @@ public class XmlImportUtilities extends TreeImportUtilities {
         String[] recordPath,
         ImportColumnGroup rootColumnGroup
     ) {
+        logger.trace("importTreeData(TreeParser, Project, String[], ImportColumnGroup)");
         try {
             while (parser.hasNext()) {
                 TreeParserToken eventType = parser.next();
-                if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
+                if (eventType == TreeParserToken.StartEntity) {
                     findRecord(project, parser, recordPath, 0, rootColumnGroup);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             // silent
         }
     }
@@ -265,18 +269,21 @@ public class XmlImportUtilities extends TreeImportUtilities {
         int pathIndex,
         ImportColumnGroup rootColumnGroup
     ) throws ServletException {
-        if(parser.getEventType() == TreeParserToken.EndDocument){//XMLStreamConstants.START_DOCUMENT){
+        logger.trace("findRecord(Project, TreeParser, String[], int, ImportColumnGroup");
+        
+        if(parser.getEventType() == TreeParserToken.StartDocument){//XMLStreamConstants.START_DOCUMENT){
             logger.warn("Cannot use findRecord method for START_DOCUMENT event");
             return;
         }
+        
         String tagName = parser.getLocalName();
         if (tagName.equals(recordPath[pathIndex])) {
             if (pathIndex < recordPath.length - 1) {
                 while (parser.hasNext()) {
                     TreeParserToken eventType = parser.next();
-                    if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
+                    if (eventType == TreeParserToken.StartEntity) {
                         findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup);
-                    } else if (eventType == TreeParserToken.EndEntity) {//XMLStreamConstants.END_ELEMENT) {
+                    } else if (eventType == TreeParserToken.EndEntity ) {
                         break;
                     }
                 }
@@ -312,6 +319,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         TreeParser parser,
         ImportColumnGroup rootColumnGroup
     ) throws ServletException {
+        logger.trace("processRecord(Project,TreeParser,ImportColumnGroup)");
         ImportRecord record = new ImportRecord();
 
         processSubRecord(project, parser, rootColumnGroup, record);
@@ -350,13 +358,18 @@ public class XmlImportUtilities extends TreeImportUtilities {
         ImportColumnGroup columnGroup,
         ImportRecord record
     ) throws ServletException {
+        logger.trace("processSubRecord(Project,TreeParser,ImportColumnGroup,ImportRecord)");
+        
+        if(parser.getEventType() == TreeParserToken.StartDocument)
+            return;
+        
         ImportColumnGroup thisColumnGroup = getColumnGroup(
-                project,
-                columnGroup,
-                composeName(parser.getPrefix(), parser.getLocalName()));
-
+                    project,
+                    columnGroup,
+                    composeName(parser.getPrefix(), parser.getLocalName()));
+        
         thisColumnGroup.nextRowIndex = Math.max(thisColumnGroup.nextRowIndex, columnGroup.nextRowIndex);
-
+        
         int attributeCount = parser.getAttributeCount();
         for (int i = 0; i < attributeCount; i++) {
             String text = parser.getAttributeValue(i).trim();
@@ -373,7 +386,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
         while (parser.hasNext()) {
             TreeParserToken eventType = parser.next();
-            if (eventType == TreeParserToken.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
+            if (eventType == TreeParserToken.StartEntity) {
                 processSubRecord(
                     project,
                     parser,
@@ -382,17 +395,21 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 );
             } else if (//eventType == XMLStreamConstants.CDATA ||
                         eventType == TreeParserToken.Value) { //XMLStreamConstants.CHARACTERS) {
-                String text = parser.getText().trim();
-                if (text.length() > 0) {
-                    addCell(
-                        project,
-                        thisColumnGroup,
-                        record,
-                        null,
-                        parser.getText()
-                    );
+                String text = parser.getText();
+                String colName = parser.getLocalName();
+                if(text != null){
+                    text = text.trim();
+                    if (text.length() > 0) {
+                        addCell(
+                                project,
+                                thisColumnGroup,
+                                record,
+                                colName,
+                                parser.getText()
+                        );
+                    }
                 }
-            } else if (eventType == TreeParserToken.EndEntity) { //XMLStreamConstants.END_ELEMENT) {
+            } else if (eventType == TreeParserToken.EndEntity) {
                 break;
             }
         }

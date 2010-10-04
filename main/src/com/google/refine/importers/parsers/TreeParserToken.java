@@ -8,5 +8,5 @@ public enum TreeParserToken {
     StartEntity,
     EndEntity,
     Value
-    //TODO
+    //append additional tokens as necessary (most are just mapped to Value or Ignorable)
 }

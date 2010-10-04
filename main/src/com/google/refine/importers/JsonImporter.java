@@ -62,7 +62,6 @@ public class JsonImporter implements StreamImporter{
 
         if (recordPath == null)
             return;
-
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         XmlImportUtilities.importTreeData(new JSONParser(pis), project, recordPath, rootColumnGroup);
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);

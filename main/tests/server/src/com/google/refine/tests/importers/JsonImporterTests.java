@@ -16,6 +16,8 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.JsonImporter;
+import com.google.refine.importers.parsers.JSONParser;
+import com.google.refine.importers.parsers.TreeParserToken;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
@@ -102,7 +104,7 @@ public class JsonImporterTests extends RefineTest {
         log(project);
         assertProjectCreated(project, 5, 6);
 
-        Assert.assertEquals( project.columnModel.getColumnByCellIndex(5).getName(), "book - genre");
+        Assert.assertEquals( project.columnModel.getColumnByCellIndex(5).getName(), "__anonymous__ - genre");
 
         Row row0 = project.rows.get(0);
         Assert.assertNotNull(row0);
@@ -120,11 +122,86 @@ public class JsonImporterTests extends RefineTest {
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.columnGroups.size(),1);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).keyColumnIndex, 2);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).startColumnIndex, 2);
+        Assert.assertEquals(project.columnModel.columnGroups.get(0).keyColumnIndex, 3);
+        Assert.assertEquals(project.columnModel.columnGroups.get(0).startColumnIndex, 3);
         Assert.assertNull(project.columnModel.columnGroups.get(0).parentGroup);
         Assert.assertEquals(project.columnModel.columnGroups.get(0).subgroups.size(),0);
         Assert.assertEquals(project.columnModel.columnGroups.get(0).columnSpan,2);
+    }
+    
+    
+    /**
+     * org.codehaus.Jackson.JsonParser has an inconsistency when returning getLocalName
+     * of an Entity_Start token which occurs after a Field_Name token
+     */
+    @Test
+    public void EnsureJSONParserHandlesgetLocalNameCorrectly() throws Exception{
+        String sampleJson = "{\"field\":\"value\"}";
+        String sampleJson2 = "{\"field\":{}}";
+        String sampleJson3 = "{\"field\":[{},{}]}";
+        
+        JSONParser parser = new JSONParser(new ByteArrayInputStream( sampleJson.getBytes( "UTF-8" ) ));
+        TreeParserToken token = TreeParserToken.Ignorable;
+        int i = 0;
+        try{
+            while(token != null){
+                token = parser.next();
+                if(token == null)
+                    break;
+                i++;
+                if(i == 3){
+                    Assert.assertEquals(TreeParserToken.Value, token);
+                    Assert.assertEquals("field", parser.getLocalName());
+                }
+            }
+        }catch(Exception e){
+            //silent
+        }
+        
+        
+        parser = new JSONParser(new ByteArrayInputStream( sampleJson2.getBytes( "UTF-8" ) ) );
+        token = TreeParserToken.Ignorable;
+        i = 0;
+        try{
+            while(token != null){
+                token = parser.next();
+                if(token == null)
+                    break;
+                i++;
+                if(i == 3){
+                    Assert.assertEquals(TreeParserToken.StartEntity, token);
+                    Assert.assertEquals(parser.getLocalName(), "field");
+                }
+            }
+        }catch(Exception e){
+            //silent
+        }
+        
+        parser = new JSONParser(new ByteArrayInputStream( sampleJson3.getBytes( "UTF-8" ) ) );
+        token = TreeParserToken.Ignorable;
+        i = 0;
+        try{
+            while(token != null){
+                token = parser.next();
+                if(token == null)
+                    break;
+                i++;
+                if(i == 3){
+                    Assert.assertEquals(token, TreeParserToken.StartEntity);
+                    Assert.assertEquals(parser.getLocalName(), "field");
+                }
+                if(i == 4){
+                    Assert.assertEquals(token, TreeParserToken.StartEntity);
+                    Assert.assertEquals(parser.getLocalName(), "__anonymous__");
+                }
+                if(i == 6){
+                    Assert.assertEquals(token, TreeParserToken.StartEntity);
+                    Assert.assertEquals(parser.getLocalName(), "__anonymous__");
+                }
+            }
+        }catch(Exception e){
+            //silent
+        }
     }
 
     //------------helper methods---------------
@@ -139,13 +216,13 @@ public class JsonImporterTests extends RefineTest {
 
     public static String getElementWithDuplicateSubElement(int id){
         return "{ \"id\" : " + id + "," +
-        "\"authors\":[" +
-        "{\"author\" : \"Author " + id + ", The\"}," +
-        "{\"author\" : \"Author " + id + ", Another\"}" +
-        "]," +
-        "\"title\" : \"Book title " + id + "\"," +
-        "\"publish_date\" : \"2010-05-26\"" +
-        "}";
+                 "\"authors\":[" +
+                               "{\"name\" : \"Author " + id + ", The\"}," +
+                               "{\"name\" : \"Author " + id + ", Another\"}" +
+                             "]," +
+                 "\"title\" : \"Book title " + id + "\"," +
+                 "\"publish_date\" : \"2010-05-26\"" +
+               "}";
     }
 
     public static String getSample(){
@@ -181,8 +258,8 @@ public class JsonImporterTests extends RefineTest {
             sb.append(",");
         }
         sb.append("{\"id\" : 4," +
-                "\"author\" : \"With line\n break\"," +
-                "\"title\" : \"Book title 4\"" +
+                "\"author\" : \"With line\\n break\"," + //FIXME this line break is doubled - is this correct??
+                "\"title\" : \"Book title 4\"," +
                 "\"publish_date\" : \"2010-05-26\"" +
                 "},");
         sb.append(getTypicalElement(5));
@@ -197,12 +274,13 @@ public class JsonImporterTests extends RefineTest {
         sb.append("[");
         for(int i = 1; i < 6; i++){
             sb.append(getTypicalElement(i));
+            sb.append(",");
         }
         sb.append("{\"id\" : 6," +
                 "\"author\" : \"Author 6, The\"," +
                 "\"title\" : \"Book title 6\"," +
                 "\"genre\" : \"New element not seen in other records\"," +
-                "\"publish_date\" : \"2010-05-26\"," +
+                "\"publish_date\" : \"2010-05-26\"" +
                 "}");
         sb.append("]");
         return sb.toString();
@@ -217,7 +295,7 @@ public class JsonImporterTests extends RefineTest {
                     "\"author-dob\" : \"1950-0" + i + "-15\"}," +
                     "\"title\" : \"Book title " + i + "\"," +
                     "\"publish_date\" : \"2010-05-26\"" +
-                    "},");
+                    "}");
             if(i < 6)
             	sb.append(",");
         }
