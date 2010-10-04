@@ -65,6 +65,27 @@ public class XmlImporterTests extends RefineTest {
         Assert.assertNotNull(row.getCell(2));
         Assert.assertEquals(row.getCell(2).value, "Author 1, The");
     }
+    
+    @Test
+    public void canParseDeeplyNestedSample(){
+        RunTest(getDeeplyNestedSample());
+
+        log(project);
+        assertProjectCreated(project, 4, 6);
+
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
+    }
+    
+    @Test
+    public void canParseSampleWithMixedElement(){
+        RunTest(getMixedElementSample());
+
+        log(project);
+        assertProjectCreated(project, 0, 0); //nothing imported
+    }
 
     @Test
     public void canParseSampleWithDuplicateNestedElements(){
@@ -156,6 +177,30 @@ public class XmlImporterTests extends RefineTest {
             sb.append(getTypicalElement(i));
         }
         sb.append("</library>");
+        return sb.toString();
+    }
+    
+    public static String getDeeplyNestedSample(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\"?><nest><nest2><library>");
+        for(int i = 1; i < 7; i++){
+            sb.append(getTypicalElement(i));
+        }
+        sb.append("</nest2>");
+        sb.append("<anElement>asdf</anElement></nest></library>");
+        return sb.toString();
+    }
+    
+    public static String getMixedElementSample(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\"?><nest>");
+        sb.append("somemixeduptext");
+        sb.append("<nest2><library>");
+        for(int i = 1; i < 7; i++){
+            sb.append(getTypicalElement(i));
+        }
+        sb.append("</nest2>");
+        sb.append("<anElement>asdf</anElement></nest></library>");
         return sb.toString();
     }
 
