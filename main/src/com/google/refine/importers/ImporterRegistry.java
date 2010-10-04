@@ -18,7 +18,8 @@ abstract public class ImporterRegistry {
         {"XmlImporter", "com.google.refine.importers.XmlImporter"},
         {"RdfTripleImporter", "com.google.refine.importers.RdfTripleImporter"},
         {"MarcImporter", "com.google.refine.importers.MarcImporter"},
-        {"TsvCsvImporter", "com.google.refine.importers.TsvCsvImporter"}
+        {"TsvCsvImporter", "com.google.refine.importers.TsvCsvImporter"},
+        {"JsonImporter", "com.google.refine.importers.JsonImporter"}
     };
 
     static {
