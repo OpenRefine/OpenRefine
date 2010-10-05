@@ -324,9 +324,9 @@ jarbundler_prepare() {
 virtualenv_prepare() {
     check_python
 
-    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.4.6.tar.gz"
-    VIRTUALENV_FILE="virtualenv-1.4.6.tar.gz"
-    VIRTUALENV_DIR="virtualenv-1.4.6"
+    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.5.1.tar.gz"
+    VIRTUALENV_FILE="virtualenv-1.5.1.tar.gz"
+    VIRTUALENV_DIR="virtualenv-1.5.1"
 
     tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
     
