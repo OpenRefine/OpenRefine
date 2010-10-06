@@ -206,6 +206,7 @@ function init() {
             "scripts/widgets/slider-widget.js",
 
             "scripts/project/extension-bar.js",
+            "scripts/project/summary-widget.js",
             "scripts/project/exporters.js",
             "scripts/project/browsing-engine.js",
             "scripts/project/scripting.js",
@@ -262,6 +263,7 @@ function init() {
             "styles/project/browsing.less",
             "styles/project/process.less",
             "styles/project/extension-bar.less",
+            "styles/project/summary-widget.less",
             
             "styles/widgets/history.less",
             "styles/widgets/histogram-widget.less",

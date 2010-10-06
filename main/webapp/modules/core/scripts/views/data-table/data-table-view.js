@@ -1,7 +1,7 @@
 function DataTableView(div) {
     this._div = div;
     
-    this._pageSize = 20;
+    this._pageSize = 10;
     this._showRecon = true;
     this._collapsedColumnNames = {};
     this._sorting = { criteria: [] };
@@ -35,9 +35,14 @@ DataTableView.prototype.render = function() {
     var html = $(
         '<table class="viewPanel-header">' +
             '<tr>' +
-                '<td bind="summary"></td>' +
-                '<td bind="sortingControls" align="right"></td>' +
-                '<td bind="pageSizeControls" align="right"></td>' +
+                '<td bind="rowRecordControls">Show as ' +
+                    '<span bind="modeSelectors" class="viewPanel-browsingModes">' + 
+                        '<input type="radio" id="viewPanel-browsingMode-row-based" name="viewPanel-browsingMode" value="row-based" /><label for="viewPanel-browsingMode-row-based">rows</label>' +
+                        '<input type="radio" id="viewPanel-browsingMode-record-based" name="viewPanel-browsingMode" value="record-based" /><label for="viewPanel-browsingMode-record-based">records</label>' +
+                    '</span>' +
+                '</td>' +
+                '<td bind="pageSizeControls"></td>' +
+                '<td bind="sortingControls" align="center"></td>' +
                 '<td bind="pagingControls" align="right"></td>' +
             '</tr>' +
         '</table>' +
@@ -45,7 +50,8 @@ DataTableView.prototype.render = function() {
     );
     var elmts = DOM.bind(html);
     
-    this._renderSummaryText(elmts.summary);
+    ui.summaryWidget.updateResultCount();
+    
     this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
     this._renderDataTable(elmts.table[0]);
     
@@ -58,21 +64,14 @@ DataTableView.prototype.render = function() {
     this.resize();
         
     elmts.dataTableContainer[0].scrollLeft = scrollLeft;
-};
-
-DataTableView.prototype._renderSummaryText = function(elmt) {
-    var summaryText;
     
-    var units = theProject.rowModel.mode == "row-based" ? "rows" : "records";
-    var from = (theProject.rowModel.start + 1);
-    var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
-    if (theProject.rowModel.filtered == theProject.rowModel.total) {
-        summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + (theProject.rowModel.total) + '</span> ' + units;
-    } else {
-        summaryText = from + ' &ndash; ' + to + ' of <span class="viewPanel-summary-row-count">' + 
-            (theProject.rowModel.filtered) + '</span> matching ' + units + ' (' + (theProject.rowModel.total) + ' total)';
-    }
-    $('<span>').html(summaryText).appendTo(elmt);
+    $("#viewPanel-browsingMode-" + 
+        (theProject.recordModel.hasRecords ? 'record-based' : 'row-based')).attr("checked", "checked");
+    
+    elmts.modeSelectors.buttonset();
+    elmts.modeSelectors.find("input").change(function() {
+        ui.browsingEngine.setMode(this.value);
+    });
 };
 
 DataTableView.prototype._renderSortingControls = function(sortingControls) {
@@ -91,6 +90,9 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
 DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
     var self = this;
     
+    var from = (theProject.rowModel.start + 1);
+    var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
+    
     var firstPage = $('<a href="javascript:{}">&laquo; first</a>').appendTo(pagingControls);
     var previousPage = $('<a href="javascript:{}">&laquo; previous</a>').appendTo(pagingControls);
     if (theProject.rowModel.start > 0) {
@@ -100,7 +102,9 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
         firstPage.addClass("inaction");
         previousPage.addClass("inaction");
     }
-    $('<span> &bull; </span>').appendTo(pagingControls);
+    
+    $('<span>').addClass("viewPanel-pagingControls-currentPageInfo").html(" " + from + " &mdash; " + to + " ").appendTo(pagingControls);
+    
     var nextPage = $('<a href="javascript:{}">next page &raquo;</a>').appendTo(pagingControls);
     var lastPage = $('<a href="javascript:{}">last &raquo;</a>').appendTo(pagingControls);
     if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
@@ -112,7 +116,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     }
     
     $('<span>Show </span>').appendTo(pageSizeControls);
-    var sizes = [ 10, 20, 25, 50 ];
+    var sizes = [ 5, 10, 25, 50 ];
     var renderPageSize = function(index) {
         var pageSize = sizes[index];
         var a = $('<a href="javascript:{}"></a>')

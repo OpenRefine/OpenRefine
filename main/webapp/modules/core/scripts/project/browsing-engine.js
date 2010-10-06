@@ -1,7 +1,8 @@
 function BrowsingEngine(div, facetConfigs) {
     this._div = div;
-    this._facets = [];
+    this._mode = theProject.recordModel.hasRecords ? 'record-based' : 'row-based';
     
+    this._facets = [];
     this._initializeUI();
     
     if (facetConfigs.length > 0) {
@@ -40,7 +41,6 @@ BrowsingEngine.prototype.resize = function() {
         var height = 
             this._div.height() -
             this._div.find(".browsing-panel-header").outerHeight(true) -
-            this._div.find(".browsing-panel-modes").outerHeight(true) -
             bodyPaddings;
         
         body.css("height", height + "px");
@@ -66,13 +66,6 @@ BrowsingEngine.prototype._initializeUI = function() {
             '<h1>Explore data ...</h1>' +
             '<p>by choosing a facet or filter method from the menus at the top of each column.</p>' +
             '<p>Not sure how to get started? <a href="http://vimeo.com/groups/gridworks/videos" target="_blank">Watch these screencasts</a>.</p>' +
-        '</div>' +
-        '<div class="browsing-panel-modes">' +
-            'Browse by ' +
-            '<span bind="modeSelectors">' + 
-                '<input type="radio" id="browsing-panel-mode-row-based" name="browsing-panel-mode" value="row-based" /><label for="browsing-panel-mode-row-based">rows</label>' +
-                '<input type="radio" id="browsing-panel-mode-record-based" name="browsing-panel-mode" value="record-based" /><label for="browsing-panel-mode-record-based">records</label>' +
-            '</span>' +
         '</div>' +
         '<div class="browsing-panel-header" bind="header">' +
             '<div class="browsing-panel-indicator" bind="indicator">' +
@@ -101,15 +94,7 @@ BrowsingEngine.prototype._initializeUI = function() {
             self._updateFacetOrder();
         }
     });
-    
-    $("#browsing-panel-mode-" + 
-        (theProject.recordModel.hasRecords ? 'record-based' : 'row-based')).attr("checked", "checked");
         
-    this._elmts.modeSelectors.buttonset();
-    this._elmts.modeSelectors.find("input").change(function() {
-        Refine.update({ engineChanged: true });
-    });
-    
     this._elmts.refreshLink.click(function() { self.update(); });
     this._elmts.resetLink.click(function() { self.reset(); });
     this._elmts.removeLink.click(function() { self.remove(); });
@@ -131,13 +116,20 @@ BrowsingEngine.prototype._updateFacetOrder = function() {
 };
 
 BrowsingEngine.prototype.getMode = function() {
-    return this._elmts.modeSelectors.find("input:checked")[0].value;
+    return this._mode;
+};
+
+BrowsingEngine.prototype.setMode = function(mode) {
+    if (this._mode != mode) {
+        this._mode = mode;
+        Refine.update({ engineChanged: true });
+    }
 };
 
 BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
     var a = {
         facets: [],
-        mode: this._elmts.modeSelectors.find("input:checked")[0].value
+        mode: this._mode
     };
     for (var i = 0; i < this._facets.length; i++) {
         var facet = this._facets[i];

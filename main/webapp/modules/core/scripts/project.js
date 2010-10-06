@@ -89,6 +89,7 @@ function initializeUI(uiState) {
     resize();
     resizeTabs();
     
+    ui.summaryWidget = new SummaryWidget(ui.summaryBar);
     ui.browsingEngine = new BrowsingEngine(ui.facetPanel, uiState.facets || []);
     ui.processWidget = new ProcessWidget(ui.processPanel);
     ui.historyWidget = new HistoryWidget(ui.historyPanel, ui.historyTabHeader);
