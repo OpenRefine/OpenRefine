@@ -3,9 +3,9 @@ package com.google.refine.model;
 import com.google.refine.Jsonizable;
 
 public interface OverlayModel extends Jsonizable {
-    public void onBeforeSave();
+    public void onBeforeSave(Project project);
     
-    public void onAfterSave();
+    public void onAfterSave(Project project);
     
-    public void dispose();
+    public void dispose(Project project);
 }

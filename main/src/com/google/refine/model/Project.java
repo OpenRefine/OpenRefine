@@ -71,7 +71,7 @@ public class Project {
     public void dispose() {
         for (OverlayModel overlayModel : overlayModels.values()) {
             try {
-                overlayModel.dispose();
+                overlayModel.dispose(this);
             } catch (Exception e) {
                 logger.warn("Error signaling overlay model before disposing", e);
             }
@@ -95,7 +95,7 @@ public class Project {
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
         for (OverlayModel overlayModel : overlayModels.values()) {
             try {
-                overlayModel.onBeforeSave();
+                overlayModel.onBeforeSave(this);
             } catch (Exception e) {
                 logger.warn("Error signaling overlay model before saving", e);
             }
@@ -114,7 +114,7 @@ public class Project {
         
         for (OverlayModel overlayModel : overlayModels.values()) {
             try {
-                overlayModel.onAfterSave();
+                overlayModel.onAfterSave(this);
             } catch (Exception e) {
                 logger.warn("Error signaling overlay model after saving", e);
             }

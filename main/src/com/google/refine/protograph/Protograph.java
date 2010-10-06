@@ -24,16 +24,16 @@ public class Protograph implements OverlayModel {
     }
     
     @Override
-    public void onBeforeSave() {
+    public void onBeforeSave(Project project) {
     }
     
     @Override
-    public void onAfterSave() {
+    public void onAfterSave(Project project) {
     }
     
     
     @Override
-    public void dispose() {
+    public void dispose(Project project) {
     }
     
     static public Protograph reconstruct(JSONObject o) throws JSONException {
