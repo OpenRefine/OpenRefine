@@ -170,7 +170,7 @@ function init() {
         [
             "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
             "styles/common.less",
-            "styles/freebase.css",
+            "styles/freebase.less",
             "styles/index.less",
             "styles/jquery-ui-overrides.less"
         ]
