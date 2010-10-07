@@ -103,16 +103,25 @@ public abstract class Command {
      * @throws ServletException
      */
     protected Project getProject(HttpServletRequest request) throws ServletException {
-        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
-        try {
-            Project p = ProjectManager.singleton.getProject(Long.parseLong(request.getParameter("project")));
-            if (p != null) {
-                return p;
-            }
-        } catch (Exception e) {
-            // ignore
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-        throw new ServletException("Can't find project: missing or bad URL parameter");
+        String param = request.getParameter("project");
+        if (param == null || "".equals(param)) {
+            throw new ServletException("Can't find project: missing ID parameter");
+        }
+        Long id;
+        try {
+            id = Long.parseLong(param);
+        } catch (NumberFormatException e) {
+            throw new ServletException("Can't find project: badly formatted id #", e);
+        }
+        Project p = ProjectManager.singleton.getProject(id);
+        if (p != null) {
+            return p;
+        } else {
+            throw new ServletException("Failed to find project id #" + param + " - may be corrupt");
+        }
     }
 
     /**
