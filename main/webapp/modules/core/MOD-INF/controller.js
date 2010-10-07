@@ -139,7 +139,9 @@ function registerOperations() {
     OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
     OR.registerOperation(module, "import-qa-data", Packages.com.google.refine.operations.recon.ImportQADataOperation);
     
+    // for backward compatibility
     OR.registerOperation(module, "save-protograph", Packages.com.google.refine.operations.SaveProtographOperation);
+    OR.registerOperation(module, "save-schema-alignment-skeleton", Packages.com.google.refine.operations.SaveProtographOperation);
 }
 
 /*
