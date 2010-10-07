@@ -1,0 +1,112 @@
+package com.google.refine.rdf;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
+
+import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
+import com.google.refine.model.Project;
+import com.google.refine.model.Row;
+import com.google.refine.rdf.app.ApplicationContext;
+import com.google.refine.rdf.expr.util.RdfExpressionUtil;
+import com.google.refine.rdf.vocab.VocabularyIndexException;
+
+public class Util {
+
+	private static final String XSD_INT_URI = "http://www.w3.org/2001/XMLSchema#int";
+	private static final String XSD_DOUBLE_URI = "http://www.w3.org/2001/XMLSchema#double";
+	private static final String XSD_DATE_URI = "http://www.w3.org/2001/XMLSchema#date";
+
+	public static String resolveUri(URI base, String rel) {
+		// FIXME
+		try {
+			URI relUri = new URI(rel);
+			if (relUri.isAbsolute()) {
+				return rel;
+			}
+		} catch (URISyntaxException e) {
+			// silent
+		}
+		if (base.getFragment() != null) {
+			try {
+				return base + URLEncoder.encode(rel, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				//silent
+				return "";
+			}
+		}
+		return base.resolve(rel).toString();
+	}
+
+	public static String getDataType(String s) {
+		if (s == null) {
+			return null;
+		}
+		if (s.equals(XSD_INT_URI)) {
+			return XSD_INT_URI;
+		}
+		if (s.equals(XSD_DOUBLE_URI)) {
+			return XSD_DOUBLE_URI;
+		}
+		if (s.equals(XSD_DATE_URI)) {
+			return XSD_DATE_URI;
+		}
+		return null;
+	}
+
+	public static RdfSchema getProjectSchema(ApplicationContext ctxt, Project project) throws VocabularyIndexException, IOException {
+		synchronized (project) {
+			RdfSchema rdfSchema = (RdfSchema) project.overlayModels
+					.get("rdfSchema");
+			if (rdfSchema == null) {
+				rdfSchema = new RdfSchema(ctxt,project);
+
+				project.overlayModels.put("rdfSchema", rdfSchema);
+				project.getMetadata().updateModified();
+			}
+
+			return rdfSchema;
+		}
+	}
+
+	public static URI buildURI(String uri) {
+		try {
+			URI baseUri = new URI(uri);
+			return baseUri;
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("malformed Base URI " + uri, e);
+		}
+	}
+	
+	public static Object evaluateExpression(Project project, String expression, String columnName, Row row, int rowIndex) throws ParsingException{
+		
+		Properties bindings = ExpressionUtils.createBindings(project);
+        Evaluable eval = MetaParser.parse(expression);
+        
+        int cellIndex = (columnName==null||columnName.equals(""))?-1:project.columnModel.getColumnByName(columnName).getCellIndex();
+        
+        return RdfExpressionUtil.evaluate(eval,bindings, row, rowIndex,columnName , cellIndex);
+	}
+	
+	public static void writePrefixes(Map<String,String> prefixes,JSONWriter writer)throws JSONException{
+		writer.array();
+		for(Entry<String, String> prefix:prefixes.entrySet()){
+			writer.object();
+			writer.key("name"); writer.value(prefix.getKey()) ;
+			writer.key("uri"); writer.value(prefix.getValue());
+			writer.endObject();
+		}
+		writer.endArray();
+	}
+}
