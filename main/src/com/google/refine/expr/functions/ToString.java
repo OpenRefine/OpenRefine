@@ -7,7 +7,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.google.refine.gel.Function;
+import com.google.refine.grel.Function;
 
 public class ToString implements Function {
 

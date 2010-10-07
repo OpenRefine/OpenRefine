@@ -1,9 +1,9 @@
-package com.google.refine.gel.ast;
+package com.google.refine.grel.ast;
 
 import java.util.Properties;
 
 import com.google.refine.expr.Evaluable;
-import com.google.refine.gel.Control;
+import com.google.refine.grel.Control;
 
 /**
  * An abstract syntax tree node encapsulating a control call, such as "if".

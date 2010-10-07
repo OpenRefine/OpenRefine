@@ -14,7 +14,7 @@ import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.filters.AnyRowRecordFilter;
 import com.google.refine.browsing.filters.ExpressionStringComparisonRowFilter;
 import com.google.refine.expr.Evaluable;
-import com.google.refine.gel.ast.VariableExpr;
+import com.google.refine.grel.ast.VariableExpr;
 import com.google.refine.model.Project;
 
 public class TextSearchFacet implements Facet {

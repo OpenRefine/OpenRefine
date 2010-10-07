@@ -7,7 +7,7 @@ import org.json.JSONWriter;
 
 import com.google.refine.clustering.binning.FingerprintKeyer;
 import com.google.refine.clustering.binning.Keyer;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.Function;
 
 public class Fingerprint implements Function {
 

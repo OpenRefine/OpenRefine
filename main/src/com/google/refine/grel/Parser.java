@@ -1,4 +1,4 @@
-package com.google.refine.gel;
+package com.google.refine.grel;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,16 +7,16 @@ import java.util.regex.Pattern;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.functions.arrays.ArgsToArray;
-import com.google.refine.gel.Scanner.NumberToken;
-import com.google.refine.gel.Scanner.RegexToken;
-import com.google.refine.gel.Scanner.Token;
-import com.google.refine.gel.Scanner.TokenType;
-import com.google.refine.gel.ast.ControlCallExpr;
-import com.google.refine.gel.ast.FieldAccessorExpr;
-import com.google.refine.gel.ast.FunctionCallExpr;
-import com.google.refine.gel.ast.LiteralExpr;
-import com.google.refine.gel.ast.OperatorCallExpr;
-import com.google.refine.gel.ast.VariableExpr;
+import com.google.refine.grel.Scanner.NumberToken;
+import com.google.refine.grel.Scanner.RegexToken;
+import com.google.refine.grel.Scanner.Token;
+import com.google.refine.grel.Scanner.TokenType;
+import com.google.refine.grel.ast.ControlCallExpr;
+import com.google.refine.grel.ast.FieldAccessorExpr;
+import com.google.refine.grel.ast.FunctionCallExpr;
+import com.google.refine.grel.ast.LiteralExpr;
+import com.google.refine.grel.ast.OperatorCallExpr;
+import com.google.refine.grel.ast.VariableExpr;
 
 public class Parser {
     protected Scanner   _scanner;

@@ -1,19 +1,15 @@
-<div class="grid-layout layout-tight layout-full"><table rows="4" cols="2">
-  <tr>
+<div class="grid-layout layout-tight layout-full"><table rows="4" cols="4">
+  <tr style="vertical-align: bottom;">
     <td>Expression</td>
-    <td>Language</td>
+    <td style="text-align: right;">Language</td>
+    <td colspan="2"><select bind="expressionPreviewLanguageSelect">$LANGUAGE_OPTIONS$</select></td>
   </tr>
   <tr>
-    <td rowspan="2"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></div></td>
-    <td width="150" height="1">
-      <select bind="expressionPreviewLanguageSelect">$LANGUAGE_OPTIONS$</select>
-    </td>
-  </tr>
-  <tr>
+    <td colspan="3"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" /></div></td>
     <td class="expression-preview-error-container" bind="expressionPreviewErrorContainer" width="150" style="vertical-align: top;"></td>
   </tr>
   <tr>
-    <td colspan="2">
+    <td colspan="4">
       <div id="expression-preview-tabs" class="refine-tabs">
         <ul>
           <li><a href="#expression-preview-tabs-preview">Preview</a></li>

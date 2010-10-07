@@ -10,8 +10,8 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.gel.ControlFunctionRegistry;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 import com.google.refine.util.JSONUtilities;
 
 public class Sort implements Function {

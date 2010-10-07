@@ -9,8 +9,8 @@ import com.google.refine.clustering.binning.DoubleMetaphoneKeyer;
 import com.google.refine.clustering.binning.MetaphoneKeyer;
 import com.google.refine.clustering.binning.SoundexKeyer;
 import com.google.refine.expr.EvalError;
-import com.google.refine.gel.ControlFunctionRegistry;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 
 public class Phonetic implements Function {
 

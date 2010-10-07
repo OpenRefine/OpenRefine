@@ -1,4 +1,4 @@
-package com.google.refine.gel.controls;
+package com.google.refine.grel.controls;
 
 import com.google.refine.expr.ExpressionUtils;
 

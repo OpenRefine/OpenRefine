@@ -168,7 +168,7 @@ ListFacet.prototype._initializeUI = function() {
     this._elmts.sortGroup.buttonset();
     
     this._elmts.clusterLink.click(function() { self._doEdit(); }).button();
-    if (this._config.expression != "value" && this._config.expression != "gel:value") {
+    if (this._config.expression != "value" && this._config.expression != "grel:value") {
         this._elmts.clusterLink.hide();
     }
     
@@ -633,7 +633,7 @@ ListFacet.prototype._editExpression = function() {
                 self._config.expression = expr;
                 
                 self._elmts.expressionDiv.text(self._config.expression);
-                if (self._config.expression == "value" || self._config.expression == "gel:value") {
+                if (self._config.expression == "value" || self._config.expression == "grel:value") {
                     self._elmts.clusterLink.show();
                 } else {
                     self._elmts.clusterLink.hide();

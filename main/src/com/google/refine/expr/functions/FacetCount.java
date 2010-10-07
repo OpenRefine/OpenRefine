@@ -11,8 +11,8 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
-import com.google.refine.gel.ControlFunctionRegistry;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 

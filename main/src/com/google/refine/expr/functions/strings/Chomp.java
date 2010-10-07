@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.google.refine.gel.Function;
+import com.google.refine.grel.Function;
 
 public class Chomp implements Function {
 

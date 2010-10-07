@@ -9,8 +9,8 @@ import org.json.JSONWriter;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.EvalError;
-import com.google.refine.gel.ControlFunctionRegistry;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 import com.google.refine.model.Project;
 
 public class Reinterpret implements Function {

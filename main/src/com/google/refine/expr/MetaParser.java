@@ -8,7 +8,7 @@ import java.util.Set;
 
 import clojure.lang.IFn;
 
-import com.google.refine.gel.Parser;
+import com.google.refine.grel.Parser;
 
 abstract public class MetaParser {
     static public class LanguageInfo {
@@ -27,11 +27,11 @@ abstract public class MetaParser {
     static {
         s_languages = new HashMap<String, LanguageInfo>();
         
-        registerLanguageParser("gel", "Google Refine Expression Language (GREL)", new LanguageSpecificParser() {
+        registerLanguageParser("grel", "Google Refine Expression Language (GREL)", new LanguageSpecificParser() {
             
             @Override
             public Evaluable parse(String s) throws ParsingException {
-                return parseGEL(s);
+                return parseGREL(s);
             }
         }, "value");
         
@@ -88,29 +88,32 @@ abstract public class MetaParser {
     /**
      * Parse an expression that might have a language prefix into an Evaluable.
      * Expressions without valid prefixes or without any prefix are assumed to be
-     * GEL expressions.
+     * GREL expressions.
      * 
      * @param s
      * @return
      * @throws ParsingException
      */
     static public Evaluable parse(String s) throws ParsingException {
-        String language = "gel";
+        String language = "grel";
         
         int colon = s.indexOf(':');
         if (colon >= 0) {
-            language = s.substring(0, colon);
+            language = s.substring(0, colon).toLowerCase();
+            if ("gel".equals(language)) {
+                language = "grel";
+            }
         }
         
         LanguageInfo info = s_languages.get(language.toLowerCase());
         if (info != null) {
             return info.parser.parse(s.substring(colon + 1));
         } else {
-            return parseGEL(s);
+            return parseGREL(s);
         }
     }
     
-    static protected Evaluable parseGEL(String s) throws ParsingException {
+    static protected Evaluable parseGREL(String s) throws ParsingException {
         Parser parser = new Parser(s);
         
         return parser.getExpression();

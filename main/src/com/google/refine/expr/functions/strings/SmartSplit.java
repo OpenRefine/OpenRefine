@@ -9,8 +9,8 @@ import org.json.JSONWriter;
 import au.com.bytecode.opencsv.CSVParser;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.gel.ControlFunctionRegistry;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 
 public class SmartSplit implements Function {
     static protected CSVParser s_tabParser = new CSVParser(

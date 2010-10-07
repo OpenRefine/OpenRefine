@@ -9,7 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.google.refine.gel.Function;
+import com.google.refine.grel.Function;
 
 public class Jsonize implements Function {
 

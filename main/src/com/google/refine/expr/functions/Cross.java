@@ -9,8 +9,8 @@ import com.google.refine.ProjectManager;
 import com.google.refine.InterProjectModel.ProjectJoin;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.WrappedCell;
-import com.google.refine.gel.ControlFunctionRegistry;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 import com.google.refine.model.Project;
 
 public class Cross implements Function {

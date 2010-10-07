@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.expr.HasFields;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.Function;
 
 public class HasField implements Function {
 

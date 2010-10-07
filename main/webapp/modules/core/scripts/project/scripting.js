@@ -5,6 +5,9 @@ Scripting.parse = function(expression) {
     var colon = expression.indexOf(":");
     if (colon > 0) {
         var l = expression.substring(0, colon);
+        if (l == "gel") { // backward compatible
+            l = "grel";
+        }
         if (theProject.scripting.hasOwnProperty(l)) {
             return {
                 language: l,
@@ -14,7 +17,7 @@ Scripting.parse = function(expression) {
     }
     
     return {
-        language: "gel",
+        language: "grel",
         expression: expression
     };
 };

@@ -1,4 +1,4 @@
-package com.google.refine.gel.controls;
+package com.google.refine.grel.controls;
 
 import org.apache.commons.lang.StringUtils;
 

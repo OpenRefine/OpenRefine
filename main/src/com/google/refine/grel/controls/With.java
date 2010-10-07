@@ -1,4 +1,4 @@
-package com.google.refine.gel.controls;
+package com.google.refine.grel.controls;
 
 import java.util.Properties;
 
@@ -6,9 +6,9 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.expr.Evaluable;
-import com.google.refine.gel.Control;
-import com.google.refine.gel.ControlFunctionRegistry;
-import com.google.refine.gel.ast.VariableExpr;
+import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.ast.VariableExpr;
 
 public class With implements Control {
     public String checkArguments(Evaluable[] args) {

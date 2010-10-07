@@ -52,11 +52,15 @@ ExpressionPreviewDialog.Widget = function(
     values,
     expression
 ) {
-    var language = "gel";
+    var language = "grel";
     if (!(expression)) {
         language = $.cookie("scripting.lang");
+        if (language == "gel") { // backward compatible
+            language = "grel";
+        }
+        
         if (!(language) || !(language.toLowerCase() in theProject.scripting)) {
-            language = "gel";
+            language = "grel";
         }
         this.expression = theProject.scripting[language].defaultExpression;
     } else {
@@ -317,7 +321,7 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
     };
     
     if (this._results !== null) {
-        this._elmts.expressionPreviewErrorContainer.empty();
+        this._elmts.expressionPreviewErrorContainer.empty().text("No syntax error.");
     } else {
         var message = (data.type == "parser") ? data.message : "Internal error";
         this._elmts.expressionPreviewErrorContainer.empty().text(message);

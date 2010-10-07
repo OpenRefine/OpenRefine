@@ -1,4 +1,4 @@
-package com.google.refine.gel;
+package com.google.refine.grel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,19 +69,19 @@ import com.google.refine.expr.functions.strings.Trim;
 import com.google.refine.expr.functions.strings.Unescape;
 import com.google.refine.expr.functions.strings.Unicode;
 import com.google.refine.expr.functions.strings.UnicodeType;
-import com.google.refine.gel.controls.Filter;
-import com.google.refine.gel.controls.ForEach;
-import com.google.refine.gel.controls.ForEachIndex;
-import com.google.refine.gel.controls.ForNonBlank;
-import com.google.refine.gel.controls.ForRange;
-import com.google.refine.gel.controls.If;
-import com.google.refine.gel.controls.IsBlank;
-import com.google.refine.gel.controls.IsError;
-import com.google.refine.gel.controls.IsNonBlank;
-import com.google.refine.gel.controls.IsNotNull;
-import com.google.refine.gel.controls.IsNull;
-import com.google.refine.gel.controls.IsNumeric;
-import com.google.refine.gel.controls.With;
+import com.google.refine.grel.controls.Filter;
+import com.google.refine.grel.controls.ForEach;
+import com.google.refine.grel.controls.ForEachIndex;
+import com.google.refine.grel.controls.ForNonBlank;
+import com.google.refine.grel.controls.ForRange;
+import com.google.refine.grel.controls.If;
+import com.google.refine.grel.controls.IsBlank;
+import com.google.refine.grel.controls.IsError;
+import com.google.refine.grel.controls.IsNonBlank;
+import com.google.refine.grel.controls.IsNotNull;
+import com.google.refine.grel.controls.IsNull;
+import com.google.refine.grel.controls.IsNumeric;
+import com.google.refine.grel.controls.With;
 
 public class ControlFunctionRegistry {
 

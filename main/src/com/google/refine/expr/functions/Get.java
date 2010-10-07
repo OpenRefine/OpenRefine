@@ -11,7 +11,7 @@ import org.json.JSONWriter;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
 import com.google.refine.expr.HasFieldsList;
-import com.google.refine.gel.Function;
+import com.google.refine.grel.Function;
 
 public class Get implements Function {
 

@@ -1,4 +1,4 @@
-package com.google.refine.gel;
+package com.google.refine.grel;
 
 import java.util.Properties;
 

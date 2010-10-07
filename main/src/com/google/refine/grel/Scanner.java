@@ -1,4 +1,4 @@
-package com.google.refine.gel;
+package com.google.refine.grel;
 
 public class Scanner {
     static public enum TokenType {

@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
-import com.google.refine.gel.ast.FieldAccessorExpr;
-import com.google.refine.gel.ast.VariableExpr;
+import com.google.refine.grel.ast.FieldAccessorExpr;
+import com.google.refine.grel.ast.VariableExpr;
 
 public class Parser {
 	static public Template parse(String s) throws ParsingException {
