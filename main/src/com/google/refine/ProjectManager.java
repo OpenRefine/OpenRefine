@@ -336,9 +336,9 @@ public abstract class ProjectManager {
                 return _projects.get(id);
             } else {
                 Project project = loadProject(id);
-
-                _projects.put(id, project);
-
+                if (project != null) {
+                    _projects.put(id, project);                    
+                }
                 return project;
             }
         }
