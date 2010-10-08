@@ -13,5 +13,4 @@ public class GoogleProvider extends Provider {
     public String getUserAuthorizationURL() {
         return "https://www.google.com/accounts/OAuthAuthorizeToken";
     }
-    
 }

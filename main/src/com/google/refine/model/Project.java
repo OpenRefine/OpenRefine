@@ -24,7 +24,6 @@ import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.History;
 import com.google.refine.process.ProcessManager;
-import com.google.refine.protograph.Protograph;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
@@ -34,10 +33,6 @@ public class Project {
     
     static public void registerOverlayModel(String modelName, Class<? extends OverlayModel> klass) {
         s_overlayModelClasses.put(modelName, klass);
-    }
-    
-    static {
-        registerOverlayModel("freebaseProtograph", Protograph.class);
     }
     
     final public long                       id;

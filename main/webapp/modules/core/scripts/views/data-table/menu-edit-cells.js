@@ -119,27 +119,33 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             label: "Common Transforms",
             submenu: [
                 {
+                    id: "core/unescape-html-entities",
                     label: "Unescape HTML entities",
                     click: function() { doTextTransform("value.unescape('html')", "store-blank", true, 10); }
                 },
                 {
+                    id: "core/collapse-whitespace",
                     label: "Collapse whitespace",
                     click: function() { doTextTransform("value.replace(/\\s+/,' ')", "store-blank", false, ""); }
                 },
                 {},
                 {
+                    id: "core/to-titlecase",
                     label: "To Titlecase",
                     click: function() { doTextTransform("toTitlecase(value)", "store-blank", false, ""); }
                 },
                 {
+                    id: "core/to-uppercase",
                     label: "To Uppercase",
                     click: function() { doTextTransform("toUppercase(value)", "store-blank", false, ""); }
                 },
                 {
+                    id: "core/to-lowercase",
                     label: "To Lowercase",
                     click: function() { doTextTransform("toLowercase(value)", "store-blank", false, ""); }
                 },
                 {
+                    id: "core/to-blank",
                     label: "To Blank",
                     click: function() { doTextTransform("null", "store-blank", false, ""); }
                 }
@@ -147,24 +153,29 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {},
         {
+            id: "core/fill-down",
             label: "Fill Down",
             click: doFillDown
         },
         {
+            id: "core/blank-down",
             label: "Blank Down",
             click: doBlankDown
         },
         {},
         {
+            id: "core/split-multi-valued-cells",
             label: "Split Multi-Valued Cells ...",
             click: doSplitMultiValueCells
         },
         {
+            id: "core/join-multi-valued-cells",
             label: "Join Multi-Valued Cells ...",
             click: doJoinMultiValueCells
         },
         {},
         {
+            id: "core/cluster",
             label: "Cluster & Edit ...",
             click: function() { new ClusteringDialog(column.name, "value"); }
         }
@@ -266,10 +277,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     MenuSystem.appendTo(menu, [ "core/transpose" ], [
         {
+            id: "core/transpose-columns-into-rows",
             label: "Cells Across Columns into Rows",
             click: doTransposeColumnsIntoRows
         },
         {
+            id: "core/transpose-rows-into-columns",
             label: "Cells in Rows into Columns",
             click: doTransposeRowsIntoColumns
         }

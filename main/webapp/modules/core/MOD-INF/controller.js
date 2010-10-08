@@ -53,12 +53,11 @@ function registerCommands() {
     RS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.refine.commands.cell.TransposeRowsIntoColumnsCommand());
 
     RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
+    RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
     RS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
     RS.registerCommand(module, "rename-column", new Packages.com.google.refine.commands.column.RenameColumnCommand());
     RS.registerCommand(module, "move-column", new Packages.com.google.refine.commands.column.MoveColumnCommand());
     RS.registerCommand(module, "split-column", new Packages.com.google.refine.commands.column.SplitColumnCommand());
-    RS.registerCommand(module, "extend-data", new Packages.com.google.refine.commands.column.ExtendDataCommand());
-    RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
     RS.registerCommand(module, "reorder-columns", new Packages.com.google.refine.commands.column.ReorderColumnsCommand());
 
     RS.registerCommand(module, "denormalize", new Packages.com.google.refine.commands.row.DenormalizeCommand());
@@ -70,33 +69,17 @@ function registerCommands() {
     RS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.refine.commands.recon.ReconMatchSpecificTopicCommand());
     RS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.refine.commands.recon.ReconJudgeOneCellCommand());
     RS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.refine.commands.recon.ReconJudgeSimilarCellsCommand());
+    RS.registerCommand(module, "guess-types-of-column", new Packages.com.google.refine.commands.recon.GuessTypesOfColumnCommand());
 
     RS.registerCommand(module, "annotate-one-row", new Packages.com.google.refine.commands.row.AnnotateOneRowCommand());
     RS.registerCommand(module, "annotate-rows", new Packages.com.google.refine.commands.row.AnnotateRowsCommand());
     RS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
     RS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
 
-    RS.registerCommand(module, "save-protograph", new Packages.com.google.refine.commands.freebase.SaveProtographCommand());
-
     RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
     RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
     RS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
-
     RS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
-    RS.registerCommand(module, "preview-extend-data", new Packages.com.google.refine.commands.column.PreviewExtendDataCommand());
-    RS.registerCommand(module, "preview-protograph", new Packages.com.google.refine.commands.freebase.PreviewProtographCommand());
-
-    RS.registerCommand(module, "guess-types-of-column", new Packages.com.google.refine.commands.freebase.GuessTypesOfColumnCommand());
-
-    RS.registerCommand(module, "check-authorization", new Packages.com.google.refine.commands.auth.CheckAuthorizationCommand());
-    RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
-    RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
-    RS.registerCommand(module, "user-badges", new Packages.com.google.refine.commands.auth.GetUserBadgesCommand());
-
-    RS.registerCommand(module, "upload-data", new Packages.com.google.refine.commands.freebase.UploadDataCommand());
-    RS.registerCommand(module, "import-qa-data", new Packages.com.google.refine.commands.freebase.ImportQADataCommand());
-    RS.registerCommand(module, "mqlread", new Packages.com.google.refine.commands.freebase.MQLReadCommand());
-    RS.registerCommand(module, "mqlwrite", new Packages.com.google.refine.commands.freebase.MQLWriteCommand());
 
     RS.registerCommand(module, "get-preference", new Packages.com.google.refine.commands.GetPreferenceCommand());
     RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
@@ -122,7 +105,6 @@ function registerOperations() {
     OR.registerOperation(module, "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
     OR.registerOperation(module, "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
     OR.registerOperation(module, "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
-    OR.registerOperation(module, "extend-data", Packages.com.google.refine.operations.column.ExtendDataOperation);
     OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
     OR.registerOperation(module, "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
     
@@ -137,11 +119,6 @@ function registerOperations() {
     OR.registerOperation(module, "recon-discard-judgments", Packages.com.google.refine.operations.recon.ReconDiscardJudgmentsOperation);
     OR.registerOperation(module, "recon-match-specific-topic-to-cells", Packages.com.google.refine.operations.recon.ReconMatchSpecificTopicOperation);
     OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
-    OR.registerOperation(module, "import-qa-data", Packages.com.google.refine.operations.recon.ImportQADataOperation);
-    
-    // for backward compatibility
-    OR.registerOperation(module, "save-protograph", Packages.com.google.refine.operations.SaveProtographOperation);
-    OR.registerOperation(module, "save-schema-alignment-skeleton", Packages.com.google.refine.operations.SaveProtographOperation);
 }
 
 /*
@@ -152,6 +129,9 @@ function init() {
     
     registerCommands();
     registerOperations();
+    
+    var RC = Packages.com.google.refine.model.recon.ReconConfig;
+    RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
     
     ClientSideResourceManager.addPaths(
         "index/scripts",
@@ -198,8 +178,6 @@ function init() {
             "scripts/util/menu.js",
             "scripts/util/dialog.js",
             "scripts/util/dom.js",
-            "scripts/util/sign.js",
-            "scripts/util/freebase.js",
             "scripts/util/custom-suggest.js",
 
             "scripts/widgets/history-widget.js",
@@ -233,16 +211,10 @@ function init() {
             "scripts/reconciliation/standard-service-panel.js",
             
             "scripts/dialogs/expression-preview-dialog.js",
-            "scripts/dialogs/freebase-loading-dialog.js",
             "scripts/dialogs/clustering-dialog.js",
             "scripts/dialogs/scatterplot-dialog.js",
-            "scripts/dialogs/extend-data-preview-dialog.js",
             "scripts/dialogs/templating-exporter-dialog.js",
-            "scripts/dialogs/column-reordering-dialog.js",
-
-            "scripts/protograph/schema-alignment.js",
-            "scripts/protograph/schema-alignment-ui-node.js",
-            "scripts/protograph/schema-alignment-ui-link.js"
+            "scripts/dialogs/column-reordering-dialog.js"
         ]
     );
     
@@ -276,14 +248,10 @@ function init() {
             "styles/dialogs/expression-preview-dialog.less",
             "styles/dialogs/clustering-dialog.less",
             "styles/dialogs/scatterplot-dialog.less",
-            "styles/dialogs/freebase-loading-dialog.less",
-            "styles/dialogs/extend-data-preview-dialog.less",
             "styles/dialogs/column-reordering-dialog.less",
             
             "styles/reconciliation/recon-dialog.less",
-            "styles/reconciliation/standard-service-panel.less",
-            
-            "styles/protograph/schema-alignment-dialog.less"
+            "styles/reconciliation/standard-service-panel.less"
         ]
     );
     

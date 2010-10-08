@@ -84,15 +84,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     MenuSystem.appendTo(menu, [ "core/reconcile" ], [
         {
+            id: "core/reconcile",
             label: "Start Reconciling ...",
             tooltip: "Reconcile text in this column with topics on Freebase",
             click: doReconcile
         },
         {},
         {
+            id: "core/facets",
             label: "Facets",
             submenu: [
                 {
+                    id: "core/by-judgment",
                     label: "By Judgment",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -111,7 +114,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {},
                 {
-                    label: "Best Candidate's Relevance Score",
+                    id: "core/by-best-candidates-score",
+                    label: "Best Candidate's Score",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range", 
@@ -127,6 +131,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     }
                 },
                 {
+                    id: "core/by-best-candidates-type-match",
                     label: "Best Candidate's Type Match",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -144,6 +149,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     }
                 },
                 {
+                    id: "core/by-best-candidates-name-match",
                     label: "Best Candidate's Name Match",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -162,6 +168,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {},
                 {
+                    id: "core/by-best-candidates-name-edit-distance",
                     label: "Best Candidate's Name Edit Distance",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -178,6 +185,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     }
                 },
                 {
+                    id: "core/by-best-candidates-name-word-similarity",
                     label: "Best Candidate's Name Word Similarity",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -195,6 +203,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {},
                 {
+                    id: "core/by-best-candidates-types",
                     label: "Best Candidate's Types",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -211,9 +220,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ]
         },
         {
+            id: "core/qa-facets",
             label: "QA Facets",
             submenu: [
                 {
+                    id: "core/by-qa-results",
                     label: "QA Results",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -227,6 +238,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     }
                 },
                 {
+                    id: "core/by-judgment-actions",
                     label: "Judgment Actions",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -240,6 +252,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     }
                 },
                 {
+                    id: "core/by-judgment-history-entries",
                     label: "Judgment History Entries",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -255,14 +268,17 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ]
         },
         {
+            id: "core/actions",
             label: "Actions",
             submenu: [
                 {
+                    id: "core/match-to-best-candidate",
                     label: "Match Each Cell to Its Best Candidate",
                     tooltip: "Match each cell to its best candidate in this column for all current filtered rows",
                     click: doReconMatchBestCandidates
                 },
                 {
+                    id: "core/match-to-new-topic",
                     label: "Create a New Topic for Each Cell",
                     tooltip: "Mark to create one new topic for each cell in this column for all current filtered rows",
                     click: function() {
@@ -271,6 +287,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {},
                 {
+                    id: "core/match-similar-to-new-topic",
                     label: "Create One New Topic for Similar Cells",
                     tooltip: "Mark to create one new topic for each group of similar cells in this column for all current filtered rows",
                     click: function() {
@@ -278,12 +295,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     }
                 },
                 {
+                    id: "core/match-to-specific",
                     label: "Match All Filtered Cells to ...",
                     tooltip: "Search for a topic to match all filtered cells to",
                     click: doSearchToMatch
                 },
                 {},
                 {
+                    id: "core/discard-judgments",
                     label: "Discard Reconciliation Judgments",
                     tooltip: "Discard reconciliaton judgments in this column for all current filtered rows",
                     click: doReconDiscardJudgments

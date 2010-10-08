@@ -27,7 +27,6 @@ import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.RecordModel.RowDependency;
-import com.google.refine.protograph.FreebaseProperty;
 import com.google.refine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
@@ -35,11 +34,13 @@ public class StandardReconConfig extends ReconConfig {
     
     static public class ColumnDetail {
         final public String columnName;
-        final public FreebaseProperty property;
+        final public String propertyName;
+        final public String propertyID;
         
-        public ColumnDetail(String columnName, FreebaseProperty property) {
+        public ColumnDetail(String columnName, String propertyName, String propertyID) {
             this.columnName = columnName;
-            this.property = property;
+            this.propertyName = propertyName;
+            this.propertyID = propertyID;
         }
     }
     
@@ -52,15 +53,21 @@ public class StandardReconConfig extends ReconConfig {
             columnDetails = new ArrayList<ColumnDetail>(l);
             for (int i = 0; i < l; i++) {
                 JSONObject o = columnDetailsA.getJSONObject(i);
-                JSONObject p = o.getJSONObject("property");
                 
-                columnDetails.add(new ColumnDetail(
-                    o.getString("column"),
-                    new FreebaseProperty(
-                        p.getString("id"),
-                        p.getString("name")
-                    )
-                ));
+                if (o.has("property")) { // legacy
+                    JSONObject p = o.getJSONObject("property");
+                    columnDetails.add(new ColumnDetail(
+                        o.getString("column"),
+                        p.has("name") ? p.getString("name") : null,
+                        p.has("id") ? p.getString("id") : null
+                    ));
+                } else {
+                    columnDetails.add(new ColumnDetail(
+                        o.getString("column"),
+                        o.has("propertyName") ? o.getString("propertyName") : null,
+                        o.has("propertyID") ? o.getString("propertyID") : null
+                    ));
+                }
             }
         } else {
             columnDetails = new ArrayList<ColumnDetail>();
@@ -140,7 +147,8 @@ public class StandardReconConfig extends ReconConfig {
             for (ColumnDetail c : columnDetails) {
                 writer.object();
                 writer.key("column"); writer.value(c.columnName);
-                writer.key("property"); c.property.write(writer, options);
+                writer.key("propertyName"); writer.value(c.propertyName);
+                writer.key("propertyID"); writer.value(c.propertyID);
                 writer.endObject();
             }
             writer.endArray();
@@ -198,7 +206,7 @@ public class StandardReconConfig extends ReconConfig {
                         if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
                             jsonWriter.object();
                             
-                            jsonWriter.key("pid"); jsonWriter.value(c.property.id);
+                            jsonWriter.key("pid"); jsonWriter.value(c.propertyID);
                             jsonWriter.key("v");
                             if (cell2.recon != null && cell2.recon.match != null) {
                                 jsonWriter.object();

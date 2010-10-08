@@ -1,4 +1,4 @@
-package com.google.refine.commands.freebase;
+package com.google.refine.commands.recon;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

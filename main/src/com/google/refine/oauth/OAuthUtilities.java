@@ -10,20 +10,14 @@ import oauth.signpost.OAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.http.HttpParameters;
 
-import com.google.refine.util.FreebaseUtils;
-
 public class OAuthUtilities {
     
     static final private Map<String,Provider> providers = new HashMap<String,Provider>();
     static final private Map<String,String[]> infos = new HashMap<String,String[]>();
-   
-    static private final String[] FREEBASE_OAUTH_INFO = { "#9202a8c04000641f80000000185352db" , "4561ee02279e6f04ebd88a1557e4292489380adf"};
-
-    static {
-        Provider freebase = new FreebaseProvider(FreebaseUtils.FREEBASE_HOST);
-        providers.put(freebase.getHost(), freebase);
-        
-        infos.put(freebase.getHost(), FREEBASE_OAUTH_INFO);
+    
+    static final public void registerOAuthProvider(Provider provider, String[] oauthInfo) {
+        providers.put(provider.getHost(), provider);
+        infos.put(provider.getHost(), oauthInfo);
     }
     
     public static Provider getProvider(String name) {
@@ -43,7 +37,7 @@ public class OAuthUtilities {
         if (provider == null) throw new RuntimeException("Provider can't be null");
         String[] consumer_info = infos.get(provider.getHost());
         if (consumer_info == null) throw new RuntimeException("Can't find secrets for provider '" + provider.getHost() + "'");
-        OAuthConsumer oauthConsumer = new FreebaseTimeCommonsHttpOAuthConsumer(consumer_info[0],consumer_info[1]);
+        OAuthConsumer oauthConsumer = provider.createConsumer(consumer_info[0],consumer_info[1]);
         HttpParameters params = new HttpParameters();
         params.put("realm", provider.getHost());
         oauthConsumer.setAdditionalParameters(params);

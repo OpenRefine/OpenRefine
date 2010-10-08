@@ -3,10 +3,6 @@ package com.google.refine.exporters;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.refine.exporters.ProtographTransposeExporter.MqlwriteLikeExporter;
-import com.google.refine.exporters.ProtographTransposeExporter.TripleLoaderExporter;
-
-
 abstract public class ExporterRegistry {
     static final private Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();
 
@@ -16,9 +12,6 @@ abstract public class ExporterRegistry {
         s_formatToExporter.put("csv", new CsvExporter());
         
         s_formatToExporter.put("template", new TemplatingExporter());
-        
-        s_formatToExporter.put("tripleloader", new TripleLoaderExporter());
-        s_formatToExporter.put("mqlwrite", new MqlwriteLikeExporter());
     }
     
     static public void registerExporter(String format, Exporter exporter) {

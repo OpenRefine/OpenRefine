@@ -262,6 +262,14 @@ public class RefineServlet extends Butterfly {
     }
     
     static final private Map<String, String> classMappingsCache  = new HashMap<String, String>();
+    static final private Map<String, Class<?>> classCache  = new HashMap<String, Class<?>>();
+    
+    // TODO(dfhuynh): Temporary solution until we figure out why cross butterfly module class resolution
+    // doesn't entirely work
+    static public void cacheClass(Class<?> klass) {
+        classCache.put(klass.getName(), klass);
+    }
+    
     static public Class<?> getClass(String className) throws ClassNotFoundException {
         String toClassName = classMappingsCache.get(className);
         if (toClassName == null) {
@@ -282,6 +290,11 @@ public class RefineServlet extends Butterfly {
             classMappingsCache.put(className, toClassName);
         }
         
-        return Class.forName(toClassName);
+        Class<?> klass = classCache.get(toClassName);
+        if (klass == null) {
+            klass = Class.forName(toClassName);
+            classCache.put(toClassName, klass);
+        }
+        return klass;
     }
 }

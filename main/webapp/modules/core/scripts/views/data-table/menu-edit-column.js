@@ -89,28 +89,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         );
     };
     
-    var doAddColumnFromFreebase = function() {
-        var o = DataTableView.sampleVisibleRows(column);
-        new ExtendDataPreviewDialog(
-            column, 
-            columnIndex, 
-            o.rowIndices, 
-            function(extension) {
-                Refine.postCoreProcess(
-                    "extend-data", 
-                    {
-                        baseColumnName: column.name,
-                        columnInsertIndex: columnIndex + 1
-                    },
-                    {
-                        extension: JSON.stringify(extension)
-                    },
-                    { rowsChanged: true, modelsChanged: true }
-                );
-            }
-        );
-    };
-
     var doRemoveColumn = function() {
         Refine.postCoreProcess(
             "remove-column", 
@@ -226,45 +204,50 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     MenuSystem.appendTo(menu, [ "core/edit-column" ], [
         {
+            id: "core/split-column",
             label: "Split into Several Columns ...",
             click: doSplitColumn
         },
         {},
         {
+            id: "core/add-column",
             label: "Add Column Based on This Column ...",
             click: doAddColumn
         },
         {
-            label: "Add Columns From Freebase ...",
-            click: doAddColumnFromFreebase
-        },
-        {
+            id: "core/add-column-by-fetching-urls",
             label: "Add Column By Fetching URLs ...",
             click: doAddColumnByFetchingURLs
         },
         {},
         {
+            id: "core/rename-column",
             label: "Rename This Column",
             click: doRenameColumn
         },
         {
+            id: "core/remove-column",
             label: "Remove This Column",
             click: doRemoveColumn
         },
         {},
         {
+            id: "core/move-column-to-beginning",
             label: "Move Column to Beginning",
             click: function() { doMoveColumnTo(0); }
         },
         {
+            id: "core/move-column-to-end",
             label: "Move Column to End",
             click: function() { doMoveColumnTo(theProject.columnModel.columns.length - 1); }
         },
         {
+            id: "core/move-column-to-left",
             label: "Move Column Left",
             click: function() { doMoveColumnBy(-1); }
         },
         {
+            id: "core/move-column-to-right",
             label: "Move Column Right",
             click: function() { doMoveColumnBy(1); }
         }

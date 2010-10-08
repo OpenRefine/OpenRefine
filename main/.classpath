@@ -13,10 +13,6 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/secondstring-20100303.jar" sourcepath="webapp/WEB-INF/lib-src/secondstring-20100303-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/ant-tools-1.8.0.jar" sourcepath="webapp/WEB-INF/lib-src/ant-tools-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/vicino-1.1.jar" sourcepath="webapp/WEB-INF/lib-src/vicino-1.1-sources.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/httpcore-4.0.1.jar" sourcepath="webapp/WEB-INF/lib-src/httpcore-4.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/httpclient-4.0.1.jar" sourcepath="webapp/WEB-INF/lib-src/httpclient-4.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/signpost-core-1.2.1.1.jar" sourcepath="webapp/WEB-INF/lib-src/signpost-core-1.2.1.1-sources.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.1.jar" sourcepath="webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.1-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/opencsv-2.2.jar" sourcepath="tests/java/lib-src/opencsv-2.2-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar" sourcepath="webapp/WEB-INF/lib-src/jcl-over-slf4j-1.5.6-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/slf4j-api-1.5.6.jar" sourcepath="webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
@@ -39,5 +35,9 @@
 	<classpathentry kind="lib" path="tests/server/lib/mockito-all-1.8.4.jar" sourcepath="tests/server/lib-src/mockito-all-1.8.4-sources.jar"/>
 	<classpathentry kind="lib" path="tests/server/lib/testng-5.12.1.jar" sourcepath="tests/server/lib-src/testng-5.12.1-sources.jar"/>
 	<classpathentry kind="lib" path="/grefine-server/lib/servlet-api-2.5.jar" sourcepath="/grefine-server/lib-src/servlet-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/httpclient-4.0.1.jar" sourcepath="webapp/WEB-INF/lib-src/httpclient-4.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/httpcore-4.0.1.jar" sourcepath="webapp/WEB-INF/lib-src/httpcore-4.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.1.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/signpost-core-1.2.1.1.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
