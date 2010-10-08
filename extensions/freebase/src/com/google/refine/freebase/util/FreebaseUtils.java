@@ -39,6 +39,9 @@ public class FreebaseUtils {
     static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/refine";
     
     static final private String AGENT_ID = "/en/google_refine";
+        
+    static final private int SAMPLE_SIZE = 300;
+    static final private int JUDGES = 4;
     
     private static String getUserInfoURL(String host) {
         return "http://" + host + "/api/service/user_info";
@@ -148,6 +151,19 @@ public class FreebaseUtils {
         return EntityUtils.toString(httpResponse.getEntity());
     }
 
+    private static String getTweezersParams(int sample_size, int judges) {
+        String o = "{" +
+            "'sample_size':" + sample_size + "," +
+            "'votes':{" +
+                "'reconciled':" + judges + "," +
+                "'invalid':" + judges + "," +
+                "'new':" + judges + "," +
+                "'skip':" + (judges + 2) +
+            "}" + 
+        "}";
+        return o.replace('\'', '"');
+    }
+    
     public static String uploadTriples(
         HttpServletRequest request,
         String qa,
@@ -183,7 +199,7 @@ public class FreebaseUtils {
                 formparams.add(new BasicNameValuePair("mdo_guid", mdo_id));
             }
             if (Boolean.parseBoolean(qa)) {
-                formparams.add(new BasicNameValuePair("rabj", "true"));
+                formparams.add(new BasicNameValuePair("rabj", getTweezersParams(SAMPLE_SIZE,JUDGES)));
             }
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
