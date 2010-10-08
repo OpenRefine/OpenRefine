@@ -601,7 +601,7 @@ run() {
     fi
 
     if [ "$OS" = "macosx" ] ; then
-        add_option "-Xdock:name=GoogleRefine -Xdock:icon=graphics/icon/google-refine.icns"
+        add_option '-Xdock:icon=graphics/icon/google-refine.icns'
     fi
     
     if [ "$REFINE_DATA_DIR" ] ; then

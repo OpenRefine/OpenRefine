@@ -54,10 +54,11 @@ public class Refine {
         System.setProperty("VERBOSE","false");
         System.setProperty("org.mortbay.log.class","org.mortbay.log.Slf4jLog");
         
-        // tell macosx to keep the menu associated with the screen
+        // tell macosx to keep the menu associated with the screen and what the app title is
         System.setProperty("apple.laf.useScreenMenuBar", "true");  
         System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode", "false"); 
-
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Google Refine");
+        
         // tell the signpost library to log
         //System.setProperty("debug","true");
             
