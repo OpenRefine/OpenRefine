@@ -16,7 +16,7 @@ import com.google.refine.importers.parsers.TreeParser;
 import com.google.refine.model.Project;
 
 public class JsonImporter implements StreamImporter{
-	final static Logger logger = LoggerFactory.getLogger("XmlImporter");
+	final static Logger logger = LoggerFactory.getLogger("JsonImporter");
 
     public static final int BUFFER_SIZE = 64 * 1024;
 

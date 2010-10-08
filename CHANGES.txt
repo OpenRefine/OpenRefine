@@ -23,6 +23,7 @@ Features:
   - Regexp groups capturing GEL function
 - Importers
   - New: RDF exporter (as extension)
+  - New: Json importer
   - CSV and TSV importers: added support for ignoring quotation marks
   - Added support for creating a project by pointing to a data file URL.
 - Text facet's choice count limit is now configurable through preference page
