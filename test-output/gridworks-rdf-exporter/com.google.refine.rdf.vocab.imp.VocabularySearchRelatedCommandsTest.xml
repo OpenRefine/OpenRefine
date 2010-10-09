@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.google.refine.rdf.vocab.imp.VocabularySearchRelatedCommandsTest" failures="0" tests="4" time="9.062" errors="0">
-  <properties/>
-  <testcase name="deleteVocabularyTest" time="0.125" classname="com.google.refine.rdf.vocab.imp.VocabularySearchRelatedCommandsTest"/>
-  <testcase name="importVocabularyTest" time="1.5" classname="com.google.refine.rdf.vocab.imp.VocabularySearchRelatedCommandsTest"/>
-  <testcase name="refreshVocabularyTest" time="1.125" classname="com.google.refine.rdf.vocab.imp.VocabularySearchRelatedCommandsTest"/>
-  <testcase name="suggestTermTest" time="0.0" classname="com.google.refine.rdf.vocab.imp.VocabularySearchRelatedCommandsTest"/>
-</testsuite>
