@@ -125,8 +125,8 @@ check_python() {
         error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
     fi
     PYTHON_VERSION="`python --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
-    if [ "$PYTHON_VERSION" != "2.5" ] && [ "$PYTHON_VERSION" != "2.6" ] ; then
-        error "This action requires python version 2.5.x or 2.6.x. You can download it for free at http://www.python.org/"
+    if [ "$PYTHON_VERSION" != "2.5" ] && [ "$PYTHON_VERSION" != "2.6" && [ "$PYTHON_VERSION" != "2.7" ]] ; then
+        error "This action requires python version 2.5.x, 2.6.x or 2.7.x. You can download it for free at http://www.python.org/"
     fi
 }
 
