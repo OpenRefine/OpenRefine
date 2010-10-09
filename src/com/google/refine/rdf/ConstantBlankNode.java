@@ -1,10 +1,9 @@
 package com.google.refine.rdf;
 
-import java.io.IOException;
 import java.net.URI;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
+import org.json.JSONException;
+import org.json.JSONWriter;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
@@ -26,10 +25,8 @@ public class ConstantBlankNode extends ResourceNode{
     }
 
 	@Override
-	protected void writeNode(JsonGenerator jwriter)
-			throws JsonGenerationException, IOException {
-		jwriter.writeStringField("nodeType","blank");
-		
+	protected void writeNode(JSONWriter writer) throws JSONException {
+		writer.key("nodeType"); writer.value("blank");
 	}
 
     

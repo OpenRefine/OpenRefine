@@ -1,0 +1,24 @@
+<testng-results>
+  <reporter-output>
+  </reporter-output>
+  <suite name="gridworks-rdf-exporter" duration-ms="9062" started-at="2010-10-06T19:41:16Z" finished-at="2010-10-06T19:41:25Z">
+    <groups>
+    </groups>
+    <test name="com.google.refine.rdf.vocab.imp.VocabularySearchRelatedCommandsTest" duration-ms="9062" started-at="2010-10-06T19:41:16Z" finished-at="2010-10-06T19:41:25Z">
+      <class name="com.google.refine.rdf.vocab.imp.VocabularySearchRelatedCommandsTest">
+        <test-method status="PASS" signature="init()" name="init" is-config="true" duration-ms="6218" started-at="2010-10-06T19:41:16Z" finished-at="2010-10-06T19:41:22Z">
+        </test-method>
+        <test-method status="PASS" signature="deleteVocabularyTest()" name="deleteVocabularyTest" duration-ms="125" started-at="2010-10-06T19:41:22Z" finished-at="2010-10-06T19:41:23Z">
+        </test-method>
+        <test-method status="PASS" signature="importVocabularyTest()" name="importVocabularyTest" duration-ms="1500" started-at="2010-10-06T19:41:23Z" finished-at="2010-10-06T19:41:24Z">
+        </test-method>
+        <test-method status="PASS" signature="refreshVocabularyTest()" name="refreshVocabularyTest" duration-ms="1125" started-at="2010-10-06T19:41:24Z" finished-at="2010-10-06T19:41:25Z">
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="94" started-at="2010-10-06T19:41:25Z" finished-at="2010-10-06T19:41:25Z">
+        </test-method>
+        <test-method status="PASS" signature="suggestTermTest()" name="suggestTermTest" duration-ms="0" started-at="2010-10-06T19:41:25Z" finished-at="2010-10-06T19:41:25Z">
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>

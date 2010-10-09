@@ -215,6 +215,25 @@ public class VocabularySearcher implements IVocabularySearcher {
 		this.update();
 	}
 	
+	@Override
+	public Map<String, String> setDefaultVocabularies(String projectId) throws CorruptIndexException, IOException, ParseException{
+		//remove default vocabularies 
+		this.deleteProjectVocabularies(GLOBAL_VOCABULARY_PLACE_HOLDER);
+		//set the new defaults
+		this.addDocumentsToProject(this.getDocumentsOfProjectId(projectId), GLOBAL_VOCABULARY_PLACE_HOLDER);
+		return this.getVocabulariesOfProjectId(projectId);
+	}
+	
+	@Override
+	public void addDefaultPrefixIfNotExist(String name, String uri) throws IOException{
+		if(prefixExists(name,GLOBAL_VOCABULARY_PLACE_HOLDER)){
+			//already exists 
+			return;
+		}
+		Vocabulary v = new Vocabulary(name, uri);
+		indexVocabulary(v,GLOBAL_VOCABULARY_PLACE_HOLDER);
+	}
+	
 	private void indexRdfNode(RDFNode node, String type, String projectId)
 			throws CorruptIndexException, IOException {
 		Document doc = new Document();

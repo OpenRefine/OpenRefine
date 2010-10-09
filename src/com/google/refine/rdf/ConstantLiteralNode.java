@@ -1,10 +1,10 @@
 package com.google.refine.rdf;
 
-import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
+import org.json.JSONException;
+import org.json.JSONWriter;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Value;
@@ -54,22 +54,19 @@ public class ConstantLiteralNode implements Node{
     public void setValue(String value) {
         this.value = value;
     }
-
-
     
     @Override
-	public void write(JsonGenerator jwriter) throws JsonGenerationException,
-			IOException {
-    	jwriter.writeStartObject();
-        jwriter.writeStringField("nodeType","literal");
-        jwriter.writeStringField("value",value);
+	public void write(JSONWriter writer, Properties options) throws JSONException {
+    	writer.object();
+        writer.key("nodeType"); writer.value("literal");
+        writer.key("value"); writer.value(value);
         if(valueType!=null){
-        	jwriter.writeStringField("valueType",valueType);
+        	writer.key("valueType"); writer.value(valueType);
         }
         if(lang!=null){
-        	jwriter.writeStringField("lang",lang);
+        	writer.key("lang"); writer.value(lang);
         }
-        jwriter.writeEndObject();
+        writer.endObject();
 	}
     
     @Override

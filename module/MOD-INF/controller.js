@@ -37,9 +37,9 @@ function init() {
     ExporterRegistry.registerExporter("n3", new RdfExporter(ctxt,org.openrdf.rio.RDFFormat.TURTLE));
     
     /*
-     *  GEL Functions and Binders
+     *  GREL Functions and Binders
      */
-    Packages.com.google.refine.gel.ControlFunctionRegistry.registerFunction(
+    Packages.com.google.refine.grel.ControlFunctionRegistry.registerFunction(
         "urlify", new Packages.com.google.refine.rdf.expr.functions.strings.Urlify());
         
     Packages.com.google.refine.expr.ExpressionUtils.registerBinder(
@@ -58,6 +58,7 @@ function init() {
     RefineServlet.registerCommand(module, "refresh-vocabulary", new RefreshVocabularyCommand(ctxt));
     RefineServlet.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
     RefineServlet.registerCommand(module, "list-prefixes", new ListPrefixesCommand(ctxt));
+    RefineServlet.registerCommand(module, "set-default-prefixes", new SetDefaultVocabulariesCommand(ctxt));
        
     /*
      *  Client-side Resources

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.google.refine.rdf.vocab.imp.VocabularySearcherTest" failures="0" tests="3" time="5.882" errors="0">
+  <properties/>
+  <testcase name="deleteTest" time="0.141" classname="com.google.refine.rdf.vocab.imp.VocabularySearcherTest"/>
+  <testcase name="newProjectGetsPredefinedVocabs" time="0.0" classname="com.google.refine.rdf.vocab.imp.VocabularySearcherTest"/>
+  <testcase name="searchTest" time="0.0" classname="com.google.refine.rdf.vocab.imp.VocabularySearcherTest"/>
+</testsuite>

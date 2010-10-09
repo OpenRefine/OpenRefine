@@ -10,8 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/grefine-server"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="/grefine/webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
 	<classpathentry kind="lib" path="/grefine/tests/server/lib/testng-5.12.1.jar"/>
-	<classpathentry kind="lib" path="test-libs/jackson-core-asl-1.5.6.jar"/>
-	<classpathentry kind="lib" path="test-libs/jackson-mapper-asl-1.5.6.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/any23-core-0.4.1.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/nekohtml-1.9.14.jar"/>
@@ -30,7 +28,6 @@
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/httpclient-4.0.1.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/httpcore-4.0.1.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/icu4j-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/jackson-core-asl-1.5.1.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/jrdf-0.5.6.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
@@ -54,5 +51,7 @@
 	<classpathentry kind="lib" path="/grefine/tests/server/lib/mockito-all-1.8.4.jar"/>
 	<classpathentry kind="lib" path="test-libs/org.springframework.core-3.0.4.RELEASE.jar"/>
 	<classpathentry kind="lib" path="test-libs/org.springframework.test-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/development/Java/grifine/grefine/extensions/rdf-export-extension/test-libs/jackson-mapper-asl-1.5.6.jar"/>
+	<classpathentry kind="lib" path="C:/development/Java/grifine/grefine/extensions/rdf-export-extension/test-libs/jackson-core-asl-1.5.6.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>

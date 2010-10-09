@@ -1,8 +1,6 @@
 package com.google.refine.rdf;
 
 import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.lucene.queryParser.ParseException;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,7 +51,7 @@ public class RdfSchema implements OverlayModel {
     
    @Override
     public void dispose(Project project) {
-	   try {
+	   /*try {
 			ApplicationContext.instance().getVocabularySearcher().deleteProjectVocabularies(String.valueOf(project.id));
 		} catch (ParseException e) {
 			//log
@@ -64,7 +59,7 @@ public class RdfSchema implements OverlayModel {
 		} catch (IOException e) {
 			//log
 			logger.error("Unable to delete index for project " + project.id, e);
-		}
+		}*/
     }
 
     public void setBaseUri(URI baseUri) {
@@ -242,35 +237,11 @@ public class RdfSchema implements OverlayModel {
         
         writer.key("rootNodes");
         writer.array();
-        JsonFactory factory = new JsonFactory();
-        Writer w;
-        try {
-        	//	some reflection magic
-        	Field protectedWriterField;
-			protectedWriterField = JSONWriter.class.getDeclaredField("writer");
-			protectedWriterField.setAccessible(true);
-			w = (Writer) protectedWriterField.get(writer);
-		} catch (IllegalArgumentException e) {
-			throw new JSONException(e);
-		} catch (IllegalAccessException e) {
-			throw new JSONException(e);
-		} catch (SecurityException e) {
-			throw new JSONException(e);
-		} catch (NoSuchFieldException e) {
-			throw new JSONException(e);
-		}
+       	for (Node node : _rootNodes) {
+        	node.write(writer, options);
+       	}
 
-        try{
-        	JsonGenerator jwriter =  factory.createJsonGenerator(w);
-        	for (Node node : _rootNodes) {
-        		node.write(jwriter);
-        	}
-        	jwriter.flush();
-        }catch(IOException ioe){
-        	new JSONException(ioe);
-        }
-        
-        writer.endArray();
+       	writer.endArray();
         writer.endObject();
     }
     

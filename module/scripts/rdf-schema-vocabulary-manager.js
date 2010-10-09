@@ -203,6 +203,24 @@ ManageVocabulariesDialog._addImageLink = function(file_name, txt, handler, paren
 	$('<a/>').attr('href','#').bind('click',function(e){e.preventDefault();handler();}).attr('title',txt).append(imgElem).appendTo(parent);
 };
 
+ManageVocabulariesDialog.showSetAsDefaultInfo = function(){
+	var frame = DialogSystem.createDialog();
+    frame.width("250px");
+    var header = $('<div></div>').addClass("dialog-header").text("Set as default prefixes").appendTo(frame);
+    var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    var html = $(
+    		'<p>"Set as default" will make the list of the current project\'s prefixes the default one. Any newly created project will have them defined by default. ' +
+    		'Existing projects are not affected.</p>'
+    ).appendTo(body);
+    
+    $('<button></button>').text("Close").click(function() {
+    	DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+    var level = DialogSystem.showDialog(frame);
+};
+
 ManageVocabulariesDialog.prototype.show = function(){
 	var self = this;
 	var frame = DialogSystem.createDialog();
@@ -225,10 +243,33 @@ ManageVocabulariesDialog.prototype.show = function(){
     		      '<td class="column-header">Imported</td>' +
     		      '<td class="column-header">Actions</td>' +
     		  '</table>'+
+    		  '<div style="width:100%; padding-top:4px">' +
+    		    '<div style="float:right;">' +
+    		      '<a href="#" bind="set_as_default_button">Set as default</a> ' +
+    		      '<a title="click for info" href="#" bind="set_as_default_info">' +
+    		      	'<img alt="What\'s this?" src="extension/rdf-exporter-extension/images/questionMarkIcon.jpg" />' +
+    		      '</a>' +
+    		    '</div>' + 
+    		  '</div>'+
     		'</div>'
     ).appendTo(body);
     
     var elmts = DOM.bind(html);
+    
+    elmts.set_as_default_button.bind('click', function(){
+    	var dismissBusy = DialogSystem.showBusy('Updating default prefixes');
+		$.post("/command/rdf-exporter-extension/set-default-prefixes",{"project":theProject.id},function(data){
+			dismissBusy();
+			if (data.code === "error"){
+				alert('Error:' + data.message)
+			}
+		},"json");
+    });
+    
+    elmts.set_as_default_info.bind('click',function(e){
+    	e.preventDefault();
+    	ManageVocabulariesDialog.showSetAsDefaultInfo();
+    });
     
     elmts.add_prefix_link.bind('click',function(e){
     	e.preventDefault();
@@ -265,16 +306,18 @@ ManageVocabulariesDialog.prototype._loadVocabularies = function(){
 		
 		var deleteVocabFun = function(v){
 			return function(){
-				var dismissBusy = DialogSystem.showBusy('Deleteing vocabulary: ' + v.prefix);
-				$.post("/command/rdf-exporter-extension/delete-vocabulary",{"name":v.prefix,"project":theProject.id},function(data){
-					dismissBusy();
-					if (data.code === "error"){
-						alert('Error:' + data.message)
-					}else{
-						self._loadVocabularies();
-						self._prefixesManager._loadPrefixes();
-					}
-				},"json");
+				if (window.confirm("Are you sure you want to delete prefix \"" + v.prefix + "\"?")){ 
+					var dismissBusy = DialogSystem.showBusy('Deleteing vocabulary: ' + v.prefix);
+					$.post("/command/rdf-exporter-extension/delete-vocabulary",{"name":v.prefix,"project":theProject.id},function(data){
+						dismissBusy();
+						if (data.code === "error"){
+							alert('Error:' + data.message)
+						}else{
+							self._loadVocabularies();
+							self._prefixesManager._loadPrefixes();
+						}
+					},"json");
+				}
 			};
 		}(vocabulary);
 		
@@ -291,7 +334,7 @@ ManageVocabulariesDialog.prototype._loadVocabularies = function(){
 				},"json");
 			};
 		}(vocabulary);
-		ManageVocabulariesDialog._addImageLink('delete.jpg','Delete',deleteVocabFun,actionsTd);	
+		ManageVocabulariesDialog._addImageLink('delete.png','Delete',deleteVocabFun,actionsTd);	
 		
 		if(vocabulary.imported){
 			$(td).text('Yes');

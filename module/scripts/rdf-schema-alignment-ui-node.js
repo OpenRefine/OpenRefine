@@ -640,7 +640,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._preview = function(expr,columnName,is
 				!columnName,
 				RdfSchemaAlignment._defaultNamespace,
 				function(expression){
-					expression = expression.substring(4);
+					expression = expression.substring(5);//grel:
 					$("#rdf-cell-expr").empty().text(expression);
 				}
 			);
@@ -654,7 +654,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._preview = function(expr,columnName,is
 				expr,
 				!columnName,
 				function(expression){
-					expression = expression.substring(4);
+					expression = expression.substring(5);//grel:
 					$("#rdf-cell-expr").empty().text(expression);
 				}
 			);

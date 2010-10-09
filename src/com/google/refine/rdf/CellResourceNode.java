@@ -1,10 +1,9 @@
 package com.google.refine.rdf;
 
-import java.io.IOException;
 import java.net.URI;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
+import org.json.JSONException;
+import org.json.JSONWriter;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
@@ -53,22 +52,6 @@ public class CellResourceNode extends ResourceNode implements CellNode{
         
     }
 
-    
-
-
-	@Override
-	protected void writeNode(JsonGenerator jwriter)
-			throws JsonGenerationException, IOException {
-        jwriter.writeStringField("nodeType","cell-as-resource");
-        jwriter.writeStringField("expression",uriExpression);
-        jwriter.writeBooleanField("isRowNumberCell",isRowNumberCell);
-        if(columnName!=null){
-        	jwriter.writeStringField("columnName",columnName);
-        }
-		
-	}
-
-
 
 	@Override
 	public boolean isRowNumberCellNode() {
@@ -80,5 +63,18 @@ public class CellResourceNode extends ResourceNode implements CellNode{
 	@Override
 	public String getColumnName() {
 		return columnName;
+	}
+
+
+
+	@Override
+	protected void writeNode(JSONWriter writer) throws JSONException {
+		writer.key("nodeType"); writer.value("cell-as-resource");
+        writer.key("expression"); writer.value(uriExpression);
+        writer.key("isRowNumberCell"); writer.value(isRowNumberCell);
+        if(columnName!=null){
+        	writer.key("columnName"); writer.value(columnName);
+        }
+		
 	}
 }

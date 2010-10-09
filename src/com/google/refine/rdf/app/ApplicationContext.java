@@ -6,8 +6,10 @@ import java.io.IOException;
 import org.json.JSONException;
 
 import com.google.refine.rdf.vocab.IPredefinedVocabularyManager;
+import com.google.refine.rdf.vocab.IVocabularyManager;
 import com.google.refine.rdf.vocab.IVocabularySearcher;
 import com.google.refine.rdf.vocab.imp.PredefinedVocabularyManager;
+import com.google.refine.rdf.vocab.imp.VocabularyManager;
 import com.google.refine.rdf.vocab.imp.VocabularySearcher;
 
 public class ApplicationContext {
@@ -15,18 +17,14 @@ public class ApplicationContext {
 	private File workingDir;
 	private IPredefinedVocabularyManager predefinedVocabularyManager;
 	private IVocabularySearcher vocabularySearcher;
-	private static ApplicationContext instance;
-	
-	/**
-	 * @return
-	 *  This is not singleton pattern but I will create only one instance... and add it in the {@link #init(File)} method 
-	 */
-	public static ApplicationContext instance(){
-		return instance;
-	}
+	private IVocabularyManager vocabularyManager;
 	
 	public IPredefinedVocabularyManager getPredefinedVocabularyManager() {
 		return predefinedVocabularyManager;
+	}
+	
+	public IVocabularyManager getVocabularyManager() {
+		return vocabularyManager;
 	}
 	
 	public IVocabularySearcher getVocabularySearcher() {
@@ -37,7 +35,7 @@ public class ApplicationContext {
 		this.workingDir = workingDir;
 		this.vocabularySearcher = new VocabularySearcher(this.workingDir);
 		this.predefinedVocabularyManager = new PredefinedVocabularyManager(this,this.workingDir);
-		instance = this;
+		this.vocabularyManager = new VocabularyManager();
 	}
 
 	public void setPredefinedVocabularyManager(
@@ -47,5 +45,9 @@ public class ApplicationContext {
 
 	public void setVocabularySearcher(IVocabularySearcher vocabularySearcher) {
 		this.vocabularySearcher = vocabularySearcher;
+	}
+	
+	public void setVocabularyMAnager(IVocabularyManager vocabularyManager) {
+		this.vocabularyManager = vocabularyManager;
 	}
 }

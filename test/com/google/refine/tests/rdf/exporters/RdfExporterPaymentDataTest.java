@@ -19,7 +19,7 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.browsing.Engine;
 import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.gel.ControlFunctionRegistry;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.importers.TsvCsvImporter;
 import com.google.refine.model.Project;
 import com.google.refine.rdf.RdfSchema;

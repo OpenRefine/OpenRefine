@@ -1,10 +1,9 @@
 package com.google.refine.rdf;
 
-import java.io.IOException;
 import java.net.URI;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
+import org.json.JSONException;
+import org.json.JSONWriter;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
@@ -29,11 +28,11 @@ public class CellBlankNode extends ResourceNode implements CellNode{
     }
 
     @Override
-    public void writeNode(JsonGenerator jwriter) throws  JsonGenerationException, IOException{
-        jwriter.writeStringField("nodeType","cell-as-blank");
-        jwriter.writeBooleanField("isRowNumberCell",isRowNumberCell);
+    public void writeNode(JSONWriter writer) throws JSONException {
+        writer.key("nodeType"); writer.value("cell-as-blank");
+        writer.key("isRowNumberCell"); writer.value(isRowNumberCell);
         if(columnName!=null){
-        	jwriter.writeStringField("columnName",columnName);
+        	writer.key("columnName");writer.value(columnName);
         }
     }
 
@@ -46,5 +45,4 @@ public class CellBlankNode extends ResourceNode implements CellNode{
 	public String getColumnName() {
 		return columnName;
 	}
-
 }

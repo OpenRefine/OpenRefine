@@ -47,8 +47,14 @@ public class PredefinedVocabularyManager implements IPredefinedVocabularyManager
 		}
 	}
 	
+	@Override
 	public Map<String, String> getPredefinedPrefixesMap() {
 		return predefinedPrefixesMap;
+	}
+	
+	@Override
+	public void setPredefinedPrefixesMap(Map<String, String> prefixes) {
+		this.predefinedPrefixesMap = prefixes;
 	}
 	
 	protected InputStream getPredefinedVocabularyFile(){

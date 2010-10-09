@@ -20,11 +20,11 @@ RdfDataTableView.previewOnVisibleRows = function(isLiteral,column, title, expres
     		
     	};*/
     
-   	f.prototype.generateWidgetHtmlOnlyGel = function() {
+   	f.prototype.generateWidgetHtmlOnlyGrel = function() {
 	    var html = DOM.loadHTML("core", "scripts/dialogs/expression-preview-dialog.html");
 	    
 	    var languageOptions = [];
-	    var prefix = 'gel';
+	    var prefix = 'grel';
            var info = theProject.scripting[prefix];
 	        languageOptions.push('<option value="' + prefix + '">' + info.name + '</option>');
 	    
@@ -41,7 +41,7 @@ RdfDataTableView.previewOnVisibleRows = function(isLiteral,column, title, expres
         var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
         var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
         var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-        var html = $(self.generateWidgetHtmlOnlyGel()).appendTo(body);
+        var html = $(self.generateWidgetHtmlOnlyGrel()).appendTo(body);
         
         f._elmts = DOM.bind(html);
         
@@ -76,7 +76,7 @@ RdfDataTableView.previewOnVisibleRows = function(isLiteral,column, title, expres
         	$("#expression-preview-tabs-history").css("display", "");
         	$("#expression-preview-tabs-help").css("display", "");
             
-        	uriPreviewWidget._elmts.expressionPreviewLanguageSelect[0].value = "gel";
+        	uriPreviewWidget._elmts.expressionPreviewLanguageSelect[0].value = "grel";
         	uriPreviewWidget._elmts.expressionPreviewLanguageSelect.bind("change", function() {
         		$.cookie("scripting.lang", this.value);
         		self.update();

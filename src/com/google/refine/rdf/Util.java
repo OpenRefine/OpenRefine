@@ -38,13 +38,27 @@ public class Util {
 		} catch (URISyntaxException e) {
 			// silent
 		}
-		if (base.getFragment() != null) {
+		String res;
+		try{
+			res = resolveRelativeUri(base,rel);
+			new URI(res);
+			return res;
+		}catch(Exception ex){
+			//try encoding
+			String encodedRel;
 			try {
-				return base + URLEncoder.encode(rel, "UTF-8");
+				encodedRel = URLEncoder.encode(rel, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				//silent
 				return "";
 			}
+			return resolveRelativeUri(base, encodedRel);
+		}
+	}
+
+	private static String resolveRelativeUri(URI base, String rel){
+		if (base.getFragment() != null) {
+			return base + rel;
 		}
 		return base.resolve(rel).toString();
 	}

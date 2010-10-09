@@ -1,10 +1,10 @@
 package com.google.refine.rdf;
 
-import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
+import org.json.JSONException;
+import org.json.JSONWriter;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Value;
@@ -29,24 +29,6 @@ public class CellLiteralNode implements CellNode{
     
     public String getLang() {
         return lang;
-    }
-    
-    public void write(JsonGenerator writer)
-            throws  JsonGenerationException, IOException {
-        writer.writeStartObject();
-        writer.writeStringField("nodeType","cell-as-literal");
-        writer.writeStringField("expression",expression);
-        writer.writeBooleanField("isRowNumberCell",isRowNumberCell);
-        if(valueType!=null){
-        	writer.writeStringField("valueType",valueType);
-        }
-        if(lang!=null){
-            writer.writeStringField("lang",lang);
-        }
-        if(columnName!=null){
-        	writer.writeStringField("columnName",columnName);
-        }
-        writer.writeEndObject();
     }
     
     public CellLiteralNode(String columnName, String exp, String valueType,String lang,boolean isRowNumberCell){
@@ -102,6 +84,25 @@ public class CellLiteralNode implements CellNode{
 	@Override
 	public String getColumnName() {
 		return columnName;
+	}
+
+	@Override
+	public void write(JSONWriter writer, Properties options)
+			throws JSONException {
+		writer.object();
+        writer.key("nodeType"); writer.value("cell-as-literal");
+        writer.key("expression"); writer.value(expression);
+        writer.key("isRowNumberCell"); writer.value(isRowNumberCell);
+        if(valueType!=null){
+        	writer.key("valueType"); writer.value(valueType);
+        }
+        if(lang!=null){
+            writer.key("lang"); writer.value(lang);
+        }
+        if(columnName!=null){
+        	writer.key("columnName"); writer.value(columnName);
+        }
+        writer.endObject();		
 	}
 
 }

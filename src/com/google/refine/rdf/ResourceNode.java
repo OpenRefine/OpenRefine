@@ -1,12 +1,12 @@
 package com.google.refine.rdf;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
+import org.json.JSONException;
+import org.json.JSONWriter;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -50,32 +50,32 @@ abstract public class ResourceNode implements Node {
         return this.rdfTypes;
     }
 
-    protected abstract void writeNode(JsonGenerator jwriter) throws  JsonGenerationException, IOException;
-    public void write(JsonGenerator jwriter)
-    	throws  JsonGenerationException, IOException {
-        jwriter.writeStartObject();
+    protected abstract void writeNode(JSONWriter writer) throws JSONException;
+    @Override
+    public void write(JSONWriter writer, Properties options)throws JSONException{
+        writer.object();
         //writer node
-        writeNode(jwriter);
+        writeNode(writer);
         //write types
-        jwriter.writeFieldName("rdfTypes");
-        jwriter.writeStartArray();
+        writer.key("rdfTypes");
+        writer.array();
         for(RdfType type:this.getTypes()){
-            jwriter.writeStartObject();
-            jwriter.writeStringField("uri",type.uri);
-            jwriter.writeStringField("curie",type.curie);
-            jwriter.writeEndObject();
+            writer.object();
+            writer.key("uri");writer.value(type.uri);
+            writer.key("curie");writer.value(type.curie);
+            writer.endObject();
         }
-        jwriter.writeEndArray();
+        writer.endArray();
         //write links
-        jwriter.writeFieldName("links");
-        jwriter.writeStartArray();
+        writer.key("links");
+        writer.array();
         for(int i=0;i<getLinkCount();i++){
             Link l = getLink(i);
-            l.write(jwriter);
+            l.write(writer,options);
         }
-        jwriter.writeEndArray();
+        writer.endArray();
         
-        jwriter.writeEndObject();
+        writer.endObject();
         
     }
 

@@ -1,10 +1,13 @@
 package com.google.refine.rdf;
 
-import java.io.IOException;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
+import java.util.Properties;
 
-public class Link {
+import org.json.JSONException;
+import org.json.JSONWriter;
+
+import com.google.refine.Jsonizable;
+
+public class Link implements Jsonizable{
 
     public final String propertyUri;
     public final String curie;
@@ -16,16 +19,15 @@ public class Link {
         this.curie = curie;
     }
     
-    public void write(JsonGenerator jwriter)
-    	throws  JsonGenerationException, IOException {
+    public void write(JSONWriter writer, Properties options)throws  JSONException{
 
-        jwriter.writeStartObject();
-        jwriter.writeStringField("uri",propertyUri);
-        jwriter.writeStringField("curie",curie);
+        writer.object();
+        writer.key("uri"); writer.value(propertyUri);
+        writer.key("curie"); writer.value(curie);
         if (target != null) {
-            jwriter.writeFieldName("target");
-            target.write(jwriter);
+            writer.key("target");
+            target.write(writer, options);
         }
-        jwriter.writeEndObject();
+        writer.endObject();
     }
 }

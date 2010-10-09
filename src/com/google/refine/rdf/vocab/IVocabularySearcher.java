@@ -53,4 +53,15 @@ public interface IVocabularySearcher {
 	public void dispose()throws CorruptIndexException, IOException;
 	
 	public void deleteProjectVocabularies(String projectId) throws ParseException,IOException;
+	
+	/**
+	 * @param projectId
+	 * @return prefixes that were set as defaults in a form of a map (name==>uri as in foaf==>http://xmlns.com/foaf/0.1/) 
+	 * @throws CorruptIndexException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public Map<String,String> setDefaultVocabularies(String projectId) throws CorruptIndexException, IOException, ParseException;
+	
+	public void addDefaultPrefixIfNotExist(String key, String value)throws IOException;
 }
