@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>RDF Extension for Google Refine</title>
+  <link href="http://24ways.org/examples/intricate-fluid-layouts/yui/v012/grids-min.css" rel="stylesheet" type="text/css">
+  <link href="style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+	<div id="doc3" class="yui-t1">
+	  <div id="yui-main">
+	    <div class="yui-b main-header">
+		    <h1>RDF Extension for <a href="http://code.google.com/p/google-refine/" name="top">Google Refine</a></h1>
+		</div>
+		<div class="yui-b">
+		  <a name="about"></a>
+		  <div class="text">
+		    <em>RDF Extension for Google Refine</em> allows exporting data of Google Refine projects in RDF format. 
+			The export is based on mapping the data to a template graph which can be defined through a graphical interface.
+		  </div>
+        </div>
+		<div id="download">
+			<h3><a href="downloads/grefine-rdf-extension.zip">Download RDF Extension for Google Refine</a></h3>
+			<small>v0.2.1 (alpha), released 2010-10-27</small>
+		</div>
+		<div class="yui-b">
+		  <a name="quick_start"></a>
+		  <h2>Quick Start <a class="top_link" href="#top">Top ^</a></h2>
+		  <div>
+		    <p><em>You need to have Google Refine <b>(version 2.0 or later)</b> installed on you machine (see <a href="http://code.google.com/p/google-refine/wiki/Downloads?tm=2">download page</a>)</em></p>
+			<ol>
+				<li><a href="downloads/grefine-rdf-extension.zip">Download Google Refine Extension</a></li>
+				<li>Unpack the downloaded archive into an <em>extensions</em> directory under your user workspace directory for Google Refine.
+					The latter should be findable in the following places depending on your operating system:
+					<ul>
+						<li>Linux   ~/.local/share/Google/Refine/extensions</li>
+						<li>Windows  C:/Documents and Settings/<user>/Application Data/Google/Refine/extensions</li>
+						<li>Mac OSX  ~/Library/Application Support/Google/Refine/extensions/</li>
+					</ul>
+				</li>
+			<li>Restart Google Refine (you should see an RDF small button next to Freebase button on the upper right corner)</li>
+			</ol>
+			<div class="note"><span>note:</span>if extensions folder does not exist just create it </div>
+			<div class="note"><span>note:</span>if you couldnot find the Refine folder on Windows, try C:/Documents and Settings/<user>/Local Settings/Application Data/Google/Refine/extensions</div>
+			<div class="note"><span>note:</span>Upon the first running of the extension, it will try to download a set of predefined vocabularies (rdf, rdfs and owl) so it is recommended 
+			that you have internet access. You still can download them later anyway.</div>
+ 		  </div>
+        </div>
+		<div class="yui-b">
+		  <a name="features"></a>
+		  <h2>Main Features <a class="top_link" href="#top">Top ^</a></h2>
+		  <div>
+		    <ul>
+			  <li>Graphical interface to define the mapping</li>
+			  <li>Vocabulary management (add, delete, import...)</li>
+			  <li>Autocomplete for properties and classes names</li>
+			  <li>RDF/XML and Turtle export</li>
+		    </ul>
+		  </div>
+		</div>
+		<div class="yui-b">
+		  <a name="example"></a>
+		  <h2>Example <a class="top_link" href="#top">Top ^</a></h2>
+		  <span>This is a simple example showing how RDF can be extracted from a sample <a href="downloads/example/high-earners-pay.csv">CSV file</a> (you can download the whole <a href="downloads/example/high-earners-pay.google-refine.tar.gz">project</a> and then directly import it in Google Refine)</span>
+		  <div>
+		    The first few lines of the <a href="downloads/example/high-earners-pay.csv">sample CSV file</a> is shown in the table below. 
+			This data is the <a href="http://www.direct.gov.uk/prod_consum_dg/groups/dg_digitalassets/@dg/@en/documents/digitalasset/dg_188112.csv">highest-earning senior civil servants in UK</a> as published by the Cabinet Office on 1 June 2010.
+			<table class="data-table">
+			  <tr>
+				<th>Name</th>
+				<th>Job Title</th>
+				<th>Grade</th>
+				<th>Organization</th>
+				<th>Annual pay rate - including taxable benefits and allowances</th>
+				<th>Notes</th>
+			  </tr>
+			  <tr>
+			  	<td>Stephan Wilcke</td>
+				<td>Chief Executive Officer</td>
+				<td></td>
+				<td>Asset Protection Agency</td>
+				<td>£150,000 - £154,999</td>
+				<td></td>
+			  </tr>
+			  <tr>
+				<td>Jens Bech</td>
+				<td>Chief Risk Officer</td>
+				<td></td>
+				<td>Asset Protection Agency</td>
+				<td>£165,000 - £169,999</td>
+				<td>No pension</td>
+			  </tr>
+			  <tr>
+			    <td>Ion Dagtoglou</td>
+				<td>Chief Invesment Officer</td>
+				<td></td>
+				<td>Asset Protection Agency</td>
+				<td>£165,000 - £169,999</td>
+				<td>No pension</td>
+			  </tr>
+			  <tr>
+			    <td>Brian Scammell</td>
+				<td>Chief Credit Officer</td>
+				<td></td>
+				<td>Asset Protection Agency</td>
+				<td>£130,000 - £134,999</td>
+				<td>4 days per week</td>
+			  </tr>
+			</table>
+			The intended RDF we want to export should look like (for the first line):
+			<pre>
+			  <code>
+&lt;http://lab.linkeddata.deri.ie/test/0&gt; a foaf:Person ; 
+				foaf:name "Stephan Wilcke" ; 
+				foaf:title "Chief Executive Officer"@en .
+				foaf:member &lt;http://lab.linkeddata.deri.ie/test#organizations/asset-protection-agency&gt;  ;
+				&lt;http://lab.linkeddata.deri.ie/test/annualPayRate&gt; "£150,000 - £154,999" . 
+				
+&lt;http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency&gt;  a foaf:Organization ; 
+				foaf:name "Asset Protection Agency"@en . 
+			  </code>
+			</pre>
+			
+			<div>
+			  After creating a project in Google Refine, using <em>Edit RDF Skeleton...</em> command available under the <em>RDF</em> menu, we design the following skeleton:
+			  <div class="image">
+			    <img src="imgs/skeleton_example.png" alt="Skeleton Example" />
+			  </div>
+			  <div class="note"><span>note:</span>we set the base URI at the top of the dialog to http://lab.linkeddata.deri.ie/test/ </div>
+			  <div class="note"><span>note:</span>Prefixs can be managed by the <em>Add Prefix</em> and <em>Manage vocabularies</em> </div>
+			  <div class="note"><span>note:</span>We created a new property <em>annualPayRate</em> which will be defined within the default namespace specified by the base URI</div>
+			</div>
+			<div>
+			  The figure below shows an example of a node dialog (the <em>organization URI</em> node)
+			  <div class="image">
+			    <img src="imgs/node_config_example.png" alt="Node configuration Example" />
+			  </div>
+			</div>
+			<div>
+			  Notice the custom expression used to define the URI. The <em>preview/edit</em> shows sample values of the first 10 rows as shown below
+			  <div class="image">
+			    <img src="imgs/preview_uri_example.png" alt="Node configuration Example" />
+			  </div>
+			</div>
+			<div>
+			After saving the skeleton, RDF data can be exported in RDF/XML or Turtle from the <em>Export</em> menu (You can download the result 
+			RDF data of the example <a href="downloads/example/high-earners-pay.rdf">RDF/XML</a> , <a href="downloads/example/high-earners-pay.ttl">Turtle</a> ) 
+			</div>
+		  </div>
+        </div>
+
+		<div class="yui-b">
+		  <a name="developers"></a>
+          <h2>Developers <a class="top_link" href="#top">Top ^</a></h2>
+		  <div>
+		  The code is shared on <a href="http://github.com/fadmaa/grefine-rdf-extension">github</a>
+		  </div>
+		</div>
+		
+		<div class="yui-b">
+		  <a name="contact"></a>
+          <h2>Support and feedback <a class="top_link" href="#top">Top ^</a></h2>
+		  <ul>
+            <li>Fadi Maali <a href="mailto:fadi.maali@deri.org">(fadi.maali@deri.org)</a></li>
+            <li><a href="http://richard.cyganiak.de/">Richard Cyganiak</a> <a href="mailto:richard@cyganiak.de">(richard@cyganiak.de)</a></li>
+          </ul>
+		</div>
+	  </div>
+	  <div class="yui-b">
+	    <div class="logo">
+		  <img src="imgs/deri_logo.gif" />
+		</div>
+	    &raquo;&nbsp;<a href="#quick_start">Quick Start</a><br/>
+	    &raquo;&nbsp;<a href="#features">Features</a><br/>
+		&raquo;&nbsp;<a href="#example">Example</a><br/>
+		&raquo;&nbsp;<a href="#developers">For Developers</a><br/>
+		&raquo;&nbsp;<a href="#contact">Contact</a>
+	  </div>
+	</div>
+</body>
+</html>

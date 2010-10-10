@@ -1,0 +1,1779 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:dcat="http://www.w3.org/ns/dcat#"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:dct="http://purl.org/dc/terms/"
+	xmlns:myns="http://myhost.com/myns/"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/0">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Stephan Wilcke</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive Officer</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Asset Protection Agency</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/0">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/1">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jens Bech</foaf:name>
+	<foaf:title xml:lang="en">Chief Risk Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/2">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Ion Dagtoglou</foaf:name>
+	<foaf:title xml:lang="en">Chief Invesment Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/3">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Brian Scammell</foaf:name>
+	<foaf:title xml:lang="en">Chief Credit Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£130,000 - £134,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/4">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Hamish Buckland</foaf:name>
+	<foaf:title xml:lang="en">Special Advisor</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£65,000 - £69,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/5">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Stephen Lovegrove</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive, Shareholder Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/bis">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">BIS</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/5">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£185,000 - £189,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/6">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Philip Rutnam</foaf:name>
+	<foaf:title xml:lang="en">Director General, Business Group</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£180,000 - £184,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/7">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Vicky Pryce</foaf:name>
+	<foaf:title xml:lang="en">Director General, Economics and Joint Head, UK Government Economic Service</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/8">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Prof. John Beddington</foaf:name>
+	<foaf:title xml:lang="en">Government Chief Scientific Adviser</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/9">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Prof. Adrian Smith</foaf:name>
+	<foaf:title xml:lang="en">Director General, Science and Research</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/10">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Philip Rycroft</foaf:name>
+	<foaf:title xml:lang="en">Director General, Innovation and Enterpriseand Chief Executive of the Better Regulation Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/11">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Howard Orme</foaf:name>
+	<foaf:title xml:lang="en">Director General, Finance and Commercial</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/12">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Simon Fraser</foaf:name>
+	<foaf:title xml:lang="en">BIS Permanent Secretary</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/13">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Mark Russell</foaf:name>
+	<foaf:title xml:lang="en">Deputy Chief Executive, Shareholder Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/14">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>John McCready</foaf:name>
+	<foaf:title xml:lang="en">Managing Director, Property, Shareholder Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/15">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Marc Middleton</foaf:name>
+	<foaf:title xml:lang="en">Managing Director, Royal Mail &amp; Postal Services, Shareholder Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/bis"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/16">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Alison Littley</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/buying-solutions">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Buying Solutions</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/16">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/buying-solutions"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/17">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Gus O'Donnell</foaf:name>
+	<foaf:title xml:lang="en">Cabinet Secretary and Head of the Home Civil Service</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Cabinet Office</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/17">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£235,000 - £239,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/18">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Stephen Laws</foaf:name>
+	<foaf:title xml:lang="en">First Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£225,000 - £229,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/19">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Robert Parker</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£210,000 - £214,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/20">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>John Suffolk</foaf:name>
+	<foaf:title xml:lang="en">Chief Information Officer for HM Government and chair of the CIO Council</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£205,000 - £209,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/21">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Philip Davies</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£195,000 - £199,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/22">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Catherine Johnston</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/23">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Gill Rider</foaf:name>
+	<foaf:title xml:lang="en">Head of Civil Service Capability Group</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£180,000 - £184,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/24">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Cook</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/25">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Elizabeth Gardiner</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/26">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Adrian Hogarth</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/27">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Leonie McLaughlin</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/28">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Matt Tee</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary for Government Communications</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/29">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Alex Allan</foaf:name>
+	<foaf:title xml:lang="en">Chairman of the Joint Intelligence committee and Professional Head of Intelligence Analysis</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/30">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Edward Stell</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/31">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Hayley Rogers</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/32">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jonathan Cunliffe</foaf:name>
+	<foaf:title xml:lang="en">Prime Minister's Adviser on International Economic Affairs and Europe</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/33">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Sprackling</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/34">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jeremy Heywood</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary, No.10</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/35">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Douglas Ramsay</foaf:name>
+	<foaf:title xml:lang="en">Parliamentary Counsel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£135,000 - £139,998</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/36">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Janet Paraskeva</foaf:name>
+	<foaf:title xml:lang="en">First Civil Service Commissioner</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£120,000 - £124,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/37">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Janet Gaymer</foaf:name>
+	<foaf:title xml:lang="en">Commissioner for Public Appointments</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/cabinet-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£90,000 - £94,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/38">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Joe Montgomery</foaf:name>
+	<foaf:title xml:lang="en">Director General, Regions and Communities</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/communities-local-government">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Communities &amp; Local Government</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/38">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/communities-local-government"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/39">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Ken Knight</foaf:name>
+	<foaf:title xml:lang="en">Chief Fire and Rescue Adviser</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/communities-local-government"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/40">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Richard McCarthy</foaf:name>
+	<foaf:title xml:lang="en">Director General, Housing and Planning</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/communities-local-government"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/41">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Peter Housden</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/communities-local-government"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£185,000 - £189,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/42">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Peter Lewis</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/crown-prosecution-service">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Crown Prosecution Service</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/42">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/crown-prosecution-service"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/43">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Keir Starmer</foaf:name>
+	<foaf:title xml:lang="en">Director of Public Prosecutions</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/crown-prosecution-service"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£195,000 - £199,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/44">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Green</foaf:name>
+	<foaf:title xml:lang="en">Director of Revenues and Customs Division</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/crown-prosecution-service"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£210,000 - £214,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/45">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jonathan Stephens</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/dcms">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">DCMS</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/45">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dcms"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/46">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jeremy Beeton</foaf:name>
+	<foaf:title xml:lang="en">Director General,Government Olympic Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dcms"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£225,000 - £229,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/47">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Goldstone</foaf:name>
+	<foaf:title xml:lang="en">Director- Finance and Programme, Government Olympic Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dcms"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£185,000 - £189,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/48">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Moira Wallace</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/decc">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">DECC</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/48">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/decc"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/49">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Dame Helen Ghosh</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/defra">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Defra</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/49">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/defra"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£140,000 - £144,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/50">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Prof Robert Watson</foaf:name>
+	<foaf:title xml:lang="en">Chief Scientific Adviser</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/defra"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£135,000 - £139,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/51">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Nemat Shafik</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/department-for-international-development">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Department for International Development</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/51">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/department-for-international-development"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/52">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Robert Devereux</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/department-for-transport">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Department for Transport</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/52">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/department-for-transport"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/53">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Dr Mike Mitchell</foaf:name>
+	<foaf:title xml:lang="en">Head of National Networks Group</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/department-for-transport-centre">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Department for Transport (Centre)</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/53">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/department-for-transport-centre"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£200,000 - £204,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/54">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Nirmal Kotecha</foaf:name>
+	<foaf:title xml:lang="en">Major Projects Director</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/department-for-transport-highways-agency">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Department for Transport, Highways Agency</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/54">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/department-for-transport-highways-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/55">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Nicholson</foaf:name>
+	<foaf:title xml:lang="en">NHS Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Dept. of Health</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/55">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£255,000 - £259,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/56">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Clare Chapman</foaf:name>
+	<foaf:title xml:lang="en">Director General of Workforce</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£220,000 - £224,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/57">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Liam Donaldson</foaf:name>
+	<foaf:title xml:lang="en">Chief Medical Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£205,000 - £209,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/58">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Christine Connelly</foaf:name>
+	<foaf:title xml:lang="en">Chief Information Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£200,000 - £204,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/59">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Gabriel Scally</foaf:name>
+	<foaf:title xml:lang="en">Regional Director of Public Health</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£200,000 - £204,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/60">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Behan</foaf:name>
+	<foaf:title xml:lang="en">Director General of Social Care, Local Government and Carepartnerships</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£180,000 - £184,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/61">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Salisbury</foaf:name>
+	<foaf:title xml:lang="en">Director of Immunisation</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/62">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Lindsey Davies</foaf:name>
+	<foaf:title xml:lang="en">Interim Regional Director of Public Health</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/63">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Hugh Taylor</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary, DH</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/64">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Martin Bellamy</foaf:name>
+	<foaf:title xml:lang="en">ICT Director</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/65">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Duncan Selbie</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dept-of-health"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£180,000 - £184,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/66">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Leigh Lewis</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/dwp">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">DWP</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/66">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dwp"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£195,000 - £199,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/67">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Hunada Nouss</foaf:name>
+	<foaf:title xml:lang="en">Finance Director General</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dwp"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/68">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Joe Harley</foaf:name>
+	<foaf:title xml:lang="en">IT Director General &amp; Chief Information Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dwp"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£245,000 - £249,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/69">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Chris Last</foaf:name>
+	<foaf:title xml:lang="en">HR Director General</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dwp"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£180,000 - £184,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/70">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Mel Groves</foaf:name>
+	<foaf:title xml:lang="en">Project Director, Welfare &amp; Wellbeing</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dwp"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/71">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Stephen Holt</foaf:name>
+	<foaf:title xml:lang="en">Director of Change Management</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dwp"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/72">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Bill Gunnyeon</foaf:name>
+	<foaf:title xml:lang="en">Director of Health Work and Wellbeing, Chief Medical Adviser and Chief Scientist</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/dwp"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/73">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Bell</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/education">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Education</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/73">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/education"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£180,000 - £184,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/74">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Patrick Crawford</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/export-credits-guarantee-department">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Export Credits Guarantee Department</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/74">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/export-credits-guarantee-department"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£205,000 - £209,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/75">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Tim Smith</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/food-standards-agency">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Food Standards Agency</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/75">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/food-standards-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/76">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Peter Ricketts</foaf:name>
+	<foaf:title xml:lang="en">Permanent Under-Secretary and Head of the Diplomatic Service</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/foreign-commonwealth-office">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Foreign &amp; Commonwealth Office</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/76">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/foreign-commonwealth-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/77">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Nigel Shienwald</foaf:name>
+	<foaf:title xml:lang="en">HM Ambassador to the United States of America</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/foreign-commonwealth-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/78">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Kim Darroch</foaf:name>
+	<foaf:title xml:lang="en">UK Permanent Representative to the European Union</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/foreign-commonwealth-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/79">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Trevor Llanwarne</foaf:name>
+	<foaf:title xml:lang="en">Government Actuary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/government-actuarys-dept">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Government Actuary's Dept</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/79">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/government-actuarys-dept"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/80">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Marco Pierleoni</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive and Chief Land Registrar</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/hm-land-registry-moj-executive-agency">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">HM Land Registry (MoJ Executive Agency)</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/80">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-land-registry-moj-executive-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/81">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Peter Collis</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive and Chief Land Registrar</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-land-registry-moj-executive-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/82">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Mike Clasper</foaf:name>
+	<foaf:title xml:lang="en">Chair HM Revenue &amp; Customs</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/hm-revenue-customs">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">HM Revenue &amp; Customs</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/82">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-revenue-customs"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/83">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Steve Lamey</foaf:name>
+	<foaf:title xml:lang="en">Director General Benefits &amp; Credits</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-revenue-customs"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£205,000 - £209,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/84">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Simon Bowles</foaf:name>
+	<foaf:title xml:lang="en">Chief Finance Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-revenue-customs"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£185,000 - £189,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/85">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Phil Pavitt</foaf:name>
+	<foaf:title xml:lang="en">Chief Information Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-revenue-customs"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£180,000 - £184,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/86">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Mike Falvey</foaf:name>
+	<foaf:title xml:lang="en">Chief People Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-revenue-customs"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/87">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Lesley Strathie</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-revenue-customs"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/88">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Dave Hartnett</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary For Tax</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-revenue-customs"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/89">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Nicholas Macpherson</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/hm-treasury">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">HM Treasury</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/89">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-treasury"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/90">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>R Shostak</foaf:name>
+	<foaf:title xml:lang="en">Head of Prime Minister's Delivery Unit and DG Performance Management</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-treasury"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/91">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>JMG Taylor</foaf:name>
+	<foaf:title xml:lang="en">Financial Services and Stability Director</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-treasury"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/92">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>TW Scholar</foaf:name>
+	<foaf:title xml:lang="en">2nd Permanent Secretary</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/hm-treasury"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/93">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir David Normington</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/home-office">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Home Office</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/93">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/home-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£195,000 - £199,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/94">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Helen Kilpatrick</foaf:name>
+	<foaf:title xml:lang="en">Director General, Finance and Commercial</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/home-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£205,000 - £209,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/95">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Kevin White</foaf:name>
+	<foaf:title xml:lang="en">Director General, Human Resources</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/home-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/96">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Peter Makeham</foaf:name>
+	<foaf:title xml:lang="en">Director General, Strategy and Reform</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/home-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/97">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Paul Wiles</foaf:name>
+	<foaf:title xml:lang="en">Chief Scientific Adviser, Statistics and Research Group</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/home-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/98">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>James Hall</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive, Identity and Passport Service</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/home-office-agency-ips">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Home Office (Agency-IPS)</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/98">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/home-office-agency-ips"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£195,000 - £199,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/99">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Lin Homer</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive, United Kingdom Border Agency</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/home-office-agency-ukba">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Home Office (Agency-UKBA)</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/99">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/home-office-agency-ukba"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£205,000 - £209,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/100">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Geoffrey Podger</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/health-safety-executive">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Health &amp; Safety Executive</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/100">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/health-safety-executive"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/101">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Darra Singh</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/jobcentre-plus">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Jobcentre Plus</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/101">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/jobcentre-plus"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£185,000 - £189,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/102">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Professor Kent Woods</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/mhra">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">MHRA</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/102">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/mhra"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/103">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Professor Sir Alasdair Breckenridge</foaf:name>
+	<foaf:title xml:lang="en">Chairman</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/mhra"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£90,000 - £94,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/104">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Jock Stirrup</foaf:name>
+	<foaf:title xml:lang="en">Chief of the Defence Staff</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Ministry of Defence</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/104">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£240,000 - £244,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/105">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Mark Stanhope</foaf:name>
+	<foaf:title xml:lang="en">First Sea Lord and Chief of the Naval staff</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/106">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Kevin O'Donoghue</foaf:name>
+	<foaf:title xml:lang="en">Chief of Defence Materiel</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/107">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Peter Ruddock</foaf:name>
+	<foaf:title xml:lang="en">Saudi Arabia Project Team</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/108">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir David Richards</foaf:name>
+	<foaf:title xml:lang="en">Chief of the General Staff</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/109">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Stephen Dalton</foaf:name>
+	<foaf:title xml:lang="en">Chief of the Air Staff</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/110">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Nicholas Houghton</foaf:name>
+	<foaf:title xml:lang="en">Vice Chief of the Defence Staff</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/111">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir John McColl</foaf:name>
+	<foaf:title xml:lang="en">Deputy Supreme Allied Commander Europe</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/112">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Trevor Soar</foaf:name>
+	<foaf:title xml:lang="en">Commander-In-Chief Fleet</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/113">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Peter Wall</foaf:name>
+	<foaf:title xml:lang="en">Commander-in-Chief Land Forces</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/114">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Andrew Tyler</foaf:name>
+	<foaf:title xml:lang="en">Chief Operating Officer Defence Equipment and Support</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£200,000 - £204,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/115">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Andrew Manley</foaf:name>
+	<foaf:title xml:lang="en">DG Defence Commercial</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£195,000 - £199,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/116">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Bill Jeffrey</foaf:name>
+	<foaf:title xml:lang="en">Permanent Under Secretary</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/117">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jon Thompson</foaf:name>
+	<foaf:title xml:lang="en">DG Finance</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/118">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>John Hirst</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive Met Office</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/119">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Mike Robinson</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive UK Hydrographic Office</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/120">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Les Mosco</foaf:name>
+	<foaf:title xml:lang="en">Director Commercial Defence Equipment and Support</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/121">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Susanna Mason</foaf:name>
+	<foaf:title xml:lang="en">Director Industrial Relationships</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/122">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Ursula Brennan</foaf:name>
+	<foaf:title xml:lang="en">2nd Permanent Under Secretary</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/123">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Archie Hughes</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive Defence Support Group</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/124">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Stephen Love</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive/Chief Constable MoD Police and Guarding Agency</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/125">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Bruce Houlder QC</foaf:name>
+	<foaf:title xml:lang="en">Director Service Prosecutions</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/126">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Ian Rushby</foaf:name>
+	<foaf:title xml:lang="en">Non-Executive Director Defence Board and Chair Audit Committee</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£40k</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/127">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>David Allen</foaf:name>
+	<foaf:title xml:lang="en">Non-Executive Director Defence Board and Chair Audit Committee</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£30k</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/128">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Richard Mottram</foaf:name>
+	<foaf:title xml:lang="en">Non-Executive Chair Dstl</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£40k</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/129">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sandra Rogers</foaf:name>
+	<foaf:title xml:lang="en">Non-Executive Chair UKHO</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£40k</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/130">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jamie Pike</foaf:name>
+	<foaf:title xml:lang="en">Non-Executive Chair DSG</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£40k</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/131">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Robert Napier</foaf:name>
+	<foaf:title xml:lang="en">Non-Executive Chair Met Office</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-defence"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£40k</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/132">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Suma Chakrabarti</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-justice">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Ministry of Justice</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/132">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-justice"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£180,000 - £184,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/133">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Carolyn Downs</foaf:name>
+	<foaf:title xml:lang="en">Director General - Corporate Performance Group and Deputy Permanent Secretary (now Interim Chief Executive of the Legal Services Commission)</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-justice"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/134">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Helen Edwards</foaf:name>
+	<foaf:title xml:lang="en">Director General - Criminal Justice Group (now Director General - Justice Policy Group)</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-justice"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/135">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jim Gallagher</foaf:name>
+	<foaf:title xml:lang="en">Director General - Devolution</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-justice"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/136">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Neil Hayward</foaf:name>
+	<foaf:title xml:lang="en">Group HR Director</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-justice"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/137">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Andy Nelson</foaf:name>
+	<foaf:title xml:lang="en">Chief Information Officer</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-justice"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/138">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Nick Ramsay</foaf:name>
+	<foaf:title xml:lang="en">Director ICT Portfolio and Programmes</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ministry-of-justice"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/139">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Beverley Shears</foaf:name>
+	<foaf:title xml:lang="en">Director of Offender Management - East Midlands</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/national-offender-management-service-moj-executive-agency">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">National Offender Management Service (MoJ Executive Agency)</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/139">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/national-offender-management-service-moj-executive-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/140">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Phil Wheatley</foaf:name>
+	<foaf:title xml:lang="en">Director General - National Offender Management Service</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/national-offender-management-service-moj-executive-agency"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/141">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Jane Platt</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/national-savings-investments">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">National Savings &amp; Investments</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/141">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/national-savings-investments"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/142">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Jonathan Phillips</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/northern-ireland-office">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Northern Ireland Office</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/142">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/northern-ireland-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/143">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Christine Gilbert</foaf:name>
+	<foaf:title xml:lang="en">Her Majesty's Chief Inspector</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/ofsted">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">OFSTED</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/143">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ofsted"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£195,000 - £199,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/144">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Lorraine Langham</foaf:name>
+	<foaf:title xml:lang="en">Director, Corporate Services</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ofsted"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/145">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Melanie Hunt</foaf:name>
+	<foaf:title xml:lang="en">Director, Development Learning and Skills</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ofsted"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/146">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>John Goldup</foaf:name>
+	<foaf:title xml:lang="en">Director, Development Social Care</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ofsted"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/147">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Patrick Leeson</foaf:name>
+	<foaf:title xml:lang="en">Director, Development Education and Care</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ofsted"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/148">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Philip Collins</foaf:name>
+	<foaf:title xml:lang="en">Chairman</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/office-of-fair-trading">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Office of Fair Trading</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/148">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/office-of-fair-trading"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£175,000 - £179,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/149">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>John Fingleton</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/office-of-fair-trading"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£275,000 - £279,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/150">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>William Emery</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/office-of-rail-regulation">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Office of Rail Regulation</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/150">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/office-of-rail-regulation"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/151">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Philip Fletcher</foaf:name>
+	<foaf:title xml:lang="en">Chairman</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/ofwat">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Ofwat</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/151">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ofwat"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£105,000 - £110,000</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/152">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>D Pitchford</foaf:name>
+	<foaf:title xml:lang="en">Major Projects Executive Director</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/ogc">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">OGC</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/152">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ogc"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£200,000 - £204,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/153">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>N Smith</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ogc"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£185,000 - £189,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/154">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>DA Shields</foaf:name>
+	<foaf:title xml:lang="en">Programme Director</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ogc"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£205,000 - £209,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/155">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Vanessa Lawrence</foaf:name>
+	<foaf:title xml:lang="en">Director General &amp; Chief Executive Officer</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/ordnance-survey">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Ordnance Survey</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/155">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ordnance-survey"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£190,000 - £194,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/156">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Paul Hemsley</foaf:name>
+	<foaf:title xml:lang="en">Director of Finance</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ordnance-survey"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£220,000 - £224,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/157">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Terry Moran</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/pension-disability-carers-service">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Pension, Disability &amp; Carers Service</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/157">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/pension-disability-carers-service"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/158">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Nigel Stapleton</foaf:name>
+	<foaf:title xml:lang="en">Chairman</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/postcomm">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Postcomm</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/158">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/postcomm"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£85,000 - £89,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/159">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Tim Brown</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/postcomm"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/160">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Alisdair Fraser</foaf:name>
+	<foaf:title xml:lang="en">Director of Public Prosecution, NI</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/public-prosecution-service">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Public Prosecution Service</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/160">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/public-prosecution-service"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£170,000 - £174,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/161">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir John Elvidge</foaf:name>
+	<foaf:title xml:lang="en">Permanent Secretary</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/scottish-government">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Scottish Government</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/161">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/scottish-government"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/162">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Dr Kevin Woods</foaf:name>
+	<foaf:title xml:lang="en">Director General, Health and Chief Executive NHS Scotland</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/scottish-government"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/163">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Ms Stella Manzie</foaf:name>
+	<foaf:title xml:lang="en">Director General,Justice and Communities</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/scottish-government"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/164">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Richard Alderman</foaf:name>
+	<foaf:title xml:lang="en">Director</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/serious-fraud-office">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Serious Fraud Office</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/164">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/serious-fraud-office"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£165,000 - £169,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/165">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Paul Jenkins Q.C.</foaf:name>
+	<foaf:title xml:lang="en">Treasury Solicitor</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/treasury-solicitors-department">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">Treasury Solicitors Department</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/165">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/treasury-solicitors-department"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£155,000 - £159,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/166">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Michael Scholar</foaf:name>
+	<foaf:title xml:lang="en">Chair of UK Statistics Authority</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/uk-statistics-authority">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">UK Statistics Authority</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/166">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/uk-statistics-authority"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£150,000 - £154,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/167">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Professor Sir Roger Jowell</foaf:name>
+	<foaf:title xml:lang="en">Deputy Chair (Statistics System)</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/uk-statistics-authority"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£35,000-£39,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/168">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Lord David Rowe-Beddoe of Kilgetty</foaf:name>
+	<foaf:title xml:lang="en">Deputy Chair (ONS)</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/uk-statistics-authority"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£35,000-£39,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/169">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Sir Andrew Cahn</foaf:name>
+	<foaf:title xml:lang="en">Chief Executive, UK Trade &amp; Investment</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/ukti-joint-bisfco">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">UKTI (joint BIS/FCO)</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/169">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ukti-joint-bisfco"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£205,000 - £209,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/170">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Richard Paniguian</foaf:name>
+	<foaf:title xml:lang="en">Head of UK Trade &amp; Investment Defence and Security Organsation</foaf:title>
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/ukti-joint-bisfco"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£195,000 - £199,999</annualPayRate>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/171">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+	<foaf:name>Fiona Adshead</foaf:name>
+	<foaf:title xml:lang="en">Director General on secondment</foaf:title>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/organizations/world-health-organisation">
+	<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+	<foaf:name xml:lang="en">World Health Organisation</foaf:name>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://lab.linkeddata.deri.ie/test/171">
+	<foaf:member rdf:resource="http://lab.linkeddata.deri.ie/test/organizations/world-health-organisation"/>
+	<annualPayRate xmlns="http://lab.linkeddata.deri.ie/test/">£160,000 - £164,999</annualPayRate>
+</rdf:Description>
+
+</rdf:RDF>
