@@ -34,7 +34,7 @@ function init() {
     var RdfExporter = Packages.com.google.refine.rdf.exporters.RdfExporter;
     
     ExporterRegistry.registerExporter("rdf", new RdfExporter(ctxt,org.openrdf.rio.RDFFormat.RDFXML));
-    ExporterRegistry.registerExporter("n3", new RdfExporter(ctxt,org.openrdf.rio.RDFFormat.TURTLE));
+    ExporterRegistry.registerExporter("Turtle", new RdfExporter(ctxt,org.openrdf.rio.RDFFormat.TURTLE));
     
     /*
      *  GREL Functions and Binders

@@ -107,6 +107,7 @@ public class PreviewRdfValueExpressionCommand extends PreviewExpressionCommand{
             writer.endArray();
             writer.key("code"); writer.value("ok");
         } catch (ParsingException e) {
+        	writer.endArray();
             writer.key("code"); writer.value("error");
             writer.key("type"); writer.value("parser");
             writer.key("message"); writer.value(e.getMessage());

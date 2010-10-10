@@ -82,7 +82,7 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
                 '<div class="schema-alignment-dialog-canvas rdf-schema-alignment-dialog-canvas"></div>' +
             '</div>' +
             '<div id="rdf-schema-alignment-tabs-preview" style="display: none;">' +
-                '<div>This is a sample <code>N3</code> representation of (up-to) the <em>first 20</em> rows</div>' + 
+                '<div>This is a sample <code>Turtle</code> representation of (up-to) the <em>first 20</em> rows</div>' + 
                 '<div class="schema-alignment-dialog-preview" id="rdf-schema-alignment-dialog-preview"></div>' +
             '</div>' +
         '</div>'

@@ -10,7 +10,7 @@ ExporterManager.MenuItems.push(
 		{
 			"id" : "exportRdfTurtle",
         	"label":"RDF as Turtle",
-        	"click": function() { RdfExporterMenuBar.exportRDF("n3", "ttl"); }
+        	"click": function() { RdfExporterMenuBar.exportRDF("Turtle", "ttl"); }
 		}
 );
 
@@ -21,12 +21,12 @@ ExtensionBar.MenuItems.push(
 			"submenu" : [
 		        {
 		        	"id": "rdf/edit-rdf-schema",
-		            label: "Edit RDF Schema...",
+		            label: "Edit RDF Skeleton...",
 		            click: function() { RdfExporterMenuBar.editRdfSchema(false); }
 		        },
 		        {
 		        	"id": "rdf/reset-rdf-schema",
-		            label: "Reset RDF Schema...",
+		            label: "Reset RDF Skeleton...",
 		            click: function() { RdfExporterMenuBar.editRdfSchema(true); }
 		        }
 		    ]

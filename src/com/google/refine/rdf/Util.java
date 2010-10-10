@@ -40,7 +40,7 @@ public class Util {
 		}
 		String res;
 		try{
-			res = resolveRelativeUri(base,rel);
+			res = resolveRelativeURI(base,rel);
 			new URI(res);
 			return res;
 		}catch(Exception ex){
@@ -52,17 +52,17 @@ public class Util {
 				//silent
 				return "";
 			}
-			return resolveRelativeUri(base, encodedRel);
+			return resolveRelativeURI(base, encodedRel);
 		}
 	}
 
-	private static String resolveRelativeUri(URI base, String rel){
+	private static String resolveRelativeURI(URI base, String rel){
 		if (base.getFragment() != null) {
 			return base + rel;
 		}
 		return base.resolve(rel).toString();
 	}
-
+	
 	public static String getDataType(String s) {
 		if (s == null) {
 			return null;

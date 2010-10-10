@@ -123,8 +123,8 @@ public class RdfExporter implements Exporter{
     }
     
     public String getContentType() {
-        if(format.equals("N3")){
-            return "text/rdf+n3";
+        if(format.equals(RDFFormat.TURTLE)){
+            return "text/turtle";
         }else{
             return "application/rdf+xml";
         }
