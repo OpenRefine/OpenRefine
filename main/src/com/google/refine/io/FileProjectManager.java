@@ -46,7 +46,7 @@ public class FileProjectManager extends ProjectManager {
     protected FileProjectManager(File dir) {
         super();
         _workspaceDir = dir;
-        if (!_workspaceDir.mkdirs()) {
+        if (!_workspaceDir.exists() && !_workspaceDir.mkdirs()) {
             logger.error("Failed to create directory : " + _workspaceDir);
             return;
         }
