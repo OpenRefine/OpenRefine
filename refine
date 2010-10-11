@@ -525,8 +525,8 @@ ui_test() {
     INTERACTIVE=$1
     
     windmill_prepare
-    
-    REFINE_DATA_DIR="${TMPDIR}/google-refine-tests"
+
+    REFINE_DATA_DIR="${TMPDIR:=/tmp}/google-refine-tests"
     
     add_option "-Drefine.headless=true"
     
