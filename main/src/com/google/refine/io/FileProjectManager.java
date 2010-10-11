@@ -46,7 +46,10 @@ public class FileProjectManager extends ProjectManager {
     protected FileProjectManager(File dir) {
         super();
         _workspaceDir = dir;
-        _workspaceDir.mkdirs();
+        if (!_workspaceDir.mkdirs()) {
+            logger.error("Failed to create directory : " + _workspaceDir);
+            return;
+        }
 
         load();
         recover();
@@ -280,6 +283,7 @@ public class FileProjectManager extends ProjectManager {
         if (loadFromFile(new File(_workspaceDir, "workspace.json"))) return;
         if (loadFromFile(new File(_workspaceDir, "workspace.temp.json"))) return;
         if (loadFromFile(new File(_workspaceDir, "workspace.old.json"))) return;
+        logger.error("Failed to load workspace from any attempted alternatives.");
     }
 
     protected boolean loadFromFile(File file) {
