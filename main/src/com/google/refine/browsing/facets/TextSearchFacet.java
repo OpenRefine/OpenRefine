@@ -15,6 +15,7 @@ import com.google.refine.browsing.filters.AnyRowRecordFilter;
 import com.google.refine.browsing.filters.ExpressionStringComparisonRowFilter;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.ast.VariableExpr;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 
 public class TextSearchFacet implements Facet {
@@ -54,7 +55,8 @@ public class TextSearchFacet implements Facet {
         _name = o.getString("name");
         _columnName = o.getString("columnName");
         
-        _cellIndex = project.columnModel.getColumnByName(_columnName).getCellIndex();
+        Column column = project.columnModel.getColumnByName(_columnName);
+        _cellIndex = column != null ? column.getCellIndex() : -1;
         
         if (!o.isNull("query")) {
             _query = o.getString("query"); 
@@ -79,7 +81,7 @@ public class TextSearchFacet implements Facet {
 
     @Override
     public RowFilter getRowFilter(Project project) {
-        if (_query == null || _query.length() == 0) {
+        if (_query == null || _query.length() == 0 || _cellIndex < 0) {
             return null;
         } else if ("regex".equals(_mode) && _pattern == null) {
             return null;
