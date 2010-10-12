@@ -106,8 +106,8 @@ public class RdfSchema implements OverlayModel {
 		return prefixesMap;
 	}
 
-	public Node getRoot() {
-        return _rootNodes.get(0);
+	public List<Node> getRoots() {
+        return _rootNodes;
     }
 
     static public RdfSchema reconstruct(JSONObject o) throws JSONException {

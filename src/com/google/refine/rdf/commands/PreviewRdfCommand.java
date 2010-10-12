@@ -23,6 +23,7 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
+import com.google.refine.rdf.Node;
 import com.google.refine.rdf.RdfSchema;
 import com.google.refine.rdf.exporters.RdfExporter;
 import com.google.refine.rdf.exporters.RdfExporter.RdfRowVisitor;
@@ -44,14 +45,16 @@ public class PreviewRdfCommand extends Command {
             final RdfSchema schema = RdfSchema.reconstruct(json);
             
             RdfRowVisitor visitor = new RdfRowVisitor(schema) {
-            	final int limit = 20;
+            	final int limit = 10;
             	int _count;
 				@Override
 				public boolean visit(Project project, int rowIndex, Row row) {
 					if(_count>=limit){
 		                return true;
 		            }
-		            root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
+					for(Node root:roots){
+						root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
+					}
 		            _count +=1;
 		            return false;
 				}

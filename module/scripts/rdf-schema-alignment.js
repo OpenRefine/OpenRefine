@@ -80,6 +80,7 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
             '<div id="rdf-schema-alignment-tabs-schema">' +
             	'<div><table><tr><td><span style="display:block;width:100px;">Available Prefixes:</span></td><td><div class="rdf-schema-prefixes" bind="rdf_schema_prefixes"></div></td></tr></table></div>' + 
                 '<div class="schema-alignment-dialog-canvas rdf-schema-alignment-dialog-canvas"></div>' +
+                '<div class="rdf-schema-alignment-body-footer"><a bind="add_another_root_node" href="#">Add another root node</a></div>'  +
             '</div>' +
             '<div id="rdf-schema-alignment-tabs-preview" style="display: none;">' +
                 '<div>This is a sample <code>Turtle</code> representation of (up-to) the <em>first 20</em> rows</div>' + 
@@ -95,6 +96,20 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
     elmts.editBaseUriLink.click(function(evt){
     	evt.preventDefault();
     	self._editBaseUri($(evt.target));
+    });
+    
+    elmts.add_another_root_node.click(function(e){
+    	e.preventDefault();
+    	var newRootNode = RdfSchemaAlignment.createNewRootNode(false)
+    	self._schema.rootNodes.push(newRootNode);
+    	self._nodeUIs.push(new RdfSchemaAlignmentDialog.UINode(
+            self,
+            newRootNode, 
+            self._nodeTable, 
+            {
+                expanded: true,
+            }
+        ));
     });
     
 };
@@ -146,8 +161,13 @@ RdfSchemaAlignmentDialog.prototype._renderBody = function(body) {
 
 
 
-RdfSchemaAlignment.createNewRootNode = function() {
+RdfSchemaAlignment.createNewRootNode = function(withDefaultChildren) {
+    rootNode = { nodeType: "cell-as-resource", expression:"value", isRowNumberCell:true};
     var links = [];
+    if(withDefaultChildren===false){
+    	rootNode.links = links;
+    	return rootNode;
+    }
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
         var column = columns[i];
@@ -161,8 +181,6 @@ RdfSchemaAlignment.createNewRootNode = function() {
                 target: target
             });
     }
-    
-    rootNode = { nodeType: "cell-as-resource", expression:"value", isRowNumberCell:true};
     rootNode.links = links;
     
     return rootNode;

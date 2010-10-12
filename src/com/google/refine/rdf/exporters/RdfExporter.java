@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -105,7 +106,9 @@ public class RdfExporter implements Exporter{
 			
 			@Override
 			public boolean visit(Project project, int rowIndex, Row row) {
-				root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
+				for(Node root:roots){
+					root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
+				}
 	            return false;
 			}
 		};
@@ -138,7 +141,7 @@ public class RdfExporter implements Exporter{
         protected Repository model;
         protected URI baseUri;
         protected BNode[] blanks;
-        protected Node root;
+        protected List<Node> roots;
         private RdfSchema schema;
         
         protected ValueFactory factory;
@@ -151,7 +154,7 @@ public class RdfExporter implements Exporter{
         public RdfRowVisitor(RdfSchema schema){
         	this.schema = schema;
         	baseUri = schema.getBaseUri();
-            root = schema.getRoot();
+            roots = schema.getRoots();
 
             //initilaizing repository
             model = new SailRepository(new MemoryStore());
