@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importers.ImporterUtilities;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Row;
@@ -21,12 +20,11 @@ public class NonSplitRowParser extends RowParser {
     }
     
     public boolean parseRow(Row row, String line, boolean guessValueType, LineNumberReader lineReader) {
-        line = line.trim();
-        if (line.isEmpty()) {
+        if (line.trim().isEmpty()) {
             return false;
         } else {
             Serializable value = guessValueType ? ImporterUtilities.parseCellValue(line) : line;
-            if (ExpressionUtils.isNonBlankData(value)) {
+            if (value != null) {
                 row.cells.add(new Cell(value, null));
                 return true;
             } else {
