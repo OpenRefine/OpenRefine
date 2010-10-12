@@ -9,18 +9,26 @@
 	<div id="doc3" class="yui-t1">
 	  <div id="yui-main">
 	    <div class="yui-b main-header">
-		    <h1>RDF Extension for <a href="http://code.google.com/p/google-refine/" name="top">Google Refine</a></h1>
+			<a name="top"></a>
+		    <h1>RDF Extension for Google Refine</h1>
 		</div>
 		<div class="yui-b">
 		  <a name="about"></a>
+		  <div class="names">
+			<a href="http://www.deri.ie/about/team/member/fadi_maali/">Fadi Maali</a> <br/>
+			<a href="http://richard.cyganiak.de/">Richard Cyganiak</a>
+		  </div>
+		  <div style="clear:both"></div>
+		</div>
+		<div class="yui-b">
 		  <div class="text">
-		    <em>RDF Extension for Google Refine</em> allows exporting data of Google Refine projects in RDF format. 
-			The export is based on mapping the data to a template graph which can be defined through a graphical interface.
+		    This project adds a graphical user interface(GUI) for exporting data of <a href="http://code.google.com/p/google-refine/" >Google Refine</a> projects in RDF format. 
+			The export is based on mapping the data to a template graph using the GUI.
 		  </div>
         </div>
 		<div id="download">
 			<h3><a href="downloads/grefine-rdf-extension.zip">Download RDF Extension for Google Refine</a></h3>
-			<small>v0.2.1 (alpha), released 2010-10-27</small>
+			<small>v0.2.1 (alpha), released 2010-10-20</small>
 		</div>
 		<div class="yui-b">
 		  <a name="quick_start"></a>
@@ -28,31 +36,36 @@
 		  <div>
 		    <p><em>You need to have Google Refine <b>(version 2.0 or later)</b> installed on you machine (see <a href="http://code.google.com/p/google-refine/wiki/Downloads?tm=2">download page</a>)</em></p>
 			<ol>
-				<li><a href="downloads/grefine-rdf-extension.zip">Download Google Refine Extension</a></li>
-				<li>Unpack the downloaded archive into an <em>extensions</em> directory under your user workspace directory for Google Refine.
+				<li>
+					If not exists, create a folder named <em>extensions</em> under your user workspace directory for Google Refine.
 					The latter should be findable in the following places depending on your operating system:
 					<ul>
 						<li>Linux   ~/.local/share/Google/Refine/extensions</li>
-						<li>Windows  C:/Documents and Settings/<user>/Application Data/Google/Refine/extensions</li>
+						<li>Windows  C:/Documents and Settings/<em>&lt;user&gt;</em>/Application Data/Google/Refine/extensions OR C:/Documents and Settings/<em>&lt;user&gt;</em>/Local Settings/Application Data/Google/Refine/extensions</li>
 						<li>Mac OSX  ~/Library/Application Support/Google/Refine/extensions/</li>
 					</ul>
 				</li>
-			<li>Restart Google Refine (you should see an RDF small button next to Freebase button on the upper right corner)</li>
+				<li><a href="downloads/grefine-rdf-extension.zip">Download Google Refine Extension</a></li>
+				<li>Unzip the downloaded archive into the <em>extensions</em> folder (step 1).
+				</li>
+				<li>It is recommendedthat you have internet connection during the first running of the extension, as it will try to download a set of predefined vocabularies (rdf, rdfs and owl). 
+				You still can download them later anyway.</li>
+				<li>Restart Google Refine</li>
+				<li>Open an existing project or create a new one. You should see an RDF small button in the upper right corner as shown below
+				</li>
+				<img src="imgs/rdf_button.png" alt="RDF button" />
 			</ol>
-			<div class="note"><span>note:</span>if extensions folder does not exist just create it </div>
-			<div class="note"><span>note:</span>if you couldnot find the Refine folder on Windows, try C:/Documents and Settings/<user>/Local Settings/Application Data/Google/Refine/extensions</div>
-			<div class="note"><span>note:</span>Upon the first running of the extension, it will try to download a set of predefined vocabularies (rdf, rdfs and owl) so it is recommended 
-			that you have internet access. You still can download them later anyway.</div>
  		  </div>
         </div>
 		<div class="yui-b">
 		  <a name="features"></a>
-		  <h2>Main Features <a class="top_link" href="#top">Top ^</a></h2>
+		  <h2>Features <a class="top_link" href="#top">Top ^</a></h2>
 		  <div>
 		    <ul>
-			  <li>Graphical interface to define the mapping</li>
-			  <li>Vocabulary management (add, delete, import...)</li>
-			  <li>Autocomplete for properties and classes names</li>
+			  <li>Graphical interface for defining the mapping</li>
+			  <li>Use of arbitrary vocabularies/ Ontologies </li>
+			  <li>Import exisitng vocabularies/ Ontologies</li>
+			  <li>Autocomplete for property and class names</li>
 			  <li>RDF/XML and Turtle export</li>
 		    </ul>
 		  </div>
@@ -109,25 +122,30 @@
 			The intended RDF we want to export should look like (for the first line):
 			<pre>
 			  <code>
-&lt;http://lab.linkeddata.deri.ie/test/0&gt; a foaf:Person ; 
-				foaf:name "Stephan Wilcke" ; 
-				foaf:title "Chief Executive Officer"@en .
-				foaf:member &lt;http://lab.linkeddata.deri.ie/test#organizations/asset-protection-agency&gt;  ;
-				&lt;http://lab.linkeddata.deri.ie/test/annualPayRate&gt; "£150,000 - £154,999" . 
+&lt;http://lab.linkeddata.deri.ie/test/0&gt; 
+	a foaf:Person ; 
+	foaf:name "Stephan Wilcke" ; 
+	foaf:title "Chief Executive Officer"@en .
+	foaf:member &lt;http://lab.linkeddata.deri.ie/test#organizations/asset-protection-agency&gt;  ;
+	&lt;http://lab.linkeddata.deri.ie/test/annualPayRate&gt; "£150,000 - £154,999" . 
 				
-&lt;http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency&gt;  a foaf:Organization ; 
-				foaf:name "Asset Protection Agency"@en . 
+&lt;http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency&gt;  
+	a foaf:Organization ; 
+	foaf:name "Asset Protection Agency"@en . 
 			  </code>
 			</pre>
 			
 			<div>
 			  After creating a project in Google Refine, using <em>Edit RDF Skeleton...</em> command available under the <em>RDF</em> menu, we design the following skeleton:
 			  <div class="image">
-			    <img src="imgs/skeleton_example.png" alt="Skeleton Example" />
+			    <img src="imgs/skeleton_example_annotated.png" alt="Skeleton Example" />
 			  </div>
-			  <div class="note"><span>note:</span>we set the base URI at the top of the dialog to http://lab.linkeddata.deri.ie/test/ </div>
-			  <div class="note"><span>note:</span>Prefixs can be managed by the <em>Add Prefix</em> and <em>Manage vocabularies</em> </div>
-			  <div class="note"><span>note:</span>We created a new property <em>annualPayRate</em> which will be defined within the default namespace specified by the base URI</div>
+			  <ul>
+				<li><div class="note">we set the base URI at the top of the dialog to http://lab.linkeddata.deri.ie/test/ </div></li>
+				<li><div class="note">Prefixs can be managed by the <em>Add Prefix</em> and <em>Manage vocabularies</em> </div></li>
+				<li><div class="note">We created the skeleton by repeatedly using <em>add rdf:type</em> and <em>add property</em></div></li>
+				<li><div class="note">We created a new property <em>annualPayRate</em> which will be defined within the default namespace specified by the base URI</div></li>
+			  </ul>
 			</div>
 			<div>
 			  The figure below shows an example of a node dialog (the <em>organization URI</em> node)
@@ -150,15 +168,18 @@
 
 		<div class="yui-b">
 		  <a name="developers"></a>
-          <h2>Developers <a class="top_link" href="#top">Top ^</a></h2>
+          <h2>Source Code <a class="top_link" href="#top">Top ^</a></h2>
 		  <div>
-		  The code is shared on <a href="http://github.com/fadmaa/grefine-rdf-extension">github</a>
+		  The code is shared on <a href="http://github.com/fadmaa/grefine-rdf-extension">github</a> under the <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>
 		  </div>
 		</div>
 		
 		<div class="yui-b">
 		  <a name="contact"></a>
           <h2>Support and feedback <a class="top_link" href="#top">Top ^</a></h2>
+		  Bugs, suggestions, feature requests, ideas...? use the 
+		  <a href="http://github.com/fadmaa/grefine-rdf-extension/issues">issue tracker</a>
+		  or contact us:
 		  <ul>
             <li>Fadi Maali <a href="mailto:fadi.maali@deri.org">(fadi.maali@deri.org)</a></li>
             <li><a href="http://richard.cyganiak.de/">Richard Cyganiak</a> <a href="mailto:richard@cyganiak.de">(richard@cyganiak.de)</a></li>
@@ -172,7 +193,7 @@
 	    &raquo;&nbsp;<a href="#quick_start">Quick Start</a><br/>
 	    &raquo;&nbsp;<a href="#features">Features</a><br/>
 		&raquo;&nbsp;<a href="#example">Example</a><br/>
-		&raquo;&nbsp;<a href="#developers">For Developers</a><br/>
+		&raquo;&nbsp;<a href="#developers">Source Code</a><br/>
 		&raquo;&nbsp;<a href="#contact">Contact</a>
 	  </div>
 	</div>

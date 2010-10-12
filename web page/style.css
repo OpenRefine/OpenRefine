@@ -84,3 +84,11 @@ a.top_link, a.top_link:visited, a.top_link:hover{
 	color:#888888;
 	font-size:80%;
 }
+
+div.names{
+	clear:right;
+	float:right;
+	font-size:80%;
+	text-align:right;
+	margin-bottom:5px;
+}
