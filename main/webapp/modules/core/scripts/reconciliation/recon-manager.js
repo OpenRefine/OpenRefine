@@ -8,6 +8,14 @@ ReconciliationManager.isFreebaseId = function(s) {
     return s == "http://rdf.freebase.com/ns/type.object.id";
 };
 
+ReconciliationManager.isFreebaseMid = function(s) {
+    return s == "http://rdf.freebase.com/ns/type.object.mid";
+};
+
+ReconciliationManager.isFreebaseIdOrMid = function(s) {
+    return ReconciliationManager.isFreebaseMid(s) || ReconciliationManager.isFreebaseId(s);
+};
+
 ReconciliationManager._rebuildMap = function() {
     var map = {};
     $.each(ReconciliationManager.getAllServices(), function(i, service) {
@@ -109,7 +117,7 @@ ReconciliationManager.save = function(f) {
                 ReconciliationManager._rebuildMap();
             } else {
                 ReconciliationManager.registerStandardService(
-                    "http://2.standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");
+                    "http://3.standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");
             }
         },
         dataType: "json"

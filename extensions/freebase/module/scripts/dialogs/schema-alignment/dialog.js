@@ -11,7 +11,7 @@ SchemaAlignment.autoAlign = function() {
     for (var c = 0; c < columns.length; c++) {
         var column = columns[c];
         var typed = (column.reconConfig) && 
-            ReconciliationManager.isFreebaseId(column.reconConfig.identifierSpace) &&
+            ReconciliationManager.isFreebaseIdOrMid(column.reconConfig.identifierSpace) &&
             ReconciliationManager.isFreebaseId(column.reconConfig.schemaSpace);
         
         var candidate = {
@@ -105,7 +105,7 @@ SchemaAlignment.createNewRootNode = function() {
             createForNoReconMatch: true
         };
         if ((column.reconConfig) && 
-            ReconciliationManager.isFreebaseId(column.reconConfig.identifierSpace) &&
+            ReconciliationManager.isFreebaseIdOrMid(column.reconConfig.identifierSpace) &&
             ReconciliationManager.isFreebaseId(column.reconConfig.schemaSpace) &&
             (column.reconConfig.type)) {
 

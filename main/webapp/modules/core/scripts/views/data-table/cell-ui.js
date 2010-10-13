@@ -72,7 +72,7 @@ DataTableCellUI.prototype._render = function() {
                 
             if (service && (service.view) && (service.view.url)) {
                 a.attr("href", service.view.url.replace("{{id}}", match.id));
-            } else if (ReconciliationManager.isFreebaseId(r.identifierSpace)) {
+            } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
                 a.attr("href", "http://www.freebase.com/view" + match.id);
             }
                 
@@ -116,14 +116,14 @@ DataTableCellUI.prototype._render = function() {
                             
                         if ((service) && (service.view) && (service.view.url)) {
                             a.attr("href", service.view.url.replace("{{id}}", candidate.id));
-                        } else if (ReconciliationManager.isFreebaseId(r.identifierSpace)) {
+                        } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
                             a.attr("href", "http://www.freebase.com/view" + candidate.id);
                         }
                             
                         var preview = null;
                         if ((service) && (service.preview)) {
                             preview = service.preview;
-                        } else if (ReconciliationManager.isFreebaseId(r.identifierSpace)) {
+                        } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
                             preview = DataTableCellUI.topicBlockPreview;
                         }
                         if (preview) {
@@ -172,7 +172,7 @@ DataTableCellUI.prototype._render = function() {
                 if ((service) && (service.suggest) && (service.suggest.entity)) {
                     suggestOptions = service.suggest.entity;
                     addSuggest = true;
-                } else if (ReconciliationManager.isFreebaseId(r.identifierSpace)) {
+                } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
                     addSuggest = true;
                 }
                     
