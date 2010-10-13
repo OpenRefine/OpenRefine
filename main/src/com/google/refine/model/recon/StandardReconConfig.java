@@ -157,7 +157,7 @@ public class StandardReconConfig extends ReconConfig {
 
     @Override
     public int getBatchSize() {
-        return 7;
+        return 3;
     }
 
     @Override
