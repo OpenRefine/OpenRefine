@@ -139,6 +139,10 @@ public class RefineServlet extends Butterfly {
             super.service(request, response);
         }
     }
+    
+    public ButterflyModule getModule(String name) {
+        return _modulesByName.get(name);
+    }
 
     protected String getCommandKey(HttpServletRequest request) {
         // A command path has this format: /command/module-name/command-name/...

@@ -53,12 +53,10 @@ public class ImportProjectCommand extends Command {
 
                 redirect(response, "/project?project=" + projectID);
             } else {
-                redirect(response, "/error.html?redirect=index&msg=" +
-                    ParsingUtilities.encode("Failed to import project")
-                );
+                respondWithErrorPage(request, response, "Failed to import project. Reason unknown.", null);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            respondWithErrorPage(request, response, "Failed to import project", e);
         } finally {
             ProjectManager.singleton.setBusy(false);
         }

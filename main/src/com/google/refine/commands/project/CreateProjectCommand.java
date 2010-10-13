@@ -36,6 +36,7 @@ import org.apache.commons.fileupload.util.Streams;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
+import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,10 +94,7 @@ public class CreateProjectCommand extends Command {
 
             redirect(response, "/project?project=" + project.id);
         } catch (Exception e) {
-            redirect(response, "/error.html?redirect=index.html&msg=" +
-                ParsingUtilities.encode("Failed to import file: " + e.getLocalizedMessage())
-            );
-            e.printStackTrace();
+            respondWithErrorPage(request, response, "Failed to import file", e);
         } finally {
             ProjectManager.singleton.setBusy(false);
         }
