@@ -261,6 +261,7 @@ class RefineServer extends Server {
         }
         
         File dataDir = null;
+        File gridworksDir = null;
         
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
@@ -271,9 +272,11 @@ class RefineServer extends Server {
                 // it's not elegant but it's the safest bet.
                 
                 DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Google");
-                
+
+                // new: ./Google/Refine old: ./Gridworks
                 dataDir = new File(new File(fixWindowsUnicodePath(localDataPath.getPath())), "Refine");
-                
+                gridworksDir = new File(fixWindowsUnicodePath(JDataPathSystem.getLocalSystem()
+                        .getLocalDataPath("Gridworks").getPath()));
             } catch (Error e) {
                 /*
                  *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
@@ -301,42 +304,55 @@ class RefineServer extends Server {
                 }
                 
                 dataDir = new File(new File(parentDir, "Google"), "Refine");
+                gridworksDir = new File(parentDir, "Gridworks");
             }
         } else if (os.contains("mac os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
-            String data_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine"; 
             
+            String data_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine";
             dataDir = new File(data_home);
             
+            String gridworks_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks"; 
+            gridworksDir = new File(gridworks_home);
         } else { // most likely a UNIX flavor
             // start with the XDG environment
             // see http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
             String data_home = System.getenv("XDG_DATA_HOME");
             if (data_home == null) { // if not found, default back to ~/.local/share
                 String home = System.getProperty("user.home");
-                if (home == null) home = ".";
+                if (home == null) {
+                    home = ".";
+                }
                 data_home = home + "/.local/share";
             }
             
-            dataDir = new File(data_home + "/google-refine");
+            dataDir = new File(data_home + "/google/refine");
+            gridworksDir = new File(data_home + "/gridworks");
         }
         
         // If refine data dir doesn't exist, try to find and move gridworks data dir over
-        if (!dataDir.exists()) {
-            File gridworksDir;
-            if (dataDir.getName().equals("Refine")) {
-                gridworksDir = new File(dataDir.getParentFile().getParentFile(), "Gridworks");
-            } else if (dataDir.getName().startsWith(".")) {
-                gridworksDir = new File(dataDir.getParent(), ".gridworks");
+        if (!dataDir.exists() && gridworksDir.exists()) {
+            if (!dataDir.getParentFile().mkdirs()) {
+                logger.error("FAILED to create parent directory for workspace rename target " 
+                        + dataDir.getParent());
             } else {
-                gridworksDir = new File(dataDir.getParent(), ".gridworks");
+                if (gridworksDir.renameTo(dataDir)) {
+                    logger.info("Renamed Gridworks directory " + gridworksDir 
+                            + " to " + dataDir);
+                } else {
+                    logger.error("FAILED to rename Gridworks directory " 
+                            + gridworksDir 
+                            + " to " + dataDir);
+                }
             }
-            
-            if (gridworksDir.exists()) {
-                gridworksDir.renameTo(dataDir);
-            } else {
-                dataDir.mkdirs();
+        }
+        
+        // Either rename failed or nothing to rename - create a new one
+        if (!dataDir.exists()) {
+            logger.info("Creating new workspace directory " + dataDir);
+            if (!dataDir.mkdirs()) {
+                logger.error("FAILED to create new workspace directory " + dataDir);
             }
         }
         
