@@ -358,6 +358,8 @@ public class FileProjectManager extends ProjectManager {
                                         " in directory " + name);
                         } else {
                             logger.warn("Failed to recover project in directory " + name);
+                            
+                            file.renameTo(new File(file.getParentFile(), name + ".corrupted"));
                         }
                     }
                 }
