@@ -35,10 +35,7 @@ DataTableView.prototype.render = function() {
     var html = $(
         '<div id="viewPanel-header">' +
             '<div bind="rowRecordControls">Show as ' +
-                '<span bind="modeSelectors" class="viewPanel-browsingmodes">' + 
-                    '<input type="radio" id="viewPanel-browsingMode-row-based" name="viewPanel-browsingMode" value="row-based" /><label for="viewPanel-browsingMode-row-based">rows</label>' +
-                    '<input type="radio" id="viewPanel-browsingMode-record-based" name="viewPanel-browsingMode" value="record-based" /><label for="viewPanel-browsingMode-record-based">records</label>' +
-                '</span>' +
+                '<span bind="modeSelectors" class="viewPanel-browsingmodes"></span>' + 
             '</div>' +
             '<div bind="pageSizeControls"></div>' +
             '<div bind="sortingControls" align="center"></div>' +
@@ -50,26 +47,35 @@ DataTableView.prototype.render = function() {
     
     ui.summaryWidget.updateResultCount();
     
+    var renderBrowsingModeLink = function(label, value) {
+        var a = $('<a href="javascript:{}"></a>')
+            .addClass("viewPanel-browsingModes-mode")
+            .text(label)
+            .appendTo(elmts.modeSelectors);
+            
+        if (value == ui.browsingEngine.getMode()) {
+            a.addClass("inaction");
+        } else {
+            a.addClass("action").click(function(evt) {
+                ui.browsingEngine.setMode(value);
+            });
+        }
+    };
+    renderBrowsingModeLink("rows", "row-based");
+    renderBrowsingModeLink("records", "record-based");
+    
     this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
-    this._renderDataTable(elmts.table[0]);
     
     if (this._sorting.criteria.length > 0) {
         this._renderSortingControls(elmts.sortingControls);
     }
     
-    this._div.empty().append(html);
+    this._renderDataTable(elmts.table[0]);
     
+    this._div.empty().append(html);
     this.resize();
         
     elmts.dataTableContainer[0].scrollLeft = scrollLeft;
-    
-    $("#viewPanel-browsingMode-" + 
-        (theProject.recordModel.hasRecords ? 'record-based' : 'row-based')).attr("checked", "checked");
-    
-    elmts.modeSelectors.buttonset();
-    elmts.modeSelectors.find("input").change(function() {
-        ui.browsingEngine.setMode(this.value);
-    });
 };
 
 DataTableView.prototype._renderSortingControls = function(sortingControls) {

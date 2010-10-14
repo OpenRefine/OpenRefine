@@ -6,24 +6,16 @@
   padding: @padding_normal;
 }
 
-.viewPanel-browsingModes .ui-button .ui-button-text {
-    line-height: 1.0;
-    text-decoration: line-through;
-}
-.viewPanel-browsingModes .ui-button.ui-state-active .ui-button-text {
-    text-decoration: none;
-}
-
 .viewPanel-pagingControls-currentPageInfo {
     font-size: 150%;
 }
 
-a.viewPanel-pagingControls-page {
+a.viewPanel-pagingControls-page, a.viewPanel-browsingModes-mode {
     margin: 0 2px;
     padding: 2px 4px 3px 4px;
     font-weight: bold;
 }
-a.viewPanel-pagingControls-page.inaction {
+a.viewPanel-pagingControls-page.inaction, a.viewPanel-browsingModes-mode.inaction {
     background: #f8f8f8;
     color: #777;
     border: 1px solid #ff6a00;
