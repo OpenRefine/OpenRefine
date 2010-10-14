@@ -204,7 +204,7 @@ public abstract class ProjectManager {
     protected void saveProjects(boolean allModified) {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
         Date startTimeOfSave = new Date();
-
+        
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
                 ProjectMetadata metadata = getProjectMetadata(id);
@@ -212,7 +212,10 @@ public abstract class ProjectManager {
 
                 if (project != null) {
                     boolean hasUnsavedChanges =
-                        metadata.getModified().getTime() > project.getLastSave().getTime();
+                        metadata.getModified().getTime() >= project.getLastSave().getTime();
+                    // We use >= instead of just > to avoid the case where a newly created project
+                    // has the same modified and last save times, resulting in the project not getting
+                    // saved at all.
 
                     if (hasUnsavedChanges) {
                         long msecsOverdue = startTimeOfSave.getTime() - project.getLastSave().getTime();
@@ -229,7 +232,7 @@ public abstract class ProjectManager {
                 }
             }
         }
-
+        
         if (records.size() > 0) {
             Collections.sort(records, new Comparator<SaveRecord>() {
                 public int compare(SaveRecord o1, SaveRecord o2) {
