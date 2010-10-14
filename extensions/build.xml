@@ -12,6 +12,7 @@
     <ant dir="sample-extension/" target="build" />
     <ant dir="jython/" target="build" />
     <ant dir="freebase/" target="build" />
+    <ant dir="gdata-extension/" target="build" />
   </target>
 
   <target name="clean">
@@ -19,5 +20,6 @@
     <ant dir="sample-extension/" target="clean" />
     <ant dir="jython/" target="clean" />
     <ant dir="freebase/" target="clean" />
+    <ant dir="gdata-extension/" target="clean" />
   </target>
 </project>
