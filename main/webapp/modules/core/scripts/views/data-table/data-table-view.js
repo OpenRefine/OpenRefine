@@ -33,13 +33,13 @@ DataTableView.prototype.render = function() {
     var scrollLeft = (oldTableDiv.length > 0) ? oldTableDiv[0].scrollLeft : 0;
     
     var html = $(
-        '<div id="viewPanel-header">' +
-            '<div bind="rowRecordControls">Show as ' +
-                '<span bind="modeSelectors" class="viewPanel-browsingmodes"></span>' + 
+        '<div id="viewpanel-header">' +
+            '<div class="viewpanel-rowrecord" bind="rowRecordControls">Show as ' +
+                '<span bind="modeSelectors"></span>' + 
             '</div>' +
-            '<div bind="pageSizeControls"></div>' +
-            '<div bind="sortingControls" align="center"></div>' +
-            '<div bind="pagingControls" align="right"></div>' +
+            '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
+            '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
+            '<div class="viewpanel-paging" bind="pagingControls"></div>' +
         '</div>' +
         '<div bind="dataTableContainer" class="data-table-container" style="display: none;"><table bind="table" class="data-table" cellspacing="0"></table></div>'
     );
@@ -54,7 +54,7 @@ DataTableView.prototype.render = function() {
             .appendTo(elmts.modeSelectors);
             
         if (value == ui.browsingEngine.getMode()) {
-            a.addClass("inaction");
+            a.addClass("selected");
         } else {
             a.addClass("action").click(function(evt) {
                 ui.browsingEngine.setMode(value);
@@ -98,7 +98,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
     
     var firstPage = $('<a href="javascript:{}">&laquo; first</a>').appendTo(pagingControls);
-    var previousPage = $('<a href="javascript:{}">&laquo; previous</a>').appendTo(pagingControls);
+    var previousPage = $('<a href="javascript:{}">&lsaquo; previous</a>').appendTo(pagingControls);
     if (theProject.rowModel.start > 0) {
         firstPage.addClass("action").click(function(evt) { self._onClickFirstPage(this, evt); });
         previousPage.addClass("action").click(function(evt) { self._onClickPreviousPage(this, evt); });
@@ -107,9 +107,9 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
         previousPage.addClass("inaction");
     }
     
-    $('<span>').addClass("viewPanel-pagingControls-currentPageInfo").html(" " + from + " &mdash; " + to + " ").appendTo(pagingControls);
+    $('<span>').addClass("viewpanel-pagingcount").html(" " + from + " - " + to + " ").appendTo(pagingControls);
     
-    var nextPage = $('<a href="javascript:{}">next page &raquo;</a>').appendTo(pagingControls);
+    var nextPage = $('<a href="javascript:{}">next &rsaquo;</a>').appendTo(pagingControls);
     var lastPage = $('<a href="javascript:{}">last &raquo;</a>').appendTo(pagingControls);
     if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
         nextPage.addClass("action").click(function(evt) { self._onClickNextPage(this, evt); });
@@ -127,7 +127,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
             .addClass("viewPanel-pagingControls-page")
             .appendTo(pageSizeControls);
         if (pageSize == self._pageSize) {
-            a.text(pageSize).addClass("inaction");
+            a.text(pageSize).addClass("selected");
         } else {
             a.text(pageSize).addClass("action").click(function(evt) {
                 self._pageSize = pageSize;

@@ -43,6 +43,25 @@ a.secondary {
   color: @link_secondary;
   }
 
+a.action, a.selected, a.inaction {
+  margin: 0 3px;
+  }
+
+a.selected {
+  color: #000;
+  font-weight: bold;
+  cursor: default;
+  }
+
+a.inaction {
+  color: #ccc;
+  }
+
+a.selected:hover, a.inaction:hover {
+  cursor: default;
+  text-decoration: none;
+  }
+
 a img {
   border: 0;
   }
@@ -202,25 +221,6 @@ input.inline {
 
 
 
-
-a.action, 
-a.quiet-link {
-    text-decoration: none;
-    color: #448;
-}
-a.action {
-    margin: 0 3px;
-}
-a.action:hover, 
-a.quiet-link:hover {
-    color: #88f;
-}
-
-a.inaction {
-    margin: 0 3px;
-    text-decoration: none;
-    color: #ccc;
-}
 
 
   

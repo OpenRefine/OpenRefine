@@ -1,27 +1,32 @@
 @import-less url("../theme.less");
 
-#viewPanel-header {
+#viewpanel-header {
+  position: relative;
   background: @chrome_secondary;
   font-size: 1.3em;
   padding: @padding_normal;
-}
+  overflow: hidden;
+  text-align: right;
+  }
 
-.viewPanel-pagingControls-currentPageInfo {
-    font-size: 150%;
-}
+.viewpanel-rowrecord, .viewpanel-pagesize, .viewpanel-sorting {
+  position: absolute;
+  top: @padding_normal;
+  background: @chrome_secondary;
+  padding: 0 10px 0 0;
+  }
 
-a.viewPanel-pagingControls-page, a.viewPanel-browsingModes-mode {
-    margin: 0 2px;
-    padding: 2px 4px 3px 4px;
-    font-weight: bold;
-}
-a.viewPanel-pagingControls-page.inaction, a.viewPanel-browsingModes-mode.inaction {
-    background: #f8f8f8;
-    color: #777;
-    border: 1px solid #ff6a00;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-}
+.viewpanel-pagesize {
+  left: 180px;
+  }
+
+.viewpanel-sorting {
+  left: 350px;
+  }
+
+.viewpanel-pagingcount {
+  font-weight: bold
+  }
 
 .data-table-container {
     border-top: 1px solid @line_accent;
