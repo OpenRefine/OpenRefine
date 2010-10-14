@@ -9,17 +9,17 @@
 <project name="google-refine-extensions" default="build" basedir=".">
   <target name="build">
     <echo message="Building extensions" />
-    <ant dir="sample-extension/" target="build" />
+    <ant dir="sample/" target="build" />
     <ant dir="jython/" target="build" />
     <ant dir="freebase/" target="build" />
-    <ant dir="gdata-extension/" target="build" />
+    <ant dir="gdata/" target="build" />
   </target>
 
   <target name="clean">
     <echo message="cleaning extensions" />
-    <ant dir="sample-extension/" target="clean" />
+    <ant dir="sample/" target="clean" />
     <ant dir="jython/" target="clean" />
     <ant dir="freebase/" target="clean" />
-    <ant dir="gdata-extension/" target="clean" />
+    <ant dir="gdata/" target="clean" />
   </target>
 </project>
