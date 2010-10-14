@@ -16,7 +16,7 @@
     <property name="ext.dir" value="${dist.dir}/${name}"/>
     <property name="fullname" value="${name}-${version}-${revision}" />
     
-    <property name="refine.dir" value="${basedir}/../grefine" />
+    <property name="refine.dir" value="${basedir}/../../main" />
     <!-- We assume that we're a parallel project in an Eclipse workspace.
          If you're using the SVN layout instead, you want something like:
     <property name="refine.dir" value="${basedir}/../grefine-all/main" />
