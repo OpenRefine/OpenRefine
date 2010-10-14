@@ -94,18 +94,27 @@ a img {
   padding: 1px 15px;
   }
 
-.button-disabled {
+.button-disabled, a.button-disabled {
   color: #666;
   border: 1px solid #ddd;
   background: #f3f3f3;
   cursor: default;
   }
 
-.button-disabled:hover {
+.button-disabled:hover, a.button-disabled:hover {
   color: #666;
   border: 1px solid #ddd;
   background: #f3f3f3;
   cursor: default;
+  }
+
+.button img, a.button img {
+  padding-left: 3px;
+  }
+  
+.button-menu, a.button-menu {
+  background: url(/images/down-arrow.png) no-repeat right 6px;
+  padding-right: 12px;
   }
 
 .form-table th, .form-table td {
@@ -206,8 +215,6 @@ a img {
   margin: 0.4em;
 }
 
-
-
 input[type="checkbox"], input[type="radio"] {
     vertical-align: baseline;
 }
@@ -282,10 +289,10 @@ div.grid-layout.layout-looser > table {
     border-spacing: 20px;
 }
 
-
 div.input-container {
     padding: 3px;
 }
+
 div.input-container > input, div.input-container > textarea {
     display: block;
     width: 100%;
@@ -299,7 +306,6 @@ div.input-container > input, div.input-container > textarea {
 input.code, textarea.code {
     font-family: monospace;
 }
-
 
 img {
     vertical-align: middle;

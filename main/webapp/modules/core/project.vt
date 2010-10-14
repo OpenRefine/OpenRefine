@@ -16,7 +16,7 @@
         <span id="project-name-button" class="app-path-section" title="Click to rename project"></span>
           <a id="project-permalink-button" href="javascript:{}" class="secondary">Permalink</a>
       </div>
-      <div id="project-controls"><a class="button button-primary" bind="exportButton" id="export-button" href="#export">Export</a></div>
+      <div id="project-controls"><a class="button button-primary" bind="exportButton" id="export-button" href="#export"><span class="button-menu">Export</span></a></div>
     </div>
     
     <div id="loading-message"><img src="images/large-spinner.gif" /> Starting up...</div>
@@ -38,7 +38,7 @@
             <!-- row/record counts -->
           </div>
           <div bind="extensionBar" id="extension-bar">
-            Extensions: <span bind="menuContainer" id="extension-bar-menu-container"></span> <a href="" class="secondary">Customize...</a>
+            Extensions: <span bind="menuContainer" id="extension-bar-menu-container"></span>
           </div>
         </div>
         <div bind="viewPanel" id="view-panel"></div>

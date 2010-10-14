@@ -63,9 +63,9 @@ BrowsingEngine.prototype._initializeUI = function() {
     
     this._div.html(
         '<div class="browsing-panel-help" bind="help">' +
-            '<h1>Explore data ...</h1>' +
-            '<p>by choosing a facet or filter method from the menus at the top of each column.</p>' +
-            '<p>Not sure how to get started? <a href="http://vimeo.com/groups/gridworks/videos" target="_blank">Watch these screencasts</a>.</p>' +
+          '<h1>Using facets and filters</h1>' +
+          '<p>Use facets and filters to select subsets of your data to act on. Choose facet and filter methods from the menus at the top of each data column.</p>' +
+          '<p>Not sure how to get started?<br /><a href="http://vimeo.com/groups/gridworks/videos" target="_blank"><b>Watch these screencasts!</b></a>.</p>' +
         '</div>' +
         '<div class="browsing-panel-header" bind="header">' +
             '<div class="browsing-panel-indicator" bind="indicator">' +

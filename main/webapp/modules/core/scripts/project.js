@@ -60,7 +60,6 @@ function resizeTabs() {
 function resizeAll() {
     resize();
     resizeTabs();
-    
     ui.extensionBar.resize();
     ui.browsingEngine.resize();
     ui.processWidget.resize();

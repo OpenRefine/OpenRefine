@@ -121,6 +121,7 @@ function renderProjects(data) {
 
             var renameLink = $('<a></a>')
                 .text("rename")
+                .addClass("secondary")
                 .attr("href", "javascript:{}")
                 .css("visibility", "hidden")
                 .click(function() {

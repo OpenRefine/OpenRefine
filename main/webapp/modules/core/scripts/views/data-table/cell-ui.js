@@ -17,7 +17,7 @@ DataTableCellUI.prototype._render = function() {
         
     var editLink = $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-cell-edit")
-        .attr("title", "edit this cell")
+        .attr("title", "Edit this cell")
         .appendTo(divContent)
         .click(function() { self._startEdit(this); });
         

@@ -235,10 +235,10 @@ function init() {
             "styles/util/custom-suggest.less",
 
             "styles/project.less",
-            "styles/project/browsing.less",
+            "styles/project/sidebar.less",
+            "styles/project/facets.less",
             "styles/project/process.less",
             
-            "styles/widgets/history.less",
             "styles/widgets/histogram-widget.less",
             "styles/widgets/slider-widget.less",
             

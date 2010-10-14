@@ -1,18 +1,54 @@
 @import-less url("../theme.less");
 
-.history-panel-help {
-    padding: 10px;
-    background: white;
-    border: 1px solid #ccc;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-}
-.history-panel-help h1 {
-    margin-top: 0px;
-    font-size: 150%;
-    font-weight: bold;
-    color: #888;
-}
+.browsing-panel-header {
+  padding-bottom: 0.5em;
+  position: relative;
+  display: none;
+  }
+
+.browsing-panel-indicator {
+  visibility: hidden;
+  position: absolute;
+  width: 50%;
+  margin: 0px;
+  top: 0em;
+  left: 20%;
+  text-align: center;
+  background-color: #fff;
+  padding: 4px 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border: 1px solid #ccc;
+  }
+
+.browsing-panel-indicator img {
+  vertical-align: text-top;
+  }
+
+.browsing-panel-controls {
+  visibility: hidden;
+  }
+
+.browsing-panel-help, .history-panel-help {
+  margin: 1em;
+  padding: 0 0 13px 0;
+  background: @fill_primary;
+  border: 1px solid @chrome_primary;
+  color: @near_black;
+  .rounded_corners();
+  }
+  
+.browsing-panel-help h1, .history-panel-help h1 {
+  margin: 10px;
+  padding: 20px 0 0 10px;
+  font-size: 1.15em;
+  font-weight: bold;
+  background: url(/images/logo-gem-40.png) no-repeat right top;
+  }
+
+.browsing-panel-help p, .history-panel-help p {
+  padding: 7px 20px;
+  }
 
 .history-panel-body {
     background: #fff;

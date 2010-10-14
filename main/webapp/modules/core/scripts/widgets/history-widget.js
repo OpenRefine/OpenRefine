@@ -37,9 +37,9 @@ HistoryWidget.prototype._render = function() {
         .unbind()
         .html(
             '<div class="history-panel-help" bind="helpDiv">' +
-                '<h1>Don\'t worry ...</h1>' +
-                '<p>about making mistakes. Every change you make will be shown here, and you can undo changes at any point.</p>' +
-                '<p><a href="http://code.google.com/p/google-refine/wiki/GettingStarted?tm=6" target="_blank">Learn more &raquo;</a></p>' +
+                '<h1>Infinite undo history</h1>' +
+                '<p>Don\'t worry about making mistakes. Every change you make will be shown here, and you can undo your changes anytime.</p>' +
+                '<p><a href="http://code.google.com/p/google-refine/wiki/GettingStarted?tm=6" target="_blank"><b>Learn more &raquo;</b></a></p>' +
             '</div>' +
             '<div class="history-panel-body" bind="bodyDiv">' +
                 '<div class="history-past" bind="pastDiv"></div>' +
@@ -84,6 +84,7 @@ HistoryWidget.prototype._render = function() {
         elmts.helpDiv.hide();
     } else {
         elmts.bodyDiv.hide();
+        elmts.footerDiv.hide();
     }
     
     elmts.extractLink.click(function() { self._extractOperations(); });
