@@ -33,19 +33,17 @@ DataTableView.prototype.render = function() {
     var scrollLeft = (oldTableDiv.length > 0) ? oldTableDiv[0].scrollLeft : 0;
     
     var html = $(
-        '<table class="viewPanel-header">' +
-            '<tr>' +
-                '<td bind="rowRecordControls">Show as ' +
-                    '<span bind="modeSelectors" class="viewPanel-browsingModes">' + 
-                        '<input type="radio" id="viewPanel-browsingMode-row-based" name="viewPanel-browsingMode" value="row-based" /><label for="viewPanel-browsingMode-row-based">rows</label>' +
-                        '<input type="radio" id="viewPanel-browsingMode-record-based" name="viewPanel-browsingMode" value="record-based" /><label for="viewPanel-browsingMode-record-based">records</label>' +
-                    '</span>' +
-                '</td>' +
-                '<td bind="pageSizeControls"></td>' +
-                '<td bind="sortingControls" align="center"></td>' +
-                '<td bind="pagingControls" align="right"></td>' +
-            '</tr>' +
-        '</table>' +
+        '<div id="viewPanel-header">' +
+            '<div bind="rowRecordControls">Show as ' +
+                '<span bind="modeSelectors" class="viewPanel-browsingmodes">' + 
+                    '<input type="radio" id="viewPanel-browsingMode-row-based" name="viewPanel-browsingMode" value="row-based" /><label for="viewPanel-browsingMode-row-based">rows</label>' +
+                    '<input type="radio" id="viewPanel-browsingMode-record-based" name="viewPanel-browsingMode" value="record-based" /><label for="viewPanel-browsingMode-record-based">records</label>' +
+                '</span>' +
+            '</div>' +
+            '<div bind="pageSizeControls"></div>' +
+            '<div bind="sortingControls" align="center"></div>' +
+            '<div bind="pagingControls" align="right"></div>' +
+        '</div>' +
         '<div bind="dataTableContainer" class="data-table-container" style="display: none;"><table bind="table" class="data-table" cellspacing="0"></table></div>'
     );
     var elmts = DOM.bind(html);
@@ -79,7 +77,7 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
     
     $('<a href="javascript:{}"></a>')
         .addClass("action")
-        .text("Sorted")
+        .text("Sort")
         .append($('<img>').attr("src", "/images/down-arrow.png"))
         .appendTo(sortingControls)
         .click(function() {

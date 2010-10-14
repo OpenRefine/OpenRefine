@@ -70,7 +70,8 @@ function resizeAll() {
 
 function initializeUI(uiState) {
     $("#loading-message").hide();
-    $("#header-layout").show();
+    $("#project-title").show();
+    $("#project-controls").show();
     $("#body").show();
     
     $('#project-name-button').click(Refine._renameProject);
@@ -139,7 +140,7 @@ Refine.reinitializeProjectData = function(f) {
 };
 
 Refine._renameProject = function() {
-    var name = window.prompt("Rename Project", theProject.metadata.name);
+    var name = window.prompt("New project name:", theProject.metadata.name);
     if (name == null) {
         return;
     }

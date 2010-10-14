@@ -1,23 +1,230 @@
 @import-less url("theme.less");
 
-html {
-    font-size: 62.5%;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, menu, time, mark, audio, video { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
+article, aside, figure, footer, header, hgroup, nav, section { display: block; }
+ul { list-style-position: inside; }
+a { margin: 0; padding: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
+table { border-collapse: collapse; border-spacing: 0; }
+input, select { vertical-align: middle; }
+
+body { 
+  font-size: 62.5%; 
+  font-family: Arial, sans-serif; 
+  background: #fff;
+  }
+
+h1 { 
+  font-size: 1.8em; 
+  }
+  
+h2 {
+  font-size: 1.3em;
+  font-weight: bold;
 }
 
-body {
-    font-size: 11px;
-    margin: 0;
-    padding: 0;
+input[type=text] {
+  padding: @padding_tighter;
+  font-size: 1em;  
+  font-family: inherit; 
+  border: #ccc 1px solid;
+  border-top: #888 1px solid;
+  }
+
+a {
+  color: @link_primary;
+  text-decoration: none;
+  }
+
+a:hover {
+  text-decoration: underline;
+  }
+  
+a.secondary {
+  color: @link_secondary;
+  }
+
+a img {
+  border: 0;
+  }
+
+.button, a.button { 
+  display: inline-block;
+  overflow: visible;
+  font-size: 1em;
+  line-height: 1.4;
+  color: #000;
+  text-decoration: none;
+  padding: 1px 6px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  background: #eee;
+  font-family: Arial, Helvetica, sans-serif; 
+  .rounded_corners(3px);
+  }
+
+.button:hover, a.button:hover { 
+  border: 1px solid #666;
+  }
+
+.button:active, a.button:active { 
+  border: 1px solid #000;
+  }
+
+.button-primary, a.button-primary { 
+  font-weight: bold;
+  padding: 1px 15px;
+  }
+
+.button-disabled {
+  color: #666;
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  cursor: default;
+  }
+
+.button-disabled:hover {
+  color: #666;
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  cursor: default;
+  }
+
+.form-table th, .form-table td {
+  vertical-align: top;
+  font-size: 1.3em;
+  padding: 2px;
+  }
+
+.form-table th {
+  text-align: left;
+  padding-top: 8px;
+  font-weight: bold;
+  }
+
+.list-table {
+  width: 100%;
+  }
+  
+.list-table th, .list-table td {
+  padding-top: @padding_tight;
+  text-align: left;
+  vertical-align: baseline;
+  padding: @padding_tight;
+  font-size: 1.1em;
+  color: @metadata_grey;
+  border-bottom: dotted 1px @faint_grey;
+  }
+
+.list-table th {
+  font-weight: bold;
+  color: #444;
+  background: #f2f2f2;
+  }
+
+.list-table-itemname {
+  font-size: 1.2em;
+  }
+
+#loading-message {
+    text-align: center;
+    font-size: 300%;
+    color: @light_grey;
+    padding: 4em;
 }
 
-table {
-    font-size: inherit;
+#loading-message img {
+  position: relative;
+  top: -4px;
 }
 
-tr, td {
+#header {
+  height: 40px;
+  margin: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+#app-home-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  }
+
+#body-info {
+  margin: 0 40px;
+  }
+
+#body-info p {
+  font-size: 1.3em;
+  margin: 1.3em;
+  width: 50em;
+  line-height: 1.3;
+  }
+
+#body-info h1 {
+  font-size: 3.0em;
+  font-weight: normal;
+  color: @metadata_grey;
+  }
+
+#body-info h2 {
+  margin: 1.6em 0 .5em 0;
+  }
+
+#body-info .license, #body-info .errorstack {
+  font-family: monospace;
+  font-size: 1.3em;
+  white-space: pre;
+  border: 1px solid #ddd;
+  background: #eee;
+  padding: @padding_looser;
+  width: 60em;
+  overflow: auto;
+  }
+  
+#body-info ul {
+    font-size: 1.3em;
+    margin: .5em 0 2em;
+}
+
+#body-info li {
+  margin: 0.4em;
+}
+
+
+
+input[type="checkbox"], input[type="radio"] {
     vertical-align: baseline;
 }
+input.inline {
+    vertical-align: middle;
+}
+
+
+
+
+a.action, 
+a.quiet-link {
+    text-decoration: none;
+    color: #448;
+}
+a.action {
+    margin: 0 3px;
+}
+a.action:hover, 
+a.quiet-link:hover {
+    color: #88f;
+}
+
+a.inaction {
+    margin: 0 3px;
+    text-decoration: none;
+    color: #ccc;
+}
+
+
+  
+
 
 div.grid-layout > table {
     border-collapse: separate;
@@ -79,12 +286,6 @@ div.grid-layout.layout-looser > table {
     border-spacing: 20px;
 }
 
-input[type="checkbox"], input[type="radio"] {
-    vertical-align: baseline;
-}
-input.inline {
-    vertical-align: middle;
-}
 
 div.input-container {
     padding: 3px;
@@ -103,28 +304,6 @@ input.code, textarea.code {
     font-family: monospace;
 }
 
-a.action, 
-a.quiet-link {
-    text-decoration: none;
-    color: #448;
-}
-a.action {
-    margin: 0 3px;
-}
-a.action:hover, 
-a.quiet-link:hover {
-    color: #88f;
-}
-
-a.inaction {
-    margin: 0 3px;
-    text-decoration: none;
-    color: #ccc;
-}
-
-a img {
-    border: none;
-}
 
 img {
     vertical-align: middle;
@@ -145,56 +324,4 @@ img {
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
     font-family: inherit;
     font-size: inherit;
-}
-
-#header {
-    height: 40px;
-    position: relative;
-    overflow: hidden;
-    background: white;
-    padding-left: 125px;
-}
-#app-home-button {
-    position: absolute;
-    top: 50%;
-    margin-top: -16px;
-    left: 0px;
-}
-#path {
-    position: absolute;
-    height: 40px;
-    top: 50%;
-    margin-top: -0.5em;
-    left: 125px;
-    right: 10px;
-    line-height: 1em;
-}
-#path .app-path-section {
-    font-size: 150%;
-    margin: 0 0.5em;
-    padding: 0 0.5em;
-}
-#path a {
-    text-decoration: none;
-}
-#path a:hover {
-    text-decoration: underline;
-}
-
-#body {
-}
-
-a.app-menu-button, #path a.app-menu-button {
-    text-decoration: none;
-    font-weight: bold;
-    padding: 4px 8px;
-    color: black;
-    background: #eee;
-    border: 1px solid #aaa;
-    border-radius: 5px;
-    cursor: pointer;
-}
-a.app-menu-button:hover, #path a.app-menu-button:hover {
-    text-decoration: none;
-    background: #white;
 }

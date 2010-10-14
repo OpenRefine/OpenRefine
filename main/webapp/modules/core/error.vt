@@ -1,25 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
     <title>Error - Google Refine</title>
-    
-    <link rel="icon" type="image/png" href="/images/favicon.png">
-    
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="/styles/common.less" />
-    <link rel="stylesheet" href="/styles/error.less" />
-</head>
-<body>
+  </head>
+  <body>
     <div id="header">
-      <a id="app-home-button" href="/"><img alt="Google Refine" src="/images/google-refine-home-button.png" /></a>
-      <div id="path"><span class="app-path-section">Error</span></div>
+      <a id="app-home-button" href="/"><img alt="Google Refine" src="/images/logo-googlerefine-30.png" width="129" height="29" /></a>
     </div>
-    
-    <div id="body">
-      <h1>Oops, something went wrong!</h1>
-      <p id="message">$message</p>
-      <pre>$stack</pre>
+    <div id="body-info">
+      <h1>Something went wrong!</h1>
+      <h2>$message:</h2>  
+  <pre class="errorstack">$stack</pre>
     </div>
-</body>
+  </body>
 </html>

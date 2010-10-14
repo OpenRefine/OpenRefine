@@ -12,11 +12,11 @@ function onLoad() {
 $(onLoad);
 
 function populatePreferences(prefs) {
-    var body = $("#body").empty();
+    var body = $("#body-info").empty();
     
     $('<h1>').text("Preferences").appendTo(body);
     
-    var table = $('<table>').addClass("preferences").html('<tr><th>Key</th><th>Value</th><td></td></tr>').appendTo(body)[0];
+    var table = $('<table>').addClass("list-table").addClass("preferences").html('<tr><th>Key</th><th>Value</th><th></th></tr>').appendTo(body)[0];
     for (var k in prefs) {
         var tr = table.insertRow(table.rows.length);
         preferenceUIs.push(new PreferenceUI(tr, k, prefs[k]));
@@ -24,10 +24,12 @@ function populatePreferences(prefs) {
     
     var trLast = table.insertRow(table.rows.length);
     var tdLast0 = trLast.insertCell(0);
+    trLast.insertCell(1);
+    trLast.insertCell(2);
     $('<button>').text("Add Preference").appendTo(tdLast0).click(function() {
-        var key = window.prompt("Preference Key");
+        var key = window.prompt("Preference key:");
         if (key) {
-            var value = window.prompt("Preference Value");
+            var value = window.prompt("Preference key value:");
             if (value != null) {
                 var tr = table.insertRow(table.rows.length - 1);
                 preferenceUIs.push(new PreferenceUI(tr, key, value));
@@ -62,7 +64,7 @@ function PreferenceUI(tr, key, value) {
     var td2 = tr.insertCell(2);
     
     $('<button>').text("Edit").appendTo(td2).click(function() {
-        var newValue = window.prompt("Value of preference key " + key, value);
+        var newValue = window.prompt("Change value of preference key " + key, value);
         if (newValue != null) {
             $(td1).text(newValue);
             $.post(

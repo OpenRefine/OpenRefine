@@ -97,11 +97,11 @@ function renderProjects(data) {
     if (!projects.length) {
         $('<div>')
             .addClass("message")
-            .text("No existing project. Use form on right to create.")
+            .text("You don't have any projects yet. Create one now!")
             .appendTo(container);
     } else {
         var table = $(
-            '<table><tr>' +
+            '<table class="list-table"><tr>' +
                 '<th>Name</th>' +
                 '<th></th>' +
                 '<th align="right">Last Modified</th>' +
@@ -114,6 +114,7 @@ function renderProjects(data) {
             tr.className = "project";
 
             var nameLink = $('<a></a>')
+                .addClass("list-table-itemname")
                 .text(project.name)
                 .attr("href", "/project?project=" + project.id)
                 .appendTo(tr.insertCell(tr.cells.length));
@@ -123,7 +124,7 @@ function renderProjects(data) {
                 .attr("href", "javascript:{}")
                 .css("visibility", "hidden")
                 .click(function() {
-                    var name = window.prompt("Rename Project", project.name);
+                    var name = window.prompt("New project name:", project.name);
                     if (name == null) {
                         return;
                     }

@@ -37,7 +37,7 @@ ExtensionBar.prototype._initializeUI = function() {
 ExtensionBar.prototype._createMenuButton = function(label, submenu) {
     var self = this;
 
-    var menuItem = $("<a>").addClass("app-menu-button").text(label);
+    var menuItem = $("<a>").addClass("button").text(label);
     
     menuItem.click(function(evt) {
         MenuSystem.createAndShowStandardMenu(

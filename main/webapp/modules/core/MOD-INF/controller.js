@@ -152,7 +152,7 @@ function init() {
         [
             "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
             "styles/common.less",
-            "styles/freebase.less",
+            "styles/pure.css",
             "styles/index.less",
             "styles/jquery-ui-overrides.less"
         ]
@@ -227,6 +227,7 @@ function init() {
             "externals/imgareaselect/css/imgareaselect-default.css",
     
             "styles/common.less",
+            "styles/pure.css",
             "styles/jquery-ui-overrides.less",
     
             "styles/util/menu.less",
@@ -236,8 +237,6 @@ function init() {
             "styles/project.less",
             "styles/project/browsing.less",
             "styles/project/process.less",
-            "styles/project/extension-bar.less",
-            "styles/project/summary-widget.less",
             
             "styles/widgets/history.less",
             "styles/widgets/histogram-widget.less",
@@ -274,10 +273,9 @@ function init() {
         [
             "externals/suggest/css/suggest-1.2.min.css",
             "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
-            
             "styles/common.less",
+            "styles/pure.css",
             "styles/jquery-ui-overrides.less",
-            "styles/preferences.less"
         ]
     );
 }

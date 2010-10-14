@@ -1,55 +1,49 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
     <title>Google Refine</title>
-    
     <script type="text/javascript">var theProject = { id : $projectID };</script>
     <script type="text/javascript" src="wirings.js"></script>
+    <link rel="icon" type="image/png" href="images/favicon.png">
     $scriptInjection
-    
-    <link rel="icon" type="image/png" href="images/favicon.png" />
     $styleInjection
-    
-</head>
-<body>
+  </head>
+  <body>
     <div id="header">
-      <a id="app-home-button" href="./"><img alt="Google Refine" src="images/google-refine-home-button.png" /></a>
-      <div id="path"><table id="header-layout"><tr>
-        <td id="header-layout-left">
-          <span id="project-name-button" class="app-path-section" title="Click to rename project"></span>
-          <a id="project-permalink-button" href="javascript:{}" class="permalink">Permalink</a></td>
-        <td id="header-layout-right">
-          <a class="app-menu-button" bind="exportButton" id="export-button" href="#export">Export</a>
-        </td></tr>
-      </table></div>
+      <a id="app-home-button" href="./"><img alt="Google Refine" src="images/logo-googlerefine-30.png" width="129" height="29" /></a>
+      <div id="project-title">
+        <span id="project-name-button" class="app-path-section" title="Click to rename project"></span>
+          <a id="project-permalink-button" href="javascript:{}" class="secondary">Permalink</a>
+      </div>
+      <div id="project-controls"><a class="button button-primary" bind="exportButton" id="export-button" href="#export">Export</a></div>
     </div>
     
-    <div id="loading-message"><img src="images/large-spinner.gif" /> starting up ...</div>
-    
+    <div id="loading-message"><img src="images/large-spinner.gif" /> Starting up...</div>
+      
     <div id="body">
       <div bind="leftPanel" id="left-panel">
         <div bind="leftPanelTabs" class="refine-tabs">
           <ul>
-            <li><a href="#refine-tabs-facets">Facet/Filter</a></li>
-            <li><a href="#refine-tabs-history" bind="historyTabHeader">Undo/Redo</a></li>
+            <li><a href="#refine-tabs-facets">Facet / Filter</a></li>
+            <li><a href="#refine-tabs-history" bind="historyTabHeader">Undo / Redo</a></li>
           </ul>
           <div id="refine-tabs-facets" bind="facetPanel" id="facet-panel"></div>
           <div id="refine-tabs-history" bind="historyPanel" id="history-panel"></div>
         </div>
       </div>
       <div bind="rightPanel" id="right-panel">
-        <div bind="toolPanel" id="tool-panel"><table id="tool-panel-layout"><tr>
-          <td id="summary-bar-container"><div bind="summaryBar" id="summary-bar">
-            <!-- row/record counts displayed here-->
-          </div></td>
-          <td id="extension-bar-container"><div bind="extensionBar" id="extension-bar">Extensions:&nbsp;<span bind="menuContainer" id="extension-bar-menu-container"></span>&nbsp;<a>Customize...</a></div></td>
-        </tr></table></div>
-        
+        <div bind="toolPanel" id="tool-panel">
+          <div bind="summaryBar" id="summary-bar">
+            <!-- row/record counts -->
+          </div>
+          <div bind="extensionBar" id="extension-bar">
+            Extensions: <span bind="menuContainer" id="extension-bar-menu-container"></span> <a href="" class="secondary">Customize...</a>
+          </div>
+        </div>
         <div bind="viewPanel" id="view-panel"></div>
       </div>
-        
       <div bind="processPanel" id="process-panel"></div>
     </div>
-</body>
+  </body>
 </html>

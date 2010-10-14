@@ -30,7 +30,7 @@ HistoryWidget.prototype.update = function(onDone) {
 HistoryWidget.prototype._render = function() {
     var self = this;
     
-    this._tabHeader.html('Undo/Redo <span class="count">' + this._data.past.length + '</span>');
+    this._tabHeader.html('Undo / Redo <span class="count">' + this._data.past.length + '</span>');
     
     this._div
         .empty()

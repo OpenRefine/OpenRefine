@@ -1,92 +1,42 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
-<head>
-    <title>About Google Refine</title>
+  <head>
+    <title>About - Google Refine</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="/styles/common.less" />
-    <link rel="stylesheet" href="/styles/index.less" />
     <script type="text/javascript" src="scripts/version.js"></script>
     <script type="text/javascript" src="externals/jquery-1.4.2.min.js"></script>
     <script>
       $(function() {
-          if (GoogleRefineVersion && GoogleRefineVersion.version) {
-              if (GoogleRefineVersion.version != "$VERSION") {
-                  $("#version").text("Version " + GoogleRefineVersion.version + " [" + GoogleRefineVersion.revision + "]").show();
-              }
+        if (GoogleRefineVersion && GoogleRefineVersion.version) {
+          if (GoogleRefineVersion.version != "$VERSION") {
+            $("#version").text("Version " + GoogleRefineVersion.version + " [" + GoogleRefineVersion.revision + "]").show();
           }
+          else {
+            $("#version").text("Version <trunk>").show();
+          }
+        }
       });
     </script>
-    <style>
-        #body {
-            margin: 0em;
-            padding: 40px;
-        }
-        h1 {
-          font-family: helvetica;
-          font-weight: normal;
-          letter-spacing: -0.04em;
-        }
-		h1 + h2 {
-		  font-family: myriad pro, tahoma;
-		  font-weight: normal;
-		  position: relative;
-		  bottom: 1em;
-		  letter-spacing: 0.3em;
-		  font-size: 130%;
-		  margin: 0em;
-		  padding: 0em;
-		  color: #888;
-		}        
-        #about p {
-            width: 40em;
-        }
-        .license {
-            font-family: monospace;
-            font-size: 12px;
-            white-space: pre;
-            border: 1px solid #ddd;
-            background: #eee;
-            padding: 20px;
-            width: 60em;
-        }
-        h2 {
-            margin-top: 2em;
-            color: #888;
-        }
-        ul.credit-entries {
-            margin: 0;
-            padding: 0;
-        }
-        ul.credit-entries li {
-            display: block;
-            margin: 1em 0;
-        }
-    </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="header">
-      <a id="app-home-button" href="./"><img alt="Google Refine" src="images/google-refine-home-button.png" /></a>
-      <div id="path"><span class="app-path-section">About</span></div>
+      <a id="app-home-button" href="./"><img alt="Google Refine" src="images/logo-googlerefine-30.png" width="129" height="29" /></a>
     </div>
 
-    <div id="body">
-        <h1>About Google Refine</h1>
-        <h2 id="version" style="display: none"></h2>
+    <div id="body-info">
+      <h1>About Google Refine</h1>
+      <h2 id="version" style="display: none"></h2>
+      
+      <p>
+        Google Refine is a power tool for working with messy data.  Use it to improve data consistency, link it to data registries like Freebase, augment it with data from other sources, transform it into different formats for other tools to consume, and contribute it to back to the original sources. Google Refine is not a web service but a desktop app that runs on your own computer, so you can process sensitive data with privacy.
+      </p>
+
+      <p>
+        Google Refine was originally developed as Gridworks by <a href="http://www.metaweb.com/">Metaweb, Inc.</a>. Metaweb was acquired by <a href="http://www.google.com/">Google</a> in July 2010.
+      </p>
         
-        <div id="about">
-            
-            <p>
-                Google Refine is a power tool that allows you to load data, 
-  understand it, clean it up, reconcile it internally, and augment it 
-  with data coming from Freebase and other web sources. All with the comfort and privacy of 
-  your own computer.</p>
-  
-            <p>
-                It was originally developed by <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>.
-                Metaweb was acquired by <a href="http://www.google.com/">Google, Inc.</a>, in July 2010.
-            </p>
-            
-            <h2>License</h2>
+      <h2>Google Refine License</h2>
             
 <pre class="license">/*
  * Copyright (c) 2010, Google, Inc. All rights reserved.
@@ -118,7 +68,7 @@
  *
  */</pre>
  
- <h2>Dependencies Licenses</h2>
+      <h2>Dependencies Licenses</h2>
 
 <pre class="license">Apache License 2.0
 ------------------
@@ -149,7 +99,6 @@ LGPL
 licenses/marj4j.LICENSE.txt
     marc4j
     
-     
 BSD
 ---
     
@@ -204,24 +153,23 @@ Flag icon
     http://pixel-mixer.com/category/free-icons/
 </pre>
         
-            <h2>Credits</h2>
-            <ul class="credit-entries">
-                <li><a href="http://www.freebase.com/view/en/david_francois_huynh">David Huynh</a></li>
-                <li><a href="http://www.freebase.com/view/en/stefano_mazzocchi">Stefano Mazzocchi</a></li>
-                <li><a href="http://www.freebase.com/view/en/vishal_talwar">Vishal Talwar</a></li>
-                <li><a href="http://www.freebase.com/view/en/will_moffat">Will Moffat</a></li>
-                <li><a href="http://www.freebase.com/view/en/jeff_fry">Jeff Fry</a></li>
-                <li><a href="http://www.freebase.com/view/en/james_home">James Home</a></li>
-                <li><a href="http://www.freebase.com/view/m/046vz5k">Iain Sproat</a></li>
-                <li><a href="http://www.freebase.com/view/user/tfmorris">Tom Morris</a></li>
-                <li><a href="http://www.freebase.com/view/user/heathercampbell">Heather Campbell</a></li>
-            </ul>
+      <h2>Credits</h2>
+        <ul>
+          <li><a href="http://www.freebase.com/view/en/david_francois_huynh">David Huynh</a></li>
+          <li><a href="http://www.freebase.com/view/en/stefano_mazzocchi">Stefano Mazzocchi</a></li>
+          <li><a href="http://www.freebase.com/view/en/vishal_talwar">Vishal Talwar</a></li>
+          <li><a href="http://www.freebase.com/view/en/will_moffat">Will Moffat</a></li>
+          <li><a href="http://www.freebase.com/view/en/jeff_fry">Jeff Fry</a></li>
+          <li><a href="http://www.freebase.com/view/en/james_home">James Home</a></li>
+          <li><a href="http://www.freebase.com/view/m/046vz5k">Iain Sproat</a></li>
+          <li><a href="http://www.freebase.com/view/user/tfmorris">Tom Morris</a></li>
+          <li><a href="http://www.freebase.com/view/user/heathercampbell">Heather Campbell</a></li>
+        </ul>
 
-            <h2>Special Thanks</h2>
-            <ul class="credit-entries">
-                <li><a href="http://www.paolociccarese.info/">Paolo Ciccarese</a></li>
-            </ul>
-        </div>
+      <h2>Special Thanks</h2>
+      <ul>
+        <li><a href="http://www.paolociccarese.info/">Paolo Ciccarese</a></li>
+      </ul>
     </div>
-</body>
+  </body>
 </html>

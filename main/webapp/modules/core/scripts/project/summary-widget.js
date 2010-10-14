@@ -11,10 +11,9 @@ SummaryWidget.prototype.updateResultCount = function() {
     var summaryText;
     var units = theProject.rowModel.mode == "row-based" ? "rows" : "records";
     if (theProject.rowModel.filtered == theProject.rowModel.total) {
-        summaryText = '<span class="summaryWidget-rowCount">' + (theProject.rowModel.total) + ' ' + units + '</span>';
+        summaryText = (theProject.rowModel.total) + ' ' + units;
     } else {
-        summaryText = '<span class="summaryWidget-rowCount">' + 
-            (theProject.rowModel.filtered) + ' matching ' + units + '</span>' + ' (' + (theProject.rowModel.total) + ' total)';
+        summaryText = (theProject.rowModel.filtered) + ' matching ' + units + ' <span id="summary-total">(' + (theProject.rowModel.total) + ' total)</span>';
     }
     
     $('<span>').html(summaryText).appendTo(this._div.empty());

@@ -1,24 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Google Refine - Preferences</title>
-    
-    <script type="text/javascript" src="wirings.js"></script>
-    $scriptInjection
-    
-    <link rel="icon" type="image/png" href="images/favicon.png" />
-    $styleInjection
-    
+  <meta charset="utf-8">
+  <title>Preferences - Google Refine</title>
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <script type="text/javascript" src="wirings.js"></script>
+  $scriptInjection
+  $styleInjection
 </head>
 <body>
-    <div id="header">
-      <a id="app-home-button" href="./"><img alt="Google Refine" src="images/google-refine-home-button.png" /></a>
-      <div id="path"><span class="app-path-section">Preferences</span></div>
-    </div>
-    
-    <div id="body">
-        <div id="loading-message"><img src="images/large-spinner.gif" /> starting up ...</div>
-    </div>
+  <div id="header">
+    <a id="app-home-button" href="./"><img alt="Google Refine" src="images/logo-googlerefine-30.png" width="129" height="29" /></a>
+  </div>
+
+  <div id="body-info">
+    <div id="loading-message"><img src="images/large-spinner.gif" /> Loading...</div>
+  </div>
 </body>
 </html>
