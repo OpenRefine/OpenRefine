@@ -59,7 +59,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 
 	public VocabularySearcher(File dir) throws IOException {
 		_directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
-		writer = new IndexWriter(_directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+		writer = new IndexWriter(_directory, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 		searcher = new IndexSearcher(_directory);
 	}
 
@@ -173,7 +173,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 		}
 		VocabularyImporter importer = new VocabularyImporter();
 		Vocabulary v = importer.importVocabulary(name, uri);
-		deleteVocabulary(name, projectId);
+//		deleteVocabulary(name, projectId);
 		try{
 			indexVocabulary(v,projectId);
 			indexTerms(v,projectId);
