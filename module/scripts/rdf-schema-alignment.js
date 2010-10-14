@@ -83,7 +83,7 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
                 '<div class="rdf-schema-alignment-body-footer"><a bind="add_another_root_node" href="#">Add another root node</a></div>'  +
             '</div>' +
             '<div id="rdf-schema-alignment-tabs-preview" style="display: none;">' +
-                '<div>This is a sample <code>Turtle</code> representation of (up-to) the <em>first 20</em> rows</div>' + 
+                '<div>This is a sample <code>Turtle</code> representation of (up-to) the <em>first 10</em> rows</div>' + 
                 '<div class="schema-alignment-dialog-preview" id="rdf-schema-alignment-dialog-preview"></div>' +
             '</div>' +
         '</div>'
