@@ -21,8 +21,8 @@ function init() {
     Packages.com.google.refine.importers.ImporterRegistry.registerImporter(
     	      "gdata-importer", new Packages.com.google.refine.extension.gdata.GDataImporter());
 
-    Packages.com.google.refine.exporters.ExporterRegistry.registerExporter(
-  	      "gdata-exporter", new Packages.com.google.refine.extension.gdata.GDataExporter());
+//    Packages.com.google.refine.exporters.ExporterRegistry.registerExporter(
+//  	      "gdata-exporter", new Packages.com.google.refine.extension.gdata.GDataExporter());
 
     // Script files to inject into /project page
     ClientSideResourceManager.addPaths(
