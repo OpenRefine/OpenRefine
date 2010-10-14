@@ -1,7 +1,6 @@
 package com.google.refine.exporters;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Properties;
 
@@ -17,7 +16,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-public class CsvExporter implements Exporter{
+public class CsvExporter implements WriterExporter{
 
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
     char separator;
@@ -28,12 +27,6 @@ public class CsvExporter implements Exporter{
 
     public CsvExporter(char separator) {
         this.separator = separator;
-    }
-
-    @Override
-    public void export(Project project, Properties options, Engine engine, OutputStream outputStream)
-            throws IOException {
-        throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -105,11 +98,6 @@ public class CsvExporter implements Exporter{
     @Override
     public String getContentType() {
         return "application/x-unknown";
-    }
-
-    @Override
-    public boolean takeWriter() {
-        return true;
     }
 
 }

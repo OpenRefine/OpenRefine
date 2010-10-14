@@ -15,6 +15,8 @@ import com.google.refine.commands.Command;
 import com.google.refine.exporters.CsvExporter;
 import com.google.refine.exporters.Exporter;
 import com.google.refine.exporters.ExporterRegistry;
+import com.google.refine.exporters.StreamExporter;
+import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
 
 public class ExportRowsCommand extends Command {
@@ -50,11 +52,15 @@ public class ExportRowsCommand extends Command {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", exporter.getContentType());
 
-            if (exporter.takeWriter()) {
+            if (exporter instanceof WriterExporter) {
                 PrintWriter writer = response.getWriter();
-                exporter.export(project, options, engine, writer);
+                ((WriterExporter) exporter).export(project, options, engine, writer);
+            } else if (exporter instanceof StreamExporter) {
+                ((StreamExporter) exporter).export(project, options, engine, response.getOutputStream());
+            } else if (exporter instanceof StreamExporter) {
+                ((StreamExporter) exporter).export(project, options, engine, response.getOutputStream());
             } else {
-                exporter.export(project, options, engine, response.getOutputStream());
+                respondException(response, new RuntimeException("Unknown exporter type"));
             }
         } catch (Exception e) {
             respondException(response, e);
