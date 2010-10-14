@@ -127,9 +127,9 @@ ListFacet.prototype._initializeUI = function() {
         '<div class="facet-expression" bind="expressionDiv"></div>' +
         '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
             '<table><tr>' +
-                '<td><a bind="choiceCountContainer" class="action" href="javascript:{}"></a> <span bind="sortGroup">sorted by ' +
-                    '<input bind="sortByNameLink" type="radio" id="' + facet_id + '-name-sort" name="' + facet_id + '-sort-radio" checked="checked" /><label for="' + facet_id + '-name-sort">name</label>' +
-                    '<input bind="sortByCountLink" type="radio" id="' + facet_id + '-count-sort" name="' + facet_id + '-sort-radio" /><label for="' + facet_id + '-count-sort">count</label>' +
+                '<td><a bind="choiceCountContainer" class="action" href="javascript:{}"></a> <span class="facet-controls-sortControls" bind="sortGroup">sorted by ' +
+                    '<a href="javascript:{}" bind="sortByNameLink">name</a>' +
+                    '<a href="javascript:{}" bind="sortByCountLink">count</a>' +
                 '</span></td>' +
                 '<td width="1%" nowrap=""><button bind="clusterLink">cluster</button></td>' +
             '</tr></table>' +
@@ -165,8 +165,6 @@ ListFacet.prototype._initializeUI = function() {
         }
     });
         
-    this._elmts.sortGroup.buttonset();
-    
     this._elmts.clusterLink.click(function() { self._doEdit(); }).button();
     if (this._config.expression != "value" && this._config.expression != "grel:value") {
         this._elmts.clusterLink.hide();
@@ -278,11 +276,11 @@ ListFacet.prototype._update = function(resetScroll) {
     }
     
     if (this._options.sort == "name") {
-        this._elmts.sortByNameLink.addClass("facet-mode-link-selected");
-        this._elmts.sortByCountLink.removeClass("facet-mode-link-selected");
+        this._elmts.sortByNameLink.removeClass("action").addClass("inaction");
+        this._elmts.sortByCountLink.removeClass("inaction").addClass("action");
     } else {
-        this._elmts.sortByNameLink.removeClass("facet-mode-link-selected");
-        this._elmts.sortByCountLink.addClass("facet-mode-link-selected");
+        this._elmts.sortByNameLink.removeClass("inaction").addClass("action");
+        this._elmts.sortByCountLink.removeClass("action").addClass("inaction");
     }
     
     var html = [];
