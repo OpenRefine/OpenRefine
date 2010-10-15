@@ -6,7 +6,7 @@ import java.io.Writer;
 import java.util.Properties;
 
 import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.Exporter;
+import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
 import com.google.refine.freebase.protograph.Protograph;
 import com.google.refine.freebase.protograph.transpose.MqlwriteLikeTransposedNodeFactory;
@@ -14,7 +14,7 @@ import com.google.refine.freebase.protograph.transpose.TransposedNodeFactory;
 import com.google.refine.freebase.protograph.transpose.Transposer;
 import com.google.refine.freebase.protograph.transpose.TripleLoaderTransposedNodeFactory;
 
-abstract public class ProtographTransposeExporter implements Exporter {
+abstract public class ProtographTransposeExporter implements WriterExporter {
 	final protected String _contentType;
 	
 	public ProtographTransposeExporter(String contentType) {
