@@ -6,10 +6,10 @@ function HistoryWidget(div, tabHeader) {
 
 HistoryWidget.prototype.resize = function() {
     var body = this._div.find(".history-panel-body");
-    var footer = this._div.find(".history-panel-footer");
+    var controls = this._div.find(".history-panel-controls");
     var bodyPaddings = body.outerHeight(true) - body.height();
     
-    body.css("height", (this._div.height() - footer.outerHeight(true) - bodyPaddings) + "px");
+    body.css("height", (this._div.height() - controls.outerHeight(true) - bodyPaddings) + "px");
 };
 
 HistoryWidget.prototype.update = function(onDone) {
@@ -36,6 +36,10 @@ HistoryWidget.prototype._render = function() {
         .empty()
         .unbind()
         .html(
+            '<div class="history-panel-controls" bind="controlsDiv">' +
+                '<a class="button" href="javascript:{}" bind="extractLink">extract...</a> ' +
+                '<a class="button" href="javascript:{}" bind="applyLink">apply...</a>' +
+            '</div>' +
             '<div class="history-panel-help" bind="helpDiv">' +
                 '<h1>Infinite undo history</h1>' +
                 '<p>Don\'t worry about making mistakes. Every change you make will be shown here, and you can undo your changes anytime.</p>' +
@@ -45,10 +49,6 @@ HistoryWidget.prototype._render = function() {
                 '<div class="history-past" bind="pastDiv"></div>' +
                 '<div class="history-now" bind="nowDiv">done upto here</div>' +
                 '<div class="history-future" bind="futureDiv"></div>' +
-            '</div>' +
-            '<div class="history-panel-footer" bind="footerDiv">' +
-                '<a href="javascript:{}" bind="extractLink">extract</a> &bull; ' +
-                '<a href="javascript:{}" bind="applyLink">apply</a>' +
             '</div>'
         );
     
@@ -84,7 +84,6 @@ HistoryWidget.prototype._render = function() {
         elmts.helpDiv.hide();
     } else {
         elmts.bodyDiv.hide();
-        elmts.footerDiv.hide();
     }
     
     elmts.extractLink.click(function() { self._extractOperations(); });

@@ -73,9 +73,12 @@
 .history-past {
     padding-bottom: 3px;
 }
+
+@history_now_color: #a9e9fb;
+
 .history-now {
     padding: 3px 0;
-    background: #a9e9fb;
+    background: @history_now_color;
     color: white;
     font-size: 80%;
     text-transform: uppercase;
@@ -92,7 +95,7 @@ a.history-entry {
     padding: 7px 5px;
     text-decoration: none;
     color: black;
-    border-top: 1px solid #ddd;
+    border-top: 1px dotted #ddd;
 }
 a.history-entry:first-child {
     border-top: none;
@@ -103,12 +106,12 @@ a.history-entry:hover {
 
 .history-past a.history-entry:hover{
     padding: 11px 5px 2px 5px;
-    border-top: 2px solid red;
+    border-top: 2px solid @history_now_color;
     background: url(../../images/up-arrow.png) top center no-repeat;
 }
 .history-future a.history-entry:hover{
     padding: 2px 5px 11px 5px;
-    border-bottom: 2px solid red;
+    border-bottom: 2px solid @history_now_color;
     background: url(../../images/down-arrow.png) bottom center no-repeat;
 }
 
@@ -116,13 +119,14 @@ a.history-entry:hover {
     color: #888;
 }
 
-.history-panel-footer {
-    padding: 6px 0px 0px 0px;    
-    text-align: center;
+.history-panel-controls {
+    padding: 6px;
+    text-align: right;
     font-weight: bold;
-}
-.history-panel-footer a {
-    text-decoration: none;
+    
+    a {
+      text-decoration: none;
+    }
 }
 
 .extract-operation-dialog-entries {
