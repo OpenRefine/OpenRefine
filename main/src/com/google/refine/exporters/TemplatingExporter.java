@@ -1,7 +1,6 @@
 package com.google.refine.exporters;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Properties;
@@ -11,11 +10,11 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
-import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Project;
 import com.google.refine.sorting.SortingRecordVisitor;
@@ -25,19 +24,13 @@ import com.google.refine.templating.Template;
 import com.google.refine.util.ParsingUtilities;
 
 public class TemplatingExporter implements WriterExporter {
+
+    @Override
     public String getContentType() {
         return "application/x-unknown";
     }
-    
-    public boolean takeWriter() {
-        return true;
-    }
-    
-    public void export(Project project, Properties options, Engine engine,
-            OutputStream outputStream) throws IOException {
-        throw new RuntimeException("Not implemented");
-    }
-    
+
+    @Override
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;

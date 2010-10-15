@@ -1,7 +1,6 @@
 package com.google.refine.exporters;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Properties;
 
@@ -15,25 +14,19 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class HtmlTableExporter implements WriterExporter {
+
+	@Override
     public String getContentType() {
         return "text/html";
     }
-    
-    public boolean takeWriter() {
-        return true;
-    }
-    
-    public void export(Project project, Properties options, Engine engine,
-            OutputStream outputStream) throws IOException {
-        throw new RuntimeException("Not implemented");
-    }
-    
+
+    @Override
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
         writer.write("<html>\n");
         writer.write("<head><title>"); 
-            writer.write(ProjectManager.singleton.getProjectMetadata(project.id).getName());
-            writer.write("</title></head>\n");
-        
+        writer.write(ProjectManager.singleton.getProjectMetadata(project.id).getName());
+        writer.write("</title></head>\n");
+
         writer.write("<body>\n");
         writer.write("<table>\n");
         

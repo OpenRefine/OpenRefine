@@ -2,7 +2,6 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -22,21 +21,16 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class XlsExporter implements StreamExporter {
+
+    @Override
     public String getContentType() {
         return "application/xls";
     }
-    
-    public boolean takeWriter() {
-        return false;
-    }
-    
-    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
-        throw new RuntimeException("Not implemented");
-    }
-    
+
+    @Override
     public void export(Project project, Properties options, Engine engine,
-        OutputStream outputStream) throws IOException {
-        
+            OutputStream outputStream) throws IOException {
+
         Workbook wb = new HSSFWorkbook();
         Sheet s = wb.createSheet();
         wb.setSheetName(0, ProjectManager.singleton.getProjectMetadata(project.id).getName());
