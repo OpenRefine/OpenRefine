@@ -233,29 +233,20 @@ DataTableView.prototype._renderDataTable = function(table) {
      *  Column Headers with Menus
      *------------------------------------------------------------
      */
-    
+
     var trHead = table.insertRow(table.rows.length);
     DOM.bind(
         $(trHead.insertCell(trHead.cells.length))
             .attr("colspan", "3")
             .addClass("column-header")
-            .html(
-                '<table class="column-header-layout"><tr>' +
-                    '<td width="1%">' +
-                        '<a class="column-header-menu" bind="dropdownMenu">&nbsp;</a>' +
-                    '</td>' +
-                    '<td>&nbsp;</td>' +
-                '</tr></table>'
-            )
+            .html('<div class="column-header-title"><a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">All</span></div>')
     ).dropdownMenu.click(function() {
         self._createMenuForAllColumns(this);
     });
-    
     this._columnHeaderUIs = [];
     var createColumnHeader = function(column, index) {
         var td = trHead.insertCell(trHead.cells.length);
         $(td).addClass("column-header");
-        
         if (column.name in self._collapsedColumnNames) {
             $(td).html("&nbsp;").attr("title", column.name).click(function(evt) {
                 delete self._collapsedColumnNames[column.name];
