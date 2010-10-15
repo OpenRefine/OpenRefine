@@ -19,15 +19,15 @@ function resize() {
     var top = $("#header").outerHeight();
     var height = $(window).height() - top;
     
+    var leftPanelPaddings = ui.leftPanel.outerHeight(true) - ui.leftPanel.height();
     ui.leftPanel
         .css("top", top + "px")
         .css("left", "0px")
-        .css("height", height + "px")
+        .css("height", (height - leftPanelPaddings) + "px")
         .css("width", leftPanelWidth + "px");
         
-    var leftPanelPaddings = ui.leftPanel.outerHeight(true) - ui.leftPanel.height();
     var leftPanelTabsPaddings = ui.leftPanelTabs.outerHeight(true) - ui.leftPanelTabs.height();
-    ui.leftPanelTabs.height(ui.leftPanel.height() - leftPanelTabsPaddings - leftPanelPaddings);
+    ui.leftPanelTabs.height(ui.leftPanel.height() - leftPanelTabsPaddings);
     
     var rightPanelVPaddings = ui.rightPanel.outerHeight(true) - ui.rightPanel.height();
     var rightPanelHPaddings = ui.rightPanel.outerWidth(true) - ui.rightPanel.width();
@@ -36,7 +36,6 @@ function resize() {
         .css("left", leftPanelWidth + "px")
         .css("height", (height - rightPanelVPaddings) + "px")
         .css("width", (width - leftPanelWidth - rightPanelHPaddings) + "px");
-    
     
     ui.viewPanel.height((height - ui.toolPanel.outerHeight() - rightPanelVPaddings) + "px");
     

@@ -15,11 +15,12 @@ DataTableView.prototype.getSorting = function() {
 };
 
 DataTableView.prototype.resize = function() {
-    var topHeight = this._div.find(".viewPanel-header").outerHeight(true);
+    var topHeight = this._div.find(".viewpanel-header").outerHeight(true);
+    var tableContainerIntendedHeight = this._div.innerHeight() - topHeight;
     
-    this._div.find(".data-table-container")
-        .css("height", (this._div.innerHeight() - topHeight - 1) + "px")
-        .css("display", "block");
+    var tableContainer = this._div.find(".data-table-container").css("display", "block");
+    var tableContainerVPadding = tableContainer.outerHeight(true) - tableContainer.height();
+    tableContainer.height((tableContainerIntendedHeight - tableContainerVPadding) + "px");
 };
 
 DataTableView.prototype.update = function(onDone) {
@@ -33,7 +34,7 @@ DataTableView.prototype.render = function() {
     var scrollLeft = (oldTableDiv.length > 0) ? oldTableDiv[0].scrollLeft : 0;
     
     var html = $(
-        '<div id="viewpanel-header">' +
+        '<div class="viewpanel-header">' +
             '<div class="viewpanel-rowrecord" bind="rowRecordControls">Show as ' +
                 '<span bind="modeSelectors"></span>' + 
             '</div>' +
