@@ -124,7 +124,7 @@ ListFacet.prototype._initializeUI = function() {
                 '</td>' +
             '</tr></table></div>' +
         '</div>' +
-        '<div class="facet-expression" bind="expressionDiv"></div>' +
+        '<div class="facet-expression" bind="expressionDiv" title="Click to edit expression"></div>' +
         '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
             '<table><tr>' +
                 '<td><a bind="choiceCountContainer" class="action" href="javascript:{}"></a> <span class="facet-controls-sortControls" bind="sortGroup">sorted by ' +

@@ -107,7 +107,7 @@ RangeFacet.prototype._initializeUI = function() {
                     '</td>' +
                 '</tr></table></div>' +
             '</div>' +
-            '<div class="facet-expression" bind="expressionDiv"></div>' +
+            '<div class="facet-expression" bind="expressionDiv" title="Click to edit expression"></div>' +
             '<div class="facet-range-body">' +
                 '<div class="facet-range-message" bind="messageDiv">Loading...</div>' +
                 '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
