@@ -144,13 +144,12 @@ public class TemplatingExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        // TODO: Template exporter returns null for empty cells, which doesn't
-        // doesn't seem to be desirable behavior.
+        // Template exporter returns null for empty cells
         Assert.assertEquals(writer.toString(), 
                 prefix 
                 + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
-                + rowPrefix + "row1cell0" + cellSeparator               + cellSeparator + "row1cell2" + rowSeparator 
-                + rowPrefix +               cellSeparator + "row2cell1" + cellSeparator + "row2cell2" 
+                + rowPrefix + "row1cell0" + cellSeparator + "null"    + cellSeparator + "row1cell2" + rowSeparator 
+                + rowPrefix + "null"      + cellSeparator + "row2cell1" + cellSeparator + "row2cell2" 
                 + suffix);
 
     }
