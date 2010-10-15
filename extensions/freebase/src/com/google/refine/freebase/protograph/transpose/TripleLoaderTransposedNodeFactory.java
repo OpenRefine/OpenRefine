@@ -195,7 +195,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             sb.append("{ \"s\" : \""); sb.append(subject); sb.append('"');
             sb.append(", \"p\" : \""); sb.append(predicate); sb.append('"');
             sb.append(", \"o\" : "); sb.append(s);
-            sb.append(", \"lang\" : "); sb.append(lang);
+            sb.append(", \"lang\" : \""); sb.append(lang); sb.append('"');
                     
             if (subjectCell != null) {
                 sb.append(", \"meta\" : { ");
@@ -409,18 +409,25 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
         
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
-            if (subject != null) {
-                if ("/type/text".equals(node.lang)) {
-                    writeLine(subject, predicate, cell.value, node.lang, project, 
-                            subjectRowIndex, subjectCellIndex, subjectCell, !load);
+            Object value = cell.value;
+            if (value != null) {
+                if ("/type/text".equals(node.valueType)) {
+                    value = value.toString();
+                    if (subject != null) {
+                        writeLine(subject, predicate, value, node.lang, project, 
+                                subjectRowIndex, subjectCellIndex, subjectCell, !load);
+                    }
                 } else {
-                    writeLine(subject, predicate, cell.value, project, 
-                            subjectRowIndex, subjectCellIndex, subjectCell, 
-                            -1, -1, null, !load);
+                    value = validateValue(value, node.valueType);
+                    if (subject != null && value != null) {
+                        writeLine(subject, predicate, value, project, 
+                                subjectRowIndex, subjectCellIndex, subjectCell, 
+                                -1, -1, null, !load);
+                    }
                 }
             }
             
-            return cell.value;
+            return value;
         }
     }
     
@@ -472,16 +479,24 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
 
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
-            if ("/type/text".equals(node.lang)) {
-                writeLine(subject, predicate, node.value, node.lang, project,
-                    subjectRowIndex, subjectCellIndex, subjectCell, !load);
-            } else {
-                writeLine(subject, predicate, node.value, project, 
-                    subjectRowIndex, subjectCellIndex, subjectCell, 
-                    -1, -1, null, !load);
+            Object value = node.value;
+            if (value != null) {
+                if ("/type/text".equals(node.valueType)) {
+                    value = value.toString();
+                    if (subject != null) {
+                        writeLine(subject, predicate, value, node.lang, project,
+                            subjectRowIndex, subjectCellIndex, subjectCell, !load);
+                    }
+                } else {
+                    value = validateValue(value, node.valueType);
+                    if (subject != null && value != null) {
+                        writeLine(subject, predicate, value, project, 
+                            subjectRowIndex, subjectCellIndex, subjectCell, 
+                            -1, -1, null, !load);
+                    }
+                }
             }
-            
-            return node.value;
+            return value;
         }
     }
     
@@ -721,5 +736,49 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             
             writeLine(sb.toString());
         }
+    }
+    
+    static protected Object validateValue(Object value, String valueType) {
+        if ("/type/datetime".equals(valueType)) {
+            if (!(value instanceof String)) {
+                value = value.toString();
+            }
+        } else if ("/type/boolean".equals(valueType)) {
+            if (!(value instanceof Boolean)) {
+                value = Boolean.parseBoolean(value.toString());
+            }
+        } else if ("/type/int".equals(valueType)) {
+            if (value instanceof Number) {
+                value = ((Number) value).longValue();
+            } else {
+                try {
+                    value = Long.parseLong(value.toString());
+                } catch (NumberFormatException e) {
+                    value = null;
+                }
+            }
+        } else if ("/type/float".equals(valueType)) {
+            if (value instanceof Number) {
+                value = ((Number) value).floatValue();
+            } else {
+                try {
+                    value = Float.parseFloat(value.toString());
+                } catch (NumberFormatException e) {
+                    value = null;
+                }
+            }
+        } else if ("/type/double".equals(valueType)) {
+            if (value instanceof Number) {
+                value = ((Number) value).doubleValue();
+            } else {
+                try {
+                    value = Double.parseDouble(value.toString());
+                } catch (NumberFormatException e) {
+                    value = null;
+                }
+            }
+        }
+        
+        return value;
     }
 }

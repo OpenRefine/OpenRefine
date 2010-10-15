@@ -6,7 +6,7 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
     this._extension = { properties: [] };
 
     var self = this;
-    this._dialog = $(DOM.loadHTML("freebase-extension", "scripts/dialogs/extend-data-preview-dialog.html"));
+    this._dialog = $(DOM.loadHTML("freebase", "scripts/dialogs/extend-data-preview-dialog.html"));
     this._elmts = DOM.bind(this._dialog);
     this._elmts.dialogHeader.text("Add Columns from Freebase Based on Column " + column.name);
     this._elmts.resetButton.click(function() {
@@ -135,7 +135,7 @@ ExtendDataPreviewDialog.prototype._update = function() {
     };
     
     $.post(
-        "/command/freebase-extension/preview-extend-data?" + $.param(params), 
+        "/command/freebase/preview-extend-data?" + $.param(params), 
         {
             rowIndices: JSON.stringify(this._rowIndices),
             extension: JSON.stringify(this._extension)

@@ -36,12 +36,12 @@ public class SaveProtographOperation extends AbstractOperation {
     
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription());
+        writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("protograph"); _protograph.write(writer, options);
         writer.endObject();
     }
 
-    protected String getBriefDescription() {
+    protected String getBriefDescription(Project project) {
         return "Save schema alignment skeleton";
     }
 
@@ -49,7 +49,7 @@ public class SaveProtographOperation extends AbstractOperation {
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Change change = new ProtographChange(_protograph);
         
-        return new HistoryEntry(historyEntryID, project, getBriefDescription(), SaveProtographOperation.this, change);
+        return new HistoryEntry(historyEntryID, project, getBriefDescription(project), SaveProtographOperation.this, change);
     }
     
     static public class ProtographChange implements Change {

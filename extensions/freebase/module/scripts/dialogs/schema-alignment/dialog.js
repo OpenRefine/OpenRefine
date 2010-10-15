@@ -170,7 +170,7 @@ SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
         var protograph = self.getJSON();
         
         Refine.postProcess(
-            "freebase-extension",
+            "freebase",
             "save-protograph",
             {},
             { protograph: JSON.stringify(protograph) },
@@ -264,7 +264,7 @@ SchemaAlignmentDialog.prototype.preview = function() {
     
     var protograph = this.getJSON();
     $.post(
-        "/command/freebase-extension/preview-protograph?" + $.param({ project: theProject.id }),
+        "/command/freebase/preview-protograph?" + $.param({ project: theProject.id }),
         { protograph: JSON.stringify(protograph), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
             if ("mqllike" in data) {

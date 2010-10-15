@@ -5,7 +5,7 @@ function FreebaseLoadingDialog() {
 
 FreebaseLoadingDialog.prototype._createDialog = function() {
     var self = this;
-    var dialog = $(DOM.loadHTML("freebase-extension", "scripts/dialogs/freebase-loading-dialog.html"));
+    var dialog = $(DOM.loadHTML("freebase", "scripts/dialogs/freebase-loading-dialog.html"));
     this._elmts = DOM.bind(dialog);
     this._elmts.cancelButton.click(function() { self._dismiss(); });
     
@@ -14,7 +14,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     var loadButton = this._elmts.loadButton;
     
     var check_authorization = function(cont) {
-        $.get("/command/freebase-extension/check-authorization/" + provider, function(data) {
+        $.get("/command/freebase/check-authorization/" + provider, function(data) {
             if ("status" in data && data.code == "/api/status/ok") {
                 authorization.html('Signed in as: <a target="_new" href="http://www.freebase.com/view/user/' + data.username + '">' + data.username + '</a> | <a href="javascript:{}" bind="signout">Sign Out</a>').show();
                 DOM.bind(authorization).signout.click(function() {
@@ -50,7 +50,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
             "guid":   null
         }];
 
-        $.post("/command/freebase-extension/mqlwrite/" + provider, 
+        $.post("/command/freebase/mqlwrite/" + provider, 
             { "query" : JSON.stringify(mql_query) }, 
             function(data) {
                 if ("status" in data && data.code == "/api/status/ok") {
@@ -66,7 +66,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
     
     var show_triples = function(cont) {
         $.post(
-            "/command/freebase-extension/preview-protograph?" + $.param({ project: theProject.id }),
+            "/command/freebase/preview-protograph?" + $.param({ project: theProject.id }),
             {
                 protograph: JSON.stringify(theProject.overlayModels.freebaseProtograph || {}),
                 engine: JSON.stringify(ui.browsingEngine.getJSON())
@@ -143,7 +143,7 @@ FreebaseLoadingDialog.prototype._load = function() {
     var doLoad = function() {
         var dismissBusy = DialogSystem.showBusy();
         
-        $.post("/command/freebase-extension/upload-data", 
+        $.post("/command/freebase/upload-data", 
             {
                 project: theProject.id, 
                 "qa" : qa,
