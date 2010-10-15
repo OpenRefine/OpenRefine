@@ -30,7 +30,13 @@ import com.google.refine.tests.RefineTest;
 public class TemplatingExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "templating exporter test project";
-    
+
+    String rowPrefix = "boilerplate";
+    String cellSeparator = "spacer";
+    String prefix = "test prefix>";
+    String suffix = "<test suffix";
+    String rowSeparator = "\n";
+
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -71,17 +77,12 @@ public class TemplatingExporterTests extends RefineTest {
     @Test
     public void exportEmptyTemplate(){
 
-        String template = "a simple test template";
-        String prefix = "test prefix";
-        String suffix = "test suffix";
-        String separator = "|";
-        
 //        when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //        when(options.getProperty("sorting")).thenReturn(""); //optional
-        when(options.getProperty("template")).thenReturn(template);
+        when(options.getProperty("template")).thenReturn("a template that should never get used");
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(separator);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
 //        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
 
         try {
@@ -96,14 +97,9 @@ public class TemplatingExporterTests extends RefineTest {
     @Test
     public void exportSimpleTemplate(){
         CreateGrid(2, 2);
-
-        String rowPrefix = "boilerplate";
-        String cellSeparator = "spacer";
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
-//        String template = "boilerplate${column0}{{4+3}}${column1}";
-        String prefix = "test prefix>";
-        String suffix = "<test suffix";
-        String rowSeparator = "\n";
+//      String template = "boilerplate${column0}{{4+3}}${column1}";
+
         
 //        when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //        when(options.getProperty("sorting")).thenReturn(""); //optional
@@ -127,8 +123,17 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
 
-    @Test(enabled=false)
+    @Test()
     public void exportTemplateWithEmptyCells(){
+        
+//      when(options.getProperty("limit")).thenReturn("100"); // optional integer
+//      when(options.getProperty("sorting")).thenReturn(""); //optional
+      when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+      when(options.getProperty("prefix")).thenReturn(prefix);
+      when(options.getProperty("suffix")).thenReturn(suffix);
+      when(options.getProperty("separator")).thenReturn(rowSeparator);
+//      when(options.getProperty("preview")).thenReturn("false"); // optional true|false
+
         CreateGrid(3,3);
 
         project.rows.get(1).cells.set(1, null);
@@ -139,12 +144,45 @@ public class TemplatingExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,,row1cell2\n" +
-                                               ",row2cell1,row2cell2\n");
+        // TODO: Template exporter returns null for empty cells, which doesn't
+        // doesn't seem to be desirable behavior.
+        Assert.assertEquals(writer.toString(), 
+                prefix 
+                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
+                + rowPrefix + "row1cell0" + cellSeparator               + cellSeparator + "row1cell2" + rowSeparator 
+                + rowPrefix +               cellSeparator + "row2cell1" + cellSeparator + "row2cell2" 
+                + suffix);
+
     }
 
+    @Test()
+    public void exportTemplateWithLimit(){
+        
+      when(options.getProperty("limit")).thenReturn("2"); // optional integer
+//      when(options.getProperty("sorting")).thenReturn(""); //optional
+      when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+      when(options.getProperty("prefix")).thenReturn(prefix);
+      when(options.getProperty("suffix")).thenReturn(suffix);
+      when(options.getProperty("separator")).thenReturn(rowSeparator);
+//      when(options.getProperty("preview")).thenReturn("false"); // optional true|false
+
+        CreateGrid(3,3);
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), 
+                prefix 
+                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
+                + rowPrefix + "row1cell0" + cellSeparator + "row1cell1" + cellSeparator + "row1cell2"  
+                // third row should be skipped because of limit
+                + suffix);
+
+    }
+    
     //helper methods
 
     protected void CreateColumns(int noOfColumns){
