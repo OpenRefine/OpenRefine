@@ -1,6 +1,7 @@
 package com.google.refine.commands.project;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -55,10 +56,13 @@ public class ExportRowsCommand extends Command {
             if (exporter instanceof WriterExporter) {
                 PrintWriter writer = response.getWriter();
                 ((WriterExporter) exporter).export(project, options, engine, writer);
+                writer.flush();
             } else if (exporter instanceof StreamExporter) {
-                ((StreamExporter) exporter).export(project, options, engine, response.getOutputStream());
-            } else if (exporter instanceof StreamExporter) {
-                ((StreamExporter) exporter).export(project, options, engine, response.getOutputStream());
+                OutputStream stream = response.getOutputStream();
+                ((StreamExporter) exporter).export(project, options, engine, stream);
+                stream.flush();
+//            } else if (exporter instanceof UrlExporter) {
+//                ((UrlExporter) exporter).export(project, options, engine);
             } else {
                 respondException(response, new RuntimeException("Unknown exporter type"));
             }
