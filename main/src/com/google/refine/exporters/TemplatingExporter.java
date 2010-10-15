@@ -24,7 +24,7 @@ import com.google.refine.templating.Parser;
 import com.google.refine.templating.Template;
 import com.google.refine.util.ParsingUtilities;
 
-public class TemplatingExporter implements Exporter {
+public class TemplatingExporter implements WriterExporter {
     public String getContentType() {
         return "application/x-unknown";
     }

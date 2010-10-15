@@ -14,7 +14,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-public class HtmlTableExporter implements Exporter {
+public class HtmlTableExporter implements WriterExporter {
     public String getContentType() {
         return "text/html";
     }

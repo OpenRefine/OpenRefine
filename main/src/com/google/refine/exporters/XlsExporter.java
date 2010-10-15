@@ -21,7 +21,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-public class XlsExporter implements Exporter {
+public class XlsExporter implements StreamExporter {
     public String getContentType() {
         return "application/xls";
     }
