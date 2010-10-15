@@ -54,7 +54,7 @@ a.selected {
   }
 
 a.inaction {
-  color: #ccc;
+  color: @chrome_primary;
   }
 
 a.selected:hover, a.inaction:hover {
@@ -77,6 +77,7 @@ a img {
   border: 1px solid #bbb;
   cursor: pointer;
   background: #eee;
+  white-space: nowrap;
   font-family: Arial, Helvetica, sans-serif; 
   .rounded_corners(3px);
   }
@@ -92,6 +93,16 @@ a img {
 .button-primary, a.button-primary { 
   font-weight: bold;
   padding: 1px 15px;
+  }
+
+.button-pill-left, a.button-pill-left {
+  border-right: 1px solid #bbb;
+  .sharp_corners_left();
+  }
+
+.button-pill-right, a.button-pill-right {
+  border-left: 1px solid #fff;
+  .sharp_corners_right();  
   }
 
 .button-disabled, a.button-disabled {

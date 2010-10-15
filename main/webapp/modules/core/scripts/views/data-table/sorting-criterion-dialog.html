@@ -1,46 +1,48 @@
 <div class="dialog-frame" style="width: 400px;">
-  <div class="dialog-header" bind="dialogHeader"></div>
-  <div class="dialog-body" bind="dialogBody">
-    <div class="grid-layout layout-normal layout-full "><table>
-        <tr>
-            <td>Sort cell values as</td>
-            <td>Position blanks and errors</td>
-        </tr>
-        <tr>
-            <td>
-                <div class="grid-layout layout-tightest grid-layout-for-text" bind="valueTypeOptions"><table>
-                    <tr>
-                        <td width="1"><input type="radio" name="sorting-dialog-value-type" value="string" /></td>
-                        <td>text <input type="checkbox" class="inline" bind="caseSensitiveCheckbox" /> case-sensitive</td>
-                    </tr>
-                    <tr>
-                        <td width="1"><input type="radio" name="sorting-dialog-value-type" value="number" /></td>
-                        <td>numbers</td>
-                    </tr>
-                    <tr>
-                        <td width="1"><input type="radio" name="sorting-dialog-value-type" value="date" /></td>
-                        <td>dates</td>
-                    </tr>
-                    <tr>
-                        <td width="1"><input type="radio" name="sorting-dialog-value-type" value="boolean" /></td>
-                        <td>booleans</td>
-                    </tr>
-                </table></div>
-            </td>
-            <td>
-                <ul class="sorting-dialog-blank-error-positions" bind="blankErrorPositions"></ul>
-                <p>Drag and drop to re-order</p>
-            </td>
-        </tr>
-        <tr><td colspan="2" bind="directionOptions">
-            <input type="radio" class="inline" name="sorting-dialog-direction" value="forward" /><label bind="directionForwardLabel">forward</label>
-            <input type="radio" class="inline" name="sorting-dialog-direction" value="reverse" /><label bind="directionReverseLabel">reverse</label>
-            <span bind="sortAloneContainer" style="display:none;"><input type="checkbox" class="inline" /><label>sort by this column alone</label></span>
-        </td></tr>
-    </table></div>
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-normal layout-full "><table>
+          <tr>
+              <td>Sort cell values as</td>
+              <td>Position blanks and errors</td>
+          </tr>
+          <tr>
+              <td>
+                  <div class="grid-layout layout-tightest grid-layout-for-text" bind="valueTypeOptions"><table>
+                      <tr>
+                          <td width="1"><input type="radio" name="sorting-dialog-value-type" value="string" /></td>
+                          <td>text <input type="checkbox" class="inline" bind="caseSensitiveCheckbox" /> case-sensitive</td>
+                      </tr>
+                      <tr>
+                          <td width="1"><input type="radio" name="sorting-dialog-value-type" value="number" /></td>
+                          <td>numbers</td>
+                      </tr>
+                      <tr>
+                          <td width="1"><input type="radio" name="sorting-dialog-value-type" value="date" /></td>
+                          <td>dates</td>
+                      </tr>
+                      <tr>
+                          <td width="1"><input type="radio" name="sorting-dialog-value-type" value="boolean" /></td>
+                          <td>booleans</td>
+                      </tr>
+                  </table></div>
+              </td>
+              <td>
+                  <ul class="sorting-dialog-blank-error-positions" bind="blankErrorPositions"></ul>
+                  <p>Drag and drop to re-order</p>
+              </td>
+          </tr>
+          <tr><td colspan="2" bind="directionOptions">
+              <input type="radio" class="inline" name="sorting-dialog-direction" value="forward" /><label bind="directionForwardLabel">forward</label>
+              <input type="radio" class="inline" name="sorting-dialog-direction" value="reverse" /><label bind="directionReverseLabel">reverse</label>
+              <span bind="sortAloneContainer" style="display:none;"><input type="checkbox" class="inline" /><label>sort by this column alone</label></span>
+          </td></tr>
+      </table></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+      <button bind="cancelButton">Cancel</button>
+    </div>
   </div>
-  <div class="dialog-footer" bind="dialogFooter">
-    <button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
-    <button bind="cancelButton">Cancel</button>
-  </div>
-</div>
+</div>  

@@ -1,50 +1,51 @@
 @import-less url("../theme.less");
 
 .dialog-overlay {
-    position: fixed;
-    padding: 0px;
-    margin: 0px;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    background: black;
-    opacity: 0.4;
-}
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #666;
+  opacity: 0.5;
+  }
 
 .dialog-container {
-    position: fixed;
-    padding: 0px;
-    margin: 0px;
-    left: 0px;
-    width: 100%;
-    text-align: center;
-}
+  position: fixed;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  }
 
 .dialog-frame {
     margin: 0 auto;
     text-align: left;
     background: white;
-    border: 1px solid #aaa;
-    padding: 2px;
+    border: 1px solid @dialog_frame;
+}
+
+.dialog-border {
+    border: 4px solid @dialog_border;
 }
 
 .dialog-header {
-    background: #404859;
-    padding: 5px 10px;
+    background: @dialog_header;
+    padding: @padding_loose;
     font-weight: bold;
-    color: white;
+    font-size: 1.6em;
+    color: #000;
     cursor: move;
 }
 
 .dialog-body {
-    padding: 10px;
+  font-size: 1.3em;
+  padding: @padding_looser;
 }
 
 .dialog-footer {
-    background: #ddd;
-    padding: 5px 10px;
-    text-align: right;
+  font-size: 1.3em;
+  background: @dialog_footer;
+  padding: @padding_loose;
 }
 
 .dialog-footer button {

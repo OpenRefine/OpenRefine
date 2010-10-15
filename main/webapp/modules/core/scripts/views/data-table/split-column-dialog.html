@@ -1,55 +1,57 @@
 <div class="dialog-frame" style="width: 600px;">
-  <div class="dialog-header" bind="dialogHeader"></div>
-  <div class="dialog-body" bind="dialogBody">
-    <div class="grid-layout layout-looser layout-full"><table><tr>
-        <td>
-            <div class="grid-layout layout-tighter"><table>
-                <tr>
-                    <td colspan="3"><h3>How to Split Column</h3></td>
-                </tr>
-                <tr>
-                    <td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" /></td>
-                    <td colspan="2">by separator</td>
-                </tr>
-                <tr><td></td>
-                    <td>Separator</td>
-                    <td style="white-space: pre;"><input size="15" value="," bind="separatorInput" /> <input type="checkbox" bind="regexInput" /> regular expression</td>
-                </tr>
-                <tr><td></td>
-                    <td>Split into</td>
-                    <td style="white-space: pre;"><input size="3" bind="maxColumnsInput" /> columns at most (leave blank for no limit)</td>
-                </tr>
-                <tr>
-                    <td width="1%"><input type="radio" name="split-by-mode" value="lengths" /></td>
-                    <td colspan="2">by field lengths</td>
-                </tr>
-                <tr><td></td>
-                    <td colspan="2"><textarea style="width: 100%;" bind="lengthsTextarea"></textarea></td>
-                </tr>
-                <tr><td></td>
-                    <td colspan="2">List of integers separated by commas, e.g., 5, 7, 15</td>
-                </tr>
-            </table></div>
-        </td>
-        <td>
-            <div class="grid-layout layout-tighter"><table>
-                <tr>
-                    <td colspan="3"><h3>After Splitting</h3></td>
-                </tr>
-                <tr>
-                    <td width="1%"><input type="checkbox" checked="true" bind="guessCellTypeInput" /></td>
-                    <td colspan="2">Guess cell type</td>
-                </tr>
-                <tr>
-                    <td width="1%"><input type="checkbox" checked="true" bind="removeColumnInput" /></td>
-                    <td colspan="2">Remove this column</td>
-                </tr>
-            </table></div>
-        </td>
-    </table></div>
-  </div>
-  <div class="dialog-footer" bind="dialogFooter">
-    <button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
-    <button bind="cancelButton">Cancel</button>
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-looser layout-full"><table><tr>
+          <td>
+              <div class="grid-layout layout-tighter"><table>
+                  <tr>
+                      <td colspan="3"><h3>How to Split Column</h3></td>
+                  </tr>
+                  <tr>
+                      <td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" /></td>
+                      <td colspan="2">by separator</td>
+                  </tr>
+                  <tr><td></td>
+                      <td>Separator</td>
+                      <td style="white-space: pre;"><input size="15" value="," bind="separatorInput" /> <input type="checkbox" bind="regexInput" /> regular expression</td>
+                  </tr>
+                  <tr><td></td>
+                      <td>Split into</td>
+                      <td style="white-space: pre;"><input size="3" bind="maxColumnsInput" /> columns at most (leave blank for no limit)</td>
+                  </tr>
+                  <tr>
+                      <td width="1%"><input type="radio" name="split-by-mode" value="lengths" /></td>
+                      <td colspan="2">by field lengths</td>
+                  </tr>
+                  <tr><td></td>
+                      <td colspan="2"><textarea style="width: 100%;" bind="lengthsTextarea"></textarea></td>
+                  </tr>
+                  <tr><td></td>
+                      <td colspan="2">List of integers separated by commas, e.g., 5, 7, 15</td>
+                  </tr>
+              </table></div>
+          </td>
+          <td>
+              <div class="grid-layout layout-tighter"><table>
+                  <tr>
+                      <td colspan="3"><h3>After Splitting</h3></td>
+                  </tr>
+                  <tr>
+                      <td width="1%"><input type="checkbox" checked="true" bind="guessCellTypeInput" /></td>
+                      <td colspan="2">Guess cell type</td>
+                  </tr>
+                  <tr>
+                      <td width="1%"><input type="checkbox" checked="true" bind="removeColumnInput" /></td>
+                      <td colspan="2">Remove this column</td>
+                  </tr>
+              </table></div>
+          </td>
+      </table></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+      <button bind="cancelButton">Cancel</button>
+    </div>
   </div>
 </div>

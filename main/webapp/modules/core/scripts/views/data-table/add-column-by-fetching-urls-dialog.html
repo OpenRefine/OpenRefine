@@ -1,25 +1,27 @@
 <div class="dialog-frame" style="width: 700px;">
-  <div class="dialog-header" bind="dialogHeader"></div>
-  <div class="dialog-body" bind="dialogBody">
-    <div class="grid-layout layout-normal layout-full"><table cols="2">
-        <tr>
-            <td width="1%" style="white-space: pre;">New column name</td>
-            <td><input bind="columnNameInput" size="40" /></td>
-            
-            <td width="1%" style="white-space: pre;">Throttle delay</td>
-            <td><input bind="throttleDelayInput" size="10" value="5000" /> milliseconds</td>
-        </tr>
-        <tr>
-            <td width="1%" style="white-space: pre;">On error</td>
-            <td colspan="3"><input type="radio" name="dialog-onerror-choice" value="set-to-blank" checked /> set to blank 
-              <input type="radio" name="dialog-onerror-choice" value="store-error" /> store error</td>
-        </tr>
-        <tr><td colspan="4"><h3>Formulate the URLs to fetch:</h3></td></tr>
-        <tr><td colspan="4">$EXPRESSION_PREVIEW_WIDGET$</td></tr>
-    </table></div>
-  </div>
-  <div class="dialog-footer" bind="dialogFooter">
-    <button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
-    <button bind="cancelButton">Cancel</button>
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-normal layout-full"><table cols="2">
+          <tr>
+              <td width="1%" style="white-space: pre;">New column name</td>
+              <td><input bind="columnNameInput" size="40" /></td>
+              
+              <td width="1%" style="white-space: pre;">Throttle delay</td>
+              <td><input bind="throttleDelayInput" size="10" value="5000" /> milliseconds</td>
+          </tr>
+          <tr>
+              <td width="1%" style="white-space: pre;">On error</td>
+              <td colspan="3"><input type="radio" name="dialog-onerror-choice" value="set-to-blank" checked /> set to blank 
+                <input type="radio" name="dialog-onerror-choice" value="store-error" /> store error</td>
+          </tr>
+          <tr><td colspan="4"><h3>Formulate the URLs to fetch:</h3></td></tr>
+          <tr><td colspan="4">$EXPRESSION_PREVIEW_WIDGET$</td></tr>
+      </table></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+      <button bind="cancelButton">Cancel</button>
+    </div>
   </div>
 </div>

@@ -1,38 +1,40 @@
 <div class="dialog-frame" style="width: 600px;">
-  <div class="dialog-header" bind="dialogHeader"></div>
-  <div class="dialog-body" bind="dialogBody">
-    <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
-      <tr>
-        <td>From Column</td>
-        <td>To Column</td>
-        <td>Formatting Options</td>
-      </tr>
-      <tr>
-        <td><select bind="fromColumnSelect" size="20" style="width: 100%;"></select></td>
-        <td><select bind="toColumnSelect" size="20" style="width: 100%;"></select></td>
-        <td><div class="grid-layout layout-tightest"><table>
-          <tr>
-            <td colspan="2">Combined column name <input bind="combinedColumnNameInput" size="15" /></td>
-          </tr>
-          <tr>
-            <td colspan="2"><input type="checkbox" bind="prependColumnNameCheckbox" checked /> prepend column name</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>Separate column name and cell value with
-              <input bind="separatorInput" size="5" value=":" />
-            </td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td><input type="checkbox" bind="ignoreBlankCellsCheckbox" checked /> ignore blank cells</td>
-          </tr>
-        </table></div></td>
-      </tr>
-    </table></div>
-  </div>
-  <div class="dialog-footer" bind="dialogFooter">
-    <button bind="okButton">Transpose</button>
-    <button bind="cancelButton">Cancel</button>
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
+        <tr>
+          <td>From Column</td>
+          <td>To Column</td>
+          <td>Formatting Options</td>
+        </tr>
+        <tr>
+          <td><select bind="fromColumnSelect" size="20" style="width: 100%;"></select></td>
+          <td><select bind="toColumnSelect" size="20" style="width: 100%;"></select></td>
+          <td><div class="grid-layout layout-tightest"><table>
+            <tr>
+              <td colspan="2">Combined column name <input bind="combinedColumnNameInput" size="15" /></td>
+            </tr>
+            <tr>
+              <td colspan="2"><input type="checkbox" bind="prependColumnNameCheckbox" checked /> prepend column name</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>Separate column name and cell value with
+                <input bind="separatorInput" size="5" value=":" />
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td><input type="checkbox" bind="ignoreBlankCellsCheckbox" checked /> ignore blank cells</td>
+            </tr>
+          </table></div></td>
+        </tr>
+      </table></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button bind="okButton">Transpose</button>
+      <button bind="cancelButton">Cancel</button>
+    </div>
   </div>
 </div>

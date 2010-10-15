@@ -65,25 +65,19 @@ BrowsingEngine.prototype._initializeUI = function() {
         '<div class="browsing-panel-help" bind="help">' +
           '<h1>Using facets and filters</h1>' +
           '<p>Use facets and filters to select subsets of your data to act on. Choose facet and filter methods from the menus at the top of each data column.</p>' +
-          '<p>Not sure how to get started?<br /><a href="http://vimeo.com/groups/gridworks/videos" target="_blank"><b>Watch these screencasts!</b></a>.</p>' +
+          '<p>Not sure how to get started?<br /><a href="http://vimeo.com/groups/gridworks/videos" target="_blank"><b>Watch these screencasts!</b></a></p>' +
         '</div>' +
         '<div class="browsing-panel-header" bind="header">' +
-            '<div class="browsing-panel-indicator" bind="indicator">' +
-                '<img src="images/small-spinner.gif" /> refreshing facets ...' +
-            '</div>' +
-            '<div class="browsing-panel-controls" bind="controls"><div class="grid-layout layout-tightest layout-full"><table>' +
-                '<tr>' +
-                    '<td>' +
-                        '<a href="javascript:{}" bind="refreshLink" class="action" title="Make sure all facets are up-to-date">Refresh</a>' +
-                    '</td>' +
-                    '<td width="1%">' +
-                        '<a href="javascript:{}" bind="resetLink" class="action" title="Clear selection in all facets">Reset&nbsp;All</a>' +
-                    '</td>' +
-                    '<td width="1%">' +
-                        '<a href="javascript:{}" bind="removeLink" class="action" title="Remove all facets">Remove&nbsp;All</a>' +
-                    '</td>' +
-                '</tr>' +
-            '</table></div></div>' +
+          '<div class="browsing-panel-indicator" bind="indicator">' +
+              '<img src="images/small-spinner.gif" /> Refreshing facets...' +
+          '</div>' +
+          '<div class="browsing-panel-controls" bind="controls">' +
+            '<div class="browsing-panel-controls-refresh">' +
+              '<a href="javascript:{}" bind="refreshLink" class="button" title="Update all facets">Refresh</a>' +
+            '</div>' +              
+            '<a href="javascript:{}" bind="resetLink" class="button button-pill-left" title="Clear selection in all facets">Reset All</a>' +
+            '<a href="javascript:{}" bind="removeLink" class="button button-pill-right" title="Remove all facets">Remove All</a>' +
+          '</div>' +
         '</div>' +
         '<ul bind="facets" class="facets-container"></ul>'
     );
