@@ -142,7 +142,11 @@ ListFacet.prototype._initializeUI = function() {
     
     this._elmts.titleSpan.text(this._config.name);
     this._elmts.changeButton.attr("title","Current Expression: " + this._config.expression).click(function() {
-        self._elmts.expressionDiv.slideToggle(100);
+        self._elmts.expressionDiv.slideToggle(100, function() {
+            if (self._elmts.expressionDiv.css("display") != "none") {
+                self._editExpression();
+            }
+        });
     });
     this._elmts.expressionDiv.text(this._config.expression).hide().click(function() { self._editExpression(); });
     this._elmts.removeButton.click(function() { self._remove(); });

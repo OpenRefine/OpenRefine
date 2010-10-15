@@ -121,7 +121,11 @@ RangeFacet.prototype._initializeUI = function() {
     
     this._elmts.facetTitle.text(this._config.name);
     this._elmts.changeButton.attr("title","Current Expression: " + this._config.expression).click(function() {
-        self._elmts.expressionDiv.slideToggle(100);
+        self._elmts.expressionDiv.slideToggle(100, function() {
+            if (self._elmts.expressionDiv.css("display") != "none") {
+                self._editExpression();
+            }
+        });
     });
     this._elmts.expressionDiv.text(this._config.expression).click(function() { 
         self._editExpression(); 
