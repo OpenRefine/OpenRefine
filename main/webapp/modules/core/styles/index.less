@@ -4,9 +4,18 @@
   width: 980px; 
   height: 600px;
   margin: 10px auto;
-  padding: 0 10px;  
-  background: url(../images/logo-gem-150.png) no-repeat 20px right; 
+  padding: 0 10px;
+  position: relative;
   }
+  
+#logo {
+  position: absolute;
+  top: 20px;
+  right: 0px;
+  width: 150px;
+  height: 150px;
+  background: url(../images/logo-gem-150.png) no-repeat top right; 
+}
   
 #header-home img { 
   padding: 6px 0; 
@@ -33,6 +42,10 @@
   overflow: auto;
   height: 400px;
   }
+  
+#projects-container .project .last-modified {
+  white-space: nowrap;
+}
 
 #projects-container .message {
   padding: @padding_loose;

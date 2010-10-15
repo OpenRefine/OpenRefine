@@ -104,7 +104,7 @@ function renderProjects(data) {
             '<table class="list-table"><tr>' +
                 '<th>Name</th>' +
                 '<th></th>' +
-                '<th align="right">Last Modified</th>' +
+                '<th align="right">Last&nbsp;Modified</th>' +
                 '<th></th>' +
             '</tr></table>'
         ).appendTo(container)[0];
