@@ -136,7 +136,7 @@ public class TsvCsvImporter implements ReaderImporter,StreamImporter {
                     //add parsed data to row
                     for(String s : cells){
                         if (ExpressionUtils.isNonBlankData(s)) {
-                            Serializable value = guessValueType ? ImporterUtilities.parseCellValue(s.trim()) : s;
+                            Serializable value = guessValueType ? ImporterUtilities.parseCellValue(s) : s;
                             row.cells.add(new Cell(value, null));
                         }else{
                             row.cells.add(null);

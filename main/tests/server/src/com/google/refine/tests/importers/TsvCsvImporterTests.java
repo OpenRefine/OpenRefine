@@ -173,8 +173,8 @@ public class TsvCsvImporterTests extends RefineTest {
     }
 
     @Test(groups = {  }, dataProvider = "CSV-or-null")
-    public void readDoesTrimsLeadingTrailingWhitespace(String sep){
-        String input = " data1 , data2 , data3 ";
+    public void readDoesNotTrimLeadingTrailingWhitespace(String sep){
+        String input = " data1 , 3.4 , data3 ";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
             SUT.read(lnReader, project, sep, -1, 0, 0, 0, false, true, false);
@@ -184,14 +184,14 @@ public class TsvCsvImporterTests extends RefineTest {
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1 ");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, " 3.4 ");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3 ");
     }
 
     @Test(dataProvider = "CSV-or-null")
-    public void readTrimsLeadingTrailingWhitespace(String sep){
-        String input = " data1, data2, data3";
+    public void readDoesNotTrimLeadingWhitespace(String sep){
+        String input = " data1, 12, data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
             SUT.read(lnReader, project, sep, -1, 0, 0, 0, true, true, false);
@@ -201,14 +201,14 @@ public class TsvCsvImporterTests extends RefineTest {
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, 12L);
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3");
     }
 
     @Test(dataProvider = "CSV-or-null")
     public void readCanAddNull(String sep){
-        String input = " data1, , data3";
+        String input = " data1,, data3";
         LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
             SUT.read(lnReader, project, sep, -1, 0, 0, 0, true, true, false);
@@ -218,9 +218,9 @@ public class TsvCsvImporterTests extends RefineTest {
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1");
         Assert.assertNull(project.rows.get(0).cells.get(1));
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3");
     }
 
     @Test(dataProvider = "CSV-or-null")

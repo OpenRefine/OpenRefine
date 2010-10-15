@@ -18,19 +18,21 @@ public class ImporterUtilities {
                 return text.substring(1, text.length() - 1);
             }
 
-            try {
-                return Long.parseLong(text);
-            } catch (NumberFormatException e) {
-            }
-
-            try {
-                double d = Double.parseDouble(text);
-                if (!Double.isInfinite(d) && !Double.isNaN(d)) {
-                    return d;
+            String text2 = text.trim();
+            if (text2.length() > 0) {
+                try {
+                    return Long.parseLong(text2);
+                } catch (NumberFormatException e) {
                 }
-            } catch (NumberFormatException e) {
+    
+                try {
+                    double d = Double.parseDouble(text2);
+                    if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                        return d;
+                    }
+                } catch (NumberFormatException e) {
+                }
             }
-            text = text.trim();
         }
         return text;
     }
