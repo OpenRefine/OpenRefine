@@ -16,6 +16,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.HtmlTableExporter;
 import com.google.refine.exporters.WriterExporter;
@@ -24,9 +26,12 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.tests.ProjectManagerStub;
 import com.google.refine.tests.RefineTest;
 
 public class HtmlExporterTests extends RefineTest {
+
+    private static final String TEST_PROJECT_NAME = "html table exporter test project";
 
     @BeforeTest
     public void init() {
@@ -35,6 +40,7 @@ public class HtmlExporterTests extends RefineTest {
 
     //dependencies
     StringWriter writer;
+    ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
     Properties options;
@@ -46,7 +52,11 @@ public class HtmlExporterTests extends RefineTest {
     public void SetUp(){
         SUT = new HtmlTableExporter();
         writer = new StringWriter();
+        ProjectManager.singleton = new ProjectManagerStub();
+        projectMetadata = new ProjectMetadata();
         project = new Project();
+        projectMetadata.setName(TEST_PROJECT_NAME);
+        ProjectManager.singleton.registerProject(project, projectMetadata);
         engine = new Engine(project);
         options = mock(Properties.class);
     }
@@ -55,13 +65,15 @@ public class HtmlExporterTests extends RefineTest {
     public void TearDown(){
         SUT = null;
         writer = null;
+        ProjectManager.singleton.deleteProject(project.id);
         project = null;
+        projectMetadata = null;
         engine = null;
         options = null;
     }
 
     @Test
-    public void exportSimpleCsv(){
+    public void exportSimpleHtmlTable(){
         CreateGrid(2, 2);
 
         try {
@@ -70,14 +82,23 @@ public class HtmlExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1\n" +
-                                               "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
+        Assert.assertEquals(writer.toString(), "<html>\n" +
+        		"<head><title>" + TEST_PROJECT_NAME + "</title></head>\n" +
+        		"<body>\n" +
+        		"<table>\n" +
+        		"<tr><th>column0</th><th>column1</th></tr>\n" +
+        		"<tr><td>row0cell0</td><td>row0cell1</td></tr>\n" +
+        		"<tr><td>row1cell0</td><td>row1cell1</td></tr>\n" +
+        		"</table>\n" +
+        		"</body>\n" +
+        		"</html>\n");
 
     }
 
+    // TODO: This test fails because the HTML table exporter 
+    // apparently doesn't honor the column header option.  Should it?
     @Test
-    public void exportSimpleCsvNoHeader(){
+    public void exportSimpleHtmlTableNoHeader(){
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
@@ -86,65 +107,21 @@ public class HtmlExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
-
+        Assert.assertEquals(writer.toString(), "<html>\n" +
+                "<head><title>" + TEST_PROJECT_NAME + "</title></head>\n" +
+                "<body>\n" +
+                "<table>\n" +
+                "<tr><td>row0cell0</td><td>row0cell1</td></tr>\n" +
+                "<tr><td>row1cell0</td><td>row1cell1</td></tr>\n" +
+                "</table>\n" +
+                "</body>\n" +
+                "</html>\n");
         verify(options,times(2)).getProperty("printColumnHeader");
     }
 
-    @Test
-    public void exportCsvWithLineBreaks(){
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, new Cell("line\n\n\nbreak", null));
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
-    }
 
     @Test
-    public void exportCsvWithComma(){
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, new Cell("with, comma", null));
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"with, comma\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
-    }
-
-    @Test
-    public void exportCsvWithQuote(){
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, new Cell("line has \"quote\"", null));
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
-    }
-
-    @Test
-    public void exportCsvWithEmptyCells(){
+    public void exportHtmlTableWithEmptyCells(){
         CreateGrid(3,3);
 
         project.rows.get(1).cells.set(1, null);
@@ -155,11 +132,18 @@ public class HtmlExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,,row1cell2\n" +
-                                               ",row2cell1,row2cell2\n");
-    }
+        Assert.assertEquals(writer.toString(), "<html>\n" +
+                "<head><title>" + TEST_PROJECT_NAME + "</title></head>\n" +
+                "<body>\n" +
+                "<table>\n" +
+                "<tr><th>column0</th><th>column1</th><th>column2</th></tr>\n" +
+                "<tr><td>row0cell0</td><td>row0cell1</td><td>row0cell2</td></tr>\n" +
+                "<tr><td>row1cell0</td><td></td><td>row1cell2</td></tr>\n" +
+                "<tr><td></td><td>row2cell1</td><td>row2cell2</td></tr>\n" +
+                "</table>\n" +
+                "</body>\n" +
+                "</html>\n");
+        }
 
     //helper methods
 
