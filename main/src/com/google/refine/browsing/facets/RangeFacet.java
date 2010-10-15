@@ -107,6 +107,8 @@ public class RangeFacet implements Facet {
                 
                 writer.key(FROM); writer.value(_from);
                 writer.key(TO); writer.value(_to);
+            } else {
+                writer.key("error"); writer.value("No numeric value present.");
             }
             
             writer.key("baseNumericCount"); writer.value(_baseNumericCount);
