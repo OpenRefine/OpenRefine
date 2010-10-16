@@ -9,6 +9,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
@@ -33,6 +35,8 @@ import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 
 public class ReconOperation extends EngineDependentOperation {
+    final static Logger logger = LoggerFactory.getLogger("recon-operation");
+    
     final protected String      _columnName;
     final protected ReconConfig _reconConfig;
     
@@ -92,6 +96,7 @@ public class ReconOperation extends EngineDependentOperation {
     static protected class JobGroup {
         final public ReconJob job;
         final public List<ReconEntry> entries = new ArrayList<ReconEntry>();
+        public int trials = 0;
         
         public JobGroup(ReconJob job) {
             this.job = job;
@@ -228,27 +233,47 @@ public class ReconOperation extends EngineDependentOperation {
                 group.entries.add(entry);
             }
             
+            int batchSize = _reconConfig.getBatchSize();
+            int done = 0;
+            
             List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
             List<JobGroup> groups = new ArrayList<JobGroup>(jobKeyToGroup.values());
             
-            int batchSize = _reconConfig.getBatchSize();
-            for (int i = 0; i < groups.size(); i += batchSize) {
-                int to = Math.min(i + batchSize, groups.size());
-                
-                List<ReconJob> jobs = new ArrayList<ReconJob>(to - i);
-                for (int j = i; j < to; j++) {
-                    jobs.add(groups.get(j).job);
+            List<ReconJob> jobs = new ArrayList<ReconJob>(batchSize);
+            Map<ReconJob, JobGroup> jobToGroup = new HashMap<ReconJob, ReconOperation.JobGroup>();
+            
+            for (int i = 0; i < groups.size(); /* don't increment here */) {
+                while (jobs.size() < batchSize && i < groups.size()) {
+                    JobGroup group = groups.get(i++);
+                    
+                    jobs.add(group.job);
+                    jobToGroup.put(group.job, group);
                 }
                 
                 List<Recon> recons = _reconConfig.batchRecon(jobs, _historyEntryID);
-                for (int j = i; j < to; j++) {
-                    int index = j - i;
-                    Recon recon = index < recons.size() ? recons.get(j - i) : null;
-                    List<ReconEntry> entries = groups.get(j).entries;
+                for (int j = jobs.size() - 1; j >= 0; j--) {
+                    ReconJob job = jobs.get(j);
+                    Recon    recon = j < recons.size() ? recons.get(j) : null;
+                    JobGroup group = jobToGroup.get(job);
+                    List<ReconEntry> entries = group.entries;
                     
-                    if (recon != null) {
-                        recon.judgmentBatchSize = entries.size();
+                    if (recon == null) {
+                        group.trials++;
+                        if (group.trials < 3) {
+                            logger.warn("Re-trying job including cell containing: " + entries.get(0).cell.value);
+                            continue; // try again next time
+                        }
+                        logger.warn("Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value);
                     }
+                    
+                    jobToGroup.remove(job);
+                    jobs.remove(j);
+                    done++;
+                    
+                    if (recon == null) {
+                        recon = _reconConfig.createNewRecon(_historyEntryID);
+                    }
+                    recon.judgmentBatchSize = entries.size();
                     
                     for (ReconEntry entry : entries) {
                         Cell oldCell = entry.cell;
@@ -264,7 +289,7 @@ public class ReconOperation extends EngineDependentOperation {
                     }
                 }
                 
-                _progress = i * 100 / groups.size();
+                _progress = done * 100 / groups.size();
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {

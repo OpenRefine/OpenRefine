@@ -179,6 +179,7 @@ public class StandardReconConfig extends ReconConfig {
                 jsonWriter.key("query"); jsonWriter.value(cell.value.toString());
                 if (typeID != null) {
                     jsonWriter.key("type"); jsonWriter.value(typeID);
+                    jsonWriter.key("type_strict"); jsonWriter.value("should");
                 }
                 
                 if (columnDetails.size() > 0) {
@@ -289,14 +290,16 @@ public class StandardReconConfig extends ReconConfig {
                             JSONArray results = o2.getJSONArray("result");
                             
                             recon = createReconServiceResults(text, results, historyEntryID);
+                        } else {
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
                         }
+                    } else {
+                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
                     }
                     
-                    if (recon == null) {
-                        recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                    if (recon != null) {
+                        recon.service = service;
                     }
-                    recon.service = service;
-                    
                     recons.add(recon);
                 }
             } finally {
@@ -316,6 +319,13 @@ public class StandardReconConfig extends ReconConfig {
         }
         
         return recons;
+    }
+    
+    @Override
+    public Recon createNewRecon(long historyEntryID) {
+        Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+        recon.service = service;
+        return recon;
     }
 
     protected Recon createReconServiceResults(String text, JSONArray results, long historyEntryID) {

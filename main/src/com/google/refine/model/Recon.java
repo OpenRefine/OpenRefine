@@ -80,7 +80,7 @@ public class Recon implements HasFields, Jsonizable {
         return new Recon(
             judgmentHistoryEntry,
             "http://rdf.freebase.com/ns/type.object.mid",
-            "http://rdf.freebase.com/ns/type.object.mid");
+            "http://rdf.freebase.com/ns/type.object.id");
     }
     
     public Recon(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {

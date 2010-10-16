@@ -82,6 +82,8 @@ abstract public class ReconConfig implements Jsonizable {
     
     abstract public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID);
     
+    abstract public Recon createNewRecon(long historyEntryID);
+    
     public void save(Writer writer) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
