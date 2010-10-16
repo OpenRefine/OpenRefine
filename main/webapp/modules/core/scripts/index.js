@@ -196,6 +196,19 @@ function showHide(toHide, toShow) {
     $("#" + toShow).show();
 }
 
+function openWorkspaceDir() {
+    $.ajax({
+        type: "POST",
+        url: "/command/core/open-workspace-dir",
+        dataType: "json",
+        success: function (data) {
+            if (data.code != "ok" && "message" in data) {
+                alert(data.message);
+            }
+        }
+    });
+}
+
 function onLoad() {
     fetchProjects();
 

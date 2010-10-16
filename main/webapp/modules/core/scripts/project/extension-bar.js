@@ -54,16 +54,3 @@ ExtensionBar.prototype._createMenuButton = function(label, submenu) {
 };
 
 ExtensionBar.handlers = {};
-
-ExtensionBar.handlers.openWorkspaceDir = function() {
-    $.ajax({
-        type: "POST",
-        url: "/command/core/open-workspace-dir",
-        dataType: "json",
-        success: function (data) {
-            if (data.code != "ok" && "message" in data) {
-                alert(data.message);
-            }
-        }
-    });
-};
