@@ -7,9 +7,14 @@ function HistoryWidget(div, tabHeader) {
 HistoryWidget.prototype.resize = function() {
     var body = this._div.find(".history-panel-body");
     var controls = this._div.find(".history-panel-controls");
-    var bodyPaddings = body.outerHeight(true) - body.height();
+    var nowDiv = this._div.find(".history-now");
     
-    body.css("height", (this._div.height() - controls.outerHeight(true) - bodyPaddings) + "px");
+    var bodyPaddings = body.outerHeight(true) - body.height();
+    body.height((this._div.height() - controls.outerHeight(true) - bodyPaddings) + "px");
+    body[0].scrollTop = 
+        nowDiv[0].offsetTop + 
+        nowDiv[0].offsetHeight - 
+        body[0].offsetHeight;
 };
 
 HistoryWidget.prototype.update = function(onDone) {
@@ -54,7 +59,7 @@ HistoryWidget.prototype._render = function() {
     
     var elmts = DOM.bind(this._div);
     
-    var renderEntry = function(container, entry, lastDoneID, title) {
+    var renderEntry = function(container, index, entry, lastDoneID, title) {
         var a = $('<a href="javascript:{}"></a>').appendTo(container);
         a.addClass("history-entry").html(entry.description).attr("title", title).click(function(evt) {
             return self._onClickHistoryEntry(evt, entry, lastDoneID);
@@ -68,7 +73,7 @@ HistoryWidget.prototype._render = function() {
         } else {
             for (var i = 0; i < this._data.past.length; i++) {
                 var entry = this._data.past[i];
-                renderEntry(elmts.pastDiv, entry, i === 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
+                renderEntry(elmts.pastDiv, i, entry, i === 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
             }
         }
     
@@ -77,7 +82,7 @@ HistoryWidget.prototype._render = function() {
         } else {
             for (var i = 0; i < this._data.future.length; i++) {
                 var entry = this._data.future[i];
-                renderEntry(elmts.futureDiv, entry, entry.id, "Redo to here");
+                renderEntry(elmts.futureDiv, this._data.past.length + i, entry, entry.id, "Redo to here");
             }
         }
         
@@ -90,11 +95,6 @@ HistoryWidget.prototype._render = function() {
     elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
     
     this.resize();
-    
-    elmts.bodyDiv[0].scrollTop = 
-        elmts.nowDiv[0].offsetTop + 
-        elmts.nowDiv[0].offsetHeight - 
-        elmts.bodyDiv[0].offsetHeight;
 };
 
 HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {

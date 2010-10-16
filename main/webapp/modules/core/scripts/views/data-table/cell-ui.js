@@ -271,7 +271,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
                 }).join(",")
             };
             
-            if (elmts.checkSimilar[0].checked) {
+            if (elmts.radioSimilar[0].checked) {
                 params.similarValue = self._cell.v;
                 params.columnName = Refine.cellIndexToColumn(self._cellIndex).name;
 
@@ -282,19 +282,30 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
 
                 self._postProcessOneCell("recon-judge-one-cell", {}, params, true);
             }
-
-            DialogSystem.dismissUntil(level - 1);
+            
+            dismiss();
         }
+    };
+    var commitNew = function() {
+        if (elmts.radioSimilar[0].checked) {
+            self._doMatchNewTopicToSimilarCells();
+        } else {
+            self._doMatchNewTopicToOneCell();
+        }
+        dismiss();
     };
     
     elmts.okButton.click(commit);
-    elmts.cancelButton.click(function() { DialogSystem.dismissUntil(level - 1); });
+    elmts.newButton.click(commitNew);
+    elmts.cancelButton.click(dismiss);
     
     var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
+    var suggestOptions2 = $.extend({ align: "left" }, suggestOptions || { all_types: true });
     elmts.input
         .attr("value", this._cell.v)
-        .suggest(suggestOptions || { all_types: true })
+        .suggest(suggestOptions2)
         .bind("fb-select", function(e, data) {
             match = data;
             commit();

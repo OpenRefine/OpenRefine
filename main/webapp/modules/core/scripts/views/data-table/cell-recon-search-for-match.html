@@ -1,18 +1,26 @@
-<div class="dialog-frame" style="width: 400px;">
+<div class="dialog-frame" style="width: 450px;">
   <div class="dialog-border">
     <div class="dialog-header" bind="dialogHeader">Search for Match</div>
     <div class="dialog-body" bind="dialogBody">
-      <div class="grid-layout layout-normal layout-full"><table>
-        <tr><td colspan="2">Search Freebase for topic to match <span bind="cellTextSpan"></span></td></tr>
+      <div class="grid-layout layout-tighter"><table>
         <tr>
+          <td colspan="2">Search for "<span bind="cellTextSpan"></span>"</td>
           <td><input bind="input" /></td>
-          <td><input type="checkbox" checked="true" bind="checkSimilar" /> Match other cells with same content</td>
+        </tr>
+        <tr>
+          <td width="1%"><input type="radio" name="cell-recon-search-for-match-mode" checked="true" bind="radioSimilar" /></td>
+          <td>Match other cells with same content</td>
+        </tr>
+        <tr>
+          <td width="1%"><input type="radio" name="cell-recon-search-for-match-mode" bind="radioOne" /></td>
+          <td>Match this cell only</td>
         </tr>
       </table></div>
     </div>
     <div class="dialog-footer" bind="dialogFooter">
-      <button bind="okButton">Match</button>
-      <button bind="cancelButton">Cancel</button>
+      <button class="button button-primary" bind="okButton">Match</button>
+      <button class="button" bind="newButton">New</button>
+      <button class="button" bind="cancelButton">Cancel</button>
     </div>
   </div>
 </div>
