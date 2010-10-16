@@ -61,9 +61,12 @@ HistoryWidget.prototype._render = function() {
     
     var renderEntry = function(container, index, entry, lastDoneID, title) {
         var a = $('<a href="javascript:{}"></a>').appendTo(container);
-        a.addClass("history-entry").html(entry.description).attr("title", title).click(function(evt) {
+        a.addClass("history-entry").text(entry.description).attr("title", title).click(function(evt) {
             return self._onClickHistoryEntry(evt, entry, lastDoneID);
         });
+        
+        $('<span>').addClass("history-entry-index").text((index + 1) + ".").prependTo(a);
+        
         return a;
     };
     

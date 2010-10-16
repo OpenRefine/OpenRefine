@@ -93,7 +93,8 @@
 }
 a.history-entry {
     display: block;
-    padding: 7px 5px;
+    position: relative;
+    padding: 7px 5px 7px 36px;
     text-decoration: none;
     color: black;
     border-top: 1px dotted #ddd;
@@ -104,14 +105,26 @@ a.history-entry:first-child {
 a.history-entry:hover {
     background: #ddd;
 }
+.history-entry-index {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 30px;
+    text-align: right;
+    font-size: 80%;
+    padding: 2px;
+    color: @history_now_color;
+}
 
 .history-past a.history-entry:hover{
-    padding: 11px 5px 2px 5px;
+    padding-top: 11px;
+    padding-bottom: 2px;
     border-top: 2px solid @history_now_color;
     background: url(../../images/up-arrow.png) top center no-repeat;
 }
 .history-future a.history-entry:hover{
-    padding: 2px 5px 11px 5px;
+    padding-top: 2px;
+    padding-bottom: 11px;
     border-bottom: 2px solid @history_now_color;
     background: url(../../images/down-arrow.png) bottom center no-repeat;
 }
