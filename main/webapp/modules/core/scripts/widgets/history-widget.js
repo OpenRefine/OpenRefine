@@ -208,7 +208,7 @@ HistoryWidget.prototype._showApplyOperationsDialog = function() {
     
     var elmts = DOM.bind(html);
     
-    $('<button></button>').text("Apply").click(function() {
+    $('<button class="button"></button>').text("Apply").click(function() {
         var json;
         
         try {
@@ -236,7 +236,7 @@ HistoryWidget.prototype._showApplyOperationsDialog = function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
-    $('<button></button>').text("Cancel").click(function() {
+    $('<button class="button"></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     

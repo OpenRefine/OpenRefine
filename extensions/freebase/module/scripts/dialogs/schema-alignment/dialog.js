@@ -166,7 +166,7 @@ SchemaAlignmentDialog.prototype._createDialog = function() {
 SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
-    $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    $('<button class="button"></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         var protograph = self.getJSON();
         
         Refine.postProcess(
@@ -184,7 +184,7 @@ SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
         );
     }).appendTo(footer);
     
-    $('<button></button>').text("Cancel").click(function() {
+    $('<button class="button"></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
 };

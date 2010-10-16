@@ -198,7 +198,7 @@ ListFacet.prototype._copyChoices = function() {
     body.html('<textarea wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
     var elmts = DOM.bind(body);
     
-    $('<button></button>').text("Close").click(function() {
+    $('<button class="button"></button>').text("Close").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
@@ -457,11 +457,11 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
             '</tr>' +
             '<tr>' +
                 '<td width="1%" align="center">' +
-                    '<button bind="okButton">Apply</button><br/>' +
+                    '<button class="button" bind="okButton">Apply</button><br/>' +
                     '<span class="data-table-cell-editor-key">Enter</span>' +
                 '</td>' +
                 '<td width="1%" align="center">' +
-                    '<button bind="cancelButton">Cancel</button><br/>' +
+                    '<button class="button" bind="cancelButton">Cancel</button><br/>' +
                     '<span class="data-table-cell-editor-key">Esc</span>' +
                 '</td>' +
                 '<td>' +

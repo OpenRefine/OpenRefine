@@ -74,7 +74,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             );
         });
 
-        $('<button></button>').text("Cancel").click(function() {
+        $('<button class="button"></button>').text("Cancel").click(function() {
             DialogSystem.dismissUntil(level - 1);
         }).appendTo(footer);
 

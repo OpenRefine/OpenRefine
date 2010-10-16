@@ -321,8 +321,8 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
     }
     
     footer.html(
-        '<button bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-        '<button bind="cancelButton">Cancel</button>'
+        '<button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+        '<button class="button" bind="cancelButton">Cancel</button>'
     );
     var footerElmts = DOM.bind(footer);
     

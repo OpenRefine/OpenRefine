@@ -12,12 +12,12 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
     
     this._elmts = DOM.bind(html);
     
-    $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    $('<button class="button"></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
         self._onDone(self._previewWidget.getExpression(true));
     }).appendTo(footer);
     
-    $('<button></button>').text("Cancel").click(function() {
+    $('<button class="button"></button>').text("Cancel").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
     

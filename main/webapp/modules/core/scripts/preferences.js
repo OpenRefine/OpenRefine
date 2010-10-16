@@ -26,7 +26,7 @@ function populatePreferences(prefs) {
     var tdLast0 = trLast.insertCell(0);
     trLast.insertCell(1);
     trLast.insertCell(2);
-    $('<button>').text("Add Preference").appendTo(tdLast0).click(function() {
+    $('<button class="button">').text("Add Preference").appendTo(tdLast0).click(function() {
         var key = window.prompt("Preference key:");
         if (key) {
             var value = window.prompt("Preference key value:");
@@ -63,7 +63,7 @@ function PreferenceUI(tr, key, value) {
     
     var td2 = tr.insertCell(2);
     
-    $('<button>').text("Edit").appendTo(td2).click(function() {
+    $('<button class="button">').text("Edit").appendTo(td2).click(function() {
         var newValue = window.prompt("Change value of preference key " + key, value);
         if (newValue != null) {
             $(td1).text(newValue);
@@ -83,7 +83,7 @@ function PreferenceUI(tr, key, value) {
         }
     });
     
-    $('<button>').text("Delete").appendTo(td2).click(function() {
+    $('<button class="button">').text("Delete").appendTo(td2).click(function() {
         if (window.confirm("Delete preference key " + key + "?")) {
             $.post(
                 "/command/core/set-preference",
