@@ -172,24 +172,19 @@ FreebaseLoadingDialog.prototype._load = function() {
     };
         
     if (qa) {
-        var dialog = $(
-            '<div id="freebase-confirmation-dialog" title="Are you sure?">' +
-                '<table><tr><td width="30%"><img src="/images/cop.png" width="140px"></td><td width="70%" style="text-align: center; vertical-align: middle; font-size: 120%">Are you sure this data is ready to be tested for upload into <b>Freebase</b>?</td></tr></table>' +
-            '</div>'
-        ).dialog({
-            resizable: false,
-            width: 400,
-            height: 230,
-            modal: true,
-            buttons: {
-                'yes, I\'m sure': function() {
-                    $(this).dialog('close');
-                    doLoad();
-                },
-                'hmm, not really': function() {
-                    $(this).dialog('close');
-                }
-            }
+        var dialog = $(DOM.loadHTML("freebase", "scripts/dialogs/confirm-qa-dialog.html"));
+        var elmts = DOM.bind(dialog);
+        var level = DialogSystem.showDialog(dialog);
+        var dismiss = function() {
+            DialogSystem.dismissUntil(level - 1);
+        };
+        
+        elmts.okButton.click(function() {
+            doLoad();
+            dismiss();
+        });
+        elmts.cancelButton.click(function() {
+            dismiss();
         });
     } else {
         doLoad();
