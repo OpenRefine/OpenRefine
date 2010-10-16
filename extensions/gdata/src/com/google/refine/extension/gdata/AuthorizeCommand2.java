@@ -25,10 +25,11 @@ public class AuthorizeCommand2 extends Command {
                 respond(response, "401 Unauthorized", "Authentication failed.");
                 return;
             }
-            String onetimeUseToken = AuthSubUtil.getTokenFromReply(URLDecoder
-                    .decode(queryString));
-            String sessionToken = AuthSubUtil.exchangeForSessionToken(
-                    onetimeUseToken, null);
+            
+            String onetimeUseToken = AuthSubUtil.getTokenFromReply(URLDecoder.decode(queryString,"UTF-8"));
+            // FIXME(SM): can we safely assume UTF-8 encoding here?
+
+            String sessionToken = AuthSubUtil.exchangeForSessionToken(onetimeUseToken, null);
             TokenCookie.setToken(request, response, sessionToken);
 
 //            FeedURLFactory factory = FeedURLFactory.getDefault();
