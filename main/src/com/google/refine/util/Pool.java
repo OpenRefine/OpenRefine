@@ -1,6 +1,8 @@
 package com.google.refine.util;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -53,7 +55,7 @@ public class Pool implements Jsonizable {
     }
     
     public void save(OutputStream out) throws IOException {
-        Writer writer = new OutputStreamWriter(out);
+        Writer writer = new OutputStreamWriter(out, "UTF-8");
         try {
             save(writer);
         } finally {
@@ -95,6 +97,10 @@ public class Pool implements Jsonizable {
                 e.printStackTrace();
             }
         }
+    }
+    
+    public void load(InputStream is) throws Exception {
+        load(new InputStreamReader(is, "UTF-8"));
     }
     
     public void load(Reader reader) throws Exception {

@@ -31,7 +31,7 @@ import com.google.refine.util.Pool;
  */
 public class History implements Jsonizable {
     static public Change readOneChange(InputStream in, Pool pool) throws Exception {
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
+        LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "UTF-8"));
         try {
             return readOneChange(reader, pool);
         } finally {
@@ -51,7 +51,7 @@ public class History implements Jsonizable {
     }
 
     static public void writeOneChange(OutputStream out, Change change, Pool pool) throws IOException {
-        Writer writer = new OutputStreamWriter(out);
+        Writer writer = new OutputStreamWriter(out, "UTF-8");
         try {
             History.writeOneChange(writer, change, pool);
         } finally {

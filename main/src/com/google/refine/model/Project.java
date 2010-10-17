@@ -1,6 +1,8 @@
 package com.google.refine.model;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -96,7 +98,7 @@ public class Project {
             }
         }
         
-        Writer writer = new OutputStreamWriter(out);
+        Writer writer = new OutputStreamWriter(out, "UTF-8");
         try {
             Properties options = new Properties();
             options.setProperty("mode", "save");
@@ -143,7 +145,11 @@ public class Project {
         }
     }
     
-    static public Project loadFromReader(
+    static public Project loadFromInputStream(InputStream is, long id, Pool pool) throws Exception {
+        return loadFromReader(new LineNumberReader(new InputStreamReader(is, "UTF-8")), id, pool);
+    }
+    
+    static private Project loadFromReader(
         LineNumberReader reader,
         long id,
         Pool pool

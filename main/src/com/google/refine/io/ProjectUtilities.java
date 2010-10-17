@@ -2,8 +2,6 @@ package com.google.refine.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -115,15 +113,11 @@ public class ProjectUtilities {
                 Pool pool = new Pool();
                 ZipEntry poolEntry = zipFile.getEntry("pool.txt");
                 if (poolEntry != null) {
-                    pool.load(new InputStreamReader(
-                        zipFile.getInputStream(poolEntry)));
+                    pool.load(zipFile.getInputStream(poolEntry));
                 } // else, it's a legacy project file
 
-                return Project.loadFromReader(
-                    new LineNumberReader(
-                        new InputStreamReader(
-                            zipFile.getInputStream(
-                                zipFile.getEntry("data.txt")))),
+                return Project.loadFromInputStream(
+                    zipFile.getInputStream(zipFile.getEntry("data.txt")),
                     id,
                     pool
                 );
