@@ -60,26 +60,32 @@
   line-height: 1.3;
   }
 
+@history_done_background: white;
+@history_undone_background: #f2f2ff; /* #a9e9fb; */
+@history_now_background: @chrome_primary;
+@history_entry_vpadding: 7px;
+@history_entry_hpadding: 5px;
+@history_entry_index_width: 30px;
+
 .history-panel-body {
-    background: #fff;
+    background: @history_undone_background;
     overflow: auto;
     border-top: 1px solid @chrome_primary;
 }
 
 .history-panel-message {
     text-align: center;
-    color: #aaa;
+    font-style: italic;
+    padding: @padding_loose;
 }
 
 .history-past {
-    padding-bottom: 3px;
+    position: relative;
+    background: @history_done_background;
 }
-
-@history_now_color: #a9e9fb;
-
 .history-now {
     padding: 3px 0;
-    background: @history_now_color;
+    background: @history_now_background;
     color: white;
     font-size: 80%;
     text-transform: uppercase;
@@ -88,49 +94,54 @@
     font-weight: bold;
 }
 .history-future {
-    padding-top: 3px;
-    padding-bottom: 3px;
-}
-a.history-entry {
-    display: block;
     position: relative;
-    padding: 7px 5px 7px 36px;
-    text-decoration: none;
-    color: black;
-    border-top: 1px dotted #ddd;
 }
-a.history-entry:first-child {
-    border-top: none;
+
+.history-highlight {
+    position: absolute;
+    left: 0px;
+    width: 100%;
+    display: none;
 }
-a.history-entry:hover {
-    background: #ddd;
+.history-past .history-highlight {
+    background: @history_undone_background;
+    bottom: 0px;
 }
+.history-future .history-highlight {
+    background: @history_done_background;
+    top: 0px;
+}
+
 .history-entry-index {
     position: absolute;
     left: 0px;
     top: 0px;
-    width: 30px;
+    width: @history_entry_index_width;
     text-align: right;
     font-size: 80%;
-    padding: 2px;
-    color: @history_now_color;
+    padding: 2px 0px;
+}
+
+a.history-entry {
+    display: block;
+    position: relative;
+    padding: @history_entry_vpadding @history_entry_hpadding;
+    padding-left: @history_entry_hpadding + @history_entry_index_width;
+    text-decoration: none;
+    color: black;
+    border-top: 1px dotted #ddd;
+}
+.history-future a.history-entry {
+    color: @near_black;
 }
 
 .history-past a.history-entry:hover{
-    padding-top: 11px;
-    padding-bottom: 2px;
-    border-top: 2px solid @history_now_color;
-    background: url(../../images/up-arrow.png) top center no-repeat;
+    padding-top: @history_entry_vpadding - 2px;
+    border-top: 2px solid @history_now_background;
 }
 .history-future a.history-entry:hover{
-    padding-top: 2px;
-    padding-bottom: 11px;
-    border-bottom: 2px solid @history_now_color;
-    background: url(../../images/down-arrow.png) bottom center no-repeat;
-}
-
-.history-future a.history-entry {
-    color: #888;
+    padding-bottom: @history_entry_vpadding - 2px;
+    border-bottom: 2px solid @history_now_background;
 }
 
 .history-panel-controls {

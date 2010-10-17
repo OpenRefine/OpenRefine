@@ -51,21 +51,41 @@ HistoryWidget.prototype._render = function() {
                 '<p><a href="http://code.google.com/p/google-refine/wiki/GettingStarted?tm=6" target="_blank"><b>Learn more &raquo;</b></a></p>' +
             '</div>' +
             '<div class="history-panel-body" bind="bodyDiv">' +
-                '<div class="history-past" bind="pastDiv"></div>' +
+                '<div class="history-past" bind="pastDiv"><div class="history-highlight" bind="pastHighlightDiv"></div></div>' +
                 '<div class="history-now" bind="nowDiv">done upto here</div>' +
-                '<div class="history-future" bind="futureDiv"></div>' +
+                '<div class="history-future" bind="futureDiv"><div class="history-highlight" bind="futureHighlightDiv"></div></div>' +
             '</div>'
         );
     
     var elmts = DOM.bind(this._div);
     
-    var renderEntry = function(container, index, entry, lastDoneID, title) {
+    var renderEntry = function(container, index, entry, lastDoneID, past) {
         var a = $('<a href="javascript:{}"></a>').appendTo(container);
-        a.addClass("history-entry").text(entry.description).attr("title", title).click(function(evt) {
-            return self._onClickHistoryEntry(evt, entry, lastDoneID);
-        });
+        a.addClass("history-entry")
+            .text(entry.description)
+            .attr("title", past ? "Undo to here" : "Redo to here")
+            .click(function(evt) {
+                return self._onClickHistoryEntry(evt, entry, lastDoneID);
+            })
+            .mouseover(function() {
+                if (past) {
+                    elmts.pastHighlightDiv.show().height(elmts.pastDiv.height() - this.offsetTop);
+                } else {
+                    elmts.futureHighlightDiv.show().height(this.offsetTop + this.offsetHeight);
+                }
+            })
+            .mouseout(function() {
+                if (past) {
+                    elmts.pastHighlightDiv.hide();
+                } else {
+                    elmts.futureHighlightDiv.hide();
+                }
+            });
         
-        $('<span>').addClass("history-entry-index").text((index + 1) + ".").prependTo(a);
+        $('<span>')
+            .addClass("history-entry-index")
+            .text((index + 1) + ".")
+            .prependTo(a);
         
         return a;
     };
@@ -76,7 +96,7 @@ HistoryWidget.prototype._render = function() {
         } else {
             for (var i = 0; i < this._data.past.length; i++) {
                 var entry = this._data.past[i];
-                renderEntry(elmts.pastDiv, i, entry, i === 0 ? 0 : this._data.past[i - 1].id, "Undo to here");
+                renderEntry(elmts.pastDiv, i, entry, i === 0 ? 0 : this._data.past[i - 1].id, true);
             }
         }
     
@@ -85,7 +105,7 @@ HistoryWidget.prototype._render = function() {
         } else {
             for (var i = 0; i < this._data.future.length; i++) {
                 var entry = this._data.future[i];
-                renderEntry(elmts.futureDiv, this._data.past.length + i, entry, entry.id, "Redo to here");
+                renderEntry(elmts.futureDiv, this._data.past.length + i, entry, entry.id, false);
             }
         }
         
