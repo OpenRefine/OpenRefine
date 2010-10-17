@@ -257,6 +257,12 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     var self = this;
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-search-for-match.html"));
     var elmts = DOM.bind(frame);
+    
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() {
+        DialogSystem.dismissUntil(level - 1);
+    };
+    
     elmts.cellTextSpan.text(this._cell.v);
     
     var match = null;
@@ -298,9 +304,6 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     elmts.okButton.click(commit);
     elmts.newButton.click(commitNew);
     elmts.cancelButton.click(dismiss);
-    
-    var level = DialogSystem.showDialog(frame);
-    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
     var suggestOptions2 = $.extend({ align: "left" }, suggestOptions || { all_types: true });
     elmts.input

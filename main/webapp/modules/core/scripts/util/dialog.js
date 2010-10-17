@@ -39,6 +39,7 @@ DialogSystem.dismissUntil = function(level) {
         var layer = DialogSystem._layers[i];
         layer.overlay.remove();
         layer.container.remove();
+        layer.container.unbind();
         
         if (layer.onCancel) {
             try {

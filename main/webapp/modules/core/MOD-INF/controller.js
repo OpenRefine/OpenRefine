@@ -164,7 +164,7 @@ function init() {
         [
             "externals/jquery-1.4.2.min.js",
             "externals/jquery.cookie.js",
-            "externals/suggest/suggest-1.2.min.js",
+            "externals/suggest/suggest-1.2.1.min.js",
             "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
             "externals/imgareaselect/jquery.imgareaselect.js",
             "externals/date.js",
@@ -222,7 +222,7 @@ function init() {
         "project/styles",
         module,
         [
-            "externals/suggest/css/suggest-1.2.min.css",
+            "externals/suggest/css/suggest-1.2.1.min.css",
             "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
             "externals/imgareaselect/css/imgareaselect-default.css",
 
