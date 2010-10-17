@@ -38,36 +38,13 @@ HistoryPanel.prototype._render = function() {
     
     this._tabHeader.html('Undo / Redo <span class="count">' + this._data.past.length + '</span>');
     
-    this._div
-        .empty()
-        .unbind()
-        .html(
-            '<div class="history-panel-controls" bind="controlsDiv">' +
-                '<a class="button" href="javascript:{}" bind="extractLink">extract...</a> ' +
-                '<a class="button" href="javascript:{}" bind="applyLink">apply...</a>' +
-            '</div>' +
-            '<div class="history-panel-help" bind="helpDiv">' +
-                '<h1>Infinite undo history</h1>' +
-                '<p>Don\'t worry about making mistakes. Every change you make will be shown here, and you can undo your changes anytime.</p>' +
-                '<p><a href="http://code.google.com/p/google-refine/wiki/GettingStarted?tm=6" target="_blank"><b>Learn more &raquo;</b></a></p>' +
-            '</div>' +
-            '<div class="history-panel-body-controls" bind="bodyControlsDiv">Quick filter: ' +
-                '<input bind="filterInput" />' +
-            '</div>' +
-            '<div class="history-panel-body" bind="bodyDiv">' +
-                '<div class="history-past" bind="pastDiv"><div class="history-highlight" bind="pastHighlightDiv"></div></div>' +
-                '<div class="history-now" bind="nowDiv">done upto here</div>' +
-                '<div class="history-future" bind="futureDiv"><div class="history-highlight" bind="futureHighlightDiv"></div></div>' +
-            '</div>'
-        );
+    this._div.empty().unbind().html(DOM.loadHTML("core", "scripts/project/history-panel.html"));
     
     var elmts = DOM.bind(this._div);
     
     var renderEntry = function(container, index, entry, lastDoneID, past) {
-        var a = $('<a href="javascript:{}"></a>').appendTo(container);
-        a.addClass("history-entry")
-            .text(entry.description)
-            .attr("title", past ? "Undo to here" : "Redo to here")
+        var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);
+        a.attr("title", past ? "Undo to here" : "Redo to here")
             .click(function(evt) {
                 return self._onClickHistoryEntry(evt, entry, lastDoneID);
             })
@@ -85,18 +62,16 @@ HistoryPanel.prototype._render = function() {
                     elmts.futureHighlightDiv.hide();
                 }
             });
-        
-        $('<span>')
-            .addClass("history-entry-index")
-            .text((index + 1) + ".")
-            .prependTo(a);
+            
+        a[0].appendChild(document.createTextNode(entry.description));
+        a[0].firstChild.appendChild(document.createTextNode((index + 1) + "."));
         
         return a;
     };
     
     if (this._data.past.length > 0 || this._data.future.length > 0) {
         if (!this._data.past.length) {
-            elmts.pastDiv.html('<div class="history-panel-message">No change to undo</div>');
+            elmts.noUndoDiv.show();
         } else {
             for (var i = 0; i < this._data.past.length; i++) {
                 var entry = this._data.past[i];
@@ -105,7 +80,7 @@ HistoryPanel.prototype._render = function() {
         }
     
         if (!this._data.future.length) {
-            elmts.futureDiv.html('<div class="history-panel-message">No change to redo</div>');
+            elmts.noRedoDiv.show();
         } else {
             for (var i = 0; i < this._data.future.length; i++) {
                 var entry = this._data.future[i];
@@ -114,6 +89,7 @@ HistoryPanel.prototype._render = function() {
         }
         
         elmts.helpDiv.hide();
+        
         elmts.filterInput.keyup(function() {
             var filter = $.trim(this.value.toLowerCase());
             if (filter.length == 0) {
@@ -163,7 +139,7 @@ HistoryPanel.prototype._extractOperations = function() {
 
 HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     var self = this;
-    var frame = $(DOM.loadHTML("core", "scripts/widgets/history-extract-dialog.html"));
+    var frame = $(DOM.loadHTML("core", "scripts/project/history-extract-dialog.html"));
     var elmts = DOM.bind(frame);
     
     var entryTable = elmts.entryTable[0];
@@ -227,27 +203,10 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
 
 HistoryPanel.prototype._showApplyOperationsDialog = function() {
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("800px");
+    var frame = $(DOM.loadHTML("core", "scripts/project/history-apply-dialog.html"));
+    var elmts = DOM.bind(frame);
     
-    var header = $('<div></div>').addClass("dialog-header").text("Apply Operations").appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    var html = $(
-        '<div class="grid-layout layout-normal layout-full"><table>' +
-            '<tr><td>' +
-                'Paste the JSON code encoding the operations to perform.' +
-            '</td></tr>' +
-            '<tr><td>' +
-                '<div class="input-container"><textarea wrap="off" bind="textarea" class="history-operation-json" /></div>' +
-            '</td></tr>' +
-        '</table></div>'
-    ).appendTo(body);
-    
-    var elmts = DOM.bind(html);
-    
-    $('<button class="button"></button>').text("Apply").click(function() {
+    elmts.applyButton.click(function() {
         var json;
         
         try {
@@ -273,13 +232,13 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
         );
         
         DialogSystem.dismissUntil(level - 1);
-    }).appendTo(footer);
+    });
     
-    $('<button class="button"></button>').text("Cancel").click(function() {
+    elmts.cancelButton.click(function() {
         DialogSystem.dismissUntil(level - 1);
-    }).appendTo(footer);
+    });
     
     var level = DialogSystem.showDialog(frame);
     
-    textarea[0].focus();
+    elmts.textarea.focus();
 };
