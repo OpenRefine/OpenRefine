@@ -1,13 +1,13 @@
-function SummaryWidget(div) {
+function SummaryBar(div) {
     this._div = div;
     this._initializeUI();
 }
 
-SummaryWidget.prototype._initializeUI = function() {
+SummaryBar.prototype._initializeUI = function() {
     
 };
 
-SummaryWidget.prototype.updateResultCount = function() {
+SummaryBar.prototype.updateResultCount = function() {
     var summaryText;
     var units = theProject.rowModel.mode == "row-based" ? "rows" : "records";
     if (theProject.rowModel.filtered == theProject.rowModel.total) {

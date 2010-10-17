@@ -180,15 +180,15 @@ function init() {
             "scripts/util/dom.js",
             "scripts/util/custom-suggest.js",
 
-            "scripts/widgets/history-widget.js",
-            "scripts/widgets/process-widget.js",
             "scripts/widgets/histogram-widget.js",
             "scripts/widgets/slider-widget.js",
 
-            "scripts/project/extension-bar.js",
-            "scripts/project/summary-widget.js",
-            "scripts/project/exporters.js",
             "scripts/project/browsing-engine.js",
+            "scripts/project/history-panel.js",
+            "scripts/project/process-panel.js",
+            "scripts/project/extension-bar.js",
+            "scripts/project/summary-bar.js",
+            "scripts/project/exporters.js",
             "scripts/project/scripting.js",
 
             "scripts/facets/list-facet.js",

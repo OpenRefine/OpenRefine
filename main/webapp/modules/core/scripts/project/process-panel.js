@@ -1,4 +1,4 @@
-function ProcessWidget(div) {
+function ProcessPanel(div) {
     this._div = div;
     this._timerID = null;
     this._processCount = 0;
@@ -24,10 +24,10 @@ function ProcessWidget(div) {
     this.update({});
 }
 
-ProcessWidget.prototype.resize = function() {
+ProcessPanel.prototype.resize = function() {
 };
 
-ProcessWidget.prototype.update = function(updateOptions, onDone) {
+ProcessPanel.prototype.update = function(updateOptions, onDone) {
     this._latestHistoryEntry = null;
     
     for (var n in updateOptions) {
@@ -53,7 +53,7 @@ ProcessWidget.prototype.update = function(updateOptions, onDone) {
     );
 };
 
-ProcessWidget.prototype.showUndo = function(historyEntry) {
+ProcessPanel.prototype.showUndo = function(historyEntry) {
     var self = this;
     
     this._latestHistoryEntry = historyEntry;
@@ -70,7 +70,7 @@ ProcessWidget.prototype.showUndo = function(historyEntry) {
     elmts.close.click(function() { $(".process-panel-inner").stop(true,false).slideUp(150); });
 };
 
-ProcessWidget.prototype.undo = function() {
+ProcessPanel.prototype.undo = function() {
     if (this._latestHistoryEntry !== null) {
         Refine.postCoreProcess(
             "undo-redo",
@@ -81,7 +81,7 @@ ProcessWidget.prototype.undo = function() {
     }
 };
 
-ProcessWidget.prototype._cancelAll = function() {
+ProcessPanel.prototype._cancelAll = function() {
     var self = this;
     $.post(
         "/command/core/cancel-processes?" + $.param({ project: theProject.id }), 
@@ -94,7 +94,7 @@ ProcessWidget.prototype._cancelAll = function() {
     );
 };
 
-ProcessWidget.prototype._render = function(newData) {
+ProcessPanel.prototype._render = function(newData) {
     var self = this;
     var newProcessMap = {};
     
@@ -166,7 +166,7 @@ ProcessWidget.prototype._render = function(newData) {
     }
 };
 
-ProcessWidget.prototype._perform = function(jobs) {
+ProcessPanel.prototype._perform = function(jobs) {
     for (var i = 0; i < jobs.length; i++) {
         var job = jobs[i];
         if (job.action == "createFacet") {
@@ -183,7 +183,7 @@ ProcessWidget.prototype._perform = function(jobs) {
     }
 };
 
-ProcessWidget.prototype._runOnDones = function() {
+ProcessPanel.prototype._runOnDones = function() {
     var updateOptions = this._updateOptions;
     var onDones = this._onDones;
     

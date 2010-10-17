@@ -61,8 +61,8 @@ function resizeAll() {
     resizeTabs();
     ui.extensionBar.resize();
     ui.browsingEngine.resize();
-    ui.processWidget.resize();
-    ui.historyWidget.resize();
+    ui.processPanel.resize();
+    ui.historyPanel.resize();
     ui.dataTableView.resize();
 }
 
@@ -88,17 +88,17 @@ function initializeUI(uiState) {
     resize();
     resizeTabs();
     
-    ui.summaryWidget = new SummaryWidget(ui.summaryBar);
+    ui.summaryBar = new SummaryBar(ui.summaryBar);
     ui.browsingEngine = new BrowsingEngine(ui.facetPanel, uiState.facets || []);
-    ui.processWidget = new ProcessWidget(ui.processPanel);
-    ui.historyWidget = new HistoryWidget(ui.historyPanel, ui.historyTabHeader);
+    ui.processPanel = new ProcessPanel(ui.processPanel);
+    ui.historyPanel = new HistoryPanel(ui.historyPanel, ui.historyTabHeader);
     ui.dataTableView = new DataTableView(ui.viewPanel);
     
     ui.leftPanelTabs.bind('tabsshow', function(event, tabs) {
         if (tabs.index === 0) {
             ui.browsingEngine.resize();
         } else if (tabs.index === 1) {
-            ui.historyWidget.resize();
+            ui.historyPanel.resize();
         }
     });
     
@@ -178,7 +178,7 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
     };
     
     pushFunction(function(onDone) {
-        ui.historyWidget.update(onDone);
+        ui.historyPanel.update(onDone);
     });
     if (options.everythingChanged || options.modelsChanged || options.columnStatsChanged) {
         pushFunction(Refine.reinitializeProjectData);
@@ -276,7 +276,7 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
                 Refine.update(updateOptions, callbacks.onFinallyDone);
                 
                 if ("historyEntry" in o) {
-                    ui.processWidget.showUndo(o.historyEntry);
+                    ui.processPanel.showUndo(o.historyEntry);
                 }
             } else if (o.code == "pending") {
                 if ("onPending" in callbacks) {
@@ -286,7 +286,7 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
                         Refine.reportException(e);
                     }
                 }
-                ui.processWidget.update(updateOptions, callbacks.onFinallyDone);
+                ui.processPanel.update(updateOptions, callbacks.onFinallyDone);
             }
         }
     }

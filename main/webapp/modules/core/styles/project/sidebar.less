@@ -67,16 +67,34 @@
 @history_entry_hpadding: 5px;
 @history_entry_index_width: 30px;
 
-.history-panel-body {
-    background: @history_undone_background;
-    overflow: auto;
-    border-top: 1px solid @chrome_primary;
+.history-panel-controls {
+    padding: @padding_normal;
+    text-align: right;
+    font-weight: bold;
+    
+    a {
+      text-decoration: none;
+    }
 }
 
 .history-panel-message {
     text-align: center;
     font-style: italic;
     padding: @padding_loose;
+}
+
+.history-panel-body-controls {
+    padding: @padding_tighter @padding_normal;
+    
+    input {
+      vertical-align: baseline;
+    }
+}
+
+.history-panel-body {
+    background: @history_undone_background;
+    overflow: auto;
+    border-top: 1px solid @chrome_primary;
 }
 
 .history-past {
@@ -142,16 +160,6 @@ a.history-entry {
 .history-future a.history-entry:hover{
     padding-bottom: @history_entry_vpadding - 2px;
     border-bottom: 2px solid @history_now_background;
-}
-
-.history-panel-controls {
-    padding: 6px;
-    text-align: right;
-    font-weight: bold;
-    
-    a {
-      text-decoration: none;
-    }
 }
 
 .extract-operation-dialog-entries {

@@ -46,7 +46,7 @@ DataTableView.prototype.render = function() {
     );
     var elmts = DOM.bind(html);
     
-    ui.summaryWidget.updateResultCount();
+    ui.summaryBar.updateResultCount();
     
     var renderBrowsingModeLink = function(label, value) {
         var a = $('<a href="javascript:{}"></a>')

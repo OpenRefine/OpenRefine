@@ -1,23 +1,24 @@
-function HistoryWidget(div, tabHeader) {
+function HistoryPanel(div, tabHeader) {
     this._div = div;
     this._tabHeader = tabHeader;
     this.update();
 }
 
-HistoryWidget.prototype.resize = function() {
+HistoryPanel.prototype.resize = function() {
     var body = this._div.find(".history-panel-body");
     var controls = this._div.find(".history-panel-controls");
+    var bodyControls = this._div.find(".history-panel-body-controls");
     var nowDiv = this._div.find(".history-now");
     
     var bodyPaddings = body.outerHeight(true) - body.height();
-    body.height((this._div.height() - controls.outerHeight(true) - bodyPaddings) + "px");
+    body.height((this._div.height() - controls.outerHeight(true) - bodyControls.outerHeight(true) - bodyPaddings) + "px");
     body[0].scrollTop = 
         nowDiv[0].offsetTop + 
         nowDiv[0].offsetHeight - 
         body[0].offsetHeight;
 };
 
-HistoryWidget.prototype.update = function(onDone) {
+HistoryPanel.prototype.update = function(onDone) {
     var self = this;
     Ajax.chainGetJSON(
         "/command/core/get-history?" + $.param({ project: theProject.id }), null,
@@ -32,7 +33,7 @@ HistoryWidget.prototype.update = function(onDone) {
     );
 };
 
-HistoryWidget.prototype._render = function() {
+HistoryPanel.prototype._render = function() {
     var self = this;
     
     this._tabHeader.html('Undo / Redo <span class="count">' + this._data.past.length + '</span>');
@@ -49,6 +50,9 @@ HistoryWidget.prototype._render = function() {
                 '<h1>Infinite undo history</h1>' +
                 '<p>Don\'t worry about making mistakes. Every change you make will be shown here, and you can undo your changes anytime.</p>' +
                 '<p><a href="http://code.google.com/p/google-refine/wiki/GettingStarted?tm=6" target="_blank"><b>Learn more &raquo;</b></a></p>' +
+            '</div>' +
+            '<div class="history-panel-body-controls" bind="bodyControlsDiv">Quick filter: ' +
+                '<input bind="filterInput" />' +
             '</div>' +
             '<div class="history-panel-body" bind="bodyDiv">' +
                 '<div class="history-past" bind="pastDiv"><div class="history-highlight" bind="pastHighlightDiv"></div></div>' +
@@ -110,8 +114,20 @@ HistoryWidget.prototype._render = function() {
         }
         
         elmts.helpDiv.hide();
+        elmts.filterInput.keyup(function() {
+            var filter = $.trim(this.value.toLowerCase());
+            if (filter.length == 0) {
+                elmts.bodyDiv.find(".history-entry").show();
+            } else {
+                elmts.bodyDiv.find(".history-entry").each(function() {
+                    var text = this.childNodes[1].nodeValue;
+                    this.style.display = (text.toLowerCase().indexOf(filter) >= 0) ? "block" : "none";
+                });
+            }
+        });
     } else {
         elmts.bodyDiv.hide();
+        elmts.bodyControlsDiv.hide();
     }
     
     elmts.extractLink.click(function() { self._extractOperations(); });
@@ -120,7 +136,7 @@ HistoryWidget.prototype._render = function() {
     this.resize();
 };
 
-HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
+HistoryPanel.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
     var self = this;
     
     Refine.postCoreProcess(
@@ -131,7 +147,7 @@ HistoryWidget.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) 
     );
 };
 
-HistoryWidget.prototype._extractOperations = function() {
+HistoryPanel.prototype._extractOperations = function() {
     var self = this;
     $.getJSON(
         "/command/core/get-operations?" + $.param({ project: theProject.id }), 
@@ -145,7 +161,7 @@ HistoryWidget.prototype._extractOperations = function() {
     );
 };
 
-HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
+HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     var self = this;
     var frame = $(DOM.loadHTML("core", "scripts/widgets/history-extract-dialog.html"));
     var elmts = DOM.bind(frame);
@@ -209,7 +225,7 @@ HistoryWidget.prototype._showExtractOperationsDialog = function(json) {
     elmts.textarea[0].select();
 };
 
-HistoryWidget.prototype._showApplyOperationsDialog = function() {
+HistoryPanel.prototype._showApplyOperationsDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     frame.width("800px");
