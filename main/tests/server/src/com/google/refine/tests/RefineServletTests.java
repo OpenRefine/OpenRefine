@@ -114,7 +114,7 @@ public class RefineServletTests extends RefineTest {
     }
 
     //----------------doPost tests-------------------------
-    @Test(enabled=false) // TODO: Fails due to interaction with doGetRegressionTest
+    @Test
     public void doPostRegressionTest(){
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(POST);

@@ -29,8 +29,7 @@ function onClickUploadFileButton(evt) {
 }
 
 function formatDate(d) {
-	var d1 = d;
-    var d = new Date(d + " EDT");
+    var d = new Date(d);
     var last_year = Date.today().add({ years: -1 });
     var last_month = Date.today().add({ months: -1 });
     var last_week = Date.today().add({ days: -7 });
@@ -38,8 +37,7 @@ function formatDate(d) {
     var tomorrow = Date.today().add({ days: 1 });
 
     if (d.between(today, tomorrow)) {
-    	// TODO: Fix timezone problem
-        return "today " + d1 + " " + d.toLocaleTimeString();
+        return "today " + d.toString("h:mm tt");
     } else if (d.between(last_week, today)) {
         var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
         return (diff <= 1) ? ("yesterday " + d.toString("h:mm tt")) : (diff + " days ago");
