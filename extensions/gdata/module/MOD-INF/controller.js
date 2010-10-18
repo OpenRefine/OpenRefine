@@ -1,6 +1,6 @@
 var html = "text/html";
 var encoding = "UTF-8";
-var version="0.2"
+var version="0.2";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
 
 /*
