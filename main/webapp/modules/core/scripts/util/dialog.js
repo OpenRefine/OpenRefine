@@ -27,6 +27,21 @@ DialogSystem.showDialog = function(elmt, onCancel) {
     DialogSystem._layers.push(layer);
     
     var level = DialogSystem._layers.length;
+    
+    layer.keyHandler = function(evt) {
+        if (evt.keyCode == 27 && !evt.shiftKey && !evt.metaKey && !evt.altKey && !evt.ctrlKey &&
+            evt.target.tagName.toLowerCase() != "input" &&
+            evt.target.tagName.toLowerCase() != "textarea") {
+            
+            DialogSystem.dismissUntil(level - 1);
+            evt.stopImmediatePropagation();
+            evt.stopPropagation();
+            evt.preventDefault();
+            return false;
+        }
+    };
+    $(document).stack("keydown", layer.keyHandler);
+    
     return level;
 };
 
@@ -37,6 +52,9 @@ DialogSystem.dismissAll = function() {
 DialogSystem.dismissUntil = function(level) {
     for (var i = DialogSystem._layers.length - 1; i >= level; i--) {
         var layer = DialogSystem._layers[i];
+        
+        $(document).unbind("keydown", layer.keyHandler);
+        
         layer.overlay.remove();
         layer.container.remove();
         layer.container.unbind();

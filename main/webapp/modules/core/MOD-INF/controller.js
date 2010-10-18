@@ -164,6 +164,7 @@ function init() {
         [
             "externals/jquery-1.4.2.min.js",
             "externals/jquery.cookie.js",
+            "externals/jquery.eventstack-0.3.js",
             "externals/suggest/suggest-1.2.1.min.js",
             "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
             "externals/imgareaselect/jquery.imgareaselect.js",

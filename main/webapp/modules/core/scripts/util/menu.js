@@ -17,9 +17,23 @@ MenuSystem.showMenu = function(elmt, onDismiss) {
         elmt: elmt,
         onDismiss: onDismiss
     };
+    
     MenuSystem._layers.push(layer);
     
     var level = MenuSystem._layers.length;
+    
+    layer.keyHandler = function(evt) {
+        if (evt.keyCode == 27 && !evt.shiftKey && !evt.metaKey && !evt.altKey && !evt.ctrlKey &&
+            evt.target.tagName.toLowerCase() != "input" &&
+            evt.target.tagName.toLowerCase() != "textarea") {
+            MenuSystem.dismissUntil(level - 1);
+            evt.stopImmediatePropagation();
+            evt.stopPropagation();
+            evt.preventDefault();
+            return false;
+        }
+    };
+    $(document).stack("keydown", layer.keyHandler);
     
     return level;
 };
@@ -35,6 +49,9 @@ MenuSystem.dismissAll = function() {
 MenuSystem.dismissUntil = function(level) {
     for (var i = MenuSystem._layers.length - 1; i >= level; i--) {
         var layer = MenuSystem._layers[i];
+        
+        $(document).unbind("keydown", layer.keyHandler);
+        
         layer.elmt.remove();
         layer.elmt.unbind();
         layer.onDismiss();

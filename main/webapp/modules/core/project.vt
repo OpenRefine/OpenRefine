@@ -22,28 +22,28 @@
     <div id="loading-message"><img src="images/large-spinner.gif" /> Starting up...</div>
       
     <div id="body">
-      <div bind="leftPanel" id="left-panel">
+      <div bind="leftPanelDiv" id="left-panel">
         <div bind="leftPanelTabs" class="refine-tabs">
           <ul>
             <li><a href="#refine-tabs-facets">Facet / Filter</a></li>
             <li><a href="#refine-tabs-history" bind="historyTabHeader">Undo / Redo</a></li>
           </ul>
-          <div id="refine-tabs-facets" bind="facetPanel" id="facet-panel"></div>
-          <div id="refine-tabs-history" bind="historyPanel" id="history-panel"></div>
+          <div id="refine-tabs-facets" bind="facetPanelDiv" id="facet-panel"></div>
+          <div id="refine-tabs-history" bind="historyPanelDiv" id="history-panel"></div>
         </div>
       </div>
-      <div bind="rightPanel" id="right-panel">
-        <div bind="toolPanel" id="tool-panel">
-          <div bind="summaryBar" id="summary-bar">
+      <div bind="rightPanelDiv" id="right-panel">
+        <div bind="toolPanelDiv" id="tool-panel">
+          <div bind="summaryBarDiv" id="summary-bar">
             <!-- row/record counts -->
           </div>
-          <div bind="extensionBar" id="extension-bar">
+          <div bind="extensionBarDiv" id="extension-bar">
             Extensions: <span bind="menuContainer" id="extension-bar-menu-container"></span>
           </div>
         </div>
-        <div bind="viewPanel" id="view-panel"></div>
+        <div bind="viewPanelDiv" id="view-panel"></div>
       </div>
-      <div bind="processPanel" id="process-panel"></div>
+      <div bind="processPanelDiv" id="process-panel"></div>
     </div>
   </body>
 </html>

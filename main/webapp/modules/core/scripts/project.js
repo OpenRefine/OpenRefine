@@ -19,34 +19,34 @@ function resize() {
     var top = $("#header").outerHeight();
     var height = $(window).height() - top;
     
-    var leftPanelPaddings = ui.leftPanel.outerHeight(true) - ui.leftPanel.height();
-    ui.leftPanel
+    var leftPanelPaddings = ui.leftPanelDiv.outerHeight(true) - ui.leftPanelDiv.height();
+    ui.leftPanelDiv
         .css("top", top + "px")
         .css("left", "0px")
         .css("height", (height - leftPanelPaddings) + "px")
         .css("width", leftPanelWidth + "px");
         
     var leftPanelTabsPaddings = ui.leftPanelTabs.outerHeight(true) - ui.leftPanelTabs.height();
-    ui.leftPanelTabs.height(ui.leftPanel.height() - leftPanelTabsPaddings);
+    ui.leftPanelTabs.height(ui.leftPanelDiv.height() - leftPanelTabsPaddings);
     
-    var rightPanelVPaddings = ui.rightPanel.outerHeight(true) - ui.rightPanel.height();
-    var rightPanelHPaddings = ui.rightPanel.outerWidth(true) - ui.rightPanel.width();
-    ui.rightPanel
+    var rightPanelVPaddings = ui.rightPanelDiv.outerHeight(true) - ui.rightPanelDiv.height();
+    var rightPanelHPaddings = ui.rightPanelDiv.outerWidth(true) - ui.rightPanelDiv.width();
+    ui.rightPanelDiv
         .css("top", top + "px")
         .css("left", leftPanelWidth + "px")
         .css("height", (height - rightPanelVPaddings) + "px")
         .css("width", (width - leftPanelWidth - rightPanelHPaddings) + "px");
     
-    ui.viewPanel.height((height - ui.toolPanel.outerHeight() - rightPanelVPaddings) + "px");
+    ui.viewPanelDiv.height((height - ui.toolPanelDiv.outerHeight() - rightPanelVPaddings) + "px");
     
     var processPanelWidth = 400;
-    ui.processPanel
+    ui.processPanelDiv
         .css("width", processPanelWidth + "px")
         .css("left", Math.floor((width - processPanelWidth) / 2) + "px");
 }
 
 function resizeTabs() {
-    var totalHeight = ui.leftPanel.height();
+    var totalHeight = ui.leftPanelDiv.height();
     var headerHeight = ui.leftPanelTabs.find(".ui-tabs-nav").outerHeight(true);
     
     var visibleTabPanels = ui.leftPanelTabs.find(".ui-tabs-panel:not(.ui-tabs-hide)");
@@ -81,18 +81,18 @@ function initializeUI(uiState) {
 
     ui = DOM.bind($("#body"));
     
-    ui.extensionBar = new ExtensionBar(ui.extensionBar); // construct the menu first so we can resize everything else
+    ui.extensionBar = new ExtensionBar(ui.extensionBarDiv); // construct the menu first so we can resize everything else
     ui.exporterManager = new ExporterManager($("#export-button"));
     
     ui.leftPanelTabs.tabs({ selected: 0 });
     resize();
     resizeTabs();
     
-    ui.summaryBar = new SummaryBar(ui.summaryBar);
-    ui.browsingEngine = new BrowsingEngine(ui.facetPanel, uiState.facets || []);
-    ui.processPanel = new ProcessPanel(ui.processPanel);
-    ui.historyPanel = new HistoryPanel(ui.historyPanel, ui.historyTabHeader);
-    ui.dataTableView = new DataTableView(ui.viewPanel);
+    ui.summaryBar = new SummaryBar(ui.summaryBarDiv);
+    ui.browsingEngine = new BrowsingEngine(ui.facetPanelDiv, uiState.facets || []);
+    ui.processPanel = new ProcessPanel(ui.processPanelDiv);
+    ui.historyPanel = new HistoryPanel(ui.historyPanelDiv, ui.historyTabHeader);
+    ui.dataTableView = new DataTableView(ui.viewPanelDiv);
     
     ui.leftPanelTabs.bind('tabsshow', function(event, tabs) {
         if (tabs.index === 0) {
