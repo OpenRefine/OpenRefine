@@ -102,14 +102,7 @@
     background: @history_done_background;
 }
 .history-now {
-    padding: 3px 0;
     background: @history_now_background;
-    color: white;
-    font-size: 80%;
-    text-transform: uppercase;
-    text-align: center;
-    font-variant: small-caps;
-    font-weight: bold;
 }
 .history-future {
     position: relative;
@@ -149,16 +142,11 @@ a.history-entry {
     color: black;
     border-top: 1px dotted #ddd;
 }
-.history-future a.history-entry {
-    color: @near_black;
+.history-future a.history-entry, .history-future a.history-entry-index {
+    color: @light_grey;
 }
 
-.history-past a.history-entry:hover{
-    padding-top: @history_entry_vpadding - 2px;
-    border-top: 2px solid @history_now_background;
-}
-.history-future a.history-entry:hover{
-    padding-bottom: @history_entry_vpadding - 2px;
+.history-past a.history-entry:hover, .history-future a.history-entry:hover {
     border-bottom: 2px solid @history_now_background;
 }
 

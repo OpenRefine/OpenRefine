@@ -44,47 +44,55 @@ HistoryPanel.prototype._render = function() {
     
     var renderEntry = function(container, index, entry, lastDoneID, past) {
         var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);
-        a.attr("title", past ? "Undo to here" : "Redo to here")
-            .click(function(evt) {
-                return self._onClickHistoryEntry(evt, entry, lastDoneID);
-            })
-            .mouseover(function() {
-                if (past) {
-                    elmts.pastHighlightDiv.show().height(elmts.pastDiv.height() - this.offsetTop);
-                } else {
-                    elmts.futureHighlightDiv.show().height(this.offsetTop + this.offsetHeight);
-                }
-            })
-            .mouseout(function() {
-                if (past) {
-                    elmts.pastHighlightDiv.hide();
-                } else {
-                    elmts.futureHighlightDiv.hide();
-                }
-            });
-            
+        if (lastDoneID >= 0) {
+            a.attr("href", "javascript:{}")
+                .click(function(evt) {
+                    return self._onClickHistoryEntry(evt, entry, lastDoneID);
+                })
+                .mouseover(function() {
+                    if (past) {
+                        elmts.pastHighlightDiv.show().height(elmts.pastDiv.height() - this.offsetTop - this.offsetHeight);
+                    } else {
+                        elmts.futureHighlightDiv.show().height(this.offsetTop + this.offsetHeight);
+                    }
+                })
+                .mouseout(function() {
+                    if (past) {
+                        elmts.pastHighlightDiv.hide();
+                    } else {
+                        elmts.futureHighlightDiv.hide();
+                    }
+                });
+        }
+        
         a[0].appendChild(document.createTextNode(entry.description));
-        a[0].firstChild.appendChild(document.createTextNode((index + 1) + "."));
+        a[0].firstChild.appendChild(document.createTextNode(index + "."));
         
         return a;
     };
     
     if (this._data.past.length > 0 || this._data.future.length > 0) {
         if (!this._data.past.length) {
-            elmts.noUndoDiv.show();
+            renderEntry(elmts.nowDiv, 0, {
+                description: "Create project"
+            }, 0, true);
         } else {
-            for (var i = 0; i < this._data.past.length; i++) {
+            renderEntry(elmts.pastDiv, 0, {
+                description: "Create project"
+            }, 0, true);
+
+            for (var i = 0; i < this._data.past.length - 1; i++) {
                 var entry = this._data.past[i];
-                renderEntry(elmts.pastDiv, i, entry, i === 0 ? 0 : this._data.past[i - 1].id, true);
+                renderEntry(elmts.pastDiv, i + 1, entry, entry.id, true);
             }
+            
+            renderEntry(elmts.nowDiv, this._data.past.length, this._data.past[this._data.past.length - 1], -1);
         }
     
-        if (!this._data.future.length) {
-            elmts.noRedoDiv.show();
-        } else {
+        if (this._data.future.length) {
             for (var i = 0; i < this._data.future.length; i++) {
                 var entry = this._data.future[i];
-                renderEntry(elmts.futureDiv, this._data.past.length + i, entry, entry.id, false);
+                renderEntry(elmts.futureDiv, this._data.past.length + i + 1, entry, entry.id, false);
             }
         }
         
