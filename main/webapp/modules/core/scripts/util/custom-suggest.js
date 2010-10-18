@@ -1,4 +1,17 @@
 (function() {
+    /*
+     *  Make suggest widgets clean up when removed.
+     */
+    var oldInit = $.suggest.suggest.prototype._init;
+    $.suggest.suggest.prototype._init = function() {
+        oldInit.call(this);
+        
+        var self = this;
+        this.input.bind("remove", function() {
+            self._destroy();
+        });
+    };
+    
   /*
    *  Property suggest
    */
