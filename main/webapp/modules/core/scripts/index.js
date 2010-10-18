@@ -209,6 +209,42 @@ function openWorkspaceDir() {
     });
 }
 
+var GoogleRefineVersion;
+function showVersion() {
+    $.getJSON(
+        "/command/core/get-version",
+        null,
+        function(data) {
+            GoogleRefineVersion = data;
+            
+            $("#google-refine-version").text("Version " + GoogleRefineVersion.full_version);
+            
+            var script = $('<script></script>')
+                .attr("src", "http://google-refine.googlecode.com/svn/support/releases.js")
+                .attr("type", "text/javascript")
+                .appendTo(document.body);
+
+            var poll = function() {
+                if ("releases" in window) {
+                    if (isThereNewRelease()) {
+                        var div = $('<div id="version-message">')
+                            .text('New version "' + releases.releases[0].description + '" ')
+                            .appendTo(document.body)
+                        
+                        $('<a>')
+                            .attr("href", releases.homepage)
+                            .text("available for download here")
+                            .appendTo(div);
+                    }
+                } else {
+                    window.setTimeout(poll, 1000);
+                }
+            };
+            window.setTimeout(poll, 1000);            
+        }
+    );
+}
+
 function onLoad() {
     fetchProjects();
 
@@ -217,27 +253,8 @@ function onLoad() {
         $("#more-options-controls").hide();
         $("#more-options").show();
     });
-
-    var version = (GoogleRefineVersion.version != "$VERSION") ? "Version " + GoogleRefineVersion.version + " [" + GoogleRefineVersion.revision + "]" : "Version <trunk>";
-    $("#google-refine-version").text(version);
-
-    var script = $('<script></script>')
-        .attr("src", "http://google-refine.googlecode.com/svn/support/releases.js")
-        .attr("type", "text/javascript")
-        .appendTo(document.body);
-
-    var poll = function() {
-        if ("releases" in window) {
-            if (isThereNewRelease()) {
-                $('<div id="version-message">' +
-                    'New version "' + releases.releases[0].description + '" <a href="' + releases.homepage + '">available for download here</a>.' +
-                  '</div>').appendTo(document.body);
-            }
-        } else {
-            window.setTimeout(poll, 1000);
-        }
-    };
-    window.setTimeout(poll, 1000);
+    
+    showVersion();
 }
 
 $(onLoad);

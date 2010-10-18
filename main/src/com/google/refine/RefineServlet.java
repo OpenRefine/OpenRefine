@@ -24,9 +24,11 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
-
+    static private String ASSIGNED_VERSION = "2.0";
+    
     static public String VERSION = "";
     static public String REVISION = "";
+    static public String FULL_VERSION = "";
     static public String FULLNAME = "Google Refine ";
 
     static public final String AGENT_ID = "/en/google_refine";
@@ -67,7 +69,16 @@ public class RefineServlet extends Butterfly {
 
         VERSION = getInitParameter("refine.version");
         REVISION = getInitParameter("refine.revision");
-        FULLNAME +=  VERSION + " [" + REVISION + "]";
+        
+        if (VERSION.equals("$VERSION")) {
+            VERSION = ASSIGNED_VERSION;
+        }
+        if (REVISION.equals("$REVISION")) {
+            REVISION = "TRUNK";
+        }
+        
+        FULL_VERSION = VERSION + " [" + REVISION + "]";
+        FULLNAME += FULL_VERSION;
 
         logger.info("Starting " + FULLNAME + "...");
         

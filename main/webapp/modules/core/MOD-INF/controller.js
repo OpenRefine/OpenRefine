@@ -141,7 +141,6 @@ function init() {
             "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
             "externals/date.js",
             "scripts/util/string.js",
-            "scripts/version.js",
             "scripts/index.js"
         ]
     );

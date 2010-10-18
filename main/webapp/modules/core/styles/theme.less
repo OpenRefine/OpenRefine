@@ -48,3 +48,12 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   }
+
+.rounded_corners_bottom (@radius: 10px) {
+  -webkit-border-bottom-left-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -moz-border-radius-bottomleft: @radius;
+  -moz-border-radius-bottomright: @radius;
+  border-bottom-left-radius: @radius;
+  border-bottom-right-radius: @radius;
+  }
