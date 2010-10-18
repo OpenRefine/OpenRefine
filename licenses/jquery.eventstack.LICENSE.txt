@@ -1,0 +1,35 @@
+// http://plugins.jquery.com/project/eventstack
+
+/**
+ * Copyright (c) 2008, Ben XO <me@ben-xo.com>
+ * 
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ * 
+ * 
+ * This is a jQuery plugin that allows events to be handled in reverse order of
+ * binding - add events to the head of the queue rather than the end.
+ * 
+ * Particularly useful if you apply your "do"s in a modular order and wish to 
+ * apply your "undo"s in reverse order.
+ * 
+ * It adds the following two methods:
+ * 
+ * reverse(event): reverses the order that functions attached to <event> are 
+ *                 applied to this element.
+ * 
+ * stack( event, data, fn ): just like bind(), except adds to the front of the 
+ *                           event queue instead of the end.
+ *                           
+ * Also, every event method (.click(), .focus(), .resize(), .submit(), etc - 
+ * 21 methods in all) can take an extra parameter "reverse" that controls if 
+ * the event is added to the front or end of the event queue. For example:
+ * 
+ * $("body").click(function() { alert("1"); });
+ * $("body").click(function() { alert("2"); });
+ * $("body").click(function() { alert("3"); }, true);
+ * 
+ * ... will show "3", "1" then "2" when the document is clicked.
+ * 
+ * @version 0.3
+ */
