@@ -65,8 +65,8 @@ HistoryPanel.prototype._render = function() {
                 });
         }
         
-        a[0].appendChild(document.createTextNode(entry.description));
-        a[0].firstChild.appendChild(document.createTextNode(index + "."));
+        a[0].childNodes[0].appendChild(document.createTextNode(index + "."));
+        a[0].childNodes[1].appendChild(document.createTextNode(entry.description));
         
         return a;
     };
@@ -101,11 +101,15 @@ HistoryPanel.prototype._render = function() {
         elmts.filterInput.keyup(function() {
             var filter = $.trim(this.value.toLowerCase());
             if (filter.length == 0) {
-                elmts.bodyDiv.find(".history-entry").show();
+                elmts.bodyDiv.find(".history-entry").removeClass("filtered-out");
             } else {
                 elmts.bodyDiv.find(".history-entry").each(function() {
-                    var text = this.childNodes[1].nodeValue;
-                    this.style.display = (text.toLowerCase().indexOf(filter) >= 0) ? "block" : "none";
+                    var text = this.childNodes[1].firstChild.nodeValue;
+                    if (text.toLowerCase().indexOf(filter) >= 0) {
+                        $(this).removeClass("filtered-out");
+                    } else {
+                        $(this).addClass("filtered-out");
+                    }
                 });
             }
         });

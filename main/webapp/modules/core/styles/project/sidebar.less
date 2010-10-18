@@ -142,6 +142,15 @@ a.history-entry {
     color: black;
     border-top: 1px dotted #ddd;
 }
+a.history-entry.filtered-out {
+    height: 1px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+a.history-entry.filtered-out > * {
+    display: none;
+}
+
 .history-future a.history-entry, .history-future a.history-entry-index {
     color: @light_grey;
 }
