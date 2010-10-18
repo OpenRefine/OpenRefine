@@ -10,6 +10,25 @@ function DataTableView(div) {
     this._showRows(0);
 }
 
+DataTableView._extenders = [];
+
+/*
+    To extend, do something like this
+    
+    DataTableView.extendMenu(function(dataTableView, menu) {
+        ...
+        MenuSystem.appendTo(menu, [ "core/view" ], {
+            "label": "Test",
+            "click": function() {
+                alert("Test");
+            } 
+        });
+    });
+*/
+DataTableView.extendMenu = function(extender) {
+    DataTableView._extenders.push(extender);
+};
+
 DataTableView.prototype.getSorting = function() {
     return this._sorting;
 };
@@ -429,11 +448,14 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
 
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     var self = this;
-    MenuSystem.createAndShowStandardMenu([
+    var menu = [
         {   label: "Facet",
+            id: "core/facets",
+            width: "200px",
             submenu: [
                 {
                     label: "Facet by Star",
+                    id: "core/facet-by-star",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -450,6 +472,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 },
                 {
                     label: "Facet by Flag",
+                    id: "core/facet-by-flag",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -466,16 +489,21 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 }
             ]
         },
+        {},
         {   label: "Edit Rows",
+            id: "core/edit-rows",
+            width: "200px",
             submenu: [
                 {
                     label: "Star Rows",
+                    id: "core/star-rows",
                     click: function() {
                         Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
                     }
                 },
                 {
                     label: "Unstar Rows",
+                    id: "core/unstar-rows",
                     click: function() {
                         Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
                     }
@@ -483,12 +511,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 {},
                 {
                     label: "Flag Rows",
+                    id: "core/flag-rows",
                     click: function() {
                         Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
                     }
                 },
                 {
                     label: "Unflag Rows",
+                    id: "core/unflag-rows",
                     click: function() {
                         Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
                     }
@@ -496,6 +526,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 {},
                 {
                     label: "Remove All Matching Rows",
+                    id: "core/remove-rows",
                     click: function() {
                         Refine.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
                     }
@@ -503,19 +534,26 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
             ]
         },
         {   label: "Edit Columns",
+            id: "core/edit-columns",
+            width: "200px",
             submenu: [
                 {
-                    label: "Re-order Columns",
+                    label: "Re-order Columns ...",
+                    id: "core/reorder-columns",
                     click: function() {
                         new ColumnReorderingDialog();
                     }
                 }
             ]
         },
+        {},
         {   label: "View",
+            id: "core/view",
+            width: "200px",
             submenu: [
                 {
                     label: "Collapse All Columns",
+                    id: "core/collapse-all-columns",
                     click: function() {
                         for (var i = 0; i < theProject.columnModel.columns.length; i++) {
                             self._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
@@ -525,6 +563,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 },
                 {
                     label: "Expand All Columns",
+                    id: "core/expand-all-columns",
                     click: function() {
                         self._collapsedColumnNames = [];
                         self.render();
@@ -532,7 +571,13 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 }
             ]
         }
-    ], elmt, { width: "120px", horizontal: false });
+    ];
+    
+    for (var i = 0; i < DataTableView._extenders.length; i++) {
+        DataTableView._extenders[i].call(null, this, menu);
+    }
+    
+    MenuSystem.createAndShowStandardMenu(menu, elmt, { width: "120px", horizontal: false });
 };
 
 DataTableView.prototype._createSortingMenu = function(elmt) {
@@ -643,5 +688,3 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
         onDone
     );
 };
-
-

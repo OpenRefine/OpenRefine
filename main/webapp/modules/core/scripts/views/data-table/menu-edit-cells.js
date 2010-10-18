@@ -119,14 +119,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             label: "Common Transforms",
             submenu: [
                 {
-                    id: "core/unescape-html-entities",
-                    label: "Unescape HTML entities",
-                    click: function() { doTextTransform("value.unescape('html')", "store-blank", true, 10); }
+                    id: "core/trim-whitespace",
+                    label: "Trim leading and trailing whitespace",
+                    click: function() { doTextTransform("value.trim()", "store-blank", false, ""); }
                 },
                 {
                     id: "core/collapse-whitespace",
-                    label: "Collapse whitespace",
+                    label: "Collapse consecutive whitespace",
                     click: function() { doTextTransform("value.replace(/\\s+/,' ')", "store-blank", false, ""); }
+                },
+                {},
+                {
+                    id: "core/unescape-html-entities",
+                    label: "Unescape HTML entities",
+                    click: function() { doTextTransform("value.unescape('html')", "store-blank", true, 10); }
                 },
                 {},
                 {
@@ -144,9 +150,26 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     label: "To Lowercase",
                     click: function() { doTextTransform("toLowercase(value)", "store-blank", false, ""); }
                 },
+                {},
+                {
+                    id: "core/to-number",
+                    label: "To number",
+                    click: function() { doTextTransform("toNumber(value)", "store-blank", false, ""); }
+                },
+                {
+                    id: "core/to-date",
+                    label: "To date",
+                    click: function() { doTextTransform("toDate(value)", "store-blank", false, ""); }
+                },
+                {
+                    id: "core/to-text",
+                    label: "To text",
+                    click: function() { doTextTransform("toString(value)", "store-blank", false, ""); }
+                },
+                {},
                 {
                     id: "core/to-blank",
-                    label: "To Blank",
+                    label: "Blank out cells",
                     click: function() { doTextTransform("null", "store-blank", false, ""); }
                 }
             ]
@@ -278,12 +301,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     MenuSystem.appendTo(menu, [ "core/transpose" ], [
         {
             id: "core/transpose-columns-into-rows",
-            label: "Cells Across Columns into Rows",
+            label: "Cells Across Columns into Rows ...",
             click: doTransposeColumnsIntoRows
         },
         {
             id: "core/transpose-rows-into-columns",
-            label: "Cells in Rows into Columns",
+            label: "Cells in Rows into Columns ...",
             click: doTransposeRowsIntoColumns
         }
     ]);

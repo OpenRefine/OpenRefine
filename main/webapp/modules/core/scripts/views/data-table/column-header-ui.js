@@ -9,6 +9,14 @@ function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td) {
 
 DataTableColumnHeaderUI._extenders = [];
 
+/*
+    To extend, call
+    
+    DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
+        ...
+        MenuSystem.appendTo(menu, path, newItems);
+    });
+*/
 DataTableColumnHeaderUI.extendMenu = function(extender) {
     DataTableColumnHeaderUI._extenders.push(extender);
 };
@@ -61,12 +69,14 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
         {
             id: "core/facet",
             label: "Facet",
+            width: "170px",
             submenu: []
         },
         {},
         {
             id: "core/edit-cells",
             label: "Edit Cells",
+            width: "170px",
             submenu: []
         },
         {
@@ -145,6 +155,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             id: "core/reconcile",
             label: "Reconcile",
             tooltip: "Match this column's cells to topics on Freebase",
+            width: "170px",
             submenu: []
         }
     ];

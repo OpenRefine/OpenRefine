@@ -128,16 +128,17 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
                     
                     menuItem.addClass("menu-expanded");
                     
-                    MenuSystem.createAndShowStandardMenu(
-                        item.submenu, 
-                        this,
-                        {
-                            horizontal: true,
-                            onDismiss: function() {
-                                menuItem.removeClass("menu-expanded");
-                            }
+                    var options = {
+                        horizontal: true,
+                        onDismiss: function() {
+                            menuItem.removeClass("menu-expanded");
                         }
-                    );
+                    };
+                    if ("width" in item) {
+                        options.width = item.width;
+                    }
+                    
+                    MenuSystem.createAndShowStandardMenu(item.submenu, this, options);
                 });
             } else {
                 menuItem.html(item.label).click(function(evt) {
