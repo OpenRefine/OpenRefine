@@ -149,7 +149,7 @@ SchemaAlignmentDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     
-    frame.width("1000px");
+    frame.width("800px");
     
     var header = $('<div></div>').addClass("dialog-header").text("Schema Alignment").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
