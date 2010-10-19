@@ -68,6 +68,7 @@ function resizeAll() {
 
 function initializeUI(uiState) {
     $("#loading-message").hide();
+    $("#notification-container").hide();
     $("#project-title").show();
     $("#project-controls").show();
     $("#body").show();

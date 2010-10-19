@@ -76,9 +76,9 @@ DialogSystem.createDialog = function() {
 
 DialogSystem.showBusy = function(message) {
     var frame = DialogSystem.createDialog();
-    frame.addClass("dialog-busy-frame");
+    frame.addClass("dialog-busy");
     
-    var body = $('<div>').addClass("dialog-busy-body").appendTo(frame);
+    var body = $('<div>').attr('id', 'loading-message').appendTo(frame);
     $('<img>').attr("src", "images/large-spinner.gif").appendTo(body);
     $('<span>').text(" " + (message || "Working...")).appendTo(body);
     

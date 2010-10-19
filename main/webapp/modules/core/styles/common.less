@@ -28,6 +28,7 @@ input[type=text] {
   font-family: inherit; 
   border: #ccc 1px solid;
   border-top: #888 1px solid;
+  vertical-align: baseline;
   }
 
 a {
@@ -54,7 +55,7 @@ a.selected {
   }
 
 a.inaction {
-  color: @chrome_primary;
+  color: @light_grey;
   }
 
 a.selected:hover, a.inaction:hover {
@@ -160,16 +161,48 @@ a img {
   background: #f2f2f2;
   }
 
+.list-table-itemname {
+  font-size: 1.2em;
+  }
+
 #loading-message {
-    text-align: center;
-    font-size: 300%;
-    color: @light_grey;
-    padding: 4em;
-}
+  text-align: center;
+  font-size: 300%;
+  color: @light_grey;
+  padding: 3em .5em;
+  }
 
 #loading-message img {
   position: relative;
   top: -4px;
+  }
+  
+#notification-container {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  text-align: center;
+  }
+
+#notification {
+  display: inline-block;
+  margin: 0 auto;
+  padding: 5px 8px 4px;
+  font-size: 1.3em;
+  text-align: left;
+  font-weight: bold;
+  background: @notification_primary;
+  .rounded_corners(2px);
+  }
+  
+.notification-action {
+    padding-left: 10px;
+}
+
+.notification-loader {
+    padding: 0 3px 0 0;
+    opacity: 0.3;
 }
 
 #header {
@@ -229,9 +262,11 @@ a img {
 input[type="checkbox"], input[type="radio"] {
     vertical-align: baseline;
 }
+
 input.inline {
     vertical-align: middle;
 }
+
 
 
 

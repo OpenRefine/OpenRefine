@@ -37,10 +37,12 @@
   }
 
 #projects-container {
-  border-top: 1px solid @line_accent;
+  border: 1px solid @chrome_primary;
+  border-left: 0;
+  border-right: 0;
   background: #fff;
   overflow: auto;
-  height: 400px;
+  height: 378px;
   }
   
 #projects-container .project .last-modified {
@@ -59,8 +61,9 @@
   }
   
 .content-block-footer {
-  padding: @padding_tighter;
-  text-align: center;
+  background: #f2f2f2;
+  padding: @padding_tight;
+  font-size: 1.1em;
   }
 
 #project-links {
@@ -90,7 +93,7 @@
   } 
 
 .project-create-basic {
-  border-top: 1px solid @line_accent;
+  border-top: 1px solid @chrome_primary;
   padding: @padding_loose;
   background: #fff;
   }
@@ -128,16 +131,4 @@
   position: absolute;
   top: 12px;
   right: 10px;
-  }
-  
-#version-message {
-  position: fixed;
-  top: -1px;
-  padding: @padding_loose;
-  left: 40%;
-  width: 20%;
-  background: @fill_primary;
-  border: 1px solid @chrome_primary;
-  
-  .rounded_corners_bottom(10px);
   }

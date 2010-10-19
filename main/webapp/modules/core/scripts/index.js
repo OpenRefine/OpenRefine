@@ -227,14 +227,16 @@ function showVersion() {
             var poll = function() {
                 if ("releases" in window) {
                     if (isThereNewRelease()) {
-                        var div = $('<div id="version-message">')
-                            .text('New version "' + releases.releases[0].description + '" ')
+                        var container = $('<div id="notification-container">')
                             .appendTo(document.body)
-                        
+                        var notification = $('<div id="notification">')
+                            .text('New version! ')
+                            .appendTo(container)
                         $('<a>')
+                            .addClass('notification-action')
                             .attr("href", releases.homepage)
-                            .text("available for download here")
-                            .appendTo(div);
+                            .text('Download ' + releases.releases[0].description + ' now.')
+                            .appendTo(notification);
                     }
                 } else {
                     window.setTimeout(poll, 1000);

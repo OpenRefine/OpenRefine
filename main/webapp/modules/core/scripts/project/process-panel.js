@@ -58,16 +58,16 @@ ProcessPanel.prototype.showUndo = function(historyEntry) {
     
     this._latestHistoryEntry = historyEntry;
 
-    this._div.stop(true,false).empty().html(
-        '<div class="process-panel-inner"><div class="process-panel-undo">' +
-            '<a href="javascript:{}" bind="undo">Undo</a> <span bind="description"></span>' +
-        '</div><div style="text-align: right; padding-right: 1em;"><a href="javascript:{}" bind="close">close</a></div></div>'
-    ).slideDown(200).delay(5000).slideUp(150);
+    this._div.stop(true,false)
+    .empty()
+    .html('<div id="notification"><span bind="description"></span> <span class="notification-action"><a href="javascript:{}" bind="undo">Undo</a></span></div>')
+    .fadeIn(200)
+    .delay(7500)
+    .fadeOut(200);
     var elmts = DOM.bind(this._div);
         
     elmts.description.text(historyEntry.description);
     elmts.undo.click(function() { self.undo(); });
-    elmts.close.click(function() { $(".process-panel-inner").stop(true,false).slideUp(150); });
 };
 
 ProcessPanel.prototype.undo = function() {
@@ -102,40 +102,34 @@ ProcessPanel.prototype._render = function(newData) {
     
     if (!newData.processes.length) {
         Refine.setTitle();
-        this._div.hide();
+        this._div.fadeOut(200);
     } else {
-        this._div.show();
-        
-        var innerDiv = $('<div></div>').addClass("process-panel-inner").appendTo(this._div);
-        
-        var headDiv = $('<div></div>').addClass("process-panel-head").appendTo(innerDiv);
+        this._div.fadeIn(200);
+        var cancelmessage = "Cancel"
+        var noticeDiv = $('<div id="notification"></div>').appendTo(this._div);
+        var descriptionSpan = $('<span></span>').appendTo(noticeDiv);
+        var statusDiv = $('<div></div>').appendTo(noticeDiv);
         $('<img src="images/small-spinner.gif" />')
-            .css("margin-right", "3px")
-            .css("opacity", "0.3")
-            .appendTo(headDiv);
-        $('<a href="javascript:{}"></a>')
-            .addClass("action")
-            .text("cancel all")
-            .click(function() {
-                self._cancelAll();
-                
-                $(this).text("canceling all processes...").unbind();
-            })
-            .appendTo(headDiv);
-            
-        var bodyDiv = $('<div></div>').addClass("process-panel-body").appendTo(innerDiv);
+            .addClass("notification-loader")
+            .appendTo(statusDiv);
+        var progressSpan = $('<span></span>').appendTo(statusDiv);
+        var countSpan = $('<span></span>').appendTo(statusDiv);
         var renderProcess = function(process) {
-            var div = $('<div></div>').addClass("process-panel-entry").appendTo(bodyDiv);
-            
-            if (process.status == "pending") {
-                div.text(process.description + " (pending)");
-            } else {
-                Refine.setTitle(process.progress + "%");
-                div.text(process.description + " (" + process.progress + "%)");
-            }
+          if (process.status != "pending") {
+            Refine.setTitle(process.progress + "% complete");
+            descriptionSpan.text(process.description);
+            progressSpan.text(process.progress  + '% complete');
+          }
         };
-        
+        var renderProcessCount = function(count) {
+          var pendingcount = count - 1;
+          countSpan.text(', ' + pendingcount + ' pending processes');
+        };
         var processes = newData.processes;
+        if (processes.length >> 1) {
+          cancelmessage = "Cancel All";
+          renderProcessCount(processes.length);
+        }
         for (var i = 0; i < processes.length; i++) {
             var process = processes[i];
             renderProcess(process);
@@ -143,6 +137,14 @@ ProcessPanel.prototype._render = function(newData) {
                 newProcessMap[process.id] = process;
             }
         }
+        $('<a href="javascript:{}"></a>')
+          .addClass("notification-action")
+          .text(cancelmessage)
+          .click(function() {
+              self._cancelAll();
+              $(this).text("Canceling...").unbind();
+          })
+          .appendTo(statusDiv);
     }
     
     if ((this._data) && this._data.processes.length > 0) {

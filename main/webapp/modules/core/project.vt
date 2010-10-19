@@ -43,7 +43,7 @@
         </div>
         <div bind="viewPanelDiv" id="view-panel"></div>
       </div>
-      <div bind="processPanelDiv" id="process-panel"></div>
+      <div bind="processPanelDiv" id="notification-container"></div>
     </div>
   </body>
 </html>

@@ -18,51 +18,38 @@
   }
 
 .dialog-frame {
-    margin: 0 auto;
-    text-align: left;
-    background: white;
-    border: 1px solid @dialog_frame;
-}
+  margin: 0 auto;
+  text-align: left;
+  background: white;
+  border: 1px solid @dialog_frame;
+  }
 
 .dialog-border {
-    border: 4px solid @dialog_border;
-}
+  border: 4px solid @dialog_border;
+  }
 
 .dialog-header {
-    background: @dialog_header;
-    padding: @padding_loose;
-    font-weight: bold;
-    font-size: 1.6em;
-    color: #000;
-    cursor: move;
-}
+  background: @dialog_header;
+  padding: @padding_loose;
+  font-weight: bold;
+  font-size: 1.6em;
+  color: #000;
+  cursor: move;
+  }
 
 .dialog-body {
   font-size: 1.3em;
   padding: @padding_looser;
-}
+  }
 
 .dialog-footer {
   font-size: 1.3em;
   background: @dialog_footer;
   padding: @padding_loose;
-}
+  }
 
-.dialog-footer button {
-}
-
-.dialog-busy-frame {
-    width: 300px;
-    border: none;
-    padding: @padding_loose;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
-}
-.dialog-busy-body {
-    margin: 1em;
-    text-align: center;
-    font-size: 200%;
-    font-weight: bold;
-    color: #aaa;
-}
-
+.dialog-busy {
+  width: 400px;
+  border: none;
+  .rounded_corners();
+  }

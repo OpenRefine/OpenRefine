@@ -18,7 +18,7 @@
       <div id="project-open">
         <h1>Open a Project</h1>
         <div id="projects-container"></div>
-        <div class="content-block-footer"><a href="javascript:openWorkspaceDir()">Browse Workspace Directory</a></div>
+        <div class="content-block-footer"><a href="javascript:openWorkspaceDir()" class="secondary">Browse workspace directory</a></div>
       </div>
       <div id="project-create">
         <form id="file-upload-form" method="post" enctype="multipart/form-data" action="/command/core/create-project-from-upload" accept-charset="UTF-8">
