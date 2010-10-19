@@ -69,7 +69,7 @@
       },
       
       signin : function(success, provider, width, height) {
-        var newwin = window.Sign.popup("/command/freebase-extension/authorize/" + provider, width, height);
+        var newwin = window.Sign.popup("/command/freebase/authorize/" + provider, width, height);
         
         if (newwin !== null) {
             newwin.opener = window;
@@ -80,7 +80,7 @@
             window.location.reload();
           } else {
             $.ajax({
-              url: "/command/freebase-extension/check-authorization/" + provider,
+              url: "/command/freebase/check-authorization/" + provider,
               dataType: "json",
               success: function(data) {
                 window.user = data;
@@ -105,7 +105,7 @@
       
       signout : function(success,provider) {
         $.ajax({
-          url: "/command/freebase-extension/deauthorize/" + provider,
+          url: "/command/freebase/deauthorize/" + provider,
           success: function() {
             if (typeof success == 'undefined') {
               window.location.reload();

@@ -130,6 +130,6 @@ public class AuthorizeCommand extends Command {
                 throw new RuntimeException("neither the 'host' nor 'referer' headers were present in the HTTP response, I can't determine what URL Google Refine is listening to.");
             }
         }
-        return "http://" + host + "/command/freebase-extension/authorize/" + provider.getHost();
+        return "http://" + host + "/command/freebase/authorize/" + provider.getHost();
     }
 }
