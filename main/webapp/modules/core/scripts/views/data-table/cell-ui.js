@@ -88,10 +88,10 @@ DataTableCellUI.prototype._render = function() {
         var service = (r.service) ? ReconciliationManager.getServiceFromUrl(r.service) : null;
         
         if (r.j == "new") {
-            $('<span>').text(cell.v + " (new topic) ").appendTo(divContent);
+            $('<span>').text(cell.v + "Create new topic").appendTo(divContent);
             
             $('<a href="javascript:{}"></a>')
-                .text("re\u2011match")
+                .text("Choose new match")
                 .addClass("data-table-recon-action")
                 .appendTo(divContent).click(function(evt) {
                     self._doRematch();
@@ -111,7 +111,7 @@ DataTableCellUI.prototype._render = function() {
                 
             $('<span> </span>').appendTo(divContent);
             $('<a href="javascript:{}"></a>')
-                .text("re\u2011match")
+                .text("Choose new match")
                 .addClass("data-table-recon-action")
                 .appendTo(divContent)
                 .click(function(evt) {
@@ -129,7 +129,7 @@ DataTableCellUI.prototype._render = function() {
                         
                         $('<a href="javascript:{}">&nbsp;</a>')
                             .addClass("data-table-recon-match-similar")
-                            .attr("title", "Match this topic to this cell and other cells with the same content")
+                            .attr("title", "Match this topic to this and all identical cells")
                             .appendTo(li).click(function(evt) {
                                 self._doMatchTopicToSimilarCells(candidate);
                             });
@@ -186,7 +186,7 @@ DataTableCellUI.prototype._render = function() {
                 var liNew = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
                 $('<a href="javascript:{}">&nbsp;</a>')
                     .addClass("data-table-recon-match-similar")
-                    .attr("title", "Create a new topic for this cell and other cells with the same content")
+                    .attr("title", "Create a new topic for this and all identical cells")
                     .appendTo(liNew).click(function(evt) {
                         self._doMatchNewTopicToSimilarCells();
                     });
@@ -198,7 +198,7 @@ DataTableCellUI.prototype._render = function() {
                         self._doMatchNewTopicToOneCell();
                     });
                     
-                $('<span>').text("(New topic)").appendTo(liNew);
+                $('<span>').text("Create new topic").appendTo(liNew);
                 
                 var suggestOptions;
                 var addSuggest = false;
@@ -216,7 +216,7 @@ DataTableCellUI.prototype._render = function() {
                             self._searchForMatch(suggestOptions);
                             return false;
                         })
-                        .text("search for match")
+                        .text("Search for match")
                         .appendTo($('<div>').appendTo(divContent));
                 }
             }
@@ -395,13 +395,11 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
 
     var fakeMenu = MenuSystem.createMenu();
     fakeMenu
-        .width(preview.width)
-        .css("background", "none")
-        .css("border", "none")
+        .width(414)
+        .addClass('data-table-topic-popup')
         .html(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-preview-popup-header.html"));
 
     var iframe = $('<iframe></iframe>')
-        .addClass("data-table-topic-popup-iframe")
         .width(preview.width)
         .height(preview.height)
         .attr("src", url)
@@ -417,6 +415,9 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     });
     elmts.matchSimilarButton.click(function() {
         self._doMatchTopicToSimilarCells(candidate);
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
         MenuSystem.dismissAll();
     });
 };
@@ -435,7 +436,11 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     
     var commit = function() {
         var type = elmts.typeSelect[0].value;
-        var applyOthers = elmts.applyOthersCheckbox[0].checked;
+        
+        var applyOthers = 0;
+        if (this === elmts.okallButton[0]) {
+          applyOthers = 1;
+        }
         
         var text = elmts.textarea[0].value;
         var value = text;
@@ -502,15 +507,17 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     };
     
     elmts.okButton.click(commit);
+    elmts.okallButton.click(commit);
     elmts.textarea
         .text(originalContent)
         .keydown(function(evt) {
             if (!evt.shiftKey) {
                 if (evt.keyCode == 13) {
                     if (evt.ctrlKey) {
-                        elmts.applyOthersCheckbox[0].checked = true;
+                        elmts.okallButton.trigger('click');
+                    } else {
+                      elmts.okButton.trigger('click');
                     }
-                    commit();
                 } else if (evt.keyCode == 27) {
                     MenuSystem.dismissAll();
                 }

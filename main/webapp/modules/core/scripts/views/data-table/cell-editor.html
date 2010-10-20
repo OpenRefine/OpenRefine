@@ -1,17 +1,29 @@
-<table class="grid-layout layout-tighest layout-full data-table-cell-editor-layout">
-  <tr>
-    <td colspan="5"><textarea class="data-table-cell-editor-editor" bind="textarea" /></td>
-  </tr>
-  <tr>
-    <td width="1%" align="center"><button class="button" bind="okButton">Apply</button><br/><span class="data-table-cell-editor-key">Enter</span></td>
-    <td width="1%" align="center"><button class="button" bind="cancelButton">Cancel</button><br/><span class="data-table-cell-editor-key">Esc</span></td>
-    <td><select bind="typeSelect">
-        <option value="text">text</option>
-        <option value="number">number</option>
-        <option value="boolean">boolean</option>
-        <option value="date">date</option>
-      </select></td>
-    <td width="1%"><input type="checkbox" bind="applyOthersCheckbox" /></td>
-    <td>apply to other cells with<br/>same content <span class="data-table-cell-editor-key">(Ctrl-Enter)</span></td>
-  </tr>
-</table>
+
+  Data type: <select bind="typeSelect">
+    <option value="text">text</option>
+    <option value="number">number</option>
+    <option value="boolean">boolean</option>
+    <option value="date">date</option>
+  </select>
+
+<textarea class="data-table-cell-editor-editor" bind="textarea" />
+
+<div id="data-table-cell-editor-actions">
+  <div class="data-table-cell-editor-action">
+    <button class="button" bind="okButton">Apply</button>
+    <div class="data-table-cell-editor-key">Enter</div>
+  </div>
+  <div class="data-table-cell-editor-action">
+    <button class="button" bind="okallButton">Apply to All Identical Cells</button>
+    <div class="data-table-cell-editor-key">Ctrl-Enter</div>
+  </div>
+  <div class="data-table-cell-editor-action">
+    <button class="button" bind="cancelButton">Cancel</button>
+    <div class="data-table-cell-editor-key">Esc</div>
+  </div>
+</div>
+
+
+
+
+
