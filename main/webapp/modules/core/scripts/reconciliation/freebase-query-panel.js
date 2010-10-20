@@ -68,7 +68,7 @@ ReconFreebaseQueryPanel.prototype.start = function() {
         bodyParams = {
             columnName: this._column.name,
             config: JSON.stringify({
-                mode: "strict",
+                mode: "freebase/strict",
                 match: "key",
                 namespace: namespace
             })
@@ -77,7 +77,7 @@ ReconFreebaseQueryPanel.prototype.start = function() {
         bodyParams = {
             columnName: this._column.name,
             config: JSON.stringify({
-                mode: "strict",
+                mode: "freebase/strict",
                 match: "id"
             })
         };
@@ -85,7 +85,7 @@ ReconFreebaseQueryPanel.prototype.start = function() {
         bodyParams = {
             columnName: this._column.name,
             config: JSON.stringify({
-                mode: "strict",
+                mode: "freebase/strict",
                 match: "guid"
             })
         };

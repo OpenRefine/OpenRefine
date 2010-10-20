@@ -45,7 +45,7 @@ abstract public class ReconConfig implements Jsonizable {
             String mode = obj.getString("mode");
             
             // Backward compatibility
-            if ("extend".equals(mode) || "strict".equals("mode")) {
+            if ("extend".equals(mode) || "strict".equals(mode)) {
                 mode = "freebase/" + mode;
             } else if ("heuristic".equals(mode)) {
                 mode = "core/standard-service"; // legacy

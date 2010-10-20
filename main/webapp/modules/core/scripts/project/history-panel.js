@@ -7,7 +7,7 @@ function HistoryPanel(div, tabHeader) {
 HistoryPanel.prototype.resize = function() {
     var body = this._div.find(".history-panel-body");
     var controls = this._div.find(".history-panel-controls");
-    var bodyControls = this._div.find(".history-panel-body-controls");
+    var bodyControls = this._div.find(".history-panel-filter");
     var nowDiv = this._div.find(".history-now");
     
     var bodyPaddings = body.outerHeight(true) - body.height();
