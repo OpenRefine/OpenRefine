@@ -6,6 +6,11 @@ importPackage(com.google.refine.rdf.commands);
  */
 function init() {
 	var RefineServlet = Packages.com.google.refine.RefineServlet;
+	RefineServlet.registerClassMapping(
+	        "com.google.refine.operations.SaveRdfSchemaOperation$RdfSchemaChange",
+	        "com.google.refine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange");
+	
+	RefineServlet.cacheClass(Packages.com.google.refine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange);
 	/*
      * Context Initialization. This is mainly to allow testability. a simple attempt to mimic dependency injection
      */
