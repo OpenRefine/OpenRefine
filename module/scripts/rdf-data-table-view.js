@@ -45,12 +45,12 @@ RdfDataTableView.previewOnVisibleRows = function(isLiteral,column, title, expres
         
         f._elmts = DOM.bind(html);
         
-        $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+        $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         	DialogSystem.dismissUntil(f._level - 1);
             f._onDone(f._previewWidget.getExpression(true));
         }).appendTo(footer);
         
-        $('<button></button>').text("Cancel").click(function() {
+        $('<button></button>').addClass('button').text("Cancel").click(function() {
         	DialogSystem.dismissUntil(f._level - 1);
         }).appendTo(footer);
         

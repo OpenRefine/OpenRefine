@@ -2,7 +2,7 @@ td.highlighted {
   background: #e8e8e8;
 }
 
-span.emphasized{
+.emphasized{
   font-weight:bold;
   font-size: 11pt;
 }
@@ -122,4 +122,18 @@ a#add_prefix_link, a#add_prefix_link:HOVER, a#add_prefix_link:VISITED {
 	font-size:120%;
 	color:#0000FF;
 	
+}
+div.rdf-scheme-dialog-subheader{
+	background: none repeat scroll 0 0 #E0EDFE;
+	padding:0.1em;
+	
+}
+p.base-uri-space{
+	margin: 0.5em 0 4px 0;
+}
+table.rdf-schema-alignment-table-layout >tbody>tr> td.padded{
+	padding:15px 6px;
+}
+table.rdfTypesTable {
+	margin:0.2em 0 0.6em 0;
 }

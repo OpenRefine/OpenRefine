@@ -24,7 +24,7 @@ RdfSchemaAlignmentDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     
-    frame.width("1000px");
+    frame.width("800px");
     
     var header = $('<div></div>').addClass("dialog-header").text("RDF Schema Alignment").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
@@ -41,7 +41,7 @@ RdfSchemaAlignmentDialog.prototype._createDialog = function() {
 RdfSchemaAlignmentDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
-    $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
     	var schema = self.getJSON();
     	Refine.postProcess(
     	        "rdf-exporter-extension",
@@ -58,7 +58,7 @@ RdfSchemaAlignmentDialog.prototype._constructFooter = function(footer) {
             );
     }).appendTo(footer);
     
-    $('<button></button>').text("Cancel").click(function() {
+    $('<button></button>').addClass('button').text("Cancel").click(function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
 };
@@ -71,19 +71,19 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
     '</p>').appendTo(body);
     
     var html = $(
-    	'<p>Base URI: <span bind="baseUriSpan" class="emphasized"></span> <a href="#" bind="editBaseUriLink">edit</a></p>'+
+    	'<p class="base-uri-space"><span class="emphasized">Base URI:</span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>'+
         '<div id="rdf-schema-alignment-tabs" class="refine-tabs">' +
             '<ul>' +
                 '<li><a href="#rdf-schema-alignment-tabs-schema">RDF Skeleton</a></li>' +
                 '<li><a href="#rdf-schema-alignment-tabs-preview">RDF Preview</a></li>' +
             '</ul>' +
             '<div id="rdf-schema-alignment-tabs-schema">' +
-            	'<div><table><tr><td><span style="display:block;width:100px;">Available Prefixes:</span></td><td><div class="rdf-schema-prefixes" bind="rdf_schema_prefixes"></div></td></tr></table></div>' + 
+            	'<div class="rdf-scheme-dialog-subheader"><table><tr><td><span style="display:block;width:150px;">Available Prefixes:</span></td><td><div class="rdf-schema-prefixes" bind="rdf_schema_prefixes"></div></td></tr></table></div>' + 
                 '<div class="schema-alignment-dialog-canvas rdf-schema-alignment-dialog-canvas"></div>' +
                 '<div class="rdf-schema-alignment-body-footer"><a bind="add_another_root_node" href="#">Add another root node</a></div>'  +
             '</div>' +
             '<div id="rdf-schema-alignment-tabs-preview" style="display: none;">' +
-                '<div>This is a sample <code>Turtle</code> representation of (up-to) the <em>first 10</em> rows</div>' + 
+                '<div class="rdf-scheme-dialog-subheader">This is a sample <code>Turtle</code> representation of (up-to) the <em>first 10</em> rows</div>' + 
                 '<div class="schema-alignment-dialog-preview" id="rdf-schema-alignment-dialog-preview"></div>' +
             '</div>' +
         '</div>'
@@ -143,7 +143,7 @@ RdfSchemaAlignmentDialog.prototype._renderBody = function(body) {
     $("#rdf-schema-alignment-tabs-vocabulary-manager").css("display", "");
 
     this._canvas = $(".schema-alignment-dialog-canvas");
-    this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._canvas)[0];
+    this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").addClass("rdf-schema-alignment-table-layout").appendTo(this._canvas)[0];
     
     for (var i = 0; i < this._schema.rootNodes.length; i++) {
         this._nodeUIs.push(new RdfSchemaAlignmentDialog.UINode(
@@ -190,8 +190,8 @@ RdfSchemaAlignmentDialog.prototype._editBaseUri = function(src){
 	var self = this;
 	var menu = MenuSystem.createMenu().width('400px');
 	menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newBaseUri" size="50"><br/>'+
-			'<button bind="applyButton">Apply</button>' + 
-			'<button bind="cancelButton">Cancel</button></div>'
+			'<button class="button" bind="applyButton">Apply</button>' + 
+			'<button class="button" bind="cancelButton">Cancel</button></div>'
 			);
 	MenuSystem.showMenu(menu,function(){});
 	MenuSystem.positionMenuLeftRight(menu, src);

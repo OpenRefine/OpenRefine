@@ -13,7 +13,7 @@ RdfSchemaAlignmentDialog.UINode = function(dialog, node, table, options) {
     
     $(this._tdMain).addClass("schema-alignment-node-main").attr("width", "250").addClass("padded");
     $(this._tdToggle).addClass("schema-alignment-node-toggle").attr("width", "1%").addClass("padded").hide();
-    $(this._tdDetails).addClass("schema-alignment-node-details").attr("width", "90%").hide();
+    $(this._tdDetails).addClass("schema-alignment-node-details").attr("width", "62%").hide();
     
     
     this._renderMain();
@@ -55,7 +55,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._renderMain = function() {
     
     var type_html = !this._isExpandable()? '' : '<tr>' +
     	   '<td>' +
-  	      	'<table bind="rdfTypesTable">' +
+  	      	'<table bind="rdfTypesTable" class="rdfTypesTable">' +
   	      	    '<tr bind="rdfTypesTr"><td bind="rdfTypesTd">&nbsp;</td></tr>' +
   	      		'<tr bind="addRdfTyprTr">' + 
   	      			'<td>' +
@@ -597,7 +597,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
         return node;
     };
     
-    $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
     	var node = getResultJSON();
         if (node !== null) {
         	if(self._node.rdfTypes){
@@ -619,7 +619,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
         }
     }).appendTo(footer);
     
-    $('<button></button>').text("Cancel").click(function() {
+    $('<button></button>').addClass('button').text("Cancel").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
@@ -814,8 +814,8 @@ RdfSchemaAlignmentDialog.NewRdfResourceDialog = function(elmt,defaultVal,onDone)
 	menu.html('<div class="schema-alignment-link-menu-type-search">' + 
 			'<span class="schema-alignment-node-column">URI: <small>(relative URIs will be resolved against base URI)</small></span>' + 
 			'<input type="text" bind="newResourceUri" size="50"><br/>' +
-			'<button bind="applyBtn">Apply</button>' + 
-			'<button bind="cancelBtn">Cancel</button>'
+			'<button class="button" bind="applyBtn">Apply</button>' + 
+			'<button class="button" bind="cancelBtn">Cancel</button>'
 			);
 	MenuSystem.showMenu(menu,function(){});
 	MenuSystem.positionMenuLeftRight(menu, $(elmt));
@@ -870,7 +870,7 @@ RdfSchemaAlignmentDialog.RdfResourceDialog = function(elmt,lookFor,projectId,par
 				MenuSystem.dismissAll();
 				return;
 			}else{
-				parent._prefixesManager._addPrefix(prefix + ' is unknown prefix. Enter the full URL below to add it',prefix);
+				parent._prefixesManager._addPrefix(prefix + ' is unknown prefix. Enter the full URI below to add it',prefix);
 			}
 		}else{
 			new RdfSchemaAlignmentDialog.NewRdfResourceDialog(elmt,val,onDone);	

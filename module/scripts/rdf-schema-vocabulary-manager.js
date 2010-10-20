@@ -144,8 +144,8 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
     var html = $(
     		'<div class="message" bind="message"></div>' + 
     		'<table>' +
-    			'<tr><td>prefix:</td><td> <input type="text" bind="prefix" size="4" /></td></tr>' + 
-    			'<tr><td>URI:</td><td> <input type="text" bind="uri" size="25" /></td></tr>' +
+    			'<tr><td>prefix:</td><td style="padding-bottom:4px"> <input type="text" bind="prefix" size="4" /></td></tr>' + 
+    			'<tr><td>URI:</td><td style="padding-bottom:4px"> <input type="text" bind="uri" size="25" /></td></tr>' +
     		'</table>' 
     ).appendTo(body);
     
@@ -180,11 +180,11 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
     	});
     };
     
-    $('<button></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
     	importVocabulary(onDone);
     }).appendTo(footer);
     
-    $('<button></button>').text("Cancel").click(function() {
+    $('<button></button>').addClass('button').text("Cancel").click(function() {
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
@@ -215,7 +215,7 @@ ManageVocabulariesDialog.showSetAsDefaultInfo = function(){
     		'Existing projects are not affected.</p>'
     ).appendTo(body);
     
-    $('<button></button>').text("Close").click(function() {
+    $('<button></button>').addClass('button').text("Close").click(function() {
     	DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     var level = DialogSystem.showDialog(frame);
@@ -280,7 +280,7 @@ ManageVocabulariesDialog.prototype.show = function(){
     this._vocab_table=elmts.vocabularies_table[0];
     self._loadVocabularies();
     
-    $('<button></button>').text("Done").click(function() {
+    $('<button></button>').addClass('button').text("Done").click(function() {
     	DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
@@ -358,7 +358,7 @@ ManageVocabulariesDialog.prototype._loadVocabularies = function(){
 				    		'</table>' 
 				    ).appendTo(body);
 				    
-				    $('<button></button>').text("Ok").click(function() {
+				    $('<button></button>').addClass('button').text("Ok").click(function() {
 				        DialogSystem.dismissUntil(level - 1);
 				    }).appendTo(footer);
 				    var level = DialogSystem.showDialog(frame);
