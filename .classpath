@@ -51,7 +51,7 @@
 	<classpathentry kind="lib" path="/grefine/tests/server/lib/mockito-all-1.8.4.jar"/>
 	<classpathentry kind="lib" path="test-libs/org.springframework.core-3.0.4.RELEASE.jar"/>
 	<classpathentry kind="lib" path="test-libs/org.springframework.test-3.0.4.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/development/Java/grifine/grefine/extensions/rdf-export-extension/test-libs/jackson-mapper-asl-1.5.6.jar"/>
-	<classpathentry kind="lib" path="C:/development/Java/grifine/grefine/extensions/rdf-export-extension/test-libs/jackson-core-asl-1.5.6.jar"/>
+	<classpathentry kind="lib" path="test-libs/jackson-mapper-asl-1.5.6.jar"/>
+	<classpathentry kind="lib" path="test-libs/jackson-core-asl-1.5.6.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>
