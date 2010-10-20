@@ -173,7 +173,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 		}
 		VocabularyImporter importer = new VocabularyImporter();
 		Vocabulary v = importer.importVocabulary(name, uri);
-//		deleteVocabulary(name, projectId);
+		deleteVocabulary(name, projectId);
 		try{
 			indexVocabulary(v,projectId);
 			indexTerms(v,projectId);
