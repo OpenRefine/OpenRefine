@@ -69,7 +69,7 @@ public class VocabularyImporter {
 
 		try {
 			Any23 runner = new Any23();
-			runner.setHTTPUserAgent("freebase-gridworks-rdf-extension");
+			runner.setHTTPUserAgent("google-refine-rdf-extension");
 			HTTPClient client = runner.getHTTPClient();
 			DocumentSource source = new HTTPDocumentSource(client, url);
 			Repository repository = new SailRepository(
