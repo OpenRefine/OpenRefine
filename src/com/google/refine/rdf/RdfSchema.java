@@ -164,7 +164,7 @@ public class RdfSchema implements OverlayModel {
                 node = new CellResourceNode(columnName, exp,isRowNumberCell);
                 reconstructTypes((CellResourceNode)node,o);
             } else if ("cell-as-literal".equals(nodeType)) {
-                String valueType = o.has("valueType")?Util.getDataType(o.getString("valueType")):null;
+                String valueType = o.has("valueType")?Util.getDataType(s.getBaseUri(),o.getString("valueType")):null;
                 String lang = o.has("lang") ? o.getString("lang"):null;
                 String exp;
                 if (o.has("expression")){
@@ -182,7 +182,7 @@ public class RdfSchema implements OverlayModel {
             node = new ConstantResourceNode(o.getString("value"));
             reconstructTypes((ConstantResourceNode)node,o);
         } else if ("literal".equals(nodeType)) {
-            String valueType = o.has("valueType")?Util.getDataType(o.getString("valueType")):null;
+            String valueType = o.has("valueType")?Util.getDataType(s.getBaseUri(),o.getString("valueType")):null;
             String lang = o.has("lang") ? o.getString("lang"):null;
             node = new ConstantLiteralNode(o.getString("value"), valueType,lang);
         } else if ("blank".equals(nodeType)) {

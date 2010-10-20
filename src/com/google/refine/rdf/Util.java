@@ -63,7 +63,7 @@ public class Util {
 		return base.resolve(rel).toString();
 	}
 	
-	public static String getDataType(String s) {
+	public static String getDataType(URI base,String s) {
 		if (s == null) {
 			return null;
 		}
@@ -76,7 +76,7 @@ public class Util {
 		if (s.equals(XSD_DATE_URI)) {
 			return XSD_DATE_URI;
 		}
-		return null;
+		return resolveUri(base,s);
 	}
 
 	public static RdfSchema getProjectSchema(ApplicationContext ctxt, Project project) throws VocabularyIndexException, IOException {
