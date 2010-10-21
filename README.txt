@@ -5,60 +5,60 @@
                                ---------------------------
 
 
-                                    
-  What is this?
-  -------------
-  
-  Google Refine is a power tool that allows you to load data, understand it,
-  clean it up, reconcile it internally, and augment it with data coming from
-  Freebase or other web sources. All with the comfort and privacy of 
-  your own computer.
 
+What is this?
+-------------
 
-  
-  Where can I get more information on Google Refine?
-  ----------------------------------------------
-  
-  Look at the Google Refine web site
-  
-    http://code.google.com/p/google-refine/
+Google Refine is a power tool that allows you to load data, understand it,
+clean it up, reconcile it internally, and augment it with data coming from
+Freebase or other web sources. All with the comfort and privacy of 
+your own computer.
 
 
 
-  Licensing and legal issues
-  --------------------------
+Where can I get more information on Google Refine?
+----------------------------------------------
 
-  Google Refine is open source software and is licensed under the BSD license
-  located in the LICENSE.txt. See that file also for information on open source
-  libraries that Google Refine depends on.
-  
+Look at the Google Refine web site
+
+  http://code.google.com/p/google-refine/
 
 
-  Credits
-  -------
 
-  This software was created by Metaweb Technologies, Inc. and originally written
-  and conceived by David Huynh <dfhuynh@google.com>. Metaweb Technologies, Inc.
-  was acquired by Google, Inc. in July 2010.
-  
-  This is the full list of contributors (in chronological order):
+Licensing and legal issues
+--------------------------
 
-   - David Huynh <dfhuynh@google.com>
-   - Stefano Mazzocchi <stefanom@google.com>
-   - Vishal Talwar <vtalwar@google.com> 
-   - Jeff Fry <jfry@google.com>
-   - Will Moffat <wdm@google.com>
-   - James Home <jameshome@google.com>
-   - Iain Sproat <iainsproat@gmail.com>
-   - Tom Morris <tfmorris@gmail.com>
-   - Heather Campbell <campbellh@google.com>
-     
+Google Refine is open source software and is licensed under the BSD license
+located in the LICENSE.txt. See that file also for information on open source
+libraries that Google Refine depends on.
 
-                                  - o -
-                                                
-                                                
-   Thank you for your interest.
-   
-   
-                                             The Google Refine Development Team
-                                           http://code.google.com/p/google-refine/
+
+
+Credits
+-------
+
+This software was created by Metaweb Technologies, Inc. and originally written
+and conceived by David Huynh <dfhuynh@google.com>. Metaweb Technologies, Inc.
+was acquired by Google, Inc. in July 2010.
+
+This is the full list of contributors (in chronological order):
+
+ - David Huynh <dfhuynh@google.com>
+ - Stefano Mazzocchi <stefanom@google.com>
+ - Vishal Talwar <vtalwar@google.com> 
+ - Jeff Fry <jfry@google.com>
+ - Will Moffat <wdm@google.com>
+ - James Home <jameshome@google.com>
+ - Iain Sproat <iainsproat@gmail.com>
+ - Tom Morris <tfmorris@gmail.com>
+ - Heather Campbell <campbellh@google.com>
+
+
+                                - o -
+
+
+ Thank you for your interest.
+ 
+ 
+                                           The Google Refine Development Team
+                                         http://code.google.com/p/google-refine/
