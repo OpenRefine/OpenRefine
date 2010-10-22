@@ -288,7 +288,7 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
         elmts.sortAloneContainer.show();
     }
     
-    var validValuesHtml = '<li kind="value">Valid Values</li>';
+    var validValuesHtml = '<li kind="value">Valid values</li>';
     var blankValuesHtml = '<li kind="blank">Blanks</li>';
     var errorValuesHtml = '<li kind="error">Errors</li>';
     var positionsHtml;

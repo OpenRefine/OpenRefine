@@ -70,9 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 #projects-container {
-  border: 1px solid @chrome_primary;
-  border-left: 0;
-  border-right: 0;
+  border-top: 1px solid @chrome_primary;
   background: #fff;
   overflow: auto;
   height: 378px;
@@ -97,6 +95,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background: #f2f2f2;
   padding: @padding_tight;
   font-size: 1.1em;
+  .rounded_corners_bottom(4px);  
   }
 
 #project-links {
@@ -141,6 +140,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: @padding_loose 200px 48px @padding_loose;
   background: @fill_secondary;
   color: @metadata_grey;
+  .rounded_corners_bottom(4px);
   }
   
 #project-create-parsetext {

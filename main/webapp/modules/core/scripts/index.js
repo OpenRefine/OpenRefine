@@ -137,8 +137,8 @@ function renderProjects(data) {
             '<table class="list-table"><tr>' +
                 '<th>Name</th>' +
                 '<th></th>' +
-                '<th align="right">Last&nbsp;Modified</th>' +
                 '<th></th>' +
+                '<th align="right">Last&nbsp;modified</th>' +
             '</tr></table>'
         ).appendTo(container)[0];
 
@@ -183,38 +183,42 @@ function renderProjects(data) {
                     });
                 }).appendTo(tr.insertCell(tr.cells.length));
 
+            var deleteLink = $('<a></a>')
+                .addClass("delete-project")
+                .attr("title","Delete this project")
+                .attr("href","")
+                .css("visibility", "hidden")                
+                .html("<img src='/images/close.png' />")
+                .click(function() {
+                    if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/command/core/delete-project",
+                            data: { "project" : project.id },
+                            dataType: "json",
+                            success: function (data) {
+                                if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                                    fetchProjects();
+                                }
+                            }
+                        });
+                    }
+                    return false;
+                }).appendTo(tr.insertCell(tr.cells.length));
+
+
             $('<div></div>')
                 .html(formatDate(project.date))
                 .addClass("last-modified")
                 .attr("title", project.date.toString())
                 .appendTo(tr.insertCell(tr.cells.length));
 
-            $('<a></a>')
-            .addClass("delete-project")
-            .attr("title","Delete this project")
-            .attr("href","")
-            .html("<img src='/images/close.png' />")
-            .click(function() {
-                if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/command/core/delete-project",
-                        data: { "project" : project.id },
-                        dataType: "json",
-                        success: function (data) {
-                            if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                                fetchProjects();
-                            }
-                        }
-                    });
-                }
-                return false;
-            }).appendTo(tr.insertCell(tr.cells.length));
-
             $(tr).mouseenter(function() {
                 renameLink.css("visibility", "visible");
+                deleteLink.css("visibility", "visible");
             }).mouseleave(function() {
                 renameLink.css("visibility", "hidden");
+                deleteLink.css("visibility", "hidden");
             });
         };
 

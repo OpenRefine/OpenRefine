@@ -172,7 +172,7 @@ RangeFacet.prototype._initializeUI = function() {
         self._remove();
     });
         
-    this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
+    this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#bbccff", "#88aaee" ] });
     this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
     
     this._elmts.sliderWidgetDiv.bind("slide", function(evt, data) {

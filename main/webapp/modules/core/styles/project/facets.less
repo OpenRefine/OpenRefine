@@ -34,111 +34,116 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @import-less url("../theme.less");
 
 ul.facets-container {
-    margin: 0;
-    padding: 0;
-    padding-right: 2px;
-    overflow: auto;
-}
+  margin: 0 5px;
+  overflow: auto;
+  }
 
 li.facet-container {
-    display: block;
-    clear: both;
-    margin: 0;
-    padding: 0;
-    margin-bottom: 6px;
-    background: white;
-    border: 1px solid #bbb;
-    
-    -moz-border-radius: 7px;
-    -webkit-border-radius: 7px;    
-    border-radius: 7px 7px;
-}
+  display: block;
+  clear: both;
+  margin-bottom: 7px;
+  background: @chrome_secondary;  
+  border: 1px solid @chrome_primary;
+  .rounded_corners(7px);
+  }
 
 .facet-title {
-    padding: 3px 5px;
-    font-weight: bold;
-    cursor: move;
-    border-bottom: 1px solid #ccc;
-}
+  padding: 3px 5px;
+  background: @chrome_primary;
+  font-weight: bold;
+  cursor: move;
+  border-bottom: 1px solid @chrome_primary;
+  .rounded_corners_top(6px);
+  
+  }
+
 a.facet-title-remove {
     display: block;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
+    margin: 2px 0 0 0;
     text-decoration: none;
     background-image: url(../../images/close-map.png);
     background-repeat: no-repeat;
     background-position: 0px 0px;
 }
+
 a.facet-title-remove:hover {
-    background-position: -16px 0px;
-}
-
-.facet-expression {
-    padding: 3px 5px;
-    font-family: monospace;
-    font-size: 11px;
-    background: #eee;
-    cursor: text;
-    border-bottom: 1px solid #ccc;
-}
-
-.facet-expression:hover {
-  background: #ffffd6;
-}
-
-.facet-status {
-    font-size: 90%;
-    padding: 2px 5px;
-}
-.facet-controls {
-    font-size: 90%;
-    padding: 4px 5px 4px 5px;
-    background: #F4F7FA;
-    border-bottom: 1px solid #ccc;
-}
-.facet-controls .ui-button-text {
-    padding: 0.1em 0.4em 0.2em;
-}
-
-.facet-controls-sortControls a {
-  margin: 0 2px;
-  padding: 2px 4px 3px 4px;
-}
-.facet-controls-sortControls a.inaction {
-  color: #000;
-  font-weight: bold;
+  background-position: -12px 0px;
   }
 
-.facet-body {
-    padding: 1px;
-}
+.facet-expression {
+  padding: 3px 5px;
+  font-family: monospace;
+  background: #fff;
+  cursor: text;
+  border-bottom: 1px solid @chrome_primary;
+  }
+
+.facet-expression:hover {
+  background: @fill_editable;
+  }
+
+.facet-status {
+  font-size: 0.9em;
+  padding: 2px 5px;
+  }
+
+.facet-controls {
+  position: relative;
+  font-size: 0.9em;
+  padding: 7px 3px;
+  background: @chrome_secondary;
+  border-bottom: 1px solid @chrome_primary;
+  }
+
+.facet-controls-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  }
+  
 .facet-body-message {
-    margin: 1em;
-    color: #666;
-    text-align: center;
-}
-.facet-body.facet-body-scrollable {
-    height: 17em;
-    padding-bottom: 10px;
-    background: url(../../images/facet-resize-handle.png) center bottom no-repeat;
-}
+  margin: 1em;
+  color: @metadata_grey;
+  text-align: center;
+  }
+
+.facet-body-scrollable {
+  height: 17em;
+  padding-bottom: 8px;
+  background: url(../../images/facet-resize-handle.png) center bottom no-repeat;
+  }
+
+.facet-body-inner {
+  background: #fff;
+  border-bottom: 1px solid @chrome_primary;
+  }
+
 .facet-body.facet-body-scrollable .ui-resizable-s {
-    bottom: -5px;
-    height: 15px;
-}
+  bottom: -5px;
+  height: 15px;
+  }
+  
 .facet-body-scrollable .facet-body-inner {
-    height: 100%;
-    overflow: auto;
-}
+  height: 100%;
+  overflow: auto;
+  }
+
 .facet-body-controls {
-    margin: 0.5em 0;
-    text-align: center;
-}
+  font-size: 0.85em;
+  margin: 5px 0;
+  }
 
 .facet-choice {
     padding: 2px 5px;
     clear: both;
 }
+
+.facet-choice:hover {
+  background: @fill_secondary;
+}
+
 .facet-choice-selected .facet-choice-label {
     font-weight: bold;
     color: #ff6a00;
@@ -152,32 +157,19 @@ a.facet-title-remove:hover {
     color: black;
 }
 
-a.facet-choice-label {
-    margin-right: 0.25em;
-    text-decoration: none;
-    color: #004;
-}
-a.facet-choice-label:hover {
-    text-decoration: underline;
-    color: #66f;
-}
-
 .facet-choice-count {
-    color: #aaa;
-    font-size: 80%;
-}
+  padding-left: 5px;
+  font-size: 0.85em;
+  color: @light_grey;
+  }
 
 a.facet-choice-link {
-    margin-left: 0.5em;
-    font-size: 80%;
-    float: right;
-    text-decoration: none;
-    color: #aac;
-}
-a.facet-choice-link:hover {
-    text-decoration: underline;
-    color: #88a;
-}
+  float: right;
+  padding-left: 5px;
+  font-size: 0.85em;
+  color: @link_secondary;
+  font-weight: normal;
+  }
 
 img.facet-choice-link {
     text-align: baseline;
@@ -187,23 +179,22 @@ img.facet-choice-link {
 }
 
 .facet-range-body {
-    padding: 10px 5px 0px 5px;
-}
-.facet-range-message {
-    margin: 1em;
-    color: #f88;
-}
-.facet-range-histogram {
-    overflow: hidden;
-}
-.facet-range-slider {
-    margin: 0px;
+    padding: 5px;
 }
 
+.facet-range-message {
+  color: @metadata_grey;
+  }
+
+.facet-range-histogram {
+  overflow: hidden;
+  }
+
 .facet-range-status {
-    margin: 5px 0;
-    text-align: center;
-}
+  margin: 0 0 3px 0;
+  color: #000;
+  text-align: center;
+  }
 
 .facet-range-choices {
     margin-bottom: 0.8em;

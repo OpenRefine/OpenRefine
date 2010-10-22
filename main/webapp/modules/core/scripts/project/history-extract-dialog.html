@@ -1,21 +1,31 @@
 <div class="dialog-frame" style="width: 800px;">
-  <div class="dialog-header" bind="dialogHeader">Extract Operations</div>
-  <div class="dialog-body" bind="dialogBody"><div class="grid-layout layout-normal layout-full"><table>
-        <tr><td colspan="2">
-            The following JSON code encodes the operations you have done that can be abstracted.
-            You can copy and save it in order to apply the same operations in the future.
-        </td></tr>
-        <tr>
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader">Extract Operation History</div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-normal layout-full">
+        <table>
+          <tr>
+            <td colspan="2">
+              Extract and save parts of your operation history as JSON that you can apply to this or other projects in the future.
+            </td>
+          </tr>
+          <tr>
             <td width="50%" style="vertical-align: top">
-                <div class="extract-operation-dialog-entries"><table cellspacing="5" bind="entryTable"></table></div>
+              <div class="extract-operation-dialog-entries">
+                <table cellspacing="5" bind="entryTable"></table>
+              </div>
+                <button class="button" bind="selectAllButton">Select All</button>
+                <button class="button" bind="unselectAllButton">Unselect All</button>
             </td>
             <td width="50%" style="vertical-align: top">
                 <div class="input-container"><textarea wrap="off" class="history-operation-json" bind="textarea" /></div>
             </td>
-        </tr>
-  </table></div></div>
-  <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-normal layout-full"><table><tr>
-    <td align="left"><button class="button" bind="selectAllButton">Select All</button> <button class="button" bind="unselectAllButton">Unselect All</button></td>
-    <td align="left"><button class="button" bind="closeButton">Close</button></td>
-  </tr></table></div></div>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="closeButton">Close</button>
+    </div>
+  </div>
 </div>

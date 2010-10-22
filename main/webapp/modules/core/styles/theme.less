@@ -37,6 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @chrome_secondary: #e3e9ff;
 @fill_primary: #ebeef8;
 @fill_secondary: #f2f2f2;
+@fill_editable: #ffffd6;
 @selected_primary: #68e;
 @green_primary: #282;
 @green_secondary: #3d3;
@@ -60,6 +61,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -moz-border-radius: @radius;
   -webkit-border-radius: @radius;
   border-radius: @radius;
+  }
+
+.rounded_corners_top (@radius: 5px) { 
+  -webkit-border-top-left-radius: @radius;
+  -webkit-border-top-right-radius: @radius;
+  -moz-border-radius-topleft: @radius;
+  -moz-border-radius-topright: @radius;
+  border-top-right-radius: @radius;
+  border-top-left-radius: @radius;
+  }
+
+.rounded_corners_bottom (@radius: 5px) { 
+  -webkit-border-bottom-left-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -moz-border-radius-bottomleft: @radius;
+  -moz-border-radius-bottomright: @radius;
+  border-bottom-right-radius: @radius;
+  border-bottom-left-radius: @radius;
   }
 
 .sharp_corners_left () {

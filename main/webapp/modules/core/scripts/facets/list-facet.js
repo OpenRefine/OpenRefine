@@ -158,14 +158,12 @@ ListFacet.prototype._initializeUI = function() {
             '</tr></table></div>' +
         '</div>' +
         '<div class="facet-expression" bind="expressionDiv" title="Click to edit expression"></div>' +
-        '<div class="facet-controls" bind="controlsDiv" style="display:none;"><div class="grid-layout layout-tightest layout-full">' +
-            '<table><tr>' +
-                '<td><a bind="choiceCountContainer" class="action" href="javascript:{}"></a> <span class="facet-controls-sortControls" bind="sortGroup">sorted by ' +
-                    '<a href="javascript:{}" bind="sortByNameLink">name</a>' +
-                    '<a href="javascript:{}" bind="sortByCountLink">count</a>' +
-                '</span></td>' +
-                '<td width="1%" nowrap=""><button bind="clusterLink">cluster</button></td>' +
-            '</tr></table>' +
+        '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
+          '<a bind="choiceCountContainer" class="action" href="javascript:{}"></a> <span class="facet-controls-sortControls" bind="sortGroup">Sort by: ' +
+            '<a href="javascript:{}" bind="sortByNameLink">name</a>' +
+            '<a href="javascript:{}" bind="sortByCountLink">count</a>' +
+          '</span>' +
+          '<button bind="clusterLink" class="facet-controls-button button">Cluster</button>' +
         '</div></div>' +
         '<div class="facet-body" bind="bodyDiv">' +
             '<div class="facet-body-inner" bind="bodyInnerDiv"></div>' +
@@ -202,7 +200,7 @@ ListFacet.prototype._initializeUI = function() {
         }
     });
         
-    this._elmts.clusterLink.click(function() { self._doEdit(); }).button();
+    this._elmts.clusterLink.click(function() { self._doEdit(); });
     if (this._config.expression != "value" && this._config.expression != "grel:value") {
         this._elmts.clusterLink.hide();
     }
@@ -224,7 +222,7 @@ ListFacet.prototype._copyChoices = function() {
     var frame = DialogSystem.createDialog();
     frame.width("600px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Facet Choices exported as TSV").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Facet Choices as Tab Separated Values").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -313,11 +311,11 @@ ListFacet.prototype._update = function(resetScroll) {
     }
     
     if (this._options.sort == "name") {
-        this._elmts.sortByNameLink.removeClass("action").addClass("inaction");
-        this._elmts.sortByCountLink.removeClass("inaction").addClass("action");
+        this._elmts.sortByNameLink.removeClass("action").addClass("selected");
+        this._elmts.sortByCountLink.removeClass("selected").addClass("action");
     } else {
-        this._elmts.sortByNameLink.removeClass("inaction").addClass("action");
-        this._elmts.sortByCountLink.removeClass("action").addClass("inaction");
+        this._elmts.sortByNameLink.removeClass("selected").addClass("action");
+        this._elmts.sortByCountLink.removeClass("action").addClass("selected");
     }
     
     var html = [];
@@ -444,9 +442,10 @@ ListFacet.prototype._renderBodyControls = function() {
         .appendTo(this._elmts.bodyInnerDiv);
         
     $('<a>')
-        .text("facet by choice counts")
+        .text("Facet by choice counts")
         .attr("href", "javascript:{}")
         .addClass("action")
+        .addClass("secondary")
         .appendTo(bodyControls)
         .click(function() {
             ui.browsingEngine.addFacet(
@@ -482,25 +481,17 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
     
     var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
     menu.html(
-        '<table class="data-table-cell-editor-layout">' +
-            '<tr>' +
-                '<td colspan="3">' +
-                    '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
-                '</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td width="1%" align="center">' +
-                    '<button class="button" bind="okButton">Apply</button><br/>' +
-                    '<span class="data-table-cell-editor-key">Enter</span>' +
-                '</td>' +
-                '<td width="1%" align="center">' +
-                    '<button class="button" bind="cancelButton">Cancel</button><br/>' +
-                    '<span class="data-table-cell-editor-key">Esc</span>' +
-                '</td>' +
-                '<td>' +
-                '</td>' +
-            '</tr>' +
-        '</table>'
+              '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
+              '<div id="data-table-cell-editor-actions">' +
+                '<div class="data-table-cell-editor-action">' +
+                  '<button class="button" bind="okButton">Apply</button>' +
+                  '<div class="data-table-cell-editor-key">Enter</div>' +
+                '</div>' +
+                '<div class="data-table-cell-editor-action">' +
+                  '<button class="button" bind="cancelButton">Cancel</button>' +
+                    '<div class="data-table-cell-editor-key">Esc</div>' +
+                '</div>' +
+              '</div>'
     );
     var elmts = DOM.bind(menu);
     

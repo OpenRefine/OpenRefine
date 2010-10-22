@@ -87,7 +87,7 @@ DataTableView.prototype.render = function() {
     
     var html = $(
         '<div class="viewpanel-header">' +
-            '<div class="viewpanel-rowrecord" bind="rowRecordControls">Show as ' +
+            '<div class="viewpanel-rowrecord" bind="rowRecordControls">Show as: ' +
                 '<span bind="modeSelectors"></span>' + 
             '</div>' +
             '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
@@ -172,7 +172,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
         lastPage.addClass("inaction");
     }
     
-    $('<span>Show </span>').appendTo(pageSizeControls);
+    $('<span>Show: </span>').appendTo(pageSizeControls);
     var sizes = [ 5, 10, 25, 50 ];
     var renderPageSize = function(index) {
         var pageSize = sizes[index];
