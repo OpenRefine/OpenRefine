@@ -14,6 +14,11 @@ Features:
   - Transpose Cells in Rows into Columns (Issue 82)
   - Move Column to Beginning, Move Column to End, Move Column Left, Move Column Right, Reorder Columns
   - Add Column by Fetching URLs
+  - Recon commands:
+    - Clear recon data for all matching rows
+    - Clear recon data for one cell
+    - Clear recon data for similar cells
+    - Copy recon judgments across columns
 - GEL:
   - JSON support
   - New functions: smartSplit, escape, parseJson, hasField, uniques
