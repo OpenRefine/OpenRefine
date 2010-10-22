@@ -132,7 +132,6 @@ public class Transposer {
     ) {
         List<TransposedNode> tnodes = new LinkedList<TransposedNode>();
         
-        TransposedNode parentNode = context.parent == null ? null : context.parent.transposedNode;
         Link link = context.parent == null ? null : context.link;
         
         if (node instanceof CellNode) {
@@ -144,6 +143,7 @@ public class Transposer {
                     
                     Cell cell = row.getCell(cellIndex);
                     if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                        System.err.println("row " + rowIndex + " non-blank column " + columnName);
                         if (node2 instanceof CellTopicNode &&
                             (cell.recon == null || cell.recon.judgment == Judgment.None)) {
                                 return;
@@ -154,40 +154,93 @@ public class Transposer {
                             return;
                         }
                         
-                        tnodes.add(nodeFactory.transposeCellNode(
-                            parentNode,
-                            link,
-                            node2, 
-                            rowIndex,
-                            cellIndex,
-                            cell
-                        ));
+                        if (context.parent == null) {
+                            tnodes.add(nodeFactory.transposeCellNode(
+                                null,
+                                link,
+                                node2, 
+                                rowIndex,
+                                cellIndex,
+                                cell
+                            ));
+                        } else {
+                            for (TransposedNode parentNode : context.parent.transposedNodes) {
+                                tnodes.add(nodeFactory.transposeCellNode(
+                                    parentNode,
+                                    link,
+                                    node2, 
+                                    rowIndex,
+                                    cellIndex,
+                                    cell
+                                ));
+                            }
+                        }
+                    } else {
+                        System.err.println("row " + rowIndex + " blank column " + columnName);
                     }
                 }
             }
         } else {
             if (node instanceof AnonymousNode) {
-                tnodes.add(nodeFactory.transposeAnonymousNode(
-                    parentNode,
-                    link,
-                    (AnonymousNode) node,
-                    rowIndex
-                ));
+                if (context.parent == null) {
+                    tnodes.add(nodeFactory.transposeAnonymousNode(
+                        null,
+                        link,
+                        (AnonymousNode) node,
+                        rowIndex
+                    ));
+                } else {
+                    for (TransposedNode parentNode : context.parent.transposedNodes) {
+                        tnodes.add(nodeFactory.transposeAnonymousNode(
+                            parentNode,
+                            link,
+                            (AnonymousNode) node,
+                            rowIndex
+                        ));
+                    }
+                }
             } else if (node instanceof FreebaseTopicNode) {
-                tnodes.add(nodeFactory.transposeTopicNode(
-                    parentNode,
-                    link,
-                    (FreebaseTopicNode) node,
-                    rowIndex
-                ));
+                if (context.parent == null) {
+                    tnodes.add(nodeFactory.transposeTopicNode(
+                        null,
+                        link,
+                        (FreebaseTopicNode) node,
+                        rowIndex
+                    ));
+                } else {
+                    for (TransposedNode parentNode : context.parent.transposedNodes) {
+                        tnodes.add(nodeFactory.transposeTopicNode(
+                            parentNode,
+                            link,
+                            (FreebaseTopicNode) node,
+                            rowIndex
+                        ));
+                    }
+                }
             } else if (node instanceof ValueNode) {
-                tnodes.add(nodeFactory.transposeValueNode(
-                    parentNode,
-                    link,
-                    (ValueNode) node,
-                    rowIndex
-                ));
+                if (context.parent == null) {
+                    tnodes.add(nodeFactory.transposeValueNode(
+                        null,
+                        link,
+                        (ValueNode) node,
+                        rowIndex
+                    ));
+                } else {
+                    for (TransposedNode parentNode : context.parent.transposedNodes) {
+                        tnodes.add(nodeFactory.transposeValueNode(
+                            parentNode,
+                            link,
+                            (ValueNode) node,
+                            rowIndex
+                        ));
+                    }
+                }
             }
+        }
+        
+        if (tnodes.size() > 0) {
+            context.transposedNodes.clear();
+            context.transposedNodes.addAll(tnodes);
         }
         
         if (node instanceof NodeWithLinks) {
@@ -197,32 +250,28 @@ public class Transposer {
             for (int i = 0; i < linkCount; i++) {
                 Link link2 = node2.getLink(i);
                 if (link2.condition == null || link2.condition.test(project, rowIndex, row)) {
-                    for (TransposedNode tnode : tnodes) {
-                        context.transposedNode = tnode;
-                        context.nullifySubContextNodes();
-
-                        descend(
-                            project, 
-                            protograph, 
-                            nodeFactory,
-                            rowIndex,
-                            row, 
-                            link2.getTarget(), 
-                            context.subContexts.get(i)
-                        );
-                    }
+                    System.err.println("  row " + rowIndex + " descend " + link2.property.id);
+                    descend(
+                        project, 
+                        protograph, 
+                        nodeFactory,
+                        rowIndex,
+                        row, 
+                        link2.getTarget(), 
+                        context.subContexts.get(i)
+                    );
                 }
             }
         }
     }
     
     static class Context {
-        TransposedNode    transposedNode;
-        List<Context>     subContexts;
-        Context           parent;
-        Link              link;
-        int               count;
-        int               limit;
+        List<TransposedNode>    transposedNodes = new LinkedList<TransposedNode>();
+        List<Context>           subContexts;
+        Context                 parent;
+        Link                    link;
+        int                     count;
+        int                     limit;
         
         Context(Node node, Context parent, Link link, int limit) {
             this.parent = parent;
@@ -246,7 +295,7 @@ public class Transposer {
         public void nullifySubContextNodes() {
             if (subContexts != null) {
                 for (Context context : subContexts) {
-                    context.transposedNode = null;
+                    context.transposedNodes.clear();
                     context.nullifySubContextNodes();
                 }
             }
