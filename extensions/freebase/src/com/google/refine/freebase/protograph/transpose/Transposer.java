@@ -143,7 +143,6 @@ public class Transposer {
                     
                     Cell cell = row.getCell(cellIndex);
                     if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                        System.err.println("row " + rowIndex + " non-blank column " + columnName);
                         if (node2 instanceof CellTopicNode &&
                             (cell.recon == null || cell.recon.judgment == Judgment.None)) {
                                 return;
@@ -175,8 +174,6 @@ public class Transposer {
                                 ));
                             }
                         }
-                    } else {
-                        System.err.println("row " + rowIndex + " blank column " + columnName);
                     }
                 }
             }
@@ -250,7 +247,6 @@ public class Transposer {
             for (int i = 0; i < linkCount; i++) {
                 Link link2 = node2.getLink(i);
                 if (link2.condition == null || link2.condition.test(project, rowIndex, row)) {
-                    System.err.println("  row " + rowIndex + " descend " + link2.property.id);
                     descend(
                         project, 
                         protograph, 
