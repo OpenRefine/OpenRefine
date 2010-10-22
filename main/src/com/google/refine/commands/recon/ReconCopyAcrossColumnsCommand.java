@@ -40,16 +40,19 @@ import org.json.JSONObject;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.operations.recon.ReconDiscardJudgmentsOperation;
+import com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation;
 
-public class ReconDiscardJudgmentsCommand extends EngineDependentCommand {
+public class ReconCopyAcrossColumnsCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, JSONObject engineConfig) throws Exception {
         
-        String columnName = request.getParameter("columnName");
-        boolean clearData = Boolean.parseBoolean(request.getParameter("clearData"));
+        String fromColumnName = request.getParameter("fromColumnName");
+        String[] toColumnNames = request.getParameterValues("toColumnName[]");
+        String[] judgments = request.getParameterValues("judgment[]");
+        boolean applyToJudgedCells = Boolean.parseBoolean(request.getParameter("applyToJudgedCells"));
         
-        return new ReconDiscardJudgmentsOperation(engineConfig, columnName, clearData);
+        return new ReconCopyAcrossColumnsOperation(
+            engineConfig, fromColumnName, toColumnNames, judgments, applyToJudgedCells);
     }
 }

@@ -208,17 +208,27 @@ DataTableCellUI.prototype._render = function() {
                 } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
                     addSuggest = true;
                 }
-                    
+                
+                var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContent);
                 if (addSuggest) {
                     $('<a href="javascript:{}"></a>')
-                        .addClass("data-table-recon-search")
                         .click(function(evt) {
                             self._searchForMatch(suggestOptions);
                             return false;
                         })
                         .text("Search for match")
-                        .appendTo($('<div>').appendTo(divContent));
+                        .appendTo(extraChoices);
+                    
+                    $('<span>').html(" &bull; ").appendTo(extraChoices);
                 }
+                
+                $('<a href="javascript:{}"></a>')
+                    .click(function(evt) {
+                        self._doClearOneCell();
+                        return false;
+                    })
+                    .text("Clear")
+                    .appendTo(extraChoices);
             }
         }
     }
@@ -234,8 +244,32 @@ DataTableCellUI.prototype._doMatchNewTopicToOneCell = function() {
     this._doJudgment("new");
 };
 
+DataTableCellUI.prototype._doClearOneCell = function() {
+    this._postProcessOneCell(
+        "recon-clear-one-cell",
+        {},
+        {
+            row: this._rowIndex,
+            cell: this._cellIndex
+        },
+        true
+    );
+};
+
 DataTableCellUI.prototype._doMatchNewTopicToSimilarCells = function() {
     this._doJudgmentForSimilarCells("new", {}, { shareNewTopics: true }, true);
+};
+
+DataTableCellUI.prototype._doClearSimilarCells = function() {
+    this._postProcessSeveralCells(
+        "recon-clear-similar-cells",
+        {},
+        {
+            columnName: Refine.cellIndexToColumn(this._cellIndex).name,
+            similarValue: this._cell.v
+        },
+        true
+    );
 };
 
 DataTableCellUI.prototype._doMatchTopicToOneCell = function(candidate) {
@@ -333,9 +367,18 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
         }
         dismiss();
     };
+    var commitClear = function() {
+        if (elmts.radioSimilar[0].checked) {
+            self._doClearSimilarCells();
+        } else {
+            self._doClearOneCell();
+        }
+        dismiss();
+    };
     
     elmts.okButton.click(commit);
     elmts.newButton.click(commitNew);
+    elmts.clearButton.click(commitClear);
     elmts.cancelButton.click(dismiss);
     
     var suggestOptions2 = $.extend({ align: "left" }, suggestOptions || { all_types: true });

@@ -102,6 +102,10 @@ function registerCommands() {
     RS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.refine.commands.recon.ReconMatchSpecificTopicCommand());
     RS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.refine.commands.recon.ReconJudgeOneCellCommand());
     RS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.refine.commands.recon.ReconJudgeSimilarCellsCommand());
+    RS.registerCommand(module, "recon-clear-one-cell", new Packages.com.google.refine.commands.recon.ReconClearOneCellCommand());
+    RS.registerCommand(module, "recon-clear-similar-cells", new Packages.com.google.refine.commands.recon.ReconClearSimilarCellsCommand());
+    RS.registerCommand(module, "recon-copy-across-columns", new Packages.com.google.refine.commands.recon.ReconCopyAcrossColumnsCommand());
+    
     RS.registerCommand(module, "guess-types-of-column", new Packages.com.google.refine.commands.recon.GuessTypesOfColumnCommand());
 
     RS.registerCommand(module, "annotate-one-row", new Packages.com.google.refine.commands.row.AnnotateOneRowCommand());
@@ -152,6 +156,8 @@ function registerOperations() {
     OR.registerOperation(module, "recon-discard-judgments", Packages.com.google.refine.operations.recon.ReconDiscardJudgmentsOperation);
     OR.registerOperation(module, "recon-match-specific-topic-to-cells", Packages.com.google.refine.operations.recon.ReconMatchSpecificTopicOperation);
     OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
+    OR.registerOperation(module, "recon-clear-similar-cells", Packages.com.google.refine.operations.recon.ReconClearSimilarCellsOperation);
+    OR.registerOperation(module, "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
 }
 
 /*

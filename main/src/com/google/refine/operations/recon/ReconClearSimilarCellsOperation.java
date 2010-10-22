@@ -33,9 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -48,29 +46,31 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
-import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OperationRegistry;
 
-public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOperation {
-    final protected boolean _clearData;
-    
+public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOperation {
+    final protected String _similarValue;
+
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        return new ReconDiscardJudgmentsOperation(
-            engineConfig, 
+        return new ReconClearSimilarCellsOperation(
+            engineConfig,
             obj.getString("columnName"),
-            obj.has("clearData") && obj.getBoolean("clearData")
+            obj.getString("similarValue")
         );
     }
     
-    public ReconDiscardJudgmentsOperation(JSONObject engineConfig, String columnName, boolean clearData) {
+    public ReconClearSimilarCellsOperation(
+        JSONObject engineConfig, 
+        String     columnName, 
+        String     similarValue
+    ) {
         super(engineConfig, columnName, false);
-        _clearData = clearData;
+        this._similarValue = similarValue;
     }
 
     public void write(JSONWriter writer, Properties options)
@@ -81,79 +81,54 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("engineConfig"); writer.value(getEngineConfig());
         writer.key("columnName"); writer.value(_columnName);
-        writer.key("clearData"); writer.value(_clearData);
+        writer.key("similarValue"); writer.value(_similarValue);
+        
         writer.endObject();
     }
-
+    
     protected String getBriefDescription(Project project) {
-        return _clearData ?
-            "Discard recon judgments and clear recon data for cells in column " + _columnName :
-            "Discard recon judgments for cells in column " + _columnName;
+        return "Clear recon data for cells containing \"" +
+            _similarValue + "\" in column " + _columnName;
     }
 
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return (_clearData ?
-            "Discard recon judgments and clear recon data" :
-            "Discard recon judgments") +
-            " for " + cellChanges.size() + " cells in column " + column.getName();
+        return "Clear recon data for " + cellChanges.size() + " cells containing \"" +
+            _similarValue + "\" in column " + _columnName;
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
+    protected RowVisitor createRowVisitor(final Project project, final List<CellChange> cellChanges, final long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
+        final int cellIndex = column != null ? column.getCellIndex() : -1;
         
         return new RowVisitor() {
-            int cellIndex;
-            List<CellChange> cellChanges;
-            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
-            long historyEntryID;
-            
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
-                this.cellIndex = cellIndex;
-                this.cellChanges = cellChanges;
-                this.historyEntryID = historyEntryID;
-                return this;
-            }
-            
             @Override
             public void start(Project project) {
-            	// nothing to do
+                // nothing to do
             }
             
             @Override
             public void end(Project project) {
-            	// nothing to do
+                // nothing to do
             }
             
             public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(cellIndex);
+                Cell cell = cellIndex < 0 ? null : row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {
-                    Recon newRecon = null;
-                    if (!_clearData) {
-                        if (dupReconMap.containsKey(cell.recon.id)) {
-                            newRecon = dupReconMap.get(cell.recon.id);
-                            newRecon.judgmentBatchSize++;
-                        } else {
-                            newRecon = cell.recon.dup(historyEntryID);
-                            newRecon.match = null;
-                            newRecon.matchRank = -1;
-                            newRecon.judgment = Judgment.None;
-                            newRecon.judgmentAction = "mass";
-                            newRecon.judgmentBatchSize = 1;
+                    String value = cell.value instanceof String ? 
+                            ((String) cell.value) : cell.value.toString();
                             
-                            dupReconMap.put(cell.recon.id, newRecon);
-                        }
+                    if (_similarValue.equals(value)) {
+                        Cell newCell = new Cell(cell.value, null);
+                        
+                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
+                        cellChanges.add(cellChange);
                     }
-                    
-                    Cell newCell = new Cell(cell.value, newRecon);
-                    
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                    cellChanges.add(cellChange);
                 }
                 return false;
             }
-        }.init(column.getCellIndex(), cellChanges, historyEntryID);
+        };
     }
     
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {

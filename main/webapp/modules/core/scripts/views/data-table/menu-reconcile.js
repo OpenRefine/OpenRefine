@@ -39,11 +39,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var doReconDiscardJudgments = function() {
         Refine.postCoreProcess(
             "recon-discard-judgments",
-            { columnName: column.name },
+            { columnName: column.name, clearData: false },
             null,
             { cellsChanged: true, columnStatsChanged: true }
         );
     };
+    
+    var doClearReconData = function() {
+        Refine.postCoreProcess(
+            "recon-discard-judgments",
+            { columnName: column.name, clearData: true },
+            null,
+            { cellsChanged: true, columnStatsChanged: true }
+        );
+    }
 
     var doReconMatchBestCandidates = function() {
         Refine.postCoreProcess(
@@ -113,6 +122,59 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
         var level = DialogSystem.showDialog(frame);
         input.focus().data("suggest").textchange();
+    };
+    
+    var doCopyAcrossColumns = function() {
+        var frame = $(DOM.loadHTML("core", "scripts/views/data-table/copy-recon-across-columns-dialog.html"));
+        var elmts = DOM.bind(frame);
+        elmts.dialogHeader.text("Copy recon judgments from column " + column.name);
+
+        var columns = theProject.columnModel.columns;
+        for (var i = 0; i < columns.length; i++) {
+            var column2 = columns[i];
+            if (column !== column2) {
+                $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.toColumnSelect);
+            }
+        }
+        
+        var level = DialogSystem.showDialog(frame);
+        var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+        
+        elmts.cancelButton.click(dismiss);
+        elmts.okButton.click(function() {
+            var config = {
+                fromColumnName: column.name,
+                toColumnName: [],
+                judgment: [],
+                applyToJudgedCells: elmts.applyToJudgedCellsCheckbox[0].checked
+            };
+            
+            if (elmts.newCheckbox[0].checked) {
+                config.judgment.push("new");
+            }
+            if (elmts.matchCheckbox[0].checked) {
+                config.judgment.push("matched");
+            }
+            elmts.toColumnSelect.find("option").each(function() {
+                if (this.selected) {
+                    config.toColumnName.push(this.value);
+                }
+            });
+            
+            if (config.toColumnName.length == 0) {
+                alert("Please select some other column to copy to.");
+            } else if (config.judgment.length == 0) {
+                alert("Please select at least one kind of judgment to copy.");
+            } else {
+                Refine.postCoreProcess(
+                    "recon-copy-across-columns", 
+                    null,
+                    config,
+                    { rowsChanged: true }
+                );
+                dismiss();
+            }
+        });
     };
     
     MenuSystem.appendTo(menu, [ "core/reconcile" ], [
@@ -339,8 +401,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     label: "Discard Reconciliation Judgments",
                     tooltip: "Discard reconciliaton judgments in this column for all current filtered rows",
                     click: doReconDiscardJudgments
+                },
+                {
+                    id: "core/clear-recon-data",
+                    label: "Clear Recon Data",
+                    tooltip: "Clear recon data in this column for all current filtered rows",
+                    click: doClearReconData
                 }
             ]
+        },
+        {},
+        {
+            id: "core/copy-across-columns",
+            label: "Copy Recon Data ...",
+            tooltip: "Copy this column's recon data to other columns",
+            click: doCopyAcrossColumns
         }
     ]);
 });
