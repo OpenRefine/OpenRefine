@@ -202,65 +202,65 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
 
     // ----------------- time -----------------
     
-    var timeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-time").appendTo(choices).change(function() {
+    var timeDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
+    var timeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-time").appendTo(timeDiv).change(function() {
         self._selectTime = !self._selectTime;
         self._updateRest();
     });
     if (this._selectTime) timeCheck.attr("checked","checked");
     
-    var timeLabel = $('<label>').attr("for", facet_id + "-time").appendTo(choices);    
-    $('<span>').text("Time ").addClass("facet-choice-label").appendTo(timeLabel);
-    $('<br>').appendTo(timeLabel);
-    $('<span>').text(this._timeCount).addClass("facet-choice-count").appendTo(timeLabel);
+    var timeLabel = $('<label>').attr("for", facet_id + "-time").appendTo(timeDiv);    
+    $('<span>').text("Time ").addClass("facet-range-choice-label").appendTo(timeLabel);
+    $('<div>').text(this._timeCount).addClass("facet-range-choice-count").appendTo(timeLabel);
 
     // ----------------- non-Time -----------------
     
-    var nonTimeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-time").appendTo(choices).change(function() {
+    var nonTimeDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
+    var nonTimeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-time").appendTo(nonTimeDiv).change(function() {
         self._selectNonTime = !self._selectNonTime;
         self._updateRest();
     });
     if (this._selectNonTime) nonTimeCheck.attr("checked","checked");
     
-    var nonTimeLabel = $('<label>').attr("for", facet_id + "-non-time").appendTo(choices);    
-    $('<span>').text("Non-Time ").addClass("facet-choice-label").appendTo(nonTimeLabel);
-    $('<br>').appendTo(nonTimeLabel);
-    $('<span>').text(this._nonTimeCount).addClass("facet-choice-count").appendTo(nonTimeLabel);
+    var nonTimeLabel = $('<label>').attr("for", facet_id + "-non-time").appendTo(nonTimeDiv);    
+    $('<span>').text("Non-Time ").addClass("facet-range-choice-label").appendTo(nonTimeLabel);
+    $('<div>').text(this._nonTimeCount).addClass("facet-range-choice-count").appendTo(nonTimeLabel);
 
     if (this._baseNonTimeCount === 0) nonTimeCheck.removeAttr("checked");
     
     // ----------------- blank -----------------
     
-    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(choices).change(function() {
+    var blankDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
+    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).change(function() {
         self._selectBlank = !self._selectBlank;
         self._updateRest();
     });
     if (this._selectBlank) blankCheck.attr("checked","checked");
 
-    var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(choices);    
-    $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(blankLabel);
-    $('<br>').appendTo(blankLabel);
-    $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(blankLabel);
+    var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(blankDiv);    
+    $('<span>').text("Blank ").addClass("facet-range-choice-label").appendTo(blankLabel);
+    $('<div>').text(this._blankCount).addClass("facet-range-choice-count").appendTo(blankLabel);
 
     if (this._baseBlankCount === 0) blankCheck.removeAttr("checked");
     
     // ----------------- error -----------------
 
-    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(choices).change(function() {
+    var errorDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
+    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).change(function() {
         self._selectError = !self._selectError;
         self._updateRest();
     });
     if (this._selectError) errorCheck.attr("checked","checked");
 
-    var errorLabel = $('<label>').attr("for", facet_id + "-error").appendTo(choices);    
-    $('<span>').text("Error ").addClass("facet-choice-label").appendTo(errorLabel);
-    $('<br>').appendTo(errorLabel);
-    $('<span>').text(this._errorCount).addClass("facet-choice-count").appendTo(errorLabel);
+    var errorLabel = $('<label>').attr("for", facet_id + "-error").appendTo(errorDiv);    
+    $('<span>').text("Error ").addClass("facet-range-choice-label").appendTo(errorLabel);
+    $('<div>').text(this._errorCount).addClass("facet-range-choice-count").appendTo(errorLabel);
 
     if (this._baseErrorCount === 0) errorCheck.removeAttr("checked");
 
     // --------------------------
     
-    choices.buttonset().appendTo(container);
+    choices.appendTo(container);
 };
 
 TimeRangeFacet.prototype.steps = [ 

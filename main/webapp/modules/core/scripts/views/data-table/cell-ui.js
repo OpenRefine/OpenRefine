@@ -219,17 +219,7 @@ DataTableCellUI.prototype._render = function() {
                         })
                         .text("Search for match")
                         .appendTo(extraChoices);
-                    
-                    $('<span>').html(" &bull; ").appendTo(extraChoices);
                 }
-                
-                $('<a href="javascript:{}"></a>')
-                    .click(function(evt) {
-                        self._doClearOneCell();
-                        return false;
-                    })
-                    .text("Clear")
-                    .appendTo(extraChoices);
             }
         }
     }

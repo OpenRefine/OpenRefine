@@ -34,14 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @import-less url("../theme.less");
 
 ul.facets-container {
-  margin: 0 5px;
+  margin: 0;
   overflow: auto;
   }
 
 li.facet-container {
   display: block;
   clear: both;
-  margin-bottom: 7px;
+  margin: 0 5px 7px;
   background: @chrome_secondary;  
   border: 1px solid @chrome_primary;
   .rounded_corners(7px);
@@ -157,7 +157,7 @@ a.facet-title-remove:hover {
     color: black;
 }
 
-.facet-choice-count {
+.facet-choice-count, .facet-range-choice-count {
   padding-left: 5px;
   font-size: 0.85em;
   color: @light_grey;
@@ -197,17 +197,24 @@ img.facet-choice-link {
   }
 
 .facet-range-choices {
-    margin-bottom: 0.8em;
-    text-align: center;
-}
-.facet-range-choices .ui-button .ui-button-text {
-    line-height: 1;
-    padding: 0.1em 0.4em;   
-    text-decoration: line-through;
-}
-.facet-range-choices .ui-button.ui-state-active .ui-button-text {
-    text-decoration: none;
-}
+  padding: 5px 0 30px 0;
+  }
+
+.facet-range-item {
+  float: left;
+  text-align: left;
+  padding: 0 4px;
+  }
+
+.facet-range-choice-label {
+  font-size: 0.85em;
+  }
+
+.facet-range-choice-count {
+  margin: -2px 0 0 16px;
+  }
+
+
 .facet-text-body {
     padding: 5px;
 }

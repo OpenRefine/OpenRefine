@@ -201,65 +201,65 @@ RangeFacet.prototype._renderOtherChoices = function() {
 
     // ----------------- numeric -----------------
     
-    var numericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-numeric").appendTo(choices).change(function() {
+    var numericDiv = $('<div class="facet-range-item"></div>').appendTo(choices);
+    var numericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-numeric").appendTo(numericDiv).change(function() {
         self._selectNumeric = !self._selectNumeric;
         self._updateRest();
     });
     if (this._selectNumeric) numericCheck.attr("checked","checked");
     
-    var numericLabel = $('<label>').attr("for", facet_id + "-numeric").appendTo(choices);    
-    $('<span>').text("Numeric ").addClass("facet-choice-label").appendTo(numericLabel);
-    $('<br>').appendTo(numericLabel);
-    $('<span>').text(this._numericCount).addClass("facet-choice-count").appendTo(numericLabel);
+    var numericLabel = $('<label>').attr("for", facet_id + "-numeric").appendTo(numericDiv);    
+    $('<span>').text("Numeric ").addClass("facet-range-choice-label").appendTo(numericLabel);
+    $('<div>').text(this._numericCount).addClass("facet-range-choice-count").appendTo(numericLabel);
 
     // ----------------- non-numeric -----------------
-    
-    var nonNumericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-numeric").appendTo(choices).change(function() {
+
+    var nonNumericDiv = $('<div class="facet-range-item"></div>').appendTo(choices);    
+    var nonNumericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-numeric").appendTo(nonNumericDiv).change(function() {
         self._selectNonNumeric = !self._selectNonNumeric;
         self._updateRest();
     });
     if (this._selectNonNumeric) nonNumericCheck.attr("checked","checked");
     
-    var nonNumericLabel = $('<label>').attr("for", facet_id + "-non-numeric").appendTo(choices);    
-    $('<span>').text("Non-numeric ").addClass("facet-choice-label").appendTo(nonNumericLabel);
-    $('<br>').appendTo(nonNumericLabel);
-    $('<span>').text(this._nonNumericCount).addClass("facet-choice-count").appendTo(nonNumericLabel);
+    var nonNumericLabel = $('<label>').attr("for", facet_id + "-non-numeric").appendTo(nonNumericDiv);    
+    $('<span>').text("Non-numeric ").addClass("facet-range-choice-label").appendTo(nonNumericLabel);
+    $('<div>').text(this._nonNumericCount).addClass("facet-range-choice-count").appendTo(nonNumericLabel);
 
     if (this._baseNonNumericCount === 0) nonNumericCheck.removeAttr("checked");
     
     // ----------------- blank -----------------
-    
-    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(choices).change(function() {
+
+    var blankDiv = $('<div class="facet-range-item"></div>').appendTo(choices);        
+    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).change(function() {
         self._selectBlank = !self._selectBlank;
         self._updateRest();
     });
     if (this._selectBlank) blankCheck.attr("checked","checked");
 
-    var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(choices);    
-    $('<span>').text("Blank ").addClass("facet-choice-label").appendTo(blankLabel);
-    $('<br>').appendTo(blankLabel);
-    $('<span>').text(this._blankCount).addClass("facet-choice-count").appendTo(blankLabel);
+    var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(blankDiv);    
+    $('<span>').text("Blank ").addClass("facet-range-choice-label").appendTo(blankLabel);
+    $('<div>').text(this._blankCount).addClass("facet-range-choice-count").appendTo(blankLabel);
 
     if (this._baseBlankCount === 0) blankCheck.removeAttr("checked");
     
     // ----------------- error -----------------
 
-    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(choices).change(function() {
+    var errorDiv = $('<div class="facet-range-item"></div>').appendTo(choices);
+    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).change(function() {
         self._selectError = !self._selectError;
         self._updateRest();
     });
     if (this._selectError) errorCheck.attr("checked","checked");
 
-    var errorLabel = $('<label>').attr("for", facet_id + "-error").appendTo(choices);    
-    $('<span>').text("Error ").addClass("facet-choice-label").appendTo(errorLabel);
-    $('<br>').appendTo(errorLabel);
-    $('<span>').text(this._errorCount).addClass("facet-choice-count").appendTo(errorLabel);
+    var errorLabel = $('<label>').attr("for", facet_id + "-error").appendTo(errorDiv);    
+    $('<span>').text("Error ").addClass("facet-range-choice-label").appendTo(errorLabel);
+    $('<div>').text(this._errorCount).addClass("facet-range-choice-count").appendTo(errorLabel);
 
     if (this._baseErrorCount === 0) errorCheck.removeAttr("checked");
 
     // --------------------------
     
-    choices.buttonset().appendTo(container);
+    choices.appendTo(container);
 };
 
 RangeFacet.prototype._setRangeIndicators = function() {

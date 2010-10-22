@@ -55,7 +55,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     MenuSystem.appendTo(menu, [ "core/facet" ], [
         {
             id: "core/text-facet",
-            label: "Text Facet",
+            label: "Text facet",
             click: function() {
                 ui.browsingEngine.addFacet(
                     "list",
@@ -69,7 +69,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
             id: "core/numeric-facet",
-            label: "Numeric Facet",
+            label: "Numeric facet",
             click: function() {
                 ui.browsingEngine.addFacet(
                     "range",
@@ -84,7 +84,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
             id: "core/time-facet",
-            label: "Timeline Facet",
+            label: "Timeline facet",
             click: function() {
                 ui.browsingEngine.addFacet(
                     "timerange",
@@ -99,7 +99,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
             id: "core/scatterplot-facet",
-            label: "Scatterplot Facet",
+            label: "Scatterplot facet",
             click: function() {
                 new ScatterplotDialog(column.name);
             }
@@ -107,25 +107,25 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
             id: "core/custom-text-facet",
-            label: "Custom Text Facet ...",
+            label: "Custom text facet...",
             click: function() {
                 doFilterByExpressionPrompt(null, "list");
             }
         },
         {
             id: "core/custom-numeric-facet",
-            label: "Custom Numeric Facet ...",
+            label: "Custom numeric facet...",
             click: function() {
                 doFilterByExpressionPrompt(null, "range");
             }
         },
         {
             id: "core/customized-facets",
-            label: "Customized Facets",
+            label: "Customized facets",
             submenu: [
                 {
                     id: "core/word-facet",
-                    label: "Word Facet",
+                    label: "Word facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list",
@@ -140,7 +140,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {},
                 {
                     id: "core/numeric-log-facet",
-                    label: "Numeric Log Facet",
+                    label: "Numeric log facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range",
@@ -155,7 +155,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/bounded-numeric-log-facet",
-                    label: "1-bounded Numeric Log Facet",
+                    label: "1-bounded numeric log facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range",
@@ -171,7 +171,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {},
                 {
                     id: "core/text-length-facet",
-                    label: "Text Length Facet",
+                    label: "Text length facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range",
@@ -186,7 +186,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/log-text-length-facet",
-                    label: "Log of Text Length Facet",
+                    label: "Log of text length facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range",
@@ -201,7 +201,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/unicode-charcode-facet",
-                    label: "Unicode Char-code Facet",
+                    label: "Unicode char-code facet",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range",
@@ -217,7 +217,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {},
                 {
                     id: "core/error-facet",
-                    label: "Facet by Error",
+                    label: "Facet by error",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list",
@@ -231,7 +231,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/blank-facet",
-                    label: "Facet by Blank",
+                    label: "Facet by blank",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list",
@@ -249,7 +249,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     MenuSystem.insertAfter(menu, [ "core/facet" ], [
         {
-            label: "Text Filter",
+            label: "Text filter",
             click: function() {
                 ui.browsingEngine.addFacet(
                     "text", 

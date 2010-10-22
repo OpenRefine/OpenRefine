@@ -180,7 +180,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     MenuSystem.appendTo(menu, [ "core/reconcile" ], [
         {
             id: "core/reconcile",
-            label: "Start Reconciling ...",
+            label: "Start reconciling...",
             tooltip: "Reconcile text in this column with topics on Freebase",
             click: doReconcile
         },
@@ -191,7 +191,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             submenu: [
                 {
                     id: "core/by-judgment",
-                    label: "By Judgment",
+                    label: "By judgment",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -210,7 +210,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {},
                 {
                     id: "core/by-best-candidates-score",
-                    label: "Best Candidate's Score",
+                    label: "Best candidate's score",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range", 
@@ -227,7 +227,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/by-best-candidates-type-match",
-                    label: "Best Candidate's Type Match",
+                    label: "Best candidate's type match",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -245,7 +245,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/by-best-candidates-name-match",
-                    label: "Best Candidate's Name Match",
+                    label: "Best candidate's name match",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -264,7 +264,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {},
                 {
                     id: "core/by-best-candidates-name-edit-distance",
-                    label: "Best Candidate's Name Edit Distance",
+                    label: "Best candidate's name edit distance",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range", 
@@ -281,7 +281,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/by-best-candidates-name-word-similarity",
-                    label: "Best Candidate's Name Word Similarity",
+                    label: "Best candidate's name word similarity",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "range", 
@@ -299,7 +299,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {},
                 {
                     id: "core/by-best-candidates-types",
-                    label: "Best Candidate's Types",
+                    label: "Best candidate's types",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -316,11 +316,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
             id: "core/qa-facets",
-            label: "QA Facets",
+            label: "QA facets",
             submenu: [
                 {
                     id: "core/by-qa-results",
-                    label: "QA Results",
+                    label: "QA results",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -334,7 +334,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/by-judgment-actions",
-                    label: "Judgment Actions",
+                    label: "Judgment actions",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -348,7 +348,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/by-judgment-history-entries",
-                    label: "Judgment History Entries",
+                    label: "Judgment history entries",
                     click: function() {
                         ui.browsingEngine.addFacet(
                             "list", 
@@ -368,13 +368,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             submenu: [
                 {
                     id: "core/match-to-best-candidate",
-                    label: "Match Each Cell to Its Best Candidate",
+                    label: "Match each cell to its best candidate",
                     tooltip: "Match each cell to its best candidate in this column for all current filtered rows",
                     click: doReconMatchBestCandidates
                 },
                 {
                     id: "core/match-to-new-topic",
-                    label: "Create a New Topic for Each Cell",
+                    label: "Create a new topic for each cell",
                     tooltip: "Mark to create one new topic for each cell in this column for all current filtered rows",
                     click: function() {
                         doReconMarkNewTopics(false);
@@ -383,7 +383,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {},
                 {
                     id: "core/match-similar-to-new-topic",
-                    label: "Create One New Topic for Similar Cells",
+                    label: "Create one new topic for similar cells",
                     tooltip: "Mark to create one new topic for each group of similar cells in this column for all current filtered rows",
                     click: function() {
                         doReconMarkNewTopics(true);
@@ -391,21 +391,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {
                     id: "core/match-to-specific",
-                    label: "Match All Filtered Cells to ...",
+                    label: "Match all filtered cells to...",
                     tooltip: "Search for a topic to match all filtered cells to",
                     click: doSearchToMatch
                 },
                 {},
                 {
                     id: "core/discard-judgments",
-                    label: "Discard Reconciliation Judgments",
-                    tooltip: "Discard reconciliaton judgments in this column for all current filtered rows",
+                    label: "Discard reconciliation judgments",
+                    tooltip: "Discard reconciliation judgments in this column for all current filtered rows",
                     click: doReconDiscardJudgments
                 },
                 {
                     id: "core/clear-recon-data",
-                    label: "Clear Recon Data",
-                    tooltip: "Clear recon data in this column for all current filtered rows",
+                    label: "Clear reconciliation data",
+                    tooltip: "Clear reconciliation data in this column for all current filtered rows",
                     click: doClearReconData
                 }
             ]
@@ -413,8 +413,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
             id: "core/copy-across-columns",
-            label: "Copy Recon Data ...",
-            tooltip: "Copy this column's recon data to other columns",
+            label: "Copy reconciliation data...",
+            tooltip: "Copy this column's reconciliation data to other columns",
             click: doCopyAcrossColumns
         }
     ]);
