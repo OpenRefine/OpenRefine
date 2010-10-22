@@ -88,7 +88,8 @@ DataTableCellUI.prototype._render = function() {
         var service = (r.service) ? ReconciliationManager.getServiceFromUrl(r.service) : null;
         
         if (r.j == "new") {
-            $('<span>').text(cell.v + "Create new topic").appendTo(divContent);
+            $('<span>').text(cell.v).appendTo(divContent);
+            $('<span>').addClass("data-table-recon-new").text("new").appendTo(divContent);
             
             $('<a href="javascript:{}"></a>')
                 .text("Choose new match")
