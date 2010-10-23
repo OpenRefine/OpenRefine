@@ -238,50 +238,50 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     MenuSystem.appendTo(menu, [ "core/edit-column" ], [
         {
             id: "core/split-column",
-            label: "Split into Several Columns ...",
+            label: "Split into several columns...",
             click: doSplitColumn
         },
         {},
         {
             id: "core/add-column",
-            label: "Add Column Based on This Column ...",
+            label: "Add column based on this column...",
             click: doAddColumn
         },
         {
             id: "core/add-column-by-fetching-urls",
-            label: "Add Column By Fetching URLs ...",
+            label: "Add column by fetching URLs...",
             click: doAddColumnByFetchingURLs
         },
         {},
         {
             id: "core/rename-column",
-            label: "Rename This Column",
+            label: "Rename this column",
             click: doRenameColumn
         },
         {
             id: "core/remove-column",
-            label: "Remove This Column",
+            label: "Remove this column",
             click: doRemoveColumn
         },
         {},
         {
             id: "core/move-column-to-beginning",
-            label: "Move Column to Beginning",
+            label: "Move column to beginning",
             click: function() { doMoveColumnTo(0); }
         },
         {
             id: "core/move-column-to-end",
-            label: "Move Column to End",
+            label: "Move column to end",
             click: function() { doMoveColumnTo(theProject.columnModel.columns.length - 1); }
         },
         {
             id: "core/move-column-to-left",
-            label: "Move Column Left",
+            label: "Move column left",
             click: function() { doMoveColumnBy(-1); }
         },
         {
             id: "core/move-column-to-right",
-            label: "Move Column Right",
+            label: "Move column right",
             click: function() { doMoveColumnBy(1); }
         }
     ]);

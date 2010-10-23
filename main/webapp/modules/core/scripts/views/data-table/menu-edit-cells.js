@@ -144,65 +144,65 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     MenuSystem.appendTo(menu, [ "core/edit-cells" ], [
         {
             id: "core/text-transform",
-            label: "Transform ...",
+            label: "Transform...",
             click: function() { doTextTransformPrompt(); }
         },
         {
             id: "core/common-transforms",
-            label: "Common Transforms",
+            label: "Common transforms",
             submenu: [
                 {
                     id: "core/trim-whitespace",
-                    label: "Trim Leading and Trailing Whitespace",
+                    label: "Trim leading and trailing whitespace",
                     click: function() { doTextTransform("value.trim()", "store-blank", false, ""); }
                 },
                 {
                     id: "core/collapse-whitespace",
-                    label: "Collapse Consecutive Whitespace",
+                    label: "Collapse consecutive whitespace",
                     click: function() { doTextTransform("value.replace(/\\s+/,' ')", "store-blank", false, ""); }
                 },
                 {},
                 {
                     id: "core/unescape-html-entities",
-                    label: "Unescape HTML Entities",
+                    label: "Unescape HTML entities",
                     click: function() { doTextTransform("value.unescape('html')", "store-blank", true, 10); }
                 },
                 {},
                 {
                     id: "core/to-titlecase",
-                    label: "To Titlecase",
+                    label: "To titlecase",
                     click: function() { doTextTransform("value.toTitlecase()", "store-blank", false, ""); }
                 },
                 {
                     id: "core/to-uppercase",
-                    label: "To Uppercase",
+                    label: "To uppercase",
                     click: function() { doTextTransform("value.toUppercase()", "store-blank", false, ""); }
                 },
                 {
                     id: "core/to-lowercase",
-                    label: "To Lowercase",
+                    label: "To lowercase",
                     click: function() { doTextTransform("value.toLowercase()", "store-blank", false, ""); }
                 },
                 {},
                 {
                     id: "core/to-number",
-                    label: "To Number",
+                    label: "To number",
                     click: function() { doTextTransform("value.toNumber()", "store-blank", false, ""); }
                 },
                 {
                     id: "core/to-date",
-                    label: "To Date",
+                    label: "To date",
                     click: function() { doTextTransform("value.toDate()", "store-blank", false, ""); }
                 },
                 {
                     id: "core/to-text",
-                    label: "To Text",
+                    label: "To text",
                     click: function() { doTextTransform("value.toString()", "store-blank", false, ""); }
                 },
                 {},
                 {
                     id: "core/to-blank",
-                    label: "Blank Out Cells",
+                    label: "Blank out cells",
                     click: function() { doTextTransform("null", "store-blank", false, ""); }
                 }
             ]
@@ -210,29 +210,29 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
             id: "core/fill-down",
-            label: "Fill Down",
+            label: "Fill down",
             click: doFillDown
         },
         {
             id: "core/blank-down",
-            label: "Blank Down",
+            label: "Blank down",
             click: doBlankDown
         },
         {},
         {
             id: "core/split-multi-valued-cells",
-            label: "Split Multi-Valued Cells ...",
+            label: "Split multi-valued cells...",
             click: doSplitMultiValueCells
         },
         {
             id: "core/join-multi-valued-cells",
-            label: "Join Multi-Valued Cells ...",
+            label: "Join multi-valued cells...",
             click: doJoinMultiValueCells
         },
         {},
         {
             id: "core/cluster",
-            label: "Cluster & Edit ...",
+            label: "Cluster and edit...",
             click: function() { new ClusteringDialog(column.name, "value"); }
         }
     ]);
@@ -334,12 +334,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     MenuSystem.appendTo(menu, [ "core/transpose" ], [
         {
             id: "core/transpose-columns-into-rows",
-            label: "Cells Across Columns into Rows ...",
+            label: "Cells across columns into rows...",
             click: doTransposeColumnsIntoRows
         },
         {
             id: "core/transpose-rows-into-columns",
-            label: "Cells in Rows into Columns ...",
+            label: "Cells in rows into columns...",
             click: doTransposeRowsIntoColumns
         }
     ]);

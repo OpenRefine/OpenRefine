@@ -41,23 +41,23 @@ ExporterManager.handlers = {};
 ExporterManager.MenuItems = [
     {
         "id" : "core/export-project",
-        "label": "Export Project",
+        "label": "Export project",
         "click": function() { ExporterManager.handlers.exportProject(); }
     },
     {},
     {
         "id" : "core/export-tsv",
-        "label": "Tab-Separated Value",
+        "label": "Tab-separated value",
         "click": function() { ExporterManager.handlers.exportRows("tsv", "tsv"); }
     },
     {
         "id" : "core/export-csv",
-        "label": "Comma-Separated Value",
+        "label": "Comma-separated value",
         "click": function() { ExporterManager.handlers.exportRows("csv", "csv"); }
     },
     {
         "id" : "core/export-html-table",
-        "label": "HTML Table",
+        "label": "HTML table",
         "click": function() { ExporterManager.handlers.exportRows("html", "html"); }
     },
     {
@@ -68,7 +68,7 @@ ExporterManager.MenuItems = [
     {},
     {
         "id" : "core/export-tripleloader",
-        "label": "Tripleloader",
+        "label": "Triple loader",
         "click": function() { ExporterManager.handlers.exportTripleloader("tripleloader"); }
     },
     {
@@ -101,7 +101,7 @@ ExporterManager.handlers.exportTripleloader = function(format) {
     if (!theProject.overlayModels.freebaseProtograph) {
         alert(
             "You haven't done any schema alignment yet,\nso there is no triple to export.\n\n" +
-            "Use the Schemas > Edit Schema Alignment Skeleton...\ncommand to align your data with Freebase schemas first."
+            "Use the Freebase > Edit Schema Alignment Skeleton...\ncommand to align your data with Freebase schemas first."
         );
     } else {
         ExporterManager.handlers.exportRows(format, "txt");

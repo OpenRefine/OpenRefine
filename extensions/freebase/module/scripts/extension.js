@@ -87,28 +87,28 @@ ExtensionBar.addExtensionMenu({
     "submenu" : [
         {
             "id" : "freebase/schema-alignment",
-            label: "Edit Schema Aligment Skeleton ...",
+            label: "Edit schema aligment skeleton...",
             click: function() { FreebaseExtension.handlers.editSchemaAlignment(false); }
         },
         {
             "id" : "freebase/reset-schema-alignment",
-            label: "Reset Schema Alignment Skeleton ...",
+            label: "Reset schema alignment skeleton...",
             click: function() { FreebaseExtension.handlers.editSchemaAlignment(true); }
         },
         {},
         {
             "id" : "freebase/load-info-freebase",
-            label: "Load into Freebase ...",
+            label: "Load into Freebase...",
             click: function() { FreebaseExtension.handlers.loadIntoFreebase(); }
         },
         {
             "id" : "freebase/browse-load",
-            label: "Browse to Data Load ...",
+            label: "Browse data load details...",
             click: function() { FreebaseExtension.handlers.browseToDataLoad(); }
         },
         {
             "id" : "freebase/import-qa-data",
-            label: "Import QA Data",
+            label: "Import QA data",
             click: function() { FreebaseExtension.handlers.importQAData(); }
         }
     ]
@@ -144,7 +144,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         [ "core/edit-column", "core/add-column-by-fetching-urls" ],
         {
             id: "freebase/add-columns-from-freebase",
-            label: "Add Columns From Freebase ...",
+            label: "Add columns from Freebase ...",
             click: doAddColumnFromFreebase
         }
     );

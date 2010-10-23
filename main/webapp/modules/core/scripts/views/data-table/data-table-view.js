@@ -487,7 +487,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
             width: "200px",
             submenu: [
                 {
-                    label: "Facet by Star",
+                    label: "Facet by star",
                     id: "core/facet-by-star",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -504,7 +504,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                     }
                 },
                 {
-                    label: "Facet by Flag",
+                    label: "Facet by flag",
                     id: "core/facet-by-flag",
                     click: function() {
                         ui.browsingEngine.addFacet(
@@ -523,19 +523,19 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
             ]
         },
         {},
-        {   label: "Edit Rows",
+        {   label: "Edit rows",
             id: "core/edit-rows",
             width: "200px",
             submenu: [
                 {
-                    label: "Star Rows",
+                    label: "Star rows",
                     id: "core/star-rows",
                     click: function() {
                         Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
                     }
                 },
                 {
-                    label: "Unstar Rows",
+                    label: "Unstar rows",
                     id: "core/unstar-rows",
                     click: function() {
                         Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
@@ -543,14 +543,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 },
                 {},
                 {
-                    label: "Flag Rows",
+                    label: "Flag rows",
                     id: "core/flag-rows",
                     click: function() {
                         Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
                     }
                 },
                 {
-                    label: "Unflag Rows",
+                    label: "Unflag rows",
                     id: "core/unflag-rows",
                     click: function() {
                         Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
@@ -558,7 +558,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 },
                 {},
                 {
-                    label: "Remove All Matching Rows",
+                    label: "Remove all matching rows",
                     id: "core/remove-rows",
                     click: function() {
                         Refine.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
@@ -566,12 +566,12 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                 }
             ]
         },
-        {   label: "Edit Columns",
+        {   label: "Edit columns",
             id: "core/edit-columns",
             width: "200px",
             submenu: [
                 {
-                    label: "Re-order Columns ...",
+                    label: "Reorder columns...",
                     id: "core/reorder-columns",
                     click: function() {
                         new ColumnReorderingDialog();
@@ -585,7 +585,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
             width: "200px",
             submenu: [
                 {
-                    label: "Collapse All Columns",
+                    label: "Collapse all columns",
                     id: "core/collapse-all-columns",
                     click: function() {
                         for (var i = 0; i < theProject.columnModel.columns.length; i++) {
@@ -595,7 +595,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                     }
                 },
                 {
-                    label: "Expand All Columns",
+                    label: "Expand all columns",
                     id: "core/expand-all-columns",
                     click: function() {
                         self._collapsedColumnNames = [];
@@ -617,14 +617,14 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
     var self = this;
     var items = [
         {
-            "label" : "Un-sort",
+            "label" : "Remove sort",
             "click" : function() {
                 self._sorting.criteria = [];
                 self.update();
             }
         },
         {
-            "label" : "Reorder Rows Permanently",
+            "label" : "Reorder rows permanently",
             "click" : function() {
                 Refine.postCoreProcess(
                     "reorder-rows",

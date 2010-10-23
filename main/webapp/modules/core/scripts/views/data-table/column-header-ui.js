@@ -108,13 +108,13 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
         {},
         {
             id: "core/edit-cells",
-            label: "Edit Cells",
+            label: "Edit cells",
             width: "170px",
             submenu: []
         },
         {
             id: "core/edit-column",
-            label: "Edit Column",
+            label: "Edit column",
             submenu: []
         },
         {
@@ -127,7 +127,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             this._dataTableView._getSortingCriterionForColumn(this._column.name) == null ?
                 {
                     id: "core/sort",
-                    "label": "Sort ...",
+                    "label": "Sort...",
                     "click": function() {
                         self._showSortingCriterion(null, self._dataTableView._getSortingCriteriaCount() > 0)
                     }
@@ -144,14 +144,14 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             tooltip: "Collapse/expand columns to make viewing the data more convenient",
             submenu: [
                 {
-                    label: "Collapse This Column",
+                    label: "Collapse this column",
                     click: function() {
                         self._dataTableView._collapsedColumnNames[self._column.name] = true;
                         self._dataTableView.render();
                     }
                 },
                 {
-                    label: "Collapse All Other Columns",
+                    label: "Collapse all other columns",
                     click: function() {
                         var collapsedColumnNames = {};
                         for (var i = 0; i < theProject.columnModel.columns.length; i++) {
@@ -164,7 +164,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     }
                 },
                 {
-                    label: "Collapse All Columns To Left",
+                    label: "Collapse all columns to left",
                     click: function() {
                         for (var i = 0; i < self._columnIndex; i++) {
                             self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
@@ -173,7 +173,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
                     }
                 },
                 {
-                    label: "Collapse All Columns To Right",
+                    label: "Collapse all columns to right",
                     click: function() {
                         for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
                             self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
@@ -208,7 +208,7 @@ DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
     
     var items = [
         {
-            "label": "Sort ...",
+            "label": "Sort...",
             "click": function() {
                 self._showSortingCriterion(criterion, hasOtherCriteria)
             }
@@ -224,7 +224,7 @@ DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
             }
         });
         items.push({
-            "label": "Un-sort",
+            "label": "Remove sort",
             "click": function() {
                 self._dataTableView._removeSortingCriterionOfColumn(criterion.column);
             }
