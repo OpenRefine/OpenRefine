@@ -46,9 +46,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <a id="app-home-button" href="./"><img alt="Google Refine" src="images/logo-googlerefine-30.png" width="129" height="29" /></a>
       <div id="project-title">
         <span id="project-name-button" class="app-path-section" title="Click to rename project"></span>
-          <a id="project-permalink-button" href="javascript:{}" class="secondary">Permalink</a>
+        <a id="project-permalink-button" href="javascript:{}" class="secondary">Permalink</a>
       </div>
-      <div id="project-controls"><a class="button button-primary" bind="exportButton" id="export-button" href="#export"><span class="button-menu">Export</span></a></div>
+      <div id="project-controls">
+        <a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers" target="_blank">Help Documentation</a>
+        <a class="button button-primary" bind="exportButton" id="export-button" href="#export"><span class="button-menu">Export</span></a>
+      </div>
     </div>
     
     <div id="loading-message"><img src="images/large-spinner.gif" /> Starting up...</div>
