@@ -251,11 +251,25 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
     var frame = $(DOM.loadHTML("core", "scripts/project/history-apply-dialog.html"));
     var elmts = DOM.bind(frame);
     
+    var fixJson = function(json) {
+        json = json.trim();
+        if (!json.startsWith("[")) {
+            json = "[" + json;
+        }
+        if (!json.endsWith("[")) {
+            json = json + "]";
+        }
+        
+        return json.replace(/\}\s*\,\s*\]/g, "} ]").replace(/\}\s*\{/g, "}, {");
+    };
+    
     elmts.applyButton.click(function() {
         var json;
         
         try {
-            json = JSON.parse(elmts.textarea[0].value);
+            json = elmts.textarea[0].value;
+            json = fixJson(json);
+            json = JSON.parse(json);
         } catch (e) {
             alert("The JSON you pasted is invalid.");
             return;

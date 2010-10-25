@@ -187,16 +187,19 @@ a.history-entry.filtered-out > * {
   border-bottom: 1px solid @selected_primary;
   }
 
-
-.extract-operation-dialog-entries {
-    height: 400px;
-    padding: 2px;
-    border: 1px inset;
-    max-width: 400px !important;
-    overflow: auto;
-}
+.history-extract-dialog-panel {
+  border: 1px solid @chrome_primary;
+  height: 400px;
+  overflow: auto;
+  }
+  
+table.history-extract-dialog-entries {
+  border-collapse: separate;
+  border-spacing: @padding_tight;
+  }
+  
 textarea.history-operation-json {
-    white-space: pre;
-    font-family: monospace;
-    height: 400px;
-}
+  white-space: pre;
+  font-family: monospace;
+  height: 450px;
+  }
