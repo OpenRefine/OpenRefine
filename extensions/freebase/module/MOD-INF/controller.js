@@ -79,6 +79,11 @@ function init() {
     ER.registerExporter("tripleloader", new Packages.com.google.refine.freebase.ProtographTransposeExporter.TripleLoaderExporter());
     ER.registerExporter("mqlwrite", new Packages.com.google.refine.freebase.ProtographTransposeExporter.MqlwriteLikeExporter());
     
+    var FCR = Packages.com.google.refine.grel.ControlFunctionRegistry;
+    
+    FCR.registerFunction("mqlKeyQuote", new Packages.com.google.refine.freebase.expr.MqlKeyQuote());
+    FCR.registerFunction("mqlKeyUnquote", new Packages.com.google.refine.freebase.expr.MqlKeyUnquote());
+    
     Packages.com.google.refine.model.Project.
         registerOverlayModel("freebaseProtograph", Packages.com.google.refine.freebase.protograph.Protograph);
     
