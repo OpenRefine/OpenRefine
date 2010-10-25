@@ -166,11 +166,13 @@ SchemaAlignment.createNewRootNode = function() {
 
 function SchemaAlignmentDialog(protograph, onDone) {
     this._onDone = onDone;
+    this._hasUnsavedChanges = false;
+    
     this._createDialog();
-    this._reset(protograph);
+    this._reset(protograph, true);
 }
 
-SchemaAlignmentDialog.prototype._reset = function(protograph) {
+SchemaAlignmentDialog.prototype._reset = function(protograph, initial) {
     this._originalProtograph = protograph || { rootNodes: [] };
     this._protograph = cloneDeep(this._originalProtograph); // this is what can be munched on
     
@@ -193,10 +195,11 @@ SchemaAlignmentDialog.prototype._reset = function(protograph) {
         ));
     }
     
-    this.preview();
+    this.preview(initial);
 };
 
 SchemaAlignmentDialog.prototype._save = function(onDone) {
+    var self = this;
     var protograph = this.getJSON();
     
     Refine.postProcess(
@@ -208,7 +211,11 @@ SchemaAlignmentDialog.prototype._save = function(onDone) {
         {   
             onDone: function() {
                 theProject.overlayModels.freebaseProtograph = protograph;
-                onDone();
+                
+                self._elmts.statusIndicator.hide();
+                self._hasUnsavedChanges = false;
+                
+                if (onDone) onDone();
             }
         }
     );
@@ -217,7 +224,7 @@ SchemaAlignmentDialog.prototype._save = function(onDone) {
 SchemaAlignmentDialog.prototype._createDialog = function() {
     var self = this;
     var frame = $(DOM.loadHTML("freebase", "scripts/dialogs/schema-alignment/schema-alignment-dialog.html"));
-    var elmts = DOM.bind(frame);
+    var elmts = this._elmts = DOM.bind(frame);
     
     this._level = DialogSystem.showDialog(frame);
     
@@ -225,8 +232,8 @@ SchemaAlignmentDialog.prototype._createDialog = function() {
         DialogSystem.dismissUntil(self._level - 1);
     };
     
-    elmts.saveAndCloseButton.click(function() {
-        self._save(dismiss);
+    elmts.saveButton.click(function() {
+        self._save();
     });
     elmts.saveAndLoadButton.click(function() {
         self._save(function() {
@@ -237,7 +244,11 @@ SchemaAlignmentDialog.prototype._createDialog = function() {
     elmts.resetButton.click(function() {
         self._reset(null);
     });
-    elmts.cancelButton.click(dismiss);
+    elmts.closeButton.click(function() {
+        if (!self._hasUnsavedChanges || window.confirm("There are unsaved changes. Close anyway?")) {
+            dismiss();
+        }
+    });
     
     $("#schema-alignment-tabs").tabs();
     $("#schema-alignment-tabs-preview-mqllike").css("display", "");
@@ -263,10 +274,14 @@ SchemaAlignmentDialog.prototype.getJSON = function() {
     };
 };
 
-SchemaAlignmentDialog.prototype.preview = function() {
+SchemaAlignmentDialog.prototype.preview = function(initial) {
     var self = this;
     
     this._previewPanes.empty();
+    if (!(initial)) {
+        this._elmts.statusIndicator.show().text("There are unsaved changes.");
+        this._hasUnsavedChanges = true;
+    }
     
     var protograph = this.getJSON();
     $.post(

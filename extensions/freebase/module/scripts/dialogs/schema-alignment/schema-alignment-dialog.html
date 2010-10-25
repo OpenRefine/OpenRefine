@@ -25,12 +25,17 @@
   </div>
   <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-normal layout-full"><table><tr>
     <td>
-      <button class="button" bind="cancelButton">Cancel</button>
       <button class="button" bind="resetButton">Reset</button>
     </td>
     <td style="text-align:right;">
-      <button class="button button-primary" bind="saveAndCloseButton">Save &amp; Close</button>
+      <button class="button button-primary" bind="saveButton">Save</button>
       <button class="button" bind="saveAndLoadButton">Save &amp; Load</button>
+    </td>
+    <td style="text-align:center;" width="30%">
+      <span class="schema-alignment-status-indicator" bind="statusIndicator"></span>
+    </td>
+    <td style="text-align:right;" width="1%">
+      <button class="button" bind="closeButton">Close</button>
     </td>
   </tr></table></div></div>
 </div>

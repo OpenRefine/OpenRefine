@@ -265,6 +265,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     if (suggestions.length > 0) {
         divSearch = $('<div>')
             .addClass("schema-alignment-link-menu-section")
+            .css("margin-bottom", "2em")
             .html('<div>Search for a property or pick one below</div>').appendTo(menu);
         
         var createSuggestion = function(suggestion) {
