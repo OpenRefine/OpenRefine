@@ -155,7 +155,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <ul>
           <li><a href="/about.html">About Google Refine</a></li>
           <li><a href="https://code.google.com/p/google-refine/">Project Home Page</a></li>
-          <li><a href="http://vimeo.com/groups/gridworks/videos">Screencasts</a></li>
+          <li><a href="http://code.google.com/p/google-refine/wiki/Screencasts">Screencasts</a></li>
+          <li><a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers">User Documentation</a></li>
         </ul>
         <div id="google-refine-version"></div>
       </div>      

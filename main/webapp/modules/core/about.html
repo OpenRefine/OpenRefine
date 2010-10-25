@@ -36,6 +36,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <title>About - Google Refine</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="/styles/common.less" />
+    <style>
+      #body-info {
+        margin-bottom: 10em;
+      }
+    </style>
     <script type="text/javascript" src="scripts/version.js"></script>
     <script type="text/javascript" src="externals/jquery-1.4.2.min.js"></script>
     <script>
@@ -61,44 +66,75 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <h2 id="version" style="display: none"></h2>
       
       <p>
-        Google Refine is a power tool for working with messy data.  Use it to improve data consistency, link it to data registries like Freebase, augment it with data from other sources, transform it into different formats for other tools to consume, and contribute it to back to the original sources. Google Refine is not a web service but a desktop app that runs on your own computer, so you can process sensitive data with privacy.
+        Google Refine is a power tool for working with messy data.Use it to improve data consistency,
+        link it to data registries like Freebase, augment it with data from other sources, transform it
+        into different formats for other tools to consume, and contribute it to back to the original
+        sources. Google Refine is not a web service but a desktop app that runs on your own computer,
+        so you can process sensitive data with privacy.
       </p>
 
       <p>
-        Google Refine was originally developed as Gridworks by <a href="http://www.metaweb.com/">Metaweb, Inc.</a>. Metaweb was acquired by <a href="http://www.google.com/">Google</a> in July 2010.
+        Google Refine was originally developed as "Freebase Gridworks" by
+        <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>. Metaweb was acquired by
+        <a href="http://www.google.com/">Google</a> in July 2010.
       </p>
+      
+      <table cellspacing="0" cellpadding="0"><tr>
+        <td width="300">
+          <h2>Contributors (in chronological order)</h2>
+          <ul>
+            <li><a href="http://www.freebase.com/view/en/david_francois_huynh">David Huynh</a></li>
+            <li><a href="http://www.freebase.com/view/en/stefano_mazzocchi">Stefano Mazzocchi</a></li>
+            <li><a href="http://www.freebase.com/view/en/vishal_talwar">Vishal Talwar</a></li>
+            <li><a href="http://www.freebase.com/view/en/will_moffat">Will Moffat</a></li>
+            <li><a href="http://www.freebase.com/view/en/jeff_fry">Jeff Fry</a></li>
+            <li><a href="http://www.freebase.com/view/en/james_home">James Home</a></li>
+            <li><a href="http://www.freebase.com/view/m/046vz5k">Iain Sproat</a></li>
+            <li><a href="http://www.freebase.com/view/user/tfmorris">Tom Morris</a></li>
+            <li><a href="http://www.freebase.com/view/user/heathercampbell">Heather Campbell</a></li>
+          </ul>
+        </td>
+        <td>
+          <h2>Special Thanks</h2>
+          <ul>
+            <li><a href="http://www.paolociccarese.info/">Paolo Ciccarese</a></li>
+            <li><a href="http://www.freebase.com/view/en/thad_guidry">Thad Guidry</a></li>
+          </ul>
+        </td>
+      </table>
         
       <h2>Google Refine License</h2>
             
-<pre class="license">/*
- * Copyright (c) 2010, Google, Inc. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *  2. Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY GOOGLE, INC. AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL GOOGLE,
- * INC. OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- */</pre>
+<pre class="license">
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
  
       <h2>Dependencies Licenses</h2>
 
@@ -186,23 +222,6 @@ Flag icon based on an icon from Silk Icons:
     http://www.famfamfam.com/lab/icons/silk/
 </pre>
         
-      <h2>Credits</h2>
-        <ul>
-          <li><a href="http://www.freebase.com/view/en/david_francois_huynh">David Huynh</a></li>
-          <li><a href="http://www.freebase.com/view/en/stefano_mazzocchi">Stefano Mazzocchi</a></li>
-          <li><a href="http://www.freebase.com/view/en/vishal_talwar">Vishal Talwar</a></li>
-          <li><a href="http://www.freebase.com/view/en/will_moffat">Will Moffat</a></li>
-          <li><a href="http://www.freebase.com/view/en/jeff_fry">Jeff Fry</a></li>
-          <li><a href="http://www.freebase.com/view/en/james_home">James Home</a></li>
-          <li><a href="http://www.freebase.com/view/m/046vz5k">Iain Sproat</a></li>
-          <li><a href="http://www.freebase.com/view/user/tfmorris">Tom Morris</a></li>
-          <li><a href="http://www.freebase.com/view/user/heathercampbell">Heather Campbell</a></li>
-        </ul>
-
-      <h2>Special Thanks</h2>
-      <ul>
-        <li><a href="http://www.paolociccarese.info/">Paolo Ciccarese</a></li>
-      </ul>
     </div>
   </body>
 </html>
