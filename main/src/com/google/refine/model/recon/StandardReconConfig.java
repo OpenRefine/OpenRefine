@@ -388,7 +388,7 @@ public class StandardReconConfig extends ReconConfig {
                     score
                 );
                 
-                if (i == 0 && result.has("match") && result.getBoolean("match")) {
+                if (autoMatch && i == 0 && result.has("match") && result.getBoolean("match")) {
                     recon.match = candidate;
                     recon.matchRank = 0;
                     recon.judgment = Judgment.Matched;
