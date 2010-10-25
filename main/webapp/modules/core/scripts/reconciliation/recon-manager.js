@@ -150,7 +150,7 @@ ReconciliationManager.save = function(f) {
                 ReconciliationManager._rebuildMap();
             } else {
                 ReconciliationManager.registerStandardService(
-                    "http://3.standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");
+                    "http://4.standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");
             }
         },
         dataType: "json"

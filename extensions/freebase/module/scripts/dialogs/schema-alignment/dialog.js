@@ -166,6 +166,11 @@ SchemaAlignment.createNewRootNode = function() {
 
 function SchemaAlignmentDialog(protograph, onDone) {
     this._onDone = onDone;
+    this._createDialog();
+    this._reset(protograph);
+}
+
+SchemaAlignmentDialog.prototype._reset = function(protograph) {
     this._originalProtograph = protograph || { rootNodes: [] };
     this._protograph = cloneDeep(this._originalProtograph); // this is what can be munched on
     
@@ -173,94 +178,9 @@ function SchemaAlignmentDialog(protograph, onDone) {
         this._protograph.rootNodes.push(SchemaAlignment.createNewRootNode());
     }
     
+    $(this._nodeTable).empty();
+    
     this._nodeUIs = [];
-    this._createDialog();
-    this.preview();
-}
-
-SchemaAlignmentDialog.prototype._createDialog = function() {
-    var self = this;
-    var frame = DialogSystem.createDialog();
-    
-    frame.width("800px");
-    
-    var header = $('<div></div>').addClass("dialog-header").text("Schema Alignment").appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    this._constructFooter(footer);
-    this._constructBody(body);
-    
-    this._level = DialogSystem.showDialog(frame);
-    
-    this._renderBody(body);
-};
-
-SchemaAlignmentDialog.prototype._constructFooter = function(footer) {
-    var self = this;
-    
-    $('<button class="button"></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
-        var protograph = self.getJSON();
-        
-        Refine.postProcess(
-            "freebase",
-            "save-protograph",
-            {},
-            { protograph: JSON.stringify(protograph) },
-            {},
-            {   
-                onDone: function() {
-                    DialogSystem.dismissUntil(self._level - 1);
-                    theProject.overlayModels.freebaseProtograph = protograph;
-                }
-            }
-        );
-    }).appendTo(footer);
-    
-    $('<button class="button"></button>').text("Cancel").click(function() {
-        DialogSystem.dismissUntil(self._level - 1);
-    }).appendTo(footer);
-};
-
-SchemaAlignmentDialog.prototype._constructBody = function(body) {
-    $('<p>' +
-        'The schema alignment skeleton below specifies how the graph-shaped data that will get generated ' +
-        'from your grid-shaped data and written into Freebase. The cells in each record of your data will ' +
-        'get placed into nodes within the skeleton. Configure the skeleton by specifying which ' +
-        'column to substitute into which node. A node can also be an automatically generated ' +
-        'anonymous node, or it can be an explicit value or topic that is the same for all records.' +
-    '</p>').appendTo(body);
-    
-    $(
-        '<div id="schema-alignment-tabs" class="refine-tabs">' +
-            '<ul>' +
-                '<li><a href="#schema-alignment-tabs-protograph">Skeleton</a></li>' +
-                '<li><a href="#schema-alignment-tabs-preview-mqllike">MQL-like Preview</a></li>' +
-                '<li><a href="#schema-alignment-tabs-preview-tripleloader">TripleLoader Preview</a></li>' +
-            '</ul>' +
-            '<div id="schema-alignment-tabs-protograph">' +
-                '<div class="schema-alignment-dialog-canvas"></div>' +
-            '</div>' +
-            '<div id="schema-alignment-tabs-preview-mqllike" style="display: none;">' +
-                '<div class="schema-alignment-dialog-preview"></div>' +
-            '</div>' +
-            '<div id="schema-alignment-tabs-preview-tripleloader" style="display: none;">' +
-                '<div class="schema-alignment-dialog-preview"></div>' +
-            '</div>' +
-        '</div>'
-    ).appendTo(body);
-};
-
-SchemaAlignmentDialog.prototype._renderBody = function(body) {
-    var self = this;
-    
-    $("#schema-alignment-tabs").tabs();
-    $("#schema-alignment-tabs-preview-mqllike").css("display", "");
-    $("#schema-alignment-tabs-preview-tripleloader").css("display", "");
-
-    this._canvas = $(".schema-alignment-dialog-canvas");
-    this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._canvas)[0];
-    
     for (var i = 0; i < this._protograph.rootNodes.length; i++) {
         this._nodeUIs.push(new SchemaAlignmentDialog.UINode(
             this,
@@ -273,7 +193,60 @@ SchemaAlignmentDialog.prototype._renderBody = function(body) {
         ));
     }
     
+    this.preview();
+};
+
+SchemaAlignmentDialog.prototype._save = function(onDone) {
+    var protograph = this.getJSON();
+    
+    Refine.postProcess(
+        "freebase",
+        "save-protograph",
+        {},
+        { protograph: JSON.stringify(protograph) },
+        {},
+        {   
+            onDone: function() {
+                theProject.overlayModels.freebaseProtograph = protograph;
+                onDone();
+            }
+        }
+    );
+};
+
+SchemaAlignmentDialog.prototype._createDialog = function() {
+    var self = this;
+    var frame = $(DOM.loadHTML("freebase", "scripts/dialogs/schema-alignment/schema-alignment-dialog.html"));
+    var elmts = DOM.bind(frame);
+    
+    this._level = DialogSystem.showDialog(frame);
+    
+    var dismiss = function() {
+        DialogSystem.dismissUntil(self._level - 1);
+    };
+    
+    elmts.saveAndCloseButton.click(function() {
+        self._save(dismiss);
+    });
+    elmts.saveAndLoadButton.click(function() {
+        self._save(function() {
+            dismiss();
+            FreebaseExtension.handlers.loadIntoFreebase();
+        });
+    });
+    elmts.resetButton.click(function() {
+        self._reset(null);
+    });
+    elmts.cancelButton.click(dismiss);
+    
+    $("#schema-alignment-tabs").tabs();
+    $("#schema-alignment-tabs-preview-mqllike").css("display", "");
+    $("#schema-alignment-tabs-preview-tripleloader").css("display", "");
+
     this._previewPanes = $(".schema-alignment-dialog-preview");
+    
+    this._canvas = $(".schema-alignment-dialog-canvas");
+    this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._canvas)[0];
 };
 
 SchemaAlignmentDialog.prototype.getJSON = function() {

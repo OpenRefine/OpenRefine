@@ -33,9 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var FreebaseExtension = { handlers: {} };
 
-FreebaseExtension.handlers.editSchemaAlignment = function(reset) {
-    new SchemaAlignmentDialog(
-        reset ? null : theProject.overlayModels.freebaseProtograph, function(newProtograph) {});
+FreebaseExtension.handlers.editSchemaAlignment = function() {
+    new SchemaAlignmentDialog(theProject.overlayModels.freebaseProtograph, function(newProtograph) {});
 };
 
 FreebaseExtension.handlers.loadIntoFreebase = function() {
@@ -87,20 +86,15 @@ ExtensionBar.addExtensionMenu({
     "submenu" : [
         {
             "id" : "freebase/schema-alignment",
-            label: "Edit schema aligment skeleton...",
+            label: "Align to Freebase's schemas...",
             click: function() { FreebaseExtension.handlers.editSchemaAlignment(false); }
         },
-        {
-            "id" : "freebase/reset-schema-alignment",
-            label: "Reset schema alignment skeleton...",
-            click: function() { FreebaseExtension.handlers.editSchemaAlignment(true); }
-        },
-        {},
         {
             "id" : "freebase/load-info-freebase",
             label: "Load into Freebase...",
             click: function() { FreebaseExtension.handlers.loadIntoFreebase(); }
         },
+        {},
         {
             "id" : "freebase/browse-load",
             label: "Browse data load details...",

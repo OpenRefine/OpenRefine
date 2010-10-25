@@ -1,0 +1,38 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader">Align to Freebase's Schemas</div>
+  <div class="dialog-body" bind="dialogBody">
+    <p class="body-text">
+      The schema alignment skeleton below specifies how the graph-shaped data will get generated
+      from your grid-shaped data and written into Freebase. The cells in each record of your data will
+      get placed into nodes within the skeleton. Configure the skeleton by specifying which
+      column to substitute into which node. A node can also be an automatically generated
+      anonymous node, or it can be an explicit value or topic that is the same for all records.
+    </p>
+    <div id="schema-alignment-tabs" class="refine-tabs">
+        <ul>
+            <li><a href="#schema-alignment-tabs-protograph">Skeleton</a></li>
+            <li><a href="#schema-alignment-tabs-preview-mqllike">MQL-like Preview</a></li>
+            <li><a href="#schema-alignment-tabs-preview-tripleloader">TripleLoader Preview</a></li>
+        </ul>
+        <div id="schema-alignment-tabs-protograph">
+            <div class="schema-alignment-dialog-canvas"></div>
+        </div>
+        <div id="schema-alignment-tabs-preview-mqllike" style="display: none;">
+            <div class="schema-alignment-dialog-preview"></div>
+        </div>
+        <div id="schema-alignment-tabs-preview-tripleloader" style="display: none;">
+            <div class="schema-alignment-dialog-preview"></div>
+        </div>
+    </div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-normal layout-full"><table><tr>
+    <td>
+      <button class="button" bind="cancelButton">Cancel</button>
+      <button class="button" bind="resetButton">Reset</button>
+    </td>
+    <td style="text-align:right;">
+      <button class="button button-primary" bind="saveAndCloseButton">Save &amp; Close</button>
+      <button class="button" bind="saveAndLoadButton">Save &amp; Load</button>
+    </td>
+  </tr></table></div></div>
+</div>

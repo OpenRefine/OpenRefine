@@ -386,10 +386,10 @@ ClusteringDialog.prototype._resetFacets = function() {
     }
     this._facets = [];
     
-    this._createFacet("Cluster Size", "size");
-    this._createFacet("Row Count", "rowCount");
-    this._createFacet("Value Length Average", "avg");
-    this._createFacet("Value Length Variance", "variance");
+    this._createFacet("# Choices in Cluster", "size");
+    this._createFacet("# Rows in Cluster", "rowCount");
+    this._createFacet("Average Length of Choices", "avg");
+    this._createFacet("Length Variance of Choices", "variance");
 };
 
 ClusteringDialog.prototype._createFacet = function(title, property) {

@@ -196,10 +196,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : column.name,
+                                "name" : column.name + ": judgment",
                                 "columnName" : column.name, 
-                                "expression" : "cell.recon.judgment",
-                                "omitError" : true
+                                "expression" : 'forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                             },
                             {
                                 "scroll" : false
@@ -215,7 +214,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : column.name,
+                                "name" : column.name + ": best candidate's score",
                                 "columnName" : column.name, 
                                 "expression" : "cell.recon.best.score",
                                 "mode" : "range"
@@ -232,10 +231,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : column.name,
+                                "name" : column.name + ": best candidate's types match?",
                                 "columnName" : column.name, 
-                                "expression" : "cell.recon.features.typeMatch",
-                                "omitError" : true
+                                "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                             },
                             {
                                 "scroll" : false
@@ -250,10 +248,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : column.name,
+                                "name" : column.name + ": best candidate's name match?",
                                 "columnName" : column.name, 
-                                "expression" : "cell.recon.features.nameMatch",
-                                "omitError" : true
+                                "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                             },
                             {
                                 "scroll" : false
@@ -269,7 +266,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : column.name,
+                                "name" : column.name + ": best candidate's name edit distance",
                                 "columnName" : column.name, 
                                 "expression" : "cell.recon.features.nameLevenshtein",
                                 "mode" : "range"
@@ -286,7 +283,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                         ui.browsingEngine.addFacet(
                             "range", 
                             {
-                                "name" : column.name,
+                                "name" : column.name + ": best candidate's name word similarity",
                                 "columnName" : column.name, 
                                 "expression" : "cell.recon.features.nameWordDistance",
                                 "mode" : "range"
@@ -304,10 +301,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                         ui.browsingEngine.addFacet(
                             "list", 
                             {
-                                "name" : column.name,
-                                "columnName" : column.name, 
-                                "expression" : "cell.recon.best.type",
-                                "omitError" : true
+                                "name" : column.name + ": best candidate's types",
+                                "columnName" : column.name,
+                                "expression" : 'forNonBlank(cell.recon.best.type, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                             }
                         );
                     }

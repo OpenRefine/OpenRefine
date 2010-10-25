@@ -59,11 +59,17 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                 loadButton.unbind().click(function() {
                     self._load();
                 });
+                
                 self._signedin = true;
                 $("#freebase-loading-source-name").keyup();
+                
                 if (typeof cont == "function") cont(data);
             } else {
                 authorization.html('<a href="javascript:{}" bind="signin">Sign into Freebase</a> to enable loading').show();
+                
+                self._signedin = false;
+                $("#freebase-loading-source-name").keyup();
+                
                 DOM.bind(authorization).signin.click(function() {
                     Sign.signin(function() {
                         check_authorization(cont);
@@ -105,24 +111,19 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                 engine: JSON.stringify(ui.browsingEngine.getJSON())
             },
             function(data) {
-                var body = self._elmts.dialogBody;
                 if ("tripleloader" in data) {
-                    body.html(
-                        '<div class="freebase-loading-tripleloader-info"><table><tr>' +
-                          '<td><div>Name this data load &not; <sup style="color: red">required</sup></div>' +
-                          '<input type="text" size="40" id="freebase-loading-source-name" bind="source_name"></td>' +
-                          '<td><div>Source ID &not; <sup style="color: #888">optional</sup></div>' +
-                          '<input type="text" size="60" id="freebase-loading-source-id" bind="source_id"></td>' +
-                        '</tr></table></div>' +
-                        '<div class="freebase-loading-tripleloader-data">' + data.tripleloader + '</div>'
-                    );
-                    self._elmts = DOM.bind(dialog);
+                    self._elmts.functionalCase.show();
+                    self._level = DialogSystem.showDialog(dialog);
+                    
+                    self._elmts.functionalTabs.tabs();
+                    
+                    self._elmts.previewContainer.text(data.tripleloader).show();
                     
                     self._elmts.source_name.keyup(function() {
                         if (self._signedin && $(this).val() != "") {
-                            loadButton.removeAttr("disabled");
+                            loadButton.removeAttr("disabled").removeClass("button-disabled");
                         } else {
-                            loadButton.attr("disabled","disabled");
+                            loadButton.attr("disabled","disabled").addClass("button-disabled");
                         }
                     });
                     
@@ -139,24 +140,21 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
                         "/command/core/get-preference?" + $.param({ project: theProject.id, name: "freebase.load.jobName" }),
                         null,
                         function(data) {
-                            if (data.value != null) {
-                                self._elmts.source_name[0].value = data.value;
-                            }
+                            self._elmts.source_name[0].value = (data.value) ? data.value : theProject.metadata.name;
                         }
                     );
 
                     if (typeof cont == "function") cont();
                 } else {
-                    body.html(
-                        '<div class="freebase-loading-tripleloader-message">'+
-                            '<h2>This dataset has no triples</h2>' +
-                            '<p>Have you aligned it with the Freebase schemas yet?</p>' +
-                        '</div>'
-                    );
-                    self._elmts = DOM.bind(dialog);
+                    self._elmts.unalignedCase.show();
+                    self._level = DialogSystem.showDialog(dialog);
+                    
+                    self._elmts.alignButton.click(function() {
+                        self._dismiss();
+                        FreebaseExtension.handlers.editSchemaAlignment(false);
+                    });
                     self._end();
                 }
-                self._level = DialogSystem.showDialog(dialog);
             },
             "json"
         );
@@ -189,12 +187,10 @@ FreebaseLoadingDialog.prototype._load = function() {
                 
                 var body = self._elmts.dialogBody;
                 if ("status" in data && typeof data.status == "object" && "code" in data.status && data.status.code == 200) {
-                    body.html(
-                        '<div class="freebase-loading-tripleloader-message">' +
-                            '<h2><span>' + data.result.added + '</span> triples successfully scheduled for loading</h2>' + 
-                            '<h4>Follow the loading progress in the <a href="' + get_refinery_url(data.result.status_url) + '" target="_new">Freebase Refinery</a></h4>' +
-                        '</div>'
-                    );
+                    self._elmts.tripleCountSpan.text(data.result.added);
+                    self._elmts.refineryLink.attr("href", get_refinery_url(data.result.status_url));
+                    self._elmts.functionalCase.hide();
+                    self._elmts.loadedCase.show();
                     self._end();
                 } else {
                     self._show_error("Error loading data",data);
@@ -229,25 +225,22 @@ FreebaseLoadingDialog.prototype._dismiss = function() {
 };
 
 FreebaseLoadingDialog.prototype._show_error = function(msg, error) {
-	console.log(error);
-	var self = this;
-    var body = self._elmts.dialogBody;
-    body.html(
-        '<div class="freebase-loading-tripleloader-message">' +
-            '<h2>' + msg + '</h2>' + 
-            (('message' in error) ? '<p>' + error.message + '</p>' : '<pre>' + JSON.stringify(error, null, 2) + '</pre>') +
-            (('stack' in error) ? '<pre>' + error.stack.replace(/\\n/g,'\n').replace(/\\t/g,'\t') + '</pre>' : "") +
-        '</div>'
+    this._elmts.dialogBody.children().hide();
+    this._elmts.errorCase.show();
+    this._elmts.errorMessage.text(msg);
+    this._elmts.errorDetails.html(
+        (('message' in error) ? '<p>' + error.message + '</p>' : '<pre>' + JSON.stringify(error, null, 2) + '</pre>') +
+        (('stack' in error) ? '<pre>' + error.stack.replace(/\\n/g,'\n').replace(/\\t/g,'\t') + '</pre>' : "")
     );
     this._end();
+    console.log(error);
 };
 
 FreebaseLoadingDialog.prototype._end = function() {
     var self = this;
-    self._elmts.loadButton.text("Close").removeAttr("disabled").unbind().click(function() {
+    this._elmts.loadButton.text("Close").removeAttr("disabled").removeClass("button-disabled").unbind().click(function() {
         self._dismiss();
     });
-    self._elmts.cancelButton.hide();
-    self._elmts.qaCheckboxContainer.hide();
-    self._elmts.authorization.hide();
+    this._elmts.cancelButton.hide();
+    this._elmts.authorization.hide();
 };

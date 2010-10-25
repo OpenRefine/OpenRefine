@@ -1,43 +1,52 @@
-<div class="dialog-frame" style="width: 900px;">
+<div class="dialog-frame" style="width: 1000px;">
   <div class="dialog-header" bind="dialogHeader"></div>
   <div class="dialog-body" bind="dialogBody">
     <div class="grid-layout layout-normal layout-full"><table>
       <tr>
+        <td colspan="4">
+          This feature helps you find groups of different cell values that might be
+          alternative representations of the same thing. For example, the two strings
+          "New York" and "new york" are very likely to refer to the same concept and 
+          just have capitalization differences, and "Gödel" and "Godel" probably refer
+          to the same person.
+          <a href="http://code.google.com/p/google-refine/wiki/Clustering" target="_blank">Find out more ...</a>
+        </td>
+      </tr>
+      <tr>
         <td>
-            Method:
-            <select bind="methodSelector">
+            Method&nbsp;<select bind="methodSelector">
               <option selected="true">key collision</option>
               <option>nearest neighbor</option>
             </select>
         </td>
         <td>
-          <div class="binning-controls">Keying Function: <select bind="keyingFunctionSelector">
+          <div class="binning-controls">Keying&nbsp;Function&nbsp;<select bind="keyingFunctionSelector">
             <option selected="true">fingerprint</option>
             <option>ngram-fingerprint</option>
             <option>double-metaphone</option>
           </select></div>
-          <div class="knn-controls hidden">Distance Function: <select bind="distanceFunctionSelector">
+          <div class="knn-controls hidden">Distance&nbsp;Function&nbsp;<select bind="distanceFunctionSelector">
             <option selected="true">levenshtein</option>
             <option>PPM</option>
           </select></div>
         </td>
         <td>
           <div id="ngram-fingerprint-params" class="function-params hidden">
-            'Ngram Size: <input type="text" value="2" bind="ngramSize" name="ngram-size" size="3" class="param" datatype="int">
+            Ngram&nbsp;Size&nbsp;<input type="text" value="2" bind="ngramSize" name="ngram-size" size="2" class="param" datatype="int">
           </div> 
           <div class="knn-controls hidden">
-            <span style="margin-right: 1em">Radius: <input type="text" value="1.0" bind="radius" name="radius" size="3" class="param" datatype="float"></span>
-            <span>Block Chars: <input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="3" class="param" datatype="int"></span>
+            <span style="margin-right: 1em">Radius&nbsp;<input type="text" value="1.0" bind="radius" name="radius" size="2" class="param" datatype="float"></span>
+            <span>Block&nbsp;Chars&nbsp;<input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="2" class="param" datatype="int"></span>
           </div> 
         </td>
-        <td bind="resultSummary" align="right">
+        <td bind="resultSummary" style="text-align:right;">
         </td>
       </tr>
       <tr>
         <td colspan="3">
           <div bind="tableContainer" class="clustering-dialog-table-container"></div>
         </td>
-        <td bind="facetContainer" width="200"></td>
+        <td colspan="1" bind="facetContainer" width="250"></td>
       </tr>
     </table></div>
   </div>
@@ -48,8 +57,8 @@
         <button class="button" bind="deselectAllButton">Deselect All</button>
       </td> 
       <td class="right" style="text-align: right">
-        <button class="button" bind="applyReClusterButton">Apply &amp; Re-Cluster</button>
-        <button class="button" bind="applyCloseButton">Apply &amp; Close</button>
+        <button class="button button-primary" bind="applyReClusterButton">Merge Selected &amp; Re-Cluster</button>
+        <button class="button" bind="applyCloseButton">Merge Selected &amp; Close</button>
         <button class="button" bind="closeButton">Close</button>
       </td>
     </tr></table>
