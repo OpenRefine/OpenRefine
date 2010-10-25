@@ -290,9 +290,9 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     
-    frame.width("800px");
+    frame.width("750px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Schema Skeleton Node").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Schema Alignment Skeleton Node").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -309,10 +309,10 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         '<option value="/type/datetime">date/time</option>';
     
     var html = $(
-        '<table class="grid-layout layout-normal layout-full">' +
+        '<div class="grid-layout layout-looser layout-full"><table>' +
             '<tr>' +
                 '<td>' +
-                    '<table class="grid-layout layout-tight">' +
+                    '<div class="grid-layout layout-loose"><table>' +
                         '<tr>' +
                             '<td>' +
                                 '<div class="schema-align-node-dialog-node-type">' +
@@ -322,11 +322,11 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                         '</tr>' +
                         '<tr>' +
                             '<td>' +
-                                '<table class="grid-layout layout-tight">' +
+                                '<div class="grid-layout layout-normal"><table>' +
                                     '<tr>' +
-                                        '<td><div class="schema-alignment-node-dialog-column-list" bind="divColumns"></div></td>' +
+                                        '<td><div class="schema-alignment-node-dialog-column-list grid-layout layout-tightest" bind="divColumns"></div></td>' +
                                         '<td>' +
-                                            '<table class="grid-layout layout-tight" cols="4">' +
+                                            '<div class="grid-layout layout-tight"><table cols="4">' +
                                                 '<tr>' +
                                                     '<td colspan="4">The cell\'s content is used ...</td>' +
                                                 '</tr>' +
@@ -336,16 +336,12 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                                                 '</tr>' +
                                                 '<tr>' +
                                                     '<td></td>' +
-                                                    '<td colspan="1" width="1%"><input type="checkbox" bind="radioNodeTypeCellAsTopicCreate" /></td>' +
-                                                    '<td colspan="2">If not reconciled, create new topic named by the cell\'s content, and assign it a type</td>' +
+                                                    '<td colspan="3">Type new topics as</td>' +
                                                 '</tr>' +
                                                 '<tr>' +
                                                     '<td></td>' +
-                                                    '<td></td>' +
-                                                    '<td colspan="1">Type:</td>' +
-                                                    '<td colspan="1"><input bind="cellAsTopicNodeTypeInput" /></td>' +
+                                                    '<td colspan="3"><input bind="cellAsTopicNodeTypeInput" /></td>' +
                                                 '</tr>' +
-                                                
                                                 '<tr>' +
                                                     '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-value" bind="radioNodeTypeCellAsValue" /></td>' +
                                                     '<td colspan="3">as a literal value</td>' +
@@ -357,7 +353,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                                                 '</tr>' +
                                                 '<tr>' +
                                                     '<td></td>' +
-                                                    '<td colspan="2">Language (for text)</td>' +
+                                                    '<td colspan="2">Text language</td>' +
                                                     '<td colspan="1"><input bind="cellAsValueLanguageInput" /></td>' +
                                                 '</tr>' +
                                                 
@@ -370,17 +366,17 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                                                     '<td colspan="2">Namespace</td>' +
                                                     '<td colspan="1"><input bind="cellAsKeyInput" /></td>' +
                                                 '</tr>' +
-                                            '</table>' +
+                                            '</table></div>' +
                                         '</td>' +
                                     '</tr>' +
-                                '</table>' +
+                                '</table></div>' +
                             '</td>' +
                         '</tr>' +
-                    '</table>' +
+                    '</table></div>' +
                 '</td>' +
                 
                 '<td>' +
-                    '<table class="grid-layout layout-tight">' +
+                    '<div class="grid-layout layout-normal"><table>' +
                         '<tr>' +
                             '<td colspan="3">' +
                                 '<div class="schema-align-node-dialog-node-type">' +
@@ -429,10 +425,10 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                             '<td>Language</td>' +
                             '<td><input bind="valueNodeTypeLanguageInput" /></td>' +
                         '</tr>' +
-                    '</table>' +
+                    '</table></div>' +
                 '</td>' +
             '</tr>' +
-        '</table>'
+        '</table></div>'
     ).appendTo(body);
     
     var elmts = DOM.bind(html);
@@ -466,7 +462,6 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
                     
                     elmts.cellAsTopicNodeTypeInput[0].value = typeName;
                     elmts.cellAsTopicNodeTypeInput.data("data.suggest", { "id" : typeID, "name" : typeName });
-                    elmts.radioNodeTypeCellAsTopicCreate[0].checked = true;
                     elmts.radioNodeTypeCellAsTopic[0].checked = true;
                 }
             });
@@ -498,11 +493,6 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         .bind("focus", function() { elmts.radioNodeTypeValue[0].checked = true; })
         .suggest({ type: "/type/lang" });
         
-    elmts.radioNodeTypeCellAsTopicCreate
-        .click(function() {
-            elmts.radioNodeTypeCellAs[0].checked = true;
-            elmts.radioNodeTypeCellAsTopic[0].checked = true;
-        });
     elmts.cellAsTopicNodeTypeInput
         .bind("focus", function() {
             elmts.radioNodeTypeCellAs[0].checked = true;
@@ -562,9 +552,6 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
         elmts.cellAsKeyInput[0].value = this._node.namespace.name;
         elmts.cellAsKeyInput.data("data.suggest", this._node.namespace);
     }
-    if ("createForNoReconMatch" in this._node) {
-        elmts.radioNodeTypeCellAsTopicCreate[0].checked = this._node.createForNoReconMatch;
-    }
     if ("lang" in this._node) {
         elmts.valueNodeTypeLanguageInput[0].value = this._node.lang;
         elmts.valueNodeTypeLanguageInput.data("data.suggest", { id: this._node.lang });
@@ -598,11 +585,10 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
             }
             
             if (node.nodeType == "cell-as-topic") {
-                node.createForNoReconMatch = elmts.radioNodeTypeCellAsTopicCreate[0].checked;
-                
                 var t = elmts.cellAsTopicNodeTypeInput.data("data.suggest");
-                if (!(t) && node.createForNoReconMatch) {
+                if (!(t)) {
                     alert("For creating a new graph node, you need to specify a type for it.");
+                    elmts.cellAsTopicNodeTypeInput.focus();
                     return null;
                 }
                 node.type = {
@@ -695,8 +681,7 @@ SchemaAlignmentDialog.UINode.prototype.getJSON = function() {
             result = {
                 nodeType: this._node.nodeType,
                 columnNames: this._node.columnNames,
-                type: "type" in this._node ? cloneDeep(this._node.type) : { "id" : "/common/topic", "name" : "Topic", "cvt" : false },
-                createForNoReconMatch: "createForNoReconMatch" in this._node ? this._node.createForNoReconMatch : true
+                type: "type" in this._node ? cloneDeep(this._node.type) : { "id" : "/common/topic", "name" : "Topic", "cvt" : false }
             };
             getLinks = true;
         } else if (this._node.nodeType == "cell-as-value") {
