@@ -185,8 +185,11 @@ abstract public class NumericBinIndex {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
                         if (v instanceof Number) {
-                            _hasNumeric = true;
-                            processValue(((Number) v).doubleValue(), allValues);
+                            if (processValue(((Number) v).doubleValue(), allValues)) {
+                                _hasNumeric = true;
+                            } else {
+                                _hasError = true;
+                            }
                         } else {
                             _hasNonNumeric = true;
                         }
@@ -202,8 +205,11 @@ abstract public class NumericBinIndex {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
                         if (v instanceof Number) {
-                            _hasNumeric = true;
-                            processValue(((Number) v).doubleValue(), allValues);
+                            if (processValue(((Number) v).doubleValue(), allValues)) {
+                                _hasNumeric = true;
+                            } else {
+                                _hasError = true;
+                            }
                         } else {
                             _hasNonNumeric = true;
                         }
@@ -215,8 +221,11 @@ abstract public class NumericBinIndex {
                 _totalValueCount++;
                 
                 if (value instanceof Number) {
-                    _hasNumeric = true;
-                    processValue(((Number) value).doubleValue(), allValues);
+                    if (processValue(((Number) value).doubleValue(), allValues)) {
+                        _hasNumeric = true;
+                    } else {
+                        _hasError = true;
+                    }
                 } else {
                     _hasNonNumeric = true;
                 }
@@ -248,11 +257,14 @@ abstract public class NumericBinIndex {
         }
     }
 
-    protected void processValue(double v, List<Double> allValues) {
+    protected boolean processValue(double v, List<Double> allValues) {
         if (!Double.isInfinite(v) && !Double.isNaN(v)) {
             _min = Math.min(_min, v);
             _max = Math.max(_max, v);
             allValues.add(v);
+            return true;
+        } else {
+            return false;
         }
     }
 
