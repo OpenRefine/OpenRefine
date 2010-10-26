@@ -50,7 +50,7 @@ function TimeRangeFacet(div, config, options) {
     this._baseBlankCount = 0;
     this._baseErrorCount = 0;
     
-    this._TimeCount = 0;
+    this._timeCount = 0;
     this._nonTimeCount = 0;
     this._blankCount = 0;
     this._errorCount = 0;
