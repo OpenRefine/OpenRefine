@@ -172,8 +172,7 @@ public class ReconOperation extends EngineDependentOperation {
                             writer.object();
                                 writer.key("name"); writer.value(_columnName + ": judgment");
                                 writer.key("columnName"); writer.value(_columnName);
-                                writer.key("expression"); writer.value("cell.recon.judgment");
-                                writer.key("omitError"); writer.value(true);
+                                writer.key("expression"); writer.value("forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \"(unreconciled)\", \"(blank)\"))");
                             writer.endObject();
                         writer.key("facetOptions");
                             writer.object();
