@@ -247,7 +247,7 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
 };
 
 ReconStandardServicePanel.prototype._isInFreebaseIdentifierSpace = function() {
-    return ReconciliationManager.isFreebaseId(this._service.identifierSpace);
+    return ReconciliationManager.isFreebaseIdOrMid(this._service.identifierSpace);
 };
 
 ReconStandardServicePanel.prototype._isInFreebaseSchemaSpace = function() {
@@ -257,12 +257,13 @@ ReconStandardServicePanel.prototype._isInFreebaseSchemaSpace = function() {
 ReconStandardServicePanel.prototype.start = function() {
     var self = this;
     
-    var type = this._isInFreebaseIdentifierSpace() ?
-        this._elmts.typeInput.data("data.suggest") :
-        {
+    var type = this._elmts.typeInput.data("data.suggest");
+    if (!(type)) {
+        type = {
             id: this._elmts.typeInput[0].value,
             name: this._elmts.typeInput[0].value
         };
+    }
         
     var choices = this._panel.find('input[name="type-choice"]:checked');
     if (choices !== null && choices.length > 0) {
