@@ -47,6 +47,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <h1>A power tool for working with messy data.</h1>
     </div>
     <div id="content-home">
+      <div id="no-project-message" class="message" style="display: none;">
+        No existing project. Create one now!<br/>
+        Try these <a href="http://code.google.com/p/google-refine/wiki/SampleDatasets" target="_blank">sample data sets &raquo;</a>
+      </div>
+        
       <div id="project-open">
         <h1>Open a Project</h1>
         <div id="projects-container"></div>
@@ -156,7 +161,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           <li><a href="/about.html">About Google Refine</a></li>
           <li><a href="https://code.google.com/p/google-refine/">Project Home Page</a></li>
           <li><a href="http://code.google.com/p/google-refine/wiki/Screencasts">Screencasts</a></li>
-          <li><a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers">User Documentation</a></li>
+          <li><a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers">Help Documentation</a></li>
         </ul>
         <div id="google-refine-version"></div>
       </div>      

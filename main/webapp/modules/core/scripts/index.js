@@ -128,10 +128,7 @@ function renderProjects(data) {
 
     var container = $("#projects-container").empty();
     if (!projects.length) {
-        $('<div>')
-            .addClass("message")
-            .text("You don't have any projects yet. Create one now!")
-            .appendTo(container);
+        $("#no-project-message").clone().show().appendTo(container);
     } else {
         var table = $(
             '<table class="list-table"><tr>' +
@@ -286,7 +283,21 @@ function showVersion() {
 
 function onLoad() {
     fetchProjects();
-
+    
+    $("#project-file-input").change(function() {
+        if ($("#project-name-input")[0].value.length == 0) {
+            var fileName = this.files[0].fileName;
+            if (fileName) {
+                $("#project-name-input")[0].value = fileName.replace(/\.\w+/, "").replace(/[_-]/g, " ");
+            }
+            $("#project-name-input").focus().select();
+        }
+    }).keypress(function(evt) {
+        if (evt.keyCode == 13) {
+            onClickUploadFileButton();
+        }
+    });
+    
     $("#upload-file-button").click(onClickUploadFileButton);
     $("#more-options-link").click(function() {
         $("#more-options-controls").hide();

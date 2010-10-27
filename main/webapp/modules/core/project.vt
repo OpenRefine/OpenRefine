@@ -49,8 +49,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <a id="project-permalink-button" href="javascript:{}" class="secondary">Permalink</a>
       </div>
       <div id="project-controls">
-        <a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers" target="_blank">Help Documentation</a>
-        <a class="button button-primary" bind="exportButton" id="export-button" href="#export"><span class="button-menu">Export</span></a>
+        <a href="./" class="button button-pill-left" target="_blank">New / Open ...</a><a class="button button-pill-right" bind="exportButton" id="export-button" href="#export"><span class="button-menu">Export</span></a>&nbsp;
+        <a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers" target="_blank" class="button">Help</a>
       </div>
     </div>
     
