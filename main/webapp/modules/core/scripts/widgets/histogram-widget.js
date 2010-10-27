@@ -140,7 +140,7 @@ HistogramWidget.prototype._render = function() {
             if (y > 0) {
                 var left = c * stepPixels;
                 var width = Math.ceil(stepPixels);
-                var height = Math.ceil(y * canvas.height / self._peak);
+                var height = Math.max(2, Math.ceil(y * canvas.height / self._peak));
                 
                 ctx.fillRect(left, 0, width, height);
             }
