@@ -256,7 +256,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
         if (!json.startsWith("[")) {
             json = "[" + json;
         }
-        if (!json.endsWith("[")) {
+        if (!json.endsWith("]")) {
             json = json + "]";
         }
         
