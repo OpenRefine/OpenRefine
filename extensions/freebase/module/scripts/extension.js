@@ -118,7 +118,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             o.rowIndices, 
             function(extension) {
                 Refine.postProcess(
-                    "freebase-extension",
+                    "freebase",
                     "extend-data", 
                     {
                         baseColumnName: column.name,
