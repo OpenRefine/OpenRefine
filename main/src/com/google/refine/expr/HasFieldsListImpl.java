@@ -41,16 +41,18 @@ public class HasFieldsListImpl extends ArrayList<HasFields> implements HasFields
 
     public Object getField(String name, Properties bindings) {
         int c = size();
-        if (c > 0 && get(0).fieldAlsoHasFields(name)) {
+        if (c > 0 && get(0) != null && get(0).fieldAlsoHasFields(name)) {
             HasFieldsListImpl l = new HasFieldsListImpl();
             for (int i = 0; i < size(); i++) {
-                l.add(i, (HasFields) this.get(i).getField(name, bindings));
+                HasFields o = this.get(i);
+                l.add(i, o == null ? null : (HasFields) o.getField(name, bindings));
             }
             return l;
         } else {
             Object[] r = new Object[this.size()];
             for (int i = 0; i < r.length; i++) {
-                r[i] = this.get(i).getField(name, bindings);
+                HasFields o = this.get(i);
+                r[i] = o == null ? null : o.getField(name, bindings);
             }
             return r;
         }
