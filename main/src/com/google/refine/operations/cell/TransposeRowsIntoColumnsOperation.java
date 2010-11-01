@@ -92,8 +92,6 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
         int columnIndex = project.columnModel.getColumnIndexByName(_columnName);
         int columnCount = oldColumns.size();
         
-        newColumns.addAll(oldColumns.subList(0, columnIndex));
-        
         for (int i = 0; i < columnCount; i++) {
             Column column = oldColumns.get(i);
             
