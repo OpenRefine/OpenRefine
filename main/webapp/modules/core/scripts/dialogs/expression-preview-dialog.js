@@ -135,6 +135,8 @@ ExpressionPreviewDialog.Widget = function(
         })
         .select()
         .focus();
+        
+    this._tabContentWidth = this._elmts.expressionPreviewPreviewContainer.width() + "px";
     
     this.update();
     this._renderExpressionHistoryTab();
@@ -178,10 +180,10 @@ ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
-    var elmt = this._elmts.expressionPreviewHelpTabBody.empty();
+    var elmt = this._elmts.expressionPreviewHelpTabBody.empty().width(this._tabContentWidth);
     
     $('<h3></h3>').text("Variables").appendTo(elmt);
-    var varTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
+    var varTable = $('<table cellspacing="5"></table>').appendTo(elmt)[0];
     var vars = [
         {   name: "cell",
             description: "The current cell. It has a few fields: 'value' and 'recon'."
@@ -260,13 +262,13 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistoryTab = function(
 
 ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(data) {
     var self = this;
-    var elmt = this._elmts.expressionPreviewHistoryContainer.empty();
+    var elmt = this._elmts.expressionPreviewHistoryContainer.empty().width(this._tabContentWidth);
     
     var table = $(
-        '<table width="100%" cellspacing="5">' +
+        '<table>' +
             '<tr><th></th><th>From</th><th colspan="2">Expression</th><th></th></tr>' +
         '</table>'
-    ).appendTo(elmt)[0];
+    ).appendTo($('<div>').addClass("expression-preview-table-wrapper").appendTo(elmt))[0];
     
     var renderEntry = function(entry) {
         var tr = table.insertRow(table.rows.length);
@@ -333,8 +335,10 @@ ExpressionPreviewDialog.Widget.prototype._prepareUpdate = function(params) {
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, data) {
-    var container = this._elmts.expressionPreviewPreviewContainer.empty();
-    var table = $('<table width="100%"></table>').appendTo(container)[0];
+    var container = this._elmts.expressionPreviewPreviewContainer.empty().width(this._tabContentWidth);
+    
+    var table = $('<table></table>').appendTo(
+        $('<div>').addClass("expression-preview-table-wrapper").appendTo(container))[0];
     
     var tr = table.insertRow(0);
     $(tr.insertCell(0)).addClass("expression-preview-heading").text("row");

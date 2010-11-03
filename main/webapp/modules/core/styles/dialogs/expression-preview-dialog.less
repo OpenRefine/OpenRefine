@@ -50,14 +50,28 @@ textarea.expression-preview-code {
     color: red;
 }
 
-#expression-preview-tabs-preview, #expression-preview-tabs-help, #expression-preview-tabs-history {
-    padding: 5px;
+#expression-preview-tabs-preview,
+#expression-preview-tabs-help,
+#expression-preview-tabs-history {
+    padding: @padding_tight;
+    overflow: hidden;
 }
 
-.expression-preview-container {
+#expression-preview-tabs-preview > div,
+#expression-preview-tabs-help > div,
+#expression-preview-tabs-history > div {
     height: 200px;
-    padding: 5px;
     overflow: auto;
+}
+
+#expression-preview-tabs-preview td, #expression-preview-tabs-preview th,
+#expression-preview-tabs-help td, #expression-preview-tabs-help th,
+#expression-preview-tabs-history td, #expression-preview-tabs-history th {
+    padding: @padding_tight;
+}
+
+.expression-preview-table-wrapper {
+    padding: @padding_normal;
 }
 
 .expression-preview-container td {
@@ -80,15 +94,10 @@ td.expression-preview-value {
     color: #aaa;
 }
 
-.expression-preview-help-container {
-    height: 200px;
-    padding: 5px;
-    overflow: auto;
-}
-
 .expression-preview-help-container h3 {
-    background: white;
-    padding: 3px 10px;
+    margin-top: @padding_looser;
+    margin-bottom: @padding_normal;
+    border-bottom: 1px solid @light_grey;
 }
 
 .expression-preview-doc-item-title {
