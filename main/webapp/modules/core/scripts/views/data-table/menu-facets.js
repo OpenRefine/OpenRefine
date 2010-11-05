@@ -82,7 +82,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 );
             }
         },
-        {
+        /*{
             id: "core/time-facet",
             label: "Timeline facet",
             click: function() {
@@ -96,7 +96,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                     }
                 );
             }
-        },
+        },*/
         {
             id: "core/scatterplot-facet",
             label: "Scatterplot facet",
