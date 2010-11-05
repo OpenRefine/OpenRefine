@@ -35,6 +35,7 @@ package com.google.refine.grel.ast;
 
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Function;
@@ -63,7 +64,11 @@ public class FunctionCallExpr implements Evaluable {
             }
              args[i] = v;
         }
-        return _function.call(bindings, args);
+        try {
+            return _function.call(bindings, args);
+        } catch (Exception e) {
+            return new EvalError(e.toString());
+        }
     }
 
     public String toString() {
