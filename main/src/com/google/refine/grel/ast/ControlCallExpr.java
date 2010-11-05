@@ -35,6 +35,7 @@ package com.google.refine.grel.ast;
 
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
 
@@ -51,7 +52,11 @@ public class ControlCallExpr implements Evaluable {
     }
                               
     public Object evaluate(Properties bindings) {
-        return _control.call(bindings, _args);
+        try {
+            return _control.call(bindings, _args);
+        } catch (Exception e) {
+            return new EvalError(e.toString());
+        }
     }
 
     @Override
