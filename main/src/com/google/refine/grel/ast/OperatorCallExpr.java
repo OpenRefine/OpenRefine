@@ -82,6 +82,10 @@ public class OperatorCallExpr implements Evaluable {
                         return n1 < n2;
                     } else if ("<=".equals(_op)) {
                         return n1 <= n2;
+                    } else if ("==".equals(_op)) {
+                        return n1 == n2;
+                    } else if ("!=".equals(_op)) {
+                        return n1 != n2;
                     }
                 } else if (args[0] instanceof Number && args[1] instanceof Number) {
                     double n1 = ((Number) args[0]).doubleValue();
@@ -103,6 +107,10 @@ public class OperatorCallExpr implements Evaluable {
                         return n1 < n2;
                     } else if ("<=".equals(_op)) {
                         return n1 <= n2;
+                    } else if ("==".equals(_op)) {
+                        return n1 == n2;
+                    } else if ("!=".equals(_op)) {
+                        return n1 != n2;
                     }
                 }
                 
