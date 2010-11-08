@@ -38,6 +38,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -51,8 +52,12 @@ abstract class IsTest implements Control {
     }
 
     public Object call(Properties bindings, Evaluable[] args) {
-        Object o = args[0].evaluate(bindings);
-        
+        Object o;
+        try {
+            o = args[0].evaluate(bindings);
+        } catch (Exception e) {
+            o = new EvalError(e.toString());
+        } 
         return test(o);
     }
     
