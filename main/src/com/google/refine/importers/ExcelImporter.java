@@ -78,10 +78,17 @@ public class ExcelImporter implements StreamImporter {
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
             throw new ImportException(
-                "Attempted to parse file as Excel file but failed. " +
+                "Attempted to parse as an Excel file but failed. " +
                 "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
                 e
             );
+        } catch (ArrayIndexOutOfBoundsException e){
+            throw new ImportException(
+                   "Attempted to parse file as an Excel file but failed. " +
+                   "This is probably caused by a corrupt excel file, or due to the file having previously been created or saved by a non-Microsoft application. " +
+                   "Please try opening the file in Microsoft Excel and resaving it, then try re-uploading the file. " +
+                   "See https://issues.apache.org/bugzilla/show_bug.cgi?id=48261 for further details",
+                   e);
         }
         
         Sheet sheet = wb.getSheetAt(0);
