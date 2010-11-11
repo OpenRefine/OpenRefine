@@ -23,7 +23,7 @@ import org.openrdf.sail.memory.MemoryStore;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
-import com.google.refine.exporters.Exporter;
+import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.rdf.Node;
@@ -32,7 +32,7 @@ import com.google.refine.rdf.Util;
 import com.google.refine.rdf.app.ApplicationContext;
 import com.google.refine.rdf.vocab.VocabularyIndexException;
 
-public class RdfExporter implements Exporter{
+public class RdfExporter implements WriterExporter{
 
     private RDFFormat format;
     private ApplicationContext applicationContext;
