@@ -164,11 +164,11 @@ RdfDataTableView.getUriPreviewWidget = function(isLiteral,isRowNumberCell,baseUr
 		};
     
 		if (this._results !== null) {
-			this._elmts.expressionPreviewErrorContainer.empty();
-		} else {
-			var message = (data.type == "parser") ? data.message : "Internal error";
-			this._elmts.expressionPreviewErrorContainer.empty().text(message);
-		}
+	        this._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text("No syntax error.");
+	    } else {
+	        var message = (data.type == "parser") ? data.message : "Internal error";
+	        this._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
+	    }
     
 		for (var i = 0; i < this._values.length; i++) {
 			var tr = table.insertRow(table.rows.length);
