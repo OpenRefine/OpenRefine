@@ -558,10 +558,9 @@ public class TsvCsvImporterTests extends RefineTest {
      */
     @DataProvider(name = "CSV-or-null")
     public Object[][] CSV_or_null(){
-        return new Object[][]{{
-                ",",
-                null
-        }};
+        return new Object[][]{
+                {","},{null}
+        };
     }
 
     public void whenGetBooleanOption(String name, Properties properties, Boolean def){
