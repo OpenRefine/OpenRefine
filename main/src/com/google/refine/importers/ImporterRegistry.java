@@ -52,7 +52,8 @@ abstract public class ImporterRegistry {
         {"RdfTripleImporter", "com.google.refine.importers.RdfTripleImporter"},
         {"MarcImporter", "com.google.refine.importers.MarcImporter"},
         {"TsvCsvImporter", "com.google.refine.importers.TsvCsvImporter"},
-        {"JsonImporter", "com.google.refine.importers.JsonImporter"}
+        {"JsonImporter", "com.google.refine.importers.JsonImporter"},
+        {"FixedWidthImporter", "com.google.refine.importers.FixedWidthImporter"}
     };
 
     static {
