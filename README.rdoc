@@ -1,0 +1,4 @@
+This project adds a graphical user interface(GUI) for exporting data of Google Refine projects in RDF format. The export is based on mapping the data to a template graph using the GUI.
+
+INSTALL
+you need to have the code of Google Refine http://code.google.com/p/google-refine/source/checkout . Then pull the code of this extension into the extensions folder available with Google Refine code. see http://code.google.com/p/google-refine/wiki/WriteAnExtension
