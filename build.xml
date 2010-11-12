@@ -2,11 +2,11 @@
 
 <!--+
     |
-    |  Gridworks Extension RDF Exporter Build File    
+    |  Google Refine Extension RDF Exporter Build File    
     |                
     +-->
     
-<project name="gridworks-rdf-exporter" default="build" basedir=".">
+<project name="refine-rdf-export" default="build" basedir=".">
 
     <property environment="env"/>
 
@@ -28,14 +28,13 @@
 
     <property name="fullname" value="${name}-${version}-${revision}" />
     
-    <property name="gridworks.dir" value="${basedir}/../../main" />
-    <property name="gridworks.webinf.dir" value="${gridworks.dir}/webapp/WEB-INF" />
-    <property name="gridworks.modinf.dir" value="${gridworks.dir}/webapp/modules/core/MOD-INF" />
-    <property name="gridworks.classes.dir" value="${gridworks.webinf.dir}/classes" />
-    <property name="gridworks.lib.dir" value="${gridworks.webinf.dir}/lib" />
-    
-    <property name="gridworks.server.dir" value="${basedir}/../../server" />
-    <property name="gridworks.server.lib.dir" value="${gridworks.server.dir}/lib" />
+    <property name="refine.dir" value="${basedir}/../../main" />
+    <property name="refine.webinf.dir" value="${refine.dir}/webapp/WEB-INF" />
+    <property name="refine.modinf.dir" value="${refine.dir}/webapp/modules/core/MOD-INF" />
+    <property name="refine.classes.dir" value="${refine.webinf.dir}/classes" />
+    <property name="refine.lib.dir" value="${refine.webinf.dir}/lib" />
+    <property name="server.dir" value="${basedir}/../../server" />
+    <property name="server.lib.dir" value="${server.dir}/lib" />
     
     <property name="src.dir" value="${basedir}/src" />
     <property name="module.dir" value="${basedir}/module" />
@@ -47,13 +46,13 @@
         <fileset dir="${lib.dir}">
             <include name="**/*.jar" />
         </fileset>
-        <fileset dir="${gridworks.lib.dir}">
+        <fileset dir="${refine.lib.dir}">
             <include name="**/*.jar" />
         </fileset>
-        <fileset dir="${gridworks.server.lib.dir}">
+        <fileset dir="${server.lib.dir}">
             <include name="**/*.jar" />
         </fileset>
-        <pathelement path="${gridworks.classes.dir}"/>
+        <pathelement path="${refine.classes.dir}"/>
     </path>
             
     <target name="build_java">
@@ -64,13 +63,7 @@
         </javac>
     </target>
 
-	<target name="copy_tsv">
-		<copy todir="${classes.dir}">
-			<fileset dir="${src.dir}" includes="**/*.tsv"/>
-		</copy>
-	</target>
-
-    <target name="build" depends="build_java,copy_tsv"/>
+    <target name="build" depends="build_java"/>
 
     <target name="clean">
         <delete dir="${classes.dir}" />
