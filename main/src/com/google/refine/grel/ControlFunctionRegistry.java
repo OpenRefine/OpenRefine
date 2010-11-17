@@ -59,6 +59,7 @@ import com.google.refine.expr.functions.booleans.Or;
 import com.google.refine.expr.functions.date.DatePart;
 import com.google.refine.expr.functions.date.Inc;
 import com.google.refine.expr.functions.date.Now;
+import com.google.refine.expr.functions.math.Abs;
 import com.google.refine.expr.functions.math.Ceil;
 import com.google.refine.expr.functions.math.Exp;
 import com.google.refine.expr.functions.math.Floor;
@@ -214,6 +215,7 @@ public class ControlFunctionRegistry {
         registerFunction("round", new Round());
         registerFunction("floor", new Floor());
         registerFunction("ceil", new Ceil());
+        registerFunction("abs", new Abs());
         registerFunction("mod", new Mod());
         registerFunction("max", new Max());
         registerFunction("min", new Min());
