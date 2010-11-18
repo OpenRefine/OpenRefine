@@ -231,4 +231,13 @@ public class Row implements HasFields, Jsonizable {
         
         return (cells.size() > 0) ? new Row(cells, flagged, starred) : null;
     }
+    
+    public String toString() {
+        StringBuffer result = new StringBuffer();
+        for (Cell cell : cells) {
+            result.append(cell.toString());
+            result.append(",");
+        }
+        return result.toString();
+    }
 }

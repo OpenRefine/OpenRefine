@@ -179,4 +179,8 @@ public class Cell implements HasFields, Jsonizable {
             return null;
         }
     }
+    
+    public String toString() {
+        return value.toString();
+    }
 }
