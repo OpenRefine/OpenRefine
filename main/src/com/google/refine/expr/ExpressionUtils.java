@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -51,37 +51,38 @@ import com.google.refine.model.Row;
 
 public class ExpressionUtils {
     static protected Set<Binder> s_binders = new HashSet<Binder>();
-    
+
     static public void registerBinder(Binder binder) {
         s_binders.add(binder);
     }
-    
+
     static public Properties createBindings(Project project) {
         Properties bindings = new Properties();
-        
+
         bindings.put("true", true);
         bindings.put("false", false);
-        
+        bindings.put("PI", Math.PI);
+
         bindings.put("project", project);
-        
+
         for (Binder binder : s_binders) {
             binder.initializeBindings(bindings, project);
         }
 
         return bindings;
     }
-    
+
     static public void bind(Properties bindings, Row row, int rowIndex, String columnName, Cell cell) {
         Project project = (Project) bindings.get("project");
-        
+
         bindings.put("rowIndex", rowIndex);
         bindings.put("row", new WrappedRow(project, rowIndex, row));
         bindings.put("cells", new CellTuple(project, row));
-        
+
         if (columnName != null) {
             bindings.put("columnName", columnName);
         }
-        
+
         if (cell == null) {
             bindings.remove("cell");
             bindings.remove("value");
@@ -93,12 +94,12 @@ public class ExpressionUtils {
                 bindings.put("value", cell.value);
             }
         }
-        
+
         for (Binder binder : s_binders) {
             binder.bind(bindings, row, rowIndex, columnName, cell);
         }
     }
-    
+
     static public boolean isError(Object o) {
         return o != null && o instanceof EvalError;
     }
@@ -108,19 +109,19 @@ public class ExpressionUtils {
     }
     */
     static public boolean isNonBlankData(Object o) {
-        return 
-            o != null && 
+        return
+            o != null &&
             !(o instanceof EvalError) &&
             (!(o instanceof String) || ((String) o).length() > 0);
     }
 
     static public boolean isTrue(Object o) {
-        return o != null && 
-            (o instanceof Boolean ? 
-                ((Boolean) o).booleanValue() : 
+        return o != null &&
+            (o instanceof Boolean ?
+                ((Boolean) o).booleanValue() :
                 Boolean.parseBoolean(o.toString()));
     }
-    
+
     static public boolean sameValue(Object v1, Object v2) {
         if (v1 == null) {
             return (v2 == null)
@@ -132,7 +133,7 @@ public class ExpressionUtils {
             return v1.equals(v2);
         }
     }
-    
+
     static public boolean isStorable(Object v) {
         return v == null ||
             v instanceof Number ||
@@ -142,36 +143,36 @@ public class ExpressionUtils {
             v instanceof Calendar ||
             v instanceof EvalError;
     }
-    
+
     static public Serializable wrapStorable(Object v) {
         if (v instanceof JSONArray) {
             return ((JSONArray) v).toString();
         } else if (v instanceof JSONObject) {
             return ((JSONObject) v).toString();
         } else {
-            return isStorable(v) ? 
-                (Serializable) v : 
+            return isStorable(v) ?
+                (Serializable) v :
                 new EvalError(v.getClass().getSimpleName() + " value not storable");
         }
     }
-    
+
     static public boolean isArray(Object v) {
         return v != null && v.getClass().isArray();
     }
-    
+
     static public boolean isArrayOrCollection(Object v) {
         return v != null && (v.getClass().isArray() || v instanceof Collection<?>);
     }
-    
+
     static public boolean isArrayOrList(Object v) {
         return v != null && (v.getClass().isArray() || v instanceof List<?>);
     }
-    
+
     @SuppressWarnings("unchecked")
     static public List<Object> toObjectList(Object v) {
         return (List<Object>) v;
     }
-    
+
     @SuppressWarnings("unchecked")
     static public Collection<Object> toObjectCollection(Object v) {
         return (Collection<Object>) v;
