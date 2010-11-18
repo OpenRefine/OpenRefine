@@ -271,9 +271,9 @@ public class GDataImporter implements UrlImporter {
                 } else {
                     row.cells.add(null);
                 }
-                project.rows.add(row);
-                values = getTableRow(scanner);
             }
+            project.rows.add(row);
+            values = getTableRow(scanner);
         }
     }
 
