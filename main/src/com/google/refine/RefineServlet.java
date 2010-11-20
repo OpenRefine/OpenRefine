@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,8 +92,6 @@ public class RefineServlet extends Butterfly {
             }
         }
     }
-
-    protected ServletConfig config;
 
     @Override
     public void init() throws ServletException {
@@ -149,8 +146,6 @@ public class RefineServlet extends Butterfly {
             ProjectManager.singleton.dispose();
             ProjectManager.singleton = null;
         }
-
-        this.config = null;
 
         logger.trace("< destroy");
 
@@ -208,7 +203,7 @@ public class RefineServlet extends Butterfly {
 
     public File getTempDir() {
         if (tempDir == null) {
-            File tempDir = (File) this.config.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
+            File tempDir = (File) _config.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
             if (tempDir == null) {
                 throw new RuntimeException("This app server doesn't support temp directories");
             }
