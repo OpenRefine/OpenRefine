@@ -60,9 +60,9 @@ public class Combin implements Function {
             throw new IllegalArgumentException ("the number of elements, n, should be larger than the number of combinations, k");
         if (n < 1)
             throw new IllegalArgumentException ("the number of elements, n, cannot be less than 1");
-        int nFact = Fact.factorial(n);
-        int rFact = Fact.factorial(k);
-        int nminusrFact = Fact.factorial(n - k);
+        int nFact = FactN.factorial(n, 1);
+        int rFact = FactN.factorial(k, 1);
+        int nminusrFact = FactN.factorial(n - k, 1);
         return nFact / (rFact * nminusrFact);
     }
 

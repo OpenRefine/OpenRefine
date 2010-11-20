@@ -42,21 +42,37 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-public class Fact implements Function {
+public class LeastCommonMultiple implements Function {
 
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
-            return FactN.factorial(((Number) args[0]).intValue(), 1);
+        if (args.length == 2
+                && args[0] != null && args[0] instanceof Number
+                && args[1] != null && args[1] instanceof Number) {
+            return LeastCommonMultiple.LCM(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+    }
+
+    public static double LCM(double a, double b){
+        double largerValue = a;
+        double smallerValue = b;
+        if(b > a){
+            largerValue = b;
+            smallerValue = a;
+        }
+        for(int i = 1; i <= largerValue; i++){
+            if((largerValue*i) % smallerValue == 0)
+                return largerValue * i;
+        }
+        return largerValue * smallerValue;
     }
 
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Returns the factorial of a number");
-        writer.key("params"); writer.value("number i");
+        writer.key("description"); writer.value("Returns the greatest common denominator of the two numbers");
+        writer.key("params"); writer.value("number d, number e");
         writer.key("returns"); writer.value("number");
         writer.endObject();
     }

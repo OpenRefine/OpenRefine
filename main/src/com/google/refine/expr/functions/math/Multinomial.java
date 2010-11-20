@@ -42,21 +42,29 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-public class Fact implements Function {
+public class Multinomial implements Function {
 
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
-            return FactN.factorial(((Number) args[0]).intValue(), 1);
+        if (args.length < 1)
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one or more numbers");
+        int sum = 0;
+        int product = 1;
+        for(int i = 0; i < args.length; i++){
+            if(args[i] == null && !(args[i] instanceof Number))
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects parameter " + (i + 1) + " to be a number");
+            int num = ((Number) args[i]).intValue();
+            sum += num;
+            product *= FactN.factorial(num, 1);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
+        return FactN.factorial(sum, 1) / product;
     }
 
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Returns the factorial of a number");
-        writer.key("params"); writer.value("number i");
+        writer.key("description"); writer.value("Calculates the multinomial of a series of numbers");
+        writer.key("params"); writer.value("one or more numbers");
         writer.key("returns"); writer.value("number");
         writer.endObject();
     }

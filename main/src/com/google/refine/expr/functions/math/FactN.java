@@ -42,13 +42,30 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-public class Fact implements Function {
+public class FactN implements Function {
 
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
-            return FactN.factorial(((Number) args[0]).intValue(), 1);
-        }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
+        if (args.length != 2)
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+        if(args[0] == null || !(args[0] instanceof Number))
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first parameter to be a number");
+        if(args[1] == null && !(args[1] instanceof Number))
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second parameter to be a number");
+
+        return FactN.factorial(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
+
+    }
+
+    /*
+     * Calculates the factorial of an integer, i, for a decreasing step of n.
+     * e.g. A double factorial would have a step of 2.
+     * Returns 1 for zero and negative integers.
+     */
+    public static int factorial(int i, int step){
+        if(i <= 1)
+            return 1;
+        else
+            return i * FactN.factorial(i - step, step);
     }
 
     public void write(JSONWriter writer, Properties options)
