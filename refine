@@ -910,13 +910,6 @@ if [ -z "$REFINE_VERBOSITY" ] ; then
 fi
 add_option "-Drefine.verbosity=$REFINE_VERBOSITY"
 
-if [ -z "$JYTHONPATH" ] ; then
-    JYTHONPATH="$REFINE_WEBAPP/WEB-INF/lib/jython"
-else
-    JYTHONPATH="$REFINE_WEBAPP/WEB-INF/lib/jython${SEP}$JYTHONPATH"
-fi
-add_option "-Dpython.path=$JYTHONPATH"
-
 # ----- Respond to the action given --------------------------------------------
 
 case "$ACTION" in

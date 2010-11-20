@@ -32,8 +32,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 function init() {
-    // Packages.java.lang.System.err.println("Initializing jython extension");
+    var libPath = new Packages.java.io.File(module.getPath(), "MOD-INF/lib/jython/").getCanonicalPath();
     
+    var S = Packages.java.lang.System;
+    var currentLibPath = S.getProperty("python.path");
+    if (currentLibPath == null) {
+        currentLibPath = libPath;
+    } else if (currentLibPath.indexOf(libPath) < 0) {
+        currentLibPath = currentLibPath + Packages.java.io.File.pathSeparator + libPath;
+    }
+    S.setProperty("python.path", currentLibPath);
+
     Packages.com.google.refine.expr.MetaParser.registerLanguageParser(
         "jython",
         "Jython",
