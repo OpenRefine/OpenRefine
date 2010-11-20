@@ -253,7 +253,7 @@ public class ControlFunctionRegistry {
         registerFunction("exp", new Exp());
         registerFunction("sum", new Sum());
         registerFunction("fact", new Fact());
-        registerFunction("comb", new Combin());
+        registerFunction("combin", new Combin());
         registerFunction("degrees", new Degrees());
         registerFunction("radians", new Radians());
 
