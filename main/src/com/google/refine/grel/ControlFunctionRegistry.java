@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -59,18 +59,34 @@ import com.google.refine.expr.functions.booleans.Or;
 import com.google.refine.expr.functions.date.DatePart;
 import com.google.refine.expr.functions.date.Inc;
 import com.google.refine.expr.functions.date.Now;
+import com.google.refine.expr.functions.math.ACos;
+import com.google.refine.expr.functions.math.ASin;
+import com.google.refine.expr.functions.math.ATan;
+import com.google.refine.expr.functions.math.ATan2;
 import com.google.refine.expr.functions.math.Abs;
 import com.google.refine.expr.functions.math.Ceil;
+import com.google.refine.expr.functions.math.Combin;
+import com.google.refine.expr.functions.math.Cos;
+import com.google.refine.expr.functions.math.Cosh;
+import com.google.refine.expr.functions.math.Degrees;
+import com.google.refine.expr.functions.math.Even;
 import com.google.refine.expr.functions.math.Exp;
+import com.google.refine.expr.functions.math.Fact;
 import com.google.refine.expr.functions.math.Floor;
 import com.google.refine.expr.functions.math.Ln;
 import com.google.refine.expr.functions.math.Log;
 import com.google.refine.expr.functions.math.Max;
 import com.google.refine.expr.functions.math.Min;
 import com.google.refine.expr.functions.math.Mod;
+import com.google.refine.expr.functions.math.Odd;
 import com.google.refine.expr.functions.math.Pow;
+import com.google.refine.expr.functions.math.Radians;
 import com.google.refine.expr.functions.math.Round;
+import com.google.refine.expr.functions.math.Sin;
+import com.google.refine.expr.functions.math.Sinh;
 import com.google.refine.expr.functions.math.Sum;
+import com.google.refine.expr.functions.math.Tan;
+import com.google.refine.expr.functions.math.Tanh;
 import com.google.refine.expr.functions.strings.Chomp;
 import com.google.refine.expr.functions.strings.Contains;
 import com.google.refine.expr.functions.strings.Diff;
@@ -212,9 +228,21 @@ public class ControlFunctionRegistry {
         registerFunction("inc", new Inc());
         registerFunction("datePart", new DatePart());
 
+        registerFunction("acos", new ACos());
+        registerFunction("asin", new ASin());
+        registerFunction("atan", new ATan());
+        registerFunction("atan2", new ATan2());
+        registerFunction("cos", new Cos());
+        registerFunction("cosh", new Cosh());
+        registerFunction("sin", new Sin());
+        registerFunction("sinh", new Sinh());
+        registerFunction("tan", new Tan());
+        registerFunction("tanh", new Tanh());
         registerFunction("round", new Round());
         registerFunction("floor", new Floor());
         registerFunction("ceil", new Ceil());
+        registerFunction("even", new Even());
+        registerFunction("odd", new Odd());
         registerFunction("abs", new Abs());
         registerFunction("mod", new Mod());
         registerFunction("max", new Max());
@@ -224,6 +252,10 @@ public class ControlFunctionRegistry {
         registerFunction("pow", new Pow());
         registerFunction("exp", new Exp());
         registerFunction("sum", new Sum());
+        registerFunction("fact", new Fact());
+        registerFunction("comb", new Combin());
+        registerFunction("degrees", new Degrees());
+        registerFunction("radians", new Radians());
 
         registerFunction("and", new And());
         registerFunction("or", new Or());

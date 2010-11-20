@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -44,12 +44,12 @@ import com.google.refine.expr.ExpressionUtils;
 public class OperatorCallExpr implements Evaluable {
     final protected Evaluable[] _args;
     final protected String        _op;
-    
+
     public OperatorCallExpr(Evaluable[] args, String op) {
         _args = args;
         _op = op;
     }
-                              
+
     public Object evaluate(Properties bindings) {
         Object[] args = new Object[_args.length];
         for (int i = 0; i < _args.length; i++) {
@@ -59,13 +59,13 @@ public class OperatorCallExpr implements Evaluable {
             }
             args[i] = v;
         }
-        
+
         if (args.length == 2) {
             if (args[0] != null && args[1] != null) {
                 if (isIntegral(args[0]) && isIntegral(args[1])) {
                     long n1 = ((Number) args[0]).longValue();
                     long n2 = ((Number) args[1]).longValue();
-                    
+
                     if ("+".equals(_op)) {
                         return n1 + n2;
                     } else if ("-".equals(_op)) {
@@ -74,6 +74,8 @@ public class OperatorCallExpr implements Evaluable {
                         return n1 * n2;
                     } else if ("/".equals(_op)) {
                         return n1 / n2;
+                    } else if ("%".equals(_op)) {
+                        return n1 % n2;
                     } else if (">".equals(_op)) {
                         return n1 > n2;
                     } else if (">=".equals(_op)) {
@@ -90,7 +92,7 @@ public class OperatorCallExpr implements Evaluable {
                 } else if (args[0] instanceof Number && args[1] instanceof Number) {
                     double n1 = ((Number) args[0]).doubleValue();
                     double n2 = ((Number) args[1]).doubleValue();
-                    
+
                     if ("+".equals(_op)) {
                         return n1 + n2;
                     } else if ("-".equals(_op)) {
@@ -99,6 +101,8 @@ public class OperatorCallExpr implements Evaluable {
                         return n1 * n2;
                     } else if ("/".equals(_op)) {
                         return n1 / n2;
+                    } else if ("%".equals(_op)) {
+                        return n1 % n2;
                     } else if (">".equals(_op)) {
                         return n1 > n2;
                     } else if (">=".equals(_op)) {
@@ -113,12 +117,12 @@ public class OperatorCallExpr implements Evaluable {
                         return n1 != n2;
                     }
                 }
-                
+
                 if ("+".equals(_op)) {
                     return args[0].toString() + args[1].toString();
                 }
             }
-            
+
             if ("==".equals(_op)) {
                 if (args[0] != null) {
                     return args[0].equals(args[1]);
@@ -139,7 +143,7 @@ public class OperatorCallExpr implements Evaluable {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        
+
         for (Evaluable ev : _args) {
             if (sb.length() > 0) {
                 sb.append(' ');
@@ -148,10 +152,10 @@ public class OperatorCallExpr implements Evaluable {
             }
             sb.append(ev.toString());
         }
-        
+
         return sb.toString();
     }
-    
+
     private boolean isIntegral(Object n) {
         return n instanceof Long || n instanceof Integer;
     }
