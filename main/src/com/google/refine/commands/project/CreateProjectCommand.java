@@ -209,7 +209,7 @@ public class CreateProjectCommand extends Command {
 
         logger.info("Importing '{}'", fileName);
 
-        if (fileName.endsWith(".zip") || fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || fileName.endsWith(".tar.bz2")) {
+        if (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || fileName.endsWith(".tar.bz2")) {
 
             // first, save the file on disk, since we need two passes and we might
             // not have enough memory to keep it all in there
@@ -363,6 +363,8 @@ public class CreateProjectCommand extends Command {
             return new TarInputStream(new GZIPInputStream(is));
         } else if (fileName.endsWith(".tar.bz2")) {
             return new TarInputStream(new CBZip2InputStream(is));
+        } else if (fileName.endsWith(".tar")) {
+            return new TarInputStream(is);
         } else {
             return new ZipInputStream(is);
         }
