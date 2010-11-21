@@ -94,11 +94,6 @@ public class Refine {
         
         // tell the signpost library to log
         //System.setProperty("debug","true");
-            
-        // if not already set, make sure jython can find its python stuff
-        if (System.getProperty("python.path") == null) {
-            System.setProperty("python.path","lib/python");
-        }
         
         // set the log verbosity level
         org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("refine.verbosity","info")));
