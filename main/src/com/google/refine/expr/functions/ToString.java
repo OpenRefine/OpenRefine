@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
@@ -49,13 +50,17 @@ public class ToString implements Function {
             Object o1 = args[0];
             if (o1 != null) {
                 if (o1 instanceof Calendar) {
+                    DateFormat formatter = null;
                     if (args.length == 2) {
                        Object o2 = args[1];
                        if (o2 != null && o2 instanceof String) {
-                           SimpleDateFormat formatter = new SimpleDateFormat((String) o2);
-                           return formatter.format(((Calendar) o1).getTime());
+                           formatter = new SimpleDateFormat((String) o2);
                        }
                     }
+                    if (formatter == null) {
+                        formatter = DateFormat.getDateInstance();
+                    }
+                    return formatter.format(((Calendar) o1).getTime());
                 } else {
                     return (o1 instanceof String) ? o1 : o1.toString();
                 }
