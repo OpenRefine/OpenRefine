@@ -448,35 +448,44 @@ public class CreateProjectCommand extends Command {
 
             CharsetDetector detector = new CharsetDetector();
             detector.setDeclaredEncoding("utf8"); // most of the content on the web is encoded in UTF-8 so start with that
+            options.setProperty("encoding_confidence", "0"); // in case we don't find anything suitable
 
-            Reader reader = null;
+            InputStreamReader reader = null;
             CharsetMatch[] charsetMatches = detector.setText(bytes).detectAll();
-            for (CharsetMatch charsetMatch : charsetMatches) {
-                try {
-                    int confidence = charsetMatch.getConfidence();
-                    if (confidence >= 50) {
+            if (charsetMatches.length > 0) {
+                CharsetMatch charsetMatch = charsetMatches[0]; // matches are ordered - first is best match
+                int confidence = charsetMatch.getConfidence();
+                // Threshold was 50.  Do we ever want to not use our best guess even if it's low confidence? - tfmorris
+                if (confidence >= 20) {
+                    try {
                         reader = new InputStreamReader(inputStream, charsetMatch.getName());
-    
-                        options.setProperty("encoding", charsetMatch.getName());
-                        options.setProperty("encoding_confidence", Integer.toString(confidence));
-    
-                        logger.info("Best encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
+                    } catch (UnsupportedEncodingException e) {
+                        // ignored - we'll fall back to a different reader later
                     }
-                    
-                    break;
-                } catch (UnsupportedEncodingException e) {
-                    // silent
+                    // Encoding will be set later at common exit point
+                    options.setProperty("encoding_confidence", Integer.toString(confidence));    
+                    logger.info("Best encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
+                } else {
+                    logger.debug("Poor encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
                 }
             }
 
             if (reader == null) { // when all else fails
-                reader = encoding != null ?
-                        new InputStreamReader(inputStream, encoding) :
-                        new InputStreamReader(inputStream);
+                if (encoding != null) {
+                    reader = new InputStreamReader(inputStream, encoding);
+                } else {
+                    reader = new InputStreamReader(inputStream);
+                }
             }
+            // Get the actual encoding which will be used and save it for project metadata
+            options.setProperty("encoding", reader.getEncoding());
 
             ((ReaderImporter) importer).read(reader, project, metadata, options);
         } else {
+            // TODO: How do we set character encoding here?
+            // Things won't work right if it's not set, so pick some arbitrary values
+            options.setProperty("encoding", encoding);
+            options.setProperty("encoding_confidence", "0");
             ((StreamImporter) importer).read(rawInputStream, project, metadata, options);
         }
     }
