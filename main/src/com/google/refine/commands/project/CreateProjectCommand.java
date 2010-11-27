@@ -484,7 +484,9 @@ public class CreateProjectCommand extends Command {
         } else {
             // TODO: How do we set character encoding here?
             // Things won't work right if it's not set, so pick some arbitrary values
-            options.setProperty("encoding", encoding);
+            if (encoding != null) {
+                options.setProperty("encoding", encoding);
+            }
             options.setProperty("encoding_confidence", "0");
             ((StreamImporter) importer).read(rawInputStream, project, metadata, options);
         }
