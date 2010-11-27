@@ -64,6 +64,9 @@ public class ReconJudgeOneCellCommand extends Command {
             throws ServletException, IOException {
 
         try {
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+
             Project project = getProject(request);
 
             int rowIndex = Integer.parseInt(request.getParameter("row"));
