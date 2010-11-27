@@ -56,7 +56,7 @@ public class DateCriterion extends Criterion {
 						return s_error;
 					}
 				}
-				return value;
+				return null;
 			}
 			
 			@Override
