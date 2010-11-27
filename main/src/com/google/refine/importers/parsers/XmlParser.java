@@ -52,7 +52,10 @@ public class XmlParser implements TreeParser{
     
     public XmlParser(InputStream inputStream){
         try {
-            parser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.IS_COALESCING, true);
+            factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
+            parser = factory.createXMLStreamReader(inputStream);
         } catch (XMLStreamException e) {
             // silent
             // e.printStackTrace();
