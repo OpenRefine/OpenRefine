@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
