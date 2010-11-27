@@ -40,29 +40,29 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 
 public class DateCriterion extends Criterion {
-	final static protected EvalError s_error = new EvalError("Not a date");
-	
-	@Override
-	public KeyMaker createKeyMaker() {
-		return new KeyMaker() {
-			@Override
-			protected Object makeKey(Object value) {
-				if (ExpressionUtils.isNonBlankData(value)) {
-					if (value instanceof Date) {
-						return value;
-					} else if (value instanceof Calendar) {
-						return ((Calendar) value).getTime();
-					} else {
-						return s_error;
-					}
-				}
-				return null;
-			}
-			
-			@Override
-			public int compareKeys(Object key1, Object key2) {
-				return ((Date) key1).compareTo((Date) key2);
-			}
-		};
-	}
+    final static protected EvalError s_error = new EvalError("Not a date");
+
+    @Override
+    public KeyMaker createKeyMaker() {
+        return new KeyMaker() {
+            @Override
+            protected Object makeKey(Object value) {
+                if (ExpressionUtils.isNonBlankData(value)) {
+                    if (value instanceof Date) {
+                        return value;
+                    } else if (value instanceof Calendar) {
+                        return ((Calendar) value).getTime();
+                    } else {
+                        return s_error;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public int compareKeys(Object key1, Object key2) {
+                return ((Date) key1).compareTo((Date) key2);
+            }
+        };
+    }
 }
