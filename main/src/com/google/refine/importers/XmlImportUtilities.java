@@ -275,7 +275,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 }
             }
         } catch (Exception e) {
-            // silent
+            logger.error("Exception from XML parse",e);
         }
     }
 
@@ -433,7 +433,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                                 thisColumnGroup,
                                 record,
                                 colName,
-                                parser.getText()
+                                text
                         );
                     }
                 }
