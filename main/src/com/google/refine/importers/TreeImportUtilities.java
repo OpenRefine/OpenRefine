@@ -61,11 +61,7 @@ public abstract class TreeImportUtilities {
         int count;
     }
 
-    /**
-     *
-     *
-     *
-     */
+
     static protected abstract class ImportVertical {
         public String name = "";
         public int nonBlankCount;
@@ -134,46 +130,46 @@ public abstract class TreeImportUtilities {
     static public void createColumnsFromImport(
             Project project,
             ImportColumnGroup columnGroup
-        ) {
-            int startColumnIndex = project.columnModel.columns.size();
+    ) {
+        int startColumnIndex = project.columnModel.columns.size();
 
-            List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
-            Collections.sort(columns, new Comparator<ImportColumn>() {
-                public int compare(ImportColumn o1, ImportColumn o2) {
-                    if (o1.blankOnFirstRow != o2.blankOnFirstRow) {
-                        return o1.blankOnFirstRow ? 1 : -1;
-                    }
-
-                    int c = o2.nonBlankCount - o1.nonBlankCount;
-                    return c != 0 ? c : (o1.name.length() - o2.name.length());
+        List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
+        Collections.sort(columns, new Comparator<ImportColumn>() {
+            public int compare(ImportColumn o1, ImportColumn o2) {
+                if (o1.blankOnFirstRow != o2.blankOnFirstRow) {
+                    return o1.blankOnFirstRow ? 1 : -1;
                 }
-            });
 
-            for (int i = 0; i < columns.size(); i++) {
-                ImportColumn c = columns.get(i);
-
-                Column column = new com.google.refine.model.Column(c.cellIndex, c.name);
-                project.columnModel.columns.add(column);
+                int c = o2.nonBlankCount - o1.nonBlankCount;
+                return c != 0 ? c : (o1.name.length() - o2.name.length());
             }
+        });
 
-            List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());
-            Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
-                public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
-                    int c = o2.nonBlankCount - o1.nonBlankCount;
-                    return c != 0 ? c : (o1.name.length() - o2.name.length());
-                }
-            });
+        for (int i = 0; i < columns.size(); i++) {
+            ImportColumn c = columns.get(i);
 
-            for (ImportColumnGroup g : subgroups) {
-                createColumnsFromImport(project, g);
-            }
-
-            int endColumnIndex = project.columnModel.columns.size();
-            int span = endColumnIndex - startColumnIndex;
-            if (span > 1 && span < project.columnModel.columns.size()) {
-                project.columnModel.addColumnGroup(startColumnIndex, span, startColumnIndex);
-            }
+            Column column = new com.google.refine.model.Column(c.cellIndex, c.name);
+            project.columnModel.columns.add(column);
         }
+
+        List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());
+        Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
+            public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
+                int c = o2.nonBlankCount - o1.nonBlankCount;
+                return c != 0 ? c : (o1.name.length() - o2.name.length());
+            }
+        });
+
+        for (ImportColumnGroup g : subgroups) {
+            createColumnsFromImport(project, g);
+        }
+
+        int endColumnIndex = project.columnModel.columns.size();
+        int span = endColumnIndex - startColumnIndex;
+        if (span > 1 && span < project.columnModel.columns.size()) {
+            project.columnModel.addColumnGroup(startColumnIndex, span, startColumnIndex);
+        }
+    }
 
     static protected void addCell(
             Project project,
@@ -181,95 +177,95 @@ public abstract class TreeImportUtilities {
             ImportRecord record,
             String columnLocalName,
             String text
-        ) {
-            if (text == null || ((String) text).isEmpty()) {
-                return;
-            }
-
-            Serializable value = ImporterUtilities.parseCellValue(text);
-
-            ImportColumn column = getColumn(project, columnGroup, columnLocalName);
-            int cellIndex = column.cellIndex;
-
-            int rowIndex = Math.max(columnGroup.nextRowIndex, column.nextRowIndex);
-            while (rowIndex >= record.rows.size()) {
-                record.rows.add(new ArrayList<Cell>());
-            }
-
-            List<Cell> row = record.rows.get(rowIndex);
-            while (cellIndex >= row.size()) {
-                row.add(null);
-            }
-
-            row.set(cellIndex, new Cell(value, null));
-
-            column.nextRowIndex = rowIndex + 1;
-            column.nonBlankCount++;
+    ) {
+        if (text == null || ((String) text).isEmpty()) {
+            return;
         }
+
+        Serializable value = ImporterUtilities.parseCellValue(text);
+
+        ImportColumn column = getColumn(project, columnGroup, columnLocalName);
+        int cellIndex = column.cellIndex;
+
+        int rowIndex = Math.max(columnGroup.nextRowIndex, column.nextRowIndex);
+        while (rowIndex >= record.rows.size()) {
+            record.rows.add(new ArrayList<Cell>());
+        }
+
+        List<Cell> row = record.rows.get(rowIndex);
+        while (cellIndex >= row.size()) {
+            row.add(null);
+        }
+
+        row.set(cellIndex, new Cell(value, null));
+
+        column.nextRowIndex = rowIndex + 1;
+        column.nonBlankCount++;
+    }
 
 
     static protected ImportColumn getColumn(
             Project project,
             ImportColumnGroup columnGroup,
             String localName
-        ) {
-            if (columnGroup.columns.containsKey(localName)) {
-                return columnGroup.columns.get(localName);
-            }
-
-            ImportColumn column = createColumn(project, columnGroup, localName);
-            columnGroup.columns.put(localName, column);
-
-            return column;
+    ) {
+        if (columnGroup.columns.containsKey(localName)) {
+            return columnGroup.columns.get(localName);
         }
 
-        static protected ImportColumn createColumn(
+        ImportColumn column = createColumn(project, columnGroup, localName);
+        columnGroup.columns.put(localName, column);
+
+        return column;
+    }
+
+    static protected ImportColumn createColumn(
             Project project,
             ImportColumnGroup columnGroup,
             String localName
-        ) {
-            ImportColumn newColumn = new ImportColumn();
+    ) {
+        ImportColumn newColumn = new ImportColumn();
 
-            newColumn.name =
-                columnGroup.name.length() == 0 ?
+        newColumn.name = columnGroup.name.length() == 0 ?
                 (localName == null ? "Text" : localName) :
-                (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
+                    (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
 
-            newColumn.cellIndex = project.columnModel.allocateNewCellIndex();
-            newColumn.nextRowIndex = columnGroup.nextRowIndex;
+        newColumn.cellIndex = project.columnModel.allocateNewCellIndex();
+        newColumn.nextRowIndex = columnGroup.nextRowIndex;
 
-            return newColumn;
-        }
+        return newColumn;
+    }
 
-        static protected ImportColumnGroup getColumnGroup(
+    static protected ImportColumnGroup getColumnGroup(
             Project project,
             ImportColumnGroup columnGroup,
             String localName
-        ) {
-            if (columnGroup.subgroups.containsKey(localName)) {
-                return columnGroup.subgroups.get(localName);
-            }
-
-            ImportColumnGroup subgroup = createColumnGroup(project, columnGroup, localName);
-            columnGroup.subgroups.put(localName, subgroup);
-
-            return subgroup;
+    ) {
+        if (columnGroup.subgroups.containsKey(localName)) {
+            return columnGroup.subgroups.get(localName);
         }
 
-        static protected ImportColumnGroup createColumnGroup(
+        ImportColumnGroup subgroup = createColumnGroup(project, columnGroup, localName);
+        columnGroup.subgroups.put(localName, subgroup);
+
+        return subgroup;
+    }
+
+    static protected ImportColumnGroup createColumnGroup(
             Project project,
             ImportColumnGroup columnGroup,
             String localName
-        ) {
-            ImportColumnGroup newGroup = new ImportColumnGroup();
+    ) {
+        ImportColumnGroup newGroup = new ImportColumnGroup();
 
-            newGroup.name =
-                columnGroup.name.length() == 0 ?
-                (localName == null ? "Text" : localName) :
-                (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
+        newGroup.name =
+            columnGroup.name.length() == 0 ?
+                    (localName == null ? "Text" : localName) :
+                        (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
 
-            newGroup.nextRowIndex = columnGroup.nextRowIndex;
+        newGroup.nextRowIndex = columnGroup.nextRowIndex;
 
-            return newGroup;
-        }
+        return newGroup;
+    }
+        
 }
