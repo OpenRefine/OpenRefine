@@ -46,146 +46,146 @@ import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 
 public class RecordModel implements Jsonizable {
-	final static public class CellDependency {
-		final public int rowIndex;
-		final public int cellIndex;
-		
-		public CellDependency(int rowIndex, int cellIndex) {
-			this.rowIndex = rowIndex;
-			this.cellIndex = cellIndex;
-		}
-	}
-	
-	final static public class RowDependency {
-		public int recordIndex;
-		public CellDependency[] cellDependencies;
-		public List<Integer> contextRows;
-	}
-	
-	protected List<RowDependency> _rowDependencies;
-	protected List<Record> _records;
-	
-	public RowDependency getRowDependency(int rowIndex) {
-		return _rowDependencies != null && rowIndex >= 0 && rowIndex < _rowDependencies.size() ?
-				_rowDependencies.get(rowIndex) : null;
-	}
-	
-	public int getRecordCount() {
-		return _records.size();
-	}
-	
-	public Record getRecord(int recordIndex) {
-		return _records != null && recordIndex >= 0 && recordIndex < _records.size() ?
-				_records.get(recordIndex) : null;
-	}
-	
-	public Record getRecordOfRow(int rowIndex) {
-		RowDependency rd = getRowDependency(rowIndex);
-		if (rd != null) {
-			if (rd.recordIndex < 0) {
-				rd = getRowDependency(rd.contextRows.get(0));
-			}
-			return getRecord(rd.recordIndex);
-		}
-		return null;
-	}
-	
-    synchronized public void write(JSONWriter writer, Properties options)
-    	throws JSONException {
+    final static public class CellDependency {
+        final public int rowIndex;
+        final public int cellIndex;
 
-    	writer.object();
-    	writer.key("hasRecords"); writer.value(_records.size() < _rowDependencies.size());
-    	writer.endObject();
+        public CellDependency(int rowIndex, int cellIndex) {
+            this.rowIndex = rowIndex;
+            this.cellIndex = cellIndex;
+        }
     }
-    
+	
+    final static public class RowDependency {
+        public int recordIndex;
+        public CellDependency[] cellDependencies;
+        public List<Integer> contextRows;
+    }
+
+    protected List<RowDependency> _rowDependencies;
+    protected List<Record> _records;
+
+    public RowDependency getRowDependency(int rowIndex) {
+        return _rowDependencies != null && rowIndex >= 0 && rowIndex < _rowDependencies.size() ?
+                _rowDependencies.get(rowIndex) : null;
+    }
+
+    public int getRecordCount() {
+        return _records.size();
+    }
+
+    public Record getRecord(int recordIndex) {
+        return _records != null && recordIndex >= 0 && recordIndex < _records.size() ?
+                _records.get(recordIndex) : null;
+    }
+
+    public Record getRecordOfRow(int rowIndex) {
+        RowDependency rd = getRowDependency(rowIndex);
+        if (rd != null) {
+            if (rd.recordIndex < 0) {
+                rd = getRowDependency(rd.contextRows.get(0));
+            }
+            return getRecord(rd.recordIndex);
+        }
+        return null;
+    }
+
+    synchronized public void write(JSONWriter writer, Properties options)
+    throws JSONException {
+
+        writer.object();
+        writer.key("hasRecords"); writer.value(_records.size() < _rowDependencies.size());
+        writer.endObject();
+    }
+
     static protected class KeyedGroup {
         int[]   cellIndices;
         int     keyCellIndex;
     }
 
     synchronized public void update(Project project) {
-    	synchronized (project) {
-	    	List<Row> rows = project.rows;
-	        int rowCount = rows.size();
-	    	
-	    	ColumnModel columnModel = project.columnModel;
-	    	List<KeyedGroup> keyedGroups = computeKeyedGroups(columnModel);
-	        int groupCount = keyedGroups.size();
-	    	
-	        int[] lastNonBlankRowsByGroup = new int[keyedGroups.size()];
-	        for (int i = 0; i < lastNonBlankRowsByGroup.length; i++) {
-	            lastNonBlankRowsByGroup[i] = -1;
-	        }
-	
-	    	_rowDependencies = new ArrayList<RowDependency>(rowCount);
-	    	
-	        int recordIndex = 0;
-	        for (int r = 0; r < rowCount; r++) {
-	            Row row = rows.get(r);
-	            RowDependency rowDependency = new RowDependency();
-	
-	            for (int g = 0; g < groupCount; g++) {
-	                KeyedGroup group = keyedGroups.get(g);
-	
-	                if (!ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
-	                    int contextRowIndex = lastNonBlankRowsByGroup[g];
-	                    if (contextRowIndex >= 0) {
-	                        for (int dependentCellIndex : group.cellIndices) {
-	                            if (ExpressionUtils.isNonBlankData(row.getCellValue(dependentCellIndex))) {
-	                                setRowDependency(
-	                                    project,
-	                                    rowDependency,
-	                                    dependentCellIndex,
-	                                    contextRowIndex,
-	                                    group.keyCellIndex
-	                                );
-	                            }
-	                        }
-	                    }
-	                } else {
-	                    lastNonBlankRowsByGroup[g] = r;
-	                }
-	            }
-	
-	            if (rowDependency.cellDependencies != null && rowDependency.cellDependencies.length > 0) {
-	            	rowDependency.recordIndex = -1;
-	            	rowDependency.contextRows = new ArrayList<Integer>();
-	                for (CellDependency cd : rowDependency.cellDependencies) {
-	                    if (cd != null) {
-	                    	rowDependency.contextRows.add(cd.rowIndex);
-	                    }
-	                }
-	                Collections.sort(rowDependency.contextRows);
-	            } else {
-	            	rowDependency.recordIndex = recordIndex++;
-	            }
-	            
-	            _rowDependencies.add(rowDependency);
-	        }
-	        
-	    	_records = new ArrayList<Record>(recordIndex);
-	    	if (recordIndex > 0) {
-		    	recordIndex = 0;
-		    	
-		    	int recordRowIndex = 0;
-		        for (int r = 1; r < rowCount; r++) {
-		            RowDependency rd = _rowDependencies.get(r);
-		            if (rd.recordIndex >= 0) {
-		            	_records.add(new Record(recordRowIndex, r, recordIndex++));
-		            	
-		            	recordIndex = rd.recordIndex;
-		            	recordRowIndex = r;
-		            }
-		        }
-		        
-            	_records.add(new Record(recordRowIndex, rowCount, recordIndex++));
-	    	}
-    	}
+        synchronized (project) {
+            List<Row> rows = project.rows;
+            int rowCount = rows.size();
+
+            ColumnModel columnModel = project.columnModel;
+            List<KeyedGroup> keyedGroups = computeKeyedGroups(columnModel);
+            int groupCount = keyedGroups.size();
+
+            int[] lastNonBlankRowsByGroup = new int[keyedGroups.size()];
+            for (int i = 0; i < lastNonBlankRowsByGroup.length; i++) {
+                lastNonBlankRowsByGroup[i] = -1;
+            }
+
+            _rowDependencies = new ArrayList<RowDependency>(rowCount);
+
+            int recordIndex = 0;
+            for (int r = 0; r < rowCount; r++) {
+                Row row = rows.get(r);
+                RowDependency rowDependency = new RowDependency();
+
+                for (int g = 0; g < groupCount; g++) {
+                    KeyedGroup group = keyedGroups.get(g);
+
+                    if (!ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
+                        int contextRowIndex = lastNonBlankRowsByGroup[g];
+                        if (contextRowIndex >= 0) {
+                            for (int dependentCellIndex : group.cellIndices) {
+                                if (ExpressionUtils.isNonBlankData(row.getCellValue(dependentCellIndex))) {
+                                    setRowDependency(
+                                            project,
+                                            rowDependency,
+                                            dependentCellIndex,
+                                            contextRowIndex,
+                                            group.keyCellIndex
+                                    );
+                                }
+                            }
+                        }
+                    } else {
+                        lastNonBlankRowsByGroup[g] = r;
+                    }
+                }
+
+                if (rowDependency.cellDependencies != null && rowDependency.cellDependencies.length > 0) {
+                    rowDependency.recordIndex = -1;
+                    rowDependency.contextRows = new ArrayList<Integer>();
+                    for (CellDependency cd : rowDependency.cellDependencies) {
+                        if (cd != null) {
+                            rowDependency.contextRows.add(cd.rowIndex);
+                        }
+                    }
+                    Collections.sort(rowDependency.contextRows);
+                } else {
+                    rowDependency.recordIndex = recordIndex++;
+                }
+
+                _rowDependencies.add(rowDependency);
+            }
+
+            _records = new ArrayList<Record>(recordIndex);
+            if (recordIndex > 0) {
+                recordIndex = 0;
+
+                int recordRowIndex = 0;
+                for (int r = 1; r < rowCount; r++) {
+                    RowDependency rd = _rowDependencies.get(r);
+                    if (rd.recordIndex >= 0) {
+                        _records.add(new Record(recordRowIndex, r, recordIndex++));
+
+                        recordIndex = rd.recordIndex;
+                        recordRowIndex = r;
+                    }
+                }
+
+                _records.add(new Record(recordRowIndex, rowCount, recordIndex++));
+            }
+        }
     }
-    
+
     protected List<KeyedGroup> computeKeyedGroups(ColumnModel columnModel) {
         List<KeyedGroup> keyedGroups = new ArrayList<KeyedGroup>();
-    	
+
         addRootKeyedGroup(columnModel, keyedGroups);
 
         for (ColumnGroup group : columnModel.columnGroups) {
@@ -212,7 +212,7 @@ public class RecordModel implements Jsonizable {
                 return o2.cellIndices.length - o1.cellIndices.length; // larger groups first
             }
         });
-        
+
         return keyedGroups;
     }
 
@@ -236,20 +236,20 @@ public class RecordModel implements Jsonizable {
     }
 
     protected void setRowDependency(
-		Project project, 
-		RowDependency rowDependency, 
-		int cellIndex, 
-		int contextRowIndex, 
-		int contextCellIndex
-	) {
+            Project project, 
+            RowDependency rowDependency, 
+            int cellIndex, 
+            int contextRowIndex, 
+            int contextCellIndex
+    ) {
         if (rowDependency.cellDependencies == null) {
             int count = project.columnModel.getMaxCellIndex() + 1;
-            
-        	rowDependency.cellDependencies = new CellDependency[count];
+
+            rowDependency.cellDependencies = new CellDependency[count];
         }
 
         rowDependency.cellDependencies[cellIndex] = 
-        	new CellDependency(contextRowIndex, contextCellIndex);
+            new CellDependency(contextRowIndex, contextCellIndex);
     }
 
 }
