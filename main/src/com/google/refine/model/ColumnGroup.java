@@ -106,4 +106,8 @@ public class ColumnGroup implements Jsonizable {
     protected void internalInitialize() {
         subgroups = new LinkedList<ColumnGroup>();
     }
+    
+    public String toString() {
+        return String.format("%d:%d:k=%d",startColumnIndex,columnSpan,keyColumnIndex);
+    }
 }

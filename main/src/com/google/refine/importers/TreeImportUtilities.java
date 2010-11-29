@@ -35,6 +35,7 @@ package com.google.refine.importers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +61,10 @@ public abstract class TreeImportUtilities {
     static protected class RecordElementCandidate {
         String[] path;
         int count;
+        
+        public String toString() {
+            return Arrays.toString(path);
+        }
     }
 
 
@@ -87,6 +93,12 @@ public abstract class TreeImportUtilities {
                 g.tabulate();
                 nonBlankCount = Math.max(nonBlankCount, g.nonBlankCount);
             }
+        }
+        
+        public String toString() {
+            return String.format("name=%s, columns={%s}, subgroups={{%s}}",
+                    name,StringUtils.join(columns.keySet(), ','),
+                    StringUtils.join(subgroups.keySet(),','));
         }
     }
 

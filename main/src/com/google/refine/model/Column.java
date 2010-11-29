@@ -153,4 +153,8 @@ public class Column implements Jsonizable {
         
         return column;
     }
+    
+    public String toString() {
+        return _name;
+    }
 }
