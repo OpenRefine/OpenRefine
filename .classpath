@@ -54,5 +54,6 @@
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-core-1.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-collect-1.0-rc1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

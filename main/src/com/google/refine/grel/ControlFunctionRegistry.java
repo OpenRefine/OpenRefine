@@ -98,12 +98,16 @@ import com.google.refine.expr.functions.strings.Diff;
 import com.google.refine.expr.functions.strings.EndsWith;
 import com.google.refine.expr.functions.strings.Escape;
 import com.google.refine.expr.functions.strings.Fingerprint;
+import com.google.refine.expr.functions.html.HtmlAttr;
+import com.google.refine.expr.functions.html.HtmlText;
+import com.google.refine.expr.functions.html.InnerHtml;
 import com.google.refine.expr.functions.strings.IndexOf;
 import com.google.refine.expr.functions.strings.LastIndexOf;
 import com.google.refine.expr.functions.strings.MD5;
 import com.google.refine.expr.functions.strings.Match;
 import com.google.refine.expr.functions.strings.NGram;
 import com.google.refine.expr.functions.strings.NGramFingerprint;
+import com.google.refine.expr.functions.html.ParseHtml;
 import com.google.refine.expr.functions.strings.ParseJson;
 import com.google.refine.expr.functions.strings.Partition;
 import com.google.refine.expr.functions.strings.Phonetic;
@@ -112,6 +116,7 @@ import com.google.refine.expr.functions.strings.Reinterpret;
 import com.google.refine.expr.functions.strings.Replace;
 import com.google.refine.expr.functions.strings.ReplaceChars;
 import com.google.refine.expr.functions.strings.SHA1;
+import com.google.refine.expr.functions.html.SelectHtml;
 import com.google.refine.expr.functions.strings.SmartSplit;
 import com.google.refine.expr.functions.strings.Split;
 import com.google.refine.expr.functions.strings.SplitByCharType;
@@ -219,6 +224,12 @@ public class ControlFunctionRegistry {
         registerFunction("parseJson", new ParseJson());
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
+
+        registerFunction("parseHtml", new ParseHtml());
+        registerFunction("select", new SelectHtml());
+        registerFunction("htmlAttr", new HtmlAttr());
+        registerFunction("htmlText", new HtmlText());
+        registerFunction("innerHtml", new InnerHtml());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

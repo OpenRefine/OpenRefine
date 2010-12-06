@@ -122,6 +122,9 @@ licenses/json.LICENSE.txt
 
 licenses/mockito.LICENSE.txt
     mockito
+
+licenses/jsoup.LICENSE.txt
+    jsoup
     
 http://www.opensource.org/licenses/mit-license.php
     jquery.cookie
