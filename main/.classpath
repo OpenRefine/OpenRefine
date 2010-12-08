@@ -39,5 +39,6 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/httpcore-4.0.1.jar" sourcepath="webapp/WEB-INF/lib-src/httpcore-4.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.1.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/signpost-core-1.2.1.1.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
