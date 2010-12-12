@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
+import java.text.Collator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,13 +43,25 @@ import com.google.refine.model.Project;
 
 public class StringCriterion extends Criterion {
     public boolean caseSensitive;
-
+    Collator collator;
+    
+    /**
+     * 
+     */
+    public StringCriterion() {
+        super();
+        collator = Collator.getInstance();
+        collator.setDecomposition(Collator.FULL_DECOMPOSITION);
+        collator.setStrength(Collator.SECONDARY);
+    }
+    
     @Override
     public void initializeFromJSON(Project project, JSONObject obj) throws JSONException {
         super.initializeFromJSON(project, obj);
 
         if (obj.has("caseSensitive") && !obj.isNull("caseSensitive")) {
             caseSensitive = obj.getBoolean("caseSensitive");
+            collator.setStrength(Collator.IDENTICAL);
         }
     }
 
@@ -62,11 +76,7 @@ public class StringCriterion extends Criterion {
 
             @Override
             public int compareKeys(Object key1, Object key2) {
-                if (StringCriterion.this.caseSensitive) {
-                    return ((String) key1).compareTo((String) key2);
-                } else {
-                    return ((String) key1).compareToIgnoreCase((String) key2);
-                }
+                return collator.compare(key1, key2);
             }
         };
     }
