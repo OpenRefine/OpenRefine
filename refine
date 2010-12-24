@@ -818,21 +818,19 @@ if [ "$OS" = "macosx" ] ; then
     fi
 fi
 
-JAVA="`which java 2> /dev/null`"
-if [ -z "$JAVA" ] ; then
-    if [ "$JAVA_HOME" ] ; then
-        JAVA="$JAVA_HOME/bin/java"
-        if [ ! -f "$JAVA" ] ; then
-            error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
-        fi
-    else
-        error "The 'java' command should be in your path or the 'JAVA_HOME' environment variable should be set"
-    fi
+if [ "$JAVA_HOME" ]; then
+    JAVA="$JAVA_HOME/bin/java"
+else 
+    JAVA="`which javas 2> /dev/null`"
+fi
+
+if [ ! -x "$JAVA" ] ; then
+    error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
 fi
 
 JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1\.6`
 if [ -z "$JAVA_VERSION" ] ; then
-    error "Google Refine requires Java version 6 or later. If you have multiple versions of Java installed, please set JAVA_HOME to the correct version."
+    error "Google Refine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
 fi
 
 # ----- Parse the command line args ------------------------------------------
