@@ -92,7 +92,7 @@ add_option() {
                 
 load_configs() {
    TEMP_CONFIG=$(mktemp -t refine.XXXXXXX)
-   if [ "${TEMP_CONFIG}" == "" ]; then
+   if [ "${TEMP_CONFIG}" == "" ] ; then
        error "Could not create temporary file to load configurations"
    fi
    cat $1 | egrep "^[A-Z]" | sed 's/^\(.*\)$/export \1/' > ${TEMP_CONFIG}
@@ -152,12 +152,27 @@ check_pywin32() {
 check_running() {
     check_downloaders
     URL="http://${REFINE_HOST}:${REFINE_PORT}/"
-    
+    CHECK_STR="<title>Google Refine</title>"
+
     if [ "$CURL" ] ; then
-        NOT_RUNNING=`curl -s $URL > /dev/null || echo not_running`
+        NOT_RUNNING=`curl -s -S $URL 2>&1 > /dev/null | grep "couldn't connect to host"`
     elif [ "$WGET" ] ; then
-        NOT_RUNNING=`wget -q -O - $URL > /dev/null || echo not_running`
+        NOT_RUNNING=`wget -O - $URL 2>&1 > /dev/null | grep "Connection refused"`
     fi    
+
+    if [ -z "${NOT_RUNNING}" ] ; then
+        if [ "$CURL" ] ; then
+            RUNNING=`curl -s $URL | grep "$CHECK_STR"`
+        elif [ "$WGET" ] ; then
+            RUNNING=`wget -q -O - $URL | grep "$CHECK_STR"`
+        fi    
+        
+        if [ -z "${RUNNING}" ] ; then
+            error "Something is already running on $URL but doesn't seem to be Google Refine"
+        fi
+    else
+        RUNNING=""
+    fi
 }
 
 get_version() {
@@ -546,7 +561,7 @@ ui_test() {
     echo "Waiting for Google Refine to load..."
     sleep 5
     check_running
-    if [ ! -z "$NOT_RUNNING" ] ; then
+    if [ -z "$RUNNING" ] ; then
         sleep 10
     fi
     echo "... proceed with the tests."
@@ -595,7 +610,7 @@ run() {
     
     check_running
     
-    if [ -z "$NOT_RUNNING" ] ; then
+    if [ "$RUNNING" ] ; then
         warn "Google Refine is already running."
     fi
     
@@ -657,15 +672,6 @@ broker_build() {
 
 broker_run() {
     FORK=$1
-
-    REFINE_HOST=127.0.0.1
-    REFINE_PORT=3334
-            
-    check_running
-    
-    if [ -z "$NOT_RUNNING" ] ; then
-        warn "Google Refine Broker is already running."
-    fi
 
     if [ ! -d "broker/core/WEB-INF/lib" ] ; then
         broker_build
@@ -818,7 +824,7 @@ if [ "$OS" = "macosx" ] ; then
     fi
 fi
 
-if [ "$JAVA_HOME" ]; then
+if [ "$JAVA_HOME" ] ; then
     JAVA="$JAVA_HOME/bin/java"
 else 
     JAVA="`which javas 2> /dev/null`"
