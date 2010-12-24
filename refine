@@ -91,11 +91,15 @@ add_option() {
 }
                 
 load_configs() {
-    cat $1 | egrep "^[A-Z]" | sed 's/^\(.*\)$/export \1/' > .$1
-    . ./.$1
-    rm ./.$1
+   TEMP_CONFIG=$(mktemp -t refine.XXXXXXX)
+   if [ "${TEMP_CONFIG}" == "" ]; then
+       error "Could not create temporary file to load configurations"
+   fi
+   cat $1 | egrep "^[A-Z]" | sed 's/^\(.*\)$/export \1/' > ${TEMP_CONFIG}
+   . ${TEMP_CONFIG}
+   rm ${TEMP_CONFIG}
 }
-    
+                    
 check_macosx() {
     if [ "$OS" != "macosx" ] ; then
         error "This action can only run on MacOSX"
@@ -937,3 +941,5 @@ case "$ACTION" in
   dist) dist $1;;
   *) usage; ;;
 esac
+
+# ----------- end of file --------------------
