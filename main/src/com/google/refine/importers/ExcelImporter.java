@@ -230,12 +230,12 @@ public class ExcelImporter implements StreamImporter {
     
     protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
         int cellType = cell.getCellType();
+        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
+            cellType = cell.getCachedFormulaResultType();
+        }
         if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR ||
             cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
             return null;
-        }
-        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
-            cellType = cell.getCachedFormulaResultType();
         }
         
         Serializable value = null;
