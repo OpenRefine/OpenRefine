@@ -50,12 +50,7 @@ public class ToString implements Function {
         if (args.length >= 1) {
             Object o1 = args[0];
             if (o1 != null) {
-                if (o1 instanceof Date) {
-                    Calendar c = Calendar.getInstance();
-                    c.setTime((Date) o1);
-                    o1 = c;
-                }
-                if (o1 instanceof Calendar) {
+                if (o1 instanceof Calendar || o1 instanceof Date) {
                     DateFormat formatter = null;
                     if (args.length == 2) {
                        Object o2 = args[1];
@@ -66,7 +61,7 @@ public class ToString implements Function {
                     if (formatter == null) {
                         formatter = DateFormat.getDateInstance();
                     }
-                    return formatter.format(((Calendar) o1).getTime());
+                    return formatter.format(o1 instanceof Date ? ((Date) o1) : ((Calendar) o1).getTime());
                 } else {
                     return (o1 instanceof String) ? o1 : o1.toString();
                 }
