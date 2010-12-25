@@ -36,6 +36,7 @@ package com.google.refine.expr.functions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -49,6 +50,11 @@ public class ToString implements Function {
         if (args.length >= 1) {
             Object o1 = args[0];
             if (o1 != null) {
+                if (o1 instanceof Date) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime((Date) o1);
+                    o1 = c;
+                }
                 if (o1 instanceof Calendar) {
                     DateFormat formatter = null;
                     if (args.length == 2) {
