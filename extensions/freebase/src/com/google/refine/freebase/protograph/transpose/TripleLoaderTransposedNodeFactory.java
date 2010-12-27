@@ -79,6 +79,58 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     protected int contextRefCount = 0;
     protected JSONObject contextTreeRoot;
     
+    protected SchemaHelper schemaHelper = new SchemaHelper();
+    
+    protected Map<String, Set<Long>> typeIDToAssertedReconIDs = new HashMap<String, Set<Long>>();
+    protected Set<Long> getAssertedReconIDSet(String typeID) {
+        Set<Long> assertedReconIDSet = typeIDToAssertedReconIDs.get(typeID);
+        if (assertedReconIDSet == null) {
+            assertedReconIDSet = new HashSet<Long>();
+            typeIDToAssertedReconIDs.put(typeID, assertedReconIDSet);
+        }
+        return assertedReconIDSet;
+    }
+    protected void ensureOneTypeAsserted(Recon recon, String typeID) {
+        Set<Long> assertedReconIDSet = getAssertedReconIDSet(typeID);
+        if (!assertedReconIDSet.contains(recon.id)) {
+            assertedReconIDSet.add(recon.id);
+            
+            String subject = recon.judgment == Judgment.New ? newTopicVars.get(recon.id) : recon.match.id;
+            
+            StringBuffer sb = new StringBuffer();
+            sb.append("{ \"s\" : \""); sb.append(subject); sb.append('"');
+            sb.append(", \"p\" : \"type\"");
+            sb.append(", \"o\" : \""); sb.append(typeID); sb.append('"');
+            sb.append(" }");
+                    
+            writeLine(sb.toString());
+        }
+    }
+    protected void ensureAllIncludedTypesAsserted(Recon recon, String typeID) {
+        ensureOneTypeAsserted(recon, typeID);
+        
+        String[] includedTypeIDs = schemaHelper.getIncludedTypeIDs(typeID);
+        if (includedTypeIDs != null) {
+            for (String typeID2 : includedTypeIDs) {
+                if (!"/type/object".equals(typeID2)) {
+                    ensureOneTypeAsserted(recon, typeID2);
+                }
+            }
+        }
+    }
+    protected void ensureFromTypesAsserted(Recon recon, String propertyID) {
+        String fromTypeID = schemaHelper.getPropertyFromType(propertyID);
+        if (fromTypeID != null) {
+            ensureAllIncludedTypesAsserted(recon, fromTypeID);
+        }
+    }
+    protected void ensureToTypesAsserted(Recon recon, String propertyID) {
+        String toTypeID = schemaHelper.getPropertyToType(propertyID);
+        if (toTypeID != null) {
+            ensureAllIncludedTypesAsserted(recon, toTypeID);
+        }
+    }
+    
     public TripleLoaderTransposedNodeFactory(Project project, Writer writer) {
         this.project = project;
         this.writer = writer;
@@ -274,10 +326,18 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             String subject, Project project,
             int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             
+            Recon recon = subjectCell.recon != null && 
+                    (subjectCell.recon.judgment == Judgment.Matched || subjectCell.recon.judgment == Judgment.New)
+                ? subjectCell.recon : null;
+            
             for (int i = 0; i < children.size(); i++) {
                 WritingTransposedNode child = children.get(i);
                 Link link = links.get(i);
                 String predicate = link.property.id;
+                
+                if (recon != null) {
+                    ensureFromTypesAsserted(recon, predicate);
+                }
                 
                 child.write(subject, predicate, project, 
                     subjectRowIndex, subjectCellIndex, subjectCell);
@@ -378,6 +438,14 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                 int objectCellIndex = cellIndex;
                 Cell objectCell = cell;
                 
+                String typeID = node.type.id;
+                
+                Column column = project.columnModel.getColumnByCellIndex(cellIndex);
+                ReconConfig reconConfig = column.getReconConfig();
+                if (reconConfig instanceof StandardReconConfig) {
+                    typeID = ((StandardReconConfig) reconConfig).typeID;
+                }
+                
                 if (cell.recon.judgment == Recon.Judgment.Matched) {
                     id = cell.recon.match.id;
                     
@@ -385,7 +453,6 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                     if (newTopicVars.containsKey(cell.recon.id)) {
                         id = newTopicVars.get(cell.recon.id);
                     } else {
-                        Column column = project.columnModel.getColumnByCellIndex(cellIndex);
                         String columnName = column.getName();
                         
                         long var = 0;
@@ -396,25 +463,22 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
                         
                         id = "$" + columnName.replaceAll("\\W+", "_") + "_" + var;
                         
-                        String typeID = node.type.id;
-                        
-                        ReconConfig reconConfig = column.getReconConfig();
-                        if (reconConfig instanceof StandardReconConfig) {
-                            typeID = ((StandardReconConfig) reconConfig).typeID;
-                        }
-                        
                         writeLine(id, "type", typeID, project, rowIndex, cellIndex, cell, -1, -1, (Cell) null, !load);
                         writeLine(id, "name", cell.value, project, -1, -1, (Cell) null, -1, -1, (Cell) null, !load);
                         
-                        if (cell.recon != null) {
-                            newTopicVars.put(cell.recon.id, id);
-                        }
+                        getAssertedReconIDSet(typeID).add(cell.recon.id);
+                        
+                        newTopicVars.put(cell.recon.id, id);
                     }
                 } else {
                     return null;
                 }
                 
+                ensureAllIncludedTypesAsserted(cell.recon, typeID);
+                
                 if (subject != null) {
+                    ensureToTypesAsserted(cell.recon, predicate);
+                    
                     writeLine(subject, predicate, id, project, 
                             subjectRowIndex, subjectCellIndex, subjectCell, 
                             objectRowIndex, objectCellIndex, objectCell, !load);
