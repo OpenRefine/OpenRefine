@@ -326,7 +326,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             String subject, Project project,
             int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             
-            Recon recon = subjectCell.recon != null && 
+            Recon recon = subjectCell != null && subjectCell.recon != null && 
                     (subjectCell.recon.judgment == Judgment.Matched || subjectCell.recon.judgment == Judgment.New)
                 ? subjectCell.recon : null;
             
