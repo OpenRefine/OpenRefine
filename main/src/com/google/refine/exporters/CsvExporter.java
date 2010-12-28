@@ -35,6 +35,8 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -48,6 +50,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 
 public class CsvExporter implements WriterExporter{
 
@@ -94,7 +97,15 @@ public class CsvExporter implements WriterExporter{
 
                     Object value = row.getCellValue(cellIndex);
                     if (value != null) {
-                        vals[i] = value instanceof String ? (String) value : value.toString();
+                        if (value instanceof String) {
+                            vals[i] = (String) value;
+                        } else if (value instanceof Calendar) {
+                            vals[i] = ParsingUtilities.dateToString(((Calendar) value).getTime()); 
+                        } else if (value instanceof Date) {
+                            vals[i] = ParsingUtilities.dateToString((Date) value); 
+                        } else {
+                            vals[i] = value.toString();
+                        }
                     }
                     i++;
                 }

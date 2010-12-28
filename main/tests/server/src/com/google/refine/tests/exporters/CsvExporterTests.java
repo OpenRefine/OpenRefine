@@ -35,6 +35,8 @@ package com.google.refine.tests.exporters;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import static org.mockito.Mockito.mock;
@@ -57,6 +59,7 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.ParsingUtilities;
 
 public class CsvExporterTests extends RefineTest {
 
@@ -191,6 +194,28 @@ public class CsvExporterTests extends RefineTest {
                                                "row0cell0,row0cell1,row0cell2\n" +
                                                "row1cell0,,row1cell2\n" +
                                                ",row2cell1,row2cell2\n");
+    }
+    
+    @Test
+    public void exportDateColumns(){
+        CreateGrid(1,1);
+        Calendar calendar = Calendar.getInstance();
+        Date date = new Date();
+
+        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        project.rows.get(0).cells.set(0, new Cell(calendar, null));
+        project.rows.get(0).cells.set(1, new Cell(date, null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        String expectedOutput = ParsingUtilities.dateToString(calendar.getTime()) + "," +
+            ParsingUtilities.dateToString(date) + "\n";
+
+        Assert.assertEquals(writer.toString(), expectedOutput);
     }
 
     //helper methods
