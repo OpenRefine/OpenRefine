@@ -281,7 +281,149 @@ function showVersion() {
     );
 }
 
+function renderImportPanel() {
+  var headerContainer = $('#import-panel-tab-headers');
+  var bodyContainer = $('#import-panel-tab-bodies');
+  
+  var selectImportSourceTab = function(importSource) {
+    $('.import-panel-tab-body').hide();
+    $('.import-panel-tab-header').removeClass('selected');
+    
+    importSource._divBody.show();
+    importSource._divHeader.addClass('selected');
+    importSource._ui.focus();
+  };
+  
+  var createImportSourceTab = function(importSource) {
+    importSource._divBody = $('<div>')
+      .addClass('import-panel-tab-body')
+      .appendTo(bodyContainer)
+      .hide();
+    
+    importSource._divHeader = $('<div>')
+      .addClass('import-panel-tab-header')
+      .text(importSource.label)
+      .appendTo(headerContainer)
+      .click(function() { selectImportSourceTab(importSource); });
+      
+    importSource._ui = new importSource.ui(importSource._divBody);
+  };
+  
+  for (var i= 0; i < ImportSources.length; i++) {
+    createImportSourceTab(ImportSources[i]);
+  }
+  selectImportSourceTab(ImportSources[0]);
+}
+
+function startImportJob(importSource, form, progressMessage) {
+  $.post(
+    "/command/core/create-import-job",
+    null,
+    function(data) {
+      var jobID = data.jobID;
+      
+      form.attr("method", "post")
+          .attr("enctype", "multipart/form-data")
+          .attr("accept-charset", "UTF-8")
+          .attr("target", "import-iframe")
+          .attr("action", "/command/core/retrieve-import-content?" + $.param({
+            "jobID" : jobID,
+            "source" : importSource
+          }));
+
+      form[0].submit();
+      
+      var start = new Date();
+      var timerID = window.setInterval(function() { pollImportJob(start, jobID, timerID); }, 1000);
+      initializeImportProgressPanel(progressMessage, jobID, timerID);
+    },
+    "json"
+  );
+}
+
+function initializeImportProgressPanel(progressMessage, jobID, timerID) {
+  $('#import-progress-message').text(progressMessage);
+  $('#import-progress-bar-body').css("width", "0%");
+  $('#import-progress-message-left').text('Starting');
+  $('#import-progress-message-center').empty();
+  $('#import-progress-message-right').empty();
+  
+  $('#import-panel').hide();
+  $('#import-progress-panel').show();
+  
+  $('#import-progress-cancel-button').unbind().click(function() {
+    $('#import-panel').show();
+    $('#import-progress-panel').hide();
+    
+    // stop the iframe
+    $('#import-iframe')[0].contentWindow.stop();
+    
+    // stop the timed polling
+    window.clearInterval(timerID);
+    
+    // explicitly cancel the import job
+    $.post("/command/core/cancel-import-job?" + $.param({ "jobID" : jobID }));
+  });
+}
+
+function bytesToString(b) {
+  if (b >= 1024 * 1024) {
+    return Math.round(b / (1024 * 1024)) + " MB";
+  } else if (b >= 1024) {
+    return Math.round(b / 1024) + " KB";
+  } else {
+    return b + " bytes";
+  }
+}
+
+function pollImportJob(start, jobID, timerID) {
+  $.post(
+    "/command/core/get-import-job-status?" + $.param({ "jobID" : jobID }),
+    null,
+    function(data) {
+      if (data.code == "error") {
+        showImportJobError(data.message);
+        window.clearInterval(timerID);
+      } else if (data.state == "error") {
+        showImportJobError(data.message, data.stack);
+        window.clearInterval(timerID);
+      } else if (data.state == "retrieving") {
+        if (data.progress < 0) {
+          $('#import-progress-message-left').text(bytesToString(data.bytesSaved) + " saved");
+        } else {
+          $('#import-progress-bar-body').css("width", data.progress + "%");
+          $('#import-progress-message-left').text(data.progress + "% saved");
+        }
+      } else if (data.state == "ready") {
+        window.clearInterval(timerID);
+        
+        // Just so if the user clicks Back the progress panel won't be showing if the DOM is cached.
+        $('#import-progress-panel').hide();
+        $('#import-panel').show();
+        
+        window.location = "/import?" + $.param({ "jobID" : jobID });
+      }
+    },
+    "json"
+  );
+}
+
+function showImportJobError(message, stack) {
+  $('#import-error-message').text(message);
+  $('#import-error-stack').text(stack || 'No technical details.');
+  
+  $('#import-progress-panel').hide();
+  $('#import-error-panel').show();
+  
+  $('#import-error-ok-button').unbind().click(function() {
+    $('#import-error-panel').hide();
+    $('#import-panel').show();
+  });
+}
+
 function onLoad() {
+  renderImportPanel();
+  
     fetchProjects();
     
     $("#project-file-input").change(function() {

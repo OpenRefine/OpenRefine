@@ -312,7 +312,7 @@ public abstract class Command {
         HttpServletRequest request, 
         HttpServletResponse response, 
         String message, 
-        Exception e
+        Throwable e
     ) {
         VelocityContext context = new VelocityContext();
         

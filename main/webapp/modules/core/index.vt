@@ -36,10 +36,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <meta charset="utf-8">
   <title>Google Refine</title>
   <link rel="icon" type="image/png" href="images/favicon.png">
+  <script type="text/javascript" src="wirings.js"></script>
   $scriptInjection
   $styleInjection
 </head>
 <body>
+  #if($params.new == "1")
+    #set($newStyle = "")
+    #set($oldStyle = "display: none; ")
+  #else
+    #set($oldStyle = "")
+    #set($newStyle = "display: none; ")
+  #end
   <div id="container">
     <div id="logo"> </div>
     <div id="header-home">
@@ -58,7 +66,50 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <div class="content-block-footer"><a href="javascript:openWorkspaceDir()" class="secondary">Browse workspace directory</a></div>
       </div>
       <div id="project-create">
-        <form id="file-upload-form" method="post" enctype="multipart/form-data" action="/command/core/create-project-from-upload" accept-charset="UTF-8">
+        <h1 style="$newStyle">Create a New Project</h1>
+        <div style="$newStyle" id="import-panel"><table id="import-panel-layout">
+          <tr>
+            <td id="import-panel-tab-headers">
+              <div>Import data from</div>
+            </td>
+            <td id="import-panel-tab-bodies"></td>
+          </tr>
+          <tr>
+            <td colspan="2" id="import-panel-message">
+              <h3>What kinds of data files can I import?</h3>
+              <div>TSV, CSV, *SV, Excel (.xls and .xlsx), JSON, XML, RDF as XML, and
+                Google Spreadsheets are all supported. Support for other formats can
+                be added with Refine extensions.
+              </div>
+            </td>
+          </tr>
+        </table></div>
+        
+        <div style="$newStyle" id="import-progress-panel">
+          <div class="grid-layout layout-normal layout-full"><table>
+            <tr><td colspan="3" id="import-progress-message"></td></tr>
+            <tr><td colspan="3">
+              <div id="import-progress-bar-frame"><div id="import-progress-bar-body"></div></div>
+            </td></tr>
+            <tr>
+              <td id="import-progress-message-left"></td>
+              <td id="import-progress-message-center"></td>
+              <td id="import-progress-message-right"></td>
+            </tr>
+            <tr><td colspan="3">
+              <button class="button" id="import-progress-cancel-button">Cancel</button>
+            </td></tr>
+          </table></div>
+          <iframe id="import-iframe" name="import-iframe"></iframe>
+        </div>
+        
+        <div style="$newStyle" id="import-error-panel"><div class="grid-layout layout-normal layout-full"><table>
+          <tr><td id="import-error-message"></td></tr>
+          <tr><td id="import-error-stack"></td></tr>
+          <tr><td><button class="button button-primary" id="import-error-ok-button">OK</button></td></tr>
+        </table></div></div>
+                
+        <form style="$oldStyle" id="file-upload-form" method="post" enctype="multipart/form-data" action="/command/core/create-project-from-upload" accept-charset="UTF-8">
           <h1>Create a New Project</h1>
           <h2 id="project-toggle">
             <a class="secondary" href="javascript:showHide('file-upload-form', 'project-upload-form')">or Import an Existing Project</a>
@@ -132,7 +183,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           </div>
         </form>
 
-        <form id="project-upload-form" method="post" enctype="multipart/form-data" action="/command/core/import-project" accept-charset="UTF-8" style="display:none;">
+        <form style="display: none;" id="project-upload-form" method="post" enctype="multipart/form-data" action="/command/core/import-project" accept-charset="UTF-8" style="display:none;">
           <h1>Import an Existing Project</h1>
           <h2 id="project-toggle">
             <a class="secondary" href="javascript:showHide('project-upload-form', 'file-upload-form')">or Create a New Project</a>

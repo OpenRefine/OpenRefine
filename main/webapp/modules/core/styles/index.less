@@ -166,3 +166,96 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   top: 12px;
   right: 10px;
   }
+
+#import-panel {
+  font-size: 1.3em;
+}
+
+#import-panel-message {
+  padding: @padding_loose;
+}
+
+#import-panel-layout {
+  width: 100%;
+  border-collapse: collapse;
+}
+#import-panel-layout > tbody > tr > td {
+  border-top: 1px solid @chrome_primary;
+  border-bottom: 1px solid @chrome_primary;
+}
+
+#import-panel-tab-bodies {
+  background: white;
+}
+
+#import-panel-tab-headers {
+  width: 15em;
+  background: @fill_primary;
+  border-right: 1px solid @chrome_primary;
+  padding-left: @padding_normal;
+  padding-bottom: @padding_looser;
+}
+#import-panel-tab-headers > div {
+  padding: @padding_tight;
+  padding-right: @padding_normal;
+}
+
+.import-panel-tab-body {
+  padding: @padding_loose;
+}
+
+.import-panel-tab-header {
+  cursor: pointer;
+  color: @link_primary;
+}
+.import-panel-tab-header.selected {
+  cursor: default;
+  color: black;
+  background: white;
+  font-weight: bold;
+  position: relative;
+  left: 1px;
+  border: 1px solid @chrome_primary;
+  border-right: none;
+}
+
+#import-progress-panel {
+  display: none;
+  font-size: 1.3em;
+  padding: @padding_loose;
+  background: white;
+}
+
+#import-progress-bar-frame {
+  border: 1px solid @chrome_primary;
+  padding: @padding_tighter;
+}
+
+#import-progress-bar-body {
+  background: @chrome_primary;
+  height: 1em;
+  position: relative;
+  width: 30%;
+}
+
+#import-iframe {
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  left: -300px;
+  top: -300px;
+}
+
+#import-error-panel {
+  display: none;
+  font-size: 1.3em;
+  padding: @padding_loose;
+}
+#import-error-message {
+}
+#import-error-stack {
+  font-family: monospace;
+  whitespace: pre;
+  padding: @padding_normal;
+  border: 1px solid @chrome_primary;
+}

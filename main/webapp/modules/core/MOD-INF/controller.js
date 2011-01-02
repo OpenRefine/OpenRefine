@@ -34,14 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
-var bundle = true;
+var bundle = false;
 
 var templatedFiles = {
     // Requests with last path segments mentioned here 
     // will get served from .vt files with the same names
+    "import" : true,
     "index" : true,
-    "project" : true,
-    "preferences" : true
+    "preferences" : true,
+    "project" : true
 };
 
 function registerCommands() {
@@ -49,6 +50,10 @@ function registerCommands() {
 
     RS.registerCommand(module, "get-version", new Packages.com.google.refine.commands.GetVersionCommand());
 
+    RS.registerCommand(module, "create-import-job", new Packages.com.google.refine.commands.importing.CreateImportJobCommand());
+    RS.registerCommand(module, "retrieve-import-content", new Packages.com.google.refine.commands.importing.RetrieveImportContentCommand());
+    RS.registerCommand(module, "get-import-job-status", new Packages.com.google.refine.commands.importing.GetImportJobStatusCommand());
+    
     RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
     RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
     RS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
@@ -160,6 +165,13 @@ function registerOperations() {
     OR.registerOperation(module, "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
 }
 
+function registerImportSourceClasses() {
+  var RM = Packages.com.google.refine.commands.importing.ImportManager;
+  RM.registerImportSourceClass("file-upload", Packages.com.google.refine.model.meta.FileUploadImportSource);
+  RM.registerImportSourceClass("text", Packages.com.google.refine.model.meta.TextImportSource);
+  RM.registerImportSourceClass("web", Packages.com.google.refine.model.meta.WebImportSource);
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
@@ -168,6 +180,7 @@ function init() {
     
     registerCommands();
     registerOperations();
+    registerImportSourceClasses();
     
     var RC = Packages.com.google.refine.model.recon.ReconConfig;
     RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
@@ -180,7 +193,9 @@ function init() {
             "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
             "externals/date.js",
             "scripts/util/string.js",
-            "scripts/index.js"
+            "scripts/util/dom.js",
+            "scripts/index.js",
+            "scripts/index/import-sources.js"
         ]
     );
     
@@ -193,6 +208,31 @@ function init() {
             "styles/common.less",
             "styles/pure.css",
             "styles/index.less"
+        ]
+    );
+    
+    ClientSideResourceManager.addPaths(
+        "import/scripts",
+        module,
+        [
+            "externals/jquery-1.4.2.min.js",
+            "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
+            "externals/date.js",
+            "scripts/util/string.js",
+            "scripts/util/dom.js",
+            "scripts/import.js"
+        ]
+    );
+    
+    ClientSideResourceManager.addPaths(
+        "import/styles",
+        module,
+        [
+            "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
+            "styles/jquery-ui-overrides.less",
+            "styles/common.less",
+            "styles/pure.css",
+            "styles/import.less"
         ]
     );
     
@@ -382,6 +422,14 @@ function process(path, request, response) {
         } else {
             if (lastSegment in templatedFiles) {
                 var context = {};
+                
+                var params = new Packages.java.util.Properties();
+                var e = request.getParameterNames();
+                while (e.hasMoreElements()) {
+                  var name = e.nextElement();
+                  params.put(name, request.getParameterValues(name)[0]);
+                }
+                context.params = params;
                 context.projectID = request.getParameter("project");
                 
                 var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
