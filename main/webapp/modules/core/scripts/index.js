@@ -69,16 +69,18 @@ function formatDate(d) {
     var today = Date.today();
     var tomorrow = Date.today().add({ days: 1 });
 
-    if (d.between(today, tomorrow)) {
+    if (d > today) {
         return "today " + d.toString("h:mm tt");
     } else if (d.between(last_week, today)) {
         var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
         return (diff <= 1) ? ("yesterday " + d.toString("h:mm tt")) : (diff + " days ago");
     } else if (d.between(last_month, today)) {
         var diff = Math.floor((today.getDayOfYear() - d.getDayOfYear()) / 7);
+        if (diff < 0) {diff += 52;}
         return (diff == 1) ? "a week ago" : diff.toFixed(0) + " weeks ago" ;
     } else if (d.between(last_year, today)) {
         var diff = Math.floor(today.getMonth() - d.getMonth());
+        if (diff < 0) {diff += 12;}
         return (diff == 1) ? "a month ago" : diff + " months ago";
     } else {
         var diff = Math.floor(today.getYear() - d.getYear());
@@ -174,7 +176,7 @@ function renderProjects(data) {
                             if (data && typeof data.code != 'undefined' && data.code == "ok") {
                                 nameLink.text(name);
                             } else {
-                                alert("Failed to rename project: " + data.message)
+                                alert("Failed to rename project: " + data.message);
                             }
                         }
                     });
@@ -262,10 +264,10 @@ function showVersion() {
                 if ("releases" in window) {
                     if (isThereNewRelease()) {
                         var container = $('<div id="notification-container">')
-                            .appendTo(document.body)
+                            .appendTo(document.body);
                         var notification = $('<div id="notification">')
                             .text('New version! ')
-                            .appendTo(container)
+                            .appendTo(container);
                         $('<a>')
                             .addClass('notification-action')
                             .attr("href", releases.homepage)
