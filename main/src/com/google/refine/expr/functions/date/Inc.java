@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions.date;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -47,10 +48,17 @@ public class Inc implements Function {
 
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3 && 
-                args[0] != null && args[0] instanceof Calendar && 
+                args[0] != null && (args[0] instanceof Calendar || args[0] instanceof Date) && 
                 args[1] != null && args[1] instanceof Number && 
                 args[2] != null && args[2] instanceof String) {
-            Calendar date = (Calendar) args[0];
+            Calendar date;
+            if (args[0] instanceof Calendar) {
+                date = (Calendar) ((Calendar) args[0]).clone(); // must copy so not to modify original
+            } else {
+                date = Calendar.getInstance();
+                date.setTime((Date) args[0]);
+            }
+            
             int amount = ((Number) args[1]).intValue();
             String unit = (String) args[2];
             
