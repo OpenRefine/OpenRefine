@@ -273,13 +273,13 @@ public class Recon implements HasFields, Jsonizable {
         writer.key("j"); writer.value(judgmentToString());
         if (match != null) {
             writer.key("m");
-            writer.value(match.id);
+            match.write(writer, options);
         }
         if (match == null || saveMode) {
             writer.key("c"); writer.array();
             if (candidates != null) {
                 for (ReconCandidate c : candidates) {
-                    writer.value(c.id);
+                    c.write(writer, options);
                 }
             }
             writer.endArray();
@@ -344,11 +344,10 @@ public class Recon implements HasFields, Jsonizable {
                     recon.judgment = stringToJudgment(jp.getText());
                 } else if ("m".equals(fieldName)) {
                     if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
+                        // legacy case
                         String candidateID = jp.getText();
-                        
                         recon.match = pool.getReconCandidate(candidateID);
                     } else {
-                        // legacy
                         recon.match = ReconCandidate.loadStreaming(jp);
                     }
                 } else if ("f".equals(fieldName)) {
@@ -380,11 +379,10 @@ public class Recon implements HasFields, Jsonizable {
                     
                     while (jp.nextToken() != JsonToken.END_ARRAY) {
                         if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
+                            // legacy case
                             String candidateID = jp.getText();
-                        
                             recon.addCandidate(pool.getReconCandidate(candidateID));
                         } else {
-                            // legacy
                             recon.addCandidate(ReconCandidate.loadStreaming(jp));
                         }
                     }

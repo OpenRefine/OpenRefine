@@ -56,10 +56,12 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 
 public class Pool implements Jsonizable {
-    final protected Map<String, ReconCandidate> candidates = new HashMap<String, ReconCandidate>();
     final protected Map<String, Recon> recons = new HashMap<String, Recon>();
     
-    public void pool(ReconCandidate candidate) {
+    // This is only for backward compatibility while loading old project files
+    final protected Map<String, ReconCandidate> candidates = new HashMap<String, ReconCandidate>();
+    
+    private void pool(ReconCandidate candidate) {
         candidates.put(candidate.id, candidate);
     }
     
@@ -103,20 +105,6 @@ public class Pool implements Jsonizable {
         options.setProperty("mode", "save");
         options.put("pool", this);
         
-        Collection<ReconCandidate> candidates2 = candidates.values();
-        writer.write("reconCandidateCount=" + candidates2.size()); writer.write('\n');
-        
-        for (ReconCandidate c : candidates2) {
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            try {
-                c.write(jsonWriter, options);
-                
-                writer.write('\n');
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        
         Collection<Recon> recons2 = recons.values();
         writer.write("reconCount=" + recons2.size()); writer.write('\n');
         
@@ -141,6 +129,7 @@ public class Pool implements Jsonizable {
 
         /* String version = */ reader2.readLine();
         
+        Map<String, ReconCandidate> candidates = new HashMap<String, ReconCandidate>();
         String line;
         while ((line = reader2.readLine()) != null) {
             int equal = line.indexOf('=');
@@ -155,6 +144,7 @@ public class Pool implements Jsonizable {
                     if (line != null) {
                         ReconCandidate candidate = ReconCandidate.loadStreaming(line);
                         if (candidate != null) {
+                            // pool for backward compatibility
                             pool(candidate);
                         }
                     }
@@ -179,15 +169,6 @@ public class Pool implements Jsonizable {
             throws JSONException {
         
         writer.object();
-        
-        writer.key("reconCandidates");
-            writer.object();
-            for (Entry<String, ReconCandidate> entry : candidates.entrySet()) {
-                writer.key(entry.getKey());
-                entry.getValue().write(writer, options);
-            }
-            writer.endObject();
-        
         writer.key("recons");
             writer.object();
             for (Entry<String, Recon> entry : recons.entrySet()) {
@@ -195,7 +176,6 @@ public class Pool implements Jsonizable {
                 entry.getValue().write(writer, options);
             }
             writer.endObject();
-            
         writer.endObject();
     }
 }

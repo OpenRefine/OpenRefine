@@ -384,22 +384,6 @@ Refine.columnNameToColumnIndex = function(columnName) {
     return -1;
 };
 
-Refine.preparePool = function(pool) {
-    for (var id in pool.recons) {
-        if (pool.recons.hasOwnProperty(id)) {        
-            var recon = pool.recons[id];
-            if (recon.m) {
-                recon.m = pool.reconCandidates[recon.m];
-            }
-            if (recon.c) {
-                for (var j = 0; j < recon.c.length; j++) {
-                    recon.c[j] = pool.reconCandidates[recon.c[j]];
-                }
-            }
-        }
-    }
-};
-
 Refine.fetchRows = function(start, limit, onDone, sorting) {
     var body = {
         engine: JSON.stringify(ui.browsingEngine.getJSON())
@@ -415,7 +399,6 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
             theProject.rowModel = data;
             
             // Un-pool objects
-            Refine.preparePool(data.pool);
             for (var r = 0; r < data.rows.length; r++) {
                 var row = data.rows[r];
                 for (var c = 0; c < row.cells.length; c++) {
