@@ -97,6 +97,14 @@ public class CreateProjectCommand extends Command {
 
         ProjectManager.singleton.setBusy(true);
         try {
+
+            /* 
+             * Set UTF-8 as request encoding, then ServletFileUpload will use it as default encoding
+             */
+            if (request.getCharacterEncoding() == null) {
+                request.setCharacterEncoding("UTF-8");
+            }
+            
             /*
              * The uploaded file is in the POST body as a "file part". If
              * we call request.getParameter() then the POST body will get
@@ -150,7 +158,7 @@ public class CreateProjectCommand extends Command {
             InputStream stream = item.openStream();
             if (item.isFormField()) {
                 if (name.equals("raw-text")) {
-                    Reader reader = new InputStreamReader(stream,"UTF-8");
+                    Reader reader = new InputStreamReader(stream,request.getCharacterEncoding());
                     try {
                         internalInvokeImporter(project, new TsvCsvImporter(), metadata, options, reader);
                         imported = true;
@@ -158,9 +166,9 @@ public class CreateProjectCommand extends Command {
                         reader.close();
                     }
                 } else if (name.equals("project-url")) {
-                    url = Streams.asString(stream);
+                    url = Streams.asString(stream, request.getCharacterEncoding());
                 } else {
-                    options.put(name, Streams.asString(stream));
+                    options.put(name, Streams.asString(stream, request.getCharacterEncoding()));
                 }
             } else {
                 String fileName = item.getName().toLowerCase();
