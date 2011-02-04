@@ -150,7 +150,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <div class="project-create-option">
               Skip:
               <div class="project-create-suboption">
-                <input type="text" id="skip-input" name="ignore" size="5" value="0" /> initial data rows
+                <input type="text" id="skip-input" name="skip" size="5" value="0" /> initial data rows
               </div>
             </div>
             <div id="project-create-parsetext">
