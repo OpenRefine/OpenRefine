@@ -221,12 +221,8 @@ public class KeyBasedReconConfig extends StrictReconConfig {
         for (ReconJob job : jobs) {
             String key = ((KeyBasedReconJob) job).key;
             Recon recon = keyToRecon.get(key);
-            if (recon == null) { // add a no-match recon if none
-            	recon = Recon.makeFreebaseRecon(historyEntryID);
-            	recon.service = "mql";
-            	recon.judgment = Judgment.None;
-            	recon.matchRank = -1;
-            	keyToRecon.put(key, recon);
+            if (recon == null) {
+            	recon = createNoMatchRecon(historyEntryID);
             }
             recons.add(recon);
         }

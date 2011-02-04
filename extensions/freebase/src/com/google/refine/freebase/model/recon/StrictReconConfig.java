@@ -36,6 +36,7 @@ package com.google.refine.freebase.model.recon;
 import org.json.JSONObject;
 
 import com.google.refine.model.Recon;
+import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.recon.ReconConfig;
 
 abstract public class StrictReconConfig extends ReconConfig {
@@ -56,5 +57,13 @@ abstract public class StrictReconConfig extends ReconConfig {
     @Override
     public Recon createNewRecon(long historyEntryID) {
         return Recon.makeFreebaseRecon(historyEntryID);
+    }
+    
+    protected Recon createNoMatchRecon(long historyEntryID) {
+    	Recon recon = createNewRecon(historyEntryID);
+    	recon.service = "mql";
+    	recon.judgment = Judgment.None;
+    	recon.matchRank = -1;
+    	return recon;
     }
 }
