@@ -198,7 +198,7 @@ public class CsvExporterTests extends RefineTest {
     
     @Test
     public void exportDateColumns(){
-        CreateGrid(1,1);
+        CreateGrid(1,2);
         Calendar calendar = Calendar.getInstance();
         Date date = new Date();
 
