@@ -415,14 +415,23 @@ public class GDataImporter implements UrlImporter {
 
     private boolean isSpreadsheetURL(URL url) {
         String host = url.getHost();
+        String query = url.getQuery();
+        if (query == null) {
+            query = "";
+        }
         // http://spreadsheets.google.com/ccc?key=tI36b9Fxk1lFBS83iR_3XQA&hl=en
-        return host.endsWith(".google.com") && host.contains("spreadsheet");
+        return host.endsWith(".google.com") && host.contains("spreadsheet") && query.contains("key=");
     }
     
     private boolean isFusionTableURL(URL url) {
         // http://www.google.com/fusiontables/DataSource?dsrcid=1219
+        String query = url.getQuery();
+        if (query == null) {
+            query = "";
+        }
         return url.getHost().endsWith(".google.com") 
-                && url.getPath().startsWith("/fusiontables/");
+                && url.getPath().startsWith("/fusiontables/DataSource")
+                && query.contains("dsrcid=");
     }
     
     // Modified version of FeedURLFactor.getSpreadsheetKeyFromUrl()
