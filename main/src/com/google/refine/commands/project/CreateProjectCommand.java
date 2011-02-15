@@ -43,6 +43,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -393,7 +394,10 @@ public class CreateProjectCommand extends Command {
         Properties options,
         String urlString) throws Exception {
         
+        // Little dance to get URL properly encoded (e.g. for funky Fusion Tables queries)
         URL url = new URL(urlString);
+        url = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null).toURL();
+
         URLConnection connection = null;
 
         // Try for a URL importer first
