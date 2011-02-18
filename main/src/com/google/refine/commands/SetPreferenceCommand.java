@@ -64,9 +64,9 @@ public class SetPreferenceCommand extends Command {
             
             ps.put(prefName, PreferenceStore.loadObject(o));
             
-            respond(response, "{ \"code\" : \"ok\" }");
+            HttpUtilities.respond(response, "{ \"code\" : \"ok\" }");
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

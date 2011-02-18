@@ -80,7 +80,7 @@ abstract public class EngineDependentCommand extends Command {
             
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

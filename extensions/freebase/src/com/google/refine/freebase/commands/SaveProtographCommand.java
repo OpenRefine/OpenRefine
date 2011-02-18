@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.freebase.protograph.Protograph;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -67,7 +68,7 @@ public class SaveProtographCommand extends Command {
             
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

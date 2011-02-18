@@ -43,19 +43,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
+import com.google.refine.importing.ImportingManager;
 
-public class CreateImportJobCommand extends Command {
+public class CreateImportingJobCommand extends Command {
 
-    final static Logger logger = LoggerFactory.getLogger("create-import-job_command");
+    final static Logger logger = LoggerFactory.getLogger("create-importing-job_command");
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        long id = ImportManager.singleton().createJob().id;
+        long id = ImportingManager.createJob().id;
         
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
-        respond(response, "{ \"jobID\" : " + id + " }");
+        HttpUtilities.respond(response, "{ \"jobID\" : " + id + " }");
     }
 }

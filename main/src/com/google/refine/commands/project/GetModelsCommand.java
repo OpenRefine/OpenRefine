@@ -44,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.MetaParser.LanguageInfo;
 import com.google.refine.model.OverlayModel;
@@ -92,7 +93,7 @@ public class GetModelsCommand extends Command {
             
             writer.endObject();
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

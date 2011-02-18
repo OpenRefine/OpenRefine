@@ -53,25 +53,45 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
   
 #body {
-  position: relative;
-  margin: @padding_loose;
+  position: absolute;
   background: @fill_primary;
   border: 1px solid @chrome_primary;
-  border-radius: @padding_tight;
+  border-radius: @padding_normal;
   }
 
-#top-panel {
+#header-panel {
   padding: @padding_loose;
   }
-  
-#middle-panel {
+
+#file-selection-stage {
+  }
+
+#file-selection-stage-file-panel {
   border-top: 1px solid @chrome_primary;
   border-bottom: 1px solid @chrome_primary;
   background: white;
-  height: 200px;
   overflow: auto;
   }
   
-#bottom-panel {
-  height: 200px;
+#file-selection-stage-control-panel {
+  font-size: 1.3em;
+  div {
+    padding: @padding_normal;
+    }
+  }
+    
+#data-preview-stage {
+  display: none;
+  }
+
+#data-preview-stage-data-panel {
+  border-top: 1px solid @chrome_primary;
+  border-bottom: 1px solid @chrome_primary;
+  background: white;
+  overflow: auto;
+  }
+  
+#data-preview-stage-control-panel {
+  font-size: 1.3em;
+  overflow: auto;
   }

@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 
 public class CancelProcessesCommand extends Command {
@@ -58,7 +59,7 @@ public class CancelProcessesCommand extends Command {
             response.setHeader("Content-Type", "application/json");
             response.getWriter().write("{ \"code\" : \"ok\" }");
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

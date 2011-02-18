@@ -43,6 +43,7 @@ import org.json.JSONException;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 
 public class GetProjectMetadataCommand extends Command {
@@ -53,9 +54,9 @@ public class GetProjectMetadataCommand extends Command {
         Project project = getProject(request);
         
         try {
-            respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
+            HttpUtilities.respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
@@ -93,10 +94,10 @@ public class ReconClearOneCellCommand extends Command {
                 writer.key("pool"); pool.write(writer, options);
                 writer.endObject();
             } else {
-                respond(response, "{ \"code\" : \"pending\" }");
+                HttpUtilities.respond(response, "{ \"code\" : \"pending\" }");
             }
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

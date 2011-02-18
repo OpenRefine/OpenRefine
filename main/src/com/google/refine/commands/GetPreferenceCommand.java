@@ -80,7 +80,7 @@ public class GetPreferenceCommand extends Command {
             
             writer.endObject();
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

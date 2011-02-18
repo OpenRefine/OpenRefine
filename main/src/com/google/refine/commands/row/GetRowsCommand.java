@@ -52,6 +52,7 @@ import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
@@ -81,8 +82,8 @@ public class GetRowsCommand extends Command {
             Engine engine = getEngine(request, project);
             String callback = request.getParameter("callback");
             
-            int start = Math.min(project.rows.size(), Math.max(0, getIntegerParameter(request, "start", 0)));
-            int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
+            int start = Math.min(project.rows.size(), Math.max(0, HttpUtilities.getIntegerParameter(request, "start", 0)));
+            int limit = Math.min(project.rows.size() - start, Math.max(0, HttpUtilities.getIntegerParameter(request, "limit", 20)));
             
             Pool pool = new Pool();
             Properties options = new Properties();
@@ -163,7 +164,7 @@ public class GetRowsCommand extends Command {
                 writer.write(")");
             }
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

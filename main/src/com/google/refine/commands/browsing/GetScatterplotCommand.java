@@ -55,6 +55,7 @@ import com.google.refine.browsing.facets.ScatterplotDrawingRowVisitor;
 import com.google.refine.browsing.facets.ScatterplotFacet;
 import com.google.refine.browsing.util.NumericBinIndex;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
@@ -74,7 +75,7 @@ public class GetScatterplotCommand extends Command {
             
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            JSONObject conf = getJsonParameter(request,"plotter");
+            JSONObject conf = HttpUtilities.getJsonParameter(request,"plotter");
             
             response.setHeader("Content-Type", "image/png");
             
@@ -90,7 +91,7 @@ public class GetScatterplotCommand extends Command {
             logger.trace("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
         } catch (Exception e) {
             e.printStackTrace();
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

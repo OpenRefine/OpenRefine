@@ -45,6 +45,7 @@ import org.apache.tools.tar.TarOutputStream;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 
 public class ExportProjectCommand extends Command {
@@ -66,7 +67,7 @@ public class ExportProjectCommand extends Command {
                 os.close();
             }
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

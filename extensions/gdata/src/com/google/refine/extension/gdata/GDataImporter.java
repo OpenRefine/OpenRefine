@@ -67,7 +67,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * Google Refine importer for Google Spreadsheets.
+ * Google Refine parser for Google Spreadsheets.
  * 
  * @author Tom Morris <tfmorris@gmail.com>
  * @copyright 2010 Thomas F. Morris
@@ -93,7 +93,7 @@ public class GDataImporter implements UrlImporter {
         int headerLines = ImporterUtilities.getIntegerOption("header-lines", options, 1);
         int limit = ImporterUtilities.getIntegerOption("limit", options, -1);
 
-        // Note: Unlike TSV/CSV importer, we count all rows towards skip, not
+        // Note: Unlike TSV/CSV parser, we count all rows towards skip, not
         // just "data" rows
         int skip = ImporterUtilities.getIntegerOption("skip", options, 0);
         int dataStart = ignoreLines + headerLines + skip;

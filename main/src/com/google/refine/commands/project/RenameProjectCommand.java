@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 
 public class RenameProjectCommand extends Command {
     @Override
@@ -53,9 +54,9 @@ public class RenameProjectCommand extends Command {
             
             pm.setName(name);
             
-            respond(response, "{ \"code\" : \"ok\" }");
+            HttpUtilities.respond(response, "{ \"code\" : \"ok\" }");
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

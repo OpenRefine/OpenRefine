@@ -49,12 +49,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </div>
     
     <div id="body">
-      <div bind="topPanelDiv" id="top-panel">
+      <div bind="headerPanel" id="header-panel">
         <h1>Preview</h1>
       </div>
-      <div bind="middlePanelDiv" id="middle-panel">
+      <div id="file-selection-stage" bind="fileSelectionStage">
+        <div bind="fileSelectionStageFilePanel" id="file-selection-stage-file-panel">
+        </div>
+        <div bind="fileSelectionStageControlPanel" id="file-selection-stage-control-panel"><div>
+          <p>The data file is an archive file, which potentially contains several files.
+            Please select the files to import from the list above, or specify a single extension
+            of files to import in the text field below.
+          </p>
+          <p><input size="10" />
+          <p>
+        </div></div>
       </div>
-      <div bind="bottomPanelDiv" id="bottom-panel">
+      <div id="data-preview-stage" bind="dataPreviewStage">
+        <div bind="dataPreviewStageDataPanel" id="data-preview-stage-data-panel">
+        </div>
+        <div bind="dataPreviewStageControlPanel" id="data-preview-stage-control-panel">
+        </div>
       </div>
     </div>
   </body>

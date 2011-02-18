@@ -7,6 +7,7 @@
 	<classpathentry kind="src" path="extensions/freebase/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
 	<classpathentry kind="src" path="extensions/sample/src"/>
+	<classpathentry kind="src" path="main/tests/server/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
@@ -55,5 +56,7 @@
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-collect-1.0-rc1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
+	<classpathentry kind="lib" path="main/tests/server/lib/mockito-all-1.8.4.jar"/>
+	<classpathentry kind="lib" path="main/tests/server/lib/testng-5.12.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -74,7 +74,7 @@ public class GetAllPreferencesCommand extends Command {
             
             writer.endObject();
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

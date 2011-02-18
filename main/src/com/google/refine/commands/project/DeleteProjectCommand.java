@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 
 public class DeleteProjectCommand extends Command {
     @Override
@@ -52,10 +53,10 @@ public class DeleteProjectCommand extends Command {
             
             ProjectManager.singleton.deleteProject(projectID);
             
-            respond(response, "{ \"code\" : \"ok\" }");
+            HttpUtilities.respond(response, "{ \"code\" : \"ok\" }");
             
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

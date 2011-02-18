@@ -46,6 +46,7 @@ import com.google.refine.browsing.util.ExpressionBasedRowEvaluable;
 import com.google.refine.browsing.util.NumericBinIndex;
 import com.google.refine.browsing.util.NumericBinRowIndex;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
@@ -80,7 +81,7 @@ public class GetColumnsInfoCommand extends Command {
             //Refine.log("Obtained columns info in " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
             e.printStackTrace();
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

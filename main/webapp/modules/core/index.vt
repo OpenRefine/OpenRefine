@@ -41,182 +41,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   $styleInjection
 </head>
 <body>
-  #if($params.new == "1")
-    #set($newStyle = "")
-    #set($oldStyle = "display: none; ")
-  #else
-    #set($oldStyle = "")
-    #set($newStyle = "display: none; ")
-  #end
-  <div id="container">
-    <div id="logo"> </div>
-    <div id="header-home">
-      <img alt="Google Refine" src="images/logo-googlerefine-40.png" />
-      <h1>A power tool for working with messy data.</h1>
-    </div>
-    <div id="content-home">
-      <div id="no-project-message" class="message" style="display: none;">
-        No existing project. Create one now!<br/>
-        Try these <a href="http://code.google.com/p/google-refine/wiki/SampleDatasets" target="_blank">sample data sets &raquo;</a>
-      </div>
-        
-      <div id="project-open">
-        <h1>Open a Project</h1>
-        <div id="projects-container"></div>
-        <div class="content-block-footer"><a href="javascript:openWorkspaceDir()" class="secondary">Browse workspace directory</a></div>
-      </div>
-      <div id="project-create">
-        <h1 style="$newStyle">Create a New Project</h1>
-        <div style="$newStyle" id="import-panel"><table id="import-panel-layout">
-          <tr>
-            <td id="import-panel-tab-headers">
-              <div>Import data from</div>
-            </td>
-            <td id="import-panel-tab-bodies"></td>
-          </tr>
-          <tr>
-            <td colspan="2" id="import-panel-message">
-              <h3>What kinds of data files can I import?</h3>
-              <div>TSV, CSV, *SV, Excel (.xls and .xlsx), JSON, XML, RDF as XML, and
-                Google Spreadsheets are all supported. Support for other formats can
-                be added with Refine extensions.
-              </div>
-            </td>
-          </tr>
-        </table></div>
-        
-        <div style="$newStyle" id="import-progress-panel">
-          <div class="grid-layout layout-normal layout-full"><table>
-            <tr><td colspan="3" id="import-progress-message"></td></tr>
-            <tr><td colspan="3">
-              <div id="import-progress-bar-frame"><div id="import-progress-bar-body"></div></div>
-            </td></tr>
-            <tr>
-              <td id="import-progress-message-left"></td>
-              <td id="import-progress-message-center"></td>
-              <td id="import-progress-message-right"></td>
-            </tr>
-            <tr><td colspan="3">
-              <button class="button" id="import-progress-cancel-button">Cancel</button>
-            </td></tr>
-          </table></div>
-          <iframe id="import-iframe" name="import-iframe"></iframe>
-        </div>
-        
-        <div style="$newStyle" id="import-error-panel"><div class="grid-layout layout-normal layout-full"><table>
-          <tr><td id="import-error-message"></td></tr>
-          <tr><td id="import-error-stack"></td></tr>
-          <tr><td><button class="button button-primary" id="import-error-ok-button">OK</button></td></tr>
-        </table></div></div>
-                
-        <form style="$oldStyle" id="file-upload-form" method="post" enctype="multipart/form-data" action="/command/core/create-project-from-upload" accept-charset="UTF-8">
-          <h1>Create a New Project</h1>
-          <h2 id="project-toggle">
-            <a class="secondary" href="javascript:showHide('file-upload-form', 'project-upload-form')">or Import an Existing Project</a>
-          </h2>
-          <div class="project-create-basic">
-            <table class="form-table">
-              <tr>
-                <th><label for="project-file">Data file:</label></th>
-                <td><input type="file" id="project-file-input" name="project-file" /></td>
-              </tr>
-              <tr>
-                <th><label for="project-url">or data file URL:</label></th>
-                <td><input type="text" id="project-url-input" name="project-url" size="40" /></td>
-              </tr>
-              <tr>
-                <th><label for="project-name">Project name:</label></th>
-                <td><input type="text" size="25" id="project-name-input" name="project-name" /></td></tr>
-              <tr>
-                <td></td>
-                <td><input type="submit" value="Create Project" id="upload-file-button" class="button button-primary"  /></td>
-              </tr>
-            </table>
-          </div>
-          <div class="project-create-advanced">
-            <h2>Advanced Options</h2>
-            <div class="project-create-option">
-              Limit load to:
-              <div class="project-create-suboption">
-                <input type="text" id="limit-input" name="limit" size="5" /> rows (blank for all)
-              </div>
-            </div>
-            <div class="project-create-option">
-              Ignore:
-              <div class="project-create-suboption">
-                <input type="text" id="ignore-input" name="ignore" size="5" value="0" /> initial non-blank lines
-              </div>
-            </div>
-            <div class="project-create-option">
-              Skip:
-              <div class="project-create-suboption">
-                <input type="text" id="skip-input" name="skip" size="5" value="0" /> initial data rows
-              </div>
-            </div>
-            <div id="project-create-parsetext">
-              <div class="project-create-option">
-                When parsing text files:
-                <div class="project-create-suboption">
-                  <input id="split-into-columns-input" type="checkbox" checked="true" name="split-into-columns" />
-                  Split into columns
-                </div>
-                <div class="project-create-suboption">
-                  Column separator:
-                  <input type="text" id="separator-input" name="separator" size="2" /><br />
-                  (leave blank to auto-detect)
-                </div>
-                <div class="project-create-suboption">
-                  <input type="checkbox" id="guess-value-type-input" name="guess-value-type" checked="true" />
-                  Auto-detect value types<br />
-                  (numbers, dates, etc)
-                </div>
-                <div class="project-create-suboption">
-                  Header lines: <input type="text" id="header-lines-input" name="header-lines" size="5" value="1" /><br />
-                  (use 0 if your data has no header)
-                </div>
-                <div class="project-create-suboption">
-                  <input type="checkbox" id="ignore-quotes-input" name="ignore-quotes" />
-                  Ignore quotation marks
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <form style="display: none;" id="project-upload-form" method="post" enctype="multipart/form-data" action="/command/core/import-project" accept-charset="UTF-8" style="display:none;">
-          <h1>Import an Existing Project</h1>
-          <h2 id="project-toggle">
-            <a class="secondary" href="javascript:showHide('project-upload-form', 'file-upload-form')">or Create a New Project</a>
-          </h2>
-          <div class="project-create-basic">
-            <p>Import an existing Google Refine .tar or .tar.gz project file:</p>
-            <table class="form-table">
-              <tr>
-                <th><label for="project-file">Project file:</label></th>
-                <td><input type="file" id="project-tar-file-input" name="project-file" /></td>
-              </tr>
-              <tr>
-                <th><label for="project-name">Project name (optional):</label></th>
-                <td><input type="text" size="25" id="project-name-input" name="project-name" /></td></tr>
-              <tr>
-                <td></td>
-                <td><input type="submit" value="Import Project" id="import-project-button" class="button button-primary" /></td>
-              </tr>
-            </table>
-          </div>
-        </form>
-      </div>
+  <div id="header">
+    <img alt="Google Refine" src="images/logo-googlerefine-30.png" width="129" height="29" />
+    A power tool for working with messy data.
+  </div>
+  
+  <div id="left-panel" class="main-layout-panel"><div id="left-panel-body">
+    <ul id="action-area-tabs">
+    </ul>
     
-      <div id="project-links">
-        <ul>
-          <li><a href="/about.html">About Google Refine</a></li>
-          <li><a href="https://code.google.com/p/google-refine/">Project Home Page</a></li>
-          <li><a href="http://code.google.com/p/google-refine/wiki/Screencasts">Screencasts</a></li>
-          <li><a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers">Help Documentation</a></li>
-        </ul>
+    <div id="project-links">
+      <div id="logo-container">
+        <img alt="Google Refine" src="images/logo-gem-40.png" />
         <div id="google-refine-version"></div>
-      </div>      
+      </div>
+      <ul>
+        <li><a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers">Help</a></li>
+        <li><a href="/about.html">About</a></li>
+      </ul>
     </div>
+  </div></div> <!-- left-panel -->
+
+  <div id="right-panel" class="main-layout-panel"><div id="right-panel-body">
+  </div></div> <!-- right-panel -->
+  
+  <div id="no-project-message" class="message" style="display: none;">
+    No existing project. Create one now!<br/>
+    Try these <a href="http://code.google.com/p/google-refine/wiki/SampleDatasets" target="_blank">sample data sets &raquo;</a>
   </div>
 </body>
 </html>

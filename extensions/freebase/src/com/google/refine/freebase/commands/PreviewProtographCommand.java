@@ -45,6 +45,7 @@ import org.json.JSONObject;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.freebase.protograph.Protograph;
 import com.google.refine.model.Project;
 import com.google.refine.freebase.protograph.transpose.MqlwriteLikeTransposedNodeFactory;
@@ -96,9 +97,9 @@ public class PreviewProtographCommand extends Command {
 
             sb.append(" }");
             
-            respond(response, sb.toString());
+            HttpUtilities.respond(response, sb.toString());
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

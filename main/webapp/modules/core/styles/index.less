@@ -33,229 +33,85 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @import-less url("theme.less");
 
-#container { 
-  width: 980px; 
-  height: 600px;
-  margin: 10px auto;
-  padding: 0 10px;
-  position: relative;
-  }
-  
-#logo {
-  position: absolute;
-  top: 20px;
-  right: 0px;
-  width: 150px;
-  height: 150px;
-  background: url(../images/logo-gem-150.png) no-repeat top right; 
-}
-  
-#header-home img { 
-  padding: 6px 0; 
-  }
-  
-#content-home { 
-  position: relative;
-  margin: 20px 0;
-  }
-
-#project-open, #project-create, #project-links {
-  position: absolute;
-  top: 0;
-  }
-  
-#project-open {
-  left: 0;
-  width: 330px;
-  }
-
-#projects-container {
-  border-top: 1px solid @chrome_primary;
-  background: #fff;
-  overflow: auto;
-  height: 378px;
-  }
-  
-#projects-container .project .last-modified {
-  white-space: nowrap;
+.main-layout-panel {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
 
-#projects-container .message {
-  padding: @padding_loose;
-  font-size: 170%;
-  line-height: 1.5em;
-  opacity: 0.2;
+#left-panel {
+}
+
+#left-panel-body {
+  margin-left: @padding_tight;
+  overflow: hidden;
+  position: relative;
   }
 
-#project-create {
-  left: 350px;
-  width: 430px;
-  }
-  
-.content-block-footer {
-  background: #f2f2f2;
-  padding: @padding_tight;
-  font-size: 1.1em;
-  .rounded_corners_bottom(4px);  
-  }
+#action-area-tabs {
+  margin: 0;
+  padding: 0;
+  padding-top: @padding_looser;
+  font-size: 1.3em;
+}
+#action-area-tabs > li {
+  display: block;
+  padding-top: @padding_tight;
+  padding-bottom: @padding_tight;
+  padding-left: @padding_normal;
+  cursor: pointer;
+}
+#action-area-tabs > li.selected {
+  background: @chrome_primary;
+  .rounded_corners_left();
+}
 
 #project-links {
-  top: 110px;
-  left: 810px;
-  width: 150px;
   font-size: 1.3em;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
   }
 
-#project-links li {
-  padding: @padding_tight 0;
+#logo-container {
+  margin: 2em 0;
+  }
+
+#project-links > ul {
+  padding: 0;
+  margin: 1em 0;
+  line-height: 1.5em;
+  }
+
+#project-links > ul > li {
+  display: block;
   }
 
 #google-refine-version {
-  margin: 30px 0 0 0;
+  margin: @padding_normal 0 0 0;
   color: @metadata_grey;
-  }
-  
-#project-open, #project-create { 
-  background: @fill_primary;
-  border: 1px solid @chrome_primary;
-  .rounded_corners;
-  } 
-
-#project-open h1, #project-create h1 { 
-  padding: @padding_loose;
-  } 
-
-.project-create-basic {
-  border-top: 1px solid @chrome_primary;
-  padding: @padding_loose;
-  background: #fff;
+  font-size: 80%;
   }
 
-.project-create-basic p {
-  font-size: 1.3em;
-  padding: 0 0 @padding_normal 0;
-  }
-
-.project-create-advanced {
-  position: relative;
-  padding: @padding_loose 200px 48px @padding_loose;
-  background: @fill_secondary;
-  color: @metadata_grey;
-  .rounded_corners_bottom(4px);
-  }
-  
-#project-create-parsetext {
-  position: absolute;
-  width: 200px;
-  top: 25px;
-  left: 210px;
-  }
-
-.project-create-option {
-  padding: @padding_normal;
-  font-size: 1.3em;
-  }
-
-.project-create-suboption {
-  padding: @padding_tight 0;
-  font-size: 0.85em;
-  }
-
-#project-toggle { 
-  position: absolute;
-  top: 12px;
-  right: 10px;
-  }
-
-#import-panel {
-  font-size: 1.3em;
-}
-
-#import-panel-message {
-  padding: @padding_loose;
-}
-
-#import-panel-layout {
-  width: 100%;
-  border-collapse: collapse;
-}
-#import-panel-layout > tbody > tr > td {
-  border-top: 1px solid @chrome_primary;
-  border-bottom: 1px solid @chrome_primary;
-}
-
-#import-panel-tab-bodies {
-  background: white;
-}
-
-#import-panel-tab-headers {
-  width: 15em;
-  background: @fill_primary;
-  border-right: 1px solid @chrome_primary;
-  padding-left: @padding_normal;
-  padding-bottom: @padding_looser;
-}
-#import-panel-tab-headers > div {
-  padding: @padding_tight;
-  padding-right: @padding_normal;
-}
-
-.import-panel-tab-body {
-  padding: @padding_loose;
-}
-
-.import-panel-tab-header {
-  cursor: pointer;
-  color: @link_primary;
-}
-.import-panel-tab-header.selected {
-  cursor: default;
-  color: black;
-  background: white;
-  font-weight: bold;
-  position: relative;
-  left: 1px;
-  border: 1px solid @chrome_primary;
-  border-right: none;
-}
-
-#import-progress-panel {
-  display: none;
-  font-size: 1.3em;
-  padding: @padding_loose;
-  background: white;
-}
-
-#import-progress-bar-frame {
-  border: 1px solid @chrome_primary;
-  padding: @padding_tighter;
-}
-
-#import-progress-bar-body {
+#right-panel {
   background: @chrome_primary;
-  height: 1em;
+  }
+
+#right-panel-body {
+  overflow: auto;
   position: relative;
-  width: 30%;
-}
+  }
 
-#import-iframe {
-  position: fixed;
-  width: 200px;
-  height: 200px;
-  left: -300px;
-  top: -300px;
-}
-
-#import-error-panel {
-  display: none;
-  font-size: 1.3em;
-  padding: @padding_loose;
-}
-#import-error-message {
-}
-#import-error-stack {
-  font-family: monospace;
-  whitespace: pre;
-  padding: @padding_normal;
-  border: 1px solid @chrome_primary;
+.action-area-tab-body {
+  visibility: hidden;
+  position: absolute;
+  background: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

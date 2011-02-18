@@ -37,11 +37,11 @@ package com.google.refine.importers;
 public interface Importer {
 
     /**
-     * Determine whether importer can handle given contentType and filename.
+     * Determine whether parser can handle given contentType and filename.
      * 
      * @param contentType
      * @param fileName
-     * @return true if the importer can handle this
+     * @return true if the parser can handle this
      */
     public boolean canImportData(String contentType, String fileName);
 }

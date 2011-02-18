@@ -35,8 +35,10 @@ package com.google.refine.util;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +46,14 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 public class JSONUtilities {
+    static public JSONObject getObject(JSONObject obj, String key) {
+        try {
+            return obj.getJSONObject(key);
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+    
     static public String getString(JSONObject obj, String key, String def) {
         try {
             return obj.getString(key);
@@ -91,6 +101,14 @@ public class JSONUtilities {
             return d != null ? d : def;
         } catch (JSONException e) {
             return def;
+        }
+    }
+    
+    static public JSONArray getArray(JSONObject obj, String key) {
+        try {
+            return obj.getJSONArray(key);
+        } catch (JSONException e) {
+            return null;
         }
     }
     
@@ -144,24 +162,154 @@ public class JSONUtilities {
         writer.endArray();
     }
     
+    static public void writeStringArray(JSONWriter writer, String[] strings) throws JSONException {
+        writer.array();
+        for (String s : strings) {
+            writer.value(s);
+        }
+        writer.endArray();
+    }
+    
     static public void putField(JSONObject obj, String key, Object value) throws JSONException {
-    	if (value instanceof Integer) {
-    		obj.put(key, ((Integer) value).intValue());
-    	} else if (value instanceof Long) {
-    		obj.put(key, ((Long) value).intValue());
-    	} else if (value instanceof Number) {
-    		obj.put(key, ((Double) value).doubleValue());
-    	} else if (value instanceof Boolean) {
-    		obj.put(key, (Boolean) value);
-    	} else if (value instanceof Date) {
-    		obj.put(key, ParsingUtilities.dateToString((Date) value));
-    	} else if (value instanceof Calendar) {
-    		obj.put(key, ParsingUtilities.dateToString(((Calendar) value).getTime()));
-    	} else if (value instanceof String) {
-    		obj.put(key, (String) value);
-    	} else {
-    		obj.put(key, value.toString());
-    	}
+        if (value instanceof Integer) {
+            obj.put(key, ((Integer) value).intValue());
+        } else if (value instanceof Long) {
+            obj.put(key, ((Long) value).intValue());
+        } else if (value instanceof Number) {
+            obj.put(key, ((Double) value).doubleValue());
+        } else if (value instanceof Boolean) {
+            obj.put(key, (Boolean) value);
+        } else if (value instanceof Date) {
+            obj.put(key, ParsingUtilities.dateToString((Date) value));
+        } else if (value instanceof Calendar) {
+            obj.put(key, ParsingUtilities.dateToString(((Calendar) value).getTime()));
+        } else if (value instanceof String) {
+            obj.put(key, (String) value);
+        } else {
+            obj.put(key, value.toString());
+        }
+    }
+    
+    static public JSONObject getObjectElement(JSONArray a, int i) {
+        try {
+            return a.getJSONObject(i);
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+    
+    static public int getIntElement(JSONArray a, int i, int def) {
+        try {
+            return a.getInt(i);
+        } catch (JSONException e) {
+            return def;
+        }
+    }
+    
+    static public void append(JSONArray a, JSONObject element) {
+        try {
+            a.put(a.length(), element);
+        } catch (JSONException e) {
+        }
+    }
+    
+    static public void append(JSONArray a, int element) {
+        try {
+            a.put(a.length(), element);
+        } catch (JSONException e) {
+        }
+    }
+    
+    static public void append(JSONArray a, long element) {
+        try {
+            a.put(a.length(), element);
+        } catch (JSONException e) {
+        }
+    }
+    
+    static public void append(JSONArray a, double element) {
+        try {
+            a.put(a.length(), element);
+        } catch (JSONException e) {
+        }
+    }
+    
+    static public void append(JSONArray a, boolean element) {
+        try {
+            a.put(a.length(), element);
+        } catch (JSONException e) {
+        }
+    }
+    
+    static public void append(JSONArray a, String element) {
+        try {
+            a.put(a.length(), element);
+        } catch (JSONException e) {
+        }
+    }
+    
+    static public void safePut(JSONObject obj, String key, int value) {
+        try {
+            obj.put(key, value);
+        } catch (JSONException e) {
+            // Ignore: the JSONObject is just too happy about throwing exceptions.
+        }
+    }
+    
+    static public void safePut(JSONObject obj, String key, long value) {
+        try {
+            obj.put(key, value);
+        } catch (JSONException e) {
+            // Ignore: the JSONObject is just too happy about throwing exceptions.
+        }
+    }
+    
+    static public void safePut(JSONObject obj, String key, double value) {
+        try {
+            obj.put(key, value);
+        } catch (JSONException e) {
+            // Ignore: the JSONObject is just too happy about throwing exceptions.
+        }
+    }
+    
+    static public void safePut(JSONObject obj, String key, boolean value) {
+        try {
+            obj.put(key, value);
+        } catch (JSONException e) {
+            // Ignore: the JSONObject is just too happy about throwing exceptions.
+        }
+    }
+    
+    static public void safePut(JSONObject obj, String key, String value) {
+        try {
+            obj.put(key, value);
+        } catch (JSONException e) {
+            // Ignore: the JSONObject is just too happy about throwing exceptions.
+        }
+    }
+    
+    static public void safePut(JSONObject obj, String key, Collection<?> value) {
+        try {
+            obj.put(key, value);
+        } catch (JSONException e) {
+            // Ignore: the JSONObject is just too happy about throwing exceptions.
+        }
+    }
+    
+    static public void safePut(JSONObject obj, String key, Map<?, ?> value) {
+        try {
+            obj.put(key, value);
+        } catch (JSONException e) {
+            // Ignore: the JSONObject is just too happy about throwing exceptions.
+        }
+    }
+    
+    static public void safePut(JSONObject obj, String key, Object value) {
+        try {
+            obj.put(key, value);
+        } catch (JSONException e) {
+            // Ignore: the JSONObject is just too happy about throwing exceptions.
+        }
     }
     
     static public Object[] toArray(JSONArray a) throws JSONException {

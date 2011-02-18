@@ -37,17 +37,38 @@ var ui = {};
 var Refine = {
 };
 
-function resize() {
-    var header = $("#header");
-    
-    var leftPanelWidth = 300;
-    var width = $(window).width();
-    var top = $("#header").outerHeight();
-    var height = $(window).height() - top;
-    
-}
+$(function() {
+  ui.elmts = DOM.bind($('#body'));
 
-function onLoad() {
+  var resize = function() {
+      var header = $("#header");
+      var body = $('#body');
+      var bodyPadding = 10;
+    
+      var bodyTop = header.outerHeight() + header.offset().top;
+      var bodyHeight = $(window).height() - bodyTop - bodyPadding;
+      var bodyWidth = $(window).width() - 2 * bodyPadding;
+      body.css("left", bodyPadding + "px")
+        .css("top", bodyTop + "px")
+        .css("width", bodyWidth + "px")
+        .css("height", bodyHeight + "px");
+    
+      // File selection stage
+      var fileSelectionStageControlPanelHeight = 150; // pixel
+      ui.elmts.fileSelectionStageControlPanel.height(fileSelectionStageControlPanelHeight + "px");
+      ui.elmts.fileSelectionStageFilePanel.height(
+        (bodyHeight -
+          ui.elmts.headerPanel.outerHeight() - 
+          fileSelectionStageControlPanelHeight) + "px");
+    
+      // Data preview stage
+      var dataPreviewStageDataPanelHeight = 200; // pixel
+      ui.elmts.dataPreviewStageDataPanel.height(dataPreviewStageDataPanelHeight + "px");
+      ui.elmts.dataPreviewStageControlPanel.height(
+        (bodyHeight -
+          ui.elmts.headerPanel.outerHeight() - 
+          dataPreviewStageDataPanelHeight) + "px");
+  };
   $(window).bind("resize", resize);
-}
-$(onLoad);
+  resize();
+});

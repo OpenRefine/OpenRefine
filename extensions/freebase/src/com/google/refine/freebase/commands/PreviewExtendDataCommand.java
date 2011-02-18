@@ -50,6 +50,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.freebase.util.FreebaseDataExtensionJob;
 import com.google.refine.freebase.util.FreebaseDataExtensionJob.ColumnInfo;
 import com.google.refine.freebase.util.FreebaseDataExtensionJob.DataExtension;
@@ -71,7 +72,7 @@ public class PreviewExtendDataCommand extends Command {
             
             String rowIndicesString = request.getParameter("rowIndices");
             if (rowIndicesString == null) {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
+                HttpUtilities.respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
                 return;
             }
             
@@ -185,7 +186,7 @@ public class PreviewExtendDataCommand extends Command {
                 
             writer.endObject();
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

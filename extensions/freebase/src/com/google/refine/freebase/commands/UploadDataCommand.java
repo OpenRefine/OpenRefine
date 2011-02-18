@@ -48,6 +48,7 @@ import org.json.JSONObject;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.freebase.ProtographTransposeExporter.TripleLoaderExporter;
 import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.model.Project;
@@ -111,10 +112,10 @@ public class UploadDataCommand extends Command {
                 }
                 response.getWriter().write(uploadResponse);
             } catch (JSONException e) {
-                respond(response,"500 Error", uploadResponse);
+                HttpUtilities.respond(response,"500 Error", uploadResponse);
             }
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         } finally {
             ProjectManager.singleton.setBusy(false);
         }

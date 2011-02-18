@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 
 public class ComputeFacetsCommand extends Command {
@@ -54,9 +55,9 @@ public class ComputeFacetsCommand extends Command {
             
             engine.computeFacets();
             
-            respondJSON(response, engine);
+            HttpUtilities.respondJSON(response, engine);
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

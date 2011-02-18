@@ -48,6 +48,7 @@ import com.google.refine.clustering.Clusterer;
 import com.google.refine.clustering.binning.BinningClusterer;
 import com.google.refine.clustering.knn.kNNClusterer;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 
 public class ComputeClustersCommand extends Command {
@@ -62,7 +63,7 @@ public class ComputeClustersCommand extends Command {
             long start = System.currentTimeMillis();
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            JSONObject clusterer_conf = getJsonParameter(request,"clusterer");
+            JSONObject clusterer_conf = HttpUtilities.getJsonParameter(request,"clusterer");
 
             Clusterer clusterer = null;
             String type = clusterer_conf.has("type") ? clusterer_conf.getString("type") : "binning";
@@ -77,10 +78,10 @@ public class ComputeClustersCommand extends Command {
             
             clusterer.computeClusters(engine);
             
-            respondJSON(response, clusterer);
+            HttpUtilities.respondJSON(response, clusterer);
             logger.info("computed clusters [{},{}] in {}ms", new Object[] { type, clusterer_conf.getString("function"), Long.toString(System.currentTimeMillis() - start) });
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

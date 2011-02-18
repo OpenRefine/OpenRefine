@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2011, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,52 +31,75 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.commands.workspace;
+package com.google.refine.importing;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Map.Entry;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.google.refine.ProjectManager;
+import com.google.refine.Jsonizable;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.commands.Command;
-import com.google.refine.commands.HttpUtilities;
+import com.google.refine.model.Project;
 
-public class GetAllProjectMetadataCommand extends Command {
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+
+public class ImportingJob implements Jsonizable {
+    final public long id;
+    final public File dir; // Temporary directory where the data about this job is stored
+    
+    public long lastTouched;
+    public JSONObject config = null;
+    
+    public Project project;
+    public ProjectMetadata metadata;
+    
+    public ImportingJob(long id, File dir) {
+        this.id = id;
+        this.dir = dir;
+        
+        dir.mkdirs();
+    }
+    
+    public void touch() {
+        lastTouched = System.currentTimeMillis();
+    }
+    
+    public void prepareNewProject() {
+        if (project != null) {
+            project.dispose();
+        }
+        project = new Project();
+        metadata = new ProjectMetadata();
+    }
+    
+    public void dispose() {
+        if (project != null) {
+            project.dispose();
+            project = null;
+        }
+        metadata = null;
         
         try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            Properties options = new Properties();
-            
-            writer.object();
-            writer.key("projects");
-                writer.object();
-                Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
-                for (Entry<Long,ProjectMetadata> e : m.entrySet()) {
-                    ProjectMetadata pm = e.getValue();
-                    if (pm != null) {
-                        writer.key(e.getKey().toString());
-                        e.getValue().write(writer, options);
-                    }
-                }
-                writer.endObject();
-            writer.endObject();
-        } catch (JSONException e) {
-            HttpUtilities.respondException(response, e);
+            FileUtils.deleteDirectory(dir);
+        } catch (IOException e) {
         }
+    }
+    
+    public File getRawDataDir() {
+        File dir2 = new File(dir, "raw-data");
+        dir2.mkdirs();
+        return dir2;
+    }
+
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        writer.object();
+        writer.key("config"); writer.value(config);
+        writer.endObject();
     }
 }

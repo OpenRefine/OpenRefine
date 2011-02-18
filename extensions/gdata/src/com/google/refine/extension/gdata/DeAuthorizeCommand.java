@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gdata.client.http.AuthSubUtil;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 
 public class DeAuthorizeCommand extends Command {
 
@@ -23,9 +24,9 @@ public class DeAuthorizeCommand extends Command {
                 AuthSubUtil.revokeToken(sessionToken, null);
                 TokenCookie.deleteToken(request, response);
             }
-            respond(response, "200 OK", "");
+            HttpUtilities.respond(response, "200 OK", "");
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

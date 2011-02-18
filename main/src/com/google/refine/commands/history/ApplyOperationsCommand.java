@@ -45,6 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
@@ -69,12 +70,12 @@ public class ApplyOperationsCommand extends Command {
             }
 
             if (project.processManager.hasPending()) {
-                respond(response, "{ \"code\" : \"pending\" }");
+                HttpUtilities.respond(response, "{ \"code\" : \"pending\" }");
             } else {
-                respond(response, "{ \"code\" : \"ok\" }");
+                HttpUtilities.respond(response, "{ \"code\" : \"ok\" }");
             }
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

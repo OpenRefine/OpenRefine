@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gdata.client.http.AuthSubUtil;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 
 /**
  * Second half of authentication sequence after Google has redirected back to us
@@ -22,7 +23,7 @@ public class AuthorizeCommand2 extends Command {
         try {
             String queryString = request.getQueryString();
             if (queryString == null) {
-                respond(response, "401 Unauthorized", "Authentication failed.");
+                HttpUtilities.respond(response, "401 Unauthorized", "Authentication failed.");
                 return;
             }
             
@@ -45,14 +46,14 @@ public class AuthorizeCommand2 extends Command {
 //                System.out.println("\t" + entry.getTitle().getPlainText());
 //            }
 
-            respond(response, "200 OK", "");
+            HttpUtilities.respond(response, "200 OK", "");
             // } catch (AuthenticationException e) {
             // } catch (GeneralSecurityException e) {
         } catch (Exception e) { // AuthenticationException
                                 // GeneralSecurityException
             e.printStackTrace();
             TokenCookie.deleteToken(request, response);
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

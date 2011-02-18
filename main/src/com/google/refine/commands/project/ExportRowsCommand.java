@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.exporters.CsvExporter;
 import com.google.refine.exporters.Exporter;
 import com.google.refine.exporters.ExporterRegistry;
@@ -97,10 +98,10 @@ public class ExportRowsCommand extends Command {
 //            } else if (exporter instanceof UrlExporter) {
 //                ((UrlExporter) exporter).export(project, options, engine);
             } else {
-                respondException(response, new RuntimeException("Unknown exporter type"));
+                HttpUtilities.respondException(response, new RuntimeException("Unknown exporter type"));
             }
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         } finally {
             ProjectManager.singleton.setBusy(false);
         }

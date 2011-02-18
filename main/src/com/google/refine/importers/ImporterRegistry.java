@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 
 abstract public class ImporterRegistry {
-    final static Logger logger = LoggerFactory.getLogger("importer-registry");
+    final static Logger logger = LoggerFactory.getLogger("parser-registry");
 
     static final private Map<String, Importer> importers = new HashMap<String, Importer>();
 
@@ -71,15 +71,15 @@ abstract public class ImporterRegistry {
                 // TODO: May need to use the servlet container's class loader here
                 cmd = (Importer) Class.forName(className).newInstance();
             } catch (InstantiationException e) {
-                logger.error("Failed to load importer class " + className, e);
+                logger.error("Failed to load parser class " + className, e);
                 status = false;
                 continue;
             } catch (IllegalAccessException e) {
-                logger.error("Failed to load importer class " + className, e);
+                logger.error("Failed to load parser class " + className, e);
                 status = false;
                 continue;
             } catch (ClassNotFoundException e) {
-                logger.error("Failed to load importer class " + className, e);
+                logger.error("Failed to load parser class " + className, e);
                 status = false;
                 continue;
             }
@@ -89,12 +89,12 @@ abstract public class ImporterRegistry {
     }
 
     /**
-     * Register a single importer.
+     * Register a single parser.
      *
-     * @param name importer verb for importer
-     * @param importerObject object implementing the importer
+     * @param name parser verb for parser
+     * @param importerObject object implementing the parser
      * 
-     * @return true if importer was loaded and registered successfully
+     * @return true if parser was loaded and registered successfully
      */
     static public boolean registerImporter(String name, Importer importerObject) {
         if (importers.containsKey(name)) {

@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.oauth.Credentials;
 import com.google.refine.oauth.OAuthUtilities;
@@ -69,11 +70,11 @@ public class CheckAuthorizationCommand extends Command {
                 String user_info = FreebaseUtils.getUserInfo(access_credentials, provider);
                 response.getWriter().write(user_info);
             } else {    
-                respond(response, "401 Unauthorized", "You don't have the right credentials");
+                HttpUtilities.respond(response, "401 Unauthorized", "You don't have the right credentials");
             }
         } catch (Exception e) {
             logger.info("error",e);
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

@@ -34,9 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.importing;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -44,22 +43,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.refine.commands.Command;
-import com.google.refine.commands.importing.ImportJob.State;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingManager;
 
-public class GetImportJobStatusCommand extends Command {
-
-    final static Logger logger = LoggerFactory.getLogger("get-import-job-status_command");
-
+public class GetImportingJobStatusCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         long jobID = Long.parseLong(request.getParameter("jobID"));
-        ImportJob job = ImportManager.singleton().getJob(jobID);
+        ImportingJob job = ImportingManager.getJob(jobID);
         
         Writer w = response.getWriter();
         JSONWriter writer = new JSONWriter(w);
@@ -70,32 +65,11 @@ public class GetImportJobStatusCommand extends Command {
                 writer.key("message"); writer.value("No such import job");
             } else {
                 writer.key("code"); writer.value("ok");
-                writer.key("state");
-                if (job.state == State.NEW) {
-                    writer.value("new");
-                } else if (job.state == State.RETRIEVING_DATA) {
-                    writer.value("retrieving");
-                    writer.key("progress"); writer.value(job.retrievingProgress);
-                    writer.key("bytesSaved"); writer.value(job.bytesSaved);
-                } else if (job.state == State.READY) {
-                    writer.value("ready");
-                } else if (job.state == State.ERROR) {
-                    writer.value("error");
-                    writer.key("message"); writer.value(job.errorMessage);
-                    if (job.exception != null) {
-                        StringWriter sw = new StringWriter();
-                        PrintWriter pw = new PrintWriter(sw);
-                        job.exception.printStackTrace(pw);
-                        pw.flush();
-                        sw.flush();
-
-                        writer.key("stack"); writer.value(sw.toString());
-                    }
-                }
+                writer.key("job"); job.write(writer, new Properties());
             }
             writer.endObject();
         } catch (JSONException e) {
-            throw new IOException(e);
+            throw new ServletException(e);
         } finally {
             w.flush();
             w.close();

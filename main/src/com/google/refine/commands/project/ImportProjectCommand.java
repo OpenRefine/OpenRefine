@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
@@ -84,7 +85,7 @@ public class ImportProjectCommand extends Command {
                     }
                 }
 
-                redirect(response, "/project?project=" + projectID);
+                HttpUtilities.redirect(response, "/project?project=" + projectID);
             } else {
                 respondWithErrorPage(request, response, "Failed to import project. Reason unknown.", null);
             }

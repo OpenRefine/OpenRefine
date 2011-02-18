@@ -58,6 +58,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -108,7 +109,7 @@ public class GuessTypesOfColumnCommand extends Command {
             
             writer.endObject();
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

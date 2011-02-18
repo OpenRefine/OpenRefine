@@ -167,7 +167,7 @@ public class FixedWidthImporter implements ReaderImporter, StreamImporter { //TO
                         }
                     }
                 } catch (IOException e) {
-                    throw new ImportException("The fixed width importer could not read the next line", e);
+                    throw new ImportException("The fixed width parser could not read the next line", e);
                 }
 
                 ImporterUtilities.setupColumns(project, columnNames);

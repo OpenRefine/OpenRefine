@@ -46,6 +46,7 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.oauth.Credentials;
 import com.google.refine.oauth.OAuthUtilities;
 import com.google.refine.oauth.Provider;
@@ -123,7 +124,7 @@ public class AuthorizeCommand extends Command {
         } catch (Exception e) {
             Credentials.deleteCredentials(request, response, provider, Credentials.Type.REQUEST);
             Credentials.deleteCredentials(request, response, provider, Credentials.Type.ACCESS);
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

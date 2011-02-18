@@ -43,6 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @green_secondary: #3d3;
 @notification_primary: #fe8;
 @faint_grey: #ddd;
+@fainter_grey: #eee;
 @light_grey: #999;
 @metadata_grey: #777;
 @near_black: #444;
@@ -79,6 +80,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -moz-border-radius-bottomright: @radius;
   border-bottom-right-radius: @radius;
   border-bottom-left-radius: @radius;
+  }
+
+.rounded_corners_left (@radius: 5px) { 
+  -webkit-border-top-left-radius: @radius;
+  -webkit-border-bottom-left-radius: @radius;
+  -moz-border-radius-topleft: @radius;
+  -moz-border-radius-bottomleft: @radius;
+  border-top-left-radius: @radius;
+  border-bottom-left-radius: @radius;
+  }
+
+.rounded_corners_right (@radius: 5px) { 
+  -webkit-border-top-right-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -moz-border-radius-topright: @radius;
+  -moz-border-radius-bottomright: @radius;
+  border-top-right-radius: @radius;
+  border-bottom-right-radius: @radius;
   }
 
 .sharp_corners_left () {

@@ -52,7 +52,7 @@ public class OpenWorkspaceDirCommand extends Command {
         String serverName = request.getServerName();
         
         if (!"127.0.0.1".equals(serverName) && !"localhost".equals(serverName)) {
-            respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace directory can only be opened on the local machine where Google Refine is run.\" }");
+            HttpUtilities.respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace directory can only be opened on the local machine where Google Refine is run.\" }");
         } else if (ProjectManager.singleton instanceof FileProjectManager) {
             File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
 
@@ -67,9 +67,9 @@ public class OpenWorkspaceDirCommand extends Command {
             	);
             }
             
-            respond(response, "{ \"code\" : \"ok\" }");
+            HttpUtilities.respond(response, "{ \"code\" : \"ok\" }");
         } else {
-            respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace is not stored on the file system.\" }");
+            HttpUtilities.respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace is not stored on the file system.\" }");
         }
     }
 

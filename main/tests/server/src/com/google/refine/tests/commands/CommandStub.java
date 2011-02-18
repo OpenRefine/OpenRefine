@@ -41,6 +41,7 @@ import org.json.JSONObject;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 
 /**
@@ -64,10 +65,10 @@ public class CommandStub extends Command {
     }
 
     public int wrapGetIntegerParameter(HttpServletRequest request, String name,int def) {
-        return getIntegerParameter(request, name, def);
+        return HttpUtilities.getIntegerParameter(request, name, def);
     }
 
     public JSONObject wrapGetJsonParameter(HttpServletRequest request,String name) {
-        return getJsonParameter(request, name);
+        return HttpUtilities.getJsonParameter(request, name);
     }
 }

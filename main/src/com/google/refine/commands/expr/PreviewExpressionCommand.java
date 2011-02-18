@@ -50,6 +50,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -78,7 +79,7 @@ public class PreviewExpressionCommand extends Command {
             String expression = request.getParameter("expression");
             String rowIndicesString = request.getParameter("rowIndices");
             if (rowIndicesString == null) {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
+                HttpUtilities.respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
                 return;
             }
             
@@ -167,7 +168,7 @@ public class PreviewExpressionCommand extends Command {
             
             writer.endObject();
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
     

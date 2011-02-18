@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.oauth.Credentials;
 import com.google.refine.oauth.OAuthUtilities;
@@ -64,10 +65,10 @@ public class MQLWriteCommand extends Command {
                 String result = FreebaseUtils.mqlwrite(access_credentials, provider, query);
                 response.getWriter().write(result);
             } else {    
-                respond(response, "401 Unauthorized", "You don't have the right credentials");
+                HttpUtilities.respond(response, "401 Unauthorized", "You don't have the right credentials");
             }
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

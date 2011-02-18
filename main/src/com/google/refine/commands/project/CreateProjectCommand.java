@@ -75,6 +75,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importers.Importer;
 import com.google.refine.importers.ImporterRegistry;
 import com.google.refine.importers.ReaderImporter;
@@ -132,7 +133,7 @@ public class CreateProjectCommand extends Command {
 
             project.update();
 
-            redirect(response, "/project?project=" + project.id);
+            HttpUtilities.redirect(response, "/project?project=" + project.id);
         } catch (Exception e) {
             respondWithErrorPage(request, response, "Failed to import file", e);
         } finally {
@@ -396,7 +397,7 @@ public class CreateProjectCommand extends Command {
         URL url = new URL(urlString);
         URLConnection connection = null;
 
-        // Try for a URL importer first
+        // Try for a URL parser first
         Importer importer = ImporterRegistry.guessUrlImporter(url);
         if (importer instanceof UrlImporter) {
             ((UrlImporter) importer).read(url, project, metadata, options);

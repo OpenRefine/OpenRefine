@@ -57,7 +57,7 @@ public class GetVersionCommand extends Command {
 
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            respond(response, o.toString());
+            HttpUtilities.respond(response, o.toString());
         } catch (JSONException e) {
             e.printStackTrace(response.getWriter());
         }

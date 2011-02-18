@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.model.Project;
 
 public class GetHistoryCommand extends Command {
@@ -51,9 +52,9 @@ public class GetHistoryCommand extends Command {
         
         Project project = getProject(request);
         try {
-            respondJSON(response, project.history);
+            HttpUtilities.respondJSON(response, project.history);
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

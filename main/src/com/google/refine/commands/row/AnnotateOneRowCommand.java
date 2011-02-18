@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.RowFlagChange;
@@ -91,10 +92,10 @@ public class AnnotateOneRowCommand extends Command {
                 return;
             }
 
-            respond(response, "{ \"code\" : \"error\", \"message\" : \"invalid command parameters\" }");
+            HttpUtilities.respond(response, "{ \"code\" : \"error\", \"message\" : \"invalid command parameters\" }");
 
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

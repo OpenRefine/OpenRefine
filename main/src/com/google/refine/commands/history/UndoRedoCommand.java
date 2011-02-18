@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.history.HistoryProcess;
 import com.google.refine.model.Project;
 
@@ -69,9 +70,9 @@ public class UndoRedoCommand extends Command {
                 project.processManager.queueProcess(
                     new HistoryProcess(project, lastDoneID));
             
-            respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
+            HttpUtilities.respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

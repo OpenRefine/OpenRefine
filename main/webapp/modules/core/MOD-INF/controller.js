@@ -50,9 +50,10 @@ function registerCommands() {
 
     RS.registerCommand(module, "get-version", new Packages.com.google.refine.commands.GetVersionCommand());
 
-    RS.registerCommand(module, "create-import-job", new Packages.com.google.refine.commands.importing.CreateImportJobCommand());
-    RS.registerCommand(module, "retrieve-import-content", new Packages.com.google.refine.commands.importing.RetrieveImportContentCommand());
-    RS.registerCommand(module, "get-import-job-status", new Packages.com.google.refine.commands.importing.GetImportJobStatusCommand());
+    RS.registerCommand(module, "get-importing-configuration", new Packages.com.google.refine.commands.importing.GetImportingConfigurationCommand());
+    RS.registerCommand(module, "create-importing-job", new Packages.com.google.refine.commands.importing.CreateImportingJobCommand());
+    RS.registerCommand(module, "get-importing-job-status", new Packages.com.google.refine.commands.importing.GetImportingJobStatusCommand());
+    RS.registerCommand(module, "importing-controller", new Packages.com.google.refine.commands.importing.ImportingControllerCommand());
     
     RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
     RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
@@ -165,11 +166,72 @@ function registerOperations() {
     OR.registerOperation(module, "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
 }
 
-function registerImportSourceClasses() {
-  var RM = Packages.com.google.refine.commands.importing.ImportManager;
-  RM.registerImportSourceClass("file-upload", Packages.com.google.refine.model.meta.FileUploadImportSource);
-  RM.registerImportSourceClass("text", Packages.com.google.refine.model.meta.TextImportSource);
-  RM.registerImportSourceClass("web", Packages.com.google.refine.model.meta.WebImportSource);
+function registerImporting() {
+    var IM = Packages.com.google.refine.importing.ImportingManager;
+    
+    /*
+     *  Formats and their UIs and parsers
+     */
+    var svParser = new Packages.com.google.refine.importers.TsvCsvImporter();
+    var fixedWidthParser = new Packages.com.google.refine.importers.FixedWidthImporter();
+    
+    IM.registerFormat("text", "Text files"); // generic format, no parser to handle it
+    IM.registerFormat("text/line-based", "Line-based text files", "SeparatorBasedParserUI", svParser);
+    IM.registerFormat("text/line-based/*sv", "Separator-based files", "SeparatorBasedParserUI", svParser);
+    IM.registerFormat("text/line-based/*sv/csv", "Comma-separated (CSV) files", "SeparatorBasedParserUI", svParser);
+    IM.registerFormat("text/line-based/*sv/tsv", "Tab-separated (TSV) files", "SeparatorBasedParserUI", svParser);
+    IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI", fixedWidthParser);
+    IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
+    IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
+    IM.registerFormat("text/xml/xlsx", "Excel (.xlsx) files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+    IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
+    //IM.registerFormat("text/marc", "MARC files");
+    
+    IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
+    IM.registerFormat("binary/xls", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+    
+    /*
+     *  Format guessers
+     */
+    IM.registerFormatGuesser("text", new Packages.com.google.refine.importers.TextFormatGuesser());
+    IM.registerFormatGuesser("text/line-based", new Packages.com.google.refine.importers.LineBasedFormatGuesser());
+    
+    /*
+     *  Extension to format mappings
+     */
+    IM.registerExtension(".txt", "text/line-based");
+    IM.registerExtension(".csv", "text/line-based/*sv/csv");
+    IM.registerExtension(".tsv", "text/line-based/*sv/tsv");
+    IM.registerExtension(".xml", "text/xml");
+    IM.registerExtension(".rdf", "text/xml/rdf");
+    IM.registerExtension(".json", "text/json");
+    IM.registerExtension(".xls", "binary/xls");
+    IM.registerExtension(".xlsx", "text/xml/xlsx");
+    
+    /*
+     *  Mime type to format mappings
+     */
+    IM.registerMimeType("application/msexcel", "binary/xls");
+    IM.registerMimeType("application/x-msexcel", "binary/xls");
+    IM.registerMimeType("application/x-ms-excel", "binary/xls");
+    IM.registerMimeType("application/vnd.ms-excel", "binary/xls");
+    IM.registerMimeType("application/x-excel", "binary/xls");
+    IM.registerMimeType("application/xls", "binary/xls");
+    IM.registerMimeType("application/x-xls", "text/xml/xlsx");
+    
+    IM.registerMimeType("application/json", "text/json");
+    IM.registerMimeType("text/json", "text/json");
+    
+    IM.registerMimeType("application/rdf+xml", "text/xml/rdf");
+    
+    /*
+     *  Controllers
+     */
+    IM.registerController(
+        module,
+        "default-importing-controller",
+        new Packages.com.google.refine.importing.DefaultImportingController()
+    );
 }
 
 /*
@@ -180,7 +242,7 @@ function init() {
     
     registerCommands();
     registerOperations();
-    registerImportSourceClasses();
+    registerImporting();
     
     var RC = Packages.com.google.refine.model.recon.ReconConfig;
     RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
@@ -195,7 +257,12 @@ function init() {
             "scripts/util/string.js",
             "scripts/util/dom.js",
             "scripts/index.js",
-            "scripts/index/import-sources.js"
+            "scripts/index/create-project-ui.js",
+            "scripts/index/open-project-ui.js",
+            "scripts/index/import-project-ui.js",
+            "scripts/index/default-importing-controller/controller.js",
+            "scripts/index/default-importing-sources/sources.js",
+            "scripts/index/parser-interfaces/separator-based-parser-ui.js"
         ]
     );
     
@@ -207,7 +274,12 @@ function init() {
             "styles/jquery-ui-overrides.less",
             "styles/common.less",
             "styles/pure.css",
-            "styles/index.less"
+            "styles/index.less",
+            "styles/index/create-project-ui.less",
+            "styles/index/open-project-ui.less",
+            "styles/index/import-project-ui.less",
+            "styles/index/default-importing-controller.less",
+            "styles/index/default-importing-sources.less"
         ]
     );
     

@@ -44,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 
@@ -76,7 +77,7 @@ public class GetOperationsCommand extends Command {
             writer.endArray();
             writer.endObject();
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

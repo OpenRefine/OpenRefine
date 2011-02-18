@@ -80,11 +80,11 @@ public class XmlImporter implements StreamImporter {
 
             InputStream iStream = new ByteArrayInputStream(buffer, 0, bytes_read);
             TreeParser parser = new XmlParser(iStream);
-            if (options.containsKey("importer-record-tag")) {
+            if (options.containsKey("parser-record-tag")) {
                 try{
                     recordPath = XmlImportUtilities.detectPathFromTag(
                         parser,
-                        options.getProperty("importer-record-tag"));
+                        options.getProperty("parser-record-tag"));
                 }catch(Exception e){
                     // silent
                     // e.printStackTrace();

@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -85,7 +86,7 @@ public class GetExpressionLanguageInfoCommand extends Command {
             
             writer.endObject();
         } catch (Exception e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 }

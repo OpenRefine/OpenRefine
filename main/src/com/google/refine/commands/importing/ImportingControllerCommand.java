@@ -44,18 +44,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.commands.Command;
-import com.google.refine.commands.importing.ImportJob.State;
-import com.google.refine.model.meta.ImportSource;
+import com.google.refine.commands.HttpUtilities;
+import com.google.refine.importing.ImportingController;
+import com.google.refine.importing.ImportingManager;
 import com.google.refine.util.ParsingUtilities;
 
-public class RetrieveImportContentCommand extends Command {
+public class ImportingControllerCommand extends Command {
 
-    final static Logger logger = LoggerFactory.getLogger("retrieve-import-content_command");
-
+    final static Logger logger = LoggerFactory.getLogger("importing-controller_command");
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        ImportingController controller = getController(request);
+        if (controller != null) {
+            controller.doPost(request, response);
+        } else {
+            HttpUtilities.respond(response, "error", "No such import controller");
+        }
+    }
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        ImportingController controller = getController(request);
+        if (controller != null) {
+            controller.doPost(request, response);
+        } else {
+            HttpUtilities.respond(response, "error", "No such import controller");
+        }
+    }
+    
+    private ImportingController getController(HttpServletRequest request) {
         /*
          * The uploaded file is in the POST body as a "file part". If
          * we call request.getParameter() then the POST body will get
@@ -64,39 +86,10 @@ public class RetrieveImportContentCommand extends Command {
          * Don't call request.getParameter() before calling internalImport().
          */
         Properties options = ParsingUtilities.parseUrlParameters(request);
-        
-        long jobID = Long.parseLong(options.getProperty("jobID"));
-        ImportJob job = ImportManager.singleton().getJob(jobID);
-        if (job == null) {
-            respondWithErrorPage(request, response, "No such import job", null);
-            return;
-        } else if (job.state != State.NEW) {
-            respondWithErrorPage(request, response, "Import job already started", null);
-            return;
+        String name = options.getProperty("controller");
+        if (name != null) {
+            return ImportingManager.controllers.get(name);
         }
-        
-        Class<? extends ImportSource> importSourceClass =
-            ImportManager.getImportSourceClass(options.getProperty("source"));
-        if (importSourceClass == null) {
-            respondWithErrorPage(request, response, "No such import source class", null);
-            return;
-        }
-
-        try {
-            ImportSource importSource = importSourceClass.newInstance();
-            job.importSource = importSource;
-            job.state = State.RETRIEVING_DATA;
-            
-            importSource.retrieveContent(request, options, job);
-            
-            job.retrievingProgress = 100;
-            job.state = State.READY;
-        } catch (Throwable e) {e.printStackTrace();
-            job.state = State.ERROR;
-            job.errorMessage = e.getLocalizedMessage();
-            job.exception = e;
-            
-            respondWithErrorPage(request, response, "Failed to kick start import job", e);
-        }
+        return null;
     }
 }
