@@ -394,7 +394,6 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyPa
         { columnStatsChanged: columnStatsChanged },
         {
             onDone: function(o) {
-                Refine.preparePool(o.pool);
                 if (o.cell.r) {
                     o.cell.r = o.pool.recons[o.cell.r];
                 }
