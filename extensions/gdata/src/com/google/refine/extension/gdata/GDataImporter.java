@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Thomas F. Morris
+ * Copyright (c) 2010,2011. Thomas F. Morris
  *        All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without 
@@ -410,7 +410,7 @@ public class GDataImporter implements UrlImporter {
 
     @Override
     public boolean canImportData(URL url) {
-        return isSpreadsheetURL(url) | isFusionTableURL(url);
+        return isSpreadsheetURL(url) || isFusionTableURL(url);
     }
 
     private boolean isSpreadsheetURL(URL url) {
@@ -420,7 +420,9 @@ public class GDataImporter implements UrlImporter {
             query = "";
         }
         // http://spreadsheets.google.com/ccc?key=tI36b9Fxk1lFBS83iR_3XQA&hl=en
-        return host.endsWith(".google.com") && host.contains("spreadsheet") && query.contains("key=");
+        return host.endsWith(".google.com") 
+                && host.contains("spreadsheet") 
+                && getSpreadsheetKey(url) != null;
     }
     
     private boolean isFusionTableURL(URL url) {
@@ -431,7 +433,7 @@ public class GDataImporter implements UrlImporter {
         }
         return url.getHost().endsWith(".google.com") 
                 && url.getPath().startsWith("/fusiontables/DataSource")
-                && query.contains("dsrcid=");
+                && getFusionTableKey(url) != null;
     }
     
     // Modified version of FeedURLFactor.getSpreadsheetKeyFromUrl()
