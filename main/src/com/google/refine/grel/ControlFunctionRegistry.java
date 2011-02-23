@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2011 Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -101,6 +101,7 @@ import com.google.refine.expr.functions.strings.Fingerprint;
 import com.google.refine.expr.functions.html.HtmlAttr;
 import com.google.refine.expr.functions.html.HtmlText;
 import com.google.refine.expr.functions.html.InnerHtml;
+import com.google.refine.expr.functions.html.OwnText;
 import com.google.refine.expr.functions.strings.IndexOf;
 import com.google.refine.expr.functions.strings.LastIndexOf;
 import com.google.refine.expr.functions.strings.MD5;
@@ -225,11 +226,13 @@ public class ControlFunctionRegistry {
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
 
+        // HTML functions from JSoup
         registerFunction("parseHtml", new ParseHtml());
         registerFunction("select", new SelectHtml());
         registerFunction("htmlAttr", new HtmlAttr());
         registerFunction("htmlText", new HtmlText());
         registerFunction("innerHtml", new InnerHtml());
+		registerFunction("ownText", new OwnText());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

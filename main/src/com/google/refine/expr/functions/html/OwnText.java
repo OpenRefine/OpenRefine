@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010,2011 Google Inc.
+Copyright 2011, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -43,14 +43,14 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-public class HtmlText implements Function {
+public class OwnText implements Function {
 
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
                 Element e1 = (Element)o1;
-                return e1.text();
+                return e1.ownText();
 
             }else{
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
@@ -64,9 +64,9 @@ public class HtmlText implements Function {
         throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Selects the text from within an element (including all child elements)");
+        writer.key("description"); writer.value("Gets the text owned by this element only; does not get the combined text of all children.");
         writer.key("params"); writer.value("Element e");
-        writer.key("returns"); writer.value("String text");
+        writer.key("returns"); writer.value("String ownText");
         writer.endObject();
     }
 }
