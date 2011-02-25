@@ -46,7 +46,8 @@ import com.google.refine.grel.Function;
 public class MqlKeyQuote implements Function {
     final static private String keyStartChar = "A-Za-z0-9";
     final static private String keyInternalChar = "A-Za-z0-9_-";
-    final static private String fullValidKey = "^[" + keyStartChar + "][" + keyInternalChar + "]*$";
+    final static private String keyEndChar = "A-Za-z0-9_";
+    final static private String fullValidKey = "^[" + keyStartChar + "][" + keyInternalChar + "]*[" + keyEndChar + "]$";
     final static private String keyCharMustQuote = "([^" + keyInternalChar + "])";
     
     final static private Pattern fullValidKeyPattern = Pattern.compile(fullValidKey);
@@ -56,37 +57,12 @@ public class MqlKeyQuote implements Function {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof String) {
-                String s = (String) o1;
-                if (fullValidKeyPattern.matcher(s).find()) {
-                    return s;
-                }
-                
-                StringBuffer sb = new StringBuffer();
-                
-                int last = 0;
-                Matcher m = keyCharMustQuotePattern.matcher(s);
-                while (m.find()) {
-                    int start = m.start();
-                    int end = m.end();
-                    if (start > last) {
-                        sb.append(s.substring(last, start));
-                    }
-                    last = end;
-                    
-                    sb.append('$');
-                    sb.append(StringUtils.leftPad(Integer.toHexString(s.charAt(start)).toUpperCase(), 4, '0'));
-                }
-                
-                if (last < s.length()) {
-                    sb.append(s.substring(last));
-                }
-                
-                return sb.toString();
+                return mqlKeyQuote((String) o1);
             }
         }
         return null;
     }
-    
+
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     
@@ -95,5 +71,53 @@ public class MqlKeyQuote implements Function {
         writer.key("params"); writer.value("string s");
         writer.key("returns"); writer.value("string");
         writer.endObject();
+    }
+    
+    static String mqlKeyQuote(String s) {
+        if (fullValidKeyPattern.matcher(s).find()) {
+            return s;
+        }
+        
+        StringBuffer sb = new StringBuffer();
+        
+        int last = 0;
+        Matcher m = keyCharMustQuotePattern.matcher(s);
+        while (m.find()) {
+            int start = m.start();
+            int end = m.end();
+            if (start > last) {
+                sb.append(s.substring(last, start));
+            }
+            last = end;
+            
+            sb.append('$');
+            sb.append(quote(s.charAt(start)));
+        }
+        
+        if (last < s.length()) {
+            sb.append(s.substring(last));
+        }
+        
+        if (sb.length() > 0) { 
+            if (sb.charAt(0) == '-' || sb.charAt(0) == '_') {
+                char c = sb.charAt(0);
+                sb.deleteCharAt(0);
+                sb.insert(0, '$');
+                sb.insert(1, quote(c));
+            } 
+        
+            int length = sb.length();
+            if (sb.charAt(length-1) == '-') {
+                sb.deleteCharAt(length-1);
+                sb.insert(length-1, '$');
+                sb.insert(length, quote('-'));
+            }
+        }
+        
+        return sb.toString();
+    }
+    
+    static String quote(char c) {
+        return StringUtils.leftPad(Integer.toHexString(c).toUpperCase(), 4, '0');        
     }
 }
