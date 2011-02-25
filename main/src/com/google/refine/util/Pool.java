@@ -129,7 +129,6 @@ public class Pool implements Jsonizable {
 
         /* String version = */ reader2.readLine();
         
-        Map<String, ReconCandidate> candidates = new HashMap<String, ReconCandidate>();
         String line;
         while ((line = reader2.readLine()) != null) {
             int equal = line.indexOf('=');
