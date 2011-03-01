@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
-	<classpathentry kind="src" path="broker/core/src"/>
 	<classpathentry kind="src" path="extensions/jython/src"/>
 	<classpathentry kind="src" path="server/src"/>
 	<classpathentry kind="src" path="extensions/freebase/src"/>
@@ -55,5 +54,5 @@
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-collect-1.0-rc1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="build"/>
 </classpath>

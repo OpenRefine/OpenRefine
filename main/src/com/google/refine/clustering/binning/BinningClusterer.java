@@ -40,9 +40,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,6 +73,7 @@ public class BinningClusterer extends Clusterer {
         _keyers.put("ngram-fingerprint", new NGramFingerprintKeyer());
         _keyers.put("metaphone", new MetaphoneKeyer());
         _keyers.put("double-metaphone", new DoubleMetaphoneKeyer());
+        _keyers.put("metaphone3", new Metaphone3Keyer());
         _keyers.put("soundex", new SoundexKeyer());
     }
 

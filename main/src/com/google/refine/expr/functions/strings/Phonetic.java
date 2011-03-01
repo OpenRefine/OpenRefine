@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.clustering.binning.DoubleMetaphoneKeyer;
+import com.google.refine.clustering.binning.Metaphone3Keyer;
 import com.google.refine.clustering.binning.MetaphoneKeyer;
 import com.google.refine.clustering.binning.SoundexKeyer;
 import com.google.refine.expr.EvalError;
@@ -47,6 +48,7 @@ import com.google.refine.grel.Function;
 
 public class Phonetic implements Function {
 
+    static private Metaphone3Keyer metaphone3 = new Metaphone3Keyer();
     static private DoubleMetaphoneKeyer metaphone2 = new DoubleMetaphoneKeyer();
     static private MetaphoneKeyer metaphone = new MetaphoneKeyer();
     static private SoundexKeyer soundex = new SoundexKeyer();
@@ -58,11 +60,14 @@ public class Phonetic implements Function {
             if (o1 != null && o2 != null && o2 instanceof String) {
                 String str = (o1 instanceof String) ? (String) o1 : o1.toString();
                 String encoding = ((String) o2).toLowerCase();
-                if ("doublemetaphone".equals(encoding)) {
+                if (encoding == null) encoding = "metaphone3";
+                if ("doublemetaphone".equalsIgnoreCase(encoding)) {
                     return metaphone2.key(str);
-                } else if ("metaphone".equals(encoding)) {
+                } else if ("metaphone3".equalsIgnoreCase(encoding)) {
+                    return metaphone3.key(str);
+                } else if ("metaphone".equalsIgnoreCase(encoding)) {
                     return metaphone.key(str);
-                } else if ("soundex".equals(encoding)) {
+                } else if ("soundex".equalsIgnoreCase(encoding)) {
                     return soundex.key(str);
                 } else {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " doesn't know how to handle the '" + encoding + "' encoding.");
@@ -77,7 +82,7 @@ public class Phonetic implements Function {
     
         writer.object();
         writer.key("description"); writer.value("Returns the a phonetic encoding of s (optionally indicating which encoding to use')");
-        writer.key("params"); writer.value("string s, string encoding (optional, defaults to 'DoubleMetaphone')");
+        writer.key("params"); writer.value("string s, string encoding (optional, defaults to 'metaphone3')");
         writer.key("returns"); writer.value("string");
         writer.endObject();
     }
