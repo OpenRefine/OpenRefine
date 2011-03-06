@@ -2,7 +2,6 @@ package com.google.refine.rdf.commands;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +26,7 @@ import com.google.refine.rdf.Node;
 import com.google.refine.rdf.RdfSchema;
 import com.google.refine.rdf.exporters.RdfExporter;
 import com.google.refine.rdf.exporters.RdfExporter.RdfRowVisitor;
+import com.google.refine.rdf.vocab.Vocabulary;
 
 public class PreviewRdfCommand extends Command {
 
@@ -66,8 +66,8 @@ public class PreviewRdfCommand extends Command {
             	RepositoryConnection con = model.getConnection();
             	try{
             		RDFWriter w = Rio.createWriter(RDFFormat.TURTLE, sw);
-            		for(Entry<String, String> prefix:schema.getPrefixesMap().entrySet()){
-            			w.handleNamespace(prefix.getKey(),prefix.getValue());
+            		for(Vocabulary v:schema.getPrefixesMap().values()){
+            			w.handleNamespace(v.getName(), v.getUri());
             		}
             		con.export(w);
     			}finally{

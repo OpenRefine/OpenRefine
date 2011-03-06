@@ -16,19 +16,25 @@ import com.google.refine.rdf.vocab.PrefixExistException;
 
 public class AddPrefixCommand extends RdfCommand{
 
-    public AddPrefixCommand(ApplicationContext ctxt) {
+	public AddPrefixCommand(ApplicationContext ctxt) {
 		super(ctxt);
 	}
 
 	@Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String name = request.getParameter("name").trim();
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String name = request.getParameter("name").trim();
         String uri = request.getParameter("uri").trim();
         String projectId = request.getParameter("project");
+        String fetchOption = request.getParameter("fetch");
         try {    
         	getRdfSchema(request).addPrefix(name, uri);
-        	getRdfContext().getVocabularySearcher().importAndIndexVocabulary(name, uri, projectId);
+        	if(fetchOption.equals("web")){
+        		String fetchUrl = request.getParameter("fetch-url");
+        		if(fetchUrl==null || fetchOption.trim().isEmpty()){
+        			fetchUrl = uri;
+        		}
+        		getRdfContext().getVocabularySearcher().importAndIndexVocabulary(name, uri, fetchUrl, projectId);
+        	}
             respondJSON(response, new Jsonizable() {
                 
                 @Override
@@ -49,6 +55,4 @@ public class AddPrefixCommand extends RdfCommand{
         	respond(response,"{\"code\":\"ok\"}");
         }
     }
-
-    
 }

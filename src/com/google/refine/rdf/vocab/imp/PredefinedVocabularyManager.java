@@ -23,9 +23,9 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.rdf.Util;
 import com.google.refine.rdf.app.ApplicationContext;
 import com.google.refine.rdf.vocab.IPredefinedVocabularyManager;
+import com.google.refine.rdf.vocab.Vocabulary;
 
 public class PredefinedVocabularyManager implements IPredefinedVocabularyManager{
 	final static Logger logger = LoggerFactory.getLogger("predefined_vocabulary_manager");
@@ -34,33 +34,26 @@ public class PredefinedVocabularyManager implements IPredefinedVocabularyManager
 	
 	private final File workingDir;
 	private ApplicationContext applicationContext;
-	private Map<String,String> predefinedPrefixesMap = new HashMap<String, String>();
+	private Map<String, Vocabulary> predefinedVocabulariesMap = new HashMap<String,Vocabulary>();
 	
 	public PredefinedVocabularyManager(ApplicationContext ctxt, File workingDir) throws IOException, JSONException{
 		this.workingDir = workingDir;
 		this.applicationContext = ctxt;
 		try{
-			reconstructPrefixesFromFile();
+			reconstructVocabulariesFromFile();
 		}catch(FileNotFoundException ex){
 			addPredefinedVocabularies();
 			save();
 		}
 	}
 	
-	@Override
-	public Map<String, String> getPredefinedPrefixesMap() {
-		return predefinedPrefixesMap;
+	public Map<String,Vocabulary> getPredefinedVocabulariesMap(){
+		return predefinedVocabulariesMap;
 	}
-	
-	@Override
-	public void setPredefinedPrefixesMap(Map<String, String> prefixes) {
-		this.predefinedPrefixesMap = prefixes;
-	}
-	
-	protected InputStream getPredefinedVocabularyFile(){
-		return this.getClass().getResourceAsStream(PREDEFINED_VOCABS_FILE_NAME);
-	}
-	
+
+	/*
+	 * Private methods
+	 */
 	private void addPredefinedVocabularies() throws IOException {
 		InputStream in = getPredefinedVocabularyFile();
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -72,10 +65,10 @@ public class PredefinedVocabularyManager implements IPredefinedVocabularyManager
 			try {
 				String name = tokenizer.nextToken();
 				String uri = tokenizer.nextToken();
-				this.predefinedPrefixesMap.put(name, uri);
-				
+				String url = tokenizer.nextToken();
 				//import and index
-				this.applicationContext.getVocabularySearcher().importAndIndexVocabulary(name, uri);
+				this.applicationContext.getVocabularySearcher().importAndIndexVocabulary(name, uri,url);
+				this.predefinedVocabulariesMap.put(name,new Vocabulary(name, uri));
 			} catch (Exception e) {
 				// predefined vocabularies are not defined properly
 				// ignore the exception, just log it
@@ -84,9 +77,14 @@ public class PredefinedVocabularyManager implements IPredefinedVocabularyManager
 
 		}
 		br.close();
+		applicationContext.getVocabularySearcher().update();
 	}
 	
-	private void reconstructPrefixesFromFile() throws IOException, JSONException{
+	protected InputStream getPredefinedVocabularyFile(){
+		return this.getClass().getResourceAsStream(PREDEFINED_VOCABS_FILE_NAME);
+	}
+	
+	private void reconstructVocabulariesFromFile() throws IOException, JSONException{
 		File vocabulariesFile =  new File(workingDir, SAVED_VOCABULARIES_FILE_NAME);
 		if(vocabulariesFile.exists()){
 			load();
@@ -138,12 +136,8 @@ public class PredefinedVocabularyManager implements IPredefinedVocabularyManager
             	JSONObject p = prefixes.getJSONObject(i);
             	String name = p.getString("name");
             	String uri = p.getString("uri");
-
-            	this.predefinedPrefixesMap.put(name,uri);
-            	
+            	this.predefinedVocabulariesMap.put(name,new Vocabulary(name,uri));
             }
-        
-
         } finally {
             reader.close();
         }
@@ -153,7 +147,11 @@ public class PredefinedVocabularyManager implements IPredefinedVocabularyManager
     private void write(JSONWriter writer,Properties options) throws JSONException{
     	writer.object();
     	writer.key("prefixes");
-		Util.writePrefixes(predefinedPrefixesMap, writer);
+    	writer.array();
+    	for(Vocabulary v:this.predefinedVocabulariesMap.values()){
+    		v.write(writer);
+    	}
+    	writer.endArray();
 		writer.endObject();
 	}
     

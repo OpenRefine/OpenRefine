@@ -56,14 +56,15 @@ function init() {
     RefineServlet.registerCommand(module, "save-rdf-schema", new SaveRdfSchemaCommand(ctxt));
     RefineServlet.registerCommand(module, "preview-rdf", new PreviewRdfCommand());
     RefineServlet.registerCommand(module, "save-baseURI", new SaveBaseURICommand(ctxt));
-    RefineServlet.registerCommand(module, "suggest-term", new SuggestTermCommand(ctxt));
-    RefineServlet.registerCommand(module, "add-prefix", new AddPrefixCommand(ctxt));
-    RefineServlet.registerCommand(module, "list-vocabularies", new ListVocabulariesCommand(ctxt));
-    RefineServlet.registerCommand(module, "delete-vocabulary", new DeleteVocabularyCommand(ctxt));
-    RefineServlet.registerCommand(module, "refresh-vocabulary", new RefreshVocabularyCommand(ctxt));
     RefineServlet.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
-    RefineServlet.registerCommand(module, "list-prefixes", new ListPrefixesCommand(ctxt));
-    RefineServlet.registerCommand(module, "set-default-prefixes", new SetDefaultVocabulariesCommand(ctxt));
+    //Vocabs commands
+    RefineServlet.registerCommand(module, "save-prefixes", new SavePrefixesCommand(ctxt));
+    RefineServlet.registerCommand(module, "get-default-prefixes", new GetDefaultPrefixesCommand(ctxt));
+    RefineServlet.registerCommand(module, "add-prefix", new AddPrefixCommand(ctxt));
+    RefineServlet.registerCommand(module, "suggest-term", new SuggestTermCommand(ctxt));
+    RefineServlet.registerCommand(module, "get-prefix-cc-uri", new SuggestPrefixUriCommand(ctxt));
+    RefineServlet.registerCommand(module, "upload-file-add-prefix", new AddPrefixFromFileCommand(ctxt));
+    
        
     /*
      *  Client-side Resources
@@ -81,7 +82,9 @@ function init() {
             "scripts/rdf-schema-alignment-ui-node.js",
             "scripts/rdf-schema-alignment-ui-link.js",
             "scripts/suggestterm.suggest.js",
-            "scripts/rdf-schema-vocabulary-manager.js"
+            "scripts/rdf-schema-vocabulary-manager.js",
+            "scripts/rdf-schema-new-prefix-widget.js",
+            "scripts/externals/jquery.form.js"
         ]
     );
     

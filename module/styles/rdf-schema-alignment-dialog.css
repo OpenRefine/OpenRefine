@@ -101,8 +101,10 @@ div.rdf-schema-prefixes{
 }
 
 div.message{
-	font-style:italic;
+	border:solid 1px #cccccc;
+	margin:0.5em 0.5em 1em 0;
 	padding:0.5em;	
+	
 }
 
 img.vocab_action_icon{
@@ -136,4 +138,13 @@ table.rdf-schema-alignment-table-layout >tbody>tr> td.padded{
 }
 table.rdfTypesTable {
 	margin:0.2em 0 0.6em 0;
+}
+table.rdf_indented_table{
+	margin:0 1.5em;
+}
+
+fieldset.rdf-reconcile-fieldset{
+	border:solid 1px #BBCCFF;
+	padding: 0.2em 0 0.5em 0.2em;
+	margin-top:1.5em;
 }

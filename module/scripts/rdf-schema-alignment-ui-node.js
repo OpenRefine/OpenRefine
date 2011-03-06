@@ -318,6 +318,10 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
                                     	'<td>as dateTime <span class="rdf-node-info">(YYYY-MM-DD HH:MM:SS)</span></td>' +
                                     '</tr>' +
                                     '<tr>' +
+                                		'<td><input type="radio" name="rdf-content-radio" value="literal" bind="rdf_content_boolean_radio" id="rdf-content-boolean-radio"/></td>' +
+                                		'<td>as boolean</td>' +
+                                	'</tr>' +
+                                    '<tr>' +
                                     	'<td><input type="radio" name="rdf-content-radio" value="literal" bind="rdf_content_type_radio" id="rdf-content-type-radio" /></td>' +
                                     	'<td>as custom datatype <span class="rdf-node-info">(specify type URI)</span></td>' +
                                     '</tr>' +
@@ -456,7 +460,10 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
     					elmts.rdf_content_date_radio.attr("checked",true);
     				}else if(self._node.valueType==='http://www.w3.org/2001/XMLSchema#dateTime'){
     					elmts.rdf_content_date_time_radio.attr("checked",true);
-    				}else{
+    				}else if(self._node.valueType==='http://www.w3.org/2001/XMLSchema#boolean'){
+    					elmts.rdf_content_boolean_radio.attr("checked",true);
+    				}
+    				else{
     					elmts.rdf_content_type_radio.attr("checked",true);
     					elmts.rdf_content_type_input.removeAttr("disabled").val(self._node.valueType);
     				}
@@ -556,6 +563,8 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
         			node.valueType = 'http://www.w3.org/2001/XMLSchema#date';
         		}else if($('#rdf-content-date-time-radio').attr('checked')){
         			node.valueType = 'http://www.w3.org/2001/XMLSchema#dateTime';
+        		}else if($('#rdf-content-boolean-radio').attr('checked')){
+        			node.valueType = 'http://www.w3.org/2001/XMLSchema#boolean';
         		}else if($('#rdf-content-type-radio').attr('checked')){
         			//check custom datatype URI
         			var val = $('#rdf-content-type-input').val();
@@ -864,13 +873,13 @@ RdfSchemaAlignmentDialog.RdfResourceDialog = function(elmt,lookFor,projectId,par
 		if(RdfPrefixesManager.isPrefixedQname(val)){
 			//check that the prefix is defined
 			var prefix = RdfPrefixesManager.getPrefix(val);
-			if(prefixesManager.isKnownPrefix(prefix)){
+			if(prefixesManager._hasPrefix(prefix)){
 				var uri = RdfPrefixesManager.getFullUri(val);
 				onDone({name:val,id:uri});
 				MenuSystem.dismissAll();
 				return;
 			}else{
-				parent._prefixesManager._addPrefix(prefix + ' is unknown prefix. Enter the full URI below to add it',prefix);
+				parent._prefixesManager._addPrefix('<em>' + prefix + '</em> is unknown prefix. Enter the full URI below to add it.',prefix);
 			}
 		}else{
 			new RdfSchemaAlignmentDialog.NewRdfResourceDialog(elmt,val,onDone);	

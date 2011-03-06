@@ -5,12 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -111,16 +106,5 @@ public class Util {
         int cellIndex = (columnName==null||columnName.equals(""))?-1:project.columnModel.getColumnByName(columnName).getCellIndex();
         
         return RdfExpressionUtil.evaluate(eval,bindings, row, rowIndex,columnName , cellIndex);
-	}
-	
-	public static void writePrefixes(Map<String,String> prefixes,JSONWriter writer)throws JSONException{
-		writer.array();
-		for(Entry<String, String> prefix:prefixes.entrySet()){
-			writer.object();
-			writer.key("name"); writer.value(prefix.getKey()) ;
-			writer.key("uri"); writer.value(prefix.getValue());
-			writer.endObject();
-		}
-		writer.endArray();
 	}
 }

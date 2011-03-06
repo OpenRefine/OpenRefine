@@ -6,22 +6,19 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/grefine"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/json-20100208.jar" sourcepath="/grefine/webapp/WEB-INF/lib-src/json-20100208-sources.jar"/>
 	<classpathentry kind="lib" path="/grefine-server/lib/servlet-api-2.5.jar" sourcepath="/grefine-server/lib-src/servlet-api-2.5-sources.jar"/>
-	<classpathentry kind="lib" path="module/MOD-INF/lib/lucene-core-3.0.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/grefine-server"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="/grefine/webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
 	<classpathentry kind="lib" path="/grefine/tests/server/lib/testng-5.12.1.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="lib" path="module/MOD-INF/lib/any23-core-0.4.1.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/any23-core-0.4.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/nekohtml-1.9.14.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/openrdf-sesame-2.3.2-onejar.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/tika-core-0.6.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/tika-parsers-0.6.jar"/>
-	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/clojure-1.1.0.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-lang-2.5.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/dom4j-1.6.1.jar"/>
@@ -53,5 +50,7 @@
 	<classpathentry kind="lib" path="test-libs/org.springframework.test-3.0.4.RELEASE.jar"/>
 	<classpathentry kind="lib" path="test-libs/jackson-mapper-asl-1.5.6.jar"/>
 	<classpathentry kind="lib" path="test-libs/jackson-core-asl-1.5.6.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/lucene-core-3.0.1.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>

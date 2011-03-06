@@ -3,7 +3,6 @@ package com.google.refine.rdf.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -21,6 +20,7 @@ import com.google.refine.rdf.RdfSchema;
 import com.google.refine.rdf.Util;
 import com.google.refine.rdf.app.ApplicationContext;
 import com.google.refine.rdf.vocab.SearchResultItem;
+import com.google.refine.rdf.vocab.Vocabulary;
 
 public class SuggestTermCommand extends RdfCommand{
 
@@ -94,26 +94,22 @@ public class SuggestTermCommand extends RdfCommand{
     		int index = query.indexOf(":");
     		String prefix = query.substring(0,index);
     		String lPart = query.substring(index + 1);
-    		for(Entry<String, String> entry:schema.getPrefixesMap().entrySet()){
-    			String name = entry.getKey();
+    		for(Vocabulary v:schema.getPrefixesMap().values()){
+    			String name = v.getName();
     			if (name.equals(prefix)){
-    				String uri = entry.getValue();
-    				result.add(new SearchResultItem(uri+lPart, prefix, lPart, "", "Not in the imported vocabulary definition"));
+    				result.add(new SearchResultItem(v.getUri()+lPart, prefix, lPart, "", "Not in the imported vocabulary definition"));
     			}
     		}
     	}else{
-    		for(Entry<String, String> entry:schema.getPrefixesMap().entrySet()){
-    			String name = entry.getKey();
+    		for(Vocabulary v:schema.getPrefixesMap().values()){
+    			String name = v.getName();
     			if (name.startsWith(query)){
-    				String uri = entry.getValue();
-    				result.add(new SearchResultItem(uri, name, "", "", "Not in the imported vocabulary definition"));
+    				result.add(new SearchResultItem(v.getUri(), name, "", "", "Not in the imported vocabulary definition"));
     			}
     		}
     	}
     	return result;
-    	
     }
-    
 }
 
 class Result implements Jsonizable{

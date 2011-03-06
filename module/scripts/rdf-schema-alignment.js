@@ -13,10 +13,11 @@ function RdfSchemaAlignmentDialog(schema){
 	this._nodeUIs = [];
     this._createDialog();
 
-    //initialize vocabularyManager
+	RdfSchemaAlignment._defaultNamespace = this._schema.baseUri;
+	
+	//initialize vocabularyManager
     this._prefixesManager = new RdfPrefixesManager(this,this._schema.prefixes);
     
-	RdfSchemaAlignment._defaultNamespace = this._schema.baseUri;
     this._replaceBaseUri(RdfSchemaAlignment._defaultNamespace || URL.getHostname()+'/',true);
 };
 
@@ -24,7 +25,7 @@ RdfSchemaAlignmentDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     
-    frame.width("800px");
+    frame.width("1000px");
     
     var header = $('<div></div>').addClass("dialog-header").text("RDF Schema Alignment").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);

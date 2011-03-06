@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.openrdf.model.BNode;
@@ -30,6 +29,7 @@ import com.google.refine.rdf.Node;
 import com.google.refine.rdf.RdfSchema;
 import com.google.refine.rdf.Util;
 import com.google.refine.rdf.app.ApplicationContext;
+import com.google.refine.rdf.vocab.Vocabulary;
 import com.google.refine.rdf.vocab.VocabularyIndexException;
 
 public class RdfExporter implements WriterExporter{
@@ -59,8 +59,8 @@ public class RdfExporter implements WriterExporter{
         	RepositoryConnection con = model.getConnection();
         	try{
         		RDFWriter writer = Rio.createWriter(format, outputStream);
-        		for(Entry<String, String> prefix:schema.getPrefixesMap().entrySet()){
-        			writer.handleNamespace(prefix.getKey(),prefix.getValue());
+        		for(Vocabulary v:schema.getPrefixesMap().values()){
+        			writer.handleNamespace(v.getName(), v.getUri());
         		}
         		con.export(writer);
 			}finally{
@@ -87,8 +87,8 @@ public class RdfExporter implements WriterExporter{
         	RepositoryConnection con = model.getConnection();
         	try{
         		RDFWriter w = Rio.createWriter(format, writer);
-        		for(Entry<String, String> prefix:schema.getPrefixesMap().entrySet()){
-        			w.handleNamespace(prefix.getKey(),prefix.getValue());
+        		for(Vocabulary v:schema.getPrefixesMap().values()){
+        			w.handleNamespace(v.getName(),v.getUri());
         		}
         		con.export(w);
 			}finally{

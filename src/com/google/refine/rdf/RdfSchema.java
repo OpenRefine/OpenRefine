@@ -21,6 +21,7 @@ import com.google.refine.model.Project;
 import com.google.refine.rdf.ResourceNode.RdfType;
 import com.google.refine.rdf.app.ApplicationContext;
 import com.google.refine.rdf.vocab.PrefixExistException;
+import com.google.refine.rdf.vocab.Vocabulary;
 import com.google.refine.rdf.vocab.VocabularyIndexException;
 
 public class RdfSchema implements OverlayModel {
@@ -34,7 +35,7 @@ public class RdfSchema implements OverlayModel {
     /**
      * keys are the short name, values are the full URIs e.g. foaf --> http://xmlns.com/foaf/0.1/
      */
-    protected Map<String,String> prefixesMap;
+    protected Map<String,Vocabulary> prefixesMap;
 
     public List<ConstantBlankNode> get_blanks() {
         return _blanks;
@@ -47,7 +48,6 @@ public class RdfSchema implements OverlayModel {
     @Override
     public void onAfterSave(Project project) {
     }
-    
     
    @Override
     public void dispose(Project project) {
@@ -67,31 +67,29 @@ public class RdfSchema implements OverlayModel {
     }
 
     public RdfSchema(){
-    	this.prefixesMap = new HashMap<String, String>();
+    	this.prefixesMap = new HashMap<String, Vocabulary>();
     }
     
-    public RdfSchema(ApplicationContext ctxt, Project project) throws VocabularyIndexException, IOException{
-    	this(ctxt,project,true);
-    }
-    
-    public RdfSchema(ApplicationContext ctxt, Project project, boolean getPredefinedPrefixes) throws VocabularyIndexException, IOException {
+    public RdfSchema(ApplicationContext ctxt, Project project) throws VocabularyIndexException, IOException {
         // this value will never be used, just set
         this.baseUri = Util.buildURI("http://localhost:3333/");
-        if(getPredefinedPrefixes){
-        	this.prefixesMap = clone(ctxt.getPredefinedVocabularyManager().getPredefinedPrefixesMap());
+        if(this.prefixesMap==null || this.prefixesMap.isEmpty()){
+        	this.prefixesMap = clone(ctxt.getPredefinedVocabularyManager().getPredefinedVocabulariesMap());
         	//copy the index of predefined vocabularies
         	//each project will have its own copy of these predefined vocabs to enable delete, update ....
         	ctxt.getVocabularySearcher().addPredefinedVocabulariesToProject(project.id);
         }else{
-        	this.prefixesMap = new HashMap<String, String>();
+        	this.prefixesMap = new HashMap<String, Vocabulary>();
         }
     }
 
     public void addPrefix(String name, String uri) throws PrefixExistException{
-    	if(this.prefixesMap.containsKey(name)){
-    		throw new PrefixExistException(name + " already defined");
+    	synchronized(prefixesMap){
+    		if(this.prefixesMap.containsKey(name)){
+    			throw new PrefixExistException(name + " already defined");
+    		}
+    		this.prefixesMap.put(name, new Vocabulary(name, uri));
     	}
-    	this.prefixesMap.put(name, uri);
     }
     
     public void removePrefix(String name){
@@ -102,8 +100,12 @@ public class RdfSchema implements OverlayModel {
         return baseUri;
     }
 
-    public Map<String, String> getPrefixesMap() {
+    public Map<String, Vocabulary> getPrefixesMap() {
 		return prefixesMap;
+	}
+    
+    public void setPrefixesMap(Map<String, Vocabulary> map) {
+		this.prefixesMap = map;
 	}
 
 	public List<Node> getRoots() {
@@ -123,7 +125,8 @@ public class RdfSchema implements OverlayModel {
         }
         for (int i = 0; i < prefixesArr.length(); i++) {
         	JSONObject prefixObj = prefixesArr.getJSONObject(i);
-        	s.prefixesMap.put(prefixObj.getString("name"),prefixObj.getString("uri"));
+        	String name = prefixObj.getString("name");
+        	s.prefixesMap.put(name,new Vocabulary(name, prefixObj.getString("uri")));
         }
         
         JSONArray rootNodes = o.getJSONArray("rootNodes");
@@ -166,6 +169,8 @@ public class RdfSchema implements OverlayModel {
             } else if ("cell-as-literal".equals(nodeType)) {
                 String valueType = o.has("valueType")?Util.getDataType(s.getBaseUri(),o.getString("valueType")):null;
                 String lang = o.has("lang") ? o.getString("lang"):null;
+                //strip off @
+                lang = stripAtt(lang);
                 String exp;
                 if (o.has("expression")){
                 	exp = o.getString("expression");
@@ -184,6 +189,8 @@ public class RdfSchema implements OverlayModel {
         } else if ("literal".equals(nodeType)) {
             String valueType = o.has("valueType")?Util.getDataType(s.getBaseUri(),o.getString("valueType")):null;
             String lang = o.has("lang") ? o.getString("lang"):null;
+            //strip off @
+            lang = stripAtt(lang);
             node = new ConstantLiteralNode(o.getString("value"), valueType,lang);
         } else if ("blank".equals(nodeType)) {
             node = new ConstantBlankNode(blanksCount);
@@ -233,7 +240,14 @@ public class RdfSchema implements OverlayModel {
         writer.key("baseUri"); writer.value(baseUri);
         
         writer.key("prefixes");
-        Util.writePrefixes(getPrefixesMap(), writer);
+        writer.array();
+        for(Vocabulary v:this.prefixesMap.values()){
+        	writer.object();
+        	writer.key("name"); writer.value(v.getName());
+        	writer.key("uri"); writer.value(v.getUri());
+        	writer.endObject();
+        }
+        writer.endArray();
         
         writer.key("rootNodes");
         writer.array();
@@ -249,12 +263,22 @@ public class RdfSchema implements OverlayModel {
         return reconstruct(obj);
     }
     
-    private Map<String,String> clone(Map<String,String> original){
-    	Map<String,String> copy = new HashMap<String, String>();
-    	for(Entry<String, String> entry : original.entrySet()){
-    		copy.put(entry.getKey(), entry.getValue());
+    private Map<String,Vocabulary> clone(Map<String,Vocabulary> original){
+    	Map<String,Vocabulary> copy = new HashMap<String, Vocabulary>();
+    	for(Entry<String, Vocabulary> entry : original.entrySet()){
+    		copy.put(entry.getKey(), new Vocabulary(entry.getValue().getName(),entry.getValue().getUri()));
     	}
     	
     	return copy;
+    }
+    
+    private static String stripAtt(String s){
+    	if(s==null){
+    		return s;
+    	}
+    	if(s.startsWith("@")){
+    		return s.substring(1);
+    	}
+    	return s;
     }
 }

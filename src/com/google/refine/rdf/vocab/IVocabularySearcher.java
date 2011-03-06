@@ -2,12 +2,12 @@ package com.google.refine.rdf.vocab;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
+import org.openrdf.repository.Repository;
 
-import com.google.refine.rdf.vocab.imp.Vocabulary;
 
 
 
@@ -16,13 +16,8 @@ public interface IVocabularySearcher {
 	/**
 	 * import the vocabulary from namespace and use the short name name for it
 	 * this vocabulary is not limited to a specific project i.e. Global vocabulary
-	 * @param name
-	 * @param uri
-	 * @throws VocabularyImportException
-	 * @throws VocabularyIndexException
-	 * @throws PrefixExistException
 	 */
-	public Vocabulary importAndIndexVocabulary(String name, String uri)throws VocabularyImportException, VocabularyIndexException, PrefixExistException ;
+	public void importAndIndexVocabulary(String name, String uri, String fetchUrl) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
 	
 	/**
 	 * import the vocabulary from namespace and use the short name name for it
@@ -34,34 +29,18 @@ public interface IVocabularySearcher {
 	 * @throws VocabularyIndexException
 	 * @throws PrefixExistException
 	 */
-	public Vocabulary importAndIndexVocabulary(String name, String uri,String projectId)throws VocabularyImportException, VocabularyIndexException, PrefixExistException ;
+	public void importAndIndexVocabulary(String name, String uri, String fetchUrl,String projectId) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
+	public void importAndIndexVocabulary(String name, String uri, Repository repository, String projectId) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
 	
 	public List<SearchResultItem> searchClasses(String str, String projectId) throws ParseException,IOException;
 	
 	public List<SearchResultItem> searchProperties(String str, String projectId) throws ParseException,IOException;
-
-	public List<Vocabulary> getProjectVocabularies(String projectId)throws ParseException,IOException;
+	
+	public void deleteTermsOfVocabs(Set<Vocabulary> toRemove,String projectId) throws CorruptIndexException, IOException;
 	
 	public void addPredefinedVocabulariesToProject(long projectId)throws VocabularyIndexException, IOException;
 	
-	public void deleteVocabulary(String name,String projectId) throws ParseException,IOException;
-	
-	public void updateVocabulary(String name,String uri, String projectId) throws ParseException,IOException, VocabularyImportException, VocabularyIndexException;
-	
-	public void synchronizeIndex(Map<String, String> prefixes, String projectId)throws IOException, ParseException;
-	
-	public void dispose()throws CorruptIndexException, IOException;
-	
-	public void deleteProjectVocabularies(String projectId) throws ParseException,IOException;
-	
-	/**
-	 * @param projectId
-	 * @return prefixes that were set as defaults in a form of a map (name==>uri as in foaf==>http://xmlns.com/foaf/0.1/) 
-	 * @throws CorruptIndexException
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	public Map<String,String> setDefaultVocabularies(String projectId) throws CorruptIndexException, IOException, ParseException;
-	
-	public void addDefaultPrefixIfNotExist(String key, String value)throws IOException;
+	public void update() throws CorruptIndexException, IOException;
+
+	public void synchronize(String projectId, Set<String> prefixes) throws IOException;
 }
