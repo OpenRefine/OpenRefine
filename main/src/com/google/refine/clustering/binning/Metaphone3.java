@@ -496,34 +496,34 @@ public class Metaphone3 {
 			|| (inChar == 'O') 
 			|| (inChar == 'U') 
 			|| (inChar == 'Y') 
-			|| (inChar == 'À')
-			|| (inChar == 'Á')
-			|| (inChar == 'Â')
-			|| (inChar == 'Ã')
-			|| (inChar == 'Ä')
-			|| (inChar == 'Å')
-			|| (inChar == 'Æ')
-			|| (inChar == 'È')
-			|| (inChar == 'É')
-	 		|| (inChar == 'Ê')
-			|| (inChar == 'Ë')
-			|| (inChar == 'Ì')
-			|| (inChar == 'Í')
-			|| (inChar == 'Î')
-	 		|| (inChar == 'Ï')
-			|| (inChar == 'Ò')
-			|| (inChar == 'Ó')
-			|| (inChar == 'Ô')
-			|| (inChar == 'Õ')
-			|| (inChar == 'Ö')
-			|| (inChar == 'Œ')
-			|| (inChar == 'Ø')
-			|| (inChar == 'Ù')
-			|| (inChar == 'Ú')
-			|| (inChar == 'Û')
-			|| (inChar == 'Ü')
-			|| (inChar == 'Ý')
-			|| (inChar == 'Ÿ'))
+			|| (inChar == 'Ã€')
+			|| (inChar == 'Ã')
+			|| (inChar == 'Ã‚')
+			|| (inChar == 'Ãƒ')
+			|| (inChar == 'Ã„')
+			|| (inChar == 'Ã…')
+			|| (inChar == 'Ã†')
+			|| (inChar == 'Ãˆ')
+			|| (inChar == 'Ã‰')
+	 		|| (inChar == 'ÃŠ')
+			|| (inChar == 'Ã‹')
+			|| (inChar == 'ÃŒ')
+			|| (inChar == 'Ã')
+			|| (inChar == 'ÃŽ')
+	 		|| (inChar == 'Ã')
+			|| (inChar == 'Ã’')
+			|| (inChar == 'Ã“')
+			|| (inChar == 'Ã”')
+			|| (inChar == 'Ã•')
+			|| (inChar == 'Ã–')
+			|| (inChar == 'ÂŒ')
+			|| (inChar == 'Ã˜')
+			|| (inChar == 'Ã™')
+			|| (inChar == 'Ãš')
+			|| (inChar == 'Ã›')
+			|| (inChar == 'Ãœ')
+			|| (inChar == 'Ã')
+			|| (inChar == 'ÂŸ'))
 		{
 	        return true;
 		}
@@ -780,8 +780,8 @@ public class Metaphone3 {
 					Encode_B();
 	                break;
 	                        
-	            case 'ß':
-				case 'Ç':
+	            case 'ÃŸ':
+				case 'Ã‡':
 
 	                MetaphAdd("S");
 	                m_current++;
@@ -837,7 +837,7 @@ public class Metaphone3 {
 					Encode_N();
 	                break;
 
-	            case 'Ñ':
+	            case 'Ã‘':
 	                
 	                MetaphAdd("N");
 	                m_current++;
@@ -868,8 +868,8 @@ public class Metaphone3 {
 					Encode_T();
 	                break;
 
-	            case 'Ð': // eth
-				case 'Þ': // thorn
+	            case 'Ã': // eth
+				case 'Ãž': // thorn
 
 	                MetaphAdd("0");
 	                m_current++;
@@ -890,13 +890,13 @@ public class Metaphone3 {
 					Encode_X();
 	                break;
 
-	            case 'Š':
+	            case 'ÂŠ':
 
 	                MetaphAdd("X");
 	                m_current++;
 	                break;
 
-				case 'Ž':
+				case 'ÂŽ':
 
 	                MetaphAdd("S");
 	                m_current++;
@@ -6137,7 +6137,7 @@ public class Metaphone3 {
 				return true;
 			}
 
-			// old 'École française d'Extrême-Orient' chinese pinyin where 'ts-' => 'X'
+			// old 'Ã‰cole franÃ§aise d'ExtrÃªme-Orient' chinese pinyin where 'ts-' => 'X'
 			if (((m_length == 3) && StringAt((m_current + 1), 2, "SO", "SA", "SU", ""))
 				||	((m_length == 4) && StringAt((m_current + 1), 3, "SAO", "SAI", ""))
 				||	((m_length == 5) && StringAt((m_current + 1), 4, "SING", "SANG", "")))
