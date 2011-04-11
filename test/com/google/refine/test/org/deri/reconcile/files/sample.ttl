@@ -1,0 +1,25 @@
+@prefix movie:   <http://data.linkedmdb.org/resource/movie/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ex:    <http://example.org/sample/> .
+
+<http://example.org/resource/film/137>
+      a       movie:film ;
+	  a 	  ex:Movie;
+      rdfs:label "sample" ;
+      movie:initial_release_date
+              "1985-07-24" .
+
+<http://example.org/resource/film/200>
+      a       movie:film_series ;
+      rdfs:label "sample but not exact match" ;
+      movie:initial_release_date
+              "1994-09-28" .
+
+<http://example.org/resource/film/110>
+      a       movie:film ;
+	  a		  ex:Show;
+      rdfs:label "sample but not exact match the long text will make the score less compared to the previous one" ;
+      movie:initial_release_date
+              "1999" .
+

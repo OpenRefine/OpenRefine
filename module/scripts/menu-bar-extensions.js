@@ -93,11 +93,14 @@ function ReconciliationSindiceServiceDialog(){
 	var frame = DialogSystem.createDialog();
     frame.width("400px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Define a domain to reconcile using Sindice").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Add reconciliation service").appendTo(frame);
     var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     var html = $(
+    	  '<div class="rdf-reconcile-spaced">' + 
+    	    'Set up a new reconciliation service that uses <a target="_blank" href="http://www.sindice.com">Sindice.com</a> to search on a single site.' + 
+    	  '</div>' +
     	  '<table>' +
     	    '<tr>' +
     	      '<th>' + 
@@ -139,7 +142,6 @@ function ReconciliationRdfServiceDialog(){
 	var dialog = $(DOM.loadHTML("rdf-extension","scripts/rdf-service-dialog.html"));
 	this._elmts = DOM.bind(dialog);
 	
-	this._elmts.other_properties.hide();
 	this._elmts.other_label_chk.click(function(){
 		if($(this).attr("checked")){
 			self._elmts.other_properties.show();
@@ -163,11 +165,12 @@ function ReconciliationRdfServiceDialog(){
     
     frame.width("600px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("File-based Reconciliation Service").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Add file-based reconciliation service").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").append(dialog).appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
 	this._level = DialogSystem.showDialog(frame);
+	this._elmts.other_properties.hide();
 	this._footer(footer);
 }
 
@@ -233,7 +236,6 @@ function ReconciliationSparqlServiceDialog(){
 	var dialog = $(DOM.loadHTML("rdf-extension","scripts/sparql-service-dialog.html"));
 	this._elmts = DOM.bind(dialog);
 	
-	this._elmts.other_properties.hide();
 	this._elmts.other_label_chk.click(function(){
 		if($(this).attr("checked")){
 			self._elmts.other_properties.show();
@@ -246,11 +248,12 @@ function ReconciliationSparqlServiceDialog(){
     
     frame.width("600px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("SPARQL-based Reconciliation Service").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Add SPARQL-based reconciliation service").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").append(dialog).appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
 	this._level = DialogSystem.showDialog(frame);
+	this._elmts.other_properties.hide();
 	this._footer(footer);
 }
 
@@ -316,19 +319,26 @@ $(function(){
 					},
 					{},
 			        {
-			        	"id": "rdf/add-sparql-service",
-			            label: "Define SPARQL endpoint for reconciliation",
-			            click: function() { RdfReconciliationManager.newSparqlService(); }
-			        },
-			        {
-			        	"id": "rdf/add-rdf-service",
-			            label: "Add RDF file for reconciliation",
-			            click: function() { RdfReconciliationManager.newRdfService(); }
-			        },
-			        {
-			        	"id": "rdf/add-sindice-service",
-			            label: "Define a domain to reconcile using Sindice",
-			            click: function() { RdfReconciliationManager.newSindiceService(); }
+			        	"id": "rdf/reconcile",
+			            label: "Add reconciliation service",
+			            submenu:[
+			                     {
+			                    	 "id" :"rdf/reconcile/sparql",
+			                    	 label: "Based on SPARQL endpoint...",
+			                    	 click: function() { RdfReconciliationManager.newSparqlService(); }
+			                     },
+			                     {
+			                    	 "id":"rdf/reconcile/dump",
+			                    	 label:"Based on RDF file...",
+			                    	 click: function() { RdfReconciliationManager.newRdfService(); }        	 
+			                     },
+			                     {
+			                    	 "id" : "rdf/reconcile/sindice",
+			                    	 label: "Based on a Sindice site search...",
+			                    	 click: function() { RdfReconciliationManager.newSindiceService(); }        	 
+			                     }
+						]
+					
 			        }
 			    ]
 			}
@@ -338,7 +348,7 @@ $(function(){
 		                                             {},
 		                                             {
 		                                                 id: "core/sindice-find-dataset",
-		                                                 label: "Identify a domain to reconcile using Sindice" ,
+		                                                 label: "Discover related RDF datasets..." ,
 		                                                 click: function() {
 		                                                     var dialog = new SindiceDialog();
 		                                                     dialog.show(column);

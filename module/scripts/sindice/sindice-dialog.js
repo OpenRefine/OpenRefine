@@ -8,12 +8,12 @@ SindiceDialog.prototype.show = function(column){
     var frame = DialogSystem.createDialog();
     frame.width("400px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Identify a domain to reconcile using Sindice").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Related RDF datasets").appendTo(frame);
     var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     var html = $(
-    		'<div class="" ><span>List of domains:</span><div bind="domains_container"></div></div>'    		
+    		'<div class="" ><span>List of domains:</span><div class="rdf-extension-sindice-domain-container" bind="domains_container"></div></div>'    		
     ).appendTo(body);
     
     self._elmts = DOM.bind(html);
@@ -25,8 +25,8 @@ SindiceDialog.prototype.show = function(column){
 
 SindiceDialog.prototype.guessDomain = function(column){
 	var self = this;
-	var dismissBusy = DialogSystem.showBusy('Guessing domain using Sindice...');
-	$.post("/command/rdf-reconcile-extension/sindiceGuessType",{"project":theProject.id,"columnName":self._column.name},function(data){
+	var dismissBusy = DialogSystem.showBusy('Finding related RDF datasets...(This could take up to 5 minutes)');
+	$.post("/command/rdf-extension/sindiceGuessType",{"project":theProject.id,"columnName":self._column.name},function(data){
 		dismissBusy();
 		if(data.code==='error'){
 			alert(data.message);
@@ -57,7 +57,7 @@ SindiceDialog.prototype._footer = function(footer){
 			alert("a domain needs to be selected");
 			return;
 		}
-		$.post("/command/rdf-reconcile-extension/addSindiceService",{"domain":domain},function(data){
+		$.post("/command/rdf-extension/addSindiceService",{"domain":domain},function(data){
 			RdfReconciliationManager.registerService(data,self._level);
 		},"json");
     }).appendTo(footer);
