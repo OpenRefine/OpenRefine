@@ -13,6 +13,8 @@ div.flyout-frame{
 .flyout-content {
   border:1px solid #CCCCCC;
   background-color:#FFFFFF;
+  margin:4px 8px 4px 4px;
+  padding:4px;
 }
 
 .properties_table{
@@ -24,7 +26,7 @@ div.flyout-frame{
 	border:solid 1px #ccc;
 }
 
-img.resource_preview_logo{
+img.rdf-resource_preview_logo{
 	float:right;
 	width:30%;
 	height:auto;

@@ -43,7 +43,17 @@ div.rdf-reconcile-label-option{
 	padding-right:2em;
 }
 
-div.rdf-reconcile-last{
+div.rdf-reconcile-label-last-option{
 	clear:left;
+	font-family:Arial,sans-serif;
+	margin-top:0.5em;
+	
 	}
 
+div.rdf-flyout-content{
+	color:#000;
+	}
+div.rdf-flyout-content div.rdf-header{
+	font-weight:bold;
+	margin:4px;
+	}	

@@ -9,3 +9,8 @@
 	width:100%;
 	border-spacing:10px;
 }
+
+div.rdf-extension-sindice-domain-container{
+	height:300px;
+	overflow:auto;
+}
