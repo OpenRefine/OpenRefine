@@ -14,25 +14,6 @@ ExporterManager.MenuItems.push(
 		}
 );
 
-ExtensionBar.MenuItems.push(
-		{
-			"id":"rdf",
-			"label": "RDF",
-			"submenu" : [
-		        {
-		        	"id": "rdf/edit-rdf-schema",
-		            label: "Edit RDF Skeleton...",
-		            click: function() { RdfExporterMenuBar.editRdfSchema(false); }
-		        },
-		        {
-		        	"id": "rdf/reset-rdf-schema",
-		            label: "Reset RDF Skeleton...",
-		            click: function() { RdfExporterMenuBar.editRdfSchema(true); }
-		        }
-		    ]
-		}
-);
-
 RdfExporterMenuBar = {};
 
 RdfExporterMenuBar.exportRDF = function(format, ext) {
@@ -79,3 +60,311 @@ RdfExporterMenuBar.editRdfSchema = function(reset) {
     new RdfSchemaAlignmentDialog(reset ? null : theProject.overlayModels.rdfSchema);
 };
 
+var RdfReconciliationManager = {};
+
+RdfReconciliationManager.newSparqlService = function(){
+	new ReconciliationSparqlServiceDialog();
+};
+RdfReconciliationManager.newRdfService = function(){
+	new ReconciliationRdfServiceDialog();
+};
+RdfReconciliationManager.newSindiceService = function(){
+	new ReconciliationSindiceServiceDialog();
+};
+
+RdfReconciliationManager.registerService = function(data,level){
+	if (data.code === "error"){
+		alert('Error:' + data.message)
+	}else{
+		var url = location.href;  // entire url including querystring - also: window.location.href;
+	    var baseURL = url.substring(0,url.lastIndexOf('/'));
+		var service_url = baseURL + '/extension/rdf-extension/services/' + data.service.id;
+		if(!ReconciliationManager.getServiceFromUrl(service_url)){
+			ReconciliationManager.registerStandardService(service_url);
+		}
+		if(level){
+			DialogSystem.dismissUntil(level - 1);
+		}
+	}
+};
+
+function ReconciliationSindiceServiceDialog(){
+	var self = this;
+	var frame = DialogSystem.createDialog();
+    frame.width("400px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Add reconciliation service").appendTo(frame);
+    var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+    var html = $(
+    	  '<div class="rdf-reconcile-spaced">' + 
+    	    'Set up a new reconciliation service that uses <a target="_blank" href="http://www.sindice.com">Sindice.com</a> to search on a single site.' + 
+    	  '</div>' +
+    	  '<table>' +
+    	    '<tr>' +
+    	      '<th>' + 
+    	  	    '<label>Domain:</label>' +
+    	  	  '</th>' +
+    	  	  '<td class="rdf-reconcile-spaced">' +
+    	  	    '<input type="text" bind="domain" size="32" />' +
+    	  	    '<div class="rdf-reconcile-field-details">e.g. dbpedia.org</div>' +
+    	  	  '</td>' +
+    	  	'</tr>' +
+    	  '</table>'    		
+    ).appendTo(body);
+    
+    self._elmts = DOM.bind(html);
+    
+    self._level = DialogSystem.showDialog(frame);
+    self._footer(footer);
+}
+
+ReconciliationSindiceServiceDialog.prototype._footer= function(footer){
+	var self = this;
+	$('<button></button>').addClass('button').html("&nbsp;&nbsp;Ok&nbsp;&nbsp;").click(function() {
+        var domain = self._elmts.domain.val();
+        if(!domain){
+        	alert("Domain need to be provided!");
+        	return;
+        }
+        $.post("/command/rdf-extension/addSindiceService",{"domain":domain},function(data){
+			RdfReconciliationManager.registerService(data,self._level);
+		},"json");
+    }).appendTo(footer);
+	$('<button></button>').addClass('button').text("Cancel").click(function() {
+        DialogSystem.dismissUntil(self._level - 1);
+    }).appendTo(footer);
+};
+
+function ReconciliationRdfServiceDialog(){
+	var self = this;
+	var dialog = $(DOM.loadHTML("rdf-extension","scripts/rdf-service-dialog.html"));
+	this._elmts = DOM.bind(dialog);
+	
+	this._elmts.other_label_chk.click(function(){
+		if($(this).attr("checked")){
+			self._elmts.other_properties.show();
+		}else{
+			self._elmts.other_properties.hide();
+		}
+	});
+	
+	this._elmts.file_source_upload.add(this._elmts.file_source_url).bind("click", function(){
+		var upload = self._elmts.file_source_upload.attr("checked");
+		if(upload){
+			self._elmts.file_upload_input.attr("disabled",false);
+			self._elmts.file_url_input.attr("disabled",true);
+		}else{
+			self._elmts.file_upload_input.attr("disabled",true);
+			self._elmts.file_url_input.attr("disabled",false);
+		}
+	});
+	
+	var frame = DialogSystem.createDialog();
+    
+    frame.width("600px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Add file-based reconciliation service").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").append(dialog).appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+	this._level = DialogSystem.showDialog(frame);
+	this._elmts.other_properties.hide();
+	this._footer(footer);
+}
+
+ReconciliationRdfServiceDialog.prototype._footer = function(footer){
+	var self = this;
+	$('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+		self._dismissBusy = DialogSystem.showBusy('Adding new reconciliation service');
+	    var name = self._elmts.service_name.val();
+	    if(name.trim()===""){
+	    	alert("Name is required");
+	    	return;
+	    }
+	    var props = self._elmts.label_prop_container.find('input[name="label_prop"]:checked');
+	    var prop_uris = "";
+	    for(var i=0;i<props.length;i++){
+	    	prop_uris += " " + $(props[i]).val();
+	    }
+	    if(self._elmts.other_label_chk.attr("checked")){
+	    	prop_uris += " " + self._elmts.other_properties_textarea.val();
+	    }
+	    if(prop_uris===""){
+	    	alert("At least one label property should  be provided");
+	    	return;
+	    }
+	    
+	    if (self._elmts.file_source_url.attr('checked')){
+	    	var file_url = self._elmts.file_url_input.val();
+	    	var file_format = self._elmts.file_format_input.val();
+	    	if(file_url.trim()===""){
+		    	alert("File URL is required");
+		    	return;
+		    }
+	    	$.post("/command/rdf-extension/addService",
+					{"datasource":"file_url","name":name,"url":file_url,properties:prop_uris, "file_format":file_format},
+					function(data){
+						self._dismissBusy();
+						RdfReconciliationManager.registerService(data,self._level);					
+			},"json");
+	    	return;
+	    }
+	    
+	    self._elmts.hidden_service_name.val(name);
+	    self._elmts.hidden_properties.val(prop_uris);
+	    
+	    self._elmts.file_upload_form.ajaxSubmit({
+	    	dataType:  'json',
+	    	success: function(data) {
+	    		self._dismissBusy();
+	    		RdfReconciliationManager.registerService(data,self._level);
+			}
+		});
+	    
+	}).appendTo(footer);
+	
+	$('<button></button>').addClass('button').text("Cancel").click(function() {
+	    DialogSystem.dismissUntil(self._level - 1);
+	}).appendTo(footer);
+};
+
+
+function ReconciliationSparqlServiceDialog(){
+	var self = this;
+	var dialog = $(DOM.loadHTML("rdf-extension","scripts/sparql-service-dialog.html"));
+	this._elmts = DOM.bind(dialog);
+	
+	this._elmts.other_label_chk.click(function(){
+		if($(this).attr("checked")){
+			self._elmts.other_properties.show();
+		}else{
+			self._elmts.other_properties.hide();
+		}
+	});
+	
+	var frame = DialogSystem.createDialog();
+    
+    frame.width("600px");
+    
+    var header = $('<div></div>').addClass("dialog-header").text("Add SPARQL-based reconciliation service").appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").append(dialog).appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    
+	this._level = DialogSystem.showDialog(frame);
+	this._elmts.other_properties.hide();
+	this._footer(footer);
+}
+
+ReconciliationSparqlServiceDialog.prototype._footer = function(footer){
+	var self = this;
+	$('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+		self._dismissBusy = DialogSystem.showBusy('Adding new reconciliation service');
+	    var name = self._elmts.service_name.val();
+	    var endpoint = self._elmts.endpoint_url.val()
+	    var graph_uri = self._elmts.graph_uri.val();
+	    if(name.trim()===""){
+	    	alert("Name is required");
+	    	return;
+	    }
+	    if(endpoint.trim()===""){
+	    	alert("Endpoint URL is required");
+	    	return;
+	    }
+	    var type = self._elmts.endpoint_type.val();
+	    
+	    var props = self._elmts.label_prop_container.find('input[name="label_prop"]:checked');
+	    var prop_uris = "";
+	    for(var i=0;i<props.length;i++){
+	    	prop_uris += " " + $(props[i]).val();
+	    }
+	    if(self._elmts.other_label_chk.attr("checked")){
+	    	prop_uris += " " + self._elmts.other_properties_textarea.val();
+	    }
+	    if(prop_uris===""){
+	    	alert("At least one label property should  be provided");
+	    	return;
+	    }
+	    $.post("/command/rdf-extension/addService",
+				{"datasource":"sparql","name":name,"url":endpoint,"type":type,"graph":graph_uri,properties:prop_uris},
+				function(data){
+					self._dismissBusy();
+					RdfReconciliationManager.registerService(data,self._level);					
+		},"json");
+	}).appendTo(footer);
+	
+	$('<button></button>').addClass('button').text("Cancel").click(function() {
+	    DialogSystem.dismissUntil(self._level - 1);
+	}).appendTo(footer);
+};
+
+//extend the column header menu
+$(function(){
+    
+	ExtensionBar.MenuItems.push(
+			{
+				"id":"reconcile",
+				"label": "RDF",
+				"submenu" : [
+					{
+						"id": "rdf/edit-rdf-schema",
+						label: "Edit RDF Skeleton...",
+						click: function() { RdfExporterMenuBar.editRdfSchema(false); }
+					},
+					{
+						"id": "rdf/reset-rdf-schema",
+						label: "Reset RDF Skeleton...",
+						click: function() { RdfExporterMenuBar.editRdfSchema(true); }
+					},
+					{},
+			        {
+			        	"id": "rdf/reconcile",
+			            label: "Add reconciliation service",
+			            submenu:[
+			                     {
+			                    	 "id" :"rdf/reconcile/sparql",
+			                    	 label: "Based on SPARQL endpoint...",
+			                    	 click: function() { RdfReconciliationManager.newSparqlService(); }
+			                     },
+			                     {
+			                    	 "id":"rdf/reconcile/dump",
+			                    	 label:"Based on RDF file...",
+			                    	 click: function() { RdfReconciliationManager.newRdfService(); }        	 
+			                     },
+			                     {
+			                    	 "id" : "rdf/reconcile/sindice",
+			                    	 label: "Based on a Sindice site search...",
+			                    	 click: function() { RdfReconciliationManager.newSindiceService(); }        	 
+			                     }
+						]
+					
+			        }
+			    ]
+			}
+	);
+	DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
+		MenuSystem.appendTo(menu, [ "core/reconcile" ], [
+		                                             {},
+		                                             {
+		                                                 id: "core/sindice-find-dataset",
+		                                                 label: "Discover related RDF datasets..." ,
+		                                                 click: function() {
+		                                                     var dialog = new SindiceDialog();
+		                                                     dialog.show(column);
+		                                                 }
+		                                             },
+		                                         ]);
+	});
+	
+	var services = ReconciliationManager.getAllServices();
+	var ids = [];
+	for(var i=0;i<services.length;i++){
+		if(services[i].url){
+			ids.push(services[i].url);
+		}
+	}
+	$.post("/command/rdf-extension/initializeServices",{"services":JSON.stringify(ids)},function(data){
+		RdfReconciliationManager.registerService(data);
+	},"json");
+});

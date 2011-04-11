@@ -17,7 +17,7 @@ public interface IVocabularySearcher {
 	 * import the vocabulary from namespace and use the short name name for it
 	 * this vocabulary is not limited to a specific project i.e. Global vocabulary
 	 */
-	public void importAndIndexVocabulary(String name, String uri, String fetchUrl) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
+	public void importAndIndexVocabulary(String name, String uri, String fetchUrl,VocabularyImporter importer) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
 	
 	/**
 	 * import the vocabulary from namespace and use the short name name for it
@@ -29,14 +29,15 @@ public interface IVocabularySearcher {
 	 * @throws VocabularyIndexException
 	 * @throws PrefixExistException
 	 */
-	public void importAndIndexVocabulary(String name, String uri, String fetchUrl,String projectId) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
-	public void importAndIndexVocabulary(String name, String uri, Repository repository, String projectId) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
+	public void importAndIndexVocabulary(String name, String uri, String fetchUrl,String projectId,VocabularyImporter importer) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
+	public void importAndIndexVocabulary(String name, String uri, Repository repository, String projectId,VocabularyImporter importer) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
 	
 	public List<SearchResultItem> searchClasses(String str, String projectId) throws ParseException,IOException;
 	
 	public List<SearchResultItem> searchProperties(String str, String projectId) throws ParseException,IOException;
 	
 	public void deleteTermsOfVocabs(Set<Vocabulary> toRemove,String projectId) throws CorruptIndexException, IOException;
+	public void deleteTermsOfVocab(String vocabName, String projectId) throws CorruptIndexException, IOException;
 	
 	public void addPredefinedVocabulariesToProject(long projectId)throws VocabularyIndexException, IOException;
 	

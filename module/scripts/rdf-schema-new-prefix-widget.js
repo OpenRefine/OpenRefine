@@ -8,7 +8,7 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
     
     frame.width("350px");
 
-    var html = $(DOM.loadHTML("rdf-exporter-extension","scripts/new-prefix-widget.html"));
+    var html = $(DOM.loadHTML("rdf-extension","scripts/new-prefix-widget.html"));
     
     var header = $('<div></div>').addClass("dialog-header").text("New Prefix").appendTo(frame);
     var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body").append(html).appendTo(frame);
@@ -22,22 +22,6 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
     	self._elmts.prefix.val(def_prefix);
     	self.suggestUri(def_prefix);
     }
-    
-    self._elmts.fetching_options_table
-    	.hide()
-    	.find('input[name="vocab_fetch_method"]').click(function(){
-    		var upload = $(this).val()!=='file';
-    		self._elmts.fetching_options_table.find('.upload_file_inputs').attr('disabled',upload);
-    		var fetch_from_url = $(this).val() !== 'web';
-    		self._elmts.fetch_from_url.attr('disabled',fetch_from_url);
-    	});
-    
-    self._elmts.fetching_options_handle.click(function(e){
-    		e.preventDefault();
-    		$('#fetching_options').addClass('rdf-reconcile-fieldset');
-    		self._elmts.fetch_from_url.val(self._elmts.uri.val());
-    		self._elmts.fetching_options_table.show();
-    	});
     
     var importVocabulary = function(fetchOption,onDone){
     	var name = self._elmts.prefix.val();
@@ -71,8 +55,7 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
     		return;
     	}
 		dismissBusy = DialogSystem.showBusy('Trying to import vocabulary from ' + uri);
-		var fetchUrl = self._elmts.fetch_from_url.val();
-    	$.post("/command/rdf-exporter-extension/add-prefix",{name:name,uri:uri,"fetch-url":fetchUrl,project: theProject.id,fetch:fetchOption},function(data){
+    	$.post("/command/rdf-extension/add-prefix",{name:name,uri:uri,"fetch-url":uri,project: theProject.id,fetch:fetchOption},function(data){
     		if (data.code === "error"){
     			alert('Error:' + data.message)
     		}else{
@@ -94,9 +77,22 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
         DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
     
+    $('<button></button>').attr('id','advanced_options_button').attr("disabled","").attr("style","float:right").text("Advanced...").click(function() {
+        self._elmts.fetching_options_table.show();
+        $('#advanced_options_button').attr("disabled", "disabled");
+    }).appendTo(footer);
+    
     
     
     var level = DialogSystem.showDialog(frame);
+    
+    self._elmts.fetching_options_table
+	.hide()
+	.find('input[name="vocab_fetch_method"]').click(function(){
+		var upload = $(this).val()!=='file';
+		self._elmts.fetching_options_table.find('.upload_file_inputs').attr('disabled',upload);
+	});
+    
     self._elmts.prefix.bind('change',function(){
     	self.suggestUri($(this).val());
     	}).focus();
@@ -104,13 +100,13 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
 
 NewPrefixWidget.prototype.suggestUri = function(prefix){
 	var self = this;
-	$.get("/command/rdf-exporter-extension/get-prefix-cc-uri",{prefix:prefix},function(data){
+	$.get("/command/rdf-extension/get-prefix-cc-uri",{prefix:prefix},function(data){
 		if(!self._elmts.uri.val() && data.uri){
 			self._elmts.uri.val(data.uri);
 			if(self._elmts.message.text()){
-				self._elmts.message.find('div').remove().end().append($('<span>(a suggestion from <em>prefix.cc</em> is provided)</span>'));
+				self._elmts.message.find('div').remove().end().append($('<span>(a suggestion from <em><a target="_blank" href="http://prefix.cc">prefix.cc</a></em> is provided)</span>'));
 			}else{
-				self._elmts.uri_note.text('(suggested by prefix.cc)');
+				self._elmts.uri_note.html('(suggested by <a target="_blank" href="http://prefix.cc">prefix.cc</a>)');
 			}
 		}
 	},"json");

@@ -1,0 +1,51 @@
+<p>
+In this example, I will reconcile a list of people working at <a href="http://deri.ie">the Digital Enterprise Research Institute DERI</a> with the help of <a href="http://www.sindice.com">Sindice</a>. The <a href="files/sindice/derians.csv">CSV file can be downloaded</a>.
+</p>
+<ul class="steps">
+<li class="step step1">
+Create a Google Refine project from the CSV file. A snippet is shown in the figure below.
+<p>
+  <img src="files/sindice/screenshots/derians.png" border="1" />
+</p>
+</li>
+<li class="step step2">
+From the "name" column drop down menu, select <span class="instruction">Discover related RDF datasets</span> as shown in the figure below. This will query <a href="http://sindice.com">Sindice</a> for datasets containing RDF data about the first ten rows.
+<p>
+  <img src="files/sindice/screenshots/discover_datasets.png" border="1"/>
+</p>
+</li>
+<li class="step step3">
+Querying Sindice might take some time (up to 5 minutes). The result is a list of domains containing related data as shown below. Select <i>www.deri.ie</i> and then hit the <span class="instruction">Add domain-specific Sindice service</span> button. This will define a reconciliation service that search <a href="http://sindice.com">Sindice</a> for RDF data defined under <i>www.deri.ie</i>.
+<p>
+  <img src="files/sindice/screenshots/datasets.png" />
+</p>
+</li>
+<li class="step step4">
+Choose <span class="instruction">start reconciling...</span> from the column drop down menu of the "name" column. Select the <i>Sindice (www.deri.ie)</i> added to the list of defined reconciliation services. As shown below, type guessing will suggest a list of types with <code>foaf:Person</code> at the top.
+<p>
+  <img src="files/sindice/screenshots/reconciliation.png" />
+</p>
+</li>
+<li class="step step5">
+Go ahead with the <span class="instruction">start reconciling</span> button. After a while, google Refine presents reconciliation results with factes about reconciliation decision and top candidate score (see figure below).
+<p>
+  <img src="files/sindice/screenshots/results.png" />
+</p>
+</li>
+<ul>
+<p class="note">
+Unfortunately, RDFa data on deri.ie is not perfect (yet!). Thus, many of the URIs are broken. I already pinged our lovely web master and hope by the time you try, it will be fixed and you will get awesome results!
+</p>
+<p class="note">
+Alternatively, Sindice domain-specific services can be directly added through the RDF menu as shown below. This will directly add the service to the list of defined reconciliation services without going through the step of discovering related RDF datasets.
+</p>
+<p>
+  <img src="files/sindice/screenshots/add-service.png" border="1" />
+</p>
+<p>
+  <img src="files/sindice/screenshots/add-service-2.png" />
+</p>
+
+<p class="note">
+  For more details and technical documentation see <a href="sindiceDocs">Reconciliation using Sindice</a>
+</p>

@@ -13,6 +13,7 @@ import org.json.JSONWriter;
 import com.google.refine.Jsonizable;
 import com.google.refine.rdf.app.ApplicationContext;
 import com.google.refine.rdf.vocab.PrefixExistException;
+import com.google.refine.rdf.vocab.VocabularyImporter;
 
 public class AddPrefixCommand extends RdfCommand{
 
@@ -33,7 +34,7 @@ public class AddPrefixCommand extends RdfCommand{
         		if(fetchUrl==null || fetchOption.trim().isEmpty()){
         			fetchUrl = uri;
         		}
-        		getRdfContext().getVocabularySearcher().importAndIndexVocabulary(name, uri, fetchUrl, projectId);
+        		getRdfContext().getVocabularySearcher().importAndIndexVocabulary(name, uri, fetchUrl, projectId,new VocabularyImporter());
         	}
             respondJSON(response, new Jsonizable() {
                 

@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.any23.Any23;
+import org.deri.any23.extractor.rdf.RDFXMLExtractor;
 import org.deri.any23.http.HTTPClient;
+import org.deri.any23.mime.NaiveMIMETypeDetector;
 import org.deri.any23.source.DocumentSource;
 import org.deri.any23.source.HTTPDocumentSource;
 import org.deri.any23.writer.ReportingTripleHandler;
@@ -26,7 +28,8 @@ import org.openrdf.sail.memory.MemoryStore;
 public class VocabularyImporter {
 	
 	public void importVocabulary(String name, String uri, String fetchUrl, List<RDFSClass> classes, List<RDFSProperty> properties) throws VocabularyImportException{
-		Repository repos = getModel(fetchUrl);
+		boolean strictlyRdf = faultyContentNegotiation(uri);
+		Repository repos = getModel(fetchUrl, strictlyRdf);
 		getTerms(repos, name, uri, classes, properties);
 	}
 	
@@ -63,9 +66,14 @@ public class VocabularyImporter {
 			+ "FILTER regex(str(?resource), \"^";
 	private static final String PROPERTIES_QUERY_P2 = "\")}";
 
-	private Repository getModel(String url) throws VocabularyImportException {
+	private Repository getModel(String url,boolean strictlyRdf) throws VocabularyImportException {
 		try {
-			Any23 runner = new Any23();
+			Any23 runner;
+			if(strictlyRdf){
+				runner = new Any23("rdf-xml");
+			}else{
+				runner = new Any23();
+			}
 			runner.setHTTPUserAgent("google-refine-rdf-extension");
 			HTTPClient client = runner.getHTTPClient();
 			DocumentSource source = new HTTPDocumentSource(client, url);
@@ -84,7 +92,7 @@ public class VocabularyImporter {
 		}
 	}
 
-	private void getTerms(Repository repos, String name, String uri, List<RDFSClass> classes, List<RDFSProperty> properties) throws VocabularyImportException {
+	protected void getTerms(Repository repos, String name, String uri, List<RDFSClass> classes, List<RDFSProperty> properties) throws VocabularyImportException {
 		try {
 			RepositoryConnection con = repos.getConnection();
 			try {
@@ -162,6 +170,12 @@ public class VocabularyImporter {
 			return v.stringValue();
 		}
 		return null;
+	}
+	
+	private boolean faultyContentNegotiation(String uri){
+		//we add an exceptional treatment for SKOS as their deployment does not handle Accept header properly
+		//SKSO always return HTML if the Accept header contains HTML regardless the other more preferred options
+		return uri.equals("http://www.w3.org/2004/02/skos/core#");
 	}
 
 }

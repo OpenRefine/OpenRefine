@@ -148,3 +148,15 @@ fieldset.rdf-reconcile-fieldset{
 	padding: 0.2em 0 0.5em 0.2em;
 	margin-top:1.5em;
 }
+table.rdf-prefixes-table{
+	width:100%;
+	}
+table.rdf-prefixes-table, table.rdf-prefixes-table td{
+	border:1px dotted #DDDDDD;
+	border-collapse:collapse;
+	margin:.2em;
+	}
+
+tr.rdf-table-even{
+	background-color:#F2F2F2;
+	}

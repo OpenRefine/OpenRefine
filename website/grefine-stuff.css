@@ -1,0 +1,85 @@
+div.code{
+  border:solid 1px #C5A584;
+  background-color:#F8EFE0;
+  margin-bottom:0.5em;
+}
+
+div.code  pre, div.code div.input{
+  border:dashed 1px #CCCCCC;
+  background-color:#FFFFFF;
+  margin:0.5em;
+}
+
+div.code div.code-header{
+  font-family:Georgia,Times,"Times New Roman",serif;
+  font-size:1.4em;
+  color:#3C3020;
+}
+
+ul.steps li{
+  background-repeat:no-repeat;
+  list-style:none outside none;
+  margin:0 0 0.8em -2px;
+  padding:1px 0 0 40px;
+}
+
+.step1{
+  background-image: url("images/number1.png");
+}
+
+.step2{
+  background-image: url("images/number2.png");
+}
+
+.step3{
+  background-image: url("images/number3.png");
+}
+
+.step4{
+  background-image: url("images/number4.png");
+}
+
+.step5{
+  background-image: url("images/number5.png");
+}
+
+.step6{
+  background-image: url("images/number6.png");
+}
+
+.note{
+	background-image: url("images/info.png");
+	background-repeat:no-repeat;
+    margin:0 0 0.8em -2px;
+	padding:1px 0 0 40px;
+}
+
+.attention{
+	background-image: url("images/icon_attention.png");
+	background-repeat:no-repeat;
+    margin:0 0 0.8em -2px;
+	padding:1px 0 0 40px;
+}
+
+span.instruction{
+  font-size:120%;
+  font-family:monospace;
+  font-weight:bold;
+}
+ul.features{
+  margin-top:0px;
+  margin-left: 460px;
+  padding-left: 3.2em;
+  list-style:none;
+}
+.subheader{
+  margin-bottom:6px;
+  margin-left: 460px;
+  padding-left: 3.2em;
+  font-family: Georgia, Times, "Times New Roman", serif;
+  
+  
+}
+#features_title{
+  margin-bottom:0;
+}

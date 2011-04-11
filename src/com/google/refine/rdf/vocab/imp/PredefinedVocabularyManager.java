@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.rdf.app.ApplicationContext;
 import com.google.refine.rdf.vocab.IPredefinedVocabularyManager;
 import com.google.refine.rdf.vocab.Vocabulary;
+import com.google.refine.rdf.vocab.VocabularyImporter;
 
 public class PredefinedVocabularyManager implements IPredefinedVocabularyManager{
 	final static Logger logger = LoggerFactory.getLogger("predefined_vocabulary_manager");
@@ -67,7 +68,7 @@ public class PredefinedVocabularyManager implements IPredefinedVocabularyManager
 				String uri = tokenizer.nextToken();
 				String url = tokenizer.nextToken();
 				//import and index
-				this.applicationContext.getVocabularySearcher().importAndIndexVocabulary(name, uri,url);
+				this.applicationContext.getVocabularySearcher().importAndIndexVocabulary(name, uri,url, new VocabularyImporter());
 				this.predefinedVocabulariesMap.put(name,new Vocabulary(name, uri));
 			} catch (Exception e) {
 				// predefined vocabularies are not defined properly
