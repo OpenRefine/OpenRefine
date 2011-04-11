@@ -7,10 +7,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.refine.org.deri.reconcile.model.ReconciliationService;
-import com.google.refine.org.deri.reconcile.sindice.SindiceBroker;
 import com.google.refine.org.deri.reconcile.sindice.SindiceService;
-import com.google.refine.org.deri.reconcile.util.GRefineJsonUtilitiesImpl;
-import com.google.refine.org.deri.reconcile.util.RdfUtilitiesImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -22,8 +19,7 @@ public class InitializeServicesCommand extends AbstractAddServiceCommand{
 
 	@Override
 	protected ReconciliationService getReconciliationService(HttpServletRequest request) throws JSONException, IOException {
-		ReconciliationService service = new SindiceService("sindice", "Sindice", null, 
-				new GRefineJsonUtilitiesImpl(), new RdfUtilitiesImpl(), new SindiceBroker());
+		ReconciliationService service = new SindiceService("sindice", "Sindice", null);
 		try {
 			JSONArray arr = ParsingUtilities.evaluateJsonStringToArray(request.getParameter("services"));
 			Set<String> urls = new HashSet<String>();

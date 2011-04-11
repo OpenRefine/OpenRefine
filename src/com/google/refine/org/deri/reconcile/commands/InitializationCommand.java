@@ -21,7 +21,7 @@ public class InitializationCommand extends Command{
 	
 	@Override
 	public void init(RefineServlet servlet) {
-		File workingDir = servlet.getCacheDir("rdfReconcile");
+		File workingDir = servlet.getCacheDir("rdfExtension/reconcile");
 		try {
 			GRefineServiceManager.initialize(workingDir);
 		} catch (JSONException e) {

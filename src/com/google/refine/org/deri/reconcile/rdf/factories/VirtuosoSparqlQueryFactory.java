@@ -99,7 +99,7 @@ public class VirtuosoSparqlQueryFactory extends AbstractSparqlQueryFactory{
 	 * signaling that this term is mandatory. tokenization is based on spaces  
 	 */
 	protected String formatTextQueryString(String query){
-		return "+" + query.trim().replaceAll("[\\s]+", " +");
+		return "+" + query.trim().replaceAll("[\\s]+", " +").replaceAll("'", "\\\\\\\\'");
 	}
 	
 	private String prepareSparqlList(String[] uris){

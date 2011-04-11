@@ -18,7 +18,7 @@ public class InitilizationCommand extends Command{
 	
 	@Override
 	public void init(RefineServlet servlet) {
-		workingDir = servlet.getCacheDir("rdfExporter");
+		workingDir = servlet.getCacheDir("rdfExtension/export");
 		super.init(servlet);
 	}
 

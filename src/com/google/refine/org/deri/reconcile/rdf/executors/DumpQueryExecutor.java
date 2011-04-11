@@ -112,6 +112,8 @@ public class DumpQueryExecutor implements QueryExecutor {
 		loaded = true;
 		// -- Read and index all literal strings.
 		IndexBuilderString larqBuilder;
+		model = ModelFactory.createDefaultModel();
+		model.read(in, null,"TTL");
 		if(propertyUri==null){
 			larqBuilder = new IndexBuilderString() ;
 		}else{
@@ -119,15 +121,9 @@ public class DumpQueryExecutor implements QueryExecutor {
 			larqBuilder = new IndexBuilderString(p,LARQ.STANDARD_INDEX) ;
 		}
 
-		model = ModelFactory.createDefaultModel();
-		// -- Index statements as they are added to the model.
-		model.register(larqBuilder) ;
-
-		model.read(in, null,"TTL");
-
+		larqBuilder.indexStatements(model.listStatements()) ;
 		// -- Finish indexing
 		larqBuilder.closeWriter() ;
-		model.unregister(larqBuilder) ;
 
 		// -- Create the access index  
 		index = larqBuilder.getIndex() ;

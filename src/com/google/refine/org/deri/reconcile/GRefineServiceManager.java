@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -135,6 +136,18 @@ public class GRefineServiceManager {
 		return registry.previewEntity(service, entityId, callback);
 	}
 	
+	public String previewResource(String serviceName, HttpServletRequest request) throws Exception {
+		ReconciliationService service = getService(serviceName);
+		String entityId = request.getParameter("id");		
+		return registry.previewResource(service, entityId);
+	}
+	
+	public String getHtmlOfResourcePreviewTemplate(String serviceName, HttpServletRequest request) throws Exception{
+		String entityId = request.getParameter("id");
+		String previewUrl = request.getRequestURI().substring(0, request.getRequestURI().lastIndexOf("/")) + "?id=" + URLEncoder.encode(entityId,"UTF-8");
+		return registry.getHtmlOfResourcePreviewTemplate(previewUrl, entityId);
+	}
+	
 	/**
 	 * retain only these ids
 	 * @param ids
@@ -143,7 +156,7 @@ public class GRefineServiceManager {
 	 */
 	public synchronized void synchronizeServices(Set<String> urls) throws JSONException, IOException{
 		Set<String> services = this.registry.getServiceIds();
-		Pattern pattern = Pattern.compile("rdf-reconcile-extension\\/services\\/([-.a-zA-Z0-9_]+)");
+		Pattern pattern = Pattern.compile("rdf-extension\\/services\\/([-.a-zA-Z0-9_]+)");
 		Set<String> ids = getServiceIds(urls,pattern);
 		services.removeAll(ids);
 		for(String id:services){
@@ -168,4 +181,5 @@ public class GRefineServiceManager {
 		}
 		return ids;
 	}
+	
 }

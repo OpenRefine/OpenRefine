@@ -22,7 +22,6 @@ public class VirtuosoRemoteQueryExecutor extends RemoteQueryExecutor{
 			qExec.setDefaultGraphURIs(Collections.singletonList(defaultGraphUri));
 		}
 		ResultSet res = qExec.execSelect();
-		qExec.close();
 		return res;
 	}
 	

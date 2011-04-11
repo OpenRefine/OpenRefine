@@ -5,10 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.refine.org.deri.reconcile.model.ReconciliationService;
-import com.google.refine.org.deri.reconcile.sindice.SindiceBroker;
 import com.google.refine.org.deri.reconcile.sindice.SindiceService;
-import com.google.refine.org.deri.reconcile.util.GRefineJsonUtilitiesImpl;
-import com.google.refine.org.deri.reconcile.util.RdfUtilitiesImpl;
 import org.json.JSONException;
 
 import com.google.refine.org.deri.reconcile.GRefineServiceManager;
@@ -28,7 +25,7 @@ public class AddSindiceService extends AbstractAddServiceCommand{
 		if(domain.trim().isEmpty()){
 			throw new RuntimeException("doamin is required");
 		}
-		ReconciliationService service = new SindiceService(id, name, domain, new GRefineJsonUtilitiesImpl(), new RdfUtilitiesImpl(), new SindiceBroker());
+		ReconciliationService service = new SindiceService(id, name, domain);
 		GRefineServiceManager.singleton.addService(service);
 		return service;
 	}

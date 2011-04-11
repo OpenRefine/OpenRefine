@@ -3,8 +3,10 @@ package com.google.refine.org.deri.reconcile;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -28,16 +32,14 @@ import com.google.refine.org.deri.reconcile.rdf.executors.DumpQueryExecutor;
 import com.google.refine.org.deri.reconcile.rdf.executors.QueryExecutor;
 import com.google.refine.org.deri.reconcile.rdf.executors.RemoteQueryExecutor;
 import com.google.refine.org.deri.reconcile.rdf.executors.VirtuosoRemoteQueryExecutor;
+import com.google.refine.org.deri.reconcile.rdf.factories.BigOwlImSparqlQueryFactory;
 import com.google.refine.org.deri.reconcile.rdf.factories.LarqSparqlQueryFactory;
 import com.google.refine.org.deri.reconcile.rdf.factories.PlainSparqlQueryFactory;
 import com.google.refine.org.deri.reconcile.rdf.factories.SparqlQueryFactory;
 import com.google.refine.org.deri.reconcile.rdf.factories.VirtuosoSparqlQueryFactory;
-import com.google.refine.org.deri.reconcile.sindice.SindiceBroker;
 import com.google.refine.org.deri.reconcile.sindice.SindiceService;
 import com.google.refine.org.deri.reconcile.util.GRefineJsonUtilities;
-import com.google.refine.org.deri.reconcile.util.GRefineJsonUtilitiesImpl;
 import com.google.refine.org.deri.reconcile.util.PrefixManager;
-import com.google.refine.org.deri.reconcile.util.RdfUtilitiesImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -159,6 +161,24 @@ public class ServiceRegistry {
 		return service.getPreviewHtmlForResource(resourceId);
 	}
 	
+	public String getHtmlOfResourcePreviewTemplate(String previewUrl, String resourceId)throws Exception{
+		String templatePath = "templates/resource_preview_template.vt";
+		StringWriter writer = new StringWriter();
+		VelocityContext context = new VelocityContext();
+		context.put("resourceUri", resourceId);
+		context.put("previewResourceUrl", previewUrl);
+		
+		InputStream in = this.getClass().getClassLoader().getResourceAsStream(templatePath);
+		
+		VelocityEngine templateEngine = new VelocityEngine();
+		templateEngine.init();
+		
+		templateEngine.evaluate(context, writer, "rdf-reconcile-extension", new InputStreamReader(in));
+		writer.close();
+		String html = writer.toString();
+		return html;
+	}
+	
 	public void loadFromFile(FileInputStream in) throws JSONException, IOException{
 		try {
             JSONTokener tokener = new JSONTokener(new InputStreamReader(in));
@@ -191,7 +211,7 @@ public class ServiceRegistry {
 		if(serviceObj.has("domain")){
 			domain = serviceObj.getString("domain");
 		}
-		return new SindiceService(serviceId, name, domain, new GRefineJsonUtilitiesImpl(), new RdfUtilitiesImpl(), new SindiceBroker());
+		return new SindiceService(serviceId, name, domain);
 	}
 	
 	private RdfReconciliationService loadRdfServiceFromJSON(JSONObject serviceObj) throws JSONException{
@@ -248,6 +268,8 @@ public class ServiceRegistry {
 			return new VirtuosoSparqlQueryFactory();
 		}else if(type.equals("larq")){
 			return new LarqSparqlQueryFactory();
+		}else if(type.equals("bigowlim")){
+			return new BigOwlImSparqlQueryFactory();
 		}else{
 			//plain
 			return new PlainSparqlQueryFactory();

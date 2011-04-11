@@ -49,7 +49,7 @@ public class GRefineJsonUtilitiesImpl implements GRefineJsonUtilities{
 		
 		//preview object
 		ObjectNode previewObj = mapper.createObjectNode();
-		previewObj.put("url", baseServiceUrl + "/preview?id={{id}}");
+		previewObj.put("url", baseServiceUrl + "/preview/template?id={{id}}");
 		previewObj.put("width",430);
 		previewObj.put("height",300);
 		

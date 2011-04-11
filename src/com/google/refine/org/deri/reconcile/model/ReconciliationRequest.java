@@ -134,6 +134,16 @@ public class ReconciliationRequest {
 		return request;
 	}
 	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj==null) {return false;}
+		if(!obj.getClass().equals(this.getClass())){ return false;}
+		ReconciliationRequest otherReq = (ReconciliationRequest)obj;
+		
+		return this.queryString.equals(otherReq.getQueryString()) && this.getLimit()==otherReq.limit && this.getTypes().equals(otherReq.getTypes());
+	}
+
 	/**
 	 * when types are restricted (i.e. typesLength>0) the query is specific and the default limit needs to be small thus we use DEFAULT_LIMIT
 	 * when types are not restricted (i.e. typesLength==0) the query is more of a an explorative nature and needs to see what types exist for what we are looking for

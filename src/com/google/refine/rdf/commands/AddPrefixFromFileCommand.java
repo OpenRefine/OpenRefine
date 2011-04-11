@@ -24,6 +24,7 @@ import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
 import org.openrdf.sail.memory.MemoryStore;
 
 import com.google.refine.rdf.app.ApplicationContext;
+import com.google.refine.rdf.vocab.VocabularyImporter;
 
 public class AddPrefixFromFileCommand extends RdfCommand{
 
@@ -39,7 +40,7 @@ public class AddPrefixFromFileCommand extends RdfCommand{
 			// Create a new file upload handler
 			ServletFileUpload upload = new ServletFileUpload(factory);
 
-			String uri = null, prefix = null, format = null, projectId = null;
+			String uri = null, prefix = null, format = null, projectId = null, filename="";
 			InputStream in = null;
 			@SuppressWarnings("unchecked")
 			List<FileItem> items = upload.parseRequest(request);
@@ -53,6 +54,7 @@ public class AddPrefixFromFileCommand extends RdfCommand{
 				}else if(item.getFieldName().equals("project")){
 					projectId = item.getString();
 				}else{
+					filename = item.getName();
 					in = item.getInputStream();
 				}
 			}
@@ -62,7 +64,9 @@ public class AddPrefixFromFileCommand extends RdfCommand{
 			repository.initialize();
 			RepositoryConnection con = repository.getConnection();
 			RDFFormat rdfFromat;
-			if(format.equals("TTL")){
+			if(format.equals("auto-detect")){
+				rdfFromat = guessFormat(filename);
+			}else if(format.equals("TTL")){
 				rdfFromat = RDFFormat.TURTLE;
 			}else if(format.equals("N3")){
 				rdfFromat = RDFFormat.N3;
@@ -75,7 +79,7 @@ public class AddPrefixFromFileCommand extends RdfCommand{
 			con.close();
 			
 			getRdfSchema(request).addPrefix(prefix, uri);
-        	getRdfContext().getVocabularySearcher().importAndIndexVocabulary(prefix, uri, repository, projectId);
+        	getRdfContext().getVocabularySearcher().importAndIndexVocabulary(prefix, uri, repository, projectId, new VocabularyImporter());
         	//success
         	PrintWriter out = response.getWriter();
 			out.print("<html><body><textarea>\n{\"code\":\"ok\"}\n</textarea></body></html>");
@@ -102,6 +106,22 @@ public class AddPrefixFromFileCommand extends RdfCommand{
 		}
 	}
     
-    
+	private RDFFormat guessFormat(String filename){
+		if(filename.lastIndexOf('.')!=-1){
+			String extension = filename.substring(filename.lastIndexOf('.')).toLowerCase();
+			if(extension.equals(".ttl")){
+				return RDFFormat.TURTLE;
+			}else if(extension.equals(".rdf")){
+				return RDFFormat.RDFXML;
+			}else if(extension.equals(".owl")){
+				return RDFFormat.RDFXML;
+			}else if(extension.equals(".nt")){
+				return RDFFormat.NTRIPLES;
+			}else if(extension.equals(".n3")){
+				return RDFFormat.N3;
+			}
+		}
+		return RDFFormat.RDFXML;
+	}
 
 }

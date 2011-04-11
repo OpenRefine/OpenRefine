@@ -65,14 +65,13 @@ public class VocabularySearcher implements IVocabularySearcher {
 	}
 
 	@Override
-	public void importAndIndexVocabulary(String name, String uri, String fetchUrl)throws VocabularyImportException, VocabularyIndexException,PrefixExistException, CorruptIndexException, IOException {
-		importAndIndexVocabulary(name, uri, fetchUrl, GLOBAL_VOCABULARY_PLACE_HOLDER);
+	public void importAndIndexVocabulary(String name, String uri, String fetchUrl,VocabularyImporter importer)throws VocabularyImportException, VocabularyIndexException,PrefixExistException, CorruptIndexException, IOException {
+		importAndIndexVocabulary(name, uri, fetchUrl, GLOBAL_VOCABULARY_PLACE_HOLDER,importer);
 	}
 
 	@Override
-	public void importAndIndexVocabulary(String name, String uri, String fetchUrl, String projectId) throws VocabularyImportException,VocabularyIndexException, PrefixExistException,
+	public void importAndIndexVocabulary(String name, String uri, String fetchUrl, String projectId,VocabularyImporter importer) throws VocabularyImportException,VocabularyIndexException, PrefixExistException,
 			CorruptIndexException, IOException {
-		VocabularyImporter importer = new VocabularyImporter();
 		List<RDFSClass> classes = new ArrayList<RDFSClass>();
 		List<RDFSProperty> properties = new ArrayList<RDFSProperty>();
 		importer.importVocabulary(name, uri, fetchUrl,classes, properties);
@@ -81,9 +80,8 @@ public class VocabularySearcher implements IVocabularySearcher {
 
 	
 	@Override
-	public void importAndIndexVocabulary(String name, String uri, Repository repository, String projectId) throws VocabularyImportException, VocabularyIndexException,
+	public void importAndIndexVocabulary(String name, String uri, Repository repository, String projectId,VocabularyImporter importer) throws VocabularyImportException, VocabularyIndexException,
 			PrefixExistException, CorruptIndexException, IOException {
-		VocabularyImporter importer = new VocabularyImporter();
 		List<RDFSClass> classes = new ArrayList<RDFSClass>();
 		List<RDFSProperty> properties = new ArrayList<RDFSProperty>();
 		importer.importVocabulary(name, uri, repository, classes, properties);
@@ -144,6 +142,12 @@ public class VocabularySearcher implements IVocabularySearcher {
 		this.update();
 	}
 	
+	@Override
+	public void deleteTermsOfVocab(String vocabName, String projectId) throws CorruptIndexException, IOException {
+		deleteTerms(vocabName, projectId);
+		this.update();
+	}
+
 	/*
 	 * Private methods
 	 */

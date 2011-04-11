@@ -109,7 +109,7 @@ public class UploadFileAndAddServiceCommand extends AbstractAddServiceCommand{
 				queryExecutor = new DumpQueryExecutor(model);
 			}
 			QueryEndpoint queryEndpoint = new QueryEndpointImpl(queryFactory, queryExecutor);
-			ReconciliationService service = new RdfReconciliationService(id, name, queryEndpoint, AddServiceCommand.DEFAULT_MATCH_THRESHOLD);
+			ReconciliationService service = new RdfReconciliationService(id, name, propUris, queryEndpoint, AddServiceCommand.DEFAULT_MATCH_THRESHOLD);
 			GRefineServiceManager.singleton.addAndSaveService(service);
 			return service;
 		}catch(FileUploadException fe){

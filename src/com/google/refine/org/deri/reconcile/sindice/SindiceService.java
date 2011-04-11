@@ -26,31 +26,33 @@ import com.google.refine.org.deri.reconcile.model.ReconciliationRequest;
 import com.google.refine.org.deri.reconcile.model.ReconciliationResponse;
 import com.google.refine.org.deri.reconcile.model.SearchResultItem;
 import com.google.refine.org.deri.reconcile.rdf.endpoints.QueryEndpoint;
-import com.google.refine.org.deri.reconcile.rdf.endpoints.QueryEndpointImpl;
-import com.google.refine.org.deri.reconcile.rdf.executors.DumpQueryExecutor;
-import com.google.refine.org.deri.reconcile.rdf.executors.QueryExecutor;
-import com.google.refine.org.deri.reconcile.rdf.factories.LarqSparqlQueryFactory;
+import com.google.refine.org.deri.reconcile.rdf.endpoints.QueryEndpointFactory;
 import com.google.refine.org.deri.reconcile.rdf.factories.PreviewResourceCannedQuery;
-import com.google.refine.org.deri.reconcile.rdf.factories.SparqlQueryFactory;
 import com.google.refine.org.deri.reconcile.util.GRefineJsonUtilities;
+import com.google.refine.org.deri.reconcile.util.GRefineJsonUtilitiesImpl;
 import com.google.refine.org.deri.reconcile.util.RdfUtilities;
+import com.google.refine.org.deri.reconcile.util.RdfUtilitiesImpl;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class SindiceService extends AbstractReconciliationService{
 	final static Logger logger = LoggerFactory.getLogger("SindiceService");
 
-	private SparqlQueryFactory queryFactory;
+	private QueryEndpointFactory queryEndpointFactory;
 	private GRefineJsonUtilities jsonUtilities;
 	private SindiceBroker broker;
 	private String domain;
 	private RdfUtilities rdfUtilities;
 	protected PreviewResourceCannedQuery previewResourceCannedQuery;
 	
-	public SindiceService(String id, String name,String domain,GRefineJsonUtilities jsonUtilities, RdfUtilities rdfUtilities, SindiceBroker broker) {
+	public SindiceService(String id, String name,String domain){
+		this(id,name,domain,new GRefineJsonUtilitiesImpl(), new RdfUtilitiesImpl(), new SindiceBroker(), new QueryEndpointFactory());
+	}
+	
+	public SindiceService(String id, String name,String domain,GRefineJsonUtilities jsonUtilities, RdfUtilities rdfUtilities, SindiceBroker broker,QueryEndpointFactory queryEndpointFactory) {
 		super(id, name);
+		this.queryEndpointFactory = queryEndpointFactory;
 		this.domain = domain;
-		this.queryFactory = new LarqSparqlQueryFactory();
 		this.jsonUtilities = jsonUtilities;
 		this.broker = broker;
 		this.rdfUtilities = rdfUtilities;
@@ -64,16 +66,17 @@ public class SindiceService extends AbstractReconciliationService{
 
 	@Override
 	public ReconciliationResponse reconcile(ReconciliationRequest request) {
-		String type = (request.getTypes()!=null && request.getTypes().length>0)? (request.getTypes()[0]) : null;
+//		String type = (request.getTypes()!=null && request.getTypes().length>0)? (request.getTypes()[0]) : null;
 		try {
-			LinkedHashSet<String[]> urlPairs = broker.getUrlsForSimpleTermSearch(request.getQueryString(),domain,type, DEFAULT_SEARCH_LIMIT,jsonUtilities);
+			//Type is not pushed to Sindice anymore as Sindice does not handle full URI(e.g. http://xmlns.com/foaf/0.1/Person) for type properly
+			int sindiceDocumentsLimit = domain==null?DEFAULT_SEARCH_LIMIT:DOMAIN_SPECIFIED_SEARCH_LIMIT;
+			LinkedHashSet<String[]> urlPairs = broker.getUrlsForSimpleTermSearch(request.getQueryString(),domain,null, sindiceDocumentsLimit,jsonUtilities);
 			ImmutableList<String> empty = ImmutableList.of();
 			Set<ReconciliationCandidate> candidates = new LinkedHashSet<ReconciliationCandidate>();
 			int limit = request.getLimit();
 			for(String[] pair: urlPairs){
 				Model model = broker.getModelForUrl(pair[0], pair[1],jsonUtilities);
-				QueryExecutor queryExecutor = new DumpQueryExecutor(model); 
-				QueryEndpoint endpoint = new QueryEndpointImpl(queryFactory, queryExecutor);
+				QueryEndpoint endpoint = queryEndpointFactory.getLarqQueryEndpoint(model);
 				request.setLimit(limit - candidates.size());
 				candidates.addAll(endpoint.reconcileEntities(request, empty, 0.9));
 				if(candidates.size()>=limit){
@@ -119,8 +122,7 @@ public class SindiceService extends AbstractReconciliationService{
 	public String getPreviewHtmlForResource(String resourceId) throws Exception {
 		Model model = rdfUtilities.dereferenceUri(resourceId);
 		
-		QueryExecutor queryExecutor = new DumpQueryExecutor(model); 
-		QueryEndpoint endpoint = new QueryEndpointImpl(queryFactory, queryExecutor);
+		QueryEndpoint endpoint = this.queryEndpointFactory.getLarqQueryEndpoint(model);
 		Multimap<String, String> propertiesMap 	= endpoint.getResourcePropertiesMap(previewResourceCannedQuery, resourceId);
 		VelocityContext context = new VelocityContext();
 		context.put("resourceUri", resourceId);
@@ -179,5 +181,6 @@ public class SindiceService extends AbstractReconciliationService{
 		//nothing to save
 	}
 	
-	static final int DEFAULT_SEARCH_LIMIT = 10;
+	static final int DEFAULT_SEARCH_LIMIT = 8;
+	static final int DOMAIN_SPECIFIED_SEARCH_LIMIT = 3;
 }

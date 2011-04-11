@@ -33,7 +33,6 @@ public class RemoteQueryExecutor implements QueryExecutor{
 			qExec = QueryExecutionFactory.sparqlService(sparqlEndpointUrl, sparql,defaultGraphUri);
 		}
 		ResultSet res = qExec.execSelect();
-		qExec.close();
 		return res;
 	}
 
