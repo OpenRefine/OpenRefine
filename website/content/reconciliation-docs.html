@@ -1,0 +1,31 @@
+<p>
+<em>Reconciliation</em> is identifying multiple representations of the same real-world object. In the Semantic Web field, it is usually known as instance matching and refers to identifying equivalent resources in two RDF datasets.
+</p>
+<h2>Reconciliation in Google Refine</h2>
+<p>
+<a href="http://code.google.com/p/google-refine/"> Google Refine</a> can reconcile values in a specific column to entities in <a href="http://www.freebase.com/">Freebase</a>. <a href="http://code.google.com/p/google-refine/wiki/Reconciliation">Reconciliation to Freebase</a> is a very useful operation as it helps mapping ambiguous textual values to precisely identified Freebase entities.
+<p>
+Upon reconciliation request, Google Refine starts by invoking the Freebase reconciliation service with a sample set of data values. It uses the result to guess a type for the values in the corresponding column.
+</p>
+<p>
+The list of guessed types are presented to the user who can select a specific type or continue without choosing any. The user can also choose to include additional properties in the request to help enhancing the precision of the reconciliation process. Additional properties need to be clearly identified to the reconciliation service i.e. via IDs understandable by the service. To help the user in that a reconciliation service can support autocomplete for properties search.
+</p>
+<p> 
+Figure below shows a screenshot of the reconciliation interface resulting from reconciling a set of city names against Freebase. 
+</p>
+<img src="files/images/reconcile-fb.png" border="1"/>
+<br/>
+<p>
+In the Figure we see that a set of types are suggested with <code>City/Town/Village</code> (with ID <code>/location/citytown</code>) at the top of the list. The right part of the figure shows property autocompletion in action. Proceeding with reconciliation as shown in the figure means that the set of values will be reconciled against Freebase
+for entities of type <code>/location/citytown</code> taken into account that the city is contained by a location matching the corresponding content of the state column in the data.
+</p>
+<p>
+After receiving the response, the top three matching candidates for each value are presented to the user. the user can then choose to accept one of them or refuse them all. To better inform the user decision, a resource preview is available per candidate where basic information about the candidate is provided. Additionally, a numeric facet is built based on the scores of results provided by the service, helping the
+user to find an acceptable threshold for the score and mass accept or reject certain results.
+</p>
+<p>
+Figure below shows a screenshot where a preview for the candidate labeled "Cambridge" is presented. Results marked as an "exact match" will be automatically accepted by Google Refine without the need of
+user intervention.
+</p>
+<img src="files/images/preview-fb.png" border="1"/>
+</p>
