@@ -37,6 +37,7 @@
     <property name="server.lib.dir" value="${server.dir}/lib" />
     
     <property name="src.dir" value="${basedir}/src" />
+	<property name="rsrc.dir" value="${basedir}/resources" />
     <property name="module.dir" value="${basedir}/module" />
     <property name="modinf.dir" value="${module.dir}/MOD-INF" />
     <property name="lib.dir" value="${modinf.dir}/lib" />
@@ -59,6 +60,7 @@
         <mkdir dir="${classes.dir}" />
         <javac destdir="${classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${src.dir}"/>
+			<src path="${rsrcs.dir}"/>
             <classpath refid="class.path" />
         </javac>
     </target>
