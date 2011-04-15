@@ -56,17 +56,24 @@
         <pathelement path="${refine.classes.dir}"/>
     </path>
             
-    <target name="build_java">
+    <target name="build_java" depends="copyfiles">
         <mkdir dir="${classes.dir}" />
         <javac destdir="${classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${src.dir}"/>
-			<src path="${rsrcs.dir}"/>
+			<src path="${rsrc.dir}"/>
             <classpath refid="class.path" />
         </javac>
     </target>
 
     <target name="build" depends="build_java"/>
-
+	
+	<target name="copyfiles">
+		<copy todir="${classes.dir}">
+             <fileset dir="${rsrc.dir}">
+                 <include name="**/*"/>
+             </fileset>
+         </copy>
+	</target>
     <target name="clean">
         <delete dir="${classes.dir}" />
     </target>

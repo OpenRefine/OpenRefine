@@ -54,7 +54,7 @@ public class RdfReconciliationService extends AbstractReconciliationService{
 		this.matchThreshold = matchThreshold;
 		try{
 			//TODO hard-coded for now.. accept as parameter if you need services to use different properties for perviewing
-			InputStream in = this.getClass().getResourceAsStream("factories/files/preview_properties.properties");
+			InputStream in = this.getClass().getResourceAsStream("/files/preview_properties.properties");
 			this.previewResourceCannedQuery = new PreviewResourceCannedQuery(in);
 		}catch (IOException e) {
 		}
