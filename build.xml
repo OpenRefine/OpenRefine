@@ -138,7 +138,7 @@
 
     <target name="build_server">
         <mkdir dir="${server.classes.dir}" />
-        <javac srcdir="${server.src.dir}" destdir="${server.classes.dir}" debug="true" includeAntRuntime="no">
+        <javac encoding="utf-8" srcdir="${server.src.dir}" destdir="${server.classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="server.class.path" />
         </javac>
         <copy file="${server.src.dir}/log4j.properties" tofile="${server.classes.dir}/log4j.properties"/>
@@ -146,7 +146,7 @@
             
     <target name="build_webapp">
         <mkdir dir="${webapp.classes.dir}" />
-        <javac destdir="${webapp.classes.dir}" debug="true" includeAntRuntime="no">
+        <javac encoding="utf-8" destdir="${webapp.classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${webapp.src.dir}"/>
             <classpath refid="webapp.class.path" />
         </javac>
@@ -155,7 +155,7 @@
 
     <target name="build_tests" depends="build_webapp, build_server">
         <mkdir dir="${server.tests.classes.dir}" />
-        <javac srcdir="${server.tests.src.dir}" destdir="${server.tests.classes.dir}" debug="true" includeAntRuntime="no">
+        <javac encoding="utf-8" srcdir="${server.tests.src.dir}" destdir="${server.tests.classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="tests.class.path" />
         </javac>
         <copy file="${server.tests.src.dir}/tests.log4j.properties" tofile="${server.tests.classes.dir}/tests.log4j.properties"/>
@@ -169,7 +169,7 @@
 
     <target name="build_broker_core">
         <mkdir dir="${broker.core.dir}/module/MOD-INF/classes" />
-        <javac destdir="${broker.core.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
+        <javac encoding="utf-8" destdir="${broker.core.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
             <src path="${broker.core.dir}/src/"/>
             <classpath refid="broker.class.path" />
         </javac>
@@ -177,7 +177,7 @@
 
     <target name="build_broker_appengine" depends="build_broker_core">
         <mkdir dir="${broker.appengine.dir}/module/MOD-INF/classes" />
-        <javac destdir="${broker.appengine.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
+        <javac encoding="utf-8" destdir="${broker.appengine.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
             <src path="${broker.appengine.dir}/src/"/>
             <classpath refid="broker.appengine.class.path" />
         </javac>
