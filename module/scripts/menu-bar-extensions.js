@@ -181,6 +181,7 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 	    var name = self._elmts.service_name.val();
 	    if(name.trim()===""){
 	    	alert("Name is required");
+	    	self._dismissBusy();
 	    	return;
 	    }
 	    var props = self._elmts.label_prop_container.find('input[name="label_prop"]:checked');
@@ -193,6 +194,7 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 	    }
 	    if(prop_uris===""){
 	    	alert("At least one label property should  be provided");
+	    	self._dismissBusy();
 	    	return;
 	    }
 	    
@@ -201,6 +203,7 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 	    	var file_format = self._elmts.file_format_input.val();
 	    	if(file_url.trim()===""){
 		    	alert("File URL is required");
+		    	self._dismissBusy();
 		    	return;
 		    }
 	    	$.post("/command/rdf-extension/addService",
@@ -266,10 +269,12 @@ ReconciliationSparqlServiceDialog.prototype._footer = function(footer){
 	    var graph_uri = self._elmts.graph_uri.val();
 	    if(name.trim()===""){
 	    	alert("Name is required");
+	    	self._dismissBusy();
 	    	return;
 	    }
 	    if(endpoint.trim()===""){
 	    	alert("Endpoint URL is required");
+	    	self._dismissBusy();
 	    	return;
 	    }
 	    var type = self._elmts.endpoint_type.val();
@@ -284,6 +289,7 @@ ReconciliationSparqlServiceDialog.prototype._footer = function(footer){
 	    }
 	    if(prop_uris===""){
 	    	alert("At least one label property should  be provided");
+	    	self._dismissBusy();
 	    	return;
 	    }
 	    $.post("/command/rdf-extension/addService",
