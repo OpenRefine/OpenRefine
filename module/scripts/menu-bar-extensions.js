@@ -79,6 +79,10 @@ RdfReconciliationManager.registerService = function(data,level){
 		var url = location.href;  // entire url including querystring - also: window.location.href;
 	    var baseURL = url.substring(0,url.lastIndexOf('/'));
 		var service_url = baseURL + '/extension/rdf-extension/services/' + data.service.id;
+		
+		//ReconciliationManager doesnot call this method upon unregister.. this is why I am calling it myself
+		ReconciliationManager._rebuildMap();
+		
 		if(!ReconciliationManager.getServiceFromUrl(service_url)){
 			ReconciliationManager.registerStandardService(service_url);
 		}
@@ -206,6 +210,9 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 		    	self._dismissBusy();
 		    	return;
 		    }
+	    	
+	    	var services = ReconciliationManager.getAllServices();
+	    	
 	    	$.post("/command/rdf-extension/addService",
 					{"datasource":"file_url","name":name,"url":file_url,properties:prop_uris, "file_format":file_format},
 					function(data){
@@ -292,18 +299,40 @@ ReconciliationSparqlServiceDialog.prototype._footer = function(footer){
 	    	self._dismissBusy();
 	    	return;
 	    }
-	    $.post("/command/rdf-extension/addService",
-				{"datasource":"sparql","name":name,"url":endpoint,"type":type,"graph":graph_uri,properties:prop_uris},
-				function(data){
-					self._dismissBusy();
-					RdfReconciliationManager.registerService(data,self._level);					
-		},"json");
+	    
+	    RdfReconciliationManager.synchronizeServices(
+	    	function(){
+	    			$.post("/command/rdf-extension/addService",
+	    					{"datasource":"sparql","name":name,"url":endpoint,"type":type,"graph":graph_uri,properties:prop_uris},
+	    					function(data){
+	    						self._dismissBusy();
+	    						RdfReconciliationManager.registerService(data,self._level);					
+	    					},"json");
+			}
+	    );
 	}).appendTo(footer);
 	
 	$('<button></button>').addClass('button').text("Cancel").click(function() {
 	    DialogSystem.dismissUntil(self._level - 1);
 	}).appendTo(footer);
 };
+
+RdfReconciliationManager.synchronizeServices = function(onDone){
+	var services = ReconciliationManager.getAllServices();
+	var ids = [];
+	for(var i=0;i<services.length;i++){
+		if(services[i].url){
+			ids.push(services[i].url);
+		}
+	}
+	$.post("/command/rdf-extension/initializeServices",{"services":JSON.stringify(ids)},function(data){
+		RdfReconciliationManager.registerService(data);
+		if(onDone){
+			onDone();
+		}
+	},"json");
+};
+
 
 //extend the column header menu
 $(function(){
@@ -363,14 +392,6 @@ $(function(){
 		                                         ]);
 	});
 	
-	var services = ReconciliationManager.getAllServices();
-	var ids = [];
-	for(var i=0;i<services.length;i++){
-		if(services[i].url){
-			ids.push(services[i].url);
-		}
-	}
-	$.post("/command/rdf-extension/initializeServices",{"services":JSON.stringify(ids)},function(data){
-		RdfReconciliationManager.registerService(data);
-	},"json");
+	RdfReconciliationManager.synchronizeServices();
 });
+
