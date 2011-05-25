@@ -69,7 +69,7 @@ licenses/jrdf.LICENSE.txt
 LGPL
 ----
 
-licenses/marj4j.LICENSE.txt
+licenses/marc4j.LICENSE.txt
     marc4j
     
      
