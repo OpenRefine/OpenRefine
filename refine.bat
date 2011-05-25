@@ -2,6 +2,9 @@
 rem
 rem Configuration variables
 rem
+rem ANT_HOME
+rem   Home of Ant installation; copy is in the source as tools\apache-ant-*
+rem
 rem JAVA_HOME
 rem   Home of Java installation.
 rem
@@ -40,7 +43,7 @@ echo  /x enable JMX monitoring (for jconsole and friends)
 echo.
 echo and <action> is one of
 echo.
-echo   build ..................... Build Google Refine      
+echo   build ..................... Build Google Refine
 echo   run ....................... Run Google Refine
 echo.
 echo   clean ..................... Clean compiled classes
@@ -54,24 +57,26 @@ goto end
 
 :endUtils
 
+rem --- Read ini file -----------------------------------------------
+
+set OPTS=
+
+for /f "tokens=1,* delims==" %%a in (refine.ini) do (
+    set %%a=%%b
+)
+
+rem --- Check JAVA_HOME ---------------------------------------------
+
 if not "%JAVA_HOME%" == "" goto gotJavaHome
 echo You must set JAVA_HOME to point at your Java Development Kit installation
 echo.
-echo If you don't know how to do this, follow the instructions at 
+echo If you don't know how to do this, follow the instructions at
 echo.
 echo   http://bit.ly/1c2gkR
 echo.
 
 goto fail
 :gotJavaHome
-
-rem --- Read ini file --------------------------------------------
-
-set OPTS=
-
-for /f "tokens=1,2 delims==" %%a in (refine.ini) do ( 
-    set %%a=%%b 
-) 
 
 rem --- Argument parsing --------------------------------------------
 
@@ -109,7 +114,7 @@ goto shift2loop
 
 :arg-x
 set OPTS=%OPTS% -Dcom.sun.management.jmxremote
-goto shift2loop 
+goto shift2loop
 
 :shift2loop
 shift
@@ -137,8 +142,13 @@ set OPTS=%OPTS% -Drefine.port=%REFINE_PORT%
 
 if not "%REFINE_HOST%" == "" goto gotHost
 set REFINE_HOST=127.0.0.1
-:gotHOST
+:gotHost
 set OPTS=%OPTS% -Drefine.host=%REFINE_HOST%
+
+if not "%REFINE_WEBAPP%" == "" goto gotWebApp
+set REFINE_WEBAPP=main\webapp
+:gotWebApp
+set OPTS=%OPTS% -Drefine.webapp=%REFINE_WEBAPP%
 
 if not "%REFINE_CLASSES_DIR%" == "" goto gotClassesDir
 set REFINE_CLASSES_DIR=server\classes
@@ -170,7 +180,7 @@ echo You can download it from
 echo.
 echo   http://ant.apache.org/
 echo.
-echo If you don't know how to set environment variables, follow the instructions at 
+echo If you don't know how to set environment variables, follow the instructions at
 echo.
 echo   http://bit.ly/1c2gkR
 echo.
