@@ -28,9 +28,9 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/opencsv-2.2.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-3.6.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.6.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.6-20091214.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/secondstring-20100303.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.1.jar"/>
