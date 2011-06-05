@@ -38,6 +38,7 @@ import java.io.LineNumberReader;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -47,6 +48,7 @@ import org.json.JSONTokener;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
@@ -66,6 +68,8 @@ public class ColumnSplitChange implements Change {
     protected int                       _firstNewCellIndex = -1;
     protected List<Row>                 _oldRows;
     protected List<Row>                 _newRows;
+    
+    protected List<ColumnGroup>         _oldColumnGroups;
     
     public ColumnSplitChange(
         String                columnName, 
@@ -152,6 +156,49 @@ public class ColumnSplitChange implements Change {
                 }
             }
             
+            int columnGroupCount = project.columnModel.columnGroups.size();
+            int columnCountChange = _columnNames.size() - (_removeOriginalColumn ? 1 : 0);
+            _oldColumnGroups = new ArrayList<ColumnGroup>(columnGroupCount);
+            for (int i = columnGroupCount - 1; i >= 0; i--) {
+                ColumnGroup columnGroup = project.columnModel.columnGroups.get(i);
+                
+                _oldColumnGroups.add(columnGroup);
+                
+                if (columnGroup.startColumnIndex <= _columnIndex) {
+                    if (columnGroup.startColumnIndex + columnGroup.columnSpan > _columnIndex) {
+                        // the column being split is in the middle of the group
+                        
+                        if (columnGroup.keyColumnIndex == _columnIndex) {
+                            if (_removeOriginalColumn) {
+                                // the key column is being split and removed
+                                project.columnModel.columnGroups.remove(i);
+                            } else {
+                                project.columnModel.columnGroups.set(i, new ColumnGroup(
+                                    columnGroup.startColumnIndex,
+                                    columnGroup.columnSpan + columnCountChange,
+                                    columnGroup.keyColumnIndex
+                                ));
+                            }
+                        } else {
+                            project.columnModel.columnGroups.set(i, new ColumnGroup(
+                                columnGroup.startColumnIndex,
+                                columnGroup.columnSpan + columnCountChange,
+                                columnGroup.keyColumnIndex < _columnIndex ?
+                                    columnGroup.keyColumnIndex :
+                                    (columnGroup.keyColumnIndex + columnCountChange)
+                            ));
+                        }
+                    }
+                } else {
+                    // the new column precedes this whole group
+                    project.columnModel.columnGroups.set(i, new ColumnGroup(
+                        columnGroup.startColumnIndex + columnCountChange,
+                        columnGroup.columnSpan,
+                        columnGroup.keyColumnIndex + columnCountChange
+                    ));
+                }
+            }
+            
             for (int i = 0; i < _rowIndices.size(); i++) {
                 int r = _rowIndices.get(i);
                 Row newRow = _newRows.get(i);
@@ -192,6 +239,9 @@ public class ColumnSplitChange implements Change {
             for (int i = 0; i < _columnNames.size(); i++) {
                 project.columnModel.columns.remove(_columnIndex + 1);
             }
+            
+            project.columnModel.columnGroups.clear();
+            project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
             project.update();
         }
@@ -240,6 +290,7 @@ public class ColumnSplitChange implements Change {
             row.save(writer, options);
             writer.write('\n');
         }
+        ColumnChange.writeOldColumnGroups(writer, options, _oldColumnGroups);
         writer.write("/ec/\n"); // end of change marker
     }
     
@@ -257,6 +308,8 @@ public class ColumnSplitChange implements Change {
         List<Row>                   oldRows = null;
         List<Row>                   newRows = null;
         
+        List<ColumnGroup>           oldColumnGroups = null;
+
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
@@ -337,8 +390,11 @@ public class ColumnSplitChange implements Change {
                         newRows.add(Row.load(line, pool));
                     }
                 }
+            } else if ("oldColumnGroupCount".equals(field)) {
+                int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
+                
+                oldColumnGroups = ColumnChange.readOldColumnGroups(reader, oldColumnGroupCount);
             }
-
         }
         
         ColumnSplitChange change = new ColumnSplitChange(
@@ -355,7 +411,8 @@ public class ColumnSplitChange implements Change {
             oldRows,
             newRows
         );
-        
+        change._oldColumnGroups = oldColumnGroups != null ?
+                oldColumnGroups : new LinkedList<ColumnGroup>();
         
         return change;
     }

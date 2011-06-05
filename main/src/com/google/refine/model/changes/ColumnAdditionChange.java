@@ -37,11 +37,13 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import com.google.refine.history.Change;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
@@ -51,6 +53,7 @@ public class ColumnAdditionChange extends ColumnChange {
     final protected int             _columnIndex;
     final protected CellAtRow[]     _newCells;
     protected int                   _newCellIndex = -1;
+    protected List<ColumnGroup>     _oldColumnGroups;
     
     public ColumnAdditionChange(String columnName, int columnIndex, List<CellAtRow> newCells) {
         _columnName = columnName;
@@ -64,9 +67,36 @@ public class ColumnAdditionChange extends ColumnChange {
             if (_newCellIndex < 0) {
                 _newCellIndex = project.columnModel.allocateNewCellIndex();
             }
+
+            int columnGroupCount = project.columnModel.columnGroups.size();
+            _oldColumnGroups = new ArrayList<ColumnGroup>(columnGroupCount);
+            for (int i = columnGroupCount - 1; i >= 0; i--) {
+                ColumnGroup columnGroup = project.columnModel.columnGroups.get(i);
+                
+                _oldColumnGroups.add(columnGroup);
+                
+                if (columnGroup.startColumnIndex <= _columnIndex) {
+                    if (columnGroup.startColumnIndex + columnGroup.columnSpan > _columnIndex) {
+                        // the new column is inserted right in the middle of the group
+                        project.columnModel.columnGroups.set(i, new ColumnGroup(
+                            columnGroup.startColumnIndex,
+                            columnGroup.columnSpan + 1,
+                            columnGroup.keyColumnIndex < _columnIndex ?
+                                columnGroup.keyColumnIndex :
+                                (columnGroup.keyColumnIndex + 1)
+                        ));
+                    }
+                } else {
+                    // the new column precedes this whole group
+                    project.columnModel.columnGroups.set(i, new ColumnGroup(
+                        columnGroup.startColumnIndex + 1,
+                        columnGroup.columnSpan,
+                        columnGroup.keyColumnIndex + 1
+                    ));
+                }
+            }
             
             Column column = new Column(_newCellIndex, _columnName);
-            
             project.columnModel.columns.add(_columnIndex, column);
             try {
                 for (CellAtRow cell : _newCells) {
@@ -75,6 +105,7 @@ public class ColumnAdditionChange extends ColumnChange {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            
             project.update();
         }
     }
@@ -87,6 +118,9 @@ public class ColumnAdditionChange extends ColumnChange {
             }
             
             project.columnModel.columns.remove(_columnIndex);
+            
+            project.columnModel.columnGroups.clear();
+            project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
             project.update();
         }
@@ -101,6 +135,7 @@ public class ColumnAdditionChange extends ColumnChange {
             c.save(writer, options);
             writer.write('\n');
         }
+        writeOldColumnGroups(writer, options, _oldColumnGroups);
         writer.write("/ec/\n"); // end of change marker
     }
     
@@ -109,6 +144,7 @@ public class ColumnAdditionChange extends ColumnChange {
         int columnIndex = -1;
         int newCellIndex = -1;
         List<CellAtRow> newCells = null;
+        List<ColumnGroup> oldColumnGroups = null;
         
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -131,12 +167,18 @@ public class ColumnAdditionChange extends ColumnChange {
                         newCells.add(CellAtRow.load(line, pool));
                     }
                 }
+            } else if ("oldColumnGroupCount".equals(field)) {
+                int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
+                
+                oldColumnGroups = readOldColumnGroups(reader, oldColumnGroupCount);
             }
         }
         
         ColumnAdditionChange change = new ColumnAdditionChange(columnName, columnIndex, newCells);
         change._newCellIndex = newCellIndex;
-        
+        change._oldColumnGroups = oldColumnGroups != null ?
+                oldColumnGroups : new LinkedList<ColumnGroup>();
+
         return change;
     }
 }

@@ -36,19 +36,24 @@ package com.google.refine.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
 
 public class ColumnRemovalChange extends ColumnChange {
-    final protected int     _oldColumnIndex;
-    protected Column        _oldColumn;
-    protected CellAtRow[]   _oldCells;
+    final protected int         _oldColumnIndex;
+    protected Column            _oldColumn;
+    protected CellAtRow[]       _oldCells;
+    protected List<ColumnGroup> _oldColumnGroups;
     
     public ColumnRemovalChange(int index) {
         _oldColumnIndex = index;
@@ -56,9 +61,44 @@ public class ColumnRemovalChange extends ColumnChange {
     
     public void apply(Project project) {
         synchronized (project) {
+            int columnGroupCount = project.columnModel.columnGroups.size();
+            _oldColumnGroups = new ArrayList<ColumnGroup>(columnGroupCount);
+            for (int i = columnGroupCount - 1; i >= 0; i--) {
+                ColumnGroup columnGroup = project.columnModel.columnGroups.get(i);
+                
+                _oldColumnGroups.add(columnGroup);
+                
+                if (columnGroup.startColumnIndex <= _oldColumnIndex) {
+                    if (columnGroup.startColumnIndex + columnGroup.columnSpan > _oldColumnIndex) {
+                        // the group starts before or at _oldColumnIndex
+                        // but spans to include _oldColumnIndex
+                        
+                        if (columnGroup.keyColumnIndex == _oldColumnIndex) {
+                            // the key column is removed, so we remove the whole group
+                            project.columnModel.columnGroups.remove(i);
+                        } else {
+                            // otherwise, the group's span has been reduced by 1
+                            project.columnModel.columnGroups.set(i, new ColumnGroup(
+                                columnGroup.startColumnIndex,
+                                columnGroup.columnSpan - 1,
+                                columnGroup.keyColumnIndex < _oldColumnIndex ?
+                                    columnGroup.keyColumnIndex :
+                                    (columnGroup.keyColumnIndex - 1)
+                            ));
+                        }
+                    }
+                } else {
+                    // the column removed precedes this whole group
+                    project.columnModel.columnGroups.set(i, new ColumnGroup(
+                        columnGroup.startColumnIndex - 1,
+                        columnGroup.columnSpan,
+                        columnGroup.keyColumnIndex - 1
+                    ));
+                }
+            }
+
             _oldColumn = project.columnModel.columns.remove(_oldColumnIndex);
             _oldCells = new CellAtRow[project.rows.size()];
-            
             int cellIndex = _oldColumn.getCellIndex();
             for (int i = 0; i < _oldCells.length; i++) {
                 Row row = project.rows.get(i);
@@ -85,6 +125,9 @@ public class ColumnRemovalChange extends ColumnChange {
                 project.rows.get(cell.row).cells.set(cellIndex, cell.cell);
             }
             
+            project.columnModel.columnGroups.clear();
+            project.columnModel.columnGroups.addAll(_oldColumnGroups);
+            
             project.update();
         }
     }
@@ -97,6 +140,8 @@ public class ColumnRemovalChange extends ColumnChange {
             c.save(writer, options);
             writer.write('\n');
         }
+        writeOldColumnGroups(writer, options, _oldColumnGroups);
+        
         writer.write("/ec/\n"); // end of change marker
     }
     
@@ -104,6 +149,7 @@ public class ColumnRemovalChange extends ColumnChange {
         int oldColumnIndex = -1;
         Column oldColumn = null;
         CellAtRow[] oldCells = null;
+        List<ColumnGroup> oldColumnGroups = null;
         
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -124,12 +170,18 @@ public class ColumnRemovalChange extends ColumnChange {
                         oldCells[i] = CellAtRow.load(line, pool);
                     }
                 }
+            } else if ("oldColumnGroupCount".equals(field)) {
+                int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
+                
+                oldColumnGroups = readOldColumnGroups(reader, oldColumnGroupCount);
             }
         }
         
         ColumnRemovalChange change = new ColumnRemovalChange(oldColumnIndex);
         change._oldColumn = oldColumn;
         change._oldCells = oldCells;
+        change._oldColumnGroups = oldColumnGroups != null ?
+                oldColumnGroups : new LinkedList<ColumnGroup>();
         
         return change;
     }

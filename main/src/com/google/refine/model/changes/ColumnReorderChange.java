@@ -37,11 +37,13 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import com.google.refine.history.Change;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
@@ -49,6 +51,7 @@ public class ColumnReorderChange extends ColumnChange {
     final protected List<String>    _columnNames;
     protected List<Column>          _oldColumns;
     protected List<Column>          _newColumns;
+    protected List<ColumnGroup>     _oldColumnGroups;
     
     public ColumnReorderChange(List<String> columnNames) {
         _columnNames = columnNames;
@@ -66,10 +69,14 @@ public class ColumnReorderChange extends ColumnChange {
                         _newColumns.add(column);
                     }
                 }
+                
+                _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
             }
             
             project.columnModel.columns.clear();
             project.columnModel.columns.addAll(_newColumns);
+            project.columnModel.columnGroups.clear();
+
             project.update();
         }
     }
@@ -78,6 +85,10 @@ public class ColumnReorderChange extends ColumnChange {
         synchronized (project) {
             project.columnModel.columns.clear();
             project.columnModel.columns.addAll(_oldColumns);
+            
+            project.columnModel.columnGroups.clear();
+            project.columnModel.columnGroups.addAll(_oldColumnGroups);
+
             project.update();
         }
     }
@@ -98,6 +109,7 @@ public class ColumnReorderChange extends ColumnChange {
             c.save(writer);
             writer.write('\n');
         }
+        writeOldColumnGroups(writer, options, _oldColumnGroups);
         writer.write("/ec/\n"); // end of change marker
     }
     
@@ -105,6 +117,7 @@ public class ColumnReorderChange extends ColumnChange {
         List<String> columnNames = new ArrayList<String>();
         List<Column> oldColumns = new ArrayList<Column>();
         List<Column> newColumns = new ArrayList<Column>();
+        List<ColumnGroup> oldColumnGroups = null;
         
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -135,12 +148,18 @@ public class ColumnReorderChange extends ColumnChange {
                         newColumns.add(Column.load(line));
                     }
                 }
+            } else if ("oldColumnGroupCount".equals(field)) {
+                int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
+                
+                oldColumnGroups = readOldColumnGroups(reader, oldColumnGroupCount);
             }
         }
         
         ColumnReorderChange change = new ColumnReorderChange(columnNames);
         change._oldColumns = oldColumns;
         change._newColumns = newColumns;
+        change._oldColumnGroups = oldColumnGroups != null ?
+                oldColumnGroups : new LinkedList<ColumnGroup>();
         
         return change;
     }

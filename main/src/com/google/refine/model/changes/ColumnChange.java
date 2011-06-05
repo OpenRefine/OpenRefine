@@ -33,7 +33,45 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.changes;
 
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.google.refine.history.Change;
+import com.google.refine.model.ColumnGroup;
 
 abstract public class ColumnChange implements Change {
+    
+    static public void writeOldColumnGroups(Writer writer, Properties options,
+            List<ColumnGroup> oldColumnGroups) throws IOException {
+        writer.write("oldColumnGroupCount=");
+        writer.write(Integer.toString(oldColumnGroups.size())); writer.write('\n');
+        for (ColumnGroup cg : oldColumnGroups) {
+            JSONWriter jsonWriter = new JSONWriter(writer);
+            try {
+                cg.write(jsonWriter, options);
+            } catch (JSONException e) {
+                throw new IOException(e);
+            }
+            writer.write('\n');
+        }
+    }
+    
+    static public List<ColumnGroup> readOldColumnGroups(
+            LineNumberReader reader, int oldColumnGroupCount) throws Exception {
+        List<ColumnGroup> oldColumnGroups = new ArrayList<ColumnGroup>(oldColumnGroupCount);
+        for (int i = 0; i < oldColumnGroupCount; i++) {
+            String line = reader.readLine();
+            if (line != null) {
+                oldColumnGroups.add(ColumnGroup.load(line));
+            }
+        }
+        return oldColumnGroups;
+    }
 }
