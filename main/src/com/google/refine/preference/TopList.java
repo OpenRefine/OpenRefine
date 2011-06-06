@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.preference;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,7 +47,7 @@ import org.json.JSONWriter;
 import com.google.refine.Jsonizable;
 
 
-public class TopList implements Jsonizable {
+public class TopList implements Jsonizable, Iterable<String> {
     private static final long serialVersionUID = 2666669643063493350L;
     
     final protected int          _top;
@@ -67,6 +68,11 @@ public class TopList implements Jsonizable {
         while (_list.size() > _top) {
             _list.remove(_list.size() - 1);
         }
+    }
+    
+    public void remove(String element)
+    {
+        _list.remove(element);
     }
 
     @Override
@@ -102,4 +108,9 @@ public class TopList implements Jsonizable {
             _list.add(a.getString(i));
         }
     }
+    
+    @Override  
+    public Iterator<String> iterator() {  
+        return _list.iterator();  
+    } 
 }

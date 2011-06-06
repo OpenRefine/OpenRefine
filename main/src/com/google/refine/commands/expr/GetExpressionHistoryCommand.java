@@ -67,6 +67,7 @@ public class GetExpressionHistoryCommand extends Command {
             localExpressions = localExpressions.size() > 20 ? localExpressions.subList(0, 20) : localExpressions;
             
             List<String> globalExpressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
+            Set<String> starredExpressions = new HashSet<String>(((TopList)ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions")).getList());
             
             Set<String> done = new HashSet<String>();
             
@@ -81,6 +82,7 @@ public class GetExpressionHistoryCommand extends Command {
                     writer.object();
                     writer.key("code"); writer.value(s);
                     writer.key("global"); writer.value(false);
+                    writer.key("starred"); writer.value(starredExpressions.contains(s));
                     writer.endObject();
                     done.add(s);
                 }
@@ -89,6 +91,7 @@ public class GetExpressionHistoryCommand extends Command {
                         writer.object();
                         writer.key("code"); writer.value(s);
                         writer.key("global"); writer.value(true);
+                        writer.key("starred"); writer.value(starredExpressions.contains(s));
                         writer.endObject();
                     }
                 }

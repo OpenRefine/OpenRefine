@@ -119,6 +119,7 @@ ExpressionPreviewDialog.Widget = function(
     
     $("#expression-preview-tabs").tabs();
     $("#expression-preview-tabs-history").css("display", "");
+    $("#expression-preview-tabs-starred").css("display", "");
     $("#expression-preview-tabs-help").css("display", "");
     
     this._elmts.expressionPreviewLanguageSelect[0].value = language;
@@ -140,6 +141,7 @@ ExpressionPreviewDialog.Widget = function(
     
     this.update();
     this._renderExpressionHistoryTab();
+    this._renderStarredExpressionsTab();
     this._renderHelpTab();
 };
 
@@ -266,15 +268,30 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
     
     var table = $(
         '<table>' +
-            '<tr><th></th><th>From</th><th colspan="2">Expression</th><th></th></tr>' +
+            '<tr><th></th><th></th><th>From</th><th colspan="2">Expression</th><th></th></tr>' +
         '</table>'
     ).appendTo($('<div>').addClass("expression-preview-table-wrapper").appendTo(elmt))[0];
     
-    var renderEntry = function(entry) {
-        var tr = table.insertRow(table.rows.length);
+    var renderEntry = function(self,tr,entry) {
+        $(tr).empty();
         var o = Scripting.parse(entry.code);
+        $('<a href="javascript:{}">&nbsp;</a>')
+                .addClass(entry.starred ? "data-table-star-on" : "data-table-star-off")
+                .appendTo(tr.insertCell(0))
+                .click(function() {
+                    $.post(
+                        "/command/core/toggle-starred-expression",
+                        { expression: entry.code },
+                        function(data) {
+                            entry.starred = !entry.starred;
+                            renderEntry(self,tr,entry);
+                            self._renderStarredExpressionsTab();
+                        },
+                        "json"
+                    );
+                });
         
-        $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(0)).click(function() {
+        $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(1)).click(function() {
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
             
@@ -285,7 +302,69 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
             self.update();
         });
         
-        $(tr.insertCell(1)).html(entry.global ? "Other&nbsp;projects" : "This&nbsp;project");
+        
+        $(tr.insertCell(2)).html(entry.global ? "Other&nbsp;projects" : "This&nbsp;project");
+        $(tr.insertCell(3)).text(o.language + ":");
+        $(tr.insertCell(4)).text(o.expression);
+    };
+    
+    for (var i = 0; i < data.expressions.length; i++) {
+        var tr = table.insertRow(table.rows.length);
+        var entry = data.expressions[i];
+        renderEntry(self,tr,entry);
+    }
+   
+};
+
+ExpressionPreviewDialog.Widget.prototype._renderStarredExpressionsTab = function() {
+    var self = this;
+    $.getJSON(
+        "/command/core/get-starred-expressions",
+        null,
+        function(data) {
+            self._renderStarredExpressions(data);
+        },
+        "json"
+    );
+};
+
+ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(data) {
+    var self = this;
+    var elmt = this._elmts.expressionPreviewStarredContainer.empty().width(this._tabContentWidth);
+    
+    var table = $(
+        '<table>' +
+            '<tr><th></th><th></th><th colspan="2">Expression</th><th></th></tr>' +
+        '</table>'
+    ).appendTo($('<div>').addClass("expression-preview-table-wrapper").appendTo(elmt))[0];
+    
+    var renderEntry = function(entry) {
+        var tr = table.insertRow(table.rows.length);
+        var o = Scripting.parse(entry.code);
+        
+        $('<a href="javascript:{}">Remove</a>').appendTo(tr.insertCell(0)).click(function() {
+            $.post(
+                "/command/core/toggle-starred-expression",
+                { expression: entry.code, returnList: true },
+                function(data) {
+                    self._renderStarredExpressions(data);
+                    self._renderExpressionHistoryTab();
+                },
+                "json"
+            );
+        });
+        
+        $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(1)).click(function() {
+            self._elmts.expressionPreviewTextarea[0].value = o.expression;
+            self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
+            
+            $("#expression-preview-tabs").tabs('option', 'selected', 0);
+            
+            self._elmts.expressionPreviewTextarea.select().focus();
+            
+            self.update();
+        });
+        
         $(tr.insertCell(2)).text(o.language + ":");
         $(tr.insertCell(3)).text(o.expression);
     };
@@ -294,8 +373,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
         var entry = data.expressions[i];
         renderEntry(entry);
     }
-};
-
+}
 ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
     if (this._timerID !== null) {
         window.clearTimeout(this._timerID);
