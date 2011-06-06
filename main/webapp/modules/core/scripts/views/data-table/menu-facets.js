@@ -139,6 +139,22 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 },
                 {},
                 {
+                    id: "core/duplicates-facet",
+                    label: "Duplicates facet",
+                    click: function() {
+                        ui.browsingEngine.addFacet(
+                            "list",
+                            {
+                                "name": column.name,
+                                "columnName": column.name,
+                                "expression": "facetCount(value, 'value', '" +
+                                                          column.name + "') > 1"
+                            }
+                        );
+                    }
+                },
+                {},
+                {
                     id: "core/numeric-log-facet",
                     label: "Numeric log facet",
                     click: function() {

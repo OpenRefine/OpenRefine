@@ -194,7 +194,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
             description: "The current cell's value. This is a shortcut for 'cell.value'."
         },
         {   name: "row",
-            description: "The current row. It has 4 fields: 'flagged', 'starred', 'index', and 'cells'."
+            description: "The current row. It has 5 fields: 'flagged', 'starred', 'index', 'cells', and 'record'."
         },
         {   name: "cells",
             description: "The cells of the current row. This is a shortcut for 'row.cells'. " +
