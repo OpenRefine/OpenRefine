@@ -45,6 +45,7 @@ import com.google.refine.grel.Function;
 
 public class OwnText implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
             Object o1 = args[0];
@@ -60,11 +61,12 @@ public class OwnText implements Function {
     }
 
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Gets the text owned by this element only; does not get the combined text of all children.");
+        writer.key("description"); writer.value("Gets the text owned by this HTML element only; does not get the combined text of all children.");
         writer.key("params"); writer.value("Element e");
         writer.key("returns"); writer.value("String ownText");
         writer.endObject();
