@@ -41,7 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   $styleInjection
 </head>
 <body>
-  #if($params.new == "1")
+  #if($params.new  && $params.new == "1")
     #set($newStyle = "")
     #set($oldStyle = "display: none; ")
   #else
