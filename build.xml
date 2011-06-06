@@ -220,7 +220,7 @@
         <taskdef 
             name="jarbundler" 
             classname="net.sourceforge.jarbundler.JarBundler" 
-            classpath="${jarbundler.dir}/jarbundler-2.1.0.jar" 
+            classpath="${jarbundler.dir}/jarbundler-2.2.0.jar" 
         />
         
         <mkdir dir="${mac.dir}"/>
