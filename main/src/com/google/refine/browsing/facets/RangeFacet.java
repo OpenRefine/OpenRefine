@@ -110,6 +110,7 @@ public class RangeFacet implements Facet {
     protected static final String TO = "to";
     protected static final String FROM = "from";
     
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -157,6 +158,7 @@ public class RangeFacet implements Facet {
         writer.endObject();
     }
 
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         _name = o.getString("name");
         _expression = o.getString("expression");
@@ -195,11 +197,13 @@ public class RangeFacet implements Facet {
         }
     }
 
+    @Override
     public RowFilter getRowFilter(Project project) {
         if (_eval != null && _errorMessage == null && _selected) {
             return new ExpressionNumberComparisonRowFilter(
         		getRowEvaluable(project), _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
                 
+                @Override
                 protected boolean checkValue(double d) {
                     return d >= _from && d < _to;
                 };
@@ -215,6 +219,7 @@ public class RangeFacet implements Facet {
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
+    @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
@@ -237,6 +242,7 @@ public class RangeFacet implements Facet {
         }
     }
     
+    @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);

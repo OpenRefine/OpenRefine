@@ -124,12 +124,14 @@ public class TextSearchFacet implements Facet {
         
         if ("regex".equals(_mode)) {
             return new ExpressionStringComparisonRowFilter(eval, _columnName, _cellIndex) {
+                @Override
                 protected boolean checkValue(String s) {
                     return _pattern.matcher(s).find();
                 };
             };
         } else {
             return new ExpressionStringComparisonRowFilter(eval, _columnName, _cellIndex) {
+                @Override
                 protected boolean checkValue(String s) {
                     return (_caseSensitive ? s : s.toLowerCase()).contains(_query);
                 };

@@ -43,6 +43,7 @@ public class FingerprintKeyer extends Keyer {
 
     static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}");
     
+    @Override
     public String key(String s, Object... o) {
         s = s.trim(); // first off, remove whitespace around the string
         s = s.toLowerCase(); // then lowercase it

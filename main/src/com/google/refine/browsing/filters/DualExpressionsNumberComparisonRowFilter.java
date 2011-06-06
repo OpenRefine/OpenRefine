@@ -72,6 +72,7 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
         _y_cellIndex = y_cellIndex;
     }
 
+    @Override
     public boolean filterRow(Project project, int rowIndex, Row row) {
         Cell x_cell = _x_cellIndex < 0 ? null : row.getCell(_x_cellIndex);
         Properties x_bindings = ExpressionUtils.createBindings(project);

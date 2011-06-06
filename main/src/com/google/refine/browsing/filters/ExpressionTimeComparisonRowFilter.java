@@ -61,6 +61,7 @@ abstract public class ExpressionTimeComparisonRowFilter extends ExpressionNumber
     	_selectNonTime = selectNonTime;
     }
         
+    @Override
     protected boolean checkValue(Object v) {
         if (ExpressionUtils.isError(v)) {
             return _selectError;
@@ -77,6 +78,7 @@ abstract public class ExpressionTimeComparisonRowFilter extends ExpressionNumber
     }
     
     // not really needed for operation, just to make extending the abstract class possible
+    @Override
     protected boolean checkValue(double d) {
     	return false;
     }

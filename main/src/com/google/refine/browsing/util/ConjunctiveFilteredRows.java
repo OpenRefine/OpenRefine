@@ -53,6 +53,7 @@ public class ConjunctiveFilteredRows implements FilteredRows {
         _rowFilters.add(rowFilter);
     }
     
+    @Override
     public void accept(Project project, RowVisitor visitor) {
     	try {
     		visitor.start(project);

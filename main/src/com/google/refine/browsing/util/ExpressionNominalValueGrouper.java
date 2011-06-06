@@ -101,6 +101,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
     	// nothing to do
     }
     
+    @Override
     public boolean visit(Project project, int rowIndex, Row row) {
     	hasError = false;
     	hasBlank = false;

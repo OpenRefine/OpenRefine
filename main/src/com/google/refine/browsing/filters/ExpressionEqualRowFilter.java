@@ -82,6 +82,7 @@ public class ExpressionEqualRowFilter implements RowFilter {
         _invert = invert;
     }
 
+    @Override
     public boolean filterRow(Project project, int rowIndex, Row row) {
         return _invert ?
                 internalInvertedFilterRow(project, rowIndex, row) :

@@ -163,6 +163,7 @@ public class ScatterplotFacet implements Facet {
         }
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         
         writer.object();
@@ -204,6 +205,7 @@ public class ScatterplotFacet implements Facet {
         writer.endObject();
     }
 
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         name = o.getString(NAME);
         l = size = (o.has(SIZE)) ? o.getInt(SIZE) : 100;
@@ -285,6 +287,7 @@ public class ScatterplotFacet implements Facet {
         
     }
 
+    @Override
     public RowFilter getRowFilter(Project project) {
         if (selected && 
             eval_x != null && errorMessage_x == null && 
@@ -298,6 +301,7 @@ public class ScatterplotFacet implements Facet {
                 double from_y_pixels = from_y * l;
                 double to_y_pixels = to_y * l;
                 
+                @Override
                 protected boolean checkValues(double x, double y) {
                     Point2D.Double p = new Point2D.Double(x,y);
                     p = translateCoordinates(p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, t);
@@ -315,6 +319,7 @@ public class ScatterplotFacet implements Facet {
     	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
+    @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (eval_x != null && eval_y != null && errorMessage_x == null && errorMessage_y == null) {
             Column column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
@@ -345,6 +350,7 @@ public class ScatterplotFacet implements Facet {
         }
     }
     
+    @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (eval_x != null && eval_y != null && errorMessage_x == null && errorMessage_y == null) {
             Column column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);

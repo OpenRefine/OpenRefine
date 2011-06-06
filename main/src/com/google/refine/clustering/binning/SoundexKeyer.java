@@ -43,6 +43,7 @@ public class SoundexKeyer extends Keyer {
         _soundex = new Soundex();
     }
     
+    @Override
     public String key(String s, Object... o) {
         return _soundex.soundex(s);
     }

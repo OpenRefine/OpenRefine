@@ -41,6 +41,7 @@ public class NGramFingerprintKeyer extends FingerprintKeyer {
 
     static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}|\\p{Space}");
     
+    @Override
     public String key(String s, Object... o) {
         int ngram_size = 2;
         if (o != null && o.length > 0 && o[0] instanceof Number) {

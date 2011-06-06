@@ -110,6 +110,7 @@ public class BinningClusterer extends Clusterer {
         	// nothing to do
         }
         
+        @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
@@ -139,6 +140,7 @@ public class BinningClusterer extends Clusterer {
             
     public static class SizeComparator implements Comparator<Map<String,Integer>>, Serializable {
         private static final long serialVersionUID = -1390696157208674054L;
+        @Override
         public int compare(Map<String,Integer> o1, Map<String,Integer> o2) {
             int s1 = o1.size();
             int s2 = o2.size();
@@ -160,16 +162,19 @@ public class BinningClusterer extends Clusterer {
 
     public static class EntriesComparator implements Comparator<Entry<String,Integer>>, Serializable {
         private static final long serialVersionUID = 2763378036791777964L;
+        @Override
         public int compare(Entry<String,Integer> o1, Entry<String,Integer> o2) {
             return o2.getValue() - o1.getValue();
         }
     }
     
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         super.initializeFromJSON(project, o);
         _keyer = _keyers.get(o.getString("function").toLowerCase());
     }
 
+    @Override
     public void computeClusters(Engine engine) {
         BinningRowVisitor visitor = new BinningRowVisitor(_keyer,_config);
         FilteredRows filteredRows = engine.getAllFilteredRows();
@@ -180,6 +185,7 @@ public class BinningClusterer extends Clusterer {
         Collections.sort(_clusters, new SizeComparator());
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         EntriesComparator c = new EntriesComparator();
         

@@ -38,6 +38,7 @@ public class Metaphone3Keyer extends Keyer {
     public Metaphone3Keyer() {
     }
     
+    @Override
     public String key(String s, Object... o) {
         Metaphone3 _metaphone3 = new Metaphone3();
         //_metaphone3.SetEncodeVowels(true);

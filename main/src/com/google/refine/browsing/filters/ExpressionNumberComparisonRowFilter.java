@@ -72,6 +72,7 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
         _selectError = selectError;
     }
 
+    @Override
     public boolean filterRow(Project project, int rowIndex, Row row) {
         Properties bindings = ExpressionUtils.createBindings(project);
         

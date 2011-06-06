@@ -61,6 +61,7 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
         _cellIndex = cellIndex;
     }
 
+    @Override
     public boolean filterRow(Project project, int rowIndex, Row row) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
         

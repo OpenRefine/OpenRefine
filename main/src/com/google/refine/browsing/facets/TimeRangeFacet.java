@@ -65,6 +65,7 @@ public class TimeRangeFacet extends RangeFacet {
     protected int       _timeCount;
     protected int       _nonTimeCount;
     
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         
         writer.object();
@@ -109,6 +110,7 @@ public class TimeRangeFacet extends RangeFacet {
         writer.endObject();
     }
 
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         _name = o.getString("name");
         _expression = o.getString("expression");
@@ -147,11 +149,13 @@ public class TimeRangeFacet extends RangeFacet {
         }
     }
 
+    @Override
     public RowFilter getRowFilter(Project project) {
         if (_eval != null && _errorMessage == null && _selected) {
             return new ExpressionTimeComparisonRowFilter(
         		getRowEvaluable(project), _selectTime, _selectNonTime, _selectBlank, _selectError) {
                 
+                @Override
                 protected boolean checkValue(long t) {
                     return t >= _from && t < _to;
                 };
@@ -161,6 +165,7 @@ public class TimeRangeFacet extends RangeFacet {
         }
     }
 
+    @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
@@ -182,6 +187,7 @@ public class TimeRangeFacet extends RangeFacet {
         }
     }
     
+    @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
