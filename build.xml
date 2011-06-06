@@ -8,40 +8,21 @@
     
 <project name="google-refine" default="build" basedir=".">
 
+	<!-- Properties are immutable, so anything set in this file takes priority-->
+	<property file="build.properties"/>
+	
     <property environment="env"/>
 
-    <condition property="version" value="trunk">
-        <not><isset property="version"/></not>
-    </condition>
+    <property name="version" value="trunk"/>
+    <property name="revision" value="rXXXX"/>
+    <property name="full_version" value="0.0.0.0"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
 
-    <condition property="revision" value="rXXXX">
-        <not><isset property="revision"/></not>
-    </condition>
-
-    <condition property="full_version" value="0.0.0.0">
-        <not><isset property="full_version"/></not>
-    </condition>
-
-    <condition property="build.dir" value="build">
-        <not><isset property="build.dir"/></not>
-    </condition>
-
-    <condition property="dist.dir" value="dist">
-        <not><isset property="dist.dir"/></not>
-    </condition>
-
-    <condition property="appengine.app_id" value="google-refine-broker">
-        <not><isset property="appengine.app_id"/></not>
-    </condition>
-
-    <condition property="appengine.version" value="1">
-        <not><isset property="appengine.version"/></not>
-    </condition>
-
-    <condition property="appengine.sdk.dir" value="/opt/appengine">
-        <not><isset property="appengine.sdk.dir"/></not>
-    </condition>
-
+	<property name="appengine.app_id" value="google-refine-broker"/>
+    <property name="appengine.version" value="1"/>
+    <property name="appengine.sdk.dir" value="/opt/appengine"/>
+    	
     <property name="fullname" value="google-refine-${version}-${revision}" />
     
     <property name="main.dir" value="${basedir}/main" />
@@ -336,6 +317,7 @@
         <copy file="${basedir}/README.txt" tofile="${windows.dir}/README.txt"/>
         <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
         
+        <mkdir dir="${dist.dir}"/>
         <zip destfile="${dist.dir}/google-refine-${version}-${revision}.zip" basedir="${windows.dir}"/>                
     </target>
     
@@ -366,6 +348,7 @@
         <copy file="${basedir}/README.txt" tofile="${linux.dir}/README.txt"/>
         <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
         
+        <mkdir dir="${dist.dir}"/>
         <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/google-refine-${version}-${revision}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
                <include name="${linux.name}/refine"/>
@@ -377,6 +360,10 @@
         </tar>
     </target>
 
+	<target name="kits" depends="linux,mac,windows" 
+		description="Build kits for all supported platforms">
+	</target>
+	
     <!-- ================================================================== -->
 
     <target name="prepare_reports">
