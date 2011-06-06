@@ -84,6 +84,14 @@ public class WrappedRow implements HasFields {
         public Object getField(String name, Properties bindings) {
             if ("cells".equals(name)) {
                 return new RecordCells(_record);
+            } else if ("index".equals(name)) {
+                return _record.recordIndex;
+            } else if ("fromRowIndex".equals(name)) {
+                return _record.fromRowIndex;
+            } else if ("toRowIndex".equals(name)) {
+                return _record.toRowIndex;
+            } else if ("rowCount".equals(name)) {
+                return _record.toRowIndex - _record.fromRowIndex;
             }
             return null;
         }
