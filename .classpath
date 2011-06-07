@@ -42,8 +42,8 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/vicino-1.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="server/lib/jdatapath-alpha2.jar"/>
-	<classpathentry kind="lib" path="server/lib/jetty-6.1.22.jar"/>
-	<classpathentry kind="lib" path="server/lib/jetty-util-6.1.22.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-6.1.22.jar" sourcepath="server/lib-src/jetty-6.1.22-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-util-6.1.22.jar" sourcepath="server/lib-src/jetty-util-6.1.22-sources.jar"/>
 	<classpathentry kind="lib" path="server/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="server/lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="lib" path="server/lib/slf4j-api-1.5.6.jar"/>
