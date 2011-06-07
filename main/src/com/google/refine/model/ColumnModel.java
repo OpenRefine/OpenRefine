@@ -156,6 +156,7 @@ public class ColumnModel implements Jsonizable {
         return _columnNames;
     }
 
+    @Override
     synchronized public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -236,6 +237,7 @@ public class ColumnModel implements Jsonizable {
         
         _rootColumnGroups = new LinkedList<ColumnGroup>(columnGroups);
         Collections.sort(_rootColumnGroups, new Comparator<ColumnGroup>() {
+            @Override
             public int compare(ColumnGroup o1, ColumnGroup o2) {
                 int firstDiff = o1.startColumnIndex - o2.startColumnIndex;
                 return firstDiff != 0 ?

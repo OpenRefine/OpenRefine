@@ -92,6 +92,7 @@ public class Column implements Jsonizable {
         return _reconStats;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -154,6 +155,7 @@ public class Column implements Jsonizable {
         return column;
     }
     
+    @Override
     public String toString() {
         return _name;
     }
