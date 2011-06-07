@@ -97,10 +97,12 @@ public class ExportRowsCommand extends Command {
 //            } else if (exporter instanceof UrlExporter) {
 //                ((UrlExporter) exporter).export(project, options, engine);
             } else {
+                // TODO: Should this use ServletException instead of respondException?
                 respondException(response, new RuntimeException("Unknown exporter type"));
             }
         } catch (Exception e) {
-            respondException(response, e);
+            // Use generic error handling rather than our JSON handling
+            throw new ServletException(e);
         } finally {
             ProjectManager.singleton.setBusy(false);
         }
