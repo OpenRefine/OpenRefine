@@ -38,6 +38,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.refine.clustering.binning.ColognePhoneticKeyer;
 import com.google.refine.clustering.binning.DoubleMetaphoneKeyer;
 import com.google.refine.clustering.binning.Metaphone3Keyer;
 import com.google.refine.clustering.binning.MetaphoneKeyer;
@@ -48,11 +49,14 @@ import com.google.refine.grel.Function;
 
 public class Phonetic implements Function {
 
+    // TODO: We could probably lazily initialize these when needed for efficiency
     static private Metaphone3Keyer metaphone3 = new Metaphone3Keyer();
     static private DoubleMetaphoneKeyer metaphone2 = new DoubleMetaphoneKeyer();
     static private MetaphoneKeyer metaphone = new MetaphoneKeyer();
     static private SoundexKeyer soundex = new SoundexKeyer();
+    static private ColognePhoneticKeyer cologne = new ColognePhoneticKeyer();
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2) {
             Object o1 = args[0];
@@ -69,6 +73,8 @@ public class Phonetic implements Function {
                     return metaphone.key(str);
                 } else if ("soundex".equalsIgnoreCase(encoding)) {
                     return soundex.key(str);
+                } else if ("cologne".equalsIgnoreCase(encoding)) {
+                    return cologne.key(str);
                 } else {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " doesn't know how to handle the '" + encoding + "' encoding.");
                 }
@@ -77,6 +83,7 @@ public class Phonetic implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

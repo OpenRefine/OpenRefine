@@ -75,6 +75,7 @@ public class BinningClusterer extends Clusterer {
         _keyers.put("double-metaphone", new DoubleMetaphoneKeyer());
         _keyers.put("metaphone3", new Metaphone3Keyer());
         _keyers.put("soundex", new SoundexKeyer());
+        _keyers.put("cologne-phonetic", new ColognePhoneticKeyer());
     }
 
     class BinningRowVisitor implements RowVisitor {
