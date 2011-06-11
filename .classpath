@@ -12,7 +12,7 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/butterfly-trunk.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.1.0.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.5.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-io-1.4.jar"/>
