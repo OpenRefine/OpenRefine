@@ -827,7 +827,7 @@ fi
 if [ "$JAVA_HOME" ] ; then
     JAVA="$JAVA_HOME/bin/java"
 else 
-    JAVA="`which javas 2> /dev/null`"
+    JAVA="`which java 2> /dev/null`"
 fi
 
 if [ ! -x "$JAVA" ] ; then
