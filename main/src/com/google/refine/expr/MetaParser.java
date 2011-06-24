@@ -85,6 +85,7 @@ abstract public class MetaParser {
                             return this;
                         }
                         
+                        @Override
                         public Object evaluate(Properties bindings) {
                             try {
                                 return _fn.invoke(

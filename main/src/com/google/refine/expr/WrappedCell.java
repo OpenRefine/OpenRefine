@@ -49,10 +49,12 @@ public class WrappedCell implements HasFields {
         this.cell = cell;
     }
     
+    @Override
     public Object getField(String name, Properties bindings) {
         return cell.getField(name, bindings);
     }
 
+    @Override
     public boolean fieldAlsoHasFields(String name) {
         return cell.fieldAlsoHasFields(name);
     }

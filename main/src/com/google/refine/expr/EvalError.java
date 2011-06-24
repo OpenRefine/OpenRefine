@@ -56,10 +56,12 @@ public class EvalError implements Serializable, Jsonizable {
         this.message = message;
     }
     
+    @Override
     public String toString() {
         return this.message;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

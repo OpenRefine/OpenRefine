@@ -52,6 +52,7 @@ public class WrappedRow implements HasFields {
         this.row = row;
     }
     
+    @Override
     public Object getField(String name, Properties bindings) {
         if ("cells".equals(name)) {
             return new CellTuple(project, row);
@@ -70,6 +71,7 @@ public class WrappedRow implements HasFields {
         }
     }
 
+    @Override
     public boolean fieldAlsoHasFields(String name) {
         return row.fieldAlsoHasFields(name);
     }
@@ -81,6 +83,7 @@ public class WrappedRow implements HasFields {
         	_record = record;
         }
 
+        @Override
         public Object getField(String name, Properties bindings) {
             if ("cells".equals(name)) {
                 return new RecordCells(_record);
@@ -96,6 +99,7 @@ public class WrappedRow implements HasFields {
             return null;
         }
 
+        @Override
         public boolean fieldAlsoHasFields(String name) {
             return "cells".equals(name);
         }
@@ -108,6 +112,7 @@ public class WrappedRow implements HasFields {
             _record = record;
         }
         
+        @Override
         public Object getField(String name, Properties bindings) {
             Column column = project.columnModel.getColumnByName(name);
             if (column != null) {
@@ -127,6 +132,7 @@ public class WrappedRow implements HasFields {
             return null;
         }
 
+        @Override
         public boolean fieldAlsoHasFields(String name) {
             return true;
         }
