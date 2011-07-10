@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2011. Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -447,38 +447,35 @@ public class CreateProjectCommand extends Command {
     ) throws Exception {
         if (importer instanceof ReaderImporter) {
 
-            BufferedInputStream inputStream = new BufferedInputStream(rawInputStream);
-
-            // NOTE(SM): The ICU4J char detection code requires the input stream to support mark/reset.
-            // Unfortunately, not all ServletInputStream implementations are marking, so we need do
-            // this memory-expensive wrapping to make it work. It's far from ideal but I don't have
-            // a more efficient solution.
-            byte[] bytes = new byte[1024 * 4];
-            inputStream.mark(bytes.length);
-            inputStream.read(bytes);
-            inputStream.reset();
+            // NOTE: The ICU4J char detection code requires the input stream to support mark/reset.
+            InputStream inputStream = rawInputStream;
+            if (!inputStream.markSupported()) {
+                inputStream = new BufferedInputStream(rawInputStream);
+            }
 
             CharsetDetector detector = new CharsetDetector();
             detector.setDeclaredEncoding("utf8"); // most of the content on the web is encoded in UTF-8 so start with that
             options.setProperty("encoding_confidence", "0"); // in case we don't find anything suitable
 
             InputStreamReader reader = null;
-            CharsetMatch[] charsetMatches = detector.setText(bytes).detectAll();
-            if (charsetMatches.length > 0) {
-                CharsetMatch charsetMatch = charsetMatches[0]; // matches are ordered - first is best match
+            CharsetMatch[] charsetMatches = detector.setText(inputStream).detectAll();
+            for (CharsetMatch charsetMatch : charsetMatches) { // matches are ordered - first is best match
+                String matchName = charsetMatch.getName();
                 int confidence = charsetMatch.getConfidence();
                 // Threshold was 50.  Do we ever want to not use our best guess even if it's low confidence? - tfmorris
                 if (confidence >= 20) {
+                    logger.info("Encoding guess: {} [confidence: {}]", matchName, confidence);
                     try {
-                        reader = new InputStreamReader(inputStream, charsetMatch.getName());
+                        reader = new InputStreamReader(inputStream, matchName);
                     } catch (UnsupportedEncodingException e) {
-                        // ignored - we'll fall back to a different reader later
+                        logger.debug("Unsupported InputStreamReader charset encoding: {} [confidence: {}]; skipping", matchName, confidence);
+                        continue;
                     }
                     // Encoding will be set later at common exit point
-                    options.setProperty("encoding_confidence", Integer.toString(confidence));    
-                    logger.info("Best encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
+                    options.setProperty("encoding_confidence", Integer.toString(confidence));
+                    break;
                 } else {
-                    logger.debug("Poor encoding guess: {} [confidence: {}]", charsetMatch.getName(), charsetMatch.getConfidence());
+                    logger.debug("Poor encoding guess: {} [confidence: {}]; skipping", matchName, confidence);
                 }
             }
 
