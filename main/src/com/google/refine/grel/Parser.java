@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2011. Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -119,7 +119,7 @@ public class Parser {
 
             next(true);
 
-            Evaluable sub2 = parseSubExpression();
+            Evaluable sub2 = parseTerm();
 
             sub = new OperatorCallExpr(new Evaluable[] { sub, sub2 }, op);
         }
