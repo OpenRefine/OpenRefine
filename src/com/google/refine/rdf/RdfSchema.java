@@ -146,7 +146,6 @@ public class RdfSchema implements OverlayModel {
     static protected Node reconstructNode(JSONObject o, RdfSchema s)
             throws JSONException {
         Node node = null;
-        int blanksCount = 0;
         String nodeType = o.getString("nodeType");
         if (nodeType.startsWith("cell-as-")) {
         	
@@ -193,8 +192,7 @@ public class RdfSchema implements OverlayModel {
             lang = stripAtt(lang);
             node = new ConstantLiteralNode(o.getString("value"), valueType,lang);
         } else if ("blank".equals(nodeType)) {
-            node = new ConstantBlankNode(blanksCount);
-            blanksCount += 1;
+            node = new ConstantBlankNode(s._blanks.size());
             s._blanks.add((ConstantBlankNode) node);
             reconstructTypes((ConstantBlankNode)node,o);
         }
