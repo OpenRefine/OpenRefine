@@ -398,6 +398,6 @@ public class VocabularySearcher implements IVocabularySearcher {
 	}
 	
 	private int getMaxDoc() throws IOException {
-		return searcher.maxDoc() > 0 ? searcher.maxDoc() : 1000;
+		return searcher.maxDoc() > 0 ? searcher.maxDoc() : 100000;
 	}
 }
