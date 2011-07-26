@@ -59,8 +59,8 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
         DialogSystem.dismissUntil(self._level - 1);
     });
     
-    var dismissBusy = DialogSystem.showBusy();
-    var type = "reconConfig" in column && "type" in column.reconConfig ? column.reconConfig.type.id : "/common/topic";
+    var dismissBusy = DialogSystem.showBusy();console.log(column.reconConfig)
+    var type = (column.reconConfig) && (column.reconConfig.type) ? column.reconConfig.type.id : "/common/topic";
     
     ExtendDataPreviewDialog.getAllProperties(type, function(properties) {
         dismissBusy();
