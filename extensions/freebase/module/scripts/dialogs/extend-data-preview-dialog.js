@@ -59,7 +59,7 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
         DialogSystem.dismissUntil(self._level - 1);
     });
     
-    var dismissBusy = DialogSystem.showBusy();console.log(column.reconConfig)
+    var dismissBusy = DialogSystem.showBusy();
     var type = (column.reconConfig) && (column.reconConfig.type) ? column.reconConfig.type.id : "/common/topic";
     
     ExtendDataPreviewDialog.getAllProperties(type, function(properties) {
@@ -141,7 +141,7 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
     var suggestConfig = {
         type: '/type/property'
     };
-    if ("reconConfig" in this._column && "type" in this._column.reconConfig) {
+    if ((this._column.reconConfig) && (this._column.reconConfig.type)) {
         suggestConfig.ac_param = { schema: this._column.reconConfig.type.id };
     }
     
