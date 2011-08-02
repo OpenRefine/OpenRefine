@@ -50,9 +50,10 @@ function registerCommands() {
 
     RS.registerCommand(module, "get-version", new Packages.com.google.refine.commands.GetVersionCommand());
 
-    RS.registerCommand(module, "create-import-job", new Packages.com.google.refine.commands.importing.CreateImportJobCommand());
-    RS.registerCommand(module, "retrieve-import-content", new Packages.com.google.refine.commands.importing.RetrieveImportContentCommand());
-    RS.registerCommand(module, "get-import-job-status", new Packages.com.google.refine.commands.importing.GetImportJobStatusCommand());
+    RS.registerCommand(module, "get-importing-configuration", new Packages.com.google.refine.commands.importing.GetImportingConfigurationCommand());
+    RS.registerCommand(module, "create-importing-job", new Packages.com.google.refine.commands.importing.CreateImportingJobCommand());
+    RS.registerCommand(module, "get-importing-job-status", new Packages.com.google.refine.commands.importing.GetImportingJobStatusCommand());
+    RS.registerCommand(module, "importing-controller", new Packages.com.google.refine.commands.importing.ImportingControllerCommand());
     
     RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
     RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
@@ -120,11 +121,8 @@ function registerCommands() {
 
     RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
     RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
-    RS.registerCommand(module, "get-starred-expressions", new Packages.com.google.refine.commands.expr.GetStarredExpressionsCommand());
-    RS.registerCommand(module, "toggle-starred-expression", new Packages.com.google.refine.commands.expr.ToggleStarredExpressionCommand());
     RS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
     RS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
-
 
     RS.registerCommand(module, "get-preference", new Packages.com.google.refine.commands.GetPreferenceCommand());
     RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
@@ -168,11 +166,98 @@ function registerOperations() {
     OR.registerOperation(module, "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
 }
 
-function registerImportSourceClasses() {
-  var RM = Packages.com.google.refine.commands.importing.ImportManager;
-  RM.registerImportSourceClass("file-upload", Packages.com.google.refine.model.meta.FileUploadImportSource);
-  RM.registerImportSourceClass("text", Packages.com.google.refine.model.meta.TextImportSource);
-  RM.registerImportSourceClass("web", Packages.com.google.refine.model.meta.WebImportSource);
+function registerImporting() {
+    var IM = Packages.com.google.refine.importing.ImportingManager;
+    
+    /*
+     *  Formats and their UI class names and parsers:
+     *  - UI class names are used on the client-side in Javascript to instantiate code that lets the user
+     *    configure the parser's options.
+     *  - Parsers are server-side code that do the actual parsing. Because they have access to the raw files,
+     *    they also generate defaults for the client-side UIs to initialize.
+     */
+    
+    IM.registerFormat("text", "Text files"); // generic format, no parser to handle it
+    IM.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
+        new Packages.com.google.refine.importers.LineBasedImporter());
+    IM.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
+        new Packages.com.google.refine.importers.SeparatorBasedImporter());
+    IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
+        new Packages.com.google.refine.importers.FixedWidthImporter());
+    
+    IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
+    IM.registerFormat("text/xml/xlsx", "Excel (.xlsx) files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+    IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
+    IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
+    IM.registerFormat("text/marc", "MARC files");
+    
+    IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
+    IM.registerFormat("binary/xls", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+    
+    IM.registerFormat("service", "Services"); // generic format, no parser to handle it
+    
+    /*
+     *  Extension to format mappings
+     */
+    IM.registerExtension(".txt", "text/line-based");
+    IM.registerExtension(".csv", "text/line-based/*sv");
+    IM.registerExtension(".tsv", "text/line-based/*sv");
+    
+    IM.registerExtension(".xml", "text/xml");
+    IM.registerExtension(".rdf", "text/xml/rdf");
+    
+    IM.registerExtension(".json", "text/json");
+    IM.registerExtension(".js", "text/json");
+    
+    IM.registerExtension(".xls", "binary/xls");
+    IM.registerExtension(".xlsx", "text/xml/xlsx");
+    
+    IM.registerExtension(".marc", "text/marc");
+    IM.registerExtension(".mrc", "text/marc");
+    
+    /*
+     *  Mime type to format mappings
+     */
+    IM.registerMimeType("text/plain", "text/line-based");
+    IM.registerMimeType("text/csv", "text/line-based/*sv");
+    IM.registerMimeType("text/x-csv", "text/line-based/*sv");
+    IM.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
+    
+    IM.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
+     
+    IM.registerMimeType("application/msexcel", "binary/xls");
+    IM.registerMimeType("application/x-msexcel", "binary/xls");
+    IM.registerMimeType("application/x-ms-excel", "binary/xls");
+    IM.registerMimeType("application/vnd.ms-excel", "binary/xls");
+    IM.registerMimeType("application/x-excel", "binary/xls");
+    IM.registerMimeType("application/xls", "binary/xls");
+    IM.registerMimeType("application/x-xls", "text/xml/xlsx");
+    
+    IM.registerMimeType("application/json", "text/json");
+    IM.registerMimeType("text/json", "text/json");
+    
+    IM.registerMimeType("application/rdf+xml", "text/xml/rdf");
+    
+    IM.registerMimeType("application/marc", "text/marc");
+    
+    /*
+     *  Format guessers: these take a format derived from extensions or mime-types,
+     *  look at the actual files' content, and try to guess a better format.
+     */
+    IM.registerFormatGuesser("text", new Packages.com.google.refine.importers.TextFormatGuesser());
+    IM.registerFormatGuesser("text/line-based", new Packages.com.google.refine.importers.LineBasedFormatGuesser());
+    
+    /*
+     *  Controllers: these implement high-level UI flows for importing data. For example, the default
+     *  controller lets the user specify one or more source files, either local or remote or on the clipboard,
+     *  lets the user select which files to actually import in case any of the original file is an archive
+     *  containing several files, and then lets the user configure parsing options.
+     */
+    IM.registerController(
+        module,
+        "default-importing-controller",
+        new Packages.com.google.refine.importing.DefaultImportingController()
+    );
 }
 
 /*
@@ -183,7 +268,7 @@ function init() {
     
     registerCommands();
     registerOperations();
-    registerImportSourceClasses();
+    registerImporting();
     
     var RC = Packages.com.google.refine.model.recon.ReconConfig;
     RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
@@ -193,12 +278,36 @@ function init() {
         module,
         [
             "externals/jquery-1.4.2.min.js",
+            "externals/jquery.cookie.js",
+            "externals/jquery.eventstack-0.3.js",
             "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
             "externals/date.js",
+            
+            "scripts/util/misc.js",
+            "scripts/util/url.js",
             "scripts/util/string.js",
+            "scripts/util/ajax.js",
+            "scripts/util/menu.js",
+            "scripts/util/dialog.js",
             "scripts/util/dom.js",
+            
             "scripts/index.js",
-            "scripts/index/import-sources.js"
+            "scripts/index/create-project-ui.js",
+            "scripts/index/open-project-ui.js",
+            "scripts/index/import-project-ui.js",
+            
+            "scripts/index/default-importing-controller/controller.js",
+            "scripts/index/default-importing-controller/file-selection-panel.js",
+            "scripts/index/default-importing-controller/parsing-panel.js",
+            
+            "scripts/index/default-importing-sources/sources.js",
+            "scripts/index/parser-interfaces/preview-table.js",
+            "scripts/index/parser-interfaces/separator-based-parser-ui.js",
+            "scripts/index/parser-interfaces/line-based-parser-ui.js",
+            "scripts/index/parser-interfaces/fixed-width-parser-ui.js",
+            "scripts/index/parser-interfaces/excel-parser-ui.js",
+            "scripts/index/parser-interfaces/xml-parser-ui.js",
+            "scripts/index/parser-interfaces/json-parser-ui.js"
         ]
     );
     
@@ -210,32 +319,20 @@ function init() {
             "styles/jquery-ui-overrides.less",
             "styles/common.less",
             "styles/pure.css",
-            "styles/index.less"
-        ]
-    );
-    
-    ClientSideResourceManager.addPaths(
-        "import/scripts",
-        module,
-        [
-            "externals/jquery-1.4.2.min.js",
-            "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
-            "externals/date.js",
-            "scripts/util/string.js",
-            "scripts/util/dom.js",
-            "scripts/import.js"
-        ]
-    );
-    
-    ClientSideResourceManager.addPaths(
-        "import/styles",
-        module,
-        [
-            "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
-            "styles/jquery-ui-overrides.less",
-            "styles/common.less",
-            "styles/pure.css",
-            "styles/import.less"
+            "styles/index.less",
+            "styles/index/create-project-ui.less",
+            "styles/index/open-project-ui.less",
+            "styles/index/import-project-ui.less",
+            
+            "styles/index/default-importing-controller.less",
+            "styles/index/default-importing-file-selection-panel.less",
+            "styles/index/default-importing-parsing-panel.less",
+            
+            "styles/index/default-importing-sources.less",
+            "styles/views/data-table-view.less", // for the preview table's styles
+            "styles/index/fixed-width-parser-ui.less",
+            "styles/index/xml-parser-ui.less",
+            "styles/index/json-parser-ui.less"
         ]
     );
     

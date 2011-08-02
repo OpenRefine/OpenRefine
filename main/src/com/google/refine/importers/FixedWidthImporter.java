@@ -1,179 +1,107 @@
 package com.google.refine.importers;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
-import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.refine.ProjectMetadata;
-import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.model.Cell;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
+import com.google.refine.util.JSONUtilities;
 
-public class FixedWidthImporter implements ReaderImporter, StreamImporter { //TODO this class is almost an exact copy of TsvCsvImporter.  Could we combine the two, or combine common functions into a common abstract supertype?
-
-    final static Logger logger = LoggerFactory.getLogger("FixedWidthImporter");
+public class FixedWidthImporter extends TabularImportingParserBase {
+    public FixedWidthImporter() {
+        super(false);
+    }
     
     @Override
-    public boolean canImportData(String contentType, String fileName) {
-        if (contentType != null) {
-            contentType = contentType.toLowerCase().trim();
-            
-            //filter out tree structure data
-            if("application/json".equals(contentType)||
-                    "text/json".equals(contentType)||
-                    "application/xml".equals(contentType) ||
-                    "text/xml".equals(contentType) ||
-                    "application/rss+xml".equals(contentType) ||
-                    "application/atom+xml".equals(contentType) ||
-                    "application/rdf+xml".equals(contentType))  //TODO add more tree data types.
-                return false;
-            
-            return
-                "text/plain".equals(contentType)
-                || "text/fixed-width".equals(contentType);  //FIXME Is text/fixed-width a valid contentType?
-        }
-        return false;
-    }
-
-    @Override
-    public void read(InputStream inputStream, Project project,
-            ProjectMetadata metadata, Properties options)
-            throws ImportException {
-        read(new InputStreamReader(inputStream), project, metadata, options);
-    }
-
-    @Override
-    public void read(Reader reader, Project project, ProjectMetadata metadata,
-            Properties options) throws ImportException {
-        boolean splitIntoColumns = ImporterUtilities.getBooleanOption("split-into-columns", options, true);
-        String columnWidths = options.getProperty("fixed-column-widths");
-        int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
-        int headerLines = ImporterUtilities.getIntegerOption("header-lines", options, 1);
-
-        int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
-        int skip = ImporterUtilities.getIntegerOption("skip",options,0);
-        boolean guessValueType = ImporterUtilities.getBooleanOption("guess-value-type", options, true);
-
-        LineNumberReader lnReader = new LineNumberReader(reader);
+    public JSONObject createParserUIInitializationData(
+            ImportingJob job, List<JSONObject> fileRecords, String format) {
+        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+        JSONArray columnWidths = new JSONArray();
         
-        
-        read(lnReader, project, columnWidths,
-            limit, skip, ignoreLines, headerLines,
-            guessValueType, splitIntoColumns
-        );
-        
-    }
-
-    /**
-    *
-    * @param lnReader
-    *           LineNumberReader used to read file or string contents
-    * @param project
-    *           The project into which the parsed data will be added
-    * @param columnWidths
-    *           Expects a comma separated string of integers which indicate the number of characters in each line
-    * @param limit
-    *           The maximum number of rows of data to import
-    * @param skip
-    *           The number of initial data rows to skip
-    * @param ignoreLines
-    *           The number of initial lines within the data source which should be ignored entirely
-    * @param headerLines
-    *           The number of lines in the data source which describe each column
-    * @param guessValueType
-    *           Whether the parser should try and guess the type of the value being parsed
-    * @param splitIntoColumns
-    *           Whether the parser should try and split the data source into columns
-    * @throws IOException
-    */
-    public void read(LineNumberReader lnReader, Project project,
-            String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean splitIntoColumns) throws ImportException{
-                
-                int[] columnWidths = null;
-
-                columnWidths = getColumnWidthsFromString( sep );
-                
-                if(columnWidths.length < 2)
-                    splitIntoColumns = false;
-                
-                List<String> columnNames = new ArrayList<String>();
-                String line = null;
-                int rowsWithData = 0;
-
-                try {
-                    while ((line = lnReader.readLine()) != null) {
-                        if (ignoreLines > 0) {
-                            ignoreLines--;
-                            continue;
-                        } else if (StringUtils.isBlank(line)) {
-                            continue;
-                        }
-
-
-                        if (headerLines > 0) {
-                            //column headers
-                            headerLines--;
-                            
-                            ArrayList<String> cells = getCells(line, columnWidths, splitIntoColumns);
-                            
-                            for (int c = 0; c < cells.size(); c++) {
-                                String cell = cells.get(c).trim();
-                                //add column even if cell is blank
-                                ImporterUtilities.appendColumnName(columnNames, c, cell);
-                            }
-                        } else {
-                            //data
-                            Row row = new Row(columnNames.size());
-
-                            ArrayList<String> cells = getCells(line, columnWidths, splitIntoColumns);
-
-                            if( cells != null && cells.size() > 0 )
-                                rowsWithData++;
-
-                            if (skip <=0  || rowsWithData > skip){
-                                //add parsed data to row
-                                for(String s : cells){
-                                    if (ExpressionUtils.isNonBlankData(s)) {
-                                        Serializable value = guessValueType ? ImporterUtilities.parseCellValue(s) : s;
-                                        row.cells.add(new Cell(value, null));
-                                    }else{
-                                        row.cells.add(null);
-                                    }
-                                }
-                                project.rows.add(row);
-                                project.columnModel.setMaxCellIndex(row.cells.size());
-                                
-                                ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
-
-                                if (limit > 0 && project.rows.size() >= limit) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    throw new ImportException("The fixed width importer could not read the next line", e);
+        JSONObject firstFileRecord = fileRecords.get(0);
+        String encoding = ImportingUtilities.getEncoding(firstFileRecord);
+        String location = JSONUtilities.getString(firstFileRecord, "location", null);
+        if (location != null) {
+            File file = new File(job.getRawDataDir(), location);
+            int[] columnWidthsA = guessColumnWidths(file, encoding);
+            if (columnWidthsA != null) {
+                for (int w : columnWidthsA) {
+                    JSONUtilities.append(columnWidths, w);
                 }
-
-                ImporterUtilities.setupColumns(project, columnNames);
-        
+            }
         }
+        
+        JSONUtilities.safePut(options, "lineSeparator", "\n");
+        JSONUtilities.safePut(options, "headerLines", 0);
+        JSONUtilities.safePut(options, "columnWidths", columnWidths);
+        JSONUtilities.safePut(options, "guessCellValueTypes", true);
+        
+        return options;
+    }
 
+    @Override
+    public void parseOneFile(
+        Project project,
+        ProjectMetadata metadata,
+        ImportingJob job,
+        String fileSource,
+        Reader reader,
+        int limit,
+        JSONObject options,
+        List<Exception> exceptions
+    ) {
+        // String lineSeparator = JSONUtilities.getString(options, "lineSeparator", "\n");
+        final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
+        
+        final List<Object> columnNames;
+        if (options.has("columnNames")) {
+            columnNames = new ArrayList<Object>();
+            String[] strings = JSONUtilities.getStringArray(options, "columnNames");
+            for (String s : strings) {
+                columnNames.add(s);
+            }
+            JSONUtilities.safePut(options, "headerLines", 1);
+        } else {
+            columnNames = null;
+        }
+        
+        final LineNumberReader lnReader = new LineNumberReader(reader);
+        
+        TableDataReader dataReader = new TableDataReader() {
+            boolean usedColumnNames = false;
+            
+            @Override
+            public List<Object> getNextRowOfCells() throws IOException {
+                if (columnNames != null && !usedColumnNames) {
+                    usedColumnNames = true;
+                    return columnNames;
+                } else {
+                    String line = lnReader.readLine();
+                    if (line == null) {
+                        return null;
+                    } else {
+                        return getCells(line, columnWidths);
+                    }
+                }
+            }
+        };
+        
+        readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+    }
+    
     /**
      * Splits the line into columns
      * @param line
@@ -181,60 +109,108 @@ public class FixedWidthImporter implements ReaderImporter, StreamImporter { //TO
      * @param splitIntoColumns
      * @return
      */
-    private ArrayList<String> getCells(String line, int[] widths, boolean splitIntoColumns) {
-        ArrayList<String> cells = new ArrayList<String>();
-        if(splitIntoColumns){
-            int columnStartCursor = 0;
-            int columnEndCursor = 0;
-            for(int width : widths){
-                if(columnStartCursor >= line.length()){
-                    cells.add(null); //FIXME is adding a null cell (to represent no data) OK?
-                    continue;
-                }
-                
-                columnEndCursor = columnStartCursor + width;
-                
-                if(columnEndCursor > line.length())
-                    columnEndCursor = line.length();
-                if(columnEndCursor <= columnStartCursor){
-                    cells.add(null); //FIXME is adding a null cell (to represent no data, or a zero width column) OK? 
-                    continue;
-                }
-                
-                cells.add(line.substring(columnStartCursor, columnEndCursor));
-                
-                columnStartCursor = columnEndCursor;
+    static private ArrayList<Object> getCells(String line, int[] widths) {
+        ArrayList<Object> cells = new ArrayList<Object>();
+        
+        int columnStartCursor = 0;
+        int columnEndCursor = 0;
+        for (int width : widths) {
+            if (columnStartCursor >= line.length()) {
+                cells.add(null); //FIXME is adding a null cell (to represent no data) OK?
+                continue;
             }
-        }else{
-            cells.add(line);
+            
+            columnEndCursor = columnStartCursor + width;
+            
+            if (columnEndCursor > line.length()) {
+                columnEndCursor = line.length();
+            }
+            if (columnEndCursor <= columnStartCursor) {
+                cells.add(null); //FIXME is adding a null cell (to represent no data, or a zero width column) OK? 
+                continue;
+            }
+            
+            cells.add(line.substring(columnStartCursor, columnEndCursor));
+            
+            columnStartCursor = columnEndCursor;
+        }
+        
+        // Residual text
+        if (columnStartCursor < line.length()) {
+            cells.add(line.substring(columnStartCursor));
         }
         return cells;
     }
-
-    /**
-     * Converts the expected string of comma separated integers into an array of integers.
-     * Also performs a basic sanity check on the provided data.
-     * 
-     * @param sep
-     * A comma separated string of integers. e.g. 4,2,5,22,19
-     * @return
-     * @throws ServletException
-     */
-    public int[] getColumnWidthsFromString(String sep) throws ImportException {
-        String[] splitSep = Pattern.compile(",").split(sep);
-
-        int[] widths = new int[splitSep.length];
-        for(int i = 0;  i < splitSep.length; i++){
-            try{
-                int parsedInt = Integer.parseInt(splitSep[i]);
-                if( parsedInt < 0 )
-                    throw new ImportException("A column cannot have a width of less than zero", null);
-                widths[i] = parsedInt;
-            }catch(NumberFormatException e){
-                throw new ImportException("For a fixed column width import, the column widths must be given as a comma separated string of integers.  e.g. 1,3,5,22,19", e);
+    
+    static public int[] guessColumnWidths(File file, String encoding) {
+        try {
+            InputStream is = new FileInputStream(file);
+            try {
+                Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+                LineNumberReader lineNumberReader = new LineNumberReader(reader);
+                
+                int[] counts = null;
+                int totalBytes = 0;
+                int lineCount = 0;
+                String s;
+                while (totalBytes < 64 * 1024 &&
+                       lineCount < 100 &&
+                       (s = lineNumberReader.readLine()) != null) {
+                    
+                    totalBytes += s.length() + 1; // count the new line character
+                    if (s.length() == 0) {
+                        continue;
+                    }
+                    lineCount++;
+                    
+                    if (counts == null) {
+                        counts = new int[s.length()];
+                        for (int c = 0; c < counts.length; c++) {
+                            counts[c] = 0;
+                        }
+                    }
+                    
+                    for (int c = 0; c < counts.length && c < s.length(); c++) {
+                        char ch = s.charAt(c);
+                        if (ch == ' ') {
+                            counts[c]++;
+                        }
+                    }
+                }
+                
+                if (counts != null) {
+                    List<Integer> widths = new ArrayList<Integer>();
+                    
+                    int startIndex = 0;
+                    for (int c = 0; c < counts.length; c++) {
+                        int count = counts[c];
+                        if (count == lineCount && c > startIndex) {
+                            widths.add(c - startIndex + 1);
+                            startIndex = c + 1;
+                        }
+                    }
+                    
+                    for (int i = widths.size() - 1; i > 0; i--) {
+                        if (widths.get(i) == 1) {
+                            widths.remove(i);
+                            widths.set(i - 1, widths.get(i - 1) + 1);
+                        }
+                    }
+                    
+                    int[] widthA = new int[widths.size()];
+                    for (int i = 0; i < widthA.length; i++) {
+                        widthA[i] = widths.get(i);
+                    }
+                    return widthA;
+                }
+            } finally {
+                is.close();
             }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return widths;
+        return null;
     }
-
 }

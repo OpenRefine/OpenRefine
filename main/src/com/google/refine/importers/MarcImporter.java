@@ -40,56 +40,44 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Properties;
+import java.util.List;
 
+import org.json.JSONObject;
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
 import org.marc4j.marc.Record;
 
 import com.google.refine.ProjectMetadata;
+import com.google.refine.importers.tree.ImportColumnGroup;
+import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
 
-public class MarcImporter implements StreamImporter {
-
+public class MarcImporter extends XmlImporter {
     @Override
-    public void read(
-        InputStream inputStream,
-        Project project,
-        ProjectMetadata metadata, Properties options
-    ) throws ImportException {
-        int limit = ImporterUtilities.getIntegerOption("limit",options,-1);
-        int skip = ImporterUtilities.getIntegerOption("skip",options,0);
-
+    public void parseOneFile(Project project, ProjectMetadata metadata,
+            ImportingJob job, String fileSource, InputStream inputStream,
+            ImportColumnGroup rootColumnGroup, int limit, JSONObject options,
+            List<Exception> exceptions) {
+        
         File tempFile;
         try {
             tempFile = File.createTempFile("refine-import-", ".marc.xml");
         } catch (IOException e) {
-            throw new ImportException("Unexpected error creating temp file",e);
+            exceptions.add(new ImportException("Unexpected error creating temp file", e));
+            return;
         }
+        
         try {
             OutputStream os = new FileOutputStream(tempFile);
             try {
-                MarcPermissiveStreamReader reader = new MarcPermissiveStreamReader(
-                    inputStream,
-                    true,
-                    true
-                );
                 MarcWriter writer = new MarcXmlWriter(os, true);
-
-                int count = 0;
+                
+                MarcPermissiveStreamReader reader = new MarcPermissiveStreamReader(
+                    inputStream, true, true);
                 while (reader.hasNext()) {
                     Record record = reader.next();
-                    if (skip <= 0) {
-                        if (limit == -1 || count < limit) {
-                            writer.write(record);
-                            count++;
-                        } else {
-                            break;
-                        }
-                    } else {
-                        skip--;
-                    }
+                    writer.write(record);
                 }
                 writer.close();
             } finally {
@@ -102,7 +90,8 @@ public class MarcImporter implements StreamImporter {
 
             InputStream is = new FileInputStream(tempFile);
             try {
-                new XmlImporter().read(is, project, metadata, options);
+                super.parseOneFile(project, metadata, job, fileSource, inputStream,
+                        rootColumnGroup, limit, options, exceptions);
             } finally {
                 try {
                     is.close();
@@ -111,31 +100,10 @@ public class MarcImporter implements StreamImporter {
                 }
             }
         } catch (FileNotFoundException e) {
-            throw new ImportException("Input file not found", e);
+            exceptions.add(new ImportException("Input file not found", e));
+            return;
         } finally {
             tempFile.delete();
         }
-    }
-
-    @Override
-    public boolean canImportData(String contentType, String fileName) {
-        if (contentType != null) {
-            contentType = contentType.toLowerCase().trim();
-
-            if ("application/marc".equals(contentType)) {
-                return true;
-            }
-        } else if (fileName != null) {
-            fileName = fileName.toLowerCase();
-            if (
-                    fileName.endsWith(".mrc") ||
-                    fileName.endsWith(".marc") ||
-                    fileName.contains(".mrc.") ||
-                    fileName.contains(".marc.")
-                ) {
-                return true;
-            }
-        }
-        return false;
     }
 }

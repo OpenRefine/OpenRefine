@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.tests.importers;
 
 import java.io.StringReader;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -42,13 +41,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.RdfTripleImporter;
-import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
+import com.google.refine.util.JSONUtilities;
 
-
-public class RdfTripleImporterTests extends RefineTest {
+public class RdfTripleImporterTests extends ImporterTest {
     
     @BeforeTest
     public void init() {
@@ -58,15 +54,12 @@ public class RdfTripleImporterTests extends RefineTest {
     
     //System Under Test
     RdfTripleImporter SUT = null;
-    Project project = null;
-    Properties options = null;
 
     @BeforeMethod
     public void SetUp(){
+        super.SetUp();
         SUT = new RdfTripleImporter();
-        project = new Project();
-        options = new Properties();
-        options.put("base-url", "http://rdf.freebase.com");
+        JSONUtilities.safePut(options, "base-url", "http://rdf.freebase.com");
     }
 
     @Test(enabled=false)
@@ -75,8 +68,7 @@ public class RdfTripleImporterTests extends RefineTest {
         StringReader reader = new StringReader(sampleRdf);
 
         try {
-            SUT.read(reader, project, new ProjectMetadata(), options);
-            project.update();
+            parseOneFile(SUT, reader);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -98,8 +90,7 @@ public class RdfTripleImporterTests extends RefineTest {
         StringReader reader = new StringReader(sampleRdf);
 
         try {
-            SUT.read(reader, project, new ProjectMetadata(), options);
-            project.update();
+            parseOneFile(SUT, reader);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -140,8 +131,7 @@ public class RdfTripleImporterTests extends RefineTest {
         StringReader reader = new StringReader(sampleRdf);
 
         try {
-            SUT.read(reader, project, new ProjectMetadata(), options);
-            project.update();
+            parseOneFile(SUT, reader);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -175,8 +165,7 @@ public class RdfTripleImporterTests extends RefineTest {
         StringReader reader = new StringReader(sampleRdf);
 
         try {
-            SUT.read(reader, project, new ProjectMetadata(), options);
-            project.update();
+            parseOneFile(SUT, reader);
         } catch (Exception e) {
             Assert.fail();
         }

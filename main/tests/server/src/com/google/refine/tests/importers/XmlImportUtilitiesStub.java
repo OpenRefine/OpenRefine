@@ -35,27 +35,27 @@ package com.google.refine.tests.importers;
 
 import java.util.List;
 
-import javax.servlet.ServletException;
-
-import com.google.refine.importers.XmlImportUtilities;
-import com.google.refine.importers.parsers.TreeParser;
+import com.google.refine.importers.tree.ImportColumnGroup;
+import com.google.refine.importers.tree.ImportRecord;
+import com.google.refine.importers.tree.TreeReader;
+import com.google.refine.importers.tree.XmlImportUtilities;
 import com.google.refine.model.Project;
 
 public class XmlImportUtilitiesStub extends XmlImportUtilities {
     
-    public List<String> detectRecordElementWrapper(TreeParser parser, String tag) throws ServletException{
+    public List<String> detectRecordElementWrapper(TreeReader parser, String tag) throws Exception{
         return super.detectRecordElement(parser, tag);
     }
 
-    public void ProcessSubRecordWrapper(Project project, TreeParser parser, ImportColumnGroup columnGroup, ImportRecord record) throws ServletException{
+    public void ProcessSubRecordWrapper(Project project, TreeReader parser, ImportColumnGroup columnGroup, ImportRecord record) throws Exception{
         super.processSubRecord(project, parser, columnGroup, record);
     }
 
-    public void findRecordWrapper(Project project, TreeParser parser, String[] recordPath, int pathIndex, ImportColumnGroup rootColumnGroup) throws ServletException{
-        super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup);
+    public void findRecordWrapper(Project project, TreeReader parser, String[] recordPath, int pathIndex, ImportColumnGroup rootColumnGroup) throws Exception{
+        super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, -1);
     }
 
-    public void processRecordWrapper(Project project, TreeParser parser, ImportColumnGroup rootColumnGroup) throws ServletException{
+    public void processRecordWrapper(Project project, TreeReader parser, ImportColumnGroup rootColumnGroup) throws Exception{
         super.processRecord(project, parser, rootColumnGroup);
     }
 

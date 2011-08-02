@@ -38,11 +38,9 @@ package com.google.refine.importers;
  * indicating the underlying cause of the problem.
  */
 public class ImportException extends Exception {
-
-	private static final long serialVersionUID = 7077314805989174181L;
-
-	public ImportException(String message, Throwable cause) {
+    private static final long serialVersionUID = 7077314805989174181L;
+    
+    public ImportException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

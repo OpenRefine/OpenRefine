@@ -33,6 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
@@ -41,6 +48,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.JSONUtilities;
 
 public class RefineTest {
 
@@ -80,6 +88,43 @@ public class RefineTest {
                 }
             }
             logger.info(sb.toString());
+        }
+    }
+    
+    //----helpers----
+    
+    static public void whenGetBooleanOption(String name, JSONObject options, Boolean def){
+        when(options.has(name)).thenReturn(true);
+        when(JSONUtilities.getBoolean(options, name, def)).thenReturn(def);
+    }
+    
+    static public void whenGetIntegerOption(String name, JSONObject options, int def){
+        when(options.has(name)).thenReturn(true);
+        when(JSONUtilities.getInt(options, name, def)).thenReturn(def);
+    }
+    
+    static public void whenGetStringOption(String name, JSONObject options, String def){
+        when(options.has(name)).thenReturn(true);
+        when(JSONUtilities.getString(options, name, def)).thenReturn(def);
+    }
+    
+    static public void whenGetObjectOption(String name, JSONObject options, JSONObject def){
+        when(options.has(name)).thenReturn(true);
+        when(JSONUtilities.getObject(options, name)).thenReturn(def);
+    }
+    
+    static public void whenGetArrayOption(String name, JSONObject options, JSONArray def){
+        when(options.has(name)).thenReturn(true);
+        when(JSONUtilities.getArray(options, name)).thenReturn(def);
+    }
+    
+    static public void verifyGetOption(String name, JSONObject options){
+        verify(options, times(1)).has(name);
+        try {
+            verify(options, times(1)).get(name);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 }

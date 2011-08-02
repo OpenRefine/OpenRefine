@@ -33,99 +33,274 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.util.Properties;
+import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.ServletException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.refine.ProjectMetadata;
-import com.google.refine.importers.TreeImportUtilities.ImportColumnGroup;
-import com.google.refine.importers.parsers.TreeParser;
-import com.google.refine.importers.parsers.XmlParser;
+import com.google.refine.importers.tree.ImportColumnGroup;
+import com.google.refine.importers.tree.TreeImportingParserBase;
+import com.google.refine.importers.tree.TreeReader;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
+import com.google.refine.util.JSONUtilities;
 
-public class XmlImporter implements StreamImporter {
-
-    final static Logger logger = LoggerFactory.getLogger("XmlImporter");
-
-    public static final int BUFFER_SIZE = 64 * 1024;
-
+public class XmlImporter extends TreeImportingParserBase {
+    public XmlImporter() {
+        super(true);
+    }
+    
+    static private class PreviewParsingState {
+        int tokenCount;
+    }
+    
+    final static private int PREVIEW_PARSING_LIMIT = 1000;
+    
     @Override
-    public void read(
-        InputStream inputStream,
-        Project project,
-        ProjectMetadata metadata, Properties options
-    ) throws ImportException {
-        logger.trace("XmlImporter.read");
-        PushbackInputStream pis = new PushbackInputStream(inputStream,BUFFER_SIZE);
+    public JSONObject createParserUIInitializationData(
+            ImportingJob job, List<JSONObject> fileRecords, String format) {
+        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+        try {
+            JSONObject firstFileRecord = fileRecords.get(0);
+            File file = ImportingUtilities.getFile(job, firstFileRecord);
+            InputStream is = new FileInputStream(file);
+            try {
+                XMLStreamReader parser = createXMLStreamReader(is);
+                PreviewParsingState state = new PreviewParsingState();
+                
+                while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
+                    int tokenType = parser.next();
+                    state.tokenCount++;
+                    if (tokenType == XMLStreamConstants.START_ELEMENT) {
+                        JSONObject rootElement = descendElement(parser, state);
+                        if (rootElement != null) {
+                            JSONUtilities.safePut(options, "dom", rootElement);
+                            break;
+                        }
+                    } else {
+                        // ignore everything else
+                    }
+                }
+            } finally {
+                is.close();
+            }
+        } catch (XMLStreamException e) {
+            // Ignore
+        } catch (IOException e) {
+            // Ignore
+        }
 
-        String[] recordPath = null;
+        return options;
+    }
+    
+    final static private JSONObject descendElement(XMLStreamReader parser, PreviewParsingState state) throws XMLStreamException {
+        JSONObject result = new JSONObject();
         {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytes_read = 0;
-            try {//fill the buffer with data
-                while (bytes_read < BUFFER_SIZE) {
-                    int c = pis.read(buffer, bytes_read, BUFFER_SIZE - bytes_read);
-                    if (c == -1) break;
-                    bytes_read +=c ;
-                }
-                pis.unread(buffer, 0, bytes_read);
-            } catch (IOException e) {
-                throw new ImportException("Read error",e);
+            String name = parser.getLocalName();
+            JSONUtilities.safePut(result, "n", name);
+            
+            String prefix = parser.getPrefix();
+            if (prefix != null) {
+                JSONUtilities.safePut(result, "p", prefix);
             }
-
-            InputStream iStream = new ByteArrayInputStream(buffer, 0, bytes_read);
-            TreeParser parser = new XmlParser(iStream);
-            if (options.containsKey("importer-record-tag")) {
-                try{
-                    recordPath = XmlImportUtilities.detectPathFromTag(
-                        parser,
-                        options.getProperty("importer-record-tag"));
-                }catch(Exception e){
-                    // silent
-                    // e.printStackTrace();
+            String nsUri = parser.getNamespaceURI();
+            if (nsUri != null) {
+                JSONUtilities.safePut(result, "uri", nsUri);
+            }
+        }
+        
+        int namespaceCount = parser.getNamespaceCount();
+        if (namespaceCount > 0) {
+            JSONArray namespaces = new JSONArray();
+            JSONUtilities.safePut(result, "ns", namespaces);
+            
+            for (int i = 0; i < namespaceCount; i++) {
+                JSONObject namespace = new JSONObject();
+                JSONUtilities.append(namespaces, namespace);
+                JSONUtilities.safePut(namespace, "p", parser.getNamespacePrefix(i));
+                JSONUtilities.safePut(namespace, "uri", parser.getNamespaceURI(i));
+            }
+        }
+        
+        int attributeCount = parser.getAttributeCount();
+        if (attributeCount > 0) {
+            JSONArray attributes = new JSONArray();
+            JSONUtilities.safePut(result, "a", attributes);
+            
+            for (int i = 0; i < attributeCount; i++) {
+                JSONObject attribute = new JSONObject();
+                JSONUtilities.append(attributes, attribute);
+                JSONUtilities.safePut(attribute, "n", parser.getAttributeLocalName(i));
+                JSONUtilities.safePut(attribute, "v", parser.getAttributeValue(i));
+                String prefix = parser.getAttributePrefix(i);
+                if (prefix != null) {
+                    JSONUtilities.safePut(attribute, "p", prefix);
                 }
+            }
+        }
+        
+        JSONArray children = new JSONArray();
+        while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
+            int tokenType = parser.next();
+            state.tokenCount++;
+            if (tokenType == XMLStreamConstants.END_ELEMENT) {
+                break;
+            } else if (tokenType == XMLStreamConstants.START_ELEMENT) {
+                JSONObject childElement = descendElement(parser, state);
+                if (childElement != null) {
+                    JSONUtilities.append(children, childElement);
+                }
+            } else if (tokenType == XMLStreamConstants.CHARACTERS ||
+                       tokenType == XMLStreamConstants.CDATA ||
+                       tokenType == XMLStreamConstants.SPACE) {
+                JSONObject childElement = new JSONObject();
+                JSONUtilities.safePut(childElement, "t", parser.getText());
+                JSONUtilities.append(children, childElement);
             } else {
-                recordPath = XmlImportUtilities.detectRecordElement(parser);
+                // ignore everything else
             }
         }
-
-        if (recordPath == null)
-            return;
-
-        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        XmlImportUtilities.importTreeData(new XmlParser(pis), project, recordPath, rootColumnGroup);
-        XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-
-        project.columnModel.update();
+        
+        if (children.length() > 0) {
+            JSONUtilities.safePut(result, "c", children);
+        }
+        return result;
     }
-
+    
     @Override
-    public boolean canImportData(String contentType, String fileName) {
-        if (contentType != null) {
-            contentType = contentType.toLowerCase().trim();
-
-            if("application/xml".equals(contentType) ||
-                      "text/xml".equals(contentType) ||
-                      "application/rss+xml".equals(contentType) ||
-                      "application/atom+xml".equals(contentType)) {
-                return true;
+    public void parseOneFile(Project project, ProjectMetadata metadata,
+            ImportingJob job, String fileSource, InputStream inputStream,
+            ImportColumnGroup rootColumnGroup, int limit, JSONObject options,
+            List<Exception> exceptions) {
+        
+        try {
+            parseOneFile(project, metadata, job, fileSource,
+                new XmlParser(inputStream), rootColumnGroup, limit, options, exceptions);
+        } catch (XMLStreamException e) {
+            exceptions.add(e);
+        }
+    }
+    
+    static public class XmlParser implements TreeReader {
+        final protected XMLStreamReader parser;
+        
+        public XmlParser(InputStream inputStream) throws XMLStreamException {
+            parser = createXMLStreamReader(inputStream);
+        }
+        
+        @Override
+        public Token next() throws ServletException {
+            try {
+                if (!parser.hasNext()) {
+                    throw new ServletException("End of XML stream");
+                }
+            } catch (XMLStreamException e) {
+                throw new ServletException(e);
             }
-        } else if (fileName != null) {
-            fileName = fileName.toLowerCase();
-            if (
-                    fileName.endsWith(".xml") ||
-                    fileName.endsWith(".atom") ||
-                    fileName.endsWith(".rss")
-                ) {
-                return true;
+            
+            int currentToken = -1;
+            try {
+                currentToken = parser.next();
+            } catch (XMLStreamException e) {
+                throw new ServletException(e);
+            }
+            
+            return mapToToken(currentToken);
+        }
+        
+        protected Token mapToToken(int token) throws ServletException {
+            switch(token){
+                case XMLStreamConstants.START_ELEMENT: return Token.StartEntity;
+                case XMLStreamConstants.END_ELEMENT: return Token.EndEntity;
+                case XMLStreamConstants.CHARACTERS: return Token.Value;
+                case XMLStreamConstants.START_DOCUMENT: return Token.Ignorable;
+                case XMLStreamConstants.END_DOCUMENT: return Token.Ignorable;
+                case XMLStreamConstants.SPACE: return Token.Value;
+                case XMLStreamConstants.PROCESSING_INSTRUCTION: return Token.Ignorable;
+                case XMLStreamConstants.NOTATION_DECLARATION: return Token.Ignorable;
+                case XMLStreamConstants.NAMESPACE: return Token.Ignorable;
+                case XMLStreamConstants.ENTITY_REFERENCE: return Token.Ignorable;
+                case XMLStreamConstants.DTD: return Token.Ignorable;
+                case XMLStreamConstants.COMMENT: return Token.Ignorable;
+                case XMLStreamConstants.CDATA: return Token.Ignorable;
+                case XMLStreamConstants.ATTRIBUTE: return Token.Ignorable;
+                default:
+                    return Token.Ignorable;
             }
         }
-        return false;
+        
+        @Override
+        public Token current() throws ServletException{
+            return this.mapToToken(parser.getEventType());
+        }
+        
+        @Override
+        public boolean hasNext() throws ServletException{
+            try {
+                return parser.hasNext();
+            } catch (XMLStreamException e) {
+                throw new ServletException(e);
+            }
+        }
+        
+        @Override
+        public String getFieldName() throws ServletException{
+            try{
+                return parser.getLocalName();
+            }catch(IllegalStateException e){
+                return null;
+            }
+        }
+        
+        @Override
+        public String getPrefix(){
+            return parser.getPrefix();
+        }
+        
+        @Override
+        public String getFieldValue(){
+            return parser.getText();
+        }
+        
+        @Override
+        public int getAttributeCount(){
+            return parser.getAttributeCount();
+        }
+        
+        @Override
+        public String getAttributeValue(int index){
+            return parser.getAttributeValue(index);
+        }
+        
+        @Override
+        public String getAttributePrefix(int index){
+            return parser.getAttributePrefix(index);
+        }
+        
+        @Override
+        public String getAttributeLocalName(int index){
+            return parser.getAttributeLocalName(index);
+        }
     }
-
+    
+    final static private XMLStreamReader createXMLStreamReader(InputStream inputStream) throws XMLStreamException {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.IS_COALESCING, true);
+        factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
+        
+        return factory.createXMLStreamReader(inputStream);
+    }
+    
 }

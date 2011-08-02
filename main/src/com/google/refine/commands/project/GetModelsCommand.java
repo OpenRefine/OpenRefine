@@ -44,17 +44,43 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.MetaParser.LanguageInfo;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
 
 public class GetModelsCommand extends Command {
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        internalRespond(request, response);
+    }
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        internalRespond(request, response);
+    }
+    
+    protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         
-        Project project = getProject(request);
+        Project project = null;
+        
+        // This command also supports retrieving rows for an importing job.
+        String importingJobID = request.getParameter("importingJobID");
+        if (importingJobID != null) {
+            long jobID = Long.parseLong(importingJobID);
+            ImportingJob job = ImportingManager.getJob(jobID);
+            if (job != null) {
+                project = job.project;
+            }
+        }
+        if (project == null) {
+            project = getProject(request);
+        }
         
         try {
             response.setCharacterEncoding("UTF-8");
@@ -92,7 +118,7 @@ public class GetModelsCommand extends Command {
             
             writer.endObject();
         } catch (JSONException e) {
-            respondException(response, e);
+            HttpUtilities.respondException(response, e);
         }
     }
 

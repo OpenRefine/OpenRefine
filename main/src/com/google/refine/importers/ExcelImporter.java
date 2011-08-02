@@ -33,16 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -51,184 +50,152 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.refine.ProjectMetadata;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.Row;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.util.JSONUtilities;
 
-public class ExcelImporter implements StreamImporter {
-    protected boolean _xmlBased;
-
+public class ExcelImporter extends TabularImportingParserBase {
+    public ExcelImporter() {
+        super(true);
+    }
+    
     @Override
-    public void read(InputStream inputStream, Project project, ProjectMetadata metadata, Properties options) throws ImportException {
-        int ignoreLines = ImporterUtilities.getIntegerOption("ignore", options, -1);
-        int headerLines = ImporterUtilities.getIntegerOption("header-lines", options, 1);
-        int limit = ImporterUtilities.getIntegerOption("limit", options, -1);
-        int skip = ImporterUtilities.getIntegerOption("skip", options, 0);
-
+    public JSONObject createParserUIInitializationData(
+            ImportingJob job, List<JSONObject> fileRecords, String format) {
+        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+        
+        boolean xmlBased = "text/xml/xlsx".equals(format);
+        JSONUtilities.safePut(options, "xmlBased", xmlBased);
+        
+        JSONArray sheetRecords = new JSONArray();
+        JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
+        try {
+            JSONObject firstFileRecord = fileRecords.get(0);
+            File file = ImportingUtilities.getFile(job, firstFileRecord);
+            InputStream is = new FileInputStream(file);
+            try {
+                Workbook wb = xmlBased ?
+                    new XSSFWorkbook(is) :
+                    new HSSFWorkbook(new POIFSFileSystem(is));
+                
+                int sheetCount = wb.getNumberOfSheets();
+                boolean hasData = false;
+                for (int i = 0; i < sheetCount; i++) {
+                    Sheet sheet = wb.getSheetAt(i);
+                    int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
+                    
+                    JSONObject sheetRecord = new JSONObject();
+                    JSONUtilities.safePut(sheetRecord, "name", sheet.getSheetName());
+                    JSONUtilities.safePut(sheetRecord, "rows", rows);
+                    if (hasData) {
+                        JSONUtilities.safePut(sheetRecord, "selected", false);
+                    } else if (rows > 1) {
+                        JSONUtilities.safePut(sheetRecord, "selected", true);
+                        hasData = true;
+                    }
+                    JSONUtilities.append(sheetRecords, sheetRecord);
+                }
+            } finally {
+                is.close();
+            }
+        } catch (IOException e) {
+            // Ignore
+        }
+        
+        return options;
+    }
+    
+    @Override
+    public void parseOneFile(
+        Project project,
+        ProjectMetadata metadata,
+        ImportingJob job,
+        String fileSource,
+        InputStream inputStream,
+        int limit,
+        JSONObject options,
+        List<Exception> exceptions
+    ) {
+        boolean xmlBased = JSONUtilities.getBoolean(options, "xmlBased", false);
         Workbook wb = null;
         try {
-            wb = _xmlBased ?
+            wb = xmlBased ?
                 new XSSFWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
-            throw new ImportException(
+            exceptions.add(new ImportException(
                 "Attempted to parse as an Excel file but failed. " +
                 "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
                 e
-            );
+            ));
+            return;
         } catch (ArrayIndexOutOfBoundsException e){
-            throw new ImportException(
-                   "Attempted to parse file as an Excel file but failed. " +
-                   "This is probably caused by a corrupt excel file, or due to the file having previously been created or saved by a non-Microsoft application. " +
-                   "Please try opening the file in Microsoft Excel and resaving it, then try re-uploading the file. " +
-                   "See https://issues.apache.org/bugzilla/show_bug.cgi?id=48261 for further details",
-                   e);
+            exceptions.add(new ImportException(
+               "Attempted to parse file as an Excel file but failed. " +
+               "This is probably caused by a corrupt excel file, or due to the file having previously been created or saved by a non-Microsoft application. " +
+               "Please try opening the file in Microsoft Excel and resaving it, then try re-uploading the file. " +
+               "See https://issues.apache.org/bugzilla/show_bug.cgi?id=48261 for further details",
+               e
+           ));
+            return;
         }
         
-        Sheet sheet = wb.getSheetAt(0);
-        
-        int firstRow = sheet.getFirstRowNum();
-        int lastRow = sheet.getLastRowNum();
-        
-        List<String>         columnNames = new ArrayList<String>();
-        Set<String>          columnNameSet = new HashSet<String>();
-        Map<String, Integer> columnRootNameToIndex = new HashMap<String, Integer>();
-        
-        int                  rowsWithData = 0;
-        Map<String, Recon>   reconMap = new HashMap<String, Recon>();
-        
-        for (int r = firstRow; r <= lastRow; r++) {
-            org.apache.poi.ss.usermodel.Row row = sheet.getRow(r);
-            if (row == null) {
-                continue;
-            } else if (ignoreLines > 0) {
-                ignoreLines--;
-                continue;
-            }
+        int[] sheets = JSONUtilities.getIntArray(options, "sheets");
+        for (int sheetIndex : sheets) {
+            final Sheet sheet = wb.getSheetAt(sheetIndex);
+            final int lastRow = sheet.getLastRowNum();
             
-            short firstCell = row.getFirstCellNum();
-            short lastCell = row.getLastCellNum();
-            if (firstCell < 0 || firstCell > lastCell) {
-                continue;
-            }
-            
-            /*
-             *  Still processing header lines
-             */
-            if (headerLines > 0) {
-                headerLines--;
+            TableDataReader dataReader = new TableDataReader() {
+                int nextRow = 0;
+                Map<String, Recon> reconMap = new HashMap<String, Recon>();
                 
-                for (int c = firstCell; c <= lastCell; c++) {
-                    org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
-                    if (cell != null) {
-                        Serializable value = extractCell(cell);
-                        String text = value != null ? value.toString() : null;
-                        if (text != null && text.length() > 0) {
-                            while (columnNames.size() < c + 1) {
-                                columnNames.add(null);
+                @Override
+                public List<Object> getNextRowOfCells() throws IOException {
+                    if (nextRow >= lastRow) {
+                        return null;
+                    }
+                    
+                    List<Object> cells = new ArrayList<Object>();
+                    org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
+                    if (row != null) {
+                        short lastCell = row.getLastCellNum();
+                        for (short cellIndex = 0; cellIndex <= lastCell; cellIndex++) {
+                            Cell cell = null;
+                            
+                            org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
+                            if (sourceCell != null) {
+                                cell = extractCell(sourceCell, reconMap);
                             }
-                            
-                            String existingName = columnNames.get(c);
-                            String name = (existingName == null) ? text : (existingName + " " + text);
-                            
-                            columnNames.set(c, name);
+                            cells.add(cell);
                         }
                     }
+                    return cells;
                 }
-                
-                if (headerLines == 0) {
-                    for (int i = 0; i < columnNames.size(); i++) {
-                        String rootName = columnNames.get(i);
-                        if (rootName == null) {
-                            continue;
-                        }
-                        setUnduplicatedColumnName(rootName, columnNames, i, columnNameSet, columnRootNameToIndex);
-                    }
-                }
-                
-            /*
-             *  Processing data rows
-             */
-            } else {
-                Row newRow = new Row(columnNames.size());
-                boolean hasData = false;
-                
-                for (int c = firstCell; c <= lastCell; c++) {
-                    org.apache.poi.ss.usermodel.Cell cell = row.getCell(c);
-                    if (cell == null) {
-                        continue;
-                    }
-                    
-                    Cell ourCell = extractCell(cell, reconMap);
-                    if (ourCell != null) {
-                        while (columnNames.size() < c + 1) {
-                            columnNames.add(null);
-                        }
-                        if (columnNames.get(c) == null) {
-                            setUnduplicatedColumnName("Column", columnNames, c, columnNameSet, columnRootNameToIndex);
-                        }
-                        
-                        newRow.setCell(c, ourCell);
-                        hasData = true;
-                    }
-                }
-                
-                if (hasData) {
-                    rowsWithData++;
-                    
-                    if (skip <= 0 || rowsWithData > skip) {
-                        project.rows.add(newRow);
-                        project.columnModel.setMaxCellIndex(newRow.cells.size());
-                        
-                        if (limit > 0 && project.rows.size() >= limit) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        /*
-         *  Create columns
-         */
-        for (int c = 0; c < columnNames.size(); c++) {
-            String name = columnNames.get(c);
-            if (name != null) {
-                Column column = new Column(c, name);
-                project.columnModel.columns.add(column);
-            }
-        }
-    }
-    
-    protected void setUnduplicatedColumnName(
-        String rootName, List<String> columnNames, int index, Set<String> columnNameSet, Map<String, Integer> columnRootNameToIndex) {
-        if (columnNameSet.contains(rootName)) {
-            int startIndex = columnRootNameToIndex.containsKey(rootName) ? columnRootNameToIndex.get(rootName) : 2;
-            while (true) {
-                String name = rootName + " " + startIndex;
-                if (columnNameSet.contains(name)) {
-                    startIndex++;
-                } else {
-                    columnNames.set(index, name);
-                    columnNameSet.add(name);
-                    break;
-                }
-            }
+            };
             
-            columnRootNameToIndex.put(rootName, startIndex + 1);
-        } else {
-            columnNames.set(index, rootName);
-            columnNameSet.add(rootName);
+            readTable(
+                project,
+                metadata,
+                job,
+                dataReader,
+                fileSource + "#" + sheet.getSheetName(),
+                limit,
+                options,
+                exceptions
+            );
         }
     }
     
-    protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
+    static protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
         int cellType = cell.getCellType();
         if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
             cellType = cell.getCachedFormulaResultType();
@@ -259,7 +226,7 @@ public class ExcelImporter implements StreamImporter {
         return value;
     }
     
-    protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, Map<String, Recon> reconMap) {
+    static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, Map<String, Recon> reconMap) {
         Serializable value = extractCell(cell);
         
         if (value != null) {
@@ -311,34 +278,5 @@ public class ExcelImporter implements StreamImporter {
         } else {
             return null;
         }
-    }
-    
-    @Override
-    public boolean canImportData(String contentType, String fileName) {
-        if (contentType != null) {
-            contentType = contentType.toLowerCase().trim();
-            if ("application/msexcel".equals(contentType) ||
-                "application/x-msexcel".equals(contentType) ||
-                "application/x-ms-excel".equals(contentType) ||
-                "application/vnd.ms-excel".equals(contentType) ||
-                "application/x-excel".equals(contentType) ||
-                "application/xls".equals(contentType)) {
-                this._xmlBased = false;
-                return true;
-            } else if("application/x-xls".equals(contentType)) {
-                this._xmlBased = true;
-                return true;
-            }
-        } else if (fileName != null) {
-            fileName = fileName.toLowerCase();
-            if (fileName.endsWith(".xls")) {
-                this._xmlBased = false;
-                return true;
-            } else if (fileName.endsWith(".xlsx")) {
-                this._xmlBased = true;
-                return true;
-            }
-        }
-        return false;
     }
 }

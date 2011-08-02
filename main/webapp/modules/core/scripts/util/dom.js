@@ -80,3 +80,11 @@ DOM.loadHTML = function(module, path) {
     }
     return DOM._loadedHTML[fullPath];
 };
+
+DOM.getHPaddings = function(elmt) {
+    return elmt.outerWidth() - elmt.width();
+};
+
+DOM.getVPaddings = function(elmt) {
+    return elmt.outerHeight() - elmt.height();
+};

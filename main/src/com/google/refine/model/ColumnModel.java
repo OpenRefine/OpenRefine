@@ -110,28 +110,28 @@ public class ColumnModel implements Jsonizable {
     }
     
     synchronized public void addColumn(int index, Column column, boolean avoidNameCollision) throws ModelException {
-    	String baseName = column.getName();
-    	
-    	if (_nameToColumn.containsKey(baseName)) {
-    		if (!avoidNameCollision) {
-    			throw new ModelException("Duplicated column name");
-    		}
-    	}
-    	
-    	String name = baseName;
-    	int i = 1;
-    	while (true) {
-    		if (_nameToColumn.containsKey(name)) {
-    			i++;
-    			name = baseName + i;
-    		} else {
-    			break;
-    		}
-    	}
-    	
-    	column.setName(name);
-		columns.add(index < 0 ? columns.size() : index, column);
-		_nameToColumn.put(name, column); // so the next call can check
+        String baseName = column.getName();
+        
+        if (_nameToColumn.containsKey(baseName)) {
+            if (!avoidNameCollision) {
+                throw new ModelException("Duplicated column name");
+            }
+        }
+        
+        String name = baseName;
+        int i = 1;
+        while (true) {
+            if (_nameToColumn.containsKey(name)) {
+                i++;
+                name = baseName + i;
+            } else {
+                break;
+            }
+        }
+        
+        column.setName(name);
+        columns.add(index < 0 ? columns.size() : index, column);
+        _nameToColumn.put(name, column); // so the next call can check
     }
     
     synchronized public Column getColumnByName(String name) {

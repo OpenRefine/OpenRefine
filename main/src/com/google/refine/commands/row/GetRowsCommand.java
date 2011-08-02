@@ -52,6 +52,8 @@ import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.commands.Command;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
@@ -61,7 +63,7 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class GetRowsCommand extends Command {
-	
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -77,7 +79,21 @@ public class GetRowsCommand extends Command {
         throws ServletException, IOException {
         
         try {
-            Project project = getProject(request);
+            Project project = null;
+            
+            // This command also supports retrieving rows for an importing job.
+            String importingJobID = request.getParameter("importingJobID");
+            if (importingJobID != null) {
+                long jobID = Long.parseLong(importingJobID);
+                ImportingJob job = ImportingManager.getJob(jobID);
+                if (job != null) {
+                    project = job.project;
+                }
+            }
+            if (project == null) {
+                project = getProject(request);
+            }
+            
             Engine engine = getEngine(request, project);
             String callback = request.getParameter("callback");
             
@@ -108,7 +124,7 @@ public class GetRowsCommand extends Command {
             try{
                 String json = request.getParameter("sorting");
                 sortingJson = (json == null) ? null : 
-                	ParsingUtilities.evaluateJsonStringToObject(json);
+                    ParsingUtilities.evaluateJsonStringToObject(json);
             } catch (JSONException e) {
             }
 
@@ -117,12 +133,12 @@ public class GetRowsCommand extends Command {
                 RowVisitor visitor = rwv;
                 
                 if (sortingJson != null) {
-                	SortingRowVisitor srv = new SortingRowVisitor(visitor);
-                	
-                	srv.initializeFromJSON(project, sortingJson);
-            		if (srv.hasCriteria()) {
-            			visitor = srv;
-            		}
+                    SortingRowVisitor srv = new SortingRowVisitor(visitor);
+                    
+                    srv.initializeFromJSON(project, sortingJson);
+                    if (srv.hasCriteria()) {
+                        visitor = srv;
+                    }
                 }
                 
                 jsonWriter.key("mode"); jsonWriter.value("row-based");
@@ -136,12 +152,12 @@ public class GetRowsCommand extends Command {
                 RecordVisitor visitor = rwv;
                 
                 if (sortingJson != null) {
-                	SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
-                	
-                	srv.initializeFromJSON(project, sortingJson);
-            		if (srv.hasCriteria()) {
-            			visitor = srv;
-            		}
+                    SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
+                    
+                    srv.initializeFromJSON(project, sortingJson);
+                    if (srv.hasCriteria()) {
+                        visitor = srv;
+                    }
                 }
                 
                 jsonWriter.key("mode"); jsonWriter.value("record-based");
@@ -168,8 +184,8 @@ public class GetRowsCommand extends Command {
     }
     
     static protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
-        final int 		  start;
-        final int 		  limit;
+        final int           start;
+        final int           limit;
         final JSONWriter  writer;
         final Properties  options;
         
@@ -184,20 +200,20 @@ public class GetRowsCommand extends Command {
         
         @Override
         public void start(Project project) {
-        	// nothing to do
+            // nothing to do
         }
         
         @Override
         public void end(Project project) {
-        	// nothing to do
+            // nothing to do
         }
         
         public boolean visit(Project project, int rowIndex, Row row) {
             if (total >= start && total < start + limit) {
                 internalVisit(project, rowIndex, row);
             }
-        	total++;
-        	
+            total++;
+            
             return false;
         }
         
@@ -206,8 +222,8 @@ public class GetRowsCommand extends Command {
             if (total >= start && total < start + limit) {
                 internalVisit(project, record);
             }
-        	total++;
-        	
+            total++;
+            
             return false;
         }
         
@@ -223,10 +239,10 @@ public class GetRowsCommand extends Command {
         protected boolean internalVisit(Project project, Record record) {
             options.put("recordIndex", record.recordIndex);
             
-        	for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+            for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
                 try {
-                	Row row = project.rows.get(r);
-                	
+                    Row row = project.rows.get(r);
+                    
                     options.put("rowIndex", r);
                     
                     row.write(writer, options);
@@ -235,8 +251,8 @@ public class GetRowsCommand extends Command {
                 }
                 
                 options.remove("recordIndex");
-        	}
-        	return false;
+            }
+            return false;
         }
     }
 }

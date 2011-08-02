@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.commands.Command;
-import com.google.refine.commands.importing.ImportManager;
+import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 
 import edu.mit.simile.butterfly.Butterfly;
@@ -125,7 +125,7 @@ public class RefineServlet extends Butterfly {
 
         s_dataDir = new File(data);
         FileProjectManager.initialize(s_dataDir);
-        ImportManager.initialize(this);
+        ImportingManager.initialize(this);
 
         if (_timer == null) {
             _timer = new Timer("autosave");

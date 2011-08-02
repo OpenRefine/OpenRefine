@@ -299,6 +299,16 @@ input[type="checkbox"], input[type="radio"], select {
 input.inline {
   vertical-align: middle;
   }
+input[type='text'].inline {
+  vertical-align: baseline;
+  }
+input.lightweight {
+  vertical-align: baseline;
+  border: none;
+  border-bottom: 1px solid @faint_grey;
+  background-color: @fainter_grey;
+  padding: 0px 2px 1px 2px;
+  }
 
 
 div.grid-layout > table {
@@ -402,4 +412,11 @@ img {
 
 p.body-text {
   margin-bottom: 1em;
+}
+
+.relative-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }

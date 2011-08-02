@@ -33,15 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.importers;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -51,12 +47,10 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectMetadata;
-import com.google.refine.importers.TsvCsvImporter;
-import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
+import com.google.refine.importers.SeparatorBasedImporter;
+import com.google.refine.util.JSONUtilities;
 
-public class TsvCsvImporterTests extends RefineTest {
+public class TsvCsvImporterTests extends ImporterTest {
 
     @BeforeTest
     public void init() {
@@ -67,25 +61,18 @@ public class TsvCsvImporterTests extends RefineTest {
     String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
 
     //System Under Test
-    TsvCsvImporter SUT = null;
-
-    //mock dependencies
-    Project project = null;
-    Properties properties = null;
-
+    SeparatorBasedImporter SUT = null;
 
     @BeforeMethod
-    public void SetUp(){
-        SUT = new TsvCsvImporter();
-        project = new Project(); //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
-        properties = mock(Properties.class);
+    public void SetUp() {
+        super.SetUp();
+        SUT = new SeparatorBasedImporter();
     }
 
     @AfterMethod
     public void TearDown(){
         SUT = null;
-        project = null;
-        properties = null;
+        super.TearDown();
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
@@ -94,11 +81,10 @@ public class TsvCsvImporterTests extends RefineTest {
         String inputSeparator =  sep == "\t" ? "\t" : ",";
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
-
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 1, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
@@ -113,11 +99,10 @@ public class TsvCsvImporterTests extends RefineTest {
         String inputSeparator =  sep == "\t" ? "\t" : ",";
         String input = "value1" + inputSeparator + "value2" + inputSeparator + "value3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
-
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 0, false, false, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 0, false, false, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
         Assert.assertEquals(project.columnModel.columns.size(), 1);
@@ -135,10 +120,10 @@ public class TsvCsvImporterTests extends RefineTest {
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
         
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 1, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
         
@@ -160,13 +145,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "data1" + inputSeparator + "234" + inputSeparator + "data3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 1, true, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 1, true, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
@@ -185,13 +169,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String inputSeparator = sep == "\t" ? "\t" : ",";
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 0, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 0, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column2");
@@ -209,13 +192,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String inputSeparator =  sep == "\t" ? "\t" : ",";
         String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 0, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 0, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
@@ -230,13 +212,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String inputSeparator =  sep == "\t" ? "\t" : ",";
         String input = " data1" + inputSeparator + " 12" + inputSeparator + " data3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 0, true, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 0, true, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
@@ -251,13 +232,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String inputSeparator =  sep == "\t" ? "\t" : ",";
         String input = " data1" + inputSeparator + inputSeparator + " data3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 0, true, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 0, true, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
@@ -274,13 +254,12 @@ public class TsvCsvImporterTests extends RefineTest {
                        "sub1" + inputSeparator + "sub2" + inputSeparator + "sub3\n" +
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 2, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 2, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2 sub2");
@@ -299,13 +278,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
         "data1" + inputSeparator + "data2" + inputSeparator + "data3" + inputSeparator + "data4" + inputSeparator + "data5" + inputSeparator + "data6";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 1, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 6);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
@@ -330,13 +308,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\"" + inputSeparator + "data2";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 1, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
@@ -355,13 +332,12 @@ public class TsvCsvImporterTests extends RefineTest {
                        "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 1, 1, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 1, 1, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
@@ -381,13 +357,12 @@ public class TsvCsvImporterTests extends RefineTest {
                        "skip1\n" +
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 1, 0, 1, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 1, 0, 1, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
@@ -411,13 +386,12 @@ public class TsvCsvImporterTests extends RefineTest {
                        "skip1\n" +
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 1, 3, 2, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 1, 3, 2, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2 sub2");
@@ -444,10 +418,10 @@ public class TsvCsvImporterTests extends RefineTest {
                        "data-row2-cell1" + inputSeparator + "data-row2-cell2" + inputSeparator + "\n" + //missing last data point of this row on purpose
                        "data-row3-cell1" + inputSeparator + "data-row3-cell2" + inputSeparator + "data-row1-cell3";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, 2, 2, 3, 2, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, 2, 2, 3, 2, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
@@ -471,13 +445,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String inputSeparator =  sep == "\t" ? "\t" : ",";
         String input = "data1" + inputSeparator + "data2\"" + inputSeparator + "data3" + inputSeparator + "data4";
               
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 0, false, true, true);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 0, false, true, true);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 4);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
@@ -493,13 +466,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
             "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\"" + inputSeparator + "data2";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 1, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
@@ -517,13 +489,12 @@ public class TsvCsvImporterTests extends RefineTest {
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
             "\"A line with many \n\n\n\n\n empty lines\"" + inputSeparator + "data2";
         
-        LineNumberReader lnReader = new LineNumberReader(new StringReader(input));
         try {
-            SUT.read(lnReader, project, sep, -1, 0, 0, 1, false, true, false);
-        } catch (IOException e) {
+            prepareOptions(sep, -1, 0, 0, 1, false, true, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
             Assert.fail();
         }
-        
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
@@ -536,35 +507,34 @@ public class TsvCsvImporterTests extends RefineTest {
 
     //---------------------read tests------------------------
     @Test
-    public void readCsvWithProperties(){
+    public void readCsvWithProperties() {
         StringReader reader = new StringReader(SAMPLE_ROW);
-
-        when(properties.getProperty("separator")).thenReturn(",");
-        whenGetIntegerOption("ignore",properties,0);
-        whenGetIntegerOption("header-lines",properties,0);
-        whenGetIntegerOption("limit",properties,-1);
-        whenGetIntegerOption("skip",properties,0);
-        whenGetIntegerOption("ignore-quotes",properties,0);
-
+        
+        when(JSONUtilities.getString(options, "separator", null)).thenReturn(",");
+        whenGetIntegerOption("ignore", options, 0);
+        whenGetIntegerOption("header-lines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetIntegerOption("skip", options, 0);
+        whenGetIntegerOption("ignore-quotes", options, 0);
+        
         try {
-            SUT.read(reader, project, new ProjectMetadata(), properties);
+            parseOneFile(SUT, reader);
         } catch (Exception e) {
             Assert.fail();
         }
-
-
+        
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals((String)project.rows.get(0).cells.get(0).value, "NDB_No");
         Assert.assertEquals((String)project.rows.get(0).cells.get(1).value, "Shrt_Desc");
         Assert.assertEquals((String)project.rows.get(0).cells.get(2).value, "Water");
 
-        verify(properties, times(1)).getProperty("separator");
-        verifyGetOption("ignore",properties);
-        verifyGetOption("header-lines",properties);
-        verifyGetOption("limit",properties);
-        verifyGetOption("skip",properties);
-        verifyGetOption("ignore-quotes",properties);
+        JSONUtilities.getString(verify(options, times(1)), "separator", null);
+        verifyGetOption("ignore", options);
+        verifyGetOption("header-lines", options);
+        verifyGetOption("limit", options);
+        verifyGetOption("skip", options);
+        verifyGetOption("ignore-quotes", options);
     }
 
     @Test
@@ -572,20 +542,19 @@ public class TsvCsvImporterTests extends RefineTest {
         String input = "data1,data2\",data3,data4";
         StringReader reader = new StringReader(input);
 
-        when(properties.getProperty("separator")).thenReturn(",");
-        whenGetIntegerOption("ignore",properties,0);
-        whenGetIntegerOption("header-lines",properties,0);
-        whenGetIntegerOption("limit",properties,-1);
-        whenGetIntegerOption("skip",properties,0);
-        whenGetBooleanOption("ignore-quotes",properties,true);
-
+        when(JSONUtilities.getString(options, "separator", null)).thenReturn(",");
+        whenGetIntegerOption("ignore", options, 0);
+        whenGetIntegerOption("header-lines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetIntegerOption("skip", options, 0);
+        whenGetBooleanOption("ignore-quotes", options, true);
+        
         try {
-            SUT.read(reader, project, new ProjectMetadata(), properties);
+            parseOneFile(SUT, reader);
         } catch (Exception e) {
             Assert.fail();
         }
-
-
+        
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals((String)project.rows.get(0).cells.get(0).value, "data1");
@@ -593,12 +562,12 @@ public class TsvCsvImporterTests extends RefineTest {
         Assert.assertEquals((String)project.rows.get(0).cells.get(2).value, "data3");
         Assert.assertEquals((String)project.rows.get(0).cells.get(3).value, "data4");
 
-        verify(properties, times(1)).getProperty("separator");
-        verifyGetOption("ignore",properties);
-        verifyGetOption("header-lines",properties);
-        verifyGetOption("limit",properties);
-        verifyGetOption("skip",properties);
-        verifyGetOption("ignore-quotes",properties);
+        JSONUtilities.getString(verify(options, times(1)), "separator", null);
+        verifyGetOption("ignore", options);
+        verifyGetOption("header-lines", options);
+        verifyGetOption("limit", options);
+        verifyGetOption("skip", options);
+        verifyGetOption("ignore-quotes", options);
     }
 
     //--helpers--
@@ -611,20 +580,17 @@ public class TsvCsvImporterTests extends RefineTest {
                 {","},{"\t"},{null}
         };
     }
-
-    public void whenGetBooleanOption(String name, Properties properties, Boolean def){
-        when(properties.containsKey(name)).thenReturn(true);
-        when(properties.getProperty(name)).thenReturn(Boolean.toString(def));
+    
+    private void prepareOptions(
+        String sep, int limit, int skip, int ignoreLines,
+        int headerLines, boolean guessValueType, boolean splitIntoColumns, boolean ignoreQuotes) {
+        JSONUtilities.safePut(options, "separator", sep);
+        JSONUtilities.safePut(options, "limit", limit);
+        JSONUtilities.safePut(options, "skipDataLines", skip);
+        JSONUtilities.safePut(options, "ignoreLines", ignoreLines);
+        JSONUtilities.safePut(options, "headerLines", headerLines);
+        JSONUtilities.safePut(options, "guessCellValueTypes", guessValueType);
+        JSONUtilities.safePut(options, "splitIntoColumns", splitIntoColumns);
+        JSONUtilities.safePut(options, "processQuotes", !ignoreQuotes);
     }
-
-    public void whenGetIntegerOption(String name, Properties properties, int def){
-        when(properties.containsKey(name)).thenReturn(true);
-        when(properties.getProperty(name)).thenReturn(Integer.toString(def));
-    }
-
-    public void verifyGetOption(String name, Properties properties){
-        verify(properties, times(1)).containsKey(name);
-        verify(properties, times(1)).getProperty(name);
-    }
-
 }

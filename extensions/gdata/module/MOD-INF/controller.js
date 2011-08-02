@@ -33,8 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var html = "text/html";
 var encoding = "UTF-8";
-var version="0.2"
-var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
+var version = "0.2";
 
 /*
  * Function invoked to initialize the extension.
@@ -43,21 +42,24 @@ function init() {
 //    Packages.java.lang.System.err.println("Initializing gData extension");
 //    Packages.java.lang.System.err.println(module.getMountPoint());
 
-	Packages.com.google.refine.RefineServlet.registerCommand(
-        module, "authorize", Packages.com.google.refine.extension.gdata.AuthorizeCommand());
-	Packages.com.google.refine.RefineServlet.registerCommand(
-	        module, "authorize2", Packages.com.google.refine.extension.gdata.AuthorizeCommand2());
-	Packages.com.google.refine.RefineServlet.registerCommand(
-        module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
-
+    var RS = Packages.com.google.refine.RefineServlet;
+    RS.registerCommand(module, "authorize", Packages.com.google.refine.extension.gdata.AuthorizeCommand());
+    RS.registerCommand(module, "authorize2", Packages.com.google.refine.extension.gdata.AuthorizeCommand2());
+    RS.registerCommand(module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
+    
     // Register importer and exporter
-    Packages.com.google.refine.importers.ImporterRegistry.registerImporter(
-    	      "gdata-importer", new Packages.com.google.refine.extension.gdata.GDataImporter());
+    var IM = Packages.com.google.refine.importing.ImportingManager;
+    IM.registerFormat("service/gdata", "GData services"); // generic format, no parser to handle it
+    IM.registerFormat("service/gdata/spreadsheet", "Google spreadsheets", false, "GoogleSpreadsheetParserUI",
+        new Packages.com.google.refine.extension.gdata.GDataImporter());
+    IM.registerUrlRewriter(new Packages.com.google.refine.extension.gdata.GDataUrlRewriter())
+    IM.registerUrlRewriter(new Packages.com.google.refine.extension.gdata.FusionTablesUrlRewriter())
 
 //    Packages.com.google.refine.exporters.ExporterRegistry.registerExporter(
-//  	      "gdata-exporter", new Packages.com.google.refine.extension.gdata.GDataExporter());
+//            "gdata-exporter", new Packages.com.google.refine.extension.gdata.GDataExporter());
 
     // Script files to inject into /project page
+    var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
     ClientSideResourceManager.addPaths(
         "project/scripts",
         module,
@@ -82,7 +84,7 @@ function init() {
  */
 function process(path, request, response) {
     // Analyze path and handle this request yourself.
-	
+    
     if (path == "/" || path == "") {
         var context = {};
         // here's how to pass things into the .vt templates

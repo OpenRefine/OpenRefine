@@ -33,12 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.importers;
 
-import static org.mockito.Mockito.mock;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -47,14 +44,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.XmlImporter;
-import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.tests.RefineTest;
 
 
-public class XmlImporterTests extends RefineTest {
+public class XmlImporterTests extends ImporterTest {
 
     @BeforeTest
     public void init() {
@@ -62,28 +56,29 @@ public class XmlImporterTests extends RefineTest {
     }
     
     //dependencies
-    Project project = null;
-    Properties options = null;
     ByteArrayInputStream inputStream = null;
 
     //System Under Test
     XmlImporter SUT = null;
-
-
+    
     @BeforeMethod
     public void SetUp(){
+        super.SetUp();
         SUT = new XmlImporter();
-        project = new Project();
-        options = mock(Properties.class);
     }
 
     @AfterMethod
-    public void TearDown() throws IOException{
+    public void TearDown() {
         SUT = null;
-        project = null;
-        options = null;
-        if (inputStream != null) inputStream.close();
-        inputStream = null;
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                // Ignore
+            }
+            inputStream = null;
+        }
+        super.TearDown();
     }
 
     @Test
@@ -309,11 +304,9 @@ public class XmlImporterTests extends RefineTest {
         }
 
         try {
-            SUT.read(inputStream, project, new ProjectMetadata(), options);
+            parseOneFile(SUT, inputStream);
         } catch (Exception e) {
             Assert.fail();
         }
     }
-
-
 }

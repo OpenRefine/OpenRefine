@@ -81,6 +81,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border-bottom-left-radius: @radius;
   }
 
+.rounded_corners_left (@radius: 5px) { 
+  -webkit-border-top-left-radius: @radius;
+  -webkit-border-bottom-left-radius: @radius;
+  -moz-border-radius-topleft: @radius;
+  -moz-border-radius-bottomleft: @radius;
+  border-top-left-radius: @radius;
+  border-bottom-left-radius: @radius;
+  }
+
+.rounded_corners_right (@radius: 5px) { 
+  -webkit-border-top-right-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -moz-border-radius-topright: @radius;
+  -moz-border-radius-bottomright: @radius;
+  border-top-right-radius: @radius;
+  border-bottom-right-radius: @radius;
+  }
+
 .sharp_corners_left () {
   -webkit-border-top-right-radius: 0;
   -webkit-border-bottom-right-radius: 0;

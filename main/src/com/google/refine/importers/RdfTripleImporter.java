@@ -33,66 +33,74 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.jrdf.JRDFFactory;
 import org.jrdf.SortedMemoryJRDFFactory;
 import org.jrdf.collection.MemMapFactory;
 import org.jrdf.graph.Graph;
 import org.jrdf.graph.Triple;
-import org.jrdf.parser.ParseException;
-import org.jrdf.parser.StatementHandlerException;
 import org.jrdf.parser.line.GraphLineParser;
 import org.jrdf.parser.line.LineHandler;
 import org.jrdf.parser.ntriples.NTriplesParserFactory;
 import org.jrdf.util.ClosableIterable;
+import org.json.JSONObject;
+
 import static org.jrdf.graph.AnyObjectNode.ANY_OBJECT_NODE;
 import static org.jrdf.graph.AnyPredicateNode.ANY_PREDICATE_NODE;
 import static org.jrdf.graph.AnySubjectNode.ANY_SUBJECT_NODE;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.JSONUtilities;
 
-public class RdfTripleImporter implements ReaderImporter{
+public class RdfTripleImporter extends ImportingParserBase {
     private JRDFFactory             _jrdfFactory;
     private NTriplesParserFactory   _nTriplesParserFactory;
     private MemMapFactory           _newMapFactory;
 
-    public RdfTripleImporter(){
+    public RdfTripleImporter() {
+        super(false);
         _jrdfFactory = SortedMemoryJRDFFactory.getFactory();
         _nTriplesParserFactory = new NTriplesParserFactory();
         _newMapFactory = new MemMapFactory();
     }
-
+    
     @Override
-    public void read(Reader reader, Project project, ProjectMetadata metadata, Properties options) throws ImportException {
-        String baseUrl = options.getProperty("base-url");
-
+    public JSONObject createParserUIInitializationData(ImportingJob job,
+            List<JSONObject> fileRecords, String format) {
+        throw new NotImplementedException();
+    }
+    
+    @Override
+    public void parseOneFile(Project project, ProjectMetadata metadata,
+            ImportingJob job, String fileSource, Reader reader, int limit,
+            JSONObject options, List<Exception> exceptions) {
+        
+        String baseUrl = JSONUtilities.getString(options, "baseUrl", "");
+        
         Graph graph = _jrdfFactory.getNewGraph();
         LineHandler lineHandler = _nTriplesParserFactory.createParser(graph, _newMapFactory);
         GraphLineParser parser = new GraphLineParser(graph, lineHandler);
         try {
             parser.parse(reader, baseUrl); // fills JRDF graph
-        } catch (IOException e) {
-            throw new ImportException("i/o error while parsing RDF",e);
-        } catch (ParseException e) {
-            throw new ImportException("error parsing RDF",e);
-        } catch (StatementHandlerException e) {
-            throw new ImportException("error parsing RDF",e);
+        } catch (Exception e) {
+            exceptions.add(e);
+            return;
         } 
-
+        
         Map<String, List<Row>> subjectToRows = new HashMap<String, List<Row>>();
 
         Column subjectColumn = new Column(0, "subject");
@@ -152,24 +160,4 @@ public class RdfTripleImporter implements ReaderImporter{
             triples.iterator().close();
         }
     }
-
-    
-    @Override
-    public boolean canImportData(String contentType, String fileName) {
-        if (contentType != null) {
-            contentType = contentType.toLowerCase().trim();
-
-            if("application/rdf+xml".equals(contentType)) {
-                return true;
-            }
-        } else if (fileName != null) {
-            fileName = fileName.toLowerCase();
-            if (
-                    fileName.endsWith(".rdf")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }
