@@ -266,7 +266,7 @@ public class FreebaseUtils {
     }
         
     static public String getFreeQUrl() {
-    	String url = (String) ProjectManager.singleton.getPreferenceStore().get("freebase.freeq");
-    	return url != null ? url : FREEQ_URL;
+        String url = (String) ProjectManager.singleton.getPreferenceStore().get("freebase.freeq");
+        return url != null ? url : FREEQ_URL;
     }
 }

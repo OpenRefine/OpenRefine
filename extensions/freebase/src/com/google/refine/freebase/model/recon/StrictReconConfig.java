@@ -60,10 +60,10 @@ abstract public class StrictReconConfig extends ReconConfig {
     }
     
     protected Recon createNoMatchRecon(long historyEntryID) {
-    	Recon recon = createNewRecon(historyEntryID);
-    	recon.service = "mql";
-    	recon.judgment = Judgment.None;
-    	recon.matchRank = -1;
-    	return recon;
+        Recon recon = createNewRecon(historyEntryID);
+        recon.service = "mql";
+        recon.judgment = Judgment.None;
+        recon.matchRank = -1;
+        return recon;
     }
 }

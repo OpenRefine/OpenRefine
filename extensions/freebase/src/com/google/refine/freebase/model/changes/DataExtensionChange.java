@@ -208,13 +208,13 @@ public class DataExtensionChange implements Change {
                 column.setReconStats(ReconStats.create(project, cellIndex));
                 
                 try {
-					project.columnModel.addColumn(_columnInsertIndex + i, column, true);
-					
-					// the column might have been renamed to avoid collision
-					_columnNames.set(i, column.getName());
-				} catch (ModelException e) {
-					// won't get here since we set the avoid collision flag
-				}
+                    project.columnModel.addColumn(_columnInsertIndex + i, column, true);
+
+                    // the column might have been renamed to avoid collision
+                    _columnNames.set(i, column.getName());
+                } catch (ModelException e) {
+                    // won't get here since we set the avoid collision flag
+                }
             }
             
             project.update();

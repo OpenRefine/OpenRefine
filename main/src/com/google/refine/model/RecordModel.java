@@ -55,7 +55,7 @@ public class RecordModel implements Jsonizable {
             this.cellIndex = cellIndex;
         }
     }
-	
+    
     final static public class RowDependency {
         public int recordIndex;
         public CellDependency[] cellDependencies;

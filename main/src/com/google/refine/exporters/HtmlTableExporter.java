@@ -48,7 +48,7 @@ import com.google.refine.model.Row;
 
 public class HtmlTableExporter implements WriterExporter {
 
-	@Override
+    @Override
     public String getContentType() {
         return "text/html";
     }
@@ -84,12 +84,12 @@ public class HtmlTableExporter implements WriterExporter {
                 
                 @Override
                 public void start(Project project) {
-                	// nothing to do
+                    // nothing to do
                 }
                 
                 @Override
                 public void end(Project project) {
-                	// nothing to do
+                    // nothing to do
                 }
                 
                 @Override

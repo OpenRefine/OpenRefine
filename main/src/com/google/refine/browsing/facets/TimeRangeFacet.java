@@ -55,7 +55,7 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 public class TimeRangeFacet extends RangeFacet {
-	    
+
     protected boolean   _selectTime; // whether the time selection applies, default true
     protected boolean   _selectNonTime;
             
@@ -153,7 +153,7 @@ public class TimeRangeFacet extends RangeFacet {
     public RowFilter getRowFilter(Project project) {
         if (_eval != null && _errorMessage == null && _selected) {
             return new ExpressionTimeComparisonRowFilter(
-        		getRowEvaluable(project), _selectTime, _selectNonTime, _selectBlank, _selectError) {
+                    getRowEvaluable(project), _selectTime, _selectNonTime, _selectBlank, _selectError) {
                 
                 @Override
                 protected boolean checkValue(long t) {

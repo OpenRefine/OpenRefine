@@ -51,10 +51,10 @@ import com.google.refine.model.Project;
 import com.google.refine.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
-    
-	static protected List<String> toExpressionList(Object o) {
+
+    static protected List<String> toExpressionList(Object o) {
         return o == null ? new ArrayList<String>() : ((TopList) o).getList();
-	}
+    }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)

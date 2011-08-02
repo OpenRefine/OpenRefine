@@ -201,8 +201,8 @@ public class RangeFacet implements Facet {
     public RowFilter getRowFilter(Project project) {
         if (_eval != null && _errorMessage == null && _selected) {
             return new ExpressionNumberComparisonRowFilter(
-        		getRowEvaluable(project), _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
-                
+                    getRowEvaluable(project), _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+
                 @Override
                 protected boolean checkValue(double d) {
                     return d >= _from && d < _to;
@@ -215,8 +215,8 @@ public class RangeFacet implements Facet {
 
     @Override
     public RecordFilter getRecordFilter(Project project) {
-    	RowFilter rowFilter = getRowFilter(project);
-    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
+        RowFilter rowFilter = getRowFilter(project);
+        return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
     @Override
@@ -267,7 +267,7 @@ public class RangeFacet implements Facet {
     }
     
     protected RowEvaluable getRowEvaluable(Project project) {
-    	return new ExpressionBasedRowEvaluable(_columnName, _cellIndex, _eval);
+        return new ExpressionBasedRowEvaluable(_columnName, _cellIndex, _eval);
     }
     
     protected void retrieveDataFromBaseBinIndex(NumericBinIndex index) {

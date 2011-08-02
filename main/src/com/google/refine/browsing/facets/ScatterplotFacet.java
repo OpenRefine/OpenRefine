@@ -315,8 +315,8 @@ public class ScatterplotFacet implements Facet {
 
     @Override
     public RecordFilter getRecordFilter(Project project) {
-    	RowFilter rowFilter = getRowFilter(project);
-    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
+        RowFilter rowFilter = getRowFilter(project);
+        return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
     @Override
@@ -414,7 +414,7 @@ public class ScatterplotFacet implements Facet {
     }
     
     public static NumericBinIndex getBinIndex(Project project, Column column, Evaluable eval, String expression) {
-    	return getBinIndex(project, column, eval, expression, "row-based");
+        return getBinIndex(project, column, eval, expression, "row-based");
     }
     
     public static NumericBinIndex getBinIndex(Project project, Column column, Evaluable eval, String expression, String mode) {
@@ -429,10 +429,10 @@ public class ScatterplotFacet implements Facet {
         NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
         if (index == null) {
             index = "row-based".equals(mode) ? 
-            		new NumericBinRowIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval)) :
-        			new NumericBinRecordIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval));
-            		
-            column.setPrecompute(key, index);
+                    new NumericBinRowIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval)) :
+                        new NumericBinRecordIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval));
+
+                    column.setPrecompute(key, index);
         }
         return index;
     }

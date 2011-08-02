@@ -117,16 +117,16 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-        		"<head><title>" + TEST_PROJECT_NAME + "</title></head>\n" +
-        		"<body>\n" +
-        		"<table>\n" +
-        		"<tr><th>column0</th><th>column1</th></tr>\n" +
-        		"<tr><td>row0cell0</td><td>row0cell1</td></tr>\n" +
-        		"<tr><td>row1cell0</td><td>row1cell1</td></tr>\n" +
-        		"</table>\n" +
-        		"</body>\n" +
-        		"</html>\n");
-
+                "<head><title>" + TEST_PROJECT_NAME + "</title></head>\n" +
+                "<body>\n" +
+                "<table>\n" +
+                "<tr><th>column0</th><th>column1</th></tr>\n" +
+                "<tr><td>row0cell0</td><td>row0cell1</td></tr>\n" +
+                "<tr><td>row1cell0</td><td>row1cell1</td></tr>\n" +
+                "</table>\n" +
+                "</body>\n" +
+        "</html>\n");
+        
     }
 
     // TODO: This test fails because the HTML table exporter 

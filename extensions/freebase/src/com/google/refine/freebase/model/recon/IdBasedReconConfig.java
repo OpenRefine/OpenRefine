@@ -167,50 +167,50 @@ public class IdBasedReconConfig extends StrictReconConfig {
                 String s = ParsingUtilities.inputStreamToString(is);
                 JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
                 if (o.has("result")) {
-	                JSONArray results = o.getJSONArray("result");
-	                int count = results.length();
-	                
-	                for (int i = 0; i < count; i++) {
-	                    JSONObject result = results.getJSONObject(i);
-	                    
-	                    String id = result.getString("id");
-	                    
-	                    JSONArray types = result.getJSONArray("type");
-	                    String[] typeIDs = new String[types.length()];
-	                    for (int j = 0; j < typeIDs.length; j++) {
-	                        typeIDs[j] = types.getString(j);
-	                    }
-	                    
-	                    ReconCandidate candidate = new ReconCandidate(
-	                        id,
-	                        result.getString("name"),
-	                        typeIDs,
-	                        100
-	                    );
-	                    
-	                    Recon recon = Recon.makeFreebaseRecon(historyEntryID);
-	                    recon.addCandidate(candidate);
-	                    recon.service = "mql";
-	                    recon.judgment = Judgment.Matched;
-	                    recon.judgmentAction = "auto";
-	                    recon.match = candidate;
-	                    recon.matchRank = 0;
-	                    
-	                    idToRecon.put(id, recon);
-	                }
+                    JSONArray results = o.getJSONArray("result");
+                    int count = results.length();
+
+                    for (int i = 0; i < count; i++) {
+                        JSONObject result = results.getJSONObject(i);
+
+                        String id = result.getString("id");
+
+                        JSONArray types = result.getJSONArray("type");
+                        String[] typeIDs = new String[types.length()];
+                        for (int j = 0; j < typeIDs.length; j++) {
+                            typeIDs[j] = types.getString(j);
+                        }
+
+                        ReconCandidate candidate = new ReconCandidate(
+                                id,
+                                result.getString("name"),
+                                typeIDs,
+                                100
+                        );
+
+                        Recon recon = Recon.makeFreebaseRecon(historyEntryID);
+                        recon.addCandidate(candidate);
+                        recon.service = "mql";
+                        recon.judgment = Judgment.Matched;
+                        recon.judgmentAction = "auto";
+                        recon.match = candidate;
+                        recon.matchRank = 0;
+
+                        idToRecon.put(id, recon);
+                    }
                 }
             } finally {
-            	is.close();
+                is.close();
             }
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         }
-        
+
         for (ReconJob job : jobs) {
             String id = ((IdBasedReconJob) job).id;
             Recon recon = idToRecon.get(id);
             if (recon == null) {
-            	recon = createNoMatchRecon(historyEntryID);
+                recon = createNoMatchRecon(historyEntryID);
             }
             recons.add(recon);
         }

@@ -87,7 +87,7 @@ public class ForRange implements Control {
                 double to = ((Number) toO).doubleValue();
                 
                 while (from < to) {
-                	bindings.put(indexName, from);
+                    bindings.put(indexName, from);
                     
                     Object r = args[4].evaluate(bindings);
                     
@@ -101,7 +101,7 @@ public class ForRange implements Control {
                 double to = ((Number) toO).doubleValue();
                 
                 while (from < to) {
-                	bindings.put(indexName, from);
+                    bindings.put(indexName, from);
                     
                     Object r = args[4].evaluate(bindings);
                     
@@ -124,13 +124,13 @@ public class ForRange implements Control {
     }
     
     static private boolean isIntegral(Number o) {
-    	if (o instanceof Integer || o instanceof Long) {
-    		return true;
-    	} else {
-    		return (o.doubleValue() - o.longValue()) == 0;
-    	}
+        if (o instanceof Integer || o instanceof Long) {
+            return true;
+        } else {
+            return (o.doubleValue() - o.longValue()) == 0;
+        }
     }
-    
+
     @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {

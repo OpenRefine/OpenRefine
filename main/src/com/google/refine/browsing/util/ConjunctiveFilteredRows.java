@@ -55,19 +55,19 @@ public class ConjunctiveFilteredRows implements FilteredRows {
     
     @Override
     public void accept(Project project, RowVisitor visitor) {
-    	try {
-    		visitor.start(project);
-    		
-	        int c = project.rows.size();
-	        for (int rowIndex = 0; rowIndex < c; rowIndex++) {
-	            Row row = project.rows.get(rowIndex);
-	            if (matchRow(project, rowIndex, row)) {
-	                visitRow(project, visitor, rowIndex, row);
-	            }
-	        }
-    	} finally {
-    		visitor.end(project);
-    	}
+        try {
+            visitor.start(project);
+
+            int c = project.rows.size();
+            for (int rowIndex = 0; rowIndex < c; rowIndex++) {
+                Row row = project.rows.get(rowIndex);
+                if (matchRow(project, rowIndex, row)) {
+                    visitRow(project, visitor, rowIndex, row);
+                }
+            }
+        } finally {
+            visitor.end(project);
+        }
     }
     
     protected void visitRow(Project project, RowVisitor visitor, int rowIndex, Row row) {

@@ -39,19 +39,19 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 
 public class AllRowsRecordFilter implements RecordFilter {
-	final protected RowFilter _rowFilter;
-	
-	public AllRowsRecordFilter(RowFilter rowFilter) {
-		_rowFilter = rowFilter;
-	}
+    final protected RowFilter _rowFilter;
 
-	@Override
-	public boolean filterRecord(Project project, Record record) {
-		for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-			if (!_rowFilter.filterRow(project, r, project.rows.get(r))) {
-				return false;
-			}
-		}
-		return true;
-	}
+    public AllRowsRecordFilter(RowFilter rowFilter) {
+        _rowFilter = rowFilter;
+    }
+
+    @Override
+    public boolean filterRecord(Project project, Record record) {
+        for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+            if (!_rowFilter.filterRow(project, r, project.rows.get(r))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

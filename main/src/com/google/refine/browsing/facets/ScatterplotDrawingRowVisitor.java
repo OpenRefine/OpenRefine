@@ -122,12 +122,12 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
     
     @Override
     public void start(Project project) {
-    	// nothing to do
+        // nothing to do
     }
-    
+
     @Override
     public void end(Project project) {
-    	// nothing to do
+        // nothing to do
     }
     
     @Override
@@ -153,10 +153,10 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
     
     @Override
     public boolean visit(Project project, Record record) {
-    	for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-    		visit(project, r, project.rows.get(r));
-    	}
-    	return false;
+        for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+            visit(project, r, project.rows.get(r));
+        }
+        return false;
     }
     
     public RenderedImage getImage() {

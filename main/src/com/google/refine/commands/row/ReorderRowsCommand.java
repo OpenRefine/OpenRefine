@@ -50,16 +50,16 @@ public class ReorderRowsCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, JSONObject engineConfig) throws Exception {
-    	
-    	String mode = request.getParameter("mode");
-    	JSONObject sorting = null;
-    	
+
+        String mode = request.getParameter("mode");
+        JSONObject sorting = null;
+
         try{
             String json = request.getParameter("sorting");
-            
+
             sorting = (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
         } catch (JSONException e) {
-        	// ignore
+            // ignore
         }
 
         return new RowReorderOperation(Engine.stringToMode(mode), sorting);

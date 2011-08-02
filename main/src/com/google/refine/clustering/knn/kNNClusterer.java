@@ -115,12 +115,12 @@ public class kNNClusterer extends Clusterer {
         
         @Override
         public void start(Project project) {
-        	// nothing to do
+            // nothing to do
         }
-        
+
         @Override
         public void end(Project project) {
-        	// nothing to do
+            // nothing to do
         }
         
         @Override
@@ -167,12 +167,12 @@ public class kNNClusterer extends Clusterer {
         
         @Override
         public void start(Project project) {
-        	// nothing to do
+            // nothing to do
         }
-        
+
         @Override
         public void end(Project project) {
-        	// nothing to do
+            // nothing to do
         }
         
         @Override

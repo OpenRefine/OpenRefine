@@ -41,12 +41,12 @@ import com.google.refine.model.Record;
  * particular criteria, such as facets' constraints.
  */
 public interface RecordVisitor {
-	public void start(Project project); // called before any visit() call
-	
+    public void start(Project project); // called before any visit() call
+
     public boolean visit(
-        Project project, 
-        Record record
+            Project project, 
+            Record record
     );
-    
-	public void end(Project project); // called after all visit() calls
+
+    public void end(Project project); // called after all visit() calls
 }

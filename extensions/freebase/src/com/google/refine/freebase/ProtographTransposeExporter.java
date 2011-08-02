@@ -48,12 +48,12 @@ import com.google.refine.freebase.protograph.transpose.Transposer;
 import com.google.refine.freebase.protograph.transpose.TripleLoaderTransposedNodeFactory;
 
 abstract public class ProtographTransposeExporter implements WriterExporter {
-	final protected String _contentType;
-	
-	public ProtographTransposeExporter(String contentType) {
-		_contentType = contentType;
-	}
-	
+    final protected String _contentType;
+
+    public ProtographTransposeExporter(String contentType) {
+        _contentType = contentType;
+    }
+
     @Override
     public String getContentType() {
         return "application/x-unknown";
@@ -86,25 +86,25 @@ abstract public class ProtographTransposeExporter implements WriterExporter {
     abstract protected TransposedNodeFactory createNodeFactory(Project project, Writer writer);
     
     static public class TripleLoaderExporter extends ProtographTransposeExporter {
-		public TripleLoaderExporter() {
-			super("application/x-unknown");
-		}
+        public TripleLoaderExporter() {
+            super("application/x-unknown");
+        }
 
-		@Override
-		protected TransposedNodeFactory createNodeFactory(Project project, Writer writer) {
-			return new TripleLoaderTransposedNodeFactory(project, writer);
-		}
+        @Override
+        protected TransposedNodeFactory createNodeFactory(Project project, Writer writer) {
+            return new TripleLoaderTransposedNodeFactory(project, writer);
+        }
     }
 
     static public class MqlwriteLikeExporter extends ProtographTransposeExporter {
-		public MqlwriteLikeExporter() {
-			super("application/x-unknown");
-		}
+        public MqlwriteLikeExporter() {
+            super("application/x-unknown");
+        }
 
-		@Override
-		protected TransposedNodeFactory createNodeFactory(Project project, Writer writer) {
-			return new MqlwriteLikeTransposedNodeFactory(writer);
-		}
+        @Override
+        protected TransposedNodeFactory createNodeFactory(Project project, Writer writer) {
+            return new MqlwriteLikeTransposedNodeFactory(writer);
+        }
     }
 
 }

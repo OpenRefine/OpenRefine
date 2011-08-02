@@ -222,12 +222,12 @@ public class ReconOperation extends EngineDependentOperation {
             filteredRows.accept(_project, new RowVisitor() {
                 @Override
                 public void start(Project project) {
-                	// nothing to do
+                    // nothing to do
                 }
-                
+
                 @Override
                 public void end(Project project) {
-                	// nothing to do
+                    // nothing to do
                 }
                 
                 @Override

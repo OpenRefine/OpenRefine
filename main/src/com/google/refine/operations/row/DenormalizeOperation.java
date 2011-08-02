@@ -87,20 +87,20 @@ public void write(JSONWriter writer, Properties options)
             RowDependency rd = project.recordModel.getRowDependency(r);
             if (rd.cellDependencies != null) {
                 newRow = oldRow.dup();
-                
+
                 for (int c = 0; c < rd.cellDependencies.length; c++) {
-                	CellDependency cd = rd.cellDependencies[c];
-                	if (cd != null) {
-	                    int contextRowIndex = cd.rowIndex;
-	                    int contextCellIndex = cd.cellIndex;
-	                    
-	                    if (contextRowIndex >= 0 && contextRowIndex < oldRows.size()) {
-	                        Row contextRow = oldRows.get(contextRowIndex);
-	                        Cell contextCell = contextRow.getCell(contextCellIndex);
-	                        
-	                        newRow.setCell(contextCellIndex, contextCell);
-	                    }
-                	}
+                    CellDependency cd = rd.cellDependencies[c];
+                    if (cd != null) {
+                        int contextRowIndex = cd.rowIndex;
+                        int contextCellIndex = cd.cellIndex;
+
+                        if (contextRowIndex >= 0 && contextRowIndex < oldRows.size()) {
+                            Row contextRow = oldRows.get(contextRowIndex);
+                            Cell contextCell = contextRow.getCell(contextCellIndex);
+
+                            newRow.setCell(contextCellIndex, contextCell);
+                        }
+                    }
                 }
             }
             

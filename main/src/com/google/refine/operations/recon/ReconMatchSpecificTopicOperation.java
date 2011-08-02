@@ -161,14 +161,14 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
             
             @Override
             public void start(Project project) {
-            	// nothing to do
+                // nothing to do
             }
-            
+
             @Override
             public void end(Project project) {
-            	// nothing to do
+                // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);

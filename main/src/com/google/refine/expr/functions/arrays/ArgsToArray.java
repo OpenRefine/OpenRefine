@@ -44,7 +44,7 @@ public class ArgsToArray implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-    	return args;
+        return args;
     }
 
     @Override

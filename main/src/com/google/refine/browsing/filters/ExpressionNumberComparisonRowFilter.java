@@ -52,20 +52,20 @@ import com.google.refine.model.Row;
  * values. 
  */
 abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
-    final protected RowEvaluable  	_rowEvaluable;
-    final protected boolean 		_selectNumeric;
-    final protected boolean 		_selectNonNumeric;
-    final protected boolean 		_selectBlank;
-    final protected boolean 		_selectError;
-    
+    final protected RowEvaluable _rowEvaluable;
+    final protected boolean _selectNumeric;
+    final protected boolean _selectNonNumeric;
+    final protected boolean _selectBlank;
+    final protected boolean _selectError;
+
     public ExpressionNumberComparisonRowFilter(
-    	RowEvaluable rowEvaluable,
-        boolean selectNumeric,
-        boolean selectNonNumeric,
-        boolean selectBlank,
-        boolean selectError
+            RowEvaluable rowEvaluable,
+            boolean selectNumeric,
+            boolean selectNonNumeric,
+            boolean selectBlank,
+            boolean selectError
     ) {
-    	_rowEvaluable = rowEvaluable;
+        _rowEvaluable = rowEvaluable;
         _selectNumeric = selectNumeric;
         _selectNonNumeric = selectNonNumeric;
         _selectBlank = selectBlank;

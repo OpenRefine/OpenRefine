@@ -44,55 +44,55 @@ import com.google.refine.model.Record;
 import com.google.refine.sorting.Criterion.KeyMaker;
 
 public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
-	final protected RecordVisitor 	_visitor;
-	protected List<Record>	 		_records;
-	
-	public SortingRecordVisitor(RecordVisitor visitor) {
-		_visitor = visitor;
-	}
+    final protected RecordVisitor _visitor;
+    protected List<Record> _records;
 
-	@Override
-	public void start(Project project) {
-		int count = project.recordModel.getRecordCount();
-		_records = new ArrayList<Record>(count);
-		_keys = new ArrayList<Object[]>(count);
-	}
+    public SortingRecordVisitor(RecordVisitor visitor) {
+        _visitor = visitor;
+    }
 
-	@Override
-	public void end(Project project) {
-		_visitor.start(project);
-		
-		Collections.sort(_records, new Comparator<Record>() {
-			Project project;
-			
-			Comparator<Record> init(Project project) {
-				this.project = project;
-				return this;
-			}
-			
-			@Override
-			public int compare(Record o1, Record o2) {
-				return SortingRecordVisitor.this.compare(project, o1, o1.recordIndex, o2, o2.recordIndex);
-			}
-		}.init(project));
-		
-		for (Record record : _records) {
-			_visitor.visit(project, record);
-		}
-		
-		_visitor.end(project);
-	}
+    @Override
+    public void start(Project project) {
+        int count = project.recordModel.getRecordCount();
+        _records = new ArrayList<Record>(count);
+        _keys = new ArrayList<Object[]>(count);
+    }
 
-	@Override
-	public boolean visit(Project project, Record record) {
-		_records.add(record);
-		return false;
-	}
+    @Override
+    public void end(Project project) {
+        _visitor.start(project);
 
-	@Override
-	protected Object makeKey(
-			Project project, KeyMaker keyMaker, Criterion c, Object o, int index) {
-		
-		return keyMaker.makeKey(project, (Record) o);
-	}
+        Collections.sort(_records, new Comparator<Record>() {
+            Project project;
+
+            Comparator<Record> init(Project project) {
+                this.project = project;
+                return this;
+            }
+
+            @Override
+            public int compare(Record o1, Record o2) {
+                return SortingRecordVisitor.this.compare(project, o1, o1.recordIndex, o2, o2.recordIndex);
+            }
+        }.init(project));
+
+        for (Record record : _records) {
+            _visitor.visit(project, record);
+        }
+
+        _visitor.end(project);
+    }
+
+    @Override
+    public boolean visit(Project project, Record record) {
+        _records.add(record);
+        return false;
+    }
+
+    @Override
+    protected Object makeKey(
+            Project project, KeyMaker keyMaker, Criterion c, Object o, int index) {
+
+        return keyMaker.makeKey(project, (Record) o);
+    }
 }

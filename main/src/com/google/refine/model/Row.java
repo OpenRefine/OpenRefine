@@ -161,12 +161,12 @@ public class Row implements HasFields, Jsonizable {
         
         if (!"save".equals(options.getProperty("mode"))) {
             if (options.containsKey("rowIndex")) {
-            	int rowIndex = (Integer) options.get("rowIndex");
+                int rowIndex = (Integer) options.get("rowIndex");
                 writer.key("i"); writer.value(rowIndex);
-                
+
                 if (options.containsKey("recordIndex")) {
-                	int recordIndex = (Integer) options.get("recordIndex");
-                	
+                    int recordIndex = (Integer) options.get("recordIndex");
+
                     writer.key("j"); writer.value(recordIndex);
                 }
             }

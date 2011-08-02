@@ -107,17 +107,17 @@ protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) 
                 this.rowIndices = rowIndices;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
-            	// nothing to do
+                // nothing to do
             }
-            
+
             @Override
             public void end(Project project) {
-            	// nothing to do
+                // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 rowIndices.add(rowIndex);

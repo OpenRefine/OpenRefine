@@ -101,13 +101,13 @@ public class TextSearchFacet implements Facet {
             if ("regex".equals(_mode)) {
                 try {
                     _pattern = Pattern.compile(
-                    		_query, 
-                    		_caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                            _query, 
+                            _caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
                 } catch (java.util.regex.PatternSyntaxException e) {
                     e.printStackTrace();
                 }
             } else if (!_caseSensitive) {
-        		_query = _query.toLowerCase();
+                _query = _query.toLowerCase();
             }
         }
     }
@@ -141,17 +141,17 @@ public class TextSearchFacet implements Facet {
 
     @Override
     public RecordFilter getRecordFilter(Project project) {
-    	RowFilter rowFilter = getRowFilter(project);
-    	return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
+        RowFilter rowFilter = getRowFilter(project);
+        return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 
     @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         // nothing to do
     }
-    
+
     @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
-    	// nothing to do
+        // nothing to do
     }
 }

@@ -77,10 +77,10 @@ public class WrappedRow implements HasFields {
     }
 
     protected class WrappedRecord implements HasFields {
-    	final Record _record;
-        
+        final Record _record;
+
         protected WrappedRecord(Record record) {
-        	_record = record;
+            _record = record;
         }
 
         @Override

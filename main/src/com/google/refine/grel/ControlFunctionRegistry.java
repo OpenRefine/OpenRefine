@@ -232,7 +232,7 @@ public class ControlFunctionRegistry {
         registerFunction("htmlAttr", new HtmlAttr());
         registerFunction("htmlText", new HtmlText());
         registerFunction("innerHtml", new InnerHtml());
-		registerFunction("ownText", new OwnText());
+        registerFunction("ownText", new OwnText());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

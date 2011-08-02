@@ -238,7 +238,7 @@ public class Parser {
                 throw makeException("Missing )");
             }
         } else if (_token.type == TokenType.Delimiter && _token.text.equals("[")) { // [ ... ] array
-        	next(true); // swallow [
+            next(true); // swallow [
 
             List<Evaluable> args = parseExpressionList("]");
 

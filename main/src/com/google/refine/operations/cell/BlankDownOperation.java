@@ -108,15 +108,15 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
                 this.cellChanges = cellChanges;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
-            	// nothing to do
+                // nothing to do
             }
-            
+
             @Override
             public void end(Project project) {
-            	// nothing to do
+                // nothing to do
             }
             
             @Override

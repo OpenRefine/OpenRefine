@@ -181,37 +181,37 @@ public class KeyBasedReconConfig extends StrictReconConfig {
                 String s = ParsingUtilities.inputStreamToString(is);
                 JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
                 if (o.has("result")) {
-	                JSONArray results = o.getJSONArray("result");
-	                int count = results.length();
-	                
-	                for (int i = 0; i < count; i++) {
-	                    JSONObject result = results.getJSONObject(i);
-	                    
-	                    String key = result.getJSONArray("key").getJSONObject(0).getString("value");
-	                    
-	                    JSONArray types = result.getJSONArray("type");
-	                    String[] typeIDs = new String[types.length()];
-	                    for (int j = 0; j < typeIDs.length; j++) {
-	                        typeIDs[j] = types.getString(j);
-	                    }
-	                    
-	                    ReconCandidate candidate = new ReconCandidate(
-	                        result.getString("id"),
-	                        result.getString("name"),
-	                        typeIDs,
-	                        100
-	                    );
-	                    
-	                    Recon recon = Recon.makeFreebaseRecon(historyEntryID);
-	                    recon.addCandidate(candidate);
-	                    recon.service = "mql";
-	                    recon.judgment = Judgment.Matched;
-	                    recon.judgmentAction = "auto";
-	                    recon.match = candidate;
-	                    recon.matchRank = 0;
-	                    
-	                    keyToRecon.put(key, recon);
-	                }
+                    JSONArray results = o.getJSONArray("result");
+                    int count = results.length();
+
+                    for (int i = 0; i < count; i++) {
+                        JSONObject result = results.getJSONObject(i);
+
+                        String key = result.getJSONArray("key").getJSONObject(0).getString("value");
+
+                        JSONArray types = result.getJSONArray("type");
+                        String[] typeIDs = new String[types.length()];
+                        for (int j = 0; j < typeIDs.length; j++) {
+                            typeIDs[j] = types.getString(j);
+                        }
+
+                        ReconCandidate candidate = new ReconCandidate(
+                                result.getString("id"),
+                                result.getString("name"),
+                                typeIDs,
+                                100
+                        );
+
+                        Recon recon = Recon.makeFreebaseRecon(historyEntryID);
+                        recon.addCandidate(candidate);
+                        recon.service = "mql";
+                        recon.judgment = Judgment.Matched;
+                        recon.judgmentAction = "auto";
+                        recon.match = candidate;
+                        recon.matchRank = 0;
+
+                        keyToRecon.put(key, recon);
+                    }
                 }
             } finally {
                 is.close();
@@ -224,7 +224,7 @@ public class KeyBasedReconConfig extends StrictReconConfig {
             String key = ((KeyBasedReconJob) job).key;
             Recon recon = keyToRecon.get(key);
             if (recon == null) {
-            	recon = createNoMatchRecon(historyEntryID);
+                recon = createNoMatchRecon(historyEntryID);
             }
             recons.add(recon);
         }

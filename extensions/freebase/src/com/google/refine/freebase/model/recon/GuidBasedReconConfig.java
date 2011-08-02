@@ -137,7 +137,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
                 jsonWriter.key("guid|=");
                 jsonWriter.array();
                 for (ReconJob job : jobs) {
-                	jsonWriter.value(((GuidBasedReconJob) job).guid);
+                    jsonWriter.value(((GuidBasedReconJob) job).guid);
                 }
                 jsonWriter.endArray();
 
@@ -163,37 +163,37 @@ public class GuidBasedReconConfig extends StrictReconConfig {
                 String s = ParsingUtilities.inputStreamToString(is);
                 JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
                 if (o.has("result")) {
-	                JSONArray results = o.getJSONArray("result");
-	                int count = results.length();
-	                
-	                for (int i = 0; i < count; i++) {
-	                    JSONObject result = results.getJSONObject(i);
-	                    
-	                    String guid = result.getString("guid");
-	                    
-	                    JSONArray types = result.getJSONArray("type");
-	                    String[] typeIDs = new String[types.length()];
-	                    for (int j = 0; j < typeIDs.length; j++) {
-	                        typeIDs[j] = types.getString(j);
-	                    }
-	                    
-	                    ReconCandidate candidate = new ReconCandidate(
-	                        result.getString("id"),
-	                        result.getString("name"),
-	                        typeIDs,
-	                        100
-	                    );
-	                    
-	                    Recon recon = Recon.makeFreebaseRecon(historyEntryID);
-	                    recon.addCandidate(candidate);
-	                    recon.service = "mql";
-	                    recon.judgment = Judgment.Matched;
-	                    recon.judgmentAction = "auto";
-	                    recon.match = candidate;
-	                    recon.matchRank = 0;
-	                    
-	                    guidToRecon.put(guid, recon);
-	                }
+                    JSONArray results = o.getJSONArray("result");
+                    int count = results.length();
+
+                    for (int i = 0; i < count; i++) {
+                        JSONObject result = results.getJSONObject(i);
+
+                        String guid = result.getString("guid");
+
+                        JSONArray types = result.getJSONArray("type");
+                        String[] typeIDs = new String[types.length()];
+                        for (int j = 0; j < typeIDs.length; j++) {
+                            typeIDs[j] = types.getString(j);
+                        }
+
+                        ReconCandidate candidate = new ReconCandidate(
+                                result.getString("id"),
+                                result.getString("name"),
+                                typeIDs,
+                                100
+                        );
+
+                        Recon recon = Recon.makeFreebaseRecon(historyEntryID);
+                        recon.addCandidate(candidate);
+                        recon.service = "mql";
+                        recon.judgment = Judgment.Matched;
+                        recon.judgmentAction = "auto";
+                        recon.match = candidate;
+                        recon.matchRank = 0;
+
+                        guidToRecon.put(guid, recon);
+                    }
                 }
             } finally {
                 is.close();
@@ -206,7 +206,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
             String guid = ((GuidBasedReconJob) job).guid;
             Recon recon = guidToRecon.get(guid);
             if (recon == null) {
-            	recon = createNoMatchRecon(historyEntryID);
+                recon = createNoMatchRecon(historyEntryID);
             }
             recons.add(recon);
         }

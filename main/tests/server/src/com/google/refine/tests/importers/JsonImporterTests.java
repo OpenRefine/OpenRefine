@@ -51,7 +51,7 @@ import com.google.refine.importers.tree.TreeReader.Token;
 import com.google.refine.model.Row;
 
 public class JsonImporterTests extends ImporterTest {
-	@Override
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -270,8 +270,9 @@ public class JsonImporterTests extends ImporterTest {
         sb.append("[");
         for(int i = 1; i < 7; i++){
             sb.append(getTypicalElement(i));
-            if(i < 6)
-            	sb.append(",");
+            if(i < 6) {
+                sb.append(",");
+            }
         }
         sb.append("]");
         return sb.toString();
@@ -282,12 +283,12 @@ public class JsonImporterTests extends ImporterTest {
         sb.append("[");
         for(int i = 1; i < 7; i++){
             sb.append(getElementWithDuplicateSubElement(i));
-            if(i < 6)
-            	sb.append(",");
+            if(i < 6) {
+                sb.append(",");
+            }
         }
         sb.append("]");
         return sb.toString();
-
     }
 
     public static String getSampleWithLineBreak(){
@@ -336,8 +337,9 @@ public class JsonImporterTests extends ImporterTest {
                     "\"title\" : \"Book title " + i + "\"," +
                     "\"publish_date\" : \"2010-05-26\"" +
                     "}");
-            if(i < 6)
-            	sb.append(",");
+            if(i < 6) {
+                sb.append(",");
+            }
         }
         sb.append("]");
         return sb.toString();

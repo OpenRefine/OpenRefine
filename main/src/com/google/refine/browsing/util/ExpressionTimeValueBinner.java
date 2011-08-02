@@ -50,13 +50,13 @@ import com.google.refine.model.Row;
  * from a given expression.
  */
 public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
-	
+
     /*
      * Configuration
      */
-	final protected RowEvaluable	_rowEvaluable;
-    final protected TimeBinIndex    _index;     // base bins
-    
+    final protected RowEvaluable _rowEvaluable;
+    final protected TimeBinIndex _index; // base bins
+
     /*
      * Computed results
      */
@@ -75,19 +75,19 @@ public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
     protected boolean hasNonTime;
     
     public ExpressionTimeValueBinner(RowEvaluable rowEvaluable, TimeBinIndex index) {
-    	_rowEvaluable = rowEvaluable;
+        _rowEvaluable = rowEvaluable;
         _index = index;
         bins = new int[_index.getBins().length];
     }
-    
+
     @Override
     public void start(Project project) {
-    	// nothing to do
+        // nothing to do
     }
-    
+
     @Override
     public void end(Project project) {
-    	// nothing to do
+        // nothing to do
     }
     
     @Override
@@ -108,7 +108,7 @@ public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
         
         Properties bindings = ExpressionUtils.createBindings(project);
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-        	processRow(project, r, project.rows.get(r), bindings);
+            processRow(project, r, project.rows.get(r), bindings);
         }
         
         updateCounts();

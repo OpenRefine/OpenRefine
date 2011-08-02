@@ -89,11 +89,11 @@ public class AppEngineRefineBrokerImpl extends RefineBroker {
     // ---------------------------------------------------------------------------------
     
     protected void expire(HttpServletResponse response) throws Exception {
-    	// TODO: implement
+        // TODO: implement
     }
 
     protected void startProject(HttpServletResponse response, String pid, String uid, String lock, byte[] data, String metadata, List<String> transformations) throws Exception {
-    	// TODO: implement
+        // TODO: implement
     }
     
     protected void expireLocks(HttpServletResponse response) throws Exception {
@@ -133,7 +133,7 @@ public class AppEngineRefineBrokerImpl extends RefineBroker {
         PersistenceManager pm = pmfInstance.getPersistenceManager();
         
         try {
-        	// TODO: implement
+            // TODO: implement
             respond(response, lockToJSON(getLock(pm,pid)));
         } finally {
             pm.close();
@@ -143,7 +143,7 @@ public class AppEngineRefineBrokerImpl extends RefineBroker {
     protected void obtainLock(HttpServletResponse response, String pid, String uid, int locktype, String lockvalue) throws Exception {
         PersistenceManager pm = pmfInstance.getPersistenceManager();
         
-    	// TODO: implement
+        // TODO: implement
         
         try {
             Lock lock = getLock(pm, pid);

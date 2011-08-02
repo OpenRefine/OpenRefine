@@ -117,7 +117,7 @@ public class Filter implements Control {
                     
                     Object r = args[2].evaluate(bindings);
                     if (r instanceof Boolean && ((Boolean) r).booleanValue()) {
-                    	results.add(v);
+                        results.add(v);
                     }
                 }
             }

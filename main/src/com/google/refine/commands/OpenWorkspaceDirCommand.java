@@ -57,14 +57,14 @@ public class OpenWorkspaceDirCommand extends Command {
             File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
 
             if (Desktop.isDesktopSupported()) {
-            	Desktop desktop = Desktop.getDesktop();
-            	desktop.open(dir);
+                Desktop desktop = Desktop.getDesktop();
+                desktop.open(dir);
             } else /* if Mac */ {
-            	Runtime.getRuntime().exec(
-        			"open .",
-        			new String[] {},
-        			dir
-            	);
+                Runtime.getRuntime().exec(
+                        "open .",
+                        new String[] {},
+                        dir
+                );
             }
             
             respond(response, "{ \"code\" : \"ok\" }");

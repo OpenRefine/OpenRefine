@@ -42,7 +42,7 @@ import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
 public class TimeBinRecordIndex extends TimeBinIndex {
-	
+
     public TimeBinRecordIndex(Project project, RowEvaluable rowEvaluable) {
         super(project, rowEvaluable);
     }

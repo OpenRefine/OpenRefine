@@ -218,11 +218,11 @@ public class ListFacet implements Facet {
     
     @Override
     public RecordFilter getRecordFilter(Project project) {
-    	RowFilter rowFilter = getRowFilter(project);
-    	return rowFilter == null ? null :
-    	    (_invert ?
-    	        new AllRowsRecordFilter(rowFilter) :
-	            new AnyRowRecordFilter(rowFilter));
+        RowFilter rowFilter = getRowFilter(project);
+        return rowFilter == null ? null :
+            (_invert ?
+                    new AllRowsRecordFilter(rowFilter) :
+                        new AnyRowRecordFilter(rowFilter));
     }
 
     @Override

@@ -7,13 +7,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+ * Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+ * Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -29,7 +29,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*/
+ */
 
 package com.google.refine.browsing.util;
 
@@ -56,94 +56,94 @@ import com.google.refine.model.Row;
  * from a given expression.
  */
 public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor {
-	static public class IndexedNominalFacetChoice extends NominalFacetChoice {
-		int _latestIndex;
-		
-		public IndexedNominalFacetChoice(DecoratedValue decoratedValue, int latestIndex) {
-			super(decoratedValue);
-			_latestIndex = latestIndex;
-		}
-	}
-	
+    static public class IndexedNominalFacetChoice extends NominalFacetChoice {
+        int _latestIndex;
+
+        public IndexedNominalFacetChoice(DecoratedValue decoratedValue, int latestIndex) {
+            super(decoratedValue);
+            _latestIndex = latestIndex;
+        }
+    }
+
     /*
      * Configuration
      */
     final protected Evaluable   _evaluable;
     final protected String      _columnName;
     final protected int         _cellIndex;
-    
+
     /*
      * Computed results
      */
     final public Map<Object, IndexedNominalFacetChoice> choices = new HashMap<Object, IndexedNominalFacetChoice>();
     public int blankCount = 0;
     public int errorCount = 0;
-    
+
     /*
      * Scratch pad variables
      */
     protected boolean hasBlank;
     protected boolean hasError;
-    
+
     public ExpressionNominalValueGrouper(Evaluable evaluable, String columnName, int cellIndex) {
         _evaluable = evaluable;
         _columnName = columnName;
         _cellIndex = cellIndex;
     }
-    
+
     @Override
     public void start(Project project) {
-    	// nothing to do
+        // nothing to do
     }
-    
+
     @Override
     public void end(Project project) {
-    	// nothing to do
+        // nothing to do
     }
-    
+
     @Override
     public boolean visit(Project project, int rowIndex, Row row) {
-    	hasError = false;
-    	hasBlank = false;
-    	
+        hasError = false;
+        hasBlank = false;
+
         Properties bindings = ExpressionUtils.createBindings(project);
-        
+
         visitRow(project, rowIndex, row, bindings, rowIndex);
-        
+
         if (hasError) {
-        	errorCount++;
+            errorCount++;
         }
         if (hasBlank) {
-        	blankCount++;
+            blankCount++;
         }
-        
+
         return false;
     }
-    
+
     @Override
     public boolean visit(Project project, Record record) {
-    	hasError = false;
-    	hasBlank = false;
-    	
+        hasError = false;
+        hasBlank = false;
+
         Properties bindings = ExpressionUtils.createBindings(project);
-        
+
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-        	Row row = project.rows.get(r);
+            Row row = project.rows.get(r);
             visitRow(project, r, row, bindings, record.recordIndex);
         }
-        
+
         if (hasError) {
-        	errorCount++;
+            errorCount++;
         }
         if (hasBlank) {
-        	blankCount++;
+            blankCount++;
         }
-        
+
         return false;
     }
-    
+
     protected void visitRow(Project project, int rowIndex, Row row, Properties bindings, int index) {
-    	Object value = evalRow(project, rowIndex, row, bindings);
+        Object value = evalRow(project, rowIndex, row, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;
@@ -155,83 +155,83 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
                     processValue(v, rowIndex);
                 }
             } else {
-            	processValue(value, rowIndex);
+                processValue(value, rowIndex);
             }
         } else {
-        	processValue(value, rowIndex);
+            processValue(value, rowIndex);
         }
     }
-    
+
     protected Object evalRow(Project project, int rowIndex, Row row, Properties bindings) {
-	    Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
-	
-	    ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
-	    
-	    return _evaluable.evaluate(bindings);
+        Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
+
+        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
+
+        return _evaluable.evaluate(bindings);
     }
-    
+
     protected void processValue(Object value, int index) {
         if (ExpressionUtils.isError(value)) {
             hasError = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
             String valueString = value.toString();
             IndexedNominalFacetChoice facetChoice = choices.get(valueString);
-            
+
             if (facetChoice != null) {
-            	if (facetChoice._latestIndex < index) {
-            		facetChoice._latestIndex = index;
-            		facetChoice.count++;
-            	}
+                if (facetChoice._latestIndex < index) {
+                    facetChoice._latestIndex = index;
+                    facetChoice.count++;
+                }
             } else {
-            	String label = value.toString();
-            	DecoratedValue dValue = new DecoratedValue(value, label);
-            	IndexedNominalFacetChoice choice = 
-            		new IndexedNominalFacetChoice(dValue, index);
-            	
+                String label = value.toString();
+                DecoratedValue dValue = new DecoratedValue(value, label);
+                IndexedNominalFacetChoice choice = 
+                    new IndexedNominalFacetChoice(dValue, index);
+
                 choice.count = 1;
                 choices.put(valueString, choice);
             }
         } else {
-        	hasBlank = true;
+            hasBlank = true;
         }
     }
-    
+
     public RowEvaluable getChoiceCountRowEvaluable() {
-    	return new RowEvaluable() {
-			@Override
-			public Object eval(Project project, int rowIndex, Row row, Properties bindings) {
-		    	Object value = evalRow(project, rowIndex, row, bindings);
-		    	return getChoiceValueCountMultiple(value);
-			}
-    	
-    	};
+        return new RowEvaluable() {
+            @Override
+            public Object eval(Project project, int rowIndex, Row row, Properties bindings) {
+                Object value = evalRow(project, rowIndex, row, bindings);
+                return getChoiceValueCountMultiple(value);
+            }
+
+        };
     }
-    
+
     public Object getChoiceValueCountMultiple(Object value) {
         if (value != null) {
-	        if (value.getClass().isArray()) {
+            if (value.getClass().isArray()) {
                 Object[] choiceValues = (Object[]) value;
                 List<Integer> counts = new ArrayList<Integer>(choiceValues.length);
-                
+
                 for (int i = 0; i < choiceValues.length; i++) {
-                	counts.add(getChoiceValueCount(choiceValues[i]));
+                    counts.add(getChoiceValueCount(choiceValues[i]));
                 }
                 return counts;
             } else if (value instanceof Collection<?>) {
-            	List<Object> choiceValues = ExpressionUtils.toObjectList(value);
+                List<Object> choiceValues = ExpressionUtils.toObjectList(value);
                 List<Integer> counts = new ArrayList<Integer>(choiceValues.size());
-                
-            	int count = choiceValues.size();
+
+                int count = choiceValues.size();
                 for (int i = 0; i < count; i++) {
-                	counts.add(getChoiceValueCount(choiceValues.get(i)));
+                    counts.add(getChoiceValueCount(choiceValues.get(i)));
                 }
                 return counts;
             }
         }
-	        
+
         return getChoiceValueCount(value);
     }
-    
+
     public Integer getChoiceValueCount(Object choiceValue) {
         if (ExpressionUtils.isError(choiceValue)) {
             return errorCount;

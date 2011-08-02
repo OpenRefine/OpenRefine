@@ -51,9 +51,9 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
     /*
      * Configuration
      */
-	final protected RowEvaluable	_rowEvaluable;
-    final protected NumericBinIndex _index;     // base bins
-    
+    final protected RowEvaluable _rowEvaluable;
+    final protected NumericBinIndex _index; // base bins
+
     /*
      * Computed results
      */
@@ -72,19 +72,19 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
     protected boolean hasNonNumeric;
     
     public ExpressionNumericValueBinner(RowEvaluable rowEvaluable, NumericBinIndex index) {
-    	_rowEvaluable = rowEvaluable;
+        _rowEvaluable = rowEvaluable;
         _index = index;
         bins = new int[_index.getBins().length];
     }
     
     @Override
     public void start(Project project) {
-    	// nothing to do
+        // nothing to do
     }
     
     @Override
     public void end(Project project) {
-    	// nothing to do
+        // nothing to do
     }
     
     @Override
@@ -105,7 +105,7 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
         
         Properties bindings = ExpressionUtils.createBindings(project);
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-        	processRow(project, r, project.rows.get(r), bindings);
+            processRow(project, r, project.rows.get(r), bindings);
         }
         
         updateCounts();

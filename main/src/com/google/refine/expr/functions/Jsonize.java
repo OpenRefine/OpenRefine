@@ -49,15 +49,15 @@ public class Jsonize implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
-        	try {
-	            Object o1 = args[0];
-	            if (o1 == null) {
-	            	return "null";
-	            } else if (o1 instanceof Number) {
-	                return JSONObject.numberToString((Number) o1);
-	            } else if (o1 instanceof Boolean) {
-	            	return o1.toString();
-	            } else if (o1 instanceof JSONObject) {
+            try {
+                Object o1 = args[0];
+                if (o1 == null) {
+                    return "null";
+                } else if (o1 instanceof Number) {
+                    return JSONObject.numberToString((Number) o1);
+                } else if (o1 instanceof Boolean) {
+                    return o1.toString();
+                } else if (o1 instanceof JSONObject) {
                     return ((JSONObject) o1).toString();
                 } else if (o1 instanceof JSONArray) {
                     return ((JSONArray) o1).toString();
@@ -67,12 +67,12 @@ public class Jsonize implements Function {
                     return new JSONArray((Collection<?>) o1).toString();
                 } else if (o1.getClass().isArray()) {
                     return new JSONArray(o1).toString();
-	            } else {
-	            	return JSONObject.quote(o1.toString());
-	            }
-			} catch (JSONException e) {
-				throw new RuntimeException(e);
-			}
+                } else {
+                    return JSONObject.quote(o1.toString());
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }

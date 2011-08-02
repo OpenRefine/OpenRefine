@@ -103,12 +103,12 @@ public class BinningClusterer extends Clusterer {
         
         @Override
         public void start(Project project) {
-        	// nothing to do
+            // nothing to do
         }
-        
+
         @Override
         public void end(Project project) {
-        	// nothing to do
+            // nothing to do
         }
         
         @Override

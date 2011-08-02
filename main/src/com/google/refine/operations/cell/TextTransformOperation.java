@@ -161,29 +161,29 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             
             @Override
             public void start(Project project) {
-            	// nothing to do
+                // nothing to do
             }
-            
+
             @Override
             public void end(Project project) {
-            	// nothing to do
+                // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;
-                
+
                 Object oldValue = cell != null ? cell.value : null;
 
                 ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
-                
+
                 Object o = eval.evaluate(bindings);
                 if (o == null) {
-                	if (oldValue != null) {
+                    if (oldValue != null) {
                         CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, null);
                         cellChanges.add(cellChange);
-                	}
+                    }
                 } else {
                     if (o instanceof Cell) {
                         newCell = (Cell) o;
