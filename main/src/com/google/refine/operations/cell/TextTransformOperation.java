@@ -109,6 +109,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         _repeatCount = repeatCount;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -124,10 +125,12 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Text transform on cells in column " + _columnName + " using expression " + _expression;
     }
 
+    @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
@@ -135,6 +138,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             " cells in column " + column.getName() + ": " + _expression;
     }
 
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
@@ -165,6 +169,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             	// nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;

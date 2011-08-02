@@ -59,6 +59,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
         _updateRowContextDependencies = updateRowContextDependencies;
     }
 
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         

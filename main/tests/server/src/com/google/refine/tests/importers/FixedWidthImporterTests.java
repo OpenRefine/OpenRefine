@@ -18,6 +18,7 @@ import com.google.refine.importers.FixedWidthImporter;
 import com.google.refine.util.JSONUtilities;
 
 public class FixedWidthImporterTests extends ImporterTest {
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -29,12 +30,14 @@ public class FixedWidthImporterTests extends ImporterTest {
     //System Under Test
     FixedWidthImporter SUT = null;
 
+    @Override
     @BeforeMethod
     public void SetUp(){
         super.SetUp();
         SUT = new FixedWidthImporter();
     }
 
+    @Override
     @AfterMethod
     public void TearDown(){
         SUT = null;

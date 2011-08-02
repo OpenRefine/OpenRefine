@@ -48,6 +48,7 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class ForRange implements Control {
+    @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 5) {
             return ControlFunctionRegistry.getControlName(this) + " expects 5 arguments";
@@ -58,6 +59,7 @@ public class ForRange implements Control {
         return null;
     }
 
+    @Override
     public Object call(Properties bindings, Evaluable[] args) {
         Object fromO = args[0].evaluate(bindings);
         Object toO = args[1].evaluate(bindings);
@@ -129,6 +131,7 @@ public class ForRange implements Control {
     	}
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

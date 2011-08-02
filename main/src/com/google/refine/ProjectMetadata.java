@@ -76,6 +76,7 @@ public class ProjectMetadata implements Jsonizable {
         preparePreferenceStore(_preferenceStore);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
 

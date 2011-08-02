@@ -101,6 +101,7 @@ public class HistoryEntry implements Jsonizable {
         this._manager = ProjectManager.singleton.getHistoryEntryManager();
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
 

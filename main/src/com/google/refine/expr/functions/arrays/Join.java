@@ -47,6 +47,7 @@ import com.google.refine.grel.Function;
 
 public class Join implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2) {
             Object v = args[0];
@@ -99,6 +100,7 @@ public class Join implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array and a string");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

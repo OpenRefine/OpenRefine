@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class FactN implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length != 2)
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
@@ -68,6 +69,7 @@ public class FactN implements Function {
             return i * FactN.factorial(i - step, step);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

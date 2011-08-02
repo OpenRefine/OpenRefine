@@ -55,6 +55,7 @@ import com.google.refine.commands.Command;
 
 public class RefineServletTests extends RefineTest {
     
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

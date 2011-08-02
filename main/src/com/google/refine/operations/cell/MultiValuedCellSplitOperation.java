@@ -78,7 +78,8 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         _mode = mode;
     }
 
-   public void write(JSONWriter writer, Properties options)
+   @Override
+public void write(JSONWriter writer, Properties options)
            throws JSONException {
        
        writer.object();
@@ -91,6 +92,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
        writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Split multi-valued cells in column " + _columnName;
     }

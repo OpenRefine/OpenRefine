@@ -49,6 +49,7 @@ public class ValueNode implements Node {
         this.lang = lang;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

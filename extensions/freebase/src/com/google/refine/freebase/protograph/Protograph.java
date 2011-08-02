@@ -186,6 +186,7 @@ public class Protograph implements OverlayModel {
         );
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("rootNodes"); writer.array();

@@ -35,14 +35,17 @@ package com.google.refine.oauth;
 
 public class GoogleProvider extends Provider {
     
+    @Override
     public String getRequestTokenServiceURL() {
         return "https://www.google.com/accounts/OAuthGetRequestToken";
     }
 
+    @Override
     public String getAccessTokenServiceURL() {
         return "https://www.google.com/accounts/OAuthGetAccessToken";
     }
 
+    @Override
     public String getUserAuthorizationURL() {
         return "https://www.google.com/accounts/OAuthAuthorizeToken";
     }

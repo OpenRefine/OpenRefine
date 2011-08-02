@@ -46,6 +46,7 @@ import com.google.refine.grel.Function;
 
 public class Inc implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3 && 
                 args[0] != null && (args[0] instanceof Calendar || args[0] instanceof Date) && 
@@ -89,6 +90,7 @@ public class Inc implements Function {
         }
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("description"); writer.value("Returns a date changed by the given amount in the given unit of time");

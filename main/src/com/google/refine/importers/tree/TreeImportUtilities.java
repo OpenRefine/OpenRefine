@@ -52,6 +52,7 @@ public abstract class TreeImportUtilities {
 
     static protected void sortRecordElementCandidates(List<RecordElementCandidate> list) {
         Collections.sort(list, new Comparator<RecordElementCandidate>() {
+            @Override
             public int compare(RecordElementCandidate o1, RecordElementCandidate o2) {
                 return o2.count - o1.count;
             }
@@ -66,6 +67,7 @@ public abstract class TreeImportUtilities {
 
         List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
         Collections.sort(columns, new Comparator<ImportColumn>() {
+            @Override
             public int compare(ImportColumn o1, ImportColumn o2) {
                 if (o1.blankOnFirstRow != o2.blankOnFirstRow) {
                     return o1.blankOnFirstRow ? 1 : -1;
@@ -85,6 +87,7 @@ public abstract class TreeImportUtilities {
 
         List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());
         Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
+            @Override
             public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
                 int c = o2.nonBlankCount - o1.nonBlankCount;
                 return c != 0 ? c : (o1.name.length() - o2.name.length());

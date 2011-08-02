@@ -42,10 +42,12 @@ import com.google.refine.grel.Function;
 
 public class ArgsToArray implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
     	return args;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

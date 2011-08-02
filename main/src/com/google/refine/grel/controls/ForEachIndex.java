@@ -49,6 +49,7 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class ForEachIndex implements Control {
+    @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 4) {
             return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
@@ -62,6 +63,7 @@ public class ForEachIndex implements Control {
         return null;
     }
 
+    @Override
     public Object call(Properties bindings, Evaluable[] args) {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
@@ -147,6 +149,7 @@ public class ForEachIndex implements Control {
         }
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class HasField implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length > 1 && args.length <= 2) {
             Object v = args[0];
@@ -65,6 +66,7 @@ public class HasField implements Function {
         return false;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

@@ -51,7 +51,8 @@ import com.google.refine.importers.tree.TreeReader.Token;
 import com.google.refine.model.Row;
 
 public class JsonImporterTests extends ImporterTest {
-	@BeforeTest
+	@Override
+    @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
@@ -63,12 +64,14 @@ public class JsonImporterTests extends ImporterTest {
     //System Under Test
     JsonImporter SUT = null;
 
+    @Override
     @BeforeMethod
     public void SetUp(){
         super.SetUp();
         SUT = new JsonImporter();
     }
 
+    @Override
     @AfterMethod
     public void TearDown() {
         SUT = null;

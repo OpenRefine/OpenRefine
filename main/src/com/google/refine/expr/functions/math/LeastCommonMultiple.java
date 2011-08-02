@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class LeastCommonMultiple implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2
                 && args[0] != null && args[0] instanceof Number
@@ -67,6 +68,7 @@ public class LeastCommonMultiple implements Function {
         return largerValue * smallerValue;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

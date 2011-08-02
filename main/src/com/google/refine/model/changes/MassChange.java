@@ -54,6 +54,7 @@ public class MassChange implements Change {
         _updateRowContextDependencies = updateRowContextDependencies;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             for (Change change : _changes) {
@@ -66,6 +67,7 @@ public class MassChange implements Change {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             for (Change change : _changes) {
@@ -78,6 +80,7 @@ public class MassChange implements Change {
         }
     }
     
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("updateRowContextDependencies="); writer.write(Boolean.toString(_updateRowContextDependencies)); writer.write('\n');
         writer.write("changeCount="); writer.write(Integer.toString(_changes.size())); writer.write('\n');

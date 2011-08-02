@@ -69,6 +69,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
         super(engineConfig, columnName, true);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -80,10 +81,12 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Blank down cells in column " + _columnName;
     }
 
+    @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
@@ -91,6 +94,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
             " cells in column " + column.getName();
     }
 
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
@@ -115,6 +119,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
             	// nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Object value = row.getCellValue(cellIndex);
                 if (ExpressionUtils.isNonBlankData(value)) {

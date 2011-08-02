@@ -108,6 +108,7 @@ public class Credentials {
         return provider;
     }
     
+    @Override
     public String toString() {
         return TOKEN + "=" + OAuth.percentEncode(token) + "&" + SECRET + "=" + OAuth.percentEncode(secret);
     }

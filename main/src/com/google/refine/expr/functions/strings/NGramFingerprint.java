@@ -49,6 +49,7 @@ public class NGramFingerprint implements Function {
 
     static Keyer ngram_fingerprint = new NGramFingerprintKeyer();
     
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 || args.length == 2) {
             if (args[0] != null) {
@@ -74,6 +75,7 @@ public class NGramFingerprint implements Function {
         return set;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

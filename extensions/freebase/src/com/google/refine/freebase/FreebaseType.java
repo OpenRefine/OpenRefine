@@ -46,6 +46,7 @@ public class FreebaseType extends FreebaseTopic implements Jsonizable {
         super(id, name);
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

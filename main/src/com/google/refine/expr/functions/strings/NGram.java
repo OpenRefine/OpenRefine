@@ -45,6 +45,7 @@ import com.google.refine.grel.Function;
 
 public class NGram implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2) {
             Object s = args[0];
@@ -77,6 +78,7 @@ public class NGram implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string and a number");
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

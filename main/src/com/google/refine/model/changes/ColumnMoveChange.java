@@ -58,6 +58,7 @@ public class ColumnMoveChange extends ColumnChange {
         _newColumnIndex = index;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             _oldColumnIndex = project.columnModel.getColumnIndexByName(_columnName);
@@ -74,6 +75,7 @@ public class ColumnMoveChange extends ColumnChange {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             Column column = project.columnModel.columns.remove(_newColumnIndex);
@@ -86,6 +88,7 @@ public class ColumnMoveChange extends ColumnChange {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("columnName="); writer.write(_columnName); writer.write('\n');
         writer.write("oldColumnIndex="); writer.write(Integer.toString(_oldColumnIndex)); writer.write('\n');

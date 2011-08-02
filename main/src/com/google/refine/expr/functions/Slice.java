@@ -46,6 +46,7 @@ import com.google.refine.grel.Function;
 
 public class Slice implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length > 1 && args.length <= 3) {
             Object v = args[0];
@@ -128,6 +129,7 @@ public class Slice implements Function {
         return null;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

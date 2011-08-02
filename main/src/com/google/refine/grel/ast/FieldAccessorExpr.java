@@ -57,6 +57,7 @@ public class FieldAccessorExpr implements Evaluable {
         _fieldName = fieldName;
     }
     
+    @Override
     public Object evaluate(Properties bindings) {
         Object o = _inner.evaluate(bindings);
         if (ExpressionUtils.isError(o)) {

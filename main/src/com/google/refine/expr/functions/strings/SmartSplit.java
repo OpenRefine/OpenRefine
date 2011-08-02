@@ -62,6 +62,7 @@ public class SmartSplit implements Function {
         CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
         false
     );    
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1 && args.length <= 2) {
             CSVParser parser = null;
@@ -99,6 +100,7 @@ public class SmartSplit implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 or 2 strings");
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

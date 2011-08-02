@@ -52,8 +52,14 @@ This is the full list of contributors (in chronological order):
  - Iain Sproat <iainsproat@gmail.com>
  - Tom Morris <tfmorris@gmail.com>
  - Heather Campbell <campbellh@google.com>
-
-
+ - Thad Guidry <thadguidry@gmail.com>
+ - Paul Makepeace <paulm@paulm.com>
+ - Tomaž Šolc <tomaz.solc@zemanta.com>
+ - Gabriel Sjoberg <GabrielSjoberg@gmail.com>
+ - Rod Salazar <rodrod.salazar@gmail.com>
+ - pxb <pxb1988@gmail.com>
+ 
+ We welcome additional contributors if you'd like to help out.
                                 - o -
 
 

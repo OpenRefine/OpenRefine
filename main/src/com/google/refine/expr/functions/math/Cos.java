@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class Cos implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
             return Math.cos(((Number) args[0]).doubleValue());
@@ -51,6 +52,7 @@ public class Cos implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

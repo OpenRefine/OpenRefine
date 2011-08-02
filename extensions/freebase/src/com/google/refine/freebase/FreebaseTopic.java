@@ -49,6 +49,7 @@ public class FreebaseTopic implements Jsonizable {
         this.name = name;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

@@ -123,6 +123,7 @@ public class StandardReconConfig extends ReconConfig {
         String text;
         String code;
         
+        @Override
         public int getKey() {
             return code.hashCode();
         }
@@ -157,6 +158,7 @@ public class StandardReconConfig extends ReconConfig {
         this.columnDetails = columnDetails;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

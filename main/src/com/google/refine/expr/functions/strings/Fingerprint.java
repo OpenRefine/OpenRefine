@@ -46,6 +46,7 @@ public class Fingerprint implements Function {
 
     static Keyer fingerprint = new FingerprintKeyer();
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
@@ -55,6 +56,7 @@ public class Fingerprint implements Function {
         return null;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

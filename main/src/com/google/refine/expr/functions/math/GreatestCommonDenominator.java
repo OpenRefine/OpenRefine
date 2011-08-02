@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class GreatestCommonDenominator implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && args[0] != null && args[0] instanceof Number
                 && args[1] != null && args[1] instanceof Number) {
@@ -56,6 +57,7 @@ public class GreatestCommonDenominator implements Function {
         return b == 0 ? a : GCD(b, a % b);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

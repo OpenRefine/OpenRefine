@@ -85,10 +85,12 @@ public class IndentingLayout extends Layout {
     protected long previousTime = 0;
     protected int indentation = 0;
 
+    @Override
     public void activateOptions() {
         // no options at this time
     }
 
+    @Override
     public String format(LoggingEvent event) {
         String message = event.getRenderedMessage();
         if (message == null) return "";
@@ -170,6 +172,7 @@ public class IndentingLayout extends Layout {
         }
     }
 
+    @Override
     public boolean ignoresThrowable() {
         return true;
     }

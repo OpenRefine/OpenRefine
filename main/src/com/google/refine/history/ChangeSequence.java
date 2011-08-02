@@ -48,6 +48,7 @@ public class ChangeSequence implements Change {
         _changes = changes;
     }
 
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             for (int i = 0; i < _changes.length; i++) {
@@ -56,6 +57,7 @@ public class ChangeSequence implements Change {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             for (int i = _changes.length - 1; i >= 0 ; i--) {
@@ -64,6 +66,7 @@ public class ChangeSequence implements Change {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("count="); writer.write(Integer.toString(_changes.length)); writer.write('\n');
         for (int i = 0; i < _changes.length; i++) {

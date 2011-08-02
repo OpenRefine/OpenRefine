@@ -73,6 +73,7 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
         this._similarValue = similarValue;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -86,11 +87,13 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
         writer.endObject();
     }
     
+    @Override
     protected String getBriefDescription(Project project) {
         return "Clear recon data for cells containing \"" +
             _similarValue + "\" in column " + _columnName;
     }
 
+    @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
@@ -98,6 +101,7 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
             _similarValue + "\" in column " + _columnName;
     }
 
+    @Override
     protected RowVisitor createRowVisitor(final Project project, final List<CellChange> cellChanges, final long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         final int cellIndex = column != null ? column.getCellIndex() : -1;
@@ -113,6 +117,7 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
                 // nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = cellIndex < 0 ? null : row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {
@@ -131,6 +136,7 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
         };
     }
     
+    @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
             cellChanges, 

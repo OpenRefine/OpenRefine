@@ -69,6 +69,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
     static protected class GuidBasedReconJob extends ReconJob {
         String guid;
         
+        @Override
         public int getKey() {
             return guid.hashCode();
         }
@@ -102,6 +103,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
         return "Reconcile cells in column " + columnName + " as Freebase IDs";
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

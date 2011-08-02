@@ -47,6 +47,7 @@ import com.google.refine.grel.Function;
 
 public class Diff implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2 && args.length <= 3) {
             Object o1 = args[0];
@@ -82,6 +83,7 @@ public class Diff implements Function {
         return null;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("description"); writer.value("For strings, returns the portion where they differ. For dates, it returns the difference in given time units");

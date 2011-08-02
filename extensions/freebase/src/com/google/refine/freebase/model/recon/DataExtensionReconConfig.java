@@ -80,6 +80,7 @@ public class DataExtensionReconConfig extends StrictReconConfig {
         throw new RuntimeException(WARN);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("mode"); writer.value("extend");

@@ -46,6 +46,7 @@ import com.google.refine.grel.Function;
 
 public class DatePart implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && 
                 args[0] != null && (args[0] instanceof Calendar || args[0] instanceof Date) && 
@@ -91,6 +92,7 @@ public class DatePart implements Function {
         }
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("description"); writer.value("Returns part of a date");

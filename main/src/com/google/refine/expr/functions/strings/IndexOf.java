@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class IndexOf implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2) {
             Object s1 = args[0];
@@ -55,6 +56,7 @@ public class IndexOf implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

@@ -42,6 +42,7 @@ import com.google.refine.grel.Function;
 
 public class And implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         for (Object o : args) {
             if (!Not.objectToBoolean(o)) {
@@ -51,6 +52,7 @@ public class And implements Function {
         return true;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

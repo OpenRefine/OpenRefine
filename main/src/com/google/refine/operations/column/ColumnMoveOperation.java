@@ -65,7 +65,8 @@ public class ColumnMoveOperation extends AbstractOperation {
         _index = index;
     }
     
-   public void write(JSONWriter writer, Properties options)
+   @Override
+public void write(JSONWriter writer, Properties options)
            throws JSONException {
        
        writer.object();
@@ -77,10 +78,12 @@ public class ColumnMoveOperation extends AbstractOperation {
     }
 
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Move column " + _columnName + " to position " + _index;
     }
 
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         if (project.columnModel.getColumnByName(_columnName) == null) {
             throw new Exception("No column named " + _columnName);

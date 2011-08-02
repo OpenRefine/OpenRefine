@@ -47,6 +47,7 @@ import com.google.refine.grel.Function;
 
 public class ToDate implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 0) {
             // missing value, can this happen?
@@ -98,6 +99,7 @@ public class ToDate implements Function {
     }
 
 
+    @Override
     public void write(JSONWriter writer, Properties options)
     throws JSONException {
 

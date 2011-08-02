@@ -85,7 +85,8 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         _ignoreBlankCells = ignoreBlankCells;
     }
 
-   public void write(JSONWriter writer, Properties options)
+   @Override
+public void write(JSONWriter writer, Properties options)
            throws JSONException {
        
        writer.object();
@@ -100,6 +101,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
        writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Transpose cells in " + _columnCount + " column(s) starting with " + _startColumnName + " into rows";
     }

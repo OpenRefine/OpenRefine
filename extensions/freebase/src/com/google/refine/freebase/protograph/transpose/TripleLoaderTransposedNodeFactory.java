@@ -349,6 +349,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         
         //protected AnonymousTransposedNode(AnonymousNode node) { }
         
+        @Override
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             if (children.size() == 0 || subject == null) {
                 return null;
@@ -431,6 +432,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
+        @Override
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             String id = null;
             if (cell.recon != null && cell.recon.judgment != Recon.Judgment.None) {
@@ -505,6 +507,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
+        @Override
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             Object value = cell.value;
             if (value != null) {
@@ -541,6 +544,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.cell = cell;
         }
         
+        @Override
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             writeLine(subject, "key", node.namespace.id + "/" + cell.value, project, 
                 subjectRowIndex, subjectCellIndex, subjectCell, 
@@ -557,6 +561,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.node = node;
         }
 
+        @Override
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             writeLine(subject, predicate, node.topic.id, project, 
                 subjectRowIndex, subjectCellIndex, subjectCell, 
@@ -575,6 +580,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             this.node = node;
         }
 
+        @Override
         public Object internalWrite(String subject, String predicate, Project project, int subjectRowIndex, int subjectCellIndex, Cell subjectCell) {
             Object value = node.value;
             if (value != null) {
@@ -597,6 +603,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         }
     }
     
+    @Override
     public TransposedNode transposeAnonymousNode(
             TransposedNode parentNode,
             Link link, 
@@ -620,6 +627,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         return tnode;
     }
 
+    @Override
     public TransposedNode transposeCellNode(
             TransposedNode parentNode,
             Link link, 
@@ -662,6 +670,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         return tnode;
     }
 
+    @Override
     public TransposedNode transposeTopicNode(
             TransposedNode parentNode,
             Link link, 
@@ -686,6 +695,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
         return tnode;
     }
 
+    @Override
     public TransposedNode transposeValueNode(
             TransposedNode parentNode,
             Link link, 

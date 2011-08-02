@@ -54,6 +54,7 @@ import com.google.refine.tests.RefineTest;
 
 public class RowTests extends RefineTest {
 
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

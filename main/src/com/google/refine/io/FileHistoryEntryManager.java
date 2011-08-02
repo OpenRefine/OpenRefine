@@ -54,6 +54,7 @@ import com.google.refine.util.Pool;
 
 public class FileHistoryEntryManager implements HistoryEntryManager{
 
+    @Override
     public void delete(HistoryEntry historyEntry) {
         File file = getChangeFile(historyEntry);
         if (file.exists()) {
@@ -61,6 +62,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
         }
     }
 
+    @Override
     public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
@@ -70,6 +72,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
         }
     }
 
+    @Override
     public void loadChange(HistoryEntry historyEntry) {
         File changeFile = getChangeFile(historyEntry);
 
@@ -97,6 +100,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
         }
     }
 
+    @Override
     public void saveChange(HistoryEntry historyEntry) throws Exception {
         File changeFile = getChangeFile(historyEntry);
         if (!(changeFile.exists())) {

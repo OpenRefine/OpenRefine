@@ -72,6 +72,7 @@ public class RowStarOperation extends EngineDependentOperation {
         _starred = starred;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -83,11 +84,13 @@ public class RowStarOperation extends EngineDependentOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return (_starred ? "Star rows" : "Unstar rows");
     }
 
-   protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+   @Override
+protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         List<Change> changes = new ArrayList<Change>(project.rows.size());
@@ -123,6 +126,7 @@ public class RowStarOperation extends EngineDependentOperation {
             	// nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 if (row.starred != _starred) {
                     RowStarChange change = new RowStarChange(rowIndex, _starred);

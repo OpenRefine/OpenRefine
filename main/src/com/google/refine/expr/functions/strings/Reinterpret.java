@@ -48,6 +48,7 @@ import com.google.refine.model.Project;
 
 public class Reinterpret implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2) {
             Object o1 = args[0];
@@ -72,6 +73,7 @@ public class Reinterpret implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 arguments");
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

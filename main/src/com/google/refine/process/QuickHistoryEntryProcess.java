@@ -52,18 +52,22 @@ abstract public class QuickHistoryEntryProcess extends Process {
         _briefDescription = briefDescription;
     }
     
+    @Override
     public void cancel() {
         throw new RuntimeException("Not a long-running process");
     }
 
+    @Override
     public boolean isImmediate() {
         return true;
     }
     
+    @Override
     public boolean isRunning() {
         throw new RuntimeException("Not a long-running process");
     }
 
+    @Override
     public HistoryEntry performImmediate() throws Exception {
         if (_historyEntry == null) {
             _historyEntry = createHistoryEntry(HistoryEntry.allocateID());
@@ -74,10 +78,12 @@ abstract public class QuickHistoryEntryProcess extends Process {
         return _historyEntry;
     }
 
+    @Override
     public void startPerforming(ProcessManager manager) {
         throw new RuntimeException("Not a long-running process");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

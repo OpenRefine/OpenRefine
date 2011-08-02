@@ -208,6 +208,7 @@ public class GetRowsCommand extends Command {
             // nothing to do
         }
         
+        @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             if (total >= start && total < start + limit) {
                 internalVisit(project, rowIndex, row);

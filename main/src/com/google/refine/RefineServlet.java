@@ -83,6 +83,7 @@ public class RefineServlet extends Butterfly {
     static final protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
     
     static protected class AutoSaveTimerTask extends TimerTask {
+        @Override
         public void run() {
             try {
                 ProjectManager.singleton.save(false); // quick, potentially incomplete save

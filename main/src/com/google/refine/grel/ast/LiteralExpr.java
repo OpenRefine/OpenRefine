@@ -49,10 +49,12 @@ public class LiteralExpr implements Evaluable {
         _value = value;
     }
                               
+    @Override
     public Object evaluate(Properties bindings) {
         return _value;
     }
 
+    @Override
     public String toString() {
         return _value instanceof String ? JSONObject.quote((String) _value) : _value.toString();
     }

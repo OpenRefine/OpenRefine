@@ -56,6 +56,7 @@ public class DecoratedValue implements Jsonizable {
         this.label = label;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         writer.object();

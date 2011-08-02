@@ -62,6 +62,7 @@ public class ProjectManagerTests extends RefineTest {
     Project project;
     ProjectMetadata metadata;
 
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

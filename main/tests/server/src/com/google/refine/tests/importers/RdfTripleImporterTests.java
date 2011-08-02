@@ -46,6 +46,7 @@ import com.google.refine.util.JSONUtilities;
 
 public class RdfTripleImporterTests extends ImporterTest {
     
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -55,6 +56,7 @@ public class RdfTripleImporterTests extends ImporterTest {
     //System Under Test
     RdfTripleImporter SUT = null;
 
+    @Override
     @BeforeMethod
     public void SetUp(){
         super.SetUp();

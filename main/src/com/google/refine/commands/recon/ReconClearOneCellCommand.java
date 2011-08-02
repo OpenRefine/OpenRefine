@@ -118,6 +118,7 @@ public class ReconClearOneCellCommand extends Command {
             this.cellIndex = cellIndex;
         }
 
+        @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {

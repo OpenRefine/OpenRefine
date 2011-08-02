@@ -59,6 +59,7 @@ public class ReconCandidate implements HasFields, Jsonizable {
         this.score = score;
     }
     
+    @Override
     public Object getField(String name, Properties bindings) {
         if ("id".equals(name)) {
             return id;
@@ -72,10 +73,12 @@ public class ReconCandidate implements HasFields, Jsonizable {
         return null;
     }
     
+    @Override
     public boolean fieldAlsoHasFields(String name) {
         return false;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

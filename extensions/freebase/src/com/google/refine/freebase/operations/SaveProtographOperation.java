@@ -64,6 +64,7 @@ public class SaveProtographOperation extends AbstractOperation {
         _protograph = protograph;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     
@@ -74,6 +75,7 @@ public class SaveProtographOperation extends AbstractOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Save schema alignment skeleton";
     }
@@ -93,6 +95,7 @@ public class SaveProtographOperation extends AbstractOperation {
             _newProtograph = protograph;
         }
         
+        @Override
         public void apply(Project project) {
             synchronized (project) {
                 _oldProtograph = (Protograph) project.overlayModels.get("freebaseProtograph");
@@ -101,6 +104,7 @@ public class SaveProtographOperation extends AbstractOperation {
             }
         }
         
+        @Override
         public void revert(Project project) {
             synchronized (project) {
                 if (_oldProtograph == null) {
@@ -111,6 +115,7 @@ public class SaveProtographOperation extends AbstractOperation {
             }
         }
         
+        @Override
         public void save(Writer writer, Properties options) throws IOException {
             writer.write("newProtograph="); writeProtograph(_newProtograph, writer); writer.write('\n');
             writer.write("oldProtograph="); writeProtograph(_oldProtograph, writer); writer.write('\n');

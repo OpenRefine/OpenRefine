@@ -55,6 +55,7 @@ import com.google.refine.tests.RefineTest;
 
 
 public class HistoryTests extends RefineTest {
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

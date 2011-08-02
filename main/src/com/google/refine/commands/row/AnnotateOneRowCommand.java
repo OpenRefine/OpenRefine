@@ -114,6 +114,7 @@ public class AnnotateOneRowCommand extends Command {
             this.starred = starred;
         }
 
+        @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
                 historyEntryID,
@@ -140,6 +141,7 @@ public class AnnotateOneRowCommand extends Command {
             this.flagged = flagged;
         }
 
+        @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
                 historyEntryID,

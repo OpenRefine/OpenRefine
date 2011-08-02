@@ -136,6 +136,7 @@ public class EditOneCellCommand extends Command {
             this.value = value;
         }
 
+        @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
             Column column = _project.columnModel.getColumnByCellIndex(cellIndex);

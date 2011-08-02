@@ -43,6 +43,7 @@ import com.google.refine.grel.Function;
 
 public class ParseHtml implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
             Object o1 = args[0];
@@ -54,6 +55,7 @@ public class ParseHtml implements Function {
     }
 
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

@@ -61,6 +61,7 @@ public class Cell implements HasFields, Jsonizable {
         this.recon = recon;
     }
     
+    @Override
     public Object getField(String name, Properties bindings) {
         if ("value".equals(name)) {
             return value;
@@ -70,10 +71,12 @@ public class Cell implements HasFields, Jsonizable {
         return null;
     }
     
+    @Override
     public boolean fieldAlsoHasFields(String name) {
         return "recon".equals(name);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         if (ExpressionUtils.isError(value)) {
@@ -180,6 +183,7 @@ public class Cell implements HasFields, Jsonizable {
         }
     }
     
+    @Override
     public String toString() {
         return value.toString();
     }

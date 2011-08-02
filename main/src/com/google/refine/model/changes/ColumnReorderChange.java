@@ -57,6 +57,7 @@ public class ColumnReorderChange extends ColumnChange {
         _columnNames = columnNames;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             if (_newColumns == null) {
@@ -81,6 +82,7 @@ public class ColumnReorderChange extends ColumnChange {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             project.columnModel.columns.clear();
@@ -93,6 +95,7 @@ public class ColumnReorderChange extends ColumnChange {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("columnNameCount="); writer.write(Integer.toString(_columnNames.size())); writer.write('\n');
         for (String n : _columnNames) {

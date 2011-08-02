@@ -102,6 +102,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         _columnInsertIndex = columnInsertIndex;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -117,6 +118,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Create column " + _newColumnName + 
             " at index " + _columnInsertIndex + 
@@ -131,6 +133,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             " rows with " + _expression;
     }
     
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
@@ -185,6 +188,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             	// nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;

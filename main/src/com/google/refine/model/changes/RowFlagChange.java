@@ -53,6 +53,7 @@ public class RowFlagChange implements Change {
         this.newFlagged = newFlagged;
     }
 
+    @Override
     public void apply(Project project) {
         Row row = project.rows.get(rowIndex);
         if (oldFlagged == null) {
@@ -61,12 +62,14 @@ public class RowFlagChange implements Change {
         row.flagged = newFlagged;
     }
 
+    @Override
     public void revert(Project project) {
         Row row = project.rows.get(rowIndex);
         
         row.flagged = oldFlagged;
     }
     
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("row="); writer.write(Integer.toString(rowIndex)); writer.write('\n');
         writer.write("newFlagged="); writer.write(Boolean.toString(newFlagged)); writer.write('\n');

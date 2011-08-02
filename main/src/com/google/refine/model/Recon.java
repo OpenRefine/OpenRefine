@@ -201,6 +201,7 @@ public class Recon implements HasFields, Jsonizable {
         features[feature] = v;
     }
     
+    @Override
     public Object getField(String name, Properties bindings) {
         if ("id".equals(name)) {
             return id;
@@ -236,6 +237,7 @@ public class Recon implements HasFields, Jsonizable {
         return null;
     }
     
+    @Override
     public boolean fieldAlsoHasFields(String name) {
         return "match".equals(name) || "best".equals(name);
     }
@@ -245,16 +247,19 @@ public class Recon implements HasFields, Jsonizable {
     }
     
     public class Features implements HasFields {
+        @Override
         public Object getField(String name, Properties bindings) {
             int index = s_featureMap.get(name);
             return index < features.length ? features[index] : null;
         }
 
+        @Override
         public boolean fieldAlsoHasFields(String name) {
             return false;
         }
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

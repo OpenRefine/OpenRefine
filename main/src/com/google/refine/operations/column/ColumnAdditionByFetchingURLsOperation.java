@@ -113,6 +113,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         _delay = delay;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -129,6 +130,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Create column " + _newColumnName + 
             " at index " + _columnInsertIndex + 
@@ -144,6 +146,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     }
     
     
+    @Override
     public Process createProcess(Project project, Properties options) throws Exception {
         Column column = project.columnModel.getColumnByName(_baseColumnName);
         if (column == null) {
@@ -186,6 +189,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             _historyEntryID = HistoryEntry.allocateID();
         }
         
+        @Override
         public void write(JSONWriter writer, Properties options)
                 throws JSONException {
             
@@ -198,10 +202,12 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             writer.endObject();
         }
         
+        @Override
         protected Runnable getRunnable() {
             return this;
         }
         
+        @Override
         public void run() {
             List<CellAtRow> urls = new ArrayList<CellAtRow>(_project.rows.size());
             
@@ -292,6 +298,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     // nothing to do
                 }
                 
+                @Override
                 public boolean visit(Project project, int rowIndex, Row row) {
                     Cell cell = row.getCell(cellIndex);
                     Cell newCell = null;

@@ -66,6 +66,7 @@ public class HtmlExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "html table exporter test project";
 
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

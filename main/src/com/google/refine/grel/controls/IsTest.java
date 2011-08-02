@@ -44,6 +44,7 @@ import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlFunctionRegistry;
 
 abstract class IsTest implements Control {
+    @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 1) {
             return ControlFunctionRegistry.getControlName(this) + " expects one argument";
@@ -51,6 +52,7 @@ abstract class IsTest implements Control {
         return null;
     }
 
+    @Override
     public Object call(Properties bindings, Evaluable[] args) {
         Object o;
         try {
@@ -61,6 +63,7 @@ abstract class IsTest implements Control {
         return test(o);
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

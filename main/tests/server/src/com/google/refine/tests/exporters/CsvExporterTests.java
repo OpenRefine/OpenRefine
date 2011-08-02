@@ -63,6 +63,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class CsvExporterTests extends RefineTest {
 
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

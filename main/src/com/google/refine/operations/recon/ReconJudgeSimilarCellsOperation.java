@@ -116,6 +116,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         this._shareNewTopics = shareNewTopics;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -134,6 +135,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         writer.endObject();
     }
     
+    @Override
     protected String getBriefDescription(Project project) {
         if (_judgment == Judgment.None) {
             return "Discard recon judgments for cells containing \"" +
@@ -155,6 +157,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         throw new InternalError("Can't get here");
     }
 
+    @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
@@ -179,6 +182,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         throw new InternalError("Can't get here");
     }
 
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
@@ -206,6 +210,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 // nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(_cellIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
@@ -270,6 +275,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     }
     
     
+    @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
             cellChanges, 

@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class Partition implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2 && args.length <= 3) {
             Object o1 = args[0];
@@ -99,6 +100,7 @@ public class Partition implements Function {
         return null;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

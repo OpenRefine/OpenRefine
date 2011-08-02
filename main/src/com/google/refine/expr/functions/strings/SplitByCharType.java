@@ -45,6 +45,7 @@ import com.google.refine.grel.Function;
 
 public class SplitByCharType implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object o = args[0];
@@ -56,6 +57,7 @@ public class SplitByCharType implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

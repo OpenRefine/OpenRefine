@@ -48,6 +48,7 @@ import com.google.refine.model.Project;
 
 public class Cross implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3) {
             // from project is implied
@@ -74,6 +75,7 @@ public class Cross implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell, a project name to join with, and a column name in that project");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

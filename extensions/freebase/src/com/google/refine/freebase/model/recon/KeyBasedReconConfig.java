@@ -80,6 +80,7 @@ public class KeyBasedReconConfig extends StrictReconConfig {
     static protected class KeyBasedReconJob extends ReconJob {
         String key;
         
+        @Override
         public int getKey() {
             return key.hashCode();
         }
@@ -106,6 +107,7 @@ public class KeyBasedReconConfig extends StrictReconConfig {
         return "Reconcile cells in column " + columnName + " to topics with keys in namespace " + namespace.id;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

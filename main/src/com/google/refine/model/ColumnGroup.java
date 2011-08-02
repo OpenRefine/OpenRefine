@@ -60,6 +60,7 @@ public class ColumnGroup implements Jsonizable {
         internalInitialize();
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -107,6 +108,7 @@ public class ColumnGroup implements Jsonizable {
         subgroups = new LinkedList<ColumnGroup>();
     }
     
+    @Override
     public String toString() {
         return String.format("%d:%d:k=%d",startColumnIndex,columnSpan,keyColumnIndex);
     }

@@ -62,7 +62,8 @@ public class ColumnRemovalOperation extends AbstractOperation {
         _columnName = columnName;
     }
     
-   public void write(JSONWriter writer, Properties options)
+   @Override
+public void write(JSONWriter writer, Properties options)
            throws JSONException {
        
        writer.object();
@@ -73,10 +74,12 @@ public class ColumnRemovalOperation extends AbstractOperation {
     }
 
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Remove column " + _columnName;
     }
 
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {

@@ -42,6 +42,7 @@ import com.google.refine.grel.Function;
 
 public class UnicodeType implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
@@ -92,6 +93,7 @@ public class UnicodeType implements Function {
         }
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

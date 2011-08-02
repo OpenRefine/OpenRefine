@@ -47,6 +47,7 @@ import com.google.refine.grel.Function;
 
 public class Type implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
@@ -71,6 +72,7 @@ public class Type implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

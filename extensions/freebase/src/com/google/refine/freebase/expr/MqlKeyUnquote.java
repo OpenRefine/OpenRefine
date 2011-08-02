@@ -45,6 +45,7 @@ import com.google.refine.grel.Function;
 public class MqlKeyUnquote implements Function {
     final static private Pattern quotedCharPattern = Pattern.compile("\\$([0-9A-Fa-f]{4})");
     
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object o1 = args[0];
@@ -75,6 +76,7 @@ public class MqlKeyUnquote implements Function {
         return null;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

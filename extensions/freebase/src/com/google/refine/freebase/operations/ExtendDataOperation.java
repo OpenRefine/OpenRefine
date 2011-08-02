@@ -96,6 +96,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         _columnInsertIndex = columnInsertIndex;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -109,6 +110,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Extend data at index " + _columnInsertIndex + 
             " based on column " + _baseColumnName;
@@ -120,6 +122,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             " by filling " + cellsAtRows.size();
     }
     
+    @Override
     public Process createProcess(Project project, Properties options) throws Exception {
         return new ExtendDataProcess(
             project, 
@@ -148,6 +151,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             _job = new FreebaseDataExtensionJob(_extension);
         }
         
+        @Override
         public void write(JSONWriter writer, Properties options)
                 throws JSONException {
             
@@ -160,6 +164,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             writer.endObject();
         }
         
+        @Override
         protected Runnable getRunnable() {
             return this;
         }
@@ -194,6 +199,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                 	// nothing to do
                 }
                 
+                @Override
                 public boolean visit(Project project, int rowIndex, Row row) {
                     Cell cell = row.getCell(_cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
@@ -246,6 +252,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             return end;
         }
         
+        @Override
         public void run() {
             List<Integer> rowIndices = new ArrayList<Integer>();
             List<DataExtension> dataExtensions = new ArrayList<DataExtension>();

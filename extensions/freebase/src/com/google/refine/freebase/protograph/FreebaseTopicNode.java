@@ -50,6 +50,7 @@ public class FreebaseTopicNode implements Node, NodeWithLinks {
         this.topic = topic;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -67,14 +68,17 @@ public class FreebaseTopicNode implements Node, NodeWithLinks {
         writer.endObject();
     }
 
+    @Override
     public void addLink(Link link) {
         links.add(link);
     }
     
+    @Override
     public Link getLink(int index) {
         return links.get(index);
     }
 
+    @Override
     public int getLinkCount() {
         return links.size();
     }

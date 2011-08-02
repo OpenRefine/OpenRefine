@@ -52,6 +52,7 @@ public class CellTopicNode extends CellNode implements NodeWithLinks {
         this.type = type;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 
@@ -77,14 +78,17 @@ public class CellTopicNode extends CellNode implements NodeWithLinks {
         writer.endObject();
     }
 
+    @Override
     public void addLink(Link link) {
         links.add(link);
     }
 
+    @Override
     public Link getLink(int index) {
         return links.get(index);
     }
 
+    @Override
     public int getLinkCount() {
         return links.size();
     }

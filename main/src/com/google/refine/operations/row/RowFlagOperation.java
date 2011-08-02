@@ -72,6 +72,7 @@ public class RowFlagOperation extends EngineDependentOperation {
         _flagged = flagged;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -83,11 +84,13 @@ public class RowFlagOperation extends EngineDependentOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return (_flagged ? "Flag rows" : "Unflag rows");
     }
 
-   protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+   @Override
+protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         List<Change> changes = new ArrayList<Change>(project.rows.size());
@@ -123,6 +126,7 @@ public class RowFlagOperation extends EngineDependentOperation {
             	// nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 if (row.flagged != _flagged) {
                     RowFlagChange change = new RowFlagChange(rowIndex, _flagged);

@@ -77,6 +77,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             this.to = to;
         }
         
+        @Override
         public void write(JSONWriter writer, Properties options)
             throws JSONException {
             
@@ -149,6 +150,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         _edits = edits;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -167,10 +169,12 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Mass edit cells in column " + _columnName;
     }
 
+    @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
@@ -178,6 +182,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             " cells in column " + column.getName();
     }
 
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
@@ -241,6 +246,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             	// nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;

@@ -50,14 +50,17 @@ public class FreebaseProvider extends Provider {
         super(host);
     }
     
+    @Override
     public String getRequestTokenServiceURL() {
         return "https://" + host + "/api/oauth/request_token";
     }
 
+    @Override
     public String getAccessTokenServiceURL() {
         return "https://" + host + "/api/oauth/access_token";
     }
 
+    @Override
     public String getUserAuthorizationURL() {
         return "https://" + host + "/signin/app";
     }

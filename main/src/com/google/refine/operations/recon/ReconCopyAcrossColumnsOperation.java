@@ -93,6 +93,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
         _applyToJudgedCells = applyToJudgedCells;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -117,6 +118,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
         writer.endObject();
     }
 
+    @Override
     protected HistoryEntry createHistoryEntry(final Project project, final long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
@@ -153,6 +155,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
                         // nothing to do
                     }
                     
+                    @Override
                     public boolean visit(Project project, int rowIndex, Row row) {
                         Cell cell = row.getCell(fromColumn.getCellIndex());
                         if (cell != null && cell.value != null && cell.recon != null) {
@@ -175,6 +178,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
                         // nothing to do
                     }
                     
+                    @Override
                     public boolean visit(Project project, int rowIndex, Row row) {
                         for (Column column : toColumns) {
                             int cellIndex = column.getCellIndex();
@@ -205,6 +209,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
             historyEntryID, project, description, this, new MassChange(cellChanges, false));
     }
     
+    @Override
     protected String getBriefDescription(Project project) {
         return "Copy recon judgments from column " +
             _fromColumnName + " to " + StringUtils.join(_toColumnNames);

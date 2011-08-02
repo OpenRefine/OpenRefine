@@ -11,6 +11,7 @@ import com.google.refine.commands.Command;
 
 public class DeAuthorizeCommand extends Command {
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

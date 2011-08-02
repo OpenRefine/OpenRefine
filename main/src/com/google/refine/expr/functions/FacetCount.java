@@ -51,6 +51,7 @@ import com.google.refine.model.Project;
 
 public class FacetCount implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3 && args[1] instanceof String && args[2] instanceof String) {
         	Object choiceValue = args[0]; // choice value to look up
@@ -85,6 +86,7 @@ public class FacetCount implements Function {
         	" expects a choice value, an expression as a string, and a column name");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

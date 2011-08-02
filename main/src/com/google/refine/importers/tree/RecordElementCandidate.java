@@ -10,6 +10,7 @@ class RecordElementCandidate {
     String[] path;
     int count;
     
+    @Override
     public String toString() {
         return Arrays.toString(path);
     }

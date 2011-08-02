@@ -268,6 +268,7 @@ public abstract class ProjectManager {
         
         if (records.size() > 0) {
             Collections.sort(records, new Comparator<SaveRecord>() {
+                @Override
                 public int compare(SaveRecord o1, SaveRecord o2) {
                     if (o1.overdue < o2.overdue) {
                         return 1;

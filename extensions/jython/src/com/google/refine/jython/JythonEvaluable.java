@@ -58,6 +58,7 @@ public class JythonEvaluable implements Evaluable {
     static public LanguageSpecificParser createParser() {
         return new LanguageSpecificParser() {
             
+            @Override
             public Evaluable parse(String s) throws ParsingException {
                 return new JythonEvaluable(s);
             }
@@ -108,6 +109,7 @@ public class JythonEvaluable implements Evaluable {
         _engine.exec(sb.toString());
     }
     
+    @Override
     public Object evaluate(Properties bindings) {
         try {
             // call the temporary PyFunction directly

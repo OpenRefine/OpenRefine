@@ -65,7 +65,8 @@ public class ColumnRenameOperation extends AbstractOperation {
         _newColumnName = newColumnName;
     }
     
-   public void write(JSONWriter writer, Properties options)
+   @Override
+public void write(JSONWriter writer, Properties options)
            throws JSONException {
        
        writer.object();
@@ -77,10 +78,12 @@ public class ColumnRenameOperation extends AbstractOperation {
     }
 
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Rename column " + _oldColumnName + " to " + _newColumnName;
     }
 
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         if (project.columnModel.getColumnByName(_oldColumnName) == null) {
             throw new Exception("No column named " + _oldColumnName);

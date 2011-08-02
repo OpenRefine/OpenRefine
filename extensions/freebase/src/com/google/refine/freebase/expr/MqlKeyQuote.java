@@ -53,6 +53,7 @@ public class MqlKeyQuote implements Function {
     final static private Pattern fullValidKeyPattern = Pattern.compile(fullValidKey);
     final static private Pattern keyCharMustQuotePattern = Pattern.compile(keyCharMustQuote);
     
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object o1 = args[0];
@@ -63,6 +64,7 @@ public class MqlKeyQuote implements Function {
         return null;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

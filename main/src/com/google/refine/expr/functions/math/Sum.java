@@ -46,6 +46,7 @@ import com.google.refine.grel.Function;
 
 public class Sum implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
@@ -80,6 +81,7 @@ public class Sum implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array of numbers");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

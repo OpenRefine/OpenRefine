@@ -42,6 +42,7 @@ import com.google.refine.grel.Function;
 
 public class Exp implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] instanceof Number) {
             return Math.exp(((Number) args[0]).doubleValue());
@@ -49,6 +50,7 @@ public class Exp implements Function {
         return null;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

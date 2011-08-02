@@ -74,6 +74,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         _separator = separator;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -86,10 +87,12 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         writer.endObject();
     }
     
+    @Override
     protected String getBriefDescription(Project project) {
         return "Join multi-valued cells in column " + _columnName;
     }
 
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {

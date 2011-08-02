@@ -47,6 +47,7 @@ import com.google.refine.grel.Function;
 
 public class Length implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
@@ -70,6 +71,7 @@ public class Length implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array or a string");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

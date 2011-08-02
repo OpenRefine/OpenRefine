@@ -123,6 +123,7 @@ public class kNNClusterer extends Clusterer {
         	// nothing to do
         }
         
+        @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
@@ -174,6 +175,7 @@ public class kNNClusterer extends Clusterer {
         	// nothing to do
         }
         
+        @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
             if (cell != null && cell.value != null) {
@@ -190,11 +192,13 @@ public class kNNClusterer extends Clusterer {
         }
     }
         
+    @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
         super.initializeFromJSON(project, o);
         _distance = _distances.get(o.getString("function").toLowerCase());
     }
 
+    @Override
     public void computeClusters(Engine engine) {
         //VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
         BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance,_config);
@@ -206,11 +210,13 @@ public class kNNClusterer extends Clusterer {
 
     public static class ValuesComparator implements Comparator<Entry<Serializable,Integer>>, Serializable {
         private static final long serialVersionUID = 204469656070583155L;
+        @Override
         public int compare(Entry<Serializable,Integer> o1, Entry<Serializable,Integer> o2) {
             return o2.getValue() - o1.getValue();
         }
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.array();        
         for (Set<Serializable> m : _clusters) {

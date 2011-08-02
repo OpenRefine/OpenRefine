@@ -49,6 +49,7 @@ import com.google.refine.util.JSONUtilities;
 
 public class Sort implements Function {
 
+    @Override
     @SuppressWarnings("unchecked")
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
@@ -84,6 +85,7 @@ public class Sort implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

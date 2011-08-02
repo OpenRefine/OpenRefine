@@ -62,6 +62,7 @@ public class ColumnAdditionChange extends ColumnChange {
         newCells.toArray(_newCells);
     }
 
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             if (_newCellIndex < 0) {
@@ -110,6 +111,7 @@ public class ColumnAdditionChange extends ColumnChange {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             for (CellAtRow cell : _newCells) {
@@ -126,6 +128,7 @@ public class ColumnAdditionChange extends ColumnChange {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("columnName="); writer.write(_columnName); writer.write('\n');
         writer.write("columnIndex="); writer.write(Integer.toString(_columnIndex)); writer.write('\n');

@@ -56,18 +56,21 @@ public class CellChange implements Change {
         this.newCell = newCell;
     }
 
+    @Override
     public void apply(Project project) {
         project.rows.get(row).setCell(cellIndex, newCell);
         
         project.columnModel.getColumnByCellIndex(cellIndex).clearPrecomputes();
     }
 
+    @Override
     public void revert(Project project) {
         project.rows.get(row).setCell(cellIndex, oldCell);
         
         project.columnModel.getColumnByCellIndex(cellIndex).clearPrecomputes();
     }
     
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("row="); writer.write(Integer.toString(row)); writer.write('\n');
         writer.write("cell="); writer.write(Integer.toString(cellIndex)); writer.write('\n');

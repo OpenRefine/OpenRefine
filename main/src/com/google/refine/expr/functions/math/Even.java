@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class Even implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
             return Even.RoundUpToEven(((Number) args[0]).doubleValue());
@@ -56,6 +57,7 @@ public class Even implements Function {
         return ((temp % 2) == 0) ? temp : temp+1;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

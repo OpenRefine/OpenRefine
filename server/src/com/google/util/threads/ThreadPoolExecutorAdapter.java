@@ -35,6 +35,7 @@ public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
         this.executor = executor;
     }
 
+    @Override
     public boolean dispatch(Runnable job) {
         try {
             executor.execute(job);
@@ -45,46 +46,57 @@ public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
         }
     }
 
+    @Override
     public int getIdleThreads() {
         return executor.getPoolSize() - executor.getActiveCount();
     }
 
+    @Override
     public int getThreads() {
         return executor.getPoolSize();
     }
 
+    @Override
     public boolean isLowOnThreads() {
         return executor.getActiveCount() >= executor.getMaximumPoolSize();
     }
 
+    @Override
     public void join() throws InterruptedException {
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     }
 
+    @Override
     public boolean isFailed() {
         return false;
     }
 
+    @Override
     public boolean isRunning() {
         return !executor.isTerminated() && !executor.isTerminating();
     }
 
+    @Override
     public boolean isStarted() {
         return !executor.isTerminated() && !executor.isTerminating();
     }
 
+    @Override
     public boolean isStarting() {
         return false;
     }
 
+    @Override
     public boolean isStopped() {
         return executor.isTerminated();
     }
 
+    @Override
     public boolean isStopping() {
         return executor.isTerminating();
     }
 
+    @Override
     public void start() throws Exception {
         if (executor.isTerminated() || executor.isTerminating()
                 || executor.isShutdown()) {
@@ -92,6 +104,7 @@ public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
         }
     }
 
+    @Override
     public void stop() throws Exception {
         executor.shutdown();
         if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -99,10 +112,12 @@ public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
         }
     }
 
+    @Override
     public void addLifeCycleListener(Listener listener) {
         System.err.println("we should implement this!");
     }
 
+    @Override
     public void removeLifeCycleListener(Listener listener) {
         System.err.println("we should implement this!");
     }

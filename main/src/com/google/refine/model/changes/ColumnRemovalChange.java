@@ -59,6 +59,7 @@ public class ColumnRemovalChange extends ColumnChange {
         _oldColumnIndex = index;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             int columnGroupCount = project.columnModel.columnGroups.size();
@@ -116,6 +117,7 @@ public class ColumnRemovalChange extends ColumnChange {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             project.columnModel.columns.add(_oldColumnIndex, _oldColumn);
@@ -132,6 +134,7 @@ public class ColumnRemovalChange extends ColumnChange {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("oldColumnIndex="); writer.write(Integer.toString(_oldColumnIndex)); writer.write('\n');
         writer.write("oldColumn="); _oldColumn.save(writer); writer.write('\n');

@@ -43,6 +43,7 @@ import com.google.refine.grel.Function;
 
 public class ToNumber implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             if (args[0] instanceof Number) {
@@ -59,6 +60,7 @@ public class ToNumber implements Function {
         return null;
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

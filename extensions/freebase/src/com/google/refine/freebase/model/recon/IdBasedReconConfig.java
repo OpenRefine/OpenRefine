@@ -69,6 +69,7 @@ public class IdBasedReconConfig extends StrictReconConfig {
     static protected class IdBasedReconJob extends ReconJob {
         String id;
         
+        @Override
         public int getKey() {
             return id.hashCode();
         }
@@ -106,6 +107,7 @@ public class IdBasedReconConfig extends StrictReconConfig {
         return "Reconcile cells in column " + columnName + " as Freebase IDs";
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         

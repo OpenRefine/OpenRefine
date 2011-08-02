@@ -53,6 +53,7 @@ public class RowRemovalChange implements Change {
         _rowIndices = rowIndices;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             int count = _rowIndices.size();
@@ -73,6 +74,7 @@ public class RowRemovalChange implements Change {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             int count = _rowIndices.size();
@@ -88,6 +90,7 @@ public class RowRemovalChange implements Change {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("rowIndexCount="); writer.write(Integer.toString(_rowIndices.size())); writer.write('\n');
         for (Integer index : _rowIndices) {

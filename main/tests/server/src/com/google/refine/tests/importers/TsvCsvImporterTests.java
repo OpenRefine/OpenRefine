@@ -52,6 +52,7 @@ import com.google.refine.util.JSONUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
 
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -63,12 +64,14 @@ public class TsvCsvImporterTests extends ImporterTest {
     //System Under Test
     SeparatorBasedImporter SUT = null;
 
+    @Override
     @BeforeMethod
     public void SetUp() {
         super.SetUp();
         SUT = new SeparatorBasedImporter();
     }
 
+    @Override
     @AfterMethod
     public void TearDown(){
         SUT = null;

@@ -69,7 +69,8 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
         _rowCount = rowCount;
     }
 
-   public void write(JSONWriter writer, Properties options)
+   @Override
+public void write(JSONWriter writer, Properties options)
            throws JSONException {
        
        writer.object();
@@ -80,6 +81,7 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
        writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
     }

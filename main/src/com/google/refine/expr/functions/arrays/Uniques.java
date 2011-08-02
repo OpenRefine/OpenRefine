@@ -50,6 +50,7 @@ import com.google.refine.util.JSONUtilities;
 
 public class Uniques implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
@@ -84,6 +85,7 @@ public class Uniques implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

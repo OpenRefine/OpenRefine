@@ -93,6 +93,7 @@ public class ReconOperation extends EngineDependentOperation {
         _reconConfig = reconConfig;
     }
 
+    @Override
     public Process createProcess(Project project, Properties options) throws Exception {
         return new ReconProcess(
             project, 
@@ -101,10 +102,12 @@ public class ReconOperation extends EngineDependentOperation {
         );
     }
     
+    @Override
     protected String getBriefDescription(Project project) {
         return _reconConfig.getBriefDescription(project, _columnName);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -154,6 +157,7 @@ public class ReconOperation extends EngineDependentOperation {
             _historyEntryID = HistoryEntry.allocateID();
         }
         
+        @Override
         public void write(JSONWriter writer, Properties options)
                 throws JSONException {
             
@@ -197,6 +201,7 @@ public class ReconOperation extends EngineDependentOperation {
             writer.endObject();
         }
         
+        @Override
         protected Runnable getRunnable() {
             return this;
         }
@@ -225,6 +230,7 @@ public class ReconOperation extends EngineDependentOperation {
                 	// nothing to do
                 }
                 
+                @Override
                 public boolean visit(Project project, int rowIndex, Row row) {
                     if (_cellIndex < row.cells.size()) {
                         Cell cell = row.cells.get(_cellIndex);
@@ -237,6 +243,7 @@ public class ReconOperation extends EngineDependentOperation {
             });
         }
         
+        @Override
         public void run() {
             try {
                 populateEntries();

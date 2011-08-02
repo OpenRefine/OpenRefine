@@ -154,6 +154,7 @@ public class ReconJudgeOneCellCommand extends Command {
             this.schemaSpace = schemaSpace;
         }
 
+        @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {

@@ -90,6 +90,7 @@ public class RecordModel implements Jsonizable {
         return null;
     }
 
+    @Override
     synchronized public void write(JSONWriter writer, Properties options)
     throws JSONException {
 
@@ -208,6 +209,7 @@ public class RecordModel implements Jsonizable {
         }
 
         Collections.sort(keyedGroups, new Comparator<KeyedGroup>() {
+            @Override
             public int compare(KeyedGroup o1, KeyedGroup o2) {
                 return o2.cellIndices.length - o1.cellIndices.length; // larger groups first
             }

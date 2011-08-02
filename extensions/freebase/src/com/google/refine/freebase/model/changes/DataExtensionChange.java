@@ -126,6 +126,7 @@ public class DataExtensionChange implements Change {
         _newRows = newRows;
     }
 
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             if (_firstNewCellIndex < 0) {
@@ -257,6 +258,7 @@ public class DataExtensionChange implements Change {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             project.rows.clear();
@@ -270,6 +272,7 @@ public class DataExtensionChange implements Change {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("baseColumnName="); writer.write(_baseColumnName); writer.write('\n');
         writer.write("columnInsertIndex="); writer.write(Integer.toString(_columnInsertIndex)); writer.write('\n');

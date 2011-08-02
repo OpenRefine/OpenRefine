@@ -51,6 +51,7 @@ public class ColumnRenameChange extends ColumnChange {
         _newColumnName = newColumnName;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             project.columnModel.getColumnByName(_oldColumnName).setName(_newColumnName);
@@ -58,6 +59,7 @@ public class ColumnRenameChange extends ColumnChange {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             project.columnModel.getColumnByName(_newColumnName).setName(_oldColumnName);
@@ -65,6 +67,7 @@ public class ColumnRenameChange extends ColumnChange {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("oldColumnName="); writer.write(_oldColumnName); writer.write('\n');
         writer.write("newColumnName="); writer.write(_newColumnName); writer.write('\n');

@@ -72,6 +72,7 @@ public class RowReorderOperation extends AbstractOperation {
         _sorting = sorting;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -83,11 +84,13 @@ public class RowReorderOperation extends AbstractOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Reorder rows";
     }
 
-   protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+   @Override
+protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = new Engine(project);
         engine.setMode(_mode);
         

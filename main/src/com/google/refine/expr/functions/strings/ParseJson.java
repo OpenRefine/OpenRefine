@@ -45,6 +45,7 @@ import com.google.refine.grel.Function;
 
 public class ParseJson implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
             Object o1 = args[0];
@@ -60,6 +61,7 @@ public class ParseJson implements Function {
     }
 
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

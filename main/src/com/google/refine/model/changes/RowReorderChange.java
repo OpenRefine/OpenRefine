@@ -52,6 +52,7 @@ public class RowReorderChange implements Change {
         _rowIndices = rowIndices;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
         	List<Row> oldRows = project.rows;
@@ -67,6 +68,7 @@ public class RowReorderChange implements Change {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
         	int count = project.rows.size();
@@ -90,6 +92,7 @@ public class RowReorderChange implements Change {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("rowIndexCount="); writer.write(Integer.toString(_rowIndices.size())); writer.write('\n');
         for (Integer index : _rowIndices) {

@@ -252,6 +252,7 @@ public class History implements Jsonizable {
         }
     }
 
+    @Override
     synchronized public void write(JSONWriter writer, Properties options)
             throws JSONException {
 

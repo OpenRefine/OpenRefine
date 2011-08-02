@@ -63,6 +63,7 @@ public class ColumnReorderOperation extends AbstractOperation {
         _columnNames = columnNames;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -77,11 +78,13 @@ public class ColumnReorderOperation extends AbstractOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Reorder columns";
     }
 
-   protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+   @Override
+protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         return new HistoryEntry(
             historyEntryID,
             project, 

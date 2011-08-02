@@ -70,6 +70,7 @@ public class TemplatingExporterTests extends RefineTest {
     String suffix = "<test suffix";
     String rowSeparator = "\n";
 
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

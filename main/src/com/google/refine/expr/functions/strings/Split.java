@@ -46,6 +46,7 @@ import com.google.refine.grel.Function;
 
 public class Split implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2 && args.length <= 3) {
             boolean preserveAllTokens = false;
@@ -74,6 +75,7 @@ public class Split implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings, or 1 string and 1 regex, followed by an optional boolean");
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

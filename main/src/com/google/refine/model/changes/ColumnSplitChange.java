@@ -117,6 +117,7 @@ public class ColumnSplitChange implements Change {
         _newRows = newRows;
     }
 
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             if (_firstNewCellIndex < 0) {
@@ -223,6 +224,7 @@ public class ColumnSplitChange implements Change {
         }
     }
     
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             for (int i = 0; i < _rowIndices.size(); i++) {
@@ -247,6 +249,7 @@ public class ColumnSplitChange implements Change {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("columnName="); writer.write(_columnName); writer.write('\n');
         

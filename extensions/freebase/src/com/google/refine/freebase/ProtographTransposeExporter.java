@@ -54,6 +54,7 @@ abstract public class ProtographTransposeExporter implements WriterExporter {
 		_contentType = contentType;
 	}
 	
+    @Override
     public String getContentType() {
         return "application/x-unknown";
     }
@@ -67,6 +68,7 @@ abstract public class ProtographTransposeExporter implements WriterExporter {
         throw new RuntimeException("Not implemented");
     }
     
+    @Override
     public void export(Project project, Properties options, Engine engine,
             Writer writer) throws IOException {
         

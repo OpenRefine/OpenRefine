@@ -53,6 +53,7 @@ public class RowStarChange implements Change {
         this.newStarred = newStarred;
     }
 
+    @Override
     public void apply(Project project) {
         Row row = project.rows.get(rowIndex);
         if (oldStarred == null) {
@@ -61,12 +62,14 @@ public class RowStarChange implements Change {
         row.starred = newStarred;
     }
 
+    @Override
     public void revert(Project project) {
         Row row = project.rows.get(rowIndex);
         
         row.starred = oldStarred;
     }
     
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("row="); writer.write(Integer.toString(rowIndex)); writer.write('\n');
         writer.write("newStarred="); writer.write(Boolean.toString(newStarred)); writer.write('\n');

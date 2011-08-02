@@ -60,6 +60,7 @@ public class MassRowColumnChange implements Change {
         _newRows = newRows;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             if (_oldColumnGroups == null) {
@@ -83,6 +84,7 @@ public class MassRowColumnChange implements Change {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             project.columnModel.columns.clear();
@@ -98,6 +100,7 @@ public class MassRowColumnChange implements Change {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("newColumnCount="); writer.write(Integer.toString(_newColumns.size())); writer.write('\n');
         for (Column column : _newColumns) {

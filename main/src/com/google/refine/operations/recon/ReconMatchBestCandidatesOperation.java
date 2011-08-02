@@ -72,6 +72,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
         super(engineConfig, columnName, false);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -83,10 +84,12 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Match each cell to its best recon candidate in column " + _columnName;
     }
 
+    @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
@@ -94,6 +97,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
             " cells to its best candidate in column " + column.getName();
     }
 
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         
@@ -120,6 +124,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
             	// nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 if (cellIndex < row.cells.size()) {
                     Cell cell = row.cells.get(cellIndex);
@@ -155,6 +160,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
         }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
     
+    @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
             cellChanges, 

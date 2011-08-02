@@ -44,6 +44,7 @@ public class JythonObjectWrapper extends PyObject {
         _obj = obj;
     }
 
+    @Override
     public String toString() {
         return _obj.getClass().getSimpleName();
     }

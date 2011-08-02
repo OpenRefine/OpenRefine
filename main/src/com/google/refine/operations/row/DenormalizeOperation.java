@@ -59,7 +59,8 @@ public class DenormalizeOperation extends AbstractOperation {
     public DenormalizeOperation() {
     }
     
-   public void write(JSONWriter writer, Properties options)
+   @Override
+public void write(JSONWriter writer, Properties options)
            throws JSONException {
        
        writer.object();
@@ -69,10 +70,12 @@ public class DenormalizeOperation extends AbstractOperation {
     }
 
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Denormalize";
     }
 
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         List<Row> newRows = new ArrayList<Row>();
         

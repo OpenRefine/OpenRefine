@@ -243,6 +243,7 @@ public class GuessTypesOfColumnCommand extends Command {
         
         List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());
         Collections.sort(types, new Comparator<TypeGroup>() {
+            @Override
             public int compare(TypeGroup o1, TypeGroup o2) {
                 int c = Math.min(s_sampleSize, o2.count) - Math.min(s_sampleSize, o1.count);
                 if (c != 0) {

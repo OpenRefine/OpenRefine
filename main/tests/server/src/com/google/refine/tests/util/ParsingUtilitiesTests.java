@@ -45,6 +45,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ParsingUtilitiesTests extends RefineTest {
     
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

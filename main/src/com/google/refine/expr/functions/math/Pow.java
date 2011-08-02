@@ -42,6 +42,7 @@ import com.google.refine.grel.Function;
 
 public class Pow implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && args[0] instanceof Number && args[1] instanceof Number) {
             return Math.pow(
@@ -52,6 +53,7 @@ public class Pow implements Function {
         return null;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

@@ -230,6 +230,7 @@ class RefineServer extends Server {
         scanner.setReportExistingFilesOnStartup(false);
 
         scanner.addListener(new Scanner.BulkListener() {
+            @Override
             public void filesChanged(@SuppressWarnings("rawtypes") List changedFiles) {
                 try {
                     logger.info("Stopping context: " + contextRoot.getAbsolutePath());
@@ -250,6 +251,7 @@ class RefineServer extends Server {
     
     static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
         baseDir.listFiles(new FileFilter() {
+            @Override
             public boolean accept(File pathname) {
                 if (pathname.isDirectory()) {
                     findFiles(extension, pathname, found);
@@ -461,6 +463,7 @@ class RefineClient extends JFrame implements ActionListener {
         openBrowser();
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) { 
       String item = e.getActionCommand(); 
       if (item.startsWith("Open")) {
@@ -485,6 +488,7 @@ class ShutdownSignalHandler implements Runnable {
         this._server = server;
     }
 
+    @Override
     public void run() {
 
         // Tell the server we want to try and shutdown gracefully

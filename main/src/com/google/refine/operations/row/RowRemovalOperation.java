@@ -65,6 +65,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
         super(engineConfig);
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -75,11 +76,13 @@ public class RowRemovalOperation extends EngineDependentOperation {
         writer.endObject();
     }
 
+    @Override
     protected String getBriefDescription(Project project) {
         return "Remove rows";
     }
 
-   protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+   @Override
+protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
         List<Integer> rowIndices = new ArrayList<Integer>();
@@ -115,6 +118,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
             	// nothing to do
             }
             
+            @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 rowIndices.add(rowIndex);
                 

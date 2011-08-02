@@ -117,6 +117,7 @@ public class ImportingUtilities {
                         }
                         JSONUtilities.safePut(progress, "percent", percent);
                     }
+                    @Override
                     public boolean isCanceled() {
                         return job.canceled;
                     }
@@ -853,6 +854,7 @@ public class ImportingUtilities {
         
         final Project project = new Project();
         new Thread() {
+            @Override
             public void run() {
                 ProjectMetadata pm = new ProjectMetadata();
                 pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));

@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class Not implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             return !objectToBoolean(args[0]);
@@ -56,6 +57,7 @@ public class Not implements Function {
             (o instanceof Boolean) ? ((Boolean) o).booleanValue() : Boolean.parseBoolean(o.toString()));
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
     

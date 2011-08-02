@@ -81,6 +81,7 @@ public class MassCellChange implements Change {
         _updateRowContextDependencies = updateRowContextDependencies;
     }
     
+    @Override
     public void apply(Project project) {
         synchronized (project) {
             List<Row> rows = project.rows;
@@ -100,6 +101,7 @@ public class MassCellChange implements Change {
         }
     }
 
+    @Override
     public void revert(Project project) {
         synchronized (project) {
             List<Row> rows = project.rows;
@@ -119,6 +121,7 @@ public class MassCellChange implements Change {
         }
     }
     
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         if (_commonColumnName != null) {
             writer.write("commonColumnName="); writer.write(_commonColumnName); writer.write('\n');

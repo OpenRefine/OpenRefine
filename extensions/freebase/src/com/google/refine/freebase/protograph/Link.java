@@ -62,6 +62,7 @@ public class Link implements Jsonizable {
         return target;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
 

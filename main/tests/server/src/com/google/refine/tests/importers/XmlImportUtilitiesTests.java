@@ -62,6 +62,7 @@ import com.google.refine.tests.RefineTest;
 
 public class XmlImportUtilitiesTests extends RefineTest {
 
+    @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());

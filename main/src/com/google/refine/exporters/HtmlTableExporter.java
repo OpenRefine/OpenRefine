@@ -92,6 +92,7 @@ public class HtmlTableExporter implements WriterExporter {
                 	// nothing to do
                 }
                 
+                @Override
                 public boolean visit(Project project, int rowIndex, Row row) {
                     try {
                         writer.write("<tr>");

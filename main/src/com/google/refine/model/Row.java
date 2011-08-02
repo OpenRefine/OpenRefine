@@ -76,6 +76,7 @@ public class Row implements HasFields, Jsonizable {
         return row;
     }
     
+    @Override
     public Object getField(String name, Properties bindings) {
         if (FLAGGED.equals(name)) {
             return flagged;
@@ -85,6 +86,7 @@ public class Row implements HasFields, Jsonizable {
         return null;
     }
     
+    @Override
     public boolean fieldAlsoHasFields(String name) {
         return "cells".equals(name) || "record".equals(name);
     }
@@ -139,6 +141,7 @@ public class Row implements HasFields, Jsonizable {
         return new CellTuple(project, this);
     }
     
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
@@ -232,6 +235,7 @@ public class Row implements HasFields, Jsonizable {
         return (cells.size() > 0) ? new Row(cells, flagged, starred) : null;
     }
     
+    @Override
     public String toString() {
         StringBuffer result = new StringBuffer();
         for (Cell cell : cells) {

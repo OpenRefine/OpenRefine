@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class ATan2 implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && args[0] != null && args[0] instanceof Number
                 && args[1] != null && args[1] instanceof Number) {
@@ -52,6 +53,7 @@ public class ATan2 implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

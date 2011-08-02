@@ -45,6 +45,7 @@ import com.google.refine.grel.Function;
 
 public class SelectHtml implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2) {
             Object o1 = args[0];
@@ -62,6 +63,7 @@ public class SelectHtml implements Function {
     }
 
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

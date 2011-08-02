@@ -72,6 +72,7 @@ public class FreebaseTimeCommonsHttpOAuthConsumer extends CommonsHttpOAuthConsum
      * NOTE: this call is potentially vulnerable to a man-in-the-middle (MITM) attack, but the same
      * could be said if we used an NTP client.
      */
+    @Override
     protected String generateTimestamp() {
         
         long time = -1;

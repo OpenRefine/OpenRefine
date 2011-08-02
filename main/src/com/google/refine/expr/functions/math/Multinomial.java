@@ -44,6 +44,7 @@ import com.google.refine.grel.Function;
 
 public class Multinomial implements Function {
 
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length < 1)
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one or more numbers");
@@ -59,6 +60,7 @@ public class Multinomial implements Function {
         return FactN.factorial(sum, 1) / product;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
 

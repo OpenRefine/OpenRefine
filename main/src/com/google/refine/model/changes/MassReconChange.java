@@ -59,10 +59,12 @@ public class MassReconChange implements Change {
         _oldRecons = oldRecons;
     }
     
+    @Override
     public void apply(Project project) {
         switchRecons(project, _newRecons);
     }
     
+    @Override
     public void revert(Project project) {
         switchRecons(project, _oldRecons);
     }
@@ -86,6 +88,7 @@ public class MassReconChange implements Change {
         }
     }
 
+    @Override
     public void save(Writer writer, Properties options) throws IOException {
         writeRecons(writer, options, _oldRecons, "oldReconCount");
         writeRecons(writer, options, _newRecons, "newReconCount");

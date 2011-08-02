@@ -63,6 +63,7 @@ public class ReconStats implements Jsonizable {
         this.matchedTopics = matchedTopics;
     }
 
+    @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
