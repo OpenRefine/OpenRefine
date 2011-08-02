@@ -59,7 +59,7 @@ public class TopList implements Jsonizable, Iterable<String> {
     
     @SuppressWarnings("unchecked")
     public List<String> getList() {
-        return (List<String>) UnmodifiableList.decorate(_list);
+        return UnmodifiableList.decorate(_list);
     }
     
     public void add(String element) {

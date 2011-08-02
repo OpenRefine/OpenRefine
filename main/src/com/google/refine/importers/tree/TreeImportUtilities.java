@@ -112,7 +112,7 @@ public abstract class TreeImportUtilities {
             String columnLocalName,
             String text
     ) {
-        if (text == null || ((String) text).isEmpty()) {
+        if (text == null || (text).isEmpty()) {
             return;
         }
 

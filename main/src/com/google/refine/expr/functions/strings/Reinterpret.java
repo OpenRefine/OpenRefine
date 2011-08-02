@@ -57,7 +57,7 @@ public class Reinterpret implements Function {
                 String str = (o1 instanceof String) ? (String) o1 : o1.toString();
                 Project project = (Project) bindings.get("project");
                 ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
-                String decoder = (String) metadata.getEncoding();
+                String decoder = metadata.getEncoding();
                 String encoder = (String) o2;
                 String reinterpreted = null;
 

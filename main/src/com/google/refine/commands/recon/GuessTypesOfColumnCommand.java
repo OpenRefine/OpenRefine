@@ -223,7 +223,7 @@ public class GuessTypesOfColumnCommand extends Command {
                                 typeName = ((JSONObject) type).getString("name");
                             }
                             
-                            double score2 = score * (typeCount - t) / (double) typeCount;
+                            double score2 = score * (typeCount - t) / typeCount;
                             if (map.containsKey(typeID)) {
                                 TypeGroup tg = map.get(typeID);
                                 tg.score += score2;

@@ -86,7 +86,7 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         this.dim_y = dim_y;
         this.rotation = rotation;
         
-        l = (double) size;
+        l = size;
         r = ScatterplotFacet.createRotationMatrix(rotation, l);
 
         image = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);

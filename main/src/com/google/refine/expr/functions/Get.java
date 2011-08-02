@@ -114,7 +114,7 @@ public class Get implements Function {
                                     if (v.getClass().isArray()) {
                                         Object[] a2 = new Object[end - start];
                                         
-                                        System.arraycopy((Object[]) v, start, a2, 0, end - start);
+                                        System.arraycopy(v, start, a2, 0, end - start);
                                         
                                         return a2;
                                     } else if (v instanceof HasFieldsList) {

@@ -178,13 +178,13 @@ public class JSONUtilities {
         } else if (value instanceof Number) {
             obj.put(key, ((Double) value).doubleValue());
         } else if (value instanceof Boolean) {
-            obj.put(key, (Boolean) value);
+            obj.put(key, value);
         } else if (value instanceof Date) {
             obj.put(key, ParsingUtilities.dateToString((Date) value));
         } else if (value instanceof Calendar) {
             obj.put(key, ParsingUtilities.dateToString(((Calendar) value).getTime()));
         } else if (value instanceof String) {
-            obj.put(key, (String) value);
+            obj.put(key, value);
         } else {
             obj.put(key, value.toString());
         }
