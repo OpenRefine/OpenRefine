@@ -110,8 +110,8 @@ abstract public class TimeBinIndex {
         
         long diff = _max - _min;
 
-        for (int i = 0; i < steps.length; i++) {
-            _step = steps[i];
+        for (long step : steps) {
+            _step = step;
             if (diff / _step <= 100) break; 
         }
 

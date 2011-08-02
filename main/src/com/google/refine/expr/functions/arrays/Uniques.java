@@ -72,8 +72,8 @@ public class Uniques implements Function {
                         Object[] a = (Object[]) v;
                         
                         set = new HashSet<Object>(a.length);
-                        for (int i = 0; i < a.length; i++) {
-                            set.add(a[i]);
+                        for (Object element : a) {
+                            set.add(element);
                         }
                     } else {
                         set = new HashSet<Object>(ExpressionUtils.toObjectList(v));

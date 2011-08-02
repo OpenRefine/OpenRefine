@@ -101,9 +101,9 @@ public class JythonEvaluable implements Evaluable {
         sb.append("def ");
         sb.append(s_functionName);
         sb.append("(value, cell, cells, row, rowIndex):");
-        for (int i = 0; i < lines.length; i++) {
+        for (String line : lines) {
             sb.append("\n  ");
-            sb.append(lines[i]);
+            sb.append(line);
         }
 
         _engine.exec(sb.toString());

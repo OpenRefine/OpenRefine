@@ -213,8 +213,8 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
                 Object[] choiceValues = (Object[]) value;
                 List<Integer> counts = new ArrayList<Integer>(choiceValues.length);
 
-                for (int i = 0; i < choiceValues.length; i++) {
-                    counts.add(getChoiceValueCount(choiceValues[i]));
+                for (Object choiceValue : choiceValues) {
+                    counts.add(getChoiceValueCount(choiceValue));
                 }
                 return counts;
             } else if (value instanceof Collection<?>) {

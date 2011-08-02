@@ -195,9 +195,8 @@ public class ColumnSplitOperation extends EngineDependentOperation {
                     List<Serializable> results = new ArrayList<Serializable>(_fieldLengths.length + 1);
                     
                     int lastIndex = 0;
-                    for (int i = 0; i < _fieldLengths.length; i++) {
+                    for (int length : _fieldLengths) {
                         int from = lastIndex;
-                        int length = _fieldLengths[i];
                         int to = Math.min(from + length, s.length());
                         
                         results.add(stringToValue(s.substring(from, to)));

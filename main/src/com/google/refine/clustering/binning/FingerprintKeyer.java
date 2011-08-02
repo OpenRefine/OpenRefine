@@ -65,8 +65,8 @@ public class FingerprintKeyer extends Keyer {
     protected String asciify(String s) {
         char[] c = s.toCharArray();
         StringBuffer b = new StringBuffer();
-        for (int i = 0; i < c.length; i++) {
-            b.append(translate(c[i]));
+        for (char element : c) {
+            b.append(translate(element));
         }
         return b.toString();
     }

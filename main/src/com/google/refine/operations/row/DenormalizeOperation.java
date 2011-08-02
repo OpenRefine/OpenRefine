@@ -88,8 +88,7 @@ public void write(JSONWriter writer, Properties options)
             if (rd.cellDependencies != null) {
                 newRow = oldRow.dup();
 
-                for (int c = 0; c < rd.cellDependencies.length; c++) {
-                    CellDependency cd = rd.cellDependencies[c];
+                for (CellDependency cd : rd.cellDependencies) {
                     if (cd != null) {
                         int contextRowIndex = cd.rowIndex;
                         int contextCellIndex = cd.cellIndex;

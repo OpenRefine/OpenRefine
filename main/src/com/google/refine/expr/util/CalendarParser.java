@@ -742,9 +742,9 @@ public class CalendarParser {
         }
 
         String lstr = str.toLowerCase();
-        for (int i = 0; i < WEEKDAY_NAMES.length; i++) {
-            if (lstr.startsWith(WEEKDAY_NAMES[i])
-                    || WEEKDAY_NAMES[i].toLowerCase().startsWith(lstr)) {
+        for (String element : WEEKDAY_NAMES) {
+            if (lstr.startsWith(element)
+                    || element.toLowerCase().startsWith(lstr)) {
                 return true;
             }
         }
@@ -1037,8 +1037,8 @@ public class CalendarParser {
                 return;
             } else if (zoneNames != null) {
                 // maybe it's a time zone name
-                for (int z = 0; z < zoneNames.length; z++) {
-                    if (token.equalsIgnoreCase(zoneNames[z])) {
+                for (String zoneName : zoneNames) {
+                    if (token.equalsIgnoreCase(zoneName)) {
                         TimeZone tz = TimeZone.getTimeZone(token);
                         if (tz.getRawOffset() != 0 || lToken.equals("gmt")) {
                             state.setTimeZone(tz);
@@ -1679,9 +1679,7 @@ public class CalendarParser {
         }
 
         String[] tList = tmpTime.split("[:\\.]");
-        for (int i = 0; i < tList.length; i++) {
-            String token = tList[i];
-
+        for (String token : tList) {
             if (DEBUG) {
                 System.err.println("HOUR "
                         + (state.isHourSet() ? Integer
@@ -1790,9 +1788,7 @@ public class CalendarParser {
         int minute = UNSET;
 
         String[] tList = zoneStr.substring(1).split(":");
-        for (int i = 0; i < tList.length; i++) {
-            String token = tList[i];
-
+        for (String token : tList) {
             if (DEBUG) {
                 System.err
                         .println("TZ_HOUR "

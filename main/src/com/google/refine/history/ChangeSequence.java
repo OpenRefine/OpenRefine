@@ -51,8 +51,8 @@ public class ChangeSequence implements Change {
     @Override
     public void apply(Project project) {
         synchronized (project) {
-            for (int i = 0; i < _changes.length; i++) {
-                _changes[i].apply(project);
+            for (Change _change : _changes) {
+                _change.apply(project);
             }
         }
     }
@@ -69,9 +69,7 @@ public class ChangeSequence implements Change {
     @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("count="); writer.write(Integer.toString(_changes.length)); writer.write('\n');
-        for (int i = 0; i < _changes.length; i++) {
-            Change change = _changes[i];
-            
+        for (Change change : _changes) {
             writer.write(change.getClass().getName()); writer.write('\n');
             
             change.save(writer, options);
