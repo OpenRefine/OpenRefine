@@ -46,10 +46,10 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.commands.Command;
 import com.google.refine.freebase.protograph.Protograph;
-import com.google.refine.model.Project;
 import com.google.refine.freebase.protograph.transpose.MqlwriteLikeTransposedNodeFactory;
 import com.google.refine.freebase.protograph.transpose.Transposer;
 import com.google.refine.freebase.protograph.transpose.TripleLoaderTransposedNodeFactory;
+import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
 public class PreviewProtographCommand extends Command {

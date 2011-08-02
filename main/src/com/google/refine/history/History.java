@@ -49,9 +49,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.google.refine.RefineServlet;
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
+import com.google.refine.RefineServlet;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 

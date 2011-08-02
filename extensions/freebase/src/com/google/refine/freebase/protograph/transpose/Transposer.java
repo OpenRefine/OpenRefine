@@ -51,8 +51,8 @@ import com.google.refine.freebase.protograph.ValueNode;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.model.Row;
 
 public class Transposer {
     static public void transpose(

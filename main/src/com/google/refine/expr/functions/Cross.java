@@ -38,8 +38,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.google.refine.ProjectManager;
 import com.google.refine.InterProjectModel.ProjectJoin;
+import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.grel.ControlFunctionRegistry;

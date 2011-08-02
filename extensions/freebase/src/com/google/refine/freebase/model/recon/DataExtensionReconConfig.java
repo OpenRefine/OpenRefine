@@ -47,7 +47,6 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.ReconJob;
-import com.google.refine.freebase.model.recon.StrictReconConfig;
 
 public class DataExtensionReconConfig extends StrictReconConfig {
     final public FreebaseType type;

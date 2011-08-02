@@ -41,8 +41,8 @@ import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.model.ReconCandidate;
 import com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation;
 
 public class ReconJudgeSimilarCellsCommand extends EngineDependentCommand {

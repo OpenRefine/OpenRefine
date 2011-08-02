@@ -48,6 +48,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.freebase.FreebaseType;
+import com.google.refine.freebase.model.recon.DataExtensionReconConfig;
 import com.google.refine.freebase.util.FreebaseDataExtensionJob.DataExtension;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
@@ -55,11 +56,10 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
+import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconStats;
 import com.google.refine.model.Row;
-import com.google.refine.model.Recon.Judgment;
-import com.google.refine.freebase.model.recon.DataExtensionReconConfig;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 

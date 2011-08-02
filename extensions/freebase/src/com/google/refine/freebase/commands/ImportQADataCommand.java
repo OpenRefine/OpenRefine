@@ -42,9 +42,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.freebase.operations.ImportQADataOperation;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.freebase.operations.ImportQADataOperation;
 import com.google.refine.process.Process;
 
 public class ImportQADataCommand extends Command {

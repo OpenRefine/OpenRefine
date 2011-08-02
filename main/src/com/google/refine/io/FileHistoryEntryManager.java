@@ -36,11 +36,11 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.Writer;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-import java.io.Writer;
 
 import org.json.JSONException;
 import org.json.JSONWriter;

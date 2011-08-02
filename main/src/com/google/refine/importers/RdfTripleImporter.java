@@ -33,6 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import static org.jrdf.graph.AnyObjectNode.ANY_OBJECT_NODE;
+import static org.jrdf.graph.AnyPredicateNode.ANY_PREDICATE_NODE;
+import static org.jrdf.graph.AnySubjectNode.ANY_SUBJECT_NODE;
+
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,10 +55,6 @@ import org.jrdf.parser.line.LineHandler;
 import org.jrdf.parser.ntriples.NTriplesParserFactory;
 import org.jrdf.util.ClosableIterable;
 import org.json.JSONObject;
-
-import static org.jrdf.graph.AnyObjectNode.ANY_OBJECT_NODE;
-import static org.jrdf.graph.AnyPredicateNode.ANY_PREDICATE_NODE;
-import static org.jrdf.graph.AnySubjectNode.ANY_SUBJECT_NODE;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.ExpressionUtils;

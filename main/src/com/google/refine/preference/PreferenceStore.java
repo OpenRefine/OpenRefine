@@ -44,8 +44,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.google.refine.RefineServlet;
 import com.google.refine.Jsonizable;
+import com.google.refine.RefineServlet;
 
 public class PreferenceStore implements Jsonizable {
     protected Map<String, Object> _prefs = new HashMap<String, Object>();

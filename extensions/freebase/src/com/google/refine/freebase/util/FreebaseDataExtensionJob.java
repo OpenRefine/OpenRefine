@@ -56,9 +56,9 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.freebase.FreebaseType;
+import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
-import com.google.refine.model.ReconCandidate;
 
 public class FreebaseDataExtensionJob {
     static public class DataExtension {

@@ -40,6 +40,7 @@ import com.google.gdata.client.Service.GDataRequest;
 import com.google.gdata.client.Service.GDataRequest.RequestType;
 import com.google.gdata.util.ContentType;
 import com.google.gdata.util.ServiceException;
+
 import com.google.refine.importing.UrlRewriter;
 
 /**

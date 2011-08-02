@@ -38,9 +38,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 
 import com.google.refine.commands.EngineDependentCommand;
+import com.google.refine.freebase.operations.ExtendDataOperation;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.freebase.operations.ExtendDataOperation;
 import com.google.refine.util.ParsingUtilities;
 
 public class ExtendDataCommand extends EngineDependentCommand {

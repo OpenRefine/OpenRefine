@@ -44,14 +44,14 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.google.refine.RefineServlet;
 import com.google.refine.Jsonizable;
+import com.google.refine.RefineServlet;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 

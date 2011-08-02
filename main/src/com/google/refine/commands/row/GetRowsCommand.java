@@ -46,11 +46,11 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
-import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;

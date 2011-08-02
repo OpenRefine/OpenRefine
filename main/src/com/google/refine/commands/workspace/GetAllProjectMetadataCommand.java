@@ -35,8 +35,8 @@ package com.google.refine.commands.workspace;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
