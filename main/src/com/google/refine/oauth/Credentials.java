@@ -58,7 +58,9 @@ public class Credentials {
         }
         
         public String getCookieName(Provider provider) {
-            if (provider == null) throw new RuntimeException("Provider can't be null");
+            if (provider == null) {
+                throw new RuntimeException("Provider can't be null");
+            }
             return provider.getHost() + "_" + postfix;
         }
     };
@@ -89,11 +91,17 @@ public class Credentials {
     
     public Credentials(String token, String secret, Provider provider) {
         this.token = token;
-        if (token == null) throw new RuntimeException("Could not find " + TOKEN + " in auth credentials");
+        if (token == null) {
+            throw new RuntimeException("Could not find " + TOKEN + " in auth credentials");
+        }
         this.secret = secret;
-        if (secret == null) throw new RuntimeException("Could not find " + SECRET + " in auth credentials");
+        if (secret == null) {
+            throw new RuntimeException("Could not find " + SECRET + " in auth credentials");
+        }
         this.provider = provider;
-        if (provider == null) throw new RuntimeException("Provider can't be null");
+        if (provider == null) {
+            throw new RuntimeException("Provider can't be null");
+        }
     }
 
     public String getToken() {

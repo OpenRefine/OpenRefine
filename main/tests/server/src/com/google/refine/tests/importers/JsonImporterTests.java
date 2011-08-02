@@ -186,8 +186,9 @@ public class JsonImporterTests extends ImporterTest {
         try{
             while(token != null){
                 token = parser.next();
-                if(token == null)
+                if(token == null) {
                     break;
+                }
                 i++;
                 if(i == 3){
                     Assert.assertEquals(Token.Value, token);
@@ -205,8 +206,9 @@ public class JsonImporterTests extends ImporterTest {
         try{
             while(token != null){
                 token = parser.next();
-                if(token == null)
+                if(token == null) {
                     break;
+                }
                 i++;
                 if(i == 3){
                     Assert.assertEquals(Token.StartEntity, token);
@@ -223,8 +225,9 @@ public class JsonImporterTests extends ImporterTest {
         try{
             while(token != null){
                 token = parser.next();
-                if(token == null)
+                if(token == null) {
                     break;
+                }
                 i++;
                 if(i == 3){
                     Assert.assertEquals(token, Token.StartEntity);

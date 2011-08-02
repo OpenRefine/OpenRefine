@@ -63,16 +63,30 @@ public class Diff implements Function {
                             Date c1 = (o1 instanceof Date) ? (Date) o1 : ((Calendar) o1).getTime();
                             Date c2 = (o2 instanceof Date) ? (Date) o2 : CalendarParser.parse((o2 instanceof String) ? (String) o2 : o2.toString()).getTime();
                             long delta = (c1.getTime() - c2.getTime()) / 1000;
-                            if ("seconds".equals(unit)) return delta;
+                            if ("seconds".equals(unit)) {
+                                return delta;
+                            }
                             delta /= 60;
-                            if ("minutes".equals(unit)) return delta;
+                            if ("minutes".equals(unit)) {
+                                return delta;
+                            }
                             delta /= 60;
-                            if ("hours".equals(unit)) return delta;
+                            if ("hours".equals(unit)) {
+                                return delta;
+                            }
                             long days = delta / 24;
-                            if ("days".equals(unit)) return days;
-                            if ("weeks".equals(unit)) return days / 7;
-                            if ("months".equals(unit)) return days / 30;
-                            if ("years".equals(unit)) return days / 365;
+                            if ("days".equals(unit)) {
+                                return days;
+                            }
+                            if ("weeks".equals(unit)) {
+                                return days / 7;
+                            }
+                            if ("months".equals(unit)) {
+                                return days / 30;
+                            }
+                            if ("years".equals(unit)) {
+                                return days / 365;
+                            }
                         } catch (CalendarParserException e) {
                             // we should throw at this point because it's important to know that date parsing failed
                         }

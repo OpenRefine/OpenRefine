@@ -143,7 +143,9 @@ class RefineServer extends Server {
         logger.info("Starting Server bound to '" + host + ":" + port + "'");
 
         String memory = Configurations.get("refine.memory");
-        if (memory != null) logger.info("Max memory size: " + memory);
+        if (memory != null) {
+            logger.info("Max memory size: " + memory);
+        }
         
         int maxThreads = Configurations.getInteger("refine.queue.size", 30);
         int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
@@ -200,7 +202,9 @@ class RefineServer extends Server {
     protected void doStop() throws Exception {    
         try {
             // shutdown our scheduled tasks first, if any
-            if (threadPool != null) threadPool.shutdown();
+            if (threadPool != null) {
+                threadPool.shutdown();
+            }
             
             // then let the parent stop
             super.doStop();
@@ -210,8 +214,12 @@ class RefineServer extends Server {
     }
         
     static private boolean isWebapp(File dir) {
-        if (dir == null) return false;
-        if (!dir.exists() || !dir.canRead()) return false;
+        if (dir == null) {
+            return false;
+        }
+        if (!dir.exists() || !dir.canRead()) {
+            return false;
+        }
         File webXml = new File(dir, "WEB-INF/web.xml");
         return webXml.exists() && webXml.canRead();
     }

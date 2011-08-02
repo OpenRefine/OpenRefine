@@ -91,8 +91,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
      */
     static protected List<String> detectRecordElement(TreeReader parser, String tag) throws Exception {
         try{
-            if(parser.current() == Token.Ignorable)//XMLStreamConstants.START_DOCUMENT)
+            if(parser.current() == Token.Ignorable) {
                 parser.next();
+            }
 
             String localName = parser.getFieldName();
             String fullName = composeName(parser.getPrefix(), localName);
@@ -392,8 +393,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
     ) throws Exception {
         logger.trace("processSubRecord(Project,TreeReader,ImportColumnGroup,ImportRecord)");
         
-        if(parser.current() == Token.Ignorable)
+        if(parser.current() == Token.Ignorable) {
             return;
+        }
         
         ImportColumnGroup thisColumnGroup = getColumnGroup(
                     project,

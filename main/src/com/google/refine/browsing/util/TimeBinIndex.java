@@ -112,7 +112,9 @@ abstract public class TimeBinIndex {
 
         for (long step : steps) {
             _step = step;
-            if (diff / _step <= 100) break; 
+            if (diff / _step <= 100) {
+                break;
+            } 
         }
 
         _bins = new int[(int) (diff / _step) + 1];

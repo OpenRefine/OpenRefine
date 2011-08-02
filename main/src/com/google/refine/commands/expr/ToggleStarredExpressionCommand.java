@@ -22,30 +22,32 @@ public class ToggleStarredExpressionCommand extends Command {
         TopList starredExpressions = ((TopList) ProjectManager.singleton.getPreferenceStore().get(
                 "scripting.starred-expressions"));
 
-        if (starredExpressions.getList().contains(expression))
+        if (starredExpressions.getList().contains(expression)) {
             starredExpressions.remove(expression);
-        else
+        } else {
             starredExpressions.add(expression);
+        }
 
-        if(request.getParameter("returnList") != null)
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
+        if(request.getParameter("returnList") != null) {
+            try {
+                response.setCharacterEncoding("UTF-8");
+                response.setHeader("Content-Type", "application/json");
 
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            writer.object();
-            writer.key("expressions");
-            writer.array();
-            for (String s : starredExpressions) {
+                JSONWriter writer = new JSONWriter(response.getWriter());
                 writer.object();
-                writer.key("code");
-                writer.value(s);
+                writer.key("expressions");
+                writer.array();
+                for (String s : starredExpressions) {
+                    writer.object();
+                    writer.key("code");
+                    writer.value(s);
+                    writer.endObject();
+                }
+                writer.endArray();
                 writer.endObject();
+            } catch (Exception e) {
+                respondException(response, e);
             }
-            writer.endArray();
-            writer.endObject();
-        } catch (Exception e) {
-            respondException(response, e);
         }
     }
 }

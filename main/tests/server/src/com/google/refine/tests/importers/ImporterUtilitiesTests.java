@@ -131,8 +131,9 @@ public class ImporterUtilitiesTests extends RefineTest {
     @Test
     public void ensureColumnsInRowExistDoesExpand(){
         Row row = new Row(4);
-        for(int i = 1; i < 5; i++)
+        for(int i = 1; i < 5; i++) {
             row.cells.add(new Cell("value" + i, null));
+        }
 
         ArrayList<String> columnNames = new ArrayList<String>(2);
 

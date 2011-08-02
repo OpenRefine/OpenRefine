@@ -93,8 +93,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
         parser = null;
         columnGroup = null;
         record = null;
-        if(inputStream != null)
-           inputStream.close();
+        if(inputStream != null) {
+            inputStream.close();
+        }
         inputStream = null;
     }
 

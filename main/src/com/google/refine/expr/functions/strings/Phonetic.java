@@ -64,7 +64,9 @@ public class Phonetic implements Function {
             if (o1 != null && o2 != null && o2 instanceof String) {
                 String str = (o1 instanceof String) ? (String) o1 : o1.toString();
                 String encoding = ((String) o2).toLowerCase();
-                if (encoding == null) encoding = "metaphone3";
+                if (encoding == null) {
+                    encoding = "metaphone3";
+                }
                 if ("doublemetaphone".equalsIgnoreCase(encoding)) {
                     return metaphone2.key(str);
                 } else if ("metaphone3".equalsIgnoreCase(encoding)) {

@@ -46,12 +46,15 @@ public class FactN implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length != 2)
+        if (args.length != 2) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
-        if(args[0] == null || !(args[0] instanceof Number))
+        }
+        if(args[0] == null || !(args[0] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first parameter to be a number");
-        if(args[1] == null && !(args[1] instanceof Number))
+        }
+        if(args[1] == null && !(args[1] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second parameter to be a number");
+        }
 
         return FactN.factorial(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
 
@@ -63,10 +66,11 @@ public class FactN implements Function {
      * Returns 1 for zero and negative integers.
      */
     public static int factorial(int i, int step){
-        if(i <= 1)
+        if(i <= 1) {
             return 1;
-        else
+        } else {
             return i * FactN.factorial(i - step, step);
+        }
     }
 
     @Override

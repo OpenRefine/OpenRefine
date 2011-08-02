@@ -47,8 +47,12 @@ public class CancelProcessesCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if( request == null ) throw new IllegalArgumentException("parameter 'request' should not be null");
-        if( response == null ) throw new IllegalArgumentException("parameter 'request' should not be null");
+        if( request == null ) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+        if( response == null ) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
 
         try {
             Project project = getProject(request);

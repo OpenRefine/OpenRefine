@@ -62,14 +62,20 @@ public class OAuthUtilities {
         int slash = path.lastIndexOf('/');
         String provider_str = path.substring(slash + 1);
         Provider provider = getProvider(provider_str);
-        if (provider == null) throw new RuntimeException("Can't find OAuth provider '" + provider_str + "'");
+        if (provider == null) {
+            throw new RuntimeException("Can't find OAuth provider '" + provider_str + "'");
+        }
         return provider;
     }
     
     public static OAuthConsumer getConsumer(Provider provider) {
-        if (provider == null) throw new RuntimeException("Provider can't be null");
+        if (provider == null) {
+            throw new RuntimeException("Provider can't be null");
+        }
         String[] consumer_info = infos.get(provider.getHost());
-        if (consumer_info == null) throw new RuntimeException("Can't find secrets for provider '" + provider.getHost() + "'");
+        if (consumer_info == null) {
+            throw new RuntimeException("Can't find secrets for provider '" + provider.getHost() + "'");
+        }
         OAuthConsumer oauthConsumer = provider.createConsumer(consumer_info[0],consumer_info[1]);
         HttpParameters params = new HttpParameters();
         params.put("realm", provider.getHost());

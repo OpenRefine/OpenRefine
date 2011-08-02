@@ -46,21 +46,26 @@ public class Combin implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if(args.length != 2)
+        if(args.length != 2) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
-        if(args[0] == null || !(args[0] instanceof Number))
+        }
+        if(args[0] == null || !(args[0] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first argument to be a number");
-        if(args[1] == null || !(args[1] instanceof Number))
+        }
+        if(args[1] == null || !(args[1] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second argument to be a number");
+        }
 
         return Combin.Combination(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
     }
 
     public static int Combination(int n, int k){
-        if (k > n)
+        if (k > n) {
             throw new IllegalArgumentException ("the number of elements, n, should be larger than the number of combinations, k");
-        if (n < 1)
+        }
+        if (n < 1) {
             throw new IllegalArgumentException ("the number of elements, n, cannot be less than 1");
+        }
         int nFact = FactN.factorial(n, 1);
         int rFact = FactN.factorial(k, 1);
         int nminusrFact = FactN.factorial(n - k, 1);

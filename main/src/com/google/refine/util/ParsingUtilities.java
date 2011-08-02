@@ -109,7 +109,9 @@ public class ParsingUtilities {
     }
 
     static public JSONObject evaluateJsonStringToObject(String s) throws JSONException {
-        if( s == null ) throw new IllegalArgumentException("parameter 's' should not be null");
+        if( s == null ) {
+            throw new IllegalArgumentException("parameter 's' should not be null");
+        }
         JSONTokener t = new JSONTokener(s);
         Object o = t.nextValue();
         if (o instanceof JSONObject) {

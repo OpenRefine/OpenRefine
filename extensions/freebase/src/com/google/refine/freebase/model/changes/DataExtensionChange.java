@@ -402,7 +402,9 @@ public class DataExtensionChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     
-                    if (line == null) continue;
+                    if (line == null) {
+                        continue;
+                    }
                     
                     if (line.length() == 0) {
                         dataExtensions.add(null);

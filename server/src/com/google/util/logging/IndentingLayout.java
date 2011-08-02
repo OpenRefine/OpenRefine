@@ -60,12 +60,18 @@ public class IndentingLayout extends Layout {
     @Override
     public String format(LoggingEvent event) {
         String message = event.getRenderedMessage();
-        if (message == null) return "";
-        if (message.length() < 2) return message;
+        if (message == null) {
+            return "";
+        }
+        if (message.length() < 2) {
+            return message;
+        }
         
         char leader = message.charAt(0);
         char secondLeader = message.charAt(1);
-        if ((leader == '<') && (secondLeader == ' ') && (this.indentation > 0)) this.indentation--;
+        if ((leader == '<') && (secondLeader == ' ') && (this.indentation > 0)) {
+            this.indentation--;
+        }
 
         // Reset buf
         StringBuffer buf = new StringBuffer(256);
@@ -87,23 +93,33 @@ public class IndentingLayout extends Layout {
 //        }
 
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if (hour < 10) buf.append('0');
+        if (hour < 10) {
+            buf.append('0');
+        }
         buf.append(hour);
         buf.append(':');
 
         int mins = calendar.get(Calendar.MINUTE);
-        if (mins < 10) buf.append('0');
+        if (mins < 10) {
+            buf.append('0');
+        }
         buf.append(mins);
         buf.append(':');
 
         int secs = calendar.get(Calendar.SECOND);
-        if (secs < 10) buf.append('0');
+        if (secs < 10) {
+            buf.append('0');
+        }
         buf.append(secs);
         buf.append('.');
 
         int millis = (int) (now % 1000);
-        if (millis < 100) buf.append('0');
-        if (millis < 10) buf.append('0');
+        if (millis < 100) {
+            buf.append('0');
+        }
+        if (millis < 10) {
+            buf.append('0');
+        }
         buf.append(millis);
 
         buf.append(" [");
@@ -128,7 +144,9 @@ public class IndentingLayout extends Layout {
         buf.append(delta);
         buf.append("ms)\n");
 
-        if ((leader == '>') && (secondLeader == ' ')) indentation++;
+        if ((leader == '>') && (secondLeader == ' ')) {
+            indentation++;
+        }
 
         return buf.toString();
     }

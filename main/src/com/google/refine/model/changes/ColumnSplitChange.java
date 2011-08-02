@@ -348,7 +348,9 @@ public class ColumnSplitChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     
-                    if (line == null) continue;
+                    if (line == null) {
+                        continue;
+                    }
                     
                     int valueCount = Integer.parseInt(line);
                     

@@ -261,10 +261,11 @@ public class JsonImporter extends TreeImportingParserBase {
                 
                 //The following is a workaround for inconsistent Jackson JsonParser
                 if(text == null){
-                    if(this.lastTokenWasAFieldNameAndCurrentTokenIsANewEntity) 
+                    if(this.lastTokenWasAFieldNameAndCurrentTokenIsANewEntity) {
                         text = this.lastFieldName;
-                    else
+                    } else {
                         text = "__anonymous__";
+                    }
                 }
                 //end of workaround
                 
@@ -307,8 +308,9 @@ public class JsonImporter extends TreeImportingParserBase {
                 throw new ServletException(e);
             }
             
-            if(next == null)
+            if(next == null) {
                 throw new ServletException("No more Json Tokens in stream");
+            }
             
             //The following is a workaround for inconsistent Jackson JsonParser
             if(next == JsonToken.FIELD_NAME){

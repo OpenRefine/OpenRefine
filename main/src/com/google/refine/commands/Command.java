@@ -96,7 +96,9 @@ public abstract class Command {
      */
     static protected JSONObject getEngineConfig(HttpServletRequest request)
     throws JSONException {
-        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
 
         String json = request.getParameter("engine");
         try{
@@ -118,13 +120,18 @@ public abstract class Command {
      */
     static protected Engine getEngine(HttpServletRequest request, Project project)
     throws Exception {
-        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
-        if (project == null) throw new IllegalArgumentException("parameter 'project' should not be null");
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+        if (project == null) {
+            throw new IllegalArgumentException("parameter 'project' should not be null");
+        }
 
         Engine engine = new Engine(project);
         JSONObject o = getEngineConfig(request);
-        if (o != null)
+        if (o != null) {
             engine.initializeFromJSON(o);
+        }
         return engine;
     }
 
@@ -167,7 +174,9 @@ public abstract class Command {
      * @throws ServletException
      */
     protected ProjectMetadata getProjectMetadata(HttpServletRequest request) throws ServletException {
-        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
         try {
             ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(Long.parseLong(request.getParameter("project")));
             if (pm != null) {
@@ -180,7 +189,9 @@ public abstract class Command {
     }
     
     static protected int getIntegerParameter(HttpServletRequest request, String name, int def) {
-        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
         try {
             return Integer.parseInt(request.getParameter(name));
         } catch (Exception e) {
@@ -190,7 +201,9 @@ public abstract class Command {
     }
 
     static protected JSONObject getJsonParameter(HttpServletRequest request, String name) {
-        if (request == null) throw new IllegalArgumentException("parameter 'request' should not be null");
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
         String value = request.getParameter(name);
         if (value != null) {
             try {
