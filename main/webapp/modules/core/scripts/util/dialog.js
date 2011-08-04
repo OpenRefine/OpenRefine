@@ -7,13 +7,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+ * Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+ * Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -29,95 +29,95 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*/
+ */
 
 DialogSystem = {
     _layers: []
 };
 
 DialogSystem.showDialog = function(elmt, onCancel) {
-    var overlay = $('<div>&nbsp;</div>')
-        .addClass("dialog-overlay")
-        .css("z-index", 101 + DialogSystem._layers.length * 2)
-        .appendTo(document.body);
-        
-    var container = $('<div></div>')
-        .addClass("dialog-container")
-        .css("z-index", 102 + DialogSystem._layers.length * 2)
-        .appendTo(document.body);
-        
-    elmt.css("visibility", "hidden").appendTo(container);
-    container.css("top", Math.round((overlay.height() - elmt.height()) / 2) + "px");
-    elmt.css("visibility", "visible");
-    
-    container.draggable({ handle: '.dialog-header', cursor: 'move' });
-    
-    var layer = {
-        overlay: overlay,
-        container: container,
-        onCancel: onCancel
-    };
-    DialogSystem._layers.push(layer);
-    
-    var level = DialogSystem._layers.length;
-    
-    layer.keyHandler = function(evt) {
-        if (evt.keyCode == 27 && !evt.shiftKey && !evt.metaKey && !evt.altKey && !evt.ctrlKey &&
-            evt.target.tagName.toLowerCase() != "input" &&
-            evt.target.tagName.toLowerCase() != "textarea") {
-            
-            DialogSystem.dismissUntil(level - 1);
-            evt.stopImmediatePropagation();
-            evt.stopPropagation();
-            evt.preventDefault();
-            return false;
-        }
-    };
-    $(document).stack("keydown", layer.keyHandler);
-    
-    return level;
+  var overlay = $('<div>&nbsp;</div>')
+  .addClass("dialog-overlay")
+  .css("z-index", 101 + DialogSystem._layers.length * 2)
+  .appendTo(document.body);
+
+  var container = $('<div></div>')
+  .addClass("dialog-container")
+  .css("z-index", 102 + DialogSystem._layers.length * 2)
+  .appendTo(document.body);
+
+  elmt.css("visibility", "hidden").appendTo(container);
+  container.css("top", Math.round((overlay.height() - elmt.height()) / 2) + "px");
+  elmt.css("visibility", "visible");
+
+  container.draggable({ handle: '.dialog-header', cursor: 'move' });
+
+  var layer = {
+    overlay: overlay,
+    container: container,
+    onCancel: onCancel
+  };
+  DialogSystem._layers.push(layer);
+
+  var level = DialogSystem._layers.length;
+
+  layer.keyHandler = function(evt) {
+    if (evt.keyCode == 27 && !evt.shiftKey && !evt.metaKey && !evt.altKey && !evt.ctrlKey &&
+        evt.target.tagName.toLowerCase() != "input" &&
+        evt.target.tagName.toLowerCase() != "textarea") {
+
+      DialogSystem.dismissUntil(level - 1);
+      evt.stopImmediatePropagation();
+      evt.stopPropagation();
+      evt.preventDefault();
+      return false;
+    }
+  };
+  $(document).stack("keydown", layer.keyHandler);
+
+  return level;
 };
 
 DialogSystem.dismissAll = function() {
-    DialogSystem.dismissUntil(0);
+  DialogSystem.dismissUntil(0);
 };
 
 DialogSystem.dismissUntil = function(level) {
-    for (var i = DialogSystem._layers.length - 1; i >= level; i--) {
-        var layer = DialogSystem._layers[i];
-        
-        $(document).unbind("keydown", layer.keyHandler);
-        
-        layer.overlay.remove();
-        layer.container.remove();
-        layer.container.unbind();
-        
-        if (layer.onCancel) {
-            try {
-                layer.onCancel();
-            } catch (e) {
-                Refine.reportException(e);
-            }
-        }
+  for (var i = DialogSystem._layers.length - 1; i >= level; i--) {
+    var layer = DialogSystem._layers[i];
+
+    $(document).unbind("keydown", layer.keyHandler);
+
+    layer.overlay.remove();
+    layer.container.remove();
+    layer.container.unbind();
+
+    if (layer.onCancel) {
+      try {
+        layer.onCancel();
+      } catch (e) {
+        Refine.reportException(e);
+      }
     }
-    DialogSystem._layers = DialogSystem._layers.slice(0, level);
+  }
+  DialogSystem._layers = DialogSystem._layers.slice(0, level);
 };
 
 DialogSystem.createDialog = function() {
-    return $('<div></div>').addClass("dialog-frame");
+  return $('<div></div>').addClass("dialog-frame");
 };
 
 DialogSystem.showBusy = function(message) {
-    var frame = DialogSystem.createDialog();
-    frame.addClass("dialog-busy");
-    
-    var body = $('<div>').attr('id', 'loading-message').appendTo(frame);
-    $('<img>').attr("src", "images/large-spinner.gif").appendTo(body);
-    $('<span>').text(" " + (message || "Working...")).appendTo(body);
-    
-    var level = DialogSystem.showDialog(frame);
-    
-    return function() {
-        DialogSystem.dismissUntil(level - 1);
-    };
+  var frame = DialogSystem.createDialog();
+  frame.addClass("dialog-busy");
+
+  var body = $('<div>').attr('id', 'loading-message').appendTo(frame);
+  $('<img>').attr("src", "images/large-spinner.gif").appendTo(body);
+  $('<span>').text(" " + (message || "Working...")).appendTo(body);
+
+  var level = DialogSystem.showDialog(frame);
+
+  return function() {
+    DialogSystem.dismissUntil(level - 1);
+  };
 };

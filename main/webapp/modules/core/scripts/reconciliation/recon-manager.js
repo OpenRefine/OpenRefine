@@ -7,13 +7,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+ * Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+ * Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -29,130 +29,130 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*/
+ */
 
 var ReconciliationManager = {
-    customServices : [],     // services registered by core and extensions
-    standardServices : [],   // services registered by user
-    _urlMap : {}
+  customServices : [],     // services registered by core and extensions
+  standardServices : [],   // services registered by user
+  _urlMap : {}
 };
 
 ReconciliationManager.isFreebaseId = function(s) {
-    return s == "http://rdf.freebase.com/ns/type.object.id";
+  return s == "http://rdf.freebase.com/ns/type.object.id";
 };
 
 ReconciliationManager.isFreebaseMid = function(s) {
-    return s == "http://rdf.freebase.com/ns/type.object.mid";
+  return s == "http://rdf.freebase.com/ns/type.object.mid";
 };
 
 ReconciliationManager.isFreebaseIdOrMid = function(s) {
-    return ReconciliationManager.isFreebaseMid(s) || ReconciliationManager.isFreebaseId(s);
+  return ReconciliationManager.isFreebaseMid(s) || ReconciliationManager.isFreebaseId(s);
 };
 
 ReconciliationManager._rebuildMap = function() {
-    var map = {};
-    $.each(ReconciliationManager.getAllServices(), function(i, service) {
-        if ("url" in service) {
-            map[service.url] = service;
-        }
-    });
-    ReconciliationManager._urlMap = map;
+  var map = {};
+  $.each(ReconciliationManager.getAllServices(), function(i, service) {
+    if ("url" in service) {
+      map[service.url] = service;
+    }
+  });
+  ReconciliationManager._urlMap = map;
 };
 
 ReconciliationManager.getServiceFromUrl = function(url) {
-    return ReconciliationManager._urlMap[url];
+  return ReconciliationManager._urlMap[url];
 };
 
 ReconciliationManager.getAllServices = function() {
-    return ReconciliationManager.customServices.concat(ReconciliationManager.standardServices);
+  return ReconciliationManager.customServices.concat(ReconciliationManager.standardServices);
 };
 
 ReconciliationManager.registerService = function(service) {
-    ReconciliationManager.customServices.push(service);
-    ReconciliationManager._rebuildMap();
-    
-    return ReconciliationManager.customServices.length - 1;
+  ReconciliationManager.customServices.push(service);
+  ReconciliationManager._rebuildMap();
+
+  return ReconciliationManager.customServices.length - 1;
 };
 
 ReconciliationManager.registerStandardService = function(url, f) {
-    var dismissBusy = DialogSystem.showBusy();
-    
-    $.getJSON(
-        url + (url.contains("?") ? "&" : "?") + "callback=?",
-        null,
-        function(data) {
-            data.url = url;
-            data.ui = { "handler" : "ReconStandardServicePanel" };
-            
-            index = ReconciliationManager.customServices.length + 
-                ReconciliationManager.standardServices.length;
-            
-            ReconciliationManager.standardServices.push(data);
-            ReconciliationManager._rebuildMap();
-            
-            ReconciliationManager.save();
-            
-            dismissBusy();
-            
-            if (f) {
-                f(index);
-            }
-        },
-        "jsonp"
-    );
+  var dismissBusy = DialogSystem.showBusy();
+
+  $.getJSON(
+    url + (url.contains("?") ? "&" : "?") + "callback=?",
+    null,
+    function(data) {
+      data.url = url;
+      data.ui = { "handler" : "ReconStandardServicePanel" };
+
+      index = ReconciliationManager.customServices.length + 
+      ReconciliationManager.standardServices.length;
+
+      ReconciliationManager.standardServices.push(data);
+      ReconciliationManager._rebuildMap();
+
+      ReconciliationManager.save();
+
+      dismissBusy();
+
+      if (f) {
+        f(index);
+      }
+    },
+    "jsonp"
+  );
 };
 
 ReconciliationManager.unregisterService = function(service, f) {
-    for (var i = 0; i < ReconciliationManager.customServices.length; i++) {
-        if (ReconciliationManager.customServices[i] === service) {
-            ReconciliationManager.customServices.splice(i, 1);
-            break;
-        }
+  for (var i = 0; i < ReconciliationManager.customServices.length; i++) {
+    if (ReconciliationManager.customServices[i] === service) {
+      ReconciliationManager.customServices.splice(i, 1);
+      break;
     }
-    for (var i = 0; i < ReconciliationManager.standardServices.length; i++) {
-        if (ReconciliationManager.standardServices[i] === service) {
-            ReconciliationManager.standardServices.splice(i, 1);
-            break;
-        }
+  }
+  for (var i = 0; i < ReconciliationManager.standardServices.length; i++) {
+    if (ReconciliationManager.standardServices[i] === service) {
+      ReconciliationManager.standardServices.splice(i, 1);
+      break;
     }
-    ReconciliationManager.save(f);
+  }
+  ReconciliationManager.save(f);
 };
 
 ReconciliationManager.save = function(f) {
-    $.ajax({
-        async: false,
-        type: "POST",
-        url: "/command/core/set-preference?" + $.param({ 
-            name: "reconciliation.standardServices" 
-        }),
-        data: { "value" : JSON.stringify(ReconciliationManager.standardServices) },
-        success: function(data) {
-            if (f) { f(); }
-        },
-        dataType: "json"
-    });
+  $.ajax({
+    async: false,
+    type: "POST",
+    url: "/command/core/set-preference?" + $.param({ 
+      name: "reconciliation.standardServices" 
+    }),
+    data: { "value" : JSON.stringify(ReconciliationManager.standardServices) },
+    success: function(data) {
+      if (f) { f(); }
+    },
+    dataType: "json"
+  });
 };
 
 (function() {
-    ReconciliationManager.customServices.push({
-        "name" : "Freebase Query-based Reconciliation",
-        "ui" : { "handler" : "ReconFreebaseQueryPanel" }
-    });
-    
-    $.ajax({
-        async: false,
-        url: "/command/core/get-preference?" + $.param({ 
-            name: "reconciliation.standardServices" 
-        }),
-        success: function(data) {
-            if (data.value && data.value != "null") {
-                ReconciliationManager.standardServices = JSON.parse(data.value);
-                ReconciliationManager._rebuildMap();
-            } else {
-                ReconciliationManager.registerStandardService(
-                    "http://4.standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");
-            }
-        },
-        dataType: "json"
-    });
+  ReconciliationManager.customServices.push({
+    "name" : "Freebase Query-based Reconciliation",
+    "ui" : { "handler" : "ReconFreebaseQueryPanel" }
+  });
+
+  $.ajax({
+    async: false,
+    url: "/command/core/get-preference?" + $.param({ 
+      name: "reconciliation.standardServices" 
+    }),
+    success: function(data) {
+      if (data.value && data.value != "null") {
+        ReconciliationManager.standardServices = JSON.parse(data.value);
+        ReconciliationManager._rebuildMap();
+      } else {
+        ReconciliationManager.registerStandardService(
+            "http://4.standard-reconcile.dfhuynh.user.dev.freebaseapps.com/reconcile");
+      }
+    },
+    dataType: "json"
+  });
 })();

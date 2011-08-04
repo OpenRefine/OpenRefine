@@ -7,13 +7,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+ * Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+ * Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -34,141 +34,141 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var GoogleRefineVersion;
 
 var Refine = {
-    actionAreas: []
+  actionAreas: []
 };
 
 Refine.selectActionArea = function(id) {
-    $('.action-area-tab').removeClass('selected');
-    $('.action-area-tab-body').css('visibility', 'hidden').css('z-index', '100');
+  $('.action-area-tab').removeClass('selected');
+  $('.action-area-tab-body').css('visibility', 'hidden').css('z-index', '100');
 
-    for (var i = 0; i < Refine.actionAreas.length; i++) {
-        var actionArea = Refine.actionAreas[i];
-        if (id == actionArea.id) {
-            actionArea.tabElmt.addClass('selected');
-            actionArea.bodyElmt.css('visibility', 'visible').css('z-index', '110');;
-        }
+  for (var i = 0; i < Refine.actionAreas.length; i++) {
+    var actionArea = Refine.actionAreas[i];
+    if (id == actionArea.id) {
+      actionArea.tabElmt.addClass('selected');
+      actionArea.bodyElmt.css('visibility', 'visible').css('z-index', '110');;
     }
+  }
 };
 
 $(function() {
-    var isThereNewRelease = function() {
-        var thisRevision = GoogleRefineVersion.revision;
-    
-        var revision_pattern = /r([0-9]+)/;
-    
-        if (!revision_pattern.test(thisRevision)) { // probably "trunk"
-            return false;
-        }
-    
-        var latestRevision = GoogleRefineReleases.releases[0].revision;
-    
-        var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
-        var latestRev = parseInt(revision_pattern.exec(GoogleRefineReleases.releases[0].revision)[1],10);
-    
-        return latestRev > thisRev;
-    };
+  var isThereNewRelease = function() {
+    var thisRevision = GoogleRefineVersion.revision;
 
-    var showVersion = function() {
-        $.getJSON(
+    var revision_pattern = /r([0-9]+)/;
+
+    if (!revision_pattern.test(thisRevision)) { // probably "trunk"
+      return false;
+    }
+
+    var latestRevision = GoogleRefineReleases.releases[0].revision;
+
+    var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
+    var latestRev = parseInt(revision_pattern.exec(GoogleRefineReleases.releases[0].revision)[1],10);
+
+    return latestRev > thisRev;
+  };
+
+  var showVersion = function() {
+    $.getJSON(
         "/command/core/get-version",
         null,
         function(data) {
-            GoogleRefineVersion = data;
+          GoogleRefineVersion = data;
 
-            $("#google-refine-version").text("Version " + GoogleRefineVersion.full_version);
+          $("#google-refine-version").text("Version " + GoogleRefineVersion.full_version);
 
-            var script = $('<script></script>')
-            .attr("src", "http://google-refine.googlecode.com/svn/support/releases.js")
-            .attr("type", "text/javascript")
-            .appendTo(document.body);
+          var script = $('<script></script>')
+          .attr("src", "http://google-refine.googlecode.com/svn/support/releases.js")
+          .attr("type", "text/javascript")
+          .appendTo(document.body);
 
-            var poll = function() {
-                if ("releases" in window) {
-                    if (isThereNewRelease()) {
-                        var container = $('<div id="notification-container">')
-                        .appendTo(document.body)
-                        var notification = $('<div id="notification">')
-                        .text('New version! ')
-                        .appendTo(container)
-                        $('<a>')
-                        .addClass('notification-action')
-                        .attr("href", releases.homepage)
-                        .text('Download ' + releases.releases[0].description + ' now.')
-                        .appendTo(notification);
-                    }
-                } else {
-                    window.setTimeout(poll, 1000);
-                }
-            };
-            window.setTimeout(poll, 1000);
+          var poll = function() {
+            if ("releases" in window) {
+              if (isThereNewRelease()) {
+                var container = $('<div id="notification-container">')
+                .appendTo(document.body)
+                var notification = $('<div id="notification">')
+                .text('New version! ')
+                .appendTo(container)
+                $('<a>')
+                .addClass('notification-action')
+                .attr("href", releases.homepage)
+                .text('Download ' + releases.releases[0].description + ' now.')
+                .appendTo(notification);
+              }
+            } else {
+              window.setTimeout(poll, 1000);
+            }
+          };
+          window.setTimeout(poll, 1000);
         }
-        );
-    };
+    );
+  };
 
-    var resize = function() {
-        var leftPanelWidth = 150;
-        // px
-        var width = $(window).width();
-        var height = $(window).height();
-        var headerHeight = $('#header').outerHeight();
-        var panelHeight = height - headerHeight;
+  var resize = function() {
+    var leftPanelWidth = 150;
+    // px
+    var width = $(window).width();
+    var height = $(window).height();
+    var headerHeight = $('#header').outerHeight();
+    var panelHeight = height - headerHeight;
 
-        $('.main-layout-panel')
-        .css("top", headerHeight + "px")
-        .css("bottom", "0px")
-        .css("height", panelHeight + "px")
-        .css("visibility", "visible");
+    $('.main-layout-panel')
+    .css("top", headerHeight + "px")
+    .css("bottom", "0px")
+    .css("height", panelHeight + "px")
+    .css("visibility", "visible");
 
-        $('#left-panel')
-        .css("left", "0px")
-        .css("width", leftPanelWidth + "px");
-        var leftPanelBodyHPaddings = 10;
-        // px
-        var leftPanelBodyVPaddings = 0;
-        // px
-        $('#left-panel-body')
-        .css("margin-left", leftPanelBodyHPaddings + "px")
-        .css("margin-top", leftPanelBodyVPaddings + "px")
-        .css("width", ($('#left-panel').width() - leftPanelBodyHPaddings) + "px")
-        .css("height", ($('#left-panel').height() - leftPanelBodyVPaddings) + "px");
+    $('#left-panel')
+    .css("left", "0px")
+    .css("width", leftPanelWidth + "px");
+    var leftPanelBodyHPaddings = 10;
+    // px
+    var leftPanelBodyVPaddings = 0;
+    // px
+    $('#left-panel-body')
+    .css("margin-left", leftPanelBodyHPaddings + "px")
+    .css("margin-top", leftPanelBodyVPaddings + "px")
+    .css("width", ($('#left-panel').width() - leftPanelBodyHPaddings) + "px")
+    .css("height", ($('#left-panel').height() - leftPanelBodyVPaddings) + "px");
 
-        $('#right-panel')
-        .css("left", leftPanelWidth + "px")
-        .css("width", (width - leftPanelWidth) + "px");
+    $('#right-panel')
+    .css("left", leftPanelWidth + "px")
+    .css("width", (width - leftPanelWidth) + "px");
 
-        var rightPanelBodyHPaddings = 5;
-        // px
-        var rightPanelBodyVPaddings = 5;
-        // px
-        $('#right-panel-body')
-        .css("margin-left", rightPanelBodyHPaddings + "px")
-        .css("margin-top", rightPanelBodyVPaddings + "px")
-        .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
-        .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
-    };
-    $(window).bind("resize", resize);
-    window.setTimeout(resize, 50); // for Chrome, give the window some time to layout first
-    
-    var renderActionArea = function(actionArea) {
-        actionArea.bodyElmt = $('<div>')
-        .addClass('action-area-tab-body')
-        .appendTo('#right-panel-body');
+    var rightPanelBodyHPaddings = 5;
+    // px
+    var rightPanelBodyVPaddings = 5;
+    // px
+    $('#right-panel-body')
+    .css("margin-left", rightPanelBodyHPaddings + "px")
+    .css("margin-top", rightPanelBodyVPaddings + "px")
+    .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
+    .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
+  };
+  $(window).bind("resize", resize);
+  window.setTimeout(resize, 50); // for Chrome, give the window some time to layout first
 
-        actionArea.tabElmt = $('<li>')
-        .addClass('action-area-tab')
-        .text(actionArea.label)
-        .appendTo($('#action-area-tabs'))
-        .click(function() {
-            Refine.selectActionArea(actionArea.id);
-        });
+  var renderActionArea = function(actionArea) {
+    actionArea.bodyElmt = $('<div>')
+    .addClass('action-area-tab-body')
+    .appendTo('#right-panel-body');
 
-        actionArea.ui = new actionArea.uiClass(actionArea.bodyElmt);
-    };
+    actionArea.tabElmt = $('<li>')
+    .addClass('action-area-tab')
+    .text(actionArea.label)
+    .appendTo($('#action-area-tabs'))
+    .click(function() {
+      Refine.selectActionArea(actionArea.id);
+    });
 
-    for (var i = 0; i < Refine.actionAreas.length; i++) {
-        renderActionArea(Refine.actionAreas[i]);
-    }
-    Refine.selectActionArea('create-project');
+    actionArea.ui = new actionArea.uiClass(actionArea.bodyElmt);
+  };
 
-    showVersion();
+  for (var i = 0; i < Refine.actionAreas.length; i++) {
+    renderActionArea(Refine.actionAreas[i]);
+  }
+  Refine.selectActionArea('create-project');
+
+  showVersion();
 });
