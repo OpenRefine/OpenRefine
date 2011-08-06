@@ -160,7 +160,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 
                 @Override
                 public List<Object> getNextRowOfCells() throws IOException {
-                    if (nextRow >= lastRow) {
+                    if (nextRow > lastRow) {
                         return null;
                     }
                     
