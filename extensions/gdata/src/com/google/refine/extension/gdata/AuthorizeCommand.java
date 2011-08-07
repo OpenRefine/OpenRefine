@@ -1,6 +1,7 @@
 package com.google.refine.extension.gdata;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +21,21 @@ public class AuthorizeCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String requestUrl = AuthSubUtil.getRequestUrl(request.getRequestURL()
-                + "2", // execution continues at authorize2 on redirect
-                // Scope must be http, not https
-                "http://spreadsheets.google.com/feeds", false, true);
+        char[] mountPointChars = this.servlet.getModule("gdata")
+            .getMountPoint().getMountPoint().toCharArray();
+        
+        StringBuffer sb = new StringBuffer();
+        sb.append(mountPointChars, 0, mountPointChars.length);
+        sb.append("authorized");
+
+        URL thisUrl = new URL(request.getRequestURL().toString());
+        URL authorizedUrl = new URL(thisUrl, sb.toString());
+        
+        String requestUrl = AuthSubUtil.getRequestUrl(
+            authorizedUrl.toExternalForm(), // execution continues at authorized on redirect
+            "http://docs.google.com/feeds", // Scope must be http, not https
+            false,
+            true);
         response.sendRedirect(requestUrl);
     }
 

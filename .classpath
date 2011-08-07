@@ -57,5 +57,13 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
 	<classpathentry kind="lib" path="main/tests/server/lib/mockito-all-1.8.4.jar"/>
 	<classpathentry kind="lib" path="main/tests/server/lib/testng-5.12.1.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-3.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-meta-3.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-media-1.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-base-1.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-client-1.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-client-meta-1.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-meta-3.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/mail.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

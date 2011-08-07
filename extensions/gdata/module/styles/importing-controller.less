@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2011, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,86 +33,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @import-less url("theme.less");
 
-.main-layout-panel {
-  position: fixed;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  visibility: hidden;
-  }
-
-#left-panel {
-  }
-
-#left-panel-body {
-  margin-left: @padding_tight;
-  overflow: hidden;
-  position: relative;
-  }
-
-#action-area-tabs {
-  margin: 0;
-  padding: 0;
-  padding-top: @padding_looser;
-  font-size: 1.3em;
-  }
-#action-area-tabs > li {
-  display: block;
-  padding-top: @padding_tight;
-  padding-bottom: @padding_tight;
-  padding-left: @padding_normal;
-  cursor: pointer;
-  }
-#action-area-tabs > li.selected {
-  background: @chrome_primary;
-  .rounded_corners_left();
-  }
-
-#project-links {
-  font-size: 1.3em;
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.gdata-extension-signin-iframe {
+  border: 1px solid #aaa;
   width: 100%;
-  text-align: center;
+  height: 500px;
   }
 
-#logo-container {
-  margin: 2em 0;
+a.gdata-doc-title {
+  color: @link_primary;
+  text-decoration: none;
+  }
+a.gdata-doc-title:hover {
+  text-decoration: underline;
+  }
+a.gdata-doc-title.gdata-doc-unread {
+  font-weight: bold;
   }
 
-#project-links > ul {
-  padding: 0;
-  margin: 1em 0;
-  line-height: 1.5em;
-  }
-
-#project-links > ul > li {
-  display: block;
-  }
-
-#google-refine-version {
-  margin: @padding_normal 0 0 0;
-  color: @metadata_grey;
+a.gdata-doc-preview {
   font-size: 80%;
+  text-decoration: none;
+  vertical-align: super;
+  color: @link_secondary;
+  margin-left: 0.5em;
+  }
+a.gdata-doc-preview:hover {
+  text-decoration: underline;
   }
 
-#right-panel {
-  background: @chrome_primary;
-  }
-
-#right-panel-body {
-  overflow: auto;
-  position: relative;
-  }
-
-.action-area-tab-body {
-  visibility: hidden;
-  position: absolute;
-  background: white;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+.gdata-doc-date {
+  color: @metadata_grey;
   }

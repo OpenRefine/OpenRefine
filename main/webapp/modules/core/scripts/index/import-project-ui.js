@@ -43,3 +43,7 @@ Refine.actionAreas.push({
   label: "Import Project",
   uiClass: Refine.ImportProjectUI
 });
+
+Refine.ImportProjectUI.prototype.resize = function() {
+  
+};

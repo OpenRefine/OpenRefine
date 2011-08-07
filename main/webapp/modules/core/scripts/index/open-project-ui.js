@@ -39,19 +39,6 @@ Refine.OpenProjectUI = function(elmt) {
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
 
-  var resize = function() {
-    var height = elmt.height();
-    var width = elmt.width();
-    var controlsHeight = self._elmts.workspaceControls.outerHeight();
-    self._elmts.projectsContainer
-    .css("height", (height - controlsHeight - DOM.getVPaddings(self._elmts.projectsContainer)) + "px");
-    self._elmts.workspaceControls
-    .css("bottom", "0px")
-    .css("width", (width - DOM.getHPaddings(self._elmts.workspaceControls)) + "px")
-  };
-  $(window).resize(resize);
-  window.setTimeout(resize, 100);
-
   $("#project-file-input").change(function() {
     if ($("#project-name-input")[0].value.length == 0) {
       var fileName = this.files[0].fileName;
@@ -84,6 +71,19 @@ Refine.OpenProjectUI = function(elmt) {
   });
 
   this._fetchProjects();
+};
+
+Refine.OpenProjectUI.prototype.resize = function() {
+  var height = this._elmt.height();
+  var width = this._elmt.width();
+  var controlsHeight = this._elmts.workspaceControls.outerHeight();
+
+  this._elmts.projectsContainer
+  .css("height", (height - controlsHeight - DOM.getVPaddings(this._elmts.projectsContainer)) + "px");
+
+  this._elmts.workspaceControls
+  .css("bottom", "0px")
+  .css("width", (width - DOM.getHPaddings(this._elmts.workspaceControls)) + "px")
 };
 
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
@@ -119,47 +119,41 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
 
     var table = $(
       '<table class="list-table"><tr>' +
+      '<th></th>' +
+      '<th></th>' +
       '<th>Name</th>' +
-      '<th></th>' +
-      '<th></th>' +
-      '<th align="right">Last&nbsp;modified</th>' +
+      '<th>Last&nbsp;modified</th>' +
       '</tr></table>'
     ).appendTo(container)[0];
-
-    var formatDate = function(d) {
-      var d = new Date(d);
-      var last_year = Date.today().add({ years: -1 });
-      var last_month = Date.today().add({ months: -1 });
-      var last_week = Date.today().add({ days: -7 });
-      var today = Date.today();
-      var tomorrow = Date.today().add({ days: 1 });
-
-      if (d.between(today, tomorrow)) {
-        return "today " + d.toString("h:mm tt");
-      } else if (d.between(last_week, today)) {
-        var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
-        return (diff <= 1) ? ("yesterday " + d.toString("h:mm tt")) : (diff + " days ago");
-      } else if (d.between(last_month, today)) {
-        var diff = Math.floor((today.getDayOfYear() - d.getDayOfYear()) / 7);
-        return (diff == 1) ? "a week ago" : diff.toFixed(0) + " weeks ago" ;
-      } else if (d.between(last_year, today)) {
-        var diff = Math.floor(today.getMonth() - d.getMonth());
-        return (diff == 1) ? "a month ago" : diff + " months ago";
-      } else {
-        var diff = Math.floor(today.getYear() - d.getYear());
-        return (diff == 1) ? "a year ago" : diff + " years ago";
-      }
-    };
 
     var renderProject = function(project) {
       var tr = table.insertRow(table.rows.length);
       tr.className = "project";
 
-      var nameLink = $('<a></a>')
-      .addClass("list-table-itemname")
-      .text(project.name)
-      .attr("href", "/project?project=" + project.id)
-      .appendTo(tr.insertCell(tr.cells.length));
+      var deleteLink = $('<a></a>')
+      .addClass("delete-project")
+      .attr("title","Delete this project")
+      .attr("href","")
+      .css("visibility", "hidden")                
+      .html("<img src='/images/close.png' />")
+      .click(function() {
+        if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
+          $.ajax({
+            type: "POST",
+            url: "/command/core/delete-project",
+            data: { "project" : project.id },
+            dataType: "json",
+            success: function (data) {
+              if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                self._fetchProjects();
+              }
+            }
+          });
+        }
+        return false;
+      }).appendTo(
+        $(tr.insertCell(tr.cells.length)).css('width', '1%')
+      );
 
       var renameLink = $('<a></a>')
       .text("rename")
@@ -190,34 +184,19 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
             }
           }
         });
-      }).appendTo(tr.insertCell(tr.cells.length));
+      }).appendTo(
+        $(tr.insertCell(tr.cells.length)).css('width', '1%')
+      );
 
-      var deleteLink = $('<a></a>')
-      .addClass("delete-project")
-      .attr("title","Delete this project")
-      .attr("href","")
-      .css("visibility", "hidden")                
-      .html("<img src='/images/close.png' />")
-      .click(function() {
-        if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
-          $.ajax({
-            type: "POST",
-            url: "/command/core/delete-project",
-            data: { "project" : project.id },
-            dataType: "json",
-            success: function (data) {
-              if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                self._fetchProjects();
-              }
-            }
-          });
-        }
-        return false;
-      }).appendTo(tr.insertCell(tr.cells.length));
+      var nameLink = $('<a></a>')
+      .addClass("list-table-itemname")
+      .text(project.name)
+      .attr("href", "/project?project=" + project.id)
+      .appendTo(tr.insertCell(tr.cells.length));
 
 
       $('<div></div>')
-      .html(formatDate(project.date))
+      .html(formatRelativeDate(project.date))
       .addClass("last-modified")
       .attr("title", project.date.toString())
       .appendTo(tr.insertCell(tr.cells.length));

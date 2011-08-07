@@ -54,3 +54,31 @@ function cloneDeep(o) {
     return o;
   }
 }
+
+function formatRelativeDate(d) {
+  var d = new Date(d);
+  var almost_last_year = Date.today().add({ months: -11 });
+  var last_month = Date.today().add({ months: -1 });
+  var last_week = Date.today().add({ days: -7 });
+  var today = Date.today();
+  var tomorrow = Date.today().add({ days: 1 });
+
+  if (d.between(today, tomorrow)) {
+    return "today " + d.toString("h:mm tt");
+  } else if (d.between(last_week, today)) {
+    var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
+    return (diff <= 1) ? ("yesterday " + d.toString("h:mm tt")) : (diff + " days ago");
+  } else if (d.between(last_month, today)) {
+    var diff = Math.floor((today.getDayOfYear() - d.getDayOfYear()) / 7);
+    return (diff == 1) ? "a week ago" : diff.toFixed(0) + " weeks ago" ;
+  } else if (d.between(almost_last_year, today)) {
+    var diff = today.getMonth() - d.getMonth();
+    if (diff < 1) {
+      diff += 12;
+    }
+    return (diff == 1) ? "a month ago" : diff + " months ago";
+  } else {
+    var diff = Math.floor(today.getYear() - d.getYear());
+    return (diff == 1) ? "a year ago" : diff + " years ago";
+  }
+};

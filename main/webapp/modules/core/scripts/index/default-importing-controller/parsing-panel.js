@@ -88,7 +88,7 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   });
   this._parsingPanelElmts.progressPanel.hide();
 
-  this._parsingPanelResizer = function() {console.log("here");
+  this._parsingPanelResizer = function() {
   var elmts = self._parsingPanelElmts;
   var width = self._parsingPanel.width();
   var height = self._parsingPanel.height();

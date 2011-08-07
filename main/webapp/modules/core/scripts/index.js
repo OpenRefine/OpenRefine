@@ -145,9 +145,13 @@ $(function() {
     .css("margin-top", rightPanelBodyVPaddings + "px")
     .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
     .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
+    
+    for (var i = 0; i < Refine.actionAreas.length; i++) {
+      Refine.actionAreas[i].ui.resize();
+    }
   };
   $(window).bind("resize", resize);
-  window.setTimeout(resize, 50); // for Chrome, give the window some time to layout first
+  window.setTimeout(resize, 100); // for Chrome, give the window some time to layout first
 
   var renderActionArea = function(actionArea) {
     actionArea.bodyElmt = $('<div>')

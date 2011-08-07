@@ -1,0 +1,16 @@
+<div>
+  <div bind="signinPage" class="gdata-page">
+    <p>Please <button class="gdata-signin button button-primary">sign in and authorize</button>
+      access to your Google data.</p>
+  </div>
+  <div bind="progressPage" class="gdata-page">
+    <p><img src="images/large-spinner.gif" /> Retrieving Google Docs documents ...</p>
+  </div>
+  <div bind="listingPage" class="gdata-page grid-layout layout-full layout-normal"><table>
+    <tr>
+      <td>Google Docs documents</td>
+      <td style="text-align: right;"><button class="gdata-signin button">re-sign in</button> with another account</td>
+    </tr>
+    <tr><td colspan="2"><div bind="listingContainer" class="grid-layout layout-tight"></div></td></tr>
+  </table></div>
+</div>

@@ -38,6 +38,10 @@ Refine.CreateProjectUI = function(elmt) {
   this._sourceSelectionUIs = [];
   this._customPanels = [];
   this._controllers = [];
+  
+  this._sourceSelectionElmt =
+    $(DOM.loadHTML("core", "scripts/index/create-project-ui-source-selection.html")).appendTo(this._elmt);
+  this._sourceSelectionElmts = DOM.bind(this._sourceSelectionElmt);
 
   $.post(
     "/command/core/get-importing-configuration",
@@ -52,12 +56,17 @@ Refine.CreateProjectUI = function(elmt) {
 
 Refine.CreateProjectUI.controllers = [];
 
+Refine.CreateProjectUI.prototype.resize = function() {
+  var totalHeight = this._elmt.height();
+  var tabBodyContainer = $('#create-project-ui-source-selection-tab-bodies');
+  var selectedTabBody = $('.create-project-ui-source-selection-tab-body.selected');
+  
+  var top = tabBodyContainer.position().top;
+  var tabBodyHeight = totalHeight - top - DOM.getVPaddings(selectedTabBody);
+  $('.create-project-ui-source-selection-tab-body').css('height', tabBodyHeight + 'px');
+};
+
 Refine.CreateProjectUI.prototype._initializeUI = function() {
-  this._sourceSelectionElmt =
-    $(DOM.loadHTML("core", "scripts/index/create-project-ui-source-selection.html")).appendTo(this._elmt);
-
-  this._sourceSelectionElmts = DOM.bind(this._sourceSelectionElmt);
-
   for (var i = 0; i < Refine.CreateProjectUI.controllers.length; i++) {
     this._controllers.push(new Refine.CreateProjectUI.controllers[i](this));
   }
@@ -93,10 +102,10 @@ Refine.CreateProjectUI.prototype.selectImportSource = function(id) {
   for (var i = 0; i < this._sourceSelectionUIs.length; i++) {
     var sourceSelectionUI = this._sourceSelectionUIs[i];
     if (sourceSelectionUI.id == id) {
-      $('.create-project-ui-source-selection-tab-body').hide();
+      $('.create-project-ui-source-selection-tab-body').removeClass('selected').hide();
       $('.create-project-ui-source-selection-tab').removeClass('selected');
 
-      sourceSelectionUI._divBody.show();
+      sourceSelectionUI._divBody.addClass('selected').show();
       sourceSelectionUI._divHeader.addClass('selected');
 
       sourceSelectionUI.ui.focus();

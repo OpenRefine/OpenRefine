@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var html = "text/html";
 var encoding = "UTF-8";
 var version = "0.2";
+var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
 
 /*
  * Function invoked to initialize the extension.
@@ -54,29 +55,33 @@ function init() {
       new Packages.com.google.refine.extension.gdata.GDataImporter());
   IM.registerUrlRewriter(new Packages.com.google.refine.extension.gdata.GDataUrlRewriter())
   IM.registerUrlRewriter(new Packages.com.google.refine.extension.gdata.FusionTablesUrlRewriter())
+  
+  IM.registerController(
+    module,
+    "gdata-importing-controller",
+    new Packages.com.google.refine.extension.gdata.GDataImportingController()
+  );
+  
 
 //Packages.com.google.refine.exporters.ExporterRegistry.registerExporter(
 //"gdata-exporter", new Packages.com.google.refine.extension.gdata.GDataExporter());
 
-  // Script files to inject into /project page
-  var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
+  // Script files to inject into /index page
   ClientSideResourceManager.addPaths(
-    "project/scripts",
+    "index/scripts",
     module,
     [
-      "scripts/project-injection.js"
+      "scripts/index/importing-controller.js"
     ]
   );
-
-  // Style files to inject into /project page
+  // Style files to inject into /index page
   ClientSideResourceManager.addPaths(
-    "project/styles",
+    "index/styles",
     module,
     [
-      "styles/project-injection.less"
+      "styles/importing-controller.less"
     ]
-  );    
-
+  );
 }
 
 /*
@@ -84,12 +89,26 @@ function init() {
  */
 function process(path, request, response) {
   // Analyze path and handle this request yourself.
-
-  if (path == "/" || path == "") {
+  if (path == "authorized") {
     var context = {};
-    // here's how to pass things into the .vt templates
-    context.version = version;
-    send(request, response, "index.vt", context);
+    var params = new Packages.java.util.Properties();
+    context.params = params;
+    
+    var queryString = request.getQueryString();
+    if (queryString != null) {
+      var AuthSubUtil = Packages.com.google.gdata.client.http.AuthSubUtil;
+      
+      // FIXME(SM): can we safely assume UTF-8 encoding here?
+      var onetimeUseToken = AuthSubUtil.getTokenFromReply(
+          Packages.java.net.URLDecoder.decode(queryString,"UTF-8"));
+      
+      var sessionToken = AuthSubUtil.exchangeForSessionToken(onetimeUseToken, null);
+      Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, sessionToken);
+    } else {
+      Packages.com.google.refine.extension.gdata.TokenCookie.deleteToken(request, response);
+    }
+    
+    send(request, response, "authorized.vt", context);
   }
 }
 
