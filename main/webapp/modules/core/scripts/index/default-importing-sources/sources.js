@@ -74,7 +74,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 
   this._elmts = DOM.bind(bodyDiv);
   this._elmts.nextButton.click(function(evt) {
-    if ($.trim(self._elmts.urlInput[0].value.length) === 0) {
+    if ($.trim(self._elmts.urlInput[0].value).length === 0) {
       window.alert("You must specify a web address (URL) to import.");
     } else {
       self._controller.startImportJob(self._elmts.form, "Downloading data ...");

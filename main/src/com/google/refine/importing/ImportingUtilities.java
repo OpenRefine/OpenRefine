@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -60,7 +61,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -78,6 +78,7 @@ import com.ibm.icu.text.NumberFormat;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
+import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
@@ -124,11 +125,11 @@ public class ImportingUtilities {
                     }
                 }
             );
-        } catch (FileUploadException e) {
+        } catch (Exception e) {
             JSONUtilities.safePut(config, "state", "error");
             JSONUtilities.safePut(config, "error", "Error uploading data");
-            
-            throw new ServletException(e);
+            JSONUtilities.safePut(config, "errorDetails", e.getLocalizedMessage());
+            return;
         }
         
         JSONArray fileSelectionIndexes = new JSONArray();
@@ -163,7 +164,7 @@ public class ImportingUtilities {
         File rawDataDir,
         JSONObject retrievalRecord,
         final Progress progress
-    ) throws FileUploadException, IOException {
+    ) throws Exception {
         JSONArray fileRecords = new JSONArray();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
         
@@ -212,7 +213,7 @@ public class ImportingUtilities {
         });
 
         progress.setProgress("Uploading data ...", -1);
-        for (Object obj : upload.parseRequest(request)) {
+        parts: for (Object obj : upload.parseRequest(request)) {
             if (progress.isCanceled()) {
                 break;
             }
@@ -260,33 +261,41 @@ public class ImportingUtilities {
                             if (!result.download) {
                                 downloadCount++;
                                 JSONUtilities.append(fileRecords, fileRecord);
-                                continue;
+                                continue parts;
                             }
                         }
                     }
                     
                     URLConnection urlConnection = url.openConnection();
+                    urlConnection.setConnectTimeout(5000);
+                    if (urlConnection instanceof HttpURLConnection) {
+                        HttpURLConnection httpConnection = (HttpURLConnection) urlConnection;
+                        RefineServlet.setUserAgent(httpConnection);
+                    }
+                    urlConnection.connect();
+                    
                     InputStream stream2 = urlConnection.getInputStream();
                     try {
-                        String fileName = url.getFile();
-                        File file = allocateFile(rawDataDir, fileName);
+                        File file = allocateFile(rawDataDir, url.getFile());
                         
                         int contentLength = urlConnection.getContentLength();
-                        if (contentLength >= 0) {
+                        if (contentLength > 0) {
                             update.totalExpectedSize += contentLength;
                         }
                         
                         JSONUtilities.safePut(fileRecord, "declaredEncoding", urlConnection.getContentEncoding());
                         JSONUtilities.safePut(fileRecord, "declaredMimeType", urlConnection.getContentType());
-                        JSONUtilities.safePut(fileRecord, "fileName", fileName);
+                        JSONUtilities.safePut(fileRecord, "fileName", file.getName());
                         JSONUtilities.safePut(fileRecord, "location", getRelativePath(file, rawDataDir));
 
                         progress.setProgress("Downloading " + urlString,
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                         
-                        long actualLength = saveStreamToFile(stream, file, update);
+                        long actualLength = saveStreamToFile(stream2, file, update);
                         JSONUtilities.safePut(fileRecord, "size", actualLength);
-                        if (contentLength >= 0) {
+                        if (actualLength == 0) {
+                            throw new Exception("No content found in " + urlString);
+                        } else if (contentLength >= 0) {
                             update.totalExpectedSize += (actualLength - contentLength);
                         } else {
                             update.totalExpectedSize += actualLength;
@@ -344,8 +353,13 @@ public class ImportingUtilities {
     }
     
     static public File allocateFile(File dir, String name) {
+        int q = name.indexOf('?');
+        if (q > 0) {
+            name = name.substring(0, q);
+        }
+        
         File file = new File(dir, name);
-
+        
         int dot = name.indexOf('.');
         String prefix = dot < 0 ? name : name.substring(0, dot);
         String suffix = dot < 0 ? "" : name.substring(dot);

@@ -34,12 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Refine.DefaultImportingController = function(createProjectUI) {
   this._createProjectUI = createProjectUI;
 
-  this._progressPanel = createProjectUI.addCustomPanel();
-  this._progressPanel.html(DOM.loadHTML("core", "scripts/index/default-importing-controller/progress-panel.html"));
-
-  this._errorPanel = createProjectUI.addCustomPanel();
-  this._errorPanel.html(DOM.loadHTML("core", "scripts/index/default-importing-controller/error-panel.html"));
-
   this._fileSelectionPanel = createProjectUI.addCustomPanel();
   this._parsingPanel = createProjectUI.addCustomPanel();
 
@@ -84,7 +78,7 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
         form.attr("method", "post")
         .attr("enctype", "multipart/form-data")
         .attr("accept-charset", "UTF-8")
-        .attr("target", "default-importing-iframe")
+        .attr("target", "create-project-iframe")
         .attr("action", "/command/core/importing-controller?" + $.param({
           "controller": "core/default-importing-controller",
           "jobID": jobID,
@@ -94,26 +88,30 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
 
         var start = new Date();
         var timerID = window.setInterval(
-            function() {
-              self._pollImportJob(
-                  start, jobID, timerID,
-                  function(job) {
-                    return job.config.hasData;
-                  },
-                  function(jobID, job) {
-                    self._job = job;
-                    self._onImportJobReady();
-                    if (callback) {
-                      callback(jobID, job);
-                    }
-                  }
-              );
-            },
-            1000
+          function() {
+            self._createProjectUI.pollImportJob(
+              start, jobID, timerID,
+              function(job) {
+                return job.config.hasData;
+              },
+              function(jobID, job) {
+                self._job = job;
+                self._onImportJobReady();
+                if (callback) {
+                  callback(jobID, job);
+                }
+              },
+              function(job) {
+                alert(job.config.error + '\n' + job.config.errorDetails);
+                self._startOver();
+              }
+            );
+          },
+          1000
         );
-        self._initializeImportProgressPanel(progressMessage, function() {
+        self._createProjectUI.showImportProgressPanel(progressMessage, function() {
           // stop the iframe
-          $('#default-importing-iframe')[0].contentWindow.stop();
+          $('#create-project-iframe')[0].contentWindow.stop();
 
           // stop the timed polling
           window.clearInterval(timerID);
@@ -126,89 +124,6 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
       },
       "json"
   );
-};
-
-Refine.DefaultImportingController.prototype._initializeImportProgressPanel = function(progressMessage, onCancel) {
-  var self = this;
-
-  this._createProjectUI.showCustomPanel(this._progressPanel);
-
-  $('#default-importing-progress-message').text(progressMessage);
-  $('#default-importing-progress-bar-body').css("width", "0%");
-  $('#default-importing-progress-message-left').text('Starting');
-  $('#default-importing-progress-message-center').empty();
-  $('#default-importing-progress-message-right').empty();
-  $('#default-importing-progress-timing').empty();
-
-  $('#default-importing-progress-cancel-button').unbind().click(onCancel);
-};
-
-Refine.DefaultImportingController.prototype._pollImportJob = function(start, jobID, timerID, checkDone, callback) {
-  var self = this;
-  $.post(
-    "/command/core/get-importing-job-status?" + $.param({ "jobID": jobID }),
-    null,
-    function(data) {
-      if (!(data)) {
-        self._showImportJobError("Unknown error");
-        window.clearInterval(timerID);
-        return;
-      } else if (data.code == "error" || !("job" in data)) {
-        self._showImportJobError(data.message || "Unknown error");
-        window.clearInterval(timerID);
-        return;
-      }
-
-      var job = data.job;
-      if (checkDone(job)) {
-        $('#default-importing-progress-message').text('Done.');
-
-        window.clearInterval(timerID);
-        if (callback) {
-          callback(jobID, job);
-        }
-      } else {
-        var progress = job.config.progress;
-        if (progress.percent > 0) {
-          var secondsSpent = (new Date().getTime() - start.getTime()) / 1000;
-          var secondsRemaining = (100 / progress.percent) * secondsSpent - secondsSpent;
-
-          $('#default-importing-progress-bar-body')
-          .removeClass('indefinite')
-          .css("width", progress.percent + "%");
-
-          if (secondsRemaining > 1) {
-            if (secondsRemaining > 60) {
-              $('#default-importing-progress-timing').text(
-                  Math.ceil(secondsRemaining / 60) + " minutes remaining");
-            } else {
-              $('#default-importing-progress-timing').text(
-                  Math.ceil(secondsRemaining) + " seconds remaining");
-            }
-          } else {
-            $('#default-importing-progress-timing').text('almost done ...');
-          }
-        } else {
-          $('#default-importing-progress-bar-body').addClass('indefinite');
-          $('#default-importing-progress-timing').empty();
-        }
-        $('#default-importing-progress-message').text(progress.message);
-      }
-    },
-    "json"
-  );
-};
-
-Refine.DefaultImportingController.prototype._showImportJobError = function(message, stack) {
-  var self = this;
-
-  $('#default-importing-error-message').text(message);
-  $('#default-importing-error-stack').text(stack || 'No technical details.');
-
-  this._createProjectUI.showCustomPanel(this._errorPanel);
-  $('#default-importing-error-ok-button').unbind().click(function() {
-    self._createProjectUI.showSourceSelectionPanel();
-  });
 };
 
 Refine.DefaultImportingController.prototype._onImportJobReady = function() {
@@ -318,17 +233,6 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
         }),
         null,
         function(data) {
-          // Un-pool objects
-          for (var r = 0; r < data.rows.length; r++) {
-            var row = data.rows[r];
-            for (var c = 0; c < row.cells.length; c++) {
-              var cell = row.cells[c];
-              if ((cell) && ("r" in cell)) {
-                cell.r = data.pool.recons[cell.r];
-              }
-            }
-          }
-
           result.rowModel = data;
           callback(result);
         },
@@ -344,7 +248,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
     var projectName = $.trim(this._parsingPanelElmts.projectNameInput[0].value);
     if (projectName.length == 0) {
       window.alert("Please name the project.");
-      this._parsingPanelElmts.focus();
+      this._parsingPanelElmts.projectNameInput.focus();
       return;
     }
 
@@ -365,7 +269,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
         var start = new Date();
         var timerID = window.setInterval(
           function() {
-            self._pollImportJob(
+            self._createProjectUI.pollImportJob(
                 start,
                 self._jobID,
                 timerID,
@@ -374,12 +278,16 @@ Refine.DefaultImportingController.prototype._createProject = function() {
                 },
                 function(jobID, job) {
                   document.location = "project?project=" + job.config.projectID;
+                },
+                function(job) {
+                  alert(job.config.error + '\n' + job.config.errorDetails);
+                  self._onImportJobReady();
                 }
             );
           },
           1000
         );
-        self._initializeImportProgressPanel("Creating project ...", function() {
+        self._createProjectUI.showImportProgressPanel("Creating project ...", function() {
           // stop the timed polling
           window.clearInterval(timerID);
 

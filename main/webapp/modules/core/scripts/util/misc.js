@@ -64,10 +64,10 @@ function formatRelativeDate(d) {
   var tomorrow = Date.today().add({ days: 1 });
 
   if (d.between(today, tomorrow)) {
-    return "today " + d.toString("h:mm tt");
+    return "today " + d.toString("H:mm tt");
   } else if (d.between(last_week, today)) {
     var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
-    return (diff <= 1) ? ("yesterday " + d.toString("h:mm tt")) : (diff + " days ago");
+    return (diff <= 1) ? ("yesterday " + d.toString("H:mm tt")) : (diff + " days ago");
   } else if (d.between(last_month, today)) {
     var diff = Math.floor((today.getDayOfYear() - d.getDayOfYear()) / 7);
     return (diff == 1) ? "a week ago" : diff.toFixed(0) + " weeks ago" ;

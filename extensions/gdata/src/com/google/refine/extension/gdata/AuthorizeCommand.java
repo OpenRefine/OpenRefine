@@ -33,7 +33,7 @@ public class AuthorizeCommand extends Command {
         
         String requestUrl = AuthSubUtil.getRequestUrl(
             authorizedUrl.toExternalForm(), // execution continues at authorized on redirect
-            "http://docs.google.com/feeds", // Scope must be http, not https
+            "https://docs.google.com/feeds https://spreadsheets.google.com/feeds",
             false,
             true);
         response.sendRedirect(requestUrl);

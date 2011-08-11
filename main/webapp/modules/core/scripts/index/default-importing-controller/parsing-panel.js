@@ -89,28 +89,28 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   this._parsingPanelElmts.progressPanel.hide();
 
   this._parsingPanelResizer = function() {
-  var elmts = self._parsingPanelElmts;
-  var width = self._parsingPanel.width();
-  var height = self._parsingPanel.height();
-  var headerHeight = elmts.wizardHeader.outerHeight(true);
-  var controlPanelHeight = 300;
+    var elmts = self._parsingPanelElmts;
+    var width = self._parsingPanel.width();
+    var height = self._parsingPanel.height();
+    var headerHeight = elmts.wizardHeader.outerHeight(true);
+    var controlPanelHeight = 300;
 
-  elmts.dataPanel
-  .css("left", "0px")
-  .css("top", headerHeight + "px")
-  .css("width", (width - DOM.getHPaddings(elmts.dataPanel)) + "px")
-  .css("height", (height - headerHeight - controlPanelHeight - DOM.getVPaddings(elmts.dataPanel)) + "px");
-  elmts.progressPanel
-  .css("left", "0px")
-  .css("top", headerHeight + "px")
-  .css("width", (width - DOM.getHPaddings(elmts.progressPanel)) + "px")
-  .css("height", (height - headerHeight - controlPanelHeight - DOM.getVPaddings(elmts.progressPanel)) + "px");
+    elmts.dataPanel
+    .css("left", "0px")
+    .css("top", headerHeight + "px")
+    .css("width", (width - DOM.getHPaddings(elmts.dataPanel)) + "px")
+    .css("height", (height - headerHeight - controlPanelHeight - DOM.getVPaddings(elmts.dataPanel)) + "px");
+    elmts.progressPanel
+    .css("left", "0px")
+    .css("top", headerHeight + "px")
+    .css("width", (width - DOM.getHPaddings(elmts.progressPanel)) + "px")
+    .css("height", (height - headerHeight - controlPanelHeight - DOM.getVPaddings(elmts.progressPanel)) + "px");
 
-  elmts.controlPanel
-  .css("left", "0px")
-  .css("top", (height - controlPanelHeight) + "px")
-  .css("width", (width - DOM.getHPaddings(elmts.controlPanel)) + "px")
-  .css("height", (controlPanelHeight - DOM.getVPaddings(elmts.controlPanel)) + "px");
+    elmts.controlPanel
+    .css("left", "0px")
+    .css("top", (height - controlPanelHeight) + "px")
+    .css("width", (width - DOM.getHPaddings(elmts.controlPanel)) + "px")
+    .css("height", (controlPanelHeight - DOM.getVPaddings(elmts.controlPanel)) + "px");
   };
 
   $(window).resize(this._parsingPanelResizer);

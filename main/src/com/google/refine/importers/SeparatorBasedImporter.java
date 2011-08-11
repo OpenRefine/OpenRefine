@@ -119,7 +119,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             }
         };
         
-        readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+        TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
     }
     
     static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)

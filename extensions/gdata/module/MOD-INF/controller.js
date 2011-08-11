@@ -50,9 +50,6 @@ function init() {
 
   // Register importer and exporter
   var IM = Packages.com.google.refine.importing.ImportingManager;
-  IM.registerFormat("service/gdata", "GData services"); // generic format, no parser to handle it
-  IM.registerFormat("service/gdata/spreadsheet", "Google spreadsheets", false, "GoogleSpreadsheetParserUI",
-      new Packages.com.google.refine.extension.gdata.GDataImporter());
   IM.registerUrlRewriter(new Packages.com.google.refine.extension.gdata.GDataUrlRewriter())
   IM.registerUrlRewriter(new Packages.com.google.refine.extension.gdata.FusionTablesUrlRewriter())
   
@@ -71,7 +68,8 @@ function init() {
     "index/scripts",
     module,
     [
-      "scripts/index/importing-controller.js"
+      "scripts/index/importing-controller.js",
+      "scripts/index/gdata-source-ui.js"
     ]
   );
   // Style files to inject into /index page

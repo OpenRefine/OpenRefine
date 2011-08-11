@@ -45,10 +45,14 @@ public class GDataUrlRewriter implements UrlRewriter {
         try {
             URL url = new URL(urlString);
             if (isSpreadsheetURL(url)) {
+                int keyFrom = Math.max(urlString.indexOf("?key="), urlString.indexOf("&key=")) + 5;
+                int keyTo = urlString.indexOf("&", keyFrom);
+                String key = urlString.substring(keyFrom, keyTo > 0 ? keyTo : urlString.length());
+                
                 Result result = new Result();
-                result.rewrittenUrl = urlString;
-                result.format = "service/gdata/spreadsheet";
-                result.download = false;
+                result.rewrittenUrl = "https://spreadsheets.google.com/pub?key=" + key + "&output=csv";
+                result.format = "text/line-based/*sv";
+                result.download = true;
                 return result;
             }
         } catch (MalformedURLException e) {
@@ -64,6 +68,6 @@ public class GDataUrlRewriter implements UrlRewriter {
             query = "";
         }
         // http://spreadsheets.google.com/ccc?key=tI36b9Fxk1lFBS83iR_3XQA&hl=en
-        return host.endsWith(".google.com") && host.contains("spreadsheet") && query.contains("key=");
+        return host.endsWith(".google.com") && host.contains("spreadsheets") && query.contains("key=");
     }
 }

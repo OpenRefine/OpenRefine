@@ -100,6 +100,6 @@ public class LineBasedImporter extends TabularImportingParserBase {
             }
         };
         
-        readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+        TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
     }
 }

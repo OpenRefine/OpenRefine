@@ -42,15 +42,13 @@ import com.google.gdata.data.spreadsheet.Cell;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
-import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
-import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.TabularImportingParserBase;
+import com.google.refine.importers.TabularImportingParserBase.TableDataReader;
 import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
@@ -61,84 +59,128 @@ import com.google.refine.util.JSONUtilities;
  * @copyright 2010 Thomas F. Morris
  * @license New BSD http://www.opensource.org/licenses/bsd-license.php
  */
-public class GDataImporter extends TabularImportingParserBase {
-    public GDataImporter() {
-        super(false);
-    }
-    
-    public void parseOneFile(
+public class GDataImporter {
+    static public void parse(
+        SpreadsheetService service,
         Project project,
         ProjectMetadata metadata,
-        ImportingJob job,
-        JSONObject fileRecord,
+        final ImportingJob job,
         int limit,
         JSONObject options,
-        List<Exception> exceptions
-    ) throws IOException {
-        String fileSource = ImportingUtilities.getFileSource(fileRecord);
-        String urlString = JSONUtilities.getString(fileRecord, "url", null);
-        URL url = new URL(urlString);
-
-        SpreadsheetService service = new SpreadsheetService(GDataExtension.SERVICE_APP_NAME);
-        // String token = TokenCookie.getToken(request);
-        // if (token != null) {
-        // service.setAuthSubToken(token);
-        // }
-        String spreadsheetKey = getSpreadsheetKey(url);
+        List<Exception> exceptions) {
         
-        int[] sheets = JSONUtilities.getIntArray(options, "sheets");
-        for (int sheetIndex : sheets) {
-            WorksheetEntry worksheet;
+        String docUrlString = JSONUtilities.getString(options, "docUrl", null);
+        String worksheetUrlString = JSONUtilities.getString(options, "sheetUrl", null);
+        if (docUrlString != null && worksheetUrlString != null) {
             try {
-                worksheet = getWorksheetEntries(service, spreadsheetKey).get(sheetIndex);
-            } catch (ServiceException e) {
+                parseOneWorkSheet(
+                    service,
+                    project,
+                    metadata,
+                    job,
+                    new URL(docUrlString),
+                    new URL(worksheetUrlString),
+                    limit,
+                    options,
+                    exceptions);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
                 exceptions.add(e);
-                continue;
             }
+        }
+    }
+    
+    static public void parseOneWorkSheet(
+        SpreadsheetService service,
+        Project project,
+        ProjectMetadata metadata,
+        final ImportingJob job,
+        URL docURL,
+        URL worksheetURL,
+        int limit,
+        JSONObject options,
+        List<Exception> exceptions) {
+        
+        try {
+            SpreadsheetEntry spreadsheetEntry = service.getEntry(docURL, SpreadsheetEntry.class);
+            WorksheetEntry worksheetEntry = service.getEntry(worksheetURL, WorksheetEntry.class);
             
-            readTable(
+            String fileSource = spreadsheetEntry.getTitle().getPlainText() + " # " +
+                worksheetEntry.getTitle().getPlainText();
+            
+            setProgress(job, fileSource, 0);
+            TabularImportingParserBase.readTable(
                 project,
                 metadata,
                 job,
-                new BatchRowReader(service, worksheet, 20),
-                fileSource + "#" + worksheet.getTitle().getPlainText(),
+                new BatchRowReader(job, fileSource, service, worksheetEntry, 20),
+                fileSource,
                 limit,
                 options,
                 exceptions
             );
+            setProgress(job, fileSource, 100);
+        } catch (IOException e) {
+            e.printStackTrace();
+            exceptions.add(e);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            exceptions.add(e);
         }
     }
     
+    static private void setProgress(ImportingJob job, String fileSource, int percent) {
+        JSONObject progress = JSONUtilities.getObject(job.config, "progress");
+        if (progress == null) {
+            progress = new JSONObject();
+            JSONUtilities.safePut(job.config, "progress", progress);
+        }
+        JSONUtilities.safePut(progress, "message", "Reading " + fileSource);
+        JSONUtilities.safePut(progress, "percent", percent);
+    }
+    
     static private class BatchRowReader implements TableDataReader {
-        final int batchSize;
+        final ImportingJob job;
+        final String fileSource;
+        
         final SpreadsheetService service;
         final WorksheetEntry worksheet;
-        final int totalRowCount;
+        final int batchSize;
+        
+        final int totalRows;
         
         int nextRow = 0; // 0-based
-        int batchRowStart = -1; // 0-based
+        int batchRowStart = 0; // 0-based
         List<List<Object>> rowsOfCells = null;
         
-        public BatchRowReader(SpreadsheetService service, WorksheetEntry worksheet, int batchSize) {
+        public BatchRowReader(ImportingJob job, String fileSource,
+                SpreadsheetService service, WorksheetEntry worksheet,
+                int batchSize) {
+            this.job = job;
+            this.fileSource = fileSource;
             this.service = service;
             this.worksheet = worksheet;
             this.batchSize = batchSize;
-            this.totalRowCount = worksheet.getRowCount();
+            
+            this.totalRows = worksheet.getRowCount();
         }
         
         @Override
         public List<Object> getNextRowOfCells() throws IOException {
-            if (rowsOfCells == null || nextRow > batchRowStart + rowsOfCells.size()) {
-                batchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
-                if (batchRowStart < totalRowCount) {
-                    try {
-                        rowsOfCells = getRowsOfCells(service, worksheet, batchRowStart + 1, batchSize);
-                    } catch (ServiceException e) {
-                        rowsOfCells = null;
-                        throw new IOException(e);
-                    }
-                } else {
-                    rowsOfCells = null;
+            if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && nextRow < totalRows)) {
+                int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
+                try {
+                    rowsOfCells = getRowsOfCells(
+                        service,
+                        worksheet,
+                        newBatchRowStart + 1, // convert to 1-based
+                        batchSize);
+                    
+                    batchRowStart = newBatchRowStart;
+                    
+                    setProgress(job, fileSource, batchRowStart * 100 / totalRows);
+                } catch (ServiceException e) {
+                    throw new IOException(e);
                 }
             }
             
@@ -150,32 +192,6 @@ public class GDataImporter extends TabularImportingParserBase {
         }
     }
     
-    /**
-     * Retrieves the spreadsheets that an authenticated user has access to. Not
-     * valid for unauthenticated access.
-     * 
-     * @return a list of spreadsheet entries
-     * @throws Exception
-     *             if error in retrieving the spreadsheet information
-     */
-    static public List<SpreadsheetEntry> getSpreadsheetEntries(
-        SpreadsheetService service
-    ) throws Exception {
-        SpreadsheetFeed feed = service.getFeed(
-            GDataExtension.getFeedUrlFactory().getSpreadsheetsFeedUrl(),
-            SpreadsheetFeed.class);
-        return feed.getEntries();
-    }
-    
-    static public List<WorksheetEntry> getWorksheetEntries(
-        SpreadsheetService service, String spreadsheetKey
-    ) throws MalformedURLException, IOException, ServiceException {
-        WorksheetFeed feed = service.getFeed(
-            GDataExtension.getFeedUrlFactory().getWorksheetFeedUrl(spreadsheetKey, "public", "values"),
-            WorksheetFeed.class);
-        return feed.getEntries();
-    }
-    
     static public List<List<Object>> getRowsOfCells(
         SpreadsheetService service,
         WorksheetEntry worksheet,
@@ -183,11 +199,11 @@ public class GDataImporter extends TabularImportingParserBase {
         int rowCount
     ) throws IOException, ServiceException {
         URL cellFeedUrl = worksheet.getCellFeedUrl();
-
-        int minRow = Math.max(1, startRow);
+        
+        int minRow = startRow;
         int maxRow = Math.min(worksheet.getRowCount(), startRow + rowCount - 1);
-        int rows = maxRow - minRow + 1;
         int cols = worksheet.getColCount();
+        int rows = worksheet.getRowCount();
         
         CellQuery cellQuery = new CellQuery(cellFeedUrl);
         cellQuery.setMinimumRow(minRow);
@@ -199,59 +215,24 @@ public class GDataImporter extends TabularImportingParserBase {
         CellFeed cellFeed = service.query(cellQuery, CellFeed.class);
         List<CellEntry> cellEntries = cellFeed.getEntries();
         
-        List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(rows);
+        List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(rowCount);
         for (CellEntry cellEntry : cellEntries) {
             Cell cell = cellEntry.getCell();
-            int row = cell.getRow();
-            int col = cell.getCol();
-            
-            while (row > rowsOfCells.size()) {
-                rowsOfCells.add(new ArrayList<Object>(cols));
+            if (cell != null) {
+                int row = cell.getRow() - startRow;
+                int col = cell.getCol() - 1;
+                
+                while (row >= rowsOfCells.size()) {
+                    rowsOfCells.add(new ArrayList<Object>());
+                }
+                List<Object> rowOfCells = rowsOfCells.get(row);
+                
+                while (col >= rowOfCells.size()) {
+                    rowOfCells.add(null);
+                }
+                rowOfCells.set(col, cell.getValue());
             }
-            List<Object> rowOfCells = rowsOfCells.get(row - 1); // 1-based
-            
-            while (col > rowOfCells.size()) {
-                rowOfCells.add(null);
-            }
-            rowOfCells.set(col - 1, cell.getValue());
         }
         return rowsOfCells;
-    }
-
-    // Modified version of FeedURLFactory.getSpreadsheetKeyFromUrl()
-    private String getSpreadsheetKey(URL url) {
-        String query = url.getQuery();
-        if (query != null) {
-            String[] parts = query.split("&");
-
-            int offset = -1;
-            int numParts = 0;
-            String keyOrId = "";
-
-            for (String part : parts) {
-                if (part.startsWith("id=")) {
-                    offset = ("id=").length();
-                    keyOrId = part.substring(offset);
-                    numParts = 4;
-                    break;
-                } else if (part.startsWith("key=")) {
-                    offset = ("key=").length();
-                    keyOrId = part.substring(offset);
-                    if (keyOrId.startsWith("p") || !keyOrId.contains(".")) {
-                        return keyOrId;
-                    }
-                    numParts = 2;
-                    break;
-                }
-            }
-
-            if (offset > -1) {
-                String[] dottedParts = keyOrId.split("\\.");
-                if (dottedParts.length == numParts) {
-                    return dottedParts[0] + "." + dottedParts[1];
-                }
-            }
-        }
-        return null;
     }
 }

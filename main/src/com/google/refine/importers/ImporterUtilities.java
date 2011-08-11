@@ -209,7 +209,7 @@ public class ImporterUtilities {
                 ImportingUtilities.setCreatingProjectProgress(
                     job,
                     "Reading " + fileSource,
-                    (int) (100 * (totalBytesRead + bytesRead) / totalSize2));
+                    totalSize2 == 0 ? -1 : (int) (100 * (totalBytesRead + bytesRead) / totalSize2));
             }
             
             @Override

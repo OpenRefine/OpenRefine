@@ -182,7 +182,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 }
             };
             
-            readTable(
+            TabularImportingParserBase.readTable(
                 project,
                 metadata,
                 job,

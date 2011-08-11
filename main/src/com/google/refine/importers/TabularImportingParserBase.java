@@ -76,7 +76,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         super(useInputStream);
     }
     
-    protected void readTable(
+    static public void readTable(
         Project project,
         ProjectMetadata metadata,
         ImportingJob job,

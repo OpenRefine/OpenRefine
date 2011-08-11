@@ -100,3 +100,46 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   height: 100%;
   visibility: hidden;
   }
+
+#create-project-progress-panel {
+  font-size: 1.3em;
+  padding: @padding_loose;
+  }
+
+#create-project-progress-bar-frame {
+  border: 1px solid @chrome_primary;
+  padding: @padding_tighter;
+  width: 300px;
+  }
+
+#create-project-progress-bar-body {
+  background: @chrome_primary;
+  height: 1em;
+  position: relative;
+  width: 30%;
+  }
+#create-project-progress-bar-body.indefinite {
+  background: #eee;
+  width: 100%;
+  }
+
+#create-project-iframe {
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  left: -300px;
+  top: -300px;
+  }
+
+#create-project-error-panel {
+  font-size: 1.3em;
+  padding: @padding_loose;
+  }
+#create-project-error-message {
+  }
+#create-project-error-stack {
+  font-family: monospace;
+  whitespace: pre;
+  padding: @padding_normal;
+  border: 1px solid @chrome_primary;
+  }

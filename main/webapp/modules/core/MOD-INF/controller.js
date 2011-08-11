@@ -54,6 +54,7 @@ function registerCommands() {
   RS.registerCommand(module, "create-importing-job", new Packages.com.google.refine.commands.importing.CreateImportingJobCommand());
   RS.registerCommand(module, "get-importing-job-status", new Packages.com.google.refine.commands.importing.GetImportingJobStatusCommand());
   RS.registerCommand(module, "importing-controller", new Packages.com.google.refine.commands.importing.ImportingControllerCommand());
+  RS.registerCommand(module, "cancel-importing-job", new Packages.com.google.refine.commands.importing.CancelImportingJobCommand());
 
   RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
   RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
@@ -456,7 +457,8 @@ function init() {
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
-      "styles/pure.css"
+      "styles/pure.css",
+      "styles/util/dialog.less"
     ]
   );
 }

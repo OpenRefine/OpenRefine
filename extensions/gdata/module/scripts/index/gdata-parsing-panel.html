@@ -1,0 +1,40 @@
+<div bind="wizardHeader" class="gdata-importing-wizard-header"><div class="grid-layout layout-tightest layout-full"><table><tr>
+  <td width="1%"><button bind="startOverButton" class="button">&laquo; Start Over</button></td>
+  <td width="98%">Configure Parsing Options</td>
+  <td style="text-align: right;">Project&nbsp;name</td>
+  <td width="1%"><input class="inline" type="text" size="30" bind="projectNameInput" /></td>
+  <td width="1%"><button bind="createProjectButton" class="button button-primary">Create Project &raquo;</button></td>
+</tr></table></div></div>
+
+<div bind="dataPanel" class="gdata-importing-parsing-data-panel"></div>
+
+<div bind="progressPanel" class="gdata-importing-progress-data-panel">
+    <img src="images/large-spinner.gif" /> Updating preview ...
+</div>
+
+<div bind="controlPanel" class="gdata-importing-parsing-control-panel"><div class="grid-layout layout-normal"><table>
+  <tr>
+    <td>Worksheets</td>
+    <td colspan="2">Options</td>
+    <td rowspan="2"><button class="button" bind="previewButton">Update&nbsp;Preview</button></td>
+  </tr>
+  <tr>
+    <td rowspan="2" width="40%"><div class="grid-layout layout-tightest"><table bind="sheetRecordContainer"></table></div></td>
+    
+    <td colspan="2"><div class="grid-layout layout-tightest"><table>
+      <tr><td width="1%"><input type="checkbox" bind="ignoreCheckbox" /></td><td>Ignore first</td>
+        <td><input bind="ignoreInput" type="text" class="lightweight" size="2" value="0" /> line(s) at beginning of file</td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="headerLinesCheckbox" /></td><td>Parse next</td>
+        <td><input bind="headerLinesInput" type="text" class="lightweight" size="2" value="1" /> line(s) as column headers</td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="skipCheckbox" /></td><td>Discard initial</td>
+        <td><input bind="skipInput" type="text" class="lightweight" size="2" value="0" /> row(s) of data</td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" /></td><td>Load at most</td>
+        <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" /> row(s) of data</td></tr>
+        
+      <tr><td width="1%"><input type="checkbox" bind="storeBlankRowsCheckbox" /></td>
+        <td colspan="2">Store blank rows</td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="storeBlankCellsAsNullsCheckbox" /></td>
+        <td colspan="2">Store blank cells as nulls</td></tr>
+    </table></div></td>
+  </tr>
+</table></div></div>

@@ -35,6 +35,8 @@ package com.google.refine;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -347,4 +349,15 @@ public class RefineServlet extends Butterfly {
         }
         return klass;
     }
+    
+    static public void setUserAgent(URLConnection urlConnection) {
+        if (urlConnection instanceof HttpURLConnection) {
+            setUserAgent((HttpURLConnection) urlConnection);
+        }
+    }
+    
+    static public void setUserAgent(HttpURLConnection httpConnection) {
+        httpConnection.addRequestProperty("User-Agent", "Google Refine/" + FULL_VERSION);
+    }
+
 }
