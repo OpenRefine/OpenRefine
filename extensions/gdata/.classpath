@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-core-1.0.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/google-collect-1.0-rc1.jar"/>
+	<classpathentry kind="lib" path="/grefine-all/extensions/gdata/module/MOD-INF/lib/gdata-docs-3.0.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>
