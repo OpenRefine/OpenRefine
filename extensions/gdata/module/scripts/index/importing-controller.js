@@ -56,7 +56,8 @@ Refine.GDataImportingController.prototype.startImportingDocument = function(doc)
         "/command/core/importing-controller?" + $.param({
           "controller": "gdata/gdata-importing-controller",
           "subCommand": "initialize-parser-ui",
-          "docUrl": doc.docSelfLink
+          "docUrl": doc.docSelfLink,
+          "docType": doc.type
         }),
         null,
         function(data2) {
@@ -82,6 +83,7 @@ Refine.GDataImportingController.prototype.startImportingDocument = function(doc)
 Refine.GDataImportingController.prototype.getOptions = function() {
   var options = {
     docUrl: this._doc.docSelfLink,
+    docType: this._doc.type,
     sheetUrl: this._sheetUrl
   };
 

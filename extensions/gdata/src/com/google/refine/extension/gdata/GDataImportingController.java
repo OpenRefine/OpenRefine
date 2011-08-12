@@ -49,15 +49,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.google.gdata.client.Query;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.Category;
 import com.google.gdata.data.DateTime;
 import com.google.gdata.data.Person;
-import com.google.gdata.data.docs.DocumentListEntry;
-import com.google.gdata.data.docs.DocumentListFeed;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
+import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
@@ -124,10 +121,10 @@ public class GDataImportingController implements ImportingController {
             
             try {
                 DocsService service = getDocsService(token);
-                listDocumentsOfType(service, writer, "http://schemas.google.com/docs/2007#spreadsheet");
+                listSpreadsheets(service, writer);
+                //listDocumentsOfType(service, writer, "http://schemas.google.com/docs/2007#???");
             } catch (ServiceException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                // TODO: just ignore?
             }
             
             writer.endArray();
@@ -140,6 +137,34 @@ public class GDataImportingController implements ImportingController {
         }
     }
     
+    private void listSpreadsheets(DocsService service, JSONWriter writer)
+            throws IOException, ServiceException, JSONException {
+        URL metafeedUrl = new URL("https://spreadsheets.google.com/feeds/spreadsheets/private/full");
+        SpreadsheetFeed feed = service.getFeed(metafeedUrl, SpreadsheetFeed.class);
+        for (SpreadsheetEntry entry : feed.getEntries()) {
+            writer.object();
+            writer.key("docId"); writer.value(entry.getId());
+            writer.key("docLink"); writer.value(entry.getHtmlLink().getHref());
+            writer.key("docSelfLink"); writer.value(entry.getSelfLink().getHref());
+            writer.key("title"); writer.value(entry.getTitle().getPlainText());
+            writer.key("type"); writer.value("spreadsheet");
+            
+            DateTime updated = entry.getUpdated();
+            if (updated != null) {
+                writer.key("updated"); writer.value(updated.toStringRfc822());
+            }
+            
+            writer.key("authors"); writer.array();
+            for (Person person : entry.getAuthors()) {
+                writer.value(person.getName());
+            }
+            writer.endArray();
+            
+            writer.endObject();
+        }
+    }
+    
+    /*
     private void listDocumentsOfType(DocsService service, JSONWriter writer, String type)
             throws IOException, ServiceException, JSONException {
         URL feedUrl = new URL("https://docs.google.com/feeds/default/private/full");
@@ -172,6 +197,7 @@ public class GDataImportingController implements ImportingController {
             writer.endObject();
         }
     }
+    */
     
     private void doInitializeParserUI(
         HttpServletRequest request, HttpServletResponse response, Properties parameters)
@@ -183,7 +209,9 @@ public class GDataImportingController implements ImportingController {
             return;
         }
         
-        SpreadsheetService service = getSpreadsheetService(token);
+        String type = parameters.getProperty("docType");
+        String urlString = parameters.getProperty("docUrl");
+        URL url = new URL(urlString);
         try {
             JSONObject result = new JSONObject();
             JSONObject options = new JSONObject();
@@ -199,18 +227,20 @@ public class GDataImportingController implements ImportingController {
             JSONArray worksheets = new JSONArray();
             JSONUtilities.safePut(options, "worksheets", worksheets);
             
-            String urlString = parameters.getProperty("docUrl");
-            URL url = new URL(urlString);
-            
-            SpreadsheetEntry spreadsheetEntry = service.getEntry(url, SpreadsheetEntry.class);
-            for (WorksheetEntry worksheetEntry : spreadsheetEntry.getWorksheets()) {
-                JSONObject worksheetO = new JSONObject();
-                JSONUtilities.safePut(worksheetO, "name", worksheetEntry.getTitle().getPlainText());
-                JSONUtilities.safePut(worksheetO, "rows", worksheetEntry.getRowCount());
-                JSONUtilities.safePut(worksheetO, "link", worksheetEntry.getSelfLink().getHref());
-                
-                JSONUtilities.append(worksheets, worksheetO);
+            if ("spreadsheet".equals(type)) {
+                SpreadsheetService spreadsheetService = getSpreadsheetService(token);
+                SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(url, SpreadsheetEntry.class);
+                for (WorksheetEntry worksheetEntry : spreadsheetEntry.getWorksheets()) {
+                    JSONObject worksheetO = new JSONObject();
+                    JSONUtilities.safePut(worksheetO, "name", worksheetEntry.getTitle().getPlainText());
+                    JSONUtilities.safePut(worksheetO, "rows", worksheetEntry.getRowCount());
+                    JSONUtilities.safePut(worksheetO, "link", worksheetEntry.getSelfLink().getHref());
+                    
+                    JSONUtilities.append(worksheets, worksheetO);
+                }
             }
+            /* TODO: else */
+            
             HttpUtilities.respond(response, result.toString());
         } catch (ServiceException e) {
             e.printStackTrace();
