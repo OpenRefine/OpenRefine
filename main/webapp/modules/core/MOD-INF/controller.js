@@ -322,6 +322,8 @@ function init() {
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
+      "styles/util/dialog.less",
+      
       "styles/index.less",
       "styles/index/create-project-ui.less",
       "styles/index/open-project-ui.less",

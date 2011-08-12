@@ -93,6 +93,7 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
       null,
       function(data) {
         self._renderProjects(data);
+        self.resize();
       },
       "json"
   );

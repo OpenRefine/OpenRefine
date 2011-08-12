@@ -39,13 +39,13 @@ var Refine = {
 
 Refine.selectActionArea = function(id) {
   $('.action-area-tab').removeClass('selected');
-  $('.action-area-tab-body').css('visibility', 'hidden').css('z-index', '100');
+  $('.action-area-tab-body').css('visibility', 'hidden').css('z-index', '50');
 
   for (var i = 0; i < Refine.actionAreas.length; i++) {
     var actionArea = Refine.actionAreas[i];
     if (id == actionArea.id) {
       actionArea.tabElmt.addClass('selected');
-      actionArea.bodyElmt.css('visibility', 'visible').css('z-index', '110');;
+      actionArea.bodyElmt.css('visibility', 'visible').css('z-index', '55');;
     }
   }
 };

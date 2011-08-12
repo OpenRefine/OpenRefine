@@ -45,7 +45,7 @@ Refine.GDataImportingController = function(createProjectUI) {
 Refine.CreateProjectUI.controllers.push(Refine.GDataImportingController);
 
 Refine.GDataImportingController.prototype.startImportingDocument = function(doc) {
-  var dismiss = DialogSystem.showBusy("Preparing importing job ...");
+  var dismiss = DialogSystem.showBusy("Preparing ...");
   
   var self = this;
   $.post(
@@ -188,6 +188,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
     var td0 = $(tr.insertCell(0)).attr('width', '1%');
     var checkbox = $('<input>')
     .attr('type', 'radio')
+    .attr('name', 'gdata-importing-parsing-worksheet')
     .attr('sheetUrl', this.link)
     .appendTo(td0);
     if (i === 0) {

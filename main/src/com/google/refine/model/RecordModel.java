@@ -95,7 +95,10 @@ public class RecordModel implements Jsonizable {
     throws JSONException {
 
         writer.object();
-        writer.key("hasRecords"); writer.value(_records.size() < _rowDependencies.size());
+        writer.key("hasRecords");
+        writer.value(
+            _records != null && _rowDependencies != null &&
+            _records.size() < _rowDependencies.size());
         writer.endObject();
     }
 
