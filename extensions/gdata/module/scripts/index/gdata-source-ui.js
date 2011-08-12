@@ -99,6 +99,7 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
   var table = $(
     '<table><tr>' +
       '<th></th>' + // starred
+      '<th>Type</th>' +
       '<th>Title</th>' +
       '<th>Authors</th>' +
       '<th>Updated</th>' +
@@ -112,7 +113,10 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
     if (doc.isStarred) {
       $('<img>').attr('src', 'images/star.png').appendTo(td);
     }
-
+    
+    td = tr.insertCell(tr.cells.length);
+    $('<span>').text(doc.type).appendTo(td);
+    
     td = tr.insertCell(tr.cells.length);
     var title = $('<a>')
     .addClass('gdata-doc-title')
@@ -132,6 +136,7 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
     
     td = tr.insertCell(tr.cells.length);
     $('<span>')
+    .addClass('gdata-doc-authors')
     .text(doc.authors.join(', '))
     .appendTo(td);
     
@@ -144,8 +149,13 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
       .appendTo(td);
     }
   };
-  for (var i = 0; i < o.documents.length; i++) {
-    renderDocument(o.documents[i]);
+  
+  var docs = o.documents;
+  $.each(docs, function() { this.updatedDate = (this.updated) ? new Date(this.updated) : new Date(); });
+  docs.sort(function(a, b) { return b.updatedDate.getTime() -  a.updatedDate.getTime(); });
+  
+  for (var i = 0; i < docs.length; i++) {
+    renderDocument(docs[i]);
   }
   
   this._body.find('.gdata-page').hide();

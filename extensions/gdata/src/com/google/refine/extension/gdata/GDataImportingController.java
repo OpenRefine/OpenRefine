@@ -49,12 +49,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.gdata.client.Query;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.data.Category;
 import com.google.gdata.data.DateTime;
 import com.google.gdata.data.Person;
+import com.google.gdata.data.docs.DocumentListEntry;
+import com.google.gdata.data.docs.DocumentListFeed;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
-import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
@@ -121,29 +124,7 @@ public class GDataImportingController implements ImportingController {
             
             try {
                 DocsService service = getDocsService(token);
-                
-                URL metafeedUrl = new URL("https://spreadsheets.google.com/feeds/spreadsheets/private/full");
-                SpreadsheetFeed feed = service.getFeed(metafeedUrl, SpreadsheetFeed.class);
-                for (SpreadsheetEntry entry : feed.getEntries()) {
-                    writer.object();
-                    writer.key("docId"); writer.value(entry.getId());
-                    writer.key("docLink"); writer.value(entry.getHtmlLink().getHref());
-                    writer.key("docSelfLink"); writer.value(entry.getSelfLink().getHref());
-                    writer.key("title"); writer.value(entry.getTitle().getPlainText());
-                    
-                    DateTime updated = entry.getUpdated();
-                    if (updated != null) {
-                        writer.key("updated"); writer.value(updated.toStringRfc822());
-                    }
-                    
-                    writer.key("authors"); writer.array();
-                    for (Person person : entry.getAuthors()) {
-                        writer.value(person.getName());
-                    }
-                    writer.endArray();
-                    
-                    writer.endObject();
-                }
+                listDocumentsOfType(service, writer, "http://schemas.google.com/docs/2007#spreadsheet");
             } catch (ServiceException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -156,6 +137,39 @@ public class GDataImportingController implements ImportingController {
         } finally {
             w.flush();
             w.close();
+        }
+    }
+    
+    private void listDocumentsOfType(DocsService service, JSONWriter writer, String type)
+            throws IOException, ServiceException, JSONException {
+        URL feedUrl = new URL("https://docs.google.com/feeds/default/private/full");
+        
+        Query query = new Query(feedUrl);
+        query.addCategoryFilter(
+            new Query.CategoryFilter(
+                new Category("http://schemas.google.com/g/2005#kind", type)));
+        
+        DocumentListFeed feed = service.query(query, DocumentListFeed.class);
+        for (DocumentListEntry entry : feed.getEntries()) {
+            writer.object();
+            writer.key("docId"); writer.value(entry.getId());
+            writer.key("docLink"); writer.value(entry.getHtmlLink().getHref());
+            writer.key("docSelfLink"); writer.value(entry.getSelfLink().getHref());
+            writer.key("title"); writer.value(entry.getTitle().getPlainText());
+            writer.key("type"); writer.value(entry.getType());
+            
+            DateTime updated = entry.getUpdated();
+            if (updated != null) {
+                writer.key("updated"); writer.value(updated.toStringRfc822());
+            }
+            
+            writer.key("authors"); writer.array();
+            for (Person person : entry.getAuthors()) {
+                writer.value(person.getName());
+            }
+            writer.endArray();
+            
+            writer.endObject();
         }
     }
     
