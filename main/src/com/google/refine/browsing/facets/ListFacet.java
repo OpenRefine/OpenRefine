@@ -107,6 +107,7 @@ public class ListFacet implements Facet {
             writer.key("error"); writer.value(_errorMessage);
         } else if (_choices.size() > getLimit()) {
             writer.key("error"); writer.value("Too many choices");
+            writer.key("choiceCount"); writer.value(_choices.size());
         } else {
             writer.key("choices"); writer.array();
             for (NominalFacetChoice choice : _choices) {
