@@ -75,7 +75,7 @@ Refine.FixedWidthParserUI.prototype.confirmReadyToCreateProject = function() {
 
 Refine.FixedWidthParserUI.prototype.getOptions = function() {
   var options = {
-      columnWidths: [].concat(this._config.columnWidths)
+      columnWidths: this._getColumnWidths()
   };
 
   var columnNames = $.trim(this._optionContainerElmts.columnNamesInput[0].value).replace(/,\s+/g, ',').split(',');
@@ -188,22 +188,18 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   };
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);
+};
 
-  this._optionContainerElmts.columnWidthsInput.bind("change", function() {
-    var newColumnWidths = [];
-    var a = $.trim(this.value).replace(/,\s+/g, ',').split(',');
-    for (var i = 0; i < a.length; i++) {
-      var n = parseInt(a[i]);
-      if (isNaN(n)) {
-        return;
-      }
+Refine.FixedWidthParserUI.prototype._getColumnWidths = function() {
+  var newColumnWidths = [];
+  var a = $.trim(this._optionContainerElmts.columnWidthsInput[0].value).replace(/,\s+/g, ',').split(',');
+  for (var i = 0; i < a.length; i++) {
+    var n = parseInt(a[i]);
+    if (!isNaN(n)) {
       newColumnWidths.push(n);
     }
-    self._config.columnWidths = newColumnWidths;
-    onChange();
-  });
-  this._optionContainerElmts.columnNamesInput.bind("change", onChange);
-
+  }
+  return newColumnWidths;
 };
 
 Refine.FixedWidthParserUI.prototype._scheduleUpdatePreview = function() {
@@ -233,7 +229,7 @@ Refine.FixedWidthParserUI.prototype.updatePreview = function() {
       self._controller.getPreviewData(function(projectData) {
         new Refine.FixedWidthPreviewTable(
             self,
-            self._config,
+            options,
             projectData,
             self._dataContainer
         );
@@ -268,6 +264,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
 
   var columns = this._projectData.columnModel.columns;
   var columnWidths = [].concat(this._config.columnWidths);
+  var includeFileSources = this._config.includeFileSources;
 
   var addCell = function(tr) {
     var index = tr.cells.length;
@@ -286,8 +283,9 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
 
   var createColumnHeader = function(column, index) {
     var name = column.name;
-    if (index < columnWidths.length) {
-      name = name.slice(0, columnWidths[index]);
+    var index2 = index - (includeFileSources ? 1 : 0);
+    if (index2 >= 0 && index2 < columnWidths.length) {
+      name = name.slice(0, columnWidths[index2]);
     }
     $(addCell(trHead))
     .addClass("column-header")
@@ -299,7 +297,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   }
 
   /*------------------------------------------------------------
-   *  Data Cells
+   *  Data Rows of Cells
    *------------------------------------------------------------
    */
 
@@ -346,7 +344,10 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
     renderRow(table.insertRow(table.rows.length), r, row);
   }
 
-  var pixelOffset = $(trHead.cells[1]).position().left;
+  /*
+   * Measure font metrics.
+   */
+  var pixelOffset = $(trHead.cells[includeFileSources ? 2 : 1]).position().left;
   var testString = '01234567890123456789012345678901234567890123456789';
   var testDiv = $('<div>')
   .css('position', 'absolute')
@@ -356,6 +357,9 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   var pixelsPerChar = testDiv.width() / testString.length;
   testDiv.remove();
 
+  /*
+   * Render column separators
+   */
   var columnSeparators = [];
   var columnCharIndexes = [];
   var positionColumnSeparator = function(outer, charIndex) {
@@ -378,7 +382,6 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
       }
     }
 
-    self._config.columnWidths = newColumnWidths;
     self._parserUI._optionContainerElmts.columnWidthsInput[0].value = newColumnWidths.join(',');
     self._parserUI.updatePreview();
   };

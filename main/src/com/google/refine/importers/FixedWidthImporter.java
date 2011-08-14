@@ -184,16 +184,16 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                     int startIndex = 0;
                     for (int c = 0; c < counts.length; c++) {
                         int count = counts[c];
-                        if (count == lineCount && c > startIndex) {
+                        if (count == lineCount) {
                             widths.add(c - startIndex + 1);
                             startIndex = c + 1;
                         }
                     }
                     
-                    for (int i = widths.size() - 1; i > 0; i--) {
+                    for (int i = widths.size() - 2; i >= 0; i--) {
                         if (widths.get(i) == 1) {
+                            widths.set(i + 1, widths.get(i + 1) + 1);
                             widths.remove(i);
-                            widths.set(i - 1, widths.get(i - 1) + 1);
                         }
                     }
                     
