@@ -117,6 +117,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         }
         
         List<String> columnNames = new ArrayList<String>();
+        boolean hasOurOwnColumnNames = headerLines > 0;
         
         List<Object> cells = null;
         int rowsWithData = 0;
@@ -161,7 +162,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     if (skipDataLines <= 0 || rowsWithData > skipDataLines) {
                         boolean rowHasData = false;
                         for (int c = 0; c < cells.size(); c++) {
-                            Column column = ImporterUtilities.getOrAllocateColumn(project, columnNames, c);
+                            Column column = ImporterUtilities.getOrAllocateColumn(
+                                project, columnNames, c, hasOurOwnColumnNames);
                             
                             Object value = cells.get(c);
                             if (value != null && value instanceof Cell) {

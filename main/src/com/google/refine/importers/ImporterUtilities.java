@@ -128,19 +128,25 @@ public class ImporterUtilities {
         }
     }
     
-    static public Column getOrAllocateColumn(Project project, List<String> currentFileColumnNames, int index) {
+    static public Column getOrAllocateColumn(Project project, List<String> currentFileColumnNames,
+            int index, boolean hasOurOwnColumnNames) {
         if (index < currentFileColumnNames.size()) {
             return project.columnModel.getColumnByName(currentFileColumnNames.get(index));
-        } else if (index == currentFileColumnNames.size()) {
+        } else if (index >= currentFileColumnNames.size()) {
             String prefix = "Column ";
-            int i = 1;
+            int i = index + 1;
             while (true) {
                 String columnName = prefix + i;
-                if (project.columnModel.getColumnByName(columnName) != null) {
-                    // Already taken name
-                    i++;
+                Column column = project.columnModel.getColumnByName(columnName);
+                if (column != null) {
+                    if (hasOurOwnColumnNames) {
+                        // Already taken name
+                        i++;
+                    } else {
+                        return column;
+                    }
                 } else {
-                    Column column = new Column(project.columnModel.allocateNewCellIndex(), columnName);
+                    column = new Column(project.columnModel.allocateNewCellIndex(), columnName);
                     try {
                         project.columnModel.addColumn(project.columnModel.columns.size(), column, false);
                     } catch (ModelException e) {
