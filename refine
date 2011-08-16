@@ -136,7 +136,7 @@ check_python() {
 	fi
 	PYTHON_VERSION="`$PYTHON --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
     fi
-    if [ "$PYTHON_VERSION" != "2.5" ] && [ "$PYTHON_VERSION" != "2.6" ]] ; then
+    if [ "$PYTHON_VERSION" != "2.5" ] && [ "$PYTHON_VERSION" != "2.6" ] ; then
         error "This action requires python version 2.5.x, 2.6.x. You can download it for free at http://www.python.org/"
     fi
 }
