@@ -834,7 +834,7 @@ if [ ! -x "$JAVA" ] ; then
     error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
 fi
 
-JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep ^\"1\.6`
+JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep '^\"1\.(6|7)'`
 if [ -z "$JAVA_VERSION" ] ; then
     error "Google Refine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
 fi
