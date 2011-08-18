@@ -79,34 +79,36 @@ public class ExcelImporter extends TabularImportingParserBase {
         JSONArray sheetRecords = new JSONArray();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
-            JSONObject firstFileRecord = fileRecords.get(0);
-            File file = ImportingUtilities.getFile(job, firstFileRecord);
-            InputStream is = new FileInputStream(file);
-            try {
-                Workbook wb = xmlBased ?
-                    new XSSFWorkbook(is) :
-                    new HSSFWorkbook(new POIFSFileSystem(is));
-                
-                int sheetCount = wb.getNumberOfSheets();
-                boolean hasData = false;
-                for (int i = 0; i < sheetCount; i++) {
-                    Sheet sheet = wb.getSheetAt(i);
-                    int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
-                    
-                    JSONObject sheetRecord = new JSONObject();
-                    JSONUtilities.safePut(sheetRecord, "name", sheet.getSheetName());
-                    JSONUtilities.safePut(sheetRecord, "rows", rows);
-                    if (hasData) {
-                        JSONUtilities.safePut(sheetRecord, "selected", false);
-                    } else if (rows > 1) {
-                        JSONUtilities.safePut(sheetRecord, "selected", true);
-                        hasData = true;
-                    }
-                    JSONUtilities.append(sheetRecords, sheetRecord);
+            if (fileRecords.size() > 0) {
+                JSONObject firstFileRecord = fileRecords.get(0);
+                File file = ImportingUtilities.getFile(job, firstFileRecord);
+                InputStream is = new FileInputStream(file);
+                try {
+                    Workbook wb = xmlBased ?
+                            new XSSFWorkbook(is) :
+                                new HSSFWorkbook(new POIFSFileSystem(is));
+
+                            int sheetCount = wb.getNumberOfSheets();
+                            boolean hasData = false;
+                            for (int i = 0; i < sheetCount; i++) {
+                                Sheet sheet = wb.getSheetAt(i);
+                                int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
+
+                                JSONObject sheetRecord = new JSONObject();
+                                JSONUtilities.safePut(sheetRecord, "name", sheet.getSheetName());
+                                JSONUtilities.safePut(sheetRecord, "rows", rows);
+                                if (hasData) {
+                                    JSONUtilities.safePut(sheetRecord, "selected", false);
+                                } else if (rows > 1) {
+                                    JSONUtilities.safePut(sheetRecord, "selected", true);
+                                    hasData = true;
+                                }
+                                JSONUtilities.append(sheetRecords, sheetRecord);
+                            }
+                } finally {
+                    is.close();
                 }
-            } finally {
-                is.close();
-            }
+            }                
         } catch (IOException e) {
             // Ignore
         }

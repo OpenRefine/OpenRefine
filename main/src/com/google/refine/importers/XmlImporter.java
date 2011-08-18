@@ -73,28 +73,30 @@ public class XmlImporter extends TreeImportingParserBase {
             ImportingJob job, List<JSONObject> fileRecords, String format) {
         JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
         try {
-            JSONObject firstFileRecord = fileRecords.get(0);
-            File file = ImportingUtilities.getFile(job, firstFileRecord);
-            InputStream is = new FileInputStream(file);
-            try {
-                XMLStreamReader parser = createXMLStreamReader(is);
-                PreviewParsingState state = new PreviewParsingState();
-                
-                while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
-                    int tokenType = parser.next();
-                    state.tokenCount++;
-                    if (tokenType == XMLStreamConstants.START_ELEMENT) {
-                        JSONObject rootElement = descendElement(parser, state);
-                        if (rootElement != null) {
-                            JSONUtilities.safePut(options, "dom", rootElement);
-                            break;
+            if (fileRecords.size() > 0) {
+                JSONObject firstFileRecord = fileRecords.get(0);
+                File file = ImportingUtilities.getFile(job, firstFileRecord);
+                InputStream is = new FileInputStream(file);
+                try {
+                    XMLStreamReader parser = createXMLStreamReader(is);
+                    PreviewParsingState state = new PreviewParsingState();
+
+                    while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
+                        int tokenType = parser.next();
+                        state.tokenCount++;
+                        if (tokenType == XMLStreamConstants.START_ELEMENT) {
+                            JSONObject rootElement = descendElement(parser, state);
+                            if (rootElement != null) {
+                                JSONUtilities.safePut(options, "dom", rootElement);
+                                break;
+                            }
+                        } else {
+                            // ignore everything else
                         }
-                    } else {
-                        // ignore everything else
                     }
+                } finally {
+                    is.close();
                 }
-            } finally {
-                is.close();
             }
         } catch (XMLStreamException e) {
             // Ignore

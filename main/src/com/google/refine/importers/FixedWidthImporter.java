@@ -30,25 +30,25 @@ public class FixedWidthImporter extends TabularImportingParserBase {
             ImportingJob job, List<JSONObject> fileRecords, String format) {
         JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
         JSONArray columnWidths = new JSONArray();
-        
-        JSONObject firstFileRecord = fileRecords.get(0);
-        String encoding = ImportingUtilities.getEncoding(firstFileRecord);
-        String location = JSONUtilities.getString(firstFileRecord, "location", null);
-        if (location != null) {
-            File file = new File(job.getRawDataDir(), location);
-            int[] columnWidthsA = guessColumnWidths(file, encoding);
-            if (columnWidthsA != null) {
-                for (int w : columnWidthsA) {
-                    JSONUtilities.append(columnWidths, w);
+        if (fileRecords.size() > 0) {
+            JSONObject firstFileRecord = fileRecords.get(0);
+            String encoding = ImportingUtilities.getEncoding(firstFileRecord);
+            String location = JSONUtilities.getString(firstFileRecord, "location", null);
+            if (location != null) {
+                File file = new File(job.getRawDataDir(), location);
+                int[] columnWidthsA = guessColumnWidths(file, encoding);
+                if (columnWidthsA != null) {
+                    for (int w : columnWidthsA) {
+                        JSONUtilities.append(columnWidths, w);
+                    }
                 }
             }
+
+            JSONUtilities.safePut(options, "lineSeparator", "\n");
+            JSONUtilities.safePut(options, "headerLines", 0);
+            JSONUtilities.safePut(options, "columnWidths", columnWidths);
+            JSONUtilities.safePut(options, "guessCellValueTypes", true);
         }
-        
-        JSONUtilities.safePut(options, "lineSeparator", "\n");
-        JSONUtilities.safePut(options, "headerLines", 0);
-        JSONUtilities.safePut(options, "columnWidths", columnWidths);
-        JSONUtilities.safePut(options, "guessCellValueTypes", true);
-        
         return options;
     }
 

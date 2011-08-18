@@ -75,24 +75,26 @@ public class JsonImporter extends TreeImportingParserBase {
     public JSONObject createParserUIInitializationData(
             ImportingJob job, List<JSONObject> fileRecords, String format) {
         JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
-        try {
-            JSONObject firstFileRecord = fileRecords.get(0);
-            File file = ImportingUtilities.getFile(job, firstFileRecord);
-            InputStream is = new FileInputStream(file);
+        if (fileRecords.size() > 0) {
             try {
-                JsonFactory factory = new JsonFactory();
-                JsonParser parser = factory.createJsonParser(is);
-                
-                PreviewParsingState state = new PreviewParsingState();
-                Object rootValue = parseForPreview(parser, state);
-                if (rootValue != null) {
-                    JSONUtilities.safePut(options, "dom", rootValue);
+                JSONObject firstFileRecord = fileRecords.get(0);
+                File file = ImportingUtilities.getFile(job, firstFileRecord);
+                InputStream is = new FileInputStream(file);
+                try {
+                    JsonFactory factory = new JsonFactory();
+                    JsonParser parser = factory.createJsonParser(is);
+
+                    PreviewParsingState state = new PreviewParsingState();
+                    Object rootValue = parseForPreview(parser, state);
+                    if (rootValue != null) {
+                        JSONUtilities.safePut(options, "dom", rootValue);
+                    }
+                } finally {
+                    is.close();
                 }
-            } finally {
-                is.close();
+            } catch (IOException e) {
+                // Ignore
             }
-        } catch (IOException e) {
-            // Ignore
         }
 
         return options;
