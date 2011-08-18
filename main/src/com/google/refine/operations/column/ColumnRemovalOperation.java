@@ -62,15 +62,15 @@ public class ColumnRemovalOperation extends AbstractOperation {
         _columnName = columnName;
     }
     
-   @Override
-public void write(JSONWriter writer, Properties options)
+    @Override
+    public void write(JSONWriter writer, Properties options)
            throws JSONException {
        
-       writer.object();
-       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-       writer.key("description"); writer.value("Remove column " + _columnName);
-       writer.key("columnName"); writer.value(_columnName);
-       writer.endObject();
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value("Remove column " + _columnName);
+        writer.key("columnName"); writer.value(_columnName);
+        writer.endObject();
     }
 
 

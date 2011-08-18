@@ -65,16 +65,16 @@ public class ColumnRenameOperation extends AbstractOperation {
         _newColumnName = newColumnName;
     }
     
-   @Override
-public void write(JSONWriter writer, Properties options)
-           throws JSONException {
-       
-       writer.object();
-       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-       writer.key("description"); writer.value("Rename column " + _oldColumnName + " to " + _newColumnName);
-       writer.key("oldColumnName"); writer.value(_oldColumnName);
-       writer.key("newColumnName"); writer.value(_newColumnName);
-       writer.endObject();
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value("Rename column " + _oldColumnName + " to " + _newColumnName);
+        writer.key("oldColumnName"); writer.value(_oldColumnName);
+        writer.key("newColumnName"); writer.value(_newColumnName);
+        writer.endObject();
     }
 
 

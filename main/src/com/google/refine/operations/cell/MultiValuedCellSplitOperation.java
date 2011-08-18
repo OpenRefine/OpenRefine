@@ -78,18 +78,18 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         _mode = mode;
     }
 
-   @Override
-public void write(JSONWriter writer, Properties options)
-           throws JSONException {
-       
-       writer.object();
-       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-       writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
-       writer.key("columnName"); writer.value(_columnName);
-       writer.key("keyColumnName"); writer.value(_keyColumnName);
-       writer.key("separator"); writer.value(_separator);
-       writer.key("mode"); writer.value(_mode);
-       writer.endObject();
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
+        writer.key("columnName"); writer.value(_columnName);
+        writer.key("keyColumnName"); writer.value(_keyColumnName);
+        writer.key("separator"); writer.value(_separator);
+        writer.key("mode"); writer.value(_mode);
+        writer.endObject();
     }
 
     @Override

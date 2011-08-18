@@ -54,10 +54,10 @@ public class ToString implements Function {
                 if (o1 instanceof Calendar || o1 instanceof Date) {
                     DateFormat formatter = null;
                     if (args.length == 2) {
-                       Object o2 = args[1];
-                       if (o2 != null && o2 instanceof String) {
-                           formatter = new SimpleDateFormat((String) o2);
-                       }
+                        Object o2 = args[1];
+                        if (o2 != null && o2 instanceof String) {
+                            formatter = new SimpleDateFormat((String) o2);
+                        }
                     }
                     if (formatter == null) {
                         formatter = DateFormat.getDateInstance();

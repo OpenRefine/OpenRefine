@@ -69,16 +69,16 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
         _rowCount = rowCount;
     }
 
-   @Override
-public void write(JSONWriter writer, Properties options)
-           throws JSONException {
-       
-       writer.object();
-       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-       writer.key("description"); writer.value("Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns");
-       writer.key("columnName"); writer.value(_columnName);
-       writer.key("rowCount"); writer.value(_rowCount);
-       writer.endObject();
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value("Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns");
+        writer.key("columnName"); writer.value(_columnName);
+        writer.key("rowCount"); writer.value(_rowCount);
+        writer.endObject();
     }
 
     @Override

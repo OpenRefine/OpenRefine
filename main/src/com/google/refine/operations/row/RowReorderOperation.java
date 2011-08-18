@@ -89,11 +89,11 @@ public class RowReorderOperation extends AbstractOperation {
         return "Reorder rows";
     }
 
-   @Override
-protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+    @Override
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = new Engine(project);
         engine.setMode(_mode);
-        
+
         List<Integer> rowIndices = new ArrayList<Integer>();
         if (_mode == Mode.RowBased) {
             RowVisitor visitor = new IndexingVisitor(rowIndices);
@@ -117,10 +117,10 @@ protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) 
                     visitor = srv;
                 }
             }
-            
+
             engine.getAllRecords().accept(project, visitor);
         }
-        
+
         return new HistoryEntry(
                 historyEntryID,
                 project, 
@@ -128,35 +128,35 @@ protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) 
                 this, 
                 new RowReorderChange(rowIndices)
         );
-   }
+    }
 
-   static protected class IndexingVisitor implements RowVisitor, RecordVisitor {
-       List<Integer> _indices;
+    static protected class IndexingVisitor implements RowVisitor, RecordVisitor {
+        List<Integer> _indices;
 
-       IndexingVisitor(List<Integer> indices) {
-           _indices = indices;
-       }
+        IndexingVisitor(List<Integer> indices) {
+            _indices = indices;
+        }
 
-       @Override
-       public void start(Project project) {
-       }
+        @Override
+        public void start(Project project) {
+        }
 
-       @Override
-       public void end(Project project) {
-       }
+        @Override
+        public void end(Project project) {
+        }
 
-       @Override
-       public boolean visit(Project project, int rowIndex, Row row) {
-           _indices.add(rowIndex);
-           return false;
-       }
+        @Override
+        public boolean visit(Project project, int rowIndex, Row row) {
+            _indices.add(rowIndex);
+            return false;
+        }
 
-       @Override
-       public boolean visit(Project project, Record record) {
-           for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-               _indices.add(r);
-           }
-           return false;
-       }
-   }
+        @Override
+        public boolean visit(Project project, Record record) {
+            for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+                _indices.add(r);
+            }
+            return false;
+        }
+    }
 }

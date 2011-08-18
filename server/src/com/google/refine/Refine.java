@@ -474,10 +474,10 @@ class RefineClient extends JFrame implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) { 
-      String item = e.getActionCommand(); 
-      if (item.startsWith("Open")) {
-          openBrowser();
-      }
+        String item = e.getActionCommand(); 
+        if (item.startsWith("Open")) {
+            openBrowser();
+        }
     } 
     
     private void openBrowser() {

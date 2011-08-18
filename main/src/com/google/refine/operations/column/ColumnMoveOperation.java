@@ -65,16 +65,16 @@ public class ColumnMoveOperation extends AbstractOperation {
         _index = index;
     }
     
-   @Override
-public void write(JSONWriter writer, Properties options)
-           throws JSONException {
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
        
-       writer.object();
-       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-       writer.key("description"); writer.value("Move column " + _columnName + " to position " + _index);
-       writer.key("columnName"); writer.value(_columnName);
-       writer.key("index"); writer.value(_index);
-       writer.endObject();
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value("Move column " + _columnName + " to position " + _index);
+        writer.key("columnName"); writer.value(_columnName);
+        writer.key("index"); writer.value(_index);
+        writer.endObject();
     }
 
 

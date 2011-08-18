@@ -140,22 +140,22 @@ public class ProjectUtilities {
     static protected Project loadFromFile(
             File file,
             long id
-        ) throws Exception {
-            ZipFile zipFile = new ZipFile(file);
-            try {
-                Pool pool = new Pool();
-                ZipEntry poolEntry = zipFile.getEntry("pool.txt");
-                if (poolEntry != null) {
-                    pool.load(zipFile.getInputStream(poolEntry));
-                } // else, it's a legacy project file
+    ) throws Exception {
+        ZipFile zipFile = new ZipFile(file);
+        try {
+            Pool pool = new Pool();
+            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
+            if (poolEntry != null) {
+                pool.load(zipFile.getInputStream(poolEntry));
+            } // else, it's a legacy project file
 
-                return Project.loadFromInputStream(
+            return Project.loadFromInputStream(
                     zipFile.getInputStream(zipFile.getEntry("data.txt")),
                     id,
                     pool
-                );
-            } finally {
-                zipFile.close();
-            }
+            );
+        } finally {
+            zipFile.close();
         }
+    }
 }

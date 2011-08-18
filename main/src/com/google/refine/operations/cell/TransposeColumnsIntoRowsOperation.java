@@ -85,20 +85,20 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         _ignoreBlankCells = ignoreBlankCells;
     }
 
-   @Override
-public void write(JSONWriter writer, Properties options)
-           throws JSONException {
-       
-       writer.object();
-       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-       writer.key("description"); writer.value("Transpose cells in " + _columnCount + " column(s) starting with " + _startColumnName + " into rows");
-       writer.key("startColumnName"); writer.value(_startColumnName);
-       writer.key("columnCount"); writer.value(_columnCount);
-       writer.key("combinedColumnName"); writer.value(_combinedColumnName);
-       writer.key("prependColumnName"); writer.value(_prependColumnName);
-       writer.key("separator"); writer.value(_separator);
-       writer.key("ignoreBlankCells"); writer.value(_ignoreBlankCells);
-       writer.endObject();
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value("Transpose cells in " + _columnCount + " column(s) starting with " + _startColumnName + " into rows");
+        writer.key("startColumnName"); writer.value(_startColumnName);
+        writer.key("columnCount"); writer.value(_columnCount);
+        writer.key("combinedColumnName"); writer.value(_combinedColumnName);
+        writer.key("prependColumnName"); writer.value(_prependColumnName);
+        writer.key("separator"); writer.value(_separator);
+        writer.key("ignoreBlankCells"); writer.value(_ignoreBlankCells);
+        writer.endObject();
     }
 
     @Override

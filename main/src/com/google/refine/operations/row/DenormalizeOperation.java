@@ -59,14 +59,14 @@ public class DenormalizeOperation extends AbstractOperation {
     public DenormalizeOperation() {
     }
     
-   @Override
-public void write(JSONWriter writer, Properties options)
-           throws JSONException {
-       
-       writer.object();
-       writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-       writer.key("description"); writer.value("Denormalize");
-       writer.endObject();
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+
+        writer.object();
+        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
+        writer.key("description"); writer.value("Denormalize");
+        writer.endObject();
     }
 
 
