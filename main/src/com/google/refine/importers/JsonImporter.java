@@ -61,6 +61,8 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 public class JsonImporter extends TreeImportingParserBase {
+    static final Logger logger = LoggerFactory.getLogger(JsonImporter.class);
+
     public JsonImporter() {
         super(false);
     }
@@ -93,7 +95,7 @@ public class JsonImporter extends TreeImportingParserBase {
                     is.close();
                 }
             } catch (IOException e) {
-                // Ignore
+                logger.error("Error generating parser UI initialization data for JSON file", e);
             }
         }
 

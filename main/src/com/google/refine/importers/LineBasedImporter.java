@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
@@ -14,6 +16,8 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 public class LineBasedImporter extends TabularImportingParserBase {
+    static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);
+    
     public LineBasedImporter() {
         super(false);
     }
@@ -66,7 +70,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
                 skip--;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error reading line-based file", e);
         }
         JSONUtilities.safePut(options, "ignoreLines", -1);
         

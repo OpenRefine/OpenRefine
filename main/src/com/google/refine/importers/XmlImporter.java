@@ -47,6 +47,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.tree.ImportColumnGroup;
@@ -58,6 +60,8 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 public class XmlImporter extends TreeImportingParserBase {
+    static final Logger logger = LoggerFactory.getLogger(XmlImporter.class);
+    
     public XmlImporter() {
         super(true);
     }
@@ -94,20 +98,20 @@ public class XmlImporter extends TreeImportingParserBase {
                             // ignore everything else
                         }
                     }
+                } catch (XMLStreamException e) {
+                    logger.warn("Error generating parser UI initialization data for XML file", e);
                 } finally {
                     is.close();
                 }
             }
-        } catch (XMLStreamException e) {
-            // Ignore
         } catch (IOException e) {
-            // Ignore
+            logger.error("Error generating parser UI initialization data for XML file", e);
         }
 
         return options;
     }
     
-    final static private JSONObject descendElement(XMLStreamReader parser, PreviewParsingState state) throws XMLStreamException {
+    final static private JSONObject descendElement(XMLStreamReader parser, PreviewParsingState state) {
         JSONObject result = new JSONObject();
         {
             String name = parser.getLocalName();
@@ -154,25 +158,29 @@ public class XmlImporter extends TreeImportingParserBase {
         }
         
         JSONArray children = new JSONArray();
-        while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
-            int tokenType = parser.next();
-            state.tokenCount++;
-            if (tokenType == XMLStreamConstants.END_ELEMENT) {
-                break;
-            } else if (tokenType == XMLStreamConstants.START_ELEMENT) {
-                JSONObject childElement = descendElement(parser, state);
-                if (childElement != null) {
+        try {
+            while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
+                int tokenType = parser.next();
+                state.tokenCount++;
+                if (tokenType == XMLStreamConstants.END_ELEMENT) {
+                    break;
+                } else if (tokenType == XMLStreamConstants.START_ELEMENT) {
+                    JSONObject childElement = descendElement(parser, state);
+                    if (childElement != null) {
+                        JSONUtilities.append(children, childElement);
+                    }
+                } else if (tokenType == XMLStreamConstants.CHARACTERS ||
+                           tokenType == XMLStreamConstants.CDATA ||
+                           tokenType == XMLStreamConstants.SPACE) {
+                    JSONObject childElement = new JSONObject();
+                    JSONUtilities.safePut(childElement, "t", parser.getText());
                     JSONUtilities.append(children, childElement);
+                } else {
+                    // ignore everything else
                 }
-            } else if (tokenType == XMLStreamConstants.CHARACTERS ||
-                       tokenType == XMLStreamConstants.CDATA ||
-                       tokenType == XMLStreamConstants.SPACE) {
-                JSONObject childElement = new JSONObject();
-                JSONUtilities.safePut(childElement, "t", parser.getText());
-                JSONUtilities.append(children, childElement);
-            } else {
-                // ignore everything else
             }
+        } catch (XMLStreamException e) {
+            logger.error("Error generating parser UI initialization data for XML file", e);
         }
         
         if (children.length() > 0) {

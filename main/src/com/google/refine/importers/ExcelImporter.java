@@ -52,6 +52,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
@@ -64,6 +66,8 @@ import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
 
 public class ExcelImporter extends TabularImportingParserBase {
+    static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
+    
     public ExcelImporter() {
         super(true);
     }
@@ -110,7 +114,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 }
             }                
         } catch (IOException e) {
-            // Ignore
+            logger.error("Error generating parser UI initialization data for Excel file", e);
         }
         
         return options;
