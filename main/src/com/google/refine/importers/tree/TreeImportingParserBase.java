@@ -111,7 +111,12 @@ abstract public class TreeImportingParserBase implements ImportingParser {
                     parseOneFile(project, metadata, job, fileSource, inputStream,
                             rootColumnGroup, limit, options, exceptions);
                 } else {
-                    Reader reader = ImportingUtilities.getFileReader(file, fileRecord);
+                    String commonEncoding = JSONUtilities.getString(options, "encoding", null);
+                    if (commonEncoding != null && commonEncoding.isEmpty()) {
+                        commonEncoding = null;
+                    }
+                    
+                    Reader reader = ImportingUtilities.getFileReader(file, fileRecord, commonEncoding);
                     parseOneFile(project, metadata, job, fileSource, reader,
                             rootColumnGroup, limit, options, exceptions);
                 }

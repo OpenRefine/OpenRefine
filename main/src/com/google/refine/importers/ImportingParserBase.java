@@ -48,6 +48,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingParser;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
+import com.google.refine.util.JSONUtilities;
 
 abstract public class ImportingParserBase implements ImportingParser {
     final protected boolean useInputStream;
@@ -98,7 +99,13 @@ abstract public class ImportingParserBase implements ImportingParser {
                 if (useInputStream) {
                     parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
                 } else {
-                    Reader reader = ImportingUtilities.getReaderFromStream(inputStream, fileRecord);
+                    String commonEncoding = JSONUtilities.getString(options, "encoding", null);
+                    if (commonEncoding != null && commonEncoding.isEmpty()) {
+                        commonEncoding = null;
+                    }
+                    
+                    Reader reader = ImportingUtilities.getReaderFromStream(
+                        inputStream, fileRecord, commonEncoding);
                     
                     parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
                 }

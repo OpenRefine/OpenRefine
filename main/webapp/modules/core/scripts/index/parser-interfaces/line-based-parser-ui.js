@@ -63,7 +63,8 @@ Refine.LineBasedParserUI.prototype.dispose = function() {
 
 Refine.LineBasedParserUI.prototype.getOptions = function() {
   var options = {
-      recordPath: this._config.recordPath
+    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value),
+    recordPath: this._config.recordPath
   };
 
   var parseIntDefault = function(s, def) {
@@ -117,6 +118,14 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
       DOM.loadHTML("core", "scripts/index/parser-interfaces/line-based-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+
+  this._optionContainerElmts.encodingInput
+    .attr('value', this._config.encoding || '')
+    .click(function() {
+      Refine.CreateProjectUI.selectEncoding($(this), function() {
+        self._updatePreview();
+      });
+    });
 
   this._optionContainerElmts.linesPerRowInput[0].value =
     this._config.linesPerRow.toString();

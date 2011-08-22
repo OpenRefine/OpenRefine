@@ -75,7 +75,8 @@ Refine.FixedWidthParserUI.prototype.confirmReadyToCreateProject = function() {
 
 Refine.FixedWidthParserUI.prototype.getOptions = function() {
   var options = {
-      columnWidths: this._getColumnWidths()
+    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value),
+    columnWidths: this._getColumnWidths()
   };
 
   var columnNames = $.trim(this._optionContainerElmts.columnNamesInput[0].value).replace(/,\s+/g, ',').split(',');
@@ -139,7 +140,15 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   this._optionContainer.unbind().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/fixed-width-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  this._optionContainerElmts.previewButton.click(function() { self.updatePreview(); });
+
+  this._optionContainerElmts.encodingInput
+    .attr('value', this._config.encoding || '')
+    .click(function() {
+      Refine.CreateProjectUI.selectEncoding($(this), function() {
+        self.updatePreview();
+      });
+    });
 
   this._optionContainerElmts.columnWidthsInput[0].value = this._config.columnWidths.join(',');
   if ('columnNames' in this._config) {

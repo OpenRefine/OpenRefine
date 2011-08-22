@@ -557,7 +557,28 @@ function process(path, request, response) {
           }
           context.scriptInjection = scriptInjection.join("\n");
         }
-
+        
+        if (path == "/index") {
+          var encodings = [];
+          
+          var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
+          for each (var code in sortedCharsetMap.keySet().toArray()) {
+            var charset = sortedCharsetMap.get(code);
+            var aliases = [];
+            for each (var alias in charset.aliases().toArray()) {
+              aliases.push(alias);
+            }
+            
+            encodings.push({
+              code: code,
+              name: charset.displayName(),
+              aliases: aliases
+            });
+          }
+          
+          context.encodingJson = butterfly.toJSONString(encodings);
+        }
+        
         send(request, response, path + ".vt", context);
       }
     }

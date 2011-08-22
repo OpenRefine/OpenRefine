@@ -373,18 +373,21 @@ public class ImportingUtilities {
         return file;
     }
     
-    static public Reader getFileReader(ImportingJob job, JSONObject fileRecord)
+    static public Reader getFileReader(ImportingJob job, JSONObject fileRecord, String commonEncoding)
         throws FileNotFoundException {
         
-        return getFileReader(getFile(job, JSONUtilities.getString(fileRecord, "location", "")), fileRecord);
+        return getFileReader(getFile(job, JSONUtilities.getString(fileRecord, "location", "")), fileRecord, commonEncoding);
     }
     
-    static public Reader getFileReader(File file, JSONObject fileRecord) throws FileNotFoundException {
-        return getReaderFromStream(new FileInputStream(file), fileRecord);
+    static public Reader getFileReader(File file, JSONObject fileRecord, String commonEncoding) throws FileNotFoundException {
+        return getReaderFromStream(new FileInputStream(file), fileRecord, commonEncoding);
     }
     
-    static public Reader getReaderFromStream(InputStream inputStream, JSONObject fileRecord) {
+    static public Reader getReaderFromStream(InputStream inputStream, JSONObject fileRecord, String commonEncoding) {
         String encoding = getEncoding(fileRecord);
+        if (encoding == null) {
+            encoding = commonEncoding;
+        }
         if (encoding != null) {
             try {
                 return new InputStreamReader(inputStream, encoding);

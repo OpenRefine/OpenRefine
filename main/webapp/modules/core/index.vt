@@ -39,6 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <script type="text/javascript" src="wirings.js"></script>
   $scriptInjection
   $styleInjection
+  <script>Refine.encodings = $encodingJson;</script>
 </head>
 <body>
   <div id="header">

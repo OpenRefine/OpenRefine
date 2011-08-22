@@ -73,8 +73,10 @@ Refine.SeparatorBasedParserUI.prototype.confirmReadyToCreateProject = function()
 };
 
 Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
-  var options = {};
-
+  var options = {
+    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
+  };
+  
   switch (this._optionContainer.find("input[name='row-separator']:checked")[0].value) {
   case 'new-line':
     options.lineSeparator = "\n";
@@ -145,6 +147,14 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
 
+  this._optionContainerElmts.encodingInput
+    .attr('value', this._config.encoding || '')
+    .click(function() {
+      Refine.CreateProjectUI.selectEncoding($(this), function() {
+        self._updatePreview();
+      });
+    });
+  
   var rowSeparatorValue = (this._config.lineSeparator == "\n") ? 'new-line' : 'custom';
   this._optionContainer.find(
       "input[name='row-separator'][value='" + rowSeparatorValue + "']").attr("checked", "checked");
