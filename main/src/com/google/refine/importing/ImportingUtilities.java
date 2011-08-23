@@ -861,7 +861,8 @@ public class ImportingUtilities {
             final ImportingJob job,
             final String format,
             final JSONObject optionObj,
-            final List<Exception> exceptions) {
+            final List<Exception> exceptions,
+            boolean synchronous) {
         final Format record = ImportingManager.formatToRecord.get(format);
         if (record == null || record.parser == null) {
             // TODO: what to do?
@@ -871,36 +872,52 @@ public class ImportingUtilities {
         JSONUtilities.safePut(job.config, "state", "creating-project");
         
         final Project project = new Project();
-        new Thread() {
-            @Override
-            public void run() {
-                ProjectMetadata pm = new ProjectMetadata();
-                pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
-                pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
-                
-                record.parser.parse(
-                    project,
-                    pm,
-                    job,
-                    getSelectedFileRecords(job),
-                    format,
-                    -1,
-                    optionObj,
-                    exceptions
-                );
-                
-                if (!job.canceled) {
-                    project.update(); // update all internal models, indexes, caches, etc.
-                    
-                    ProjectManager.singleton.registerProject(project, pm);
-                    
-                    JSONUtilities.safePut(job.config, "projectID", project.id);
-                    JSONUtilities.safePut(job.config, "state", "created-project");
+        if (synchronous) {
+            createProjectSynchronously(
+                job, format, optionObj, exceptions, record, project);
+        } else {
+            new Thread() {
+                @Override
+                public void run() {
+                    createProjectSynchronously(
+                        job, format, optionObj, exceptions, record, project);
                 }
-            }
-        }.start();
-        
+            }.start();
+        }
         return project.id;
+    }
+    
+    static private void createProjectSynchronously(
+        final ImportingJob job,
+        final String format,
+        final JSONObject optionObj,
+        final List<Exception> exceptions,
+        final Format record,
+        final Project project
+    ) {
+        ProjectMetadata pm = new ProjectMetadata();
+        pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
+        pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
+        
+        record.parser.parse(
+            project,
+            pm,
+            job,
+            getSelectedFileRecords(job),
+            format,
+            -1,
+            optionObj,
+            exceptions
+        );
+        
+        if (!job.canceled) {
+            project.update(); // update all internal models, indexes, caches, etc.
+            
+            ProjectManager.singleton.registerProject(project, pm);
+            
+            JSONUtilities.safePut(job.config, "projectID", project.id);
+            JSONUtilities.safePut(job.config, "state", "created-project");
+        }
     }
     
     static public void setCreatingProjectProgress(ImportingJob job, String message, int percent) {

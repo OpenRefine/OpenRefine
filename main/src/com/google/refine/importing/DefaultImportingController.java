@@ -107,7 +107,7 @@ public class DefaultImportingController implements ImportingController {
         }
 
         try {
-            final JSONObject config = getConfig(job);
+            JSONObject config = job.getOrCreateDefaultConfig();
             if (!("new".equals(config.getString("state")))) {
                 HttpUtilities.respond(response, "error", "Job already started; cannot load more data");
                 return;
@@ -131,7 +131,7 @@ public class DefaultImportingController implements ImportingController {
         }
     
         try {
-            JSONObject config = getConfig(job);
+            JSONObject config = job.getOrCreateDefaultConfig();
             if (!("ready".equals(config.getString("state")))) {
                 HttpUtilities.respond(response, "error", "Job not ready");
                 return;
@@ -159,7 +159,7 @@ public class DefaultImportingController implements ImportingController {
         }
     
         try {
-            JSONObject config = getConfig(job);
+            JSONObject config = job.getOrCreateDefaultConfig();
             if (!("ready".equals(config.getString("state")))) {
                 HttpUtilities.respond(response, "error", "Job not ready");
                 return;
@@ -215,7 +215,7 @@ public class DefaultImportingController implements ImportingController {
         }
     
         try {
-            JSONObject config = getConfig(job);
+            JSONObject config = job.getOrCreateDefaultConfig();
             if (!("ready".equals(config.getString("state")))) {
                 HttpUtilities.respond(response, "error", "Job not ready");
                 return;
@@ -227,7 +227,7 @@ public class DefaultImportingController implements ImportingController {
             
             List<Exception> exceptions = new LinkedList<Exception>();
             
-            ImportingUtilities.createProject(job, format, optionObj, exceptions);
+            ImportingUtilities.createProject(job, format, optionObj, exceptions, false);
             
             HttpUtilities.respond(response, "ok", "done");
         } catch (JSONException e) {
@@ -235,15 +235,6 @@ public class DefaultImportingController implements ImportingController {
         }
     }
 
-    private JSONObject getConfig(ImportingJob job) {
-        if (job.config == null) {
-            job.config = new JSONObject();
-            JSONUtilities.safePut(job.config, "state", "new");
-            JSONUtilities.safePut(job.config, "hasData", false);
-        }
-        return job.config;
-    }
-    
     private void replyWithJobData(HttpServletRequest request, HttpServletResponse response, ImportingJob job)
         throws ServletException, IOException {
         

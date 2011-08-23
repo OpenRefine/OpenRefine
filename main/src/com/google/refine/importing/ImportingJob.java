@@ -45,6 +45,7 @@ import org.json.JSONWriter;
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
+import com.google.refine.util.JSONUtilities;
 
 
 public class ImportingJob implements Jsonizable {
@@ -63,6 +64,15 @@ public class ImportingJob implements Jsonizable {
         this.dir = dir;
         
         dir.mkdirs();
+    }
+    
+    public JSONObject getOrCreateDefaultConfig() {
+        if (config == null) {
+            config = new JSONObject();
+            JSONUtilities.safePut(config, "state", "new");
+            JSONUtilities.safePut(config, "hasData", false);
+        }
+        return config;
     }
     
     public void touch() {

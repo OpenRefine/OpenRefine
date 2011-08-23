@@ -34,20 +34,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.project;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpUtilities;
-import com.google.refine.model.Project;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingManager;
+import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.importing.ImportingManager.Format;
+import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class CreateProjectCommand extends Command {
@@ -60,39 +67,112 @@ public class CreateProjectCommand extends Command {
 
         ProjectManager.singleton.setBusy(true);
         try {
+            Properties parameters = ParsingUtilities.parseUrlParameters(request);
+            ImportingJob job = ImportingManager.createJob();
+            JSONObject config = job.getOrCreateDefaultConfig();
+            ImportingUtilities.loadDataAndPrepareJob(
+                    request, response, parameters, job, config);
+            
+            String format = parameters.getProperty("format");
+            
+            // If a format is specified, it might still be wrong, so we need
+            // to check if we have a parser for it. If not, null it out.
+            if (format != null && !format.isEmpty()) {
+                Format formatRecord = ImportingManager.formatToRecord.get(format);
+                if (formatRecord == null || formatRecord.parser == null) {
+                    format = null;
+                }
+            }
+            
+            // If we don't have a format specified, try to guess it.
+            if (format == null || format.isEmpty()) {
+                // Use legacy parameters to guess the format.
+                if ("false".equals(parameters.getProperty("split-into-columns"))) {
+                    format = "text/line-based";
+                } else if (",".equals(parameters.getProperty("separator")) ||
+                           "\\t".equals(parameters.getProperty("separator"))) {
+                    format = "text/line-based/*sv";
+                } else {
+                    JSONArray rankedFormats = JSONUtilities.getArray(config, "rankedFormats");
+                    if (rankedFormats != null && rankedFormats.length() > 0) {
+                        format = rankedFormats.getString(0);
+                    }
+                }
+                
+                if (format == null || format.isEmpty()) {
+                    // If we have failed in guessing, default to something simple.
+                    format = "text/line-based";
+                }
+            }
+            
+            JSONObject optionObj = null;
+            String optionsString = request.getParameter("options");
+            if (optionsString != null && !optionsString.isEmpty()) {
+                optionObj = ParsingUtilities.evaluateJsonStringToObject(optionsString);
+            } else {
+                Format formatRecord = ImportingManager.formatToRecord.get(format);
+                optionObj = formatRecord.parser.createParserUIInitializationData(
+                    job, ImportingUtilities.getSelectedFileRecords(job), format);
+            }
+            adjustLegacyOptions(format, parameters, optionObj);
+            
+            String projectName = parameters.getProperty("project-name");
+            if (projectName != null && !projectName.isEmpty()) {
+                JSONUtilities.safePut(optionObj, "projectName", projectName);
+            }
+            
+            List<Exception> exceptions = new LinkedList<Exception>();
+            
+            long projectId = ImportingUtilities.createProject(job, format, optionObj, exceptions, true);
 
-            /*
-             * The uploaded file is in the POST body as a "file part". If
-             * we call request.getParameter() then the POST body will get
-             * read and we won't have a chance to parse the body ourselves.
-             * This is why we have to parse the URL for parameters ourselves.
-             * Don't call request.getParameter() before calling internalImport().
-             */
-            Properties options = ParsingUtilities.parseUrlParameters(request);
-
-            Project project = new Project();
-            ProjectMetadata pm = new ProjectMetadata();
-
-            //internalImport(request, project, pm, options);
-
-            /*
-             * The import process above populates options with parameters
-             * in the POST body. That's why we're constructing the project
-             * metadata object after calling internalImport().
-             */
-            pm.setName(options.getProperty("project-name"));
-            pm.setPassword(options.getProperty("project-password"));
-            pm.setEncoding(options.getProperty("encoding"));
-            pm.setEncodingConfidence(options.getProperty("encoding_confidence"));
-            ProjectManager.singleton.registerProject(project, pm);
-
-            project.update();
-
-            HttpUtilities.redirect(response, "/project?project=" + project.id);
+            HttpUtilities.redirect(response, "/project?project=" + projectId);
         } catch (Exception e) {
             respondWithErrorPage(request, response, "Failed to import file", e);
         } finally {
             ProjectManager.singleton.setBusy(false);
+        }
+    }
+
+    static private void adjustLegacyOptions(String format, Properties parameters, JSONObject optionObj) {
+        if (",".equals(parameters.getProperty("separator"))) {
+            JSONUtilities.safePut(optionObj, "separator", ",");
+        } else if ("\\t".equals(parameters.getProperty("separator"))) {
+            JSONUtilities.safePut(optionObj, "separator", "\t");
+        }
+        
+        adjustLegacyIntegerOption(format, parameters, optionObj, "ignore", "ignoreLines");
+        adjustLegacyIntegerOption(format, parameters, optionObj, "header-lines", "headerLines");
+        adjustLegacyIntegerOption(format, parameters, optionObj, "skip", "skipDataLines");
+        adjustLegacyIntegerOption(format, parameters, optionObj, "limit", "limit");
+        
+        adjustLegacyBooleanOption(format, parameters, optionObj, "guess-value-type", "guessCellValueTypes", false);
+        adjustLegacyBooleanOption(format, parameters, optionObj, "ignore-quotes", "processQuotes", true);
+    }
+
+    static private void adjustLegacyIntegerOption(
+        String format, Properties parameters, JSONObject optionObj, String legacyName, String newName) {
+        
+        String s = parameters.getProperty(legacyName);
+        if (s != null && !s.isEmpty()) {
+            try {
+                JSONUtilities.safePut(optionObj, newName, Integer.parseInt(s));
+            } catch (NumberFormatException e) {
+                // Ignore
+            }
+        }
+    }
+    
+    static private void adjustLegacyBooleanOption(
+        String format,
+        Properties parameters,
+        JSONObject optionObj,
+        String legacyName,
+        String newName,
+        boolean invert) {
+        
+        String s = parameters.getProperty(legacyName);
+        if (s != null && !s.isEmpty()) {
+            JSONUtilities.safePut(optionObj, newName, Boolean.parseBoolean(s));
         }
     }
 }
