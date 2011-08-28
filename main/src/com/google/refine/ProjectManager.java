@@ -73,9 +73,9 @@ public abstract class ProjectManager {
     transient protected InterProjectModel _interProjectModel = new InterProjectModel();
 
     /**
-     *  Flags
+     *  Flag for heavy operations like creating or importing projects.  Workspace saves are skipped while it's set.
      */
-    transient protected int _busy = 0; // heavy operations like creating or importing projects are going on
+    transient protected int _busy = 0;
 
     /**
      *  While each project's metadata is loaded completely at start-up, each project's raw data
@@ -255,7 +255,9 @@ public abstract class ProjectManager {
 
                         records.add(new SaveRecord(project, msecsOverdue));
 
-                    } else if (startTimeOfSave.getTime() - project.getLastSave().getTime() > s_projectFlushDelay) {
+                    } else if (!project.getProcessManager().hasPending()
+                              && startTimeOfSave.getTime() - project.getLastSave().getTime() > s_projectFlushDelay) {
+                        
                         /*
                          *  It's been a while since the project was last saved and it hasn't been
                          *  modified. We can safely remove it from the cache to save some memory.
@@ -435,7 +437,8 @@ public abstract class ProjectManager {
     //--------------Miscellaneous-----------
 
     /**
-     * Sets the flag for long running operations
+     * Sets the flag for long running operations.  This will prevent
+     * workspace saves from happening while it's set.
      * @param busy
      */
     public void setBusy(boolean busy) {
