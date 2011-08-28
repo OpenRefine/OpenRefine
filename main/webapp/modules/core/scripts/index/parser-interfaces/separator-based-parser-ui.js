@@ -49,18 +49,6 @@ Refine.SeparatorBasedParserUI = function(controller, jobID, job, format, config,
 };
 Refine.DefaultImportingController.parserUIs["SeparatorBasedParserUI"] = Refine.SeparatorBasedParserUI;
 
-Refine.SeparatorBasedParserUI.encodeSeparator = function(s) {
-  return s.replace("\\", "\\\\")
-  .replace("\n", "\\n")
-  .replace("\t", "\\t");
-};
-
-Refine.SeparatorBasedParserUI.decodeSeparator = function(s) {
-  return s.replace("\\n", "\n")
-  .replace("\\t", "\t")
-  .replace("\\\\", "\\");
-};
-
 Refine.SeparatorBasedParserUI.prototype.dispose = function() {
   if (this._timerID != null) {
     window.clearTimeout(this._timerID);
@@ -82,7 +70,7 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
     options.lineSeparator = "\n";
     break;
   default:
-    options.lineSeparator = Refine.SeparatorBasedParserUI.decodeSeparator(
+    options.lineSeparator = String.decodeSeparator(
         this._optionContainerElmts.rowSeparatorInput[0].value);
   }
   switch (this._optionContainer.find("input[name='column-separator']:checked")[0].value) {
@@ -93,7 +81,7 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
     options.separator = "\t";
     break;
   default:
-    options.separator = Refine.SeparatorBasedParserUI.decodeSeparator(
+    options.separator = String.decodeSeparator(
         this._optionContainerElmts.columnSeparatorInput[0].value);
   }
 
@@ -150,7 +138,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')
     .click(function() {
-      Refine.CreateProjectUI.selectEncoding($(this), function() {
+      Encoding.selectEncoding($(this), function() {
         self._updatePreview();
       });
     });
@@ -159,14 +147,14 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   this._optionContainer.find(
       "input[name='row-separator'][value='" + rowSeparatorValue + "']").attr("checked", "checked");
   this._optionContainerElmts.rowSeparatorInput[0].value =
-    Refine.SeparatorBasedParserUI.encodeSeparator(this._config.lineSeparator);
+    String.encodeSeparator(this._config.lineSeparator);
 
   var columnSeparatorValue = (this._config.separator == ",") ? 'comma' :
     ((this._config.separator == "\t") ? 'tab' : 'custom');
   this._optionContainer.find(
       "input[name='column-separator'][value='" + columnSeparatorValue + "']").attr("checked", "checked");
   this._optionContainerElmts.columnSeparatorInput[0].value =
-    Refine.SeparatorBasedParserUI.encodeSeparator(this._config.separator);
+    String.encodeSeparator(this._config.separator);
 
   if (this._config.ignoreLines > 0) {
     this._optionContainerElmts.ignoreCheckbox.attr("checked", "checked");

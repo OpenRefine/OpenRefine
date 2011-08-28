@@ -39,10 +39,15 @@ var bundle = false;
 var templatedFiles = {
   // Requests with last path segments mentioned here 
   // will get served from .vt files with the same names
-  "import" : true,
-  "index" : true,
-  "preferences" : true,
-  "project" : true
+  "index" : {
+    outputEncodings: true
+  },
+  "preferences" : {
+    outputEncodings: false
+  },
+  "project" : {
+    outputEncodings: true
+  }
 };
 
 function registerCommands() {
@@ -293,6 +298,7 @@ function init() {
       "scripts/util/menu.js",
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
+      "scripts/util/encoding.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
@@ -323,6 +329,7 @@ function init() {
       "styles/common.less",
       "styles/pure.css",
       "styles/util/dialog.less",
+      "styles/util/encoding.less",
       
       "styles/index.less",
       "styles/index/create-project-ui.less",
@@ -363,6 +370,7 @@ function init() {
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
       "scripts/util/custom-suggest.js",
+      "scripts/util/encoding.js",
 
       "scripts/widgets/histogram-widget.js",
       "scripts/widgets/slider-widget.js",
@@ -398,7 +406,8 @@ function init() {
       "scripts/dialogs/clustering-dialog.js",
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
-      "scripts/dialogs/column-reordering-dialog.js"
+      "scripts/dialogs/column-reordering-dialog.js",
+      "scripts/dialogs/custom-tabular-exporter-dialog.js"
     ]
   );
 
@@ -417,6 +426,7 @@ function init() {
       "styles/util/menu.less",
       "styles/util/dialog.less",
       "styles/util/custom-suggest.less",
+      "styles/util/encoding.less",
 
       "styles/project.less",
       "styles/project/sidebar.less",
@@ -432,6 +442,7 @@ function init() {
       "styles/dialogs/clustering-dialog.less",
       "styles/dialogs/scatterplot-dialog.less",
       "styles/dialogs/column-reordering-dialog.less",
+      "styles/dialogs/custom-tabular-exporter-dialog.less",
 
       "styles/reconciliation/recon-dialog.less",
       "styles/reconciliation/standard-service-panel.less"
@@ -558,7 +569,7 @@ function process(path, request, response) {
           context.scriptInjection = scriptInjection.join("\n");
         }
         
-        if (path == "/index") {
+        if (templatedFiles[lastSegment].outputEncodings) {
           var encodings = [];
           
           var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();

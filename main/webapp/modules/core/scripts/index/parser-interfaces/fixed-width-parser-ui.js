@@ -50,18 +50,6 @@ Refine.FixedWidthParserUI = function(controller, jobID, job, format, config,
 };
 Refine.DefaultImportingController.parserUIs["FixedWidthParserUI"] = Refine.FixedWidthParserUI;
 
-Refine.FixedWidthParserUI.encodeSeparator = function(s) {
-  return s.replace("\\", "\\\\")
-  .replace("\n", "\\n")
-  .replace("\t", "\\t");
-};
-
-Refine.FixedWidthParserUI.decodeSeparator = function(s) {
-  return s.replace("\\n", "\n")
-  .replace("\\t", "\t")
-  .replace("\\\\", "\\");
-};
-
 Refine.FixedWidthParserUI.prototype.dispose = function() {
   if (this._timerID != null) {
     window.clearTimeout(this._timerID);
@@ -89,7 +77,7 @@ Refine.FixedWidthParserUI.prototype.getOptions = function() {
     options.lineSeparator = "\n";
     break;
   default:
-    options.lineSeparator = Refine.FixedWidthParserUI.decodeSeparator(
+    options.lineSeparator = String.decodeSeparator(
         this._optionContainerElmts.rowSeparatorInput[0].value);
   }
 
@@ -145,7 +133,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')
     .click(function() {
-      Refine.CreateProjectUI.selectEncoding($(this), function() {
+      Encoding.selectEncoding($(this), function() {
         self.updatePreview();
       });
     });
@@ -159,7 +147,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   this._optionContainer.find(
       "input[name='row-separator'][value='" + rowSeparatorValue + "']").attr("checked", "checked");
   this._optionContainerElmts.rowSeparatorInput[0].value =
-    Refine.FixedWidthParserUI.encodeSeparator(this._config.lineSeparator);
+    String.encodeSeparator(this._config.lineSeparator);
 
   if (this._config.ignoreLines > 0) {
     this._optionContainerElmts.ignoreCheckbox.attr("checked", "checked");

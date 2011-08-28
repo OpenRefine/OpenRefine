@@ -78,6 +78,11 @@ ExporterManager.MenuItems = [
   },
   {},
   {
+    "id" : "core/export-custom-tabular",
+    "label": "Custom tabular exporter...",
+    "click": function() { new CustomTabularExporterDialog(); }
+  },
+  {
     "id" : "core/export-templating",
     "label": "Templating...",
     "click": function() { new TemplatingExporterDialog(); }
@@ -158,4 +163,3 @@ ExporterManager.handlers.exportProject = function() {
 
   document.body.removeChild(form);
 };
-

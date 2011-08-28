@@ -85,7 +85,7 @@ Refine.LineBasedParserUI.prototype.getOptions = function() {
     options.lineSeparator = "\n";
     break;
   default:
-    options.lineSeparator = Refine.FixedWidthParserUI.decodeSeparator(
+    options.lineSeparator = String.decodeSeparator(
         this._optionContainerElmts.rowSeparatorInput[0].value);
   }
 
@@ -122,7 +122,7 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')
     .click(function() {
-      Refine.CreateProjectUI.selectEncoding($(this), function() {
+      Encoding.selectEncoding($(this), function() {
         self._updatePreview();
       });
     });
@@ -134,7 +134,7 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
   this._optionContainer.find(
       "input[name='row-separator'][value='" + rowSeparatorValue + "']").attr("checked", "checked");
   this._optionContainerElmts.rowSeparatorInput[0].value =
-    Refine.SeparatorBasedParserUI.encodeSeparator(this._config.lineSeparator);
+    String.encodeSeparator(this._config.lineSeparator);
 
   if (this._config.ignoreLines > 0) {
     this._optionContainerElmts.ignoreCheckbox.attr("checked", "checked");
