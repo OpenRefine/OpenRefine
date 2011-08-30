@@ -84,7 +84,7 @@ public class XlsExporterTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp(){
-        SUT = new XlsExporter();
+        SUT = new XlsExporter(false);
         stream = new ByteArrayOutputStream();
         ProjectManager.singleton = new ProjectManagerStub();
         projectMetadata = new ProjectMetadata();
