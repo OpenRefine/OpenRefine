@@ -47,6 +47,27 @@ function CustomTabularExporterDialog(options) {
   this._createDialog(options);
 };
 
+CustomTabularExporterDialog.formats = {
+  'csv': {
+    extension: 'csv'
+  },
+  'tsv': {
+    extension: 'tsv'
+  },
+  '*sv': {
+    extension: 'txt'
+  },
+  'html': {
+    extension: 'html'
+  },
+  'xls': {
+    extension: 'xls'
+  },
+  'xlsx': {
+    extension: 'xlsx'
+  }
+};
+
 CustomTabularExporterDialog.prototype._createDialog = function(options) {
   var self = this;
   
@@ -145,7 +166,6 @@ CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(opti
   this._elmts.encodingInput[0].value = options.encoding;
   this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : '');
   this._elmts.outputBlankRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : '');
-  this._elmts.xlsxCheckbox.attr('checked', (options.xlsx) ? 'checked' : '');
   
   if (options.columns != null) {
     var self = this;
@@ -169,8 +189,52 @@ CustomTabularExporterDialog.prototype._dismiss = function() {
 };
 
 CustomTabularExporterDialog.prototype._preview = function() {
+  this._postExport(true);
+};
+
+CustomTabularExporterDialog.prototype._commit = function() {
+  this._postExport(false);
+  this._dismiss();
+};
+
+CustomTabularExporterDialog.prototype._postExport = function(preview) {
+  var exportAllRowsCheckbox = this._elmts.exportAllRowsCheckbox[0].checked;
   var options = this._getOptionCode();
-  console.log(options);
+  
+  var format = options.format;
+  var encoding = options.encoding;
+  
+  delete options.format;
+  delete options.encoding;
+  if (preview) {
+    options.limit = 10;
+  }
+  
+  var ext = CustomTabularExporterDialog.formats[format].extension;
+  var form = ExporterManager.prepareExportRowsForm(format, !exportAllRowsCheckbox, ext);
+  $('<input />')
+  .attr("name", "options")
+  .attr("value", JSON.stringify(options))
+  .appendTo(form);
+  if (encoding) {
+    $('<input />')
+    .attr("name", "encoding")
+    .attr("value", encoding)
+    .appendTo(form);
+  }
+  if (!preview) {
+    $('<input />')
+    .attr("name", "contentType")
+    .attr("value", "application/x-unknown") // force download
+    .appendTo(form);
+  }
+  
+  document.body.appendChild(form);
+
+  window.open("about:blank", "refine-export");
+  form.submit();
+
+  document.body.removeChild(form);
 };
 
 CustomTabularExporterDialog.prototype._selectColumn = function(columnName) {
@@ -229,10 +293,14 @@ CustomTabularExporterDialog.prototype._getOptionCode = function() {
     format: this._dialog.find('input[name="custom-tabular-exporter-format"]:checked').val()
   };
   
-  if (options.format == 'excel') {
-    options.xlsx = this._elmts.xlsxCheckbox[0].checked;
-  } else if (options.format != 'html') {
-    options.separator = String.decodeSeparator(this._elmts.separatorInput.val());
+  if (options.format == 'tsv' || options.format == 'csv' || options.format == '*sv') {
+    if (options.format == 'tsv') {
+      options.separator = '\t';
+    } else if (options.format == 'csv') {
+      options.separator = ',';
+    } else {
+      options.separator = String.decodeSeparator(this._elmts.separatorInput.val());
+    }
     options.lineSeparator = String.decodeSeparator(this._elmts.lineSeparatorInput.val());
     options.encoding = this._elmts.encodingInput.val();
   }

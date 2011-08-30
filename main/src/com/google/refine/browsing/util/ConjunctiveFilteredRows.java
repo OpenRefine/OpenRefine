@@ -62,7 +62,9 @@ public class ConjunctiveFilteredRows implements FilteredRows {
             for (int rowIndex = 0; rowIndex < c; rowIndex++) {
                 Row row = project.rows.get(rowIndex);
                 if (matchRow(project, rowIndex, row)) {
-                    visitRow(project, visitor, rowIndex, row);
+                    if (visitRow(project, visitor, rowIndex, row)) {
+                        break;
+                    }
                 }
             }
         } finally {
@@ -70,8 +72,8 @@ public class ConjunctiveFilteredRows implements FilteredRows {
         }
     }
     
-    protected void visitRow(Project project, RowVisitor visitor, int rowIndex, Row row) {
-        visitor.visit(project, rowIndex, row);
+    protected boolean visitRow(Project project, RowVisitor visitor, int rowIndex, Row row) {
+        return visitor.visit(project, rowIndex, row);
     }
     
     protected boolean matchRow(Project project, int rowIndex, Row row) {

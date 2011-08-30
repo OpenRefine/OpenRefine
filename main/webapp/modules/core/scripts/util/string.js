@@ -49,12 +49,14 @@ String.prototype.contains = function(s) {
 
 String.encodeSeparator = function(s) {
   return s.replace("\\", "\\\\")
+  .replace("\r", "\\r")
   .replace("\n", "\\n")
   .replace("\t", "\\t");
 };
 
 String.decodeSeparator = function(s) {
   return s.replace("\\n", "\n")
+  .replace("\\r", "\r")
   .replace("\\t", "\t")
   .replace("\\\\", "\\");
 };

@@ -40,9 +40,14 @@ abstract public class ExporterRegistry {
     static final private Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();
 
     static {
-        s_formatToExporter.put("html", new HtmlTableExporter());
-        s_formatToExporter.put("xls", new XlsExporter());
         s_formatToExporter.put("csv", new CsvExporter());
+        s_formatToExporter.put("tsv", new CsvExporter('\t'));
+        s_formatToExporter.put("*sv", new CsvExporter());
+        
+        s_formatToExporter.put("xls", new XlsExporter(false));
+        s_formatToExporter.put("xlsx", new XlsExporter(true));
+        
+        s_formatToExporter.put("html", new HtmlTableExporter());
         
         s_formatToExporter.put("template", new TemplatingExporter());
     }

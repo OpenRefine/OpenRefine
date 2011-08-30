@@ -24,8 +24,12 @@
           
           <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
             <tr>
-              <td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="excel" /></td>
-              <td>Excel <input type="checkbox" bind="xlsxCheckbox" /> in XML (.xlsx)</td>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="xls" /></td>
+              <td>Excel (.xls)</td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="xlsx" /></td>
+              <td>Excel in XML (.xlsx)</td>
             </tr>
             <tr>
               <td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="html" /></td>
@@ -115,8 +119,10 @@
           </td>
           <td><div class="grid-layout layout-tighter"><table>
             <tr>
-              <td width="1%"><input type="checkbox" bind="outputColumnHeadersCheckbox" checked /></td><td>Output column headers</td>
-              <td width="1%"><input type="checkbox" bind="outputBlankRowsCheckbox" /></td><td>Output blank rows</td>
+              <td width="1%"><input type="checkbox" bind="outputColumnHeadersCheckbox" checked /></td>
+              <td width="50%">Output column headers</td>
+              <td width="1%"><input type="checkbox" bind="outputBlankRowsCheckbox" /></td>
+              <td width="50%">Output blank rows</td>
             </tr>
           </table></div></td>
         </tr>
@@ -137,6 +143,10 @@
   </div>
   <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-tightest layout-full"><table><tr>
     <td><button class="button" bind="previewButton">Preview</button></td>
+    
+    <td width="1%"><input type="checkbox" bind="exportAllRowsCheckbox" /></td>
+    <td>Ignore facets and filters and export all rows</td>
+    
     <td width="1%"><button class="button button-primary" bind="exportButton">Export</button></td>
     <td width="1%"><button class="button" bind="cancelButton">Cancel</button></td>
   </tr></table></div></div>

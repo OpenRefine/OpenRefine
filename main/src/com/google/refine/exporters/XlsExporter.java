@@ -37,128 +37,98 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONObject;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.FilteredRows;
-import com.google.refine.browsing.RowVisitor;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 
 public class XlsExporter implements StreamExporter {
-
+    final private boolean xml;
+    
+    public XlsExporter(boolean xml) {
+        this.xml = xml;
+    }
+    
     @Override
     public String getContentType() {
-        return "application/xls";
+        return xml ? "application/xlsx" : "application/xls";
     }
 
     @Override
-    public void export(Project project, Properties options, Engine engine,
+    public void export(final Project project, Properties params, Engine engine,
             OutputStream outputStream) throws IOException {
 
-        Workbook wb = new HSSFWorkbook();
-        Sheet s = wb.createSheet();
-        wb.setSheetName(0, ProjectManager.singleton.getProjectMetadata(project.id).getName());
+        final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
         
-        int rowCount = 0;
-        
-        {
-            org.apache.poi.ss.usermodel.Row r = s.createRow(rowCount++);
+        TabularSerializer serializer = new TabularSerializer() {
+            Sheet s;
+            int rowCount = 0;
             
-            int cellCount = 0;
-            for (Column column : project.columnModel.columns) {
-                if (cellCount++ > 255) {
-                    // TODO: Warn user about truncated data
-                } else {
-                    org.apache.poi.ss.usermodel.Cell c = r.createCell(cellCount);
-                    c.setCellValue(column.getName());
-                }
+            @Override
+            public void startFile(JSONObject options) {
+                s = wb.createSheet();
+                wb.setSheetName(0, ProjectManager.singleton.getProjectMetadata(project.id).getName());
             }
-        }
-        
-        {
-            RowVisitor visitor = new RowVisitor() {
-                Sheet sheet;
-                int rowCount;
+
+            @Override
+            public void endFile() {
+            }
+
+            @Override
+            public void addRow(List<CellData> cells, boolean isHeader) {
+                Row r = s.createRow(rowCount++);
                 
-                public RowVisitor init(Sheet sheet, int rowCount) {
-                    this.sheet = sheet;
-                    this.rowCount = rowCount;
-                    return this;
-                }
-                
-                @Override
-                public void start(Project project) {
-                    // nothing to do
-                }
-
-                @Override
-                public void end(Project project) {
-                    // nothing to do
-                }
-                
-                @Override
-                public boolean visit(Project project, int rowIndex, Row row) {
-                    org.apache.poi.ss.usermodel.Row r = sheet.createRow(rowCount++);
-                    
-                    int cellCount = 0;
-                    for (Column column : project.columnModel.columns) {
-                        if (cellCount++ > 255) {
-                            // TODO: Warn user about truncated data
-                        } else {
-                            org.apache.poi.ss.usermodel.Cell c = r.createCell(cellCount);
-
-                            int cellIndex = column.getCellIndex();
-                            if (cellIndex < row.cells.size()) {
-                                Cell cell = row.cells.get(cellIndex);
-                                if (cell != null) {
-                                    if (cell.recon != null && cell.recon.match != null) {
-                                        c.setCellValue(cell.recon.match.name);
-
-                                        HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-                                        hl.setLabel(cell.recon.match.name);
-                                        hl.setAddress("http://www.freebase.com/view" + cell.recon.match.id);
-
-                                        c.setHyperlink(hl);
-                                    } else if (cell.value != null) {
-                                        Object v = cell.value;
-
-                                        if (v instanceof Number) {
-                                            c.setCellValue(((Number) v).doubleValue());
-                                        } else if (v instanceof Boolean) {
-                                            c.setCellValue(((Boolean) v).booleanValue());
-                                        } else if (v instanceof Date) {
-                                            c.setCellValue((Date) v);
-                                        } else if (v instanceof Calendar) {
-                                            c.setCellValue((Calendar) v);
-                                        } else if (v instanceof String) {
-                                            String s = (String) v;
-                                            if (s.length() > 32767) {
-                                                // The maximum length of cell contents (text) is 32,767 characters
-                                                s = s.substring(0, 32767);
-                                            }
-                                            c.setCellValue(s);
-                                        }
-                                    }
+                for (int i = 0; i < cells.size(); i++) {
+                    Cell c = r.createCell(i);
+                    if (i == 255 && cells.size() > 256) {
+                        c.setCellValue("ERROR: TOO MANY COLUMNS");
+                    } else {
+                        CellData cellData = cells.get(i);
+                        
+                        if (cellData != null && cellData.text != null && cellData.value != null) {
+                            Object v = cellData.value;
+                            if (v instanceof Number) {
+                                c.setCellValue(((Number) v).doubleValue());
+                            } else if (v instanceof Boolean) {
+                                c.setCellValue(((Boolean) v).booleanValue());
+                            } else if (v instanceof Date) {
+                                c.setCellValue((Date) v);
+                            } else if (v instanceof Calendar) {
+                                c.setCellValue((Calendar) v);
+                            } else {
+                                String s = cellData.text;
+                                if (s.length() > 32767) {
+                                    // The maximum length of cell contents (text) is 32,767 characters
+                                    s = s.substring(0, 32767);
                                 }
+                                c.setCellValue(s);
+                            }
+                            
+                            if (cellData.link != null) {
+                                HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+                                hl.setLabel(cellData.text);
+                                hl.setAddress(cellData.link);
                             }
                         }
+
                     }
-                    return false;
                 }
-            }.init(s, rowCount);
-            
-            FilteredRows filteredRows = engine.getAllFilteredRows();
-            filteredRows.accept(project, visitor);
-        }
+            }
+        };
+        
+        CustomizableTabularExporterUtilities.exportRows(
+                project, engine, params, serializer);
         
         wb.write(outputStream);
         outputStream.flush();

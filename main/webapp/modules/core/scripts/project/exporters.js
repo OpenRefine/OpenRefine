@@ -114,18 +114,29 @@ ExporterManager.handlers.exportTripleloader = function(format) {
 };
 
 ExporterManager.handlers.exportRows = function(format, ext) {
+  var form = ExporterManager.prepareExportRowsForm(format, true, ext);
+  $('<input />')
+  .attr("name", "contentType")
+  .attr("value", "application/x-unknown") // force download
+  .appendTo(form);
+  
+  document.body.appendChild(form);
+
+  window.open("about:blank", "refine-export");
+  form.submit();
+
+  document.body.removeChild(form);
+};
+
+ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
   var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
   var form = document.createElement("form");
   $(form)
   .css("display", "none")
   .attr("method", "post")
-  .attr("action", "/command/core/export-rows/" + name + "." + ext)
+  .attr("action", "/command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""))
   .attr("target", "refine-export");
 
-  $('<input />')
-  .attr("name", "engine")
-  .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
-  .appendTo(form);
   $('<input />')
   .attr("name", "project")
   .attr("value", theProject.id)
@@ -134,13 +145,14 @@ ExporterManager.handlers.exportRows = function(format, ext) {
   .attr("name", "format")
   .attr("value", format)
   .appendTo(form);
-
-  document.body.appendChild(form);
-
-  window.open("about:blank", "refine-export");
-  form.submit();
-
-  document.body.removeChild(form);
+  if (includeEngine) {
+    $('<input />')
+    .attr("name", "engine")
+    .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
+    .appendTo(form);
+  }
+  
+  return form;
 };
 
 ExporterManager.handlers.exportProject = function() {

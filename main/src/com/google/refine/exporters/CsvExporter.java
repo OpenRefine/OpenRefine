@@ -35,21 +35,19 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.FilteredRows;
-import com.google.refine.browsing.RowVisitor;
-import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
+import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class CsvExporter implements WriterExporter{
@@ -66,83 +64,65 @@ public class CsvExporter implements WriterExporter{
     }
 
     @Override
-    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
-        boolean printColumnHeader = true;
-
-        if (options != null && options.getProperty("printColumnHeader") != null) {
-            printColumnHeader = Boolean.parseBoolean(options.getProperty("printColumnHeader"));
+    public void export(Project project, Properties params, Engine engine, final Writer writer)
+            throws IOException {
+        
+        String optionsString = params == null ? null : params.getProperty("options");
+        JSONObject options = null;
+        if (optionsString != null) {
+            try {
+                options = ParsingUtilities.evaluateJsonStringToObject(optionsString);
+            } catch (JSONException e) {
+                // Ignore and keep options null.
+            }
         }
-
-        RowVisitor visitor = new RowVisitor() {
-            CSVWriter csvWriter;
-            boolean printColumnHeader = true;
-            boolean isFirstRow = true; //the first row should also add the column headers
-
-            public RowVisitor init(CSVWriter writer, boolean printColumnHeader) {
-                this.csvWriter = writer;
-                this.printColumnHeader = printColumnHeader;
-                return this;
+        
+        final String separator = options == null ? Character.toString(this.separator) :
+            JSONUtilities.getString(options, "separator", Character.toString(this.separator));
+        final String lineSeparator = options == null ? CSVWriter.DEFAULT_LINE_END :
+            JSONUtilities.getString(options, "lineSeparator", CSVWriter.DEFAULT_LINE_END);
+        
+        final boolean printColumnHeader =
+            (params != null && params.getProperty("printColumnHeader") != null) ?
+                Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
+                true;
+        
+        final CSVWriter csvWriter = 
+            new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+        
+        TabularSerializer serializer = new TabularSerializer() {
+            @Override
+            public void startFile(JSONObject options) {
             }
 
             @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                int size = project.columnModel.columns.size();
+            public void endFile() {
+            }
 
-                String[] cols = new String[size];
-                String[] vals = new String[size];
-
-                int i = 0;
-                for (Column col : project.columnModel.columns) {
-                    int cellIndex = col.getCellIndex();
-                    cols[i] = col.getName();
-
-                    Object value = row.getCellValue(cellIndex);
-                    if (value != null) {
-                        if (value instanceof String) {
-                            vals[i] = (String) value;
-                        } else if (value instanceof Calendar) {
-                            vals[i] = ParsingUtilities.dateToString(((Calendar) value).getTime()); 
-                        } else if (value instanceof Date) {
-                            vals[i] = ParsingUtilities.dateToString((Date) value); 
-                        } else {
-                            vals[i] = value.toString();
-                        }
+            @Override
+            public void addRow(List<CellData> cells, boolean isHeader) {
+                if (!isHeader || printColumnHeader) {
+                    String[] strings = new String[cells.size()];
+                    for (int i = 0; i < strings.length; i++) {
+                        CellData cellData = cells.get(i);
+                        strings[i] =
+                            (cellData != null && cellData.text != null) ?
+                            cellData.text :
+                            "";
                     }
-                    i++;
-                }
-
-                if (printColumnHeader && isFirstRow) {
-                    csvWriter.writeNext(cols,false);
-                    isFirstRow = false; //switch off flag
-                }
-                csvWriter.writeNext(vals,false);
-
-                return false;
-            }
-
-            @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                try {
-                    csvWriter.close();
-                } catch (IOException e) {
-                    logger.error("CsvExporter could not close writer : " + e.getMessage());
+                    csvWriter.writeNext(strings, false);
                 }
             }
-
-        }.init(new CSVWriter(writer, separator), printColumnHeader);
-
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(project, visitor);
+        };
+        
+        CustomizableTabularExporterUtilities.exportRows(
+                project, engine, params, serializer);
+        
+        csvWriter.close();
     }
 
     @Override
     public String getContentType() {
-        return "application/x-unknown";
+        return "text/plain";
     }
-
 }

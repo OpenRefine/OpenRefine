@@ -99,7 +99,7 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-
+        
         String json = request.getParameter("engine");
         try{
             return (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
