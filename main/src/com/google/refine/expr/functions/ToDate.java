@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
@@ -53,11 +54,16 @@ public class ToDate implements Function {
             // missing value, can this happen?
             return null;
         }
-        if (!(args[0] instanceof String)) {
+        Object arg0 = args[0];
+        if (arg0 instanceof Date) {
+            return arg0;
+        } else if (arg0 instanceof Calendar) {
+            return ((Calendar) arg0).getTime();
+        } else if (!(arg0 instanceof String)) {
             // ignore cell values that aren't strings
             return null;
         }
-        String o1 = (String) args[0];
+        String o1 = (String) arg0;
 
         // "o, boolean month_first (optional)"
         if (args.length == 1 || (args.length == 2 && args[1] instanceof Boolean)) {
