@@ -87,6 +87,15 @@ public abstract class Command {
     };
 
     /**
+     * Whether each request to this command should be logged. For some commands
+     * that can get called too frequently, such as GetProcessesCommand, logging
+     * is very distracting.
+     */
+    public boolean logRequests() {
+        return true;
+    }
+
+    /**
      * Utility function to get the browsing engine's configuration as a JSON object
      * from the "engine" request parameter, most often in the POST body.
      *

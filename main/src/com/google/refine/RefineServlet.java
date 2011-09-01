@@ -164,14 +164,14 @@ public class RefineServlet extends Butterfly {
             Command command = commands.get(commandKey);
             if (command != null) {
                 if (request.getMethod().equals("GET")) {
-                    if (!logger.isTraceEnabled()) {
+                    if (!logger.isTraceEnabled() && command.logRequests()) {
                         logger.info("GET {}", request.getPathInfo());
                     }
                     logger.trace("> GET {}", commandKey);
                     command.doGet(request, response);
                     logger.trace("< GET {}", commandKey);
                 } else if (request.getMethod().equals("POST")) {
-                    if (!logger.isTraceEnabled()) {
+                    if (!logger.isTraceEnabled() && command.logRequests()) {
                         logger.info("POST {}", request.getPathInfo());
                     }
                     logger.trace("> POST {}", commandKey);

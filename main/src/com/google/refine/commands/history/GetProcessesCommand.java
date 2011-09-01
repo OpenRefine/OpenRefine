@@ -57,4 +57,9 @@ public class GetProcessesCommand extends Command {
             respondException(response, e);
         }
     }
+    
+    @Override
+    public boolean logRequests() {
+        return false;
+    }
 }
