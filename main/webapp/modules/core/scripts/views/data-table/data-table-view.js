@@ -67,9 +67,13 @@ DataTableView.prototype.getSorting = function() {
 };
 
 DataTableView.prototype.resize = function() {
-  var topHeight = this._div.find(".viewpanel-header").outerHeight(true);
+  this._adjustDataTables();
+  
+  var topHeight =
+    this._div.find(".viewpanel-header").outerHeight(true) +
+    this._div.find(".data-header-table-container").outerHeight(true);
   var tableContainerIntendedHeight = this._div.innerHeight() - topHeight;
-
+  
   var tableContainer = this._div.find(".data-table-container").css("display", "block");
   var tableContainerVPadding = tableContainer.outerHeight(true) - tableContainer.height();
   tableContainer.height((tableContainerIntendedHeight - tableContainerVPadding) + "px");
@@ -87,15 +91,18 @@ DataTableView.prototype.render = function() {
 
   var html = $(
     '<div class="viewpanel-header">' +
-    '<div class="viewpanel-rowrecord" bind="rowRecordControls">Show as: ' +
-    '<span bind="modeSelectors"></span>' + 
+      '<div class="viewpanel-rowrecord" bind="rowRecordControls">Show as: ' +
+        '<span bind="modeSelectors"></span>' + 
+      '</div>' +
+      '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
+      '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
+      '<div class="viewpanel-paging" bind="pagingControls"></div>' +
     '</div>' +
-    '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
-    '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
-    '<div class="viewpanel-paging" bind="pagingControls"></div>' +
+    '<div bind="dataHeaderTableContainer" class="data-header-table-container">' +
+      '<table bind="headerTable" class="data-header-table"></table>' +
     '</div>' +
-    '<div bind="dataTableContainer" class="data-table-container" style="display: none;">' +
-      '<table bind="table" class="data-table" cellspacing="0"></table>' +
+    '<div bind="dataTableContainer" class="data-table-container">' +
+      '<table bind="table" class="data-table"></table>' +
     '</div>'
   );
   var elmts = DOM.bind(html);
@@ -125,11 +132,11 @@ DataTableView.prototype.render = function() {
     this._renderSortingControls(elmts.sortingControls);
   }
 
-  this._renderDataTable(elmts.table[0]);
-
+  this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
   this._div.empty().append(html);
+  
   this.resize();
-
+  
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
 };
 
@@ -199,7 +206,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   .appendTo(pageSizeControls);
 };
 
-DataTableView.prototype._renderDataTable = function(table) {
+DataTableView.prototype._renderDataTables = function(table, headerTable) {
   var self = this;
 
   var columns = theProject.columnModel.columns;
@@ -212,18 +219,20 @@ DataTableView.prototype._renderDataTable = function(table) {
 
   var renderColumnKeys = function(keys) {
     if (keys.length > 0) {
-      var tr = table.insertRow(table.rows.length);
-      tr.insertCell(0); // star
-      tr.insertCell(1); // flag
-      tr.insertCell(2); // row index
+      var tr = headerTable.insertRow(headerTable.rows.length);
+      $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
+        var column = columns[c];
         var td = tr.insertCell(tr.cells.length);
-
-        for (var k = 0; k < keys.length; k++) {
-          if (c == keys[k]) {
-            $('<img />').attr("src", "images/down-arrow.png").appendTo(td);
-            break;
+        if (column.name in self._collapsedColumnNames) {
+          $(td).html('&nbsp;');
+        } else {
+          for (var k = 0; k < keys.length; k++) {
+            if (c == keys[k]) {
+              $('<img />').attr("src", "images/down-arrow.png").appendTo(td);
+              break;
+            }
           }
         }
       }
@@ -234,10 +243,8 @@ DataTableView.prototype._renderDataTable = function(table) {
     var nextLayer = [];
 
     if (groups.length > 0) {
-      var tr = table.insertRow(table.rows.length);
-      tr.insertCell(0); // star
-      tr.insertCell(1); // flag
-      tr.insertCell(2); // row index
+      var tr = headerTable.insertRow(headerTable.rows.length);
+      $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
         var foundGroup = false;
@@ -288,21 +295,25 @@ DataTableView.prototype._renderDataTable = function(table) {
    *------------------------------------------------------------
    */
 
-  var trHead = table.insertRow(table.rows.length);
+  var trHead = headerTable.insertRow(headerTable.rows.length);
   DOM.bind(
       $(trHead.insertCell(trHead.cells.length))
       .attr("colspan", "3")
       .addClass("column-header")
-      .html('<div class="column-header-title"><a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">All</span></div>')
+      .html(
+        '<div class="column-header-title">' +
+          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">All</span>' +
+        '</div>'
+      )
   ).dropdownMenu.click(function() {
     self._createMenuForAllColumns(this);
   });
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
     var td = trHead.insertCell(trHead.cells.length);
-    $(td).addClass("column-header");
+    $(td).addClass("column-header").attr('title', column.name);
     if (column.name in self._collapsedColumnNames) {
-      $(td).html("&nbsp;").attr("title", column.name).click(function(evt) {
+      $(td).html("&nbsp;").click(function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
       });
@@ -405,6 +416,63 @@ DataTableView.prototype._renderDataTable = function(table) {
       even = !even;
     }
     renderRow(tr, r, row, even);
+  }
+  
+  $(table.parentNode).bind('scroll', function(evt) {
+    self._adjustDataTableScroll();
+  });
+};
+
+DataTableView.prototype._adjustDataTables = function() {
+  var dataTable = this._div.find('.data-table');
+  var headerTable = this._div.find('.data-header-table');
+  if (dataTable.length == 0 || headerTable.length == 0) {
+    return;
+  }
+  dataTable = dataTable[0];
+  headerTable = headerTable[0];
+  
+  if (dataTable.rows.length == 0) {
+    return;
+  }
+  
+  var dataTr = dataTable.rows[0];
+  var headerTr = headerTable.rows[headerTable.rows.length - 1];
+  
+  var marginColumnWidths =
+    $(dataTr.cells[0]).outerWidth(true) +
+    $(dataTr.cells[1]).outerWidth(true) +
+    $(dataTr.cells[2]).outerWidth(true) -
+    DOM.getHPaddings($(headerTr.cells[0])) + 1;
+  
+  $(headerTable)
+    .find('> tbody > tr > td:first-child')
+    .width('1%')
+    .children()
+      .first()
+      .width(marginColumnWidths);
+  
+  for (var i = 1; i < headerTr.cells.length; i++) {
+    var headerTd = $(headerTr.cells[i]);
+    var dataTd = $(dataTr.cells[i + 2]);
+    var commonWidth = Math.max(
+      Math.min(headerTd.width(), 100),
+      dataTd.width()
+    );
+    headerTd.width('1%').find('> div').width(commonWidth);
+    dataTd.children().first().width(commonWidth);
+  }
+  
+  this._adjustDataTableScroll();
+};
+
+DataTableView.prototype._adjustDataTableScroll = function() {
+  var dataTableContainer = this._div.find('.data-table-container');
+  var headerTableContainer = this._div.find('.data-header-table-container');
+  if (dataTableContainer.length > 0 && headerTableContainer.length > 0) {
+    headerTableContainer
+      .find('> .data-header-table')
+      .css('left', '-' + dataTableContainer[0].scrollLeft + 'px');
   }
 };
 

@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .viewpanel-header {
   position: relative;
-  background: @chrome_secondary;
+  background: @fill_secondary;
   font-size: 1.3em;
   padding: @padding_normal;
   overflow: hidden;
@@ -45,7 +45,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .viewpanel-rowrecord, .viewpanel-pagesize, .viewpanel-sorting {
   position: absolute;
   top: @padding_normal;
-  background: @chrome_secondary;
   padding: 0 10px 0 0;
   }
 
@@ -61,26 +60,46 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-weight: bold
   }
 
-.data-table-container {
+.data-header-table-container {
   border-top: 1px solid @chrome_primary;
+  border-bottom: 2px solid @chrome_primary;
+  background: @fill_primary;
+  overflow: visible;
+  }
+
+.data-header-table {
+  width: 1px;
+  position: relative;
+  }
+  
+.data-table-container {
   overflow: auto;
   }
 
-.data-table {
+.data-header-table, .data-table {
   margin: 0;
   padding: 0;
   font-size: 1.1em;
   border-collapse: collapse;
   }
 
-.data-table td {
+.data-table td, .data-header-table td {
   padding: 2px 5px;
-  border-bottom: 1px dotted #ddd;    
+  }
+.data-table td {
+  border-bottom: 1px dotted #ddd;
   border-right: 1px solid #ddd;
   }
+.data-header-table td {
+  border-bottom: 1px dotted @chrome_primary;
+  border-right: 1px solid @chrome_primary;
+  }
 
+table.data-header-table > tbody > tr > td {
+  overflow: hidden !important;
+  }
 
-table.data-table > tbody > tr.even > td {
+table.data-table > tbody > tr.odd > td {
   background: @fill_secondary;
   }
 
@@ -88,13 +107,12 @@ table.data-table > tbody > tr.contextual > td > div {
   opacity: 0.3;
   }
 
-table.data-table td.column-header {
+table.data-header-table td.column-header {
   vertical-align: top;
   white-space: nowrap;
-  background: #f2f2f2;
   cursor: pointer;
   padding: 4px 6px 4px 4px;
-  border-right: 1px solid #ddd;
+  border-bottom: none;
   font-weight: bold;
   }
 
