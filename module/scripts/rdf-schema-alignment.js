@@ -81,7 +81,7 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
             '<div id="rdf-schema-alignment-tabs-schema">' +
             	'<div class="rdf-scheme-dialog-subheader"><table><tr><td><span style="display:block;width:150px;">Available Prefixes:</span></td><td><div class="rdf-schema-prefixes" bind="rdf_schema_prefixes"></div></td></tr></table></div>' + 
                 '<div class="schema-alignment-dialog-canvas rdf-schema-alignment-dialog-canvas"></div>' +
-                '<div class="rdf-schema-alignment-body-footer"><a bind="add_another_root_node" href="#">Add another root node</a></div>'  +
+                '<div class="rdf-schema-alignment-body-footer"><a bind="add_another_root_node" href="#">Add another root node</a><a bind="_save_skeleton" href="#" style="float:right">Save</a></div>'  +
             '</div>' +
             '<div id="rdf-schema-alignment-tabs-preview" style="display: none;">' +
                 '<div class="rdf-scheme-dialog-subheader">This is a sample <code>Turtle</code> representation of (up-to) the <em>first 10</em> rows</div>' + 
@@ -97,6 +97,22 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
     elmts.editBaseUriLink.click(function(evt){
     	evt.preventDefault();
     	self._editBaseUri($(evt.target));
+    });
+    elmts._save_skeleton.click(function(e){
+    	e.preventDefault();
+    	var schema = self.getJSON();
+    	Refine.postProcess(
+    	        "rdf-extension",
+                "save-rdf-schema",
+                {},
+                { schema: JSON.stringify(schema) },
+                {},
+                {   
+                    onDone: function() {
+                       theProject.overlayModels.rdfSchema = schema;
+                    }
+                }
+            );
     });
     
     elmts.add_another_root_node.click(function(e){
