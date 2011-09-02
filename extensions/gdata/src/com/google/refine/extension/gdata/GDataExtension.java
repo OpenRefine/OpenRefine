@@ -28,7 +28,9 @@
  */
 package com.google.refine.extension.gdata;
 
+import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
+import com.google.gdata.client.spreadsheet.SpreadsheetService;
 
 /**
  * @author Tom Morris <tfmorris@gmail.com>
@@ -45,5 +47,17 @@ abstract public class GDataExtension {
             factory = FeedURLFactory.getDefault();
         }
         return factory;
+    }
+    
+    static public DocsService getDocsService(String token) {
+        DocsService service = new DocsService(SERVICE_APP_NAME);
+        service.setAuthSubToken(token);
+        return service;
+    }
+    
+    static public SpreadsheetService getSpreadsheetService(String token) {
+        SpreadsheetService service = new SpreadsheetService(SERVICE_APP_NAME);
+        service.setAuthSubToken(token);
+        return service;
     }
 }

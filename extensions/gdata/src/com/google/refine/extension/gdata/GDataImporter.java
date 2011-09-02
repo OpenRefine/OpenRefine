@@ -36,6 +36,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.Cell;
@@ -60,6 +61,41 @@ import com.google.refine.util.JSONUtilities;
  * @license New BSD http://www.opensource.org/licenses/bsd-license.php
  */
 public class GDataImporter {
+    static public void parse(
+        String token,
+        Project project,
+        ProjectMetadata metadata,
+        final ImportingJob job,
+        int limit,
+        JSONObject options,
+        List<Exception> exceptions) {
+    
+        String docType = JSONUtilities.getString(options, "docType", null);
+        if ("spreadsheet".equals(docType)) {
+            SpreadsheetService service = GDataExtension.getSpreadsheetService(token);
+            parse(
+                service,
+                job.project,
+                job.metadata,
+                job,
+                limit,
+                options,
+                exceptions
+            );
+        } else if ("table".equals(docType)) {
+            DocsService service = GDataExtension.getDocsService(token);
+            parse(
+                service,
+                job.project,
+                job.metadata,
+                job,
+                limit,
+                options,
+                exceptions
+            );
+        }
+    }
+    
     static public void parse(
         SpreadsheetService service,
         Project project,
@@ -113,7 +149,7 @@ public class GDataImporter {
                 project,
                 metadata,
                 job,
-                new BatchRowReader(job, fileSource, service, worksheetEntry, 20),
+                new WorksheetBatchRowReader(job, fileSource, service, worksheetEntry, 20),
                 fileSource,
                 limit,
                 options,
@@ -129,6 +165,21 @@ public class GDataImporter {
         }
     }
     
+    static public void parse(
+        DocsService service,
+        Project project,
+        ProjectMetadata metadata,
+        final ImportingJob job,
+        int limit,
+        JSONObject options,
+        List<Exception> exceptions) {
+        
+        String docUrlString = JSONUtilities.getString(options, "docUrl", null);
+        if (docUrlString != null) {
+            // TODO[dfhuynh]
+        }
+    }
+    
     static private void setProgress(ImportingJob job, String fileSource, int percent) {
         JSONObject progress = JSONUtilities.getObject(job.config, "progress");
         if (progress == null) {
@@ -139,7 +190,7 @@ public class GDataImporter {
         JSONUtilities.safePut(progress, "percent", percent);
     }
     
-    static private class BatchRowReader implements TableDataReader {
+    static private class WorksheetBatchRowReader implements TableDataReader {
         final ImportingJob job;
         final String fileSource;
         
@@ -153,7 +204,7 @@ public class GDataImporter {
         int batchRowStart = 0; // 0-based
         List<List<Object>> rowsOfCells = null;
         
-        public BatchRowReader(ImportingJob job, String fileSource,
+        public WorksheetBatchRowReader(ImportingJob job, String fileSource,
                 SpreadsheetService service, WorksheetEntry worksheet,
                 int batchSize) {
             this.job = job;
@@ -190,49 +241,50 @@ public class GDataImporter {
                 return null;
             }
         }
-    }
-    
-    static public List<List<Object>> getRowsOfCells(
-        SpreadsheetService service,
-        WorksheetEntry worksheet,
-        int startRow, // 1-based
-        int rowCount
-    ) throws IOException, ServiceException {
-        URL cellFeedUrl = worksheet.getCellFeedUrl();
         
-        int minRow = startRow;
-        int maxRow = Math.min(worksheet.getRowCount(), startRow + rowCount - 1);
-        int cols = worksheet.getColCount();
-        int rows = worksheet.getRowCount();
         
-        CellQuery cellQuery = new CellQuery(cellFeedUrl);
-        cellQuery.setMinimumRow(minRow);
-        cellQuery.setMaximumRow(maxRow);
-        cellQuery.setMaximumCol(cols);
-        cellQuery.setMaxResults(rows * cols);
-        cellQuery.setReturnEmpty(false);
-        
-        CellFeed cellFeed = service.query(cellQuery, CellFeed.class);
-        List<CellEntry> cellEntries = cellFeed.getEntries();
-        
-        List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(rowCount);
-        for (CellEntry cellEntry : cellEntries) {
-            Cell cell = cellEntry.getCell();
-            if (cell != null) {
-                int row = cell.getRow() - startRow;
-                int col = cell.getCol() - 1;
-                
-                while (row >= rowsOfCells.size()) {
-                    rowsOfCells.add(new ArrayList<Object>());
+        List<List<Object>> getRowsOfCells(
+            SpreadsheetService service,
+            WorksheetEntry worksheet,
+            int startRow, // 1-based
+            int rowCount
+        ) throws IOException, ServiceException {
+            URL cellFeedUrl = worksheet.getCellFeedUrl();
+            
+            int minRow = startRow;
+            int maxRow = Math.min(worksheet.getRowCount(), startRow + rowCount - 1);
+            int cols = worksheet.getColCount();
+            int rows = worksheet.getRowCount();
+            
+            CellQuery cellQuery = new CellQuery(cellFeedUrl);
+            cellQuery.setMinimumRow(minRow);
+            cellQuery.setMaximumRow(maxRow);
+            cellQuery.setMaximumCol(cols);
+            cellQuery.setMaxResults(rows * cols);
+            cellQuery.setReturnEmpty(false);
+            
+            CellFeed cellFeed = service.query(cellQuery, CellFeed.class);
+            List<CellEntry> cellEntries = cellFeed.getEntries();
+            
+            List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(rowCount);
+            for (CellEntry cellEntry : cellEntries) {
+                Cell cell = cellEntry.getCell();
+                if (cell != null) {
+                    int row = cell.getRow() - startRow;
+                    int col = cell.getCol() - 1;
+                    
+                    while (row >= rowsOfCells.size()) {
+                        rowsOfCells.add(new ArrayList<Object>());
+                    }
+                    List<Object> rowOfCells = rowsOfCells.get(row);
+                    
+                    while (col >= rowOfCells.size()) {
+                        rowOfCells.add(null);
+                    }
+                    rowOfCells.set(col, cell.getValue());
                 }
-                List<Object> rowOfCells = rowsOfCells.get(row);
-                
-                while (col >= rowOfCells.size()) {
-                    rowOfCells.add(null);
-                }
-                rowOfCells.set(col, cell.getValue());
             }
+            return rowsOfCells;
         }
-        return rowsOfCells;
     }
 }

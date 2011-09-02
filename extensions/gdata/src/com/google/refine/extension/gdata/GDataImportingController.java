@@ -49,12 +49,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.gdata.client.Query;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.data.Category;
 import com.google.gdata.data.DateTime;
 import com.google.gdata.data.Person;
+import com.google.gdata.data.docs.DocumentListEntry;
+import com.google.gdata.data.docs.DocumentListFeed;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
+import com.google.gdata.data.spreadsheet.TableEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
@@ -120,9 +125,9 @@ public class GDataImportingController implements ImportingController {
             writer.array();
             
             try {
-                DocsService service = getDocsService(token);
+                DocsService service = GDataExtension.getDocsService(token);
                 listSpreadsheets(service, writer);
-                //listDocumentsOfType(service, writer, "http://schemas.google.com/docs/2007#???");
+                listDocumentsOfType(service, writer, "http://schemas.google.com/docs/2007#table");
             } catch (ServiceException e) {
                 // TODO: just ignore?
             }
@@ -164,7 +169,6 @@ public class GDataImportingController implements ImportingController {
         }
     }
     
-    /*
     private void listDocumentsOfType(DocsService service, JSONWriter writer, String type)
             throws IOException, ServiceException, JSONException {
         URL feedUrl = new URL("https://docs.google.com/feeds/default/private/full");
@@ -197,7 +201,6 @@ public class GDataImportingController implements ImportingController {
             writer.endObject();
         }
     }
-    */
     
     private void doInitializeParserUI(
         HttpServletRequest request, HttpServletResponse response, Properties parameters)
@@ -228,7 +231,7 @@ public class GDataImportingController implements ImportingController {
             JSONUtilities.safePut(options, "worksheets", worksheets);
             
             if ("spreadsheet".equals(type)) {
-                SpreadsheetService spreadsheetService = getSpreadsheetService(token);
+                SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
                 SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(url, SpreadsheetEntry.class);
                 for (WorksheetEntry worksheetEntry : spreadsheetEntry.getWorksheets()) {
                     JSONObject worksheetO = new JSONObject();
@@ -238,6 +241,16 @@ public class GDataImportingController implements ImportingController {
                     
                     JSONUtilities.append(worksheets, worksheetO);
                 }
+            } else if ("table".equals(type)) {
+                DocsService docsService = GDataExtension.getDocsService(token);
+                TableEntry tableEntry = docsService.getEntry(url, TableEntry.class);
+                
+                JSONObject worksheetO = new JSONObject();
+                JSONUtilities.safePut(worksheetO, "name", tableEntry.getTitle().getPlainText());
+                JSONUtilities.safePut(worksheetO, "rows", -1);
+                JSONUtilities.safePut(worksheetO, "link", tableEntry.getSelfLink().getHref());
+                
+                JSONUtilities.append(worksheets, worksheetO);
             }
             /* TODO: else */
             
@@ -258,7 +271,6 @@ public class GDataImportingController implements ImportingController {
             return;
         }
         
-        SpreadsheetService service = getSpreadsheetService(token);
 
         long jobID = Long.parseLong(parameters.getProperty("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
@@ -279,7 +291,7 @@ public class GDataImportingController implements ImportingController {
             job.prepareNewProject();
             
             GDataImporter.parse(
-                service,
+                token,
                 job.project,
                 job.metadata,
                 job,
@@ -322,20 +334,19 @@ public class GDataImportingController implements ImportingController {
     private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
         throws ServletException, IOException {
     
-        String token = TokenCookie.getToken(request);
+        final String token = TokenCookie.getToken(request);
         if (token == null) {
             HttpUtilities.respond(response, "error", "Not authorized");
             return;
         }
-        final SpreadsheetService service = getSpreadsheetService(token);
-
+        
         long jobID = Long.parseLong(parameters.getProperty("jobID"));
         final ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             HttpUtilities.respond(response, "error", "No such import job");
             return;
         }
-    
+        
         try {
             final JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
                 request.getParameter("options"));
@@ -353,7 +364,7 @@ public class GDataImportingController implements ImportingController {
                     pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
                     
                     GDataImporter.parse(
-                        service,
+                        token,
                         project,
                         pm,
                         job,
@@ -377,17 +388,5 @@ public class GDataImportingController implements ImportingController {
         } catch (JSONException e) {
             throw new ServletException(e);
         }
-    }
-    
-    private DocsService getDocsService(String token) {
-        DocsService service = new DocsService(GDataExtension.SERVICE_APP_NAME);
-        service.setAuthSubToken(token);
-        return service;
-    }
-    
-    private SpreadsheetService getSpreadsheetService(String token) {
-        SpreadsheetService service = new SpreadsheetService(GDataExtension.SERVICE_APP_NAME);
-        service.setAuthSubToken(token);
-        return service;
     }
 }

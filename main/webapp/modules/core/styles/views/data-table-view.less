@@ -107,13 +107,19 @@ table.data-table > tbody > tr.contextual > td > div {
   opacity: 0.3;
   }
 
-table.data-header-table td.column-header {
+table.data-header-table td.column-header, table.data-table td.column-header {
   vertical-align: top;
   white-space: nowrap;
   cursor: pointer;
   padding: 4px 6px 4px 4px;
   border-bottom: none;
   font-weight: bold;
+  }
+
+/* For the preview in the importing stage */
+table.data-table td.column-header {
+  background: @fill_primary;
+  border-bottom: 2px solid @chrome_primary;
   }
 
 .column-header-name {
