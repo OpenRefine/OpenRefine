@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2011. Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.Function;
@@ -61,7 +62,7 @@ public class ToDate implements Function {
             return ((Calendar) arg0).getTime();
         } else if (!(arg0 instanceof String)) {
             // ignore cell values that aren't strings
-            return null;
+            return new EvalError("Not a String - cannot parse to date");
         }
         String o1 = (String) arg0;
 
@@ -74,7 +75,7 @@ public class ToDate implements Function {
             try {
                 return CalendarParser.parse( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
             } catch (CalendarParserException e) {
-                // do something about 
+                return new EvalError("Cannot parse to date");
             }
         }
 
@@ -91,7 +92,7 @@ public class ToDate implements Function {
                 try {
                     date = formatter.parse(o1);
                 } catch (java.text.ParseException e) {
-                    // ignore
+                    return new EvalError("Cannot parse to date");
                 }
                 if (date != null) {
                     GregorianCalendar c = new GregorianCalendar();
