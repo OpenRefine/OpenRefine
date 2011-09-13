@@ -90,9 +90,11 @@ public class RefineServlet extends Butterfly {
             try {
                 ProjectManager.singleton.save(false); // quick, potentially incomplete save
             } finally {
-                _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
-                // we don't use scheduleAtFixedRate because that might result in
-                // bunched up events when the computer is put in sleep mode
+                if (_timer != null) {
+                    _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
+                    // we don't use scheduleAtFixedRate because that might result in
+                    // bunched up events when the computer is put in sleep mode
+                }
             }
         }
     }
