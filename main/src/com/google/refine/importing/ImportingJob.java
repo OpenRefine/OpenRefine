@@ -52,11 +52,13 @@ public class ImportingJob implements Jsonizable {
     final public long id;
     final public File dir; // Temporary directory where the data about this job is stored
     
-    public long lastTouched;
     public JSONObject config = null;
     
     public Project project;
     public ProjectMetadata metadata;
+    
+    public long lastTouched;
+    public boolean updating;
     public boolean canceled;
     
     public ImportingJob(long id, File dir) {

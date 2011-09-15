@@ -923,6 +923,8 @@ public class ImportingUtilities {
                 JSONUtilities.safePut(job.config, "errors",
                     DefaultImportingController.convertErrorsToJsonArray(exceptions));
             }
+            job.touch();
+            job.updating = false;
         }
     }
     

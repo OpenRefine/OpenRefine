@@ -176,7 +176,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   
   this._parsingPanelElmts.startOverButton.click(function() {
     // explicitly cancel the import job
-    $.post("/command/core/cancel-importing-job?" + $.param({ "jobID": self._jobID }));
+    Refine.CreateProjectUI.cancelImportinJob(self._jobID);
     
     delete self._doc;
     delete self._jobID;
@@ -279,7 +279,8 @@ Refine.GDataImportingController.prototype._updatePreview = function() {
         });
       } else {
         self._parsingPanelElmts.progressPanel.hide();
-        alert('Errors:\n' + Refine.CreateProjectUI.composeErrorMessage(job));
+        alert('Errors:\n' + 
+          (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
       }
     },
     "json"
@@ -338,38 +339,43 @@ Refine.GDataImportingController.prototype._createProject = function() {
     {
       "options" : JSON.stringify(options)
     },
-    function() {},
+    function(o) {
+      if (o.status == 'error') {
+        alert(o.message);
+      } else {
+        var start = new Date();
+        var timerID = window.setInterval(
+          function() {
+            self._createProjectUI.pollImportJob(
+                start,
+                self._jobID,
+                timerID,
+                function(job) {
+                  return "projectID" in job.config;
+                },
+                function(jobID, job) {
+                  window.clearInterval(timerID);
+                  Refine.CreateProjectUI.cancelImportinJob(jobID);
+                  document.location = "project?project=" + job.config.projectID;
+                },
+                function(job) {
+                  alert(Refine.CreateProjectUI.composeErrorMessage(job));
+                }
+            );
+          },
+          1000
+        );
+        self._createProjectUI.showImportProgressPanel("Creating project ...", function() {
+          // stop the timed polling
+          window.clearInterval(timerID);
+
+          // explicitly cancel the import job
+          $.post("/command/core/cancel-importing-job?" + $.param({ "jobID": jobID }));
+
+          self._createProjectUI.showSourceSelectionPanel();
+        });
+      }
+    },
     "json"
   );
-  
-  var start = new Date();
-  var timerID = window.setInterval(
-    function() {
-      self._createProjectUI.pollImportJob(
-          start,
-          self._jobID,
-          timerID,
-          function(job) {
-            return "projectID" in job.config;
-          },
-          function(jobID, job) {
-            window.clearInterval(timerID);
-            document.location = "project?project=" + job.config.projectID;
-          },
-          function(job) {
-            alert(Refine.CreateProjectUI.composeErrorMessage(job));
-          }
-      );
-    },
-    1000
-  );
-  this._createProjectUI.showImportProgressPanel("Creating project ...", function() {
-    // stop the timed polling
-    window.clearInterval(timerID);
-
-    // explicitly cancel the import job
-    $.post("/command/core/cancel-importing-job?" + $.param({ "jobID": jobID }));
-
-    self._createProjectUI.showSourceSelectionPanel();
-  });
 };

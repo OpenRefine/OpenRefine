@@ -50,6 +50,10 @@ Refine.DefaultImportingController.sources = [];
 Refine.DefaultImportingController.parserUIs = {};
 
 Refine.DefaultImportingController.prototype._startOver = function() {
+  if (this._jobID) {
+    Refine.CreateProjectUI.cancelImportinJob(this._jobID);
+  }
+  
   this._disposeFileSelectionPanel();
   this._disposeFileSelectionPanel();
 
@@ -117,7 +121,7 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
           window.clearInterval(timerID);
 
           // explicitly cancel the import job
-          $.post("/command/core/cancel-importing-job?" + $.param({ "jobID": jobID }));
+          Refine.CreateProjectUI.cancelImportinJob(jobID);
 
           self._createProjectUI.showSourceSelectionPanel();
         });
@@ -206,7 +210,13 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
       "format" : this._format,
       "options" : JSON.stringify(options)
     },
-    callback,
+    function(o) {
+      if (o.status == 'error') {
+        alert(o.message);
+      } else {
+        callback(o);
+      }
+    },
     "json"
   );
 };
@@ -265,7 +275,12 @@ Refine.DefaultImportingController.prototype._createProject = function() {
         "format" : this._format,
         "options" : JSON.stringify(options)
       },
-      function() {
+      function(o) {
+        if (o.status == 'error') {
+          alert(o.message);
+          return;
+        }
+        
         var start = new Date();
         var timerID = window.setInterval(
           function() {
@@ -277,6 +292,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
                   return "projectID" in job.config;
                 },
                 function(jobID, job) {
+                  Refine.CreateProjectUI.cancelImportinJob(jobID);
                   document.location = "project?project=" + job.config.projectID;
                 },
                 function(job) {

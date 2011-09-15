@@ -42,10 +42,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.RefineServlet;
 
@@ -74,6 +78,8 @@ public class ImportingManager {
         }
     }
     
+    final static Logger logger = LoggerFactory.getLogger("importing");
+    
     static private RefineServlet servlet;
     static private File importDir;
     final static private Map<Long, ImportingJob> jobs = new HashMap<Long, ImportingJob>();
@@ -96,8 +102,30 @@ public class ImportingManager {
     // Mapping from controller name to controller
     final static public Map<String, ImportingController> controllers = new HashMap<String, ImportingController>();
     
+    // timer for periodically deleting stale importing jobs
+    static private Timer _timer;
+
+    final static private long s_timerPeriod = 1000 * 60 * 10; // 10 minutes
+    final static private long s_stalePeriod = 1000 * 60 * 60; // 60 minutes
+    
+    static private class CleaningTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            try {
+                cleanUpStaleJobs();
+            } finally {
+                _timer.schedule(new CleaningTimerTask(), s_timerPeriod);
+                // we don't use scheduleAtFixedRate because that might result in
+                // bunched up events when the computer is put in sleep mode
+            }
+        }
+    }
+    
     static public void initialize(RefineServlet servlet) {
         ImportingManager.servlet = servlet;
+        
+        _timer = new Timer("autosave");
+        _timer.schedule(new CleaningTimerTask(), s_timerPeriod);
     }
     
     static public void registerFormat(String format, String label) {
@@ -252,6 +280,19 @@ public class ImportingManager {
             return fileNameFormat;
         } else {
             return mimeTypeFormat;
+        }
+    }
+    
+    static private void cleanUpStaleJobs() {
+        long now = System.currentTimeMillis();
+        for (Long id : new HashSet<Long>(jobs.keySet())) {
+            ImportingJob job = jobs.get(id);
+            if (job != null && !job.updating && now - job.lastTouched > s_stalePeriod) {
+                job.dispose();
+                jobs.remove(id);
+                
+                logger.info("Disposed " + id);
+            }
         }
     }
 }

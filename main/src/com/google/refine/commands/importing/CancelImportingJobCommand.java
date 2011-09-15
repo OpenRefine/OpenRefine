@@ -55,6 +55,9 @@ public class CancelImportingJobCommand extends Command {
             HttpUtilities.respond(response, "error", "No such import job");
         } else {
             job.canceled = true;
+            
+            ImportingManager.disposeJob(jobID);
+            
             HttpUtilities.respond(response, "ok", "Job canceled");
         }
     }

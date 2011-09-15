@@ -258,7 +258,8 @@ public class GDataImportingController implements ImportingController {
             HttpUtilities.respond(response, "error", "No such import job");
             return;
         }
-    
+        
+        job.updating = true;
         try {
             // This is for setting progress during the parsing process.
             job.config = new JSONObject();
@@ -306,6 +307,9 @@ public class GDataImportingController implements ImportingController {
 
         } catch (JSONException e) {
             throw new ServletException(e);
+        } finally {
+            job.touch();
+            job.updating = false;
         }
     }
     
@@ -325,6 +329,7 @@ public class GDataImportingController implements ImportingController {
             return;
         }
         
+        job.updating = true;
         try {
             final JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
                 request.getParameter("options"));
@@ -364,6 +369,9 @@ public class GDataImportingController implements ImportingController {
                             JSONUtilities.safePut(job.config, "state", "created-project");
                             JSONUtilities.safePut(job.config, "projectID", project.id);
                         }
+                        
+                        job.touch();
+                        job.updating = false;
                     }
                 }
             }.start();

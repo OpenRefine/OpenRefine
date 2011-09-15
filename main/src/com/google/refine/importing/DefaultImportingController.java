@@ -107,7 +107,8 @@ public class DefaultImportingController implements ImportingController {
             HttpUtilities.respond(response, "error", "No such import job");
             return;
         }
-
+        
+        job.updating = true;
         try {
             JSONObject config = job.getOrCreateDefaultConfig();
             if (!("new".equals(config.getString("state")))) {
@@ -119,6 +120,9 @@ public class DefaultImportingController implements ImportingController {
                 request, response, parameters, job, config);
         } catch (JSONException e) {
             throw new ServletException(e);
+        } finally {
+            job.touch();
+            job.updating = false;
         }
     }
     
@@ -131,7 +135,8 @@ public class DefaultImportingController implements ImportingController {
             HttpUtilities.respond(response, "error", "No such import job");
             return;
         }
-    
+        
+        job.updating = true;
         try {
             JSONObject config = job.getOrCreateDefaultConfig();
             if (!("ready".equals(config.getString("state")))) {
@@ -147,6 +152,9 @@ public class DefaultImportingController implements ImportingController {
             replyWithJobData(request, response, job);
         } catch (JSONException e) {
             throw new ServletException(e);
+        } finally {
+            job.touch();
+            job.updating = false;
         }
     }
     
@@ -159,7 +167,8 @@ public class DefaultImportingController implements ImportingController {
             HttpUtilities.respond(response, "error", "No such import job");
             return;
         }
-    
+        
+        job.updating = true;
         try {
             JSONObject config = job.getOrCreateDefaultConfig();
             if (!("ready".equals(config.getString("state")))) {
@@ -199,6 +208,9 @@ public class DefaultImportingController implements ImportingController {
             }
         } catch (JSONException e) {
             throw new ServletException(e);
+        } finally {
+            job.touch();
+            job.updating = false;
         }
     }
     
@@ -236,7 +248,9 @@ public class DefaultImportingController implements ImportingController {
             HttpUtilities.respond(response, "error", "No such import job");
             return;
         }
-    
+        
+        job.updating = true;
+        job.touch();
         try {
             JSONObject config = job.getOrCreateDefaultConfig();
             if (!("ready".equals(config.getString("state")))) {
