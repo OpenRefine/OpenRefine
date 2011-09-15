@@ -28,9 +28,23 @@
  */
 package com.google.refine.extension.gdata;
 
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
+
+import com.google.gdata.client.GoogleService;
+import com.google.gdata.client.Service.GDataRequest;
+import com.google.gdata.client.Service.GDataRequest.RequestType;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.util.ContentType;
+import com.google.gdata.util.ServiceException;
 
 /**
  * @author Tom Morris <tfmorris@gmail.com>
@@ -59,5 +73,55 @@ abstract public class GDataExtension {
         SpreadsheetService service = new SpreadsheetService(SERVICE_APP_NAME);
         service.setAuthSubToken(token);
         return service;
+    }
+    
+    static public GoogleService getFusionTablesGoogleService(String token) {
+        GoogleService service = new GoogleService("fusiontables", SERVICE_APP_NAME);
+        service.setAuthSubToken(token);
+        return service;
+    }
+
+    final static private String FUSION_TABLES_SERVICE_URL =
+        "https://www.google.com/fusiontables/api/query";
+
+    final static private Pattern CSV_VALUE_PATTERN =
+        Pattern.compile("([^,\\r\\n\"]*|\"(([^\"]*\"\")*[^\"]*)\")(,|\\r?\\n)");
+    
+    static public List<List<String>> runFusionTablesSelect(GoogleService service, String selectQuery)
+            throws IOException, ServiceException {
+        
+        URL url = new URL(FUSION_TABLES_SERVICE_URL + "?sql=" +
+                URLEncoder.encode(selectQuery, "UTF-8"));
+        GDataRequest request = service.getRequestFactory().getRequest(
+                RequestType.QUERY, url, ContentType.TEXT_PLAIN);
+        
+        request.execute();
+        
+        List<List<String>> rows = new ArrayList<List<String>>();
+        List<String> row = null;
+        
+        Scanner scanner = new Scanner(request.getResponseStream(), "UTF-8");
+        while (scanner.hasNextLine()) {
+            scanner.findWithinHorizon(CSV_VALUE_PATTERN, 0);
+            MatchResult match = scanner.match();
+            String quotedString = match.group(2);
+            String decoded = quotedString == null ? match.group(1) : quotedString.replaceAll("\"\"", "\"");
+            
+            if (row == null) {
+                row = new ArrayList<String>();
+            }
+            row.add(decoded);
+            
+            if (!match.group(4).equals(",")) {
+                if (row != null) {
+                    rows.add(row);
+                    row = null;
+                }
+            }
+        }
+        if (row != null) {
+            rows.add(row);
+        }
+        return rows;
     }
 }

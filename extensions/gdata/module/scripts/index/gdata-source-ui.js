@@ -137,17 +137,15 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
     td = tr.insertCell(tr.cells.length);
     $('<span>')
     .addClass('gdata-doc-authors')
-    .text(doc.authors.join(', '))
+    .text((doc.authors) ? doc.authors.join(', ') : '<unknown>')
     .appendTo(td);
     
     td = tr.insertCell(tr.cells.length);
-    if (doc.updated) {
-      $('<span>')
-      .addClass('gdata-doc-date')
-      .text(formatRelativeDate(doc.updated))
-      .attr('title', doc.updated)
-      .appendTo(td);
-    }
+    $('<span>')
+    .addClass('gdata-doc-date')
+    .text((doc.updated) ? formatRelativeDate(doc.updated) : '<unknown>')
+    .attr('title', (doc.updated) ? doc.updated : '<unknown>')
+    .appendTo(td);
   };
   
   var docs = o.documents;

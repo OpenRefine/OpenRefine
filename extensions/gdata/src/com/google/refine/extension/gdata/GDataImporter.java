@@ -36,7 +36,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.google.gdata.client.docs.DocsService;
+import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.Cell;
@@ -75,19 +75,19 @@ public class GDataImporter {
             SpreadsheetService service = GDataExtension.getSpreadsheetService(token);
             parse(
                 service,
-                job.project,
-                job.metadata,
+                project,
+                metadata,
                 job,
                 limit,
                 options,
                 exceptions
             );
         } else if ("table".equals(docType)) {
-            DocsService service = GDataExtension.getDocsService(token);
+            GoogleService service = GDataExtension.getFusionTablesGoogleService(token);
             parse(
                 service,
-                job.project,
-                job.metadata,
+                project,
+                metadata,
                 job,
                 limit,
                 options,
@@ -162,21 +162,6 @@ public class GDataImporter {
         } catch (ServiceException e) {
             e.printStackTrace();
             exceptions.add(e);
-        }
-    }
-    
-    static public void parse(
-        DocsService service,
-        Project project,
-        ProjectMetadata metadata,
-        final ImportingJob job,
-        int limit,
-        JSONObject options,
-        List<Exception> exceptions) {
-        
-        String docUrlString = JSONUtilities.getString(options, "docUrl", null);
-        if (docUrlString != null) {
-            // TODO[dfhuynh]
         }
     }
     
@@ -284,6 +269,212 @@ public class GDataImporter {
                     rowOfCells.set(col, cell.getValue());
                 }
             }
+            return rowsOfCells;
+        }
+    }
+    
+    static public void parse(
+            GoogleService service,
+            Project project,
+            ProjectMetadata metadata,
+            final ImportingJob job,
+            int limit,
+            JSONObject options,
+            List<Exception> exceptions) {
+        
+        String docUrlString = JSONUtilities.getString(options, "docUrl", null);
+        if (docUrlString == null) {
+            return;
+        }
+        int equal = docUrlString.lastIndexOf('=');
+        if (equal < 0) {
+            return;
+        }
+        
+        String id = docUrlString.substring(equal + 1);
+        
+        try {
+            List<FTColumnData> columns = new ArrayList<GDataImporter.FTColumnData>();
+            List<List<String>> rows = GDataExtension.runFusionTablesSelect(service, "DESCRIBE " + id);
+            if (rows.size() > 1) {
+                for (int i = 1; i < rows.size(); i++) {
+                    List<String> row = rows.get(i);
+                    if (row.size() >= 2) {
+                        FTColumnData cd = new FTColumnData();
+                        cd.name = row.get(1);
+                        cd.type = FTColumnType.STRING;
+                        
+                        if (row.size() > 2) {
+                            String type = row.get(2).toLowerCase();
+                            if (type.equals("number")) {
+                                cd.type = FTColumnType.NUMBER;
+                            } else if (type.equals("datetime")) {
+                                cd.type = FTColumnType.DATETIME;
+                            } else if (type.equals("location")) {
+                                cd.type = FTColumnType.LOCATION;
+                            }
+                        }
+                        columns.add(cd);
+                    }
+                }
+                
+                setProgress(job, docUrlString, -1);
+                
+                // Force these options for the next call because each fusion table
+                // is strictly structured with a single line of headers.
+                JSONUtilities.safePut(options, "ignoreLines", 0); // number of blank lines at the beginning to ignore
+                JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
+                
+                TabularImportingParserBase.readTable(
+                    project,
+                    metadata,
+                    job,
+                    new FusionTableBatchRowReader(job, docUrlString, service, id, columns, 100),
+                    docUrlString,
+                    limit,
+                    options,
+                    exceptions
+                );
+                setProgress(job, docUrlString, 100);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            exceptions.add(e);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+    }
+    
+    static private enum FTColumnType {
+        STRING,
+        NUMBER,
+        DATETIME,
+        LOCATION
+    }
+    
+    final static private class FTColumnData {
+        String name;
+        FTColumnType type;
+    }
+    
+    static private class FusionTableBatchRowReader implements TableDataReader {
+        final ImportingJob job;
+        final String fileSource;
+        
+        final GoogleService service;
+        final List<FTColumnData> columns;
+        final int batchSize;
+        
+        final String baseQuery;
+        
+        int nextRow = 0; // 0-based
+        int batchRowStart = 0; // 0-based
+        boolean end = false;
+        List<List<Object>> rowsOfCells = null;
+        boolean usedHeaders = false;
+        
+        public FusionTableBatchRowReader(ImportingJob job, String fileSource,
+                GoogleService service, String tableId, List<FTColumnData> columns,
+                int batchSize) {
+            this.job = job;
+            this.fileSource = fileSource;
+            this.service = service;
+            this.columns = columns;
+            this.batchSize = batchSize;
+            
+            StringBuffer sb = new StringBuffer();
+            sb.append("SELECT ");
+            
+            boolean first = true;
+            for (FTColumnData cd : columns) {
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append(",");
+                }
+                sb.append("'");
+                sb.append(cd.name);
+                sb.append("'");
+            }
+            sb.append(" FROM ");
+            sb.append(tableId);
+            
+            baseQuery = sb.toString();
+        }
+        
+        @Override
+        public List<Object> getNextRowOfCells() throws IOException {
+            if (!usedHeaders) {
+                List<Object> row = new ArrayList<Object>(columns.size());
+                for (FTColumnData cd : columns) {
+                    row.add(cd.name);
+                }
+                usedHeaders = true;
+                return row;
+            }
+            
+            if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && !end)) {
+                int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
+                try {
+                    rowsOfCells = getRowsOfCells(newBatchRowStart);
+                    batchRowStart = newBatchRowStart;
+                    
+                    setProgress(job, fileSource, -1 /* batchRowStart * 100 / totalRows */);
+                } catch (ServiceException e) {
+                    throw new IOException(e);
+                }
+            }
+            
+            if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
+                return rowsOfCells.get(nextRow++ - batchRowStart);
+            } else {
+                return null;
+            }
+        }
+        
+        
+        private List<List<Object>> getRowsOfCells(int startRow) throws IOException, ServiceException {
+            List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
+            
+            String query = baseQuery + " OFFSET " + startRow + " LIMIT " + batchSize;
+            
+            List<List<String>> rows = GDataExtension.runFusionTablesSelect(service, query);
+            if (rows.size() > 1) {
+                for (int i = 1; i < rows.size(); i++) {
+                    List<String> row = rows.get(i);
+                    List<Object> rowOfCells = new ArrayList<Object>(row.size());
+                    for (int j = 0; j < row.size() && j < columns.size(); j++) {
+                        String text = row.get(j);
+                        if (text.isEmpty()) {
+                            rowOfCells.add(null);
+                        } else {
+                            FTColumnData cd = columns.get(j);
+                            if (cd.type == FTColumnType.NUMBER) {
+                                try {
+                                    rowOfCells.add(Long.parseLong(text));
+                                    continue;
+                                } catch (NumberFormatException e) {
+                                    // ignore
+                                }
+                                try {
+                                    double d = Double.parseDouble(text);
+                                    if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                                        rowOfCells.add(d);
+                                        continue;
+                                    }
+                                } catch (NumberFormatException e) {
+                                    // ignore
+                                }
+                            }
+                            
+                            rowOfCells.add(text);
+                        }
+                    }
+                    rowsOfCells.add(rowOfCells);
+                }
+            }
+            end = rows.size() < batchSize + 1;
             return rowsOfCells;
         }
     }

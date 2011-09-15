@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importing;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
@@ -173,7 +175,28 @@ public class DefaultImportingController implements ImportingController {
             
             ImportingUtilities.previewParse(job, format, optionObj, exceptions);
             
-            HttpUtilities.respond(response, "ok", "done");
+            Writer w = response.getWriter();
+            JSONWriter writer = new JSONWriter(w);
+            try {
+                writer.object();
+                if (exceptions.size() == 0) {
+                    job.project.update(); // update all internal models, indexes, caches, etc.
+                    
+                    writer.key("status"); writer.value("ok");
+                } else {
+                    writer.key("status"); writer.value("error");
+                    writer.key("errors");
+                    writer.array();
+                    writeErrors(writer, exceptions);
+                    writer.endArray();
+                }
+                writer.endObject();
+            } catch (JSONException e) {
+                throw new ServletException(e);
+            } finally {
+                w.flush();
+                w.close();
+            }
         } catch (JSONException e) {
             throw new ServletException(e);
         }
@@ -252,4 +275,33 @@ public class DefaultImportingController implements ImportingController {
             w.close();
         }
     }
+    
+    static public void writeErrors(JSONWriter writer, List<Exception> exceptions) throws JSONException {
+        for (Exception e : exceptions) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            
+            writer.object();
+            writer.key("message");
+            writer.value(e.getLocalizedMessage());
+            writer.key("stack");
+            writer.value(sw.toString());
+            writer.endObject();
+        }
+    }
+    
+    static public JSONArray convertErrorsToJsonArray(List<Exception> exceptions) {
+        JSONArray a = new JSONArray();
+        for (Exception e : exceptions) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            
+            JSONObject o = new JSONObject();
+            JSONUtilities.safePut(o, "message", e.getLocalizedMessage());
+            JSONUtilities.safePut(o, "stack", sw.toString());
+            JSONUtilities.append(a, o);
+        }
+        return a;
+    }
+
 }

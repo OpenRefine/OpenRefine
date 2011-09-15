@@ -911,12 +911,18 @@ public class ImportingUtilities {
         );
         
         if (!job.canceled) {
-            project.update(); // update all internal models, indexes, caches, etc.
-            
-            ProjectManager.singleton.registerProject(project, pm);
-            
-            JSONUtilities.safePut(job.config, "projectID", project.id);
-            JSONUtilities.safePut(job.config, "state", "created-project");
+            if (exceptions.size() == 0) {
+                project.update(); // update all internal models, indexes, caches, etc.
+                
+                ProjectManager.singleton.registerProject(project, pm);
+                
+                JSONUtilities.safePut(job.config, "projectID", project.id);
+                JSONUtilities.safePut(job.config, "state", "created-project");
+            } else {
+                JSONUtilities.safePut(job.config, "state", "error");
+                JSONUtilities.safePut(job.config, "errors",
+                    DefaultImportingController.convertErrorsToJsonArray(exceptions));
+            }
         }
     }
     

@@ -49,17 +49,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.google.gdata.client.Query;
+import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.Category;
 import com.google.gdata.data.DateTime;
 import com.google.gdata.data.Person;
-import com.google.gdata.data.docs.DocumentListEntry;
-import com.google.gdata.data.docs.DocumentListFeed;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
-import com.google.gdata.data.spreadsheet.TableEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
@@ -67,6 +63,7 @@ import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.HttpUtilities;
+import com.google.refine.importing.DefaultImportingController;
 import com.google.refine.importing.ImportingController;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
@@ -125,11 +122,10 @@ public class GDataImportingController implements ImportingController {
             writer.array();
             
             try {
-                DocsService service = GDataExtension.getDocsService(token);
-                listSpreadsheets(service, writer);
-                listDocumentsOfType(service, writer, "http://schemas.google.com/docs/2007#table");
+                listSpreadsheets(GDataExtension.getDocsService(token), writer);
+                listFusionTables(GDataExtension.getFusionTablesGoogleService(token), writer);
             } catch (ServiceException e) {
-                // TODO: just ignore?
+                e.printStackTrace();
             }
             
             writer.endArray();
@@ -169,36 +165,27 @@ public class GDataImportingController implements ImportingController {
         }
     }
     
-    private void listDocumentsOfType(DocsService service, JSONWriter writer, String type)
-            throws IOException, ServiceException, JSONException {
-        URL feedUrl = new URL("https://docs.google.com/feeds/default/private/full");
+    private void listFusionTables(GoogleService service, JSONWriter writer)
+        throws IOException, ServiceException, JSONException {
         
-        Query query = new Query(feedUrl);
-        query.addCategoryFilter(
-            new Query.CategoryFilter(
-                new Category("http://schemas.google.com/g/2005#kind", type)));
-        
-        DocumentListFeed feed = service.query(query, DocumentListFeed.class);
-        for (DocumentListEntry entry : feed.getEntries()) {
-            writer.object();
-            writer.key("docId"); writer.value(entry.getId());
-            writer.key("docLink"); writer.value(entry.getHtmlLink().getHref());
-            writer.key("docSelfLink"); writer.value(entry.getSelfLink().getHref());
-            writer.key("title"); writer.value(entry.getTitle().getPlainText());
-            writer.key("type"); writer.value(entry.getType());
-            
-            DateTime updated = entry.getUpdated();
-            if (updated != null) {
-                writer.key("updated"); writer.value(updated.toStringRfc822());
+        List<List<String>> rows = GDataExtension.runFusionTablesSelect(service, "SHOW TABLES");
+        if (rows.size() > 1) { // excluding headers
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                if (row.size() >= 2) {
+                    String id = row.get(0);
+                    String name = row.get(1);
+                    String link = "https://www.google.com/fusiontables/DataSource?dsrcid=" + id;
+                    
+                    writer.object();
+                    writer.key("docId"); writer.value(id);
+                    writer.key("docLink"); writer.value(link);
+                    writer.key("docSelfLink"); writer.value(link);
+                    writer.key("title"); writer.value(name);
+                    writer.key("type"); writer.value("table");
+                    writer.endObject();
+                }
             }
-            
-            writer.key("authors"); writer.array();
-            for (Person person : entry.getAuthors()) {
-                writer.value(person.getName());
-            }
-            writer.endArray();
-            
-            writer.endObject();
         }
     }
     
@@ -221,16 +208,17 @@ public class GDataImportingController implements ImportingController {
             JSONUtilities.safePut(result, "status", "ok");
             JSONUtilities.safePut(result, "options", options);
             
-            JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
-            JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
             JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
             JSONUtilities.safePut(options, "storeBlankRows", true);
             JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
             
-            JSONArray worksheets = new JSONArray();
-            JSONUtilities.safePut(options, "worksheets", worksheets);
-            
             if ("spreadsheet".equals(type)) {
+                JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
+                JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
+                
+                JSONArray worksheets = new JSONArray();
+                JSONUtilities.safePut(options, "worksheets", worksheets);
+                
                 SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
                 SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(url, SpreadsheetEntry.class);
                 for (WorksheetEntry worksheetEntry : spreadsheetEntry.getWorksheets()) {
@@ -242,15 +230,7 @@ public class GDataImportingController implements ImportingController {
                     JSONUtilities.append(worksheets, worksheetO);
                 }
             } else if ("table".equals(type)) {
-                DocsService docsService = GDataExtension.getDocsService(token);
-                TableEntry tableEntry = docsService.getEntry(url, TableEntry.class);
-                
-                JSONObject worksheetO = new JSONObject();
-                JSONUtilities.safePut(worksheetO, "name", tableEntry.getTitle().getPlainText());
-                JSONUtilities.safePut(worksheetO, "rows", -1);
-                JSONUtilities.safePut(worksheetO, "link", tableEntry.getSelfLink().getHref());
-                
-                JSONUtilities.append(worksheets, worksheetO);
+                // No metadata for a fusion table.
             }
             /* TODO: else */
             
@@ -307,15 +287,13 @@ public class GDataImportingController implements ImportingController {
                 if (exceptions.size() == 0) {
                     job.project.update(); // update all internal models, indexes, caches, etc.
                     
-                    writer.key("code"); writer.value("ok");
+                    writer.key("status"); writer.value("ok");
                 } else {
-                    writer.key("code"); writer.value("error");
+                    writer.key("status"); writer.value("error");
                     
                     writer.key("errors");
                     writer.array();
-                    for (Exception e : exceptions) {
-                        writer.value(e.getLocalizedMessage());
-                    }
+                    DefaultImportingController.writeErrors(writer, exceptions);
                     writer.endArray();
                 }
                 writer.endObject();
@@ -374,12 +352,18 @@ public class GDataImportingController implements ImportingController {
                     );
                     
                     if (!job.canceled) {
-                        project.update(); // update all internal models, indexes, caches, etc.
-                        
-                        ProjectManager.singleton.registerProject(project, pm);
-                        
-                        JSONUtilities.safePut(job.config, "projectID", project.id);
-                        JSONUtilities.safePut(job.config, "state", "created-project");
+                        if (exceptions.size() > 0) {
+                            JSONUtilities.safePut(job.config, "errors",
+                                DefaultImportingController.convertErrorsToJsonArray(exceptions));
+                            JSONUtilities.safePut(job.config, "state", "error");
+                        } else {
+                            project.update(); // update all internal models, indexes, caches, etc.
+                            
+                            ProjectManager.singleton.registerProject(project, pm);
+                            
+                            JSONUtilities.safePut(job.config, "state", "created-project");
+                            JSONUtilities.safePut(job.config, "projectID", project.id);
+                        }
                     }
                 }
             }.start();

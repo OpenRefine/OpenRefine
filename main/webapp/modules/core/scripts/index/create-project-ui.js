@@ -245,3 +245,9 @@ Refine.CreateProjectUI.prototype.showImportJobError = function(message, stack) {
     self.showSourceSelectionPanel();
   });
 };
+
+Refine.CreateProjectUI.composeErrorMessage = function(job) {
+  var messages = [];
+  $.each(job.config.errors, function() { messages.push(this.message) });
+  return messages.join('\n');
+};
