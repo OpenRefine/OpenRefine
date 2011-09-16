@@ -47,6 +47,7 @@ function init() {
   RS.registerCommand(module, "authorize", Packages.com.google.refine.extension.gdata.AuthorizeCommand());
   RS.registerCommand(module, "authorize2", Packages.com.google.refine.extension.gdata.AuthorizeCommand2());
   RS.registerCommand(module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
+  RS.registerCommand(module, "upload", Packages.com.google.refine.extension.gdata.UploadCommand());
 
   // Register importer and exporter
   var IM = Packages.com.google.refine.importing.ImportingManager;
@@ -78,6 +79,15 @@ function init() {
     module,
     [
       "styles/importing-controller.less"
+    ]
+  );
+  
+  // Script files to inject into /project page
+  ClientSideResourceManager.addPaths(
+    "project/scripts",
+    module,
+    [
+      "scripts/project/exporters.js"
     ]
   );
 }

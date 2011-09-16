@@ -68,6 +68,8 @@ CustomTabularExporterDialog.formats = {
   }
 };
 
+CustomTabularExporterDialog.uploadTargets = [];
+
 CustomTabularExporterDialog.prototype._createDialog = function(options) {
   var self = this;
   
@@ -75,8 +77,14 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
   this._elmts = DOM.bind(this._dialog);
   this._level = DialogSystem.showDialog(this._dialog);
   
-  $("#custom-tabular-exporter-tabs-format").css("display", "");
+  if (CustomTabularExporterDialog.uploadTargets.length == 0) {
+    this._elmts.uploadTabHeader.remove();
+    this._elmts.uploadTabBody.remove();
+  }
+  
   $("#custom-tabular-exporter-tabs-content").css("display", "");
+  $("#custom-tabular-exporter-tabs-download").css("display", "");
+  $("#custom-tabular-exporter-tabs-upload").css("display", "");
   $("#custom-tabular-exporter-tabs-code").css("display", "");
   $("#custom-tabular-exporter-tabs").tabs();
   
@@ -117,6 +125,34 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
   this._elmts.columnList.sortable({});
   
   /*
+   * Populate upload targets.
+   */
+  if (CustomTabularExporterDialog.uploadTargets.length > 0) {
+    var table = this._elmts.uploadTargetTable[0];
+    for (var i = 0; i < CustomTabularExporterDialog.uploadTargets.length; i++) {
+      var target = CustomTabularExporterDialog.uploadTargets[i];
+      var tr = table.insertRow(table.rows.length - 1);
+      
+      var td0 = $(tr.insertCell(0))
+        .attr('width', '1');
+      var input = $('<input>')
+        .attr('type', 'radio')
+        .attr('name', 'custom-tabular-exporter-upload-format')
+        .attr('value', target.id)
+        .appendTo(td0);
+      if (i === 0) {
+        input.attr('checked', 'checked');
+      }
+      
+      $(tr.insertCell(1))
+        .attr('width', '100%')
+        .text(target.label);
+    }
+    
+    this._elmts.uploadButton.click(function() { self._upload(); });
+  }
+  
+  /*
    * Hook up event handlers.
    */
   this._elmts.encodingInput.click(function(evt) {
@@ -146,21 +182,21 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
   $('#custom-tabular-exporter-tabs-content').find('input').bind('change', function() {
     self._updateOptionCode();
   });
-  $('#custom-tabular-exporter-tabs-format').find('input').bind('change', function() {
+  $('#custom-tabular-exporter-tabs-download').find('input').bind('change', function() {
     self._updateOptionCode();
   });
   
   this._elmts.applyOptionCodeButton.click(function(evt) { self._applyOptionCode(); });
   this._elmts.cancelButton.click(function() { self._dismiss(); });
-  this._elmts.exportButton.click(function() { self._commit(); });
-  this._elmts.previewButton.click(function(evt) { self._preview(); });
+  this._elmts.downloadButton.click(function() { self._download(); });
+  this._elmts.downloadPreviewButton.click(function(evt) { self._previewDownload(); });
   
   this._configureUIFromOptionCode(options);
   this._updateOptionCode();
 };
 
 CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(options) {
-  this._dialog.find('input[name="custom-tabular-exporter-format"][value="' + options.format + '"]').attr('checked', 'checked');
+  this._dialog.find('input[name="custom-tabular-exporter-download-format"][value="' + options.format + '"]').attr('checked', 'checked');
   this._elmts.separatorInput[0].value = String.encodeSeparator(options.separator || ',');
   this._elmts.lineSeparatorInput[0].value = String.encodeSeparator(options.lineSeparator || '\n');
   this._elmts.encodingInput[0].value = options.encoding;
@@ -188,11 +224,11 @@ CustomTabularExporterDialog.prototype._dismiss = function() {
     DialogSystem.dismissUntil(this._level - 1);
 };
 
-CustomTabularExporterDialog.prototype._preview = function() {
+CustomTabularExporterDialog.prototype._previewDownload = function() {
   this._postExport(true);
 };
 
-CustomTabularExporterDialog.prototype._commit = function() {
+CustomTabularExporterDialog.prototype._download = function() {
   this._postExport(false);
   this._dismiss();
 };
@@ -290,7 +326,7 @@ CustomTabularExporterDialog.prototype._applyOptionCode = function() {
 
 CustomTabularExporterDialog.prototype._getOptionCode = function() {
   var options = {
-    format: this._dialog.find('input[name="custom-tabular-exporter-format"]:checked').val()
+    format: this._dialog.find('input[name="custom-tabular-exporter-download-format"]:checked').val()
   };
   
   if (options.format == 'tsv' || options.format == 'csv' || options.format == '*sv') {
@@ -329,3 +365,22 @@ CustomTabularExporterDialog.prototype._getOptionCode = function() {
   return options;
 };
 
+CustomTabularExporterDialog.prototype._upload = function() {
+  var id = this._dialog.find('input[name="custom-tabular-exporter-upload-format"]:checked').val()
+  for (var i = 0; i < CustomTabularExporterDialog.uploadTargets.length; i++) {
+    var target = CustomTabularExporterDialog.uploadTargets[i];
+    if (id == target.id) {
+      var self = this;
+      var options = this._getOptionCode();
+      options.format = id;
+      
+      target.handler(
+        options,
+        this._elmts.exportAllRowsCheckbox[0].checked,
+        function() {
+          self._dismiss();
+        });
+      return;
+    }
+  }
+};

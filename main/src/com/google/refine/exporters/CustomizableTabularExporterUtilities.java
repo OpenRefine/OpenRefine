@@ -171,6 +171,34 @@ abstract public class CustomizableTabularExporterUtilities {
         filteredRows.accept(project, visitor);
     }
     
+    static public int[] countColumnsRows(
+            final Project project,
+            final Engine engine,
+            Properties params) {
+        RowCountingTabularSerializer serializer = new RowCountingTabularSerializer();
+        exportRows(project, engine, params, serializer);
+        return new int[] { serializer.columns, serializer.rows };
+    }
+    
+    static private class RowCountingTabularSerializer implements TabularSerializer {
+        int columns;
+        int rows;
+        
+        @Override
+        public void startFile(JSONObject options) {
+        }
+
+        @Override
+        public void endFile() {
+        }
+
+        @Override
+        public void addRow(List<CellData> cells, boolean isHeader) {
+            columns = Math.max(columns, cells.size());
+            rows++;
+        }
+    }
+    
     private enum ReconOutputMode {
         ENTITY_NAME,
         ENTITY_ID,

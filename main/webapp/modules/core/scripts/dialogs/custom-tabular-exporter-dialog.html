@@ -3,48 +3,11 @@
   <div class="dialog-body" bind="dialogBody">
     <div id="custom-tabular-exporter-tabs" class="refine-tabs">
       <ul>
-        <li><a href="#custom-tabular-exporter-tabs-format">File Format</a></li>
         <li><a href="#custom-tabular-exporter-tabs-content">Content</a></li>
+        <li><a href="#custom-tabular-exporter-tabs-download">Download</a></li>
+        <li bind="uploadTabHeader"><a href="#custom-tabular-exporter-tabs-upload">Upload</a></li>
         <li><a href="#custom-tabular-exporter-tabs-code">Option Code</a></li>
       </ul>
-      
-      <div id="custom-tabular-exporter-tabs-format" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
-        <tr>
-          <th>Line-based text formats</th>
-          <th>Other formats</th>
-        </tr>
-        <tr>
-          <td width="60%"><div class="grid-layout grid-layout-for-text layout-tightest"><table>
-            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="tsv" /></td><td>Tab-separated values (TSV)</td></tr>
-            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="csv" /></td><td>Comma-separated values (CSV)</td></tr>
-            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="*sv" /></td><td>Custom separator
-              <input type="text" class="lightweight" size="5" bind="separatorInput" />
-            </td></tr>
-          </table></div></td>
-          
-          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
-            <tr>
-              <td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="xls" /></td>
-              <td>Excel (.xls)</td>
-            </tr>
-            <tr>
-              <td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="xlsx" /></td>
-              <td>Excel in XML (.xlsx)</td>
-            </tr>
-            <tr>
-              <td width="1%"><input type="radio" name="custom-tabular-exporter-format" value="html" /></td>
-              <td>HTML table</td>
-            </tr>
-          </table></div></td>
-        </tr>
-        
-        <tr>
-          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
-            <tr><td>Line separator</td><td><input type="text" size="5" class="lightweight" bind="lineSeparatorInput" /></td></tr>
-            <tr><td>Character encoding</td><td><input type="text" size="10" class="lightweight" bind="encodingInput" /></td></tr>
-          </table></div></td>
-        </tr>
-      </table></div></div>
       
       <div id="custom-tabular-exporter-tabs-content"><div class="grid-layout grid-layout-for-ui layout-normal layout-full"><table>
         <tr>
@@ -109,18 +72,82 @@
           </table></div></div></td>
         </tr>
         <tr>
-          <td>
+          <td colspan="2">
             <button class="button" bind="selectAllButton">Select All</button>
             <button class="button" bind="deselectAllButton">De-select All</button>
           </td>
-          <td><div class="grid-layout layout-tighter"><table>
+        </tr>
+        <tr>
+          <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
             <tr>
               <td width="1%"><input type="checkbox" bind="outputColumnHeadersCheckbox" checked /></td>
-              <td width="50%">Output column headers</td>
+              <td width="25%">Output column headers</td>
               <td width="1%"><input type="checkbox" bind="outputBlankRowsCheckbox" /></td>
-              <td width="50%">Output blank rows</td>
+              <td width="25%">Output blank rows</td>
+              <td width="1%"><input type="checkbox" bind="exportAllRowsCheckbox" /></td>
+              <td width="50%">Ignore facets and filters and export all rows</td>
             </tr>
           </table></div></td>
+        </tr>
+      </table></div></div>
+      
+      
+      <div id="custom-tabular-exporter-tabs-download" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
+        <tr>
+          <th>Line-based text formats</th>
+          <th>Other formats</th>
+        </tr>
+        <tr>
+          <td width="60%"><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="tsv" checked /></td><td>Tab-separated values (TSV)</td></tr>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="csv" /></td><td>Comma-separated values (CSV)</td></tr>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="*sv" /></td><td>Custom separator
+              <input type="text" class="lightweight" size="5" bind="separatorInput" />
+            </td></tr>
+          </table></div></td>
+          
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+            <tr>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xls" /></td>
+              <td>Excel (.xls)</td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xlsx" /></td>
+              <td>Excel in XML (.xlsx)</td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="html" /></td>
+              <td>HTML table</td>
+            </tr>
+          </table></div></td>
+        </tr>
+        
+        <tr>
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+            <tr><td>Line separator</td><td><input type="text" size="5" class="lightweight" bind="lineSeparatorInput" /></td></tr>
+            <tr><td>Character encoding</td><td><input type="text" size="10" class="lightweight" bind="encodingInput" /></td></tr>
+          </table></div></td>
+        </tr>
+        
+        <tr>
+          <td colspan="2"><div class="grid-layout grid-layout-for-text layout-tightest layout-full"><table><tr>
+            <td width="100%"> </td>
+            <td width="1%"><button class="button" bind="downloadPreviewButton">Preview</button></td>
+            <td width="1%"><button class="button button-primary" bind="downloadButton">Download</button></td>
+          </tr></table></div></td>
+        </tr>
+      </table></div></div>
+      
+      
+      <div bind="uploadTabBody" id="custom-tabular-exporter-tabs-upload" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table bind="uploadTargetTable">
+        <tr>
+          <th colspan="2">Upload to</th>
+        </tr>
+        <tr>
+          <td colspan="2"><div class="grid-layout grid-layout-for-text layout-tightest layout-full"><table><tr>
+            <td width="100%"> </td>
+            <td width="1%"><button class="button button-primary" bind="uploadButton">Upload</button></td>
+          </tr></table></div></td>
         </tr>
       </table></div></div>
       
@@ -139,11 +166,5 @@
   </div>
   <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-tightest layout-full"><table><tr>
     <td><button class="button" bind="cancelButton">Cancel</button></td>
-    
-    <td width="1%"><input type="checkbox" bind="exportAllRowsCheckbox" /></td>
-    <td>Ignore facets and filters and export all rows</td>
-    
-    <td width="1%"><button class="button" bind="previewButton">Preview</button></td>
-    <td width="1%"><button class="button button-primary" bind="exportButton">Export</button></td>
   </tr></table></div></div>
 </div>
