@@ -149,8 +149,11 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
   };
   
   var docs = o.documents;
-  $.each(docs, function() { this.updatedDate = (this.updated) ? new Date(this.updated) : new Date(); });
-  docs.sort(function(a, b) { return b.updatedDate.getTime() -  a.updatedDate.getTime(); });
+  $.each(docs, function() {
+    this.updatedDate = (this.updated) ? new Date(this.updated) : null;
+    this.updatedDateTime = (this.updatedDate) ? this.updatedDate.getTime() : 0;
+  });
+  docs.sort(function(a, b) { return b.updatedDateTime -  a.updatedDateTime; });
   
   for (var i = 0; i < docs.length; i++) {
     renderDocument(docs[i]);
