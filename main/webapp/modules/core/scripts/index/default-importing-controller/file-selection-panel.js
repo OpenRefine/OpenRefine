@@ -280,7 +280,7 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
   }
 
   var self = this;
-  var dismissBusy = DialogSystem.showBusy("Inspecting selected files ...");
+  var dismissBusy = DialogSystem.showBusy("Inspecting<br/>selected files ...");
   $.post(
     "/command/core/importing-controller?" + $.param({
       "controller": "core/default-importing-controller",
@@ -291,23 +291,19 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
       "fileSelection" : JSON.stringify(this._job.config.fileSelection)
     },
     function(data) {
-      if (!(data)) {
-        self._showImportJobError("Unknown error");
-        window.clearInterval(timerID);
-        return;
-      } else if (data.code == "error" || !("job" in data)) {
-        self._showImportJobError(data.message || "Unknown error");
-        window.clearInterval(timerID);
-        return;
-      }
-
       dismissBusy();
 
-      // Different files might be selected. We start over again.
-      delete this._parserOptions;
+      if (!(data)) {
+        self._createProjectUI.showImportJobError("Unknown error");
+      } else if (data.code == "error" || !("job" in data)) {
+        self._createProjectUI.showImportJobError((data.message) ? ("Error: " + data.message) : "Unknown error");
+      } else {
+        // Different files might be selected. We start over again.
+        delete this._parserOptions;
 
-      self._job = data.job;
-      self._showParsingPanel(true);
+        self._job = data.job;
+        self._showParsingPanel(true);
+      }
     },
     "json"
   );
