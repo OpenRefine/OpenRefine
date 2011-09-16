@@ -131,7 +131,7 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
     var table = this._elmts.uploadTargetTable[0];
     for (var i = 0; i < CustomTabularExporterDialog.uploadTargets.length; i++) {
       var target = CustomTabularExporterDialog.uploadTargets[i];
-      var tr = table.insertRow(table.rows.length - 1);
+      var tr = table.insertRow(table.rows.length);
       
       var td0 = $(tr.insertCell(0))
         .attr('width', '1');

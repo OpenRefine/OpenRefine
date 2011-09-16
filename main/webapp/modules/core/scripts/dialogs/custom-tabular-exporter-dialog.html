@@ -139,15 +139,15 @@
       </table></div></div>
       
       
-      <div bind="uploadTabBody" id="custom-tabular-exporter-tabs-upload" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table bind="uploadTargetTable">
+      <div bind="uploadTabBody" id="custom-tabular-exporter-tabs-upload" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
         <tr>
-          <th colspan="2">Upload to</th>
+          <th>Upload to</th>
         </tr>
         <tr>
-          <td colspan="2"><div class="grid-layout grid-layout-for-text layout-tightest layout-full"><table><tr>
-            <td width="100%"> </td>
-            <td width="1%"><button class="button button-primary" bind="uploadButton">Upload</button></td>
-          </tr></table></div></td>
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table bind="uploadTargetTable"></table></div></td>
+        </tr>
+        <tr>
+          <td><button class="button button-primary" bind="uploadButton">Upload</button></td>
         </tr>
       </table></div></div>
       

@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,6 +47,9 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gdata.client.GoogleService;
+import com.google.gdata.client.Service.GDataRequest;
+import com.google.gdata.client.Service.GDataRequest.RequestType;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
@@ -96,13 +101,21 @@ public class UploadCommand extends Command {
             JSONWriter writer = new JSONWriter(w);
             try {
                 writer.object();
-                String url = upload(project, engine, params, token, name);
+                
+                List<Exception> exceptions = new LinkedList<Exception>();
+                String url = upload(project, engine, params, token, name, exceptions);
                 if (url != null) {
                     writer.key("status"); writer.value("ok");
                     writer.key("url"); writer.value(url);
-                } else {
+                } else if (exceptions.size() == 0) {
                     writer.key("status"); writer.value("error");
                     writer.key("message"); writer.value("No such format");
+                } else {
+                    for (Exception e : exceptions) {
+                        logger.warn(e.getLocalizedMessage(), e);
+                    }
+                    writer.key("status"); writer.value("error");
+                    writer.key("message"); writer.value(exceptions.get(0).getLocalizedMessage());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -122,56 +135,67 @@ public class UploadCommand extends Command {
     
     static private String upload(
             Project project, Engine engine, Properties params,
-            String token, String name) throws Exception {
+            String token, String name, List<Exception> exceptions) {
         String format = params.getProperty("format");
         if ("gdata/google-spreadsheet".equals(format)) {
-            return uploadSpreadsheet(project, engine, params, token, name);
+            return uploadSpreadsheet(project, engine, params, token, name, exceptions);
+        } else if ("gdata/fusion-table".equals(format)) {
+            return uploadFusionTable(project, engine, params, token, name, exceptions);
         }
         return null;
     }
     
     static private String uploadSpreadsheet(
             final Project project, final Engine engine, final Properties params,
-            String token, String name)
-            throws MalformedURLException, IOException, ServiceException {
+            String token, String name, List<Exception> exceptions) {
+        
         DocsService docsService = GDataExtension.getDocsService(token);
         final SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
         
-        SpreadsheetEntry spreadsheetEntry = new SpreadsheetEntry();
-        spreadsheetEntry.setTitle(new PlainTextConstruct(name));
-        
-        final SpreadsheetEntry spreadsheetEntry2 = docsService.insert(
-            new URL("https://docs.google.com/feeds/default/private/full/"), spreadsheetEntry);
-        
-        int[] size = CustomizableTabularExporterUtilities.countColumnsRows(
-                project, engine, params);
-        
-        URL worksheetFeedUrl = spreadsheetEntry2.getWorksheetFeedUrl();
-        WorksheetEntry worksheetEntry = new WorksheetEntry(size[1], size[0]); 
-        worksheetEntry.setTitle(new PlainTextConstruct("Uploaded Data"));
-        
-        final WorksheetEntry worksheetEntry2 =
-            spreadsheetService.insert(worksheetFeedUrl, worksheetEntry);
-        
-        spreadsheetEntry2.getDefaultWorksheet().delete();
-        
-        new Thread() {
-            @Override
-            public void run() {
-                spreadsheetService.setProtocolVersion(SpreadsheetService.Versions.V1);
-                try {
-                    uploadToCellFeed(
-                        project, engine, params,
-                        spreadsheetService,
-                        spreadsheetEntry2,
-                        worksheetEntry2);
-                } catch (Exception e) {
-                    logger.error("Error uploading data to Google Spreadsheets", e);
+        try {
+            SpreadsheetEntry spreadsheetEntry = new SpreadsheetEntry();
+            spreadsheetEntry.setTitle(new PlainTextConstruct(name));
+            
+            final SpreadsheetEntry spreadsheetEntry2 = docsService.insert(
+                new URL("https://docs.google.com/feeds/default/private/full/"), spreadsheetEntry);
+            
+            int[] size = CustomizableTabularExporterUtilities.countColumnsRows(
+                    project, engine, params);
+            
+            URL worksheetFeedUrl = spreadsheetEntry2.getWorksheetFeedUrl();
+            WorksheetEntry worksheetEntry = new WorksheetEntry(size[1], size[0]); 
+            worksheetEntry.setTitle(new PlainTextConstruct("Uploaded Data"));
+            
+            final WorksheetEntry worksheetEntry2 =
+                spreadsheetService.insert(worksheetFeedUrl, worksheetEntry);
+            
+            spreadsheetEntry2.getDefaultWorksheet().delete();
+            
+            new Thread() {
+                @Override
+                public void run() {
+                    spreadsheetService.setProtocolVersion(SpreadsheetService.Versions.V1);
+                    try {
+                        uploadToCellFeed(
+                            project, engine, params,
+                            spreadsheetService,
+                            spreadsheetEntry2,
+                            worksheetEntry2);
+                    } catch (Exception e) {
+                        logger.error("Error uploading data to Google Spreadsheets", e);
+                    }
                 }
-            }
-        }.start();
-        
-        return spreadsheetEntry2.getDocumentLink().getHref();
+            }.start();
+            
+            return spreadsheetEntry2.getDocumentLink().getHref();
+        } catch (MalformedURLException e) {
+            exceptions.add(e);
+        } catch (IOException e) {
+            exceptions.add(e);
+        } catch (ServiceException e) {
+            exceptions.add(e);
+        }
+        return null;
     }
     
     static private void uploadToCellFeed(
@@ -266,5 +290,147 @@ public class UploadCommand extends Command {
         
         CustomizableTabularExporterUtilities.exportRows(
                 project, engine, params, serializer);
+    }
+    
+    static private String uploadFusionTable(
+            Project project, final Engine engine, final Properties params,
+            String token, String name, List<Exception> exceptions) {
+        GoogleService service = GDataExtension.getFusionTablesGoogleService(token);
+        FusionTableSerializer serializer = new FusionTableSerializer(service, name, exceptions);
+        
+        CustomizableTabularExporterUtilities.exportRows(
+                project, engine, params, serializer);
+        
+        return serializer.tableId == null || exceptions.size() > 0 ? null :
+            "https://www.google.com/fusiontables/DataSource?dsrcid=" + serializer.tableId;
+    }
+    
+    final static private class FusionTableSerializer implements TabularSerializer {
+        GoogleService service;
+        String tableName;
+        List<Exception> exceptions;
+        
+        String tableId;
+        List<String> columnNames;
+        StringBuffer sbBatch;
+        int rows;
+        
+        FusionTableSerializer(GoogleService service, String tableName, List<Exception> exceptions) {
+            this.service = service;
+            this.tableName = tableName;
+            this.exceptions = exceptions;
+        }
+        
+        @Override
+        public void startFile(JSONObject options) {
+        }
+
+        @Override
+        public void endFile() {
+            if (sbBatch != null) {
+                sendBatch();
+            }
+        }
+
+        @Override
+        public void addRow(List<CellData> cells, boolean isHeader) {
+            if (isHeader) {
+                columnNames = new ArrayList<String>(cells.size());
+                
+                StringBuffer sb = new StringBuffer();
+                sb.append("CREATE TABLE '");
+                sb.append(tableName);
+                sb.append("' (");
+                boolean first = true;
+                for (CellData cellData : cells) {
+                    columnNames.add(cellData.text);
+                    
+                    if (first) {
+                        first = false;
+                    } else {
+                        sb.append(',');
+                    }
+                    sb.append("'");
+                    sb.append(cellData.text);
+                    sb.append("': STRING");
+                }
+                sb.append(")");
+                
+                try {
+                    String createQuery = sb.toString();
+                    
+                    GDataRequest createTableRequest = GDataExtension.createFusionTablesPostRequest(
+                            service, RequestType.INSERT, createQuery);
+                    createTableRequest.execute();
+                    
+                    List<List<String>> createTableResults =
+                        GDataExtension.parseFusionTablesResults(createTableRequest);
+                    if (createTableResults != null && createTableResults.size() == 2) {
+                        tableId = createTableResults.get(1).get(0);
+                    }
+                } catch (Exception e) {
+                    exceptions.add(e);
+                }
+            } else if (tableId != null) {
+                if (sbBatch == null) {
+                    sbBatch = new StringBuffer();
+                }
+                formulateInsert(cells, sbBatch);
+                
+                rows++;
+                if (rows % 20 == 0) {
+                    sendBatch();
+                }
+            }
+        }
+        
+        void sendBatch() {
+            try {
+                GDataRequest createTableRequest = GDataExtension.createFusionTablesPostRequest(
+                        service, RequestType.INSERT, sbBatch.toString());
+                createTableRequest.execute();
+            } catch (IOException e) {
+                exceptions.add(e);
+            } catch (ServiceException e) {
+                exceptions.add(e);
+            } finally {
+                sbBatch = null;
+            }
+        }
+        
+        void formulateInsert(List<CellData> cells, StringBuffer sb) {
+            StringBuffer sbColumnNames = new StringBuffer();
+            StringBuffer sbValues = new StringBuffer();
+            boolean first = true;
+            for (int i = 0; i < cells.size() && i < columnNames.size(); i++) {
+                CellData cellData = cells.get(i);
+                if (first) {
+                    first = false;
+                } else {
+                    sbColumnNames.append(',');
+                    sbValues.append(',');
+                }
+                sbColumnNames.append("'");
+                sbColumnNames.append(columnNames.get(i));
+                sbColumnNames.append("'");
+                
+                sbValues.append("'");
+                if (cellData != null && cellData.text != null) {
+                    sbValues.append(cellData.text.replaceAll("'", "\\'"));
+                }
+                sbValues.append("'");
+            }
+            
+            if (sb.length() > 0) {
+                sb.append(';');
+            }
+            sb.append("INSERT INTO ");
+            sb.append(tableId);
+            sb.append("(");
+            sb.append(sbColumnNames.toString());
+            sb.append(") values (");
+            sb.append(sbValues.toString());
+            sb.append(")");
+        }
     }
 }

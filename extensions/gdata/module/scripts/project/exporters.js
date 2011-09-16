@@ -31,12 +31,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-CustomTabularExporterDialog.uploadTargets.push({
-  id: 'gdata/google-spreadsheet',
-  label: 'A new Google spreadsheet',
-  handler: function(options, exportAllRows, onDone) {
+(function() {
+  var handleUpload = function(options, exportAllRows, onDone, prompt) {
     var doUpload = function() {
-      var name = window.prompt('Enter name of new spreadsheet', theProject.metadata.name);
+      var name = window.prompt(prompt, theProject.metadata.name);
       if (name) {
         var dismiss = DialogSystem.showBusy('Uploading...');
         $.post(
@@ -50,7 +48,7 @@ CustomTabularExporterDialog.uploadTargets.push({
           },
           function(o) {
             dismiss();
-            
+
             if (o.url) {
               window.open(o.url, '_blank');
             }
@@ -60,14 +58,14 @@ CustomTabularExporterDialog.uploadTargets.push({
         );
       }
     };
-    
+
     var messageListener = function(evt) {
       window.removeEventListener("message", messageListener, false);
       if ($.cookie('authsub_token')) {
         doUpload();
       }
     };
-    
+
     var authenticate = function() {
       window.addEventListener("message", messageListener, false);
       window.open(
@@ -76,7 +74,22 @@ CustomTabularExporterDialog.uploadTargets.push({
         "resizable=1,width=600,height=450"
       );
     };
-    
+
     authenticate();
-  }
-});
+  };
+  
+  CustomTabularExporterDialog.uploadTargets.push({
+    id: 'gdata/google-spreadsheet',
+    label: 'A new Google spreadsheet',
+    handler: function(options, exportAllRows, onDone) {
+      handleUpload(options, exportAllRows, onDone, 'Enter a name for the new Google spreadsheet');
+    }
+  });
+  CustomTabularExporterDialog.uploadTargets.push({
+    id: 'gdata/fusion-table',
+    label: 'A new Google Fusion table',
+    handler: function(options, exportAllRows, onDone) {
+      handleUpload(options, exportAllRows, onDone, 'Enter a name for the new Google Fusion table');
+    }
+  });
+})();

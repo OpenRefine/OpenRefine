@@ -29,6 +29,7 @@
 package com.google.refine.extension.gdata;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -90,13 +91,36 @@ abstract public class GDataExtension {
     static public List<List<String>> runFusionTablesSelect(GoogleService service, String selectQuery)
             throws IOException, ServiceException {
         
-        URL url = new URL(FUSION_TABLES_SERVICE_URL + "?sql=" +
-                URLEncoder.encode(selectQuery, "UTF-8"));
-        GDataRequest request = service.getRequestFactory().getRequest(
-                RequestType.QUERY, url, ContentType.TEXT_PLAIN);
-        
+        GDataRequest request = createFusionTablesRequest(service, RequestType.QUERY, selectQuery);
         request.execute();
+        return parseFusionTablesResults(request);
+    }
+    
+    static public GDataRequest createFusionTablesRequest(
+            GoogleService service, RequestType requestType, String query)
+            throws IOException, ServiceException {
+        URL url = new URL(FUSION_TABLES_SERVICE_URL + "?sql=" +
+                URLEncoder.encode(query, "UTF-8"));
+        return service.getRequestFactory().getRequest(
+                requestType, url, ContentType.TEXT_PLAIN);
+    }
+    
+    static public GDataRequest createFusionTablesPostRequest(
+            GoogleService service, RequestType requestType, String query)
+            throws IOException, ServiceException {
+        URL url = new URL(FUSION_TABLES_SERVICE_URL);
+        GDataRequest request = service.getRequestFactory().getRequest(
+            requestType, url, new ContentType("application/x-www-form-urlencoded"));
         
+        OutputStreamWriter writer =
+            new OutputStreamWriter(request.getRequestStream());
+        writer.append("sql=" + URLEncoder.encode(query, "UTF-8"));
+        writer.flush();
+        
+        return request;
+    }
+    
+    static public List<List<String>> parseFusionTablesResults(GDataRequest request) throws IOException {
         List<List<String>> rows = new ArrayList<List<String>>();
         List<String> row = null;
         
