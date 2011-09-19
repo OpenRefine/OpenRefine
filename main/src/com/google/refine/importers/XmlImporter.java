@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -81,6 +82,7 @@ public class XmlImporter extends TreeImportingParserBase {
                 JSONObject firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
                 InputStream is = new FileInputStream(file);
+                
                 try {
                     XMLStreamReader parser = createXMLStreamReader(is);
                     PreviewParsingState state = new PreviewParsingState();
@@ -200,13 +202,15 @@ public class XmlImporter extends TreeImportingParserBase {
                 new XmlParser(inputStream), rootColumnGroup, limit, options, exceptions);
         } catch (XMLStreamException e) {
             exceptions.add(e);
+        } catch (IOException e) {
+            exceptions.add(e);
         }
     }
     
     static public class XmlParser implements TreeReader {
         final protected XMLStreamReader parser;
         
-        public XmlParser(InputStream inputStream) throws XMLStreamException {
+        public XmlParser(InputStream inputStream) throws XMLStreamException, IOException {
             parser = createXMLStreamReader(inputStream);
         }
         
@@ -305,12 +309,23 @@ public class XmlImporter extends TreeImportingParserBase {
         }
     }
     
-    final static private XMLStreamReader createXMLStreamReader(InputStream inputStream) throws XMLStreamException {
+    final static private XMLStreamReader createXMLStreamReader(InputStream inputStream) throws XMLStreamException, IOException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.IS_COALESCING, true);
         factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
         
-        return factory.createXMLStreamReader(inputStream);
+        return factory.createXMLStreamReader(wrapPrefixSpaceRemovingInputStream(inputStream));
     }
     
+    final static private InputStream wrapPrefixSpaceRemovingInputStream(InputStream inputStream) throws IOException {
+        PushbackInputStream pis = new PushbackInputStream(inputStream);
+        int b;
+        while ((b = pis.read()) >= 0) {
+            if (!Character.isWhitespace(b)) {
+                pis.unread(b);
+                break;
+            }
+        }
+        return pis;
+    }
 }
