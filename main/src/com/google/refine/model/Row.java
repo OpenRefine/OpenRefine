@@ -232,7 +232,7 @@ public class Row implements HasFields, Jsonizable {
             }
         }
         
-        return (cells.size() > 0) ? new Row(cells, flagged, starred) : null;
+        return (cells.size() > 0) ? new Row(cells, flagged, starred) : new Row(0);
     }
     
     @Override
