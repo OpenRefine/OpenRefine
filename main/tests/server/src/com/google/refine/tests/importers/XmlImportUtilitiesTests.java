@@ -446,6 +446,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
             return parser;
         } catch (XMLStreamException e) {
             return null;
+        } catch (IOException e) {
+            return null;
         }
     }
     public TreeReader createJsonParser(){
