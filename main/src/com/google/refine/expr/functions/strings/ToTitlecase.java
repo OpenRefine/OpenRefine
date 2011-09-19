@@ -44,14 +44,15 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class ToTitlecase implements Function {
-
+    final static private char[] delimiters = { ' ', '\t', '\r', '\n', '.' };
+    
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
             String s = o instanceof String ? (String) o : o.toString();
             
-            return WordUtils.capitalizeFully(s);
+            return WordUtils.capitalizeFully(s, delimiters);
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
     }
