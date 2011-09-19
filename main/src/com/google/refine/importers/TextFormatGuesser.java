@@ -22,17 +22,28 @@ public class TextFormatGuesser implements FormatGuesser {
                 
                 int totalBytes = 0;
                 int bytes;
-                int lineBreaks = 0;
+                int openBraces = 0;
+                int closeBraces = 0;
+                int openAngleBrackets = 0;
+                int closeAngleBrackets = 0;
                 
                 CharBuffer charBuffer = CharBuffer.allocate(4096);
                 while (totalBytes < 64 * 1024 && (bytes = reader.read(charBuffer)) > 0) {
-                    lineBreaks += countSubstrings(charBuffer.toString(), "\n");
+                    String chunk = charBuffer.toString();
+                    openBraces += countSubstrings(chunk, "{");
+                    closeBraces += countSubstrings(chunk, "}");
+                    openAngleBrackets += countSubstrings(chunk, "<");
+                    closeAngleBrackets += countSubstrings(chunk, ">");
                     
                     charBuffer.clear();
                     totalBytes += bytes;
                 }
                 
-                if (lineBreaks > 3) {
+                if (openBraces >= 5 && closeBraces >= 5) {
+                    return "text/json";
+                } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
+                    return "text/xml";
+                } else {
                     return "text/line-based";
                 }
             } finally {
