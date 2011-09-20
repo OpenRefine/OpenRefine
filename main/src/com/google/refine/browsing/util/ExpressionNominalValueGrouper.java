@@ -183,7 +183,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
                     facetChoice.count++;
                 }
             } else {
-                String label = value.toString();
+                String label = valueString;
                 DecoratedValue dValue = new DecoratedValue(value, label);
                 IndexedNominalFacetChoice choice = 
                     new IndexedNominalFacetChoice(dValue, index);

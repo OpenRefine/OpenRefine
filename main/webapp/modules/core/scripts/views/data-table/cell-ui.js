@@ -64,7 +64,7 @@ DataTableCellUI.prototype._render = function() {
   } else if ("e" in cell) {
     $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
   } else if (!("r" in cell) || !cell.r) {
-    if (typeof cell.v !== "string") {
+    if (typeof cell.v !== "string" || "t" in cell) {
       if (typeof cell.v == "number") {
         divContent.addClass("data-table-cell-content-numeric");
       }

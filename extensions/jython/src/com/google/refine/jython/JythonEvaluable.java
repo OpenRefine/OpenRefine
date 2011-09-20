@@ -41,7 +41,10 @@ import java.util.Properties;
 
 import org.python.core.Py;
 import org.python.core.PyException;
+import org.python.core.PyFloat;
 import org.python.core.PyFunction;
+import org.python.core.PyInteger;
+import org.python.core.PyLong;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -137,6 +140,12 @@ public class JythonEvaluable implements Evaluable {
                 return ((JythonHasFieldsWrapper) result)._obj;
             } else if (result instanceof PyString) {
                 return ((PyString) result).asString();
+            } else if (result instanceof PyInteger) {
+                return (long) ((PyInteger) result).asInt();
+            } else if (result instanceof PyLong) {
+                return ((PyLong) result).getLong(Long.MIN_VALUE, Long.MAX_VALUE);
+            } else if (result instanceof PyFloat) {
+                return ((PyFloat) result).asDouble();
             } else if (result instanceof PyObject) {
                 return unwrap((PyObject) result);
             }
