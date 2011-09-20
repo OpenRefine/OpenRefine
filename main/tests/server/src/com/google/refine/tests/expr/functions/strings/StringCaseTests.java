@@ -43,11 +43,17 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.strings.ToTitlecase;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
 
 
+/**
+ * Tests for string up/low/title case functions.  
+ * (A very brief start so far)
+ * 
+ * @author Tom Morris <tfmorris@gmail.com>
+ */
 public class StringCaseTests extends RefineTest {
 
     static Properties bindings;
@@ -68,23 +74,37 @@ public class StringCaseTests extends RefineTest {
         bindings = null;
     }
     
+    /**
+     * Lookup a control function by name and invoke it with a variable number of args
+     */
+    private static Object invoke(String name,Object... args) {
+        // registry uses static initializer, so no need to set it up
+        Function function = ControlFunctionRegistry.getFunction(name);
+        if (function == null) {
+            throw new IllegalArgumentException("Unknown function "+name);
+        }
+        if (args == null) {
+            return function.call(bindings,new Object[0]);
+        } else {
+            return function.call(bindings,args);
+        }
+    }
+    
     @Test
     public void testToTitlecaseInvalidParams() {        
-        Function fut = new ToTitlecase();
-        Assert.assertTrue(fut.call(bindings, new Object[]{}) instanceof EvalError);
-        Assert.assertTrue(fut.call(bindings, new Object[]{"one","two"}) instanceof EvalError);
-        Assert.assertTrue(fut.call(bindings, new Object[]{"one","two","three"}) instanceof EvalError);
+        Assert.assertTrue(invoke("toTitlecase") instanceof EvalError);
+        Assert.assertTrue(invoke("toTitlecase", "one","two") instanceof EvalError);
+        Assert.assertTrue(invoke("toTitlecase", "one","two","three") instanceof EvalError);
     }
     
     @Test
     public void testToTitlecase() {        
-        Function fut = new ToTitlecase();
-        Assert.assertEquals((String)(fut.call(bindings, new Object[]{"one"})),"One");
-        Assert.assertEquals((String)(fut.call(bindings, new Object[]{"ONE"})),"One");
-        Assert.assertEquals((String)(fut.call(bindings, new Object[]{"one two three"})),"One Two Three");
-        Assert.assertEquals((String)(fut.call(bindings, new Object[]{"C.R. SANDIDGE WINES, INC."})),"C.R. Sandidge Wines, Inc.");
-//        Assert.assertEquals((String)(fut.call(bindings, new Object[]{"C.R. SANDIDGE WINES, INC.",",. "})),"C.R. Sandidge Wines, Inc.");
-//        Assert.assertEquals((String)(fut.call(bindings, new Object[]{"one-two-three","-"})),"One-Two-Three");
+        Assert.assertEquals((String)(invoke("toTitlecase", "one")),"One");
+        Assert.assertEquals((String)(invoke("toTitlecase", "ONE")),"One");
+        Assert.assertEquals((String)(invoke("toTitlecase", "one two three")),"One Two Three");
+        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")),"C.R. Sandidge Wines, Inc.");
+//        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.",",. ")),"C.R. Sandidge Wines, Inc.");
+//        Assert.assertEquals((String)(invoke("toTitlecase", "one-two-three","-")),"One-Two-Three");
     }
     
 }
