@@ -93,7 +93,6 @@ public class StringCaseTests extends RefineTest {
     @Test
     public void testToTitlecaseInvalidParams() {        
         Assert.assertTrue(invoke("toTitlecase") instanceof EvalError);
-        Assert.assertTrue(invoke("toTitlecase", "one","two") instanceof EvalError);
         Assert.assertTrue(invoke("toTitlecase", "one","two","three") instanceof EvalError);
     }
     
@@ -103,8 +102,8 @@ public class StringCaseTests extends RefineTest {
         Assert.assertEquals((String)(invoke("toTitlecase", "ONE")),"One");
         Assert.assertEquals((String)(invoke("toTitlecase", "one two three")),"One Two Three");
         Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")),"C.R. Sandidge Wines, Inc.");
-//        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.",",. ")),"C.R. Sandidge Wines, Inc.");
-//        Assert.assertEquals((String)(invoke("toTitlecase", "one-two-three","-")),"One-Two-Three");
+        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.",",. ")),"C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String)(invoke("toTitlecase", "one-two-three","-")),"One-Two-Three");
     }
     
 }

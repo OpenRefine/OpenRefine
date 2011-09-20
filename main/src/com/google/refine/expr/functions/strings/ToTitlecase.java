@@ -52,12 +52,12 @@ public class ToTitlecase implements Function {
             Object o = args[0];
             String s = o instanceof String ? (String) o : o.toString();            
             return WordUtils.capitalizeFully(s, delimiters);
-//        } else if (args.length == 2 && args[0] != null && args[1] != null) {
-//            Object o = args[0];
-//            String s = o instanceof String ? (String) o : o.toString();
-//            o = args[1];
-//            String delims = o instanceof String ? (String) o: o.toString(); 
-//            return WordUtils.capitalizeFully(s,delims.toCharArray());
+        } else if (args.length == 2 && args[0] != null && args[1] != null) {
+            Object o = args[0];
+            String s = o instanceof String ? (String) o : o.toString();
+            o = args[1];
+            String delims = o instanceof String ? (String) o: o.toString(); 
+            return WordUtils.capitalizeFully(s,delims.toCharArray());
         } else { 
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a one or two strings");
         }
