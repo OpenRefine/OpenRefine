@@ -646,7 +646,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
       width: "200px",
       submenu: [
         {
-          label: "Reorder columns...",
+          label: "Re-order / remove columns...",
           id: "core/reorder-columns",
           click: function() {
             new ColumnReorderingDialog();
