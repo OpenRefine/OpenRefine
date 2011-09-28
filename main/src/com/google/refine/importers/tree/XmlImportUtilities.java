@@ -316,8 +316,17 @@ public class XmlImportUtilities extends TreeImportUtilities {
                     Token eventType = parser.next();
                     if (eventType == Token.StartEntity) {
                         findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup, limit);
-                    } else if (eventType == Token.EndEntity ) {
+                    } else if (eventType == Token.EndEntity) {
                         break;
+                    } else if (eventType == Token.Value) {
+                        // This is when the user picks a specific field to import, not a whole object or element.
+                        if (pathIndex == recordPath.length - 2) {
+                            String desiredFieldName = recordPath[pathIndex + 1];
+                            String currentFieldName = parser.getFieldName();
+                            if (desiredFieldName.equals(currentFieldName)) {
+                                processFieldAsRecord(project, parser, rootColumnGroup);
+                            }
+                        }
                     }
                 }
             } else {
@@ -356,7 +365,39 @@ public class XmlImportUtilities extends TreeImportUtilities {
         ImportRecord record = new ImportRecord();
 
         processSubRecord(project, parser, rootColumnGroup, record);
+        addImportRecordToProject(record, project);
+    }
 
+    /**
+     * processRecord parses Tree data for a single element and it's sub-elements,
+     * adding the parsed data as a row to the project
+     * @param project
+     * @param parser
+     * @param rootColumnGroup
+     * @throws ServletException
+     */
+    static protected void processFieldAsRecord(
+        Project project,
+        TreeReader parser,
+        ImportColumnGroup rootColumnGroup
+    ) throws Exception {
+        logger.trace("processFieldAsRecord(Project,TreeReader,ImportColumnGroup)");
+        
+        String text = parser.getFieldValue().trim();
+        if (text.length() > 0) {
+            ImportRecord record = new ImportRecord();
+            addCell(
+                project,
+                rootColumnGroup,
+                record,
+                parser.getFieldName(),
+                text
+            );
+            addImportRecordToProject(record, project);
+        }
+    }
+
+    static protected void addImportRecordToProject(ImportRecord record, Project project) {
         if (record.rows.size() > 0) {
             for (List<Cell> row : record.rows) {
                 Row realRow = new Row(row.size());
