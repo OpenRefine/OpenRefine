@@ -9,7 +9,13 @@
         </tr>
         <tr>
           <td width="1%" style="white-space: pre;">On error</td>
-          <td><input type="radio" name="create-column-dialog-onerror-choice" value="set-to-blank" checked /> set to blank <input type="radio" name="create-column-dialog-onerror-choice" value="store-error" /> store error <input type="radio" name="create-column-dialog-onerror-choice" value="keep-original" /> keep original</td>
+          <td>
+            <input type="radio" name="create-column-dialog-onerror-choice" value="set-to-blank" checked id="$add-column-error-set-to-blank" />
+              <label for="$add-column-error-set-to-blank">set to blank</label>
+            <input type="radio" name="create-column-dialog-onerror-choice" value="store-error" id="$add-column-error-store-error" />
+              <label for="$add-column-error-store-error">store error</label>
+            <input type="radio" name="create-column-dialog-onerror-choice" value="keep-original" id="$add-column-error-keep-original" />
+              <label for="$add-column-error-keep-original">keep original</label></td>
         </tr>
         <tr><td colspan="2">$EXPRESSION_PREVIEW_WIDGET$</td></tr>
       </table></div>

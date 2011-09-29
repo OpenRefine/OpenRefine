@@ -11,20 +11,22 @@
           <td>
             <div class="grid-layout layout-tightest grid-layout-for-text" bind="valueTypeOptions"><table>
               <tr>
-                <td width="1"><input type="radio" name="sorting-dialog-value-type" value="string" /></td>
-                <td>text <input type="checkbox" class="inline" bind="caseSensitiveCheckbox" /> case-sensitive</td>
+                <td width="1"><input type="radio" name="sorting-dialog-value-type" value="string" id="$sorting-dialog-value-type-string" /></td>
+                <td><label for="$sorting-dialog-value-type-string">text</label>
+                  <input type="checkbox" class="inline" bind="caseSensitiveCheckbox" id="$sorting-dialog-case-sensitive" />
+                  <label for="$sorting-dialog-case-sensitive">case-sensitive</label></td>
               </tr>
               <tr>
-                <td width="1"><input type="radio" name="sorting-dialog-value-type" value="number" /></td>
-                <td>numbers</td>
+                <td width="1"><input type="radio" name="sorting-dialog-value-type" value="number" id="$sorting-dialog-value-type-number" /></td>
+                <td><label for="$sorting-dialog-value-type-number">numbers</label></td>
               </tr>
               <tr>
-                <td width="1"><input type="radio" name="sorting-dialog-value-type" value="date" /></td>
-                <td>dates</td>
+                <td width="1"><input type="radio" name="sorting-dialog-value-type" value="date" id="$sorting-dialog-value-type-date" /></td>
+                <td><label for="$sorting-dialog-value-type-date">dates</label></td>
               </tr>
               <tr>
-                <td width="1"><input type="radio" name="sorting-dialog-value-type" value="boolean" /></td>
-                <td>booleans</td>
+                <td width="1"><input type="radio" name="sorting-dialog-value-type" value="boolean" id="$sorting-dialog-value-type-boolean" /></td>
+                <td><label for="$sorting-dialog-value-type-boolean">booleans</label></td>
               </tr>
             </table></div>
           </td>
@@ -34,9 +36,13 @@
           </td>
         </tr>
         <tr><td colspan="2" bind="directionOptions">
-          <input type="radio" class="inline" name="sorting-dialog-direction" value="forward" /><label bind="directionForwardLabel">forward</label>
-          <input type="radio" class="inline" name="sorting-dialog-direction" value="reverse" /><label bind="directionReverseLabel">reverse</label>
-          <span bind="sortAloneContainer" style="display:none;"><input type="checkbox" class="inline" /><label>sort by this column alone</label></span>
+          <input type="radio" class="inline" name="sorting-dialog-direction" value="forward" id="$sorting-dialog-direction-forward" />
+            <label for="$sorting-dialog-direction-forward" bind="directionForwardLabel">forward</label>
+          <input type="radio" class="inline" name="sorting-dialog-direction" value="reverse" id="$sorting-dialog-direction-reverse" />
+            <label for="$sorting-dialog-direction-reverse" bind="directionReverseLabel">reverse</label>
+            
+          <span bind="sortAloneContainer" style="display:none;"><input type="checkbox" class="inline" id="$sorting-dialog-alone" />
+            <label for="$sorting-dialog-alone">sort by this column alone</label></span>
         </td></tr>
       </table></div>
     </div>

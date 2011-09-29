@@ -9,20 +9,22 @@
               <td colspan="3"><h3>How to Split Column</h3></td>
             </tr>
             <tr>
-              <td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" /></td>
-              <td colspan="2">by separator</td>
+              <td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" id="$split-column-by-separator" /></td>
+              <td colspan="2"><label for="$split-column-by-separator">by separator</label></td>
             </tr>
             <tr><td></td>
               <td>Separator</td>
-              <td style="white-space: pre;"><input size="15" value="," bind="separatorInput" /> <input type="checkbox" bind="regexInput" /> regular expression</td>
+              <td><input size="10" value="," bind="separatorInput" />
+                <input type="checkbox" bind="regexInput" id="$split-column-regex" />
+                <label for="$split-column-regex">regular expression</label></td>
             </tr>
             <tr><td></td>
               <td>Split into</td>
               <td style="white-space: pre;"><input size="3" bind="maxColumnsInput" /> columns at most (leave blank for no limit)</td>
             </tr>
             <tr>
-              <td width="1%"><input type="radio" name="split-by-mode" value="lengths" /></td>
-              <td colspan="2">by field lengths</td>
+              <td width="1%"><input type="radio" name="split-by-mode" value="lengths" id="$split-column-by-lengths" /></td>
+              <td colspan="2"><label for="$split-column-by-lengths">by field lengths</label></td>
             </tr>
             <tr><td></td>
               <td colspan="2"><textarea style="width: 100%;" bind="lengthsTextarea"></textarea></td>
@@ -38,12 +40,12 @@
               <td colspan="3"><h3>After Splitting</h3></td>
             </tr>
             <tr>
-              <td width="1%"><input type="checkbox" checked="true" bind="guessCellTypeInput" /></td>
-              <td colspan="2">Guess cell type</td>
+              <td width="1%"><input type="checkbox" checked="true" bind="guessCellTypeInput" id="$split-column-guess" /></td>
+              <td colspan="2"><label for="$split-column-guess">Guess cell type</label></td>
             </tr>
             <tr>
-              <td width="1%"><input type="checkbox" checked="true" bind="removeColumnInput" /></td>
-              <td colspan="2">Remove this column</td>
+              <td width="1%"><input type="checkbox" checked="true" bind="removeColumnInput" id="$split-column-remove" /></td>
+              <td colspan="2"><label for="$split-column-remove">Remove this column</label></td>
             </tr>
           </table></div>
         </td>
