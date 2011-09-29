@@ -130,12 +130,14 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
   if (CustomTabularExporterDialog.uploadTargets.length > 0) {
     var table = this._elmts.uploadTargetTable[0];
     for (var i = 0; i < CustomTabularExporterDialog.uploadTargets.length; i++) {
+      var id = 'custom-exporter-upload-' + Math.round(Math.random() * 1000000);
       var target = CustomTabularExporterDialog.uploadTargets[i];
       var tr = table.insertRow(table.rows.length);
       
       var td0 = $(tr.insertCell(0))
         .attr('width', '1');
       var input = $('<input>')
+        .attr('id', id)
         .attr('type', 'radio')
         .attr('name', 'custom-tabular-exporter-upload-format')
         .attr('value', target.id)
@@ -144,9 +146,12 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
         input.attr('checked', 'checked');
       }
       
-      $(tr.insertCell(1))
-        .attr('width', '100%')
-        .text(target.label);
+      $('<label>')
+        .attr('for', id)
+        .text(target.label)
+        .appendTo(
+          $(tr.insertCell(1))
+          .attr('width', '100%'));
     }
     
     this._elmts.uploadButton.click(function() { self._upload(); });

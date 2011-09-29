@@ -20,53 +20,53 @@
             <tr><td colspan="2">For reconciled cells, output</td></tr>
             <tr><td><div class="grid-layout layout-tightest"><table>
               <tr>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="entity-name" /></td>
-                <td>Matched entity's name</td>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="cell-content" /></td>
-                <td>Cell's content</td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="entity-name" id="$custom-exporter-recon-entity-name" /></td>
+                <td><label for="$custom-exporter-recon-entity-name">Matched entity's name</label></td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="cell-content" id="$custom-exporter-recon-cell-content" /></td>
+                <td><label for="$custom-exporter-recon-cell-content">Cell's content</label></td>
               </tr>
               <tr>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="entity-id" /></td>
-                <td>Matched entity's ID</td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="entity-id" id="$custom-exporter-recon-entity-id" /></td>
+                <td><label for="$custom-exporter-recon-entity-id">Matched entity's ID</label></td>
               </tr>
               <tr>
-                <td width="1%"><input type="checkbox" bind="reconLinkCheckbox" /></td>
-                <td width="50%">Link to matched entity's page</td>
-                <td width="1%"><input type="checkbox" bind="reconBlankUnmatchedCheckbox" /></td>
-                <td width="50%">Output nothing for unmatched cells</td>
+                <td width="1%"><input type="checkbox" bind="reconLinkCheckbox" id="$custom-exporter-recon-link" /></td>
+                <td width="50%"><label for="$custom-exporter-recon-link">Link to matched entity's page</label></td>
+                <td width="1%"><input type="checkbox" bind="reconBlankUnmatchedCheckbox" id="$custom-exporter-recon-blank-unmatched" /></td>
+                <td width="50%"><label for="$custom-exporter-recon-blank-unmatched">Output nothing for unmatched cells</label></td>
               </tr>
             </table></td></tr>
             
             <tr><td colspan="2">For date/time values, use format</td></tr>
             <tr><td><div class="grid-layout layout-tightest"><table>
               <tr>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="iso-8601" /></td>
-                <td colspan="3">ISO 8601, e.g., 2011-08-24T18:36:10+08:00</td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="iso-8601" id="$custom-exporter-date-iso" /></td>
+                <td colspan="3"><label for="$custom-exporter-date-iso">ISO 8601, e.g., 2011-08-24T18:36:10+08:00</label></td>
               </tr>
               <tr>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-short" /></td>
-                <td width="50%">Short locale format</td>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-medium" /></td>
-                <td width="50%">Medium locale format</td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-short" id="$custom-exporter-date-locale-short" /></td>
+                <td width="50%"><label for="$custom-exporter-date-locale-short">Short locale format</label></td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-medium" id="$custom-exporter-date-locale-medium" /></td>
+                <td width="50%"><label for="$custom-exporter-date-locale-medium">Medium locale format</label></td>
               </tr>
               <tr>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-long" /></td>
-                <td width="50%">Long locale format</td>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-full" /></td>
-                <td width="50%">Full locale format</td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-long" id="$custom-exporter-date-locale-long" /></td>
+                <td width="50%"><label for="$custom-exporter-date-locale-long">Long locale format</label></td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-full" id="$custom-exporter-date-locale-full" /></td>
+                <td width="50%"><label for="$custom-exporter-date-locale-full">Full locale format</label></td>
               </tr>
               <tr>
-                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="custom" /></td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="custom" id="$custom-exporter-date-custom" /></td>
                 <td colspan="3">
-                  Custom <input size="35" class="lightweight" bind="dateCustomInput" />
+                  <label for="$custom-exporter-date-custom">Custom</label> <input size="35" class="lightweight" bind="dateCustomInput" />
                   <a href="" target="_blank">Help</a>
                 </td>
               </tr>
               <tr>
-                <td width="1%"><input type="checkbox" bind="dateLocalTimeZoneCheckbox" /></td>
-                <td width="50%">Use local time zone</td>
-                <td width="1%"><input type="checkbox" bind="omitTimeCheckbox" /></td>
-                <td width="50%">Omit time</td>
+                <td width="1%"><input type="checkbox" bind="dateLocalTimeZoneCheckbox" id="$custom-exporter-date-local-timezone" /></td>
+                <td width="50%"><label for="$custom-exporter-date-local-timezone">Use local time zone</label></td>
+                <td width="1%"><input type="checkbox" bind="omitTimeCheckbox" id="$custom-exporter-date-omit-time" /></td>
+                <td width="50%"><label for="$custom-exporter-date-omit-time">Omit time</label></td>
               </tr>
             </table></td></tr>
           </table></div></div></td>
@@ -80,12 +80,12 @@
         <tr>
           <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
             <tr>
-              <td width="1%"><input type="checkbox" bind="outputColumnHeadersCheckbox" checked /></td>
-              <td width="25%">Output column headers</td>
-              <td width="1%"><input type="checkbox" bind="outputBlankRowsCheckbox" /></td>
-              <td width="25%">Output blank rows</td>
-              <td width="1%"><input type="checkbox" bind="exportAllRowsCheckbox" /></td>
-              <td width="50%">Ignore facets and filters and export all rows</td>
+              <td width="1%"><input type="checkbox" bind="outputColumnHeadersCheckbox" checked id="$custom-exporter-output-column-headers" /></td>
+              <td width="25%"><label for="$custom-exporter-output-column-headers">Output column headers</label></td>
+              <td width="1%"><input type="checkbox" bind="outputBlankRowsCheckbox" id="$custom-exporter-output-blank-rows" /></td>
+              <td width="25%"><label for="$custom-exporter-output-blank-rows">Output blank rows</label></td>
+              <td width="1%"><input type="checkbox" bind="exportAllRowsCheckbox" id="$custom-exporter-output-all-rows" /></td>
+              <td width="50%"><label for="$custom-exporter-output-all-rows">Ignore facets and filters and export all rows</label></td>
             </tr>
           </table></div></td>
         </tr>
@@ -99,25 +99,27 @@
         </tr>
         <tr>
           <td width="60%"><div class="grid-layout grid-layout-for-text layout-tightest"><table>
-            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="tsv" checked /></td><td>Tab-separated values (TSV)</td></tr>
-            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="csv" /></td><td>Comma-separated values (CSV)</td></tr>
-            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="*sv" /></td><td>Custom separator
-              <input type="text" class="lightweight" size="5" bind="separatorInput" />
-            </td></tr>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="tsv" checked id="$custom-exporter-download-tsv" /></td>
+              <td><label for="$custom-exporter-download-tsv">Tab-separated values (TSV)</label></td></tr>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="csv" id="$custom-exporter-download-csv" /></td>
+              <td><label for="$custom-exporter-download-csv">Comma-separated values (CSV)</label></td></tr>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="*sv" id="$custom-exporter-download-sv" /></td>
+              <td><label for="$custom-exporter-download-sv">Custom separator</label>
+                <input type="text" class="lightweight" size="5" bind="separatorInput" /></td></tr>
           </table></div></td>
           
           <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
             <tr>
-              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xls" /></td>
-              <td>Excel (.xls)</td>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xls" id="$custom-exporter-download-xls" /></td>
+              <td><label for="$custom-exporter-download-xls">Excel (.xls)</label></td>
             </tr>
             <tr>
-              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xlsx" /></td>
-              <td>Excel in XML (.xlsx)</td>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xlsx" id="$custom-exporter-download-xlsx" /></td>
+              <td><label for="$custom-exporter-download-xlsx">Excel in XML (.xlsx)</label></td>
             </tr>
             <tr>
-              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="html" /></td>
-              <td>HTML table</td>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="html" id="$custom-exporter-download-html" /></td>
+              <td><label for="$custom-exporter-download-html">HTML table</label></td>
             </tr>
           </table></div></td>
         </tr>
