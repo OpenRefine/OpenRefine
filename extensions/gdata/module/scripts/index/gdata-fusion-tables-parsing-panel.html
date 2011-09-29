@@ -19,15 +19,21 @@
   </tr>
   <tr>
     <td><div class="grid-layout layout-tightest"><table>
-      <tr><td width="1%"><input type="checkbox" bind="skipCheckbox" /></td><td>Discard initial</td>
-        <td><input bind="skipInput" type="text" class="lightweight" size="2" value="0" /> row(s) of data</td></tr>
-      <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" /></td><td>Load at most</td>
-        <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" /> row(s) of data</td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="skipCheckbox" id="$skip"/></td>
+        <td><label for="$skip">Discard initial</label></td>
+        <td><input bind="skipInput" type="text" class="lightweight" size="2" value="0" />
+          <label for="$skip">row(s) of data</label></td></tr>
+          
+      <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" id="$limit" /></td>
+        <td><label for="$limit">Load at most</label></td>
+        <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
+          <label for="$limit">row(s) of data</label></td></tr>
         
-      <tr><td width="1%"><input type="checkbox" bind="storeBlankRowsCheckbox" /></td>
-        <td colspan="2">Store blank rows</td></tr>
-      <tr><td width="1%"><input type="checkbox" bind="storeBlankCellsAsNullsCheckbox" /></td>
-        <td colspan="2">Store blank cells as nulls</td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="storeBlankRowsCheckbox" id="$store-blank-rows" /></td>
+        <td colspan="2"><label for="$store-blank-rows">Store blank rows</label></td></tr>
+        
+      <tr><td width="1%"><input type="checkbox" bind="storeBlankCellsAsNullsCheckbox" id="$store-blank-cells" /></td>
+        <td colspan="2"><label for="$store-blank-cells">Store blank cells as nulls</label></td></tr>
     </table></div></td>
   </tr>
 </table></div></div>

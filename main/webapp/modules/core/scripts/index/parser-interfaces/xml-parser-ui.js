@@ -69,7 +69,17 @@ Refine.XmlParserUI.prototype.getOptions = function() {
   var options = {
       recordPath: this._config.recordPath
   };
-
+  var parseIntDefault = function(s, def) {
+    try {
+      var n = parseInt(s);
+      if (!isNaN(n)) {
+        return n;
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return def;
+  };
   if (this._optionContainerElmts.limitCheckbox[0].checked) {
     options.limit = parseIntDefault(this._optionContainerElmts.limitInput[0].value, -1);
   } else {
@@ -194,7 +204,9 @@ Refine.XmlParserUI.prototype._showPickRecordElementsUI = function() {
       });
     }
   };
-  renderNode(this._config.dom, elmts.domContainer, []);
+  if (this._config.dom) {
+    renderNode(this._config.dom, elmts.domContainer, []);
+  }
 };
 
 Refine.XmlParserUI.prototype._scheduleUpdatePreview = function() {

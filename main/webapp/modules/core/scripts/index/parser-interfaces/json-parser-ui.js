@@ -70,6 +70,17 @@ Refine.JsonParserUI.prototype.getOptions = function() {
     recordPath: this._config.recordPath
   };
 
+  var parseIntDefault = function(s, def) {
+    try {
+      var n = parseInt(s);
+      if (!isNaN(n)) {
+        return n;
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return def;
+  };
   if (this._optionContainerElmts.limitCheckbox[0].checked) {
     options.limit = parseIntDefault(this._optionContainerElmts.limitInput[0].value, -1);
   } else {

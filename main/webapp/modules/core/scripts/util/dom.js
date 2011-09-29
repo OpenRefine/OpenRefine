@@ -35,31 +35,69 @@ var DOM = {};
 
 DOM.bind = function(elmt) {
   var map = {};
-
+  var idmap = {};
+  
   for (var i = 0; i < elmt.length; i++) {
-    DOM._bindDOMElement(elmt[i], map);
+    DOM._bindDOMElement(elmt[i], map, idmap);
+  }
+  for (var key in idmap) {
+    if (idmap.hasOwnProperty(key)) {
+      for (var i = 0; i < elmt.length; i++) {
+        DOM._resolveIdInDOMElement(elmt[i], idmap);
+      }
+      break;
+    }
   }
 
   return map;
 };
 
-DOM._bindDOMElement = function(elmt, map) {
+DOM._bindDOMElement = function(elmt, map, idmap) {
   var bind = elmt.getAttribute("bind");
   if (bind !== null && bind.length > 0) {
     map[bind] = $(elmt);
   }
-
+  
+  var id = elmt.id;
+  if (id !== null && id.length > 0 && id.substring(0, 1) == '$') {
+    var newID = id.substring(1) + '-' + Math.round(Math.random() * 1000000);
+    idmap[id] = newID;
+    elmt.id = newID;
+  }
+  
   if (elmt.hasChildNodes()) {
-    DOM._bindDOMChildren(elmt, map);
+    DOM._bindDOMChildren(elmt, map, idmap);
   }
 };
 
-DOM._bindDOMChildren = function(elmt, map) {
+DOM._bindDOMChildren = function(elmt, map, idmap) {
   var node = elmt.firstChild;
   while (node !== null) {
     var node2 = node.nextSibling;
     if (node.nodeType == 1) {
-      DOM._bindDOMElement(node, map);
+      DOM._bindDOMElement(node, map, idmap);
+    }
+    node = node2;
+  }
+};
+
+DOM._resolveIdInDOMElement = function(elmt, idmap) {
+  var forAttr = elmt.getAttribute("for");
+  if (forAttr !== null && forAttr.length > 0 && forAttr in idmap) {
+    elmt.setAttribute("for", idmap[forAttr]);
+  }
+  
+  if (elmt.hasChildNodes()) {
+    DOM._resolveIdInDOMChildren(elmt, idmap);
+  }
+};
+
+DOM._resolveIdInDOMChildren = function(elmt, idmap) {
+  var node = elmt.firstChild;
+  while (node !== null) {
+    var node2 = node.nextSibling;
+    if (node.nodeType == 1) {
+      DOM._resolveIdInDOMElement(node, idmap);
     }
     node = node2;
   }

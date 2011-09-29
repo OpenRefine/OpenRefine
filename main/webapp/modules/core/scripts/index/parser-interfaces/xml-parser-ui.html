@@ -10,10 +10,13 @@
   </tr>
   <tr>
     <td><div class="grid-layout layout-tightest"><table>
-      <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" /></td><td>Load at most</td>
-        <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" /> record(s) of data</td></tr>
-      <tr><td width="1%"><input type="checkbox" bind="includeFileSourcesCheckbox" /></td>
-        <td colspan="2">Store file source (file names, URLs) in each row</td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" id="$limit" /></td>
+        <td><label for="$limit">Load at most</label></td>
+        <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
+          <label for="$limit">record(s) of data</label></td></tr>
+          
+      <tr><td width="1%"><input type="checkbox" bind="includeFileSourcesCheckbox" id="$include-file-sources" /></td>
+        <td colspan="2"><label for="$include-file-sources">Store file source (file names, URLs) in each row</label></td></tr>
     </table></div></td>
   </tr>
 </table></div>

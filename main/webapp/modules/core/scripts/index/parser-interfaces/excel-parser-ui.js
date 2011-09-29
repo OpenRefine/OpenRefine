@@ -121,9 +121,11 @@ Refine.ExcelParserUI.prototype._initialize = function() {
 
   var sheetTable = this._optionContainerElmts.sheetRecordContainer[0];
   $.each(this._config.sheetRecords, function(i, v) {
+    var id = 'core-excel-worksheet-' + Math.round(Math.random() * 1000000);
     var tr = sheetTable.insertRow(sheetTable.rows.length);
     var td0 = $(tr.insertCell(0)).attr('width', '1%');
     var checkbox = $('<input>')
+    .attr('id', id)
     .attr('type', 'checkbox')
     .attr('index', i)
     .appendTo(td0);
@@ -131,8 +133,15 @@ Refine.ExcelParserUI.prototype._initialize = function() {
       checkbox.attr('checked', 'true');
     }
 
-    $(tr.insertCell(1)).text(this.name);
-    $(tr.insertCell(2)).text(this.rows + ' rows');
+    $('<label>')
+      .attr('for', id)
+      .text(this.name)
+      .appendTo(tr.insertCell(1));
+    
+    $('<label>')
+      .attr('for', id)
+      .text(this.rows + ' rows')
+      .appendTo(tr.insertCell(2));
   });
 
   if (this._config.ignoreLines > 0) {

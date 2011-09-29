@@ -192,9 +192,12 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   if (this._doc.type != 'table') {
     var sheetTable = this._parsingPanelElmts.sheetRecordContainer[0];
     $.each(this._options.worksheets, function(i, v) {
+      var id = 'gdata-worksheet-' + Math.round(Math.random() * 1000000);
+      
       var tr = sheetTable.insertRow(sheetTable.rows.length);
       var td0 = $(tr.insertCell(0)).attr('width', '1%');
       var checkbox = $('<input>')
+      .attr('id', id)
       .attr('type', 'radio')
       .attr('name', 'gdata-importing-parsing-worksheet')
       .attr('sheetUrl', this.link)
@@ -202,8 +205,16 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
       if (i === 0) {
         checkbox.attr('checked', 'true');
       }
-      $(tr.insertCell(1)).text(this.name);
-      $(tr.insertCell(2)).text(this.rows + ' rows');
+      
+      $('<label>')
+        .attr('for', id)
+        .text(this.name)
+        .appendTo(tr.insertCell(1));
+      
+      $('<label>')
+        .attr('for', id)
+        .text(this.rows + ' rows')
+        .appendTo(tr.insertCell(2));
     });
 
     if (this._options.ignoreLines > 0) {
