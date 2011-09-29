@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.nio.CharBuffer;
 
 import com.google.refine.importing.FormatGuesser;
 
@@ -21,22 +20,21 @@ public class TextFormatGuesser implements FormatGuesser {
                 Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
                 
                 int totalBytes = 0;
-                int bytes;
                 int openBraces = 0;
                 int closeBraces = 0;
                 int openAngleBrackets = 0;
                 int closeAngleBrackets = 0;
                 
-                CharBuffer charBuffer = CharBuffer.allocate(4096);
-                while (totalBytes < 64 * 1024 && (bytes = reader.read(charBuffer)) > 0) {
-                    String chunk = charBuffer.toString();
+                char[] chars = new char[4096];
+                int c;
+                while (totalBytes < 64 * 1024 && (c = reader.read(chars)) > 0) {
+                    String chunk = String.valueOf(chars, 0, c);
                     openBraces += countSubstrings(chunk, "{");
                     closeBraces += countSubstrings(chunk, "}");
                     openAngleBrackets += countSubstrings(chunk, "<");
                     closeAngleBrackets += countSubstrings(chunk, ">");
                     
-                    charBuffer.clear();
-                    totalBytes += bytes;
+                    totalBytes += c;
                 }
                 
                 if (openBraces >= 5 && closeBraces >= 5) {
