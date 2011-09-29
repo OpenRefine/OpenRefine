@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Thomas F. Morris
+ * Copyright (c) 2010,2011 Thomas F. Morris
  *        All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without 
@@ -416,7 +416,7 @@ public class UploadCommand extends Command {
                 
                 sbValues.append("'");
                 if (cellData != null && cellData.text != null) {
-                    sbValues.append(cellData.text.replaceAll("'", "\\'"));
+                    sbValues.append(cellData.text.replaceAll("'", "\\\\'"));
                 }
                 sbValues.append("'");
             }
