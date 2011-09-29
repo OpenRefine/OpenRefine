@@ -51,6 +51,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
             if (o.url) {
               window.open(o.url, '_blank');
+            } else {
+            	alert('Upload error: ' + o.message)
             }
             onDone();
           },
