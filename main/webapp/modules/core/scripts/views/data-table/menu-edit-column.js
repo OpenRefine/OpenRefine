@@ -62,9 +62,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value
         },
         null,
-        { modelsChanged: true }
+        { modelsChanged: true },
+        {
+          onDone: function(o) {
+            dismiss();
+          }
+        }
       );
-      dismiss();
     });
 
     var o = DataTableView.sampleVisibleRows(column);
