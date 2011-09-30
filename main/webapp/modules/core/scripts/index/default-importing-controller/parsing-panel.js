@@ -40,6 +40,10 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
   if (!(this._parserOptions)) {
     this._parserOptions = {};
   }
+  if (this._formatParserUI) {
+    this._formatParserUI.dispose();
+    delete this._formatParserUI;
+  }
 
   this._prepareParsingPanel();
   this._parsingPanelElmts.nextButton.click(function() {

@@ -151,7 +151,7 @@ Refine.DefaultImportingController.prototype._prepareData = function() {
 
     var slash = file.fileName.lastIndexOf('/');
     var dot = file.fileName.lastIndexOf('.');
-    if (dot > slash + 1) {
+    if (dot > slash) {
       var extension = file.fileName.substring(dot);
       if (extension in extensionMap) {
         extensionMap[extension].count++;

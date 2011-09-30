@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Refine.DefaultImportingController.prototype._showFileSelectionPanel = function() {
   var self = this;
 
+  this._selectedMap = {};
   this._prepareFileSelectionPanel();
 
   this._fileSelectionPanelElmts.nextButton.click(function() {
@@ -92,34 +93,68 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanel = function
 
 Refine.DefaultImportingController.prototype._renderFileSelectionPanelFileTable = function() {
   var self = this;
+  var files = this._job.config.retrievalRecord.files;
 
   this._fileSelectionPanelElmts.filePanel.empty();
 
-  var fileTable = $('<table><tr><th></th><th>Name</th><th>Mime-type</th><th>Format</th><th>Size</th></tr></table>')
-  .appendTo(this._fileSelectionPanelElmts.filePanel)[0];
+  var fileTable = $('<table><tr><th>Import?</th><th>Name</th><th>Mime-type</th><th>Format</th><th>Size</th></tr></table>')
+    .appendTo(this._fileSelectionPanelElmts.filePanel)[0];
 
-  var files = this._job.config.retrievalRecord.files;
+  var round = function(n) {
+    return Math.round(n * 10) / 10;
+  };
+  var renderSize = function(fileRecord) {
+    var bytes = fileRecord.size;
+    var gigabytes = bytes / 1073741824;
+    var megabytes = bytes / 1048576;
+    var kilobytes = bytes / 1024;
+    if (gigabytes > 1) {
+      return round(gigabytes) + " GB";
+    } else if (megabytes > 1) {
+      return round(megabytes) + " MB";
+    } else if (kilobytes > 1) {
+      return round(kilobytes) + " KB";
+    } else {
+      return fileRecord.size + " bytes";
+    }
+  };
   var renderFile = function(fileRecord, index) {
+    var id = "import-file-selection-" + Math.round(Math.random() * 1000000);
     var tr = fileTable.insertRow(fileTable.rows.length);
     $(tr).addClass(index % 2 == 0 ? 'even' : 'odd');
-
-    var tdSelect = $('<td>').appendTo(tr);
+    
+    var createLabeledCell = function(className) {
+      var td = $('<td>').appendTo(tr);
+      if (className) {
+        td.addClass(className);
+      }
+      return $('<label>').attr('for', id).appendTo(td);
+    };
+    
     var checkbox = $('<input>')
+    .attr("id", id)
     .attr("type", "checkbox")
     .attr("index", index)
-    .appendTo(tdSelect)
+    .appendTo(createLabeledCell())
     .click(function() {
-      files[index].selected = this.checked;
+      var fileRecord = files[index];
+      if (this.checked) {
+        self._selectedMap[fileRecord.location] = fileRecord;
+      } else {
+        delete self._selectedMap[fileRecord.location];
+      }
       self._updateFileSelectionSummary();
     });
     if (fileRecord.selected) {
+      // Initial selection determined on server side.
       checkbox.attr("checked", "checked");
+      self._selectedMap[fileRecord.location] = fileRecord;
     }
 
-    $('<td>').text(fileRecord.fileName).addClass("default-importing-file-selection-filename").appendTo(tr);
-    $('<td>').text(fileRecord.declaredMimeType || fileRecord.mimeType || "unknown").appendTo(tr);
-    $('<td>').text(fileRecord.format || "unknown").appendTo(tr);
-    $('<td>').text(fileRecord.size + " bytes").appendTo(tr);
+    createLabeledCell("default-importing-file-selection-filename").text(fileRecord.fileName);
+    createLabeledCell().text(fileRecord.declaredMimeType || fileRecord.mimeType || "unknown");
+    createLabeledCell().text(fileRecord.format || "unknown");
+    createLabeledCell().text(renderSize(fileRecord));
   };
 
   for (var i = 0; i < files.length; i++) {
@@ -134,15 +169,14 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
   this._fileSelectionPanelElmts.extensionContainer.empty();
   this._fileSelectionPanelElmts.selectAllButton.unbind().click(function(evt) {
     for (var i = 0; i < files.length; i++) {
-      files[i].selected = true;
+      var fileRecord = files[i];
+      self._selectedMap[fileRecord.location] = fileRecord;
     }
     self._fileSelectionPanelElmts.filePanel.find("input").attr("checked", "checked");
     self._updateFileSelectionSummary();
   });
   this._fileSelectionPanelElmts.unselectAllButton.unbind().click(function(evt) {
-    for (var i = 0; i < files.length; i++) {
-      files[i].selected = false;
-    }
+    self._selectedMap = {};
     self._fileSelectionPanelElmts.filePanel.find("input").removeAttr("checked");
     self._updateFileSelectionSummary();
   });
@@ -161,9 +195,9 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     .click(function() {
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
-        if (!file.selected) {
+        if (!(file.location in self._selectedMap)) {
           if (file.fileName.endsWith(extension.extension)) {
-            file.selected = true;
+            self._selectedMap[file.location] = file;
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
             .attr("checked", "checked");
@@ -179,9 +213,9 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     .click(function() {
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
-        if (file.selected) {
+        if (file.location in self._selectedMap) {
           if (file.fileName.endsWith(extension.extension)) {
-            file.selected = false;
+            delete self._selectedMap[file.location];
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
             .removeAttr("checked");
@@ -223,9 +257,9 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       var regex = new RegExp(self._fileSelectionPanelElmts.regexInput[0].value);
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
-        if (!file.selected) {
+        if (!(file.location in self._selectedMap)) {
           if (regex.test(file.fileName)) {
-            file.selected = true;
+            self._selectedMap[file.location] = file;
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
             .attr("checked", "checked");
@@ -245,9 +279,9 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       var regex = new RegExp(self._fileSelectionPanelElmts.regexInput[0].value);
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
-        if (file.selected) {
+        if (file.location in self._selectedMap) {
           if (regex.test(file.fileName)) {
-            file.selected = false;
+            delete self._selectedMap[file.location];
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
             .removeAttr("checked");
@@ -265,7 +299,7 @@ Refine.DefaultImportingController.prototype._updateFileSelectionSummary = functi
   var fileSelection = [];
   var files = this._job.config.retrievalRecord.files;
   for (var i = 0; i < files.length; i++) {
-    if (files[i].selected) {
+    if (files[i].location in this._selectedMap) {
       fileSelection.push(i);
     }
   }
