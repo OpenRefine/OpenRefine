@@ -154,56 +154,56 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {
           id: "core/trim-whitespace",
           label: "Trim leading and trailing whitespace",
-          click: function() { doTextTransform("value.trim()", "store-blank", false, ""); }
+          click: function() { doTextTransform("value.trim()", "keep-original", false, ""); }
         },
         {
           id: "core/collapse-whitespace",
           label: "Collapse consecutive whitespace",
-          click: function() { doTextTransform("value.replace(/\\s+/,' ')", "store-blank", false, ""); }
+          click: function() { doTextTransform("value.replace(/\\s+/,' ')", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/unescape-html-entities",
           label: "Unescape HTML entities",
-          click: function() { doTextTransform("value.unescape('html')", "store-blank", true, 10); }
+          click: function() { doTextTransform("value.unescape('html')", "keep-original", true, 10); }
         },
         {},
         {
           id: "core/to-titlecase",
           label: "To titlecase",
-          click: function() { doTextTransform("value.toTitlecase()", "store-blank", false, ""); }
+          click: function() { doTextTransform("value.toTitlecase()", "keep-original", false, ""); }
         },
         {
           id: "core/to-uppercase",
           label: "To uppercase",
-          click: function() { doTextTransform("value.toUppercase()", "store-blank", false, ""); }
+          click: function() { doTextTransform("value.toUppercase()", "keep-original", false, ""); }
         },
         {
           id: "core/to-lowercase",
           label: "To lowercase",
-          click: function() { doTextTransform("value.toLowercase()", "store-blank", false, ""); }
+          click: function() { doTextTransform("value.toLowercase()", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-number",
           label: "To number",
-          click: function() { doTextTransform("value.toNumber()", "store-blank", false, ""); }
+          click: function() { doTextTransform("value.toNumber()", "keep-original", false, ""); }
         },
         {
           id: "core/to-date",
           label: "To date",
-          click: function() { doTextTransform("value.toDate()", "store-blank", false, ""); }
+          click: function() { doTextTransform("value.toDate()", "keep-original", false, ""); }
         },
         {
           id: "core/to-text",
           label: "To text",
-          click: function() { doTextTransform("value.toString()", "store-blank", false, ""); }
+          click: function() { doTextTransform("value.toString()", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-blank",
           label: "Blank out cells",
-          click: function() { doTextTransform("null", "store-blank", false, ""); }
+          click: function() { doTextTransform("null", "keep-original", false, ""); }
         }
       ]
     },
