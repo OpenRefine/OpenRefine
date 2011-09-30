@@ -25,6 +25,9 @@ public class TextFormatGuesser implements FormatGuesser {
                 int openAngleBrackets = 0;
                 int closeAngleBrackets = 0;
                 
+                char firstChar = ' ';
+                boolean foundFirstChar = false;
+                
                 char[] chars = new char[4096];
                 int c;
                 while (totalBytes < 64 * 1024 && (c = reader.read(chars)) > 0) {
@@ -34,16 +37,26 @@ public class TextFormatGuesser implements FormatGuesser {
                     openAngleBrackets += countSubstrings(chunk, "<");
                     closeAngleBrackets += countSubstrings(chunk, ">");
                     
+                    if (!foundFirstChar) {
+                        chunk = chunk.trim();
+                        if (chunk.length() > 0) {
+                            firstChar = chunk.charAt(0);
+                            foundFirstChar = true;
+                        }
+                    }
                     totalBytes += c;
                 }
                 
-                if (openBraces >= 5 && closeBraces >= 5) {
-                    return "text/json";
-                } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
-                    return "text/xml";
-                } else {
-                    return "text/line-based";
+                if (foundFirstChar) {
+                    if ((firstChar == '{' || firstChar == '[') &&
+                        openBraces >= 5 && closeBraces >= 5) {
+                        return "text/json";
+                    } else if (firstChar == '<' &&
+                        openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
+                        return "text/xml";
+                    }
                 }
+                return "text/line-based";
             } finally {
                 is.close();
             }
