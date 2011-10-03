@@ -213,6 +213,8 @@ abstract public class CustomizableTabularExporterUtilities {
         CUSTOM
     }
     
+    final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    
     static private class CellFormatter {
         ReconOutputMode recon_outputMode = ReconOutputMode.ENTITY_NAME;
         boolean recon_blankUnmatchedCells = false;
@@ -227,7 +229,9 @@ abstract public class CustomizableTabularExporterUtilities {
         
         Map<String, String> identifierSpaceToUrl = null;
         
-        CellFormatter() {}
+        CellFormatter() {
+            dateFormatter = new SimpleDateFormat(fullIso8601);
+        }
         
         CellFormatter(JSONObject options) {
             JSONObject reconSettings = JSONUtilities.getObject(options, "reconSettings");
@@ -299,7 +303,7 @@ abstract public class CustomizableTabularExporterUtilities {
             default:
                 dateFormatter = date_omitTime ?
                     new SimpleDateFormat("yyyy-MM-dd") :
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    new SimpleDateFormat(fullIso8601);
             }
             
             if (!date_useLocalTimeZone) {

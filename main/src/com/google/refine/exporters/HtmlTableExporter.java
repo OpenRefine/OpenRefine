@@ -110,7 +110,7 @@ public class HtmlTableExporter implements WriterExporter {
                             writer.write("</td>");
                         }
                     }
-                    writer.write("</tr>");
+                    writer.write("</tr>\n");
                 } catch (IOException e) {
                     // Ignore
                 }
