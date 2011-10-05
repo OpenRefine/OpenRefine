@@ -44,8 +44,6 @@ function init() {
 //Packages.java.lang.System.err.println(module.getMountPoint());
 
   var RS = Packages.com.google.refine.RefineServlet;
-  RS.registerCommand(module, "authorize", Packages.com.google.refine.extension.gdata.AuthorizeCommand());
-  RS.registerCommand(module, "authorize2", Packages.com.google.refine.extension.gdata.AuthorizeCommand2());
   RS.registerCommand(module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
   RS.registerCommand(module, "upload", Packages.com.google.refine.extension.gdata.UploadCommand());
 
@@ -69,6 +67,7 @@ function init() {
     "index/scripts",
     module,
     [
+      "scripts/gdata-extension.js",
       "scripts/index/importing-controller.js",
       "scripts/index/gdata-source-ui.js"
     ]
@@ -87,6 +86,7 @@ function init() {
     "project/scripts",
     module,
     [
+      "scripts/gdata-extension.js",
       "scripts/project/exporters.js"
     ]
   );
@@ -97,24 +97,32 @@ function init() {
  */
 function process(path, request, response) {
   // Analyze path and handle this request yourself.
-  if (path == "authorized") {
+  if (path == "authorize") {
     var context = {};
-    var params = new Packages.java.util.Properties();
-    context.params = params;
+    context.authorizationUrl = Packages.com.google.refine.extension.gdata.GDataExtension.getAuthorizationUrl(module, request);
     
-    var queryString = request.getQueryString();
-    if (queryString != null) {
-      var AuthSubUtil = Packages.com.google.gdata.client.http.AuthSubUtil;
+    send(request, response, "authorize.vt", context);
+  } else if (path == "authorized") {
+    var context = {};
+    context.winname = request.getParameter("winname");
+    context.callback = request.getParameter("callback");
+    
+    (function() {
+      var queryString = request.getQueryString();
+      if (queryString != null) {
+        var AuthSubUtil = Packages.com.google.gdata.client.http.AuthSubUtil;
       
-      // FIXME(SM): can we safely assume UTF-8 encoding here?
-      var onetimeUseToken = AuthSubUtil.getTokenFromReply(
-          Packages.java.net.URLDecoder.decode(queryString,"UTF-8"));
-      
-      var sessionToken = AuthSubUtil.exchangeForSessionToken(onetimeUseToken, null);
-      Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, sessionToken);
-    } else {
+        // FIXME(SM): can we safely assume UTF-8 encoding here?
+        var onetimeUseToken = AuthSubUtil.getTokenFromReply(
+          Packages.java.net.URLDecoder.decode(queryString, "UTF-8"));
+        if (onetimeUseToken) {
+          var sessionToken = AuthSubUtil.exchangeForSessionToken(onetimeUseToken, null);
+          Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, sessionToken);
+          return;
+        }
+      }
       Packages.com.google.refine.extension.gdata.TokenCookie.deleteToken(request, response);
-    }
+    })();
     
     send(request, response, "authorized.vt", context);
   }

@@ -1,6 +1,7 @@
-/*
+<!doctype html>
+<!--
 
-Copyright 2010, Google Inc.
+Copyright 2011, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,24 +30,17 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*/
-
-// Client side resources to be injected for gData extension
-
-// Add items to the exporter menu
-//ExportManager.MenuItems.append(
-//        [ "core/project", "core/export", "core/export-templating" ],
-//        [
-//            {
-//                "label":"Google Spreadsheet",
-//                "click": function() {}
-//            },
-//            {
-//                "label":"Google Data",
-//                "click": function() {}
-//            },
-//            {} // separator
-//        ]
-//);
-
-var gdataExtension = {};
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Google Refine - Authorization</title>
+</head>
+<body>
+  <script>
+    window.setTimeout(function() {
+      document.location.href = "$authorizationUrl";
+    }, 100);
+  </script>
+</body>
+</html>

@@ -61,23 +61,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
     };
 
-    var messageListener = function(evt) {
-      window.removeEventListener("message", messageListener, false);
-      if ($.cookie('authsub_token')) {
-        doUpload();
-      }
-    };
-
-    var authenticate = function() {
-      window.addEventListener("message", messageListener, false);
-      window.open(
-        "/command/gdata/authorize",
-        "google-refine-gdata-signin",
-        "resizable=1,width=600,height=450"
-      );
-    };
-
-    authenticate();
+    if (GdataExtension.isAuthorized()) {
+      doUpload();
+    } else {
+      GdataExtension.showAuthorizationDialog(doUpload);
+    }
   };
   
   CustomTabularExporterDialog.uploadTargets.push({

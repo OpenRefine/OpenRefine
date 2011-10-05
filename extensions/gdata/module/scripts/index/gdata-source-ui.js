@@ -33,19 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Refine.GDataSourceUI = function(controller) {
   this._controller = controller;
-  
-  var self = this;
-  window.addEventListener(
-    "message",
-    function(evt) {
-      if ($.cookie('authsub_token')) {
-        self._listDocuments();
-      } else {
-        self._body.find('.gdata-page').hide();
-        self._elmts.signinPage.show();
-      }
-    },
-    false);
 };
 
 Refine.GDataSourceUI.prototype.attachUI = function(body) {
@@ -54,18 +41,23 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   this._body.html(DOM.loadHTML("gdata", "scripts/index/import-from-gdata-form.html"));
   this._elmts = DOM.bind(this._body);
   
+  var self = this;
   this._body.find('.gdata-signin.button').click(function() {
-    window.open(
-      "/command/gdata/authorize",
-      "google-refine-gdata-signin",
-      "resizable=1,width=600,height=450"
+    GdataExtension.showAuthorizationDialog(
+      function() {
+        self._listDocuments();
+      },
+      function() {
+        self._body.find('.gdata-page').hide();
+        self._elmts.signinPage.show();
+      }
     );
   });
   
   this._body.find('.gdata-page').hide();
   this._elmts.signinPage.show();
   
-  if ($.cookie('authsub_token')) {
+  if (GdataExtension.isAuthorized()) {
     this._listDocuments();
   }
 };

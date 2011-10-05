@@ -34,28 +34,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Google Refine</title>
+  <title>Google Refine - Authorized</title>
 </head>
 <body>
-  Closing...
+  Authorization process completed. Close this window and return to Google Refine.
+  
   <script>
-    (function() {
-      var url = document.location.href;
-      var slash = url.indexOf('/', url.indexOf('//') + 2);
-      var origin = url.substring(0, slash);
-      
-      var pairs = document.cookie.split(';');
-      for (var i = 0; i < pairs.length; i++) {
-        var pair = pairs[i].replace(/^\s+/, '').replace(/\s+$/, '').split('=');
-        if (pair[0] == 'authsub_token' && pair[1].length > 0) {
-          window.opener.postMessage('gdata:' + pair.join('='), origin);
-          return;
-        }
-      }
-      window.opener.postMessage('gdata:authsub_token=', origin);
-    })();
+    var windowName = "$winname";
+    var callbackName = "$callback";
     
-    window.setTimeout(function() { window.close(); }, 100);
+    var w = window.open("", windowName);
+    var callback = w[callbackName];
+    if (callback) {
+      try {
+        callback();
+      } catch (e) {
+        alert(e.message);
+      }
+    } else {
+      w.close();
+    }
+    window.close();
   </script>
 </body>
 </html>

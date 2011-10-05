@@ -30,6 +30,7 @@ package com.google.refine.extension.gdata;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -38,14 +39,21 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.Service.GDataRequest;
 import com.google.gdata.client.Service.GDataRequest.RequestType;
 import com.google.gdata.client.docs.DocsService;
+import com.google.gdata.client.http.AuthSubUtil;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.util.ContentType;
 import com.google.gdata.util.ServiceException;
+
+import com.google.refine.util.ParsingUtilities;
+
+import edu.mit.simile.butterfly.ButterflyModule;
 
 /**
  * @author Tom Morris <tfmorris@gmail.com>
@@ -54,6 +62,27 @@ import com.google.gdata.util.ServiceException;
  */
 abstract public class GDataExtension {
     static final String SERVICE_APP_NAME = "Google-Refine-GData-Extension";
+
+    static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
+            throws MalformedURLException {
+        char[] mountPointChars = module.getMountPoint().getMountPoint().toCharArray();
+    
+        StringBuffer sb = new StringBuffer();
+        sb.append(mountPointChars, 0, mountPointChars.length);
+        sb.append("authorized?winname=");
+        sb.append(ParsingUtilities.encode(request.getParameter("winname")));
+        sb.append("&callback=");
+        sb.append(ParsingUtilities.encode(request.getParameter("callback")));
+    
+        URL thisUrl = new URL(request.getRequestURL().toString());
+        URL authorizedUrl = new URL(thisUrl, sb.toString());
+        
+        return AuthSubUtil.getRequestUrl(
+            authorizedUrl.toExternalForm(), // execution continues at authorized on redirect
+            "https://docs.google.com/feeds https://spreadsheets.google.com/feeds https://www.google.com/fusiontables/api/query",
+            false,
+            true);
+    }
 
     static private FeedURLFactory factory;
     static public FeedURLFactory getFeedUrlFactory() {
