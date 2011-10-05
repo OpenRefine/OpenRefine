@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -48,6 +49,8 @@ import com.google.refine.commands.Command;
  */
 public class RefineServletStub extends RefineServlet {
 
+    private static File tempDir = null;
+    
     //requirement of extending HttpServlet, not required for testing
     private static final long serialVersionUID = 1L;
 
@@ -57,6 +60,19 @@ public class RefineServletStub extends RefineServlet {
 
     public String wrapGetCommandName(HttpServletRequest request){
         return super.getCommandKey(request);
+    }
+    
+    @Override
+    public File getTempDir() {
+        if (tempDir == null) {
+            try {
+                tempDir = File.createTempFile("refine-test-dir", "");
+                tempDir.deleteOnExit();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create temp directory",e);
+            }
+        }
+        return tempDir; 
     }
 
     //-------------------helper methods--------------
