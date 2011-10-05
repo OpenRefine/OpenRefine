@@ -182,6 +182,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 rowHasData = true;
                             } else if (!storeBlankCellsAsNulls) {
                                 row.setCell(column.getCellIndex(), new Cell("", null));
+                            } else {
+                                row.setCell(column.getCellIndex(), null);
                             }
                         }
                         
