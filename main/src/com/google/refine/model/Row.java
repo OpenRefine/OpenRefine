@@ -239,7 +239,7 @@ public class Row implements HasFields, Jsonizable {
     public String toString() {
         StringBuffer result = new StringBuffer();
         for (Cell cell : cells) {
-            result.append(cell.toString());
+            result.append(cell == null ? "null" : cell.toString());
             result.append(",");
         }
         return result.toString();
