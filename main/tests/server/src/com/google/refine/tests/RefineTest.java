@@ -127,4 +127,15 @@ public class RefineTest {
             e.printStackTrace();
         }
     }
+    
+    // Works for both int, String, and JSON arrays
+    static public void verifyGetArrayOption(String name, JSONObject options){
+        verify(options, times(1)).has(name);
+        try {
+            verify(options, times(1)).getJSONArray(name);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }
