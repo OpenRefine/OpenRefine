@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.jrdf.JRDFFactory;
 import org.jrdf.SortedMemoryJRDFFactory;
 import org.jrdf.collection.MemMapFactory;
@@ -79,12 +78,6 @@ public class RdfTripleImporter extends ImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(ImportingJob job,
-            List<JSONObject> fileRecords, String format) {
-        throw new NotImplementedException();
-    }
-    
-    @Override
     public void parseOneFile(Project project, ProjectMetadata metadata,
             ImportingJob job, String fileSource, Reader reader, int limit,
             JSONObject options, List<Exception> exceptions) {
@@ -101,14 +94,13 @@ public class RdfTripleImporter extends ImportingParserBase {
             return;
         } 
         
-        Map<String, List<Row>> subjectToRows = new HashMap<String, List<Row>>();
-
-        Column subjectColumn = new Column(0, "subject");
-        project.columnModel.columns.add(0, subjectColumn);
-        project.columnModel.setKeyColumnIndex(0);
-
         ClosableIterable<Triple> triples = graph.find(ANY_SUBJECT_NODE, ANY_PREDICATE_NODE, ANY_OBJECT_NODE);
         try {
+            Map<String, List<Row>> subjectToRows = new HashMap<String, List<Row>>();
+            Column subjectColumn = new Column(project.columnModel.allocateNewCellIndex(), "subject");
+            project.columnModel.addColumn(0, subjectColumn, false);
+            project.columnModel.setKeyColumnIndex(0);
+            
             for (Triple triple : triples) {
                 String subject = triple.getSubject().toString();
                 String predicate = triple.getPredicate().toString();
@@ -117,11 +109,7 @@ public class RdfTripleImporter extends ImportingParserBase {
                 Column column = project.columnModel.getColumnByName(predicate);
                 if (column == null) {
                     column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
-                    try {
-                        project.columnModel.addColumn(-1, column, true);
-                    } catch (ModelException e) {
-                        // ignore
-                    }
+                    project.columnModel.addColumn(-1, column, true);
                 }
 
                 int cellIndex = column.getCellIndex();
@@ -156,6 +144,8 @@ public class RdfTripleImporter extends ImportingParserBase {
             for (Entry<String, List<Row>> entry : subjectToRows.entrySet()) {
                 project.rows.addAll(entry.getValue());
             }
+        } catch (ModelException e) {
+            exceptions.add(e);
         } finally {
             triples.iterator().close();
         }

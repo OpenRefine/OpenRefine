@@ -193,6 +193,8 @@ function registerImporting() {
   IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
       new Packages.com.google.refine.importers.FixedWidthImporter());
 
+  IM.registerFormat("text/rdf+n3", "RDF/N3 files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
+
   IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
   IM.registerFormat("text/xml/xlsx", "Excel (.xlsx) files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
   IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
@@ -219,6 +221,8 @@ function registerImporting() {
 
   IM.registerExtension(".xls", "binary/xls");
   IM.registerExtension(".xlsx", "text/xml/xlsx");
+  
+  IM.registerExtension(".n3", "text/rdf+n3");
 
   IM.registerExtension(".marc", "text/marc");
   IM.registerExtension(".mrc", "text/marc");
@@ -232,6 +236,8 @@ function registerImporting() {
   IM.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
 
   IM.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
+  
+  IM.registerMimeType("text/rdf+n3", "text/rdf+n3");
 
   IM.registerMimeType("application/msexcel", "binary/xls");
   IM.registerMimeType("application/x-msexcel", "binary/xls");
@@ -316,7 +322,8 @@ function init() {
       "scripts/index/parser-interfaces/fixed-width-parser-ui.js",
       "scripts/index/parser-interfaces/excel-parser-ui.js",
       "scripts/index/parser-interfaces/xml-parser-ui.js",
-      "scripts/index/parser-interfaces/json-parser-ui.js"
+      "scripts/index/parser-interfaces/json-parser-ui.js",
+      "scripts/index/parser-interfaces/rdf-triples-parser-ui.js"
     ]
   );
 

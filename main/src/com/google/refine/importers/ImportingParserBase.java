@@ -58,6 +58,15 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
     
     @Override
+    public JSONObject createParserUIInitializationData(ImportingJob job,
+            List<JSONObject> fileRecords, String format) {
+        JSONObject options = new JSONObject();
+        JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
+        
+        return options;
+    }
+    
+    @Override
     public void parse(Project project, ProjectMetadata metadata,
             final ImportingJob job, List<JSONObject> fileRecords, String format,
             int limit, JSONObject options, List<Exception> exceptions) {

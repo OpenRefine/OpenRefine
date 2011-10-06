@@ -24,6 +24,7 @@ public class TextFormatGuesser implements FormatGuesser {
                 int closeBraces = 0;
                 int openAngleBrackets = 0;
                 int closeAngleBrackets = 0;
+                int trailingPeriods = 0;
                 
                 char firstChar = ' ';
                 boolean foundFirstChar = false;
@@ -36,6 +37,7 @@ public class TextFormatGuesser implements FormatGuesser {
                     closeBraces += countSubstrings(chunk, "}");
                     openAngleBrackets += countSubstrings(chunk, "<");
                     closeAngleBrackets += countSubstrings(chunk, ">");
+                    trailingPeriods += countLineSuffix(chunk, ".");
                     
                     if (!foundFirstChar) {
                         chunk = chunk.trim();
@@ -51,9 +53,12 @@ public class TextFormatGuesser implements FormatGuesser {
                     if ((firstChar == '{' || firstChar == '[') &&
                         openBraces >= 5 && closeBraces >= 5) {
                         return "text/json";
-                    } else if (firstChar == '<' &&
-                        openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
-                        return "text/xml";
+                    } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
+                        if (trailingPeriods > 0) {
+                            return "text/rdf+n3";
+                        } else if (firstChar == '<') {
+                            return "text/xml";
+                        }
                     }
                 }
                 return "text/line-based";
@@ -82,4 +87,31 @@ public class TextFormatGuesser implements FormatGuesser {
         }
         return count;
     }
+    
+    static public int countLineSuffix(String s, String suffix) {
+        int count = 0;
+        int from = 0;
+        while (from < s.length()) {
+            int lineEnd = s.indexOf('\n', from);
+            if (lineEnd < 0) {
+                break;
+            } else {
+                int i = lineEnd - 1;
+                while (i >= from + suffix.length() - 1) {
+                    if (Character.isWhitespace(s.charAt(i))) {
+                        i--;
+                    } else {
+                        String suffix2 = s.subSequence(i - suffix.length() + 1, i + 1).toString();
+                        if (suffix2.equals(suffix)) {
+                            count++;
+                        }
+                        break;
+                    }
+                }
+                from = lineEnd + 1;
+            }
+        }
+        return count;
+    }
+
 }

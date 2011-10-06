@@ -58,7 +58,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
     @Override
     public JSONObject createParserUIInitializationData(ImportingJob job,
             List<JSONObject> fileRecords, String format) {
-        JSONObject options = new JSONObject();
+        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
         
         JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
@@ -66,8 +66,6 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
-        
-        JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
         
         return options;
     }
