@@ -122,8 +122,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<table class="list-table"><tr>' +
       '<th></th>' +
       '<th></th>' +
-      '<th>Name</th>' +
       '<th>Last&nbsp;modified</th>' +
+      '<th>Name</th>' +
       '</tr></table>'
     ).appendTo(container)[0];
 
@@ -189,17 +189,16 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         $(tr.insertCell(tr.cells.length)).css('width', '1%')
       );
 
-      var nameLink = $('<a></a>')
-      .addClass("list-table-itemname")
-      .text(project.name)
-      .attr("href", "/project?project=" + project.id)
-      .appendTo(tr.insertCell(tr.cells.length));
-
-
       $('<div></div>')
       .html(formatRelativeDate(project.date))
       .addClass("last-modified")
       .attr("title", project.date.toString())
+      .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '1%'));
+
+      var nameLink = $('<a></a>')
+      .addClass("project-name")
+      .text(project.name)
+      .attr("href", "/project?project=" + project.id)
       .appendTo(tr.insertCell(tr.cells.length));
 
       $(tr).mouseenter(function() {

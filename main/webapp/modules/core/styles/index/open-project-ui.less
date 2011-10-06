@@ -53,9 +53,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-size: 1.3em;
   }
   
+#projects-container > table {
+  width: 100%;
+  }
+#projects-container > table > tbody > tr > td,
+#projects-container > table > tbody > tr > th {
+  padding-top: @padding_tight;
+  text-align: left;
+  vertical-align: baseline;
+  padding: @padding_tighter @padding_tight;
+  font-size: 1.1em;
+  color: @metadata_grey;
+  border-bottom: dotted 1px @faint_grey;
+  }
+  
+#projects-container > table > tbody > tr > th {
+  font-weight: bold;
+  background: @chrome_secondary;
+  }
+
+#projects-container .project .project-name {
+  font-size: 120%;
+  }
+  
 #projects-container .project .last-modified {
   white-space: nowrap;
-}
+  }
 
 #projects-container .message {
   padding: @padding_loose;

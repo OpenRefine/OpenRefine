@@ -45,7 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <body>
   <div id="header">
     <img alt="Google Refine" src="images/logo-googlerefine-30.png" width="129" height="29" />
-    A power tool for working with messy data.
+    <span id="slogan">A power tool for working with messy data.</span>
   </div>
   
   <div id="left-panel" class="main-layout-panel"><div id="left-panel-body">
