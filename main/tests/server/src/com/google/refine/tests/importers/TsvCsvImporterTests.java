@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2011 Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,10 @@ package com.google.refine.tests.importers;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.StringReader;
 
+import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -48,7 +48,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.refine.importers.SeparatorBasedImporter;
-import com.google.refine.util.JSONUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
 
@@ -88,7 +87,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 1, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
@@ -108,7 +107,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 1, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         
         Assert.assertEquals(project.columnModel.columns.size(), 3);
@@ -133,7 +132,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 1, true, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
@@ -157,7 +156,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 0, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
@@ -180,7 +179,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 0, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
@@ -200,7 +199,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 0, true, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
@@ -220,7 +219,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 0, true, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
@@ -242,7 +241,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 2, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
@@ -266,7 +265,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 1, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 6);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
@@ -296,7 +295,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 1, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
@@ -320,7 +319,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 1, 1, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
@@ -345,7 +344,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 1, 0, 1, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
@@ -374,7 +373,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 1, 3, 2, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
@@ -406,7 +405,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, 2, 2, 3, 2, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
@@ -432,7 +431,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 0, false, true, true);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 4);
         Assert.assertEquals(project.rows.size(), 1);
@@ -453,7 +452,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 1, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
@@ -476,7 +475,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             prepareOptions(sep, -1, 0, 0, 1, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
@@ -493,17 +492,12 @@ public class TsvCsvImporterTests extends ImporterTest {
     public void readCsvWithProperties() {
         StringReader reader = new StringReader(SAMPLE_ROW);
         
-        when(JSONUtilities.getString(options, "separator", null)).thenReturn(",");
-        whenGetIntegerOption("ignore", options, 0);
-        whenGetIntegerOption("header-lines", options, 0);
-        whenGetIntegerOption("limit", options, -1);
-        whenGetIntegerOption("skip", options, 0);
-        whenGetIntegerOption("ignore-quotes", options, 0);
+        prepareOptions(",", -1, 0, 0, 0, true, true, true);
         
         try {
             parseOneFile(SUT, reader);
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         
         Assert.assertEquals(project.rows.size(), 1);
@@ -512,12 +506,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(0).cells.get(1).value, "Shrt_Desc");
         Assert.assertEquals((String)project.rows.get(0).cells.get(2).value, "Water");
 
-        JSONUtilities.getString(verify(options, times(1)), "separator", null);
-        verifyGetOption("ignore", options);
-        verifyGetOption("header-lines", options);
-        verifyGetOption("limit", options);
-        verifyGetOption("skip", options);
-        verifyGetOption("ignore-quotes", options);
+        verifyOptions();
     }
 
     @Test
@@ -525,17 +514,12 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1,data2\",data3,data4";
         StringReader reader = new StringReader(input);
 
-        when(JSONUtilities.getString(options, "separator", null)).thenReturn(",");
-        whenGetIntegerOption("ignore", options, 0);
-        whenGetIntegerOption("header-lines", options, 0);
-        whenGetIntegerOption("limit", options, -1);
-        whenGetIntegerOption("skip", options, 0);
-        whenGetBooleanOption("ignore-quotes", options, true);
+        prepareOptions(",", -1, 0, 0, 0, true, true, true);
         
         try {
             parseOneFile(SUT, reader);
         } catch (Exception e) {
-            Assert.fail();
+            Assert.fail("Exception during file parse",e);
         }
         
         Assert.assertEquals(project.rows.size(), 1);
@@ -545,12 +529,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(0).cells.get(2).value, "data3");
         Assert.assertEquals((String)project.rows.get(0).cells.get(3).value, "data4");
 
-        JSONUtilities.getString(verify(options, times(1)), "separator", null);
-        verifyGetOption("ignore", options);
-        verifyGetOption("header-lines", options);
-        verifyGetOption("limit", options);
-        verifyGetOption("skip", options);
-        verifyGetOption("ignore-quotes", options);
+        verifyOptions();
     }
 
     //--helpers--
@@ -577,5 +556,23 @@ public class TsvCsvImporterTests extends ImporterTest {
         whenGetBooleanOption("splitIntoColumns", options, splitIntoColumns);
         whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+    }
+
+    private void verifyOptions() {
+        try {
+            verify(options, times(1)).getString("separator");
+            verify(options, times(1)).getInt("limit");
+            verify(options, times(1)).getInt("skipDataLines");
+            verify(options, times(1)).getInt("ignoreLines");
+            verify(options, times(1)).getInt("headerLines");
+            verify(options, times(1)).getBoolean("guessCellValueTypes");
+            verify(options, times(1)).getBoolean("processQuotes");
+            verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
+            // TODO: Is this option not being read? - tfm
+//            verify(options, times(1)).getBoolean("splitIntoColumns");
+        } catch (JSONException e) {
+            Assert.fail("JSON exception",e);
+        }
+
     }
 }
