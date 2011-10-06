@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 
 import org.json.JSONObject;
+import org.mockito.Mockito;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
@@ -38,7 +39,7 @@ abstract class ImporterTest extends RefineTest {
         metadata = new ProjectMetadata();
         job = ImportingManager.createJob();
         
-        options = new JSONObject();
+        options = Mockito.mock(JSONObject.class);
     }
     
     public void TearDown(){

@@ -101,8 +101,8 @@ public class JsonImporterTests extends ImporterTest {
 
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
 
     @Test
@@ -114,10 +114,10 @@ public class JsonImporterTests extends ImporterTest {
 
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 5);
-        Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
-        Assert.assertEquals(project.rows.get(1).getCell(2).value, "Author 1, Another");
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+        Assert.assertEquals(project.rows.get(1).getCell(1).value, "Author 1, Another");
     }
 
     @Test
@@ -130,9 +130,9 @@ public class JsonImporterTests extends ImporterTest {
 
         Row row = project.rows.get(3);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 5);
-        Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(2).value, "With line\n break");
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "With line\n break");
     }
 
     @Test
@@ -142,15 +142,15 @@ public class JsonImporterTests extends ImporterTest {
         log(project);
         assertProjectCreated(project, 5, 6);
 
-        Assert.assertEquals( project.columnModel.getColumnByCellIndex(5).getName(), "__anonymous__ - genre");
+        Assert.assertEquals( project.columnModel.getColumnByCellIndex(4).getName(), "__anonymous__ - genre");
 
         Row row0 = project.rows.get(0);
         Assert.assertNotNull(row0);
-        Assert.assertEquals(row0.cells.size(),5);
+        Assert.assertEquals(row0.cells.size(),4);
 
         Row row5  = project.rows.get(5);
         Assert.assertNotNull(row5);
-        Assert.assertEquals(row5.cells.size(),6);
+        Assert.assertEquals(row5.cells.size(),5);
     }
 
     @Test

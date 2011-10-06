@@ -97,25 +97,6 @@ public class TsvCsvImporterTests extends ImporterTest {
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readUnseperatedData(String sep){
-        //create input to test with
-        String inputSeparator =  sep == null ? "\t" : sep;
-        String input = "value1" + inputSeparator + "value2" + inputSeparator + "value3";
-        
-        try {
-            prepareOptions(sep, -1, 0, 0, 0, false, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail();
-        }
-        Assert.assertEquals(project.columnModel.columns.size(), 1);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, input);
-    }
-
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readSimpleData_CSV_1Header_1Row(String sep){
         //create input to test with
         String inputSeparator =  sep == null ? "\t" : sep;
@@ -179,9 +160,9 @@ public class TsvCsvImporterTests extends ImporterTest {
             Assert.fail();
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column3");
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -291,9 +272,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "Column");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "Column");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "Column");
+        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "Column 4");
+        Assert.assertEquals(project.columnModel.columns.get(4).getName(), "Column 5");
+        Assert.assertEquals(project.columnModel.columns.get(5).getName(), "Column 6");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 6);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -586,13 +567,15 @@ public class TsvCsvImporterTests extends ImporterTest {
     private void prepareOptions(
         String sep, int limit, int skip, int ignoreLines,
         int headerLines, boolean guessValueType, boolean splitIntoColumns, boolean ignoreQuotes) {
-        JSONUtilities.safePut(options, "separator", sep);
-        JSONUtilities.safePut(options, "limit", limit);
-        JSONUtilities.safePut(options, "skipDataLines", skip);
-        JSONUtilities.safePut(options, "ignoreLines", ignoreLines);
-        JSONUtilities.safePut(options, "headerLines", headerLines);
-        JSONUtilities.safePut(options, "guessCellValueTypes", guessValueType);
-        JSONUtilities.safePut(options, "splitIntoColumns", splitIntoColumns);
-        JSONUtilities.safePut(options, "processQuotes", !ignoreQuotes);
+        
+        whenGetStringOption("separator", options, sep);
+        whenGetIntegerOption("limit", options, limit);
+        whenGetIntegerOption("skipDataLines", options, skip);
+        whenGetIntegerOption("ignoreLines", options, ignoreLines);
+        whenGetIntegerOption("headerLines", options, headerLines);
+        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+        whenGetBooleanOption("splitIntoColumns", options, splitIntoColumns);
+        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
     }
 }
