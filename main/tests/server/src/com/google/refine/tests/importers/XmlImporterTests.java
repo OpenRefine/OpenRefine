@@ -36,7 +36,10 @@ package com.google.refine.tests.importers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.LinkedList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -45,7 +48,10 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.importers.XmlImporter;
+import com.google.refine.importers.tree.TreeImportingParserBase;
+import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Row;
+import com.google.refine.util.JSONUtilities;
 
 
 public class XmlImporterTests extends ImporterTest {
@@ -216,6 +222,18 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
     
+    public static JSONObject getOptions(ImportingJob job, TreeImportingParserBase parser) {
+        JSONObject options = parser.createParserUIInitializationData(
+                job, new LinkedList<JSONObject>(), "text/json");
+        
+        JSONArray path = new JSONArray();
+        JSONUtilities.append(path, "library");
+        JSONUtilities.append(path, "book");
+        
+        JSONUtilities.safePut(options, "recordPath", path);
+        return options;
+    }
+    
     public static String getDeeplyNestedSample(){
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><nest><nest2><library>");
@@ -307,7 +325,7 @@ public class XmlImporterTests extends ImporterTest {
         }
 
         try {
-            parseOneFile(SUT, inputStream);
+            parseOneFile(SUT, inputStream, getOptions(job, SUT));
         } catch (Exception e) {
             Assert.fail();
         }
