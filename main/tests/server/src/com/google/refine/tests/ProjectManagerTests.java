@@ -54,6 +54,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
+import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.model.ProjectStub;
 
 public class ProjectManagerTests extends RefineTest {
@@ -61,6 +62,7 @@ public class ProjectManagerTests extends RefineTest {
     ProjectManagerStub SUT;
     Project project;
     ProjectMetadata metadata;
+    ProcessManager procmgr;
 
     @Override
     @BeforeTest
@@ -74,6 +76,9 @@ public class ProjectManagerTests extends RefineTest {
         SUT = spy(pm);
         project = mock(Project.class);
         metadata = mock(ProjectMetadata.class);
+        procmgr = mock(ProcessManager.class);
+        when(project.getProcessManager()).thenReturn(procmgr);
+        when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
     }
 
     @AfterMethod
@@ -155,6 +160,7 @@ public class ProjectManagerTests extends RefineTest {
         SUT.save(true);
 
         verify(metadata, times(1)).getModified();
+        verify(project, times(1)).getProcessManager();
         verify(project, times(2)).getLastSave();
         verify(project, times(1)).dispose();
         verify(SUT, never()).saveProject(project);
