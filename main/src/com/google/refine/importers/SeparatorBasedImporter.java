@@ -92,6 +92,9 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     ) {
         // String lineSeparator = JSONUtilities.getString(options, "lineSeparator", "\n");
         String sep = JSONUtilities.getString(options, "separator", "\t");
+        if (sep == null) {
+            sep = "\t";
+        }
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         
         final CSVParser parser = new CSVParser(

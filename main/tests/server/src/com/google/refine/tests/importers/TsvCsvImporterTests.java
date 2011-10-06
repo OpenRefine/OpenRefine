@@ -81,7 +81,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readJustColumns(String sep){
         //create input to test with
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3";
         
         try {
@@ -99,7 +99,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readUnseperatedData(String sep){
         //create input to test with
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "value1" + inputSeparator + "value2" + inputSeparator + "value3";
         
         try {
@@ -118,7 +118,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readSimpleData_CSV_1Header_1Row(String sep){
         //create input to test with
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
         
@@ -144,7 +144,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readSimpleData_CSV_1Header_1Row_GuessValues(String sep){
         //create input to test with
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "data1" + inputSeparator + "234" + inputSeparator + "data3";
         
@@ -169,7 +169,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readSimpleData_0Header_1Row(String sep){
         //create input to test with
-        String inputSeparator = sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3";
         
         try {
@@ -192,7 +192,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
     public void readDoesNotTrimLeadingTrailingWhitespace(String sep){
         //create input to test with
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
         
         try {
@@ -212,7 +212,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readDoesNotTrimLeadingWhitespace(String sep){
         //create input to test with
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = " data1" + inputSeparator + " 12" + inputSeparator + " data3";
         
         try {
@@ -232,7 +232,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readCanAddNull(String sep){
         //create input to test with
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = " data1" + inputSeparator + inputSeparator + " data3";
         
         try {
@@ -252,7 +252,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readSimpleData_2Header_1Row(String sep){
         //create input to test with
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "sub1" + inputSeparator + "sub2" + inputSeparator + "sub3\n" +
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
@@ -277,7 +277,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readSimpleData_RowLongerThanHeader(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
         "data1" + inputSeparator + "data2" + inputSeparator + "data3" + inputSeparator + "data4" + inputSeparator + "data5" + inputSeparator + "data6";
         
@@ -307,7 +307,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(groups = { }, dataProvider = "CSV-TSV-AutoDetermine")
     public void readQuotedData(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\"" + inputSeparator + "data2";
         
@@ -330,7 +330,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readIgnoreFirstLine(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "ignore1\n" +
                        "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
@@ -355,7 +355,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readSkipFirstDataLine(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                        "skip1\n" +
                        "data1" + inputSeparator + "data2" + inputSeparator + "data3";
@@ -380,7 +380,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readIgnore3_Header2_Skip1(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "ignore1\n" +
                        "ignore2\n" +
                        "ignore3\n" +
@@ -409,7 +409,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
     public void readIgnore3_Header2_Skip2_limit2(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "ignore1\n" +
                        "ignore2\n" +
                        "ignore3\n" +
@@ -445,9 +445,8 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void ignoreQuotes(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "data1" + inputSeparator + "data2\"" + inputSeparator + "data3" + inputSeparator + "data4";
-              
         try {
             prepareOptions(sep, -1, 0, 0, 0, false, true, true);
             parseOneFile(SUT, new StringReader(input));
@@ -465,7 +464,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(groups = { }, dataProvider = "CSV-TSV-AutoDetermine")
     public void readWithMultiLinedQuotedData(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
             "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\"" + inputSeparator + "data2";
         
@@ -488,7 +487,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
     public void readWithMultiLinedQuotedDataAndBlankLines(String sep){
         //create input
-        String inputSeparator =  sep == "\t" ? "\t" : ",";
+        String inputSeparator =  sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
             "\"A line with many \n\n\n\n\n empty lines\"" + inputSeparator + "data2";
         

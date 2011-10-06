@@ -75,7 +75,7 @@ public class ColumnModel implements Jsonizable {
     }
 
     synchronized public int allocateNewCellIndex() {
-        return ++_maxCellIndex;
+        return _maxCellIndex++;
     }
     
     public void setKeyColumnIndex(int keyColumnIndex) {

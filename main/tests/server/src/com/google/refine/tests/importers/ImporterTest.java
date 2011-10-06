@@ -1,16 +1,11 @@
 package com.google.refine.tests.importers;
 
-import static org.mockito.Mockito.mock;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.refine.ProjectMetadata;
@@ -24,7 +19,6 @@ import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.util.JSONUtilities;
 
 abstract class ImporterTest extends RefineTest {
     //mock dependencies
@@ -44,7 +38,7 @@ abstract class ImporterTest extends RefineTest {
         metadata = new ProjectMetadata();
         job = ImportingManager.createJob();
         
-        options = mock(JSONObject.class);
+        options = new JSONObject();
     }
     
     public void TearDown(){
