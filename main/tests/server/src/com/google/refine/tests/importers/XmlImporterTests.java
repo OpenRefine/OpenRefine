@@ -35,6 +35,7 @@ package com.google.refine.tests.importers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
@@ -99,34 +100,34 @@ public class XmlImporterTests extends ImporterTest {
 
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
     
     @Test
     public void canParseDeeplyNestedSample(){
-        RunTest(getDeeplyNestedSample());
+        RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
 
         log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
     
     @Test
     public void canParseSampleWithMixedElement(){
-        RunTest(getMixedElementSample());
+        RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
 
         log(project);
         assertProjectCreated(project, 4, 6);
         
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
 
     @Test
@@ -138,10 +139,10 @@ public class XmlImporterTests extends ImporterTest {
 
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 5);
-        Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(2).value, "Author 1, The");
-        Assert.assertEquals(project.rows.get(1).getCell(2).value, "Author 1, Another");
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+        Assert.assertEquals(project.rows.get(1).getCell(1).value, "Author 1, Another");
     }
 
     @Test
@@ -154,9 +155,9 @@ public class XmlImporterTests extends ImporterTest {
 
         Row row = project.rows.get(3);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 5);
-        Assert.assertNotNull(row.getCell(2));
-        Assert.assertEquals(row.getCell(2).value, "With line\n break");
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "With line\n break");
     }
 
     @Test
@@ -166,15 +167,15 @@ public class XmlImporterTests extends ImporterTest {
         log(project);
         assertProjectCreated(project, 5, 6);
 
-        Assert.assertEquals( project.columnModel.getColumnByCellIndex(5).getName(), "book - genre");
+        Assert.assertEquals(project.columnModel.getColumnByCellIndex(4).getName(), "book - genre");
 
         Row row0 = project.rows.get(0);
         Assert.assertNotNull(row0);
-        Assert.assertEquals(row0.cells.size(),5);
+        Assert.assertEquals(row0.cells.size(),4);
 
         Row row5  = project.rows.get(5);
         Assert.assertNotNull(row5);
-        Assert.assertEquals(row5.cells.size(),6);
+        Assert.assertEquals(row5.cells.size(),5);
     }
 
     @Test
@@ -234,14 +235,28 @@ public class XmlImporterTests extends ImporterTest {
         return options;
     }
     
+    public static JSONObject getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
+        JSONObject options = parser.createParserUIInitializationData(
+                job, new LinkedList<JSONObject>(), "text/json");
+        
+        JSONArray path = new JSONArray();
+        JSONUtilities.append(path, "nest");
+        JSONUtilities.append(path, "nest2");
+        JSONUtilities.append(path, "library");
+        JSONUtilities.append(path, "book");
+        
+        JSONUtilities.safePut(options, "recordPath", path);
+        return options;
+    }
+    
     public static String getDeeplyNestedSample(){
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><nest><nest2><library>");
         for(int i = 1; i < 7; i++){
             sb.append(getTypicalElement(i));
         }
-        sb.append("</nest2>");
-        sb.append("<anElement>asdf</anElement></nest></library>");
+        sb.append("</library></nest2>");
+        sb.append("<anElement>asdf</anElement></nest>");
         return sb.toString();
     }
     
@@ -253,8 +268,8 @@ public class XmlImporterTests extends ImporterTest {
         for(int i = 1; i < 7; i++){
             sb.append(getTypicalElement(i));
         }
-        sb.append("</nest2>");
-        sb.append("<anElement>asdf</anElement></nest></library>");
+        sb.append("</library></nest2>");
+        sb.append("<anElement>asdf</anElement></nest>");
         return sb.toString();
     }
 
@@ -318,16 +333,25 @@ public class XmlImporterTests extends ImporterTest {
     }
 
     private void RunTest(String testString){
+        RunTest(testString, getOptions(job, SUT));
+    }
+    
+    private void RunTest(String testString, JSONObject options) {
         try {
-            inputStream = new ByteArrayInputStream( testString.getBytes( "UTF-8" ) );
+            inputStream = new ByteArrayInputStream(testString.getBytes( "UTF-8" ));
         } catch (UnsupportedEncodingException e1) {
             Assert.fail();
         }
 
         try {
-            parseOneFile(SUT, inputStream, getOptions(job, SUT));
+            parseOneFile(SUT, inputStream, options);
         } catch (Exception e) {
+            e.printStackTrace();
             Assert.fail();
         }
+    }
+    
+    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+        parseOneInputStream(parser, inputStream, options);
     }
 }

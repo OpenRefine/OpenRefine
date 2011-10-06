@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONObject;
 import org.mockito.Mockito;
@@ -98,7 +99,32 @@ abstract class ImporterTest extends RefineTest {
     }
     
     protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+        parseOneInputStreamAsReader(parser, inputStream, options);
+    }
+    
+    protected void parseOneInputStream(
+            TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
+        List<Exception> exceptions = new ArrayList<Exception>();
+        
+        parser.parseOneFile(
+            project,
+            metadata,
+            job,
+            "file-source",
+            inputStream,
+            rootColumnGroup,
+            -1,
+            options,
+            exceptions
+        );
+        postProcessProject(project, rootColumnGroup, exceptions);
+    }
+
+    protected void parseOneInputStreamAsReader(
+            TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
+        List<Exception> exceptions = new ArrayList<Exception>();
         
         Reader reader = new InputStreamReader(inputStream);
         parser.parseOneFile(
@@ -110,14 +136,25 @@ abstract class ImporterTest extends RefineTest {
             rootColumnGroup,
             -1,
             options,
-            new ArrayList<Exception>()
+            exceptions
         );
-        XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-        project.columnModel.update();
+        postProcessProject(project, rootColumnGroup, exceptions);
+        
         try {
             reader.close();
         } catch (IOException e) {
             //ignore errors on close
+        }
+    }
+    
+    protected void postProcessProject(
+        Project project, ImportColumnGroup rootColumnGroup, List<Exception> exceptions) {
+        
+        XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
+        project.columnModel.update();
+        
+        for (Exception e : exceptions) {
+            e.printStackTrace();
         }
     }
 }
