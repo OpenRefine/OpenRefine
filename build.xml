@@ -8,9 +8,9 @@
     
 <project name="google-refine" default="build" basedir=".">
 
-	<!-- Properties are immutable, so anything set in this file takes priority-->
-	<property file="build.properties"/>
-	
+    <!-- Properties are immutable, so anything set in this file takes priority-->
+    <property file="build.properties"/>
+    
     <property environment="env"/>
 
     <property name="version" value="trunk"/>
@@ -19,10 +19,10 @@
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
 
-	<property name="appengine.app_id" value="google-refine-broker"/>
+    <property name="appengine.app_id" value="google-refine-broker"/>
     <property name="appengine.version" value="1"/>
     <property name="appengine.sdk.dir" value="/opt/appengine"/>
-    	
+        
     <property name="fullname" value="google-refine-${version}-${revision}" />
     
     <property name="main.dir" value="${basedir}/main" />
@@ -360,10 +360,10 @@
         </tar>
     </target>
 
-	<target name="kits" depends="linux,mac,windows" 
-		description="Build kits for all supported platforms">
-	</target>
-	
+    <target name="kits" depends="linux,mac,windows" 
+        description="Build kits for all supported platforms">
+    </target>
+    
     <!-- ================================================================== -->
 
     <target name="prepare_reports">

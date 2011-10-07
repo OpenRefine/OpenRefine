@@ -80,8 +80,8 @@
                 <include name="**/**"/>
             </zipfileset>
          </zip>
-    	
-    	<delete dir="${ext.dir}"/>
+        
+        <delete dir="${ext.dir}"/>
     </target>
 
     <target name="clean">
