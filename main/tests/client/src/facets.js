@@ -1,10 +1,10 @@
 var test_facets = new function() {
 
-	// TODO: if I'm in a project, go back to main page (useful when working on this test)
+    // TODO: if I'm in a project, go back to main page (useful when working on this test)
     //if () { 
-    	//go back
+        //go back
     //};
-	
+    
     // test opening Food project
     test = newTest();
     assert (test, "assertText", { jquery: '("h1")[0]', validator: "Welcome to Google Refine" });
