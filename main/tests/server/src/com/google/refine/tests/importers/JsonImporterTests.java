@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2011 Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -184,7 +184,40 @@ public class JsonImporterTests extends ImporterTest {
         assertProjectCreated(project,3,16);
     }
     
-    
+    @Test
+    public void testJSONMinimumArray(){
+        String ScraperwikiOutput = 
+            "[\n" +
+            "{\n" +
+            "        \"school\": \"University of Cambridge\\n" +
+            "                            United Kingdom\",\n" +
+            "        \"student-faculty-score\": \"100\",\n" +
+            "        \"intl-student-score\": \"95\",\n" +
+            "        \"intl-faculty-score\": \"96\",\n" +
+            "        \"rank\": \"#1\",\n" +
+            "        \"peer-review-score\": \"100\",\n" +
+            "        \"emp-review-score\": \"100\",\n" +
+            "        \"score\": \"100.0\",\n" +
+            "        \"citations-score\": \"93\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"school\": \"Harvard University\\n" +
+            "                            United States\",\n" +
+            "        \"student-faculty-score\": \"97\",\n" +
+            "        \"intl-student-score\": \"87\",\n" +
+            "        \"intl-faculty-score\": \"71\",\n" +
+            "        \"rank\": \"#2\",\n" +
+            "        \"peer-review-score\": \"100\",\n" +
+            "        \"emp-review-score\": \"100\",\n" +
+            "        \"score\": \"99.2\",\n" +
+            "        \"citations-score\": \"100\"\n" +
+            "    }\n" +
+            "]\n";
+        RunTest(ScraperwikiOutput);
+        log(project);
+        assertProjectCreated(project,9,2);
+    }
+        
     /**
      * org.codehaus.Jackson.JsonParser has an inconsistency when returning getLocalName
      * of an Entity_Start token which occurs after a Field_Name token
