@@ -130,8 +130,7 @@ public class RefineTest {
         try {
             verify(options, times(1)).get(name);
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Assert.fail("JSONException",e);
         }
     }
     
@@ -141,8 +140,7 @@ public class RefineTest {
         try {
             verify(options, times(1)).getJSONArray(name);
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Assert.fail("JSONException",e);
         }
     }
 }
