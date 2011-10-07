@@ -170,7 +170,7 @@ public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
                 long t = ((Date) value).getTime();
                 hasTime = true;
                     
-                int bin = (int) Math.floor((t - _index.getMin()) / _index.getStep());
+                int bin = (int) Math.floor((double) (t - _index.getMin()) / (double) _index.getStep());
                 if (bin >= 0 && bin < bins.length) { // as a precaution
                     bins[bin]++;
                 }

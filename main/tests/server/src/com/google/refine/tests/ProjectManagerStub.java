@@ -49,10 +49,6 @@ import com.google.refine.model.Project;
  */
 public class ProjectManagerStub extends ProjectManager {
 
-    public ProjectManagerStub(){
-        super();
-    }
-
     @Override
     public void deleteProject(long projectID) {
         // empty

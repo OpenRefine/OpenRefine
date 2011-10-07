@@ -103,7 +103,7 @@ public class Get implements Function {
                                     return ExpressionUtils.toObjectList(v).get(start);
                                 }
                             } else {
-                                int end = (to != null) ? ((Number) to).intValue() : length;
+                                int end = ((Number) to).intValue();
                                             
                                 if (end < 0) {
                                     end = length + end;

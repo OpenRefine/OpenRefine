@@ -47,12 +47,12 @@ public class Odd implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
-            return Odd.RoundUpToOdd(((Number) args[0]).doubleValue());
+            return Odd.roundUpToOdd(((Number) args[0]).doubleValue());
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
 
-    public static double RoundUpToOdd(double d){
+    public static double roundUpToOdd(double d){
         double temp = Math.ceil(d);
         return ((temp % 2) == 0) ? temp + 1 : temp;
     }

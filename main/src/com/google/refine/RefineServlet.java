@@ -78,7 +78,7 @@ public class RefineServlet extends Butterfly {
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
     // timer for periodically saving projects
-    static private Timer _timer;
+    static private Timer _timer = new Timer("autosave");
 
     static final Logger logger = LoggerFactory.getLogger("refine");
 
@@ -132,10 +132,7 @@ public class RefineServlet extends Butterfly {
         FileProjectManager.initialize(s_dataDir);
         ImportingManager.initialize(this);
 
-        if (_timer == null) {
-            _timer = new Timer("autosave");
-            _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
-        }
+        _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
 
         logger.trace("< initialize");
     }

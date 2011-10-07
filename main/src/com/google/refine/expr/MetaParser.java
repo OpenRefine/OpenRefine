@@ -44,6 +44,7 @@ import clojure.lang.IFn;
 import com.google.refine.grel.Parser;
 
 abstract public class MetaParser {
+
     static public class LanguageInfo {
         final public String                 name;
         final public LanguageSpecificParser parser;
@@ -56,10 +57,9 @@ abstract public class MetaParser {
         }
     }
     
-    static protected Map<String, LanguageInfo> s_languages;
+    static final protected Map<String, LanguageInfo> s_languages = new HashMap<String, LanguageInfo>();
+    
     static {
-        s_languages = new HashMap<String, LanguageInfo>();
-        
         registerLanguageParser("grel", "Google Refine Expression Language (GREL)", new LanguageSpecificParser() {
             
             @Override

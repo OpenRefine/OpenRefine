@@ -51,8 +51,8 @@ public class Multinomial implements Function {
         }
         int sum = 0;
         int product = 1;
-        for(int i = 0; i < args.length; i++){
-            if(args[i] == null && !(args[i] instanceof Number)) {
+        for (int i = 0; i < args.length; i++){
+            if (args[i] == null || !(args[i] instanceof Number)) {
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects parameter " + (i + 1) + " to be a number");
             }
             int num = ((Number) args[i]).intValue();

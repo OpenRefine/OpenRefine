@@ -154,10 +154,10 @@ public class FixedWidthImporter extends TabularImportingParserBase {
     static public int[] guessColumnWidths(File file, String encoding) {
         try {
             InputStream is = new FileInputStream(file);
+            Reader reader = (encoding != null) ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+            LineNumberReader lineNumberReader = new LineNumberReader(reader);
+
             try {
-                Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
-                LineNumberReader lineNumberReader = new LineNumberReader(reader);
-                
                 int[] counts = null;
                 int totalBytes = 0;
                 int lineCount = 0;
@@ -213,6 +213,8 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                     return widthA;
                 }
             } finally {
+                lineNumberReader.close();
+                reader.close();
                 is.close();
             }
         } catch (UnsupportedEncodingException e) {

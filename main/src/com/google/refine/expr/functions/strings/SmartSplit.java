@@ -46,7 +46,8 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class SmartSplit implements Function {
-    static protected CSVParser s_tabParser = new CSVParser(
+
+    static final protected CSVParser s_tabParser = new CSVParser(
         '\t',
         CSVParser.DEFAULT_QUOTE_CHARACTER,
         CSVParser.DEFAULT_ESCAPE_CHARACTER,
@@ -54,7 +55,8 @@ public class SmartSplit implements Function {
         CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
         false
     );
-    static protected CSVParser s_commaParser = new CSVParser(
+
+    static final protected CSVParser s_commaParser = new CSVParser(
         ',',
         CSVParser.DEFAULT_QUOTE_CHARACTER,
         CSVParser.DEFAULT_ESCAPE_CHARACTER,
@@ -62,6 +64,7 @@ public class SmartSplit implements Function {
         CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
         false
     );    
+
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1 && args.length <= 2) {

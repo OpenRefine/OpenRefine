@@ -46,9 +46,7 @@ import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
 
-
 public class TopList implements Jsonizable, Iterable<String> {
-    private static final long serialVersionUID = 2666669643063493350L;
     
     final protected int          _top;
     final protected List<String> _list = new ArrayList<String>();

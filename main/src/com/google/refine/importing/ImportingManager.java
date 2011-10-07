@@ -169,7 +169,7 @@ public class ImportingManager {
         controller.init(servlet);
     }
 
-    static public File getImportDir() {
+    static synchronized public File getImportDir() {
         if (importDir == null) {
             File tempDir = servlet.getTempDir();
             importDir = tempDir == null ? new File(".import-temp") : new File(tempDir, "import");

@@ -70,7 +70,7 @@ public class ColumnModel implements Jsonizable {
         this._maxCellIndex = Math.max(this._maxCellIndex, maxCellIndex);
     }
 
-    public int getMaxCellIndex() {
+    synchronized public int getMaxCellIndex() {
         return _maxCellIndex;
     }
 
@@ -78,12 +78,12 @@ public class ColumnModel implements Jsonizable {
         return _maxCellIndex++;
     }
     
-    public void setKeyColumnIndex(int keyColumnIndex) {
+    synchronized public void setKeyColumnIndex(int keyColumnIndex) {
         // TODO: check validity of new cell index, e.g., it's not in any group
         this._keyColumnIndex = keyColumnIndex;
     }
 
-    public int getKeyColumnIndex() {
+    synchronized public int getKeyColumnIndex() {
         return _keyColumnIndex;
     }
     

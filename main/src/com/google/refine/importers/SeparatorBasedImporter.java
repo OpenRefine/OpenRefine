@@ -108,15 +108,12 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         final LineNumberReader lnReader = new LineNumberReader(reader);
         
         TableDataReader dataReader = new TableDataReader() {
-            long bytesRead = 0;
-            
             @Override
             public List<Object> getNextRowOfCells() throws IOException {
                 String line = lnReader.readLine();
                 if (line == null) {
                     return null;
                 } else {
-                    bytesRead += line.length();
                     return getCells(line, parser, lnReader);
                 }
             }
@@ -172,10 +169,10 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     static public Separator guessSeparator(File file, String encoding) {
         try {
             InputStream is = new FileInputStream(file);
+            Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+            LineNumberReader lineNumberReader = new LineNumberReader(reader);
+
             try {
-                Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
-                LineNumberReader lineNumberReader = new LineNumberReader(reader);
-                
                 List<Separator> separators = new ArrayList<SeparatorBasedImporter.Separator>();
                 Map<Character, Separator> separatorMap = new HashMap<Character, SeparatorBasedImporter.Separator>();
                 
@@ -236,6 +233,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     }
                 }
             } finally {
+                lineNumberReader.close();
+                reader.close();
                 is.close();
             }
         } catch (UnsupportedEncodingException e) {

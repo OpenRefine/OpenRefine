@@ -70,7 +70,7 @@ abstract public class CustomizableTabularExporterUtilities {
         Properties params,
         final TabularSerializer serializer) {
         
-        String optionsString = params.getProperty("options");
+        String optionsString = (params != null) ? params.getProperty("options") : null;
         JSONObject optionsTemp = null;
         if (optionsString != null) {
             try {

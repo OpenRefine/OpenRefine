@@ -240,7 +240,7 @@ public class Row implements HasFields, Jsonizable {
         StringBuffer result = new StringBuffer();
         for (Cell cell : cells) {
             result.append(cell == null ? "null" : cell.toString());
-            result.append(",");
+            result.append(',');
         }
         return result.toString();
     }

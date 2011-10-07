@@ -56,10 +56,10 @@ public class Combin implements Function {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second argument to be a number");
         }
 
-        return Combin.Combination(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
+        return Combin.combination(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
     }
 
-    public static int Combination(int n, int k){
+    public static int combination(int n, int k){
         if (k > n) {
             throw new IllegalArgumentException ("the number of elements, n, should be larger than the number of combinations, k");
         }

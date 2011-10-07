@@ -56,7 +56,6 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
     int col_y;
     int dim_x;
     int dim_y;
-    int rotation;
 
     double l;
     double dot;
@@ -84,7 +83,6 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         this.dot = dot;
         this.dim_x = dim_x;
         this.dim_y = dim_y;
-        this.rotation = rotation;
         
         l = size;
         r = ScatterplotFacet.createRotationMatrix(rotation, l);

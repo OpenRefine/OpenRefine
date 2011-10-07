@@ -371,7 +371,7 @@ public class FileProjectManager extends ProjectManager {
                 logger.warn("Error reading file", e);
             } finally {
                 try {
-                    reader.close();
+                    if (reader != null) reader.close();
                 } catch (IOException e) {
                     logger.warn("Exception closing file",e);
                 }

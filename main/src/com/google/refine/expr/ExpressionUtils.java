@@ -50,7 +50,8 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class ExpressionUtils {
-    static protected Set<Binder> s_binders = new HashSet<Binder>();
+    
+    static final protected Set<Binder> s_binders = new HashSet<Binder>();
 
     static public void registerBinder(Binder binder) {
         s_binders.add(binder);

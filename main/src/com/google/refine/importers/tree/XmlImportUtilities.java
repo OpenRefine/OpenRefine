@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.servlet.ServletException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,26 +161,13 @@ public class XmlImportUtilities extends TreeImportUtilities {
         List<RecordElementCandidate> descendantCandidates = new ArrayList<RecordElementCandidate>();
 
         Map<String, Integer> immediateChildCandidateMap = new HashMap<String, Integer>();
-        int textNodeCount = 0;
-        int childElementNodeCount = 0;
 
         try {
             while (parser.hasNext()) {
                 Token eventType = parser.next();
                 if (eventType == Token.EndEntity ) {
                     break;
-                } else if (eventType == Token.Value) {
-                    try{
-                        if (parser.getFieldValue().trim().length() > 0) {
-                            textNodeCount++;
-                        }
-                    }catch(TreeReaderException e){
-                        e.printStackTrace();
-                        //silent
-                    }
                 } else if (eventType == Token.StartEntity) {
-                    childElementNodeCount++;
-
                     String tagName = parser.getFieldName();
 
                     immediateChildCandidateMap.put(

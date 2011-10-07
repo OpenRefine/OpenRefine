@@ -16,9 +16,9 @@ public class TextFormatGuesser implements FormatGuesser {
     public String guess(File file, String encoding, String seedFormat) {
         try {
             InputStream is = new FileInputStream(file);
+            Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+
             try {
-                Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
-                
                 int totalBytes = 0;
                 int openBraces = 0;
                 int closeBraces = 0;
@@ -63,6 +63,7 @@ public class TextFormatGuesser implements FormatGuesser {
                 }
                 return "text/line-based";
             } finally {
+                reader.close();
                 is.close();
             }
         } catch (UnsupportedEncodingException e) {

@@ -49,10 +49,10 @@ public class FactN implements Function {
         if (args.length != 2) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
         }
-        if(args[0] == null || !(args[0] instanceof Number)) {
+        if (args[0] == null || !(args[0] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first parameter to be a number");
         }
-        if(args[1] == null && !(args[1] instanceof Number)) {
+        if (args[1] == null || !(args[1] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second parameter to be a number");
         }
 

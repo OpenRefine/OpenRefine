@@ -67,7 +67,7 @@ public class CsvExporter implements WriterExporter{
     public void export(Project project, Properties params, Engine engine, final Writer writer)
             throws IOException {
         
-        String optionsString = params == null ? null : params.getProperty("options");
+        String optionsString = (params == null) ? null : params.getProperty("options");
         JSONObject options = null;
         if (optionsString != null) {
             try {
@@ -115,8 +115,7 @@ public class CsvExporter implements WriterExporter{
             }
         };
         
-        CustomizableTabularExporterUtilities.exportRows(
-                project, engine, params, serializer);
+        CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
         
         csvWriter.close();
     }
