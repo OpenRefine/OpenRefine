@@ -51,6 +51,10 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
+/**
+ * Abstract class for importer parsers which handle tree-shaped data
+ * (currently XML & JSON).
+ */
 abstract public class TreeImportingParserBase implements ImportingParser {
     final protected boolean useInputStream;
     
@@ -128,6 +132,12 @@ abstract public class TreeImportingParserBase implements ImportingParser {
         }
     }
     
+    /**
+     * Parse a single file from a Reader.
+     * 
+     * The default implementation just throws a NotImplementedException.
+     * Override in subclasses to implement.
+     */
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
@@ -142,6 +152,12 @@ abstract public class TreeImportingParserBase implements ImportingParser {
         throw new NotImplementedException();
     }
     
+    /**
+     * Parse a single file from an InputStream.
+     * 
+     * The default implementation just throws a NotImplementedException.
+     * Override in subclasses to implement.
+     */
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
@@ -156,6 +172,10 @@ abstract public class TreeImportingParserBase implements ImportingParser {
         throw new NotImplementedException();
     }
     
+    /**
+     * Parse a single file from a TreeReader.
+     * 
+     */
     protected void parseOneFile(
         Project project,
         ProjectMetadata metadata,
