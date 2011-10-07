@@ -84,9 +84,11 @@ public class ImporterUtilities {
         int value = def;
         if (options.containsKey(name)) {
             String s = options.getProperty(name);
-            try {
-                value = Integer.parseInt(s);
-            } catch (Exception e) {
+            if (s != null) {
+                try {
+                    value = Integer.parseInt(s);
+                } catch (NumberFormatException e) {
+                }
             }
         }
         return value;
@@ -96,9 +98,8 @@ public class ImporterUtilities {
         boolean value = def;
         if (options.containsKey(name)) {
             String s = options.getProperty(name);
-            try {
-                value = s.equalsIgnoreCase("on") || s.equals("1") || Boolean.parseBoolean(s);
-            } catch (Exception e) {
+            if (s != null) {
+                value = "on".equalsIgnoreCase(s) || "1".equals(s) || Boolean.parseBoolean(s);
             }
         }
         return value;
