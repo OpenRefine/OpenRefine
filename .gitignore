@@ -1,4 +1,5 @@
-.DS_Store
+*.DS_Store
+*.class
 build/
 dist/
 server/classes/
