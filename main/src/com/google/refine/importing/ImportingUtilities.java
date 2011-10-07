@@ -311,6 +311,12 @@ public class ImportingUtilities {
                     } finally {
                         stream2.close();
                     }
+                } else {
+                    String value = Streams.asString(stream);
+                    parameters.put(name, value);
+                    // TODO: We really want to store this on the request so it's available for everyone
+//                    request.getParameterMap().put(name, value);
+                    
                 }
 
             } else { // is file content
