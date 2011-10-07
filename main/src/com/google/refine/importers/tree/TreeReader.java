@@ -33,6 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers.tree;
 
+/**
+ * Interface for all tree-shaped parsers.
+ * 
+ * This is effectively part of the contract for {@link TreeImportingParserBase}.
+ */
 public interface TreeReader {
     public enum Token {
         Ignorable,
@@ -42,14 +47,14 @@ public interface TreeReader {
         //append additional tokens only if necessary (most should be just mapped to Value or Ignorable)
     }
 
-    public Token current() throws Exception; //aka getCurrentToken
-    
-    public boolean hasNext() throws Exception;
-    public Token next() throws Exception;
-    
-    public String getFieldName() throws Exception; //aka getFieldName
+    public Token current() throws TreeReaderException; // aka getCurrentToken
+
+    public boolean hasNext() throws TreeReaderException;
+    public Token next() throws TreeReaderException;
+
+    public String getFieldName() throws TreeReaderException;
     public String getPrefix();
-    public String getFieldValue() throws Exception;
+    public String getFieldValue() throws TreeReaderException;
     
     public int getAttributeCount();
     public String getAttributeValue(int index);

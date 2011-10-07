@@ -40,7 +40,6 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -55,6 +54,7 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.tree.ImportColumnGroup;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importers.tree.TreeReader;
+import com.google.refine.importers.tree.TreeReaderException;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
@@ -215,26 +215,26 @@ public class XmlImporter extends TreeImportingParserBase {
         }
         
         @Override
-        public Token next() throws ServletException {
+        public Token next() throws TreeReaderException {
             try {
                 if (!parser.hasNext()) {
-                    throw new ServletException("End of XML stream");
+                    throw new TreeReaderException("End of XML stream");
                 }
             } catch (XMLStreamException e) {
-                throw new ServletException(e);
+                throw new TreeReaderException(e);
             }
             
             int currentToken = -1;
             try {
                 currentToken = parser.next();
             } catch (XMLStreamException e) {
-                throw new ServletException(e);
+                throw new TreeReaderException(e);
             }
             
             return mapToToken(currentToken);
         }
         
-        protected Token mapToToken(int token) throws ServletException {
+        protected Token mapToToken(int token) {
             switch(token){
                 case XMLStreamConstants.START_ELEMENT: return Token.StartEntity;
                 case XMLStreamConstants.END_ELEMENT: return Token.EndEntity;
@@ -256,24 +256,24 @@ public class XmlImporter extends TreeImportingParserBase {
         }
         
         @Override
-        public Token current() throws ServletException{
+        public Token current() throws TreeReaderException {
             return this.mapToToken(parser.getEventType());
         }
         
         @Override
-        public boolean hasNext() throws ServletException{
+        public boolean hasNext() throws TreeReaderException {
             try {
                 return parser.hasNext();
             } catch (XMLStreamException e) {
-                throw new ServletException(e);
+                throw new TreeReaderException(e);
             }
         }
         
         @Override
-        public String getFieldName() throws ServletException{
-            try{
+        public String getFieldName() throws TreeReaderException {
+            try {
                 return parser.getLocalName();
-            }catch(IllegalStateException e){
+            } catch (IllegalStateException e) {
                 return null;
             }
         }

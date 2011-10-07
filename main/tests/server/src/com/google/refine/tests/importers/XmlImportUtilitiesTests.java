@@ -55,6 +55,7 @@ import com.google.refine.importers.tree.ImportColumn;
 import com.google.refine.importers.tree.ImportColumnGroup;
 import com.google.refine.importers.tree.ImportRecord;
 import com.google.refine.importers.tree.TreeReader;
+import com.google.refine.importers.tree.TreeReaderException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
@@ -100,7 +101,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectPathFromTagXmlTest(){
+    public void detectPathFromTagXmlTest() throws TreeReaderException{
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
 
         String tag = "library";
@@ -113,7 +114,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectPathFromTagWithNestedElementXml(){
+    public void detectPathFromTagWithNestedElementXml() throws TreeReaderException{
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         String tag = "book";
 

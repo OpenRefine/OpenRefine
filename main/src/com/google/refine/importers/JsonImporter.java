@@ -40,8 +40,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import javax.servlet.ServletException;
-
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
@@ -55,6 +53,7 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.tree.ImportColumnGroup;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importers.tree.TreeReader;
+import com.google.refine.importers.tree.TreeReaderException;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
@@ -132,7 +131,7 @@ public class JsonImporter extends TreeImportingParserBase {
             JsonToken token = parser.nextToken();
             state.tokenCount++;
             return parseForPreview(parser, state, token);
-        } catch (Exception e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -158,7 +157,7 @@ public class JsonImporter extends TreeImportingParserBase {
                 default:
                     break loop;
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 break;
             }
         }
@@ -182,7 +181,7 @@ public class JsonImporter extends TreeImportingParserBase {
                     Object element = parseForPreview(parser, state, token);
                     JSONUtilities.append(result, element);
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 break;
             }
         }
@@ -213,7 +212,7 @@ public class JsonImporter extends TreeImportingParserBase {
         public JSONTreeReader(Reader reader) {
             try {
                 parser = factory.createJsonParser(reader);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -251,12 +250,12 @@ public class JsonImporter extends TreeImportingParserBase {
         }
 
         @Override
-        public Token current() throws ServletException {
+        public Token current() {
             return this.mapToToken(parser.getCurrentToken());
         }
 
         @Override
-        public String getFieldName() throws ServletException{
+        public String getFieldName() throws TreeReaderException {
             try {
                 String text = parser.getCurrentName();
                 
@@ -271,8 +270,8 @@ public class JsonImporter extends TreeImportingParserBase {
                 //end of workaround
                 
                 return text;
-            } catch (Exception e) {
-                throw new ServletException(e);
+            } catch (IOException e) {
+                throw new TreeReaderException(e);
             }
         }
 
@@ -285,32 +284,33 @@ public class JsonImporter extends TreeImportingParserBase {
         }
 
         @Override
-        public String getFieldValue() throws ServletException {
+        public String getFieldValue() throws TreeReaderException  {
             try {
                 return parser.getText();
-            } catch (Exception e) {
-                throw new ServletException(e);
+            } catch (IOException e) {
+                throw new TreeReaderException(e);
             }
         }
 
         @Override
-        public boolean hasNext() throws ServletException {
+        public boolean hasNext() {
             return true; //FIXME fairly obtuse, is there a better way (advancing, then rewinding?)
         }
 
         @Override
-        public Token next() throws ServletException {
+        public Token next() throws TreeReaderException {
             JsonToken next;
             try {
                 next = parser.nextToken();
             } catch (JsonParseException e) {
-                throw new ServletException(e);
+                throw new TreeReaderException(e);
             } catch (IOException e) {
-                throw new ServletException(e);
+                throw new TreeReaderException(e);
             }
             
+            // TODO just return null here?
             if(next == null) {
-                throw new ServletException("No more Json Tokens in stream");
+                throw new TreeReaderException("No more Json Tokens in stream");
             }
             
             //The following is a workaround for inconsistent Jackson JsonParser
@@ -318,7 +318,7 @@ public class JsonImporter extends TreeImportingParserBase {
                 try {
                     this.thisTokenIsAFieldName = true;
                     this.lastFieldName = parser.getCurrentName();
-                } catch (Exception e) {
+                } catch (IOException e) {
                     //silent
                 }
             }else if(next == JsonToken.START_ARRAY || next == JsonToken.START_OBJECT){
