@@ -119,7 +119,7 @@ public class RefineServletTests extends RefineTest {
             Assert.fail();
         }
 
-        verifyGetCommandNameCalled(3);
+        verifyGetCommandNameCalled(2);
         try {
             verify(command,times(1)).doGet(request, response);
         } catch (ServletException e) {
