@@ -48,10 +48,10 @@ Refine.XmlParserUI = function(controller, jobID, job, format, config,
   this._initialize();
   this._showPickRecordElementsUI();
 };
-Refine.DefaultImportingController.parserUIs["XmlParserUI"] = Refine.XmlParserUI;
+Refine.DefaultImportingController.parserUIs.XmlParserUI = Refine.XmlParserUI;
 
 Refine.XmlParserUI.prototype.dispose = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
@@ -71,7 +71,7 @@ Refine.XmlParserUI.prototype.getOptions = function() {
   };
   var parseIntDefault = function(s, def) {
     try {
-      var n = parseInt(s);
+      var n = parseInt(s,10);
       if (!isNaN(n)) {
         return n;
       }
@@ -210,7 +210,7 @@ Refine.XmlParserUI.prototype._showPickRecordElementsUI = function() {
 };
 
 Refine.XmlParserUI.prototype._scheduleUpdatePreview = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }

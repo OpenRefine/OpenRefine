@@ -47,10 +47,10 @@ Refine.SeparatorBasedParserUI = function(controller, jobID, job, format, config,
   this._initialize();
   this._updatePreview();
 };
-Refine.DefaultImportingController.parserUIs["SeparatorBasedParserUI"] = Refine.SeparatorBasedParserUI;
+Refine.DefaultImportingController.parserUIs.SeparatorBasedParserUI = Refine.SeparatorBasedParserUI;
 
 Refine.SeparatorBasedParserUI.prototype.dispose = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
@@ -65,14 +65,12 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
     encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
   };
   
-  switch (this._optionContainer.find("input[name='row-separator']:checked")[0].value) {
-  case 'new-line':
+  if (this._optionContainer.find("input[name='row-separator']:checked")[0].value === "new-line") {
     options.lineSeparator = "\n";
-    break;
-  default:
-    options.lineSeparator = String.decodeSeparator(
-        this._optionContainerElmts.rowSeparatorInput[0].value);
+  } else {
+    options.lineSeparator = String.decodeSeparator(this._optionContainerElmts.rowSeparatorInput[0].value);
   }
+
   switch (this._optionContainer.find("input[name='column-separator']:checked")[0].value) {
   case 'comma':
     options.separator = ",";
@@ -87,7 +85,7 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
 
   var parseIntDefault = function(s, def) {
     try {
-      var n = parseInt(s);
+      var n = parseInt(s,10);
       if (!isNaN(n)) {
         return n;
       }
@@ -198,7 +196,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
 };
 
 Refine.SeparatorBasedParserUI.prototype._scheduleUpdatePreview = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }

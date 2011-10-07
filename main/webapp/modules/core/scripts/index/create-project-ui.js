@@ -248,7 +248,9 @@ Refine.CreateProjectUI.prototype.showImportJobError = function(message, stack) {
 
 Refine.CreateProjectUI.composeErrorMessage = function(job) {
   var messages = [];
-  $.each(job.config.errors, function() { messages.push(this.message) });
+  $.each(job.config.errors, function() { 
+	messages.push(this.message); 
+  });
   return messages.join('\n');
 };
 

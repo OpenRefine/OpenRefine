@@ -52,7 +52,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       null,
       { cellsChanged: true, columnStatsChanged: true }
     );
-  }
+  };
 
   var doReconMatchBestCandidates = function() {
     Refine.postCoreProcess(
@@ -161,9 +161,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
       });
 
-      if (config.toColumnName.length == 0) {
+      if (config.toColumnName.length === 0) {
         alert("Please select some other column to copy to.");
-      } else if (config.judgment.length == 0) {
+      } else if (config.judgment.length === 0) {
         alert("Please select at least one kind of judgment to copy.");
       } else {
         Refine.postCoreProcess(

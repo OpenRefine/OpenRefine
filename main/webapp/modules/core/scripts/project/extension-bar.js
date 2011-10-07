@@ -41,7 +41,7 @@ ExtensionBar.MenuItems = [
 
 ExtensionBar.addExtensionMenu = function(what) {
   MenuSystem.appendTo(ExtensionBar.MenuItems, [], what);
-}
+};
 
 ExtensionBar.appendTo = function(path, what) {
   MenuSystem.appendTo(ExtensionBar.MenuItems, path, what);

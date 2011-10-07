@@ -114,7 +114,7 @@ DOM.loadHTML = function(module, path) {
       success: function(html) {
         DOM._loadedHTML[fullPath] = html;
       }
-    })
+    });
   }
   return DOM._loadedHTML[fullPath];
 };

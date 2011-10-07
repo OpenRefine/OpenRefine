@@ -63,7 +63,7 @@ TemplatingExporterDialog.prototype._getSavedTemplate = function(f) {
         "/command/core/get-preference?" + $.param({ project: theProject.id, name: "exporters.templating.template" }),
         null,
         function(data) {
-            if (data.value != null) {
+            if (data.value !== null) {
                 f(JSON.parse(data.value));
             } else {
                 f(null);
@@ -147,7 +147,7 @@ TemplatingExporterDialog.prototype._export = function() {
             .attr("name", name)
             .attr("value", value)
             .appendTo(form);
-    }
+    };
 
     appendField("engine", JSON.stringify(ui.browsingEngine.getJSON()));
     appendField("project", theProject.id);

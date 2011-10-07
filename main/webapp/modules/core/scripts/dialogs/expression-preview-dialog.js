@@ -373,7 +373,8 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
         var entry = data.expressions[i];
         renderEntry(entry);
     }
-}
+};
+
 ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
     if (this._timerID !== null) {
         window.clearTimeout(this._timerID);

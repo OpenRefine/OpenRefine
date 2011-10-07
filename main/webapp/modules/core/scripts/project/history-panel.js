@@ -133,7 +133,7 @@ HistoryPanel.prototype._render = function() {
 
     elmts.filterInput.keyup(function() {
       var filter = $.trim(this.value.toLowerCase());
-      if (filter.length == 0) {
+      if (filter.length === 0) {
         elmts.bodyDiv.find(".history-entry").removeClass("filtered-out");
       } else {
         elmts.bodyDiv.find(".history-entry").each(function() {

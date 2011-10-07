@@ -48,14 +48,14 @@ Refine.RdfTriplesParserUI = function(controller, jobID, job, format, config,
   this._initialize();
   this._updatePreview();
 };
-Refine.DefaultImportingController.parserUIs["RdfTriplesParserUI"] = Refine.RdfTriplesParserUI;
+Refine.DefaultImportingController.parserUIs.RdfTriplesParserUI = Refine.RdfTriplesParserUI;
 
 Refine.RdfTriplesParserUI.prototype.confirmReadyToCreateProject = function() {
   return true;
 };
 
 Refine.RdfTriplesParserUI.prototype.dispose = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
@@ -92,7 +92,7 @@ Refine.RdfTriplesParserUI.prototype._initialize = function() {
 };
 
 Refine.RdfTriplesParserUI.prototype._scheduleUpdatePreview = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }

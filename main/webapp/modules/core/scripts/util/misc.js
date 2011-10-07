@@ -81,4 +81,4 @@ function formatRelativeDate(d) {
     var diff = Math.floor(today.getYear() - d.getYear());
     return (diff == 1) ? "a year ago" : diff + " years ago";
   }
-};
+}

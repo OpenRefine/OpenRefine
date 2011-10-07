@@ -40,10 +40,10 @@ Refine.OpenProjectUI = function(elmt) {
   this._elmts = DOM.bind(elmt);
 
   $("#project-file-input").change(function() {
-    if ($("#project-name-input")[0].value.length == 0) {
+    if ($("#project-name-input")[0].value.length === 0) {
       var fileName = this.files[0].fileName;
       if (fileName) {
-        $("#project-name-input")[0].value = fileName.replace(/\.\w+/, "").replace(/[_-]/g, " ");
+        $("#project-name-input")[0].value = fileName.replace(/\.\w+/, "").replace(/[_\-]/g, " ");
       }
       $("#project-name-input").focus().select();
     }
@@ -54,7 +54,7 @@ Refine.OpenProjectUI = function(elmt) {
   });
 
   $("#upload-file-button").click(function(evt) {
-    return self._onClickUploadFileButton(evt)
+    return self._onClickUploadFileButton(evt);
   });
 
   $('#projects-workspace-open').click(function() {
@@ -83,7 +83,7 @@ Refine.OpenProjectUI.prototype.resize = function() {
 
   this._elmts.workspaceControls
   .css("bottom", "0px")
-  .css("width", (width - DOM.getHPaddings(this._elmts.workspaceControls)) + "px")
+  .css("width", (width - DOM.getHPaddings(this._elmts.workspaceControls)) + "px");
 };
 
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
@@ -163,12 +163,12 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .css("visibility", "hidden")
       .click(function() {
         var name = window.prompt("New project name:", project.name);
-        if (name == null) {
+        if (name === null) {
           return;
         }
 
         name = $.trim(name);
-        if (project.name == name || name.length == 0) {
+        if (project.name == name || name.length === 0) {
           return;
         }
 
@@ -181,7 +181,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
             if (data && typeof data.code != 'undefined' && data.code == "ok") {
               nameLink.text(name);
             } else {
-              alert("Failed to rename project: " + data.message)
+              alert("Failed to rename project: " + data.message);
             }
           }
         });

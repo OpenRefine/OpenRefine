@@ -491,7 +491,7 @@ ListFacet.prototype._getMetaExpression = function() {
         JSON.stringify(this._config.expression),
         JSON.stringify(this._config.columnName)
       ].join(', ') + ')';
-}
+};
 
 ListFacet.prototype._doEdit = function() {
   new ClusteringDialog(this._config.columnName, this._config.expression);
@@ -697,7 +697,7 @@ ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
   var limit = Math.ceil(choiceCount / 1000) * 1000;
   var s = window.prompt('Set the maximum number of choices shown in each text facet (too many will slow down the application)', limit);
   if (s) {
-    var n = parseInt(s);
+    var n = parseInt(s,10);
 
     if (!isNaN(n)) {
       var self = this;

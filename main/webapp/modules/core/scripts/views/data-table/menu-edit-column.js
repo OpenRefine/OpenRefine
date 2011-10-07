@@ -213,20 +213,25 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         var s = "[" + elmts.lengthsTextarea[0].value + "]";
         try {
           var a = JSON.parse(s);
+
+          var lengths = [];
+          $.each(a, function(i,n) { 
+            if (typeof n == "number") {
+              lengths.push(n); 
+            }
+          });
+
+          if (lengths.length === 0) {
+            alert("No field length is specified.");
+            return;
+          }
+
+          config.fieldLengths = JSON.stringify(lengths);
+          
         } catch (e) {
           alert("The given field lengths are not properly formatted.");
           return;
         }
-
-        var lengths = [];
-        $.each(a, function(i,n) { if (typeof n == "number") lengths.push(n); });
-
-        if (lengths.length === 0) {
-          alert("No field length is specified.");
-          return;
-        }
-
-        config.fieldLengths = JSON.stringify(lengths);
       }
 
       Refine.postCoreProcess(

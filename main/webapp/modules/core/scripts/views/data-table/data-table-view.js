@@ -426,13 +426,13 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
 DataTableView.prototype._adjustDataTables = function() {
   var dataTable = this._div.find('.data-table');
   var headerTable = this._div.find('.data-header-table');
-  if (dataTable.length == 0 || headerTable.length == 0) {
+  if (dataTable.length === 0 || headerTable.length === 0) {
     return;
   }
   dataTable = dataTable[0];
   headerTable = headerTable[0];
   
-  if (dataTable.rows.length == 0) {
+  if (dataTable.rows.length === 0) {
     return;
   }
   
@@ -726,14 +726,14 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
       }
     }
     return null;
-  }
+  };
   var createSubmenu = function(criterion) {
     var columnHeaderUI = getColumnHeaderUI(criterion.column);
-    if (columnHeaderUI != null) {
+    if (columnHeaderUI !== null) {
       items.push({
         "label" : "By " + criterion.column,
         "submenu" : columnHeaderUI.createSortingMenu()
-      })
+      });
     }
   };
   for (var i = 0; i < this._sorting.criteria.length; i++) {

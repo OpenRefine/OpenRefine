@@ -48,10 +48,10 @@ Refine.FixedWidthParserUI = function(controller, jobID, job, format, config,
   this._initialize();
   this.updatePreview();
 };
-Refine.DefaultImportingController.parserUIs["FixedWidthParserUI"] = Refine.FixedWidthParserUI;
+Refine.DefaultImportingController.parserUIs.FixedWidthParserUI = Refine.FixedWidthParserUI;
 
 Refine.FixedWidthParserUI.prototype.dispose = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
@@ -72,18 +72,15 @@ Refine.FixedWidthParserUI.prototype.getOptions = function() {
     options.columnNames = columnNames;
   }
 
-  switch (this._optionContainer.find("input[name='row-separator']:checked")[0].value) {
-  case 'new-line':
+  if (this._optionContainer.find("input[name='row-separator']:checked")[0].value === "new-line") {
     options.lineSeparator = "\n";
-    break;
-  default:
-    options.lineSeparator = String.decodeSeparator(
-        this._optionContainerElmts.rowSeparatorInput[0].value);
+  } else {
+    options.lineSeparator = String.decodeSeparator(this._optionContainerElmts.rowSeparatorInput[0].value);
   }
 
   var parseIntDefault = function(s, def) {
     try {
-      var n = parseInt(s);
+      var n = parseInt(s,10);
       if (!isNaN(n)) {
         return n;
       }
@@ -191,7 +188,7 @@ Refine.FixedWidthParserUI.prototype._getColumnWidths = function() {
   var newColumnWidths = [];
   var a = $.trim(this._optionContainerElmts.columnWidthsInput[0].value).replace(/,\s+/g, ',').split(',');
   for (var i = 0; i < a.length; i++) {
-    var n = parseInt(a[i]);
+    var n = parseInt(a[i],10);
     if (!isNaN(n)) {
       newColumnWidths.push(n);
     }
@@ -200,7 +197,7 @@ Refine.FixedWidthParserUI.prototype._getColumnWidths = function() {
 };
 
 Refine.FixedWidthParserUI.prototype._scheduleUpdatePreview = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
@@ -266,7 +263,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   var addCell = function(tr) {
     var index = tr.cells.length;
     var td = tr.insertCell(index);
-    td.className = (index % 2 == 0) ? 'even' : 'odd';
+    td.className = (index % 2 === 0) ? 'even' : 'odd';
     return td;
   };
 
@@ -373,7 +370,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
     var newColumnWidths = [];
     for (var i = 0; i < columnCharIndexes.length; i++) {
       var charIndex = columnCharIndexes[i];
-      var columnWidth = (i == 0) ? charIndex : (charIndex - columnCharIndexes[i - 1]);
+      var columnWidth = (i === 0) ? charIndex : (charIndex - columnCharIndexes[i - 1]);
       if (columnWidth > 0) {
         newColumnWidths.push(columnWidth);
       }

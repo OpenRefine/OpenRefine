@@ -45,7 +45,7 @@ Refine.selectActionArea = function(id) {
     var actionArea = Refine.actionAreas[i];
     if (id == actionArea.id) {
       actionArea.tabElmt.addClass('selected');
-      actionArea.bodyElmt.css('visibility', 'visible').css('z-index', '55');;
+      actionArea.bodyElmt.css('visibility', 'visible').css('z-index', '55');
     }
   }
 };
@@ -86,10 +86,10 @@ $(function() {
             if ("releases" in window) {
               if (isThereNewRelease()) {
                 var container = $('<div id="notification-container">')
-                .appendTo(document.body)
+                .appendTo(document.body);
                 var notification = $('<div id="notification">')
                 .text('New version! ')
-                .appendTo(container)
+                .appendTo(container);
                 $('<a>')
                 .addClass('notification-action')
                 .attr("href", releases.homepage)

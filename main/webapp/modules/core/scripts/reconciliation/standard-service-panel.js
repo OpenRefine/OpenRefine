@@ -56,7 +56,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
 
       if (self._types.length === 0 && "defaultTypes" in self._service) {
         var defaultTypes = {};
-        $.each(self._service["defaultTypes"], function() {
+        $.each(self._service.defaultTypes, function() {
           defaultTypes[this.id] = this.name;
         });
         $.each(self._types, function() {

@@ -124,12 +124,12 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     },
     {},
     (
-      this._dataTableView._getSortingCriterionForColumn(this._column.name) == null ?
+      this._dataTableView._getSortingCriterionForColumn(this._column.name) === null ?
         {
           id: "core/sort",
           "label": "Sort...",
           "click": function() {
-            self._showSortingCriterion(null, self._dataTableView._getSortingCriteriaCount() > 0)
+            self._showSortingCriterion(null, self._dataTableView._getSortingCriteriaCount() > 0);
           }
         } :
         {
@@ -204,18 +204,18 @@ DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
   var self = this;
   var criterion = this._dataTableView._getSortingCriterionForColumn(this._column.name);
   var criteriaCount = this._dataTableView._getSortingCriteriaCount();
-  var hasOtherCriteria = criterion == null ? (criteriaCount > 0) : criteriaCount > 1;
+  var hasOtherCriteria = (criterion === null) ? (criteriaCount > 0) : criteriaCount > 1;
 
   var items = [
     {
       "label": "Sort...",
       "click": function() {
-        self._showSortingCriterion(criterion, hasOtherCriteria)
+        self._showSortingCriterion(criterion, hasOtherCriteria);
       }
     }
   ];
 
-  if (criterion != null) {
+  if (criterion !== null) {
     items.push({
       "label": "Reverse",
       "click": function() {

@@ -95,8 +95,7 @@ URL.looksLikeUrl = function(s) {
     if (sep >= URL.minSchemeLength) {
       var scheme = s.substring(0, sep).toLowerCase();
       if (scheme in URL.schemes) {
-        return URL.schemes[scheme] == 0 ||
-        s.substring(sep + 1, sep + 3) == "//";
+        return (URL.schemes[scheme] === 0) || (s.substring(sep + 1, sep + 3) == "//");
       }
     }
   }

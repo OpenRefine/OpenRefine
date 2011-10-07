@@ -306,9 +306,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   var doTransposeRowsIntoColumns = function() {
     var rowCount = window.prompt("How many rows to transpose?", "2");
-    if (rowCount != null) {
+    if (rowCount !== null) {
       try {
-        rowCount = parseInt(rowCount);
+        rowCount = parseInt(rowCount,10);
       } catch (e) {
         // ignore
       }

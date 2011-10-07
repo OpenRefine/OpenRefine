@@ -47,10 +47,10 @@ Refine.ExcelParserUI = function(controller, jobID, job, format, config,
   this._initialize();
   this._updatePreview();
 };
-Refine.DefaultImportingController.parserUIs["ExcelParserUI"] = Refine.ExcelParserUI;
+Refine.DefaultImportingController.parserUIs.ExcelParserUI = Refine.ExcelParserUI;
 
 Refine.ExcelParserUI.prototype.dispose = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
@@ -68,7 +68,7 @@ Refine.ExcelParserUI.prototype.getOptions = function() {
 
   var parseIntDefault = function(s, def) {
     try {
-      var n = parseInt(s);
+      var n = parseInt(s,10);
       if (!isNaN(n)) {
         return n;
       }
@@ -80,7 +80,7 @@ Refine.ExcelParserUI.prototype.getOptions = function() {
 
   this._optionContainerElmts.sheetRecordContainer.find('input').each(function() {
     if (this.checked) {
-      options.sheets.push(parseInt(this.getAttribute('index')));
+      options.sheets.push(parseInt(this.getAttribute('index'),10));
     }
   });
 
@@ -178,7 +178,7 @@ Refine.ExcelParserUI.prototype._initialize = function() {
 };
 
 Refine.ExcelParserUI.prototype._scheduleUpdatePreview = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }

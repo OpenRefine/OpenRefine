@@ -274,7 +274,7 @@ TimeRangeFacet.prototype.steps = [
                                   1000*31556952,      // year (average Gregorian year)
                                   1000*31556952*10,   // decade 
                                   1000*31556952*100,  // century 
-                                  1000*31556952*1000, // millennium 
+                                  1000*31556952*1000  // millennium 
                                   ];
 
 TimeRangeFacet.prototype._setRangeIndicators = function() {

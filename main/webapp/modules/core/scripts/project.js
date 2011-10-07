@@ -173,12 +173,12 @@ Refine.reinitializeProjectData = function(f) {
 
 Refine._renameProject = function() {
   var name = window.prompt("New project name:", theProject.metadata.name);
-  if (name == null) {
+  if (name === null) {
     return;
   }
 
   name = $.trim(name);
-  if (theProject.metadata.name == name || name.length == 0) {
+  if (theProject.metadata.name == name || name.length === 0) {
     return;
   }
 
@@ -389,7 +389,7 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
     engine: JSON.stringify(ui.browsingEngine.getJSON())
   };
   if (sorting) {
-    body.sorting = JSON.stringify(sorting)
+    body.sorting = JSON.stringify(sorting);
   }
 
   $.post(

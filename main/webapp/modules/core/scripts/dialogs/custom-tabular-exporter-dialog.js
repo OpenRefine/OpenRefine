@@ -45,7 +45,7 @@ function CustomTabularExporterDialog(options) {
   
   this._columnOptionMap = {};
   this._createDialog(options);
-};
+}
 
 CustomTabularExporterDialog.formats = {
   'csv': {
@@ -77,7 +77,7 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
   this._elmts = DOM.bind(this._dialog);
   this._level = DialogSystem.showDialog(this._dialog);
   
-  if (CustomTabularExporterDialog.uploadTargets.length == 0) {
+  if (CustomTabularExporterDialog.uploadTargets.length === 0) {
     this._elmts.uploadTabHeader.remove();
     this._elmts.uploadTabBody.remove();
   }
@@ -208,7 +208,7 @@ CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(opti
   this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : '');
   this._elmts.outputBlankRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : '');
   
-  if (options.columns != null) {
+  if (options.columns !== null) {
     var self = this;
     this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').attr('checked', '');
     $.each(options.columns, function() {
@@ -371,7 +371,7 @@ CustomTabularExporterDialog.prototype._getOptionCode = function() {
 };
 
 CustomTabularExporterDialog.prototype._upload = function() {
-  var id = this._dialog.find('input[name="custom-tabular-exporter-upload-format"]:checked').val()
+  var id = this._dialog.find('input[name="custom-tabular-exporter-upload-format"]:checked').val();
   for (var i = 0; i < CustomTabularExporterDialog.uploadTargets.length; i++) {
     var target = CustomTabularExporterDialog.uploadTargets[i];
     if (id == target.id) {

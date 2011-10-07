@@ -436,7 +436,7 @@
         />
         <jslint>
             <formatter type="plain" destfile="${reports.dir}/jslint.txt" />
-            <fileset dir="${webapp.dir}/scripts">
+            <fileset dir="${webapp.dir}/modules/core/scripts">
               <include name="**/*.js" />
             </fileset>
         </jslint>        

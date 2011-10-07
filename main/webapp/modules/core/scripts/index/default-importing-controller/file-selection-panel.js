@@ -121,7 +121,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelFileTable =
   var renderFile = function(fileRecord, index) {
     var id = "import-file-selection-" + Math.round(Math.random() * 1000000);
     var tr = fileTable.insertRow(fileTable.rows.length);
-    $(tr).addClass(index % 2 == 0 ? 'even' : 'odd');
+    $(tr).addClass((index % 2 === 0) ? 'even' : 'odd');
     
     var createLabeledCell = function(className) {
       var td = $('<td>').appendTo(tr);
@@ -308,7 +308,7 @@ Refine.DefaultImportingController.prototype._updateFileSelectionSummary = functi
 };
 
 Refine.DefaultImportingController.prototype._commitFileSelection = function() {
-  if (this._job.config.fileSelection.length == 0) {
+  if (this._job.config.fileSelection.length === 0) {
     alert("Please select at least one file.");
     return;
   }

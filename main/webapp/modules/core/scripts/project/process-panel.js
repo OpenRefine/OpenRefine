@@ -138,7 +138,7 @@ ProcessPanel.prototype._render = function(newData) {
     this._div.fadeOut(200);
   } else {
     this._div.fadeIn(200);
-    var cancelmessage = "Cancel"
+    var cancelmessage = "Cancel";
     var noticeDiv = $('<div id="notification"></div>').appendTo(this._div);
     var descriptionSpan = $('<span></span>').appendTo(noticeDiv);
     var statusDiv = $('<div></div>').appendTo(noticeDiv);

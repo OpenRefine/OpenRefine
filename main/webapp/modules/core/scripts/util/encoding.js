@@ -64,7 +64,7 @@ Encoding.selectEncoding = function(input, onDone) {
   var generateEncodingList = function(container, filter) {
     var table = $('<table>').html('<tr><th>Encoding</th><th>Aliases</th></tr>').appendTo(container)[0];
     $.each(Refine.encodings, function() {
-      if (filter == null || this.code in filter) {
+      if (filter === null || this.code in filter) {
         renderEncoding(table, this);
       }
     });

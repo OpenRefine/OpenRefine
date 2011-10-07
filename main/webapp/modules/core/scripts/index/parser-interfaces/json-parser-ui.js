@@ -48,10 +48,10 @@ Refine.JsonParserUI = function(controller, jobID, job, format, config,
   this._initialize();
   this._showPickRecordNodesUI();
 };
-Refine.DefaultImportingController.parserUIs["JsonParserUI"] = Refine.JsonParserUI;
+Refine.DefaultImportingController.parserUIs.JsonParserUI = Refine.JsonParserUI;
 
 Refine.JsonParserUI.prototype.dispose = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
@@ -72,7 +72,7 @@ Refine.JsonParserUI.prototype.getOptions = function() {
 
   var parseIntDefault = function(s, def) {
     try {
-      var n = parseInt(s);
+      var n = parseInt(s,10);
       if (!isNaN(n)) {
         return n;
       }
@@ -162,7 +162,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
 
     var elementNode = null;
     for (var i = 0; i < a.length; i++) {
-      if (elementNode != null) {
+      if (elementNode !== null) {
         $('<span>').addClass('punctuation').text(',').appendTo(elementNode);
       }
       elementNode = $('<div>').addClass('node').addClass('indented').appendTo(container);
@@ -178,7 +178,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
     var elementNode = null;
     for (var key in o) {
       if (o.hasOwnProperty(key)) {
-        if (elementNode != null) {
+        if (elementNode !== null) {
           $('<span>').addClass('punctuation').text(',').appendTo(elementNode);
         }
         elementNode = $('<div>').addClass('node').addClass('indented').appendTo(container);
@@ -197,7 +197,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
     registerEvents(container, parentPath);
   };
   var renderNode = function(node, container, parentPath) {
-    if (node == null) {
+    if (node === null) {
       $('<span>').addClass('literal').text('null').appendTo(container);
     } else {
       if ($.isPlainObject(node)) {
@@ -214,7 +214,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
 };
 
 Refine.JsonParserUI.prototype._scheduleUpdatePreview = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }

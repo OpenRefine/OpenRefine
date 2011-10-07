@@ -48,14 +48,14 @@ Refine.LineBasedParserUI = function(controller, jobID, job, format, config,
   this._initialize();
   this._updatePreview();
 };
-Refine.DefaultImportingController.parserUIs["LineBasedParserUI"] = Refine.LineBasedParserUI;
+Refine.DefaultImportingController.parserUIs.LineBasedParserUI = Refine.LineBasedParserUI;
 
 Refine.LineBasedParserUI.prototype.confirmReadyToCreateProject = function() {
   return true;
 };
 
 Refine.LineBasedParserUI.prototype.dispose = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
@@ -69,7 +69,7 @@ Refine.LineBasedParserUI.prototype.getOptions = function() {
 
   var parseIntDefault = function(s, def) {
     try {
-      var n = parseInt(s);
+      var n = parseInt(s,10);
       if (!isNaN(n)) {
         return n;
       }
@@ -80,13 +80,10 @@ Refine.LineBasedParserUI.prototype.getOptions = function() {
   };
   options.linesPerRow = parseIntDefault(this._optionContainerElmts.linesPerRowInput[0].value, 1);
 
-  switch (this._optionContainer.find("input[name='row-separator']:checked")[0].value) {
-  case 'new-line':
-    options.lineSeparator = "\n";
-    break;
-  default:
-    options.lineSeparator = String.decodeSeparator(
-        this._optionContainerElmts.rowSeparatorInput[0].value);
+  if (this._optionContainer.find("input[name='row-separator']:checked")[0].value === "new-line") {
+	options.lineSeparator = "\n";
+  } else {
+	options.lineSeparator = String.decodeSeparator(this._optionContainerElmts.rowSeparatorInput[0].value);
   }
 
   if (this._optionContainerElmts.ignoreCheckbox[0].checked) {
@@ -166,7 +163,7 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
 };
 
 Refine.LineBasedParserUI.prototype._scheduleUpdatePreview = function() {
-  if (this._timerID != null) {
+  if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
   }
