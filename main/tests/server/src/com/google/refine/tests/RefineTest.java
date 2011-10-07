@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2011 Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -59,6 +59,13 @@ public class RefineTest {
         System.setProperty("log4j.configuration", "tests.log4j.properties");
     }
             
+    /**
+     * Check that a project was created with the appropriate number of columns and rows.
+     * 
+     * @param project project to check
+     * @param numCols expected column count
+     * @param numRows expected row count
+     */
     public static void assertProjectCreated(Project project, int numCols, int numRows) {
         Assert.assertNotNull(project);
         Assert.assertNotNull(project.columnModel);
