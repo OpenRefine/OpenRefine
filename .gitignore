@@ -1,5 +1,6 @@
 *.DS_Store
 *.class
+.import-temp/
 build/
 dist/
 server/classes/
