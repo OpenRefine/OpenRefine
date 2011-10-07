@@ -21,7 +21,7 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/httpclient-4.0.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.0.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/icu4j-4.2.1.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-asl-1.5.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-asl-1.8.6.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jrdf-0.5.6.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/json-20100208.jar"/>
