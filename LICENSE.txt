@@ -91,6 +91,10 @@ licenses/arithcode.LICENSE.txt
 licenses/freebase_suggest.LICENSE.txt
     freebase_suggest
 
+licenses/chrome_frame.LICENSE.txt
+    CFInstall
+
+
 MIT
 ---
 

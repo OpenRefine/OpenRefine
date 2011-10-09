@@ -291,11 +291,15 @@ function init() {
     "index/scripts",
     module,
     [
+      
       "externals/jquery-1.4.2.min.js",
       "externals/jquery.cookie.js",
       "externals/jquery.eventstack-0.3.js",
       "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
       "externals/date.js",
+      
+      "externals/CFInstall.min.js",
+      "scripts/chrome-frame.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -366,6 +370,9 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.8.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
+
+      "externals/CFInstall.min.js",
+      "scripts/chrome-frame.js",
 
       "scripts/project.js",
 
