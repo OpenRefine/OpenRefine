@@ -314,14 +314,14 @@ public class XmlImporter extends TreeImportingParserBase {
         factory.setProperty(XMLInputFactory.IS_COALESCING, true);
         factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
         
-        return factory.createXMLStreamReader(wrapPrefixSpaceRemovingInputStream(inputStream));
+        return factory.createXMLStreamReader(wrapPrefixRemovingInputStream(inputStream));
     }
     
-    final static private InputStream wrapPrefixSpaceRemovingInputStream(InputStream inputStream) throws IOException {
+    final static private InputStream wrapPrefixRemovingInputStream(InputStream inputStream) throws IOException {
         PushbackInputStream pis = new PushbackInputStream(inputStream);
         int b;
         while ((b = pis.read()) >= 0) {
-            if (!Character.isWhitespace(b)) {
+            if (b == '<') {
                 pis.unread(b);
                 break;
             }
