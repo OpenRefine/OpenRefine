@@ -53,6 +53,9 @@ import com.google.refine.util.JSONUtilities;
 abstract public class ImportingParserBase implements ImportingParser {
     final protected boolean useInputStream;
     
+    /**
+     * @param useInputStream true if parser takes an InputStream, false if it takes a Reader.
+     */
     protected ImportingParserBase(boolean useInputStream) {
         this.useInputStream = useInputStream;
     }

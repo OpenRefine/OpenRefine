@@ -70,6 +70,10 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         return options;
     }
     
+    /**
+     * @param useInputStream true if parser takes an InputStream, false if it takes a Reader.
+     *  
+     */
     protected TabularImportingParserBase(boolean useInputStream) {
         super(useInputStream);
     }
