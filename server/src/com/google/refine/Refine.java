@@ -144,7 +144,7 @@ class RefineServer extends Server {
 
         String memory = Configurations.get("refine.memory");
         if (memory != null) {
-            logger.info("Max memory size: " + memory);
+            logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
         }
         
         int maxThreads = Configurations.getInteger("refine.queue.size", 30);
