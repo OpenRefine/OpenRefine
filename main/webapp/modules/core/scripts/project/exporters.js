@@ -65,6 +65,11 @@ ExporterManager.MenuItems = [
     "label": "Excel",
     "click": function() { ExporterManager.handlers.exportRows("xls", "xls"); }
   },
+  {
+    "id" : "core/export-ods",
+    "label": "ODF spreadsheet",
+    "click": function() { ExporterManager.handlers.exportRows("ods", "ods"); }
+  },
   {},
   {
     "id" : "core/export-tripleloader",

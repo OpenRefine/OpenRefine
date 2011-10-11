@@ -47,6 +47,8 @@ abstract public class ExporterRegistry {
         s_formatToExporter.put("xls", new XlsExporter(false));
         s_formatToExporter.put("xlsx", new XlsExporter(true));
         
+        s_formatToExporter.put("ods", new OdsExporter());
+        
         s_formatToExporter.put("html", new HtmlTableExporter());
         
         s_formatToExporter.put("template", new TemplatingExporter());
