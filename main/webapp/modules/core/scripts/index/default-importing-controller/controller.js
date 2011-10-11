@@ -212,7 +212,7 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
     },
     function(o) {
       if (o.status == 'error') {
-        if (o.messgae) {
+        if (o.message) {
           alert(o.message);
         } else {
           var messages = [];
