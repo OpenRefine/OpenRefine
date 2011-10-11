@@ -64,10 +64,10 @@ import com.google.refine.model.Recon.Judgment;
 import com.google.refine.util.JSONUtilities;
 
 
-public class OpenOfficeImporter extends TabularImportingParserBase { 
+public class OdsImporter extends TabularImportingParserBase { 
     final static Logger logger = LoggerFactory.getLogger("open office");
 
-    public OpenOfficeImporter() {
+    public OdsImporter() {
         super(true);
     }
 
