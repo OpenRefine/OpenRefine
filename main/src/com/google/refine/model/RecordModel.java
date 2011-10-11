@@ -54,6 +54,11 @@ public class RecordModel implements Jsonizable {
             this.rowIndex = rowIndex;
             this.cellIndex = cellIndex;
         }
+        
+        @Override
+        public String toString() {
+            return rowIndex+":"+cellIndex;
+        }
     }
     
     final static public class RowDependency {
@@ -105,6 +110,15 @@ public class RecordModel implements Jsonizable {
     static protected class KeyedGroup {
         int[]   cellIndices;
         int     keyCellIndex;
+        
+        @Override
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            for (int i:cellIndices) {
+                sb.append(i).append(',');
+            }
+            return "key: " + keyCellIndex + " cells: " + sb.toString();
+        }
     }
 
     synchronized public void update(Project project) {
