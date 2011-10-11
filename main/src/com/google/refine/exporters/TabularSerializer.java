@@ -5,6 +5,11 @@ import java.util.List;
 import org.json.JSONObject;
 
 
+/**
+ * An interface to be implemented by exporters which use 
+ * {@link CustomizableTabularExporterUtilities#exportRows(com.google.refine.model.Project, com.google.refine.browsing.Engine, java.util.Properties, TabularSerializer)}
+ *
+ */
 public interface TabularSerializer {
     static public class CellData {
         final public String columnName;
