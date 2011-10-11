@@ -10,7 +10,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/butterfly-trunk.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-trunk-sources.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.1.0.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.5.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
@@ -65,5 +65,10 @@
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-client-meta-1.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-meta-3.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/mail.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/odfdom-java-0.8.7.jar" sourcepath="main/webapp/WEB-INF/lib-src/odfdom-java-0.8.7-sources.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/resolver.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/serializer.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/xercesImpl-2.11.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/xml-apis.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

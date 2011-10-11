@@ -197,6 +197,8 @@ function registerImporting() {
 
   IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
   IM.registerFormat("text/xml/xlsx", "Excel (.xlsx) files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+  // TODO: Can we get away with just reusing Excel importer UI?
+  IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OpenOfficeImporter());
   IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
   IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "MARC files");
@@ -221,6 +223,8 @@ function registerImporting() {
 
   IM.registerExtension(".xls", "binary/xls");
   IM.registerExtension(".xlsx", "text/xml/xlsx");
+
+  IM.registerExtension(".ods", "text/xml/ods");
   
   IM.registerExtension(".n3", "text/rdf+n3");
 
@@ -246,6 +250,8 @@ function registerImporting() {
   IM.registerMimeType("application/x-excel", "binary/xls");
   IM.registerMimeType("application/xls", "binary/xls");
   IM.registerMimeType("application/x-xls", "text/xml/xlsx");
+  
+  IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
   IM.registerMimeType("application/json", "text/json");
   IM.registerMimeType("text/json", "text/json");
