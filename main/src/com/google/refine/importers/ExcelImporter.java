@@ -223,6 +223,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 value = d;
             }
         } else {
+            // TODO: Why are we changing input value during import?
             String text = cell.getStringCellValue().trim();
             if (text.length() > 0) {
                 value = text;
