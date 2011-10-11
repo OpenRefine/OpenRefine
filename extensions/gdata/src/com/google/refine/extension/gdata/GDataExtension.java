@@ -145,6 +145,7 @@ abstract public class GDataExtension {
             new OutputStreamWriter(request.getRequestStream());
         writer.append("sql=" + URLEncoder.encode(query, "UTF-8"));
         writer.flush();
+        writer.close();
         
         return request;
     }
