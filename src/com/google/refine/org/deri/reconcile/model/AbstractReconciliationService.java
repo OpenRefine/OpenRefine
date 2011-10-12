@@ -47,6 +47,7 @@ public abstract class AbstractReconciliationService implements ReconciliationSer
 				ReconciliationRequest request = entry.getValue();
 				ReconciliationResponse response = reconcile(request);
 				multiQueryResponse.put(key, response);
+				Thread.sleep(300);
 			}catch(Exception e){
 				multiQueryResponse.put(entry.getKey(), new ReconciliationResponse());
 				logger.error("error reconciling '" + entry.getValue().getQueryString() + "'",e);

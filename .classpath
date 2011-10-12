@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/grefine"/>
@@ -18,7 +17,7 @@
 	<classpathentry kind="lib" path="module/MOD-INF/lib/tika-parsers-0.6.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/clojure-1.1.0.jar"/>
-	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-codec-1.5.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-lang-2.5.jar"/>
@@ -32,9 +31,9 @@
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/opencsv-2.2.jar"/>
-	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/poi-3.6.jar"/>
-	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/poi-ooxml-3.6.jar"/>
-	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/poi-ooxml-schemas-3.6-20091214.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/poi-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/poi-ooxml-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/poi-ooxml-schemas-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/secondstring-20100303.jar"/>
 	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.1.jar"/>
@@ -53,7 +52,7 @@
 	<classpathentry kind="lib" path="test-libs/jackson-core-asl-1.5.6.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/lucene-core-3.0.1.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/guava-r07.jar"/>
-	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/jackson-core-asl-1.5.1.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/jackson-core-asl-1.8.6.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/iri-0.8.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/icu4j-3.4.4.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/simmetrics_jar_v1_6_2_d07_02_07.jar"/>
