@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2011 Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@ import java.util.Properties;
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -74,11 +75,16 @@ public class XlsExporter implements StreamExporter {
         TabularSerializer serializer = new TabularSerializer() {
             Sheet s;
             int rowCount = 0;
+            CellStyle dateStyle;
             
             @Override
             public void startFile(JSONObject options) {
                 s = wb.createSheet();
                 wb.setSheetName(0, ProjectManager.singleton.getProjectMetadata(project.id).getName());
+
+                dateStyle = wb.createCellStyle();
+                dateStyle.setDataFormat(
+                        wb.getCreationHelper().createDataFormat().getFormat("YYYY-MM-DD")); // TODO what format here?
             }
 
             @Override
@@ -104,8 +110,10 @@ public class XlsExporter implements StreamExporter {
                                 c.setCellValue(((Boolean) v).booleanValue());
                             } else if (v instanceof Date) {
                                 c.setCellValue((Date) v);
+                                c.setCellStyle(dateStyle);
                             } else if (v instanceof Calendar) {
                                 c.setCellValue((Calendar) v);
+                                c.setCellStyle(dateStyle);
                             } else {
                                 String s = cellData.text;
                                 if (s.length() > 32767) {
