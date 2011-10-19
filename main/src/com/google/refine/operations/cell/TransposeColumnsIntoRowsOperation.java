@@ -91,7 +91,12 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
 
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value("Transpose cells in " + _columnCount + " column(s) starting with " + _startColumnName + " into rows");
+        writer.key("description"); writer.value(
+            _columnCount > 0 ?
+                ("Transpose cells in " + _columnCount +
+                    " column(s) starting with " + _startColumnName + " into rows") :
+                ("Transpose cells in columns starting with " +
+                    _startColumnName + " into rows"));
         writer.key("startColumnName"); writer.value(_startColumnName);
         writer.key("columnCount"); writer.value(_columnCount);
         writer.key("combinedColumnName"); writer.value(_combinedColumnName);
@@ -103,7 +108,11 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Transpose cells in " + _columnCount + " column(s) starting with " + _startColumnName + " into rows";
+        return _columnCount > 0 ?
+            ("Transpose cells in " + _columnCount +
+                " column(s) starting with " + _startColumnName + " into rows") :
+            ("Transpose cells in columns starting with " +
+                _startColumnName + " into rows");
     }
 
     @Override
@@ -117,46 +126,72 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         List<Column> newColumns = new ArrayList<Column>();
         List<Column> oldColumns = project.columnModel.columns;
         
-        int columnsLeftToTranspose = _columnCount;
         int startColumnIndex = oldColumns.size();
-        for (int c = 0; c < oldColumns.size(); c++) {
-            Column column = oldColumns.get(c);
-            if (columnsLeftToTranspose == 0) {
-                // This column is beyond the columns to transpose
-                
-                Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
-                newColumn.setName(column.getName());
-                
-                newColumns.add(newColumn);
-            } else if (columnsLeftToTranspose < _columnCount) {
-                // This column is a column to transpose, but not the first
-                // nothing to do
-                
-                columnsLeftToTranspose--;
-            } else if (_startColumnName.equals(column.getName())) {
-                // This is the first column to transpose
-                
-                startColumnIndex = c;
-                
-                String columnName = _combinedColumnName != null && _combinedColumnName.length() > 0 ? _combinedColumnName : column.getName();
-                Column newColumn = new Column(newColumns.size(), columnName);
-                
-                newColumns.add(newColumn);
-                
-                columnsLeftToTranspose--;
-            } else {
-                // This column is before all columns to transpose
-                
-                Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
-                newColumn.setName(column.getName());
-                
-                newColumns.add(newColumn);
+        int columnCount = _columnCount;
+        if (_columnCount > 0) {
+            int columnsLeftToTranspose = _columnCount;
+            for (int c = 0; c < oldColumns.size(); c++) {
+                Column column = oldColumns.get(c);
+                if (columnsLeftToTranspose == 0) {
+                    // This column is beyond the columns to transpose
+                    
+                    Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
+                    newColumn.setName(column.getName());
+                    
+                    newColumns.add(newColumn);
+                } else if (columnsLeftToTranspose < _columnCount) {
+                    // This column is a column to transpose, but not the first
+                    // nothing to do
+                    
+                    columnsLeftToTranspose--;
+                } else if (_startColumnName.equals(column.getName())) {
+                    // This is the first column to transpose
+                    
+                    startColumnIndex = c;
+                    
+                    String columnName = _combinedColumnName != null && _combinedColumnName.length() > 0 ? _combinedColumnName : column.getName();
+                    Column newColumn = new Column(newColumns.size(), columnName);
+                    
+                    newColumns.add(newColumn);
+                    
+                    columnsLeftToTranspose--;
+                } else {
+                    // This column is before all columns to transpose
+                    
+                    Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
+                    newColumn.setName(column.getName());
+                    
+                    newColumns.add(newColumn);
+                }
             }
+        } else {
+            for (int c = 0; c < oldColumns.size(); c++) {
+                Column column = oldColumns.get(c);
+                if (_startColumnName.equals(column.getName())) {
+                    // This is the first column to transpose
+                    
+                    startColumnIndex = c;
+                    
+                    String columnName = _combinedColumnName != null && _combinedColumnName.length() > 0 ?
+                        _combinedColumnName : column.getName();
+                    Column newColumn = new Column(newColumns.size(), columnName);
+                    
+                    newColumns.add(newColumn);
+                    break;
+                } else {
+                    // This column is before all columns to transpose
+                    
+                    Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
+                    newColumn.setName(column.getName());
+                    
+                    newColumns.add(newColumn);
+                }
+            }
+            columnCount = oldColumns.size() - startColumnIndex;
         }
         
-        
         List<Row> oldRows = project.rows;
-        List<Row> newRows = new ArrayList<Row>(oldRows.size() * _columnCount);
+        List<Row> newRows = new ArrayList<Row>(oldRows.size() * columnCount);
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = project.rows.get(r);
             Row firstNewRow = new Row(newColumns.size());
@@ -170,7 +205,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 
                 if (c < startColumnIndex) {
                     firstNewRow.setCell(c, cell);
-                } else if (c == startColumnIndex || c < startColumnIndex + _columnCount) {
+                } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
                     Cell newCell;
                     
                     if (cell == null || cell.value == null) {
@@ -196,7 +231,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                     
                     transposedCells++;
                 } else {
-                    firstNewRow.setCell(c - _columnCount + 1, cell);
+                    firstNewRow.setCell(c - columnCount + 1, cell);
                 }
             }
         }

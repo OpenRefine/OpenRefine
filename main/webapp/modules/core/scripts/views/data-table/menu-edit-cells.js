@@ -293,11 +293,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       for (var k = j + 1; k < columns.length; k++) {
         var column2 = columns[k];
-        var option = $('<option>').attr("value", k - j + 1).text(column2.name).appendTo(elmts.toColumnSelect);
-        if (k == columns.length - 1) {
-          option.attr("selected", "true");
-        }
+        $('<option>').attr("value", k - j + 1).text(column2.name).appendTo(elmts.toColumnSelect);
       }
+      
+      $('<option>')
+        .attr("value", "-1")
+        .attr("selected", "true")
+        .text("(last column)")
+        .appendTo(elmts.toColumnSelect);
     };
     populateToColumn();
 
