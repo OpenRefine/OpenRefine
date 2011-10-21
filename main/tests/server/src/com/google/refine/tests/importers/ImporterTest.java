@@ -31,7 +31,7 @@ abstract class ImporterTest extends RefineTest {
     
     protected JSONObject options;
     
-    public void SetUp(){
+    public void setUp(){
         //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
 
         servlet = new RefineServletStub();
@@ -43,7 +43,7 @@ abstract class ImporterTest extends RefineTest {
         options = Mockito.mock(JSONObject.class);
     }
     
-    public void TearDown(){
+    public void tearDown(){
         project = null;
         metadata = null;
         

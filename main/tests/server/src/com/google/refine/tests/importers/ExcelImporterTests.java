@@ -86,16 +86,16 @@ public class ExcelImporterTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void SetUp(){
-        super.SetUp();
+    public void setUp(){
+        super.setUp();
         SUT = new ExcelImporter();
     }
 
     @Override
     @AfterMethod
-    public void TearDown(){
+    public void tearDown(){
         SUT = null;
-        super.TearDown();
+        super.tearDown();
     }
     
     //---------------------read tests------------------------

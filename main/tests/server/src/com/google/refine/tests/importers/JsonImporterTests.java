@@ -72,14 +72,14 @@ public class JsonImporterTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void SetUp(){
-        super.SetUp();
+    public void setUp(){
+        super.setUp();
         SUT = new JsonImporter();
     }
 
     @Override
     @AfterMethod
-    public void TearDown() {
+    public void tearDown() {
         SUT = null;
         if (inputStream != null) {
             try {
@@ -89,7 +89,7 @@ public class JsonImporterTests extends ImporterTest {
             }
             inputStream = null;
         }
-        super.TearDown();
+        super.tearDown();
     }
 
     @Test

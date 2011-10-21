@@ -65,16 +65,16 @@ public class TsvCsvImporterTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void SetUp() {
-        super.SetUp();
+    public void setUp() {
+        super.setUp();
         SUT = new SeparatorBasedImporter();
     }
 
     @Override
     @AfterMethod
-    public void TearDown(){
+    public void tearDown(){
         SUT = null;
-        super.TearDown();
+        super.tearDown();
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")

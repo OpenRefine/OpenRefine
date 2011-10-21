@@ -58,8 +58,8 @@ public class RdfTripleImporterTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void SetUp(){
-        super.SetUp();
+    public void setUp(){
+        super.setUp();
         SUT = new RdfTripleImporter();
         JSONUtilities.safePut(options, "base-url", "http://rdf.freebase.com");
     }

@@ -71,14 +71,14 @@ public class XmlImporterTests extends ImporterTest {
     
     @Override
     @BeforeMethod
-    public void SetUp(){
-        super.SetUp();
+    public void setUp(){
+        super.setUp();
         SUT = new XmlImporter();
     }
 
     @Override
     @AfterMethod
-    public void TearDown() {
+    public void tearDown() {
         SUT = null;
         if (inputStream != null) {
             try {
@@ -88,7 +88,7 @@ public class XmlImporterTests extends ImporterTest {
             }
             inputStream = null;
         }
-        super.TearDown();
+        super.tearDown();
     }
 
     @Test
@@ -351,6 +351,7 @@ public class XmlImporterTests extends ImporterTest {
         }
     }
     
+    @Override
     protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
         parseOneInputStream(parser, inputStream, options);
     }
