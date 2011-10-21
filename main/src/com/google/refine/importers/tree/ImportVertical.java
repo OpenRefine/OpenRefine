@@ -5,4 +5,9 @@ abstract class ImportVertical {
     public int nonBlankCount;
 
     abstract void tabulate();
+    
+    @Override
+    public String toString() {
+        return name + ":" + nonBlankCount;
+    }
 }

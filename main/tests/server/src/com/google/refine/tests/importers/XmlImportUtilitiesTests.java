@@ -370,7 +370,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         try {
-            SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record);
+            SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record,0);
         } catch (Exception e) {
             Assert.fail();
         }

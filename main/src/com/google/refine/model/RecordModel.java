@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,11 +42,15 @@ import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 
 public class RecordModel implements Jsonizable {
+    final static Logger logger = LoggerFactory.getLogger("RecordModel");
+
     final static public class CellDependency {
         final public int rowIndex;
         final public int cellIndex;
@@ -57,7 +62,7 @@ public class RecordModel implements Jsonizable {
         
         @Override
         public String toString() {
-            return rowIndex+":"+cellIndex;
+            return rowIndex+","+cellIndex;
         }
     }
     
@@ -65,6 +70,11 @@ public class RecordModel implements Jsonizable {
         public int recordIndex;
         public CellDependency[] cellDependencies;
         public List<Integer> contextRows;
+        
+        @Override
+        public String toString() {
+            return "Idx: "+recordIndex+" CellDeps: "+Arrays.toString(cellDependencies)+" Rows:"+contextRows;
+        }
     }
 
     protected List<RowDependency> _rowDependencies;
@@ -232,7 +242,21 @@ public class RecordModel implements Jsonizable {
             }
         });
 
+        dumpKeyedGroups(keyedGroups, columnModel); // for debug
+        
         return keyedGroups;
+    }
+    
+    // debugging helper
+    private void dumpKeyedGroups(List<KeyedGroup> groups, ColumnModel columnModel) {
+        for (KeyedGroup g : groups) {
+            String keyColName = columnModel.getColumnByCellIndex(g.keyCellIndex).getName();
+            StringBuffer sb = new StringBuffer();
+            for (int ci : g.cellIndices) {
+                sb.append(columnModel.getColumnByCellIndex(ci).getName()).append(',');
+            }
+            logger.trace("KeyedGroup " + keyColName + "::" + sb.toString());
+        }
     }
 
     protected void addRootKeyedGroup(ColumnModel columnModel, List<KeyedGroup> keyedGroups) {

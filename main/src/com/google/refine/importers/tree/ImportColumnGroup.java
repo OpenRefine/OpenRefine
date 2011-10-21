@@ -27,8 +27,8 @@ public class ImportColumnGroup extends ImportVertical {
     
     @Override
     public String toString() {
-        return String.format("name=%s, columns={%s}, subgroups={{%s}}",
-                name,StringUtils.join(columns.keySet(), ','),
+        return String.format("name=%s, nextRowIndex=%d, columns={%s}, subgroups={{%s}}",
+                name,nextRowIndex,StringUtils.join(columns.keySet(), ','),
                 StringUtils.join(subgroups.keySet(),','));
     }
 }

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers.tree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -276,7 +277,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         ImportColumnGroup rootColumnGroup,
         int limit
     ) throws TreeReaderException {
-        logger.trace("findRecord(Project, TreeReader, String[], int, ImportColumnGroup");
+        logger.trace("findRecord(Project, TreeReader, String[], int, ImportColumnGroup - path:"+Arrays.toString(recordPath));
         
         if(parser.current() == Token.Ignorable){//XMLStreamConstants.START_DOCUMENT){
             logger.warn("Cannot use findRecord method for START_DOCUMENT event");
@@ -342,12 +343,12 @@ public class XmlImportUtilities extends TreeImportUtilities {
         logger.trace("processRecord(Project,TreeReader,ImportColumnGroup)");
         ImportRecord record = new ImportRecord();
 
-        processSubRecord(project, parser, rootColumnGroup, record);
+        processSubRecord(project, parser, rootColumnGroup, record, 0);
         addImportRecordToProject(record, project);
     }
 
     /**
-     * processRecord parses Tree data for a single element and it's sub-elements,
+     * processFieldAsRecord parses Tree data for a single element and it's sub-elements,
      * adding the parsed data as a row to the project
      * @param project
      * @param parser
@@ -408,9 +409,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
         Project project,
         TreeReader parser,
         ImportColumnGroup columnGroup,
-        ImportRecord record
+        ImportRecord record,
+        int level
     ) throws TreeReaderException {
-        logger.trace("processSubRecord(Project,TreeReader,ImportColumnGroup,ImportRecord)");
+        logger.trace("processSubRecord(Project,TreeReader,ImportColumnGroup,ImportRecord) lvl:"+level+" "+columnGroup);
         
         if(parser.current() == Token.Ignorable) {
             return;
@@ -444,7 +446,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
                     project,
                     parser,
                     thisColumnGroup,
-                    record
+                    record,
+                    level+1
                 );
             } else if (//eventType == XMLStreamConstants.CDATA ||
                         eventType == Token.Value) { //XMLStreamConstants.CHARACTERS) {
@@ -464,6 +467,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 }
             } else if (eventType == Token.EndEntity) {
                 break;
+            } else if (eventType == Token.Ignorable) {
+                continue;
             } else {
                 logger.info("unknown event type " + eventType);
             }

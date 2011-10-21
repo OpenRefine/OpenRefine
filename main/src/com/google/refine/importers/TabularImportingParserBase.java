@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.ExpressionUtils;
@@ -51,6 +53,7 @@ import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 
 abstract public class TabularImportingParserBase extends ImportingParserBase {
+    private final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
     static public interface TableDataReader {
         public List<Object> getNextRowOfCells() throws IOException;
     }
@@ -114,6 +117,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                         0, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
                 } catch (ModelException e) {
                     // Ignore: We already checked for duplicate name.
+                    logger.info("ModelException",e);
                 }
             }
         }
