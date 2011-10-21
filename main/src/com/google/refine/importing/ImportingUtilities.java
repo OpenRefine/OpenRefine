@@ -635,7 +635,7 @@ public class ImportingUtilities {
     
     static public String getEncoding(JSONObject fileRecord) {
         String encoding = JSONUtilities.getString(fileRecord, "encoding", null);
-        if (encoding == null) {
+        if (encoding == null || encoding.isEmpty()) {
             encoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
         }
         return encoding;
@@ -942,5 +942,7 @@ public class ImportingUtilities {
         }
         JSONUtilities.safePut(progress, "message", message);
         JSONUtilities.safePut(progress, "percent", percent);
+        JSONUtilities.safePut(progress, "memory", Runtime.getRuntime().totalMemory() / 1000000);
+        JSONUtilities.safePut(progress, "maxmemory", Runtime.getRuntime().maxMemory() / 1000000);
     }
 }

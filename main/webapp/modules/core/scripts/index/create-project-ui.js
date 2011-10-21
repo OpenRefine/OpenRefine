@@ -228,6 +228,7 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
           $('#create-project-progress-timing').empty();
         }
         $('#create-project-progress-message').text(progress.message);
+        $('#create-project-progress-memory').text("Heap usage: "+progress.memory+'/'+progress.maxmemory+"MB");
       }
     },
     "json"
