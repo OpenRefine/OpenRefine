@@ -253,7 +253,11 @@ public class RecordModel implements Jsonizable {
             String keyColName = columnModel.getColumnByCellIndex(g.keyCellIndex).getName();
             StringBuffer sb = new StringBuffer();
             for (int ci : g.cellIndices) {
-                sb.append(columnModel.getColumnByCellIndex(ci).getName()).append(',');
+                Column col = columnModel.getColumnByCellIndex(ci);
+                if (col != null) {
+                    // Old projects have col 0 slot empty
+                    sb.append(col.getName()).append(',');
+                }
             }
             logger.trace("KeyedGroup " + keyColName + "::" + sb.toString());
         }
