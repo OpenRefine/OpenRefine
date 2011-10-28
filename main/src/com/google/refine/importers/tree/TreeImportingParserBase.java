@@ -89,6 +89,7 @@ abstract public class TreeImportingParserBase implements ImportingParser {
             }
         }
         
+        rootColumnGroup.tabulate();
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
         project.columnModel.update();
     }
