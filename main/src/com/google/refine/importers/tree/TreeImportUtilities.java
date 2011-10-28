@@ -89,6 +89,14 @@ public abstract class TreeImportUtilities {
         Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
             @Override
             public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
+                // TODO: We really want the column/group with the highest % of 
+                // records with at least one row populated, so popular optional
+                // elements with multiple instances per record don't 
+                // outweigh mandatory elements with a single occurrence per record
+                // TODO: From a human factors point of view, we probably want
+                // to try to preserve the order that we found things in the XML
+                
+                // Sort by most populated first, then shortest name
                 int c = o2.nonBlankCount - o1.nonBlankCount;
                 return c != 0 ? c : (o1.name.length() - o2.name.length());
             }
@@ -101,6 +109,7 @@ public abstract class TreeImportUtilities {
         int endColumnIndex = project.columnModel.columns.size();
         int span = endColumnIndex - startColumnIndex;
         if (span > 1 && span < project.columnModel.columns.size()) {
+            // TODO: Only use "key column" if it's 100% populated?
             project.columnModel.addColumnGroup(startColumnIndex, span, startColumnIndex);
         }
     }
@@ -134,7 +143,7 @@ public abstract class TreeImportUtilities {
         row.set(cellIndex, new Cell(value, null));
 
         column.nextRowIndex = rowIndex + 1;
-        column.nonBlankCount++;
+        column.nonBlankCount++; // TODO: Only increment for first instance in record?
     }
 
 
