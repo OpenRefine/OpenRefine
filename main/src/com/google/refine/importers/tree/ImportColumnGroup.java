@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 public class ImportColumnGroup extends ImportVertical {
     public Map<String, ImportColumnGroup> subgroups = new HashMap<String, ImportColumnGroup>();
     public Map<String, ImportColumn> columns = new HashMap<String, ImportColumn>();
-    public int nextRowIndex;
+    public int nextRowIndex; // TODO: this can be hoisted into superclass
 
     @Override
     void tabulate() {

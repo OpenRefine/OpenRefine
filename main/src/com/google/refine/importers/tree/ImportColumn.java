@@ -6,8 +6,17 @@ package com.google.refine.importers.tree;
  *
  */
 public class ImportColumn extends ImportVertical {
+    /**
+     * Index of this column.
+     */
     public int      cellIndex;
-    public int      nextRowIndex;
+    /**
+     * Index of next row to allocate.
+     */
+    public int      nextRowIndex;  // TODO: this can be hoisted into superclass
+    /**
+     * ??? - this field is never written to
+     */
     public boolean  blankOnFirstRow;
 
     public ImportColumn() {}
@@ -18,6 +27,6 @@ public class ImportColumn extends ImportVertical {
 
     @Override
     void tabulate() {
-        // already done the tabulation elsewhere
+        // Nothing to do since our nonBlankCount is always up-to-date and we have no children.
     }
 }
