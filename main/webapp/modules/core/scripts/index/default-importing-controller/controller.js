@@ -314,7 +314,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
           window.clearInterval(timerID);
 
           // explicitly cancel the import job
-          $.post("/command/core/cancel-importing-job?" + $.param({ "jobID": jobID }));
+          Refine.CreateProjectUI.cancelImportinJob(self._jobID);
 
           self._createProjectUI.showSourceSelectionPanel();
         });
