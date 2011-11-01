@@ -187,7 +187,7 @@ public class OdsImporter extends TabularImportingParserBase {
 
     static protected Serializable extractCell(OdfTableCell cell) {
         // TODO: how can we tell if a cell contains an error?
-        String formula = cell.getFormula();
+        //String formula = cell.getFormula();
 
         Serializable value = null;
         // "boolean", "currency", "date", "float", "percentage", "string" or "time"

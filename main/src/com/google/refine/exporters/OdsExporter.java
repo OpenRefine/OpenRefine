@@ -70,7 +70,7 @@ public class OdsExporter implements StreamExporter {
         
         TabularSerializer serializer = new TabularSerializer() {
             OdfTable table;
-            int rowCount = 0;
+            //int rowCount = 0;
             
             @Override
             public void startFile(JSONObject options) {
@@ -85,7 +85,7 @@ public class OdsExporter implements StreamExporter {
             @Override
             public void addRow(List<CellData> cells, boolean isHeader) {
                 OdfTableRow r = table.appendRow();
-                rowCount++;
+                //rowCount++;
                 
                 for (int i = 0; i < cells.size(); i++) {
                     OdfTableCell c = r.getCellByIndex(i); // implicitly creates cell

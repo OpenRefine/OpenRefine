@@ -72,7 +72,7 @@ public class ExcelImporterTests extends ImporterTest {
     private static final int ROWS = 5;
     private static final int COLUMNS = 7;
     
-    private static final File xlsxFile = createSpreadsheet(true);
+    //private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
     
     @Override
