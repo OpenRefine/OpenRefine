@@ -58,6 +58,8 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
@@ -67,6 +69,8 @@ import com.google.refine.oauth.Provider;
 
 public class FreebaseUtils {
 
+    static final Logger logger = LoggerFactory.getLogger("freebase");
+    
     static final public String FREEBASE_HOST = "www.freebase.com";
     
     static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/refine";
@@ -205,7 +209,7 @@ public class FreebaseUtils {
         String mdo_id,
         String triples
     ) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, JSONException, IOException {
-        
+                
         Provider provider = OAuthUtilities.getProvider(FREEBASE_HOST);
         
         Credentials credentials = Credentials.getCredentials(request, provider, Credentials.Type.ACCESS);
@@ -234,24 +238,36 @@ public class FreebaseUtils {
             if (Boolean.parseBoolean(qa)) {
                 formparams.add(new BasicNameValuePair("rabj", getTweezersParams(SAMPLE_SIZE,JUDGES)));
             }
+
+            String freeqKey = System.getProperty("freeq.key");
+            if (freeqKey != null) {
+                logger.warn("Found Freeq key, will bypass OAuth signature");
+                formparams.add(new BasicNameValuePair("apikey", freeqKey));
+            }
+
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
 
             HttpPost httpRequest = new HttpPost(getFreeQUrl());
             httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getUserAgent());
             httpRequest.setEntity(entity);
-            
-            HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));
-            surrogateRequest.setEntity(entity);
-            
-            OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
 
-            consumer.sign(surrogateRequest);
-
-            Header[] h = surrogateRequest.getHeaders("Authorization");
-            if (h.length > 0) {
-                httpRequest.setHeader("X-Freebase-Credentials", h[0].getValue());
-            } else {
-                throw new RuntimeException("Couldn't find the oauth signature header in the surrogate request");
+            if (freeqKey == null) {
+                logger.warn("Calculating OAuth signature");
+                HttpPost surrogateRequest = new HttpPost(getUserInfoURL(FREEBASE_HOST));
+                surrogateRequest.setEntity(entity);
+                
+                OAuthConsumer consumer = OAuthUtilities.getConsumer(credentials, provider);
+    
+                // TODO(SM) This method uses a lot of memory and often results in OutOfMemoryErrors.
+                // Is there something we can do to generate an oauth signature without consuming so much memory?
+                consumer.sign(surrogateRequest);
+                    
+                Header[] h = surrogateRequest.getHeaders("Authorization");
+                if (h.length > 0) {
+                    httpRequest.setHeader("X-Freebase-Credentials", h[0].getValue());
+                } else {
+                    throw new RuntimeException("Couldn't find the oauth signature header in the surrogate request");
+                }
             }
             
             // execute the request
@@ -269,4 +285,5 @@ public class FreebaseUtils {
         String url = (String) ProjectManager.singleton.getPreferenceStore().get("freebase.freeq");
         return url != null ? url : FREEQ_URL;
     }
+    
 }

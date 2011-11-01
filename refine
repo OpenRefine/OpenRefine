@@ -48,6 +48,9 @@ where [options] include:
                
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
+
+  -x <name=value> additional configuration parameters to pass to Google Refine
+     default: [none]
   
   --debug enable JVM debugging (on port 8000)
        
@@ -850,6 +853,7 @@ while [ $# -ne 0 ] ; do
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
     -m) shift; REFINE_MEMORY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
+    -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
@@ -875,7 +879,7 @@ add_option "$JAVA_OPTIONS"
 if [ -z "$REFINE_MEMORY" ] ; then
     REFINE_MEMORY="1024M"
 fi
-add_option "-Xms256M -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY -XX:MaxPermSize=256m -XX:+CMSClassUnloadingEnabled"
+add_option "-Xms256M -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY"
 
 if [ -z "$REFINE_PORT" ] ; then
     REFINE_PORT="3333"
@@ -917,6 +921,10 @@ if [ -z "$REFINE_VERBOSITY" ] ; then
     REFINE_VERBOSITY="info"
 fi
 add_option "-Drefine.verbosity=$REFINE_VERBOSITY"
+
+if [ ! -z "$REFINE_EXTRA_OPTS" ] ; then
+    add_option "-D$REFINE_EXTRA_OPTS"
+fi
 
 # ----- Respond to the action given --------------------------------------------
 
