@@ -241,8 +241,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var dialog = $(DOM.loadHTML("core", "scripts/views/data-table/transpose-columns-into-rows.html"));
 
     var elmts = DOM.bind(dialog);
-    elmts.dialogHeader.text('Transpose Cells Across Columns into Rows');
-
     var level = DialogSystem.showDialog(dialog);
     var dismiss = function() {
       DialogSystem.dismissUntil(level - 1);
@@ -333,17 +331,86 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
     }
   };
+  
+  var doKeyValueColumnize = function() {
+    var dialog = $(DOM.loadHTML("core", "scripts/views/data-table/key-value-columnize.html"));
+
+    var elmts = DOM.bind(dialog);
+    var level = DialogSystem.showDialog(dialog);
+    var dismiss = function() {
+      DialogSystem.dismissUntil(level - 1);
+    };
+
+    var columns = theProject.columnModel.columns;
+
+    elmts.cancelButton.click(function() { dismiss(); });
+    elmts.okButton.click(function() {
+      var config = {
+        keyColumnName: elmts.keyColumnSelect[0].value,
+        valueColumnName: elmts.valueColumnSelect[0].value,
+        noteColumnName: elmts.noteColumnSelect[0].value
+      };
+      if (config.keyColumnName == null ||
+          config.valueColumnName == null ||
+          config.keyColumnName == config.valueColumnName) {
+        alert('Please select one key column and one value column that are different from one another.');
+        return;
+      }
+      
+      var noteColumnName = elmts.noteColumnSelect[0].value;
+      if (noteColumnName != null) {
+        if (noteColumnName == config.keyColumnName ||
+            noteColumnName == config.valueColumnName) {
+          alert('If specified, the note column cannot be the same as the key column or the value column.');
+          return;
+        }
+        config.noteColumnName = noteColumnName;
+      }
+
+      Refine.postCoreProcess(
+        "key-value-columnize", 
+        config,
+        null,
+        { modelsChanged: true }
+      );
+      dismiss();
+    });
+
+    var valueColumnIndex = -1;
+    for (var i = 0; i < columns.length; i++) {
+      var column2 = columns[i];
+      
+      var keyOption = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.keyColumnSelect);
+      if (column2.name == column.name) {
+        keyOption.attr("selected", "true");
+        valueColumnIndex = i + 1;
+      }
+      
+      var valueOption = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.valueColumnSelect);
+      if (i === valueColumnIndex) {
+        valueOption.attr("selected", "true");
+      }
+      
+      $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.noteColumnSelect);
+    }
+  };
 
   MenuSystem.appendTo(menu, [ "core/transpose" ], [
       {
         id: "core/transpose-columns-into-rows",
-        label: "Cells across columns into rows...",
+        label: "Transpose cells across columns into rows...",
         click: doTransposeColumnsIntoRows
       },
       {
         id: "core/transpose-rows-into-columns",
-        label: "Cells in rows into columns...",
+        label: "Transpose cells in rows into columns...",
         click: doTransposeRowsIntoColumns
+      },
+      {},
+      {
+        id: "core/key-value-columnize",
+        label: "Columnize by key/value columns...",
+        click: doKeyValueColumnize
       }
     ]
   );

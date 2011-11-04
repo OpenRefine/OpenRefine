@@ -1,0 +1,23 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader">Columnize by Key/Value Columns</div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
+        <tr>
+          <td>Key Column</td>
+          <td>Value Column</td>
+          <td>Note Column (optional)</td>
+        </tr>
+        <tr>
+          <td><select bind="keyColumnSelect" size="15" style="width: 100%;"></select></td>
+          <td><select bind="valueColumnSelect" size="15" style="width: 100%;"></select></td>
+          <td><select bind="noteColumnSelect" size="15" style="width: 100%;"></select></td>
+        </tr>
+      </table></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="okButton">OK</button>
+      <button class="button" bind="cancelButton">Cancel</button>
+    </div>
+  </div>
+</div>
