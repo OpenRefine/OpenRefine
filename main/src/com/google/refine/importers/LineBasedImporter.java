@@ -27,7 +27,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
             ImportingJob job, List<JSONObject> fileRecords, String format) {
         JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
         
-        JSONUtilities.safePut(options, "lineSeparator", "\n");
+        JSONUtilities.safePut(options, "lineSeparator", "\\n");
         JSONUtilities.safePut(options, "linesPerRow", 1);
         JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "guessCellValueTypes", true);

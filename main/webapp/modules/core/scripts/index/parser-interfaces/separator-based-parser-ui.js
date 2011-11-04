@@ -66,9 +66,9 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
   };
   
   if (this._optionContainer.find("input[name='row-separator']:checked")[0].value === "new-line") {
-    options.lineSeparator = "\n";
+    options.lineSeparator = "\\n";
   } else {
-    options.lineSeparator = String.decodeSeparator(this._optionContainerElmts.rowSeparatorInput[0].value);
+    options.lineSeparator = this._optionContainerElmts.rowSeparatorInput[0].value;
   }
 
   switch (this._optionContainer.find("input[name='column-separator']:checked")[0].value) {
@@ -76,11 +76,10 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
     options.separator = ",";
     break;
   case 'tab':
-    options.separator = "\t";
+    options.separator = "\\t";
     break;
   default:
-    options.separator = String.decodeSeparator(
-        this._optionContainerElmts.columnSeparatorInput[0].value);
+    options.separator = this._optionContainerElmts.columnSeparatorInput[0].value;
   }
 
   var parseIntDefault = function(s, def) {
@@ -141,18 +140,16 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
       });
     });
   
-  var rowSeparatorValue = (this._config.lineSeparator == "\n") ? 'new-line' : 'custom';
+  var rowSeparatorValue = (this._config.lineSeparator == "\\n") ? 'new-line' : 'custom';
   this._optionContainer.find(
       "input[name='row-separator'][value='" + rowSeparatorValue + "']").attr("checked", "checked");
-  this._optionContainerElmts.rowSeparatorInput[0].value =
-    String.encodeSeparator(this._config.lineSeparator);
+  this._optionContainerElmts.rowSeparatorInput[0].value = this._config.lineSeparator;
 
   var columnSeparatorValue = (this._config.separator == ",") ? 'comma' :
-    ((this._config.separator == "\t") ? 'tab' : 'custom');
+    ((this._config.separator == "\\t") ? 'tab' : 'custom');
   this._optionContainer.find(
       "input[name='column-separator'][value='" + columnSeparatorValue + "']").attr("checked", "checked");
-  this._optionContainerElmts.columnSeparatorInput[0].value =
-    String.encodeSeparator(this._config.separator);
+  this._optionContainerElmts.columnSeparatorInput[0].value = this._config.separator;
 
   if (this._config.ignoreLines > 0) {
     this._optionContainerElmts.ignoreCheckbox.attr("checked", "checked");

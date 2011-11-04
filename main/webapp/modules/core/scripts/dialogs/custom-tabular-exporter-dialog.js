@@ -34,8 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function CustomTabularExporterDialog(options) {
   options = options || {
     format: 'tsv',
-    lineSeparator: '\n',
-    separator: '\t',
+    lineSeparator: '\\n',
+    separator: '\\t',
     encoding: 'UTF-8',
     outputColumnHeaders: true,
     outputBlankRows: false,
@@ -202,8 +202,8 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
 
 CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(options) {
   this._dialog.find('input[name="custom-tabular-exporter-download-format"][value="' + options.format + '"]').attr('checked', 'checked');
-  this._elmts.separatorInput[0].value = String.encodeSeparator(options.separator || ',');
-  this._elmts.lineSeparatorInput[0].value = String.encodeSeparator(options.lineSeparator || '\n');
+  this._elmts.separatorInput[0].value = options.separator || ',';
+  this._elmts.lineSeparatorInput[0].value = options.lineSeparator || '\\n';
   this._elmts.encodingInput[0].value = options.encoding;
   this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : '');
   this._elmts.outputBlankRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : '');
@@ -336,13 +336,13 @@ CustomTabularExporterDialog.prototype._getOptionCode = function() {
   
   if (options.format == 'tsv' || options.format == 'csv' || options.format == '*sv') {
     if (options.format == 'tsv') {
-      options.separator = '\t';
+      options.separator = '\\t';
     } else if (options.format == 'csv') {
       options.separator = ',';
     } else {
-      options.separator = String.decodeSeparator(this._elmts.separatorInput.val());
+      options.separator = this._elmts.separatorInput.val();
     }
-    options.lineSeparator = String.decodeSeparator(this._elmts.lineSeparatorInput.val());
+    options.lineSeparator = this._elmts.lineSeparatorInput.val();
     options.encoding = this._elmts.encodingInput.val();
   }
   options.outputColumnHeaders = this._elmts.outputColumnHeadersCheckbox[0].checked;

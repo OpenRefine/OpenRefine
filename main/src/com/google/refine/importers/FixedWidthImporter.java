@@ -44,7 +44,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                 }
             }
 
-            JSONUtilities.safePut(options, "lineSeparator", "\n");
+            JSONUtilities.safePut(options, "lineSeparator", "\\n");
             JSONUtilities.safePut(options, "headerLines", 0);
             JSONUtilities.safePut(options, "columnWidths", columnWidths);
             JSONUtilities.safePut(options, "guessCellValueTypes", true);
@@ -63,7 +63,8 @@ public class FixedWidthImporter extends TabularImportingParserBase {
         JSONObject options,
         List<Exception> exceptions
     ) {
-        // String lineSeparator = JSONUtilities.getString(options, "lineSeparator", "\n");
+//        String lineSeparator = JSONUtilities.getString(options, "lineSeparator", "\\n");
+//        lineSeparator = StringEscapeUtils.unescapeJava(lineSeparator);
         final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
         
         List<Object> retrievedColumnNames = null;

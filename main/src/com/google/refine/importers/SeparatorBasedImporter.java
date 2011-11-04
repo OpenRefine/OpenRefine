@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONObject;
 
 import au.com.bytecode.opencsv.CSVParser;
@@ -68,10 +69,10 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             List<JSONObject> fileRecords, String format) {
         JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
         
-        JSONUtilities.safePut(options, "lineSeparator", "\n");
+        JSONUtilities.safePut(options, "lineSeparator", "\\n");
         
         String separator = guessSeparator(job, fileRecords);
-        JSONUtilities.safePut(options, "separator", separator != null ? separator : "\t");
+        JSONUtilities.safePut(options, "separator", separator != null ? separator : "\\t");
         
         JSONUtilities.safePut(options, "guessCellValueTypes", true);
         JSONUtilities.safePut(options, "processQuotes", true);
@@ -90,11 +91,13 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         JSONObject options,
         List<Exception> exceptions
     ) {
-        // String lineSeparator = JSONUtilities.getString(options, "lineSeparator", "\n");
-        String sep = JSONUtilities.getString(options, "separator", "\t");
+//        String lineSeparator = JSONUtilities.getString(options, "lineSeparator", "\\n");
+//        lineSeparator = StringEscapeUtils.unescapeJava(lineSeparator);
+        String sep = JSONUtilities.getString(options, "separator", "\\t");
         if (sep == null || "".equals(sep)) {
-            sep = "\t";
+            sep = "\\t";
         }
+        sep = StringEscapeUtils.unescapeJava(sep);
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         
         final CSVParser parser = new CSVParser(
@@ -149,7 +152,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                 File file = new File(job.getRawDataDir(), location);
                 Separator separator = guessSeparator(file, encoding);
                 if (separator != null) {
-                    return Character.toString(separator.separator);
+                    return StringEscapeUtils.escapeJava(Character.toString(separator.separator));
                 }
             }
         }
