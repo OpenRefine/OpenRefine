@@ -275,11 +275,11 @@ public class ImportingManager {
             return fileNameFormat;
         } else if (fileNameFormat == null) {
             return mimeTypeFormat;
-        } else if (fileNameFormat.startsWith(mimeTypeFormat)) {
-            // file name-based format is more specific
-            return fileNameFormat;
-        } else {
+        } else if (mimeTypeFormat.startsWith(fileNameFormat)) {
+            // mime type-base format is more specific
             return mimeTypeFormat;
+        } else {
+            return fileNameFormat;
         }
     }
     
