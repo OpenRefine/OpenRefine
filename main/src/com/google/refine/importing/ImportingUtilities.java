@@ -666,7 +666,8 @@ public class ImportingUtilities {
             }
         });
         
-        String bestFormat = formats.size() > 0 ? formats.get(0) : null;
+        // Default to text/line-based to to avoid parsing as binary/excel.
+        String bestFormat = formats.size() > 0 ? formats.get(0) : "text/line-based";
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
             // If there's no archive, then select everything
             for (int i = 0; i < count; i++) {
@@ -678,6 +679,14 @@ public class ImportingUtilities {
                 JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecords, i);
                 String format = JSONUtilities.getString(fileRecord, "format", null);
                 if (format != null && format.equals(bestFormat)) {
+                    JSONUtilities.append(fileSelectionIndexes, i);
+                }
+            }
+            
+            // If nothing matches the best format but we have some files,
+            // then select them all
+            if (fileSelectionIndexes.length() == 0 && count > 0) {
+                for (int i = 0; i < count; i++) {
                     JSONUtilities.append(fileSelectionIndexes, i);
                 }
             }
