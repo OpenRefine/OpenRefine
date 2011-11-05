@@ -189,7 +189,17 @@ abstract public class TreeImportingParserBase implements ImportingParser {
         List<Exception> exceptions
     ) {
         String[] recordPath = JSONUtilities.getStringArray(options, "recordPath");
-        
-        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit);
+        int limit2 = JSONUtilities.getInt(options, "limit", -1);
+        if (limit > 0) {
+            if (limit2 > 0) {
+                limit2 = Math.min(limit, limit2);
+            } else {
+                limit2 = limit;
+            }
+        }
+        if (limit2 == 0) { // shouldn't really happen, but be sure since 0 is stop signal
+            limit2 = -1;
+        }
+        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2);
     }
 }

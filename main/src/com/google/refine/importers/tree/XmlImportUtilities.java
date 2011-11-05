@@ -246,14 +246,14 @@ public class XmlImportUtilities extends TreeImportUtilities {
     ) {
         logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
         try {
-            while (parser.hasNext() && (limit <= 0 || project.rows.size() < limit)) {
+            while (parser.hasNext()) {
                 Token eventType = parser.next();
                 if (eventType == Token.StartEntity) {
-                    findRecord(project, parser, recordPath, 0, rootColumnGroup, limit);
-                    logger.info("Project rows after findRecord = "+project.rows.size());
+                    findRecord(project, parser, recordPath, 0, rootColumnGroup, limit--);
                 }
             }
         } catch (TreeReaderException e) {
+            // TODO: This error needs to be reported to the browser/user
             logger.error("Exception from XML parse",e);
         }
     }
@@ -290,11 +290,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
         String fullName = composeName(parser.getPrefix(), localName);
         if (recordPathSegment.equals(localName) || recordPathSegment.equals(fullName)) {
             if (pathIndex < recordPath.length - 1) {
-                while (parser.hasNext() && (limit <= 0 || project.rows.size() < limit)) {
+                while (parser.hasNext() && limit != 0) {
                     Token eventType = parser.next();
                     if (eventType == Token.StartEntity) {
-                        // TODO: find instead of process??
-                        findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup, limit);
+                        findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup, limit--);
                     } else if (eventType == Token.EndEntity) {
                         break;
                     } else if (eventType == Token.Value) {
