@@ -251,21 +251,44 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.click(function() { dismiss(); });
     elmts.okButton.click(function() {
       var config = {
-          startColumnName: elmts.fromColumnSelect[0].value,
-          columnCount: elmts.toColumnSelect[0].value,
-          combinedColumnName: $.trim(elmts.combinedColumnNameInput[0].value),
-          prependColumnName: elmts.prependColumnNameCheckbox[0].checked,
-          separator: elmts.separatorInput[0].value,
-          ignoreBlankCells: elmts.ignoreBlankCellsCheckbox[0].checked
+        startColumnName: elmts.fromColumnSelect[0].value,
+        columnCount: elmts.toColumnSelect[0].value,
+        ignoreBlankCells: elmts.ignoreBlankCellsCheckbox[0].checked
       };
+      
+      var mode = dialog.find('input[name="transpose-dialog-column-choices"]:checked')[0].value;
+      if (mode == "2") {
+        config.keyColumnName = $.trim(elmts.keyColumnNameInput[0].value);
+        config.valueColumnName = $.trim(elmts.valueColumnNameInput[0].value);
+        if (config.keyColumnName == "") {
+          alert("Please specify the new key column's name.");
+          return;
+        } else if (config.valueColumnName == "") {
+          alert("Please specify the new value column's name.");
+          return;
+        }
+      } else {
+        config.combinedColumnName = $.trim(elmts.combinedColumnNameInput[0].value);
+        config.prependColumnName = elmts.prependColumnNameCheckbox[0].checked;
+        config.separator = elmts.separatorInput[0].value;
+        if (config.combinedColumnName == "") {
+          alert("Please specify the new column's name.");
+          return;
+        } else if (config.prependColumnName && config.separator == "") {
+          alert("Please specify the separator between original column names and cell values.");
+          return;
+        }
+      }
 
       Refine.postCoreProcess(
           "transpose-columns-into-rows", 
           config,
           null,
-          { modelsChanged: true }
+          { modelsChanged: true },
+          {
+            onDone: dismiss
+          }
       );
-      dismiss();
     });
 
     for (var i = 0; i < columns.length; i++) {
