@@ -65,12 +65,6 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
     encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
   };
   
-  if (this._optionContainer.find("input[name='row-separator']:checked")[0].value === "new-line") {
-    options.lineSeparator = "\\n";
-  } else {
-    options.lineSeparator = this._optionContainerElmts.rowSeparatorInput[0].value;
-  }
-
   switch (this._optionContainer.find("input[name='column-separator']:checked")[0].value) {
   case 'comma':
     options.separator = ",";
@@ -140,11 +134,6 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
       });
     });
   
-  var rowSeparatorValue = (this._config.lineSeparator == "\\n") ? 'new-line' : 'custom';
-  this._optionContainer.find(
-      "input[name='row-separator'][value='" + rowSeparatorValue + "']").attr("checked", "checked");
-  this._optionContainerElmts.rowSeparatorInput[0].value = this._config.lineSeparator;
-
   var columnSeparatorValue = (this._config.separator == ",") ? 'comma' :
     ((this._config.separator == "\\t") ? 'tab' : 'custom');
   this._optionContainer.find(

@@ -69,8 +69,6 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             List<JSONObject> fileRecords, String format) {
         JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
         
-        JSONUtilities.safePut(options, "lineSeparator", "\\n");
-        
         String separator = guessSeparator(job, fileRecords);
         JSONUtilities.safePut(options, "separator", separator != null ? separator : "\\t");
         
@@ -91,8 +89,6 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         JSONObject options,
         List<Exception> exceptions
     ) {
-//        String lineSeparator = JSONUtilities.getString(options, "lineSeparator", "\\n");
-//        lineSeparator = StringEscapeUtils.unescapeJava(lineSeparator);
         String sep = JSONUtilities.getString(options, "separator", "\\t");
         if (sep == null || "".equals(sep)) {
             sep = "\\t";

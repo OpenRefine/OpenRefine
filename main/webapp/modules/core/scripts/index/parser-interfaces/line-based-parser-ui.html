@@ -6,7 +6,7 @@
         <td><input bind="encodingInput"></input></td>
       </tr>
     </table></div></td>
-    <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
+    <td><div class="grid-layout layout-tighter layout-full"><table>
       <tr>
         <td style="text-align: right;">&nbsp;</td>
         <td width="1%"><button class="button" bind="previewButton">Update&nbsp;Preview</button></td>
@@ -19,16 +19,6 @@
         lines into one row
       </td></tr>
       
-      <tr><td colspan="2">Lines are separated by</td></tr>
-      <tr><td width="1%"><input type="radio" name="row-separator" value="new-line" id="$row-separator-new-line" /></td>
-        <td><label for="$row-separator-new-line">new line characters \n</label></td></tr>
-      <tr><td width="1%"><input type="radio" name="row-separator" value="custom" id="$row-separator-custom" /></td>
-        <td><label for="$row-separator-custom">custom</label>
-          <input bind="rowSeparatorInput" type="text" class="lightweight" size="5" /></td></tr>
-      <tr><td colspan="2">Escape special characters with \</td></tr>
-    </table></div></td>
-    
-    <td><div class="grid-layout layout-tightest"><table>
       <tr><td width="1%"><input type="checkbox" bind="storeBlankRowsCheckbox" id="$store-blank-rows" /></td>
         <td colspan="2"><label for="$store-blank-rows">Store blank rows</label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="storeBlankCellsAsNullsCheckbox" id="$store-blank-cells" /></td>
@@ -37,7 +27,7 @@
         <td><label for="$include-file-sources">Store file source<br/>(file names, URLs)<br/>in each row</label></td></tr>
     </table></div></td>
     
-    <td colspan="2"><div class="grid-layout layout-tightest"><table>
+    <td><div class="grid-layout layout-tightest"><table>
       <tr><td width="1%"><input type="checkbox" bind="ignoreCheckbox" id="$ignore" /></td>
         <td><label for="$ignore">Ignore first</label></td>
         <td><input bind="ignoreInput" type="text" class="lightweight" size="2" value="0" />

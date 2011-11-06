@@ -80,12 +80,6 @@ Refine.LineBasedParserUI.prototype.getOptions = function() {
   };
   options.linesPerRow = parseIntDefault(this._optionContainerElmts.linesPerRowInput[0].value, 1);
 
-  if (this._optionContainer.find("input[name='row-separator']:checked")[0].value === "new-line") {
-	options.lineSeparator = "\\n";
-  } else {
-	options.lineSeparator = this._optionContainerElmts.rowSeparatorInput[0].value;
-  }
-
   if (this._optionContainerElmts.ignoreCheckbox[0].checked) {
     options.ignoreLines = parseIntDefault(this._optionContainerElmts.ignoreInput[0].value, -1);
   } else {
@@ -126,11 +120,6 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
 
   this._optionContainerElmts.linesPerRowInput[0].value =
     this._config.linesPerRow.toString();
-
-  var rowSeparatorValue = (this._config.lineSeparator == "\\n") ? 'new-line' : 'custom';
-  this._optionContainer.find(
-      "input[name='row-separator'][value='" + rowSeparatorValue + "']").attr("checked", "checked");
-  this._optionContainerElmts.rowSeparatorInput[0].value = this._config.lineSeparator;
 
   if (this._config.ignoreLines > 0) {
     this._optionContainerElmts.ignoreCheckbox.attr("checked", "checked");

@@ -72,12 +72,6 @@ Refine.FixedWidthParserUI.prototype.getOptions = function() {
     options.columnNames = columnNames;
   }
 
-  if (this._optionContainer.find("input[name='row-separator']:checked")[0].value === "new-line") {
-    options.lineSeparator = "\\n";
-  } else {
-    options.lineSeparator = this._optionContainerElmts.rowSeparatorInput[0].value;
-  }
-
   var parseIntDefault = function(s, def) {
     try {
       var n = parseInt(s,10);
@@ -139,11 +133,6 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   if ('columnNames' in this._config) {
     this._optionContainerElmts.columnNamesInput[0].value = this._config.columnNames.join(',');
   }
-
-  var rowSeparatorValue = (this._config.lineSeparator == "\\n") ? 'new-line' : 'custom';
-  this._optionContainer.find(
-      "input[name='row-separator'][value='" + rowSeparatorValue + "']").attr("checked", "checked");
-  this._optionContainerElmts.rowSeparatorInput[0].value = this._config.lineSeparator;
 
   if (this._config.ignoreLines > 0) {
     this._optionContainerElmts.ignoreCheckbox.attr("checked", "checked");
@@ -326,7 +315,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
           .attr("target", "_blank")
           .appendTo(divContent);
         } else {
-          $('<span>').text(cell.v).appendTo(divContent);
+          $('<span>').text(cell.v.replace(/\s/g, ' ')).appendTo(divContent);
         }
       }
     }
