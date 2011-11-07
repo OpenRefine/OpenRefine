@@ -58,6 +58,7 @@ public class TransposeColumnsIntoRowsCommand extends Command {
             String startColumnName = request.getParameter("startColumnName");
             int columnCount = Integer.parseInt(request.getParameter("columnCount"));
             boolean ignoreBlankCells = Boolean.parseBoolean(request.getParameter("ignoreBlankCells"));
+            boolean fillDown = Boolean.parseBoolean(request.getParameter("fillDown"));
             
             String combinedColumnName = request.getParameter("combinedColumnName");
             if (combinedColumnName != null) {
@@ -65,16 +66,16 @@ public class TransposeColumnsIntoRowsCommand extends Command {
                 String separator = request.getParameter("separator");
                 op = new TransposeColumnsIntoRowsOperation(
                     startColumnName, columnCount,
-                    combinedColumnName, prependColumnName, separator,
-                    ignoreBlankCells);
+                    ignoreBlankCells, fillDown,
+                    combinedColumnName, prependColumnName, separator);
             } else {
                 String keyColumnName = request.getParameter("keyColumnName");
                 String valueColumnName = request.getParameter("valueColumnName");
                 
                 op = new TransposeColumnsIntoRowsOperation(
                     startColumnName, columnCount,
-                    keyColumnName, valueColumnName,
-                    ignoreBlankCells);
+                    ignoreBlankCells, fillDown,
+                    keyColumnName, valueColumnName);
             }
             
             Process process = op.createProcess(project, new Properties());

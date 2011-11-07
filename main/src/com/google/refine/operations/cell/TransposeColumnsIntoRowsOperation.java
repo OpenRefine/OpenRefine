@@ -55,6 +55,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
     final protected String  _startColumnName;
     final protected int     _columnCount;
     final protected boolean _ignoreBlankCells;
+    final protected boolean _fillDown;
     
     final protected String  _combinedColumnName;
     final protected boolean _prependColumnName;
@@ -69,18 +70,20 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
             return new TransposeColumnsIntoRowsOperation(
                 obj.getString("startColumnName"),
                 obj.getInt("columnCount"),
+                JSONUtilities.getBoolean(obj, "ignoreBlankCells", true),
+                JSONUtilities.getBoolean(obj, "fillDown", false),
                 combinedColumnName,
                 obj.getBoolean("prependColumnName"),
-                obj.getString("separator"),
-                obj.getBoolean("ignoreBlankCells")
+                obj.getString("separator")
             );
         } else {
             return new TransposeColumnsIntoRowsOperation(
                 obj.getString("startColumnName"),
                 obj.getInt("columnCount"),
+                JSONUtilities.getBoolean(obj, "ignoreBlankCells", true),
+                JSONUtilities.getBoolean(obj, "fillDown", false),
                 obj.getString("keyColumnName"),
-                obj.getString("valueColumnName"),
-                obj.getBoolean("ignoreBlankCells")
+                obj.getString("valueColumnName")
             );
         }
     }
@@ -88,14 +91,16 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
     public TransposeColumnsIntoRowsOperation(
         String  startColumnName,
         int     columnCount,
+        boolean ignoreBlankCells,
+        boolean fillDown,
         String  combinedColumnName,
         boolean prependColumnName,
-        String  separator,
-        boolean ignoreBlankCells
+        String  separator
     ) {
         _startColumnName = startColumnName;
         _columnCount = columnCount;
         _ignoreBlankCells = ignoreBlankCells;
+        _fillDown = fillDown;
         
         _combinedColumnName = combinedColumnName;
         _prependColumnName = prependColumnName;
@@ -108,13 +113,15 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
     public TransposeColumnsIntoRowsOperation(
         String  startColumnName,
         int     columnCount,
+        boolean ignoreBlankCells,
+        boolean fillDown,
         String  keyColumnName,
-        String  valueColumnName,
-        boolean ignoreBlankCells
+        String  valueColumnName
     ) {
         _startColumnName = startColumnName;
         _columnCount = columnCount;
         _ignoreBlankCells = ignoreBlankCells;
+        _fillDown = fillDown;
         
         _combinedColumnName = null;
         _prependColumnName = false;
@@ -134,6 +141,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         writer.key("startColumnName"); writer.value(_startColumnName);
         writer.key("columnCount"); writer.value(_columnCount);
         writer.key("ignoreBlankCells"); writer.value(_ignoreBlankCells);
+        writer.key("fillDown"); writer.value(_fillDown);
         if (_combinedColumnName != null) {
             writer.key("combinedColumnName"); writer.value(_combinedColumnName);
             writer.key("prependColumnName"); writer.value(_prependColumnName);
@@ -266,6 +274,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = project.rows.get(r);
             Row firstNewRow = new Row(newColumns.size());
+            int firstNewRowIndex = newRows.size();
             
             newRows.add(firstNewRow);
             
@@ -323,6 +332,21 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                     firstNewRow.setCell(
                         c - columnCount + (_combinedColumnName != null ? 1 : 2),
                         cell);
+                }
+            }
+            
+            if (_fillDown) {
+                for (int r2 = firstNewRowIndex + 1; r2 < newRows.size(); r2++) {
+                    Row newRow = newRows.get(r2);
+                    for (int c = 0; c < newColumns.size(); c++) {
+                        Column column = newColumns.get(c);
+                        int cellIndex = column.getCellIndex();
+                        
+                        Cell cellToCopy = firstNewRow.getCell(cellIndex);
+                        if (cellToCopy != null && newRow.getCell(cellIndex) == null) {
+                            newRow.setCell(cellIndex, cellToCopy);
+                        }
+                    }
                 }
             }
         }

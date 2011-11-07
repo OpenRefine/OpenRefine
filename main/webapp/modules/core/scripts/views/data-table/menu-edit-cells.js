@@ -253,7 +253,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       var config = {
         startColumnName: elmts.fromColumnSelect[0].value,
         columnCount: elmts.toColumnSelect[0].value,
-        ignoreBlankCells: elmts.ignoreBlankCellsCheckbox[0].checked
+        ignoreBlankCells: elmts.ignoreBlankCellsCheckbox[0].checked,
+        fillDown: elmts.fillDownCheckbox[0].checked
       };
       
       var mode = dialog.find('input[name="transpose-dialog-column-choices"]:checked')[0].value;
