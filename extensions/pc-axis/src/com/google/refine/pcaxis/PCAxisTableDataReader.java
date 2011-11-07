@@ -121,13 +121,11 @@ public class PCAxisTableDataReader implements TableDataReader {
         });
         
         List<Object> columnNames = new LinkedList<Object>();
-        if (_dimensions.size() > 0) {
-            for (int i = _dimensions.size() - 1; i > 0; i--) {
-                Dimension d = _dimensions.get(i);
-                columnNames.add(d.name);
-            }
-            columnNames.addAll(_dimensions.get(0).values);
+        for (int i = _dimensions.size() - 1; i >= 0; i--) {
+            columnNames.add(_dimensions.get(i).name);
         }
+        columnNames.add("value");
+        
         return columnNames;
     }
     
@@ -204,13 +202,13 @@ public class PCAxisTableDataReader implements TableDataReader {
     }
     
     private List<Object> parseForNextDataRow() throws IOException {
-        List<Object> cells = getNextBatchOfDataValues(_dimensions.get(0).values.size());
+        List<Object> cells = getNextBatchOfDataValues(1);
         if (cells.size() == 0) {
             return null;
         }
         
         if (_dimensions.size() > 0) {
-            for (int i = 1; i < _dimensions.size(); i++) {
+            for (int i = 0; i < _dimensions.size(); i++) {
                 Dimension d = _dimensions.get(i);
                 if (d.next == d.values.size()) {
                     d.next = 0;
@@ -219,7 +217,7 @@ public class PCAxisTableDataReader implements TableDataReader {
                     }
                 }
                 cells.add(0, d.values.get(d.next));
-                if (i == 1) {
+                if (i == 0) {
                     d.next++;
                 }
             }
