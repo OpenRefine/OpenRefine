@@ -49,8 +49,6 @@ function init() {
 
   // Register importer and exporter
   var IM = Packages.com.google.refine.importing.ImportingManager;
-  IM.registerUrlRewriter(new Packages.com.google.refine.extension.gdata.GDataUrlRewriter())
-  IM.registerUrlRewriter(new Packages.com.google.refine.extension.gdata.FusionTablesUrlRewriter())
   
   IM.registerController(
     module,
@@ -125,7 +123,11 @@ function process(path, request, response) {
     })();
     
     send(request, response, "authorized.vt", context);
-  }
+  } else if (path == "/" || path == "") {
+      var context = {};
+      context.version = version;
+      send(request, response, "index.vt", context);
+  } 
 }
 
 function send(request, response, template, context) {
