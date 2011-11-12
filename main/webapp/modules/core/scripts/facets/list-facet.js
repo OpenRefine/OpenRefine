@@ -131,7 +131,7 @@ ListFacet.prototype.updateState = function(data) {
 ListFacet.prototype._reSortChoices = function() {
   this._data.choices.sort(this._options.sort == "name" ?
       function(a, b) {
-    return a.v.l.localeCompare(b.v.l);
+    return a.v.l.toLowerCase().localeCompare(b.v.l.toLowerCase());
   } :
     function(a, b) {
     var c = b.c - a.c;
