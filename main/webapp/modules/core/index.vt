@@ -68,8 +68,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </div></div> <!-- right-panel -->
   
   <div id="no-project-message" class="message" style="display: none;">
-    No existing project. Create one now!<br/>
-    Try these <a href="http://code.google.com/p/google-refine/wiki/SampleDatasets" target="_blank">sample data sets &raquo;</a>
+    No existing project. Select "Create Project" on the left to create a new project.<br/>
+    If you have no data to work with, try these
+    <a href="http://code.google.com/p/google-refine/wiki/SampleDatasets" target="_blank">sample data sets</a>.
   </div>
 </body>
 </html>
