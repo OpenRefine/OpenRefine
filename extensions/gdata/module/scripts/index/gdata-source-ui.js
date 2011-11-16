@@ -53,7 +53,46 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
       }
     );
   });
+  this._body.find('.gdata-signout.button').click(function() {
+      $.get("/command/gdata/deauthorize" );
+      self._body.find('.gdata-page').hide();
+      self._elmts.signinPage.show();
+  });
   
+  var importURL1 = function(evt) {
+    if ($.trim(self._elmts.urlInput1[0].value).length === 0) {
+	    window.alert("You must specify a web address (URL) to import.");
+    } else {
+	    var doc={}
+	    doc.docSelfLink = self._elmts.urlInput1[0].value;
+	    if (doc.docSelfLink.contains('spreadsheet')) { // TODO: fragile?
+	      doc.type = 'spreadsheet';
+	    } else {
+	      doc.type = 'table';
+	    }
+        self._controller.startImportingDocument(doc);
+	}
+  }
+  // TODO: Consolidate these two URL input forms
+  var importURL2 = function(evt) {
+    if ($.trim(self._elmts.urlInput2[0].value).length === 0) {
+	    window.alert("You must specify a web address (URL) to import.");
+    } else {
+	    var doc={}
+	    doc.docSelfLink = self._elmts.urlInput2[0].value;
+	    if (doc.docSelfLink.contains('spreadsheet')) { // TODO: fragile?
+	      doc.type = 'spreadsheet';
+	    } else {
+	      doc.type = 'table';
+	    }
+        self._controller.startImportingDocument(doc);
+	}
+  }
+  
+  this._elmts.urlNextButton1.click(importURL1);
+  this._elmts.urlNextButton2.click(importURL2);
+  
+   
   this._body.find('.gdata-page').hide();
   this._elmts.signinPage.show();
   

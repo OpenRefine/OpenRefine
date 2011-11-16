@@ -51,12 +51,14 @@ import org.json.JSONWriter;
 
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.docs.DocsService;
+import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.DateTime;
 import com.google.gdata.data.Person;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
+import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
 
 import com.google.refine.ProjectManager;
@@ -83,7 +85,7 @@ public class GDataImportingController implements ImportingController {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        // TODO Auto-generated method stub
+        HttpUtilities.respond(response, "error", "GET not implemented");
     }
 
     @Override
@@ -193,11 +195,7 @@ public class GDataImportingController implements ImportingController {
         HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException {
     
-        String token = TokenCookie.getToken(request);
-        if (token == null) {
-            HttpUtilities.respond(response, "error", "Not authorized");
-            return;
-        }
+        String token = TokenCookie.getToken(request); // authorization token, if logged in
         
         String type = parameters.getProperty("docType");
         String urlString = parameters.getProperty("docUrl");
@@ -220,8 +218,19 @@ public class GDataImportingController implements ImportingController {
                 JSONUtilities.safePut(options, "worksheets", worksheets);
                 
                 SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
-                SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(url, SpreadsheetEntry.class);
-                for (WorksheetEntry worksheetEntry : spreadsheetEntry.getWorksheets()) {
+                List<WorksheetEntry> worksheetEntries;
+                if (token == null) {
+                    String visibility = "public";
+                    FeedURLFactory factory = FeedURLFactory.getDefault();
+                    String key = GDataExtension.getSpreadsheetID(url);
+                    url = factory.getWorksheetFeedUrl(key, visibility, "values");
+                    WorksheetFeed feed = spreadsheetService.getFeed(url, WorksheetFeed.class);
+                    worksheetEntries = feed.getEntries(); 
+                } else {
+                    SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(url, SpreadsheetEntry.class);
+                    worksheetEntries = spreadsheetEntry.getWorksheets();
+                }
+                for (WorksheetEntry worksheetEntry : worksheetEntries) {
                     JSONObject worksheetO = new JSONObject();
                     JSONUtilities.safePut(worksheetO, "name", worksheetEntry.getTitle().getPlainText());
                     JSONUtilities.safePut(worksheetO, "rows", worksheetEntry.getRowCount());
@@ -246,12 +255,7 @@ public class GDataImportingController implements ImportingController {
             throws ServletException, IOException {
         
         String token = TokenCookie.getToken(request);
-        if (token == null) {
-            HttpUtilities.respond(response, "error", "Not authorized");
-            return;
-        }
         
-
         long jobID = Long.parseLong(parameters.getProperty("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
@@ -317,10 +321,6 @@ public class GDataImportingController implements ImportingController {
         throws ServletException, IOException {
     
         final String token = TokenCookie.getToken(request);
-        if (token == null) {
-            HttpUtilities.respond(response, "error", "Not authorized");
-            return;
-        }
         
         long jobID = Long.parseLong(parameters.getProperty("jobID"));
         final ImportingJob job = ImportingManager.getJob(jobID);

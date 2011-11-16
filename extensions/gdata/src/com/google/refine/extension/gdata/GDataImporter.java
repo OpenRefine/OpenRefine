@@ -138,10 +138,16 @@ public class GDataImporter {
         List<Exception> exceptions) {
         
         try {
-            SpreadsheetEntry spreadsheetEntry = service.getEntry(docURL, SpreadsheetEntry.class);
             WorksheetEntry worksheetEntry = service.getEntry(worksheetURL, WorksheetEntry.class);
+            String spreadsheetName = docURL.toExternalForm();
+            try {
+                SpreadsheetEntry spreadsheetEntry = service.getEntry(docURL, SpreadsheetEntry.class);
+                spreadsheetName = spreadsheetEntry.getTitle().getPlainText();
+            } catch (ServiceException e) { // RedirectRequiredException among others
+                // fall back to just using the URL (better for traceability anyway?)
+            }
             
-            String fileSource = spreadsheetEntry.getTitle().getPlainText() + " # " +
+            String fileSource = spreadsheetName + " # " +
                 worksheetEntry.getTitle().getPlainText();
             
             setProgress(job, fileSource, 0);
@@ -283,15 +289,8 @@ public class GDataImporter {
             List<Exception> exceptions) {
         
         String docUrlString = JSONUtilities.getString(options, "docUrl", null);
-        if (docUrlString == null) {
-            return;
-        }
-        int equal = docUrlString.lastIndexOf('=');
-        if (equal < 0) {
-            return;
-        }
-        
-        String id = docUrlString.substring(equal + 1);
+        String id = getFTid(docUrlString); // Use GDataExtension.getFusionTableKey(url) ?
+        // TODO: Allow arbitrary Fusion Tables URL instead of (in addition to?) constructing our own?
         
         try {
             List<FTColumnData> columns = new ArrayList<GDataImporter.FTColumnData>();
@@ -344,6 +343,17 @@ public class GDataImporter {
             e.printStackTrace();
             exceptions.add(e);
         }
+    }
+    
+    static private String getFTid(String url) {
+        if (url == null) {
+            return null;
+        }
+        int equal = url.lastIndexOf('=');
+        if (equal < 0) {
+            return null;
+        }
+        return url.substring(equal + 1);
     }
     
     static private enum FTColumnType {

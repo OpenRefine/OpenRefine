@@ -95,19 +95,25 @@ abstract public class GDataExtension {
     
     static public DocsService getDocsService(String token) {
         DocsService service = new DocsService(SERVICE_APP_NAME);
-        service.setAuthSubToken(token);
+        if (token != null) {
+            service.setAuthSubToken(token);
+        }
         return service;
     }
     
     static public SpreadsheetService getSpreadsheetService(String token) {
         SpreadsheetService service = new SpreadsheetService(SERVICE_APP_NAME);
-        service.setAuthSubToken(token);
+        if (token != null) {
+            service.setAuthSubToken(token);
+        }
         return service;
     }
     
     static public GoogleService getFusionTablesGoogleService(String token) {
         GoogleService service = new GoogleService("fusiontables", SERVICE_APP_NAME);
-        service.setAuthSubToken(token);
+        if (token != null) {
+            service.setAuthSubToken(token);
+        }
         return service;
     }
 
@@ -178,4 +184,60 @@ abstract public class GDataExtension {
         }
         return rows;
     }
+
+    static boolean isSpreadsheetURL(String url) {
+        // e.g. http://spreadsheets.google.com/ccc?key=tI36b9Fxk1lFBS83iR_3XQA&hl=en
+        // TODO: The following should work, but the GData implementation is too limited
+//        try {
+//            FeedURLFactory.getSpreadsheetKeyFromUrl(url);
+//            return true;
+//        } catch (IllegalArgumentException e) {
+//            return false;
+//        }
+        try {
+            return url.contains("spreadsheet") && getSpreadsheetID(new URL(url)) != null;
+        } catch (MalformedURLException e) {
+            return false;
+        }
+    }
+    
+    static String getSpreadsheetID(URL url) {
+        return getParamValue(url,"key");
+    }
+    
+    static private String getParamValue(URL url, String key) {
+        String query = url.getQuery();
+        if (query != null) {
+            String[] parts = query.split("&");
+            for (String part : parts) {
+                if (part.startsWith(key+"=")) {
+                    int offset = key.length()+1;
+                    String tableId = part.substring(offset);
+                    return tableId;
+                }
+            }
+        }
+        return null; 
+    }
+    
+    static boolean isFusionTableURL(URL url) {
+        // http://www.google.com/fusiontables/DataSource?dsrcid=1219
+        String query = url.getQuery();
+        if (query == null) {
+            query = "";
+        }
+        return url.getHost().endsWith(".google.com") 
+                && url.getPath().startsWith("/fusiontables/DataSource")
+                && query.contains("dsrcid=");
+    }
+    
+    static String getFusionTableKey(URL url) {
+        String tableId = getParamValue(url,"dsrcid");
+        // TODO: Any special id format considerations to worry about?
+//        if (tableId.startsWith("p") || !tableId.contains(".")) {
+//            return tableId;
+//        }
+        return tableId;
+    }
+
 }

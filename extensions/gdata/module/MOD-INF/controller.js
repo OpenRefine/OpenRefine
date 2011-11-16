@@ -40,9 +40,6 @@ var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceMan
  * Function invoked to initialize the extension.
  */
 function init() {
-//Packages.java.lang.System.err.println("Initializing gData extension");
-//Packages.java.lang.System.err.println(module.getMountPoint());
-
   var RS = Packages.com.google.refine.RefineServlet;
   RS.registerCommand(module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
   RS.registerCommand(module, "upload", Packages.com.google.refine.extension.gdata.UploadCommand());
