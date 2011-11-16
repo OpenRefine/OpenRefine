@@ -158,9 +158,15 @@ check_running() {
     CHECK_STR="<title>Google Refine</title>"
 
     if [ "$CURL" ] ; then
-        NOT_RUNNING=`curl -s -S $URL 2>&1 > /dev/null | grep "couldn't connect to host"`
+        curl -s -S $URL > /dev/null 2>&1
+        if [ "$?" = "7" ] ; then
+            NOT_RUNNING="1"
+        fi
     elif [ "$WGET" ] ; then
-        NOT_RUNNING=`wget -O - $URL 2>&1 > /dev/null | grep "Connection refused"`
+        wget -O - $URL > /dev/null 2>&1
+        if [ "$?" = "4" ] ; then
+            NOT_RUNNING="1"
+        fi
     fi    
 
     if [ -z "${NOT_RUNNING}" ] ; then
@@ -171,7 +177,7 @@ check_running() {
         fi    
         
         if [ -z "${RUNNING}" ] ; then
-            error "Something is already running on $URL but doesn't seem to be Google Refine"
+            error "Something is already running on $URL but doesn't seem to be Google Refine. Maybe a proxy issue?"
         fi
     else
         RUNNING=""
@@ -807,6 +813,7 @@ case "$SYSTEM" in
   CYGWIN*) OS="windows" ;;
   Darwin*) OS="macosx"  ;;
   Linux*)  OS="linux"   ;;
+  *) OS="other" ;;
 esac
 
 SEP=":" 
