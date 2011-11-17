@@ -1,31 +1,31 @@
 <div>
-  <div bind="signinPage" class="gdata-page">
-    <p>Please <button class="gdata-signin button button-primary">sign in and authorize</button>
-      access to your Google data.</p></tr>
-	<form bind="form"><div class="grid-layout layout-normal"><table>
-	  <tr><td colspan="2">Or enter web address (URL) of a <em>public</em> Google Spreadsheet or Fusion Table below and click Next:</td></tr>
-	  <tr bind="urlRow"><td colspan="2"><input bind="urlInput1" name="download" class="default-importing-web-url" /></td></tr>
-	  <tr bind="buttons">
-	    <td><button bind="urlNextButton1" class="button button-primary" type="button">Next &raquo;</button></td>
-	  </tr>
-	</table></div></form>
+  <div bind="publicDocsPanel" class="gdata-panel">
+    <h1>Public Documents</h1>
+    <div class="grid-layout layout-tighter"><table>
+      <tr><td colspan="2">Import a <em>public</em> Google Spreadsheet or Fusion Table by its URL:</td></tr>
+      <tr bind="urlRow">
+        <td><input bind="urlInput" name="download" class="default-importing-web-url" /></td>
+        <td><button bind="urlNextButton" class="button button-primary" type="button">Next &raquo;</button></td>
+      </tr>
+    </table></div>
   </div>
-  <div bind="progressPage" class="gdata-page">
-    <p><img src="images/large-spinner.gif" /> Retrieving Google Docs documents ...</p>
+  
+  <div bind="authorizedDocsPanel" class="gdata-panel">
+    <h1>Authorized Documents</h1>
+    
+    <div bind="signinPage" class="gdata-page">
+      <p>Please <button class="gdata-signin button button-primary">sign in and authorize</button>
+        access to your Google data.</p>
+    </div>
+    <div bind="progressPage" class="gdata-page">
+      <p><img src="images/large-spinner.gif" /> Retrieving Google Docs documents ...</p>
+    </div>
+    <div bind="listingPage" class="gdata-page grid-layout layout-normal"><table>
+      <tr>
+        <td width="%"><button class="gdata-signout button">sign out</button></td>
+        <td><button class="gdata-signin button">re-sign in</button> with another account</td>
+      </tr>
+      <tr><td colspan="2"><div bind="listingContainer" class="grid-layout layout-tight gdata-document-container"></div></td></tr>
+    </table></div>
   </div>
-  <div bind="listingPage" class="gdata-page grid-layout layout-full layout-normal"><table>
-    <tr>
-      <td>Google Docs documents</td>
-      <td style="text-align: center;"><button class="gdata-signin button">re-sign in</button> with another account</td>
-      <td style="text-align: right;"><button class="gdata-signout button">sign out</button></td>
-    </tr>
-	  <tr><td colspan="2">Click one of the documents below or enter the web address (URL) of a <em>public</em> Google Spreadsheet or Fusion Table and click "Next":</td></tr>
-	<tr bind="urlRow"><td colspan="2">
-	    <form bind="form">
-		  <input bind="urlInput2" name="download" class="default-importing-web-url" /></td>
-		</form>
-		<td bind="buttons"><button bind="urlNextButton2" class="button button-primary" type="button">Next &raquo;</button></td>
-	</tr>
-    <tr><td colspan="3"><div bind="listingContainer" class="grid-layout layout-tight gdata-document-container"></div></td></tr>
-  </table></div>
 </div>

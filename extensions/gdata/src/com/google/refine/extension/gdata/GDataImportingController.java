@@ -195,10 +195,12 @@ public class GDataImportingController implements ImportingController {
         HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException {
     
-        String token = TokenCookie.getToken(request); // authorization token, if logged in
-        
         String type = parameters.getProperty("docType");
         String urlString = parameters.getProperty("docUrl");
+        boolean isPublic = "true".equals(parameters.getProperty("isPublic"));
+        
+        String token = isPublic ? null : TokenCookie.getToken(request); // authorization token, if logged in
+        
         URL url = new URL(urlString);
         try {
             JSONObject result = new JSONObject();
