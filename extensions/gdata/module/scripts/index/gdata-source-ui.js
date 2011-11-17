@@ -64,7 +64,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
     if (url.length === 0) {
       window.alert("You must specify a web address (URL) to import.");
     } else {
-      var doc = { isPublic: true };
+      var doc = {};
       doc.docSelfLink = url;
       if (doc.docSelfLink.contains('spreadsheet')) { // TODO: fragile?
         doc.type = 'spreadsheet';

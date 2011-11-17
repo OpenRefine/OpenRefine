@@ -57,8 +57,7 @@ Refine.GDataImportingController.prototype.startImportingDocument = function(doc)
           "controller": "gdata/gdata-importing-controller",
           "subCommand": "initialize-parser-ui",
           "docUrl": doc.docSelfLink,
-          "docType": doc.type,
-          "isPublic": (doc.isPublic)
+          "docType": doc.type
         }),
         null,
         function(data2) {

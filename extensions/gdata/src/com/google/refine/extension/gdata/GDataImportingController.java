@@ -194,12 +194,11 @@ public class GDataImportingController implements ImportingController {
     private void doInitializeParserUI(
         HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException {
-    
+        
+        String token = TokenCookie.getToken(request);
+        
         String type = parameters.getProperty("docType");
         String urlString = parameters.getProperty("docUrl");
-        boolean isPublic = "true".equals(parameters.getProperty("isPublic"));
-        
-        String token = isPublic ? null : TokenCookie.getToken(request); // authorization token, if logged in
         
         URL url = new URL(urlString);
         try {
@@ -219,19 +218,8 @@ public class GDataImportingController implements ImportingController {
                 JSONArray worksheets = new JSONArray();
                 JSONUtilities.safePut(options, "worksheets", worksheets);
                 
-                SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
-                List<WorksheetEntry> worksheetEntries;
-                if (token == null) {
-                    String visibility = "public";
-                    FeedURLFactory factory = FeedURLFactory.getDefault();
-                    String key = GDataExtension.getSpreadsheetID(url);
-                    url = factory.getWorksheetFeedUrl(key, visibility, "values");
-                    WorksheetFeed feed = spreadsheetService.getFeed(url, WorksheetFeed.class);
-                    worksheetEntries = feed.getEntries(); 
-                } else {
-                    SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(url, SpreadsheetEntry.class);
-                    worksheetEntries = spreadsheetEntry.getWorksheets();
-                }
+                List<WorksheetEntry> worksheetEntries =
+                    reallyTryToGetWorksheetEntriesForDoc(url, token);
                 for (WorksheetEntry worksheetEntry : worksheetEntries) {
                     JSONObject worksheetO = new JSONObject();
                     JSONUtilities.safePut(worksheetO, "name", worksheetEntry.getTitle().getPlainText());
@@ -250,6 +238,51 @@ public class GDataImportingController implements ImportingController {
             e.printStackTrace();
             HttpUtilities.respond(response, "error", "Internal error: " + e.getLocalizedMessage());
         }
+    }
+    
+    private List<WorksheetEntry> reallyTryToGetWorksheetEntriesForDoc(URL docUrl, String token) throws IOException, ServiceException {
+        try {
+            return getWorksheetEntriesForDoc(docUrl, token);
+        } catch (ServiceException e) {
+            /*
+             * TODO: figure out if we can rewire the URL somehow. This code below
+             * doesn't work but maybe we need to try something similar to it.
+             * 
+            String urlString = docUrl.toString();
+            if (urlString.startsWith("https://docs.google.com/spreadsheet/ccc?key=") ||
+                urlString.startsWith("http://docs.google.com/spreadsheet/ccc?key=")) {
+                
+                String urlString2 = "https://spreadsheets.google.com/spreadsheet/ccc?key=" +
+                    urlString.substring(urlString.indexOf("?key=") + 5);
+                
+                return getWorksheetEntriesForDoc(new URL(urlString2), token);
+            }
+            */
+            throw e;
+        }
+    }
+    
+    private List<WorksheetEntry> getWorksheetEntriesForDoc(URL docUrl, String token) throws IOException, ServiceException {
+        if (token != null) {
+            try {
+                SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
+                SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(docUrl, SpreadsheetEntry.class);
+                return spreadsheetEntry.getWorksheets();
+            } catch (ServiceException e) {
+                // Ignore and fall through, pretending that we're not logged in.
+            }
+        }
+        return getWorksheetEntriesForDoc(docUrl);
+    }
+    
+    private List<WorksheetEntry> getWorksheetEntriesForDoc(URL docUrl) throws IOException, ServiceException {
+        SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(null);
+        String visibility = "public";
+        FeedURLFactory factory = FeedURLFactory.getDefault();
+        String key = GDataExtension.getSpreadsheetID(docUrl);
+        docUrl = factory.getWorksheetFeedUrl(key, visibility, "values");
+        WorksheetFeed feed = spreadsheetService.getFeed(docUrl, WorksheetFeed.class);
+        return feed.getEntries(); 
     }
     
     private void doParsePreview(
