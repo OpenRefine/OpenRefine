@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.filters;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import com.google.refine.browsing.util.RowEvaluable;
@@ -68,6 +69,9 @@ abstract public class ExpressionTimeComparisonRowFilter extends ExpressionNumber
         } else if (ExpressionUtils.isNonBlankData(v)) {
             if (v instanceof Date) {
                 long time = ((Date) v).getTime();
+                return _selectTime && checkValue(time);
+            } else if (v instanceof Calendar) {
+                long time = ((Calendar) v).getTime().getTime();
                 return _selectTime && checkValue(time);
             } else {
                 return _selectNonTime;
