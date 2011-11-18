@@ -912,7 +912,12 @@ public class ImportingUtilities {
     ) {
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
-        pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
+        String encoding = JSONUtilities.getString(optionObj, "encoding", "UTF-8");
+        if ("".equals(encoding)) {
+            // encoding can be present, but empty, which won't trigger JSONUtilities default processing
+            encoding = "UTF-8";
+        }
+        pm.setEncoding(encoding);
         
         record.parser.parse(
             project,
