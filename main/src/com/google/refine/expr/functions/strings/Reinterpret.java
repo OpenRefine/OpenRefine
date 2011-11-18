@@ -50,27 +50,53 @@ public class Reinterpret implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2) {
+        if (args.length == 2 || args.length == 3) {
             Object o1 = args[0];
             Object o2 = args[1];
             if (o1 != null && o2 != null && o2 instanceof String) {
                 String str = (o1 instanceof String) ? (String) o1 : o1.toString();
-                Project project = (Project) bindings.get("project");
-                ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
-                String decoder = metadata.getEncoding();
-                String encoder = (String) o2;
-                String reinterpreted = null;
+                String decoder;
+                String encoder;
 
-                try {
-                    reinterpreted = new String(str.getBytes(decoder), encoder);
-                } catch (UnsupportedEncodingException e) {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": encoding '" + encoder + "' is not available or recognized.");
+                if (args.length == 2) {
+                    Project project = (Project) bindings.get("project");
+                    ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
+                    decoder = metadata.getEncoding(); // can return "" for broken projects
+                    encoder = (String) o2;
+                } else {
+                    decoder = (String) o2;
+                    encoder = (String) args[2];
                 }
-                                
-                return reinterpreted;
+                return reinterpret(str, decoder, encoder);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 arguments");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 or 3 arguments");
+    }
+
+    private Object reinterpret(String str, String decoder, String encoder) {
+        String result = null;
+
+        byte[] bytes;
+        if (decoder == null || decoder.isEmpty()) {
+            bytes = str.getBytes();
+        } else {
+            try {
+                bytes = str.getBytes(decoder);
+            } catch (UnsupportedEncodingException e) {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": source encoding '" + decoder + "' is not available or recognized.");
+            }
+        }
+        try {
+            if (encoder == null || encoder.isEmpty()) {
+                result = new String(bytes); // system default encoding
+            } else {
+                result = new String(bytes, encoder);
+            }
+        } catch (UnsupportedEncodingException e) {
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": encoding '" + encoder + "' is not available or recognized.");
+        }
+                        
+        return result;
     }
     
     @Override
