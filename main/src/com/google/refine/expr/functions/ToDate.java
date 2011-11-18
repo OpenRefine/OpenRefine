@@ -46,6 +46,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 
 public class ToDate implements Function {
 
@@ -75,6 +76,20 @@ public class ToDate implements Function {
             try {
                 return CalendarParser.parse( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
             } catch (CalendarParserException e) {
+                Date d = ParsingUtilities.stringToDate(o1);
+                if (d != null) {
+                    return d;
+                } else {
+                    try {
+                        return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime();
+                    } catch (IllegalArgumentException e2) {
+                    }
+                    // alternate implementation which may be useful on some JVMs?
+//                    try {
+//                        return javax.xml.datatype.DatatypeFactory.newInstance().newXMLGregorianCalendar(o1).toGregorianCalendar().getTime();
+//                    } catch (DatatypeConfigurationException e2) {     
+//                    }
+                }
                 return new EvalError("Cannot parse to date");
             }
         }
