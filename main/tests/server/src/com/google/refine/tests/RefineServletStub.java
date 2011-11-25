@@ -90,6 +90,6 @@ public class RefineServletStub extends RefineServlet {
      * @param commandName
      */
     public void removeCommand( String commandName ){
-        unregisterCommand(commandName);
+        unregisterCommand("core/" + commandName);
     }
 }

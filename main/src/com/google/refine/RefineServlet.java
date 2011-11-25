@@ -176,6 +176,20 @@ public class RefineServlet extends Butterfly {
                     logger.trace("> POST {}", commandKey);
                     command.doPost(request, response);
                     logger.trace("< POST {}", commandKey);
+                } else if (request.getMethod().equals("PUT")) {
+                    if (!logger.isTraceEnabled() && command.logRequests()) {
+                        logger.info("PUT {}", request.getPathInfo());
+                    }
+                    logger.trace("> PUT {}", commandKey);
+                    command.doPut(request, response);
+                    logger.trace("< PUT {}", commandKey);
+                } else if (request.getMethod().equals("DELETE")) {
+                    if (!logger.isTraceEnabled() && command.logRequests()) {
+                        logger.info("DELETE {}", request.getPathInfo());
+                    }
+                    logger.trace("> DELETE {}", commandKey);
+                    command.doDelete(request, response);
+                    logger.trace("< DELETE {}", commandKey);
                 } else {
                     response.sendError(405);
                 }

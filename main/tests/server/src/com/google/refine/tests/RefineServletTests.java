@@ -71,6 +71,8 @@ public class RefineServletTests extends RefineTest {
 
     final static private String POST = "POST";
     final static private String GET = "GET";
+    final static private String PUT = "PUT";
+    final static private String DELETE = "DELETE";
     
     // mocks
     HttpServletRequest request = null;
@@ -148,7 +150,7 @@ public class RefineServletTests extends RefineTest {
     }
 
     //----------------doPost tests-------------------------
-    @Test(enabled=false) // TODO: Fails when run with doGetRegressionTest()
+    @Test
     public void doPostRegressionTest(){
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(POST);
@@ -161,7 +163,7 @@ public class RefineServletTests extends RefineTest {
             Assert.fail();
         }
 
-        verifyGetCommandNameCalled(3);
+        verifyGetCommandNameCalled(2);
         try {
             verify(command,times(1)).doPost(request, response);
         } catch (ServletException e) {
@@ -175,6 +177,88 @@ public class RefineServletTests extends RefineTest {
     public void doPostReturns404WhenCommandNotFound(){
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(POST);
+        
+        try {
+            SUT.wrapService(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        verifyGetCommandNameCalled(2);
+        verifyError404Called();
+    }
+
+    //----------------doPut tests-------------------------
+    @Test
+    public void doPutRegressionTest(){
+        whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
+        whenGetMethodThenReturn(PUT);
+
+        try {
+            SUT.wrapService(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        verifyGetCommandNameCalled(2);
+        try {
+            verify(command,times(1)).doPut(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void doPutReturns404WhenCommandNotFound(){
+        whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
+        whenGetMethodThenReturn(PUT);
+        
+        try {
+            SUT.wrapService(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        verifyGetCommandNameCalled(2);
+        verifyError404Called();
+    }
+
+    //----------------doDelete tests-------------------------
+    @Test
+    public void doDeleteRegressionTest(){
+        whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
+        whenGetMethodThenReturn(DELETE);
+
+        try {
+            SUT.wrapService(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        verifyGetCommandNameCalled(2);
+        try {
+            verify(command,times(1)).doDelete(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void doDeleteReturns404WhenCommandNotFound(){
+        whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
+        whenGetMethodThenReturn(DELETE);
         
         try {
             SUT.wrapService(request, response);
