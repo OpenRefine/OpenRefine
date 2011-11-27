@@ -489,6 +489,9 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     } else if (type == "date") {
       value = Date.parse(text);
       if (!value) {
+        value = DateTimeUtil.parseIso8601DateTime(text);
+      }
+      if (!value) {
         alert("Not a valid date.");
         return;
       }

@@ -316,6 +316,7 @@ function init() {
       "scripts/util/menu.js",
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
+      "scripts/util/date-time.js",
       "scripts/util/encoding.js",
 
       "scripts/index.js",
@@ -391,6 +392,7 @@ function init() {
       "scripts/util/menu.js",
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
+      "scripts/util/date-time.js",
       "scripts/util/custom-suggest.js",
       "scripts/util/encoding.js",
 

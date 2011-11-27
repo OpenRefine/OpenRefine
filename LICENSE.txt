@@ -85,6 +85,9 @@ licenses/dom4j.LICENSE.txt
 licenses/simile.LICENSE.txt
     simile vicino
 
+licenses/simile-ajax.2.3.0.LICENSE.txt
+    Simile Ajax
+
 licenses/arithcode.LICENSE.txt
     arithcode
 
@@ -93,7 +96,6 @@ licenses/freebase_suggest.LICENSE.txt
 
 licenses/chrome_frame.LICENSE.txt
     CFInstall
-
 
 MIT
 ---
