@@ -58,7 +58,7 @@ public class SindiceService extends AbstractReconciliationService{
 		this.rdfUtilities = rdfUtilities;
 		try{
 			//TODO hard-coded for now.. accept as parameter if you need services to use different properties for perviewing
-			InputStream in = this.getClass().getResourceAsStream("../rdf/factories/files/preview_properties.properties");
+			InputStream in = this.getClass().getResourceAsStream("/files/preview_properties.properties");
 			this.previewResourceCannedQuery = new PreviewResourceCannedQuery(in);
 		}catch (IOException e) {
 		}
