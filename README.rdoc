@@ -21,7 +21,7 @@ the whole file is shown below:
     <ant dir="jython/" target="build" />
     <ant dir="freebase/" target="build" />
     <ant dir="gdata/" target="build" />
-	<ant dir="rdf-extension/" target="build" />
+    <ant dir="rdf-extension/" target="build" />
   </target>
 
   <target name="clean">
@@ -30,6 +30,6 @@ the whole file is shown below:
     <ant dir="jython/" target="clean" />
     <ant dir="freebase/" target="clean" />
     <ant dir="gdata/" target="clean" />
-	<ant dir="rdf-extension/" target="clean" />
+    <ant dir="rdf-extension/" target="clean" />
   </target>
   </project>
