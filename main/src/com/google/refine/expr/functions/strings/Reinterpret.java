@@ -58,14 +58,13 @@ public class Reinterpret implements Function {
                 String decoder;
                 String encoder;
 
+                encoder = (String) o2;
                 if (args.length == 2) {
                     Project project = (Project) bindings.get("project");
                     ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
                     decoder = metadata.getEncoding(); // can return "" for broken projects
-                    encoder = (String) o2;
                 } else {
-                    decoder = (String) o2;
-                    encoder = (String) args[2];
+                    decoder = (String) args[2];
                 }
                 return reinterpret(str, decoder, encoder);
             }
