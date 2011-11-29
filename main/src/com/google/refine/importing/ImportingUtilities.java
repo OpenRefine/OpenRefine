@@ -224,11 +224,16 @@ public class ImportingUtilities {
             String name = fileItem.getFieldName().toLowerCase();
             if (fileItem.isFormField()) {
                 if (name.equals("clipboard")) {
+                    String encoding = request.getCharacterEncoding();
+                    if (encoding == null) {
+                        encoding = "UTF-8";
+                    }
+                    
                     File file = allocateFile(rawDataDir, "clipboard.txt");
                     
                     JSONObject fileRecord = new JSONObject();
                     JSONUtilities.safePut(fileRecord, "origin", "clipboard");
-                    JSONUtilities.safePut(fileRecord, "declaredEncoding", request.getCharacterEncoding());
+                    JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
                     JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
                     JSONUtilities.safePut(fileRecord, "format", "text");
                     JSONUtilities.safePut(fileRecord, "fileName", "(clipboard)");
