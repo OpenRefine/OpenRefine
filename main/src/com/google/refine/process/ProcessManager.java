@@ -46,6 +46,7 @@ import com.google.refine.history.HistoryProcess;
 
 public class ProcessManager implements Jsonizable {
     protected List<Process> _processes = new LinkedList<Process>();
+    protected List<Exception> _latestExceptions = null;
     
     public ProcessManager() {
         
@@ -62,11 +63,22 @@ public class ProcessManager implements Jsonizable {
         }
         writer.endArray();
         
+        if (_latestExceptions != null) {
+            writer.key("exceptions"); writer.array();
+            for (Exception e : _latestExceptions) {
+                writer.object();
+                writer.key("message"); writer.value(e.getLocalizedMessage());
+                writer.endObject();
+            }
+            writer.endArray();
+        }
+        
         writer.endObject();
     }
 
     public HistoryEntry queueProcess(Process process) throws Exception {
         if (process.isImmediate() && _processes.size() == 0) {
+            _latestExceptions = null;
             return process.performImmediate();
         } else {
             _processes.add(process);
@@ -78,6 +90,7 @@ public class ProcessManager implements Jsonizable {
     
     public boolean queueProcess(HistoryProcess process) throws Exception {
         if (process.isImmediate() && _processes.size() == 0) {
+            _latestExceptions = null;
             return process.performImmediate() != null;
         } else {
             _processes.add(process);
@@ -96,6 +109,18 @@ public class ProcessManager implements Jsonizable {
         update();
     }
     
+    public void onFailedProcess(Process p, Exception exception) {
+        List<Exception> exceptions = new LinkedList<Exception>();
+        exceptions.add(exception);
+        onFailedProcess(p, exceptions);
+    }
+    
+    public void onFailedProcess(Process p, List<Exception> exceptions) {
+        _latestExceptions = exceptions;
+        _processes.remove(p);
+        // Do not call update(); Just pause?
+    }
+    
     public void cancelAll() {
         for (Process p : _processes) {
             if (!p.isImmediate() && p.isRunning()) {
@@ -103,12 +128,14 @@ public class ProcessManager implements Jsonizable {
             }
         }
         _processes.clear();
+        _latestExceptions = null;
     }
     
     protected void update() {
         while (_processes.size() > 0) {
             Process p = _processes.get(0);
             if (p.isImmediate()) {
+                _latestExceptions = null;
                 try {
                     p.performImmediate();
                 } catch (Exception e) {
@@ -120,6 +147,7 @@ public class ProcessManager implements Jsonizable {
                 _processes.remove(0);
             } else {
                 if (!p.isRunning()) {
+                    _latestExceptions = null;
                     p.startPerforming(this);
                 }
                 break;

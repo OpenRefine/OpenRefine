@@ -191,6 +191,28 @@ ProcessPanel.prototype._render = function(newData) {
   }
   this._data = newData;
 
+  if (this._data.exceptions) {
+    var messages = $.map(this._data.exceptions, function(e) {
+      return e.message;
+    }).join('\n');
+    
+    if (this._data.processes.length == 0) {
+      window.alert('The last operation encountered some errors:\n' + messages);
+    } else {
+      if (window.confirm('The last operation encountered some errors:\n' + messages +
+            '\n\nContinue with the remaining operations?')) {
+        $.post(
+          "/command/core/apply-operations?" + $.param({ project: theProject.id }), 
+          { operations: '[]' },
+          function(o) {},
+          "json"
+        );
+      } else {
+        self._cancelAll();
+      }
+    }
+  }
+  
   if (this._data.processes.length && !this._timerID) {
     this._timerID = window.setTimeout(function() {
       self._timerID = null;

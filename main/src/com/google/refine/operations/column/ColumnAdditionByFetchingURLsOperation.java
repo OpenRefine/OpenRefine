@@ -148,14 +148,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     
     @Override
     public Process createProcess(Project project, Properties options) throws Exception {
-        Column column = project.columnModel.getColumnByName(_baseColumnName);
-        if (column == null) {
-            throw new Exception("No column named " + _baseColumnName);
-        }
-        if (project.columnModel.getColumnByName(_newColumnName) != null) {
-            throw new Exception("Another column already named " + _newColumnName);
-        }
-        
         Engine engine = createEngine(project);
         engine.initializeFromJSON(_engineConfig);
         
@@ -209,6 +201,16 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         
         @Override
         public void run() {
+            Column column = _project.columnModel.getColumnByName(_baseColumnName);
+            if (column == null) {
+                _project.processManager.onFailedProcess(this, new Exception("No column named " + _baseColumnName));
+                return;
+            }
+            if (_project.columnModel.getColumnByName(_newColumnName) != null) {
+                _project.processManager.onFailedProcess(this, new Exception("Another column already named " + _newColumnName));
+                return;
+            }
+            
             List<CellAtRow> urls = new ArrayList<CellAtRow>(_project.rows.size());
             
             FilteredRows filteredRows = _engine.getAllFilteredRows();
