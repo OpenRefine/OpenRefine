@@ -612,6 +612,7 @@ function process(path, request, response) {
           }
           
           context.encodingJson = butterfly.toJSONString(encodings);
+          context.defaultEncoding = butterfly.toJSONString(Packages.java.nio.charset.Charset.defaultCharset().name());
         }
         
         send(request, response, path + ".vt", context);
