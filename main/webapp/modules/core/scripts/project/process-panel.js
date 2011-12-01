@@ -39,6 +39,9 @@ function ProcessPanel(div) {
   this._updateOptions = {};
   this._onDones = [];
   this._latestHistoryEntry = null;
+  
+  this._div.html(DOM.loadHTML("core", "scripts/project/progress-panel.html"));
+  this._elmts = DOM.bind(this._div);
 
   var self = this;
   $(window).keypress(function(evt) {
@@ -91,16 +94,16 @@ ProcessPanel.prototype.showUndo = function(historyEntry) {
 
   this._latestHistoryEntry = historyEntry;
 
-  this._div.stop(true,false)
-  .empty()
-  .html('<div id="notification"><span bind="description"></span> <span class="notification-action"><a href="javascript:{}" bind="undo">Undo</a></span></div>')
-  .fadeIn(200)
-  .delay(7500)
-  .fadeOut(200);
-  var elmts = DOM.bind(this._div);
-
-  elmts.description.text(historyEntry.description);
-  elmts.undo.click(function() { self.undo(); });
+  this._div.stop(true, false);
+  this._elmts.progressDiv.hide();
+  this._elmts.undoDiv.show();
+  this._elmts.undoDescription.text(historyEntry.description);
+  this._elmts.undoLink.unbind().click(function() { self.undo(); });
+  
+  this._div
+    .fadeIn(200)
+    .delay(10000)
+    .fadeOut(200);
 };
 
 ProcessPanel.prototype.undo = function() {
@@ -130,54 +133,44 @@ ProcessPanel.prototype._cancelAll = function() {
 ProcessPanel.prototype._render = function(newData) {
   var self = this;
   var newProcessMap = {};
+  var processes = newData.processes;
 
-  this._div.stop(true, false).empty();
+  this._div.stop(true, false);
 
-  if (!newData.processes.length) {
+  if (!processes.length) {
     Refine.setTitle();
     this._div.fadeOut(200);
   } else {
-    this._div.fadeIn(200);
-    var cancelmessage = "Cancel";
-    var noticeDiv = $('<div id="notification"></div>').appendTo(this._div);
-    var descriptionSpan = $('<span></span>').appendTo(noticeDiv);
-    var statusDiv = $('<div></div>').appendTo(noticeDiv);
-    $('<img src="images/small-spinner.gif" />')
-    .addClass("notification-loader")
-    .appendTo(statusDiv);
-    var progressSpan = $('<span></span>').appendTo(statusDiv);
-    var countSpan = $('<span></span>').appendTo(statusDiv);
-    var renderProcess = function(process) {
-      if (process.status != "pending") {
-        Refine.setTitle(process.progress + "% complete");
-        descriptionSpan.text(process.description);
-        progressSpan.text(process.progress  + '% complete');
-      }
-    };
-    var renderProcessCount = function(count) {
-      var pendingcount = count - 1;
-      countSpan.text(', ' + pendingcount + ' pending processes');
-    };
-    var processes = newData.processes;
-    if (processes.length >> 1) {
-      cancelmessage = "Cancel All";
-      renderProcessCount(processes.length);
-    }
+    this._elmts.undoDiv.hide();
+    this._elmts.progressDiv.show();
+    
     for (var i = 0; i < processes.length; i++) {
       var process = processes[i];
-      renderProcess(process);
+      if (process.status != "pending") {
+        Refine.setTitle(process.progress + "% complete");
+        this._elmts.progressDescription.text(process.description);
+        this._elmts.progressSpan.text(process.progress  + '% complete');
+      }
       if ("onDone" in process) {
         newProcessMap[process.id] = process;
       }
     }
-    $('<a href="javascript:{}"></a>')
-    .addClass("notification-action")
-    .text(cancelmessage)
-    .click(function() {
-      self._cancelAll();
-      $(this).text("Canceling...").unbind();
-    })
-    .appendTo(statusDiv);
+    
+    if (processes.length > 1) {
+      var pending = processes.length - 1;
+      this._elmts.countSpan.text('(' + pending + (pending > 1 ? ' other pending processes)' : ' other pending process)'));
+    } else {
+      this._elmts.countSpan.empty();
+    }
+    this._elmts.cancelLink
+      .unbind()
+      .text(processes.length > 1 ? "Cancel All" : "Cancel")
+      .click(function() {
+        self._cancelAll();
+        $(this).text("Canceling...").unbind();
+      })
+    
+    this._div.fadeIn(200);
   }
 
   if ((this._data) && this._data.processes.length > 0) {
@@ -190,7 +183,7 @@ ProcessPanel.prototype._render = function(newData) {
     }
   }
   this._data = newData;
-
+  
   if (this._data.exceptions) {
     var messages = $.map(this._data.exceptions, function(e) {
       return e.message;
