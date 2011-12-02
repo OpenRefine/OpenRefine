@@ -87,7 +87,11 @@ public class ParsingUtilities {
     }
 
     static public String inputStreamToString(InputStream is) throws IOException {
-        Reader reader = new InputStreamReader(is, "UTF-8");
+        return inputStreamToString(is, "UTF-8");
+    }
+    
+    static public String inputStreamToString(InputStream is, String encoding) throws IOException {
+        Reader reader = new InputStreamReader(is, encoding);
         try {
             return readerToString(reader);
         } finally {

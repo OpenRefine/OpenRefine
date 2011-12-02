@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -263,9 +264,28 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
             
             try {
-                InputStream is = url.openStream();
+                URLConnection urlConnection = url.openConnection();
+                urlConnection.connect();
+                
+                InputStream is = urlConnection.getInputStream();
                 try {
-                    return new CellAtRow(urlData.row, new Cell(ParsingUtilities.inputStreamToString(is), null));
+                    String encoding = urlConnection.getContentEncoding();
+                    if (encoding == null) {
+                        String contentType = urlConnection.getContentType();
+                        if (contentType != null) {
+                            final String charsetEqual = "charset=";
+                            int c = contentType.lastIndexOf(charsetEqual);
+                            if (c > 0) {
+                                encoding = contentType.substring(c + charsetEqual.length());
+                            }
+                        }
+                    }
+                    return new CellAtRow(
+                        urlData.row,
+                        new Cell(
+                            ParsingUtilities.inputStreamToString(
+                                is, encoding != null ? encoding : "UTF-8"),
+                            null));
                 } finally {
                     is.close();
                 }
