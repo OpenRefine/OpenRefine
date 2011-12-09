@@ -369,8 +369,19 @@ public class FreebaseDataExtensionJob {
                                 name = "c:" + name;
                             }
                         }
-                        writer.key(name);
-                        writer.value(value);
+                        if (name.equals("sort")) {
+                            String sortKey = (String) value;
+                            if (sortKey.startsWith("-")) {
+                                sortKey = sortKey.substring(1);
+                            }
+                            writer.key(sortKey);
+                            writer.value(null);
+                            writer.key(name);
+                            writer.value(value);
+                        } else {
+                            writer.key(name);
+                            writer.value(value);
+                        }
                     }
                 }
                 if (!hasLimit) {
