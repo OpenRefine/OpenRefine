@@ -85,22 +85,23 @@ public class ProjectMetadata implements Jsonizable {
         writer.key("created"); writer.value(ParsingUtilities.dateToString(_created));
         writer.key("modified"); writer.value(ParsingUtilities.dateToString(_modified));
 
+        writer.key("customMetadata"); writer.object();
+        for (String key : _customMetadata.keySet()) {
+            Serializable value = _customMetadata.get(key);
+            writer.key(key);
+            writer.value(value);
+        }
+        writer.endObject();
+        
         if ("save".equals(options.getProperty("mode"))) {
             writer.key("password"); writer.value(_password);
 
             writer.key("encoding"); writer.value(_encoding);
             writer.key("encodingConfidence"); writer.value(_encodingConfidence);
-            
-            writer.key("customMetadata"); writer.object();
-            for (String key : _customMetadata.keySet()) {
-                Serializable value = _customMetadata.get(key);
-                writer.key(key);
-                writer.value(value);
-            }
-            writer.endObject();
-            
+
             writer.key("preferences"); _preferenceStore.write(writer, options);
         }
+        
         writer.endObject();
     }
     
