@@ -65,11 +65,17 @@ public class FactN implements Function {
      * e.g. A double factorial would have a step of 2.
      * Returns 1 for zero and negative integers.
      */
-    public static int factorial(int i, int step){
-        if(i <= 1) {
+    public static long factorial(long i, long step){
+        if (i < 0) {
+            throw new IllegalArgumentException("Can't compute the factorial of a negative number");
+        } else if(i <= 1) {
             return 1;
         } else {
-            return i * FactN.factorial(i - step, step);
+            long result = i * FactN.factorial(i - step, step);
+            if (result < 0) {
+                throw new ArithmeticException("Integer overflow computing factorial");
+            }
+            return result;
         }
     }
 

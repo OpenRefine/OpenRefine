@@ -59,16 +59,17 @@ public class Combin implements Function {
         return Combin.combination(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
     }
 
-    public static int combination(int n, int k){
+    public static long combination(long n, long k){
         if (k > n) {
             throw new IllegalArgumentException ("the number of elements, n, should be larger than the number of combinations, k");
         }
         if (n < 1) {
             throw new IllegalArgumentException ("the number of elements, n, cannot be less than 1");
         }
-        int nFact = FactN.factorial(n, 1);
-        int rFact = FactN.factorial(k, 1);
-        int nminusrFact = FactN.factorial(n - k, 1);
+        // TODO: This needs to use a more efficient Binomial Coefficient algorithm
+        long nFact = FactN.factorial(n, 1);
+        long rFact = FactN.factorial(k, 1);
+        long nminusrFact = FactN.factorial(n - k, 1);
         return nFact / (rFact * nminusrFact);
     }
 
