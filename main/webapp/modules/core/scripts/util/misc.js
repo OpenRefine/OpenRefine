@@ -70,6 +70,7 @@ function formatRelativeDate(d) {
     return (diff <= 1) ? ("yesterday " + d.toString("h:mm tt")) : (diff + " days ago");
   } else if (d.between(last_month, today)) {
     var diff = Math.floor((today.getDayOfYear() - d.getDayOfYear()) / 7);
+    if (diff < 1) {diff += 52};
     return (diff == 1) ? "a week ago" : diff.toFixed(0) + " weeks ago" ;
   } else if (d.between(almost_last_year, today)) {
     var diff = today.getMonth() - d.getMonth();
