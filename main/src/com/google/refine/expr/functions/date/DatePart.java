@@ -61,7 +61,7 @@ public class DatePart implements Function {
                 return getPart(c, part);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date, a number and a string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date and a string");
     }
     
     static private String[] s_daysOfWeek = new String[] {
