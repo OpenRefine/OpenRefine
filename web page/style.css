@@ -92,3 +92,9 @@ div.names{
 	text-align:right;
 	margin-bottom:5px;
 }
+
+span.instruction{
+  font-size:120%;
+  font-family:monospace;
+  font-weight:bold;
+}

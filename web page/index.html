@@ -36,13 +36,13 @@
 		</div>
 		<div class="yui-b">
 		  <div class="text">
-		    This project adds a graphical user interface(GUI) for exporting data of <a href="http://code.google.com/p/google-refine/" >Google Refine</a> projects in RDF format. 
-			The export is based on mapping the data to a template graph using the GUI.
+		    This project adds a graphical user interface(GUI) for exporting data of <a href="http://code.google.com/p/google-refine/" >Google Refine</a> projects as interlinked RDF data. 
+			Data can be reconciled against any SPARQL endpoint or RDF dump. The reconciled data can then be exported as RDF based on a template graph.  These all are supported by a friendly graphical interface.
 		  </div>
         </div>
 		<div id="download">
-			<h3><a href="downloads/grefine-rdf-extension.zip">Download RDF Extension for Google Refine</a></h3>
-			<small>v0.2.1 (alpha), released 2010-10-20</small>
+			<h3><a href="downloads/grefine-rdf-extension-0.5.zip">Download RDF Extension for Google Refine</a></h3>
+			<small>v0.5 (alpha), released 2011-04-11</small>
 		</div>
 		<div class="yui-b">
 		  <a name="quick_start"></a>
@@ -59,7 +59,7 @@
 						<li>Mac OSX  ~/Library/Application Support/Google/Refine/extensions/</li>
 					</ul>
 				</li>
-				<li><a href="downloads/grefine-rdf-extension.zip">Download Google Refine Extension</a></li>
+				<li><a href="downloads/grefine-rdf-extension-0.5.zip">Download Google Refine Extension</a></li>
 				<li>Unzip the downloaded archive into the <em>extensions</em> folder (step 1).
 				</li>
 				<li>It is recommendedthat you have internet connection during the first running of the extension, as it will try to download a set of predefined vocabularies (rdf, rdfs and owl). 
@@ -76,106 +76,103 @@
 		  <h2>Features <a class="top_link" href="#top">Top ^</a></h2>
 		  <div>
 		    <ul>
-			  <li>Graphical interface for defining the mapping</li>
-			  <li>Use of arbitrary vocabularies/ Ontologies </li>
-			  <li>Import exisitng vocabularies/ Ontologies</li>
-			  <li>Autocomplete for property and class names</li>
-			  <li>RDF/XML and Turtle export</li>
+			  <li> Reconciliation and interlinking
+			    <ul>
+				  <li>Reconcile against any SPARQL endpoint or RDF dump file</li>
+				  <li>Search the web for related RDF data using <a href="http://sindice.com">Sindice</a> </li>
+				</ul>
+			  </li>
+			  <li> RDF Export
+			    <ul>
+			      <li>Graphical interface for defining the mapping</li>
+			      <li>Use of arbitrary vocabularies/ Ontologies </li>
+			      <li>Import exisitng vocabularies/ Ontologies</li>
+			      <li>Autocomplete for property and class names</li>
+			      <li>RDF/XML and Turtle export</li>
+				  <li>Namespace suggestions from <a href="http://prefix.cc">prefix.cc</a></li>
+			    </ul>
+			  </li>
 		    </ul>
 		  </div>
 		</div>
 		<div class="yui-b">
 		  <a name="example"></a>
 		  <h2>Example <a class="top_link" href="#top">Top ^</a></h2>
-		  <span>This is a simple example showing how RDF can be extracted from a sample <a href="downloads/example/high-earners-pay.csv">CSV file</a> (you can download the whole <a href="downloads/example/high-earners-pay.google-refine.tar.gz">project</a> and then directly import it in Google Refine)</span>
+		  <span>This is a simple example showing how RDF can be extracted and interlinked to <a href="http://dbpedia.org">DBpedia</a> from a sample <a href="downloads/example/GDPS.csv">CSV file</a> (you can download the whole <a href="downloads/example/GDP-in-2009.google-refine.tar.gz">project</a> and then directly import it in Google Refine)</span>
 		  <div>
-		    The first few lines of the <a href="downloads/example/high-earners-pay.csv">sample CSV file</a> is shown in the table below. 
-			This data is the <a href="http://www.direct.gov.uk/prod_consum_dg/groups/dg_digitalassets/@dg/@en/documents/digitalasset/dg_188112.csv">highest-earning senior civil servants in UK</a> as published by the Cabinet Office on 1 June 2010.
-			<table class="data-table">
-			  <tr>
-				<th>Name</th>
-				<th>Job Title</th>
-				<th>Grade</th>
-				<th>Organization</th>
-				<th>Annual pay rate - including taxable benefits and allowances</th>
-				<th>Notes</th>
-			  </tr>
-			  <tr>
-			  	<td>Stephan Wilcke</td>
-				<td>Chief Executive Officer</td>
-				<td></td>
-				<td>Asset Protection Agency</td>
-				<td>£150,000 - £154,999</td>
-				<td></td>
-			  </tr>
-			  <tr>
-				<td>Jens Bech</td>
-				<td>Chief Risk Officer</td>
-				<td></td>
-				<td>Asset Protection Agency</td>
-				<td>£165,000 - £169,999</td>
-				<td>No pension</td>
-			  </tr>
-			  <tr>
-			    <td>Ion Dagtoglou</td>
-				<td>Chief Invesment Officer</td>
-				<td></td>
-				<td>Asset Protection Agency</td>
-				<td>£165,000 - £169,999</td>
-				<td>No pension</td>
-			  </tr>
-			  <tr>
-			    <td>Brian Scammell</td>
-				<td>Chief Credit Officer</td>
-				<td></td>
-				<td>Asset Protection Agency</td>
-				<td>£130,000 - £134,999</td>
-				<td>4 days per week</td>
-			  </tr>
-			</table>
-			The intended RDF we want to export should look like (for the first line):
+		    The example will use <a href="downloads/example/GDPS.csv">a list of GDP prer country values as of 2009</a> according to <a href="http://data.worldbank.org/">the World Databank</a>. This data can be exported the data as CSV from the World Databank using <a href="http://databank.worldbank.org/ddp/editReport?REQUEST_SOURCE=search&CNO=2&country=&series=NY.GDP.MKTP.CD&period=">this wizard</a>.
+			
+			<p>
+			The figure below shows a snippet of the data
+			<div class="image">
+			    <img src="imgs/example/gdps.png" alt="Countries GDPs" border="1"/>
+			  </div>
+			</p>
+			
+			The intended RDF we want to export should look like (for one of the lines):
 			<pre>
 			  <code>
-&lt;http://lab.linkeddata.deri.ie/test/0&gt; 
-	a foaf:Person ; 
-	foaf:name "Stephan Wilcke" ; 
-	foaf:title "Chief Executive Officer"@en .
-	foaf:member &lt;http://lab.linkeddata.deri.ie/test#organizations/asset-protection-agency&gt;  ;
-	&lt;http://lab.linkeddata.deri.ie/test/annualPayRate&gt; "£150,000 - £154,999" . 
+@prefix my: &lt;http://example.org/data#&gt; .
+&lt;http://dbpedia.org/resource/Bahrain&gt; 
+	a my:Country ; 
+	rdfs:label "Bahrain"@en ; 
+	dc:identifier "BHR";
+	my:gdp [
+                rdf:value "20594899946"^^xsd:int;
+                my:year "2009".
+	       ].
 				
-&lt;http://lab.linkeddata.deri.ie/test/organizations/asset-protection-agency&gt;  
-	a foaf:Organization ; 
-	foaf:name "Asset Protection Agency"@en . 
 			  </code>
 			</pre>
 			
-			<div>
-			  After creating a project in Google Refine, using <em>Edit RDF Skeleton...</em> command available under the <em>RDF</em> menu, we design the following skeleton:
-			  <div class="image">
-			    <img src="imgs/skeleton_example_annotated.png" alt="Skeleton Example" />
-			  </div>
+<div>
+  Notice that we want to use DBpedia URIs for countries instead of coining new ones.
+  <br/>
+  After creating a project in Google Refine, we will define a new reconciliation service against DBpedia. From the "RDF" menu select <span class="instruction">Add reconciliation service</span> then <span class="instruction">Based on SPARQL endpoint</span>. Fill in the details as shown below.
+</div>
+<div class="image">
+  <img src="imgs/example/details.png" alt="Service definition" />
+</div>
+<div>
+  Choose <span class="instruction">start reconciling...</span> from the column drop down menu of the "Country Name" column. Select the "DBpedia" service that we have just added. As shown below, type guessing will suggest a list of types. Select <code>dbo:Country</code> as it best fits our data.
+</div>
+<div class="image">
+  <img src="imgs/example/reconciliation.png" alt="Results" />
+</div>
+<div>
+Go ahead with the <span class="instruction">start reconciling</span> button. After a while, Google Refine presents reconciliation results with factes about reconciliation decision and top candidate score. You might need to spend some time resolving ambiguity when multiple sugggestions are provided.
+</div>
+<div>			  
+ Pingo! data are reconciled, let's now go to the RDF export stuff!
+ </div>
+ <div>
+ Use <span class="instruction">Edit RDF Skeleton...</span> command available under the "RDF" menu to design the following skeleton:
+ <div class="image">
+    <img src="imgs/example/schema.png" alt="RDF skeleton" />
+ </div>
 			  <ul>
-				<li><div class="note">we set the base URI at the top of the dialog to http://lab.linkeddata.deri.ie/test/ </div></li>
-				<li><div class="note">Prefixs can be managed by the <em>Add Prefix</em> and <em>Manage vocabularies</em> </div></li>
+				<li><div class="note">We set the base URI at the top of the dialog to http://example.org/data# </div></li>
+				<li><div class="note">We added "dc" vocabulary using <em>add prefix</em> </div></li>
 				<li><div class="note">We created the skeleton by repeatedly using <em>add rdf:type</em> and <em>add property</em></div></li>
-				<li><div class="note">We created a new property <em>annualPayRate</em> which will be defined within the default namespace specified by the base URI</div></li>
+				<li><div class="note">We created the new properties <em>gdp</em> and <em>year</em> and the new class <em>Country</em>. These will be defined within the default namespace specified by the base URI</div></li>
+				<li><div class="note">To use the reconciled URI from DBpedia we have to use the following <a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers">GREL</a> expression: <code>cell.recon.match.id</code> when defining the country node (see figure below)</div></li>
 			  </ul>
 			</div>
 			<div>
-			  The figure below shows an example of a node dialog (the <em>organization URI</em> node)
+			  The figure below shows an example of a node dialog (the <em>Constant 2009</em> node)
 			  <div class="image">
-			    <img src="imgs/node_config_example.png" alt="Node configuration Example" />
+			    <img src="imgs/example/node_config.png" alt="Node configuration Example" />
 			  </div>
 			</div>
 			<div>
 			  Notice the custom expression used to define the URI. The <em>preview/edit</em> shows sample values of the first 10 rows as shown below
 			  <div class="image">
-			    <img src="imgs/preview_uri_example.png" alt="Node configuration Example" />
+			    <img src="imgs/example/preview_uri.png" alt="Node configuration Example" />
 			  </div>
 			</div>
 			<div>
 			After saving the skeleton, RDF data can be exported in RDF/XML or Turtle from the <em>Export</em> menu (You can download the result 
-			RDF data of the example <a href="downloads/example/high-earners-pay.rdf">RDF/XML</a> , <a href="downloads/example/high-earners-pay.ttl">Turtle</a> ) 
+			RDF data of the example <a href="downloads/example/GDP-in-2009.rdf">RDF/XML</a> , <a href="downloads/example/GDP-in-2009.ttl">Turtle</a> ) 
 			</div>
 		  </div>
         </div>
