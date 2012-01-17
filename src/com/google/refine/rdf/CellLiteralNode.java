@@ -1,5 +1,6 @@
 package com.google.refine.rdf;
 
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.Properties;
 
@@ -39,9 +40,9 @@ public class CellLiteralNode implements CellNode{
         this.expression = exp;
     }
     @Override
-    public Value createNode(URI baseUri, ValueFactory factory, RepositoryConnection con, Project project,
+    public Value[] createNode(URI baseUri, ValueFactory factory, RepositoryConnection con, Project project,
             Row row, int rowIndex,BNode[] blanks) {
-        String val = null;
+        String[] val = null;
 
         	
         try{
@@ -50,27 +51,37 @@ public class CellLiteralNode implements CellNode{
             if(result.getClass()==EvalError.class){
             	return null;
             }
-            if(result.toString().length()>0){
-            	val = result.toString();
+            if(result.getClass().isArray()){
+            	int lngth = Array.getLength(result);
+            	val = new String[lngth];
+            	for(int i=0;i<lngth;i++){
+            		val[i] = Array.get(result,i).toString();
+            	}
+            }else if(result.toString().length()>0){
+            	val = new String[1];
+            	val[0] = result.toString();
             }
     	}catch(Exception e){
     		//an empty cell might result in an exception out of evaluating URI expression... so it is intended to eat the exception
     		val = null;
     	}   
-            
-        if(val!=null && val.length()>0){
-            Literal l;
-            if(this.valueType!=null){
-            	//TODO handle exception when valueType is not a valid URI
-                l = factory.createLiteral(val, factory.createURI(valueType));
-            }else{
-            	if(this.lang!=null){
-            		l = factory.createLiteral(val,lang);
+        
+        if(val!=null && val.length>0){
+        	Literal[] ls = new Literal[val.length];
+        	for(int i=0;i<val.length;i++){
+        		Literal l;
+            	if(this.valueType!=null){
+                	l = factory.createLiteral(val[i], factory.createURI(valueType));
             	}else{
-            		l = factory.createLiteral(val);
+            		if(this.lang!=null){
+            			l = factory.createLiteral(val[i],lang);
+            		}else{
+            			l = factory.createLiteral(val[i]);
+            		}
             	}
-            }
-            return l;
+            	ls[i] = l;
+        	}
+            return ls;
         }else{
             return null;
         }

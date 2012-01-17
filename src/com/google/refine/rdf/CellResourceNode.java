@@ -1,5 +1,6 @@
 package com.google.refine.rdf;
 
+import java.lang.reflect.Array;
 import java.net.URI;
 
 import org.json.JSONException;
@@ -31,15 +32,24 @@ public class CellResourceNode extends ResourceNode implements CellNode{
     }
 
     @Override
-    public Resource createResource(URI baseUri,ValueFactory factory,Project project,Row row,int rowIndex,BNode[] blanks) {
+    public Resource[] createResource(URI baseUri,ValueFactory factory,Project project,Row row,int rowIndex,BNode[] blanks) {
         try{
         	Object result = Util.evaluateExpression(project, uriExpression, columnName, row, rowIndex);
             if(result.getClass()==EvalError.class){
             	return null;
             }
+            if(result.getClass().isArray()){
+            	int lngth = Array.getLength(result);
+            	Resource[] rs = new org.openrdf.model.URI[lngth];
+            	for(int i=0;i<lngth;i++){
+            		String uri = Util.resolveUri(baseUri,  Array.get(result, i).toString());
+            		rs[i] = factory.createURI(uri);
+            	}
+            	return rs;
+            }
             if(result.toString().length()>0){
             	String uri = Util.resolveUri(baseUri, result.toString());
-                return factory.createURI(uri.toString());
+                return new Resource[] {factory.createURI(uri)};
             }else{
                 return null;
             }

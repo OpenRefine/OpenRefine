@@ -70,7 +70,7 @@ public class ConstantLiteralNode implements Node{
 	}
     
     @Override
-	public Value createNode(URI baseUri, ValueFactory factory, RepositoryConnection con, Project project,
+	public Value[] createNode(URI baseUri, ValueFactory factory, RepositoryConnection con, Project project,
             Row row, int rowIndex,BNode[] blanks) {
         if(this.value!=null && this.value.length()>0){
             
@@ -85,7 +85,7 @@ public class ConstantLiteralNode implements Node{
             		l = factory.createLiteral(this.value);
             	}
             }
-            return l;
+            return new Literal[]{l};
         }else{
             return null;
         }

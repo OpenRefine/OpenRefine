@@ -179,7 +179,8 @@ public class RdfSchema implements OverlayModel {
                 }
                 node = new CellLiteralNode(columnName, exp, valueType, lang,isRowNumberCell);
             } else if ("cell-as-blank".equals(nodeType)) {
-                node = new CellBlankNode(columnName,isRowNumberCell);
+            	//TODO blank nodes just accept value as expression
+                node = new CellBlankNode(columnName,"value",isRowNumberCell);
                 reconstructTypes((CellBlankNode)node,o);
             }
         } else if ("resource".equals(nodeType)) {

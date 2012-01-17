@@ -19,9 +19,9 @@ public class ConstantBlankNode extends ResourceNode{
     }
     
     @Override
-    public Resource createResource(URI baseUri, ValueFactory factory, Project project,
+    public Resource[] createResource(URI baseUri, ValueFactory factory, Project project,
             Row row, int rowIndex,BNode[] blanks) {
-        return blanks[this._id];
+        return new BNode[]{blanks[this._id]};
     }
 
 	@Override

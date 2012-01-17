@@ -80,31 +80,37 @@ abstract public class ResourceNode implements Node {
     }
 
     
-    protected void addTypes(Resource r,ValueFactory factory, RepositoryConnection con, URI baseUri) throws RepositoryException {
-        for(RdfType type:this.getTypes()){
-        	Statement stmt = factory.createStatement(r, RDF.TYPE, factory.createURI(Util.resolveUri(baseUri, type.uri)));
-        	con.add(stmt);
-        }
+    protected void addTypes(Resource[] rs,ValueFactory factory, RepositoryConnection con, URI baseUri) throws RepositoryException {
+    	for(Resource r:rs){
+    		for(RdfType type:this.getTypes()){
+    			Statement stmt = factory.createStatement(r, RDF.TYPE, factory.createURI(Util.resolveUri(baseUri, type.uri)));
+    			con.add(stmt);
+    		}
+    	}
     }
     
-    protected Resource addLinks(Resource r,URI baseUri,ValueFactory factory,RepositoryConnection con, Project project,Row row,int rowIndex,BNode[] blanks) throws RepositoryException{
-        for(int i=0;i<getLinkCount();i++){
-            Link l = getLink(i);
-            org.openrdf.model.URI p = factory.createURI(Util.resolveUri(baseUri, l.propertyUri));
-            Value o = l.target.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
-            if(o!=null){
-                con.add(factory.createStatement(r, p, o));
-            }
-        }
-        return r;
+    protected Resource[] addLinks(Resource[] rs,URI baseUri,ValueFactory factory,RepositoryConnection con, Project project,Row row,int rowIndex,BNode[] blanks) throws RepositoryException{
+   		for(int i=0;i<getLinkCount();i++){
+           	Link l = getLink(i);
+           	org.openrdf.model.URI p = factory.createURI(Util.resolveUri(baseUri, l.propertyUri));
+           	Value[] os = l.target.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
+           	if(os!=null){
+           		for(Value o:os){
+           			for(Resource r:rs){
+           				con.add(factory.createStatement(r, p, o));
+           			}
+           		}
+           	}
+       	}
+        return rs;
     }
 
     public void setTypes(List<RdfType> types) {
         this.rdfTypes = types;
     }
     
-    public Value createNode(URI baseUri,ValueFactory factory,RepositoryConnection con, Project project,Row row,int rowIndex,BNode[] blanks) {
-        Resource r = createResource(baseUri, factory, project, row, rowIndex,blanks);
+    public Value[] createNode(URI baseUri,ValueFactory factory,RepositoryConnection con, Project project,Row row,int rowIndex,BNode[] blanks) {
+        Resource[] r = createResource(baseUri, factory, project, row, rowIndex,blanks);
         if(r==null){
             return null;
         }
@@ -116,7 +122,7 @@ abstract public class ResourceNode implements Node {
         }
     }
     
-    public abstract Resource createResource(URI baseUri,ValueFactory factory, Project project,Row row,int rowIndex,BNode[] blanks) ;
+    public abstract Resource[] createResource(URI baseUri,ValueFactory factory, Project project,Row row,int rowIndex,BNode[] blanks) ;
     
     public static class RdfType{
         String uri;

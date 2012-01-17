@@ -30,11 +30,11 @@ public class ConstantResourceNode extends ResourceNode{
     }
 
     @Override
-    public Resource createResource(URI baseUri, ValueFactory factory, Project project,
+    public Resource[] createResource(URI baseUri, ValueFactory factory, Project project,
             Row row, int rowIndex,BNode[] blanks) {
         if(this.uri!=null & this.uri.length()>0){
             Resource r =  factory.createURI(Util.resolveUri(baseUri, this.uri));
-            return r;
+            return new Resource[]{r};
         }else{
             return null;
         }
