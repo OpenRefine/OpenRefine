@@ -1,6 +1,7 @@
 package com.google.refine.rdf.commands;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -88,13 +89,24 @@ public class PreviewRdfValueExpressionCommand extends PreviewExpressionCommand{
                     writer.key("message"); writer.value(((EvalError) result).message);
                     writer.endObject();
                 } else {
-                    StringBuffer sb = new StringBuffer();
-                    
+                	StringBuffer sb = new StringBuffer();
                     writeValue(sb, result, false);
-                    //prepare absolute value
-                    absolutes[i] = Util.resolveUri(base,sb.toString());
-                    
                     writer.value(sb.toString());
+                    //prepare absolute value                    
+                	if (result.getClass().isArray()) {
+                		int lngth = Array.getLength(result);
+                		StringBuilder resolvedUrisVal = new StringBuilder("[");
+                		for(int k=0;k<lngth;k++){
+                			resolvedUrisVal.append(Util.resolveUri(base,Array.get(result, k).toString()));
+                			if(k<lngth-1){
+                				resolvedUrisVal.append(",");
+                			}
+                		}
+                		resolvedUrisVal.append("]");
+                		absolutes[i] = resolvedUrisVal.toString();
+                	} else {
+                        absolutes[i] = Util.resolveUri(base,sb.toString());
+                	}
                 }
             }
             writer.endArray();
