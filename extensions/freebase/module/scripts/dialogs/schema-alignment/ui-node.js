@@ -306,7 +306,8 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     '<option value="/type/float">float</option>' +
     '<option value="/type/double">double</option>' +
     '<option value="/type/boolean">boolean</option>' +
-    '<option value="/type/datetime">date/time</option>';
+    '<option value="/type/datetime">date/time</option>' + 
+    '<option value="/type/rawstring">rawstring</option>';
 
   var html = $(
     '<div class="grid-layout layout-looser layout-full"><table>' +
