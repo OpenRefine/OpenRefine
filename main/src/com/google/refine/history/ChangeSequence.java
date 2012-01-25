@@ -70,9 +70,7 @@ public class ChangeSequence implements Change {
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("count="); writer.write(Integer.toString(_changes.length)); writer.write('\n');
         for (Change change : _changes) {
-            writer.write(change.getClass().getName()); writer.write('\n');
-            
-            change.save(writer, options);
+            History.writeOneChange(writer, change, options);
         }
         writer.write("/ec/\n"); // end of change marker
     }
