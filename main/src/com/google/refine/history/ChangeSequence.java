@@ -51,8 +51,8 @@ public class ChangeSequence implements Change {
     @Override
     public void apply(Project project) {
         synchronized (project) {
-            for (Change _change : _changes) {
-                _change.apply(project);
+            for (Change change : _changes) {
+                change.apply(project);
             }
         }
     }
@@ -61,7 +61,7 @@ public class ChangeSequence implements Change {
     public void revert(Project project) {
         synchronized (project) {
             for (int i = _changes.length - 1; i >= 0 ; i--) {
-                _changes[i].apply(project);
+                _changes[i].revert(project);
             }
         }
     }
