@@ -229,6 +229,9 @@ ProcessPanel.prototype._perform = function(jobs) {
       } catch (e) {
         //
       }
+    } else if (job.action == "open") {
+      var url = 'http://' + window.location.host + ModuleWirings[job.module] + job.path + '?' + job.params;
+      window.open(url, 'new');
     }
   }
 };
