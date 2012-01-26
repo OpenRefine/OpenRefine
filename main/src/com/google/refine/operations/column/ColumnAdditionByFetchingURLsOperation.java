@@ -33,8 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -265,29 +267,49 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             
             try {
                 URLConnection urlConnection = url.openConnection();
-                urlConnection.connect();
+//                    urlConnection.setRequestProperty(_headerKey, _headerValue);
                 
-                InputStream is = urlConnection.getInputStream();
                 try {
-                    String encoding = urlConnection.getContentEncoding();
-                    if (encoding == null) {
-                        String contentType = urlConnection.getContentType();
-                        if (contentType != null) {
-                            final String charsetEqual = "charset=";
-                            int c = contentType.lastIndexOf(charsetEqual);
-                            if (c > 0) {
-                                encoding = contentType.substring(c + charsetEqual.length());
+                    InputStream is = urlConnection.getInputStream();
+                    try {
+                        String encoding = urlConnection.getContentEncoding();
+                        if (encoding == null) {
+                            String contentType = urlConnection.getContentType();
+                            if (contentType != null) {
+                                final String charsetEqual = "charset=";
+                                int c = contentType.lastIndexOf(charsetEqual);
+                                if (c > 0) {
+                                    encoding = contentType.substring(c + charsetEqual.length());
+                                }
                             }
                         }
+                        return new CellAtRow(
+                                urlData.row,
+                                new Cell(
+                                        ParsingUtilities.inputStreamToString(
+                                                is, encoding != null ? encoding : "UTF-8"),
+                                                null));
+
+                    } finally {
+                        is.close();
                     }
-                    return new CellAtRow(
-                        urlData.row,
-                        new Cell(
-                            ParsingUtilities.inputStreamToString(
-                                is, encoding != null ? encoding : "UTF-8"),
-                            null));
-                } finally {
-                    is.close();
+                } catch (IOException e) {
+                    String message;
+                    if (urlConnection instanceof HttpURLConnection) {
+                        int status = ((HttpURLConnection)urlConnection).getResponseCode();
+                        String errorString = "";
+                        InputStream errorStream = ((HttpURLConnection)urlConnection).getErrorStream();
+                        if (errorStream != null) {
+                            errorString = ParsingUtilities.inputStreamToString(errorStream);
+                        }
+                        message = String.format("HTTP error %d : %s | %s",status,
+                                ((HttpURLConnection)urlConnection).getResponseMessage(),
+                                errorString);
+                    } else {
+                        message = e.toString();
+                    }
+                    return _onError == OnError.StoreError ?
+                            new CellAtRow(urlData.row, new Cell(new EvalError(message), null)) : null;
                 }
             } catch (Exception e) {
                 return _onError == OnError.StoreError ?
