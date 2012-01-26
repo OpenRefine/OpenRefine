@@ -142,7 +142,7 @@ public class JsonImporterTests extends ImporterTest {
         log(project);
         assertProjectCreated(project, 5, 6);
 
-        Assert.assertEquals( project.columnModel.getColumnByCellIndex(4).getName(), "__anonymous__ - genre");
+        Assert.assertEquals( project.columnModel.getColumnByCellIndex(4).getName(), JsonImporter.ANONYMOUS + " - genre");
 
         Row row0 = project.rows.get(0);
         Assert.assertNotNull(row0);
@@ -174,9 +174,9 @@ public class JsonImporterTests extends ImporterTest {
         JSONObject options = SUT.createParserUIInitializationData(
                 job, new LinkedList<JSONObject>(), "text/json");
         JSONArray path = new JSONArray();
-        JSONUtilities.append(path, "__anonymous__");
+        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
         JSONUtilities.append(path, "result");
-        JSONUtilities.append(path, "__anonymous__");
+        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
         JSONUtilities.safePut(options, "recordPath", path);
 
         RunTest(mqlOutput, options);
@@ -283,11 +283,11 @@ public class JsonImporterTests extends ImporterTest {
                 }
                 if(i == 4){
                     Assert.assertEquals(token, Token.StartEntity);
-                    Assert.assertEquals(parser.getFieldName(), "__anonymous__");
+                    Assert.assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
                 }
                 if(i == 6){
                     Assert.assertEquals(token, Token.StartEntity);
-                    Assert.assertEquals(parser.getFieldName(), "__anonymous__");
+                    Assert.assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
                 }
             }
         }catch(Exception e){
@@ -334,8 +334,8 @@ public class JsonImporterTests extends ImporterTest {
                 job, new LinkedList<JSONObject>(), "text/json");
         
         JSONArray path = new JSONArray();
-        JSONUtilities.append(path, "__anonymous__");
-        JSONUtilities.append(path, "__anonymous__");
+        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
         
         JSONUtilities.safePut(options, "recordPath", path);
         return options;

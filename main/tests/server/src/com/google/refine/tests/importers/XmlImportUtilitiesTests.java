@@ -49,6 +49,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.importers.JsonImporter;
 import com.google.refine.importers.JsonImporter.JSONTreeReader;
 import com.google.refine.importers.XmlImporter.XmlParser;
 import com.google.refine.importers.tree.ImportColumn;
@@ -199,8 +200,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
                 new JSONTreeReader(new InputStreamReader(inputStream)));
         Assert.assertNotNull(path);
         Assert.assertEquals(path.length, 2);
-        Assert.assertEquals(path[0], "__anonymous__");
-        Assert.assertEquals(path[1], "__anonymous__");
+        Assert.assertEquals(path[0], JsonImporter.ANONYMOUS);
+        Assert.assertEquals(path[1], JsonImporter.ANONYMOUS);
     }
 
     @Test

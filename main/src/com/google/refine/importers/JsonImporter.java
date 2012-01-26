@@ -62,6 +62,8 @@ import com.google.refine.util.JSONUtilities;
 public class JsonImporter extends TreeImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(JsonImporter.class);
 
+    public final static String ANONYMOUS = "_";
+
     public JsonImporter() {
         super(false);
     }
@@ -258,13 +260,18 @@ public class JsonImporter extends TreeImportingParserBase {
         public String getFieldName() throws TreeReaderException {
             try {
                 String text = parser.getCurrentName();
-                
+                /*
+                 * If current token is a JsonToken.FIELD_NAME, this will be the
+                 * same as what getText() returns; for field values it will be
+                 * preceding field name; and for others (array values,
+                 * root-level values) null.
+                 */                
                 //The following is a workaround for inconsistent Jackson JsonParser
                 if(text == null){
                     if(this.lastTokenWasAFieldNameAndCurrentTokenIsANewEntity) {
                         text = this.lastFieldName;
                     } else {
-                        text = "__anonymous__";
+                        text = ANONYMOUS;
                     }
                 }
                 //end of workaround
@@ -308,7 +315,6 @@ public class JsonImporter extends TreeImportingParserBase {
                 throw new TreeReaderException(e);
             }
             
-            // TODO just return null here?
             if(next == null) {
                 throw new TreeReaderException("No more Json Tokens in stream");
             }
