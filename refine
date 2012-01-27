@@ -95,7 +95,7 @@ add_option() {
                 
 load_configs() {
    TEMP_CONFIG=$(mktemp -t refine.XXXXXXX)
-   if [ "${TEMP_CONFIG}" == "" ] ; then
+   if [ "${TEMP_CONFIG}" = "" ] ; then
        error "Could not create temporary file to load configurations"
    fi
    cat $1 | egrep "^[A-Z]" | sed 's/^\(.*\)$/export \1/' > ${TEMP_CONFIG}
