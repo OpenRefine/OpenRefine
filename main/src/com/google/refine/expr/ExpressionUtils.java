@@ -102,7 +102,7 @@ public class ExpressionUtils {
     }
 
     static public boolean isError(Object o) {
-        return o != null && o instanceof EvalError;
+        return o instanceof EvalError;
     }
     /*
     static public boolean isBlank(Object o) {
