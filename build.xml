@@ -61,9 +61,9 @@
     <property name="built.broker.webapp.dir" value="${build.dir}/broker" />
 
     <property name="mac.dir" value="${build.dir}/mac" />
-    <property name="windows.dir" value="${build.dir}/windows" />
-    <property name="linux.name" value="google-refine-${version}" />
-    <property name="linux.dir" value="${build.dir}/linux/${linux.name}" />
+    <property name="release.name" value="google-refine-${version}" />
+    <property name="windows.dir" value="${build.dir}/windows/${release.name}" />
+    <property name="linux.dir" value="${build.dir}/linux/${release.name}" />
     
     <!-- ================================================================== -->
     
@@ -318,7 +318,7 @@
         <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
         
         <mkdir dir="${dist.dir}"/>
-        <zip destfile="${dist.dir}/google-refine-${version}-${revision}.zip" basedir="${windows.dir}"/>                
+        <zip destfile="${dist.dir}/google-refine-${version}-${revision}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
     </target>
     
     <target name="linux" depends="jar, prepare_webapp">
@@ -351,11 +351,11 @@
         <mkdir dir="${dist.dir}"/>
         <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/google-refine-${version}-${revision}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
-               <include name="${linux.name}/refine"/>
+               <include name="${release.name}/refine"/>
            </tarfileset>        
            <tarfileset dir="${linux.dir}/..">
-               <include name="${linux.name}/**"/>
-               <exclude name="${linux.name}/refine"/>
+               <include name="${release.name}/**"/>
+               <exclude name="${release.name}/refine"/>
            </tarfileset>        
         </tar>
     </target>
