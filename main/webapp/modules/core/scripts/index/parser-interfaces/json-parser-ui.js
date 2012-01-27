@@ -118,6 +118,7 @@ Refine.JsonParserUI.prototype._initialize = function() {
 };
 
 Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
+  var ANONYMOUS_NODE_NAME = '_';
   var self = this;
 
   this._dataContainer.unbind().empty().html(
@@ -158,7 +159,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
     $('<span>').addClass('punctuation').text('[').appendTo(container);
 
     var parentPath2 = [].concat(parentPath);
-    parentPath2.push('__anonymous__');
+    parentPath2.push(ANONYMOUS_NODE_NAME);
 
     var elementNode = null;
     for (var i = 0; i < a.length; i++) {
@@ -210,7 +211,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
       }
     }
   };
-  renderNode(this._config.dom, elmts.domContainer, [ '__anonymous__' ]);
+  renderNode(this._config.dom, elmts.domContainer, [ANONYMOUS_NODE_NAME]);
 };
 
 Refine.JsonParserUI.prototype._scheduleUpdatePreview = function() {
