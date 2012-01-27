@@ -7,14 +7,14 @@ var test_facets = new function() {
     
     // test opening Food project
     test = newTest();
-    assert (test, "assertText", { jquery: '("h1")[0]', validator: "Welcome to Google Refine" });
+    assert (test, "assertText", { id:"slogan", validator: "A power tool for working with messy data." });
     this.test_home_page = test;
     
     // make sure the dataset was loaded properly
     test = newTest();
     action (test, "click",        { link:    "Food" });
     wait   (test, "forPageLoad",  { timeout: "20000" });
-    assert (test, "rowCount", "7413" );
+    assert (test, "assertTest", {xpath: "//div[@id='summary-bar']/span",validator: "7413 rows"});
     this.test_open_project = test;
 
     // create text facet from 1st word of Short Description column
