@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2012 Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -205,15 +205,17 @@ public class JsonImporter extends TreeImportingParserBase {
         JsonFactory factory = new JsonFactory();
         JsonParser parser = null;
         
-        //The following is a workaround for inconsistent Jackson JsonParser
-        Boolean lastTokenWasAFieldNameAndCurrentTokenIsANewEntity = false;
-        Boolean thisTokenIsAFieldName = false;
-        String lastFieldName = null;
-        //end of workaround
+        private JsonToken current = null;
+        private JsonToken next = null;
+        private String fieldName = ANONYMOUS;
+        private String fieldValue = null;
+
         
         public JSONTreeReader(Reader reader) {
             try {
                 parser = factory.createJsonParser(reader);
+                current = null;
+                next  = parser.nextToken(); 
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -253,33 +255,16 @@ public class JsonImporter extends TreeImportingParserBase {
 
         @Override
         public Token current() {
-            return this.mapToToken(parser.getCurrentToken());
+            if (current != null) {
+                return this.mapToToken(current);
+            } else {
+                return null;
+            }
         }
 
         @Override
         public String getFieldName() throws TreeReaderException {
-            try {
-                String text = parser.getCurrentName();
-                /*
-                 * If current token is a JsonToken.FIELD_NAME, this will be the
-                 * same as what getText() returns; for field values it will be
-                 * preceding field name; and for others (array values,
-                 * root-level values) null.
-                 */                
-                //The following is a workaround for inconsistent Jackson JsonParser
-                if(text == null){
-                    if(this.lastTokenWasAFieldNameAndCurrentTokenIsANewEntity) {
-                        text = this.lastFieldName;
-                    } else {
-                        text = ANONYMOUS;
-                    }
-                }
-                //end of workaround
-                
-                return text;
-            } catch (IOException e) {
-                throw new TreeReaderException(e);
-            }
+            return fieldName;
         }
 
         /**
@@ -292,57 +277,42 @@ public class JsonImporter extends TreeImportingParserBase {
 
         @Override
         public String getFieldValue() throws TreeReaderException  {
-            try {
-                return parser.getText();
-            } catch (IOException e) {
-                throw new TreeReaderException(e);
-            }
+            return fieldValue;
         }
 
         @Override
         public boolean hasNext() {
-            return true; //FIXME fairly obtuse, is there a better way (advancing, then rewinding?)
+            return next != null;
         }
 
         @Override
         public Token next() throws TreeReaderException {
-            JsonToken next;
+            JsonToken previous = current;
+            current = next;
+            next = null; // in case an exception is thrown
             try {
+                if (current != null) {
+                    if (current.isScalarValue()) {
+                        fieldValue = parser.getText();
+                    } else {
+                        fieldValue = null;
+                    }
+                    if (current == JsonToken.FIELD_NAME) {
+                        fieldName = parser.getText();
+                    } else if (current == JsonToken.START_ARRAY 
+                            || current == JsonToken.START_OBJECT) {
+                        // Use current field name for next level object
+                        // ie elide one level of anonymous fields
+                        if (previous != JsonToken.FIELD_NAME) {
+                            fieldName = ANONYMOUS;
+                        }
+                    }
+                }
                 next = parser.nextToken();
-            } catch (JsonParseException e) {
-                throw new TreeReaderException(e);
             } catch (IOException e) {
                 throw new TreeReaderException(e);
             }
-            
-            if(next == null) {
-                throw new TreeReaderException("No more Json Tokens in stream");
-            }
-            
-            //The following is a workaround for inconsistent Jackson JsonParser
-            if(next == JsonToken.FIELD_NAME){
-                try {
-                    this.thisTokenIsAFieldName = true;
-                    this.lastFieldName = parser.getCurrentName();
-                } catch (IOException e) {
-                    //silent
-                }
-            }else if(next == JsonToken.START_ARRAY || next == JsonToken.START_OBJECT){
-                if(this.thisTokenIsAFieldName){
-                    this.lastTokenWasAFieldNameAndCurrentTokenIsANewEntity = true;
-                    this.thisTokenIsAFieldName = false;
-                }else{
-                    this.lastTokenWasAFieldNameAndCurrentTokenIsANewEntity = false;
-                    this.lastFieldName = null;
-                }
-            }else{
-                this.lastTokenWasAFieldNameAndCurrentTokenIsANewEntity = false;
-                this.lastFieldName = null;
-                this.thisTokenIsAFieldName = false;
-            }
-            //end of workaround
-                
-            return mapToToken(next);
+            return current();
         }
         
         protected Token mapToToken(JsonToken token){
