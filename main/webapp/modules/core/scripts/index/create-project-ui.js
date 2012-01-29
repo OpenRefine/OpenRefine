@@ -255,6 +255,6 @@ Refine.CreateProjectUI.composeErrorMessage = function(job) {
   return messages.join('\n');
 };
 
-Refine.CreateProjectUI.cancelImportinJob = function(jobID) {
+Refine.CreateProjectUI.cancelImportingJob = function(jobID) {
   $.post("/command/core/cancel-importing-job?" + $.param({ "jobID": jobID }));
 };

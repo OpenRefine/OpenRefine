@@ -51,7 +51,7 @@ Refine.DefaultImportingController.parserUIs = {};
 
 Refine.DefaultImportingController.prototype._startOver = function() {
   if (this._jobID) {
-    Refine.CreateProjectUI.cancelImportinJob(this._jobID);
+    Refine.CreateProjectUI.cancelImportingJob(this._jobID);
   }
   
   this._disposeFileSelectionPanel();
@@ -121,7 +121,7 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
           window.clearInterval(timerID);
 
           // explicitly cancel the import job
-          Refine.CreateProjectUI.cancelImportinJob(jobID);
+          Refine.CreateProjectUI.cancelImportingJob(jobID);
 
           self._createProjectUI.showSourceSelectionPanel();
         });
@@ -298,7 +298,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
                   return "projectID" in job.config;
                 },
                 function(jobID, job) {
-                  Refine.CreateProjectUI.cancelImportinJob(jobID);
+                  Refine.CreateProjectUI.cancelImportingJob(jobID);
                   document.location = "project?project=" + job.config.projectID;
                 },
                 function(job) {
@@ -314,7 +314,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
           window.clearInterval(timerID);
 
           // explicitly cancel the import job
-          Refine.CreateProjectUI.cancelImportinJob(self._jobID);
+          Refine.CreateProjectUI.cancelImportingJob(self._jobID);
 
           self._createProjectUI.showSourceSelectionPanel();
         });

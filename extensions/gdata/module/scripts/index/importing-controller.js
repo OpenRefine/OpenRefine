@@ -176,7 +176,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   
   this._parsingPanelElmts.startOverButton.click(function() {
     // explicitly cancel the import job
-    Refine.CreateProjectUI.cancelImportinJob(self._jobID);
+    Refine.CreateProjectUI.cancelImportingJob(self._jobID);
     
     delete self._doc;
     delete self._jobID;
@@ -366,7 +366,7 @@ Refine.GDataImportingController.prototype._createProject = function() {
                 },
                 function(jobID, job) {
                   window.clearInterval(timerID);
-                  Refine.CreateProjectUI.cancelImportinJob(jobID);
+                  Refine.CreateProjectUI.cancelImportingJob(jobID);
                   document.location = "project?project=" + job.config.projectID;
                 },
                 function(job) {
@@ -381,7 +381,7 @@ Refine.GDataImportingController.prototype._createProject = function() {
           window.clearInterval(timerID);
 
           // explicitly cancel the import job
-          $.post("/command/core/cancel-importing-job?" + $.param({ "jobID": jobID }));
+          Refine.CreateProjectUI.cancelImportingJob(jobID);
 
           self._createProjectUI.showSourceSelectionPanel();
         });
