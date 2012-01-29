@@ -153,21 +153,32 @@ Refine.setTitle = function(status) {
   $("#project-name-button").text(theProject.metadata.name);
 };
 
-Refine.reinitializeProjectData = function(f) {
-  Ajax.chainGetJSON(
+Refine.reinitializeProjectData = function(f, fError) {
+  $.getJSON(
     "/command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
     function(data) {
-      theProject.metadata = data;
-    },
-    "/command/core/get-models?" + $.param({ project: theProject.id }), null,
-    function(data) {
-      for (var n in data) {
-        if (data.hasOwnProperty(n)) {
-          theProject[n] = data[n];
+      if (data.status == 'error') {
+        alert(data.message);
+        if (fError) {
+          fError();
         }
+      } else {
+        theProject.metadata = data;
+        $.getJSON(
+          "/command/core/get-models?" + $.param({ project: theProject.id }), null,
+          function(data) {
+            for (var n in data) {
+              if (data.hasOwnProperty(n)) {
+                theProject[n] = data[n];
+              }
+            }
+            f();
+          },
+          'json'
+        );
       }
     },
-    f
+    'json'
   );
 };
 
@@ -442,9 +453,14 @@ function onLoad() {
       }
     }
 
-    Refine.reinitializeProjectData(function() {
-      initializeUI(uiState);
-    });
+    Refine.reinitializeProjectData(
+      function() {
+        initializeUI(uiState);
+      },
+      function() {
+        $("#loading-message").hide();
+      }
+    );
   }
 }
 

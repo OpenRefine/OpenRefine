@@ -571,8 +571,10 @@ function process(path, request, response) {
           params.put(name, request.getParameterValues(name)[0]);
         }
         context.params = params;
-        context.projectID = request.getParameter("project");
-
+        
+        // We prepend '' to convert the Java string to a Javascript string.
+        context.projectID = ('' + request.getParameter("project")).replace(/\D/g, '');
+        
         var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         var styleInjection = [];
         for each (var qualifiedPath in styles) {
