@@ -249,8 +249,8 @@ public class ExcelImporter extends TabularImportingParserBase {
             if (hyperlink != null) {
                 String url = hyperlink.getAddress();
                 
-                if (url.startsWith("http://") ||
-                    url.startsWith("https://")) {
+                if (url != null && (url.startsWith("http://") ||
+                    url.startsWith("https://"))) {
                     
                     final String sig = "freebase.com/view";
                     
