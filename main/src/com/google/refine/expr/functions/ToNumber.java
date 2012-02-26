@@ -49,11 +49,17 @@ public class ToNumber implements Function {
             if (args[0] instanceof Number) {
                 return args[0];
             } else {
-                String s = args[0].toString();
-                try {
-                    return Double.parseDouble(s);
-                } catch (NumberFormatException e) {
-                    return new EvalError("Cannot parse to number");
+                String s = args[0].toString().trim();
+                if (s.length() > 0) {
+                    try {
+                        return Long.parseLong(s);
+                    } catch (NumberFormatException e) {
+                    }
+                    try {
+                        return Double.parseDouble(s);
+                    } catch (NumberFormatException e) {
+                        return new EvalError("Cannot parse to number");
+                    }
                 }
             }
         }
