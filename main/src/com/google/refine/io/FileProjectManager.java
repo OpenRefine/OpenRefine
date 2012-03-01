@@ -7,13 +7,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+ * Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+ * Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -29,7 +29,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*/
+ */
 
 package com.google.refine.io;
 
@@ -265,24 +265,24 @@ public class FileProjectManager extends ProjectManager {
             JSONWriter jsonWriter = new JSONWriter(writer);
             jsonWriter.object();
             jsonWriter.key("projectIDs");
-                jsonWriter.array();
-                for (Long id : _projectsMetadata.keySet()) {
-                    ProjectMetadata metadata = _projectsMetadata.get(id);
-                    if (metadata != null) {
-                        jsonWriter.value(id);
+            jsonWriter.array();
+            for (Long id : _projectsMetadata.keySet()) {
+                ProjectMetadata metadata = _projectsMetadata.get(id);
+                if (metadata != null) {
+                    jsonWriter.value(id);
 
-                        try {
-                            ProjectMetadataUtilities.save(metadata, getProjectDir(id));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        ProjectMetadataUtilities.save(metadata, getProjectDir(id));
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
-                jsonWriter.endArray();
-                writer.write('\n');
+            }
+            jsonWriter.endArray();
+            writer.write('\n');
 
             jsonWriter.key("preferences");
-                _preferenceStore.write(jsonWriter, new Properties());
+            _preferenceStore.write(jsonWriter, new Properties());
 
             jsonWriter.endObject();
         } finally {
@@ -361,7 +361,7 @@ public class FileProjectManager extends ProjectManager {
 
                 if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
                     ((TopList) _preferenceStore.get("scripting.expressions"))
-                        .load(obj.getJSONArray("expressions"));
+                    .load(obj.getJSONArray("expressions"));
                 }
 
                 found = true;
@@ -371,7 +371,9 @@ public class FileProjectManager extends ProjectManager {
                 logger.warn("Error reading file", e);
             } finally {
                 try {
-                    if (reader != null) reader.close();
+                    if (reader != null) {
+                        reader.close();
+                    }
                 } catch (IOException e) {
                     logger.warn("Exception closing file",e);
                 }
@@ -380,7 +382,7 @@ public class FileProjectManager extends ProjectManager {
 
         return found;
     }
-    
+
     protected void recover() {
         for (File file : _workspaceDir.listFiles()) {
             if (file.isDirectory() && !file.isHidden()) {
@@ -393,16 +395,16 @@ public class FileProjectManager extends ProjectManager {
                     } catch (NumberFormatException e) {
                         // ignore
                     }
-                    
+
                     if (id > 0 && !_projectsMetadata.containsKey(id)) {
                         if (loadProjectMetadata(id)) {
                             logger.info(
-                                "Recovered project named " + 
-                                    getProjectMetadata(id).getName() +
-                                        " in directory " + name);
+                                    "Recovered project named " + 
+                                            getProjectMetadata(id).getName() +
+                                            " in directory " + name);
                         } else {
                             logger.warn("Failed to recover project in directory " + name);
-                            
+
                             file.renameTo(new File(file.getParentFile(), name + ".corrupted"));
                         }
                     }
@@ -410,7 +412,7 @@ public class FileProjectManager extends ProjectManager {
             }
         }
     }
-    
+
     @Override
     public HistoryEntryManager getHistoryEntryManager(){
         return new FileHistoryEntryManager();
