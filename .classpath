@@ -20,7 +20,7 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-lang-2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/icu4j-4.2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-asl-1.8.6.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-asl-1.9.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/jackson-src-1.9.5.zip"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jrdf-0.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/json-20100208.jar"/>
