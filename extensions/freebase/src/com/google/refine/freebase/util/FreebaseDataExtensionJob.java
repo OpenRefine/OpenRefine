@@ -139,6 +139,20 @@ public class FreebaseDataExtensionJob {
         
         return new DataExtension(data);
     }
+
+    protected void storeKey(
+            List<Object[]>  rows, 
+            int row,
+            int col,
+            JSONObject key,
+            Map<String, ReconCandidate> reconCandidateMap
+        ) throws JSONException {
+        String keyval = key.getString("value");
+        while (row >= rows.size()) {
+            rows.add(new Object[columnCount]);
+        }
+        rows.get(row)[col] = keyval;
+    }
     
     protected void storeCell(
         List<Object[]>  rows, 
@@ -191,8 +205,21 @@ public class FreebaseDataExtensionJob {
         
         JSONArray a = resultNode != null && resultNode.has(propertyID) && !resultNode.isNull(propertyID) ?
             resultNode.getJSONArray(propertyID) : null;
+
+        if ("/type/key".equals(expectedTypeID)) {
+            if (a != null) {
+                int l = a.length();
+                for (int r = 0; r < l; r++) {
+                    Object o = a.isNull(r) ? null : a.get(r);
+                    if (o instanceof JSONObject) {
+                        storeKey(rows, startRowIndex++, startColumnIndex, (JSONObject) o, reconCandidateMap);
+                    }
+                }
+            }
             
-        if (expectedTypeID.startsWith("/type/")) {
+            // note that we still take up a column even if we don't have any data
+            return new int[] { startRowIndex, startColumnIndex + 1 };
+        } else if (expectedTypeID.startsWith("/type/")) {
             if (a != null) {
                 int l = a.length();
                 for (int r = 0; r < l; r++) {
@@ -340,7 +367,8 @@ public class FreebaseDataExtensionJob {
         writer.key(propertyID);
         writer.array();
         {
-            if (!expectedTypeID.startsWith("/type/")) { // not literal
+            if (!expectedTypeID.startsWith("/type/")  // not literal
+                    || "/type/key".equals(expectedTypeID)) {
                 writer.object();
                 writer.key("optional"); writer.value(true);
                 
@@ -374,13 +402,10 @@ public class FreebaseDataExtensionJob {
                             if (sortKey.startsWith("-")) {
                                 sortKey = sortKey.substring(1);
                             }
-                            writer.key(sortKey);
-                            writer.value(null);
-                            writer.key(name);
-                            writer.value(value);
+                            writer.key(sortKey); writer.value(null);
+                            writer.key(name); writer.value(value);
                         } else {
-                            writer.key(name);
-                            writer.value(value);
+                            writer.key(name); writer.value(value);
                         }
                     }
                 }
@@ -392,8 +417,12 @@ public class FreebaseDataExtensionJob {
                     boolean hasSubProperties = (node.has("properties") && !node.isNull("properties")); 
                         
                     if (!hasSubProperties || (node.has("included") && node.getBoolean("included"))) {
-                        writer.key("name"); writer.value(null);
-                        writer.key("id"); writer.value(null);
+                        if ("/type/key".equals(expectedTypeID)) {
+                            writer.key("value"); writer.value(null);
+                        } else {
+                            writer.key("name"); writer.value(null);
+                            writer.key("id"); writer.value(null);
+                        }
                         writer.key("type"); writer.array(); writer.endArray();
                     }
                     
