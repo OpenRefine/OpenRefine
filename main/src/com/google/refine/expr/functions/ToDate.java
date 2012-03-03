@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010,2011. Google Inc.
+Copyright 2010,2012. Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -57,15 +57,19 @@ public class ToDate implements Function {
             return null;
         }
         Object arg0 = args[0];
+        String o1;
         if (arg0 instanceof Date) {
             return arg0;
         } else if (arg0 instanceof Calendar) {
             return ((Calendar) arg0).getTime();
-        } else if (!(arg0 instanceof String)) {
+        } else if (arg0 instanceof Long) {
+            o1 =  ((Long) arg0).toString(); // treat integers as years
+        } else if (arg0 instanceof String) {
+            o1 = (String) arg0;
+        } else {
             // ignore cell values that aren't strings
             return new EvalError("Not a String - cannot parse to date");
         }
-        String o1 = (String) arg0;
 
         // "o, boolean month_first (optional)"
         if (args.length == 1 || (args.length == 2 && args[1] instanceof Boolean)) {
