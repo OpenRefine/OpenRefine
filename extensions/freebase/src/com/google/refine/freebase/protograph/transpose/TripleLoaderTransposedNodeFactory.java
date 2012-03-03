@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2012. Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,10 @@ package com.google.refine.freebase.protograph.transpose;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -365,7 +369,7 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
             boolean first = true;
             boolean firstRecon = true;
             
-            if (subjectCell.recon != null) {
+            if (subjectCell != null && subjectCell.recon != null) {
                 sbRecon.append("\"s\" : ");
                 writeRecon(sbRecon, project, subjectRowIndex, subjectCellIndex, subjectCell);
                 
@@ -847,7 +851,11 @@ public class TripleLoaderTransposedNodeFactory implements TransposedNodeFactory 
     
     static protected Object validateValue(Object value, String valueType) {
         if ("/type/datetime".equals(valueType)) {
-            if (!(value instanceof String)) {
+            if (value instanceof Calendar || value instanceof Date) {
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                value = formatter.format(value instanceof Date ? ((Date) value) 
+                        : ((Calendar) value).getTime());
+            } else if (!(value instanceof String)) {
                 value = value.toString();
             }
         } else if ("/type/boolean".equals(valueType)) {
