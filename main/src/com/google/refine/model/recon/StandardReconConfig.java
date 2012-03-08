@@ -340,6 +340,8 @@ public class StandardReconConfig extends ReconConfig {
             } finally {
                 is.close();
             }
+//        } catch (IOException e) {
+//            // TODO: Retry on HTTP 500 errors?
         } catch (Exception e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
@@ -405,7 +407,8 @@ public class StandardReconConfig extends ReconConfig {
                 ReconCandidate candidate = recon.candidates.get(0);
                 
                 recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
-                recon.setFeature(Recon.Feature_nameLevenshtein, StringUtils.getLevenshteinDistance(text, candidate.name));
+                recon.setFeature(Recon.Feature_nameLevenshtein, 
+                        StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name)));
                 recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
                 
                 recon.setFeature(Recon.Feature_typeMatch, false);
