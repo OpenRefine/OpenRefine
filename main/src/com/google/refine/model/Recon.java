@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2012. Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,9 @@ import com.google.refine.util.Pool;
  
 public class Recon implements HasFields, Jsonizable {
     
+    private static final String FREEBASE_SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
+    private static final String FREEBASE_IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/type.object.mid";
+
     static public enum Judgment {
         None,
         Matched,
@@ -112,8 +115,8 @@ public class Recon implements HasFields, Jsonizable {
     static public Recon makeFreebaseRecon(long judgmentHistoryEntry) {
         return new Recon(
             judgmentHistoryEntry,
-            "http://rdf.freebase.com/ns/type.object.mid",
-            "http://rdf.freebase.com/ns/type.object.id");
+            FREEBASE_IDENTIFIER_SPACE,
+            FREEBASE_SCHEMA_SPACE);
     }
     
     public Recon(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
@@ -249,8 +252,8 @@ public class Recon implements HasFields, Jsonizable {
     public class Features implements HasFields {
         @Override
         public Object getField(String name, Properties bindings) {
-            int index = s_featureMap.get(name);
-            return index < features.length ? features[index] : null;
+            int index = s_featureMap.containsKey(name) ? s_featureMap.get(name) : -1;
+            return (index > 0 && index < features.length) ? features[index] : null;
         }
 
         @Override
@@ -395,8 +398,14 @@ public class Recon implements HasFields, Jsonizable {
                     recon.service = jp.getText();
                 } else if ("identifierSpace".equals(fieldName)) {
                     recon.identifierSpace = jp.getText();
+                    if ("null".equals(recon.identifierSpace)) {
+                        recon.identifierSpace = FREEBASE_IDENTIFIER_SPACE;
+                    }
                 } else if ("schemaSpace".equals(fieldName)) {
                     recon.schemaSpace = jp.getText();
+                    if ("null".equals(recon.schemaSpace)) {
+                        recon.schemaSpace = FREEBASE_SCHEMA_SPACE;
+                    }
                 } else if ("judgmentAction".equals(fieldName)) {
                     recon.judgmentAction = jp.getText();
                 } else if ("judgmentBatchSize".equals(fieldName)) {
