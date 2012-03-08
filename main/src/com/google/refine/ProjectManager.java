@@ -65,7 +65,7 @@ public abstract class ProjectManager {
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected PreferenceStore            _preferenceStore;
 
-    final static Logger logger = LoggerFactory.getLogger("project_manager");
+    final static Logger logger = LoggerFactory.getLogger("ProjectManager");
 
     /**
      *  What caches the joins between projects.
