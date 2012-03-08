@@ -146,7 +146,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             
             if (location != null) {
                 File file = new File(job.getRawDataDir(), location);
-                Separator separator = guessSeparator(file, encoding);
+                // Quotes are turned on by default, so use that for guessing
+                Separator separator = guessSeparator(file, encoding, true);
                 if (separator != null) {
                     return StringEscapeUtils.escapeJava(Character.toString(separator.separator));
                 }
@@ -164,8 +165,12 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         double averagePerLine;
         double stddev;
     }
-    
+
     static public Separator guessSeparator(File file, String encoding) {
+        return guessSeparator(file, encoding, false); // quotes off for backward compatibility
+    }
+
+    static public Separator guessSeparator(File file, String encoding, boolean handleQuotes) {
         try {
             InputStream is = new FileInputStream(file);
             Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
@@ -175,14 +180,15 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                 List<Separator> separators = new ArrayList<SeparatorBasedImporter.Separator>();
                 Map<Character, Separator> separatorMap = new HashMap<Character, SeparatorBasedImporter.Separator>();
                 
-                int totalBytes = 0;
+                int totalChars = 0;
                 int lineCount = 0;
+                boolean inQuote = false;
                 String s;
-                while (totalBytes < 64 * 1024 &&
+                while (totalChars < 64 * 1024 &&
                        lineCount < 100 &&
                        (s = lineNumberReader.readLine()) != null) {
                     
-                    totalBytes += s.length() + 1; // count the new line character
+                    totalChars += s.length() + 1; // count the new line character
                     if (s.length() == 0) {
                         continue;
                     }
@@ -190,8 +196,12 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     
                     for (int i = 0; i < s.length(); i++) {
                         char c = s.charAt(i);
-                        if (!Character.isLetterOrDigit(c) &&
-                            !"\"' .-".contains(s.subSequence(i, i + 1))) {
+                        if ('"' == c) {
+                            inQuote = !inQuote;
+                        }
+                        if (!Character.isLetterOrDigit(c) 
+                                && !"\"' .-".contains(s.subSequence(i, i + 1)) 
+                                && (!handleQuotes || !inQuote)) {
                             Separator separator = separatorMap.get(c);
                             if (separator == null) {
                                 separator = new Separator();
@@ -214,9 +224,10 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                 if (separators.size() > 0) {
                     for (Separator separator : separators) {
                         separator.averagePerLine = separator.totalCount / (double) lineCount;
-                        separator.stddev = Math.sqrt(
-                            separator.totalOfSquaredCount / (double) lineCount -
-                            separator.averagePerLine * separator.averagePerLine);
+                         separator.stddev = Math.sqrt(
+                                 (((double)lineCount * separator.totalOfSquaredCount) - (separator.totalCount * separator.totalCount))
+                                        / ((double)lineCount*(lineCount-1))
+                            );
                     }
                     
                     Collections.sort(separators, new Comparator<Separator>() {
