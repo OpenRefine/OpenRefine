@@ -59,18 +59,31 @@ public class Combin implements Function {
         return Combin.combination(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
     }
 
-    public static long combination(long n, long k){
-        if (k > n) {
-            throw new IllegalArgumentException ("the number of elements, n, should be larger than the number of combinations, k");
+    /*
+     * Compute binomial coefficient using dynamic programming which takes 
+     * advantage of Pascal's identity as described in:
+     * http://introcs.cs.princeton.edu/java/96optimization/
+     */
+    public static long combination(int n, int k) {
+        long[][] binomial = new long[n+1][k+1];
+
+        for (int j = 1; j <= k; j++) {
+            binomial[0][j] = 0;
         }
-        if (n < 1) {
-            throw new IllegalArgumentException ("the number of elements, n, cannot be less than 1");
+        for (int i = 0; i <= n; i++) {
+            binomial[i][0] = 1;
         }
-        // TODO: This needs to use a more efficient Binomial Coefficient algorithm
-        long nFact = FactN.factorial(n, 1);
-        long rFact = FactN.factorial(k, 1);
-        long nminusrFact = FactN.factorial(n - k, 1);
-        return nFact / (rFact * nminusrFact);
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= k; j++) {
+                binomial[i][j] = binomial[i-1][j-1] + binomial[i-1][j];
+                if (binomial[i][j] > Long.MAX_VALUE || binomial[i][j] < 0) {
+                    throw new RuntimeException("Range limit exceeded");
+                }
+            }
+        }
+
+        return binomial[n][k];
     }
 
     @Override
