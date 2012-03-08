@@ -520,6 +520,8 @@ public class ImportingUtilities {
                 return new TarInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".zip")) {
                 return new ZipInputStream(new FileInputStream(file));
+            } else if (fileName.endsWith(".kmz")) {
+                return new ZipInputStream(new FileInputStream(file));
             }
         } catch (IOException e) {
         }
