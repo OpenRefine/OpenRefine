@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.ToString;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -52,8 +53,17 @@ public class Escape implements Function {
         if (args.length == 2) {
             Object o1 = args[0];
             Object o2 = args[1];
-            if (o1 != null && o2 != null && o1 instanceof String && o2 instanceof String) {
-                String s = (String) o1;
+            String s;
+            if (o1 instanceof String) {
+                s = (String) o1;
+            } else if (o1 == null) {
+                s = "";
+            } else {
+                // Use our own ToString so that formatting is consistent
+                ToString toString = new ToString();
+                s = toString.call(bindings,new Object[] {o1});
+            }
+            if (o2 instanceof String) {
                 String mode = ((String) o2).toLowerCase();
                 if ("html".equals(mode)) {
                     return StringEscapeUtils.escapeHtml(s);

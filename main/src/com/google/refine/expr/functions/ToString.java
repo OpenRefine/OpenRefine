@@ -47,7 +47,7 @@ import com.google.refine.grel.Function;
 public class ToString implements Function {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public String call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
             Object o1 = args[0];
             if (o1 != null) {
@@ -64,7 +64,7 @@ public class ToString implements Function {
                     }
                     return formatter.format(o1 instanceof Date ? ((Date) o1) : ((Calendar) o1).getTime());
                 } else {
-                    return (o1 instanceof String) ? o1 : o1.toString();
+                    return (o1 instanceof String) ? (String) o1 : o1.toString();
                 }
             }
         }

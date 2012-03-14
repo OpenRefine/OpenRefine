@@ -138,4 +138,31 @@ public class ToFromConversionTests extends RefineTest {
         // Calendar
         // String
     }
+    
+    @Test
+    public void testEscape() {
+      Assert.assertNull(invoke("escape"));
+      Assert.assertEquals(invoke("escape",null,"xml"),"");
+      Assert.assertEquals(invoke("escape", "mystring", "html"),"mystring");
+      Assert.assertEquals(invoke("escape", "mystring", "xml"),"mystring");
+      Assert.assertEquals(invoke("escape", "mystring", "csv"),"mystring");
+      Assert.assertEquals(invoke("escape", "mystring", "url"),"mystring");
+      Assert.assertEquals(invoke("escape", "mystring", "javascript"),"mystring");
+      Assert.assertEquals(invoke("escape", 1, "html"),"1");
+      Assert.assertEquals(invoke("escape", 1, "xml"),"1");
+      Assert.assertEquals(invoke("escape", 1, "csv"),"1");
+      Assert.assertEquals(invoke("escape", 1, "url"),"1");
+      Assert.assertEquals(invoke("escape", 1, "javascript"),"1");
+      Assert.assertEquals(invoke("escape", Long.parseLong("1"), "html"),"1");
+      Assert.assertEquals(invoke("escape", Long.parseLong("1"), "xml"),"1");
+      Assert.assertEquals(invoke("escape", Long.parseLong("1"), "csv"),"1");
+      Assert.assertEquals(invoke("escape", Long.parseLong("1"), "url"),"1");
+      Assert.assertEquals(invoke("escape", Long.parseLong("1"), "javascript"),"1");
+      Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "html"),"1.23");
+      Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "xml"),"1.23");
+      Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "csv"),"1.23");
+      Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "url"),"1.23");
+      Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "javascript"),"1.23");
+   }
+
 }
