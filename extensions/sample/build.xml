@@ -33,6 +33,8 @@
     <property name="refine.modinf.dir" value="${refine.dir}/webapp/modules/core/MOD-INF" />
     <property name="refine.classes.dir" value="${refine.webinf.dir}/classes" />
     <property name="refine.lib.dir" value="${refine.webinf.dir}/lib" />
+    <property name="server.dir" value="${basedir}/../../server" />
+    <property name="server.lib.dir" value="${server.dir}/lib" />
     
     <property name="src.dir" value="${basedir}/src" />
     <property name="module.dir" value="${basedir}/module" />
@@ -45,6 +47,9 @@
             <include name="**/*.jar" />
         </fileset>
         <fileset dir="${refine.lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+        <fileset dir="${server.lib.dir}">
             <include name="**/*.jar" />
         </fileset>
         <pathelement path="${refine.classes.dir}"/>
