@@ -277,11 +277,16 @@ public class ImportingUtilities {
                         HttpURLConnection httpConnection = (HttpURLConnection) urlConnection;
                         RefineServlet.setUserAgent(httpConnection);
                     }
+                    // TODO: Set Accept-Encoding on connection so we don't get stuff we can't handle?
                     urlConnection.connect();
                     
                     InputStream stream2 = urlConnection.getInputStream();
                     try {
-                        File file = allocateFile(rawDataDir, url.getFile());
+                        String localname = url.getPath();
+                        if (localname.isEmpty() || localname.endsWith("/")) {
+                            localname = localname + "temp";
+                        }
+                        File file = allocateFile(rawDataDir, localname);
                         
                         int contentLength = urlConnection.getContentLength();
                         if (contentLength > 0) {
