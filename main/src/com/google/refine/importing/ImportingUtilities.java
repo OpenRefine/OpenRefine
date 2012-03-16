@@ -626,8 +626,11 @@ public class ImportingUtilities {
         saveStreamToFile(uncompressedIS, file2, null);
         
         JSONUtilities.safePut(fileRecord, "declaredEncoding", (String) null);
+        // TODO: Why is MIME type cleared here?
         JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
-        JSONUtilities.safePut(fileRecord, "location", getRelativePath(file2, rawDataDir));
+        String location = JSONUtilities.getString(fileRecord, "location", "");
+        location = location.substring(0,location.lastIndexOf('/')) + "/" + file2;
+        JSONUtilities.safePut(fileRecord, "location", location);
         
         return file2;
     }
