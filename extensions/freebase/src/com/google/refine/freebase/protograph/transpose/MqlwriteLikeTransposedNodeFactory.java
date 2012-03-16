@@ -248,6 +248,10 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
                 obj = new JSONObject();
                 try {
                     obj.put(ID, node.topic.id);
+                    // TODO: This won't work at the root of the query, so that needs
+                    // to be special cased, but for now one must use a different shaped graph
+                    // (ie move the Freebase topic to someplace other than the root
+                    obj.put(CONNECT, "insert");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
