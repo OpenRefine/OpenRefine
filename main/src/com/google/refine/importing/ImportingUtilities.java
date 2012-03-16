@@ -139,8 +139,8 @@ public class ImportingUtilities {
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
         
         JSONArray rankedFormats = new JSONArray();
-        JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
+        JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
         
         JSONUtilities.safePut(config, "state", "ready");
         JSONUtilities.safePut(config, "hasData", true);
