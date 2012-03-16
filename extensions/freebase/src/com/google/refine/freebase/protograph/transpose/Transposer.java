@@ -95,14 +95,10 @@ public class Transposer {
             
             @Override
             public void start(Project project) {
-                // TODO Auto-generated method stub
-                
             }
             
             @Override
             public void end(Project project) {
-                // TODO Auto-generated method stub
-                
             }
             
             public RowVisitor init(
@@ -135,104 +131,15 @@ public class Transposer {
         Link link = context.parent == null ? null : context.link;
         
         if (node instanceof CellNode) {
-            CellNode node2 = (CellNode) node;
-            for (String columnName : node2.columnNames) {
-                Column column = project.columnModel.getColumnByName(columnName);
-                if (column != null) {
-                    int cellIndex = column.getCellIndex();
-                    
-                    Cell cell = row.getCell(cellIndex);
-                    if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                        if (node2 instanceof CellTopicNode &&
-                            (cell.recon == null || cell.recon.judgment == Judgment.None)) {
-                                return;
-                        }
-                        
-                        context.count++;
-                        if (context.limit > 0 && context.count > context.limit) {
-                            return;
-                        }
-                        
-                        if (context.parent == null) {
-                            tnodes.add(nodeFactory.transposeCellNode(
-                                null,
-                                link,
-                                node2, 
-                                rowIndex,
-                                cellIndex,
-                                cell
-                            ));
-                        } else {
-                            for (TransposedNode parentNode : context.parent.transposedNodes) {
-                                tnodes.add(nodeFactory.transposeCellNode(
-                                    parentNode,
-                                    link,
-                                    node2, 
-                                    rowIndex,
-                                    cellIndex,
-                                    cell
-                                ));
-                            }
-                        }
-                    }
-                }
+            if (!descendCellNode(project, nodeFactory, rowIndex, row, node, context, tnodes, link)) {
+                return;
             }
-        } else {
-            if (node instanceof AnonymousNode) {
-                if (context.parent == null) {
-                    tnodes.add(nodeFactory.transposeAnonymousNode(
-                        null,
-                        link,
-                        (AnonymousNode) node,
-                        rowIndex
-                    ));
-                } else {
-                    for (TransposedNode parentNode : context.parent.transposedNodes) {
-                        tnodes.add(nodeFactory.transposeAnonymousNode(
-                            parentNode,
-                            link,
-                            (AnonymousNode) node,
-                            rowIndex
-                        ));
-                    }
-                }
-            } else if (node instanceof FreebaseTopicNode) {
-                if (context.parent == null) {
-                    tnodes.add(nodeFactory.transposeTopicNode(
-                        null,
-                        link,
-                        (FreebaseTopicNode) node,
-                        rowIndex
-                    ));
-                } else {
-                    for (TransposedNode parentNode : context.parent.transposedNodes) {
-                        tnodes.add(nodeFactory.transposeTopicNode(
-                            parentNode,
-                            link,
-                            (FreebaseTopicNode) node,
-                            rowIndex
-                        ));
-                    }
-                }
-            } else if (node instanceof ValueNode) {
-                if (context.parent == null) {
-                    tnodes.add(nodeFactory.transposeValueNode(
-                        null,
-                        link,
-                        (ValueNode) node,
-                        rowIndex
-                    ));
-                } else {
-                    for (TransposedNode parentNode : context.parent.transposedNodes) {
-                        tnodes.add(nodeFactory.transposeValueNode(
-                            parentNode,
-                            link,
-                            (ValueNode) node,
-                            rowIndex
-                        ));
-                    }
-                }
-            }
+        } else if (node instanceof AnonymousNode) {
+            descendAnonymousNode(nodeFactory, rowIndex, node, context, tnodes, link);
+        } else if (node instanceof FreebaseTopicNode) {
+            descendFreebaseTopicNode(nodeFactory, rowIndex, node, context, tnodes, link);
+        } else if (node instanceof ValueNode) {
+            descendValueNode(nodeFactory, rowIndex, node, context, tnodes, link);
         }
         
         if (tnodes.size() > 0) {
@@ -257,6 +164,116 @@ public class Transposer {
                         context.subContexts.get(i)
                     );
                 }
+            }
+        }
+    }
+
+    private static boolean descendCellNode(Project project, TransposedNodeFactory nodeFactory, int rowIndex, Row row,
+            Node node, Context context, List<TransposedNode> tnodes, Link link) {
+        CellNode node2 = (CellNode) node;
+        for (String columnName : node2.columnNames) {
+            Column column = project.columnModel.getColumnByName(columnName);
+            if (column != null) {
+                int cellIndex = column.getCellIndex();
+                
+                Cell cell = row.getCell(cellIndex);
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                    if (node2 instanceof CellTopicNode &&
+                        (cell.recon == null || cell.recon.judgment == Judgment.None)) {
+                            return false;
+                    }
+                    
+                    context.count++;
+                    if (context.limit > 0 && context.count > context.limit) {
+                        return false;
+                    }
+                    
+                    if (context.parent == null) {
+                        tnodes.add(nodeFactory.transposeCellNode(
+                            null,
+                            link,
+                            node2, 
+                            rowIndex,
+                            cellIndex,
+                            cell
+                        ));
+                    } else {
+                        for (TransposedNode parentNode : context.parent.transposedNodes) {
+                            tnodes.add(nodeFactory.transposeCellNode(
+                                parentNode,
+                                link,
+                                node2, 
+                                rowIndex,
+                                cellIndex,
+                                cell
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static void descendAnonymousNode(TransposedNodeFactory nodeFactory, int rowIndex, Node node,
+            Context context, List<TransposedNode> tnodes, Link link) {
+        if (context.parent == null) {
+            tnodes.add(nodeFactory.transposeAnonymousNode(
+                null,
+                link,
+                (AnonymousNode) node,
+                rowIndex
+            ));
+        } else {
+            for (TransposedNode parentNode : context.parent.transposedNodes) {
+                tnodes.add(nodeFactory.transposeAnonymousNode(
+                    parentNode,
+                    link,
+                    (AnonymousNode) node,
+                    rowIndex
+                ));
+            }
+        }
+    }
+
+    private static void descendFreebaseTopicNode(TransposedNodeFactory nodeFactory, int rowIndex, Node node,
+            Context context, List<TransposedNode> tnodes, Link link) {
+        if (context.parent == null) {
+            tnodes.add(nodeFactory.transposeTopicNode(
+                null,
+                link,
+                (FreebaseTopicNode) node,
+                rowIndex
+            ));
+        } else {
+            for (TransposedNode parentNode : context.parent.transposedNodes) {
+                tnodes.add(nodeFactory.transposeTopicNode(
+                    parentNode,
+                    link,
+                    (FreebaseTopicNode) node,
+                    rowIndex
+                ));
+            }
+        }
+    }
+
+    private static void descendValueNode(TransposedNodeFactory nodeFactory, int rowIndex, Node node, Context context,
+            List<TransposedNode> tnodes, Link link) {
+        if (context.parent == null) {
+            tnodes.add(nodeFactory.transposeValueNode(
+                null,
+                link,
+                (ValueNode) node,
+                rowIndex
+            ));
+        } else {
+            for (TransposedNode parentNode : context.parent.transposedNodes) {
+                tnodes.add(nodeFactory.transposeValueNode(
+                    parentNode,
+                    link,
+                    (ValueNode) node,
+                    rowIndex
+                ));
             }
         }
     }
