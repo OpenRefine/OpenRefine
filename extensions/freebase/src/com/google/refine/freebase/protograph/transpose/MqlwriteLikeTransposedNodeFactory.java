@@ -273,7 +273,12 @@ public class MqlwriteLikeTransposedNodeFactory implements TransposedNodeFactory 
             if (obj == null) {
                 obj = new JSONObject();
                 try {
-                    obj.put(VALUE, node.value);
+                    if ("/type/datetime".equals(node.valueType) && node.value instanceof Long) {
+                        // Special case integers as year-only dates
+                        obj.put(VALUE, node.value.toString());
+                    } else {
+                        obj.put(VALUE, node.value);                        
+                    }
                     obj.put(TYPE, node.valueType);
                     if ("/type/text".equals(node.valueType)) {
                         obj.put(LANG, node.lang);
