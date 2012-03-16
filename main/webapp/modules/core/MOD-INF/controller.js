@@ -256,6 +256,7 @@ function registerImporting() {
   IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
   IM.registerMimeType("application/json", "text/json");
+  IM.registerMimeType("application/javascript", "text/json");
   IM.registerMimeType("text/json", "text/json");
 
   IM.registerMimeType("application/rdf+xml", "text/xml/rdf");
