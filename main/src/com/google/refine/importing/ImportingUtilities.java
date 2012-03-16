@@ -457,9 +457,10 @@ public class ImportingUtilities {
             File file, JSONObject fileRecord, JSONArray fileRecords, final Progress progress) {
         
         String mimeType = JSONUtilities.getString(fileRecord, "declaredMimeType", null);
+        String contentEncoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
         File rawDataDir = file.getParentFile();
         
-        InputStream archiveIS = tryOpenAsArchive(file, mimeType);
+        InputStream archiveIS = tryOpenAsArchive(file, mimeType, contentEncoding);
         if (archiveIS != null) {
             try {
                 if (explodeArchive(rawDataDir, archiveIS, fileRecord, fileRecords, progress)) {
@@ -475,7 +476,7 @@ public class ImportingUtilities {
             }
         }
         
-        InputStream uncompressedIS = tryOpenAsCompressedFile(file, mimeType);
+        InputStream uncompressedIS = tryOpenAsCompressedFile(file, mimeType, contentEncoding);
         if (uncompressedIS != null) {
             try {
                 File file2 = uncompressFile(rawDataDir, uncompressedIS, fileRecord, progress);
@@ -487,7 +488,7 @@ public class ImportingUtilities {
                 e.printStackTrace();
             } finally {
                 try {
-                    archiveIS.close();
+                    uncompressedIS.close();
                 } catch (IOException e) {
                     // TODO: what to do?
                 }
@@ -510,15 +511,23 @@ public class ImportingUtilities {
     }
     
     static public InputStream tryOpenAsArchive(File file, String mimeType) {
+        return tryOpenAsArchive(file, mimeType, null);
+    }
+    
+    static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) {
         String fileName = file.getName();
         try {
             if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) {
                 return new TarInputStream(new GZIPInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar.bz2")) {
                 return new TarInputStream(new CBZip2InputStream(new FileInputStream(file)));
-            } else if (fileName.endsWith(".tar")) {
+            } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
                 return new TarInputStream(new FileInputStream(file));
-            } else if (fileName.endsWith(".zip")) {
+            } else if (fileName.endsWith(".zip") 
+                    || "application/x-zip-compressed".equals(contentType)
+                    || "application/zip".equals(contentType) 
+                    || "application/x-compressed".equals(contentType)
+                    || "multipar/x-zip".equals(contentType)) {
                 return new ZipInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".kmz")) {
                 return new ZipInputStream(new FileInputStream(file));
@@ -600,9 +609,21 @@ public class ImportingUtilities {
     }
     
     static public InputStream tryOpenAsCompressedFile(File file, String mimeType) {
+        return tryOpenAsCompressedFile(file, mimeType, null);
+    }
+    
+    static public InputStream tryOpenAsCompressedFile(File file, String mimeType, String contentEncoding) {
         String fileName = file.getName();
         try {
-            if (fileName.endsWith(".gz")) {
+            /*
+             * TODO: Do we need to support MIME types as well as content encodings?
+             * application/x-bzip2
+             * application/x-gzip
+             * multipart/x-gzip
+             */
+            if (fileName.endsWith(".gz") 
+                    || "gzip".equals(contentEncoding) 
+                    || "x-gzip".equals(contentEncoding)) {                
                 return new GZIPInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".bz2")) {
                 return new CBZip2InputStream(new FileInputStream(file));
