@@ -132,15 +132,8 @@ check_python() {
         error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
     fi
     PYTHON_VERSION="`$PYTHON --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
-    if [ "$PYTHON_VERSION" = "2.7" ] ; then
-	PYTHON="`which python2.6 2> /dev/null`"
-	if [ -z "$PYTHON" ] ; then
-            error "Default Python is v2.7 which not supported by Windmill. No python2.6 alternative found on path."
-	fi
-	PYTHON_VERSION="`$PYTHON --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
-    fi
-    if [ "$PYTHON_VERSION" != "2.5" ] && [ "$PYTHON_VERSION" != "2.6" ] ; then
-        error "This action requires python version 2.5.x, 2.6.x. You can download it for free at http://www.python.org/"
+    if [ "$PYTHON_VERSION" != "2.6" ] && [ "$PYTHON_VERSION" != "2.7" ]; then
+        error "This action requires Python version 2.6.x. or 2.7.x. You can download it for free at http://www.python.org/"
     fi
 }
 
@@ -359,9 +352,9 @@ jarbundler_prepare() {
 virtualenv_prepare() {
     check_python
 
-    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.5.1.tar.gz"
-    VIRTUALENV_FILE="virtualenv-1.5.1.tar.gz"
-    VIRTUALENV_DIR="virtualenv-1.5.1"
+    VIRTUALENV_DIR="virtualenv-1.7.1.2"
+    VIRTUALENV_FILE="${VIRTUALENV_DIR}.tar.gz"
+    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/${VIRTUALENV_FILE}"
 
     tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
     
