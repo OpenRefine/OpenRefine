@@ -326,17 +326,34 @@ launch4j_prepare() {
     tools_prepare
     
     if [ "$OS" = "macosx" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-macosx.tgz"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.2/launch4j-3.0.2-macosx.tgz"
     elif [ "$OS" = "windows" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-win32.zip"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.2/launch4j-3.0.2-win32.zip"
     elif [ "$OS" = "linux" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.1/launch4j-3.0.1-linux.tgz"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.2/launch4j-3.0.2-linux.tgz"
     fi
     
     LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
     LAUNCH4J_DIR="launch4j"
     
     tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
+
+    # Workaround: launch4j 3.0.2 & earlier does not work on versions of MacOS
+    # without PPC support (e.g. Lion) so we patch it to include Intel binaries; 
+    # the following lines can be removed once we update to a version of 
+    # launch4j that fixes the issue (not available yet).
+    if [ "$OS" = "macosx" ] ; then
+        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak" ] ; then
+            mv "$REFINE_TOOLS_DIR/launch4j/bin/windres" "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak"
+            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/windres" $REFINE_TOOLS_DIR/launch4j/bin/windres
+            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/windres"
+        fi
+        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak" ] ; then
+            mv "$REFINE_TOOLS_DIR/launch4j/bin/ld" "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak"
+            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/ld" $REFINE_TOOLS_DIR/launch4j/bin/ld
+            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/ld"
+        fi
+    fi
 }
     
 jarbundler_prepare() {
