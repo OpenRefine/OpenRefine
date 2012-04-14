@@ -171,6 +171,7 @@ public class ProjectMetadata implements Jsonizable {
 
     public void setName(String name) {
         this._name = name;
+        updateModified();
     }
 
     public String getName() {
@@ -179,6 +180,7 @@ public class ProjectMetadata implements Jsonizable {
 
     public void setEncoding(String encoding) {
         this._encoding = encoding;
+        updateModified();
     }
 
     public String getEncoding() {
@@ -187,6 +189,7 @@ public class ProjectMetadata implements Jsonizable {
 
     public void setEncodingConfidence(int confidence) {
         this._encodingConfidence = confidence;
+        updateModified();
     }
 
     public void setEncodingConfidence(String confidence) {
@@ -201,6 +204,7 @@ public class ProjectMetadata implements Jsonizable {
 
     public void setPassword(String password) {
         this._password = password;
+        updateModified();
     }
 
     public String getPassword() {
@@ -229,5 +233,6 @@ public class ProjectMetadata implements Jsonizable {
         } else {
             _customMetadata.put(key, value);
         }
+        updateModified();
     }
 }
