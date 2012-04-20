@@ -113,7 +113,9 @@ public class Refine {
         server.init(host,port);
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
-        if (!headless) {
+        if (headless) {
+            System.setProperty("java.awt.headless", "true"); 
+        } else {
             try {
                 RefineClient client = new RefineClient();
                 client.init(host,port);
