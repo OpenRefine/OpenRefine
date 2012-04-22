@@ -131,6 +131,7 @@ function init() {
     RefineServlet.registerCommand(module, "get-default-prefixes", new GetDefaultPrefixesCommand(ctxt));
     RefineServlet.registerCommand(module, "add-prefix", new AddPrefixCommand(ctxt));
     RefineServlet.registerCommand(module, "remove-prefix", new RemovePrefixCommand(ctxt));
+    RefineServlet.registerCommand(module, "refresh-prefix", new RefreshPrefixCommand(ctxt));
     RefineServlet.registerCommand(module, "suggest-term", new SuggestTermCommand(ctxt));
     RefineServlet.registerCommand(module, "get-prefix-cc-uri", new SuggestPrefixUriCommand(ctxt));
     RefineServlet.registerCommand(module, "upload-file-add-prefix", new AddPrefixFromFileCommand(ctxt));
