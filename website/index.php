@@ -31,6 +31,7 @@ $section_links = array(
 		'SPARQL with full-text search reconciliation' => 'searchReconDocs',
 		'Using Sindice' => 'sindiceDocs',
         'Publications' => 'publications',
+	'External resources' => 'extResources',
 		'FAQ' => 'faq'
     ),
     'support-dev' => array(
@@ -123,6 +124,11 @@ $pages = array(
         'text' => 'rdf-export',
     ),
 	
+    'extResources' => array(
+        'title' => 'External Resources',
+        'section' => 'docs',
+        'text' => 'extResources',
+    ),
     'faq' => array(
         'title' => 'Frequently Asked Questions',
         'section' => 'docs',
