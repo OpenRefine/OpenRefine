@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/grefine-all/server/lib/servlet-api-2.5.jar" sourcepath="/grefine-all/server/lib-src/servlet-api-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="/grefine-all/main/webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="/grefine-all/main/webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
 	<classpathentry kind="lib" path="/grefine-all/main/tests/server/lib/testng-5.12.1.jar"/>
@@ -41,15 +40,10 @@
 	<classpathentry kind="lib" path="/grefine-all/server/lib/jetty-6.1.22.jar"/>
 	<classpathentry kind="lib" path="/grefine-all/server/lib/jetty-util-6.1.22.jar"/>
 	<classpathentry kind="lib" path="/grefine-all/main/tests/server/lib/mockito-all-1.8.4.jar"/>
-	<classpathentry kind="lib" path="test-libs/org.springframework.core-3.0.4.RELEASE.jar"/>
-	<classpathentry kind="lib" path="test-libs/org.springframework.test-3.0.4.RELEASE.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/lucene-core-3.0.1.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/guava-r07.jar"/>
 	<classpathentry kind="lib" path="/grefine-all/main/webapp/WEB-INF/lib/jackson-core-asl-1.8.6.jar"/>
-	<classpathentry kind="lib" path="module/MOD-INF/lib/iri-0.8.jar"/>
-	<classpathentry kind="lib" path="module/MOD-INF/lib/icu4j-3.4.4.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/simmetrics_jar_v1_6_2_d07_02_07.jar"/>
-	<classpathentry kind="lib" path="module/MOD-INF/lib/fadmaa-ngram-arq-2.8.5.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/apache-mime4j-0.6.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/lucene-analyzers-3.0.1.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/java-rdfa-0.4.1.jar"/>
@@ -57,7 +51,14 @@
 	<classpathentry kind="lib" path="/grefine-all/main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/jackson-mapper-asl-1.8.6.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/grefine-all"/>
-	<classpathentry kind="lib" path="module/MOD-INF/lib/hacked-jena-2.6.4.jar"/>
-	<classpathentry kind="lib" path="module/MOD-INF/lib/hacked-xercesImpl-2.7.1.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jena-arq-2.9.0-incubating.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jena-core-2.7.0-incubating.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jena-iri-0.9.0-incubating.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jena-larq-1.0.0-incubating.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>
