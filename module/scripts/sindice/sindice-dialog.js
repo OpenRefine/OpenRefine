@@ -26,7 +26,7 @@ SindiceDialog.prototype.show = function(column){
 SindiceDialog.prototype.guessDomain = function(column){
 	var self = this;
 	var dismissBusy = DialogSystem.showBusy('Finding related RDF datasets...(This could take up to 5 minutes)');
-	$.post("/command/rdf-extension/sindiceGuessType",{"project":theProject.id,"columnName":self._column.name},function(data){
+	$.post("../command/rdf-extension/sindiceGuessType",{"project":theProject.id,"columnName":self._column.name},function(data){
 		dismissBusy();
 		if(data.code==='error'){
 			alert(data.message);
@@ -57,7 +57,7 @@ SindiceDialog.prototype._footer = function(footer){
 			alert("a domain needs to be selected");
 			return;
 		}
-		$.post("/command/rdf-extension/addSindiceService",{"domain":domain},function(data){
+		$.post("../command/rdf-extension/addSindiceService",{"domain":domain},function(data){
 			RdfReconciliationManager.registerService(data,self._level);
 		},"json");
     }).appendTo(footer);

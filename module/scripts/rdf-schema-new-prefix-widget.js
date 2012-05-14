@@ -55,7 +55,7 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
     		return;
     	}
 		dismissBusy = DialogSystem.showBusy('Trying to import vocabulary from ' + uri);
-    	$.post("/command/rdf-extension/add-prefix",{name:name,uri:uri,"fetch-url":uri,project: theProject.id,fetch:fetchOption},function(data){
+    	$.post("../command/rdf-extension/add-prefix",{name:name,uri:uri,"fetch-url":uri,project: theProject.id,fetch:fetchOption},function(data){
     		if (data.code === "error"){
     			alert('Error:' + data.message)
     		}else{
@@ -100,7 +100,7 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix,onDone){
 
 NewPrefixWidget.prototype.suggestUri = function(prefix){
 	var self = this;
-	$.get("/command/rdf-extension/get-prefix-cc-uri",{prefix:prefix},function(data){
+	$.get("../command/rdf-extension/get-prefix-cc-uri",{prefix:prefix},function(data){
 		if(!self._elmts.uri.val() && data.uri){
 			self._elmts.uri.val(data.uri);
 			if(self._elmts.message.text()){

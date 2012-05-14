@@ -18,7 +18,7 @@ function RdfPrefixesManager (dialog,prefixes){
 
 RdfPrefixesManager.prototype._getDefaultPrefixes = function(onDone){
 	var self =this;
-	$.get("/command/rdf-extension/get-default-prefixes",{project:theProject.id},function(data){
+	$.get("../command/rdf-extension/get-default-prefixes",{project:theProject.id},function(data){
 		if(onDone){
 			onDone(data);
 		}
@@ -27,7 +27,7 @@ RdfPrefixesManager.prototype._getDefaultPrefixes = function(onDone){
 
 RdfPrefixesManager.prototype._savePrefixes = function(onDone){
 	var self =this;
-	$.post("/command/rdf-extension/save-prefixes",{project:theProject.id,prefixes:JSON.stringify(self._prefixes)},function(data){
+	$.post("../command/rdf-extension/save-prefixes",{project:theProject.id,prefixes:JSON.stringify(self._prefixes)},function(data){
 		if(onDone){
 			onDone(data);
 		}

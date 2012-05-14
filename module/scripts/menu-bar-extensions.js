@@ -32,7 +32,7 @@ RdfExporterMenuBar.rdfExportRows = function(format, ext) {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "/command/core/export-rows/" + name + "." + ext)
+        .attr("action", "../command/core/export-rows/" + name + "." + ext)
         .attr("target", "gridworks-export");
 
     $('<input />')
@@ -132,7 +132,7 @@ ReconciliationSindiceServiceDialog.prototype._footer= function(footer){
         	alert("Domain need to be provided!");
         	return;
         }
-        $.post("/command/rdf-extension/addSindiceService",{"domain":domain},function(data){
+        $.post("../command/rdf-extension/addSindiceService",{"domain":domain},function(data){
 			RdfReconciliationManager.registerService(data,self._level);
 		},"json");
     }).appendTo(footer);
@@ -213,7 +213,7 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 	    	
 	    	var services = ReconciliationManager.getAllServices();
 	    	
-	    	$.post("/command/rdf-extension/addService",
+	    	$.post("../command/rdf-extension/addService",
 					{"datasource":"file_url","name":name,"url":file_url,properties:prop_uris, "file_format":file_format},
 					function(data){
 						self._dismissBusy();
@@ -302,7 +302,7 @@ ReconciliationSparqlServiceDialog.prototype._footer = function(footer){
 	    
 	    RdfReconciliationManager.synchronizeServices(
 	    	function(){
-	    			$.post("/command/rdf-extension/addService",
+	    			$.post("../command/rdf-extension/addService",
 	    					{"datasource":"sparql","name":name,"url":endpoint,"type":type,"graph":graph_uri,properties:prop_uris},
 	    					function(data){
 	    						self._dismissBusy();
@@ -325,7 +325,7 @@ RdfReconciliationManager.synchronizeServices = function(onDone){
 			ids.push(services[i].url);
 		}
 	}
-	$.post("/command/rdf-extension/initializeServices",{"services":JSON.stringify(ids)},function(data){
+	$.post("command/rdf-extension/initializeServices",{"services":JSON.stringify(ids)},function(data){
 		RdfReconciliationManager.registerService(data);
 		if(onDone){
 			onDone();
