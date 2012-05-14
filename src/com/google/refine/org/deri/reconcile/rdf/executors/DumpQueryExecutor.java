@@ -4,6 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.jena.larq.IndexBuilderString;
+import org.apache.jena.larq.IndexLARQ;
+import org.apache.jena.larq.LARQ;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -13,9 +16,6 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.query.larq.IndexBuilderString;
-import com.hp.hpl.jena.query.larq.IndexLARQ;
-import com.hp.hpl.jena.query.larq.LARQ;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -63,15 +63,14 @@ public class DumpQueryExecutor implements QueryExecutor {
 	
 	public DumpQueryExecutor(Model m, String propertyUri, boolean ngramIndex,int minGram, int maxGram){
 		loaded = true;
-		LARQ.setMinGram(minGram);LARQ.setMaxGram(maxGram);
 		this.model = m;
 		this.propertyUri = propertyUri;
 		IndexBuilderString larqBuilder;
 		if(propertyUri != null){
 			Property p = model.getProperty(propertyUri);
-			larqBuilder= new IndexBuilderString(p,ngramIndex?LARQ.NGRAM_INDEX:LARQ.STANDARD_INDEX) ;
+			larqBuilder= new IndexBuilderString(p) ;
 		}else{
-			larqBuilder= new IndexBuilderString(ngramIndex?LARQ.NGRAM_INDEX:LARQ.STANDARD_INDEX) ;
+			larqBuilder= new IndexBuilderString() ;
 		}
 		larqBuilder.indexStatements(model.listStatements()) ;
 		larqBuilder.closeWriter() ;
@@ -118,7 +117,7 @@ public class DumpQueryExecutor implements QueryExecutor {
 			larqBuilder = new IndexBuilderString() ;
 		}else{
 			Property p = model.getProperty(propertyUri);
-			larqBuilder = new IndexBuilderString(p,LARQ.STANDARD_INDEX) ;
+			larqBuilder = new IndexBuilderString(p);
 		}
 
 		larqBuilder.indexStatements(model.listStatements()) ;
