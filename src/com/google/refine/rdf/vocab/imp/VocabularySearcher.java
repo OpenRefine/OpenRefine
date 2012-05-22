@@ -61,6 +61,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 		_directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
 		writer = new IndexWriter(_directory, new SimpleAnalyzer(),
 				IndexWriter.MaxFieldLength.LIMITED);
+		writer.commit();
 		searcher = new IndexSearcher(_directory);
 	}
 
