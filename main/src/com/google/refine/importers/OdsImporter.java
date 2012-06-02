@@ -204,6 +204,13 @@ public class OdsImporter extends TabularImportingParserBase {
             value = cell.getPercentageValue();
         } else if ("string".equals(cellType)) {
             value = cell.getStringValue();
+        } else if (cellType == null) {
+            value = cell.getDisplayText();
+            if ("".equals(value)) {
+                value = null;
+            } else {
+                logger.info("Null cell type with non-empty value: " + value);                
+            }
         } else {
             logger.info("Unexpected cell type " + cellType);
             value = cell.getDisplayText();
