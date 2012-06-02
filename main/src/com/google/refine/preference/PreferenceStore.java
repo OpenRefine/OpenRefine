@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2012 Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,7 @@ import com.google.refine.Jsonizable;
 import com.google.refine.RefineServlet;
 
 public class PreferenceStore implements Jsonizable {
+    private boolean dirty = false;
     protected Map<String, Object> _prefs = new HashMap<String, Object>();
     
     public void put(String key, Object value) {
@@ -56,6 +57,7 @@ public class PreferenceStore implements Jsonizable {
         } else {
             _prefs.put(key, value);
         }
+        dirty = true;
     }
     
     public Object get(String key) {
@@ -85,6 +87,14 @@ public class PreferenceStore implements Jsonizable {
             writer.endObject();
         
         writer.endObject();
+        dirty = false;
+    }
+    
+    /**
+     * @return true if the preference store has unsaved changes
+     */
+    public boolean isDirty() {
+        return dirty;
     }
     
     @SuppressWarnings("unchecked")
@@ -100,6 +110,7 @@ public class PreferenceStore implements Jsonizable {
                     _prefs.put(key, loadObject(o));
                 }
             }
+            dirty = false; // internal puts don't count
         }
     }
     
