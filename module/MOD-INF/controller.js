@@ -165,7 +165,8 @@ function init() {
             "scripts/rdf-schema-vocabulary-manager.js",
             "scripts/rdf-schema-new-prefix-widget.js",
             "scripts/externals/jquery.form.js",
-            "scripts/sindice/sindice-dialog.js"
+            "scripts/sindice/sindice-dialog.js",
+            "scripts/common.js"
 		]
     );
     

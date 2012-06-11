@@ -140,7 +140,7 @@ RdfSchemaAlignmentDialog.prototype._previewRdf = function(){
         { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
         	self._previewPane.empty();
-        	self._previewPane.html(replaceURLWithHTMLLinks(data.v));
+        	self._previewPane.html(linkify(data.v));
 	    },
 	    "json"
 	);
@@ -274,9 +274,4 @@ RdfSchemaAlignmentDialog._findColumn = function(columnName) {
     }
     return null;
 };
-
-function replaceURLWithHTMLLinks(text) {
-    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    return text.replace(exp,"<a href='$1'>$1</a>"); 
-}
 
