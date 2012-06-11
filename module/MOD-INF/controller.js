@@ -140,6 +140,7 @@ function init() {
 	RefineServlet.registerCommand(module, "uploadFileAndAddService", new UploadFileAndAddServiceCommand());
 	RefineServlet.registerCommand(module, "sindiceGuessType", new SindiceGuessTypeCommand());
 	RefineServlet.registerCommand(module, "addSindiceService", new AddSindiceService());
+	RefineServlet.registerCommand(module, "addStanbolService", new AddStanbolServiceCommand());
 	RefineServlet.registerCommand(module, "initializeServices", new InitializeServicesCommand());
 	//RefineServlet.registerCommand(module, "sindiceReconcile", new SindiceReconcileCommand());
 	//this is just to initialize ServiceRegistry
