@@ -51,11 +51,11 @@ public class AddStanbolServiceCommand extends Command {
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String uri = req.getParameter("uri") + ENTITYHUB_PATH;
 		log.debug("Requesting referenced site to Stanbol EntityHub '" + uri + "'...");
-		Set<ReconciliationStanbolSite> reconciliations = retriveReconciliations(uri);
+		Set<ReconciliationStanbolSite> reconciliations = retrieveReconciliations(uri);
 		this.serializeReconciliations(res, reconciliations);
 	}
 
-	private Set<ReconciliationStanbolSite> retriveReconciliations(String uri) throws IOException, JsonParseException, JsonMappingException {
+	private Set<ReconciliationStanbolSite> retrieveReconciliations(String uri) throws IOException, JsonParseException, JsonMappingException {
 		HttpEntity entity = HttpUtils.get(uri, JSON);
 		ObjectMapper mapper = new ObjectMapper();
 		Set<String> sites = mapper.readValue(entity.getContent(), new TypeReference<Set<String>>(){});
