@@ -18,7 +18,7 @@ function RdfPrefixesManager (dialog,prefixes){
 
 RdfPrefixesManager.prototype._getDefaultPrefixes = function(onDone){
 	var self =this;
-	$.get("../command/rdf-extension/get-default-prefixes",{project:theProject.id},function(data){
+	$.get("command/rdf-extension/get-default-prefixes",{project:theProject.id},function(data){
 		if(onDone){
 			onDone(data);
 		}

@@ -80,7 +80,7 @@ RdfReconciliationManager.registerService = function(data,level){
 		alert('Error:' + data.message)
 	}else{
 		var url = location.href;  // entire url including querystring - also: window.location.href;
-	    var baseURL = url.substring(0,url.lastIndexOf('/'));
+		var baseURL = url.substring(0,url.lastIndexOf('/'));
 		var service_url = baseURL + '/extension/rdf-extension/services/' + data.service.id;
 		
 		//ReconciliationManager doesnot call this method upon unregister.. this is why I am calling it myself
