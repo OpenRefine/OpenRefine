@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.freebase.commands.auth;
+package com.google.refine.commands.auth;
 
 import java.io.IOException;
 

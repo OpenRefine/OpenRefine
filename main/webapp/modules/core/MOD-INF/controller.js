@@ -137,6 +137,9 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
+  
+  RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
+  RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
 }
 
 function registerOperations() {

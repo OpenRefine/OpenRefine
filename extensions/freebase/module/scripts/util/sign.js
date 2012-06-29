@@ -102,7 +102,7 @@ if (typeof window.Sign == 'undefined') {
     },
 
     signin : function(success, provider, width, height) {
-      var newwin = window.Sign.popup("/command/freebase/authorize/" + provider, width, height);
+      var newwin = window.Sign.popup("/command/core/authorize/" + provider, width, height);
 
       if (newwin !== null) {
         newwin.opener = window;
@@ -138,7 +138,7 @@ if (typeof window.Sign == 'undefined') {
 
     signout : function(success,provider) {
       $.ajax({
-        url: "/command/freebase/deauthorize/" + provider,
+        url: "/command/core/deauthorize/" + provider,
         success: function() {
           if (typeof success == 'undefined') {
             window.location.reload();

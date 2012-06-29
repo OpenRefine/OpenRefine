@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.freebase.commands.auth;
+package com.google.refine.commands.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -163,6 +163,6 @@ public class AuthorizeCommand extends Command {
                 throw new RuntimeException("neither the 'host' nor 'referer' headers were present in the HTTP response, I can't determine what URL Google Refine is listening to.");
             }
         }
-        return "http://" + host + "/command/freebase/authorize/" + provider.getHost();
+        return "http://" + host + "/command/core/authorize/" + provider.getHost();
     }
 }

@@ -53,8 +53,6 @@ function init() {
   RS.registerCommand(module, "save-protograph",       new Packages.com.google.refine.freebase.commands.SaveProtographCommand());
 
   RS.registerCommand(module, "check-authorization",   new Packages.com.google.refine.freebase.commands.auth.CheckAuthorizationCommand());
-  RS.registerCommand(module, "authorize",             new Packages.com.google.refine.freebase.commands.auth.AuthorizeCommand());
-  RS.registerCommand(module, "deauthorize",           new Packages.com.google.refine.freebase.commands.auth.DeAuthorizeCommand());
   RS.registerCommand(module, "user-badges",           new Packages.com.google.refine.freebase.commands.auth.GetUserBadgesCommand());
 
   RS.registerCommand(module, "upload-data",           new Packages.com.google.refine.freebase.commands.UploadDataCommand());
