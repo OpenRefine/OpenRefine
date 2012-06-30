@@ -159,6 +159,8 @@ public class FileProjectManager extends ProjectManager {
                 }
             }
         }
+        
+        tin.close();
     }
 
     @Override
