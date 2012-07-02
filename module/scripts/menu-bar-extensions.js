@@ -151,7 +151,7 @@ function ReconciliationStanbolServiceDialog() {
 	                "json");
     	} else {
     		inputUri.addClass("error");
-    		inputUri.after($('<img src="../extension/rdf-extension/images/no.png" width="16" height="16" alt="invalid" class="validation" id="validation-img" />'));	
+    		inputUri.after($('<img src="extension/rdf-extension/images/no.png" width="16" height="16" alt="invalid" class="validation" id="validation-img" />'));	
     		alert("Not valid URI")
     	}
     });
