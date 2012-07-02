@@ -120,7 +120,7 @@ function ReconciliationStanbolServiceDialog() {
     	
     	if (validateURI(uri)) {
     		inputUri.attr("disabled", "disabled");
-    		inputUri.after($('<img src="../extension/rdf-extension/images/spinner.gif" width="14" height="14" alt="fetching..." class="validation" id="validation-img" />'));
+    		inputUri.after($('<img src="extension/rdf-extension/images/spinner.gif" width="14" height="14" alt="fetching..." class="validation" id="validation-img" />'));
 		    $.post("command/rdf-extension/addStanbolService",
 				    {
 					    "uri": uri,
