@@ -27,7 +27,7 @@ RdfPrefixesManager.prototype._getDefaultPrefixes = function(onDone){
 
 RdfPrefixesManager.prototype._savePrefixes = function(onDone){
 	var self =this;
-	$.post("../command/rdf-extension/save-prefixes",{project:theProject.id,prefixes:JSON.stringify(self._prefixes)},function(data){
+	$.post("command/rdf-extension/save-prefixes",{project:theProject.id,prefixes:JSON.stringify(self._prefixes)},function(data){
 		if(onDone){
 			onDone(data);
 		}

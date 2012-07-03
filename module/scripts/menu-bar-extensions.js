@@ -32,7 +32,7 @@ RdfExporterMenuBar.rdfExportRows = function(format, ext) {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "../command/core/export-rows/" + name + "." + ext)
+        .attr("action", "command/core/export-rows/" + name + "." + ext)
         .attr("target", "gridworks-export");
 
     $('<input />')
@@ -168,7 +168,7 @@ ReconciliationStanbolServiceDialog.prototype.printAddedService = function(contai
 	var cached = (obj.local ? "locally cached" : "not locally cached");
 	var image = (registered ? "yes" : "no");
 	var label = (registered ? "registered" : "not added (service already registered)");
-	var sniper = '<dt><a href="' + obj.uri + '">' + obj.uri + '</a> <img src="../extension/rdf-extension/images/' + image + '.png" width="16" height="16" alt="' + label + '" title="' + label + '" /></dt><dd><strong>' + obj.name + '</strong>, ' + cached + '</dd>';
+	var sniper = '<dt><a href="' + obj.uri + '">' + obj.uri + '</a> <img src="extension/rdf-extension/images/' + image + '.png" width="16" height="16" alt="' + label + '" title="' + label + '" /></dt><dd><strong>' + obj.name + '</strong>, ' + cached + '</dd>';
 	if (!registered) {
 		sniper += '<dd>' + label + '</dd>';
 	}
@@ -215,7 +215,7 @@ ReconciliationSindiceServiceDialog.prototype._footer= function(footer){
         	alert("Domain need to be provided!");
         	return;
         }
-        $.post("../command/rdf-extension/addSindiceService",{"domain":domain},function(data){
+        $.post("command/rdf-extension/addSindiceService",{"domain":domain},function(data){
 			RdfReconciliationManager.registerService(data,self._level);
 		},"json");
     }).appendTo(footer);
@@ -296,7 +296,7 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 	    	
 	    	var services = ReconciliationManager.getAllServices();
 	    	
-	    	$.post("../command/rdf-extension/addService",
+	    	$.post("command/rdf-extension/addService",
 					{"datasource":"file_url","name":name,"url":file_url,properties:prop_uris, "file_format":file_format},
 					function(data){
 						self._dismissBusy();
@@ -385,7 +385,7 @@ ReconciliationSparqlServiceDialog.prototype._footer = function(footer){
 	    
 	    RdfReconciliationManager.synchronizeServices(
 	    	function(){
-	    			$.post("../command/rdf-extension/addService",
+	    			$.post("command/rdf-extension/addService",
 	    					{"datasource":"sparql","name":name,"url":endpoint,"type":type,"graph":graph_uri,properties:prop_uris},
 	    					function(data){
 	    						self._dismissBusy();

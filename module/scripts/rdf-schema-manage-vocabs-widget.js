@@ -34,7 +34,7 @@ ManageVocabsWidget.prototype.renderBody = function(){
     	return function(e){
     		e.preventDefault();
     		dismissBusy = DialogSystem.showBusy('Deleting prefix ' + name);
-			$.post('/command/rdf-extension/remove-prefix',{'name':name,'project':theProject.id},function(data){
+			$.post('command/rdf-extension/remove-prefix',{'name':name,'project':theProject.id},function(data){
 				dismissBusy();
 				if(data.code==='error'){
 					//TODO
@@ -50,7 +50,7 @@ ManageVocabsWidget.prototype.renderBody = function(){
     		e.preventDefault();
     		if (window.confirm("This will re-fetch the vocabulary from \"" + uri + "\" If you added it by uploading a file you need to delete it and add it again to refresh the index. Continue?")) {
     			dismissBusy = DialogSystem.showBusy('Refreshing prefix ' + name);
-    			$.post('/command/rdf-extension/refresh-prefix',{'name':name,'uri':uri,'project':theProject.id},function(data){
+    			$.post('command/rdf-extension/refresh-prefix',{'name':name,'uri':uri,'project':theProject.id},function(data){
     				dismissBusy();
     				if(data.code==='error'){
     					alert('something went wrong: ' + data.messge);
