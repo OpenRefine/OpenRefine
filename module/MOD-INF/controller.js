@@ -47,8 +47,8 @@ var rdfReconcileExtension = {
 				//it is a preview resource request
 				return 'preview-resource';
 			}
-			//metadata request is a GET request that has only 'callback' parameter
-			if(parameters.equals(Packages.java.util.Collections.singleton('callback'))){
+			//metadata request is a GET request with 'callback' parameter
+			if(parameters.contains('callback')){
 				return 'metadata';
 			}
 		}else if(method == 'POST'){
@@ -140,6 +140,7 @@ function init() {
 	RefineServlet.registerCommand(module, "uploadFileAndAddService", new UploadFileAndAddServiceCommand());
 	RefineServlet.registerCommand(module, "sindiceGuessType", new SindiceGuessTypeCommand());
 	RefineServlet.registerCommand(module, "addSindiceService", new AddSindiceService());
+	RefineServlet.registerCommand(module, "addStanbolService", new AddStanbolServiceCommand());
 	RefineServlet.registerCommand(module, "initializeServices", new InitializeServicesCommand());
 	//RefineServlet.registerCommand(module, "sindiceReconcile", new SindiceReconcileCommand());
 	//this is just to initialize ServiceRegistry
@@ -165,7 +166,8 @@ function init() {
             "scripts/rdf-schema-vocabulary-manager.js",
             "scripts/rdf-schema-new-prefix-widget.js",
             "scripts/externals/jquery.form.js",
-            "scripts/sindice/sindice-dialog.js"
+            "scripts/sindice/sindice-dialog.js",
+            "scripts/common.js"
 		]
     );
     
@@ -188,7 +190,7 @@ function process(path, request, response) {
 	var logger = loggerFactory.getLogger("rdf_extension");
     var method = request.getMethod();
     
-    logger.info('recieving request for ' + path);
+    logger.info('receiving request for ' + path);
     if(rdfReconcileExtension.isKnownRequestUrl(path)){
     	var command = rdfReconcileExtension.getCommand(path, request);
     	logger.info('command is ' + command);

@@ -32,7 +32,7 @@ RdfExporterMenuBar.rdfExportRows = function(format, ext) {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "../command/core/export-rows/" + name + "." + ext)
+        .attr("action", "command/core/export-rows/" + name + "." + ext)
         .attr("target", "gridworks-export");
 
     $('<input />')
@@ -71,13 +71,16 @@ RdfReconciliationManager.newRdfService = function(){
 RdfReconciliationManager.newSindiceService = function(){
 	new ReconciliationSindiceServiceDialog();
 };
+RdfReconciliationManager.newStanbolService = function(){
+	new ReconciliationStanbolServiceDialog();
+};
 
 RdfReconciliationManager.registerService = function(data,level){
 	if (data.code === "error"){
 		alert('Error:' + data.message)
 	}else{
 		var url = location.href;  // entire url including querystring - also: window.location.href;
-	    var baseURL = url.substring(0,url.lastIndexOf('/'));
+		var baseURL = url.substring(0,url.lastIndexOf('/'));
 		var service_url = baseURL + '/extension/rdf-extension/services/' + data.service.id;
 		
 		//ReconciliationManager doesnot call this method upon unregister.. this is why I am calling it myself
@@ -90,6 +93,86 @@ RdfReconciliationManager.registerService = function(data,level){
 			DialogSystem.dismissUntil(level - 1);
 		}
 	}
+};
+
+function ReconciliationStanbolServiceDialog() {
+
+    var self = this; 
+
+    var dialog = $(DOM.loadHTML("rdf-extension", "scripts/stanbol-service.html"));
+
+    var inputUri = dialog.find("input#stanbol-uri");
+
+    dialog.find("button#cancel").click(function() {
+        DialogSystem.dismissUntil(self._level - 1);
+    });
+
+    dialog.find("button#register").click(function() {
+    	
+    	if ($("img#validation-img").length) { $("img#validation-img").remove(); }
+    	
+	    var uri = inputUri.val();
+	    
+	    if(uri.charAt(uri.length-1) == "/") {
+	    	uri = uri.slice(0, -1);
+	    	inputUri.val(uri);
+	    }
+    	
+    	if (validateURI(uri)) {
+    		inputUri.attr("disabled", "disabled");
+    		inputUri.after($('<img src="extension/rdf-extension/images/spinner.gif" width="14" height="14" alt="fetching..." class="validation" id="validation-img" />'));
+		    $.post("command/rdf-extension/addStanbolService",
+				    {
+					    "uri": uri,
+	                    "engine": JSON.stringify(ui.browsingEngine.getJSON()),
+	                    "project": theProject.id
+				    },
+				    function(data) {
+				    	
+				    	var registering = $("dl#stanbol-registering");
+				    	registering.parent().height($("p#stanbol-help").height());
+				    	registering.parent().fadeIn("slow");
+				    	$("p#stanbol-help").hide();
+				    	$.each(data, function(i, obj) {
+				    		//check issue #579: http://code.google.com/p/google-refine/issues/detail?id=579
+				    		if (ReconciliationManager.getServiceFromUrl(obj.uri)) {
+				    			self.printAddedService(registering, obj, false)
+				    		} else {
+					    	    ReconciliationManager.registerStandardService(obj.uri, function(index) {
+					    	    	self.printAddedService(registering, obj, true)
+					    	    });	
+				    		}
+				    	});
+				    	$("img#validation-img").remove();
+				    	//DialogSystem.dismissUntil(self._level - 1);
+				    	dialog.find("button#register").hide();
+				    	dialog.find("button#cancel").text("Close");
+		            },
+	                "json");
+    	} else {
+    		inputUri.addClass("error");
+    		inputUri.after($('<img src="extension/rdf-extension/images/no.png" width="16" height="16" alt="invalid" class="validation" id="validation-img" />'));	
+    		alert("Not valid URI")
+    	}
+    });
+	
+	var frame = DialogSystem.createDialog();
+    frame.width("500px");
+    dialog.appendTo(frame);
+    
+	self._level = DialogSystem.showDialog(frame);
+	
+};
+
+ReconciliationStanbolServiceDialog.prototype.printAddedService = function(container, obj, registered) {
+	var cached = (obj.local ? "locally cached" : "not locally cached");
+	var image = (registered ? "yes" : "no");
+	var label = (registered ? "registered" : "not added (service already registered)");
+	var sniper = '<dt><a href="' + obj.uri + '">' + obj.uri + '</a> <img src="extension/rdf-extension/images/' + image + '.png" width="16" height="16" alt="' + label + '" title="' + label + '" /></dt><dd><strong>' + obj.name + '</strong>, ' + cached + '</dd>';
+	if (!registered) {
+		sniper += '<dd>' + label + '</dd>';
+	}
+	container.append(sniper).fadeIn("slow");
 };
 
 function ReconciliationSindiceServiceDialog(){
@@ -132,7 +215,7 @@ ReconciliationSindiceServiceDialog.prototype._footer= function(footer){
         	alert("Domain need to be provided!");
         	return;
         }
-        $.post("../command/rdf-extension/addSindiceService",{"domain":domain},function(data){
+        $.post("command/rdf-extension/addSindiceService",{"domain":domain},function(data){
 			RdfReconciliationManager.registerService(data,self._level);
 		},"json");
     }).appendTo(footer);
@@ -213,7 +296,7 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 	    	
 	    	var services = ReconciliationManager.getAllServices();
 	    	
-	    	$.post("../command/rdf-extension/addService",
+	    	$.post("command/rdf-extension/addService",
 					{"datasource":"file_url","name":name,"url":file_url,properties:prop_uris, "file_format":file_format},
 					function(data){
 						self._dismissBusy();
@@ -302,7 +385,7 @@ ReconciliationSparqlServiceDialog.prototype._footer = function(footer){
 	    
 	    RdfReconciliationManager.synchronizeServices(
 	    	function(){
-	    			$.post("../command/rdf-extension/addService",
+	    			$.post("command/rdf-extension/addService",
 	    					{"datasource":"sparql","name":name,"url":endpoint,"type":type,"graph":graph_uri,properties:prop_uris},
 	    					function(data){
 	    						self._dismissBusy();
@@ -371,6 +454,11 @@ $(function(){
 			                    	 "id" : "rdf/reconcile/sindice",
 			                    	 label: "Based on a Sindice site search...",
 			                    	 click: function() { RdfReconciliationManager.newSindiceService(); }        	 
+			                     },
+			                     {
+			                    	 "id" : "rdf/reconcile/stanbol",
+			                    	 label: "Based on a Apache Stanbol EntityHub...",
+			                    	 click: function() { RdfReconciliationManager.newStanbolService(); }        	 
 			                     }
 						]
 					

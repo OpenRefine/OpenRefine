@@ -49,7 +49,8 @@
 	<classpathentry kind="lib" path="module/MOD-INF/lib/java-rdfa-0.4.1.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/htmlparser-1.3.jar"/>
 	<classpathentry kind="lib" path="/grefine-all/main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
-	<classpathentry kind="lib" path="module/MOD-INF/lib/jackson-mapper-asl-1.8.6.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jackson-core-asl-1.9.5.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jackson-mapper-asl-1.9.5.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/grefine-all"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/jena-arq-2.9.0-incubating.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/jena-core-2.7.0-incubating.jar"/>

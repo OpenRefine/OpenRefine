@@ -136,11 +136,11 @@ RdfSchemaAlignmentDialog.prototype._previewRdf = function(){
 	var schema = this.getJSON();
 	self._previewPane.empty().html('<img src="images/large-spinner.gif" title="loading..."/>');
 	$.post(
-	    "../command/rdf-extension/preview-rdf?" + $.param({ project: theProject.id }),
+	    "command/rdf-extension/preview-rdf?" + $.param({ project: theProject.id }),
         { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
         	self._previewPane.empty();
-        	self._previewPane.html(replaceURLWithHTMLLinks(data.v));
+        	self._previewPane.html(linkify(data.v));
 	    },
 	    "json"
 	);
@@ -232,7 +232,7 @@ RdfSchemaAlignmentDialog.prototype._replaceBaseUri = function(newBaseUri,doNotSa
 	var self = this;
 	RdfSchemaAlignment._defaultNamespace = newBaseUri;
 	if(!doNotSave){
-		$.post("../command/rdf-extension/save-baseURI?" + $.param({project: theProject.id }),{baseURI:newBaseUri},function(data){
+		$.post("command/rdf-extension/save-baseURI?" + $.param({project: theProject.id }),{baseURI:newBaseUri},function(data){
 			if (data.code === "error"){
 				alert('Error:' + data.message)
 			}else{
@@ -274,9 +274,4 @@ RdfSchemaAlignmentDialog._findColumn = function(columnName) {
     }
     return null;
 };
-
-function replaceURLWithHTMLLinks(text) {
-    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    return text.replace(exp,"<a href='$1'>$1</a>"); 
-}
 

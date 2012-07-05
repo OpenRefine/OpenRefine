@@ -57,3 +57,46 @@ div.rdf-flyout-content div.rdf-header{
 	font-weight:bold;
 	margin:4px;
 	}	
+	
+div.dialog-body p {
+    margin-top: 0.7em;
+    margin-bottom: 0.7em;
+}
+
+div.dialog-body img.validation {
+    margin-left: 0.5em;
+}
+
+div.dialog-body input[type=text], div.dialog-body input[type=password] {
+    width: 300px;
+    margin-left: 1em;
+    padding: 3px;
+    font-size: 1em;
+    font-family: inherit;
+    border: #CCC 1px solid;
+    border-top: #888 1px solid;
+    vertical-align: baseline;
+}
+
+div#stanbol-service {
+    background-image: url(../images/stanbol.png); 
+    background-repeat: no-repeat; 
+    background-position: right bottom; 
+}
+	
+div.registering {
+    border: 1px solid #F8DCBB;
+    margin: 1em;
+    padding: 1em;
+    background-color: #F8F8F8;
+    font-size: 90%;
+    overflow: auto;
+}
+
+div.registering dl dd {
+    margin-left: 2em;
+}
+
+div.dialog-body input[type=text].error {
+    border: solid 1px red;
+}
