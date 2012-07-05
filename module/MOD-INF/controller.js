@@ -190,7 +190,7 @@ function process(path, request, response) {
 	var logger = loggerFactory.getLogger("rdf_extension");
     var method = request.getMethod();
     
-    logger.info('recieving request for ' + path);
+    logger.info('receiving request for ' + path);
     if(rdfReconcileExtension.isKnownRequestUrl(path)){
     	var command = rdfReconcileExtension.getCommand(path, request);
     	logger.info('command is ' + command);
