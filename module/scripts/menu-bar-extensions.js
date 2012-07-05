@@ -77,7 +77,7 @@ RdfReconciliationManager.newStanbolService = function(){
 
 RdfReconciliationManager.registerService = function(data,level){
 	if (data.code === "error"){
-		alert('Error:' + data.message)
+		alert('Error: ' + data);
 	}else{
 		var url = location.href;  // entire url including querystring - also: window.location.href;
 		var baseURL = url.substring(0,url.lastIndexOf('/'));
