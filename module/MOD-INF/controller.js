@@ -47,8 +47,8 @@ var rdfReconcileExtension = {
 				//it is a preview resource request
 				return 'preview-resource';
 			}
-			//metadata request is a GET request that has only 'callback' parameter
-			if(parameters.equals(Packages.java.util.Collections.singleton('callback'))){
+			//metadata request is a GET request with 'callback' parameter
+			if(parameters.contains('callback')){
 				return 'metadata';
 			}
 		}else if(method == 'POST'){
