@@ -92,12 +92,6 @@ if (typeof window.Sign == 'undefined') {
       return window.open(url, windowname || "", params_list.join(","));
     },
 
-    signintize : function(cont) {
-      $('.signedin').show();
-      $('.signedout').hide();
-      if (typeof cont == 'function') cont();
-    },
-
     signin : function(success, provider, check_authorization_url, width, height) {
       var newwin = window.Sign.popup("/command/core/authorize/" + provider, width, height);
 
@@ -114,7 +108,7 @@ if (typeof window.Sign == 'undefined') {
             dataType: "json",
             success: function(data) {
               window.user = data;
-              window.Sign.signintize(success);
+              if (typeof success == 'function') success();
             }
           });
         }
@@ -127,12 +121,6 @@ if (typeof window.Sign == 'undefined') {
       return false;
     },
 
-    signoutize : function(cont) {
-      $('.signedin').hide();
-      $('.signedout').show();
-      if (typeof cont == 'function') cont();
-    },
-
     signout : function(success,provider) {
       $.ajax({
         url: "/command/core/deauthorize/" + provider,
@@ -140,7 +128,7 @@ if (typeof window.Sign == 'undefined') {
           if (typeof success == 'undefined') {
             window.location.reload();
           } else {
-            window.Sign.signoutize(success);
+            if (typeof success == 'function') success();
           }
         }
       });

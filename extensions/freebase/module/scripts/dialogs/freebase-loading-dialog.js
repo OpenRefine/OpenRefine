@@ -55,7 +55,11 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
           self._signedin = false;
           loadButton.attr("disabled","disabled");
           $("#freebase-loading-graph-selector-freebase").attr("disabled","disabled").button("refresh");
-          Sign.signout(check_authorization,provider);
+          Sign.signout(function() {
+            $('.signedin').hide();
+            $('.signedout').show();
+            check_authorization();
+          },provider);
         });
         loadButton.unbind().click(function() {
           self._load();
@@ -73,6 +77,8 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
 
         DOM.bind(authorization).signin.click(function() {
           Sign.signin(function() {
+            $('.signedout').hide();
+            $('.signedin').show();
             check_authorization(cont);
           },provider,check_authorization_url);
         });
