@@ -91,7 +91,6 @@ function init() {
     [
       "scripts/extension.js",
 
-      "scripts/util/sign.js",
       "scripts/util/freebase.js",
 
       "scripts/dialogs/freebase-loading-dialog.js",

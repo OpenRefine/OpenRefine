@@ -47,7 +47,8 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
   var loadButton = this._elmts.loadButton;
 
   var check_authorization = function(cont) {
-    $.get("/command/freebase/check-authorization/" + provider, function(data) {
+    var check_authorization_url = "/command/freebase/check-authorization/" + provider;
+    $.get(check_authorization_url, function(data) {
       if ("status" in data && data.code == "/api/status/ok") {
         authorization.html('Signed in as: <a target="_new" href="http://www.freebase.com/view/user/' + data.username + '">' + data.username + '</a> | <a href="javascript:{}" bind="signout">Sign Out</a>').show();
         DOM.bind(authorization).signout.click(function() {
@@ -73,8 +74,8 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
         DOM.bind(authorization).signin.click(function() {
           Sign.signin(function() {
             check_authorization(cont);
-          },provider);
-        });                    
+          },provider,check_authorization_url);
+        });
       }
     },"json");
   };

@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -62,7 +62,7 @@ if (typeof window.Sign == 'undefined') {
       var top = Math.floor((pos.height - height) / 2) + pos.top;
 
       // Chrome might fix this bug, but until then add some padding
-      //  to the height of the popup for the urlbar 
+      //  to the height of the popup for the urlbar
       var is_chrome = /chrome/.test(navigator.userAgent.toLowerCase());
       if (is_chrome) {
         height += 50;
@@ -84,7 +84,7 @@ if (typeof window.Sign == 'undefined') {
 
       var params_list = [];
       for (var key in params) {
-        if (params.hasOwnProperty(key)) {            
+        if (params.hasOwnProperty(key)) {
           params_list.push(key + "=" + params[key]);
         }
       }
@@ -95,13 +95,10 @@ if (typeof window.Sign == 'undefined') {
     signintize : function(cont) {
       $('.signedin').show();
       $('.signedout').hide();
-      if (window.user) {
-        $('.user').html('<a href="http://freebase.com/view' + window.user.id + '">' + window.user.username + '</a>');
-      }
       if (typeof cont == 'function') cont();
     },
 
-    signin : function(success, provider, width, height) {
+    signin : function(success, provider, check_authorization_url, width, height) {
       var newwin = window.Sign.popup("/command/core/authorize/" + provider, width, height);
 
       if (newwin !== null) {
@@ -113,7 +110,7 @@ if (typeof window.Sign == 'undefined') {
           window.location.reload();
         } else {
           $.ajax({
-            url: "/command/freebase/check-authorization/" + provider,
+            url: check_authorization_url,
             dataType: "json",
             success: function(data) {
               window.user = data;
@@ -132,7 +129,7 @@ if (typeof window.Sign == 'undefined') {
 
     signoutize : function(cont) {
       $('.signedin').hide();
-      $('.signedout').show();              
+      $('.signedout').show();
       if (typeof cont == 'function') cont();
     },
 

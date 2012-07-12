@@ -322,6 +322,7 @@ function init() {
       "scripts/util/dom.js",
       "scripts/util/date-time.js",
       "scripts/util/encoding.js",
+      "scripts/util/sign.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
@@ -399,6 +400,7 @@ function init() {
       "scripts/util/date-time.js",
       "scripts/util/custom-suggest.js",
       "scripts/util/encoding.js",
+      "scripts/util/sign.js",
 
       "scripts/widgets/histogram-widget.js",
       "scripts/widgets/slider-widget.js",
