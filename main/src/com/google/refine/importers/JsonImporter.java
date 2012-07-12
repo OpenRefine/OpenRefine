@@ -123,6 +123,13 @@ public class JsonImporter extends TreeImportingParserBase {
                 return Boolean.FALSE;
             case VALUE_NULL:
                 return null;
+            case END_ARRAY:
+            case END_OBJECT:
+            case FIELD_NAME:
+            case NOT_AVAILABLE:
+            case VALUE_EMBEDDED_OBJECT:
+            default:
+                break;
             }
         }
         return null;
