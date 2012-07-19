@@ -70,8 +70,8 @@ public class IdBasedReconConfig extends StrictReconConfig {
         String id;
         
         @Override
-        public int getKey() {
-            return id.hashCode();
+        public String getStringKey() {
+            return id;
         }
     }
 

@@ -252,7 +252,7 @@ public class ReconOperation extends EngineDependentOperation {
                 e2.printStackTrace();
             }
             
-            Map<Integer, JobGroup> jobKeyToGroup = new HashMap<Integer, JobGroup>();
+            Map<String, JobGroup> jobKeyToGroup = new HashMap<String, JobGroup>();
             
             for (ReconEntry entry : _entries) {
                 ReconJob job = _reconConfig.createJob(
@@ -263,7 +263,7 @@ public class ReconOperation extends EngineDependentOperation {
                     entry.cell
                 );
                 
-                int key = job.getKey();
+                String key = job.getStringKey();
                 JobGroup group = jobKeyToGroup.get(key);
                 if (group == null) {
                     group = new JobGroup(job);

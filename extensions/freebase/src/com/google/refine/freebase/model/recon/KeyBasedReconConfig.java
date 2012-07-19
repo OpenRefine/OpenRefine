@@ -81,8 +81,8 @@ public class KeyBasedReconConfig extends StrictReconConfig {
         String key;
         
         @Override
-        public int getKey() {
-            return key.hashCode();
+        public String getStringKey() {
+            return key;
         }
     }
 

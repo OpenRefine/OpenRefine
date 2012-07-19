@@ -70,8 +70,8 @@ public class GuidBasedReconConfig extends StrictReconConfig {
         String guid;
         
         @Override
-        public int getKey() {
-            return guid.hashCode();
+        public String getStringKey() {
+            return guid;
         }
     }
 
