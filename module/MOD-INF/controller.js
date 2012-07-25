@@ -1,7 +1,7 @@
 
-importPackage(com.google.refine.rdf.commands);
-importPackage(com.google.refine.org.deri.reconcile.commands);
-var GRefineServiceManager = Packages.com.google.refine.org.deri.reconcile.GRefineServiceManager;
+importPackage(org.deri.grefine.rdf.commands);
+importPackage(org.deri.grefine.reconcile.commands);
+var GRefineServiceManager = Packages.org.deri.grefine.reconcile.GRefineServiceManager;
 
 var rdfReconcileExtension = {
 	urlRegex : /^services\/[-.a-zA-Z0-9_]+((\/(pre)?view((\/template)?))|((\/suggest\/(type|property|entity)(\/(pre)?view)?)?$))/g,
@@ -76,16 +76,16 @@ var rdfReconcileExtension = {
 function init() {
 	var RefineServlet = Packages.com.google.refine.RefineServlet;
 	RefineServlet.registerClassMapping(
-	        "com.google.refine.operations.SaveRdfSchemaOperation$RdfSchemaChange",
-	        "com.google.refine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange");
+	        "org.deri.grefine.operations.SaveRdfSchemaOperation$RdfSchemaChange",
+	        "org.deri.grefine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange");
 	
-	RefineServlet.cacheClass(Packages.com.google.refine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange);
+	RefineServlet.cacheClass(Packages.org.deri.grefine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange);
 	/*
      * Context Initialization. This is mainly to allow testability. a simple attempt to mimic dependency injection
      */
-    var initializer = new Packages.com.google.refine.rdf.app.InitilizationCommand();
+    var initializer = new Packages.org.deri.grefine.rdf.app.InitilizationCommand();
     RefineServlet.registerCommand(module, "initialize", initializer);
-    var ctxt = new Packages.com.google.refine.rdf.app.ApplicationContext();
+    var ctxt = new Packages.org.deri.grefine.rdf.app.ApplicationContext();
     initializer.initRdfExportApplicationContext(ctxt);
     
     /*
@@ -93,19 +93,19 @@ function init() {
      */
     Packages.com.google.refine.model.Project.registerOverlayModel(
         "rdfSchema",
-        Packages.com.google.refine.rdf.RdfSchema);
+        Packages.org.deri.grefine.rdf.RdfSchema);
     
     /*
      *  Operations
      */
     Packages.com.google.refine.operations.OperationRegistry.registerOperation(
-        module, "save-rdf-schema", Packages.com.google.refine.rdf.operations.SaveRdfSchemaOperation);
+        module, "save-rdf-schema", Packages.org.deri.grefine.rdf.operations.SaveRdfSchemaOperation);
     
     /*
      *  Exporters
      */
     var ExporterRegistry = Packages.com.google.refine.exporters.ExporterRegistry;
-    var RdfExporter = Packages.com.google.refine.rdf.exporters.RdfExporter;
+    var RdfExporter = Packages.org.deri.grefine.rdf.exporters.RdfExporter;
     
     ExporterRegistry.registerExporter("rdf", new RdfExporter(ctxt,org.openrdf.rio.RDFFormat.RDFXML));
     ExporterRegistry.registerExporter("Turtle", new RdfExporter(ctxt,org.openrdf.rio.RDFFormat.TURTLE));
@@ -114,10 +114,10 @@ function init() {
      *  GREL Functions and Binders
      */
     Packages.com.google.refine.grel.ControlFunctionRegistry.registerFunction(
-        "urlify", new Packages.com.google.refine.rdf.expr.functions.strings.Urlify());
+        "urlify", new Packages.org.deri.grefine.rdf.expr.functions.strings.Urlify());
         
     Packages.com.google.refine.expr.ExpressionUtils.registerBinder(
-        new Packages.com.google.refine.rdf.expr.RdfBinder(ctxt));
+        new Packages.org.deri.grefine.rdf.expr.RdfBinder(ctxt));
         
     /*
      *  Commands
