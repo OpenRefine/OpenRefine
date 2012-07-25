@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.deri.grefine.reconcile.model.ReconciliationService;
+
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -46,14 +48,16 @@ public abstract class AbstractAddServiceCommand extends Command{
 	}
 	
 	protected ImmutableList<String> asImmutableList(String text){
-		StringTokenizer tokenizer = new StringTokenizer(text," \n");
 		List<String> lst = new ArrayList<String>();
-		while(tokenizer.hasMoreTokens()){
-			String token = tokenizer.nextToken();
-			if(token.trim().isEmpty()){
-				continue;
+		if (StringUtils.isNotBlank(text)) {
+			StringTokenizer tokenizer = new StringTokenizer(text," \n");
+			while(tokenizer.hasMoreTokens()){
+				String token = tokenizer.nextToken();
+				if(token.trim().isEmpty()){
+					continue;
+				}
+				lst.add(token.trim());
 			}
-			lst.add(token.trim());
 		}
 		return ImmutableList.copyOf(lst);
 	}
