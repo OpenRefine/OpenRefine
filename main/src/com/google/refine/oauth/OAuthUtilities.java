@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
-import oauth.signpost.http.HttpParameters;
 
 public class OAuthUtilities {
     
@@ -77,9 +76,7 @@ public class OAuthUtilities {
             throw new RuntimeException("Can't find secrets for provider '" + provider.getHost() + "'");
         }
         OAuthConsumer oauthConsumer = provider.createConsumer(consumer_info[0],consumer_info[1]);
-        HttpParameters params = new HttpParameters();
-        params.put("realm", provider.getHost());
-        oauthConsumer.setAdditionalParameters(params);
+        oauthConsumer.setSigningStrategy(new AuthorizationHeaderSigningStrategy(provider.getRealm()));
         return oauthConsumer;
     }
 

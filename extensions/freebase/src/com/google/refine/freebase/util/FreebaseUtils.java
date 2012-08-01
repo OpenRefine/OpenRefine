@@ -71,7 +71,7 @@ public class FreebaseUtils {
 
     static final Logger logger = LoggerFactory.getLogger("freebase");
     
-    static final public String FREEBASE_HOST = "www.freebase.com";
+    static final public String FREEBASE_HOST = "freebase.com";
     
     static final private String FREEQ_URL = "http://data.labs.freebase.com/freeq/refine";
     
@@ -81,15 +81,15 @@ public class FreebaseUtils {
     static final private int JUDGES = 4;
     
     private static String getUserInfoURL(String host) {
-        return "http://" + host + "/api/service/user_info";
+        return "http://api." + host + "/api/service/user_info";
     }
 
     private static String getMQLWriteURL(String host) {
-        return "http://" + host + "/api/service/mqlwrite";
+        return "http://api." + host + "/api/service/mqlwrite";
     }
 
     private static String getMQLReadURL(String host) {
-        return "http://" + host + "/api/service/mqlread";
+        return "http://api." + host + "/api/service/mqlread";
     }
     
     private static String getUserAgent() {

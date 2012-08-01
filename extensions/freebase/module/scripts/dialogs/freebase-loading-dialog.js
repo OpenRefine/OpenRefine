@@ -42,7 +42,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
   this._elmts = DOM.bind(dialog);
   this._elmts.cancelButton.click(function() { self._dismiss(); });
 
-  var provider = "www.freebase.com";
+  var provider = "freebase.com";
   var authorization = this._elmts.authorization;
   var loadButton = this._elmts.loadButton;
 

@@ -52,19 +52,23 @@ public class FreebaseProvider extends Provider {
     
     @Override
     public String getRequestTokenServiceURL() {
-        return "https://" + host + "/api/oauth/request_token";
+        return "https://api." + host + "/api/oauth/request_token";
     }
 
     @Override
     public String getAccessTokenServiceURL() {
-        return "https://" + host + "/api/oauth/access_token";
+        return "https://api." + host + "/api/oauth/access_token";
     }
 
     @Override
     public String getUserAuthorizationURL() {
-        return "https://" + host + "/signin/app";
+        return "https://www." + host + "/signin/app";
     }
     
+    @Override
+    public String getRealm() {
+        return "http://api" + host + "/";
+    }
     
     @Override
     public OAuthConsumer createConsumer(String consumerKey, String consumerSecret) {

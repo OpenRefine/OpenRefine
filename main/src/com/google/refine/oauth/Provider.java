@@ -36,7 +36,6 @@ package com.google.refine.oauth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 
-
 public abstract class Provider {
 
     protected String host;
@@ -50,6 +49,10 @@ public abstract class Provider {
     
     public String getHost() {
         return host;
+    }
+
+    public String getRealm() {
+        return "http://" + host + "/";
     }
     
     abstract public String getRequestTokenServiceURL();
