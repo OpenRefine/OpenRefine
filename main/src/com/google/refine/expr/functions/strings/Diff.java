@@ -41,6 +41,7 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.Function;
@@ -49,11 +50,11 @@ public class Diff implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 2 && args.length <= 3) {
+        if (args.length >= 2) {
             Object o1 = args[0];
             Object o2 = args[1];
             if (o1 != null && o2 != null) {
-                if (o1 instanceof String && o2 instanceof String) {
+                if (args.length == 2 && o1 instanceof String && o2 instanceof String) {
                     return StringUtils.difference((String) o1,(String) o2);
                 } else if ((o1 instanceof Date || o1 instanceof Calendar) && args.length == 3) {
                     Object o3 = args[2];
@@ -61,7 +62,14 @@ public class Diff implements Function {
                         try {
                             String unit = ((String) o3).toLowerCase();
                             Date c1 = (o1 instanceof Date) ? (Date) o1 : ((Calendar) o1).getTime();
-                            Date c2 = (o2 instanceof Date) ? (Date) o2 : CalendarParser.parse((o2 instanceof String) ? (String) o2 : o2.toString()).getTime();
+                            Date c2;
+                            if (o2 instanceof Date) {
+                                c2 = (Date) o2;
+                            } else if (o2 instanceof Calendar) {
+                                c2 = ((Calendar) o2).getTime();
+                            } else {
+                                c2 = CalendarParser.parse((o2 instanceof String) ? (String) o2 : o2.toString()).getTime();
+                            }
                             long delta = (c1.getTime() - c2.getTime()) / 1000;
                             if ("seconds".equals(unit)) {
                                 return delta;
@@ -87,14 +95,15 @@ public class Diff implements Function {
                             if ("years".equals(unit)) {
                                 return days / 365;
                             }
+                            return new EvalError("Unknown time unit " + unit);
                         } catch (CalendarParserException e) {
-                            // we should throw at this point because it's important to know that date parsing failed
+                            return new EvalError(e);
                         }
                     }
                 }
             }
         }
-        return null;
+        return new EvalError("Unexpected arguments - expecting either 2 strings or 2 dates and a unit string");
     }
     
     @Override
