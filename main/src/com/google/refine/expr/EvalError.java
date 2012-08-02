@@ -55,7 +55,12 @@ public class EvalError implements Serializable, Jsonizable {
     public EvalError(String message) {
         this.message = message;
     }
+ 
+    public EvalError(Throwable throwable) {
+        this.message = throwable.toString();
+    }
     
+ 
     @Override
     public String toString() {
         return this.message;
