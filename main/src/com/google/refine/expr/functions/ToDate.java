@@ -106,12 +106,17 @@ public class ToDate implements Function {
                     continue;
                 }
                 String format  = (String) args[i];
-                SimpleDateFormat formatter = new SimpleDateFormat(format);
+                SimpleDateFormat formatter;
+                try {
+                    formatter = new SimpleDateFormat(format);
+                } catch (IllegalArgumentException e) {
+                    return new EvalError("Unknown date format");
+                }
                 Date date = null;
                 try {
                     date = formatter.parse(o1);
                 } catch (java.text.ParseException e) {
-                    return new EvalError("Cannot parse to date");
+                    continue;
                 }
                 if (date != null) {
                     GregorianCalendar c = new GregorianCalendar();
@@ -119,6 +124,7 @@ public class ToDate implements Function {
                     return c;
                 }
             }
+            return new EvalError("Unable to parse as date");
         }
 
         return null;

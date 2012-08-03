@@ -44,6 +44,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.util.CalendarParser;
+import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
@@ -92,13 +94,6 @@ public class ToFromConversionTests extends RefineTest {
         }
     }
     
-    @Test
-    public void testFromError() {        
-        Assert.assertTrue(invoke("fromError") instanceof EvalError);
-        Assert.assertTrue(invoke("fromError", (Object)null) instanceof EvalError);
-        Assert.assertTrue(invoke("fromError", "string") instanceof EvalError);
-        Assert.assertEquals(invoke("fromError", new EvalError("message")),"message");
-    }
     
     @Test
     public void testToNumber() {
@@ -127,13 +122,17 @@ public class ToFromConversionTests extends RefineTest {
     }
     
     @Test
-    public void testToDate() {
+    public void testToDate() throws CalendarParserException {
 //      Assert.assertTrue(invoke("toDate") instanceof EvalError);
       Assert.assertNull(invoke("toDate"));
       Assert.assertTrue(invoke("toDate", (Object) null) instanceof EvalError);
       Assert.assertTrue(invoke("toDate", 1.0) instanceof EvalError);
+      Assert.assertTrue(invoke("toDate", "2012-03-01","xxx") instanceof EvalError); // bad format string
       Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof GregorianCalendar);
-//      Assert.assertEquals(invoke("toDate", "2012-03-01"),new GregorianCalendar(2012,3,1));
+      Assert.assertEquals(invoke("toDate", "2012-03-01"),CalendarParser.parse("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalendarParser.parse("2012-03-01"));
+      // Multiple format strings should get tried sequentially until one succeeds or all are exhausted
+      Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalendarParser.parse("2012-03-01"));
         // Date
         // Calendar
         // String
