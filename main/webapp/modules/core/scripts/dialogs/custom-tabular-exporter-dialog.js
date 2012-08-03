@@ -173,11 +173,11 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
     self._updateOptionCode();
   });
   this._elmts.selectAllButton.click(function() {
-    self._elmts.columnList.find('input[type="checkbox"]').attr('checked', 'checked');
+    self._elmts.columnList.find('input[type="checkbox"]').attr('checked', true);
     self._updateOptionCode();
   });
   this._elmts.deselectAllButton.click(function() {
-    self._elmts.columnList.find('input[type="checkbox"]').attr('checked', '');
+    self._elmts.columnList.find('input[type="checkbox"]').attr('checked', false);
     self._updateOptionCode();
   });
   
