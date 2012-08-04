@@ -179,6 +179,7 @@ abstract public class GDataExtension {
                 }
             }
         }
+        scanner.close();
         if (row != null) {
             rows.add(row);
         }
