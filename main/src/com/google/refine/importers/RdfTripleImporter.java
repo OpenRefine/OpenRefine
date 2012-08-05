@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2012, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,21 +37,16 @@ import static org.jrdf.graph.AnyObjectNode.ANY_OBJECT_NODE;
 import static org.jrdf.graph.AnyPredicateNode.ANY_PREDICATE_NODE;
 import static org.jrdf.graph.AnySubjectNode.ANY_SUBJECT_NODE;
 
-import java.io.Reader;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jrdf.JRDFFactory;
-import org.jrdf.SortedMemoryJRDFFactory;
-import org.jrdf.collection.MemMapFactory;
 import org.jrdf.graph.Graph;
 import org.jrdf.graph.Triple;
-import org.jrdf.parser.line.GraphLineParser;
-import org.jrdf.parser.line.LineHandler;
-import org.jrdf.parser.ntriples.NTriplesParserFactory;
+import org.jrdf.parser.RdfReader;
 import org.jrdf.util.ClosableIterable;
 import org.json.JSONObject;
 
@@ -63,36 +58,47 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.util.JSONUtilities;
 
 public class RdfTripleImporter extends ImportingParserBase {
-    private JRDFFactory             _jrdfFactory;
-    private NTriplesParserFactory   _nTriplesParserFactory;
-    private MemMapFactory           _newMapFactory;
+    private RdfReader rdfReader;
+    private Mode mode;
+    
+    public enum Mode {
+        RDFXML,
+        NT,
+        N3
+    }
 
     public RdfTripleImporter() {
-        super(false);
-        _jrdfFactory = SortedMemoryJRDFFactory.getFactory();
-        _nTriplesParserFactory = new NTriplesParserFactory();
-        _newMapFactory = new MemMapFactory();
+        this(Mode.NT);
     }
+    
+    public RdfTripleImporter(Mode mode) {
+        super(true);
+        rdfReader = new RdfReader();
+        this.mode = mode;
+    }
+
     
     @Override
     public void parseOneFile(Project project, ProjectMetadata metadata,
-            ImportingJob job, String fileSource, Reader reader, int limit,
+            ImportingJob job, String fileSource, InputStream input, int limit,
             JSONObject options, List<Exception> exceptions) {
         
-        String baseUrl = JSONUtilities.getString(options, "baseUrl", "");
-        
-        Graph graph = _jrdfFactory.getNewGraph();
-        LineHandler lineHandler = _nTriplesParserFactory.createParser(graph, _newMapFactory);
-        GraphLineParser parser = new GraphLineParser(graph, lineHandler);
-        try {
-            parser.parse(reader, baseUrl); // fills JRDF graph
-        } catch (Exception e) {
-            exceptions.add(e);
-            return;
-        } 
+        Graph graph;
+        switch (mode) {
+        case NT:
+            graph = rdfReader.parseNTriples(input);
+            break;
+        case N3:
+            graph = rdfReader.parseN3(input);
+            break;
+        case RDFXML:
+            graph = rdfReader.parseRdfXml(input);             
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown parsing mode");    
+        }
         
         ClosableIterable<Triple> triples = graph.find(ANY_SUBJECT_NODE, ANY_PREDICATE_NODE, ANY_OBJECT_NODE);
         try {

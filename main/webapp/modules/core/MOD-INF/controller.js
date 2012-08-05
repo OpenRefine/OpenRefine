@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2012 Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -204,7 +204,7 @@ function registerImporting() {
   IM.registerFormat("text/xml/xlsx", "Excel (.xlsx) files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
   // TODO: Can we get away with just reusing Excel importer UI?
   IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
-  IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
+  IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
   IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "MARC files");
 
