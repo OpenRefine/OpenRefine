@@ -68,7 +68,7 @@ public class DefaultImportingController implements ImportingController {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        // TODO Auto-generated method stub
+        throw new ServletException("GET verb not implemented");
     }
 
     @Override
