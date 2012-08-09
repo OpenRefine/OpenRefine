@@ -211,7 +211,8 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
       }
     }
   };
-  renderNode(this._config.dom, elmts.domContainer, [ANONYMOUS_NODE_NAME]);
+  rootNode = $('<div>').addClass('node').addClass('indented').appendTo(elmts.domContainer);
+  renderNode(this._config.dom, rootNode, [ANONYMOUS_NODE_NAME]);
 };
 
 Refine.JsonParserUI.prototype._scheduleUpdatePreview = function() {
