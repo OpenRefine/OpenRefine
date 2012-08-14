@@ -84,7 +84,7 @@ public class TrimTests extends RefineTest {
     }
     
     @Test
-    public void testDiffInvalidParams() {        
+    public void testInvalidParams() {        
         Assert.assertTrue(invoke("trim") instanceof EvalError);
         Assert.assertTrue(invoke("trim", "one","two","three") instanceof EvalError);
         Assert.assertTrue(invoke("trim", Long.getLong("1")) instanceof EvalError);
