@@ -38,6 +38,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.gdata.util.common.base.CharMatcher;
+
 import com.google.refine.grel.Function;
 
 public class Trim implements Function {
@@ -47,7 +49,7 @@ public class Trim implements Function {
         if (args.length == 1) {
             Object s1 = args[0];
             if (s1 != null && s1 instanceof String) {
-                return ((String) s1).trim();
+                return CharMatcher.WHITESPACE.trimFrom((String) s1);
             }
         }
         return null;
