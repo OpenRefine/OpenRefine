@@ -40,6 +40,7 @@ import org.json.JSONWriter;
 
 import com.google.gdata.util.common.base.CharMatcher;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
 
 public class Trim implements Function {
@@ -52,7 +53,7 @@ public class Trim implements Function {
                 return CharMatcher.WHITESPACE.trimFrom((String) s1);
             }
         }
-        return null;
+        return new EvalError("Invalid parameters");
     }
     @Override
     public void write(JSONWriter writer, Properties options)
