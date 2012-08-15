@@ -38,7 +38,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import com.google.gdata.util.common.base.CharMatcher;
+import com.google.common.base.CharMatcher;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
