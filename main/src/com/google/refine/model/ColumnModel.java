@@ -143,6 +143,12 @@ public class ColumnModel implements Jsonizable {
         return _nameToColumn.get(name);
     }
     
+    /**
+     * Return the index of the column with the given name.
+     * 
+     * @param name column name to look up
+     * @return index of column with given name or -1 if not found.
+     */
     synchronized public int getColumnIndexByName(String name) {
         for (int i = 0; i < _columnNames.size(); i++) {
             String s = _columnNames.get(i);
