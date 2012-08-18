@@ -63,6 +63,10 @@ public class ColumnMoveChange extends ColumnChange {
         synchronized (project) {
             _oldColumnIndex = project.columnModel.getColumnIndexByName(_columnName);
             
+            if (_oldColumnIndex < 0 || _newColumnIndex < 0 
+                    || _newColumnIndex > project.columnModel.getMaxCellIndex()) {
+                throw new RuntimeException("Column index out of range");
+            }
             if (_oldColumnGroups == null) {
                 _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
             }
