@@ -20,10 +20,10 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-lang-2.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/icu4j-4.2.1.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-asl-1.9.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/jackson-src-1.9.5.zip"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-asl-1.9.9.jar" sourcepath="main/webapp/WEB-INF/lib-src/jackson-src-1.9.9.zip"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jrdf-0.5.6.jar" sourcepath="main/webapp/WEB-INF/lib-src/jrdf-0.5.6-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/json-20100208.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/json-20120819.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
