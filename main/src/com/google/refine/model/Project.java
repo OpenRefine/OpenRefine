@@ -106,6 +106,7 @@ public class Project {
                 logger.warn("Error signaling overlay model before disposing", e);
             }
         }
+        ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(this.id);
     }
 
     public Date getLastSave(){

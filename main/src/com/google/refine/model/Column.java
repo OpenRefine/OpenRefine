@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.InterProjectModel;
 import com.google.refine.Jsonizable;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.ParsingUtilities;
@@ -111,6 +112,14 @@ public class Column implements Jsonizable {
         writer.endObject();
     }
     
+    /**
+     * Clear all cached precomputed values.
+     * <p>
+     * If you are modifying something that requires this to be called, you
+     * probably also need to call
+     * {@link InterProjectModel#flushJoinsInvolvingProjectColumn(long, String)}.
+     * e.g. ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName())
+     */
     public void clearPrecomputes() {
         if (_precomputes != null) {
             _precomputes.clear();

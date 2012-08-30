@@ -39,6 +39,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -93,6 +94,7 @@ public class MassCellChange implements Change {
             if (_commonColumnName != null) {
                 Column column = project.columnModel.getColumnByName(_commonColumnName);
                 column.clearPrecomputes();
+                ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
             }
             
             if (_updateRowContextDependencies) {
@@ -113,6 +115,7 @@ public class MassCellChange implements Change {
             if (_commonColumnName != null) {
                 Column column = project.columnModel.getColumnByName(_commonColumnName);
                 column.clearPrecomputes();
+                ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
             }
             
             if (_updateRowContextDependencies) {

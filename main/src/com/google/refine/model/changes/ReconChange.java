@@ -42,6 +42,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -108,6 +109,7 @@ public class ReconChange extends MassCellChange {
             column.setReconStats(_newReconStats);
             
             column.clearPrecomputes();
+            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
         }
     }
     
@@ -121,6 +123,7 @@ public class ReconChange extends MassCellChange {
             column.setReconStats(_oldReconStats);
             
             column.clearPrecomputes();
+            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
         }
     }
     

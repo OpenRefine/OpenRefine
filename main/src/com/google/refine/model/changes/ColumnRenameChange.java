@@ -38,6 +38,7 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Properties;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
@@ -54,6 +55,7 @@ public class ColumnRenameChange extends ColumnChange {
     @Override
     public void apply(Project project) {
         synchronized (project) {
+            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _oldColumnName);
             project.columnModel.getColumnByName(_oldColumnName).setName(_newColumnName);
             project.columnModel.update();
         }
@@ -62,6 +64,7 @@ public class ColumnRenameChange extends ColumnChange {
     @Override
     public void revert(Project project) {
         synchronized (project) {
+            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _newColumnName);
             project.columnModel.getColumnByName(_newColumnName).setName(_oldColumnName);
             project.columnModel.update();
         }

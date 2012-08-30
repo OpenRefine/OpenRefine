@@ -62,12 +62,11 @@ public class Cross implements Function {
                 toColumnName != null && toColumnName instanceof String) {
                 
                 ProjectJoin join = ProjectManager.singleton.getInterProjectModel().getJoin(
-                        ProjectManager.singleton.getProjectMetadata(
-                                ((Project) bindings.get("project")).id).getName(),
-                                ((WrappedCell) wrappedCell).columnName,
-                                (String) toProjectName,
-                                (String) toColumnName
-                );
+                        ProjectManager.singleton.getProjectMetadata(((Project) bindings.get("project")).id).getName(),
+                        ((WrappedCell) wrappedCell).columnName, 
+                        (String) toProjectName, 
+                        (String) toColumnName
+                        );
                 
                 return join.getRows(((WrappedCell) wrappedCell).cell.value);
             }

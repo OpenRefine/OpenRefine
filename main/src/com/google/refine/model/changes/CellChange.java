@@ -38,8 +38,10 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Properties;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
@@ -60,14 +62,18 @@ public class CellChange implements Change {
     public void apply(Project project) {
         project.rows.get(row).setCell(cellIndex, newCell);
         
-        project.columnModel.getColumnByCellIndex(cellIndex).clearPrecomputes();
+        Column column = project.columnModel.getColumnByCellIndex(cellIndex);
+        column.clearPrecomputes();
+        ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
     }
 
     @Override
     public void revert(Project project) {
         project.rows.get(row).setCell(cellIndex, oldCell);
         
-        project.columnModel.getColumnByCellIndex(cellIndex).clearPrecomputes();
+        Column column = project.columnModel.getColumnByCellIndex(cellIndex);
+        column.clearPrecomputes();
+        ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
     }
     
     @Override
