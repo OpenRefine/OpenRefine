@@ -127,22 +127,29 @@ public class History implements Jsonizable {
      * Adding a new entry clears all currently held future histories
      * @param entry
      */
-    synchronized public void addEntry(HistoryEntry entry) {
-        entry.apply(ProjectManager.singleton.getProject(_projectID));
-        _pastEntries.add(entry);
+    public void addEntry(HistoryEntry entry) {
+        Project project = ProjectManager.singleton.getProject(_projectID);
+        synchronized (project) {
+            // NOTE: project lock must be acquired *first* to prevent deadlocks, so we use a 
+            // synchronized block instead of synchronizing the entire method.
+            synchronized (this) {
+                entry.apply(project);
+                _pastEntries.add(entry);
 
-        setModified();
+                setModified();
 
-        // Any new change will clear all future entries.
-        List<HistoryEntry> futureEntries = _futureEntries;
-        _futureEntries = new ArrayList<HistoryEntry>();
+                // Any new change will clear all future entries.
+                List<HistoryEntry> futureEntries = _futureEntries;
+                _futureEntries = new ArrayList<HistoryEntry>();
 
-        for (HistoryEntry entry2 : futureEntries) {
-            try {
-                // remove residual data on disk
-                entry2.delete();
-            } catch (Exception e) {
-                e.printStackTrace();
+                for (HistoryEntry entry2 : futureEntries) {
+                    try {
+                        // remove residual data on disk
+                        entry2.delete();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -273,6 +280,12 @@ public class History implements Jsonizable {
         writer.endObject();
     }
 
+    /*
+     * NOTE: this method is called from the autosave thread with the Project
+     * lock already held, so no other synchronized method here can aquire that
+     * Project lock or a deadlock will result.be careful of thread synchronization to avoid
+     * deadlocks.
+     */
     synchronized public void save(Writer writer, Properties options) throws IOException {
         writer.write("pastEntryCount="); writer.write(Integer.toString(_pastEntries.size())); writer.write('\n');
         for (HistoryEntry entry : _pastEntries) {

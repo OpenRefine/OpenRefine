@@ -119,6 +119,12 @@ public class HistoryEntry implements Jsonizable {
         _manager.save(this, writer, options);
     }
 
+    /**
+     * Apply a change to a project.  In most cases you should already hold the Project lock
+     * before calling this method to prevent deadlocks.
+     * 
+     * @param project the project the change should be applied to
+     */
     public void apply(Project project) {
         if (getChange() == null) {
             ProjectManager.singleton.getHistoryEntryManager().loadChange(this);
