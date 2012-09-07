@@ -228,7 +228,15 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
           $('#create-project-progress-timing').empty();
         }
         $('#create-project-progress-message').text(progress.message);
-        $('#create-project-progress-memory').text("Heap usage: "+progress.memory+'/'+progress.maxmemory+"MB");
+        if ('memory' in progress) {
+          var percent = progress.memory * 100.0 / progress.maxmemory;
+          $('#create-project-progress-memory').text("Memory usage: "+percent.toFixed()+'% ('+progress.memory+'/'+progress.maxmemory+"MB)");
+          if (percent > 90) {
+            $('#create-project-progress-memory').addClass('warning');
+          } else {
+            $('#create-project-progress-memory').removeClass('warning');
+          }
+        }
       }
     },
     "json"
