@@ -103,7 +103,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
             }
         }
         
-        boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", true);
+        boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", false);
         
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
@@ -172,7 +172,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 project, columnNames, c, hasOurOwnColumnNames);
                             
                             Object value = cells.get(c);
-                            if (value != null && value instanceof Cell) {
+                            if (value instanceof Cell) {
                                 row.setCell(column.getCellIndex(), (Cell) value);
                                 rowHasData = true;
                             } else if (ExpressionUtils.isNonBlankData(value)) {
