@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
@@ -287,7 +288,13 @@ public class XmlImporter extends TreeImportingParserBase {
         public String getFieldValue(){
             return parser.getText();
         }
-        
+    
+        @Override
+        public Serializable getValue() {
+            // XML parser only does string types
+            return getFieldValue();
+        }
+
         @Override
         public int getAttributeCount(){
             return parser.getAttributeCount();

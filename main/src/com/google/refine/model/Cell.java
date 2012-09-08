@@ -93,8 +93,12 @@ public class Cell implements HasFields, Jsonizable {
                     writer.key("t"); writer.value("date");
                 } else if (value instanceof Double 
                         && (((Double)value).isNaN() || ((Double)value).isInfinite())) {
-                    // TODO: Skip?  Write as string?
+                    // write as a string
                     writer.value(((Double)value).toString());
+                } else if (value instanceof Float
+                        && (((Float)value).isNaN() || ((Float)value).isInfinite())) {
+                    // TODO: Skip?  Write as string?
+                    writer.value(((Float)value).toString());
                 } else {
                     writer.value(value);
                 }

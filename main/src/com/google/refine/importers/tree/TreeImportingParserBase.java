@@ -45,8 +45,8 @@ import org.json.JSONObject;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterUtilities;
 import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
+import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingParser;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
@@ -55,19 +55,23 @@ import com.google.refine.util.JSONUtilities;
  * Abstract class for importer parsers which handle tree-shaped data
  * (currently XML & JSON).
  */
-abstract public class TreeImportingParserBase implements ImportingParser {
-    final protected boolean useInputStream;
-    
-    protected TreeImportingParserBase(boolean useInputStream) {
-        this.useInputStream = useInputStream;
+abstract public class TreeImportingParserBase extends ImportingParserBase {
+
+    protected TreeImportingParserBase(final boolean useInputStream) {
+        super(useInputStream);
     }
     
     @Override
     public JSONObject createParserUIInitializationData(ImportingJob job,
             List<JSONObject> fileRecords, String format) {
-        JSONObject options = new JSONObject();
+        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+        
+        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+        JSONUtilities.safePut(options, "storeEmptyStrings", true);
         return options;
     }
+
     
     @Override
     public void parse(Project project, ProjectMetadata metadata,
@@ -200,6 +204,14 @@ abstract public class TreeImportingParserBase implements ImportingParser {
         if (limit2 == 0) { // shouldn't really happen, but be sure since 0 is stop signal
             limit2 = -1;
         }
-        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2);
+
+        // NOTE: these defaults are solely to preserve historical behavior.
+        // All new code should override them to keep input data from being modified
+        boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", true);
+        boolean storeEmptyStrings = JSONUtilities.getBoolean(options, "storeEmptyStrings", false);
+        boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", true);
+
+        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2, trimStrings,
+                storeEmptyStrings,guessCellValueTypes);
     }
 }

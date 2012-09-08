@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers.tree;
 
+import java.io.Serializable;
+
 /**
  * Interface for all tree-shaped parsers.
  * 
@@ -54,7 +56,11 @@ public interface TreeReader {
 
     public String getFieldName() throws TreeReaderException;
     public String getPrefix();
+    
+    @Deprecated
     public String getFieldValue() throws TreeReaderException;
+    
+    public Serializable getValue() throws TreeReaderException;
     
     public int getAttributeCount();
     public String getAttributeValue(int index);

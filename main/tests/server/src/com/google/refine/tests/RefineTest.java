@@ -75,6 +75,20 @@ public class RefineTest {
         Assert.assertEquals(project.rows.size(), numRows);
     }
 
+    /**
+     * Check that a project was created with the appropriate number of columns, rows, and records.
+     * 
+     * @param project project to check
+     * @param numCols expected column count
+     * @param numRows expected row count
+     * @param numRows expected record count
+     */
+    public static void assertProjectCreated(Project project, int numCols, int numRows, int numRecords) {
+        assertProjectCreated(project,numCols,numRows);
+        Assert.assertNotNull(project.recordModel);
+        Assert.assertEquals(project.recordModel.getRecordCount(),numRecords);
+    }
+
     public void log(Project project) {
         // some quick and dirty debugging
         StringBuilder sb = new StringBuilder();

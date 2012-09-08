@@ -86,6 +86,11 @@ Refine.JsonParserUI.prototype.getOptions = function() {
   } else {
     options.limit = -1;
   }
+  
+  options.trimStrings = this._optionContainerElmts.trimStringsCheckbox[0].checked;
+  options.guessCellValueTypes = this._optionContainerElmts.guessCellValueTypesCheckbox[0].checked;
+  options.storeEmptyStrings = this._optionContainerElmts.storeEmptyStringsCheckbox[0].checked;
+
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
 
   return options;
@@ -102,6 +107,15 @@ Refine.JsonParserUI.prototype._initialize = function() {
   if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.attr("checked", "checked");
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
+  }
+  if (this._config.trimStrings) {
+    this._optionContainerElmts.trimStringsCheckbox.attr("checked", "checked");
+  }
+  if (this._config.guessCellValueTypes) {
+    this._optionContainerElmts.guessCellValueTypesCheckbox.attr("checked", "checked");
+  }
+  if (this._config.storeEmptyStrings) {
+    this._optionContainerElmts.storeEmptyStringsCheckbox.attr("checked", "checked");
   }
   if (this._config.includeFileSources) {
     this._optionContainerElmts.includeFileSourcesCheckbox.attr("checked", "checked");

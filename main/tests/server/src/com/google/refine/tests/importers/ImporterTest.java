@@ -151,7 +151,7 @@ abstract class ImporterTest extends RefineTest {
         Project project, ImportColumnGroup rootColumnGroup, List<Exception> exceptions) {
         
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-        project.columnModel.update();
+        project.update();
         
         for (Exception e : exceptions) {
             e.printStackTrace();

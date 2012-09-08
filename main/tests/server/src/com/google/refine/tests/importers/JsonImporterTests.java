@@ -295,9 +295,78 @@ public class JsonImporterTests extends ImporterTest {
         }
     }
 
+    @Test
+    public void testJsonDatatypes(){
+        RunTest(getSampleWithDataTypes());
+
+        log(project);
+        assertProjectCreated(project, 2, 21,4);
+
+        Assert.assertEquals( project.columnModel.getColumnByCellIndex(0).getName(), JsonImporter.ANONYMOUS + " - id");
+        Assert.assertEquals( project.columnModel.getColumnByCellIndex(1).getName(), JsonImporter.ANONYMOUS + " - cell - cell");
+
+        Row row = project.rows.get(8);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertEquals(row.cells.get(1).value,""); // Make sure empty strings are preserved
+
+        // null, true, false 0,1,-2.1,0.23,-0.24,3.14e100
+
+        row = project.rows.get(12);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertNull(row.cells.get(1).value); 
+
+        row = project.rows.get(13);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertEquals(row.cells.get(1).value,Boolean.TRUE); 
+        
+        row = project.rows.get(14);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertEquals(row.cells.get(1).value,Boolean.FALSE); 
+        
+        row = project.rows.get(15);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertEquals(row.cells.get(1).value,Long.valueOf(0)); 
+
+        row = project.rows.get(16);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertEquals(row.cells.get(1).value,Long.valueOf(1)); 
+
+        row = project.rows.get(17);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertEquals(row.cells.get(1).value,Double.parseDouble("-2.1")); 
+
+        row = project.rows.get(18);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertEquals(row.cells.get(1).value,Double.valueOf((double)0.23)); 
+        
+        row = project.rows.get(19);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertEquals(row.cells.get(1).value,Double.valueOf((double)-0.24)); 
+        
+        row = project.rows.get(20);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(),2);
+        Assert.assertFalse(Double.isNaN((Double) row.cells.get(1).value)); 
+        Assert.assertEquals(row.cells.get(1).value,Double.valueOf((double)3.14e100)); 
+        
+        // null, true, false 0,1,-2.1,0.23,-0.24,3.14e100
+
+
+        // TODO: check data types
+    }
+
     //------------helper methods---------------
 
-    public static String getTypicalElement(int id){
+    private static String getTypicalElement(int id){
         return "{ \"id\" : " + id + "," +
         "\"author\" : \"Author " + id + ", The\"," +
         "\"title\" : \"Book title " + id + "\"," +
@@ -305,7 +374,7 @@ public class JsonImporterTests extends ImporterTest {
         "}";
     }
 
-    public static String getElementWithDuplicateSubElement(int id){
+    private static String getElementWithDuplicateSubElement(int id){
         return "{ \"id\" : " + id + "," +
                  "\"authors\":[" +
                                "{\"name\" : \"Author " + id + ", The\"}," +
@@ -316,7 +385,7 @@ public class JsonImporterTests extends ImporterTest {
                "}";
     }
 
-    public static String getSample(){
+    static String getSample(){
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for(int i = 1; i < 7; i++){
@@ -329,7 +398,7 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
     
-    public static JSONObject getOptions(ImportingJob job, TreeImportingParserBase parser) {
+    private static JSONObject getOptions(ImportingJob job, TreeImportingParserBase parser) {
         JSONObject options = parser.createParserUIInitializationData(
                 job, new LinkedList<JSONObject>(), "text/json");
         
@@ -338,10 +407,14 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.append(path, JsonImporter.ANONYMOUS);
         
         JSONUtilities.safePut(options, "recordPath", path);
+        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "storeEmptyStrings", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+
         return options;
     }
 
-    public static String getSampleWithDuplicateNestedElements(){
+    private static String getSampleWithDuplicateNestedElements(){
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for(int i = 1; i < 7; i++){
@@ -354,7 +427,7 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithLineBreak(){
+    private static String getSampleWithLineBreak(){
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for(int i = 1; i < 4; i++){
@@ -373,7 +446,7 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithVaryingStructure(){
+    private static String getSampleWithVaryingStructure(){
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for(int i = 1; i < 6; i++){
@@ -390,7 +463,7 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithTreeStructure(){
+    private static String getSampleWithTreeStructure(){
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for(int i = 1; i < 7; i++){
@@ -407,6 +480,18 @@ public class JsonImporterTests extends ImporterTest {
         sb.append("]");
         return sb.toString();
     }
+    
+    private static String getSampleWithDataTypes() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        int i = 1;
+        sb.append("{\"id\":"+ i++ + ",\"cell\":[\"39766\",\"T1009\",\"foo\",\"DEU\",\"19\",\"01:49\"]},\n");
+        sb.append("{\"id\":"+ i++ + ",\"cell\":[\"39766\",\"T1009\",\"\",\"DEU\",\"19\",\"01:49\"]},\n");
+        sb.append("{\"id\":null,\"cell\":[null,true,false,0,1,-2.1,0.23,-0.24,3.14e100]}\n");
+        sb.append("]");
+        return sb.toString();
+    }
+    
 
     private void RunTest(String testString) {
         RunTest(testString, getOptions(job, SUT));

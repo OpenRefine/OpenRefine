@@ -38,11 +38,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.List;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonParser.NumberType;
 import org.codehaus.jackson.JsonToken;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -114,9 +116,9 @@ public class JsonImporter extends TreeImportingParserBase {
             case VALUE_STRING:
                 return parser.getText();
             case VALUE_NUMBER_INT:
-                return Integer.valueOf(parser.getIntValue());
+                return Long.valueOf(parser.getLongValue());
             case VALUE_NUMBER_FLOAT:
-                return Float.valueOf(parser.getFloatValue());
+                return Double.valueOf(parser.getDoubleValue());
             case VALUE_TRUE:
                 return Boolean.TRUE;
             case VALUE_FALSE:
@@ -215,7 +217,7 @@ public class JsonImporter extends TreeImportingParserBase {
         private JsonToken current = null;
         private JsonToken next = null;
         private String fieldName = ANONYMOUS;
-        private String fieldValue = null;
+        private Serializable fieldValue = null;
 
         
         public JSONTreeReader(Reader reader) {
@@ -284,14 +286,52 @@ public class JsonImporter extends TreeImportingParserBase {
 
         @Override
         public String getFieldValue() throws TreeReaderException  {
+            return fieldValue.toString();
+        }
+        
+        @Override
+        public Serializable getValue()
+                throws TreeReaderException {
             return fieldValue;
         }
-
         @Override
         public boolean hasNext() {
             return next != null;
         }
-
+        
+        private Serializable getValue(JsonParser parser, JsonToken token) throws IOException {
+            if (token != null) {
+                switch (token) {
+                case VALUE_STRING:
+                    return parser.getText();
+                case VALUE_NUMBER_INT:
+                    if (parser.getNumberType() == NumberType.INT || parser.getNumberType() == NumberType.LONG) {
+                        return Long.valueOf(parser.getLongValue());
+                    } else {
+                        return parser.getNumberValue();
+                    }
+                case VALUE_NUMBER_FLOAT:
+                    if (parser.getNumberType() == NumberType.FLOAT) {
+                        return Float.valueOf(parser.getFloatValue());
+                    } else if (parser.getNumberType() == NumberType.DOUBLE) {
+                        return Double.valueOf(parser.getDoubleValue());
+                    } else {
+                        return parser.getNumberValue();
+                    }
+                case VALUE_TRUE:
+                    return Boolean.TRUE;
+                case VALUE_FALSE:
+                    return Boolean.FALSE;
+                case VALUE_NULL:
+                    return null;
+                case END_ARRAY:
+                 default:
+                    break;
+                }
+             }
+            return null;
+        }
+        
         @Override
         public Token next() throws TreeReaderException {
             JsonToken previous = current;
@@ -300,7 +340,7 @@ public class JsonImporter extends TreeImportingParserBase {
             try {
                 if (current != null) {
                     if (current.isScalarValue()) {
-                        fieldValue = parser.getText();
+                        fieldValue = getValue(parser,current);
                     } else {
                         fieldValue = null;
                     }

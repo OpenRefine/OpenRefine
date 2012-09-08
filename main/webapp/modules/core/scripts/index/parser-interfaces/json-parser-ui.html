@@ -14,6 +14,12 @@
         <td><label for="$limit">Load at most</label></td>
         <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
           <label for="$limit">record(s) of data</label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="storeEmptyStringsCheckbox" id="$store-empty-strings" value=true/></td>
+        <td colspan="2"><label for="$store-empty-strings">Preserve empty strings</label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="trimStringsCheckbox" id="$trim" /></td>
+        <td><label for="$guess">Trim leading &amp; trailing whitespace from strings</label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="guessCellValueTypesCheckbox" id="$guess" /></td>
+        <td><label for="$guess">Parse cell text into<br/>numbers, dates, ...</label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="includeFileSourcesCheckbox" id="$include-file-sources" /></td>
         <td colspan="2"><label for="$include-file-sources">Store file source (file names, URLs) in each row</label></td></tr>
     </table></div></td>

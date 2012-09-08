@@ -114,6 +114,7 @@ public abstract class TreeImportUtilities {
         }
     }
 
+    @Deprecated
     static protected void addCell(
             Project project,
             ImportColumnGroup columnGroup,
@@ -121,12 +122,30 @@ public abstract class TreeImportUtilities {
             String columnLocalName,
             String text
     ) {
-        if (text == null || (text).isEmpty()) {
+        addCell(project, columnGroup, record, columnLocalName, text, true, true);
+    }
+    
+    static protected void addCell(
+            Project project,
+            ImportColumnGroup columnGroup,
+            ImportRecord record,
+            String columnLocalName,
+            String text,
+            boolean storeEmptyString,
+            boolean guessDataType
+    ) {
+        Serializable value = text;
+        if (!storeEmptyString && (text == null || (text).isEmpty())) {
             return;
         }
+        if (guessDataType) {
+            value = ImporterUtilities.parseCellValue(text); 
+        }
+        addCell(project, columnGroup, record, columnLocalName, value);
+    }
 
-        Serializable value = ImporterUtilities.parseCellValue(text);
-
+    protected static void addCell(Project project, ImportColumnGroup columnGroup, ImportRecord record,
+            String columnLocalName, Serializable value) {
         ImportColumn column = getColumn(project, columnGroup, columnLocalName);
         int cellIndex = column.cellIndex;
 
