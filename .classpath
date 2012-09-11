@@ -50,7 +50,6 @@
 	<classpathentry exported="true" kind="lib" path="broker/core/module/MOD-INF/lib/bdb-je-4.0.103.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-core-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-collect-1.0-rc1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/mockito-all-1.8.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/testng-5.12.1.jar"/>
@@ -71,6 +70,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.1.3.jar" sourcepath="main/webapp/WEB-INF/lib-src/httpcore-4.1.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
