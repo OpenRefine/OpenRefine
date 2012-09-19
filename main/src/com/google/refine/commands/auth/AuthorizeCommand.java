@@ -77,7 +77,7 @@ public class AuthorizeCommand extends Command {
                 Credentials request_credentials = Credentials.getCredentials(request, provider, Credentials.Type.REQUEST);
 
                 OAuthConsumer consumer = OAuthUtilities.getConsumer(request_credentials, provider);
-                OAuthProvider pp = OAuthUtilities.getOAuthProvider(provider);
+                OAuthProvider pp = provider.getProvider();
                 
                 if (request_credentials == null) {
                     // no credentials were found, so let's start the dance

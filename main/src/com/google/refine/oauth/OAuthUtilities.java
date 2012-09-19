@@ -39,8 +39,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import oauth.signpost.OAuthConsumer;
-import oauth.signpost.OAuthProvider;
-import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 
 public class OAuthUtilities {
     
@@ -86,10 +84,6 @@ public class OAuthUtilities {
             consumer.setTokenWithSecret(credentials.getToken(), credentials.getSecret());
         }
         return consumer;
-    }
-    
-    public static OAuthProvider getOAuthProvider(Provider p) {
-        return new CommonsHttpOAuthProvider(p.getRequestTokenServiceURL(), p.getAccessTokenServiceURL(), p.getUserAuthorizationURL());        
     }
 
 }
