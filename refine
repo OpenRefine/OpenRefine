@@ -943,6 +943,15 @@ if [ ! -z "$REFINE_EXTRA_OPTS" ] ; then
     add_option "-D$REFINE_EXTRA_OPTS"
 fi
 
+if [ -z "$JYTHONPATH" ] ; then
+    JYTHONPATH="$REFINE_WEBAPP/WEB-INF/lib/jython"
+else
+    JYTHONPATH="$REFINE_WEBAPP/WEB-INF/lib/jython${SEP}$JYTHONPATH"
+fi
+
+add_option "-Dpython.path=$JYTHONPATH"
+add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
+
 # ----- Respond to the action given --------------------------------------------
 
 case "$ACTION" in
