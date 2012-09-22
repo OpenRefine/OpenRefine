@@ -313,7 +313,7 @@ public class ImportingUtilities {
                         progress.setProgress("Saving " + urlString + " locally",
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                         
-                        if (postProcessRetrievedFile(file, fileRecord, fileRecords, progress)) {
+                        if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                             archiveCount++;
                         }
 
@@ -348,7 +348,7 @@ public class ImportingUtilities {
                         calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                     
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
-                    if (postProcessRetrievedFile(file, fileRecord, fileRecords, progress)) {
+                    if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;
                     }
                     
@@ -441,7 +441,7 @@ public class ImportingUtilities {
         long length = 0;
         FileOutputStream fos = new FileOutputStream(file);
         try {
-            byte[] bytes = new byte[4096];
+            byte[] bytes = new byte[16*1024];
             int c;
             while ((update == null || !update.isCanceled()) && (c = stream.read(bytes)) > 0) {
                 fos.write(bytes, 0, c);
@@ -459,11 +459,10 @@ public class ImportingUtilities {
     }
     
     static public boolean postProcessRetrievedFile(
-            File file, JSONObject fileRecord, JSONArray fileRecords, final Progress progress) {
+            File rawDataDir, File file, JSONObject fileRecord, JSONArray fileRecords, final Progress progress) {
         
         String mimeType = JSONUtilities.getString(fileRecord, "declaredMimeType", null);
         String contentEncoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
-        File rawDataDir = file.getParentFile();
         
         InputStream archiveIS = tryOpenAsArchive(file, mimeType, contentEncoding);
         if (archiveIS != null) {
@@ -651,7 +650,13 @@ public class ImportingUtilities {
         JSONObject fileRecord,
         final Progress progress
     ) throws IOException {
-        String fileName = JSONUtilities.getString(fileRecord, "fileName", "unknown");
+        String fileName = JSONUtilities.getString(fileRecord, "location", "unknown");
+        for (String ext : new String[] {".gz",".bz2"}) {
+            if (fileName.endsWith(ext)) {
+                fileName = fileName.substring(0, fileName.length()-ext.length());
+                break;
+            }
+        }
         File file2 = allocateFile(rawDataDir, fileName);
         
         progress.setProgress("Uncompressing " + fileName, -1);
@@ -659,11 +664,8 @@ public class ImportingUtilities {
         saveStreamToFile(uncompressedIS, file2, null);
         
         JSONUtilities.safePut(fileRecord, "declaredEncoding", (String) null);
-        // TODO: Why is MIME type cleared here?
         JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
-        String location = JSONUtilities.getString(fileRecord, "location", "");
-        location = location.substring(0,location.lastIndexOf('/')) + "/" + file2;
-        JSONUtilities.safePut(fileRecord, "location", location);
+        JSONUtilities.safePut(fileRecord, "location", getRelativePath(file2, rawDataDir));
         
         return file2;
     }
