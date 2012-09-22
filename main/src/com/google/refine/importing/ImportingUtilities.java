@@ -631,9 +631,16 @@ public class ImportingUtilities {
                     || "x-gzip".equals(contentEncoding)) {                
                 return new GZIPInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".bz2")) {
-                return new CBZip2InputStream(new FileInputStream(file));
+                InputStream is = new FileInputStream(file);
+                is.mark(4);
+                if (!(is.read() == 'B' && is.read() == 'Z')) {
+                    // No BZ prefix as appended by command line tools.  Reset and hope for the best
+                    is.reset();
+                }
+                return new CBZip2InputStream(is);
             }
         } catch (IOException e) {
+            logger.warn("Something that looked like a compressed file gave an error on open: "+file,e);
         }
         return null;
     }
