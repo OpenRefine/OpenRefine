@@ -50,6 +50,10 @@ import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.Pool;
 
+/**
+ * Class representing a single Row which contains a list of {@link Cell}s.  There may
+ * be multiple rows in a {@link Record}.
+ */
 public class Row implements HasFields, Jsonizable {
     public boolean             flagged;
     public boolean             starred;
@@ -58,6 +62,11 @@ public class Row implements HasFields, Jsonizable {
     private static final String FLAGGED = "flagged";
     private static final String STARRED = "starred";
     
+    /**
+     * Construct a new Row.
+     * 
+     * @param cellCount number of cells to give row initially (can be extended later)
+     */
     public Row(int cellCount) {
         cells = new ArrayList<Cell>(cellCount);
     }
@@ -68,6 +77,12 @@ public class Row implements HasFields, Jsonizable {
         this.starred = starred;
     }
     
+    /**
+     * Copy a row and return the copy. Note that this is a shallow copy, so
+     * if the contents of cells are changed in the original, they will be
+     * be changed in the duplicate.
+     * @return the duplicated row
+     */
     public Row dup() {
         Row row = new Row(cells.size());
         row.flagged = flagged;
@@ -100,6 +115,10 @@ public class Row implements HasFields, Jsonizable {
         return true;
     }
     
+    /**
+     * @param cellIndex index of cell to return
+     * @return given cell or null if cell doesn't exist or cell index is out of range
+     */
     public Cell getCell(int cellIndex) {
         if (cellIndex >= 0 && cellIndex < cells.size()) {
             return cells.get(cellIndex);
