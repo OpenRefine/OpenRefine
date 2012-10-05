@@ -129,17 +129,43 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         
         List<Row> newRows = new ArrayList<Row>();
         List<Row> oldRows = project.rows;
+        Row reusableRow = null;
+        List<Row> currentRows = new ArrayList<Row>();
+        String recordKey = null; // key which indicates the start of a record
+        if (unchangedColumns.isEmpty()) {
+            reusableRow = new Row(1);
+            newRows.add(reusableRow);
+            currentRows.clear();
+            currentRows.add(reusableRow);
+        }
+
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = oldRows.get(r);
             
-            Object value = oldRow.getCellValue(valueColumn.getCellIndex());
             Object key = oldRow.getCellValue(keyColumn.getCellIndex());
-            if (!ExpressionUtils.isNonBlankData(value) ||
-                !ExpressionUtils.isNonBlankData(key)) {
-                continue; // TODO: ignore this row entirely?
+            if (!ExpressionUtils.isNonBlankData(key)) {
+                if (unchangedColumns.isEmpty()) {
+                    // For degenerate 2 column case (plus optional note column), 
+                    // start a new row when we hit a blank line
+                    reusableRow = new Row(newColumns.size());
+                    newRows.add(reusableRow);
+                    currentRows.clear();
+                    currentRows.add(reusableRow);
+                } else {
+                    // Copy rows with no key
+                    newRows.add(buildNewRow(unchangedColumns, oldRow, unchangedColumns.size()));
+                }
+                continue; 
             }
             
             String keyString = key.toString();
+            // Start a new row on our beginning of record key
+            if (keyString.equals(recordKey)) {
+                reusableRow = new Row(newColumns.size());
+                newRows.add(reusableRow);
+                currentRows.clear();
+                currentRows.add(reusableRow);
+            }
             Column newColumn = keyValueToColumn.get(keyString);
             if (newColumn == null) {
                 // Allocate new column
@@ -148,40 +174,50 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     project.columnModel.getUnduplicatedColumnName(keyString));
                 keyValueToColumn.put(keyString, newColumn);
                 newColumns.add(newColumn);
-            }
-            
-            StringBuffer sb = new StringBuffer();
-            for (int c = 0; c < unchangedColumns.size(); c++) {
-                Column unchangedColumn = unchangedColumns.get(c);
-                Object cellValue = oldRow.getCellValue(unchangedColumn.getCellIndex());
-                if (c > 0) {
-                    sb.append('\0');
-                }
-                if (cellValue != null) {
-                    sb.append(cellValue.toString());
+
+                // We assume first key encountered is the beginning of record key
+                // TODO: make customizable?
+                if (recordKey == null) {
+                    recordKey = keyString;
                 }
             }
-            String unchangedCellValues = sb.toString();
             
-            Row reusableRow = groupByCellValuesToRow.get(unchangedCellValues);
-            if (reusableRow == null ||
-                reusableRow.getCellValue(valueColumn.getCellIndex()) != null) {
-                reusableRow = new Row(newColumn.getCellIndex() + 1);
-                
+            /*
+             * NOTE: If we have additional columns, we currently merge all rows that
+             * have identical values in those columns and then add our new columns.
+             */
+            if (unchangedColumns.size() > 0) {
+                StringBuffer sb = new StringBuffer();
                 for (int c = 0; c < unchangedColumns.size(); c++) {
                     Column unchangedColumn = unchangedColumns.get(c);
-                    int cellIndex = unchangedColumn.getCellIndex();
-                    
-                    reusableRow.setCell(cellIndex, oldRow.getCell(cellIndex));
+                    Object cellValue = oldRow.getCellValue(unchangedColumn.getCellIndex());
+                    if (c > 0) {
+                        sb.append('\0');
+                    }
+                    if (cellValue != null) {
+                        sb.append(cellValue.toString());
+                    }
                 }
-                
-                groupByCellValuesToRow.put(unchangedCellValues, reusableRow);
-                newRows.add(reusableRow);
+                String unchangedCellValues = sb.toString();
+
+                reusableRow = groupByCellValuesToRow.get(unchangedCellValues);
+                if (reusableRow == null ||
+                        reusableRow.getCellValue(valueColumn.getCellIndex()) != null) {
+                    reusableRow = buildNewRow(unchangedColumns, oldRow, newColumn.getCellIndex() + 1);
+                    groupByCellValuesToRow.put(unchangedCellValues, reusableRow);
+                    newRows.add(reusableRow);
+                }
             }
             
-            reusableRow.setCell(
-                newColumn.getCellIndex(),
-                oldRow.getCell(valueColumn.getCellIndex()));
+            Cell cell = oldRow.getCell(valueColumn.getCellIndex());
+            if (unchangedColumns.size() == 0) {
+                int index = newColumn.getCellIndex();
+                Row row = getAvailableRow(currentRows, newRows, index);
+                row.setCell(index, cell);
+            } else {
+                // TODO: support repeating keys in this mode too
+                reusableRow.setCell(newColumn.getCellIndex(), cell);
+            }
             
             if (noteColumn != null) {
                 Object noteValue = oldRow.getCellValue(noteColumn.getCellIndex());
@@ -210,15 +246,39 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             }
         }
         
-        unchangedColumns.addAll(newColumns);
-        unchangedColumns.addAll(newNoteColumns);
+        List<Column> allColumns = new ArrayList<Column>(unchangedColumns);
+        allColumns.addAll(newColumns);
+        allColumns.addAll(newNoteColumns);
         
         return new HistoryEntry(
             historyEntryID,
             project, 
             getBriefDescription(null), 
             this, 
-            new MassRowColumnChange(unchangedColumns, newRows)
+            new MassRowColumnChange(allColumns, newRows)
         );
+    }
+
+    private Row getAvailableRow(List<Row> currentRows, List<Row> newRows, int index) {
+        for (Row row : currentRows) {
+            if (row.getCell(index) == null) {
+                return row;
+            }
+        }
+        // If we couldn't find a row with an empty spot, we'll need a new row
+        Row row = new Row(index);
+        newRows.add(row);
+        currentRows.add(row);
+        return row;
+    }
+
+    private Row buildNewRow(List<Column> unchangedColumns, Row oldRow, int size) {
+        Row reusableRow = new Row(size);
+        for (int c = 0; c < unchangedColumns.size(); c++) {
+            Column unchangedColumn = unchangedColumns.get(c);
+            int cellIndex = unchangedColumn.getCellIndex();
+            reusableRow.setCell(cellIndex, oldRow.getCell(cellIndex));
+        }
+        return reusableRow;
     }
 }
