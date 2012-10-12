@@ -207,11 +207,14 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
   var self = this;
   var input = this._elmts.typeInput.unbind();
 
-  if ("suggest" in this._service && "type" in this._service.suggest) {
+  if ("suggest" in this._service && "type" in this._service.suggest && this._service.suggest.type.service_url) {
+    // Old style suggest API
     var suggestOptions = $.extend({}, this._service.suggest.type);
+    suggestOptions.key = null;
+    suggestOptions.query_param_name = "prefix";
     input.suggestT(suggestOptions);
   } else if (this._isInFreebaseSchemaSpace()) {
-    input.suggestT({ type : '/type/type' });
+    input.suggestT({ filter : '(all type:/type/type)' });
   }
 
   input.bind("fb-select", function(e, data) {
@@ -230,18 +233,19 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
   .find('input[name="property"]')
   .unbind();
 
-  if ("suggest" in this._service && "property" in this._service.suggest) {
+  if ("suggest" in this._service && "property" in this._service.suggest && this._service.suggest.property.service_url) {
+    // Old style suggest API
     var suggestOptions = $.extend({}, this._service.suggest.property);
+    suggestOptions.key = null;
+    suggestOptions.query_param_name = "prefix";
     if (type) {
       suggestOptions.ac_param = { schema: typeof type == "string" ? type : type.id };
     }
     inputs.suggestP(suggestOptions);
   } else if (this._isInFreebaseSchemaSpace()) {
+    var namespace = (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
     inputs.suggestP({
-      type: '/type/property',
-      ac_param: {
-        schema: (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
-      }
+      filter : '(all type:/type/property (any namespace:/type/object namespace:' + namespace + '))'
     });
   }
 };

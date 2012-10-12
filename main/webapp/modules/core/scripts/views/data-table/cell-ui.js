@@ -326,11 +326,12 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var match = null;
   var commit = function() {
     if (match !== null) {
+      alert(JSON.stringify(match));
       var params = {
         judgment: "matched",
         id: match.id,
         name: match.name,
-        types: $.map(match.type, function(elmt) {
+        types: $.map(match.notable, function(elmt) {
           return typeof elmt == "string" ? elmt : elmt.id; 
         }).join(",")
       };
@@ -373,6 +374,11 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.cancelButton.click(dismiss);
 
   var suggestOptions2 = $.extend({ align: "left" }, suggestOptions || { all_types: true });
+  if (suggestOptions2.service_url) {
+    // Old style suggest API
+    suggestOptions2.key = null;
+    suggestOptions2.query_param_name = "prefix";
+  }
   elmts.input
   .attr("value", this._cell.v)
   .suggest(suggestOptions2)

@@ -66,7 +66,7 @@ ReconFreebaseQueryPanel.prototype._constructUI = function() {
 ReconFreebaseQueryPanel.prototype._wireEvents = function() {
   var self = this;
   this._elmts.strictNamespaceInput
-  .suggest({ type: '/type/namespace' })
+  .suggest({ filter : '(all type:/type/namespace)' })
   .bind("fb-select", function(e, data) {
     self._panel.find('input[name="recon-dialog-strict-choice"][value="key"]').attr("checked", "true");
     self._panel.find('input[name="recon-dialog-strict-namespace-choice"][value="other"]').attr("checked", "true");

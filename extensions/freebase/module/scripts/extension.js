@@ -33,6 +33,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var FreebaseExtension = { handlers: {} };
 
+FreebaseExtension.handlers.setFreebaseApiKey = function() {
+  var value = window.prompt("Set Freebase API Key:");
+  if (value !== null) {
+    $.post(
+      "/command/core/set-preference",
+      {
+        name : "freebase.api.key",
+        value : JSON.stringify(value)
+      },
+      function(o) {
+        if (o.code == "error") {
+          alert(o.message);
+        }
+      },
+      "json"
+    );
+    CustomSuggest.setFreebaseAPIKey(value);
+  }
+};
+
 FreebaseExtension.handlers.editSchemaAlignment = function() {
   new SchemaAlignmentDialog(theProject.overlayModels.freebaseProtograph, function(newProtograph) {});
 };
@@ -84,6 +104,11 @@ ExtensionBar.addExtensionMenu({
   "id" : "freebase",
   "label" : "Freebase",
   "submenu" : [
+    {
+      "id" : "freebase/set-api-key",
+      label: "Set Freebase API Key",
+      click: FreebaseExtension.handlers.setFreebaseApiKey
+    },
     {
       "id" : "freebase/schema-alignment",
       label: "Align to Freebase's schemas...",

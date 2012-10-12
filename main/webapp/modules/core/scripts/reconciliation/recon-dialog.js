@@ -202,12 +202,12 @@ ReconDialog.prototype._onAddNamespacedService = function() {
   };
 
   elmts.namespaceInput
-  .suggest({ type: '/type/namespace' })
+  .suggest({ filter : '(all type:/type/namespace)' })
   .bind("fb-select", function(e, data) {
     elmts.typeInput.focus();
   });
 
-  elmts.typeInput.suggestT({ type: '/type/type' });
+  elmts.typeInput.suggestT({ filter : '(all type:/type/type)' });
 
   elmts.cancelButton.click(dismiss);
   elmts.addButton.click(function() {

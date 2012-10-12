@@ -139,10 +139,10 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
   }
 
   var suggestConfig = {
-      type: '/type/property'
+      filter: '(all type:/type/property)'
   };
   if ((this._column.reconConfig) && (this._column.reconConfig.type)) {
-    suggestConfig.ac_param = { schema: this._column.reconConfig.type.id };
+    suggestConfig.filter = '(all type:/type/property (any namespace:/type/object namespace:' + this._column.reconConfig.type.id + '))';
   }
 
   this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {

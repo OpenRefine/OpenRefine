@@ -480,7 +480,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
 
   elmts.anonymousNodeTypeInput
   .bind("focus", function() { elmts.radioNodeTypeAnonymous[0].checked = true; })
-  .suggestT({ type: "/type/type" });
+  .suggestT({ filter : "(all type:/type/type)" });
 
   elmts.topicNodeTypeInput
   .bind("focus", function() { elmts.radioNodeTypeTopic[0].checked = true; })
@@ -492,14 +492,14 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
   .bind("focus", function() { elmts.radioNodeTypeValue[0].checked = true; });
   elmts.valueNodeTypeLanguageInput
   .bind("focus", function() { elmts.radioNodeTypeValue[0].checked = true; })
-  .suggest({ type: "/type/lang" });
+  .suggest({ filter : "(all type:/type/lang)" });
 
   elmts.cellAsTopicNodeTypeInput
   .bind("focus", function() {
     elmts.radioNodeTypeCellAs[0].checked = true;
     elmts.radioNodeTypeCellAsTopic[0].checked = true; 
   })
-  .suggestT({ type: "/type/type" });
+  .suggestT({ filter : "(all type:/type/type)" });
 
   elmts.cellAsValueTypeSelect
   .bind("focus", function() {
@@ -511,14 +511,14 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     elmts.radioNodeTypeCellAs[0].checked = true;
     elmts.radioNodeTypeCellAsValue[0].checked = true; 
   })
-  .suggest({ type: "/type/lang" });
+  .suggest({ filter : "(all type:/type/lang)" });
 
   elmts.cellAsKeyInput
   .bind("focus", function() {
     elmts.radioNodeTypeCellAs[0].checked = true;
     elmts.radioNodeTypeCellAsKey[0].checked = true;
   })
-  .suggest({ type: "/type/namespace" });
+  .suggest({ filter : "(all type:/type/namespace)" });
 
   elmts.radioNodeTypeCellAsTopic[0].checked = true; // just make sure some subtype is selected
   if (this._node.nodeType.match(/^cell-as-/)) {

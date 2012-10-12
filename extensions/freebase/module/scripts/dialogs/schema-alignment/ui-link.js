@@ -304,11 +304,12 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
   MenuSystem.positionMenuAboveBelow(menu, $(elmt));
 
   var suggestOptions = {
-      type : '/type/property'
+      filter : '(all type:/type/property)'
   };
   var sourceTypeID = this._parentUINode.getExpectedType();
   if (sourceTypeID !== null) {
-    suggestOptions.ac_param = { schema: sourceTypeID };
+    suggestOptions.filter = '(all type:/type/property (any namespace:/type/object namespace:' + sourceTypeID + '))'
+
   }
   input.suggestP(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });
 

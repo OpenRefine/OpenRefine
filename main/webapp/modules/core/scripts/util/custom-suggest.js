@@ -31,7 +31,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+var CustomSuggest = {};
+
+CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
+  $.suggest.suggest.defaults.key = freebaseAPIKey;
+  $.suggest.suggestT.defaults.key = freebaseAPIKey;
+  $.suggest.suggestP.defaults.key = freebaseAPIKey;
+};
+
 (function() {
+
   /*
    *  Make suggest widgets clean up when removed.
    */
@@ -101,9 +110,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         true,
         {},
         $.suggest.suggest.defaults, {
-          service_url: Refine.refineHelperService,
-          service_path: "/suggest_property",
-          flyout_service_url: "http://www.freebase.com",
+          scoring: "schema",
           css: { pane: "fbs-pane fbs-pane-property" }
         }
       )
@@ -149,9 +156,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         true,
         {},
         $.suggest.suggest.defaults, {
+          scoring: "schema",
           css: { pane: "fbs-pane fbs-pane-type" }
         }
       )
+    }
+  );
+  
+  // Use Freebase API Key
+  $.ajax("/command/core/get-preference", 
+    {
+      async: false,
+      data: {name: "freebase.api.key"},
+      success: function(data) {
+        if (data.value && data.value != "null") {
+          CustomSuggest.setFreebaseAPIKey(data.value);
+        } else {
+          // Default API key for Refine to use for freebase suggest widget
+          CustomSuggest.setFreebaseAPIKey("AIzaSyBBTAtJ31v_jlg_ImbQuBNnAaAyrHzRyW8");
+        }
+      }
     }
   );
 })();

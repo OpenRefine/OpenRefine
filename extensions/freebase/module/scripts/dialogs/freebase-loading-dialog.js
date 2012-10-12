@@ -135,8 +135,8 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
           });
 
           self._elmts.source_id.suggest({
-            "type": "/dataworld/information_source",
-            "suggest_new": "Click here to add a new information source"
+            filter: "(all type:/dataworld/information_source)",
+            suggest_new: "Click here to add a new information source"
           }).bind("fb-select", function(e, data) {
             self._elmts.source_id.val(data.id);
           }).bind("fb-select-new", function(e, val) {
