@@ -99,7 +99,11 @@ ReconciliationManager.registerStandardService = function(url, f) {
       }
     },
     "jsonp"
-  );
+  )
+  .error(function(jqXHR, textStatus, errorThrown) {
+    dismissBusy(); 
+    alert('Error contacting recon service: '+textStatus + ' : ' + errorThrown);
+  });
 };
 
 ReconciliationManager.unregisterService = function(service, f) {
