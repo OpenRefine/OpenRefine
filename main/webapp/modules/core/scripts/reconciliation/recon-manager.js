@@ -115,6 +115,7 @@ ReconciliationManager.unregisterService = function(service, f) {
       break;
     }
   }
+  ReconciliationManager._rebuildMap();
   ReconciliationManager.save(f);
 };
 
