@@ -75,34 +75,35 @@ ReconciliationManager.registerService = function(service) {
 };
 
 ReconciliationManager.registerStandardService = function(url, f) {
-  var dismissBusy = DialogSystem.showBusy();
+  var dismissBusy = DialogSystem.showBusy("Contacting reconciliation service...");
 
-  $.getJSON(
-    url + (url.contains("?") ? "&" : "?") + "callback=?",
-    null,
-    function(data) {
-      data.url = url;
-      data.ui = { "handler" : "ReconStandardServicePanel" };
-
-      index = ReconciliationManager.customServices.length + 
-      ReconciliationManager.standardServices.length;
-
-      ReconciliationManager.standardServices.push(data);
-      ReconciliationManager._rebuildMap();
-
-      ReconciliationManager.save();
-
-      dismissBusy();
-
-      if (f) {
-        f(index);
-      }
-    },
-    "jsonp"
+  $.ajax(
+    url,
+    { "dataType" : "jsonp",
+    "timeout":10000
+     }
   )
+  .success(function(data, textStatus, jqXHR) {
+    data.url = url;
+    data.ui = { "handler" : "ReconStandardServicePanel" };
+
+    index = ReconciliationManager.customServices.length + 
+    ReconciliationManager.standardServices.length;
+
+    ReconciliationManager.standardServices.push(data);
+    ReconciliationManager._rebuildMap();
+
+    ReconciliationManager.save();
+
+    dismissBusy();
+
+    if (f) {
+      f(index);
+    }
+  })
   .error(function(jqXHR, textStatus, errorThrown) {
     dismissBusy(); 
-    alert('Error contacting recon service: '+textStatus + ' : ' + errorThrown);
+    alert('Error contacting recon service: ' + textStatus + ' : ' + errorThrown + ' - ' + url);
   });
 };
 
