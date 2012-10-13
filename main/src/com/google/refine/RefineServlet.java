@@ -71,6 +71,7 @@ public class RefineServlet extends Butterfly {
     static final long serialVersionUID = 2386057901503517403L;
 
     static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
+    private File tempDir = null;
 
     static private RefineServlet s_singleton;
     static private File s_dataDir;
@@ -221,11 +222,9 @@ public class RefineServlet extends Butterfly {
         return path;
     }
 
-    private File tempDir = null;
-
     public File getTempDir() {
         if (tempDir == null) {
-            File tempDir = (File) _config.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
+            tempDir = (File) _config.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
             if (tempDir == null) {
                 throw new RuntimeException("This app server doesn't support temp directories");
             }
