@@ -702,7 +702,7 @@ ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
     if (!isNaN(n)) {
       var self = this;
       $.post(
-        "/command/core/set-preference",
+        "command/core/set-preference",
         {
           name : "ui.browsing.listFacet.limit",
           value : n

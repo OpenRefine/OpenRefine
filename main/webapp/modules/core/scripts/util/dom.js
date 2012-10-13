@@ -105,7 +105,7 @@ DOM._resolveIdInDOMChildren = function(elmt, idmap) {
 
 DOM._loadedHTML = {};
 DOM.loadHTML = function(module, path) {
-  var fullPath = ModuleWirings[module] + path;
+  var fullPath = (ModuleWirings[module] + path).substring(1);
   if (!(fullPath in DOM._loadedHTML)) {
     $.ajax({
       async: false,

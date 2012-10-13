@@ -47,7 +47,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
   var loadButton = this._elmts.loadButton;
 
   var check_authorization = function(cont) {
-    var check_authorization_url = "/command/freebase/check-authorization/" + provider;
+    var check_authorization_url = "command/freebase/check-authorization/" + provider;
     $.get(check_authorization_url, function(data) {
       if ("status" in data && data.code == "/api/status/ok") {
         authorization.html('Signed in as: <a target="_new" href="http://www.freebase.com/view/user/' + data.username + '">' + data.username + '</a> | <a href="javascript:{}" bind="signout">Sign Out</a>').show();
@@ -96,7 +96,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
       "guid":   null
     }];
 
-    $.post("/command/freebase/mqlwrite/" + provider, 
+    $.post("command/freebase/mqlwrite/" + provider, 
         { "query" : JSON.stringify(mql_query) }, 
         function(data) {
           if ("status" in data && data.code == "/api/status/ok") {
@@ -112,7 +112,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
 
   var show_triples = function(cont) {
     $.post(
-      "/command/freebase/preview-protograph?" + $.param({ project: theProject.id }),
+      "command/freebase/preview-protograph?" + $.param({ project: theProject.id }),
       {
         protograph: JSON.stringify(theProject.overlayModels.freebaseProtograph || {}),
         engine: JSON.stringify(ui.browsingEngine.getJSON())
@@ -144,7 +144,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
           });
 
           $.getJSON(
-            "/command/core/get-preference?" + $.param({ project: theProject.id, name: "freebase.load.jobName" }),
+            "command/core/get-preference?" + $.param({ project: theProject.id, name: "freebase.load.jobName" }),
             null,
             function(data) {
               self._elmts.source_name[0].value = (data.value) ? data.value : theProject.metadata.name;
@@ -182,7 +182,7 @@ FreebaseLoadingDialog.prototype._load = function() {
     var dismissBusy = DialogSystem.showBusy();
 
     $.post(
-      "/command/freebase/upload-data",
+      "command/freebase/upload-data",
       {
         "project" : theProject.id, 
         "qa" : qa,

@@ -78,14 +78,14 @@ ScatterplotDialog.prototype._renderMatrix = function() {
     var self = this;
     
     var container = this._elmts.tableContainer.html(
-        '<div style="margin: 1em; font-size: 130%; color: #888; background-color: white;">Processing... <img src="/images/small-spinner.gif"></div>'
+        '<div style="margin: 1em; font-size: 130%; color: #888; background-color: white;">Processing... <img src="images/small-spinner.gif"></div>'
     );
 
     if (theProject.columnModel.columns.length > 0) {
         var params = {
             project: theProject.id
         };
-        $.getJSON("/command/core/get-columns-info?" + $.param(params),function(data) {
+        $.getJSON("command/core/get-columns-info?" + $.param(params),function(data) {
             if (data === null || typeof data.length == 'undefined') {
                 container.html("Error calling 'get-columns-info'");
                 return;
@@ -122,7 +122,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                     engine: JSON.stringify(ui.browsingEngine.getJSON()), 
                     plotter: JSON.stringify(plotter_params) 
                 };
-                var url = "/command/core/get-scatterplot?" + $.param(params);
+                var url = "command/core/get-scatterplot?" + $.param(params);
 
                 var attrs = [
                     'width="' + self._plot_size + '"',

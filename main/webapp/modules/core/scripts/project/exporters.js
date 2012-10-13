@@ -139,7 +139,7 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
   $(form)
   .css("display", "none")
   .attr("method", "post")
-  .attr("action", "/command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""))
+  .attr("action", "command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""))
   .attr("target", "refine-export");
 
   $('<input />')
@@ -166,7 +166,7 @@ ExporterManager.handlers.exportProject = function() {
   $(form)
   .css("display", "none")
   .attr("method", "post")
-  .attr("action", "/command/core/export-project/" + name + ".google-refine.tar.gz")
+  .attr("action", "command/core/export-project/" + name + ".google-refine.tar.gz")
   .attr("target", "refine-export");
   $('<input />')
   .attr("name", "project")

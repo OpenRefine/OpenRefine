@@ -164,7 +164,7 @@ CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
   );
   
   // Use Freebase API Key
-  $.ajax("/command/core/get-preference", 
+  $.ajax("command/core/get-preference", 
     {
       async: false,
       data: {name: "freebase.api.key"},

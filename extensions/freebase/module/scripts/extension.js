@@ -37,7 +37,7 @@ FreebaseExtension.handlers.setFreebaseApiKey = function() {
   var value = window.prompt("Set Freebase API Key:");
   if (value !== null) {
     $.post(
-      "/command/core/set-preference",
+      "command/core/set-preference",
       {
         name : "freebase.api.key",
         value : JSON.stringify(value)
@@ -75,7 +75,7 @@ FreebaseExtension.handlers.browseToDataLoad = function() {
   var w = window.open("about:blank", "dataload");
 
   $.getJSON(
-    "/command/core/get-preference?" + $.param({ project: theProject.id, name: "freebase.load.jobID" }),
+    "command/core/get-preference?" + $.param({ project: theProject.id, name: "freebase.load.jobID" }),
     null,
     function(data) {
       if (data.value == null) {

@@ -316,7 +316,7 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
   var self = this;
   var dismissBusy = DialogSystem.showBusy("Inspecting<br/>selected files ...");
   $.post(
-    "/command/core/importing-controller?" + $.param({
+    "command/core/importing-controller?" + $.param({
       "controller": "core/default-importing-controller",
       "jobID": this._jobID,
       "subCommand": "update-file-selection"

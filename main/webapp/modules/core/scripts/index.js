@@ -70,7 +70,7 @@ $(function() {
 
   var showVersion = function() {
     $.getJSON(
-        "/command/core/get-version",
+        "command/core/get-version",
         null,
         function(data) {
           GoogleRefineVersion = data;

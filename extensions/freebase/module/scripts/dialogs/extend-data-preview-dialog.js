@@ -168,7 +168,7 @@ ExtendDataPreviewDialog.prototype._update = function() {
   };
 
   $.post(
-    "/command/freebase/preview-extend-data?" + $.param(params), 
+    "command/freebase/preview-extend-data?" + $.param(params), 
     {
       rowIndices: JSON.stringify(this._rowIndices),
       extension: JSON.stringify(this._extension)

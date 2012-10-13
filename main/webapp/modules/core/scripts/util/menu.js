@@ -153,7 +153,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
         menuItem.html(
           '<table width="100%" cellspacing="0" cellpadding="0" class="menu-item-layout"><tr>' +
           '<td>' + item.label + '</td>' +
-          '<td width="1%"><img src="/images/right-arrow.png" /></td>' +
+          '<td width="1%"><img src="images/right-arrow.png" /></td>' +
           '</tr></table>'
         );
         menuItem.mouseenter(function() {

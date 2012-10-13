@@ -93,7 +93,7 @@ if (typeof window.Sign == 'undefined') {
     },
 
     signin : function(success, provider, check_authorization_url, width, height) {
-      var newwin = window.Sign.popup("/command/core/authorize/" + provider, width, height);
+      var newwin = window.Sign.popup("command/core/authorize/" + provider, width, height);
 
       if (newwin !== null) {
         newwin.opener = window;
@@ -123,7 +123,7 @@ if (typeof window.Sign == 'undefined') {
 
     signout : function(success,provider) {
       $.ajax({
-        url: "/command/core/deauthorize/" + provider,
+        url: "command/core/deauthorize/" + provider,
         success: function() {
           if (typeof success == 'undefined') {
             window.location.reload();

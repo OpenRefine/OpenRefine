@@ -521,7 +521,7 @@ function process(path, request, response) {
     );
   } else {
     if (path == "/" || path == "") {
-      path = "/index";
+      path = "index";
     } else if (path.endsWith("/")) {
       path = path.substring(0, path.length - 1);
     }
@@ -585,7 +585,7 @@ function process(path, request, response) {
         var styleInjection = [];
         for each (var qualifiedPath in styles) {
           styleInjection.push(
-              '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath + '" />');
+              '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
         }
         context.styleInjection = styleInjection.join("\n");
 
@@ -596,7 +596,7 @@ function process(path, request, response) {
           var scriptInjection = [];
           for each (var qualifiedPath in scripts) {
             scriptInjection.push(
-                '<script type="text/javascript" src="' + qualifiedPath.fullPath + '"></script>');
+                '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
           }
           context.scriptInjection = scriptInjection.join("\n");
         }

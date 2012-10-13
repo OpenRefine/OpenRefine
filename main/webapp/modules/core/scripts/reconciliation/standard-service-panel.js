@@ -45,7 +45,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var dismissBusy = DialogSystem.showBusy();
 
   $.post(
-    "/command/core/guess-types-of-column?" + $.param({
+    "command/core/guess-types-of-column?" + $.param({
       project: theProject.id, 
       columnName: this._column.name,
       service: this._service.url

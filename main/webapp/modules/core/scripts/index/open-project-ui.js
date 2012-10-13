@@ -60,7 +60,7 @@ Refine.OpenProjectUI = function(elmt) {
   $('#projects-workspace-open').click(function() {
     $.ajax({
       type: "POST",
-      url: "/command/core/open-workspace-dir",
+      url: "command/core/open-workspace-dir",
       dataType: "json",
       success: function (data) {
         if (data.code != "ok" && "message" in data) {
@@ -89,7 +89,7 @@ Refine.OpenProjectUI.prototype.resize = function() {
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
   var self = this;
   $.getJSON(
-      "/command/core/get-all-project-metadata",
+      "command/core/get-all-project-metadata",
       null,
       function(data) {
         self._renderProjects(data);
@@ -136,12 +136,12 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .attr("title","Delete this project")
       .attr("href","")
       .css("visibility", "hidden")                
-      .html("<img src='/images/close.png' />")
+      .html("<img src='images/close.png' />")
       .click(function() {
         if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
           $.ajax({
             type: "POST",
-            url: "/command/core/delete-project",
+            url: "command/core/delete-project",
             data: { "project" : project.id },
             dataType: "json",
             success: function (data) {
@@ -174,7 +174,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
 
         $.ajax({
           type: "POST",
-          url: "/command/core/rename-project",
+          url: "command/core/rename-project",
           data: { "project" : project.id, "name" : name },
           dataType: "json",
           success: function (data) {
@@ -198,7 +198,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       var nameLink = $('<a></a>')
       .addClass("project-name")
       .text(project.name)
-      .attr("href", "/project?project=" + project.id)
+      .attr("href", "project?project=" + project.id)
       .appendTo(tr.insertCell(tr.cells.length));
 
       $(tr).mouseenter(function() {
@@ -227,7 +227,7 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
 
   } else {
     $("#file-upload-form").attr("action",
-        "/command/core/create-project-from-upload?" + [
+        "command/core/create-project-from-upload?" + [
           "url=" +                escape(dataURL),
           "split-into-columns=" + $("#split-into-columns-input")[0].checked,
           "separator=" +          $("#separator-input")[0].value,

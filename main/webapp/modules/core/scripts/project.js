@@ -155,7 +155,7 @@ Refine.setTitle = function(status) {
 
 Refine.reinitializeProjectData = function(f, fError) {
   $.getJSON(
-    "/command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
+    "command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
     function(data) {
       if (data.status == 'error') {
         alert(data.message);
@@ -165,7 +165,7 @@ Refine.reinitializeProjectData = function(f, fError) {
       } else {
         theProject.metadata = data;
         $.getJSON(
-          "/command/core/get-models?" + $.param({ project: theProject.id }), null,
+          "command/core/get-models?" + $.param({ project: theProject.id }), null,
           function(data) {
             for (var n in data) {
               if (data.hasOwnProperty(n)) {
@@ -195,7 +195,7 @@ Refine._renameProject = function() {
 
   $.ajax({
     type: "POST",
-    url: "/command/core/rename-project",
+    url: "command/core/rename-project",
     data: { "project" : theProject.id, "name" : name },
     dataType: "json",
     success: function (data) {
@@ -339,7 +339,7 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
   Refine.setAjaxInProgress();
 
   $.post(
-    "/command/" + moduleName + "/" + command + "?" + $.param(params),
+    "command/" + moduleName + "/" + command + "?" + $.param(params),
     body,
     onDone,
     "json"
@@ -404,7 +404,7 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
   }
 
   $.post(
-    "/command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }) + "&callback=?",
+    "command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }) + "&callback=?",
     body,
     function(data) {
       theProject.rowModel = data;

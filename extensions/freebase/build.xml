@@ -43,7 +43,7 @@
     <property name="classes.dir" value="${modinf.dir}/classes" />
 
     <path id="class.path">
-        <fileset dir="${lib.dir}">
+        <fileset dir="${lib.dir}" erroronmissingdir="false">
             <include name="**/*.jar" />
         </fileset>
         <fileset dir="${refine.lib.dir}">

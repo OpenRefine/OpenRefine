@@ -38,7 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       if (name) {
         var dismiss = DialogSystem.showBusy('Uploading...');
         $.post(
-          "/command/gdata/upload",
+          "command/gdata/upload",
           {
             "project" : theProject.id,
             "engine" : exportAllRows ? '' : JSON.stringify(ui.browsingEngine.getJSON()),

@@ -49,11 +49,11 @@ Refine.GDataImportingController.prototype.startImportingDocument = function(doc)
   
   var self = this;
   $.post(
-    "/command/core/create-importing-job",
+    "command/core/create-importing-job",
     null,
     function(data) {
       $.post(
-        "/command/core/importing-controller?" + $.param({
+        "command/core/importing-controller?" + $.param({
           "controller": "gdata/gdata-importing-controller",
           "subCommand": "initialize-parser-ui",
           "docUrl": doc.docSelfLink,
@@ -272,7 +272,7 @@ Refine.GDataImportingController.prototype._updatePreview = function() {
   this._parsingPanelElmts.progressPanel.show();
 
   $.post(
-    "/command/core/importing-controller?" + $.param({
+    "command/core/importing-controller?" + $.param({
       "controller": "gdata/gdata-importing-controller",
       "jobID": this._jobID,
       "subCommand": "parse-preview"
@@ -303,7 +303,7 @@ Refine.GDataImportingController.prototype._getPreviewData = function(callback, n
   var result = {};
 
   $.post(
-    "/command/core/get-models?" + $.param({ "importingJobID" : this._jobID }),
+    "command/core/get-models?" + $.param({ "importingJobID" : this._jobID }),
     null,
     function(data) {
       for (var n in data) {
@@ -313,7 +313,7 @@ Refine.GDataImportingController.prototype._getPreviewData = function(callback, n
       }
       
       $.post(
-        "/command/core/get-rows?" + $.param({
+        "command/core/get-rows?" + $.param({
           "importingJobID" : self._jobID,
           "start" : 0,
           "limit" : numRows || 100 // More than we parse for preview anyway
@@ -342,7 +342,7 @@ Refine.GDataImportingController.prototype._createProject = function() {
   var options = this.getOptions();
   options.projectName = projectName;
   $.post(
-    "/command/core/importing-controller?" + $.param({
+    "command/core/importing-controller?" + $.param({
       "controller": "gdata/gdata-importing-controller",
       "jobID": this._jobID,
       "subCommand": "create-project"

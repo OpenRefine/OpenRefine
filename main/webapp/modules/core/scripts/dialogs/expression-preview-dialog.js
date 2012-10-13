@@ -154,7 +154,7 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     s = this._getLanguage() + ":" + s;
     if (commit) {
         $.post(
-            "/command/core/log-expression?" + $.param({ project: theProject.id, expression: s }),
+            "command/core/log-expression?" + $.param({ project: theProject.id, expression: s }),
             null,
             function(data) {
             },
@@ -172,7 +172,7 @@ ExpressionPreviewDialog.Widget.prototype._getLanguage = function() {
 ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
     var self = this;
     $.getJSON(
-        "/command/core/get-expression-language-info",
+        "command/core/get-expression-language-info",
         null,
         function(data) {
             self._renderHelp(data);
@@ -253,7 +253,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
 ExpressionPreviewDialog.Widget.prototype._renderExpressionHistoryTab = function() {
     var self = this;
     $.getJSON(
-        "/command/core/get-expression-history?" + $.param({ project: theProject.id }),
+        "command/core/get-expression-history?" + $.param({ project: theProject.id }),
         null,
         function(data) {
             self._renderExpressionHistory(data);
@@ -280,7 +280,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
                 .appendTo(tr.insertCell(0))
                 .click(function() {
                     $.post(
-                        "/command/core/toggle-starred-expression",
+                        "command/core/toggle-starred-expression",
                         { expression: entry.code },
                         function(data) {
                             entry.starred = !entry.starred;
@@ -319,7 +319,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
 ExpressionPreviewDialog.Widget.prototype._renderStarredExpressionsTab = function() {
     var self = this;
     $.getJSON(
-        "/command/core/get-starred-expressions",
+        "command/core/get-starred-expressions",
         null,
         function(data) {
             self._renderStarredExpressions(data);
@@ -344,7 +344,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
         
         $('<a href="javascript:{}">Remove</a>').appendTo(tr.insertCell(0)).click(function() {
             $.post(
-                "/command/core/toggle-starred-expression",
+                "command/core/toggle-starred-expression",
                 { expression: entry.code, returnList: true },
                 function(data) {
                     self._renderStarredExpressions(data);
@@ -394,7 +394,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     this._prepareUpdate(params);
     
     $.post(
-        "/command/core/preview-expression?" + $.param(params), 
+        "command/core/preview-expression?" + $.param(params), 
         {
             rowIndices: JSON.stringify(this._rowIndices) 
         },

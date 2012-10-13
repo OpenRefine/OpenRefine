@@ -285,7 +285,7 @@ SchemaAlignmentDialog.prototype.preview = function(initial) {
 
   var protograph = this.getJSON();
   $.post(
-    "/command/freebase/preview-protograph?" + $.param({ project: theProject.id }),
+    "command/freebase/preview-protograph?" + $.param({ project: theProject.id }),
     { protograph: JSON.stringify(protograph), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
       if ("mqllike" in data) {

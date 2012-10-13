@@ -5,6 +5,8 @@
     "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
 
 <web-app>
+    <display-name>Google Refine</display-name>
+    <description>Google Refine Webapp</description>
 
     <!--+
         | This forces all the session cookies to default to the root path.
@@ -17,7 +19,7 @@
         <param-name>org.mortbay.jetty.servlet.SessionPath</param-name>
         <param-value>/</param-value>
     </context-param>
-     
+
     <servlet>
         <servlet-name>refine</servlet-name>
         <servlet-class>com.google.refine.RefineServlet</servlet-class>
@@ -29,6 +31,12 @@
             <param-name>refine.revision</param-name>
             <param-value>$REVISION</param-value>
         </init-param>
+        <!-- added by Wikier, unused by us
+        <init-param>
+            <param-name>refine.data</param-name>
+            <param-value>/tmp/refine</param-value>
+        </init-param>  
+        -->
     </servlet>
 
     <servlet-mapping>

@@ -243,7 +243,7 @@ BrowsingEngine.prototype.update = function(onDone) {
   this._elmts.indicator.css("visibility", "visible");
 
   $.post(
-    "/command/core/compute-facets?" + $.param({ project: theProject.id }),
+    "command/core/compute-facets?" + $.param({ project: theProject.id }),
     { engine: JSON.stringify(this.getJSON(true)) },
     function(data) {
       var facetData = data.facets;

@@ -38,11 +38,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9;chrome=1;">
     <title>Error - Google Refine</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.less" />
+    <link rel="stylesheet" href="styles/common.less" />
   </head>
   <body>
     <div id="header">
-      <a id="app-home-button" href="/"><img alt="Google Refine" src="/images/logo-googlerefine-30.png" width="129" height="29" /></a>
+      <a id="app-home-button" href="/"><img alt="Google Refine" src="images/logo-googlerefine-30.png" width="129" height="29" /></a>
     </div>
     <div id="body-info">
       <h1>Something went wrong!</h1>

@@ -50,7 +50,7 @@ Refine.CreateProjectUI = function(elmt) {
   this._errorPanel.html(DOM.loadHTML("core", "scripts/index/create-project-error-panel.html"));
   
   $.post(
-    "/command/core/get-importing-configuration",
+    "command/core/get-importing-configuration",
     null,
     function(data) {
       Refine.importingConfig = data.config;
@@ -177,7 +177,7 @@ Refine.CreateProjectUI.prototype.showImportProgressPanel = function(progressMess
 Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID, checkDone, callback, onError) {
   var self = this;
   $.post(
-    "/command/core/get-importing-job-status?" + $.param({ "jobID": jobID }),
+    "command/core/get-importing-job-status?" + $.param({ "jobID": jobID }),
     null,
     function(data) {
       if (!(data)) {
@@ -264,5 +264,5 @@ Refine.CreateProjectUI.composeErrorMessage = function(job) {
 };
 
 Refine.CreateProjectUI.cancelImportingJob = function(jobID) {
-  $.post("/command/core/cancel-importing-job?" + $.param({ "jobID": jobID }));
+  $.post("command/core/cancel-importing-job?" + $.param({ "jobID": jobID }));
 };

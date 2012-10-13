@@ -81,7 +81,7 @@ ProcessPanel.prototype.update = function(updateOptions, onDone) {
 
   var self = this;
   Ajax.chainGetJSON(
-      "/command/core/get-processes?" + $.param({ project: theProject.id }), null,
+      "command/core/get-processes?" + $.param({ project: theProject.id }), null,
       function(data) {
         self._latestHistoryEntry = null;
         self._render(data);
@@ -120,7 +120,7 @@ ProcessPanel.prototype.undo = function() {
 ProcessPanel.prototype._cancelAll = function() {
   var self = this;
   $.post(
-      "/command/core/cancel-processes?" + $.param({ project: theProject.id }), 
+      "command/core/cancel-processes?" + $.param({ project: theProject.id }), 
       null,
       function(o) {
         self._data = null;
@@ -195,7 +195,7 @@ ProcessPanel.prototype._render = function(newData) {
       if (window.confirm('The last operation encountered some errors:\n' + messages +
             '\n\nContinue with the remaining operations?')) {
         $.post(
-          "/command/core/apply-operations?" + $.param({ project: theProject.id }), 
+          "command/core/apply-operations?" + $.param({ project: theProject.id }), 
           { operations: '[]' },
           function(o) {},
           "json"

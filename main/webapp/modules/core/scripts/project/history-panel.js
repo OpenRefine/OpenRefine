@@ -54,7 +54,7 @@ HistoryPanel.prototype.resize = function() {
 HistoryPanel.prototype.update = function(onDone) {
   var self = this;
   Ajax.chainGetJSON(
-    "/command/core/get-history?" + $.param({ project: theProject.id }), null,
+    "command/core/get-history?" + $.param({ project: theProject.id }), null,
     function(data) {
       self._data = data;
       self._render();
@@ -171,7 +171,7 @@ HistoryPanel.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
 HistoryPanel.prototype._extractOperations = function() {
   var self = this;
   $.getJSON(
-      "/command/core/get-operations?" + $.param({ project: theProject.id }), 
+      "command/core/get-operations?" + $.param({ project: theProject.id }), 
       null,
       function(data) {
         if ("entries" in data) {

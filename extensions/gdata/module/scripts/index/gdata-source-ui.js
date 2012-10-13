@@ -54,7 +54,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
     );
   });
   this._body.find('.gdata-signout.button').click(function() {
-      $.get("/command/gdata/deauthorize" );
+      $.get("command/gdata/deauthorize" );
       self._body.find('.gdata-page').hide();
       self._elmts.signinPage.show();
   });
@@ -92,7 +92,7 @@ Refine.GDataSourceUI.prototype._listDocuments = function() {
   
   var self = this;
   $.post(
-    "/command/core/importing-controller?" + $.param({
+    "command/core/importing-controller?" + $.param({
       "controller": "gdata/gdata-importing-controller",
       "subCommand": "list-documents"
     }),
