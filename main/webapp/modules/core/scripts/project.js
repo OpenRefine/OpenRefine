@@ -144,7 +144,7 @@ function initializeUI(uiState) {
 }
 
 Refine.setTitle = function(status) {
-  var title = theProject.metadata.name + " - Google Refine";
+  var title = theProject.metadata.name + " - OpenRefine";
   if (status) {
     title = status + " - " + title;
   }

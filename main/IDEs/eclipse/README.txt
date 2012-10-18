@@ -1,16 +1,16 @@
 
-                                 Google Refine Helpers for Eclipse
+                                 OpenRefine Helpers for Eclipse
                                  ---------------------------------
                                  
                         
   This file contains Eclipse-specific help files that can get simplify your life 
-  developing Google Refine with Eclipse (http://www.eclipse.org/).
+  developing OpenRefine with Eclipse (http://www.eclipse.org/).
   
   
   Launch Files (*.launch)
   -----------------------
   
-  These are files that help you running Google Refine directly from eclipse without having to execute
+  These are files that help you running OpenRefine directly from eclipse without having to execute
   the shell scripts.
   
   To run, right click on the files directly from Eclipse, then do "Run As -> <name>".
@@ -26,6 +26,6 @@
    Thank you for your interest.
    
    
-                                             The Google Refine Development Team
-                                           http://code.google.com/p/google-refine/
+                                             The OpenRefine Development Team
+                                           http://github.com/OpenRefine/OpenRefine
                                            

@@ -2,7 +2,7 @@
 
 <!--+
     |
-    |  Google Refine GData Extension Build File    
+    |  OpenRefine GData Extension Build File    
     |                
     +-->
     
@@ -75,7 +75,7 @@
          <copy file="${basedir}/LICENSE.txt" tofile="${ext.dir}/LICENSE.txt"/>
          <copy file="${basedir}/README.txt" tofile="${ext.dir}/README.txt"/>
          
-         <zip destfile="${dist.dir}/google-refine-${fullname}.zip">
+         <zip destfile="${dist.dir}/openrefine-${fullname}.zip">
             <zipfileset dir="${ext.dir}/..">
                 <include name="**/**"/>
             </zipfileset>

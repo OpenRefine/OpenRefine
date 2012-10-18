@@ -61,7 +61,7 @@ import edu.mit.simile.butterfly.ButterflyModule;
  * @license New BSD http://www.opensource.org/licenses/bsd-license.php
  */
 abstract public class GDataExtension {
-    static final String SERVICE_APP_NAME = "Google-Refine-GData-Extension";
+    static final String SERVICE_APP_NAME = "OpenRefine-GData-Extension";
 
     static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {

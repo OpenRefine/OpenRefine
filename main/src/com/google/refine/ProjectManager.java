@@ -135,9 +135,9 @@ public abstract class ProjectManager {
      */
     protected abstract Project loadProject(long id);
 
-    //------------Import and Export from Google Refine archive-----------------
+    //------------Import and Export from Refine archive-----------------
     /**
-     * Import project from a Google Refine archive
+     * Import project from a Refine archive
      * @param projectID
      * @param inputStream
      * @param gziped
@@ -146,7 +146,7 @@ public abstract class ProjectManager {
     public abstract void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException;
 
     /**
-     * Export project to a Google Refine archive
+     * Export project to a Refine archive
      * @param projectId
      * @param tos
      * @throws IOException

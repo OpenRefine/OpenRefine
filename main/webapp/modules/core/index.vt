@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9;chrome=1;">
-  <title>Google Refine</title>
+  <title>OpenRefine</title>
   <link rel="icon" type="image/png" href="images/favicon.png">
   <script type="text/javascript" src="wirings.js"></script>
   $scriptInjection
@@ -44,7 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <img alt="Google Refine" src="images/logo-googlerefine-30.png" width="129" height="29" />
+    <img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" />
     <span id="slogan">A power tool for working with messy data.</span>
   </div>
   
@@ -54,8 +54,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     <div id="project-links">
       <div id="logo-container">
-        <img alt="Google Refine" src="images/logo-gem-40.png" />
-        <div id="google-refine-version"></div>
+        <img alt="OpenRefine" src="images/logo-gem-40.png" />
+        <div id="openrefine-version"></div>
       </div>
       <ul>
         <li><a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers">Help</a></li>

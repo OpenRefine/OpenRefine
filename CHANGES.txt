@@ -1,4 +1,4 @@
-2.6 Release (TBD) - Maintenance release
+2.6 Release (TBD) - First release as OpenRefine - Maintenance release
 
 Features:
 

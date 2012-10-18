@@ -91,7 +91,7 @@ public class Refine {
         // tell macosx to keep the menu associated with the screen and what the app title is
         System.setProperty("apple.laf.useScreenMenuBar", "true");  
         System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode", "false"); 
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Google Refine");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "OpenRefine");
         
         // tell the signpost library to log
         //System.setProperty("debug","true");
@@ -351,6 +351,7 @@ class RefineServer extends Server {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
             
+            // TODO: Update needed (again)
             String data_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine";
             dataDir = new File(data_home);
             

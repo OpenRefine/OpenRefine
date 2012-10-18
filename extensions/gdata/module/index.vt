@@ -8,7 +8,7 @@
   <body>
     <h1>Google Data Extension v$version</h1>
     <h2>by Tom Morris <tfmorris@gmail.com></h2>    
-    <p>The Google Spreadsheet/Google Data extension allows Google Refine to read
+    <p>The Google Spreadsheet/Google Data extension allows OpenRefine to read
     (and write, soon) Google Spreadsheets.  It should be easily adaptable to
     other data sources which implement the gData protocol such as Google Base.
     </p>

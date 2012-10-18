@@ -67,9 +67,9 @@ import org.slf4j.LoggerFactory;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 
 /**
- * This class contains all the code shared by various implementations of a Google Refine Broker.
+ * This class contains all the code shared by various implementations of a OpenRefine Broker.
  * 
- * A broker is a server used by multiple Google Refine installations to enable collaborative
+ * A broker is a server used by multiple OpenRefine installations to enable collaborative
  * development over the same project.
  * 
  * Broker implementations differ in how they store their state but all of them are required
@@ -228,7 +228,7 @@ public abstract class RefineBroker extends ButterflyModuleImpl {
 
         HttpPost httpRequest = new HttpPost(USER_INFO_URL);
         httpRequest.setHeader(OAUTH_HEADER, oauth);
-        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Google Refine Broker");
+        httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "OpenRefine Broker");
         httpRequest.setEntity(entity);
                 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();

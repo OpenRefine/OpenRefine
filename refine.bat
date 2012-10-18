@@ -25,10 +25,10 @@ echo where [options] include:
 echo.
 echo  /? print this message and exit
 echo.
-echo  /p <port> the port that Google Refine will listen to
+echo  /p <port> the port that OpenRefine will listen to
 echo     default: 3333
 echo.
-echo  /i <interface> the host interface Google Refine should bind to
+echo  /i <interface> the host interface OpenRefine should bind to
 echo     default: 127.0.0.1
 echo.
 echo  /w <path> path to the webapp
@@ -43,8 +43,8 @@ echo  /x enable JMX monitoring (for jconsole and friends)
 echo.
 echo and <action> is one of
 echo.
-echo   build ..................... Build Google Refine
-echo   run ....................... Run Google Refine
+echo   build ..................... Build OpenRefine
+echo   run ....................... Run OpenRefine
 echo.
 echo   clean ..................... Clean compiled classes
 echo   distclean ................. Remove all generated files

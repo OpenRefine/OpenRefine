@@ -52,7 +52,7 @@ public class OpenWorkspaceDirCommand extends Command {
         String serverName = request.getServerName();
         
         if (!"127.0.0.1".equals(serverName) && !"localhost".equals(serverName)) {
-            respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace directory can only be opened on the local machine where Google Refine is run.\" }");
+            respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace directory can only be opened on the local machine where OpenRefine is run.\" }");
         } else if (ProjectManager.singleton instanceof FileProjectManager) {
             File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
 

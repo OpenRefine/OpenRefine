@@ -2,11 +2,11 @@
 
 <!--+
     |
-    |  Google Refine Extensions Build File    
+    |  OpenRefine Extensions Build File    
     |                
     +-->
     
-<project name="google-refine-extensions" default="build" basedir=".">
+<project name="openrefine-extensions" default="build" basedir=".">
   <target name="build">
     <echo message="Building extensions" />
     <ant dir="sample/" target="build" />

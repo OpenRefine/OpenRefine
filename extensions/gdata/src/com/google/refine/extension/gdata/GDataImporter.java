@@ -54,7 +54,7 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 /**
- * Google Refine parser for Google Spreadsheets.
+ * OpenRefine parser for Google Spreadsheets.
  * 
  * @author Tom Morris <tfmorris@gmail.com>
  * @copyright 2010 Thomas F. Morris

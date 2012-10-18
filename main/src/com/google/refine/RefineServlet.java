@@ -59,14 +59,15 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
-    static private String ASSIGNED_VERSION = "2.5";
+    static private String ASSIGNED_VERSION = "2.6";
     
     static public String VERSION = "";
     static public String REVISION = "";
     static public String FULL_VERSION = "";
-    static public String FULLNAME = "Google Refine ";
+    static public String FULLNAME = "OpenRefine ";
 
-    static public final String AGENT_ID = "/en/google_refine";
+
+    static public final String AGENT_ID = "/en/google_refine"; // TODO: Unused?  Freebase ID
     
     static final long serialVersionUID = 2386057901503517403L;
 
@@ -369,7 +370,7 @@ public class RefineServlet extends Butterfly {
     }
     
     static public void setUserAgent(HttpURLConnection httpConnection) {
-        httpConnection.addRequestProperty("User-Agent", "Google Refine/" + FULL_VERSION);
+        httpConnection.addRequestProperty("User-Agent", "OpenRefine/" + FULL_VERSION);
     }
 
 }

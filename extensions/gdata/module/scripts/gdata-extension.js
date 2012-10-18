@@ -41,7 +41,7 @@ GdataExtension.showAuthorizationDialog = function(onAuthorized, onNotAuthorized)
   if (window.name) {
     var windowName = window.name;
   } else {
-    var windowName = "googlerefine" + new Date().getTime();
+    var windowName = "openrefine" + new Date().getTime();
     window.name = windowName;
   }
   
@@ -58,5 +58,5 @@ GdataExtension.showAuthorizationDialog = function(onAuthorized, onNotAuthorized)
   window[callbackName] = callback;
   
   var url = ModuleWirings['gdata'] + "authorize?winname=" + escape(windowName) + "&callback=" + escape(callbackName);
-  var win = window.open(url, "googlerefinegdataauth", "resizable=1,width=800,height=600");
+  var win = window.open(url, "openrefinegdataauth", "resizable=1,width=800,height=600");
 };

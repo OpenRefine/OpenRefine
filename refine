@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ########################################################## 
-#               Google Refine Control System             #
+#               OpenRefine Control System             #
 ##########################################################
 
 # -------------- utility functions ----------------------
@@ -31,10 +31,10 @@ where [options] include:
 
   -h print this message and exit
   
-  -p <port> the port that Google Refine will listen to
+  -p <port> the port that OpenRefine will listen to
      default: 3333
 
-  -i <interface> the host interface Google Refine should bind to
+  -i <interface> the host interface OpenRefine should bind to
      default: 127.0.0.1
 
   -w <path> path to the webapp
@@ -49,7 +49,7 @@ where [options] include:
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
 
-  -x <name=value> additional configuration parameters to pass to Google Refine
+  -x <name=value> additional configuration parameters to pass to OpenRefine
      default: [none]
   
   --debug enable JVM debugging (on port 8000)
@@ -58,22 +58,22 @@ where [options] include:
   
 and <action> is one of
 
-   build ............................... Build Google Refine      
-   run ................................. Run Google Refine [default]
+   build ............................... Build OpenRefine      
+   run ................................. Run OpenRefine [default]
 
-   test ................................ Run all Google Refine tests
+   test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
    ui_test ............................. Run only the UI tests
 
-   broker .............................. Run Google Refine Broker
+   broker .............................. Run OpenRefine Broker
    
-   broker_appengine_run <id> <ver> ..... Run Google Refine Broker for Google App Engine in local server
-   broker_appengine_upload <id> <ver> .. Upload Google Refine to Google App Engine
+   broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
+   broker_appengine_upload <id> <ver> .. Upload OpenRefine to Google App Engine
    
-   findbugs ............................ Run Findbugs against Google Refine
-   pmd ................................. Run PMD against Google Refine
-   cpd ................................. Run Copy/Paste Detection against Google Refine
-   jslint .............................. Run JSlint against Google Refine
+   findbugs ............................ Run Findbugs against OpenRefine
+   pmd ................................. Run PMD against OpenRefine
+   cpd ................................. Run Copy/Paste Detection against OpenRefine
+   jslint .............................. Run JSlint against OpenRefine
 
    whitespace <extension> .............. Normalize whitespace in files with the given extension
 
@@ -148,7 +148,7 @@ check_pywin32() {
 check_running() {
     check_downloaders
     URL="http://${REFINE_HOST}:${REFINE_PORT}/"
-    CHECK_STR="<title>Google Refine</title>"
+    CHECK_STR="<title>OpenRefine</title>"
 
     if [ "$CURL" ] ; then
         curl -s -S $URL > /dev/null 2>&1
@@ -170,7 +170,7 @@ check_running() {
         fi    
         
         if [ -z "${RUNNING}" ] ; then
-            error "Something is already running on $URL but doesn't seem to be Google Refine. Maybe a proxy issue?"
+            error "Something is already running on $URL but doesn't seem to be OpenRefine. Maybe a proxy issue?"
         fi
     else
         RUNNING=""
@@ -256,9 +256,9 @@ load_data() {
     CURL="`which curl 2> /dev/null`"
     
     if [ -z "$CURL" ] ; then
-        error "We need 'curl' present in PATH to upload data to Google Refine."
+        error "We need 'curl' present in PATH to upload data to OpenRefine."
     else
-        curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to Google Refine"
+        curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to OpenRefine"
         echo "Loaded $FILE as $NAME"
     fi
 }
@@ -471,7 +471,7 @@ dist() {
     echo "with"
     echo 
     echo "    {"
-    echo "        \"description\": \"Google Refine ${VERSION}\","
+    echo "        \"description\": \"OpenRefine ${VERSION}\","
     echo "        \"version\": \"${VERSION}\","
     echo "        \"revision\": \"${REVISION}\""
     echo "    },"
@@ -517,7 +517,7 @@ mac_dist() {
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
     fi
     
-    TITLE="Google Refine $VERSION"
+    TITLE="OpenRefine $VERSION"
     echo "Building MacOSX DMG for $TITLE"
     hdiutil create -srcfolder "$REFINE_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$REFINE_BUILD_DIR/temp_refine.dmg" || error "can't create empty DMG"
     DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}'`
@@ -536,7 +536,7 @@ mac_dist() {
             set icon size of theViewOptions to 100
             set background picture of theViewOptions to file ".background:dmg_background.png"
             make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
-            set position of item "Google Refine" of container window to {170, 175}
+            set position of item "OpenRefine" of container window to {170, 175}
             set position of item "Applications" of container window to {380, 175}
             close
             open               
@@ -577,7 +577,7 @@ ui_test() {
     
     run fork
     
-    echo "Waiting for Google Refine to load..."
+    echo "Waiting for OpenRefine to load..."
     sleep 5
     check_running
     if [ -z "$RUNNING" ] ; then
@@ -598,7 +598,7 @@ ui_test() {
     fi
     
     echo ""
-    echo "Killing Google Refine"
+    echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
     echo "Cleaning up"
     rm -rf $REFINE_DATA_DIR
@@ -630,7 +630,7 @@ run() {
     check_running
     
     if [ "$RUNNING" ] ; then
-        warn "Google Refine is already running."
+        warn "OpenRefine is already running."
     fi
     
     if [ ! -d $REFINE_CLASSES_DIR ] ; then
@@ -672,7 +672,7 @@ run() {
     #echo "$RUN_CMD"
     #echo ""
   
-    echo "Starting Google Refine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
@@ -715,7 +715,7 @@ broker_run() {
     #echo "$RUN_CMD"
     #echo ""
   
-    echo "Starting Google Refine Broker at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo "Starting OpenRefine Broker at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
@@ -856,7 +856,7 @@ fi
 
 JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep '^\"1\.(6|7)'`
 if [ -z "$JAVA_VERSION" ] ; then
-    error "Google Refine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+    error "OpenRefine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
 fi
 
 # ----- Parse the command line args ------------------------------------------

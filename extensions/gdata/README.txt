@@ -1,4 +1,4 @@
-Google Refine extension for Google Spreadsheets
+OpenRefine extension for Google Spreadsheets
 by Tom Morris <tfmorris@gmail.com>
 
 This extension provides Refine with the ability to read Google spreadsheets

@@ -34,10 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Google Refine - Authorized</title>
+  <title>OpenRefine - Authorized</title>
 </head>
 <body>
-  Authorization process completed. Close this window and return to Google Refine.
+  Authorization process completed. Close this window and return to OpenRefine.
   
   <script>
     var windowName = "$winname";

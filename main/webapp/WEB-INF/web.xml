@@ -5,8 +5,8 @@
     "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
 
 <web-app>
-    <display-name>Google Refine</display-name>
-    <description>Google Refine Webapp</description>
+    <display-name>OpenRefine</display-name>
+    <description>OpenRefine Webapp</description>
 
     <!--+
         | This forces all the session cookies to default to the root path.

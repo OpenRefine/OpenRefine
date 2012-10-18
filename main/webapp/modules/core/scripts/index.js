@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-var GoogleRefineVersion;
+var OpenRefineVersion;
 
 var Refine = {
   actionAreas: []
@@ -52,7 +52,7 @@ Refine.selectActionArea = function(id) {
 
 $(function() {
   var isThereNewRelease = function() {
-    var thisRevision = GoogleRefineVersion.revision;
+    var thisRevision = OpenRefineVersion.revision;
 
     var revision_pattern = /r([0-9]+)/;
 
@@ -60,10 +60,10 @@ $(function() {
       return false;
     }
 
-    var latestRevision = GoogleRefineReleases.releases[0].revision;
+    var latestRevision = OpenRefineReleases.releases[0].revision;
 
     var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
-    var latestRev = parseInt(revision_pattern.exec(GoogleRefineReleases.releases[0].revision)[1],10);
+    var latestRev = parseInt(revision_pattern.exec(OpenRefineReleases.releases[0].revision)[1],10);
 
     return latestRev > thisRev;
   };
@@ -73,9 +73,9 @@ $(function() {
         "command/core/get-version",
         null,
         function(data) {
-          GoogleRefineVersion = data;
+          OpenRefineVersion = data;
 
-          $("#google-refine-version").text("Version " + GoogleRefineVersion.full_version);
+          $("#openrefine-version").text("Version " + OpenRefineVersion.full_version);
 
           var script = $('<script></script>')
           .attr("src", "http://google-refine.googlecode.com/svn/support/releases.js")

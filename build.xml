@@ -2,11 +2,11 @@
 
 <!--+
     |
-    |  Google Refine Build File
+    |  OpenRefine Build File
     |
     +-->
     
-<project name="google-refine" default="build" basedir=".">
+<project name="openrefine" default="build" basedir=".">
 
     <!-- Properties are immutable, so anything set in this file takes priority-->
     <property file="build.properties"/>
@@ -19,11 +19,11 @@
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
 
-    <property name="appengine.app_id" value="google-refine-broker"/>
+    <property name="appengine.app_id" value="openrefine-broker"/>
     <property name="appengine.version" value="1"/>
     <property name="appengine.sdk.dir" value="/opt/appengine"/>
         
-    <property name="fullname" value="google-refine-${version}-${revision}" />
+    <property name="fullname" value="openrefine-${version}-${revision}" />
     
     <property name="main.dir" value="${basedir}/main" />
 
@@ -61,7 +61,7 @@
     <property name="built.broker.webapp.dir" value="${build.dir}/broker" />
 
     <property name="mac.dir" value="${build.dir}/mac" />
-    <property name="release.name" value="google-refine-${version}" />
+    <property name="release.name" value="openrefine-${version}" />
     <property name="windows.dir" value="${build.dir}/windows/${release.name}" />
     <property name="linux.dir" value="${build.dir}/linux/${release.name}" />
     
@@ -227,12 +227,12 @@
         
         <jarbundler 
                 dir="${mac.dir}"
-                name="Google Refine"
+                name="OpenRefine"
                 mainclass="com.google.refine.Refine" 
-                icon="${graphics.dir}/icon/google-refine.icns"
+                icon="${graphics.dir}/icon/openrefine.icns"
                 version="${version}"
-                infostring="Google Refine ${version}"
-                aboutmenuname="Google Refine"
+                infostring="OpenRefine ${version}"
+                aboutmenuname="OpenRefine"
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
                 jvmversion="1.6+"
                 bundleid="com.google.refine.Refine"
@@ -263,10 +263,10 @@
         <launch4j>
           <config 
                headerType="console" 
-               outfile="${windows.dir}/google-refine.exe" 
+               outfile="${windows.dir}/openrefine.exe" 
                jarPath="server/lib/${fullname}-server.jar" 
                dontWrapJar="true"
-               icon="${graphics.dir}/icon/google-refine.ico">
+               icon="${graphics.dir}/icon/openrefine.ico">
             <classPath mainClass="com.google.refine.Refine">
                 <cp>server/lib/*.jar</cp>
             </classPath>
@@ -276,14 +276,14 @@
             <versionInfo
                 fileVersion="${full_version}"
                 txtFileVersion="${version}"
-                fileDescription="google-refine"
-                copyright="Copyright (c) 2010, Google, Inc."
+                fileDescription="openrefine"
+                copyright="Copyright (c) 2012 OpenRefine contributors, 2010, Google, Inc."
                 productVersion="${full_version}"
                 txtProductVersion="${full_version}"
-                productName="Google Refine"
-                companyName="Google, Inc."
-                internalName="google-refine"
-                originalFilename="google-refine.exe" 
+                productName="OpenRefine"
+                companyName="OpenRefine team"
+                internalName="openrefine"
+                originalFilename="openrefine.exe" 
             />
           </config>
         </launch4j>     
@@ -311,14 +311,14 @@
             </fileset>
         </copy>
 
-        <copy file="${conf.dir}/google-refine.l4j.ini" tofile="${windows.dir}/google-refine.l4j.ini"/>
+        <copy file="${conf.dir}/openrefine.l4j.ini" tofile="${windows.dir}/openrefine.l4j.ini"/>
         <copy file="${basedir}/refine.bat" tofile="${windows.dir}/refine.bat"/>
         <copy file="${basedir}/refine.ini" tofile="${windows.dir}/refine.ini"/>
         <copy file="${basedir}/README.txt" tofile="${windows.dir}/README.txt"/>
         <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
         
         <mkdir dir="${dist.dir}"/>
-        <zip destfile="${dist.dir}/google-refine-${version}-${revision}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
+        <zip destfile="${dist.dir}/openrefine-${version}-${revision}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
     </target>
     
     <target name="linux" depends="jar, prepare_webapp">
@@ -349,7 +349,7 @@
         <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
         
         <mkdir dir="${dist.dir}"/>
-        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/google-refine-${version}-${revision}.tar.gz">
+        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/openrefine-${version}-${revision}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
                <include name="${release.name}/refine"/>
            </tarfileset>        

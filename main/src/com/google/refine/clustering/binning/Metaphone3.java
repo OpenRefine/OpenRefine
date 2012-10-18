@@ -35,8 +35,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * A request from the author: Please comment and sign any changes you make to 
  * the Metaphone 3 reference implementation.
  * <br>
- * Please do NOT reformat this module to Google Refine's coding standard,
- * but instead keep the original format so that it can be more easily compare
+ * Please do NOT reformat this module to Refine's coding standard,
+ * but instead keep the original format so that it can be more easily compared
  * to any modified fork of the original.
  */
 

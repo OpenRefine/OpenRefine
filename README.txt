@@ -1,25 +1,25 @@
 
 
 
-                                G o o g l e   R e f i n e
-                               ---------------------------
+                                O p e n R e f i n e
+                                -------------------
 
 
 
 What is this?
 -------------
 
-Google Refine is a power tool that allows you to load data, understand it,
+ is a power tool that allows you to load data, understand it,
 clean it up, reconcile it internally, and augment it with data coming from
 Freebase or other web sources. All with the comfort and privacy of 
 your own computer.
 
 
 
-Where can I get more information on Google Refine?
+Where can I get more information on ?
 ----------------------------------------------
 
-Look at the Google Refine web site
+Look at the  web site
 
   http://code.google.com/p/google-refine/
 
@@ -28,9 +28,9 @@ Look at the Google Refine web site
 Licensing and legal issues
 --------------------------
 
-Google Refine is open source software and is licensed under the BSD license
+ is open source software and is licensed under the BSD license
 located in the LICENSE.txt. See that file also for information on open source
-libraries that Google Refine depends on.
+libraries that  depends on.
 
 
 
@@ -39,7 +39,9 @@ Credits
 
 This software was created by Metaweb Technologies, Inc. and originally written
 and conceived by David Huynh <dfhuynh@google.com>. Metaweb Technologies, Inc.
-was acquired by Google, Inc. in July 2010.
+was acquired by Google, Inc. in July 2010 and the product was renamed Google Refine.
+In October 2012, it was renamed OpenRefine as it transitioned to a 
+community-supported product.
 
 This is the full list of contributors (in chronological order):
 
@@ -66,5 +68,5 @@ This is the full list of contributors (in chronological order):
  Thank you for your interest.
  
  
-                                           The Google Refine Development Team
-                                         http://code.google.com/p/google-refine/
+                                           The OpenRefine Development Team
+                                        http://github.com/OpenRefine/OpenRefine
