@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="extensions/crowdsourcing/src"/>
 	<classpathentry kind="src" path="server/src"/>
 	<classpathentry kind="src" path="extensions/freebase/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
