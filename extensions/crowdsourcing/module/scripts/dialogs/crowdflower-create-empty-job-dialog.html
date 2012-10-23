@@ -1,0 +1,17 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <div style="height:25px;">
+    <p><a href="/preferences">Check preferences</a></p>
+    </div>  
+    <div class="grid-layout layout-normal layout-full" style="height:300px;overflow:auto">
+    Job title: <input bind="jobTitle"/> <br/>
+    Job instructions: <textarea bind="jobInstructions"/>
+    
+    </div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter">
+    <button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+    <button class="button" bind="cancelButton">Cancel</button>
+  </div>
+</div>

@@ -30,7 +30,6 @@ function ZemantaCrowdFlowerDialog(onDone) {
 ZemantaCrowdFlowerDialog.renderAllColumns = function() {
 	  
 	var columns = theProject.columnModel.columns;
-	console.log("project: " + columns);
 	
 	var columnContainer = $('<div id="columns">');
 	var chkid = 1;
