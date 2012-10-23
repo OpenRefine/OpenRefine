@@ -53,6 +53,17 @@ ZemantaExtension.handlers.openPreferences = function() {
 	window.location = "/preferences";
 };
 
+ZemantaExtension.handlers.openJobSettingsDialog = function()  {
+	console.log("Open job columns...");
+	
+	new ZemantaCrowdFlowerDialog(function(job_columns) {
+		console.log("test 123");
+		alert(job_columns);
+	});
+
+};
+
+
 ExtensionBar.addExtensionMenu({
 	"id": "zemanta",
 	"label": "Zemanta",
@@ -71,6 +82,11 @@ ExtensionBar.addExtensionMenu({
 			 "id": "zemanta/az-mechturk-settings",
 			 label: "Amazon Mechanical Turk settings",
 			 click: ZemantaExtension.handlers.doNothing
+		 },
+		 {
+			 "id": "zemanta/test",
+			 label: "Test CrowdFlower service",
+			 click: ZemantaExtension.handlers.openJobSettingsDialog
 		 }
 		]
 });

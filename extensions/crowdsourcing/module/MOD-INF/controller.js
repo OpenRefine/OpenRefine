@@ -49,6 +49,7 @@ function init() {
     [
       "scripts/extension.js",
       "scripts/dialogs/crowdflower-api-settings-dialog.js",
+      "scripts/dialogs/crowdflower-job-columns-dialog.js"
     ]
   );
 
