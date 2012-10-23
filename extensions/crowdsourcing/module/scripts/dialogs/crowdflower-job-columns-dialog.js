@@ -10,11 +10,6 @@ function ZemantaCrowdFlowerDialog(onDone) {
   this._elmts.dialogHeader.text("Select columns for CrowdFlower job");
   
   this._elmts.okButton.click(function() {
-	  jobColumns = self._jobColumns;
-      $('#column input.zem-type:checked').each(function(){
-      	jobColumns.push($(this).attr('value'));
-      });
-      
       DialogSystem.dismissUntil(self._level - 1);
       self._onDone(self._jobColumns);
   });
@@ -24,5 +19,47 @@ function ZemantaCrowdFlowerDialog(onDone) {
     DialogSystem.dismissUntil(self._level - 1);
   });
   
+  
+  colsHTML = ZemantaCrowdFlowerDialog.renderAllColumns();
+  colsHTML.appendTo(this._elmts.columnList);
+  
+  this._level = DialogSystem.showDialog(this._dialog);
+  
 };
 
+ZemantaCrowdFlowerDialog.renderAllColumns = function() {
+	  
+	var columns = theProject.columnModel.columns;
+	console.log("project: " + columns);
+	
+	var columnContainer = $('<div id="columns">');
+	var chkid = 1;
+
+	var renderColumns = function(columns, elem) {
+		$.each(columns, function(index, value){
+			var input = $('<input type="checkbox" class="zem-col" value="' + value.name + 'id="' + 'chk_' + chkid + '">').appendTo(elem);
+			$('<label for="chk_' + chkid + '">' + value.name + '</label>').appendTo(elem);
+			$('<br />').appendTo(elem);
+			chkid++;
+			
+			//in case any other column is clicked, all column is deselected
+			input.click(function() {
+				$('input#all-cols').attr('checked',false);
+			});
+		});
+	};
+	
+	var input = $('<input type="checkbox" value="all" id="all-cols">').appendTo(columnContainer);
+	$('<label for="all-cols">All columns </label>').appendTo(columnContainer);
+	$('<br />').appendTo(columnContainer);
+	renderColumns(columns, columnContainer);
+	
+	//check all columns by default
+	input.click(function() {
+		$('#columns input.zem-col').each(function () {
+			$(this).attr('checked', true);
+		});
+	});
+	
+	return columnContainer;	
+};
