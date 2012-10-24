@@ -9,6 +9,10 @@ ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings = function(getApiKey) {
 		    	if (data && data["crowdflower.apikey"]) {
 		    		getApiKey(data["crowdflower.apikey"]);
 		    	}
+		    	else {
+		    		alert("CrowdFlower API key was not found in the settings. Please add it first.");
+		    		getApiKey("");
+		    	}
 		      },
 		      "json"
 	 );	
@@ -51,48 +55,20 @@ ZemantaExtension.handlers.openJobSettingsDialog = function()  {
 
 };
 
+ZemantaExtension.handlers.getApiKey =  function() {
+	console.log("Getting API key...");
+	ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings(function(apiKey) {
+		console.log("Read API key: " + apiKey);
+		return apiKey;
+	});
+};
+
+
 ZemantaExtension.handlers.createEmptyJobDialog = function() {
 	console.log("Creating new empty CrowdFlower job");
 	
 	//TODO:maybe jobData is not even needed
-	new ZemantaCrowdFlowerEmptyJobDialog(function(jobData){
-		
-//		var apiKey= "";
-//		ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings(function(myApiKey) {
-//			apiKey = myApiKey;
-//		});
-//		
-//		var CF_SERVICE_URL = "https://api.crowdflower.com/v1/";
-//		var full_url = CF_SERVICE_URL + "jobs.json?";
-//		
-//		var params = {
-//				"key":apiKey,
-//				"job[title]": jobData.title,
-//				"job[instructions]": jobData.instructions
-//			};
-//		
-//		var safe_params = "";
-//		
-//		$.each(params, function(key, val){
-//			if (key != "key"){
-//				safe_params += "&";
-//			}
-//			safe_params += key + "=" + encodeURI(val);
-//		});
-//		
-//		console.log("Safe params: " + safe_params);
-//		console.log("complete url: " + full_url + safe_params);
-//		
-//		$.ajax({
-//			url: full_url + safe_params,
-//			type: "POST",
-//			crossDomain:true,
-//			dataType: 'json',
-//			success: function(data) {
-//				console.log("Response or sth: " + data);
-//			}
-//		});
-	});
+	new ZemantaCrowdFlowerEmptyJobDialog();
 };
 
 
@@ -112,9 +88,7 @@ ExtensionBar.addExtensionMenu({
 			              {
 			            	  "id":"zemanta/crowdflower/test",
 			            	  "label": "Test",
-			            	  click: ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings(function(apiKey) {
-			            		  console.log("Test API KEY: " + apiKey);
-			            	  })
+			            	  click: ZemantaExtension.handlers.getApiKey
 			              },
 			     		 {
 			    			 "id": "zemanta/crowdflower/settings",

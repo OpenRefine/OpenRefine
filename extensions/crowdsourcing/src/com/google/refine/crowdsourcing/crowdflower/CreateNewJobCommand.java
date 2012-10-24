@@ -7,15 +7,27 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.preference.PreferenceStore;
 
+import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.zemanta.crowdflower.client.CrowdFlowerClient;
+
 public class CreateNewJobCommand extends Command{
     static final Logger logger = LoggerFactory.getLogger("crowdflower_createnewjob");
 
+    private Object getPreference(String prefName) {
+        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
+        Object pref = ps.get(prefName);
+        
+        return pref;
+    }
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -24,9 +36,11 @@ public class CreateNewJobCommand extends Command{
             
             String job_title = request.getParameter("title");
             String job_instructions = request.getParameter("instructions");
-            String job_id = "12345";
+            String job_id = "";  //= "12345";
+
+            String apiKey = (String) getPreference("crowdflower.apikey");
+            System.out.println("---- API KEY: " + apiKey);
             
-            //Project project = getProject(request);
             //project.columnModel.columns
             //create new request to CrowdFlower API
             
@@ -35,6 +49,27 @@ public class CreateNewJobCommand extends Command{
             
             System.out.println("Job title: " + job_title);
             System.out.println("Job instructions: " + job_instructions);
+            
+            
+            CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
+            String res = cf_client.createEmptyJob(job_title, job_instructions);
+            JSONObject results;
+            
+            System.out.println("----------------------------------");
+            System.out.println(res);
+            System.out.println("----------------------------------");
+            
+            if(res!= null) {
+                results = new JSONObject(res);
+                System.out.println("-----> Project ID: " + results.get("id"));
+                job_id = results.getString("id");
+            }
+            else
+            {
+                System.out.println("No job was created!");
+                job_id = "ERROR";
+            }
+            
             
             
             Writer w = response.getWriter();

@@ -1,4 +1,4 @@
-function ZemantaCrowdFlowerEmptyJobDialog(onDone) {
+function ZemantaCrowdFlowerEmptyJobDialog() {
   this._onDone = onDone;
   this._jobData = {};
   this._jobID = "";
@@ -9,9 +9,7 @@ function ZemantaCrowdFlowerEmptyJobDialog(onDone) {
   this._elmts.dialogHeader.text("CrowdFlower: Create empty job dialog");
   
   this._elmts.okButton.click(function() {
-      DialogSystem.dismissUntil(self._level - 1);
-           
-      self._onDone(self._jobData);
+      DialogSystem.dismissUntil(self._level - 1);           
   });
 
   this._elmts.createJobButton.click(function() {
@@ -24,7 +22,6 @@ function ZemantaCrowdFlowerEmptyJobDialog(onDone) {
       }; 
       self._jobData = cf_job;
       
-      //TODO: ADD API KEY HERE or check for it on the server side?
       $.post(
     		  "command/crowdsourcing/create-crowdflower-job",
     		  self._jobData,
@@ -33,7 +30,6 @@ function ZemantaCrowdFlowerEmptyJobDialog(onDone) {
     			  console.log("Got results from command: " + data.status);
     			  console.log("Job ID: " + data.job_id);
     			  self._update(data.job_id);
-    			  //dela?
     			  self._jobData.job_id = data.job_id;
     		  },
     		  "json"
@@ -50,8 +46,7 @@ function ZemantaCrowdFlowerEmptyJobDialog(onDone) {
 };
 
 ZemantaCrowdFlowerEmptyJobDialog.prototype._update = function(data) {
-	var self = this;
-	var container = self._elmts.results;
+	var container = this._elmts.results;
 	$('<span style="font-weight:bold;">JOB ID: </span><span>' + data + '</span>').appendTo(container);
 	
 };
