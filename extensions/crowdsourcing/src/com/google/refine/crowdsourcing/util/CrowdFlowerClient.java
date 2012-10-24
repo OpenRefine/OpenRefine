@@ -1,4 +1,4 @@
-package com.google.refine.com.zemanta.crowdsourcing.crowdflower.util;
+package com.google.refine.crowdsourcing.util;
 
 
 public class CrowdFlowerClient {

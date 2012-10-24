@@ -3,6 +3,7 @@
 	<name>crowdsourcing-ext</name>
 	<comment></comment>
 	<projects>
+		<project>OpenRefine</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -34,14 +34,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
+var RS = Packages.com.google.refine.RefineServlet;
 
 /*
  * Function invoked to initialize the extension.
  */
 function init() {
   // Packages.java.lang.System.err.println("Initializing sample extension");
-  // Packages.java.lang.System.err.println(module.getMountPoint());
+ 
+	//var OR = Packages.com.google.refine.operations.OperationRegistry;
 
+  RS.registerCommand(module, "create-crowdflower-job", new Packages.com.google.refine.crowdsourcing.crowdflower.CreateNewJobCommand());
+	
   // Script files to inject into /project page
   ClientSideResourceManager.addPaths(
     "project/scripts",

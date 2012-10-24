@@ -41,7 +41,7 @@ ZemantaCrowdFlowerDialog.renderAllColumns = function() {
 			$('<br />').appendTo(elem);
 			chkid++;
 			
-			//in case any other column is clicked, all column is deselected
+			//in case any other column is clicked, all-columns checked turns into false
 			input.click(function() {
 				$('input#all-cols').attr('checked',false);
 			});

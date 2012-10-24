@@ -1,4 +1,4 @@
-package com.google.refine.com.zemanta.crowdsourcing.crowdflower.commands;
+package com.google.refine.crowdsourcing.crowdflower;
 
 import com.google.refine.commands.Command;
 
