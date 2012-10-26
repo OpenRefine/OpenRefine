@@ -40,15 +40,13 @@ public class CreateNewJobCommand extends Command{
 
             String apiKey = (String) getPreference("crowdflower.apikey");
             System.out.println("---- API KEY: " + apiKey);
-            
-            //project.columnModel.columns
-            //create new request to CrowdFlower API
-            
+                        
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             
             System.out.println("Job title: " + job_title);
             System.out.println("Job instructions: " + job_instructions);
+            
             
             
             CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
@@ -61,7 +59,7 @@ public class CreateNewJobCommand extends Command{
             
             if(res!= null) {
                 results = new JSONObject(res);
-                System.out.println("-----> Project ID: " + results.get("id"));
+                System.out.println("-----> Job ID: " + results.get("id"));
                 job_id = results.getString("id");
             }
             else
@@ -70,16 +68,12 @@ public class CreateNewJobCommand extends Command{
                 job_id = "ERROR";
             }
             
-            
-            
             Writer w = response.getWriter();
             JSONWriter writer = new JSONWriter(w);
             try {
                 writer.object();
                 writer.key("status"); writer.value("ok");
-                writer.key("job_id"); writer.value(job_id);
-                //add data about created job, e.g. job_id!
-    
+                writer.key("job_id"); writer.value(job_id);    
             } catch(Exception e){
                 logger.error("New job not created.");
             }

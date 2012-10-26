@@ -46,11 +46,27 @@ ZemantaExtension.handlers.openPreferences = function() {
 };
 
 ZemantaExtension.handlers.openJobSettingsDialog = function()  {
-	console.log("Open dialog with columns...");
 	
-	new ZemantaCrowdFlowerDialog(function(job_columns) {
-		console.log("test 123");
-		alert(job_columns);
+	new ZemantaCrowdFlowerDialog(function(data) {
+	      $.post(
+	    		  "command/crowdsourcing/create-crowdflower-job",
+	    		  self._jobData,
+	    		  function(o)
+	    		  {
+	    			  if (o.code == "error") {
+			              alert(o.message);
+			            }
+	    			  else {
+	    				  alert("Everything is ok!");
+	    				  //TODO: store job id to project
+	    				  //TODO: store unit id to each row! alternativa: download whole data, replace old one
+	    			  }
+	    		  },
+	    		  "json"
+	      );     
+
+		
+		
 	});
 
 };
