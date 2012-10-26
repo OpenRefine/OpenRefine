@@ -32,6 +32,7 @@ function ZemantaCrowdFlowerDialog(onDone) {
   
 };
 
+
 ZemantaCrowdFlowerDialog.renderAllColumns = function() {
 	  
 	var columns = theProject.columnModel.columns;
