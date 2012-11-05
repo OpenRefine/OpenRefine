@@ -1,7 +1,7 @@
 
 function ZemantaCrowdFlowerDialog(onDone) {
   this._onDone = onDone;
-  this._jobData = {};
+  this._extension = {};
   
   var self = this;
   this._dialog = $(DOM.loadHTML("crowdsourcing", "scripts/dialogs/crowdflower-job-columns-dialog.html"));
@@ -11,12 +11,15 @@ function ZemantaCrowdFlowerDialog(onDone) {
   this._elmts.okButton.click(function() {
       DialogSystem.dismissUntil(self._level - 1);
       
-      this._jobData.title= this._elmts.jobTitle;
-      this._jobData.instructions = this._elmts.jobInstructions;
+      this._extension.title= this._elmts.jobTitle;
+      this._extension.instructions = this._elmts.jobInstructions;
+      this._extension.content_type = "json";
+      this._extension.column_indices = [];
+      this._extension.upload = 0;
       //TODO: add columns
       //TODO; check whether to upload data as well
       
-      self._onDone(self._jobData);
+      self._onDone(self._extension);
   });
   
   

@@ -1,7 +1,6 @@
 function ZemantaCrowdFlowerEmptyJobDialog() {
   this._onDone = onDone;
-  this._jobData = {};
-  this._jobID = "";
+  this._extension = {};
   
   var self = this;
   this._dialog = $(DOM.loadHTML("crowdsourcing", "scripts/dialogs/crowdflower-create-empty-job-dialog.html"));
@@ -18,19 +17,22 @@ function ZemantaCrowdFlowerEmptyJobDialog() {
       
       var cf_job = {
     		  "title": title,
-    		  "instructions": instructions
+    		  "instructions": instructions,
+    		  "data" : [],
+    		  "job_id": ''
       }; 
-      self._jobData = cf_job;
+            
+      self._extension = cf_job;
       
       $.post(
     		  "command/crowdsourcing/create-crowdflower-job",
-    		  self._jobData,
+    		  self._extension,
     		  function(data)
     		  {
     			  console.log("Got results from command: " + data.status);
     			  console.log("Job ID: " + data.job_id);
-    			  self._update(data.job_id);
-    			  self._jobData.job_id = data.job_id;
+    			  self._update(data._extension.job_id);
+    			  self._extension.job_id = data.job_id;
     		  },
     		  "json"
       );     
