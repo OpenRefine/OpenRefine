@@ -47,26 +47,25 @@ ZemantaExtension.handlers.openPreferences = function() {
 
 ZemantaExtension.handlers.openJobSettingsDialog = function()  {
 	
-	new ZemantaCrowdFlowerDialog(function(data) {
+	new ZemantaCrowdFlowerDialog(function(extension) {
+		var dismissBusy = DialogSystem.showBusy();
+		
+		console.log(extension);
+		
 	      $.post(
 	    		  "command/crowdsourcing/create-crowdflower-job",
-	    		  self._jobData,
+	    		  { "project" : theProject.id, 
+	    			"extension": JSON.stringify(extension),
+	    			"engine" : JSON.stringify(ui.browsingEngine.getJSON())
+	    		  },
 	    		  function(o)
 	    		  {
-	    			  if (o.code == "error") {
-			              alert(o.message);
-			            }
-	    			  else {
-	    				  alert("Everything is ok!");
-	    				  //TODO: store job id to project
-	    				  //TODO: store unit id to each row! alternativa: download whole data, replace old one
-	    			  }
+	    			  console.log("Status: " + o.status);
+	    			  dismissBusy();	    			  
 	    		  },
 	    		  "json"
 	      );     
 
-		
-		
 	});
 
 };
@@ -80,12 +79,6 @@ ZemantaExtension.handlers.getApiKey =  function() {
 };
 
 
-ZemantaExtension.handlers.createEmptyJobDialog = function() {
-	console.log("Creating new empty CrowdFlower job");
-	
-	//TODO:maybe jobData is not even needed
-	new ZemantaCrowdFlowerEmptyJobDialog();
-};
 
 
 ExtensionBar.addExtensionMenu({
@@ -113,13 +106,8 @@ ExtensionBar.addExtensionMenu({
 			    		 },
 			    		 {},
 			    		 {
-			    			 "id": "zemanta/crowdflower/create-empty-job",
-			    			 label: "New empty job",
-			    			 click: ZemantaExtension.handlers.createEmptyJobDialog
-			    		 },
-			    		 {
-			    			 "id": "zemanta/crowdflower/create-job",
-			    			 label: "New job from columns",
+			    			 "id": "zemanta/crowdflower/create-crowdflower-job",
+			    			 label: "Create new job",
 			    			 click: ZemantaExtension.handlers.openJobSettingsDialog
 			    		 }
 			              ]

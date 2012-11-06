@@ -3,14 +3,17 @@
   <div class="dialog-body" bind="dialogBody">
     <div class="grid-layout layout-normal layout-full" style="height:350px;overflow:auto">
     <div style="clear:both;height:30px;"><h2>Job details</h2></div>  
-    <div bind="columnList" style="width:200px;height:200px;overflow:auto;float:right;border:2px solid #554455;">
+    <div bind="columnList" id="columns" style="width:200px;height:200px;overflow:auto;float:right;border:2px solid #554455;">
     <h3>Select columns</h3></div>
     <div style="width:480px;border:1px solid #000000;">
     <h3>Basic information</h3>
     <table>
     	<tr><td>Title: </td><td><input bind="jobTitle" size=68/></td></tr>
-		<tr><td style="vertical-align:top;">Instructions: </td><td><textarea bind="jobInstructions" rows=4 cols=50></textarea></td></tr>
-		<tr><td>Upload data: </td><td><input type="checkbox" id="rd_upload" bind="uploadData"/>(If unchecked, empty job will be created)</td></tr>
+		<tr><td style="vertical-align:top;">Instructions: </td>
+		<td><textarea bind="jobInstructions" rows=4 cols=50></textarea></td></tr>
+		<tr><td>Upload data: </td>
+		<td><input type="checkbox" id="chk_upload" bind="uploadChkbox"/>
+		(If unchecked, job will be created, but no data uploaded)</td></tr>
     </table>
     </div>
     </div>

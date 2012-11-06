@@ -19,7 +19,8 @@ function ZemantaCrowdFlowerEmptyJobDialog() {
     		  "title": title,
     		  "instructions": instructions,
     		  "data" : [],
-    		  "job_id": ''
+    		  "id": '',
+    		  "newJob": true
       }; 
             
       self._extension = cf_job;
@@ -31,8 +32,8 @@ function ZemantaCrowdFlowerEmptyJobDialog() {
     		  {
     			  console.log("Got results from command: " + data.status);
     			  console.log("Job ID: " + data.job_id);
-    			  self._update(data._extension.job_id);
-    			  self._extension.job_id = data.job_id;
+    			  self._update(data._extension.id);
+    			  self._extension.id = data.id;
     		  },
     		  "json"
       );     

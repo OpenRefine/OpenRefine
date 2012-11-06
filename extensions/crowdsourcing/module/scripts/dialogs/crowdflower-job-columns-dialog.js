@@ -7,18 +7,24 @@ function ZemantaCrowdFlowerDialog(onDone) {
   this._dialog = $(DOM.loadHTML("crowdsourcing", "scripts/dialogs/crowdflower-job-columns-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
   this._elmts.dialogHeader.text("Enter details for new CrowdFlower job");
-  
+    
   this._elmts.okButton.click(function() {
+      self._extension.title= self._elmts.jobTitle.val();
+      self._extension.instructions = self._elmts.jobInstructions.val();
+      self._extension.content_type = "json";
+      self._extension.column_names = [];
+      self._extension.new_job = true;
+      //self._extension.id="142827";
+      self._extension.upload = self._elmts.uploadChkbox.is(':checked');
+
+      
+      $('#columns input.zem-col:checked').each( function() {
+    	  self._extension.column_names.push($(this).attr('value'));
+      });
+      
+      console.log("Columns: " + self._extension.column_names);
+      
       DialogSystem.dismissUntil(self._level - 1);
-      
-      this._extension.title= this._elmts.jobTitle;
-      this._extension.instructions = this._elmts.jobInstructions;
-      this._extension.content_type = "json";
-      this._extension.column_indices = [];
-      this._extension.upload = 0;
-      //TODO: add columns
-      //TODO; check whether to upload data as well
-      
       self._onDone(self._extension);
   });
   
@@ -41,11 +47,11 @@ ZemantaCrowdFlowerDialog.renderAllColumns = function() {
 	var columns = theProject.columnModel.columns;
 	
 	var columnContainer = $('<div id="columns">');
-	var chkid = 1;
+	var chkid = 0;
 
 	var renderColumns = function(columns, elem) {
 		$.each(columns, function(index, value){
-			var input = $('<input type="checkbox" class="zem-col" value="' + value.name + 'id="' + 'chk_' + chkid + '">').appendTo(elem);
+			var input = $('<input type="checkbox" class="zem-col" value="' + value.name + '" id="' + 'chk_' + chkid + '">').appendTo(elem);
 			$('<label for="chk_' + chkid + '">' + value.name + '</label> ').appendTo(elem);
 			$('<br />').appendTo(elem);
 			chkid++;
