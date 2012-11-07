@@ -326,7 +326,6 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var match = null;
   var commit = function() {
     if (match !== null) {
-      alert(JSON.stringify(match));
       var params = {
         judgment: "matched",
         id: match.id,
