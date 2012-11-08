@@ -1,23 +1,50 @@
 <div class="dialog-frame" style="width: 800px;">
   <div class="dialog-header" bind="dialogHeader"></div>
   <div class="dialog-body" bind="dialogBody">
-    <div class="grid-layout layout-normal layout-full" style="height:350px;overflow:auto">
-    <div style="clear:both;height:30px;"><h2>Job details</h2></div>  
-    <div bind="columnList" id="columns" style="width:200px;height:200px;overflow:auto;float:right;border:2px solid #554455;">
-    <h3>Select columns</h3></div>
-    <div style="width:480px;border:1px solid #000000;">
-    <h3>Basic information</h3>
-    <table>
-    	<tr><td>Title: </td><td><input bind="jobTitle" size=68/></td></tr>
-		<tr><td style="vertical-align:top;">Instructions: </td>
-		<td><textarea bind="jobInstructions" rows=4 cols=50></textarea></td></tr>
-		<tr><td>Upload data: </td>
-		<td><input type="checkbox" id="chk_upload" bind="uploadChkbox"/>
-		(If unchecked, job will be created, but no data uploaded)</td></tr>
-    </table>
+    <div class="grid-layout layout-normal layout-full" style="height:400px;overflow:auto">
+  
+    <div class="refine-tabs" bind="jobTabs">
+    <ul><li><a href="#new-job-tab">New job</a></li>
+    <li><a href="#existing-job-tab">Existing job</a></li></ul>
+    
+    <div id="new-job-tab" bind="newJobTab">
+        <div style="height:30px;"><h2>Job details</h2></div>
+        <div>  
+		<div class="job-box">
+		  <h3>Basic information</h3>
+		  
+		  <div class=Ófield_containerÓ>
+		  	<label>Title: </label><input bind="jobTitle" class="job-title" id="jobTitle" />
+		  			
+		  </div>
+		 <div class=Ófield_containerÓ>
+		 	<label>Instructions: </label><textarea bind="jobInstructions" class="job-instructions"></textarea>
+		 </div>
+		 <div class=Ófield_containerÓ><label>Upload data?</label> <input type="checkbox" id="chk_upload" bind="uploadChkbox"/>
+		(If unchecked, job will be created, but no data uploaded)
+		 </div>
+		  		  
+		  </div>
+		<div bind="columnList" id="columns" class="job-box">
+			<h3>Select columns: </h3>
+		</div>
+		</div>
     </div>
+    
+    
+    <div id="existing-job-tab" bind="existingJobTab">
+    <select name=mytextarea>
+		<option name=one value=one> one </option>
+		<option name=two value=two> two </option>
+		<option name=three value=three> three </option>
+	</select>
+  
+  	</div>
+    		     
     </div>
+   </div>
   </div>
+    
   <div class="dialog-footer" bind="dialogFooter">
     <button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
     <button class="button" bind="cancelButton">Cancel</button>

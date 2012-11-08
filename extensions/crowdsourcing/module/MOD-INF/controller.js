@@ -53,8 +53,7 @@ function init() {
     [
       "scripts/extension.js",
       "scripts/dialogs/crowdflower-api-settings-dialog.js",
-      "scripts/dialogs/crowdflower-job-columns-dialog.js",
-      "scripts/dialogs/crowdflower-create-empty-job-dialog.js"
+      "scripts/dialogs/crowdflower-job-columns-dialog.js"
     ]
   );
 
@@ -63,7 +62,8 @@ function init() {
     "project/styles",
     module,
     [
-      "styles/project-injection.less"
+      "styles/theme.less",
+      "styles/dialogs/crowdflower-gui.less",
     ]
   );
 }

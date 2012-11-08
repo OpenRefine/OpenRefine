@@ -1,6 +1,7 @@
 *.DS_Store
 *.class
 .import-temp/
+.gitignore
 build/
 dist/
 server/classes/

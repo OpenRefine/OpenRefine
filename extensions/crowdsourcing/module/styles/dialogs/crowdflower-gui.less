@@ -31,8 +31,48 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-// LESS styles
-// For documentation, see http://lesscss.org/
+@import-less url("../theme.less");
 
-@color: blue;
+input[type=checkbox] + label { display:inline !important; }
 
+#project-columns {
+    -moz-column-count: 3;
+    -moz-column-gap: 10px;
+    -webkit-column-count: 3;
+    -webkit-column-gap: 10px;
+    column-count: 3;
+    column-gap: 10px;
+    height: 120px;
+    overflow:auto;
+}
+
+.job-title, .job-instructions{
+    width: 300px;
+}
+.job-instructions{
+    height: 50px;
+    }
+
+.progress{
+    width: 1px;
+	height: 14px;
+	color: white;
+	font-size: 12px;
+  overflow: hidden;
+	background-color: navy;
+	padding-left: 5px;
+}
+
+
+
+.job-box {
+    border: 1px dotted @faint_grey;
+    margin: 2px;
+    padding:5px;
+    }
+    
+label {
+    width:150px;
+    float:left;
+    text-align:left;
+}
