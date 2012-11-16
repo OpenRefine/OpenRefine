@@ -79,6 +79,7 @@ public class Refine {
         
     static private int port;
     static private String host;
+    static private Boolean start_browser;
 
     final static Logger logger = LoggerFactory.getLogger("refine");
         
@@ -101,6 +102,8 @@ public class Refine {
 
         port = Configurations.getInteger("refine.port",DEFAULT_PORT);
         host = Configurations.get("refine.host",DEFAULT_HOST);
+        
+        start_browser = Configurations.getBoolean("refine.start_browser", true);
 
         Refine refine = new Refine();
         
@@ -118,7 +121,7 @@ public class Refine {
         } else {
             try {
                 RefineClient client = new RefineClient();
-                client.init(host,port);
+                client.init(host,port,start_browser);
             } catch (Exception e) {
                 logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Refine.");
             }
@@ -438,10 +441,10 @@ class RefineClient extends JFrame implements ActionListener {
     
     private URI uri;
     
-    public void init(String host, int port) throws Exception {
+    public void init(String host, int port, Boolean start_browser) throws Exception {
 
         uri = new URI("http://" + host + ":" + port + "/");
-
+     
         if (MACOSX) {
 
             // for more info on the code found here that is macosx-specific see:
@@ -458,7 +461,7 @@ class RefineClient extends JFrame implements ActionListener {
             Class<?> applicationClass = Class.forName("com.apple.eawt.Application"); 
             Object macOSXApplication = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
             Method setDefaultMenuBar = applicationClass.getDeclaredMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
-            setDefaultMenuBar.invoke(macOSXApplication, new Object[] { mb });
+            //setDefaultMenuBar.invoke(macOSXApplication, new Object[] { mb });
            
             // FIXME(SM): this part below doesn't seem to work, I get a NPE but I have *no* idea why, suggestions?
             
@@ -472,7 +475,13 @@ class RefineClient extends JFrame implements ActionListener {
 //            setDockMenu.invoke(macOSXApplication, new Object[] { dockMenu });
         }
         
-        openBrowser();
+        if(start_browser) {
+            System.out.println("Opening up a browser window.");
+            openBrowser();
+        } else
+        {
+            System.out.println("Will not open a browser window.");
+        }
     }
     
     @Override
