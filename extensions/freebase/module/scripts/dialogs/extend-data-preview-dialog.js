@@ -146,13 +146,12 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
   }
 
   this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-    var expected = data.expected_type;
     self._addProperty({
       id : data.id,
       name: data.name,
       expected: {
-        id: expected.id,
-        name: expected.name
+        id: "/type/object",
+        name: "Object"
       }
     });
   });
