@@ -326,13 +326,17 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var match = null;
   var commit = function() {
     if (match !== null) {
+      var notable_types = null;
+      if (match.notable) {
+        notable_types = $.map(match.notable, function(elmt) {
+          return typeof elmt == "string" ? elmt : elmt.id; 
+        }).join(",");
+      }
       var params = {
         judgment: "matched",
         id: match.id,
         name: match.name,
-        types: $.map(match.notable, function(elmt) {
-          return typeof elmt == "string" ? elmt : elmt.id; 
-        }).join(",")
+        types: notable_types
       };
 
       if (elmts.radioSimilar[0].checked) {
