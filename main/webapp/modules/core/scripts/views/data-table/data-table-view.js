@@ -146,7 +146,7 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
   $('<a href="javascript:{}"></a>')
   .addClass("action")
   .text("Sort ")
-  .append($('<img>').attr("src", "/images/down-arrow.png"))
+  .append($('<img>').attr("src", "../images/down-arrow.png"))
   .appendTo(sortingControls)
   .click(function() {
     self._createSortingMenu(this);
@@ -230,7 +230,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
         } else {
           for (var k = 0; k < keys.length; k++) {
             if (c == keys[k]) {
-              $('<img />').attr("src", "images/down-arrow.png").appendTo(td);
+              $('<img />').attr("src", "../images/down-arrow.png").appendTo(td);
               break;
             }
           }
