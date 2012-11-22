@@ -45,7 +45,9 @@ function init() {
 	//var OR = Packages.com.google.refine.operations.OperationRegistry;
 
   RS.registerCommand(module, "create-crowdflower-job", new Packages.com.google.refine.crowdsourcing.crowdflower.CreateNewJobCommand());
-	
+  RS.registerCommand(module, "preview-crowdflower-jobs", new Packages.com.google.refine.crowdsourcing.crowdflower.PreviewExistingJobsCommand());
+  RS.registerCommand(module, "copy-crowdflower-job", new Packages.com.google.refine.crowdsourcing.crowdflower.CopyJobCommand());
+  RS.registerCommand(module, "get-crowdflower-job", new Packages.com.google.refine.crowdsourcing.crowdflower.GetJobInfoCommand());
   // Script files to inject into /project page
   ClientSideResourceManager.addPaths(
     "project/scripts",
@@ -53,7 +55,8 @@ function init() {
     [
       "scripts/extension.js",
       "scripts/dialogs/crowdflower-api-settings-dialog.js",
-      "scripts/dialogs/crowdflower-job-columns-dialog.js"
+      "scripts/dialogs/crowdflower-job-columns-dialog.js",
+      "scripts/dialogs/crowdflower-create-gold-dialog.js"
     ]
   );
 

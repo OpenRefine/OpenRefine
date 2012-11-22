@@ -73,5 +73,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/CrowdFlowerClient"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

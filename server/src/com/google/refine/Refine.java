@@ -123,6 +123,7 @@ public class Refine {
                 RefineClient client = new RefineClient();
                 client.init(host,port,start_browser);
             } catch (Exception e) {
+                System.out.println("Exception error: " + e.getLocalizedMessage());
                 logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Refine.");
             }
         }
@@ -461,7 +462,7 @@ class RefineClient extends JFrame implements ActionListener {
             Class<?> applicationClass = Class.forName("com.apple.eawt.Application"); 
             Object macOSXApplication = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
             Method setDefaultMenuBar = applicationClass.getDeclaredMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
-            //setDefaultMenuBar.invoke(macOSXApplication, new Object[] { mb });
+            setDefaultMenuBar.invoke(macOSXApplication, new Object[] { mb });
            
             // FIXME(SM): this part below doesn't seem to work, I get a NPE but I have *no* idea why, suggestions?
             

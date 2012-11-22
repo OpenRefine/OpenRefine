@@ -12,16 +12,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.commands.Command;
+import com.google.refine.crowdsourcing.CrowdsourcingUtil;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.preference.PreferenceStore;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,12 +34,6 @@ public class CreateNewJobCommand extends Command{
     static final Logger logger = LoggerFactory.getLogger("crowdflower_createnewjob");
     protected List<Integer> _cell_indeces;
     
-    private Object getPreference(String prefName) {
-        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
-        Object pref = ps.get(prefName);
-        
-        return pref;
-    }
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -50,7 +43,7 @@ public class CreateNewJobCommand extends Command{
             
             JSONObject extension = new JSONObject(request.getParameter("extension")); 
 
-            String apiKey = (String) getPreference("crowdflower.apikey");                       
+            String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey");                       
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             
@@ -94,7 +87,8 @@ public class CreateNewJobCommand extends Command{
                 //ERROR
                 System.out.println("Missing job id!");
             }
-                
+            
+            
             if(extension.getBoolean("upload")) {
                 
                 System.out.println("Generating objects for upload....");
@@ -156,8 +150,9 @@ public class CreateNewJobCommand extends Command{
                     for (int c=0; c < column_names.length(); c++) {
                         int cell_index = _cell_indeces.get(c);
                         String key = column_names.get(c).toString();
-                        String value = (String) project.rows.get(row_index).getCellValue(cell_index);
-                        obj.put(key, value);
+                        Object value = project.rows.get(row_index).getCellValue(cell_index);
+                        
+                        obj.put(key, value.toString());
                     } 
                     
                     System.out.println("Data: " + obj.toString());

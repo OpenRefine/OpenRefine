@@ -6,7 +6,7 @@ ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings = function(getApiKey) {
 		      "/command/core/get-all-preferences",
 		      {},
 		      function (data) {
-		    	if (data && data["crowdflower.apikey"]) {
+		    	if (data!=null && data["crowdflower.apikey"]!=null) {
 		    		getApiKey(data["crowdflower.apikey"]);
 		    	}
 		    	else {
@@ -17,6 +17,77 @@ ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings = function(getApiKey) {
 		      "json"
 	 );	
 };
+
+ZemantaExtension.util.loadAllExistingJobs = function(getJobs) {
+    $.post(
+  		  "command/crowdsourcing/preview-crowdflower-jobs",
+  		  { 
+  		  },
+  		  function(data)
+  		  {
+  			  if(data != null) {
+  	  			  console.log("Status: " + data.status);
+  	  			  if(data.status != "ERROR") {
+  	  				  getJobs(data['jobs'],data.status);
+  	  			  } else{
+  	  				  console.log(data);
+  	  				  alert("Error occured while loading existing jobs. Error: " + data['message']);  
+  	  				  getJobs([], data.message);
+  	  			  }
+  			  }
+  		  },
+  		  "json"
+    );     
+
+};
+
+
+//jobParams: jobID, all_units - default false, gold - default false
+//copy job, return updated list of jobs and new job id
+ZemantaExtension.util.copyJob = function(extension, updateJobs) {
+		
+    $.post(
+  		  "command/crowdsourcing/copy-crowdflower-job",
+  		  {"extension": JSON.stringify(extension)},
+  		  function(data)
+  		  {
+  			  console.log("Data returned: " + JSON.stringify(data));
+  			  
+  			  if(data != null) {
+  	  			  console.log("Status: " + data.status);
+  	  			  updateJobs(data);
+  			  } 
+  			  else {
+  				  alert("Could not refresh list of jobs.");
+  			  }
+  		  },
+  		  "json"
+    );     
+};
+
+
+ZemantaExtension.util.getJobInfo = function(extension, updateJobInfo) {
+	
+    $.post(
+  		  "command/crowdsourcing/get-crowdflower-job",
+  		  {"extension": JSON.stringify(extension)},
+  		  function(data)
+  		  {
+  			  console.log("Data returned: " + data);
+  			  
+  			  if(data != null) {
+  	  			  console.log("Status: " + data.status);
+  	  			  updateJobInfo(data);
+  			  } else {
+  				alert("Error occured while updating job information.");  
+  			  }
+  		  },
+  		  "json"
+    );     
+};
+
+
+
 
 ZemantaExtension.handlers.storeCrowdFlowerAPIKey = function() {
 	
@@ -29,13 +100,15 @@ ZemantaExtension.handlers.storeCrowdFlowerAPIKey = function() {
 	          },
 	          function(o) {
 	            if (o.code == "error") {
-	              alert(o.message);
+	            	
+	            	alert(o.message);
 	            }
 	          },
 	          "json"
 		);
 	});
 };
+
 
 ZemantaExtension.handlers.doNothing = function() {
 	alert("Crowdsourcing extension active...");
@@ -50,7 +123,7 @@ ZemantaExtension.handlers.openJobSettingsDialog = function()  {
 	new ZemantaCrowdFlowerDialog(function(extension) {
 		var dismissBusy = DialogSystem.showBusy();
 		
-		console.log(extension);
+		//TODO: create new of upload to existing - is there a significant difference in the code?
 		
 	      $.post(
 	    		  "command/crowdsourcing/create-crowdflower-job",
@@ -80,7 +153,7 @@ ZemantaExtension.handlers.getApiKey =  function() {
 
 
 
-
+//todo: add configuration for job: number of judgements, gold, etc.
 ExtensionBar.addExtensionMenu({
 	"id": "zemanta",
 	"label": "Zemanta",
@@ -94,22 +167,29 @@ ExtensionBar.addExtensionMenu({
 			 "id" : "zemanta/crowdflower",
 			 "label" : "CrowdFlower service",
 			 "submenu" : [
-			              {
-			            	  "id":"zemanta/crowdflower/test",
-			            	  "label": "Test",
-			            	  click: ZemantaExtension.handlers.getApiKey
-			              },
+				    		 {
+				    			 "id": "zemanta/crowdflower/create-crowdflower-job",
+				    			 label: "Create new job / upload data",
+				    			 click: ZemantaExtension.handlers.openJobSettingsDialog
+				    		 },
+				    		 {
+				    			 "id": "zemanta/crowdflower/configure-job",
+				    			 "label" :  "Configure job",
+				    			 click: ZemantaExtension.handlers.doNothing 
+				    		 },
+				    		 {
+				    			"id": "zemanta/crowdflower/download-results",
+				    			"label": "Download results",
+				    			click: ZemantaExtension.handlers.doNothing
+				    			 
+				    		 },
+				    		 {},
+
 			     		 {
 			    			 "id": "zemanta/crowdflower/settings",
 			    			 "label": "Set CrowdFlower API key",
 			    			 click: ZemantaExtension.handlers.storeCrowdFlowerAPIKey
 			    		 },
-			    		 {},
-			    		 {
-			    			 "id": "zemanta/crowdflower/create-crowdflower-job",
-			    			 label: "Create new job",
-			    			 click: ZemantaExtension.handlers.openJobSettingsDialog
-			    		 }
 			              ]
 		 },
 		 {},

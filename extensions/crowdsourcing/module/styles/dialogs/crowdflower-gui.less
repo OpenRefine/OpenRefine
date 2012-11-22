@@ -1,7 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
-All rights reserved.
+Copyright 2012, Zemanta Ltd.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -13,9 +12,6 @@ notice, this list of conditions and the following disclaimer.
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -33,8 +29,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @import-less url("../theme.less");
 
-input[type=checkbox] + label { display:inline !important; }
-
 #project-columns {
     -moz-column-count: 3;
     -moz-column-gap: 10px;
@@ -42,9 +36,11 @@ input[type=checkbox] + label { display:inline !important; }
     -webkit-column-gap: 10px;
     column-count: 3;
     column-gap: 10px;
-    height: 120px;
+    height: 100px;
     overflow:auto;
 }
+
+#project-columns input[type=checkbox] + label { display:inline !important; }
 
 .job-title, .job-instructions{
     width: 300px;
@@ -53,26 +49,61 @@ input[type=checkbox] + label { display:inline !important; }
     height: 50px;
     }
 
-.progress{
-    width: 1px;
-	height: 14px;
-	color: white;
-	font-size: 12px;
-  overflow: hidden;
-	background-color: navy;
-	padding-left: 5px;
-}
-
-
-
 .job-box {
     border: 1px dotted @faint_grey;
     margin: 2px;
-    padding:5px;
+    padding: 2px;
     }
-    
+
+.job-box h2,h3 {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-bottom: 4px;
+    }
+
+#all-columns {
+    background-color: #ddd;
+    border: 1px solid #000;
+    padding: 2px;
+    }
+
+#cmlPreviewPanel {
+    background-color:#efefef;
+    border: 1px solid #ffccff;
+    height: 50px;
+    }
+
 label {
     width:150px;
     float:left;
     text-align:left;
 }
+
+.wrapper {
+    overflow: auto;
+    width: 100%;
+    }
+
+.column-left, .column-right {
+    //width: 320px;
+    width: 48%;
+    }
+    
+.column-left {
+    float: left;
+    border-right: 1px dashed #efefef;
+    }
+
+.column-right {
+    float: right;
+    clear: right;
+    }
+
+#status-message {
+	clear: both;
+	width: 100%;
+	height: 50px;
+	color:#001100;
+	border: 2px solid #000;
+}
+
