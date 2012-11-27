@@ -90,7 +90,7 @@ function ZemantaCrowdFlowerDialog(onDone) {
 	  }
   });
   
-  this._elmts.copyButton.click(function() {
+  this._elmts.copyJobButton.click(function() {
 	  var job_id = self._elmts.allJobsList.val();
 
 	  if(job_id === "none") {
@@ -180,7 +180,7 @@ ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
 			
 			ZemantaExtension.util.getJobInfo(this._extension, function(data){
 				  console.log("Updating job.");
-					self._updateJobInfo(data);
+				 self._updateJobInfo(data);
 			});
 		});
 	});
@@ -192,10 +192,11 @@ ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
 	var elm_jobTitle = self._elmts.extJobTitle;
 	var elm_fields = self._elmts.extJobColumns;
 	var elm_jobInstructions = self._elmts.extJobInstructions;
-
+	var elm_cmlFields = self._elmts.extCmlFields;
+	
 	console.log("Updating job..." + JSON.stringify(data));
 	
-	if(data["title"] === null ) {
+	if(data["title"] === null || data["title"] === "" ) {
 		elm_jobTitle.val("(title undefined)");
 	} else {
 		elm_jobTitle.val(data["title"]);
@@ -208,7 +209,11 @@ ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
 		elm_jobInstructions.html(data["instructions"]);
 	}
 	
-	self._elmts.extCmlFields.html(data["cml"]);
+	if(data["cml"] === [] || data["cml"] === null) {
+		elm_cmlFields.html("(no fields defined )");
+	} else {
+		elm_cmlFields.html(data["cml"]);
+	}
 	
 	$.each(data["fields"], function(index, value) {
 		$('<input type="checkbox">' + value + '</input>').appendTo(elm_fields);

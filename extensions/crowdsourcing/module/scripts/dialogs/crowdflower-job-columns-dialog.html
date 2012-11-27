@@ -15,12 +15,12 @@
 		  <h2>New job details</h2>
 		  
 		  <div class="field_container">
-		  	<label>Title: </label><input bind="jobTitle" class="job-title" id="jobTitle" />
-		  	<span id="title-warning">Job title should be 5-255 characters long.</span>
+		  	<label>Title: </label><input bind="jobTitle" type="text" class="job-title" id="jobTitle" />
+		  	<span id="title-warning" class="warning">Job title should be 5-255 characters long.</span>
 		  </div>
 		 <div class="field_container">
 		 	<label>Instructions: </label><textarea bind="jobInstructions" class="job-instructions"></textarea>
-		 	<span id="instructions-warning">Instructions should not be empty.</span>
+		 	<span id="instructions-warning" class="warning">Instructions should not be empty.</span>
 		 </div>
 		 <div class="field_container">
 		 	<label>Upload data: </label><input type="checkbox" bind="chkUploadToNewJob"/>
@@ -42,28 +42,27 @@
     
     
     <div id="existing-job-tab" bind="existingJobTab">
+    
     <div class="job-box">
     
     <div class="wrapper">
 	<div class="column-left">
 		<h2>Existing jobs</h2>
-		<div class="field_container"><label>Select existing job:</label>
+		<div class="field_container">Select existing job:
     		<div id="job-list" bind="jobList">
     		<select id="all-jobs" bind="allJobsList"></select>
     		</div>
     	</div>
-    	<br/>
-		<br/>
     	</div>
-    <div class="column-right">
-    	<h3>Copy job</h3>
+    <div class="column-right" id="copy-job-options">
+    	<h3>Copy job with units:</h3>
     	<div class="field_container">
-		  	<label>Copy golden data to new job? </label>
-		  	<input type="checkbox" value="copy-gold" bind="copyJobGold"/>
+		  	<input type="radio" name="units" value="copy-none" bind="copyJob" checked="true"><span style="color:#7E2217; font-weight:bold; ">none</span> </input>
+		  	<input type="radio" name="units" value="copy-all" bind="copyJobGoldUnits"> <span style="color:#4AA02C; font-weight: bold;">all</span></input>
+		  	<input type="radio" name="units" value="copy-gold" bind="copyJobGoldUnits"> <span style="color:#EAC117; font-weight: bold;">gold</span> only </input>
 		</div>
-		
-    	<input class="button" type="button" value="Copy into new job" bind="copyButton"/>
-	</div>	
+		<input class="button" type="button" value="Copy into new job" bind="copyJobButton"/>		
+    </div>	
     	</div>
     	
     	</div>
@@ -81,12 +80,17 @@
 			</div>
 	   	</div>
 	   	<div class="column-right">
+	   		
 			<div class="field_container">
-			<label>Fields (column names): </label>
-			<div bind="extJobColumns">
-			</div>
+			<label>Existing CML: </label>
 			<textarea bind="extCmlFields" class="job-instructions"></textarea>
 			</div>
+			<div class="field_container">
+			Existing column names:
+				<div bind="extJobColumns"></div>
+			</div>
+			<br/><a href="#">Map project columns to job's columns</a>
+			
 		</div>
 		</div>
 	<input class="button" type="button" value="Save changes" bind="updateJob"/>

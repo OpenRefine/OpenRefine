@@ -95,7 +95,7 @@ ZemantaExtension.util.getJobInfo = function(extension, updateJobInfo) {
   		  {"extension": JSON.stringify(extension)},
   		  function(data)
   		  {
-  			  console.log("Data returned: " + data);
+  			  console.log("Data returned: " + JSON.stringify(data));
   			  
   			  if(data != null) {
   	  			  console.log("Status: " + data.status);

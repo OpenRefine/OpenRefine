@@ -36,76 +36,33 @@ public class GetJobInfoCommand extends Command{
             String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey");                       
             CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
             String result = "";
-            String status = "";
-            String title = null;
-            String cml = null;
-            String instructions = null;
-            String message = "";
-            ArrayList<String> fields = new ArrayList<String>();
-            Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
-
             
-            try {
-
-                //copy job, store id
-                if(extension.has("job_id") && !extension.isNull("job_id")) {
-                    
-                            
-                    result = cf_client.getJob(extension.getString("job_id"));          
-                    JSONObject res = ParsingUtilities.evaluateJsonStringToObject(result);
-          
-                    status = res.getString("status");                
-                    JSONObject obj = res.getJSONObject("response");
-                    
-                    if(obj.has("cml") && !obj.isNull("cml")) {
-                        cml = obj.getString("cml");
-                        fields = CrowdsourcingUtil.parseCmlFields(obj.getString("cml"));
-                        System.out.println("CML fields!");
-                    }
-                    
-                    if(obj.has("title") && !obj.isNull("title")) {
-                        title = obj.getString("title");
-                    }
-                    
-                    if(obj.has("instructions") && !obj.isNull("instructions")) {
-                        instructions = obj.getString("instructions");
-                    }
-    
-                } else {
-                    status = "ERROR";
-                    message = "No job id was provided!";
-                    throw new Exception();
+            response.setCharacterEncoding("UTF-8");
+            
+            //copy job, store id
+            if(extension.has("job_id") && !extension.isNull("job_id")) {
+                
+                        
+                result = cf_client.getJob(extension.getString("job_id"));                   
+                JSONObject res = ParsingUtilities.evaluateJsonStringToObject(result);
+      
+                if(res.getString("status").equals("ERROR"))
+                {
+                    generateErrorResponse(response, res);
                 }
-            
-            
-                writer.object();
-                writer.key("status"); writer.value(status);
+                     
+                JSONObject obj = res.getJSONObject("response");
+                obj.put("status", "OK"); //TODO: return additional message form API if there is any
+                generateResponse(response, obj);
+               
+            } else {
                 
-                writer.key("title"); writer.value(title);
-                writer.key("instructions"); writer.value(instructions);
-                writer.key("cml"); writer.value(cml);
-                
-                
-                writer.key("fields").array();
-                
-                for(int i= 0; i < fields.size(); i++) {
-                    writer.value(fields.get(i));
+                JSONObject err = new JSONObject();
+                err.put("status", "ERROR");
+                err.put("message", "Job id was not provided. could not obtain job information.");
+                    
+                    generateErrorResponse(response, err);
                 }
-                writer.endArray();
-                
-            } catch(Exception e){
-                logger.error("Cannot get job information.");
-                writer.key("status").value(status);
-                writer.key("message").value(message);
-            }
-            
-            finally {
-                writer.endObject();
-                w.flush();
-                w.close();
-            }
-
             
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -113,5 +70,66 @@ public class GetJobInfoCommand extends Command{
         } 
         
     }
+
+
+    
+    private void generateResponse(HttpServletResponse response, JSONObject data)
+            throws IOException, JSONException {
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        try {
+            writer.object();
+            writer.key("status"); writer.value(data.getString("status"));
+            
+            writer.key("title"); writer.value(data.getString("title"));
+            writer.key("instructions"); writer.value(data.getString("instructions"));
+
+            String cml = data.getString("cml");
+            ArrayList<String> fields = new ArrayList<String>();
+            fields = CrowdsourcingUtil.parseCmlFields(data.getString("cml"));
+            
+            writer.key("cml"); writer.value(cml);
+            writer.key("fields").array();
+            
+            for(int i= 0; i < fields.size(); i++) {
+                writer.value(fields.get(i));
+            }
+            writer.endArray();
+            
+        } catch(Exception e){
+            logger.error("Generating response failed.");
+        }
+        finally {
+            writer.endObject();
+            w.flush();
+            w.close();
+        }
+    }
+    
+    private void generateErrorResponse(HttpServletResponse response, JSONObject data)
+            throws IOException, JSONException {
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        
+        try {
+            writer.object();
+            writer.key("status"); writer.value(data.get("status"));
+            
+            if(data.has("error")) {
+                writer.key("message"); writer.value(data.getJSONObject("error").getString("message")); 
+            } else {
+                writer.key("message"); writer.value(data.get("message")); 
+            }
+            
+        } catch(Exception e){
+            logger.error("Generating ERROR response failed.");
+        }
+        finally {
+            writer.endObject();
+            w.flush();
+            w.close();
+        }
+    }
+
 
 }
