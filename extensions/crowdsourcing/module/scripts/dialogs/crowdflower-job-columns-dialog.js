@@ -2,9 +2,8 @@
 function ZemantaCrowdFlowerDialog(onDone) {
   this._onDone = onDone;
   this._extension = {};
-  this._existingJob = false;
   var dismissBusy = DialogSystem.showBusy();
-  
+    
   this._dialog = $(DOM.loadHTML("crowdsourcing", "scripts/dialogs/crowdflower-job-columns-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
   this._elmts.dialogHeader.text("Enter details for new CrowdFlower job");
@@ -37,28 +36,38 @@ function ZemantaCrowdFlowerDialog(onDone) {
       self._extension.content_type = "json";
       self._extension.column_names = [];
       
-      self._extension.new_job = true; //TODO: check which tab is selected
+	  var curTabPanel = $('#jobTabs .ui-tabs-panel:not(.ui-tabs-hide)');	  
+	  var tabindex = curTabPanel.index();
+
+	  if(tabindex == 0) {
+		  self._extension.new_job = true;  
+		  console.log("Creating new job...");
+	  } else {
+		  self._extension.new_job = false;
+		  console.log("Uploading to existing job...");
+	  }
       
-      //TODO: check if cml exists, if not, create a default one from column names
       $('#columns input.zem-col:checked').each( function() {
-    	  self._extension.column_names.push($(this).attr('value'));
+    	  var col = {};
+    	  col.name = $(this).attr('value');
+    	  col.safe_name = ZemantaExtension.util.convert2SafeName(col.name);
+    	  self._extension.column_names.push(col);
+    	  //self._extension.column_names.push($(this).attr('value'));
       });
       
-      
-      console.log("Columns: " + self._extension.column_names);
-      
-      DialogSystem.dismissUntil(self._level - 1);
-      self._onDone(self._extension);
+      if(self._extension.column_names.length < 1) {
+    	  alert("No column was selected! Cannot upload data.");
+      }
+      else {
+    	  self._extension.upload = true;
+    	  console.log("Columns: " + JSON.stringify(self._extension.column_names));
+    	  DialogSystem.dismissUntil(self._level - 1);
+    	  self._onDone(self._extension);
+      }
   });
   
   
-  this._elmts.cancelButton.click(function() {
-	  
-	  var curTabPanel = $('#jobTabs .ui-tabs-panel:not(.ui-tabs-hide)');
-	  
-	  var index = curTabPanel.index();
-	  console.log("Index: " + index);
-	  
+  this._elmts.cancelButton.click(function() {	  
     DialogSystem.dismissUntil(self._level - 1);
   });
    
@@ -66,19 +75,29 @@ function ZemantaCrowdFlowerDialog(onDone) {
   this._elmts.jobTitle.blur(function () {
 	  var title = self._elmts.jobTitle.val();	  
 	  if(title.length < 5 || title.length > 255  ) {
-		  //TODO: add better visual clues
-		  alert("Title should be between 5 and 255 chars.");
+		  $('#title-warning').show();
+	  } else {
+		  $('#title-warning').hide();
+	  }
+  });
+  
+  this._elmts.jobInstructions.blur(function () {
+	  var instructions = self._elmts.jobInstructions.val();	  
+	  if(instructions ===""  ) {
+		  $('#instructions-warning').show();
+	  } else {
+		  $('#instructions-warning').hide();
 	  }
   });
   
   this._elmts.copyButton.click(function() {
-	  var jobid = self._elmts.allJobsList.val();
+	  var job_id = self._elmts.allJobsList.val();
 
-	  if(jobid === "none") {
+	  if(job_id === "none") {
 		  alert("First select job to copy!");
 	  }
 	  else {
-		  self._copyAndUpdateJob(jobid);
+		  self._copyAndUpdateJob(job_id);
 	  }
 	  
   });
@@ -94,18 +113,21 @@ ZemantaCrowdFlowerDialog.prototype._copyAndUpdateJob = function(jobid) {
 	self._extension = {};
 	self._extension.job_id = jobid;
 	
-	  ZemantaExtension.util.copyJob(self._extension, function(data){
-		  console.log("Copy results: " + JSON.stringify(data));
-		  self._updateJobList(data);
-	  });
+	ZemantaExtension.util.copyJob(self._extension, function(data){
+	  console.log("Copy results: " + JSON.stringify(data));
+	  self._updateJobList(data);
+	});
 	
 };
 
 
 ZemantaCrowdFlowerDialog.prototype._updateJobList = function(data) {
-	var selContainer = this._elmts.allJobsList;
+	var self = this;
+	var selContainer = self._elmts.allJobsList;
 	var jobs = data["jobs"];
 	var selected = "";
+    var dismissBusy = DialogSystem.showBusy();
+
 	console.log("Data: " + JSON.stringify(data));
 	
 	selContainer.empty();
@@ -126,6 +148,8 @@ ZemantaCrowdFlowerDialog.prototype._updateJobList = function(data) {
 		selContainer.append(job);
 
 	}
+	
+	dismissBusy();
 };
 
 ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
@@ -143,15 +167,11 @@ ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
 		$.each(data, function(index, value) {
 			
 			var title = (value.title == null)? "Title not defined" : value.title;
-			
 			var job = $('<option name="opt_' + index + '" value=' + value.id + '>' + title + ' (job id: ' + value.id + ')</option>');
-			
 			selContainer.append(job);
 		});
 		
 		selContainer.change(function() {
-			//alert($(this).children(":selected").val());
-			//get job data
 			this._extension = {};
 			this._extension.job_id = $(this).children(":selected").val();
 			this._selectedJob = this._extension.job_id;
@@ -162,13 +182,8 @@ ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
 				  console.log("Updating job.");
 					self._updateJobInfo(data);
 			});
-
 		});
-		
 	});
-	
-	
-	
 };
 
 ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
@@ -210,35 +225,42 @@ ZemantaCrowdFlowerDialog.prototype._renderAllColumns = function() {
 	var columns = theProject.columnModel.columns;
 	
 	var columnContainer = self._elmts.allColumns;
-	var columnListContainer = self._elmts.columnList; //$('<div id="project-columns">');
+	var columnListContainer = self._elmts.columnList;
 	var chkid = 0;
 
 	var renderColumns = function(columns, elem) {
 		
 		$.each(columns, function(index, value){
 			var id = 'chk_' + chkid;
-			var input = $('<input type="checkbox" class="zem-col" value="' + value.name + '" id="' + id + '">').appendTo(elem);
+			var input = $('<input type="checkbox" class="zem-col" value="' + value.name + '" id="' + id + '"/>').appendTo(elem);
 			$('<label for="' + id + '">' + value.name + '</label> <br/>').appendTo(elem);
 			chkid++;
 						
-			//in case any other column is clicked, all-columns checked turns into false
+			//in case any other column is clicked, all-columns is unchecked
 			input.click(function() {
-				$('input#all-cols').attr('checked',false);
+				$('#cmlPreviewPanel').html(ZemantaExtension.util.generateCML());
 			});
 		});
-		
 	};
 	
-	var input = $('<input type="checkbox" value="all" id="all-cols">').appendTo(columnContainer);
-	$('<label for="all-cols">All columns </label>').appendTo(columnContainer);
-	$('<br /><br />').appendTo(columnContainer);
+
+	var linkSelectAll = $('<a href="#" id="select-all-cols"> Select all </a>').appendTo(columnContainer);
+	var linkClearAll = $('<a href="#" id="clear-all-columns"> Clear all </a>').appendTo(columnContainer);
+
 	renderColumns(columns, columnListContainer);
 	
-	//check all columns by default
-	input.click(function() {
+	linkClearAll.click(function () {
+		$('#project-columns input.zem-col').each(function () {
+			$(this).attr('checked', false);
+		});
+		$('#cmlPreviewPanel').html(ZemantaExtension.util.generateCML());
+	});
+	
+	linkSelectAll.click(function() {
 		$('#project-columns input.zem-col').each(function () {
 			$(this).attr('checked', true);
 		});
+		$('#cmlPreviewPanel').html(ZemantaExtension.util.generateCML());
 	});
-	
 };
+

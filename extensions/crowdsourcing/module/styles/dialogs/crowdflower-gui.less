@@ -30,12 +30,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @import-less url("../theme.less");
 
 #project-columns {
-    -moz-column-count: 3;
-    -moz-column-gap: 10px;
-    -webkit-column-count: 3;
-    -webkit-column-gap: 10px;
-    column-count: 3;
-    column-gap: 10px;
+    -moz-column-count: 2;
+    -moz-column-gap: 3px;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 3px;
+    column-count: 2;
+    column-gap: 3px;
     height: 100px;
     overflow:auto;
 }
@@ -61,31 +61,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     margin-bottom: 4px;
     }
 
-#all-columns {
-    background-color: #ddd;
-    border: 1px solid #000;
-    padding: 2px;
+#columns-menu {
+    background-color: #FAF7F8;
+    margin-bottom: 5px;
+    }
+
+#columns-menu a {
+    padding-right: 5px;
     }
 
 #cmlPreviewPanel {
-    background-color:#efefef;
-    border: 1px solid #ffccff;
-    height: 50px;
+    background-color:#FCFCFC;
+    border: 1px solid #ddd;
+    height: 110px;
+    overflow:auto;
     }
 
 label {
-    width:150px;
+    width:100px;
     float:left;
     text-align:left;
 }
 
 .wrapper {
     overflow: auto;
-    width: 100%;
+    width: auto;
     }
 
 .column-left, .column-right {
-    //width: 320px;
     width: 48%;
     }
     
@@ -96,6 +99,8 @@ label {
 
 .column-right {
     float: right;
+    margin-left: 0px;
+    padding-left: 0px;
     clear: right;
     }
 
@@ -106,4 +111,11 @@ label {
 	color:#001100;
 	border: 2px solid #000;
 }
+
+#title-warning, #instructions-warning {
+margin-left: 2px;
+color: red;
+    }
+
+
 

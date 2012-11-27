@@ -18,6 +18,28 @@ ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings = function(getApiKey) {
 	 );	
 };
 
+ZemantaExtension.util.convert2SafeName = function(columnName) {
+
+	console.log("Column name:" + columnName);
+	var patt = /(\s)+/ig;
+	var rep = '_';
+	var safeName = columnName.replace(patt, rep);
+	console.log("Safe name: " + safeName);
+	return safeName;
+	
+};
+
+ZemantaExtension.util.generateCML = function() {
+	var cml = '';
+    $('#columns input.zem-col:checked').each( function() {
+    	cml += '{{' + ZemantaExtension.util.convert2SafeName($(this).attr('value')) + '}}' + '<br/>';
+    	console.log("CML: " + cml);
+    });
+    
+	return cml;
+};
+
+
 ZemantaExtension.util.loadAllExistingJobs = function(getJobs) {
     $.post(
   		  "command/crowdsourcing/preview-crowdflower-jobs",
@@ -121,9 +143,6 @@ ZemantaExtension.handlers.openPreferences = function() {
 ZemantaExtension.handlers.openJobSettingsDialog = function()  {
 	
 	new ZemantaCrowdFlowerDialog(function(extension) {
-		var dismissBusy = DialogSystem.showBusy();
-		
-		//TODO: create new of upload to existing - is there a significant difference in the code?
 		
 	      $.post(
 	    		  "command/crowdsourcing/create-crowdflower-job",
@@ -133,8 +152,8 @@ ZemantaExtension.handlers.openJobSettingsDialog = function()  {
 	    		  },
 	    		  function(o)
 	    		  {
-	    			  console.log("Status: " + o.status);
-	    			  dismissBusy();	    			  
+	    			  console.log("Status: " + o.status); 
+	    			  alert("Status: " + o.status);
 	    		  },
 	    		  "json"
 	      );     

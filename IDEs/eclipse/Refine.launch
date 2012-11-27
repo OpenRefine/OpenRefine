@@ -10,3 +10,4 @@
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="OpenRefine"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Drefine.autoreloading=true"/>
 </launchConfiguration>
+

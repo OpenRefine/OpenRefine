@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.commands.Command;
 import com.google.refine.crowdsourcing.CrowdsourcingUtil;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 import com.zemanta.crowdflower.client.CrowdFlowerClient;
 
@@ -34,56 +34,23 @@ public class PreviewExistingJobsCommand extends Command {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
  
-                Writer w = response.getWriter();
-                JSONWriter writer = new JSONWriter(w);
-
-                try {
-                
-                    CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
-                    //TODO: more like a hack
-                    cf_client.setTimeout(2000); //more time needed than default
-                    String response_msg = "";
-                    
-                    response_msg = cf_client.getAllJobs();
-                    JSONObject obj = new JSONObject(response_msg);
-                    
-                    writer.object();
-                    writer.key("status"); writer.value(obj.getString("status"));
-                
-                    if(obj != null && obj.has("response") && obj.get("response") != null) {
-                    
-                      writer.key("jobs").array();
-                      
-                      JSONArray obj2 = obj.getJSONArray("response");
-                      System.out.println("Response: " + JSONUtilities.toStringList(obj2));
-
-                    
-                        for (int i=0; i < obj2.length(); i++) {
-                            JSONObject current = obj2.getJSONObject(i);
-                            System.out.println("Current.id: " + current.get("id"));
-                            
-                            writer.object();
-                            writer.key("id").value(current.get("id"));                       
-                            writer.key("title").value(current.get("title"));
-                            writer.endObject();
-
-                            System.out.println("current.title: " + current.get("title"));
-                            
-                         }
-                         writer.endArray();
-                    } else {
-                        writer.key("message"); writer.value(obj.getString("message"));
-                    }
-                } catch(JSONException e) {
-                    writer.key("status"); writer.value("ERROR");
-                    writer.key("jobs"); writer.array();writer.endArray();
-                    System.out.println("Job was not created.");
-                }
-                finally {
-                    writer.endObject();                    
-                    w.flush();
-                    w.close();
-                }
+            CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
+            //TODO: more like a hack
+            cf_client.setTimeout(2000); //more time needed than default
+            String response_msg = cf_client.getAllJobs();
+            JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(response_msg);
+            
+            System.out.println("Preview result: " + obj.toString());
+            
+            System.out.println("obj.getString(status): " + obj.getString("status"));
+            
+            if(obj.getString("status").equals("ERROR")) {
+                generateErrorResponse(response, obj);
+            } else
+            {
+                generateResponse(response, obj);
+            }
+            
             
         } catch(Exception e) {
             logger.error(e.getLocalizedMessage(),e);
@@ -91,5 +58,54 @@ public class PreviewExistingJobsCommand extends Command {
     }
     
     
+    private void generateResponse(HttpServletResponse response, JSONObject data)
+            throws IOException, JSONException {
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        try {
+            writer.object();
+            writer.key("status"); writer.value(data.get("status"));
+            writer.key("jobs");
+            writer.array();
+            JSONArray jobs = data.getJSONArray("response");
+            
+            for(int i=0; i < jobs.length(); i++) {
+                JSONObject current = jobs.getJSONObject(i);
+                writer.object();
+                writer.key("id").value(current.get("id"));                       
+                writer.key("title").value(current.get("title"));
+                writer.endObject();
+            }
+            writer.endArray();
+        } catch(Exception e){
+            logger.error("Generating response failed.");
+        }
+        finally {
+            writer.endObject();
+            w.flush();
+            w.close();
+        }
+    }
+    
+    private void generateErrorResponse(HttpServletResponse response, JSONObject data)
+            throws IOException, JSONException {
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        
+        System.out.println("Data in error response: " + data);
+        try {
+            writer.object();
+            writer.key("status"); writer.value(data.get("status"));
+            writer.key("message"); writer.value(data.getJSONObject("error").get("message"));
+        } catch(Exception e){
+            logger.error("Generating ERROR response failed.");
+        }
+        finally {
+            writer.endObject();
+            w.flush();
+            w.close();
+        }
+    }
+
 
 }
