@@ -1,19 +1,11 @@
-
-
-
                                 O p e n R e f i n e
                                 -------------------
 
 
-
-What is this?
--------------
-
- is a power tool that allows you to load data, understand it,
+OpenRefine is a power tool that allows you to load data, understand it,
 clean it up, reconcile it internally, and augment it with data coming from
 Freebase or other web sources. All with the comfort and privacy of 
 your own computer.
-
 
 
 Where can I get more information on ?
@@ -21,17 +13,15 @@ Where can I get more information on ?
 
 Look at the  web site
 
-  http://code.google.com/p/google-refine/
-
+  http://github.com/OpenRefine/OpenRefine
 
 
 Licensing and legal issues
 --------------------------
 
- is open source software and is licensed under the BSD license
+OpenRefine is open source software and is licensed under the BSD license
 located in the LICENSE.txt. See that file also for information on open source
-libraries that  depends on.
-
+libraries that OpenRefine depends on.
 
 
 Credits
