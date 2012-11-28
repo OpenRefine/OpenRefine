@@ -29,12 +29,12 @@
 		<div id="columns" bind="columnsPanel" class="job-box wrapper">
 			<div class="column-left">
 			<h3>Columns to upload (scroll right for more) </h3>
-			<div bind="allColumns" id="columns-menu"></div>
-			<div bind="columnList" id="project-columns"></div>
+			<div bind="columnsMenu_0" id="columns-menu-0"></div>
+			<div bind="columnList_0" id="project-columns-0" class="project-columns"></div>
 			</div>
 			<div class="column-right">
 			<h3>Generated default CML</h3>
-			<div bind="cmlPreviewPanel" id="cmlPreviewPanel"></div>
+			<div bind="cmlPreviewPanel_0" id="cml-preview-panel-0"></div>
 			</div>
 		</div>
 	</div>
@@ -83,20 +83,37 @@
 	   		
 			<div class="field_container">
 			<label>Existing CML: </label>
-			<textarea bind="extCmlFields" class="job-instructions"></textarea>
+			<textarea bind="extCml" class="job-instructions"></textarea>
 			</div>
-			<div class="field_container">
-			Existing column names:
-				<div bind="extJobColumns"></div>
+			<div>
+			<a href="#">Edit CML at CrowdFlower site.</a>
 			</div>
-			<br/><a href="#">Map project columns to job's columns</a>
-			
 		</div>
 		</div>
-	<input class="button" type="button" value="Save changes" bind="updateJob"/>
 	</div>
-	    <div class="job-box">
-    <h2>Upload data</h2>
+	<div class="job-box">
+		<div id="existing-fields-panel" bind="extFieldsPanel">
+    
+    		<h3>Map columns</h3>
+    	
+    		Existing fields:
+    		<div bind="extJobFields"></div>
+    	</div>
+    	<div id="existing-columns-panel" bind="extColumnsPanel">
+    	No fields defined yet. Select columns to upload.
+    	<div bind="extColumns" id="existing-columns">
+    	
+    	<div bind="columnsMenu_1" id="columns-menu-1"></div>
+		<div bind="columnList_1" id="project-columns-1" class="project-columns"></div>
+    	
+    	
+    	
+    	</div>
+    	
+    	</div>
+    	
+    	
+    	
     </div>
 	
   	</div>

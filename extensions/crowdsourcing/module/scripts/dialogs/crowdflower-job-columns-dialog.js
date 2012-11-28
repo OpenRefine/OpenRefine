@@ -6,17 +6,23 @@ function ZemantaCrowdFlowerDialog(onDone) {
     
   this._dialog = $(DOM.loadHTML("crowdsourcing", "scripts/dialogs/crowdflower-job-columns-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
-  this._elmts.dialogHeader.text("Enter details for new CrowdFlower job");
+  this._elmts.dialogHeader.text("Upload data to CrowdFlower");
   
   this._elmts.jobTabs.tabs();
 
-  this._renderAllExistingJobs();
-  this._renderAllColumns(this._elmts.columnList);
-  
-  var self = this;
+  var tabindex = 0;
 
   
+  this._renderAllExistingJobs();
+  this._renderAllColumns2(this._elmts.columnsMenu_0, this._elmts.columnList_0, tabindex);
+  
+  var self = this;
+  
   this._elmts.columnsPanel.hide();
+  
+  //TODO: hide this after testing
+  //this._elmts.extFieldsPanel.hide();
+  //this._elmts.extColumnsPanel.hide();
   
   this._elmts.chkUploadToNewJob.click(function () {
 	
@@ -47,7 +53,8 @@ function ZemantaCrowdFlowerDialog(onDone) {
 		  console.log("Uploading to existing job...");
 	  }
       
-      $('#columns input.zem-col:checked').each( function() {
+	  //TODO: it depends on which tab is selected!!!
+      $('#project-columns-' + tabindex +' input.zem-col:checked').each( function() {
     	  var col = {};
     	  col.name = $(this).attr('value');
     	  col.safe_name = ZemantaExtension.util.convert2SafeName(col.name);
@@ -190,9 +197,9 @@ ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
 
 	var self = this;
 	var elm_jobTitle = self._elmts.extJobTitle;
-	var elm_fields = self._elmts.extJobColumns;
+	var elm_fields = self._elmts.extJobFields;
 	var elm_jobInstructions = self._elmts.extJobInstructions;
-	var elm_cmlFields = self._elmts.extCmlFields;
+	var elm_cml = self._elmts.extCml;
 	
 	console.log("Updating job..." + JSON.stringify(data));
 	
@@ -209,18 +216,71 @@ ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
 		elm_jobInstructions.html(data["instructions"]);
 	}
 	
-	if(data["cml"] === [] || data["cml"] === null) {
-		elm_cmlFields.html("(no fields defined )");
+	if(data["cml"] === "[]" || data["cml"] === null) {
+		elm_cml.html("(no cml defined )");
 	} else {
-		elm_cmlFields.html(data["cml"]);
+		elm_cml.html(data["cml"]);
 	}
 	
-	$.each(data["fields"], function(index, value) {
-		$('<input type="checkbox">' + value + '</input>').appendTo(elm_fields);
-	});
+	//TODO: test this
+	if(data["fields"].length > 0) {
+		this._elmts.extFieldsPanel.show();
+		this._elmts.extColumnsPanel.hide();
+		var elm_fields = this._elmts.extJobFields;
+		$.each(data["fields"], function(index, value) {
+			$('<input type="checkbox">' + value + '</input>').appendTo(elm_fields);
+		});
+	} else {
+		this._elmts.extFieldsPanel.hide();
+		this._elmts.extColumnsPanel.show();
+	}
+	
 	
 	self._elmts.statusMessage.html(data["message"]);
 	
+};
+
+ZemantaCrowdFlowerDialog.prototype._renderAllColumns2 = function(columnContainer, columnListContainer, tabindex) {
+	  
+	var self = this;
+	var columns = theProject.columnModel.columns;
+	
+	var chkid = 0;
+
+	var renderColumns = function(columns, elem) {
+		
+		$.each(columns, function(index, value){
+			var id = 'chk_' + tabindex + '_' + chkid;
+			var input = $('<input type="checkbox" class="zem-col" value="' + value.name + '" id="' + id + '"/>').appendTo(elem);
+			$('<label for="' + id + '">' + value.name + '</label> <br/>').appendTo(elem);
+			chkid++;
+						
+			input.click(function() {
+				$('#cml-preview-panel-' + tabindex).html(ZemantaExtension.util.generateCML(tabindex));
+			});
+		});
+	};
+	
+	var linkSelectAll = $('<a href="#" id="select-all-columns-' + tabindex +'"> Select all </a>');
+	columnContainer.append(linkSelectAll);
+	var linkClearAll = $('<a href="#" id="clear-all-columns-' + tabindex + '"> Clear all </a>');
+	columnContainer.append(linkClearAll);
+
+	renderColumns(columns, columnListContainer);
+	
+	linkClearAll.click(function () {
+		$('#project-columns-' + tabindex + ' input.zem-col').each(function () {
+			$(this).attr('checked', false);
+		});
+		$('#cml-preview-panel-' + tabindex).html(ZemantaExtension.util.generateCML(tabindex));
+	});
+	
+	linkSelectAll.click(function() {
+		$('#project-columns-'+ tabindex + ' input.zem-col').each(function () {
+			$(this).attr('checked', true);
+		});
+		$('#cml-preview-panel-' + tabindex).html(ZemantaExtension.util.generateCML(tabindex));
+	});
 };
 
 
@@ -241,14 +301,12 @@ ZemantaCrowdFlowerDialog.prototype._renderAllColumns = function() {
 			$('<label for="' + id + '">' + value.name + '</label> <br/>').appendTo(elem);
 			chkid++;
 						
-			//in case any other column is clicked, all-columns is unchecked
 			input.click(function() {
 				$('#cmlPreviewPanel').html(ZemantaExtension.util.generateCML());
 			});
 		});
 	};
 	
-
 	var linkSelectAll = $('<a href="#" id="select-all-cols"> Select all </a>').appendTo(columnContainer);
 	var linkClearAll = $('<a href="#" id="clear-all-columns"> Clear all </a>').appendTo(columnContainer);
 

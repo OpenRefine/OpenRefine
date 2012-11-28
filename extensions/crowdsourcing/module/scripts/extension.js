@@ -29,9 +29,9 @@ ZemantaExtension.util.convert2SafeName = function(columnName) {
 	
 };
 
-ZemantaExtension.util.generateCML = function() {
+ZemantaExtension.util.generateCML = function(tabindex) {
 	var cml = '';
-    $('#columns input.zem-col:checked').each( function() {
+    $('#project-columns-'+ tabindex + ' input.zem-col:checked').each( function() {
     	cml += '{{' + ZemantaExtension.util.convert2SafeName($(this).attr('value')) + '}}' + '<br/>';
     	console.log("CML: " + cml);
     });
@@ -52,7 +52,7 @@ ZemantaExtension.util.loadAllExistingJobs = function(getJobs) {
   	  			  if(data.status != "ERROR") {
   	  				  getJobs(data['jobs'],data.status);
   	  			  } else{
-  	  				  console.log(data);
+  	  				  console.log(JSON.stringify(data));
   	  				  alert("Error occured while loading existing jobs. Error: " + data['message']);  
   	  				  getJobs([], data.message);
   	  			  }

@@ -31,8 +31,8 @@ public class PreviewExistingJobsCommand extends Command {
         try {
             
             String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey");                       
-            response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
+            response.setCharacterEncoding("UTF-8");
  
             CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
             //TODO: more like a hack
