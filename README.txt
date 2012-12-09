@@ -13,7 +13,7 @@ Where can I get more information on ?
 
 Look at the  web site
 
-  http://github.com/OpenRefine/OpenRefine
+  http://github.com/OpenRefine/OpenRefine/wiki
 
 
 Licensing and legal issues
