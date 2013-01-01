@@ -19,11 +19,11 @@ Currently OpenRefine still carry
 The list of all previous releases is [here](http://code.google.com/p/google-refine/downloads/list).
 
 # Introduction
-<iframe width="420" height="315" src="http://www.youtube.com/embed/B70J_H_zAWM" frameborder="0" allowfullscreen> </iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/B70J_H_zAWM" frameborder="0"> </iframe>
 
-<iframe width="420" height="315" src="http://www.youtube.com/embed/cO8NVCs_Ba0" frameborder="0" allowfullscreen> </iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/cO8NVCs_Ba0" frameborder="0"> </iframe>
 
-<iframe width="420" height="315" src="http://www.youtube.com/embed/5tsyz3ibYzk" frameborder="0" allowfullscreen> </iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/5tsyz3ibYzk" frameborder="0"> </iframe>
 
 Interested to learn more about OpenRefine? Check the [documentation](/OpenRefine/documentation) page to access to all resources. Alternatively your can also check the [FAQ](https://github.com/OpenRefine/OpenRefine/wiki/FAQ).
 
