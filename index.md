@@ -12,18 +12,18 @@ Currently OpenRefine still carry
 
 
 # Downloads OpenRefine
-+ [Windows](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.zip), Download, unzip, and double-click on _google-refine.exe_. If you're having issues with the above, try double-clicking on _refine.bat_ instead.
-+ [Mac](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.dmg), Download, open, drag icon into the Applications folder and double click on it.
-+ [Linux](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.tar.gz), Download, extract, then type _./refine_ to start.
++ For **[Windows](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.zip)**, Download, unzip, and double-click on _google-refine.exe_. If you're having issues with the above, try double-clicking on _refine.bat_ instead.
++ For **[Mac](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.dmg)**, Download, open, drag icon into the Applications folder and double click on it.
++ For **[Linux](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.tar.gz)**, Download, extract, then type _./refine_ to start.
 
 The list of all previous releases is [here](http://code.google.com/p/google-refine/downloads/list).
 
 # Introduction
-<iframe width="853" height="480" src="http://www.youtube.com/embed/B70J_H_zAWM?rel=0" frameborder="0" ></iframe>
+{% youtube B70J_H_zAWM %}
 
-<iframe width="853" height="480" src="http://www.youtube.com/embed/cO8NVCs_Ba0?rel=0" frameborder="0" ></iframe>
+{% youtube cO8NVCs_Ba0 %}
 
-<iframe width="853" height="480" src="http://www.youtube.com/embed/5tsyz3ibYzk?rel=0" frameborder="0" ></iframe>
+{% youtube 5tsyz3ibYzk %}
 
 Interested to learn more about OpenRefine? Check the [documentation](/OpenRefine/documentation) page to access to all resources. Alternatively your can also check the [FAQ](https://github.com/OpenRefine/OpenRefine/wiki/FAQ).
 
