@@ -1,4 +1,4 @@
-safe:        false
+safe:        true
 auto:        false
 server:      false
 server_port: 4000
