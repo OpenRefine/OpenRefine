@@ -3,7 +3,7 @@ layout: default
 title: Welcome to the new OpenRefine site
 ---
 
-# Welcome to the new OpenRefine site (former Google Refine)
+# Welcome to the new OpenRefine site! (former Google Refine)
 
 OpenRefine is a powerful tool for working with messy data, cleaning it up, transforming it from one format into another, extending it with web services, and linking it to databases like [Freebase](http://www.freebase.com/). 
 
