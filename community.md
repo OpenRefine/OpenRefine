@@ -3,9 +3,9 @@ layout: default
 title: OpenRefine Documentation
 ---
 #Participate
-First thanks for your interest in the OpenRefine community. OpenRefine is 100% supported by volunteer and Interested to participate in the development of OpenRefine.
+First thanks for your interest in the OpenRefine community. OpenRefine is 100% supported by volunteer and we are looking for new participant. 
 
-You can help in three different ways:
+Interested to participate in the development of OpenRefine? You can help in three different ways:
 * Help to develop the next version
 * Help to support user with current functionality
 * Promote OpenRefine 
@@ -21,14 +21,14 @@ From there you can help us to help us to fix open issue or propose new enhanceme
 
 ##Documentation and Support
 Not a coder but still want to help? No worries you can help OpenRefine to grow in several ways:
-* by [maintaining the documentation](https://github.com/OpenRefine/OpenRefine/wiki) For that you need a GitHub account ([create one for free](https://github.com/signup/free)). 
+* by [maintaining the documentation](https://github.com/OpenRefine/OpenRefine/wiki), you will need a GitHub account ([create one for free](https://github.com/signup/free)). 
 * helping user with questions on the [mailing list](https://groups.google.com/forum/?fromgroups#!forum/openrefine)
 * Alternatively if you are writting tutorial on your own platform, please give us a shout so we can add it to the [OpenRefine Custom Search Engine](/OpenRefine/documentation)
 
 We will be soon releasing an issue list regarding the documentation to guide new participants. 
 
 ##Promote OpenRefine
-Organizing an workshop or presentation about OpenRefine? Add your event details in our [wiki](https://github.com/OpenRefine/OpenRefine/wiki/Events) to spread the word. 
+Organizing an workshop or presentation about OpenRefine? Add your event details in our [wiki event page](https://github.com/OpenRefine/OpenRefine/wiki/Events) or give us a shout on [twitter](http://twitter.com/OpenRefine).
 
 This page also list previous presentations as catch up and source of inspiration for your presentation!
 
@@ -37,7 +37,7 @@ This page also list previous presentations as catch up and source of inspiration
 
 * Lead Developer: Tom Morris : [@tfmorris](https://twitter.com/tfmorris) - [Github](https://github.com/tfmorris)
 * Documentation & Community: Martin Magdinier: [@magdmartin](http://twitter.com/magdmartin) - [GitHub](https://github.com/magdmartin)
-* See list of [all recent contributors ](https://github.com/OpenRefine/OpenRefine/graphs/contributors)
+* See list of [all recent code contributors ](https://github.com/OpenRefine/OpenRefine/graphs/contributors)
 
 
 
