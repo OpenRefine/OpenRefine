@@ -3,23 +3,23 @@ layout: default
 title: OpenRefine Documentation
 ---
 #Participate
-First thanks for your interest in the OpenRefine community. OpenRefine is 100% supported by volunteer and we are looking for new participant. 
+First thanks for your interest in the OpenRefine community. OpenRefine is 100% supported by volunteer and we are always looking for new participant to jump in! 
 
-Interested to participate in the development of OpenRefine? You can help in three different ways:
-* Help to develop the next version
-* Help to support user with current functionality
+Interested to participate in the development of OpenRefine? You can help in to 
+* Develop the next version
+* Develop the Documentation and Support users
 * Promote OpenRefine 
 
 Join the [discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) if you have any questions!
 
-##Code
-You'll need a GitHub account to participate. If you don't have one get one for free [here](https://github.com/signup/free). 
+##Develop the Next Version
+You have some developers skills and want to help fix current bug and develop the next release of OpenRefine. Log in on GitHub and fork [OpenRefine repository](https://github.com/OpenRefine/OpenRefine). We accept pull request on a regular basis.
 
 You'll find more information regarding OpenRefine architecture in the [Documentation for Developers](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers) wiki section. 
 
-From there you can help us to help us to fix open issue or propose new enhancement using the [Issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open).
-
-##Documentation and Support
+From there you can help us to help us to fix open issue or propose new enhancement using the [Issue List](https://github.com/OpenRefine/OpenRefine/issues?state=open).
+ 
+##Documentation and Support Users
 Not a coder but still want to help? No worries you can help OpenRefine to grow in several ways:
 * by [maintaining the documentation](https://github.com/OpenRefine/OpenRefine/wiki), you will need a GitHub account ([create one for free](https://github.com/signup/free)). 
 * helping user with questions on the [mailing list](https://groups.google.com/forum/?fromgroups#!forum/openrefine)
