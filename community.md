@@ -3,16 +3,60 @@ layout: default
 title: OpenRefine Documentation
 ---
 #Participate
-Join the [discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine)
+First thanks for your interest in the OpenRefine community. OpenRefine is 100% supported by volunteer and Interested to participate in the development of OpenRefine.
 
-#Events
-Organizing an workshop or presentation about OpenRefine? Add your event details in our [wiki](url to be added) to spread the word.
+You can help in three different ways:
+* Help to develop the next version
+* Help to support user with current functionality
+* Promote OpenRefine 
 
-#Current & Previous Member
+Join the [discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) if you have any questions!
+
+##Code
+You'll need a GitHub account to participate. If you don't have one get one for free [here](https://github.com/signup/free). 
+
+You'll find more information regarding OpenRefine architecture in the [Documentation for Developers](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers) wiki section. 
+
+From there you can help us to help us to fix open issue or propose new enhancement using the [Issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open).
+
+##Documentation and Support
+Not a coder but still want to help? No worries you can help OpenRefine to grow in several ways:
+* by [maintaining the documentation](https://github.com/OpenRefine/OpenRefine/wiki) For that you need a GitHub account ([create one for free](https://github.com/signup/free)). 
+* helping user with questions on the [mailing list](https://groups.google.com/forum/?fromgroups#!forum/openrefine)
+* Alternatively if you are writting tutorial on your own platform, please give us a shout so we can add it to the [OpenRefine Custom Search Engine](/OpenRefine/documentation)
+
+We will be soon releasing an issue list regarding the documentation to guide new participants. 
+
+##Promote OpenRefine
+Organizing an workshop or presentation about OpenRefine? Add your event details in our [wiki](https://github.com/OpenRefine/OpenRefine/wiki/Events) to spread the word. 
+
+This page also list previous presentations as catch up and source of inspiration for your presentation!
+
+#Current & Previous Contributors
 ##Current
-Check commit on GitHub
-* Code maintenance: Tom Morris
-* Community
 
-What to 
-##Previous
+* Lead Developer: Tom Morris : [@tfmorris](https://twitter.com/tfmorris) - [Github](https://github.com/tfmorris)
+* Documentation & Community: Martin Magdinier: [@magdmartin](http://twitter.com/magdmartin) - [GitHub](https://github.com/magdmartin)
+* See list of [all recent contributors ](https://github.com/OpenRefine/OpenRefine/graphs/contributors)
+
+
+
+##Previous Contributors
+This software was created by Metaweb Technologies, Inc. and originally written and conceived by David Huynh <dfhuynh@google.com>. Metaweb Technologies, Inc. was acquired by Google, Inc. in July 2010 and the product was renamed Google Refine. In October 2012, it was renamed OpenRefine as it transitioned to a community-supported product.
+
+They helped to develop Gridworks and Google Refine (in chronological order):
+- David Huynh <dfhuynh@google.com>
+- Stefano Mazzocchi <stefanom@google.com>
+- Vishal Talwar <vtalwar@google.com> 
+- Jeff Fry <jfry@google.com>
+- Will Moffat <wdm@google.com>
+- James Home <jameshome@google.com>
+- Iain Sproat <iainsproat@gmail.com>
+- Tom Morris <tfmorris@gmail.com>
+- Heather Campbell <campbellh@google.com>
+- Thad Guidry <thadguidry@gmail.com>
+- Paul Makepeace <paulm@paulm.com>
+- Tomaž Šolc <tomaz.solc@zemanta.com>
+- Gabriel Sjoberg <GabrielSjoberg@gmail.com>
+- Rod Salazar <rodrod.salazar@gmail.com>
+- pxb <pxb1988@gmail.com>
