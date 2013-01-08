@@ -7,6 +7,8 @@ title: OpenRefine Documentation
 
 Currently OpenRefine documentation is scatter across multiple platforms (current wiki, help embedded in the interface,discussion list and a myriad of tutorials and blog articles) making it hard to find the right information when one need it. So we designed this custom Google Search Engine to help you to find the piece of information you're looking for.
 
+<gcse:searchbox-only></gcse:searchbox-only>
+
 # Documentation
 You can find out more on OpenRefine by reading the:
 * [FAQ](https://github.com/OpenRefine/OpenRefine/wiki/FAQ)
