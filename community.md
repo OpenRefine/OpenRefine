@@ -35,8 +35,9 @@ This page also list previous presentations as catch up and source of inspiration
 #Current & Previous Contributors
 ##Current
 
-* Lead Developer: Tom Morris : [@tfmorris](https://twitter.com/tfmorris) - [Github](https://github.com/tfmorris)
-* Documentation & Community: Martin Magdinier: [@magdmartin](http://twitter.com/magdmartin) - [GitHub](https://github.com/magdmartin)
+* Lead Developer: Tom Morris - [@tfmorris](https://twitter.com/tfmorris) - [Github](https://github.com/tfmorris)
+* Sponser, Tester, Documentation: Thad Guidry - [@thadguidry](http://twitter.com/thadguidry) - [Github](https://github.com/thadguidry)
+* Documentation & Community: Martin Magdinier - [@magdmartin](http://twitter.com/magdmartin) - [GitHub](https://github.com/magdmartin)
 * See list of [all recent code contributors ](https://github.com/OpenRefine/OpenRefine/graphs/contributors)
 
 

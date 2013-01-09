@@ -9,14 +9,14 @@ OpenRefine is a powerful tool for working with messy data, cleaning it up, trans
 
 Please note that since October 2nd, 2012, Google is not supporting activly this project which have been rebranded to OpenRefine. Project development, documentation and promotion is now fully supported by volunteers. Find out more about the [history of OpenRefine](http://googlerefine.blogspot.ca/2012/10/from-freebase-gridworks-to-google.html) and how you can [help the community](/OpenRefine/community).
 
-# Downloads OpenRefine
+# Download OpenRefine
 Currently the lastest stable version of OpenRefine is Google Refine 2.5. The next release (OpenRefine 2.6) will carry the new branding. 
 
 + **For [Windows](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.zip)**, Download, unzip, and double-click on _google-refine.exe_. If you're having issues with the above, try double-clicking on _refine.bat_ instead.
 + **For [Mac](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.dmg)**, Download, open, drag icon into the Applications folder and double click on it.
 + **For [Linux](http://google-refine.googlecode.com/files/google-refine-2.5-r2407.tar.gz)**, Download, extract, then type _./refine_ to start.
 
-The list of all previous releases is [here](http://code.google.com/p/google-refine/downloads/list).
+The list of all previous releases is [here](http://code.google.com/p/google-refine/downloads/list?can=1&q=&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount).
 
 # Introduction to OpenRefine
 ## Explore Data
