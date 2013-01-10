@@ -1,0 +1,43 @@
+This project is an extension for Google Refine and provides easy way to add columns from DBpedia to reconciled data (columns).
+
+Data has to be reconciled with DBpedia or SPARQL endpoint, which returns DBpedia resource types.
+
+INSTALL
+
+1. Before installing this extension download Google Refine code from http://code.google.com/p/google-refine/source/checkout. 
+
+2. Pull this extension's code into folder dbpedia-extension under folder /extensions. 
+For more information on how to write a Google Refine extensions and where to put the files see http://code.google.com/p/google-refine/wiki/WriteAnExtension
+
+The folder structure should resemble this:
+grefine-all/
+----------/extensions
+--------------/dbpedia-extension
+------------------/module
+------------------/src
+------------------build.xml
+------------------README (this file)
+
+3. Update build.xml in folder /extensions with build and clean ant tasks for dbpedia-extension:
+
+<project name="google-refine-extensions" default="build" basedir=".">
+    <target name="build">
+        <echo message="Building extensions" />
+        <ant dir="sample/" target="build" />
+        <ant dir="jython/" target="build" />
+        <ant dir="freebase/" target="build" />
+        <ant dir="gdata/" target="build" />
+        <ant dir="dbpedia-extension/" target="build" />
+    </target>
+    
+    <target name="clean">
+        <echo message="cleaning extensions" />
+        <ant dir="sample/" target="clean" />
+        <ant dir="jython/" target="clean" />
+        <ant dir="freebase/" target="clean" />
+        <ant dir="gdata/" target="clean" />
+        <ant dir="dbpedia-extension/" target="clean" />
+    </target>
+</project>
+
+4. If using Eclipse, make sure that you build project with ant

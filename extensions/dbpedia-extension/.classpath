@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry combineaccessrules="false" kind="src" path="/grefine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/grefine-server"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="tests/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
+	<classpathentry kind="lib" path="/grefine-all/main/webapp/WEB-INF/lib/commons-lang-2.5.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/grefine-all"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/zemapi-java.jar"/>
+	<classpathentry kind="output" path="module/MOD-INF/classes"/>
+</classpath>
