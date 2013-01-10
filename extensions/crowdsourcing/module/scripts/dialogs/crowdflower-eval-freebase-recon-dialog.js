@@ -58,7 +58,7 @@ function ZemantaCFEvaluateFreebaseReconDialog(onDone) {
       $('#info-fields input:checked').each( function() {
     	  var col = {};
     	  col.name = $(this).attr('value');
-    	  col.safe_name = ZemantaExtension.util.convert2SafeName(col.name);
+    	  col.safe_name = ZemantaCrowdSourcingExtension.util.convert2SafeName(col.name);
     	  self._extension.column_names.push(col);
       });
  

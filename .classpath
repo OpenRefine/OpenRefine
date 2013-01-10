@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="extensions/dbpedia-extension/src"/>
 	<classpathentry kind="src" path="extensions/crowdsourcing/src"/>
 	<classpathentry kind="src" path="server/src"/>
 	<classpathentry kind="src" path="extensions/freebase/src"/>
@@ -74,5 +75,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/CrowdFlowerClient"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/dbpedia-extension/module/MOD-INF/lib/zemapi-java.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

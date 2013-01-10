@@ -89,7 +89,7 @@ function ZemantaCrowdFlowerDialog(onDone) {
 	      $('#project-columns-' + tabindex +' input.zem-col:checked').each( function() {
 	    	  var col = {};
 	    	  col.name = $(this).attr('value');
-	    	  col.safe_name = ZemantaExtension.util.convert2SafeName(col.name);
+	    	  col.safe_name = ZemantaCrowdSourcingExtension.util.convert2SafeName(col.name);
 	    	  self._extension.column_names.push(col);
 	      });
 	      
@@ -117,7 +117,7 @@ function ZemantaCrowdFlowerDialog(onDone) {
 			  $('#project-columns-' + tabindex +' input.zem-col:checked').each( function() {
 		    	  var col = {};
 		    	  col.name = $(this).attr('value');
-		    	  col.safe_name = ZemantaExtension.util.convert2SafeName(col.name);
+		    	  col.safe_name = ZemantaCrowdSourcingExtension.util.convert2SafeName(col.name);
 		    	  self._extension.column_names.push(col);
 		      });
 		  }		  
@@ -197,7 +197,7 @@ ZemantaCrowdFlowerDialog.prototype._copyAndUpdateJob = function(jobid) {
 		self._extension.gold = true;
 	}
 	
-	ZemantaExtension.util.copyJob(self._extension, function(data){
+	ZemantaCrowdSourcingExtension.util.copyJob(self._extension, function(data){
 	  console.log("Copy results: " + JSON.stringify(data));
 	  if(data[status] === "ERROR") {
 		  alert("There was an error either during copying or updating list.");
@@ -265,7 +265,7 @@ ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
 	
 	
 	
-	ZemantaExtension.util.loadAllExistingJobs(function(data, status) {
+	ZemantaCrowdSourcingExtension.util.loadAllExistingJobs(function(data, status) {
 		
 		elemStatus.html("Status: " + status);
 	
@@ -283,7 +283,7 @@ ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
 			
 			console.log("Job id changed:" + JSON.stringify(this._extension));
 			
-			ZemantaExtension.util.getJobInfo(this._extension, function(data){
+			ZemantaCrowdSourcingExtension.util.getJobInfo(this._extension, function(data){
 				 self._updateJobInfo(data);
 			});
 		});

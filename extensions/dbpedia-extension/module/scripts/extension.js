@@ -31,18 +31,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-var ZemantaExtension = {handlers: {}, util: {}};
+var ZemantaDBpediaExtension = {handlers: {}, util: {}};
 
-ZemantaExtension.handlers.doNothing = function() {
+ZemantaDBpediaExtension.handlers.doNothing = function() {
 	alert("Zemanta extension active...");
 };
 
 
-ZemantaExtension.util.parseZemantaApiKey = function (prefs) {
+ZemantaDBpediaExtension.util.parseZemantaApiKey = function (prefs) {
 	var apiKey = "";
 	if(prefs != null) {
 		$.each(prefs, function(key, val) {
-			if(key === "zemanta-api-key") {
+			if(key === "zemanta.apikey") {
 				apiKey = val;
 			}
 		});
@@ -50,25 +50,25 @@ ZemantaExtension.util.parseZemantaApiKey = function (prefs) {
 	return apiKey;
 };
 
-ZemantaExtension.util.loadZemantaApiKeyFromSettings = function(getZemantaApiKey) {
+ZemantaDBpediaExtension.util.loadZemantaApiKeyFromSettings = function(getZemantaApiKey) {
 	$.post(
 		      "/command/core/get-all-preferences",
 		      {},
 		      function (data) {
-		    	  getZemantaApiKey(ZemantaExtension.util.parseZemantaApiKey(data));
+		    	  getZemantaApiKey(ZemantaDBpediaExtension.util.parseZemantaApiKey(data));
 		    	  },
 		      "json"
 	 );
 	
 };
 
-ZemantaExtension.handlers.storeZemantaAPIKey = function() {
+ZemantaDBpediaExtension.handlers.storeZemantaAPIKey = function() {
 	
 	new ZemantaSettingsDialog(function(newApiKey) {
 		$.post(
 	          "/command/core/set-preference",
 	          {
-	            name : "zemanta-api-key",
+	            name : "zemanta.apikey",
 	            value : JSON.stringify(newApiKey)
 	          },
 	          function(o) {
@@ -85,7 +85,7 @@ ZemantaExtension.handlers.storeZemantaAPIKey = function() {
 
 
 
-ZemantaExtension.util.getReconId = function(column, visibleRows) {
+ZemantaDBpediaExtension.util.getReconId = function(column, visibleRows) {
 	var rows = theProject.rowModel.rows;
     var row = null;
     var cell = null;
@@ -107,7 +107,7 @@ ZemantaExtension.util.getReconId = function(column, visibleRows) {
     return reconId;
 };
 
-ZemantaExtension.util.getCellText = function(column, visibleRows) {
+ZemantaDBpediaExtension.util.getCellText = function(column, visibleRows) {
 	var rows = theProject.rowModel.rows;
     var row = null;
     var cell = null;
@@ -129,7 +129,7 @@ ZemantaExtension.util.getCellText = function(column, visibleRows) {
     return cellText;
 };
 
-ZemantaExtension.util.prepareZemantaData = function(apikey, text) {	
+ZemantaDBpediaExtension.util.prepareZemantaData = function(apikey, text) {	
     return {
         method: 'zemanta.suggest_markup',
         format: 'json',
@@ -139,18 +139,23 @@ ZemantaExtension.util.prepareZemantaData = function(apikey, text) {
 };
 
 
-
 ExtensionBar.addExtensionMenu({
 "id": "zemanta",
-"label": "Zemanta",
+"label": "Zemanta extensions",
 "submenu": [
 	 {
-	 "id": "zemanta/zemapi",
-	 label: "Zemanta API settings",
-	 click: ZemantaExtension.handlers.storeZemantaAPIKey
-	 }
+		 "id":"zemanta/dbpedia",
+		 "label": "DBpedia",
+		 "submenu": [{
+		        	 "id": "zemanta/dbpedia",
+		        	 label: "Zemanta API settings",
+		        	 click: ZemantaDBpediaExtension.handlers.storeZemantaAPIKey
+		 			}
+		             ]
+	 },{}
 	]
  });
+
   
   // faster way to get properties - not using column.reconConfig  
   // Zemanta recon api doesn't return types anyway  
@@ -161,7 +166,7 @@ ExtensionBar.addExtensionMenu({
   var columnIndex = Refine.columnNameToColumnIndex(column.name);
   var doAddColumnFromDBpedia = function() {
   var o = DataTableView.sampleVisibleRows(column);
-  var reconId = ZemantaExtension.util.getReconId(column, o);
+  var reconId = ZemantaDBpediaExtension.util.getReconId(column, o);
   var isDBpedia = false;
 
   if(reconId !== null) {
@@ -211,7 +216,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 	  
 	  var doExtractEntitiesFromText = function() {
 		  var o = DataTableView.sampleVisibleRows(column);
-		  var cellText = ZemantaExtension.util.getCellText(column, o);
+		  var cellText = ZemantaDBpediaExtension.util.getCellText(column, o);
 		  
 		  new ZemantaExtractEntitiesPreviewDialog(
 		      column, 

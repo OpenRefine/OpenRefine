@@ -1,4 +1,4 @@
-ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings = function(getApiKey) {
+ZemantaCrowdSourcingExtension.util.loadCrowdFlowerApiKeyFromSettings = function(getApiKey) {
 	$.post(
 		      "/command/core/get-all-preferences",
 		      {},
@@ -17,7 +17,7 @@ ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings = function(getApiKey) {
 	 );	
 };
 
-ZemantaExtension.util.convert2SafeName = function(columnName) {
+ZemantaCrowdSourcingExtension.util.convert2SafeName = function(columnName) {
 
 	//console.log("Column name:" + columnName);
 	var patt = /(\s)+/ig;
@@ -30,7 +30,7 @@ ZemantaExtension.util.convert2SafeName = function(columnName) {
 };
 
 
-ZemantaExtension.util.generateCML = function(tabindex) {
+ZemantaCrowdSourcingExtension.util.generateCML = function(tabindex) {
 	var cml = '';
     $('#project-columns-'+ tabindex + ' input.zem-col:checked').each( function() {
     	cml += '{{' + ZemantaExtension.util.convert2SafeName($(this).attr('value')) + '}}' + '<br/>';
@@ -41,7 +41,7 @@ ZemantaExtension.util.generateCML = function(tabindex) {
 };
 
 
-ZemantaExtension.util.loadAllExistingJobs = function(getJobs) {
+ZemantaCrowdSourcingExtension.util.loadAllExistingJobs = function(getJobs) {
     $.post(
   		  "command/crowdsourcing/preview-crowdflower-jobs",
   		  { 
@@ -65,7 +65,7 @@ ZemantaExtension.util.loadAllExistingJobs = function(getJobs) {
 };
 
 
-ZemantaExtension.util.copyJob = function(extension, updateJobs) {
+ZemantaCrowdSourcingExtension.util.copyJob = function(extension, updateJobs) {
     $.post(
   		  "command/crowdsourcing/copy-crowdflower-job",
   		  {"extension": JSON.stringify(extension)},
@@ -86,7 +86,7 @@ ZemantaExtension.util.copyJob = function(extension, updateJobs) {
 };
 
 
-ZemantaExtension.util.getJobInfo = function(extension, updateJobInfo) {
+ZemantaCrowdSourcingExtension.util.getJobInfo = function(extension, updateJobInfo) {
 	
     $.post(
   		  "command/crowdsourcing/get-crowdflower-job",

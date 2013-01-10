@@ -38,7 +38,7 @@ function ZemantaCrowdFlowerGoldDialog(onDone) {
 	  self._extension = {};
 	  self._extension = params;
 	
-	  ZemantaExtension.util.copyJob(self._extension, function(data){
+	  ZemantaCrowdSourcingExtension.util.copyJob(self._extension, function(data){
 		  self._updateJobList(data);
 	  });
 	  	  
@@ -130,7 +130,7 @@ ZemantaCrowdFlowerGoldDialog.prototype._renderAllExistingJobs = function() {
 	$('<option name="opt_none" value="none">--- select a job --- </option>').appendTo(selContainer);
 	//$('<option name="opt_one" value="none">option 1</option>').appendTo(selContainer);
 	
-	ZemantaExtension.util.loadAllExistingJobs(function(data, status) {
+	ZemantaCrowdSourcingExtension.util.loadAllExistingJobs(function(data, status) {
 		
 		elemStatus.html("Status: " + status);
 		

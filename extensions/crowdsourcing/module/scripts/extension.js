@@ -1,7 +1,7 @@
-var ZemantaExtension = {handlers: {}, util: {}};
+var ZemantaCrowdSourcingExtension = {handlers: {}, util: {}};
 
 
-ZemantaExtension.handlers.storeCrowdFlowerSettings = function() {
+ZemantaCrowdSourcingExtension.handlers.storeCrowdFlowerSettings = function() {
 	
 	new ZemantaSettingsDialog(function(newSettings) {
 		$.post(
@@ -36,15 +36,15 @@ ZemantaExtension.handlers.storeCrowdFlowerSettings = function() {
 };
 
 
-ZemantaExtension.handlers.doNothing = function() {
+ZemantaCrowdSourcingExtension.handlers.doNothing = function() {
 	alert("Crowdsourcing extension active...");
 };
 
-ZemantaExtension.handlers.openPreferences = function() {
+ZemantaCrowdSourcingExtension.handlers.openPreferences = function() {
 	window.location = "/preferences";
 };
 
-ZemantaExtension.handlers.openJobSettingsDialog = function()  {
+ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog = function()  {
 	
 	new ZemantaCrowdFlowerDialog(function(extension) {
 		
@@ -65,7 +65,7 @@ ZemantaExtension.handlers.openJobSettingsDialog = function()  {
 	});
 };
 
-ZemantaExtension.handlers.evaluateFreebaseReconDialog = function()  {
+ZemantaCrowdSourcingExtension.handlers.evaluateFreebaseReconDialog = function()  {
 	
 	new ZemantaCFEvaluateFreebaseReconDialog(function(extension) {
 		
@@ -88,16 +88,65 @@ ZemantaExtension.handlers.evaluateFreebaseReconDialog = function()  {
 
 
 
-ZemantaExtension.handlers.getApiKey =  function() {
+ZemantaCrowdSourcingExtension.handlers.getApiKey =  function() {
 	console.log("Getting API key...");
-	ZemantaExtension.util.loadCrowdFlowerApiKeyFromSettings(function(apiKey) {
+	ZemantaCrowdSourcingExtension.util.loadCrowdFlowerApiKeyFromSettings(function(apiKey) {
 		console.log("Read API key: " + apiKey);
 		return apiKey;
 	});
 };
 
+ExtensionBar.appendTo(["zemanta"],[
+   		 {
+			 "id" : "zemanta/crowdflower",
+			 "label" : "CrowdFlower",
+			 "submenu" : [
+				    		 {
+				    			 "id": "zemanta/crowdflower/create-crowdflower-job",
+				    			 label: "Create new job / upload data",
+				    			 click: ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog
+				    		 },
+				    		 {
+				    			"id": "zemanta/crowdflower/download-results",
+				    			"label": "Download results",
+				    			click: ZemantaCrowdSourcingExtension.handlers.doNothing
+				    			 
+				    		 },
+				    		 {},
+				    		 {
+				    			 "id": "zemanta/crowdflower/templates",
+				    			 label: "Templates",
+				    			 "submenu": [
+				    			             {
+				    			            	 "id":"zemanta/crowdflower/templates/freebase",
+				    			            	 "label": "Evaluate Freebase reconciliations",
+				    			            	 click: ZemantaCrowdSourcingExtension.handlers.evaluateFreebaseReconDialog
+				    			             },
+				    			             {
+				    			            	 "id":"zemanta/crowdflower/templates/dbpedia",
+				    			            	 "label": "Evaluate DBpedia reconciliations",
+				    			            	 click: ZemantaCrowdSourcingExtension.handlers.doNothing
+				    			             }
+				    			             ]
+				    		 },
+				    		 {},
+				     		 {
+				    			 "id": "zemanta/crowdflower/settings",
+				    			 "label": "Settings",
+				    			  click: ZemantaCrowdSourcingExtension.handlers.storeCrowdFlowerSettings
+				    		 },
+			              ]
+		 },
+		 {},
+		 {
+			 "id": "zemanta/openrefine-settings",
+			 "label": "All OpenRefine settings",
+			 click: ZemantaCrowdSourcingExtension.handlers.openPreferences
+		 },
+		]);
 
-ExtensionBar.addExtensionMenu({
+
+/*ExtensionBar.addExtensionMenu({
 	"id": "zemanta",
 	"label": "Zemanta",
 	"submenu": [
@@ -148,4 +197,4 @@ ExtensionBar.addExtensionMenu({
 			              ]
 		 }
 		]
-});
+});*/
