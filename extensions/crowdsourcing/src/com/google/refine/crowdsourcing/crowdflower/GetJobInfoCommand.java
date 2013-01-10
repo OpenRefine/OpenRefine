@@ -2,7 +2,6 @@ package com.google.refine.crowdsourcing.crowdflower;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +22,9 @@ import com.zemanta.crowdflower.client.CrowdFlowerClient;
 public class GetJobInfoCommand extends Command{
     static final Logger logger = LoggerFactory.getLogger("crowdflower_getjobinfo");
 
+    /* (non-Javadoc)
+     * @see com.google.refine.commands.Command#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -34,7 +36,12 @@ public class GetJobInfoCommand extends Command{
                         
             JSONObject extension = ParsingUtilities.evaluateJsonStringToObject(jsonString);
             String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey");                       
-            CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
+            Object defTimeout = CrowdsourcingUtil.getPreference("crowdflower.defaultTimeout");
+            String defaultTimeout = (defTimeout != null) ? (String)defTimeout : "1500";
+            
+            CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey, Integer.valueOf(defaultTimeout));
+            
+        
             String result = "";
             
             response.setCharacterEncoding("UTF-8");
@@ -42,35 +49,32 @@ public class GetJobInfoCommand extends Command{
             //copy job, store id
             if(extension.has("job_id") && !extension.isNull("job_id")) {
                 
-                        
+                System.out.println("Job id: " + extension.getString("job_id"));        
                 result = cf_client.getJob(extension.getString("job_id"));                   
                 JSONObject res = ParsingUtilities.evaluateJsonStringToObject(result);
       
                 if(res.getString("status").equals("ERROR"))
                 {
                     generateErrorResponse(response, res);
-                }
+                } else {
                      
-                JSONObject obj = res.getJSONObject("response");
-                obj.put("status", "OK"); //TODO: return additional message form API if there is any
-                generateResponse(response, obj);
-               
+                    JSONObject obj = res.getJSONObject("response");
+                    obj.put("status", "OK"); //TODO: return additional message from API if there is any
+                    generateResponse(response, obj);
+                }
             } else {
                 
                 JSONObject err = new JSONObject();
                 err.put("status", "ERROR");
-                err.put("message", "Job id was not provided. could not obtain job information.");
-                    
-                    generateErrorResponse(response, err);
-                }
+                err.put("message", "Job id was not provided. could not obtain job information.");    
+                generateErrorResponse(response, err);
+            }
             
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
-        
+        }      
     }
-
 
     
     private void generateResponse(HttpServletResponse response, JSONObject data)
@@ -81,20 +85,20 @@ public class GetJobInfoCommand extends Command{
             writer.object();
             writer.key("status"); writer.value(data.getString("status"));
             
-            writer.key("title"); writer.value(data.getString("title"));
-            writer.key("instructions"); writer.value(data.getString("instructions"));
-
-            String cml = data.getString("cml");
-            ArrayList<String> fields = new ArrayList<String>();
-            fields = CrowdsourcingUtil.parseCmlFields(data.getString("cml"));
+            writer.key("title"); writer.value(data.get("title"));
+            writer.key("instructions"); writer.value(data.get("instructions"));
+            writer.key("units_count");writer.value(data.get("units_count"));
+ //           String cml = data.getString("cml");
+ //           ArrayList<String> fields = new ArrayList<String>();
+ //           fields = CrowdsourcingUtil.parseCmlFields(cml);
             
-            writer.key("cml"); writer.value(cml);
-            writer.key("fields").array();
+ //           writer.key("cml"); writer.value(cml);
+ //           writer.key("fields").array();
             
-            for(int i= 0; i < fields.size(); i++) {
-                writer.value(fields.get(i));
-            }
-            writer.endArray();
+ //           for(int i= 0; i < fields.size(); i++) {
+ //               writer.value(fields.get(i));
+ //           }
+ //           writer.endArray();
             
         } catch(Exception e){
             logger.error("Generating response failed.");

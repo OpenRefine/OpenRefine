@@ -7,6 +7,8 @@
   <p>Don't have CrowdFlower API key yet? Register for an account at <a href="http://crowdflower.com">CrowdFlower webpage</a>  </p></div>  
     <div class="grid-layout layout-normal layout-full">
     	<div>Enter Crowdflower API key: <input bind="apiKeyInput" /></div>
+    	<div>Set default connection timeout (in miliseconds): <input bind="defaultTimeoutInput" value="1500"/><br/>
+    	If you experience ant problems with getting data from CrowdFlower, try to increase this number.</div>
   </div>
   </div>
   <div class="dialog-footer" bind="dialogFooter">

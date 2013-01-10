@@ -20,6 +20,7 @@ import com.google.refine.crowdsourcing.CrowdsourcingUtil;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
@@ -32,10 +33,10 @@ import org.slf4j.LoggerFactory;
 
 import com.zemanta.crowdflower.client.CrowdFlowerClient;
 
-public class CreateNewJobCommand extends Command{
-    static final Logger logger = LoggerFactory.getLogger("crowdflower_createnewjob");
+public class EvaluateFreebaseReconJobCommand extends Command{
+    static final Logger logger = LoggerFactory.getLogger("crowdflower_evaluatefreebaserecon");
     protected List<Integer> _cell_indeces;
-    
+    protected String FREEBASE_VIEW_URL = "http://www.freebase.com/view";
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -44,11 +45,9 @@ public class CreateNewJobCommand extends Command{
         try {
             
             JSONObject extension = new JSONObject(request.getParameter("extension")); 
-
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-
-            String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey"); 
+            String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey");    
             Object defTimeout = CrowdsourcingUtil.getPreference("crowdflower.defaultTimeout");
             String defaultTimeout = (defTimeout != null) ? (String)defTimeout : "1500";
             
@@ -57,74 +56,28 @@ public class CreateNewJobCommand extends Command{
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             
-            JSONObject job = new JSONObject();
-            JSONObject result = new JSONObject();
-            
-            if(extension.has("new_job") && extension.getBoolean("new_job")) {
-                String job_title = extension.getString("title");
-                String job_instructions = extension.getString("instructions");
+            if(extension.has("job_id") && !extension.isNull("job_id")) {
 
-                //new empty job with title and instructions
-                job = createNewEmptyJob(cf_client, job_title, job_instructions);
+                StringBuffer data = generateObjectsForUpload(extension, project, engine);             
+                String msg = cf_client.bulkUploadJSONToExistingJob(extension.getString("job_id"), data.toString());
+
+                JSONObject result = ParsingUtilities.evaluateJsonStringToObject(msg);
                 
-                if(job.getString("status").equals("ERROR")) {
-                    result = job;
-                }
-            }
-            else {
-                if(extension.has("job_id")) {
-                    job.put("job_id", extension.getString("job_id"));
-                }
-                //ERROR
-                else { 
-                    result.put("status", "ERROR");
-                    result.put("message", "No job id specified.");
-                }
-            }
-            
-            System.out.println("Result at this point: " + result);
-            
-            if(result.has("status")) {
-                generateErrorResponse(response, result);
-            }
-            else {
-
-                //update job with cml - in this case no data is uploaded, because mapping between columns and CF fields is neede
-                if(extension.has("cml") && !extension.getString("cml").equals("")) {
-                    
-                    JSONObject obj_tmp = updateJobCML(job.getString("job_id"), extension.getString("cml"), cf_client);
-                    
-                    if(obj_tmp.get("status").equals("ERROR")) {
-                        generateErrorResponse(response, obj_tmp);
-                    } else {
-                        generateResponse(response, obj_tmp);
-                    }
-                    
+                if(result.has("response") && !result.getString("status").equals("ERROR")) {
+                    generateResponse(response, result);
                 } else {
-                
-                    //job either exist or it is created, time to upload data
-                    if(extension.getBoolean("upload")) {
-                        
-                        System.out.println("Generating objects for upload....");
-                        StringBuffer data = generateObjectsForUpload(extension, project, engine);             
-                        String msg = cf_client.bulkUploadJSONToExistingJob(job.getString("job_id"), data.toString());
-                        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(msg);
-                        
-                        result.put("status", obj.get("status"));
-    
-                        if(obj.has("response") && !obj.isNull("response")) {
-                            //upload succeeded
-                            JSONObject rspn = obj.getJSONObject("response");
-                            result.put("job_id", rspn.get("id"));                        
-                            generateResponse(response, result);
-                        } else {
-                            result.put("message", obj.get("message"));
-                            generateErrorResponse(response, result);
-                        }
-                    } 
+                    generateErrorResponse(response, result);
                 }
- 
+                
+                
+            } else {
+                
+                JSONObject obj = new JSONObject();
+                obj.put("status", "ERROR");
+                obj.put("message", "No job id was specified.");
+                generateErrorResponse(response, obj);
             }
+            
         } catch(Exception e) {
             logger.error(e.getLocalizedMessage(),e);
         }
@@ -139,7 +92,6 @@ public class CreateNewJobCommand extends Command{
         try {
             writer.object();
             writer.key("status"); writer.value(data.get("status"));
-            writer.key("job_id"); writer.value(data.get("job_id"));    
         } catch(Exception e){
             logger.error("Generating response failed.");
         }
@@ -172,10 +124,10 @@ public class CreateNewJobCommand extends Command{
     private StringBuffer generateObjectsForUpload(JSONObject extension, Project project, Engine engine)
             throws JSONException {
         _cell_indeces = new ArrayList<Integer>();
+
+        String recon_col_name = extension.getString("recon_column");        
+        JSONArray column_names = extension.getJSONArray("column_names");
         
-        //TODO: if it is an existing job with existing data!, get field-column mappings
-        
-        JSONArray column_names = extension.getJSONArray("column_names"); 
             
         for (int i=0; i < column_names.length(); i++) {
             Column col = project.columnModel.getColumnByName(column_names.getJSONObject(i).getString("name"));
@@ -224,6 +176,10 @@ public class CreateNewJobCommand extends Command{
         
         
         StringBuffer bf = new StringBuffer();
+        //recon information
+        Column recon_col = project.columnModel.getColumnByName(recon_col_name);
+        int recon_cell_index = recon_col.getCellIndex();
+        
         
         for(Iterator<Integer> it = rows_indeces.iterator(); it.hasNext();) {
             int row_index = it.next();
@@ -242,8 +198,22 @@ public class CreateNewJobCommand extends Command{
                     obj.put(key, "");
                 }
                 
-            } 
+            }
             
+            //add recon information
+            Cell recon_cell = project.rows.get(row_index).getCell(recon_cell_index);
+            List<ReconCandidate> candidates =  recon_cell.recon.candidates;
+            ReconCandidate rc = null;
+            
+            if((candidates != null) && candidates.size() > 0) {
+                for(int i=1; i <= candidates.size(); i++) {
+                    rc = candidates.get(i-1);
+                    obj.put("suggestion_name_" + i, rc.name);
+                    obj.put("suggestion_url_" + i, FREEBASE_VIEW_URL + rc.id);    
+                }
+            }
+
+                       
             System.out.println("Data: " + obj.toString());
            bf.append(obj.toString()); 
             
@@ -252,63 +222,7 @@ public class CreateNewJobCommand extends Command{
     }
 
 
-    private JSONObject createNewEmptyJob(CrowdFlowerClient cf_client, String title, String instructions)
-            throws JSONException {
+   
 
-
-        String response_msg = cf_client.createNewJobWithoutData(title, instructions);
-        JSONObject obj =  ParsingUtilities.evaluateJsonStringToObject(response_msg);
-        JSONObject result = new JSONObject();
-        
-        result.put("status", obj.getString("status"));
-        
-        if(obj.has("response") && !obj.isNull("response")) {
-            JSONObject obj2 = obj.getJSONObject("response");
-            
-            if(obj2.has("id") && !obj2.isNull("id")) {
-                result.put("job_id", obj2.get("id"));
-            } 
-            else {
-                result.put("message", "No job id was retruned by CrowdFlower service");
-            }
-        }
-        else {
-            result.put("message", obj.getJSONObject("error").get("message"));
-        }
-
-        return result;
-
-    }
-
-    private JSONObject updateJobCML(String job_id, String cml, CrowdFlowerClient cf_client)
-            throws JSONException {
-
-        String response_msg = cf_client.upateJobCML(job_id, cml);
-        JSONObject obj =  ParsingUtilities.evaluateJsonStringToObject(response_msg);
-        JSONObject result = new JSONObject();
-        
-        result.put("status", obj.getString("status"));
-        
-        if(obj.has("response") && !obj.isNull("response")) {
-            JSONObject obj2 = obj.getJSONObject("response");
-            
-            if(obj2.has("id") && !obj2.isNull("id")) {
-                result.put("job_id", obj2.get("id"));
-            } 
-            else {
-                result.put("message", "No job id was retruned by CrowdFlower service");
-            }
-        }
-        else {
-            result.put("message", obj.getJSONObject("error").get("message"));
-        }
-
-        return result;
-
-    }
-
-    
-    
-    
     
 }

@@ -9,11 +9,40 @@
     	<li><a href="#existing-job-tab">Upload to existing job</a></li>
     </ul>
     <div class="panels-area">
+    
     <div id="new-job-tab" bind="newJobTab">
- 	<div>   	
-		<div class="job-box">
-		  <h2>New job details</h2>
+ 	<div>
+	<div class="job-box">
+		<a href="javascript:{}" class="link-menu" id="create-from-template" bind="createFromTemplate">Create from template</a> 
+	</div>		
+ 	<div class="job-box" id="job-template-panel" bind="jobTemplatePanel">
+		  <div class="field_container">
+		  	<label>Entity type:</label>
+			<input id="autocomplete" bind="entityType"/>
+			<span id="title-warning" class="warning">E.g.: player, athlete, person, movie, TV series</span>
+			</div>		
 		  
+		  <div class="field_container">
+		  <label>Template:</label>
+    		<select id="job-templates" bind="jobTemplates">
+    		<option id="blank" value="blank">--- no template ---</option>
+    		<option id="freebase" value="freebase">Freebase reconciliation</option>
+    		<option id="dbpedia" value="dbpedia" >DBpedia reconciliation</option>
+    		</select>
+    		<span id="title-warning" class="warning">Choose one of templates or enter your data in New job details</span>	    		
+		</div>
+		<div><input type="button" value="Load template" bind="buttonLoadTemplate" class="button"></div>
+	</div>
+	
+	<div class="job-box">
+		<a href="javascript:{}" class="link-menu" id="create-from-blank" bind="createFromBlank">Create new blank job</a> 
+	</div>	
+		
+ 	   	
+		<div class="job-box" bind="newJobDetailsPanel" id="new-job-details-panel">
+		
+		  <h2>New job details</h2>
+				  
 		  <div class="field_container">
 		  	<label>Title: </label><input bind="jobTitle" type="text" class="job-title" id="jobTitle" />
 		  	<span id="title-warning" class="warning">Job title should be 5-255 characters long.</span>
@@ -22,20 +51,17 @@
 		 	<label>Instructions: </label><textarea bind="jobInstructions" class="job-instructions"></textarea>
 		 	<span id="instructions-warning" class="warning">Instructions should not be empty.</span>
 		 </div>
-		 <div class="field_container">
+		 <div id="job-problem" bind="jobProblem"></div>
+		 
+		 <div class="field_container" id="data-upload" bind="dataUpload">
 		 	<label>Upload data: </label><input type="checkbox" bind="chkUploadToNewJob"/>
 		 </div>
-		</div>  		  
+		</div>  
+				  
 		<div id="columns" bind="columnsPanel" class="job-box wrapper">
-			<div class="column-left">
 			<h3>Columns to upload (scroll right for more) </h3>
 			<div bind="columnsMenu_0" id="columns-menu-0"></div>
 			<div bind="columnList_0" id="project-columns-0" class="project-columns"></div>
-			</div>
-			<div class="column-right">
-			<h3>Generated default CML</h3>
-			<div bind="cmlPreviewPanel_0" id="cml-preview-panel-0"></div>
-			</div>
 		</div>
 	</div>
     </div>
@@ -57,11 +83,11 @@
     <div class="column-right" id="copy-job-options">
     	<h3>Copy job with units:</h3>
     	<div class="field_container">
-		  	<input type="radio" name="units" value="copy-none" bind="copyJob" checked="true"><span style="color:#7E2217; font-weight:bold; ">none</span> </input>
-		  	<input type="radio" name="units" value="copy-all" bind="copyJobGoldUnits"> <span style="color:#4AA02C; font-weight: bold;">all</span></input>
-		  	<input type="radio" name="units" value="copy-gold" bind="copyJobGoldUnits"> <span style="color:#EAC117; font-weight: bold;">gold</span> only </input>
+		  	<input type="radio" name="units" value="none" bind="copyJob" checked="true"><span style="color:#7E2217; font-weight:bold; ">none</span> </input>
+		  	<input type="radio" name="units" value="all_units" bind="copyJobGoldUnits"> <span style="color:#4AA02C; font-weight: bold;">all</span></input>
+		  	<input type="radio" name="units" value="gold" bind="copyJobGoldUnits"> <span style="color:#EAC117; font-weight: bold;">gold</span> only </input>
+		&nbsp; &nbsp;<input class="button" type="button" value="Copy into new job" bind="copyJobButton"/>
 		</div>
-		<input class="button" type="button" value="Copy into new job" bind="copyJobButton"/>		
     </div>	
     	</div>
     	
@@ -80,48 +106,32 @@
 			</div>
 	   	</div>
 	   	<div class="column-right">
-	   		
-			<div class="field_container">
-			<label>Existing CML: </label>
-			<textarea bind="extCml" class="job-instructions"></textarea>
-			</div>
-			<div>
-			<a href="#">Edit CML at CrowdFlower site.</a>
-			</div>
+	   		<div class="field_container">
+	   		<label>Units: </label>
+	   		<span bind="extUnitsCount" id="units-count"></span><br/>
+	   		</div>
 		</div>
 		</div>
 	</div>
 	<div class="job-box">
 		<div id="existing-fields-panel" bind="extFieldsPanel">
     
-    		<h3>Map columns</h3>
-    	
-    		Existing fields:
+    		<h3>Map existing CrowdFlower fields to column names</h3>    	
     		<div bind="extJobFields"></div>
     	</div>
     	<div id="existing-columns-panel" bind="extColumnsPanel">
-    	No fields defined yet. Select columns to upload.
+    	<h3>Select columns to upload</h3>    		
     	<div bind="extColumns" id="existing-columns">
-    	
-    	<div bind="columnsMenu_1" id="columns-menu-1"></div>
-		<div bind="columnList_1" id="project-columns-1" class="project-columns"></div>
-    	
-    	
-    	
+    		<div bind="columnsMenu_1" id="columns-menu-1"></div>
+			<div bind="columnList_1" id="project-columns-1" class="project-columns"></div>    	
     	</div>
-    	
-    	</div>
-    	
-    	
-    	
     </div>
-	
   	</div>
   </div>  		     
     </div>
    </div>
   </div>
-    
+   </div> 
   <div class="dialog-footer" bind="dialogFooter">
     <div id="status-message" bind="statusMessage">
     Status: 

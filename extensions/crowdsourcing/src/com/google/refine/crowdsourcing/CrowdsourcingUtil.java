@@ -28,9 +28,12 @@ public class CrowdsourcingUtil {
         Matcher regexMatcher = regex.matcher(cml);
         while (regexMatcher.find()) 
         {
-          field_names.add(regexMatcher.group());
-        } 
-            
+            System.out.println("Group: " + regexMatcher.group());
+            if(!field_names.contains(regexMatcher.group())) {
+                field_names.add(regexMatcher.group());
+                System.out.println("\tAdded: " + regexMatcher.group());
+            } 
+        }           
         return field_names;
     }
     

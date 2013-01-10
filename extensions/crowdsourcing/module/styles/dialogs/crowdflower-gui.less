@@ -29,6 +29,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @import-less url("../theme.less");
 
+#columns-dialog {
+    background: #fff;
+    color: #000;
+}
+
+#columns-dialog input[type=radio] +label {display: block !important;}
+
+
 .project-columns {
     -moz-column-count: 2;
     -moz-column-gap: 3px;
@@ -81,9 +89,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
 
 label {
-    width:100px;
+	width: 150px;
     float:left;
     text-align:left;
+    margin-left: 5px;
 }
 
 .wrapper {
@@ -119,3 +128,8 @@ label {
 margin-left: 2px;
 color: #696565;
     }
+
+.ui-widget-content a.link-menu {
+	font-size:1.2em;
+	font-weight: bold;
+}

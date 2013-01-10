@@ -34,120 +34,211 @@ public class CopyJobCommand extends Command{
             String jsonString = request.getParameter("extension");
                         
             JSONObject extension = ParsingUtilities.evaluateJsonStringToObject(jsonString);
-            String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey");                       
-            CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
-            String newJobId = "";
-            String result = "";
-            String status = "";
-            String message = "";
-            LinkedHashMap<String, String> params = null;
+            String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey"); 
+            Object defTimeout = CrowdsourcingUtil.getPreference("crowdflower.defaultTimeout");
+            String defaultTimeout = (defTimeout != null) ? (String)defTimeout : "1500";
             
-            Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
-            try {
-
-            //copy job, store id
-            if(extension.has("job_id") && !extension.isNull("job_id")) {
-                
-                System.out.println("JOB ID: " + extension.getString("job_id"));
-                
-                if(extension.has("all_units") || extension.has("gold")) {
-                    params = new LinkedHashMap<String, String>();
-                }
-                
-                if(extension.has("all_units")) {
-                    params.put("all_units", extension.getString("all_units"));
-                }
-                
-                if(extension.has("gold")) {
-                    params.put("gold", extension.getString("gold"));
-                }
-                
-                if(params != null && params.size() > 0) {
-                    result = cf_client.copyJob(extension.getString("job_id"), params);
-                } else {
-                    result = cf_client.copyJob(extension.getString("job_id"));
-                }
-                
-                JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(result);
-                status = obj.getString("status");
-                
-                JSONObject res = obj.getJSONObject("response"); 
+            CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey, Integer.valueOf(defaultTimeout));
+                     
+            response.setCharacterEncoding("UTF-8");
             
-                if(res.has("id") && !res.isNull("id")) {
-                    newJobId = res.getString("id");
+            JSONObject result = new JSONObject(); 
+            
+            result = copyJobAndReturnID(extension, cf_client);
+            
+            if(result.has("status") && !result.isNull("status") && result.getString("status").equals("ERROR")) {
+                generateErrorResponse(response, result);
+            } 
+            else {
+            
+                System.out.println("Job copied, updating list.");
+                //TODO: pause a little?
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
+                JSONObject obj = getUpdatedJobList(cf_client);
+                
+                if(obj.has("status") && obj.getString("status").equals("ERROR"))  {
+                    obj.put("source", "[updating job list]");
+                    generateErrorResponse(response, obj);
+                } 
                 else {
-                    message = res.getJSONObject("error").getString("message");
-                    throw new Exception();
+                
+                    //TODO: test if there are no jobs?
                     
-                }
-            } else {
-                message = "Cannot obtain job id: no job was selected.";
-                status = "ERROR";
-                
-                writer.object();
-               throw new Exception(message); //TODO: refactor this code!!!
-            }
-            
-            //get updated list of jobs, return new job id
-            result = cf_client.getAllJobs();
-            JSONObject res1 = ParsingUtilities.evaluateJsonStringToObject(result);
-            
-            JSONArray jobs_updated = null;
-            
-            if(res1.has("response")) {
-                jobs_updated = res1.getJSONArray("response");
-            } else {
-
-                status = res1.getString("status");
-                message = res1.getString("message");
-
-                writer.object();                         
-                throw new Exception(message);
-            }
-            
-            
-                writer.object();
-                writer.key("status"); writer.value(status);
-                writer.key("job_id"); writer.value(newJobId);
-                writer.key("jobs").array();
-                
-                if(jobs_updated!= null) {
-                
-                    for(int i=0; i < jobs_updated.length(); i++) {
-                        JSONObject current = jobs_updated.getJSONObject(i);
-                        writer.object();
-                        writer.key("id").value(current.get("id"));
-                        writer.key("title");
-                        if(current.get("title") != null) {
-                            writer.value(current.get("title"));
-                        }
-                        else {
-                            writer.value("No title entered yet");
-                        }
-    
-                        writer.endObject();
+                    System.out.println("Updated jobs: " + obj.getJSONArray("jobs").toString());
+                    
+                    if(obj.has("jobs") && !obj.isNull("jobs")) {
+                        result.put("jobs", obj.getJSONArray("jobs"));
                     }
+                    
+                    result.put("status", "OK");
+                    generateResponse(response, result);
                 }
-                writer.endArray();
-                
-            } catch(Exception e){
-                logger.error("New job not created.");
-                writer.key("status").value(status);
-                writer.key("message").value(message);
             }
-            finally {
-                writer.endObject();
-                w.flush();
-                w.close();
-            }
-
+ 
             
         } catch (JSONException e) {
             e.printStackTrace();
         } 
         
+    }
+
+    private JSONObject getUpdatedJobList(CrowdFlowerClient cf_client) throws JSONException {
+
+        JSONObject result = new JSONObject();
+        
+        String res_msg  = cf_client.getAllJobs();
+        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(res_msg);
+        
+        JSONArray jobs_updated = null;
+        
+        if(obj.has("status") && obj.getString("status").equals("ERROR")) {
+            return obj;
+        }
+        
+        if(obj.has("response")) {
+            jobs_updated = obj.getJSONArray("response");
+            result.put("jobs", jobs_updated);
+        } 
+            
+        return result;
+    
+    }
+
+    private JSONObject copyJobAndReturnID(JSONObject extension, CrowdFlowerClient cf_client)
+            throws JSONException {
+
+        LinkedHashMap<String, String> params = null;
+        JSONObject result = new JSONObject();
+        
+        String res_msg;
+
+        if(extension.has("job_id") && !extension.isNull("job_id")) {
+            
+            if(extension.has("all_units") || extension.has("gold")) {
+                params = new LinkedHashMap<String, String>();
+            }
+            
+            if(extension.has("all_units")) {
+                params.put("all_units", extension.getString("all_units"));
+            }
+            else if(extension.has("gold")) {
+                params.put("gold", extension.getString("gold"));
+            }
+            
+            if(params != null && params.size() > 0) {
+                res_msg = cf_client.copyJob(extension.getString("job_id"), params);
+            } else {
+                res_msg = cf_client.copyJob(extension.getString("job_id"));
+            }
+            
+            JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(res_msg);
+            
+            if(obj.getString("status").equals("ERROR")) {
+                result = obj;
+            }
+            else {
+                JSONObject res = obj.getJSONObject("response"); 
+                
+                if(res.has("id") && !res.isNull("id")) {
+                    result.put("job_id",res.getString("id"));
+                }
+                else {
+                    result = res; //contains error message
+                }
+            }
+            
+        } else {
+            
+            result.put("status", "ERROR");
+            result.put("message", "Cannot obtain job id: no job was selected.");
+        }
+        
+        
+        return result;
+        
+    }
+    
+    private void generateResponse(HttpServletResponse response, JSONObject data)
+            throws IOException, JSONException {
+
+        
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        try {
+           
+            writer.object();
+            writer.key("status"); writer.value(data.get("status"));
+            writer.key("job_id"); writer.value(data.get("job_id"));
+
+            if(data.has("jobs") && !data.isNull("jobs")) {
+            
+                writer.key("jobs"); 
+                writer.array();
+                JSONArray jobs_updated = data.getJSONArray("jobs");
+                
+                for(int i=0; i < jobs_updated.length(); i++) {
+                    JSONObject current = jobs_updated.getJSONObject(i);
+                    writer.object();
+                    writer.key("id").value(current.get("id"));
+                    writer.key("title");
+                    if(current.get("title") != null) {
+                        writer.value(current.get("title"));
+                    }
+                    else {
+                        writer.value("No title entered yet");
+                    }
+                    writer.endObject();
+                }
+                writer.endArray();
+        }
+
+        } catch(Exception e){
+            logger.error("Generating response failed.");
+        }
+        finally {
+            
+            writer.endObject();
+            w.flush();
+            w.close();
+        }
+    }
+    
+    private void generateErrorResponse(HttpServletResponse response, JSONObject data)
+            throws IOException, JSONException {
+        Writer w = response.getWriter();
+        JSONWriter writer = new JSONWriter(w);
+        try {
+            writer.object();
+            writer.key("status"); writer.value(data.get("status"));
+            writer.key("message");
+            
+            String error_msg = "";
+            
+            if(data.has("error")) {
+                error_msg = data.getJSONObject("error").getString("message");
+            } else {
+                error_msg = data.getString("message");
+            }
+            
+            if(data.has("source")) {
+                error_msg += " -- error source: " + data.getString("source");
+            }
+            
+            writer.value(error_msg);
+            
+        } catch(Exception e){
+            logger.error("Generating ERROR response failed.");
+        }
+        finally {
+            writer.endObject();
+            w.flush();
+            w.close();
+        }
     }
 
 }

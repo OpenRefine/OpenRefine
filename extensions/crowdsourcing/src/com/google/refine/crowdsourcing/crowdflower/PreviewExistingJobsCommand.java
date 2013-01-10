@@ -30,14 +30,19 @@ public class PreviewExistingJobsCommand extends Command {
         
         try {
             
-            String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey");                       
             response.setHeader("Content-Type", "application/json");
             response.setCharacterEncoding("UTF-8");
  
-            CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey);
-            //TODO: more like a hack
-            cf_client.setTimeout(2000); //more time needed than default
+            String apiKey = (String) CrowdsourcingUtil.getPreference("crowdflower.apikey");                       
+            Object defTimeout = CrowdsourcingUtil.getPreference("crowdflower.defaultTimeout");
+            String defaultTimeout = (defTimeout != null) ? (String)defTimeout : "1500";
+            
+            CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey, Integer.valueOf(defaultTimeout));
+            
             String response_msg = cf_client.getAllJobs();
+            
+            System.out.println("Response msg: \n" + response_msg);
+            
             JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(response_msg);
             
             System.out.println("Preview result: " + obj.toString());
@@ -61,22 +66,29 @@ public class PreviewExistingJobsCommand extends Command {
     private void generateResponse(HttpServletResponse response, JSONObject data)
             throws IOException, JSONException {
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
+        JSONWriter writer = new JSONWriter(w);  
         try {
             writer.object();
             writer.key("status"); writer.value(data.get("status"));
             writer.key("jobs");
-            writer.array();
-            JSONArray jobs = data.getJSONArray("response");
             
-            for(int i=0; i < jobs.length(); i++) {
-                JSONObject current = jobs.getJSONObject(i);
-                writer.object();
-                writer.key("id").value(current.get("id"));                       
-                writer.key("title").value(current.get("title"));
-                writer.endObject();
+            //not necessarily an array
+            //TODO: check whether this is causing trouble
+            JSONArray jobs = data.getJSONArray("response");
+
+            if(jobs.length() > 0) {
+                writer.array();
+
+            
+                for(int i=0; i < jobs.length(); i++) {
+                    JSONObject current = jobs.getJSONObject(i);
+                    writer.object();
+                    writer.key("id").value(current.get("id"));                       
+                    writer.key("title").value(current.get("title"));
+                    writer.endObject();
+                }
+                writer.endArray();
             }
-            writer.endArray();
         } catch(Exception e){
             logger.error("Generating response failed.");
         }

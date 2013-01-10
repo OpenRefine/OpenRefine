@@ -37,6 +37,22 @@
 /* Overlays */
 .ui-widget-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
+.ui-autocomplete {
+	position: absolute;
+	top: 0;
+	left: 0;
+	cursor: default;
+	background-color:#ffffff;
+}
+
+.ui-widget {
+	background-color:#ffffff;
+}
+
+/* workarounds */
+* html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
+
+
 
 /*!
  * jQuery UI CSS Framework 1.8.20
@@ -56,7 +72,7 @@
 .ui-widget { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1.1em; }
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1em; }
-.ui-widget-content { border: 1px solid #dddddd; background: #eeeeee url(images/ui-bg_highlight-soft_100_eeeeee_1x100.png) 50% top repeat-x; color: #333333; }
+.ui-widget-content { border: 1px solid #dddddd; background: #ffffff url(images/ui-bg_highlight-soft_100_eeeeee_1x100.png) 50% top repeat-x; color: #333333; }
 .ui-widget-content a { color: #333333; }
 .ui-widget-header { border: 1px solid #e78f08; background: #f6a828 url(images/ui-bg_gloss-wave_35_f6a828_500x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold; }
 .ui-widget-header a { color: #ffffff; }
@@ -81,6 +97,15 @@
 .ui-priority-primary, .ui-widget-content .ui-priority-primary, .ui-widget-header .ui-priority-primary { font-weight: bold; }
 .ui-priority-secondary, .ui-widget-content .ui-priority-secondary,  .ui-widget-header .ui-priority-secondary { opacity: .7; filter:Alpha(Opacity=70); font-weight: normal; }
 .ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled { opacity: .35; filter:Alpha(Opacity=35); background-image: none; }
+
+
+.ui-menu { list-style:none; padding: 2px; margin: 0; display:block; outline: none;}
+.ui-menu .ui-menu { margin-top: -3px; position: absolute; }
+.ui-menu .ui-menu-item { margin: 0; padding: 0; zoom: 1; width: 100%; }
+.ui-menu .ui-menu-divider { margin: 5px -2px 5px -2px; height: 0; font-size: 0; line-height: 0; border-width: 1px 0 0 0; }
+.ui-menu .ui-menu-item a { text-decoration: none; display: block; padding: 2px .4em; line-height: 1.5; zoom: 1; font-weight: normal; }
+.ui-menu .ui-menu-item a.ui-state-focus,
+.ui-menu .ui-menu-item a.ui-state-active { font-weight: normal; margin: -1px; }
 
 /* Icons
 ----------------------------------*/
