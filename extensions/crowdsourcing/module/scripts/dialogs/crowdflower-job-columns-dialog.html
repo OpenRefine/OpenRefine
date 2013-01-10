@@ -13,12 +13,17 @@
     <div id="new-job-tab" bind="newJobTab">
  	<div>
 	<div class="job-box">
+		<a href="javascript:{}" class="link-menu" id="create-from-blank" bind="createFromBlank">Create new blank job</a> 
+	</div>	
+	
+	<div class="job-box">
 		<a href="javascript:{}" class="link-menu" id="create-from-template" bind="createFromTemplate">Create from template</a> 
-	</div>		
+	</div>
+			
  	<div class="job-box" id="job-template-panel" bind="jobTemplatePanel">
 		  <div class="field_container">
 		  	<label>Entity type:</label>
-			<input id="autocomplete" bind="entityType"/>
+			<input id="autocomplete" bind="entityType" type="text"/>
 			<span id="title-warning" class="warning">E.g.: player, athlete, person, movie, TV series</span>
 			</div>		
 		  
@@ -31,14 +36,9 @@
     		</select>
     		<span id="title-warning" class="warning">Choose one of templates or enter your data in New job details</span>	    		
 		</div>
-		<div><input type="button" value="Load template" bind="buttonLoadTemplate" class="button"></div>
+		<div><input type="button" value="Load template" bind="buttonLoadTemplate" class="btn btn-danger"></div>
 	</div>
 	
-	<div class="job-box">
-		<a href="javascript:{}" class="link-menu" id="create-from-blank" bind="createFromBlank">Create new blank job</a> 
-	</div>	
-		
- 	   	
 		<div class="job-box" bind="newJobDetailsPanel" id="new-job-details-panel">
 		
 		  <h2>New job details</h2>
@@ -137,7 +137,7 @@
     Status: 
     </div>
     
-    <button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
-    <button class="button" bind="cancelButton">Cancel</button>
+    <button class="btn btn-success" bind="okButton" type="button">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+    <button class="btn" bind="cancelButton" type="button">Cancel</button>
   </div>
 </div>

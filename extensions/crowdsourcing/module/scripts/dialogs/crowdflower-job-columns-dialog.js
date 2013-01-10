@@ -34,6 +34,7 @@ function ZemantaCrowdFlowerDialog(onDone) {
 	  });
 	  
 	  self._elmts.dataUpload.hide();
+	  self._elmts.columnsPanel.hide();
 	  self._elmts.jobTemplatePanel.show();
 	  
   });
@@ -44,6 +45,10 @@ function ZemantaCrowdFlowerDialog(onDone) {
 	  self._elmts.jobTitle.val("");
 	  self._elmts.jobInstructions.val("");
 	  self._elmts.dataUpload.show();
+	  
+	  if(self._elmts.chkUploadToNewJob.is(':checked')) {
+		  self._elmts.columnsPanel.show();
+	  }
 	  self._elmts.newJobDetailsPanel.show();
 	  self._cml = "";
   });

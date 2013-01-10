@@ -1,0 +1,12 @@
+
+{ "head": { "link": [], "vars": [ "s", "p", "o" ] },
+  "results": { "distinct": false, "ordered": true, "bindings": [
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/44_Inch_Chest" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/Image_Entertainment" }},
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/Bitch_Slap" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/IM_Global" }},
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/Bitch_Slap" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/Summit_Entertainment" }},
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/The_Spy_Next_Door" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/Lions_Gate_Entertainment" }},
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/Bitch_Slap" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/Momentum_Pictures" }},
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/Quantum_Quest:_A_Cassini_Space_Odyssey" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/Jupiter_9_Productions" }},
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/Crazy_on_the_Outside" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/Freestyle_Releasing" }},
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/44_Inch_Chest" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/Momentum_Pictures" }},
+    { "s": { "type" : "uri", "value" : "http://dbpedia.org/resource/Daybreakers" }	, "p": { "type" : "uri", "value" : "http://dbpedia.org/ontology/distributor" }	, "o": { "type" : "uri", "value" : "http://dbpedia.org/resource/Lions_Gate_Entertainment" }} ] } }
