@@ -141,7 +141,7 @@ ZemantaDBpediaExtension.util.prepareZemantaData = function(apikey, text) {
 
 ExtensionBar.addExtensionMenu({
 "id": "zemanta",
-"label": "Zemanta extensions",
+"label": "Zemanta",
 "submenu": [
 	 {
 		 "id":"zemanta/dbpedia",

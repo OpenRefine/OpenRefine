@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9;chrome=1;">
-  <title>Preferences - OpenRefine</title>
+  <title>Preferences - LODRefine</title>
   <link rel="icon" type="image/png" href="images/favicon.png">
   <script type="text/javascript" src="wirings.js"></script>
   $scriptInjection
@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <a id="app-home-button" href="./"><img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" /></a>
+    <a id="app-home-button" href="./"><img alt="OpenRefine" src="images/logo-lodrefine-30.png" width="129" height="29" /></a>
   </div>
 
   <div id="body-info">

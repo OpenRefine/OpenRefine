@@ -14,6 +14,10 @@
     <ant dir="freebase/" target="build" />
     <ant dir="gdata/" target="build" />
     <ant dir="pc-axis/" target="build" />
+    <ant dir="crowdsourcing/" target="build" />
+    <ant dir="dbpedia-extension/" target="build" />
+    <ant dir="rdf-extension/" target="build" />
+    <ant dir="utilities/" target="build" />
   </target>
 
   <target name="clean">
@@ -23,5 +27,9 @@
     <ant dir="freebase/" target="clean" />
     <ant dir="gdata/" target="clean" />
     <ant dir="pc-axis/" target="clean" />
+    <ant dir="crowdsourcing/" target="clean" />
+    <ant dir="dbpedia-extension/" target="clean" />
+    <ant dir="rdf-extension/" target="clean" />
+    <ant dir="utilities/" target="clean" />
   </target>
 </project>

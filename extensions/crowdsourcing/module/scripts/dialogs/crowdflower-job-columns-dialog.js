@@ -216,6 +216,7 @@ ZemantaCrowdFlowerDialog.prototype._copyAndUpdateJob = function(jobid) {
 
 
 ZemantaCrowdFlowerDialog.prototype._updateJobList = function(data) {
+	
 	var self = this;
 	var selContainer = self._elmts.allJobsList;
 	var selected = "";

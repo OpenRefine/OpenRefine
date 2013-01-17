@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
-var bundle = true;
+var bundle = false;
 
 var templatedFiles = {
   // Requests with last path segments mentioned here 
@@ -305,12 +305,11 @@ function init() {
     [
       
       "externals/jquery-1.7.2.min.js",
-      //"externals/jquery-1.8.3.min.js",
       "externals/jquery.cookie.js",
       "externals/jquery.eventstack-0.3.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/date.js",
-      "externals/bootstrap/js/bootstrap.min.js",
+      "externals/bootstrap-lodrefine/js/bootstrap.min.js",
       
       "externals/CFInstall.min.js",
       "scripts/chrome-frame.js",
@@ -352,7 +351,7 @@ function init() {
     module,
     [
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
-      "externals/bootstrap/css/bootstrap.min.css",
+      "externals/bootstrap-lodrefine/css/bootstrap.min.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
@@ -382,14 +381,13 @@ function init() {
     module,
     [
       "externals/jquery-1.7.2.min.js",
-      //"externals/jquery-1.8.3.min.js",
       "externals/jquery.cookie.js",
       "externals/jquery.eventstack-0.3.js",
       "externals/suggest/suggest-4_0.min.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
-      "externals/bootstrap/js/bootstrap.min.js",
+      "externals/bootstrap-lodrefine/js/bootstrap.min.js",
 
       "externals/CFInstall.min.js",
       "scripts/chrome-frame.js",
@@ -454,7 +452,7 @@ function init() {
       "externals/suggest/css/suggest-4_0.min.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
-      "externals/bootstrap/css/bootstrap.min.css",
+      "externals/bootstrap-lodrefine/css/bootstrap.min.css",
 
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
@@ -497,7 +495,7 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
-      "externals/bootstrap/js/bootstrap.min.js",
+      "externals/bootstrap-lodrefine/js/bootstrap.min.js",
       "scripts/preferences.js"
     ]
   );
@@ -507,7 +505,7 @@ function init() {
     [
       "externals/suggest/css/suggest-4_0.min.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
-      "externals/bootstrap/css/bootstrap.min.css",
+      "externals/bootstrap-lodrefine/css/bootstrap.min.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",

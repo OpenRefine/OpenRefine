@@ -40,10 +40,6 @@ var RS = Packages.com.google.refine.RefineServlet;
  * Function invoked to initialize the extension.
  */
 function init() {
-  // Packages.java.lang.System.err.println("Initializing sample extension");
- 
-	//var OR = Packages.com.google.refine.operations.OperationRegistry;
-
   RS.registerCommand(module, "create-crowdflower-job", new Packages.com.google.refine.crowdsourcing.crowdflower.CreateNewJobCommand());
   RS.registerCommand(module, "preview-crowdflower-jobs", new Packages.com.google.refine.crowdsourcing.crowdflower.PreviewExistingJobsCommand());
   RS.registerCommand(module, "copy-crowdflower-job", new Packages.com.google.refine.crowdsourcing.crowdflower.CopyJobCommand());
@@ -60,7 +56,7 @@ function init() {
       "scripts/dialogs/crowdflower-api-settings-dialog.js",
       "scripts/dialogs/crowdflower-job-columns-dialog.js",
       "scripts/dialogs/crowdflower-create-gold-dialog.js",
-      "scripts/dialogs/crowdflower-eval-freebase-recon-dialog.js"
+      "scripts/dialogs/crowdflower-eval-freebase-recon-dialog.js",
     ]
   );
 

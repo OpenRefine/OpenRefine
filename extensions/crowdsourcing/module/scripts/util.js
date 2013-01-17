@@ -105,3 +105,5 @@ ZemantaCrowdSourcingExtension.util.getJobInfo = function(extension, updateJobInf
   		  "json"
     );     
 };
+
+

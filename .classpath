@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="extensions/utilities/src"/>
+	<classpathentry kind="src" path="extensions/rdf-extension/src"/>
 	<classpathentry kind="src" path="extensions/dbpedia-extension/src"/>
 	<classpathentry kind="src" path="extensions/crowdsourcing/src"/>
 	<classpathentry kind="src" path="server/src"/>
@@ -76,5 +78,14 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/CrowdFlowerClient"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/dbpedia-extension/module/MOD-INF/lib/zemapi-java.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/openrdf-sesame-2.3.2-onejar.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/any23-core-0.6.1.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/lucene-core-3.6.0.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/jackson-core-asl-1.9.5.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/jackson-mapper-asl-1.9.5.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/jena-core-2.7.0-incubating.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/jena-arq-2.9.0-incubating.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/jena-larq-1.0.0-incubating.jar"/>
+	<classpathentry kind="lib" path="/Users/mateja/Development/Projects/OpenRefine_fork/OpenRefine/extensions/rdf-extension/module/MOD-INF/lib/simmetrics_jar_v1_6_2_d07_02_07.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

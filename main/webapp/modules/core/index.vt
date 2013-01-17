@@ -44,7 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" />
+    <img alt="LODRefine" src="images/logo-lodrefine-30.png" width="129" height="29" />
     <span id="slogan">A power tool for working with messy data.</span>
   </div>
   

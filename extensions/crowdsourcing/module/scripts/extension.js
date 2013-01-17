@@ -40,9 +40,6 @@ ZemantaCrowdSourcingExtension.handlers.doNothing = function() {
 	alert("Crowdsourcing extension active...");
 };
 
-ZemantaCrowdSourcingExtension.handlers.openPreferences = function() {
-	window.location = "/preferences";
-};
 
 ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog = function()  {
 	
@@ -96,6 +93,10 @@ ZemantaCrowdSourcingExtension.handlers.getApiKey =  function() {
 	});
 };
 
+
+
+
+
 ExtensionBar.appendTo(["zemanta"],[
    		 {
 			 "id" : "zemanta/crowdflower",
@@ -132,69 +133,11 @@ ExtensionBar.appendTo(["zemanta"],[
 				    		 {},
 				     		 {
 				    			 "id": "zemanta/crowdflower/settings",
-				    			 "label": "Settings",
+				    			 "label": "CrowdFlower settings",
 				    			  click: ZemantaCrowdSourcingExtension.handlers.storeCrowdFlowerSettings
 				    		 },
 			              ]
 		 },
-		 {},
-		 {
-			 "id": "zemanta/openrefine-settings",
-			 "label": "All OpenRefine settings",
-			 click: ZemantaCrowdSourcingExtension.handlers.openPreferences
-		 },
 		]);
 
 
-/*ExtensionBar.addExtensionMenu({
-	"id": "zemanta",
-	"label": "Zemanta",
-	"submenu": [
-   		 {
-			 "id": "zemanta/openrefine-settings",
-			 "label": "OpenRefine settings",
-			 click: ZemantaExtension.handlers.openPreferences
-		 },
-		 {},
-		 {
-			 "id" : "zemanta/crowdflower",
-			 "label" : "CrowdFlower",
-			 "submenu" : [
-				    		 {
-				    			 "id": "zemanta/crowdflower/create-crowdflower-job",
-				    			 label: "Create new job / upload data",
-				    			 click: ZemantaExtension.handlers.openJobSettingsDialog
-				    		 },
-				    		 {
-				    			"id": "zemanta/crowdflower/download-results",
-				    			"label": "Download results",
-				    			click: ZemantaExtension.handlers.doNothing
-				    			 
-				    		 },
-				    		 {},
-				    		 {
-				    			 "id": "zemanta/crowdflower/templates",
-				    			 label: "Templates",
-				    			 "submenu": [
-				    			             {
-				    			            	 "id":"zemanta/crowdflower/templates/freebase",
-				    			            	 "label": "Evaluate Freebase reconciliations",
-				    			            	 click: ZemantaExtension.handlers.evaluateFreebaseReconDialog
-				    			             },
-				    			             {
-				    			            	 "id":"zemanta/crowdflower/templates/dbpedia",
-				    			            	 "label": "Evaluate DBpedia reconciliations",
-				    			            	 click: ZemantaExtension.handlers.doNothing
-				    			             }
-				    			             ]
-				    		 },
-				    		 {},
-				     		 {
-				    			 "id": "zemanta/crowdflower/settings",
-				    			 "label": "Settings",
-				    			  click: ZemantaExtension.handlers.storeCrowdFlowerSettings
-				    		 },
-			              ]
-		 }
-		]
-});*/
