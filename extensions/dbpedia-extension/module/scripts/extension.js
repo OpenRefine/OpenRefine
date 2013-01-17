@@ -64,7 +64,7 @@ ZemantaDBpediaExtension.util.loadZemantaApiKeyFromSettings = function(getZemanta
 
 ZemantaDBpediaExtension.handlers.storeZemantaAPIKey = function() {
 	
-	new ZemantaSettingsDialog(function(newApiKey) {
+	new ZemantaDBpediaSettingsDialog(function(newApiKey) {
 		$.post(
 	          "/command/core/set-preference",
 	          {
@@ -140,19 +140,14 @@ ZemantaDBpediaExtension.util.prepareZemantaData = function(apikey, text) {
 
 
 ExtensionBar.addExtensionMenu({
-"id": "zemanta",
-"label": "Zemanta",
+"id": "dbpedia-ext",
+"label": "DBpedia",
 "submenu": [
 	 {
-		 "id":"zemanta/dbpedia",
-		 "label": "DBpedia",
-		 "submenu": [{
-		        	 "id": "zemanta/dbpedia",
+		 "id":"dbpedia-ext/settings",
 		        	 label: "Zemanta API settings",
 		        	 click: ZemantaDBpediaExtension.handlers.storeZemantaAPIKey
-		 			}
-		             ]
-	 },{}
+	}
 	]
  });
 
@@ -204,7 +199,7 @@ ExtensionBar.addExtensionMenu({
     menu,
     [ "core/edit-column", "core/add-column-by-fetching-urls" ],
     {
-      id: "zemanta/add-columns-from-dbpedia",
+      id: "dbpedia-ext/add-columns-from-dbpedia",
       label: "Add columns from DBpedia ...",
       click: doAddColumnFromDBpedia
     }
@@ -242,10 +237,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
 	  MenuSystem.insertAfter(
 	    menu,
-	    [ "core/edit-column", "zemanta/add-columns-from-dbpedia" ],
+	    [ "core/edit-column", "dbpedia-ext/add-columns-from-dbpedia" ],
 	    {
-	      id: "zemanta/extract-entities-from-text",
-	      label: "Extract entities from full text",
+	      id: "dbpedia-ext/extract-entities-from-text",
+	      label: "Extract entities from text (Zemanta API)",
 	      click: doExtractEntitiesFromText
 	    }
 	  );

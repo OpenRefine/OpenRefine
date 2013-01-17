@@ -94,37 +94,27 @@ ZemantaCrowdSourcingExtension.handlers.getApiKey =  function() {
 };
 
 
-
-
-
-ExtensionBar.appendTo(["zemanta"],[
-   		 {
-			 "id" : "zemanta/crowdflower",
-			 "label" : "CrowdFlower",
-			 "submenu" : [
+ExtensionBar.addExtensionMenu({
+	"id": "crowdsourcing-ext",
+	"label": "Crowdsourcing",
+	"submenu": [
 				    		 {
-				    			 "id": "zemanta/crowdflower/create-crowdflower-job",
+				    			 "id": "crowdsourcing-ext/create-crowdflower-job",
 				    			 label: "Create new job / upload data",
 				    			 click: ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog
 				    		 },
-				    		 {
-				    			"id": "zemanta/crowdflower/download-results",
-				    			"label": "Download results",
-				    			click: ZemantaCrowdSourcingExtension.handlers.doNothing
-				    			 
-				    		 },
 				    		 {},
 				    		 {
-				    			 "id": "zemanta/crowdflower/templates",
-				    			 label: "Templates",
+				    			 "id": "crowdsourcing-ext/templates",
+				    			 label: "Job templates",
 				    			 "submenu": [
 				    			             {
-				    			            	 "id":"zemanta/crowdflower/templates/freebase",
+				    			            	 "id":"crowdsourcing-ext/templates/freebase",
 				    			            	 "label": "Evaluate Freebase reconciliations",
 				    			            	 click: ZemantaCrowdSourcingExtension.handlers.evaluateFreebaseReconDialog
 				    			             },
 				    			             {
-				    			            	 "id":"zemanta/crowdflower/templates/dbpedia",
+				    			            	 "id":"crowdsourcing-ext/templates/dbpedia",
 				    			            	 "label": "Evaluate DBpedia reconciliations",
 				    			            	 click: ZemantaCrowdSourcingExtension.handlers.doNothing
 				    			             }
@@ -132,12 +122,10 @@ ExtensionBar.appendTo(["zemanta"],[
 				    		 },
 				    		 {},
 				     		 {
-				    			 "id": "zemanta/crowdflower/settings",
+				    			 "id": "crowdsourcing-ext/settings",
 				    			 "label": "CrowdFlower settings",
 				    			  click: ZemantaCrowdSourcingExtension.handlers.storeCrowdFlowerSettings
-				    		 },
+				    		 }
 			              ]
-		 },
-		]);
-
+		 });
 

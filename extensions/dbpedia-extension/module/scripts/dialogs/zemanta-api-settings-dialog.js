@@ -1,4 +1,4 @@
-function ZemantaSettingsDialog(onDone) {
+function ZemantaDBpediaSettingsDialog(onDone) {
   this._onDone = onDone;
   this._apiKey = "";
 
