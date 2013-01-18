@@ -97,7 +97,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         
         final CSVParser parser = new CSVParser(
-            sep.toCharArray()[0],//HACK changing string to char - won't work for multi-char separators.
+            sep,
             CSVParser.DEFAULT_QUOTE_CHARACTER,
             (char) 0, // escape character
             CSVParser.DEFAULT_STRICT_QUOTES,
