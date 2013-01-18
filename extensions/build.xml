@@ -18,6 +18,7 @@
     <ant dir="dbpedia-extension/" target="build" />
     <ant dir="rdf-extension/" target="build" />
     <ant dir="utilities/" target="build" />
+    <ant dir="Refine-NER-Extension/" target="build" />
   </target>
 
   <target name="clean">
@@ -31,5 +32,6 @@
     <ant dir="dbpedia-extension/" target="clean" />
     <ant dir="rdf-extension/" target="clean" />
     <ant dir="utilities/" target="clean" />
+    <ant dir="Refine-NER-Extension/" target="clean" />
   </target>
 </project>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="extensions/Refine-NER-Extension/src"/>
 	<classpathentry kind="src" path="extensions/utilities/src"/>
 	<classpathentry kind="src" path="extensions/rdf-extension/src"/>
 	<classpathentry kind="src" path="extensions/dbpedia-extension/src"/>
