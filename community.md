@@ -5,38 +5,49 @@ title: OpenRefine Documentation
 #Participate
 First thanks for your interest in the OpenRefine community. OpenRefine is 100% supported by volunteer and we are always looking for new participant to jump in! 
 
-Interested to participate in the development of OpenRefine? You can help in to 
+Interested to participate in the development of OpenRefine? You can help to 
 * Develop the next version
-* Develop the Documentation and Support users
-* Promote OpenRefine 
+* Develop the Documentation and Support other Users
+* Promote OpenRefine around you!
 
-Join the [discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) if you have any questions!
+The [discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) is the best place to engage with the rest of the community and ask questions!
 
 ##Develop the Next Version
-You have some developers skills and want to help fix current bug and develop the next release of OpenRefine. Log in on GitHub and fork [OpenRefine repository](https://github.com/OpenRefine/OpenRefine). We accept pull request on a regular basis.
+You have some developers skills and want to help fix current bug and develop the next release of OpenRefine? Log in on GitHub and fork [OpenRefine repository](https://github.com/OpenRefine/OpenRefine). We accept pull request on a regular basis.
 
 You'll find more information regarding OpenRefine architecture in the [Documentation for Developers](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers) wiki section. 
 
-From there you can help us to help us to fix open issue or propose new enhancement using the [Issue List](https://github.com/OpenRefine/OpenRefine/issues?state=open).
+You can help us to fix open issue or propose new enhancement using the [Issue List](https://github.com/OpenRefine/OpenRefine/issues?state=open).
  
 ##Documentation and Support Users
-Not a coder but still want to help? No worries you can help OpenRefine to grow in several ways:
-* by [maintaining the documentation](https://github.com/OpenRefine/OpenRefine/wiki), you will need a GitHub account ([create one for free](https://github.com/signup/free)). 
-* helping user with questions on the [mailing list](https://groups.google.com/forum/?fromgroups#!forum/openrefine)
-* Alternatively if you are writting tutorial on your own platform, please give us a shout so we can add it to the [OpenRefine Custom Search Engine](/OpenRefine/documentation)
+Not a coder but still want to help? No worries you can help OpenRefine to grow in many ways.
 
-We will be soon releasing an issue list regarding the documentation to guide new participants. 
+###Help us to maintain the wiki
+Help us to maintain [OpenRefine documentation](https://github.com/OpenRefine/OpenRefine/wiki) up to date. See the list of [what need to be done](https://github.com/OpenRefine/OpenRefine/issues?labels=Documentation&page=1&state=open), or come up with your own improvement. 
 
-##Promote OpenRefine
-Organizing an workshop or presentation about OpenRefine? Add your event details in our [wiki event page](https://github.com/OpenRefine/OpenRefine/wiki/Events) or give us a shout on [twitter](http://twitter.com/OpenRefine).
+The wiki is written in an easy wiki markup languge nammed [Creole](http://www.wikicreole.org/) in order to let anyone participate. See the [Creole Cheat Sheet](http://www.wikicreole.org/wiki/CheatSheet).
 
-This page also list previous presentations as catch up and source of inspiration for your presentation!
+Anyone with a GitHub account can edit the documentation. 
+
+###Answer other questions
+Anyone is invited to ask questions regarding OpenRefine usage on the [mailing list](https://groups.google.com/forum/?fromgroups#!forum/openrefine). You can keep an eye on it and answer when
+
+###Share your tutorials
+
+Are you writting tutorial on your own platform (blog, website, wiki ...)? Let us know by email (info@openrefine.org), twitter ([@OpenRefine](http://twitter.com/OpenRefine)) or directly by editing the [External Resources wiki page](https://github.com/OpenRefine/OpenRefine/wiki/External-Resources).
+
+We will also add it to the [OpenRefine Custom Search Engine](/OpenRefine/documentation)
+
+##Promote OpenRefine in Public Events
+Organizing a workshop or presentation OpenRefine in your city? Add your event details in our [wiki event page](https://github.com/OpenRefine/OpenRefine/wiki/Events) or give us a shout on [twitter](http://twitter.com/OpenRefine) so we can spread the word!
+
+The [event page](https://github.com/OpenRefine/OpenRefine/wiki/Events) also list previous presentations as catch up and source of inspiration for your presentation!
 
 #Current & Previous Contributors
 ##Current
 
 * Lead Developer: Tom Morris - [@tfmorris](https://twitter.com/tfmorris) - [Github](https://github.com/tfmorris)
-* Sponser, Tester, Documentation: Thad Guidry - [@thadguidry](http://twitter.com/thadguidry) - [Github](https://github.com/thadguidry)
+* Sponsor, Tester, Documentation: Thad Guidry - [@thadguidry](http://twitter.com/thadguidry) - [Github](https://github.com/thadguidry)
 * Documentation & Community: Martin Magdinier - [@magdmartin](http://twitter.com/magdmartin) - [GitHub](https://github.com/magdmartin)
 * See list of [all recent code contributors ](https://github.com/OpenRefine/OpenRefine/graphs/contributors)
 
