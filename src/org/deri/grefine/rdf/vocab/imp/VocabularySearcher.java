@@ -9,14 +9,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.TermAttribute;
+//import org.apache.lucene.analysis.tokenattributes.TermAttribute;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -28,6 +32,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.util.Version;
 import org.deri.grefine.rdf.vocab.IVocabularySearcher;
 import org.deri.grefine.rdf.vocab.PrefixExistException;
 import org.deri.grefine.rdf.vocab.RDFNode;
@@ -57,13 +62,24 @@ public class VocabularySearcher implements IVocabularySearcher {
 
 	private Directory _directory;
 
+//	public VocabularySearcher(File dir) throws IOException {
+//		_directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
+//		writer = new IndexWriter(_directory, new SimpleAnalyzer(),
+//				IndexWriter.MaxFieldLength.LIMITED);
+//		writer.commit();
+//		searcher = new IndexSearcher(_directory);
+//	}
+	
 	public VocabularySearcher(File dir) throws IOException {
-		_directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
-		writer = new IndexWriter(_directory, new SimpleAnalyzer(),
-				IndexWriter.MaxFieldLength.LIMITED);
-		writer.commit();
-		searcher = new IndexSearcher(_directory);
-	}
+                _directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
+                Analyzer a = new SimpleAnalyzer(Version.LUCENE_36);
+                IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36,a);                
+
+                writer = new IndexWriter(_directory,conf);
+                writer.commit();
+                IndexReader r = IndexReader.open(_directory);
+                searcher = new IndexSearcher(r);
+        }
 
 	@Override
 	public void importAndIndexVocabulary(String name, String uri, String fetchUrl,VocabularyImporter importer)throws VocabularyImportException, VocabularyIndexException,PrefixExistException, CorruptIndexException, IOException {
@@ -93,7 +109,20 @@ public class VocabularySearcher implements IVocabularySearcher {
 	public List<SearchResultItem> searchClasses(String str, String projectId)
 			throws ParseException, IOException {
 		Query query = prepareQuery(str, CLASS_TYPE, projectId);
+		if(query == null)
+		{
+		    logger.error("Query null");
+		}
+		
+		logger.info("Query: " + query);
+		
 		TopDocs docs = searcher.search(query, getMaxDoc());
+		
+		if(docs == null) {
+		    logger.error("Docs null...");
+		}
+		
+		logger.info("Got docs.");
 		return prepareSearchResults(docs);
 	}
 
@@ -130,7 +159,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 		// TODO this shouldn't be required but it is not working without it...
 		// check
 		searcher.close();
-		searcher = new IndexSearcher(_directory);
+		searcher = new IndexSearcher(IndexReader.open(_directory));
 	}
 	
 	@Override
@@ -227,7 +256,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 		q.add(q2, Occur.MUST);
 
 		if (s != null && s.trim().length() > 0) {
-			SimpleAnalyzer analyzer = new SimpleAnalyzer();
+			SimpleAnalyzer analyzer = new SimpleAnalyzer(Version.LUCENE_36);
 			if (s.indexOf(":") == -1) {
 				// the query we need:
 				// "projectId":projectId AND "type":type AND ("prefix":s* OR
@@ -239,12 +268,13 @@ public class VocabularySearcher implements IVocabularySearcher {
 				TokenStream stream = analyzer.tokenStream("localPart",
 						new StringReader(s));
 				// get the TermAttribute from the TokenStream
-				TermAttribute termAtt = (TermAttribute) stream
-						.addAttribute(TermAttribute.class);
+				CharTermAttribute termAtt = (CharTermAttribute) stream
+						.addAttribute(CharTermAttribute.class);
 
 				stream.reset();
+								
 				while (stream.incrementToken()) {
-					String tmp = termAtt.term() + "*";
+					String tmp = termAtt.toString() + "*";
 					q3.add(new WildcardQuery(new Term("localPart", tmp)),
 							Occur.SHOULD);
 				}
@@ -254,12 +284,12 @@ public class VocabularySearcher implements IVocabularySearcher {
 				stream = analyzer.tokenStream("description",
 						new StringReader(s));
 				// get the TermAttribute from the TokenStream
-				termAtt = (TermAttribute) stream
-						.addAttribute(TermAttribute.class);
+				termAtt = (CharTermAttribute) stream
+						.addAttribute(CharTermAttribute.class);
 
 				stream.reset();
 				while (stream.incrementToken()) {
-					String tmp = termAtt.term() + "*";
+					String tmp = termAtt.toString() + "*";
 					q3.add(new WildcardQuery(new Term("description", tmp)),
 							Occur.SHOULD);
 				}
@@ -268,12 +298,12 @@ public class VocabularySearcher implements IVocabularySearcher {
 
 				stream = analyzer.tokenStream("label", new StringReader(s));
 				// get the TermAttribute from the TokenStream
-				termAtt = (TermAttribute) stream
-						.addAttribute(TermAttribute.class);
+				termAtt = (CharTermAttribute) stream
+						.addAttribute(CharTermAttribute.class);
 
 				stream.reset();
 				while (stream.incrementToken()) {
-					String tmp = termAtt.term() + "*";
+					String tmp = termAtt.toString() + "*";
 					q3.add(new WildcardQuery(new Term("label", tmp)),
 							Occur.SHOULD);
 				}
@@ -297,14 +327,14 @@ public class VocabularySearcher implements IVocabularySearcher {
 				TokenStream stream = analyzer.tokenStream("localPart",
 						new StringReader(p2));
 				// get the TermAttribute from the TokenStream
-				TermAttribute termAtt = (TermAttribute) stream
-						.addAttribute(TermAttribute.class);
+				CharTermAttribute termAtt = (CharTermAttribute) stream
+						.addAttribute(CharTermAttribute.class);
 
 				stream.reset();
 				if (!p2.isEmpty()) {
 					while (stream.incrementToken()) {
-						q4.add(new WildcardQuery(new Term("localPart", termAtt
-								.term() + "*")), Occur.SHOULD);
+						q4.add(new WildcardQuery(new Term("localPart", termAtt.toString()
+								 + "*")), Occur.SHOULD);
 					}
 				}
 				stream.close();

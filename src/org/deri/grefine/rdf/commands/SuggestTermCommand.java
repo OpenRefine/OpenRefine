@@ -43,6 +43,9 @@ public class SuggestTermCommand extends RdfCommand{
         String type = request.getParameter("type_strict");
         
         String query = request.getParameter("prefix");
+        
+        
+        
         try{
             writer.object();
             
