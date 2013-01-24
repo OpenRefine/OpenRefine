@@ -12,7 +12,6 @@ import java.util.Set;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
-//import org.apache.lucene.analysis.tokenattributes.TermAttribute;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -61,14 +60,6 @@ public class VocabularySearcher implements IVocabularySearcher {
 	private IndexSearcher searcher;
 
 	private Directory _directory;
-
-//	public VocabularySearcher(File dir) throws IOException {
-//		_directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
-//		writer = new IndexWriter(_directory, new SimpleAnalyzer(),
-//				IndexWriter.MaxFieldLength.LIMITED);
-//		writer.commit();
-//		searcher = new IndexSearcher(_directory);
-//	}
 	
 	public VocabularySearcher(File dir) throws IOException {
                 _directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
@@ -109,20 +100,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 	public List<SearchResultItem> searchClasses(String str, String projectId)
 			throws ParseException, IOException {
 		Query query = prepareQuery(str, CLASS_TYPE, projectId);
-		if(query == null)
-		{
-		    logger.error("Query null");
-		}
-		
-		logger.info("Query: " + query);
-		
-		TopDocs docs = searcher.search(query, getMaxDoc());
-		
-		if(docs == null) {
-		    logger.error("Docs null...");
-		}
-		
-		logger.info("Got docs.");
+		TopDocs docs = searcher.search(query, getMaxDoc());		
 		return prepareSearchResults(docs);
 	}
 
