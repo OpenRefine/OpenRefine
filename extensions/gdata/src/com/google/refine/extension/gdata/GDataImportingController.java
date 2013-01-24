@@ -371,7 +371,7 @@ public class GDataImportingController implements ImportingController {
             
             final List<Exception> exceptions = new LinkedList<Exception>();
             
-            JSONUtilities.safePut(job.config, "state", "creating-project");
+            job.safePutConfig("state", "creating-project");
             
             final Project project = new Project();
             new Thread() {
@@ -393,16 +393,16 @@ public class GDataImportingController implements ImportingController {
                     
                     if (!job.canceled) {
                         if (exceptions.size() > 0) {
-                            JSONUtilities.safePut(job.config, "errors",
+                            job.safePutConfig("errors",
                                 DefaultImportingController.convertErrorsToJsonArray(exceptions));
-                            JSONUtilities.safePut(job.config, "state", "error");
+                            job.safePutConfig("state", "error");
                         } else {
                             project.update(); // update all internal models, indexes, caches, etc.
                             
                             ProjectManager.singleton.registerProject(project, pm);
                             
-                            JSONUtilities.safePut(job.config, "state", "created-project");
-                            JSONUtilities.safePut(job.config, "projectID", project.id);
+                            job.safePutConfig("state", "created-project");
+                            job.safePutConfig("projectID", project.id);
                         }
                         
                         job.touch();

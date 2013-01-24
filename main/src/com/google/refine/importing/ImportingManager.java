@@ -84,6 +84,8 @@ public class ImportingManager {
     static private File importDir;
     final static private Map<Long, ImportingJob> jobs = new HashMap<Long, ImportingJob>();
     
+    final static private Object jobLock = new Object();
+    
     // Mapping from format to label, e.g., "text" to "Text files", "text/xml" to "XML files"
     final static public Map<String, Format> formatToRecord = new HashMap<String, Format>();
     
@@ -191,20 +193,32 @@ public class ImportingManager {
         File jobDir = new File(getImportDir(), Long.toString(id));
         
         ImportingJob job = new ImportingJob(id, jobDir);
-        jobs.put(id, job);
+        
+        synchronized(jobLock) {
+            jobs.put(id, job);
+        }
         
         return job;
     }
     
     static public ImportingJob getJob(long id) {
-        return jobs.get(id);
+        ImportingJob job;
+        
+        synchronized(jobLock) {
+            job = jobs.get(id);
+        }
+        
+        return job;
     }
     
     static public void disposeJob(long id) {
         ImportingJob job = getJob(id);
         if (job != null) {
             job.dispose();
-            jobs.remove(id);
+            
+            synchronized(jobLock) {
+                jobs.remove(id);
+            }
         }
     }
     
@@ -285,11 +299,26 @@ public class ImportingManager {
     
     static private void cleanUpStaleJobs() {
         long now = System.currentTimeMillis();
-        for (Long id : new HashSet<Long>(jobs.keySet())) {
-            ImportingJob job = jobs.get(id);
+        
+        HashSet<Long> keys;
+        
+        synchronized(jobLock) {
+            keys = new HashSet<Long>(jobs.keySet());
+        }
+        
+        for (Long id : keys) {
+            ImportingJob job;
+            
+            synchronized(jobLock) {
+                job = jobs.get(id);
+            }
+            
             if (job != null && !job.updating && now - job.lastTouched > s_stalePeriod) {
                 job.dispose();
-                jobs.remove(id);
+                
+                synchronized(jobLock) {
+                    jobs.remove(id);
+                }
                 
                 logger.info("Disposed " + id);
             }
