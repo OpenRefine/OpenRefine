@@ -109,20 +109,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 	public List<SearchResultItem> searchClasses(String str, String projectId)
 			throws ParseException, IOException {
 		Query query = prepareQuery(str, CLASS_TYPE, projectId);
-		if(query == null)
-		{
-		    logger.error("Query null");
-		}
-		
-		logger.info("Query: " + query);
-		
-		TopDocs docs = searcher.search(query, getMaxDoc());
-		
-		if(docs == null) {
-		    logger.error("Docs null...");
-		}
-		
-		logger.info("Got docs.");
+		TopDocs docs = searcher.search(query, getMaxDoc());		
 		return prepareSearchResults(docs);
 	}
 

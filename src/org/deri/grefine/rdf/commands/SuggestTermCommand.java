@@ -38,7 +38,6 @@ public class SuggestTermCommand extends RdfCommand{
         String projectId = request.getParameter("type");
         
         response.setHeader("Content-Type", "application/json");
-        //response.setStatus(HttpServletResponse.SC_OK);
         
         JSONWriter writer = new JSONWriter(response.getWriter());
         String type = request.getParameter("type_strict");
