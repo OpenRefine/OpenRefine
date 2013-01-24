@@ -129,7 +129,11 @@
         			 suggest_new:"Add it",
         			 cache:false,
         			 //             soft:true,
-        			 nomatch:'<em class="fbs-nomatch-text">No suggested matches. (Shift + Enter) to add it</em>'
+        			 nomatch:  {
+        				 title: 'No suggested matches. (Shift + Enter) to add it',
+        				 heading: null,
+        				 tips: null
+        				 }
          })
      });
 
