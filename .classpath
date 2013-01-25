@@ -26,8 +26,6 @@
 	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/opencsv-2.2.jar"/>
 	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
 	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/secondstring-20100303.jar"/>
-	<classpathentry kind="lib" path="/Users/fadi/development/Java/orefine/OpenRefine/main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar"/>
-	<classpathentry kind="lib" path="/Users/fadi/development/Java/orefine/OpenRefine/main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar"/>
 	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar"/>
 	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/velocity-1.5.jar"/>
 	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/vicino-1.1.jar"/>
@@ -61,5 +59,7 @@
 	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/poi-ooxml-3.8-20120326.jar"/>
 	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.8-20120326.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenRefine"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="/OpenRefine/main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>
