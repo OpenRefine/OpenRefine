@@ -95,9 +95,9 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         }
         sep = StringEscapeUtils.unescapeJava(sep);
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
-        
+                
         final CSVParser parser = new CSVParser(
-            sep,
+            sep.charAt(0), //String caused error!
             CSVParser.DEFAULT_QUOTE_CHARACTER,
             (char) 0, // escape character
             CSVParser.DEFAULT_STRICT_QUOTES,
