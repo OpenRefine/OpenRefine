@@ -1,0 +1,5 @@
+[
+	{"name": "AlchemyAPI",     "class": "org.freeyourmetadata.ner.services.AlchemyAPI"},
+    {"name": "DBpedia Lookup", "class": "org.freeyourmetadata.ner.services.DBpediaLookup"},
+    {"name": "Zemanta",        "class": "org.freeyourmetadata.ner.services.Zemanta"}
+]

@@ -1,0 +1,33 @@
+div.flyout-frame{
+  -moz-border-radius:5px 5px 5px 5px;
+  background:none repeat scroll 0 0 #EEEEEE;
+  border:0 none;
+  display:inline-block;
+  line-height:1;
+  margin:0;
+  outline:0 none;
+  padding:5px;
+  position:relative;
+}
+
+.flyout-content {
+  border:1px solid #CCCCCC;
+  background-color:#FFFFFF;
+  margin:4px 8px 4px 4px;
+  padding:4px;
+}
+
+.properties_table{
+	width:100%;
+	border:solid 1px #ccc;
+	border-collapse:collapse;
+}
+.properties_table td{ 
+	border:solid 1px #ccc;
+}
+
+img.rdf-resource_preview_logo{
+	float:right;
+	width:30%;
+	height:auto;
+}

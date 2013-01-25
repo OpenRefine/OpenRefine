@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_URI} !/(robots\.txt|favicon\.ico|style\.css|grefine-stuff\.css|.*\.js|images/.*|files/.*)$
+RewriteRule .* index.php

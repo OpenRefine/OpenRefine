@@ -1,0 +1,22 @@
+/*
+ *  External Licenses
+ */
+
+See the 'licenses' directory for a list of the licenses for the libraries we depend on,
+ordered here by license:
+
+Sesame 
+	(c)Copyright Aduna (http://www.aduna-software.com/) 2001-2007
+	http://www.openrdf.org/license.jsp
+
+Anything To Triples (any23)
+	Apache License
+	http://www.apache.org/licenses/LICENSE-2.0.html
+		
+Lucene 3.0.1
+  Apache License
+  http://www.apache.org/licenses/LICENSE-2.0.html
+  
+xercesImpl 2.7.1
+  Apache License
+  http://www.apache.org/licenses/LICENSE-2.0.html

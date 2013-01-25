@@ -1,0 +1,46 @@
+.dialog-frame.ner {
+  button.default {
+    font-weight: bold;
+    float: right;
+  }
+  button[disabled] {
+    color: gray;
+    border-color: #BBB !important;
+    cursor: default;
+  }
+  
+  fieldset {
+    margin-top: .5em;
+    padding: 0;
+    
+    ol {
+      list-style: none;
+      padding: 1px 0 0 10px;
+      margin-bottom: .7em;
+    }
+    li {
+      margin: .5em 0;
+      clear: both;
+    }
+    
+    label {
+      margin: 1px 10px 0 0;
+      width: 70px;
+      float: left;
+    }
+    
+    label.checkbox {
+      float: none;
+      padding-left: 15px;
+      
+      input {
+        position: absolute;
+        margin: 1px 0 0 -15px;
+      }
+    }
+  }
+  
+  legend {
+    font-weight: bold;
+  }
+}

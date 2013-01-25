@@ -1,0 +1,46 @@
+<div>
+  <div bind="message"></div>  
+  <table> 
+    <tr><td>prefix:</td><td style="padding-bottom:4px"> <input type="text" bind="prefix" size="4" /></td></tr>  
+    <tr><td>URI:</td>
+      <td style="padding-bottom:4px"> 
+        <input type="text" bind="uri" size="32" />
+        <div class="note" bind="uri_note"></div>
+      </td>
+    </tr>
+  </table> 
+  <div bind="fetching_options_table">
+    <fieldset class="rdf-reconcile-fieldset">
+      <legend>Vocabulary Terms</legend>
+      <table>  
+        <tr>
+          <td> 
+    	    <input type="radio" value="web" name="vocab_fetch_method" checked="checked" />Try fetching vocabulary terms from the Web
+    	  </td>
+    	</tr> 
+    	<tr>
+    	  <td>  
+    	    <input type="radio"  bind="upload_file_radio" value="file" name="vocab_fetch_method" />Import vocabulary terms from a file 
+    	    <form id="file-upload-form" bind="file_upload_form" action="command/rdf-extension/upload-file-add-prefix" enctype="multipart/form-data"> 
+    	      <input type="hidden" id="vocab-hidden-prefix" name="vocab-prefix" /> 
+    	      <input type="hidden" id="vocab-hidden-uri" name="vocab-uri" />  
+    	      <input type="hidden" id="vocab-hidden-project" name="project" /> 
+    	      <table class="rdf_indented_table" bind="upload_file_table" id="upload_file_table"> 
+    	      <tr><td>File:</td><td style="padding-bottom:4px"> <input type="file" bind="file" disabled="disabled" class="upload_file_inputs" name="uploaded_file" /></td></tr> 
+    	      <tr><td>Format:</td><td style="padding-bottom:4px">  
+    	        <select disabled="disabled" name="file_format" class="upload_file_inputs">
+    	          <option value="auto-detect">Auto-detect</option> 
+    	    	  <option value="TTL">Turtle</option> 
+    	    	  <option value="RDF/XML">RDF/XML</option> 
+    	    	  <option value="N3">N3</option> 
+    	    	  <option value="NTRIPLE">N-Triple</option> 
+    	    	</select> 
+    	      </td></tr> 
+    	      </table>  
+    	    </form> 
+          </td>
+        </tr> 
+      </table>
+    </fieldset> 
+  </div>
+</div>

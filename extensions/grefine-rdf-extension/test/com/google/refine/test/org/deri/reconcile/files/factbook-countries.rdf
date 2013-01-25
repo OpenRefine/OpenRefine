@@ -1,0 +1,773 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:factbook="http://www4.wiwiss.fu-berlin.de/factbook/ns#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:map="file:///C:/Documents%20and%20Settings/cyganiak/Desktop/d2r-server-0.3.2/factbook.n3#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:d2r="http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/config.rdf#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:db="http://www4.wiwiss.fu-berlin.de/factbook/resource/">
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Chad">
+    <rdfs:label>Chad</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Turks_and_Caicos_Islands">
+    <rdfs:label>Turks and Caicos Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Macau">
+    <rdfs:label>Macau</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Australia">
+    <rdfs:label>Australia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Qatar">
+    <rdfs:label>Qatar</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/United_Arab_Emirates">
+    <rdfs:label>United Arab Emirates</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Liberia">
+    <rdfs:label>Liberia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Sierra_Leone">
+    <rdfs:label>Sierra Leone</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Niger">
+    <rdfs:label>Niger</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/India">
+    <rdfs:label>India</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Netherlands_Antilles">
+    <rdfs:label>Netherlands Antilles</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Anguilla">
+    <rdfs:label>Anguilla</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Swaziland">
+    <rdfs:label>Swaziland</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Slovenia">
+    <rdfs:label>Slovenia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Latvia">
+    <rdfs:label>Latvia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Guernsey">
+    <rdfs:label>Guernsey</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Sweden">
+    <rdfs:label>Sweden</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Guatemala">
+    <rdfs:label>Guatemala</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Romania">
+    <rdfs:label>Romania</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bahamas_The">
+    <rdfs:label>Bahamas, The</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cambodia">
+    <rdfs:label>Cambodia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Lebanon">
+    <rdfs:label>Lebanon</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Belgium">
+    <rdfs:label>Belgium</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Samoa">
+    <rdfs:label>Samoa</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Lesotho">
+    <rdfs:label>Lesotho</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Virgin_Islands">
+    <rdfs:label>Virgin Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Hong_Kong">
+    <rdfs:label>Hong Kong</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Ghana">
+    <rdfs:label>Ghana</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Pakistan">
+    <rdfs:label>Pakistan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Zambia">
+    <rdfs:label>Zambia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Oman">
+    <rdfs:label>Oman</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Georgia">
+    <rdfs:label>Georgia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bolivia">
+    <rdfs:label>Bolivia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Malta">
+    <rdfs:label>Malta</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Vietnam">
+    <rdfs:label>Vietnam</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Italy">
+    <rdfs:label>Italy</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Kazakhstan">
+    <rdfs:label>Kazakhstan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Tajikistan">
+    <rdfs:label>Tajikistan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/European_Union">
+    <rdfs:label>European Union</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Jamaica">
+    <rdfs:label>Jamaica</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Holy_See_(Vatican_City)">
+    <rdfs:label>Holy See (Vatican City)</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cayman_Islands">
+    <rdfs:label>Cayman Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Luxembourg">
+    <rdfs:label>Luxembourg</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Malaysia">
+    <rdfs:label>Malaysia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Saint_Lucia">
+    <rdfs:label>Saint Lucia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Brunei">
+    <rdfs:label>Brunei</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Egypt">
+    <rdfs:label>Egypt</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Netherlands">
+    <rdfs:label>Netherlands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Argentina">
+    <rdfs:label>Argentina</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Isle_of_Man">
+    <rdfs:label>Isle of Man</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Togo">
+    <rdfs:label>Togo</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Clipperton_Island">
+    <rdfs:label>Clipperton Island</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/South_Georgia_and_the_South_Sandwich_Islands">
+    <rdfs:label>South Georgia and the South Sandwich Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Korea_South">
+    <rdfs:label>Korea, South</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Kiribati">
+    <rdfs:label>Kiribati</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Antarctica">
+    <rdfs:label>Antarctica</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/American_Samoa">
+    <rdfs:label>American Samoa</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Equatorial_Guinea">
+    <rdfs:label>Equatorial Guinea</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/British_Indian_Ocean_Territory">
+    <rdfs:label>British Indian Ocean Territory</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/United_States_Pacific_Island_Wildlife_Refuges">
+    <rdfs:label>United States Pacific Island Wildlife Refuges</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Uganda">
+    <rdfs:label>Uganda</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Macedonia">
+    <rdfs:label>Macedonia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Falkland_Islands_(Islas_Malvinas)">
+    <rdfs:label>Falkland Islands (Islas Malvinas)</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Austria">
+    <rdfs:label>Austria</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/United_Kingdom">
+    <rdfs:label>United Kingdom</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Germany">
+    <rdfs:label>Germany</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/East_Timor">
+    <rdfs:label>East Timor</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Nauru">
+    <rdfs:label>Nauru</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Guyana">
+    <rdfs:label>Guyana</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Heard_Island_and_McDonald_Islands">
+    <rdfs:label>Heard Island and McDonald Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Trinidad_and_Tobago">
+    <rdfs:label>Trinidad and Tobago</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Ireland">
+    <rdfs:label>Ireland</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Wake_Island">
+    <rdfs:label>Wake Island</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Algeria">
+    <rdfs:label>Algeria</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Congo_Republic_of_the">
+    <rdfs:label>Congo, Republic of the</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Belize">
+    <rdfs:label>Belize</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cote_dIvoire">
+    <rdfs:label>Cote dIvoire</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Pacific_Ocean">
+    <rdfs:label>Pacific Ocean</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Saint_Kitts_and_Nevis">
+    <rdfs:label>Saint Kitts and Nevis</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Tokelau">
+    <rdfs:label>Tokelau</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Colombia">
+    <rdfs:label>Colombia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Peru">
+    <rdfs:label>Peru</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/South_Africa">
+    <rdfs:label>South Africa</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Switzerland">
+    <rdfs:label>Switzerland</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Guinea-Bissau">
+    <rdfs:label>Guinea-Bissau</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/France">
+    <rdfs:label>France</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Christmas_Island">
+    <rdfs:label>Christmas Island</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Vanuatu">
+    <rdfs:label>Vanuatu</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Yemen">
+    <rdfs:label>Yemen</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Korea_North">
+    <rdfs:label>Korea, North</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Papua_New_Guinea">
+    <rdfs:label>Papua New Guinea</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Mali">
+    <rdfs:label>Mali</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Sudan">
+    <rdfs:label>Sudan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Taiwan">
+    <rdfs:label>Taiwan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cameroon">
+    <rdfs:label>Cameroon</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Singapore">
+    <rdfs:label>Singapore</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Nepal">
+    <rdfs:label>Nepal</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Belarus">
+    <rdfs:label>Belarus</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Guinea">
+    <rdfs:label>Guinea</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Madagascar">
+    <rdfs:label>Madagascar</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Congo_Democratic_Republic_of_the">
+    <rdfs:label>Congo, Democratic Republic of the</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Poland">
+    <rdfs:label>Poland</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Syria">
+    <rdfs:label>Syria</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Spain">
+    <rdfs:label>Spain</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Southern_Ocean">
+    <rdfs:label>Southern Ocean</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Western_Sahara">
+    <rdfs:label>Western Sahara</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Japan">
+    <rdfs:label>Japan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Iran">
+    <rdfs:label>Iran</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Tuvalu">
+    <rdfs:label>Tuvalu</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Wallis_and_Futuna">
+    <rdfs:label>Wallis and Futuna</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Mexico">
+    <rdfs:label>Mexico</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Chile">
+    <rdfs:label>Chile</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Ashmore_and_Cartier_Islands">
+    <rdfs:label>Ashmore and Cartier Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Portugal">
+    <rdfs:label>Portugal</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Guam">
+    <rdfs:label>Guam</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Haiti">
+    <rdfs:label>Haiti</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Navassa_Island">
+    <rdfs:label>Navassa Island</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Saint_Helena">
+    <rdfs:label>Saint Helena</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Nicaragua">
+    <rdfs:label>Nicaragua</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Uzbekistan">
+    <rdfs:label>Uzbekistan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Kyrgyzstan">
+    <rdfs:label>Kyrgyzstan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Spratly_Islands">
+    <rdfs:label>Spratly Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Thailand">
+    <rdfs:label>Thailand</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Montserrat">
+    <rdfs:label>Montserrat</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Greece">
+    <rdfs:label>Greece</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Liechtenstein">
+    <rdfs:label>Liechtenstein</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Monaco">
+    <rdfs:label>Monaco</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cape_Verde">
+    <rdfs:label>Cape Verde</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Iceland">
+    <rdfs:label>Iceland</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/New_Caledonia">
+    <rdfs:label>New Caledonia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Panama">
+    <rdfs:label>Panama</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Sri_Lanka">
+    <rdfs:label>Sri Lanka</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/China">
+    <rdfs:label>China</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Palau">
+    <rdfs:label>Palau</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Svalbard">
+    <rdfs:label>Svalbard</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Micronesia_Federated_States_of">
+    <rdfs:label>Micronesia, Federated States of</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Kuwait">
+    <rdfs:label>Kuwait</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/San_Marino">
+    <rdfs:label>San Marino</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Jordan">
+    <rdfs:label>Jordan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Mongolia">
+    <rdfs:label>Mongolia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Ethiopia">
+    <rdfs:label>Ethiopia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Eritrea">
+    <rdfs:label>Eritrea</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Saint_Pierre_and_Miquelon">
+    <rdfs:label>Saint Pierre and Miquelon</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Antigua_and_Barbuda">
+    <rdfs:label>Antigua and Barbuda</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Norway">
+    <rdfs:label>Norway</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bangladesh">
+    <rdfs:label>Bangladesh</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Mayotte">
+    <rdfs:label>Mayotte</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Tonga">
+    <rdfs:label>Tonga</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Puerto_Rico">
+    <rdfs:label>Puerto Rico</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Mauritania">
+    <rdfs:label>Mauritania</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Morocco">
+    <rdfs:label>Morocco</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Atlantic_Ocean">
+    <rdfs:label>Atlantic Ocean</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Moldova">
+    <rdfs:label>Moldova</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Turkey">
+    <rdfs:label>Turkey</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Comoros">
+    <rdfs:label>Comoros</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Azerbaijan">
+    <rdfs:label>Azerbaijan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Finland">
+    <rdfs:label>Finland</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Gambia_The">
+    <rdfs:label>Gambia, The</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Afghanistan">
+    <rdfs:label>Afghanistan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Venezuela">
+    <rdfs:label>Venezuela</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bulgaria">
+    <rdfs:label>Bulgaria</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/British_Virgin_Islands">
+    <rdfs:label>British Virgin Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Canada">
+    <rdfs:label>Canada</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Indian_Ocean">
+    <rdfs:label>Indian Ocean</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Marshall_Islands">
+    <rdfs:label>Marshall Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Andorra">
+    <rdfs:label>Andorra</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Mauritius">
+    <rdfs:label>Mauritius</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Zimbabwe">
+    <rdfs:label>Zimbabwe</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Fiji">
+    <rdfs:label>Fiji</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Malawi">
+    <rdfs:label>Malawi</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Gaza_Strip">
+    <rdfs:label>Gaza Strip</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Laos">
+    <rdfs:label>Laos</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Solomon_Islands">
+    <rdfs:label>Solomon Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bhutan">
+    <rdfs:label>Bhutan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Tunisia">
+    <rdfs:label>Tunisia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Israel">
+    <rdfs:label>Israel</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Dominican_Republic">
+    <rdfs:label>Dominican Republic</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cook_Islands">
+    <rdfs:label>Cook Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Namibia">
+    <rdfs:label>Namibia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Maldives">
+    <rdfs:label>Maldives</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Lithuania">
+    <rdfs:label>Lithuania</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Kenya">
+    <rdfs:label>Kenya</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Nigeria">
+    <rdfs:label>Nigeria</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Armenia">
+    <rdfs:label>Armenia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Arctic_Ocean">
+    <rdfs:label>Arctic Ocean</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Dhekelia">
+    <rdfs:label>Dhekelia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Norfolk_Island">
+    <rdfs:label>Norfolk Island</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Albania">
+    <rdfs:label>Albania</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Iraq">
+    <rdfs:label>Iraq</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Estonia">
+    <rdfs:label>Estonia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cocos_(Keeling)_Islands">
+    <rdfs:label>Cocos (Keeling) Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Senegal">
+    <rdfs:label>Senegal</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Niue">
+    <rdfs:label>Niue</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bouvet_Island">
+    <rdfs:label>Bouvet Island</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Sao_Tome_and_Principe">
+    <rdfs:label>Sao Tome and Principe</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Ukraine">
+    <rdfs:label>Ukraine</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/World">
+    <rdfs:label>World</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Seychelles">
+    <rdfs:label>Seychelles</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Saint_Vincent_and_the_Grenadines">
+    <rdfs:label>Saint Vincent and the Grenadines</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Faroe_Islands">
+    <rdfs:label>Faroe Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Brazil">
+    <rdfs:label>Brazil</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cuba">
+    <rdfs:label>Cuba</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Uruguay">
+    <rdfs:label>Uruguay</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Djibouti">
+    <rdfs:label>Djibouti</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Gibraltar">
+    <rdfs:label>Gibraltar</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Cyprus">
+    <rdfs:label>Cyprus</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Libya">
+    <rdfs:label>Libya</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Russia">
+    <rdfs:label>Russia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/West_Bank">
+    <rdfs:label>West Bank</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Honduras">
+    <rdfs:label>Honduras</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/New_Zealand">
+    <rdfs:label>New Zealand</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Mozambique">
+    <rdfs:label>Mozambique</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Montenegro">
+    <rdfs:label>Montenegro</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Grenada">
+    <rdfs:label>Grenada</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/French_Polynesia">
+    <rdfs:label>French Polynesia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bahrain">
+    <rdfs:label>Bahrain</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Benin">
+    <rdfs:label>Benin</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Paracel_Islands">
+    <rdfs:label>Paracel Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Turkmenistan">
+    <rdfs:label>Turkmenistan</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Philippines">
+    <rdfs:label>Philippines</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Aruba">
+    <rdfs:label>Aruba</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Akrotiri">
+    <rdfs:label>Akrotiri</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Czech_Republic">
+    <rdfs:label>Czech Republic</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Jersey">
+    <rdfs:label>Jersey</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Central_African_Republic">
+    <rdfs:label>Central African Republic</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bermuda">
+    <rdfs:label>Bermuda</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Angola">
+    <rdfs:label>Angola</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Burundi">
+    <rdfs:label>Burundi</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Suriname">
+    <rdfs:label>Suriname</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Greenland">
+    <rdfs:label>Greenland</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Saudi_Arabia">
+    <rdfs:label>Saudi Arabia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Serbia">
+    <rdfs:label>Serbia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Barbados">
+    <rdfs:label>Barbados</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Slovakia">
+    <rdfs:label>Slovakia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Burma">
+    <rdfs:label>Burma</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/French_Southern_and_Antarctic_Lands">
+    <rdfs:label>French Southern and Antarctic Lands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/El_Salvador">
+    <rdfs:label>El Salvador</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Pitcairn_Islands">
+    <rdfs:label>Pitcairn Islands</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Burkina_Faso">
+    <rdfs:label>Burkina Faso</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Croatia">
+    <rdfs:label>Croatia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Iles_Eparses">
+    <rdfs:label>Iles Eparses</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Jan_Mayen">
+    <rdfs:label>Jan Mayen</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Rwanda">
+    <rdfs:label>Rwanda</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Botswana">
+    <rdfs:label>Botswana</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Gabon">
+    <rdfs:label>Gabon</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Bosnia_and_Herzegovina">
+    <rdfs:label>Bosnia and Herzegovina</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Ecuador">
+    <rdfs:label>Ecuador</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Paraguay">
+    <rdfs:label>Paraguay</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/United_States">
+    <rdfs:label>United States</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Indonesia">
+    <rdfs:label>Indonesia</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Dominica">
+    <rdfs:label>Dominica</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Hungary">
+    <rdfs:label>Hungary</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Denmark">
+    <rdfs:label>Denmark</rdfs:label>
+  </factbook:Country>
+  <factbook:Country rdf:about="http://www4.wiwiss.fu-berlin.de/factbook/resource/Tanzania">
+    <rdfs:label>Tanzania</rdfs:label>
+  </factbook:Country>
+</rdf:RDF>
