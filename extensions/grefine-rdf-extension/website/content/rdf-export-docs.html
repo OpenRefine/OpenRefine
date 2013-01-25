@@ -1,0 +1,26 @@
+<p class="note">
+For detailed example and screenshots see <a href="rdfExport">RDF Export example</a> 
+</p>
+
+<p>
+With the export functionality, you can determine the intended structure of the RDF data by drawing a template graph. The exporter iterates through the project rows, evaluate expressions in the template graph and produce an equivalent RDF subgraph per row. The final result is the merge of all the subgraphs.
+</p>
+<p>
+The image below shows the main parts of a graph template.
+</p>
+<p>
+  <img src="images/skeleton_example_annotated.png" />
+</p>
+<p class="note">
+  Any applied filters on the data affect the exported RDF (i.e. RDF data exported corresponds to the current visible rows). This allows getting RDF data for any custom subset of the data or using different schemas for different parts of the data.
+</p>
+<p class="note">
+  Notice that you can define multiple trees (i.e. multiple root nodes) as shown in the figure above.
+</p>
+<p>
+Terms from existing vocabularies can be imported. The exporter attempts to retrieve and index the terms so that they can be included in the autocompletion available for classes and properties addition. Additionally, by using a dump from -our lovely friend- <a href="http://prefix.cc">prefix.cc</a> URIs for popular prefixes are automatically suggested.
+
+</p>
+<p>
+Data can be exported in RDF/XML or Turtle using the "Export" menu. 
+</p>
