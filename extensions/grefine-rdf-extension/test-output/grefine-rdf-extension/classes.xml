@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="classes" failures="0" tests="1" time="1.312" errors="0">
-  <properties/>
-  <testcase name="testAddPrefixCommand" time="1.0" classname="com.google.refine.test.rdf.vocab.AddPrefixCommandTest"/>
-</testsuite>

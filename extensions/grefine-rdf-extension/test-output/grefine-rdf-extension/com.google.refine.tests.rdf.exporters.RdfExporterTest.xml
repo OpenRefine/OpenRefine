@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.google.refine.tests.rdf.exporters.RdfExporterTest" failures="0" tests="1" time="0.297" errors="0">
-  <properties/>
-  <testcase name="testModel" time="0.016" classname="com.google.refine.tests.rdf.exporters.RdfExporterTest"/>
-</testsuite>

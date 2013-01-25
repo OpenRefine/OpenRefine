@@ -1,1 +1,0 @@
-{"services":[{"type":"rdf","id":"sparql-test","name":"sparql-test","matchThreshold":0,"searchPropertyUris":["http://www.w3.org/2000/01/rdf-schema#label"],"endpoint":{"type":"default","queryFactory":{"type":"larq"},"queryExecutor":{"type":"remote","sparql-url":"http://example.org/endpoint"}}}]}

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.google.refine.tests.rdf.exporters.RdfExporterMultiRootNodesTest" failures="0" tests="1" time="0.328" errors="0">
-  <properties/>
-  <testcase name="testModel" time="0.0" classname="com.google.refine.tests.rdf.exporters.RdfExporterMultiRootNodesTest"/>
-</testsuite>
