@@ -4,6 +4,6 @@
 	<classpathentry kind="src" path="tests/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenRefine"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/CrowdFlowerClient"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/crowdsourcing-client.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>

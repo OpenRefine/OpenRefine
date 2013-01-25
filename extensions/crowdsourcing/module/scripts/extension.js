@@ -113,11 +113,6 @@ ExtensionBar.addExtensionMenu({
 				    			            	 "label": "Evaluate Freebase reconciliations",
 				    			            	 click: ZemantaCrowdSourcingExtension.handlers.evaluateFreebaseReconDialog
 				    			             },
-				    			             {
-				    			            	 "id":"crowdsourcing-ext/templates/dbpedia",
-				    			            	 "label": "Evaluate DBpedia reconciliations",
-				    			            	 click: ZemantaCrowdSourcingExtension.handlers.doNothing
-				    			             }
 				    			             ]
 				    		 },
 				    		 {},

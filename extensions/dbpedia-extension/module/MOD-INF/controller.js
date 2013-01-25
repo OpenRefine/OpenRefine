@@ -45,8 +45,6 @@ var RC = Packages.com.google.refine.model.recon.ReconConfig;
  * Function invoked to initialize the extension.
  */
 function init() {
-  // Packages.java.lang.System.err.println(module.getMountPoint());
-  Packages.java.lang.System.err.println("Initializing Zemanta's extension....");
 
   RS.registerClassMapping(
   "com.google.refine.model.changes.DataExtensionChange",
@@ -56,7 +54,7 @@ function init() {
 		  "com.google.refine.model.changes.DataExtensionChange",
 		  "com.google.refine.com.zemanta.model.changes.ExtractEntitiesFromTextChange");
   
-  //temp hack needed for the core modul
+  //temp hack needed for the core module
   //to resolve this modul's classes
   RS.cacheClass(Packages.com.google.refine.com.zemanta.model.changes.DBpediaDataExtensionChange);
   RS.cacheClass(Packages.com.google.refine.com.zemanta.model.changes.ExtractEntitiesFromTextChange);

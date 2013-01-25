@@ -16,9 +16,10 @@
     <ant dir="pc-axis/" target="build" />
     <ant dir="crowdsourcing/" target="build" />
     <ant dir="dbpedia-extension/" target="build" />
-    <ant dir="rdf-extension/" target="build" />
     <ant dir="utilities/" target="build" />
     <ant dir="Refine-NER-Extension/" target="build" />
+    <ant dir="refine-stats/" target="build" />
+    <ant dir="grefine-rdf-extension/" target="build" />
   </target>
 
   <target name="clean">
@@ -30,8 +31,9 @@
     <ant dir="pc-axis/" target="clean" />
     <ant dir="crowdsourcing/" target="clean" />
     <ant dir="dbpedia-extension/" target="clean" />
-    <ant dir="rdf-extension/" target="clean" />
     <ant dir="utilities/" target="clean" />
     <ant dir="Refine-NER-Extension/" target="clean" />
+    <ant dir="refine-stats/" target="clean" />
+    <ant dir="grefine-rdf-extension/" target="clean" />
   </target>
 </project>
