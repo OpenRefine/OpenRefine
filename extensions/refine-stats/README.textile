@@ -1,0 +1,35 @@
+h1. refine-stats
+
+A extension for OpenRefine to compute elementary statistics on a column data.
+
+h2. Installation
+
+Run OpenRefine. On the starting page click the "Browse workspace directory" link in the lower left corner. Make a folder called "extensions" (if it doesn't exist) within the the window that pops up.  Copy the refine-stats folder into the extensions folder.  The final path should be something like (it may vary depending on the OS):
+
+<pre>
+/PATH/TO/Google/Refine/extensions/refine-stats/...
+</pre>
+
+Restart OpenRefine.
+
+(Alternatively, you copy the stats folder into the extensions folder of your OpenRefine installation, but it may be lost during upgrades.)
+
+h2.  Usage
+
+Select "Column statistics" from the drop-down menu of any column header.  Statistics will be calculated based on *filtered rows*, so you can facet your dataset in different ways and calculate statistics for each subset.
+
+h2. Build it yourself
+
+If you modify this extension, copy it to extensions folder of OpenRefine installation folder and build it using ./refine build 
+
+h2. Credits
+
+refine-stats is a "Newsapps":http://apps.chicagotribune.com/ project. Development by "Joe Germuska":https://github.com/joegermuska and "Christopher Groskopf":https://github.com/bouvard. 
+
+"Mateja Verlič (sparkica)":https://github.com/sparkica updated it to use newer version of "Apache Commons Math" library and made it work in OpenRefine 2.6 (previously known as Google Refine).
+
+h2. License
+
+MIT.
+
+Note: refine-stats includes the "Apache Commons Math":http://commons.apache.org/math/ library, which is licensed under the Apache Software License.  A copy of this license can be found in /stats/module/MOD-INF/lib/. 

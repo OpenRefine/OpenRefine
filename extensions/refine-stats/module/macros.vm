@@ -1,0 +1,11 @@
+#*
+  TODO: Add macros here. 
+*#
+
+#macro( makeAList $list )
+  <ul>
+    #foreach($item in $list)
+      <li>$item</li>
+    #end
+  </ul>
+#end

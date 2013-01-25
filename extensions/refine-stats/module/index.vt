@@ -1,0 +1,16 @@
+#*
+ * Access this page at the URL /extensions/stats/
+ *#
+<html>
+  <head>
+    <title>Stats Extension</title>
+  </head>
+  <body>
+    <h1>Stats Extension</h1>
+    
+    <p>
+        Yo.
+    </p>
+  </body>
+</html>
+
