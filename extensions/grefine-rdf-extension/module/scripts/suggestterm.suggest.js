@@ -10,12 +10,10 @@
                 		  $.suggest.suggest.prototype, 
                 		  {
                 			  create_item: function(data,response_data) {
-	                        	 console.log("---- create item ----");
 	                             var css = this.options.css;
 	                             
 	                             var li = $("<li>").addClass(css.item);
 	                             var name = $("<div>").addClass(css.item_name)
-	
 	                                 .append($("<label>")
 	                                 .append($.suggest.strongify(data.name,response_data.prefix)));
 	                             // this converts html escaped strings like "&amp;"
@@ -29,7 +27,6 @@
 	                         },
 	                        
 	                         request: function(value, cursor) {
-	                        	 console.log("---- request ---");
 	                        	 var self = this, 
 	                        	 o = this.options;
 	                        	 
@@ -38,32 +35,17 @@
 	                             data[o.query_param_name] = query;
 	                             
 	                             clearTimeout(this.request.timeout);
-	                             console.log("Data before ajax call");
                     	    	 data["prefix"] = query;
                     	    	 data["type_strict"] = "classes";
                     	    	 data["type"] = theProject.id;
 	                            
                     	    	 var url = o.service_url + o.service_path + "?" + $.param(data, true);
-	                             console.log(url); 
-	                             console.log(data);
-	                             
 	                             var ajax_options = {
 	                            		 url: o.service_url + o.service_path,
 	                            	     data: data,
 	                            	     traditional: true,	 
-/*	                            	     beforeSend: function(xhr) {
-	                            	    	 console.log("--- before send ---");
-	                            	    	 console.log(xhr);
-	                            	          var calls = self.input.data("request.count.suggest") || 0;
-	                            	          calls += 1;
-	                            	          self.trackEvent(self.name, "request", "count", calls);
-	                            	          self.input.data("request.count.suggest", calls);
-	                            	        },
-*/                            	        error: function(xhr) {
-                            	        	console.log("--- request error --");
-                            	        	console.log(xhr);
+                            	        error: function(xhr) {
                             	            self.status_error();
-                            	            
                             	            self.trackEvent(self.name, "request", "error", {
                             	              url: this.url,
                             	              response: xhr ? xhr.responseText : ''
@@ -71,52 +53,25 @@
                             	            self.input.trigger("fb-error", Array.prototype.slice.call(arguments));
                             	          },
                             	          complete: function(xhr) {
-                            	        	  console.log(" -- complete --");
                             	            if (xhr) {
                             	              self.trackEvent(self.name, "request", "tid",
                             	              xhr.getResponseHeader("X-Metaweb-TID"));
                             	            }
                             	          },
                             	        success: function(data) {
-                            	        	console.log("--- success ---");
-                            	        	console.log(data);
                             	            $.suggest.cache[url] = data;
                             	            data.prefix = value;  // keep track of prefix to match up response with input value
                             	            self.response(data, cursor ? cursor : -1);
-                            	            
                             	          },
                             	          dataType: "json",
                             	          cache: true
 	                             };
 	                             this.request.timeout = setTimeout(function() {
-	                            	 console.log("Doing something...");
 	                                 $.ajax(ajax_options);
 	                               }, o.xhr_delay);
 
-	                         },
-	                         
-	                         response: function(data){
-	                        	console.log("---- response ----");
-	                        	console.log(data);
-	                        	var o = this.options,
-	                             p = this.pane,
-	                             s = this.get_selected() || [];
-	                             if (p.is(":visible") && s.length) {
-	                                 var sug_data = s.data("data.suggest");
-	                                 if (sug_data && data.id === sug_data.id) {
-	                                     this.flyoutpane.html('<div class="fbs-flyout-content">' + data.description + '</div>');
-	                                     this.flyout_position(s);
-	                                     this.flyoutpane.show()
-	                                         .data("data.suggest", sug_data);
-	                                     this.input.trigger("fb-flyoutpane-show", this);
-	                                 }
-	                             }
-
-	                         },
-	                         
-	                         flyout_request:function(data){
-	                        	 console.log("----- flyout request ---");
-	                        	 
+	                         },	                         
+	                         flyout_request:function(data){	                        	 
 	                             var self = this;
 	                             
 	                             var o = this.options,
@@ -145,7 +100,6 @@
 	                         },
 	                         
 	                         flyout_response:function(data){
-	                        	 console.log("---- flyout response ----");
 	                             var o = this.options,
 	                             p = this.pane,
 	                             s = this.get_selected() || [];
@@ -162,8 +116,6 @@
 	                         }
                        }));
 
-
-
      $.extend($.suggest.suggestterm, {
          defaults:  $.extend(
         		 true, 
@@ -177,7 +129,11 @@
         			 suggest_new:"Add it",
         			 cache:false,
         			 //             soft:true,
-        			 nomatch:'<em class="fbs-nomatch-text">No suggested matches. (Shift + Enter) to add it</em>'
+        			 nomatch:  {
+        				 title: 'No suggested matches. (Shift + Enter) to add it',
+        				 heading: null,
+        				 tips: null
+        				 }
          })
      });
 
