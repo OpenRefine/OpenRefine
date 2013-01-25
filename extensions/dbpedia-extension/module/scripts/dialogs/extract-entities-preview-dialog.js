@@ -62,7 +62,7 @@ function ZemantaExtractEntitiesPreviewDialog(column, columnIndex,cellText,rowInd
   
 
   var dismissBusy = DialogSystem.showBusy();
-  ZemantaExtension.util.loadZemantaApiKeyFromSettings(function (apiKey) {
+  ZemantaDBpediaExtension.util.loadZemantaApiKeyFromSettings(function (apiKey) {
 	  ZemantaExtractEntitiesPreviewDialog.getAllEntities(apiKey, cellText, function(entities) {
 		    dismissBusy();    
 		    self._show(entities);
@@ -80,7 +80,7 @@ ZemantaExtractEntitiesPreviewDialog.getAllEntities = function(apiKey, cellText, 
 	  $.ajax({
 	      url: 'http://api.zemanta.com/services/rest/0.0/',
 	      type: 'POST',
-	      data: ZemantaExtension.util.prepareZemantaData(apiKey, cellText),
+	      data: ZemantaDBpediaExtension.util.prepareZemantaData(apiKey, cellText),
 	      success: function (data) {
 		      if (done) return;
 		      	done = true;
