@@ -188,7 +188,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
       id: "core/reconcile",
       label: "Reconcile",
       tooltip: "Match this column's cells to topics on Freebase",
-      width: "170px",
+      width: "190px",
       submenu: []
     }
   ];
