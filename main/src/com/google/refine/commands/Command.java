@@ -303,6 +303,7 @@ public abstract class Command {
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
+        response.setHeader("Cache-Control", "no-cache");
 
         Writer w = response.getWriter();
         JSONWriter writer = new JSONWriter(w);
