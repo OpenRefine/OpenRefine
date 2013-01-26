@@ -85,6 +85,7 @@ public class GetModelsCommand extends Command {
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
+            response.setHeader("Cache-Control", "no-cache");
             
             Properties options = new Properties();
             JSONWriter writer = new JSONWriter(response.getWriter());
