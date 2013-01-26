@@ -92,6 +92,12 @@ public class ImportingUtilities {
         public boolean isCanceled();
     }
     
+    static protected DiskFileItemFactory fileItemFactory = null;
+    static {
+       fileItemFactory = new DiskFileItemFactory();
+       fileItemFactory.setFileCleaningTracker(new FileCleaningTracker());
+    }
+
     static public void loadDataAndPrepareJob(
         HttpServletRequest request,
         HttpServletResponse response,
@@ -185,9 +191,6 @@ public class ImportingUtilities {
                 return progress.isCanceled();
             }
         };
-        
-        DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
-        fileItemFactory.setFileCleaningTracker(new FileCleaningTracker());
         
         ServletFileUpload upload = new ServletFileUpload(fileItemFactory);
         upload.setProgressListener(new ProgressListener() {
