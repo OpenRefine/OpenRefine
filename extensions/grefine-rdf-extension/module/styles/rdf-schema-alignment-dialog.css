@@ -96,7 +96,8 @@ div.rdf-schema-prefixes{
 .rdf-schema-alignment-node-dialog-step-header{
 	margin:1px 5px 1px 0;
 	padding: 0.25em;
-    background: #ddf;
+  	background: #088da5;
+  	color:#fff;
     -moz-border-radius: 0.5em;	
 }
 

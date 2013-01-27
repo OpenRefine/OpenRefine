@@ -30,7 +30,7 @@ function ZemantaCrowdFlowerDialog(onDone) {
   this._elmts.createFromTemplate.click(function () {
 	  
 	  $('#autocomplete').autocomplete({
-		  source: ["NHL player", "player", "movie", "show", "person", "product"]
+		  source: ["NHL player", "player", "movie", "show", "person", "product", "movie", "TV series"]
 	  });
 	  
 	  self._elmts.dataUpload.hide();
@@ -98,13 +98,12 @@ function ZemantaCrowdFlowerDialog(onDone) {
 	    	  self._extension.column_names.push(col);
 	      });
 	      
-	      //console.log("CML: " + self._cml + '\n');
-	      //self._extension.cml = self._cml;
+	      console.log("CML: " + self._cml + '\n');
+	      self._extension.cml = self._cml;
 	      
 	      
 	      
 	  } else {
-		  console.log("Tabindex: " + tabindex);
 		  self._extension.new_job = false;
 		  self._extension.job_id =  self._elmts.allJobsList.children(":selected").val();
 		  console.log("Uploading to existing job...: " + self._extension.job_id);
@@ -206,7 +205,9 @@ ZemantaCrowdFlowerDialog.prototype._copyAndUpdateJob = function(jobid) {
 	  console.log("Copy results: " + JSON.stringify(data));
 	  if(data[status] === "ERROR") {
 		  alert("There was an error either during copying or updating list.");
+		  self._elmts.statusMessage.html("There was an error either during copying or updating list.");
 	  } else {
+		  self._elmts.statusMessage.html("Job was copied.");
 		  alert("Job copied!");
 	  }
 	  self._updateJobList(data);
@@ -231,11 +232,11 @@ ZemantaCrowdFlowerDialog.prototype._updateJobList = function(data) {
 	
 
 	if(status === "ERROR") {
-		self._elmts.statusMessage.html(status + ": " + data["message"]);
+		self._elmts.statusMessage.html("There was an error: <br/>" + data["message"]);
 	}
 	else {
 	
-		self._elmts.statusMessage.html("OK");
+		self._elmts.statusMessage.html("Job list was updated.");
 		
 		if(data["jobs"] && data["jobs"]!= null) {
 			var jobs = data["jobs"];
@@ -273,7 +274,11 @@ ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
 	
 	ZemantaCrowdSourcingExtension.util.loadAllExistingJobs(function(data, status) {
 		
-		elemStatus.html("Status: " + status);
+		if(status === "OK" | status === 200) {
+			elemStatus.html("Jobs are loaded.");
+		} else {
+			elemStatus.html("There was an error loading jobs. Error message: <br/>" + status);
+		}
 	
 		$.each(data, function(index, value) {
 			
@@ -312,7 +317,8 @@ ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
 	if(status === "ERROR") {
 		self._elmts.statusMessage.html(status + ': ' + data["message"]);
 	} else {
-		self._elmts.statusMessage.html(status);
+		
+		self._elmts.statusMessage.html('Updated job information.' );
 	
 		
 		if(data["title"] === null || data["title"] === "" ) {
@@ -450,18 +456,24 @@ ZemantaCrowdFlowerDialog.prototype._renderMappings = function() {
 
 	$.each(self._fields, function(index, value) {
 		var link = $('<a title="' + value + '" href="javascript:{}">' + value + '</a>').appendTo(elm_fields);
-		$('<span>&nbsp;&nbsp;=&gt;&nbsp;&nbsp;</span>').appendTo(elm_fields);
+		$('<span>&nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;</span>').appendTo(elm_fields);
 		var mapped_column = self._getMappedColumn(value);
 		console.log("Mapped column: " + mapped_column);
-		var col_name = ((mapped_column === "") ? "(not mapped)": mapped_column);
+		var col_name = ((mapped_column === "") ? "(click to add column mapping)": mapped_column);
 		console.log("Getting mapped column: " + col_name);
 
-		$('<span>' + col_name + '</span><br/>').appendTo(elm_fields);
+		var link2 = $('<a href="javascript:{}" data-value="' + value + '">' + col_name + '</a><br/>').appendTo(elm_fields);
 		
 		link.click (function(){
 			var field = $(this).text();
 			self._showColumnsDialog($(this).text(),self._getMappedColumn(field));
-		});		
+		});	
+		
+		link2.click(function() {
+			var field = $(this).data("value");
+			self._showColumnsDialog(field,self._getMappedColumn(field));
+		});
+		
 	});	
 
 };

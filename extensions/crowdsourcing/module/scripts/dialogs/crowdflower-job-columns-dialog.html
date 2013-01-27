@@ -11,23 +11,26 @@
     <div class="panels-area">
     
     <div id="new-job-tab" bind="newJobTab">
- 	<div>
-	<div class="job-box">
-		<a href="javascript:{}" class="link-menu" id="create-from-blank" bind="createFromBlank">Create new blank job</a> 
-	</div>	
-	
-	<div class="job-box">
-		<a href="javascript:{}" class="link-menu" id="create-from-template" bind="createFromTemplate">Create from template</a> 
-	</div>
+ 	<div class="options-menu">
+	 	<ul>
+		<li class="link-menu">
+			<a href="javascript:{}" id="create-from-template" bind="createFromTemplate">
+			Create from template</a></li>
+		<li class="link-menu">
+			<a href="javascript:{}" id="create-from-blank" bind="createFromBlank">
+			Create blank</a></li>
+		</ul>
+	</div> <!-- .options-menu -->
 			
  	<div class="job-box" id="job-template-panel" bind="jobTemplatePanel">
-		  <div class="field_container">
+ 	<h3>Select template options</h3>
+		  <div class="field-container">
 		  	<label>Entity type:</label>
 			<input id="autocomplete" bind="entityType" type="text"/>
 			<span id="title-warning" class="warning">E.g.: player, athlete, person, movie, TV series</span>
-			</div>		
+			</div><!-- .field-container -->		
 		  
-		  <div class="field_container">
+		  <div class="field-container">
 		  <label>Template:</label>
     		<select id="job-templates" bind="jobTemplates">
     		<option id="blank" value="blank">--- no template ---</option>
@@ -35,103 +38,98 @@
     		<option id="dbpedia" value="dbpedia" >DBpedia reconciliation</option>
     		</select>
     		<span id="title-warning" class="warning">Choose one of templates or enter your data in New job details</span>	    		
+		</div><!-- .field-container -->	
+		<div class="controls">
+			<input type="button" value="Load template" bind="buttonLoadTemplate" class="btn btn-danger">
 		</div>
-		<div><input type="button" value="Load template" bind="buttonLoadTemplate" class="btn btn-danger"></div>
-	</div>
+	</div><!-- .job-box -->	
 	
-		<div class="job-box" bind="newJobDetailsPanel" id="new-job-details-panel">
+	<div class="job-box" bind="newJobDetailsPanel" id="new-job-details-panel">
 		
 		  <h2>New job details</h2>
 				  
-		  <div class="field_container">
+		  <div class="field-container">
 		  	<label>Title: </label><input bind="jobTitle" type="text" class="job-title" id="jobTitle" />
 		  	<span id="title-warning" class="warning">Job title should be 5-255 characters long.</span>
 		  </div>
-		 <div class="field_container">
+		 <div class="field-container">
 		 	<label>Instructions: </label><textarea bind="jobInstructions" class="job-instructions"></textarea>
 		 	<span id="instructions-warning" class="warning">Instructions should not be empty.</span>
 		 </div>
 		 <div id="job-problem" bind="jobProblem"></div>
 		 
-		 <div class="field_container" id="data-upload" bind="dataUpload">
+		 <div class="field-container" id="data-upload" bind="dataUpload">
 		 	<label>Upload data: </label><input type="checkbox" bind="chkUploadToNewJob"/>
 		 </div>
-		</div>  
+	</div> <!-- .job-box -->	 
 				  
-		<div id="columns" bind="columnsPanel" class="job-box wrapper">
+	<div class="job-box wrapper" id="columns" bind="columnsPanel" >
 			<h3>Columns to upload (scroll right for more) </h3>
 			<div bind="columnsMenu_0" id="columns-menu-0"></div>
 			<div bind="columnList_0" id="project-columns-0" class="project-columns"></div>
-		</div>
-	</div>
-    </div>
-    
+	</div><!-- .job-box -->	
+	</div> <!-- .new-job-tab -->
     
     <div id="existing-job-tab" bind="existingJobTab">
     
-    <div class="job-box">
-    
-    <div class="wrapper">
-	<div class="column-left">
-		<h2>Existing jobs</h2>
-		<div class="field_container">Select existing job:
-    		<div id="job-list" bind="jobList">
-    		<select id="all-jobs" bind="allJobsList"></select>
-    		</div>
-    	</div>
-    	</div>
-    <div class="column-right" id="copy-job-options">
-    	<h3>Copy job with units:</h3>
-    	<div class="field_container">
-		  	<input type="radio" name="units" value="none" bind="copyJob" checked="true"><span style="color:#7E2217; font-weight:bold; ">none</span> </input>
-		  	<input type="radio" name="units" value="all_units" bind="copyJobGoldUnits"> <span style="color:#4AA02C; font-weight: bold;">all</span></input>
-		  	<input type="radio" name="units" value="gold" bind="copyJobGoldUnits"> <span style="color:#EAC117; font-weight: bold;">gold</span> only </input>
-		&nbsp; &nbsp;<input class="button" type="button" value="Copy into new job" bind="copyJobButton"/>
-		</div>
-    </div>	
-    	</div>
-    	
-    	</div>
-   	<div class="job-box">
-   	<h3>Job details</h3>
-   	<div class="wrapper">
-   	   	<div class="column-left">
-	   		<div class="field_container">
-			<label>Title: </label>
-			<input type="text" bind="extJobTitle" class="job-title"/>
+	    <div class="job-box">
+		    <div class="wrapper">
+				<div class="column-left">
+					<h2>Existing jobs</h2>
+					<div class="field-container">Select existing job:
+	    				<div id="job-list" bind="jobList">
+	    					<select id="all-jobs" bind="allJobsList"></select>
+	    				</div>
+	    			</div>
+	    		</div>
+	    		<div class="column-right" id="copy-job-options">
+	    			<h3>Copy job with units:</h3>
+			    	<div class="field-container">
+					  	<input type="radio" name="units" value="none" bind="copyJob" checked="true"><span style="color:#7E2217; font-weight:bold; ">none</span> </input>
+					  	<input type="radio" name="units" value="all_units" bind="copyJobGoldUnits"> <span style="color:#4AA02C; font-weight: bold;">all</span></input>
+					  	<input type="radio" name="units" value="gold" bind="copyJobGoldUnits"> <span style="color:#EAC117; font-weight: bold;">gold</span> only </input>
+					&nbsp; &nbsp;<input class="btn btn-primary" type="button" value="Copy into new job" bind="copyJobButton"/>
+					</div>
+	    		</div>	
+	    	</div>
+	    </div><!-- .job-box -->
+	   	<div class="job-box">
+	   		<h3>Job details</h3>
+		   	<div class="wrapper">
+		   	   	<div class="column-left">
+			   		<div class="field-container">
+					<label>Title: </label>
+					<input type="text" bind="extJobTitle" class="job-title"/>
+					</div>
+					<div class="field-container">
+					<label>Instructions: </label>
+					<textarea bind="extJobInstructions" class="job-instructions"></textarea>
+					</div>
+			   	</div>
+			   	<div class="column-right">
+			   		<div class="field-container">
+			   		<label>Units: </label>
+			   		<span bind="extUnitsCount" id="units-count"></span><br/>
+			   		</div>
+				</div>
 			</div>
-			<div class="field_container">
-			<label>Instructions: </label>
-			<textarea bind="extJobInstructions" class="job-instructions"></textarea>
-			</div>
-	   	</div>
-	   	<div class="column-right">
-	   		<div class="field_container">
-	   		<label>Units: </label>
-	   		<span bind="extUnitsCount" id="units-count"></span><br/>
-	   		</div>
-		</div>
-		</div>
-	</div>
-	<div class="job-box">
-		<div id="existing-fields-panel" bind="extFieldsPanel">
-    
-    		<h3>Map existing CrowdFlower fields to column names</h3>    	
-    		<div bind="extJobFields"></div>
-    	</div>
-    	<div id="existing-columns-panel" bind="extColumnsPanel">
-    	<h3>Select columns to upload</h3>    		
-    	<div bind="extColumns" id="existing-columns">
-    		<div bind="columnsMenu_1" id="columns-menu-1"></div>
-			<div bind="columnList_1" id="project-columns-1" class="project-columns"></div>    	
-    	</div>
-    </div>
-  	</div>
-  </div>  		     
-    </div>
-   </div>
-  </div>
-   </div> 
+		</div> <!-- .job-box -->
+		<div class="job-box" bind="extFieldsPanel" id="existing-fields-panel">
+	    		<h3>Map existing CrowdFlower fields to column names</h3>    	
+	    		<div bind="extJobFields" class="project-columns"></div>
+	    	<div id="existing-columns-panel" bind="extColumnsPanel">
+		    	<h3>Select columns to upload</h3>    		
+		    	<div bind="extColumns" id="existing-columns">
+		    		<div bind="columnsMenu_1" id="columns-menu-1"></div>
+					<div bind="columnList_1" id="project-columns-1" class="project-columns"></div>    	
+		    	</div>
+	    	</div>
+	  	</div> <!-- .job-box -->
+  </div><!-- .existing-job-tab -->  		     
+    </div> <!-- ./panels-area -->
+    </div><!-- ./job-tabs -->
+   </div><!-- ./grid-layout -->
+   </div> <!--  -->
   <div class="dialog-footer" bind="dialogFooter">
     <div id="status-message" bind="statusMessage">
     Status: 

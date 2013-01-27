@@ -50,11 +50,12 @@ ZemantaCrowdSourcingExtension.util.loadAllExistingJobs = function(getJobs) {
   		  {
   			  if(data != null) {
   	  			  console.log("Status: " + data.status);
+  	  			  
   	  			  if(data.status != "ERROR") {
   	  				  getJobs(data['jobs'],data.status);
   	  			  } else{
   	  				  console.log(JSON.stringify(data));
-  	  				  alert("Error occured while loading existing jobs. Error: " + data['message']);  
+  	  				  alert("Error occured while loading existing jobs. Error: " + data.message);  
   	  				  getJobs([], data.message);
   	  			  }
   			  }

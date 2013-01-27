@@ -51,8 +51,7 @@ public class CopyJobCommand extends Command{
             } 
             else {
             
-                System.out.println("Job copied, updating list.");
-                //TODO: pause a little?
+                logger.info("Job copied, updating list.");
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
@@ -67,9 +66,7 @@ public class CopyJobCommand extends Command{
                 } 
                 else {
                 
-                    //TODO: test if there are no jobs?
-                    
-                    System.out.println("Updated jobs: " + obj.getJSONArray("jobs").toString());
+                    logger.info("Job list updated.");
                     
                     if(obj.has("jobs") && !obj.isNull("jobs")) {
                         result.put("jobs", obj.getJSONArray("jobs"));

@@ -81,9 +81,7 @@ public class CreateNewJobCommand extends Command{
                     result.put("message", "No job id specified.");
                 }
             }
-            
-            System.out.println("Result at this point: " + result);
-            
+         
             if(result.has("status")) {
                 generateErrorResponse(response, result);
             }
@@ -105,7 +103,7 @@ public class CreateNewJobCommand extends Command{
                     //job either exist or it is created, time to upload data
                     if(extension.getBoolean("upload")) {
                         
-                        System.out.println("Generating objects for upload....");
+                        logger.info("Generating objects for upload....");
                         StringBuffer data = generateObjectsForUpload(extension, project, engine);             
                         String msg = cf_client.bulkUploadJSONToExistingJob(job.getString("job_id"), data.toString());
                         JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(msg);
@@ -173,7 +171,7 @@ public class CreateNewJobCommand extends Command{
             throws JSONException {
         _cell_indeces = new ArrayList<Integer>();
         
-        //TODO: if it is an existing job with existing data!, get field-column mappings
+        //if it is an existing job with existing data!, get field-column mappings
         
         JSONArray column_names = extension.getJSONArray("column_names"); 
             
@@ -244,7 +242,6 @@ public class CreateNewJobCommand extends Command{
                 
             } 
             
-            System.out.println("Data: " + obj.toString());
            bf.append(obj.toString()); 
             
         }

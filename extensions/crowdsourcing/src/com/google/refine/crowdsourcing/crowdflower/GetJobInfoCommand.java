@@ -2,6 +2,7 @@ package com.google.refine.crowdsourcing.crowdflower;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +50,7 @@ public class GetJobInfoCommand extends Command{
             //copy job, store id
             if(extension.has("job_id") && !extension.isNull("job_id")) {
                 
-                System.out.println("Job id: " + extension.getString("job_id"));        
+                logger.info("Copying job with id: " + extension.getString("job_id"));        
                 result = cf_client.getJob(extension.getString("job_id"));                   
                 JSONObject res = ParsingUtilities.evaluateJsonStringToObject(result);
       
@@ -88,17 +89,18 @@ public class GetJobInfoCommand extends Command{
             writer.key("title"); writer.value(data.get("title"));
             writer.key("instructions"); writer.value(data.get("instructions"));
             writer.key("units_count");writer.value(data.get("units_count"));
- //           String cml = data.getString("cml");
- //           ArrayList<String> fields = new ArrayList<String>();
- //           fields = CrowdsourcingUtil.parseCmlFields(cml);
             
- //           writer.key("cml"); writer.value(cml);
- //           writer.key("fields").array();
+            String cml = data.getString("cml");
+            ArrayList<String> fields = new ArrayList<String>();
+            fields = CrowdsourcingUtil.parseCmlFields(cml);
             
- //           for(int i= 0; i < fields.size(); i++) {
- //               writer.value(fields.get(i));
- //           }
- //           writer.endArray();
+            writer.key("cml"); writer.value(cml);
+            writer.key("fields").array();
+            
+            for(int i= 0; i < fields.size(); i++) {
+                writer.value(fields.get(i));
+            }
+            writer.endArray();
             
         } catch(Exception e){
             logger.error("Generating response failed.");

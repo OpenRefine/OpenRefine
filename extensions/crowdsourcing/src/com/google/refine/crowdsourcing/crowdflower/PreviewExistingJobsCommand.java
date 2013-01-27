@@ -40,15 +40,9 @@ public class PreviewExistingJobsCommand extends Command {
             CrowdFlowerClient cf_client = new CrowdFlowerClient(apiKey, Integer.valueOf(defaultTimeout));
             
             String response_msg = cf_client.getAllJobs();
-            
-            System.out.println("Response msg: \n" + response_msg);
-            
+        
             JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(response_msg);
-            
-            System.out.println("Preview result: " + obj.toString());
-            
-            System.out.println("obj.getString(status): " + obj.getString("status"));
-            
+         
             if(obj.getString("status").equals("ERROR")) {
                 generateErrorResponse(response, obj);
             } else
@@ -104,7 +98,6 @@ public class PreviewExistingJobsCommand extends Command {
         Writer w = response.getWriter();
         JSONWriter writer = new JSONWriter(w);
         
-        System.out.println("Data in error response: " + data);
         try {
             writer.object();
             writer.key("status"); writer.value(data.get("status"));

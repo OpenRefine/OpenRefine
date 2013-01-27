@@ -53,8 +53,14 @@ ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog = function()  {
 	    		  },
 	    		  function(o)
 	    		  {
-	    			  console.log("Status: " + o.status); 
-	    			  alert("Status: " + o.status);
+	    			  console.log("Status: " + o.status);
+	    			  if(o.status==="OK" | o.status=="200") {
+	    				  if(extension.new_job === true) {
+	    					  alert("New job was created successfully.\n You can see it on your CrowdFlower profile."); 
+	    				  } else {  
+	    					  alert("Data was uploaded successfully.\n You can see it on your CrowdFlower profile.");  
+	    				  }
+	    			  }
 	    		  },
 	    		  "json"
 	      );     
@@ -102,18 +108,6 @@ ExtensionBar.addExtensionMenu({
 				    			 "id": "crowdsourcing-ext/create-crowdflower-job",
 				    			 label: "Create new job / upload data",
 				    			 click: ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog
-				    		 },
-				    		 {},
-				    		 {
-				    			 "id": "crowdsourcing-ext/templates",
-				    			 label: "Job templates",
-				    			 "submenu": [
-				    			             {
-				    			            	 "id":"crowdsourcing-ext/templates/freebase",
-				    			            	 "label": "Evaluate Freebase reconciliations",
-				    			            	 click: ZemantaCrowdSourcingExtension.handlers.evaluateFreebaseReconDialog
-				    			             },
-				    			             ]
 				    		 },
 				    		 {},
 				     		 {

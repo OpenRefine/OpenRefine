@@ -54,10 +54,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 .job-title, .job-instructions{
-    width: 300px;
+    width: 280px;
 }
 .job-instructions{
-    height: 50px;
+    height: 100px;
     }
 
 .job-box {
@@ -88,7 +88,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     overflow:auto;
     }
 
-.job_box label {
+.field-container label {
 	width: 150px;
     float:left;
     text-align:left;
@@ -119,9 +119,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #status-message {
 	clear: both;
 	width: 100%;
-	height: 50px;
+	height: 30px;
 	color:#001100;
-	border: 2px solid #000;
+	border: 1px solid #000;
 }
 
 .warning {
@@ -129,7 +129,37 @@ margin-left: 2px;
 color: #696565;
     }
 
-.ui-widget-content a.link-menu {
-	font-size:1.2em;
+.options-menu {
+	height: 30px;
+	margin: 2px;
+	clear:both;
+}
+
+.options-menu ul{
+	margin:0;
+	padding:0;
+}
+.options-menu ul li  {
+	margin:2px;
+	height:20px;
+}
+
+.options-menu li.link-menu a {
+	vertical-align:middle;
+}
+
+.options-menu li.link-menu {
+	width:150px;
+	text-align:center;
+	background-color:@fill_secondary;
+	
+	font-size:1em;
 	font-weight: bold;
+	border:1px solid #cdcdcd;
+	display:block;
+	float:left;
+}
+
+select#all-jobs {
+	width:300px;
 }

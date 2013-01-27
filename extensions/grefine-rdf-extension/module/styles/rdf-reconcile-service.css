@@ -67,10 +67,10 @@ div.dialog-body img.validation {
     margin-left: 0.5em;
 }
 
-div.dialog-body input[type=text], div.dialog-body input[type=password] {
-    width: 300px;
-    margin-left: 1em;
-    padding: 3px;
+div.dialog-body.rdf-schema input[type=text], div.dialog-body input[type=password] {
+    width: 200px;
+    /*margin-left: 1em;
+    padding: 3px;*/
     font-size: 1em;
     font-family: inherit;
     border: #CCC 1px solid;

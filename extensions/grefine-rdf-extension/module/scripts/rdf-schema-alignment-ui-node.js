@@ -55,7 +55,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._renderMain = function() {
     
     var type_html = !this._isExpandable()? '' : '<tr>' +
     	   '<td>' +
-  	      	'<table bind="rdfTypesTable" class="rdfTypesTable">' +
+  	      	'<table width="100%" bind="rdfTypesTable" class="rdfTypesTable">' +
   	      	    '<tr bind="rdfTypesTr"><td bind="rdfTypesTd">&nbsp;</td></tr>' +
   	      		'<tr bind="addRdfTyprTr">' + 
   	      			'<td>' +
@@ -68,7 +68,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._renderMain = function() {
 	       '</td>' +
   	  '</tr>';
     var html = $(
-    	'<table>' +
+    	'<table width="100%">' +
     	  '<tr>' +
     	    '<td bind="nodeLabel">' +
     	    '</td>' +
@@ -81,7 +81,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._renderMain = function() {
     var elmts = DOM.bind(html);
     this._tdNodeLabel = elmts.nodeLabel;
     if(elmts.addRdfTypeLink){
-    	var typesTable = $('<table></table>')[0];
+    	var typesTable = $('<table width="100%"></table>')[0];
     	if(self._node.rdfTypes && self._node.rdfTypes.length>0){
     		var func = function(i){
     			return function(){
@@ -213,7 +213,9 @@ RdfSchemaAlignmentDialog.UINode.prototype._showExpandable = function() {
 RdfSchemaAlignmentDialog.UINode.prototype._renderDetails = function() {
     var self = this;
 
-    this._tableLinks = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._expandedDetailDiv)[0];
+    this._tableLinks = $('<table></table>')
+    	.addClass("schema-alignment-table-layout")
+    	.appendTo(this._expandedDetailDiv)[0];
     
     if ("links" in this._node && this._node.links !== null) {
         for (var i = 0; i < this._node.links.length; i++) {
@@ -257,10 +259,10 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
 	var self = this;
     var frame = DialogSystem.createDialog();
     
-    frame.width("575px");
+    frame.width("610px");
     
     var header = $('<div></div>').addClass("dialog-header").text("RDF Node").appendTo(frame);
-    var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body").appendTo(frame);
+    var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body rdf-schema").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     /*--------------------------------------------------
@@ -288,7 +290,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
                             '<td><div class="rdf-schema-alignment-node-dialog-step rdf-schema-alignment-node-dialog-column-list" bind="divColumns"></div></td>' +
                             '<td>' +
                               '<div class="rdf-schema-alignment-node-dialog-step">' + 
-                                '<table cols="2">' +
+                                '<table width="100%" cols="2">' +
                                     '<tr>' +
                                         '<td><input type="radio" name="rdf-content-radio" value="resource" bind="rdf_content_uri_radio" /></td>' +
                                         '<td>as a URI</td>' +
@@ -339,7 +341,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
                                   'Use custom expression...' + 
                                 '</div>' + 
                                 '<div class="rdf-schema-alignment-node-dialog-step" style="margin-top:3px">' +
-                                	'<table class="grid-layout">' +
+                                	'<table width="100%" class="grid-layout">' +
                                 		'<tr>' +
                                 			'<td><span class="rdf-value-expression" bind="rdf_cell_expr" id="rdf-cell-expr"></span></td>' +
                                 		'</tr>' +
