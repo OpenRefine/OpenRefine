@@ -27,7 +27,7 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/opencsv-2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/opencsv-2.4-SNAPSHOT.jar" sourcepath="main/webapp/WEB-INF/lib-src/opencsv-2.4-SNAPSHOT-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-3.8-20120326.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.8-20120326.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.8-20120326.jar"/>
