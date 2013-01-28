@@ -2,11 +2,11 @@
 
 <!--+
     |
-    |  OpenRefine Build File
+    |  LODRefine Build File
     |
     +-->
     
-<project name="openrefine" default="build" basedir=".">
+<project name="lodrefine" default="build" basedir=".">
 
     <!-- Properties are immutable, so anything set in this file takes priority-->
     <property file="build.properties"/>
@@ -14,8 +14,8 @@
     <property environment="env"/>
 
     <property name="version" value="trunk"/>
-    <property name="revision" value="rXXXX"/>
-    <property name="full_version" value="0.0.0.0"/>
+    <property name="revision" value="r0001"/>
+    <property name="full_version" value="1.0.0.0"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
 
@@ -23,7 +23,7 @@
     <property name="appengine.version" value="1"/>
     <property name="appengine.sdk.dir" value="/opt/appengine"/>
         
-    <property name="fullname" value="openrefine-${version}-${revision}" />
+    <property name="fullname" value="lodrefine-${version}" />
     
     <property name="main.dir" value="${basedir}/main" />
 
@@ -61,7 +61,7 @@
     <property name="built.broker.webapp.dir" value="${build.dir}/broker" />
 
     <property name="mac.dir" value="${build.dir}/mac" />
-    <property name="release.name" value="openrefine-${version}" />
+    <property name="release.name" value="lodrefine-${version}" />
     <property name="windows.dir" value="${build.dir}/windows/${release.name}" />
     <property name="linux.dir" value="${build.dir}/linux/${release.name}" />
     
@@ -130,6 +130,7 @@
         <javac encoding="utf-8" destdir="${webapp.classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${webapp.src.dir}"/>
             <classpath refid="webapp.class.path" />
+        	<compilerarg value="-Xlint"/>
         </javac>
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
     </target>
@@ -227,12 +228,12 @@
         
         <jarbundler 
                 dir="${mac.dir}"
-                name="OpenRefine"
+                name="LODRefine"
                 mainclass="com.google.refine.Refine" 
                 icon="${graphics.dir}/icon/openrefine.icns"
                 version="${version}"
-                infostring="OpenRefine ${version}"
-                aboutmenuname="OpenRefine"
+                infostring="LODRefine ${version}"
+                aboutmenuname="LODRefine"
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
                 jvmversion="1.6+"
                 bundleid="com.google.refine.Refine"
@@ -263,7 +264,7 @@
         <launch4j>
           <config 
                headerType="console" 
-               outfile="${windows.dir}/openrefine.exe" 
+               outfile="${windows.dir}/lodrefine.exe" 
                jarPath="server/lib/${fullname}-server.jar" 
                dontWrapJar="true"
                icon="${graphics.dir}/icon/openrefine.ico">
@@ -276,14 +277,14 @@
             <versionInfo
                 fileVersion="${full_version}"
                 txtFileVersion="${version}"
-                fileDescription="openrefine"
+                fileDescription="lodrefine"
                 copyright="Copyright (c) 2012 OpenRefine contributors, 2010, Google, Inc."
                 productVersion="${full_version}"
                 txtProductVersion="${full_version}"
-                productName="OpenRefine"
+                productName="LODRefine"
                 companyName="OpenRefine team"
-                internalName="openrefine"
-                originalFilename="openrefine.exe" 
+                internalName="lodrefine"
+                originalFilename="lodrefine.exe" 
             />
           </config>
         </launch4j>     
@@ -318,7 +319,7 @@
         <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
         
         <mkdir dir="${dist.dir}"/>
-        <zip destfile="${dist.dir}/openrefine-${version}-${revision}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
+        <zip destfile="${dist.dir}/lodrefine-${version}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
     </target>
     
     <target name="linux" depends="jar, prepare_webapp">
@@ -349,7 +350,7 @@
         <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
         
         <mkdir dir="${dist.dir}"/>
-        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/openrefine-${version}-${revision}.tar.gz">
+        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/lodrefine-${version}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
                <include name="${release.name}/refine"/>
            </tarfileset>        

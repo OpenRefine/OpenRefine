@@ -148,7 +148,7 @@ check_pywin32() {
 check_running() {
     check_downloaders
     URL="http://${REFINE_HOST}:${REFINE_PORT}/"
-    CHECK_STR="<title>OpenRefine</title>"
+    CHECK_STR="<title>LODRefine</title>"
 
     if [ "$CURL" ] ; then
         curl -s -S $URL > /dev/null 2>&1
@@ -471,7 +471,7 @@ dist() {
     echo "with"
     echo 
     echo "    {"
-    echo "        \"description\": \"OpenRefine ${VERSION}\","
+    echo "        \"description\": \"LODRefine ${VERSION}\","
     echo "        \"version\": \"${VERSION}\","
     echo "        \"revision\": \"${REVISION}\""
     echo "    },"
@@ -511,13 +511,13 @@ mac_dist() {
     mkdir -p "$REFINE_BUILD_DIR/mac/.background"
     cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
     
-    SIZE=60
+    SIZE=80
     
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
     fi
     
-    TITLE="OpenRefine $VERSION"
+    TITLE="LODRefine $VERSION"
     echo "Building MacOSX DMG for $TITLE"
     hdiutil create -srcfolder "$REFINE_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$REFINE_BUILD_DIR/temp_refine.dmg" || error "can't create empty DMG"
     DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}'`
@@ -535,9 +535,7 @@ mac_dist() {
             set arrangement of theViewOptions to not arranged
             set icon size of theViewOptions to 100
             set background picture of theViewOptions to file ".background:dmg_background.png"
-            make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
-            set position of item "OpenRefine" of container window to {170, 175}
-            set position of item "Applications" of container window to {380, 175}
+            set position of item "LODRefine" of container window to {170, 175}
             close
             open               
             update without registering applications
@@ -546,17 +544,15 @@ mac_dist() {
          end tell
        end tell
     ' | osascript || error "Error running applescript"
-    
-    sync
     sync
     hdiutil detach $DEVICE
     
-    if [ -f "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" ] ; then
-        rm "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg"
+    if [ -f "$REFINE_DIST_DIR/lodrefine-$VERSION.dmg" ] ; then
+        rm "$REFINE_DIST_DIR/lodrefine-$VERSION.dmg"
     fi
     
-    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
-    hdiutil internet-enable -yes "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
+    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/lodrefine-$VERSION.dmg" || error "Error compressing DMG"
+    hdiutil internet-enable -yes "$REFINE_DIST_DIR/lodrefine-$VERSION.dmg" || error "Error internet-enabling DMG"
     
     rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
 }
@@ -630,7 +626,7 @@ run() {
     check_running
     
     if [ "$RUNNING" ] ; then
-        warn "OpenRefine is already running."
+        warn "LODRefine is already running."
     fi
     
     if [ ! -d $REFINE_CLASSES_DIR ] ; then
@@ -672,7 +668,7 @@ run() {
     #echo "$RUN_CMD"
     #echo ""
   
-    echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo "Starting LODRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
