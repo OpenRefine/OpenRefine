@@ -119,7 +119,15 @@ public class CreateNewJobCommand extends Command{
                             result.put("message", obj.get("message"));
                             generateErrorResponse(response, result);
                         }
+                    }
+                    //no data to upload - just return status ok
+                    else {
+                        logger.info("Just empty job, without data");
+                        result = job;
+                        result.put("status", "OK");
+                        generateResponse(response, result);
                     } 
+
                 }
  
             }

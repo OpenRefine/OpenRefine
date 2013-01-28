@@ -27,7 +27,7 @@
 		  <div class="field-container">
 		  	<label>Entity type:</label>
 			<input id="autocomplete" bind="entityType" type="text"/>
-			<span id="title-warning" class="warning">E.g.: player, athlete, person, movie, TV series</span>
+			<span class="warning">E.g.: player, athlete, person, movie, TV series</span>
 			</div><!-- .field-container -->		
 		  
 		  <div class="field-container">
@@ -37,7 +37,7 @@
     		<option id="freebase" value="freebase">Freebase reconciliation</option>
     		<option id="dbpedia" value="dbpedia" >DBpedia reconciliation</option>
     		</select>
-    		<span id="title-warning" class="warning">Choose one of templates or enter your data in New job details</span>	    		
+    		<span class="warning">Choose one of templates or enter your data in New job details</span>	    		
 		</div><!-- .field-container -->	
 		<div class="controls">
 			<input type="button" value="Load template" bind="buttonLoadTemplate" class="btn btn-danger">
@@ -114,9 +114,11 @@
 				</div>
 			</div>
 		</div> <!-- .job-box -->
-		<div class="job-box" bind="extFieldsPanel" id="existing-fields-panel">
-	    		<h3>Map existing CrowdFlower fields to column names</h3>    	
-	    		<div bind="extJobFields" class="project-columns"></div>
+		<div class="job-box" bind="dataPanel" id="data-panel">
+			<div id="job-fields-panel" bind="extFieldsPanel">
+				<h3>Map existing CrowdFlower fields to column names</h3>    	
+				<div bind="extJobFields" class="project-columns small"></div>
+			</div>
 	    	<div id="existing-columns-panel" bind="extColumnsPanel">
 		    	<h3>Select columns to upload</h3>    		
 		    	<div bind="extColumns" id="existing-columns">

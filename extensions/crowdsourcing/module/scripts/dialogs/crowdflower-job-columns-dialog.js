@@ -21,6 +21,7 @@ function ZemantaCrowdFlowerDialog(onDone) {
   
   var self = this;
   
+  this._elmts.dataPanel.hide();
   this._elmts.columnsPanel.hide();
   
   this._elmts.extFieldsPanel.hide();
@@ -151,11 +152,12 @@ function ZemantaCrowdFlowerDialog(onDone) {
    
   
   this._elmts.jobTitle.blur(function () {
-	  var title = self._elmts.jobTitle.val();	  
-	  if(title.length < 5 || title.length > 255  ) {
-		  $('#title-warning').show();
-	  } else {
+	  var title = self._elmts.jobTitle.val();
+	  console.log("Title length: " + title.length);
+	  if(title.length > 5 && title.length < 255  ) {
 		  $('#title-warning').hide();
+	  } else {
+		  $('#title-warning').show();
 	  }
   });
   
@@ -224,7 +226,7 @@ ZemantaCrowdFlowerDialog.prototype._updateJobList = function(data) {
 	var status = data["status"];
     var dismissBusy = DialogSystem.showBusy();
 
-	console.log("Data: " + JSON.stringify(data));
+	//console.log("Data: " + JSON.stringify(data));
 	
 	selContainer.empty();
 	
@@ -292,7 +294,7 @@ ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
 			this._extension.job_id = $(this).children(":selected").val();
 			this._selectedJob = this._extension.job_id;
 			
-			console.log("Job id changed:" + JSON.stringify(this._extension));
+			//console.log("Job id changed:" + JSON.stringify(this._extension));
 			
 			ZemantaCrowdSourcingExtension.util.getJobInfo(this._extension, function(data){
 				 self._updateJobInfo(data);
@@ -336,14 +338,18 @@ ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
 		
 		self._elmts.extUnitsCount.html(data["units_count"]);
 		
+		self._elmts.dataPanel.show();
+		
 		
 		if(data["fields"]!= null && data["fields"].length > 0) {
 			console.log("Job has fields");
-			self._elmts.extFieldsPanel.show();
 			self._elmts.extColumnsPanel.hide();
+			self._elmts.extFieldsPanel.show();
 			self._fields = data["fields"];
 			self._renderMappings();
 		} else {
+			
+			console.log("Job has no fields, showing columns...");
 			self._elmts.extFieldsPanel.hide();
 			var tabindex = 1;
 			self._renderAllColumns2(self._elmts.columnsMenu_1, self._elmts.columnList_1, tabindex);
