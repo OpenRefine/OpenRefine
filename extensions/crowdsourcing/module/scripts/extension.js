@@ -68,12 +68,12 @@ ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog = function()  {
 	});
 };
 
-ZemantaCrowdSourcingExtension.handlers.evaluateFreebaseReconDialog = function()  {
+ZemantaCrowdSourcingExtension.handlers.evaluateReconDialog = function()  {
 	
-	new ZemantaCFEvaluateFreebaseReconDialog(function(extension) {
+	new ZemantaCFEvaluateReconDialog(function(extension) {
 		
 	      $.post(
-	    		  "command/crowdsourcing/evaluate-freebase-recon-job",
+	    		  "command/crowdsourcing/evaluate-recon-job",
 	    		  { "project" : theProject.id, 
 	    			"extension": JSON.stringify(extension),
 	    			"engine" : JSON.stringify(ui.browsingEngine.getJSON())
@@ -81,7 +81,12 @@ ZemantaCrowdSourcingExtension.handlers.evaluateFreebaseReconDialog = function() 
 	    		  function(o)
 	    		  {
 	    			  console.log("Status: " + o.status); 
-	    			  alert("Status: " + o.status);
+	    			  
+	    			  if(o.status === "OK" | o.status === 200) {
+	    				  alert("Data successfully uploaded. Check your CrowdFlower profile.");
+	    			  } else {
+	    				  alert("Something went wrong while uploading. Error: \n" + o.status);
+	    			  }
 	    		  },
 	    		  "json"
 	      );     
@@ -108,6 +113,18 @@ ExtensionBar.addExtensionMenu({
 				    			 "id": "crowdsourcing-ext/create-crowdflower-job",
 				    			 label: "Create new job / upload data",
 				    			 click: ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog
+				    		 },
+				    		 {},
+				    		 {
+				    			 "id":"crowdsourcing-ext/templates",
+				    			 "label": "Templates",
+				    			 "submenu": [
+				    			             {
+				    			            	 "id": "crowdsourcing-ext/templates/eval-recon-data",
+				    			            	 "label": "Evaluate reconciled data",
+				    			            	 click: ZemantaCrowdSourcingExtension.handlers.evaluateReconDialog	 
+				    			             },
+				    			             ]
 				    		 },
 				    		 {},
 				     		 {

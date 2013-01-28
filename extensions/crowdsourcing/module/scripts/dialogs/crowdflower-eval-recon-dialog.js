@@ -1,30 +1,39 @@
 
-function ZemantaCFEvaluateFreebaseReconDialog(onDone) {
+function ZemantaCFEvaluateReconDialog(onDone) {
   this._onDone = onDone;
   this._extension = {};
   this._mappedFields = [];
   this._fields = [];
   var dismissBusy = DialogSystem.showBusy();
     
-  this._dialog = $(DOM.loadHTML("crowdsourcing", "scripts/dialogs/crowdflower-eval-freebase-recon-dialog.html"));
+  this._dialog = $(DOM.loadHTML("crowdsourcing", "scripts/dialogs/crowdflower-eval-recon-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
-  this._elmts.dialogHeader.text("Evaluate Freebase reconciliation");
+  this._elmts.dialogHeader.text("Evaluate reconciled data");
   
   this._elmts.jobTabs.tabs();
 
   //var tabindex = 0;  
   var self = this;
   
+  self._renderAllExistingJobs();
   self._renderColumns();
    
   this._elmts.okButton.click(function() {
 	  self._extension = {};
       self._extension.content_type = "json";
       self._extension.column_names = [];
+      var template = self._elmts.reconTemplates.children(":selected").val();
+      
+      self._extension.recon_service = template;
+      
+      if(template === "--- no template ---") {
+    	  alert("You have to choose recon template first.");
+    	  DialogSystem.dismissUntil(self._level - 1);
+      }
             
       //add mappings for anchor, link and recon column
       
-      self._extension.job_id = self._elmts.jobID.val();
+      self._extension.job_id =  self._elmts.allJobsList.children(":selected").val();
 
       var tmp = {};
       tmp.name = $('option[name=anchor]:selected').val();
@@ -38,23 +47,15 @@ function ZemantaCFEvaluateFreebaseReconDialog(onDone) {
       self._extension.column_names.push(tmp1);
       console.log("Column names: " + JSON.stringify(self._extension.column_names));
 
-
       var tmp2 = {};
-      tmp2.name = $('option[name=gold1]:selected').val();
-      tmp2.safe_name = 'best_suggestion_gold';
+      tmp2.name = $('option[name=gold2]:selected').val();
+      tmp2.safe_name = 'enter_link_gold';
       self._extension.column_names.push(tmp2);
       console.log("Column names: " + JSON.stringify(self._extension.column_names));
 
-      var tmp3 = {};
-      tmp3.name = $('option[name=gold2]:selected').val();
-      tmp3.safe_name = 'enter_freebase_link_gold';
-      self._extension.column_names.push(tmp3);
-      console.log("Column names: " + JSON.stringify(self._extension.column_names));
-
+      self._extension.recon_column = $('option[name=reconCol]:selected').val();      
+      console.log("Recon column: " + self._extension.recon_column);
       
-
-      self._extension.recon_column = $('input[name=columns]:checked').val();      
-    
       $('#info-fields input:checked').each( function() {
     	  var col = {};
     	  col.name = $(this).attr('value');
@@ -84,7 +85,7 @@ function ZemantaCFEvaluateFreebaseReconDialog(onDone) {
 
 
 
-ZemantaCFEvaluateFreebaseReconDialog.prototype._renderColumns = function() {
+ZemantaCFEvaluateReconDialog.prototype._renderColumns = function() {
 	  
 	var self = this;
 	var columns = theProject.columnModel.columns;
@@ -93,8 +94,8 @@ ZemantaCFEvaluateFreebaseReconDialog.prototype._renderColumns = function() {
 	var anchor = self._elmts.anchorField;
 	var link = self._elmts.linkField;
 	var info = self._elmts.infoField;
-	var gold1 = self._elmts.goldColumn1;
 	var gold2 = self._elmts.goldColumn2;
+	var reconCol = self._elmts.reconColumns;
 	
 	var chkid = 0;
 
@@ -102,16 +103,12 @@ ZemantaCFEvaluateFreebaseReconDialog.prototype._renderColumns = function() {
 		
 		$.each(columns, function(index, value){			
 			if(value.reconConfig != null) {
-				var id = 'chk_' + chkid;
-				$('<input type="radio" name="columns" class="zem-col" value="' + value.name + '" id="' + id + '"/>').appendTo(elem);
-				$('<label for="' + id + '">' + value.name + '</label><br/>').appendTo(elem);
-				chkid++;					
+				reconCol.append($('<option value="' + value.name + '" name="reconCol">'+ value.name + '</option>'));					
 			}
 			
 			anchor.append($('<option value="' + value.name + '" name="anchor">'+ value.name + '</option>'));
 			link.append($('<option value="' + value.name + '" name="link">'+ value.name + '</option>'));
 			info.append($('<input type="checkbox" value="' + value.name + '" >'+ value.name + '</checkbox>'));
-			gold1.append($('<option value="' + value.name + '" name="gold1">'+ value.name + '</option>'));
 			gold2.append($('<option value="' + value.name + '" name="gold2">'+ value.name + '</option>'));
 		});
 	};
@@ -120,8 +117,42 @@ ZemantaCFEvaluateFreebaseReconDialog.prototype._renderColumns = function() {
 
 };
 
+ZemantaCFEvaluateReconDialog.prototype._renderAllExistingJobs = function() {
+	
+	var self = this;
+	var selContainer = self._elmts.allJobsList;
+	var elemStatus = self._elmts.statusMessage;
+	
+	$('<option name="opt_none" value="none">--- select a job --- </option>').appendTo(selContainer);
+	
+	
+	
+	ZemantaCrowdSourcingExtension.util.loadAllExistingJobs(function(data, status) {
+		
+		if(status === "OK" | status === 200) {
+			elemStatus.html("Jobs are loaded.");
+		} else {
+			elemStatus.html("There was an error loading jobs. Error message: <br/>" + status);
+		}
+	
+		$.each(data, function(index, value) {
+			
+			var title = (value.title == null)? "Title not defined" : value.title;
+			var job = $('<option name="opt_' + index + '" value=' + value.id + '>' + title + ' (job id: ' + value.id + ')</option>');
+			selContainer.append(job);
+		});
+		
+		selContainer.change(function() {
+			this._extension = {};
+			this._extension.job_id = $(this).children(":selected").val();
+			this._selectedJob = this._extension.job_id;
+			
+		});
+	});
+};
 
-ZemantaCFEvaluateFreebaseReconDialog.prototype._showColumnsDialog = function(field, mapped_col) {
+
+ZemantaCFEvaluateReconDialog.prototype._showColumnsDialog = function(field, mapped_col) {
 	var self = this;
 	
 	var frame = DialogSystem.createDialog();
@@ -176,7 +207,7 @@ ZemantaCFEvaluateFreebaseReconDialog.prototype._showColumnsDialog = function(fie
 	  });
 };
 
-ZemantaCFEvaluateFreebaseReconDialog.prototype._renderMappings = function() {
+ZemantaCFEvaluateReconDialog.prototype._renderMappings = function() {
 	var self = this;
 	var elm_fields = self._elmts.extJobFields;
 	elm_fields.empty();
@@ -201,7 +232,7 @@ ZemantaCFEvaluateFreebaseReconDialog.prototype._renderMappings = function() {
 
 };
 
-ZemantaCFEvaluateFreebaseReconDialog.prototype._addFCMapping = function(field, old_column, new_column) {
+ZemantaCFEvaluateReconDialog.prototype._addFCMapping = function(field, old_column, new_column) {
 	var self = this;
 	if(old_column === "") {
 		var fc = {};
@@ -218,7 +249,7 @@ ZemantaCFEvaluateFreebaseReconDialog.prototype._addFCMapping = function(field, o
 	}
 };
 
-ZemantaCFEvaluateFreebaseReconDialog.prototype._getMappedColumn = function (field) {
+ZemantaCFEvaluateReconDialog.prototype._getMappedColumn = function (field) {
 	
 	var self = this;
 	var column = "";

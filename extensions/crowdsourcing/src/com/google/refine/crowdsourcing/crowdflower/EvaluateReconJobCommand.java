@@ -33,10 +33,11 @@ import org.slf4j.LoggerFactory;
 
 import com.zemanta.crowdflower.client.CrowdFlowerClient;
 
-public class EvaluateFreebaseReconJobCommand extends Command{
+public class EvaluateReconJobCommand extends Command{
     static final Logger logger = LoggerFactory.getLogger("crowdflower_evaluatefreebaserecon");
     protected List<Integer> _cell_indeces;
     protected String FREEBASE_VIEW_URL = "http://www.freebase.com/view";
+    protected String reconService = "freebase"; //default
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -179,21 +180,33 @@ public class EvaluateFreebaseReconJobCommand extends Command{
         //recon information
         Column recon_col = project.columnModel.getColumnByName(recon_col_name);
         int recon_cell_index = recon_col.getCellIndex();
-        
+        int gold_index = -1;
         
         for(Iterator<Integer> it = rows_indeces.iterator(); it.hasNext();) {
             int row_index = it.next();
             
             JSONObject obj =  new JSONObject();
-            for (int c=0; c < column_names.length(); c++) {
+            for (int c = 0; c < column_names.length(); c++) {
                 int cell_index = _cell_indeces.get(c);
                 
-                //TODO: if job already has data, can we use safe_name to pass field?
                 String key = column_names.getJSONObject(c).getString("safe_name");
                 Object value = project.rows.get(row_index).getCellValue(cell_index);
                 
                 if(value != null) {
-                    obj.put(key, value.toString());
+                    
+                    //check if column is enter_link_gold - >generate value for best_suggestion
+                    if(key.equals("enter_link_golden")) {
+                        gold_index = cell_index;
+                        
+                    } 
+                    
+                    if(reconService.equals("freebase") && key.equals("enter_link_golden")) {
+                        obj.put(key, FREEBASE_VIEW_URL + value.toString());
+                    }
+                    else {
+                        obj.put(key, value.toString());
+                    }
+                
                 } else {
                     obj.put(key, "");
                 }
@@ -205,24 +218,38 @@ public class EvaluateFreebaseReconJobCommand extends Command{
             List<ReconCandidate> candidates =  recon_cell.recon.candidates;
             ReconCandidate rc = null;
             
+            //generate gold data from column with links
+            //if link == candidates(i), gold1 = suggestion_i
+            
             if((candidates != null) && candidates.size() > 0) {
+               
+                String gold_value = (gold_index != -1) ? 
+                            (String)project.rows.get(row_index).getCellValue(gold_index) : ""; 
+                
+                
                 for(int i=1; i <= candidates.size(); i++) {
                     rc = candidates.get(i-1);
                     obj.put("suggestion_name_" + i, rc.name);
-                    obj.put("suggestion_url_" + i, FREEBASE_VIEW_URL + rc.id);    
+                    if(reconService.equals("freebase")) {
+                        obj.put("suggestion_url_" + i, FREEBASE_VIEW_URL + rc.id); 
+                    } else {
+                        obj.put("suggestion_url_" + i, rc.id);
+                    }
+                
+                    //compare cell value of golden link with candidates to generate
+                    //correct answer for form
+                    if(!gold_value.equals("")) {
+                        if(gold_value.equals(rc.id)) {
+                            obj.put("best_suggestion_golden", "Suggestion " + i);
+                        }
+                    }    
                 }
             }
-
-                       
             System.out.println("Data: " + obj.toString());
-           bf.append(obj.toString()); 
+            bf.append(obj.toString()); 
             
         }
         return bf;
     }
 
-
-   
-
-    
 }

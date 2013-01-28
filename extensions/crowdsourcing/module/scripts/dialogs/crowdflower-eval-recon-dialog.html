@@ -1,0 +1,103 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <div class="grid-layout layout-normal layout-full" style="height:400px;overflow:auto">
+  
+    <div class="refine-tabs" bind="jobTabs" id="jobTabs">
+    <ul>
+    	<li><a href="#tab2">Reconciled data</a></li>
+    </ul>
+    <div class="panels-area">
+   
+    <div id="tab2">
+    <h2>Upload data to job from reconciliation template</h2>
+	 	<div class="job-box">
+	 	<h3>Select job and reconciliation template </h3>
+	 	<div class="panel">
+			<div class="field-container">
+			<label>Select existing job:</label>
+				<div id="job-list" bind="jobList">
+					<select id="all-jobs" bind="allJobsList"></select>
+				</div>
+			</div><!-- ./field-container -->
+			<div class="field-container">
+			  <label>Select recon. template:</label>
+	    		<select id="recon-templates" bind="reconTemplates">
+	    		<option id="blank" value="blank">--- no template ---</option>
+	    		<option id="freebase" value="freebase">Freebase reconciliation</option>
+	    		<option id="dbpedia" value="dbpedia" >DBpedia reconciliation</option>
+	    		</select>
+	    		<span class="warning">Choose the service with which you reconciled data</span>	    		
+			</div><!-- ./field-container -->
+		</div>
+		</div>
+		
+		<div class="job-box">
+		<h3>Map columns to fields: </h3>
+			<div class="field-container">
+				<label>Entity name (alias): </label>
+				<select name="anchor" bind="anchorField"></select>
+			</div><!-- ./field-container -->			
+			<div class="field-container">
+			<label>Entity URL: </label>
+			<select name="link" bind="linkField"></select>
+			</div><!-- ./field-container -->
+	 	</div><!-- ./job-box -->
+
+	 	<div class="job-box">
+	 	<h3>Reconciled columns</h3>
+		 	<div class="field-container">
+					<label>Select column: </label>
+		 		<select id="project-columns-0" bind="reconColumns" ></select>
+			</div>
+		</div>
+	<div class="job-box">
+	<h2>Options</h2>
+		<div class="wrapper">
+			<div class="column-left">
+				<div class="field-container">
+				<label>Upload gold data? </label>
+				<input type="checkbox" bind="uploadGold"><br/>
+				<span class="warning">Select column with gold data for entity link</span>
+				</div><!-- ./field-container -->
+			<br/>
+				<div id="goldDataPanel">
+				<div class="field-container">
+					<label>Provided entity URL</label>
+					<select id="gold-column2" bind="goldColumn2"></select><br/>
+					<p class="text-info"><i class="icon-info-sign"></i> 
+					Column containing provided entity URL considered as correct answer.</p>
+				</div>
+				</div><!-- ./panel -->
+		
+			</div><!-- ./column-left -->
+			<div class="column-right">
+			<div class="field-container">
+				<label>Additional columns?</label>
+				<input type="checkbox" bind="uploadInfoColumns"><br/>
+				<span class="warning">Add more columns to upload. May Require template update.</span>
+			</div>
+			<br/>
+			<div id="infoFieldPanel" class="panel">
+				<label>Select columns:</label>
+				<div id="info-fields" bind="infoField" class="project-columns tiny">
+				</div>
+	    	</div>
+			</div>
+		</div><!-- ./wrapper -->		 	
+		
+ 		</div><!-- ./job-box -->
+ 	</div> <!-- ./tab2 -->   
+    </div><!-- ./panels-area -->
+  	</div><!-- ./tabs -->
+  </div><!-- ./grid -->  		     
+    </div><!-- ./dialog-bodyr -->
+  <div class="dialog-footer" bind="dialogFooter">
+    <div id="status-message" bind="statusMessage">
+    Status: 
+    </div>
+    
+    <button class="btn btn-success" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+    <button class="btn" bind="cancelButton">Cancel</button>
+  </div>
+</div>
