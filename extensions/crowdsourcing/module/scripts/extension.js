@@ -56,9 +56,9 @@ ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog = function()  {
 	    			  console.log("Status: " + o.status);
 	    			  if(o.status==="OK" | o.status=="200") {
 	    				  if(extension.new_job === true) {
-	    					  alert("New job was created successfully.\n You can see it on your CrowdFlower profile."); 
+	    					  alert("New job was created successfully.\n You can see it on your CrowdFlower account."); 
 	    				  } else {  
-	    					  alert("Data was uploaded successfully.\n You can see it on your CrowdFlower profile.");  
+	    					  alert("Data was uploaded successfully.\n You can see it on your CrowdFlower account.");  
 	    				  }
 	    			  }
 	    		  },
@@ -80,12 +80,17 @@ ZemantaCrowdSourcingExtension.handlers.evaluateReconDialog = function()  {
 	    		  },
 	    		  function(o)
 	    		  {
-	    			  console.log("Status: " + o.status); 
-	    			  
-	    			  if(o.status === "OK" | o.status === 200) {
-	    				  alert("Data successfully uploaded. Check your CrowdFlower profile.");
-	    			  } else {
-	    				  alert("Something went wrong while uploading. Error: \n" + o.status);
+	    			  if(o === null) {
+	    				  alert("There is something wrong with your data. It was not uploaded to CrowdFlower Service.");
+	    			  }
+	    			  else {
+		    			  console.log("Status: " + o.status); 
+		    			  
+		    			  if(o.status === "OK" | o.status === 200) {
+		    				  alert("Data successfully uploaded. Check your CrowdFlower account.");
+		    			  } else {
+		    				  alert("Something went wrong while uploading. Error: \n" + o.status);
+		    			  }
 	    			  }
 	    		  },
 	    		  "json"

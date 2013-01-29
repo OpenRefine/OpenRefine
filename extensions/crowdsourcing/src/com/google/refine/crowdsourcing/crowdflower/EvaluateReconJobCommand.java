@@ -193,6 +193,7 @@ public class EvaluateReconJobCommand extends Command{
         int recon_cell_index = recon_col.getCellIndex();
         int gold_index = (golden_col != null)? golden_col.getCellIndex():-1;
         
+        //TODO: what if there are records and not rows!
         for(Iterator<Integer> it = rows_indeces.iterator(); it.hasNext();) {
             int row_index = it.next();
             
@@ -213,7 +214,12 @@ public class EvaluateReconJobCommand extends Command{
             
             //add recon information
             Cell recon_cell = project.rows.get(row_index).getCell(recon_cell_index);
-            List<ReconCandidate> candidates =  recon_cell.recon.candidates;
+            System.out.println("REcon cell index: " + recon_cell_index);
+            
+            List<ReconCandidate> candidates =  null;
+            if((recon_cell != null) && recon_cell.recon!= null)
+                candidates = recon_cell.recon.candidates;
+            
             ReconCandidate rc = null;
             
             //generate gold data from column with links
@@ -264,6 +270,18 @@ public class EvaluateReconJobCommand extends Command{
                     }
 
                 }
+            }
+            else {
+                //if the value was not reconciled, we still have to generate something
+                //especially if this is the first row of values
+                //otherwise these columns will not be included (CF quirk)
+                //todo: get max number of candidates
+                obj.put("suggestion_name_1", "(no suggestion)");
+                obj.put("suggestion_name_2", "(no suggestion)");
+                obj.put("suggestion_name_3", "(no suggestion)");
+                obj.put("suggestion_url_1", "#");
+                obj.put("suggestion_url_2", "#");
+                obj.put("suggestion_url_3", "#");
             }
         
             bf.append(obj.toString()); 
