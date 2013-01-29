@@ -55,28 +55,25 @@
 	<h2>Options</h2>
 		<div class="wrapper">
 			<div class="column-left">
+			<h3>Gold data (correct answers)</h3>
+			<p class="text-info">You can upload correct answers (entity URLs), i.e. gold data by 
+			checking Upload gold data below and selecting column containing gold data.</p>
 				<div class="field-container">
-				<label>Upload gold data? </label>
-				<input type="checkbox" bind="uploadGold"><br/>
-				<span class="warning">Select column with gold data for entity link</span>
+				<label>Upload gold data </label>
+				<input type="checkbox" id="upload-gold" bind="uploadGoldBtn"><br/>
 				</div><!-- ./field-container -->
 			<br/>
-				<div id="goldDataPanel">
+				<div id="gold-data-panel" bind="goldDataPanel">
 				<div class="field-container">
-					<label>Provided entity URL</label>
+					<label>Select column:</label>
 					<select id="gold-column2" bind="goldColumn2"></select><br/>
-					<p class="text-info"><i class="icon-info-sign"></i> 
-					Column containing provided entity URL considered as correct answer.</p>
 				</div>
 				</div><!-- ./panel -->
 		
 			</div><!-- ./column-left -->
-			<div class="column-right">
-			<div class="field-container">
-				<label>Additional columns?</label>
-				<input type="checkbox" bind="uploadInfoColumns"><br/>
-				<span class="warning">Add more columns to upload. May Require template update.</span>
-			</div>
+			<div class="column-right">				
+				<h3>Additional columns for upload</h3>
+				<p class="text-info">May require template update: you have to add field for this column manually.</p>
 			<br/>
 			<div id="infoFieldPanel" class="panel">
 				<label>Select columns:</label>

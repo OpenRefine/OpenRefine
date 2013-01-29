@@ -126,7 +126,13 @@ public class EvaluateReconJobCommand extends Command{
             throws JSONException {
         _cell_indeces = new ArrayList<Integer>();
 
-        String recon_col_name = extension.getString("recon_column");        
+        String recon_col_name = extension.getString("recon_column");
+        String golden_col_name = "";
+        
+        if(extension.has("golden_column")) {
+            golden_col_name = extension.getString("golden_column");
+        }
+        
         JSONArray column_names = extension.getJSONArray("column_names");
         
             
@@ -179,8 +185,13 @@ public class EvaluateReconJobCommand extends Command{
         StringBuffer bf = new StringBuffer();
         //recon information
         Column recon_col = project.columnModel.getColumnByName(recon_col_name);
+        Column golden_col = null;
+        
+        if(!golden_col_name.equals("")) {
+            golden_col = project.columnModel.getColumnByName(golden_col_name);
+        }
         int recon_cell_index = recon_col.getCellIndex();
-        int gold_index = -1;
+        int gold_index = (golden_col != null)? golden_col.getCellIndex():-1;
         
         for(Iterator<Integer> it = rows_indeces.iterator(); it.hasNext();) {
             int row_index = it.next();
@@ -193,24 +204,11 @@ public class EvaluateReconJobCommand extends Command{
                 Object value = project.rows.get(row_index).getCellValue(cell_index);
                 
                 if(value != null) {
-                    
-                    //check if column is enter_link_gold - >generate value for best_suggestion
-                    if(key.equals("enter_link_golden")) {
-                        gold_index = cell_index;
-                        
-                    } 
-                    
-                    if(reconService.equals("freebase") && key.equals("enter_link_golden")) {
-                        obj.put(key, FREEBASE_VIEW_URL + value.toString());
-                    }
-                    else {
-                        obj.put(key, value.toString());
-                    }
-                
+
+                   obj.put(key, value.toString());
                 } else {
                     obj.put(key, "");
                 }
-                
             }
             
             //add recon information
@@ -223,8 +221,17 @@ public class EvaluateReconJobCommand extends Command{
             
             if((candidates != null) && candidates.size() > 0) {
                
-                String gold_value = (gold_index != -1) ? 
-                            (String)project.rows.get(row_index).getCellValue(gold_index) : ""; 
+                String gold_value = (gold_index != -1) ? (String)project.rows.get(row_index).getCellValue(gold_index) : ""; 
+
+                boolean candidate_matches = false;
+
+                //both gold columns need to be defined so they get registered as columns
+                //otherwise data is ignored for next rows
+                if((golden_col!= null) && gold_value.equals("")) {
+                    obj.put("best_suggestion_golden", "");
+                    obj.put("enter_link_golden", "");
+                    candidate_matches = true;
+                }            
                 
                 
                 for(int i=1; i <= candidates.size(); i++) {
@@ -238,14 +245,27 @@ public class EvaluateReconJobCommand extends Command{
                 
                     //compare cell value of golden link with candidates to generate
                     //correct answer for form
-                    if(!gold_value.equals("")) {
-                        if(gold_value.equals(rc.id)) {
-                            obj.put("best_suggestion_golden", "Suggestion " + i);
-                        }
-                    }    
+                    if((golden_col !=null) && (!candidate_matches) && (gold_value.equals(rc.id))) {
+                        obj.put("best_suggestion_golden", "Suggestion " + i);
+                        //no need for link, because we already have the right answer provided
+                        obj.put("enter_link_golden", "");
+                        candidate_matches = true;
+                    } 
+                    
+                }
+                if((golden_col !=null) && (!candidate_matches)) {
+                    obj.put("best_suggestion_golden", "None of the above");
+                    
+                    if(reconService.equals("freebase") && !gold_value.contains("www.freebase.com"))
+                    {
+                        obj.put("enter_link_golden", FREEBASE_VIEW_URL + gold_value);
+                    } else {
+                        obj.put("enter_link_golden", gold_value);
+                    }
+
                 }
             }
-            System.out.println("Data: " + obj.toString());
+        
             bf.append(obj.toString()); 
             
         }

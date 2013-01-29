@@ -91,7 +91,6 @@ function ZemantaCrowdFlowerDialog(onDone) {
 	    	  uploadData = true;
 	      }
 
-
 	      $('#project-columns-' + tabindex +' input.zem-col:checked').each( function() {
 	    	  var col = {};
 	    	  col.name = $(this).attr('value');
@@ -99,7 +98,6 @@ function ZemantaCrowdFlowerDialog(onDone) {
 	    	  self._extension.column_names.push(col);
 	      });
 	      
-	      console.log("CML: " + self._cml + '\n');
 	      self._extension.cml = self._cml;
 	      
 	      
@@ -537,7 +535,7 @@ ZemantaCrowdFlowerDialog.prototype._updateFieldsFromTemplate = function (entityT
 	
 	if(template === "freebase") {
 		recon = "Freebase";
-		reconSearchUlr = "http://www.freebase.com/view";
+		reconSearchUrl = "http://www.freebase.com/";
 		
 	}
 	else if(template === "dbpedia") {

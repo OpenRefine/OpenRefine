@@ -17,6 +17,7 @@ function ZemantaCFEvaluateReconDialog(onDone) {
   
   self._renderAllExistingJobs();
   self._renderColumns();
+  self._elmts.goldDataPanel.hide();
    
   this._elmts.okButton.click(function() {
 	  self._extension = {};
@@ -39,22 +40,22 @@ function ZemantaCFEvaluateReconDialog(onDone) {
       tmp.name = $('option[name=anchor]:selected').val();
       tmp.safe_name = 'anchor';
       self._extension.column_names.push(tmp);
-      console.log("Column names: " + JSON.stringify(self._extension.column_names));
       
       var tmp1 = {};
       tmp1.name = $('option[name=link]:selected').val();
       tmp1.safe_name = 'link';
       self._extension.column_names.push(tmp1);
-      console.log("Column names: " + JSON.stringify(self._extension.column_names));
-
-      var tmp2 = {};
-      tmp2.name = $('option[name=gold2]:selected').val();
-      tmp2.safe_name = 'enter_link_gold';
-      self._extension.column_names.push(tmp2);
-      console.log("Column names: " + JSON.stringify(self._extension.column_names));
+  
+      if($('#upload-gold').is(':checked')) {
+    	  console.log("Upload checked");
+          self._extension.golden_column = $('option[name=gold2]:selected').val();;
+      } 
+      else {
+    	  console.log("Golden data not included");
+      }
+      
 
       self._extension.recon_column = $('option[name=reconCol]:selected').val();      
-      console.log("Recon column: " + self._extension.recon_column);
       
       $('#info-fields input:checked').each( function() {
     	  var col = {};
@@ -62,26 +63,32 @@ function ZemantaCFEvaluateReconDialog(onDone) {
     	  col.safe_name = ZemantaCrowdSourcingExtension.util.convert2SafeName(col.name);
     	  self._extension.column_names.push(col);
       });
- 
-      console.log(JSON.stringify(self._extension));
-      
+     
 	  DialogSystem.dismissUntil(self._level - 1);
 	  self._onDone(self._extension);
   });
   
+  this._elmts.uploadGoldBtn.change(function () {
+	  var checked = $('#upload-gold').is(':checked');
+	  
+	  if(checked) {
+		  self._elmts.goldDataPanel.show();
+	  }
+	  else {
+		  self._elmts.goldDataPanel.hide();
+	  }
+  });
   
   this._elmts.cancelButton.click(function() {	  
     DialogSystem.dismissUntil(self._level - 1);    
     
   });
-   
-  
+     
   
   dismissBusy();
   this._level = DialogSystem.showDialog(this._dialog);
   
 };
-
 
 
 
@@ -126,7 +133,6 @@ ZemantaCFEvaluateReconDialog.prototype._renderAllExistingJobs = function() {
 	$('<option name="opt_none" value="none">--- select a job --- </option>').appendTo(selContainer);
 	
 	
-	
 	ZemantaCrowdSourcingExtension.util.loadAllExistingJobs(function(data, status) {
 		
 		if(status === "OK" | status === 200) {
@@ -149,116 +155,5 @@ ZemantaCFEvaluateReconDialog.prototype._renderAllExistingJobs = function() {
 			
 		});
 	});
-};
-
-
-ZemantaCFEvaluateReconDialog.prototype._showColumnsDialog = function(field, mapped_col) {
-	var self = this;
-	
-	var frame = DialogSystem.createDialog();
-	  frame.width("500px");
-
-	  $('<div></div>').addClass("dialog-header").text("Add mapping for field: " + field).appendTo(frame);
-	  var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-	  var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-
-	  var columns = theProject.columnModel.columns;
-	  
-	  body.html(
-			  '<div class="grid-layout layout-normal layout-full">' +
-			 '<div id="columns" bind="projColumns" class="project-columns"></div>' +
-			 '</div>'
-	  );
-	  
-	  var bodyElmts = DOM.bind(body);
-	  
-	  console.log("Mapped column: " + mapped_col);
-	  
-	  $.each(columns, function(index, value){
-		
-		  var input = $('<input type="radio" name="columns" class="zem-col" value="' + value.name + '">' + value.name + '</input><br/>').appendTo(bodyElmts.projColumns);					
-		  if(value.name === mapped_col) {
-			  input.attr("checked","true");
-		  }
-
-	  });
-
-	  footer.html(
-			    '<button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-			    '<button class="button" bind="cancelButton">Cancel</button>'
-			  );
-	  var footerElmts = DOM.bind(footer);
-
-	  var level = DialogSystem.showDialog(frame);
-	  
-	  var dismiss = function() {
-	    DialogSystem.dismissUntil(level - 1);
-	  };
-
-	  footerElmts.cancelButton.click(dismiss);
-
-	  footerElmts.okButton.click(function() {
-		  console.log("Column selected:" + $('input[name=columns]:checked').val());
-		  var new_mapped = $('input[name=columns]:checked').val();
-		  self._addFCMapping(field, mapped_col, new_mapped);		  
-		  console.log("Updated mappings: " + JSON.stringify(self._mappedFields));
-		  dismiss();
-		  self._renderMappings();
-	  });
-};
-
-ZemantaCFEvaluateReconDialog.prototype._renderMappings = function() {
-	var self = this;
-	var elm_fields = self._elmts.extJobFields;
-	elm_fields.empty();
-
-	console.log("Rendering mappings...");
-	//TODO: if initial render, there is data from response, otherwise store it somewhere
-	$.each(self._fields, function(index, value) {
-		var link = $('<a title="' + value + '" href="javascript:{}">' + value + '</a>').appendTo(elm_fields);
-		$('<span>&nbsp;&nbsp;=&gt;&nbsp;&nbsp;</span>').appendTo(elm_fields);
-		var mapped_column = self._getMappedColumn(value);
-		console.log("Mapped column: " + mapped_column);
-		var col_name = ((mapped_column === "") ? "(not mapped)": mapped_column);
-		console.log("Getting mapped column: " + col_name);
-
-		$('<span>' + col_name + '</span><br/>').appendTo(elm_fields);
-		
-		link.click (function(){
-			var field = $(this).text();
-			self._showColumnsDialog($(this).text(),self._getMappedColumn(field));
-		});		
-	});	
-
-};
-
-ZemantaCFEvaluateReconDialog.prototype._addFCMapping = function(field, old_column, new_column) {
-	var self = this;
-	if(old_column === "") {
-		var fc = {};
-		fc.field = field;
-		fc.column = new_column;
-		self._mappedFields.push(fc);
-	} else {
-		$.each(self._mappedFields, function(index, value) {
-			if(value.field === field) {
-				value.column = new_column;
-				return;
-			}
-		});
-	}
-};
-
-ZemantaCFEvaluateReconDialog.prototype._getMappedColumn = function (field) {
-	
-	var self = this;
-	var column = "";
-	$.each(self._mappedFields, function(index, value) {
-		if(value.field === field) {
-			column = value.column;
-		}
-	});
-	
-	return column;
 };
 
