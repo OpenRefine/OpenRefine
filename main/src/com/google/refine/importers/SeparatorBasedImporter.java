@@ -99,7 +99,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         final CSVParser parser = new CSVParser(
             sep.toCharArray()[0],//HACK changing string to char - won't work for multi-char separators.
             CSVParser.DEFAULT_QUOTE_CHARACTER,
-            (char) 0, // escape character
+            (char) 127, // we don't want escape processing try DEL as a rare character until we can turn it off
             CSVParser.DEFAULT_STRICT_QUOTES,
             CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
             !processQuotes);
