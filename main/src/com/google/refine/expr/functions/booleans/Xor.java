@@ -36,6 +36,7 @@ import com.google.refine.grel.Function;
 
 public class Xor implements Function {
 
+    /* naive implementation of the XOR operation */
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && 
