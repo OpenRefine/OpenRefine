@@ -87,7 +87,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 		
 		if(classes.size() == 0 && properties.size() == 0) {
 			String message = "Error importing vocabulary at provided URI.";
-			throw new VocabularyImportException(message, new Throwable("No classes and properties have been indexed."));
+			throw new VocabularyImportException(message, new Throwable("No classes or properties have been indexed."));
 		}
 		
 		indexTerms(name, uri, projectId, classes, properties);
@@ -102,7 +102,8 @@ public class VocabularySearcher implements IVocabularySearcher {
 		importer.importVocabulary(name, uri, repository, classes, properties);
 		
 		if(classes.size() == 0 && properties.size() == 0) {
-			String message = "Error importing vocabulary from file. ";
+			String message = "Error importing vocabulary from file. Bad URI or malformed vocabulary file. "; 
+			message +="Try to import with empty URI.";
 			throw new VocabularyImportException(message, new Throwable("Bad URI or vocabulary file."));
 		}
 		else {

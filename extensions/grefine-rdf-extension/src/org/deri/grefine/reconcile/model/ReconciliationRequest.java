@@ -96,7 +96,7 @@ public class ReconciliationRequest {
 		int limit = node.path("limit").isMissingNode()?getDefaultLimit(types.length):node.path("limit").getIntValue();
 		//get type_strict
 		//TODO this is ignored for now
-		String type_strict = node.path("type_strict").getTextValue();
+		//String type_strict = node.path("type_strict").getTextValue();
 		
 		
 		//get context i.e. additional properties
