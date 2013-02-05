@@ -144,7 +144,7 @@ function initializeUI(uiState) {
 }
 
 Refine.setTitle = function(status) {
-  var title = theProject.metadata.name + " - OpenRefine";
+  var title = theProject.metadata.name + " - LODRefine";
   if (status) {
     title = status + " - " + title;
   }

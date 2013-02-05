@@ -535,15 +535,18 @@ mac_dist() {
             set arrangement of theViewOptions to not arranged
             set icon size of theViewOptions to 100
             set background picture of theViewOptions to file ".background:dmg_background.png"
-            set position of item "LODRefine" of container window to {170, 175}
+            make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
+            set position of item "LODRefine" of container window to {270, 175}
+            set position of item "Applications" of container window to {380, 175}
             close
             open               
             update without registering applications
-            delay 2            
+            delay 4            
             eject
          end tell
        end tell
     ' | osascript || error "Error running applescript"
+    sync
     sync
     hdiutil detach $DEVICE
     

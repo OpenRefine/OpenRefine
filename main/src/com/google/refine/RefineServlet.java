@@ -64,7 +64,7 @@ public class RefineServlet extends Butterfly {
     static public String VERSION = "";
     static public String REVISION = "";
     static public String FULL_VERSION = "";
-    static public String FULLNAME = "OpenRefine ";
+    static public String FULLNAME = "LODRefine ";
 
 
     static public final String AGENT_ID = "/en/google_refine"; // TODO: Unused?  Freebase ID
@@ -370,7 +370,7 @@ public class RefineServlet extends Butterfly {
     }
     
     static public void setUserAgent(HttpURLConnection httpConnection) {
-        httpConnection.addRequestProperty("User-Agent", "OpenRefine/" + FULL_VERSION);
+        httpConnection.addRequestProperty("User-Agent", "LODRefine/" + FULL_VERSION);
     }
 
 }

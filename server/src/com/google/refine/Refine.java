@@ -92,7 +92,7 @@ public class Refine {
         // tell macosx to keep the menu associated with the screen and what the app title is
         System.setProperty("apple.laf.useScreenMenuBar", "true");  
         System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode", "false"); 
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "OpenRefine");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "LODRefine");
         
         // tell the signpost library to log
         //System.setProperty("debug","true");

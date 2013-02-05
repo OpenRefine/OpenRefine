@@ -64,7 +64,9 @@
     <property name="release.name" value="lodrefine-${version}" />
     <property name="windows.dir" value="${build.dir}/windows/${release.name}" />
     <property name="linux.dir" value="${build.dir}/linux/${release.name}" />
-    
+    <property name="dist-files.dir" value="${basedir}/dist-files" />
+   
+
     <!-- ================================================================== -->
     
     <path id="server.class.path">
@@ -203,6 +205,10 @@
                 <include name="**/*"/>
                 <exclude name="**/build.xml"/>
                 <exclude name="**/src/**"/>
+                <exclude name="**/test*/**"/>
+                <exclude name="**/tmp*/**"/>
+                <exclude name="**/web page*/**"/>
+                <exclude name="**/website*/**"/>
             </fileset>
         </copy>
         
@@ -213,6 +219,7 @@
 
         <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
             <replacefilter token="../../extensions/" value="extensions"/>
+            <replacefilter token="../../extensions" value="extensions"/>
         </replace>
 
     </target>
@@ -343,11 +350,11 @@
             <fileset dir="${basedir}/licenses">
                 <include name="**"/>
             </fileset>
-        </copy>
-        <copy file="${basedir}/refine.ini" tofile="${linux.dir}/refine.ini"/>
+	</copy>
+        <copy file="${dist-files.dir}/refine.ini" tofile="${linux.dir}/refine.ini"/>
         <copy file="${basedir}/LICENSE.txt" tofile="${linux.dir}/LICENSE.txt"/>
         <copy file="${basedir}/README.txt" tofile="${linux.dir}/README.txt"/>
-        <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
+        <copy file="${dist-files.dir}/refine" tofile="${linux.dir}/refine"/>
         
         <mkdir dir="${dist.dir}"/>
         <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/lodrefine-${version}.tar.gz">
