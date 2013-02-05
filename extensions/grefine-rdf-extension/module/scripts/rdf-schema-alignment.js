@@ -1,48 +1,40 @@
 var RdfSchemaAlignment = {};
 
 function RdfSchemaAlignmentDialog(schema){
-	this._originalSchema = schema || { rootNodes: [] };
-    this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
+	this._init(schema);
+    this._buildBody();
     
-    if (!this._schema.rootNodes.length) {
-        this._schema.rootNodes.push(RdfSchemaAlignment.createNewRootNode());
+    //initialize vocabularyManager
+    this._prefixesManager = new RdfPrefixesManager(this, this._schema.prefixes);   
+    this._replaceBaseUri(RdfSchemaAlignment._defaultNamespace || URL.getHostname()+'/',true);
+
+};
+
+RdfSchemaAlignmentDialog.prototype._init = function(schema) {
+	var self = this;
+	self._originalSchema = schema || { rootNodes: [] };	
+	self._schema = cloneDeep(self._originalSchema); // this is what can be munched on
+    
+    if (!self._schema.rootNodes.length) {
+        self._schema.rootNodes.push(RdfSchemaAlignment.createNewRootNode());
     }
     
 	//this._schema = { rootNodes: [] };
 	//this._schema.rootNodes.push(RdfSchemaAlignment.createNewRootNode());
-	this._nodeUIs = [];
-    this._createDialog();
-
-	RdfSchemaAlignment._defaultNamespace = this._schema.baseUri;
+	self._nodeUIs = [];
 	
-	//initialize vocabularyManager
-    this._prefixesManager = new RdfPrefixesManager(this,this._schema.prefixes);
-    
-    this._replaceBaseUri(RdfSchemaAlignment._defaultNamespace || URL.getHostname()+'/',true);
+	RdfSchemaAlignment._defaultNamespace = self._schema.baseUri;		
 };
 
-RdfSchemaAlignmentDialog.prototype._createDialog = function() {
-    var self = this;
-    var frame = DialogSystem.createDialog();
-    
-    frame.width("800px");
-    
-    var header = $('<div></div>').addClass("dialog-header").text("RDF Schema Alignment").appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
-    this._constructFooter(footer);
-    this._constructBody(body);
-  
-    this._level = DialogSystem.showDialog(frame);
-    
-    this._renderBody(body);
-};
-
-RdfSchemaAlignmentDialog.prototype._constructFooter = function(footer) {
+RdfSchemaAlignmentDialog.prototype._buildBody = function() {
     var self = this;
     
-    $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    var dialog = $(DOM.loadHTML("rdf-extension", "scripts/dialogs/rdf-schema-alignment.html"));
+    self._elmts = DOM.bind(dialog);
+    
+    self._elmts.cancelButton.click(function() { DialogSystem.dismissUntil(self._level - 1);});
+    
+    self._elmts.okButton.click(function () {
     	var schema = self.getJSON();
     	Refine.postProcess(
     	        "rdf-extension",
@@ -57,48 +49,26 @@ RdfSchemaAlignmentDialog.prototype._constructFooter = function(footer) {
                     }
                 }
             );
-    }).appendTo(footer);
+    });
     
-    $('<button></button>').addClass('button').text("Cancel").click(function() {
-        DialogSystem.dismissUntil(self._level - 1);
-    }).appendTo(footer);
+    var body = self._elmts.dialogBody;  
+    self._constructBody(body);
+    self._level = DialogSystem.showDialog(dialog);    
+    this._renderBody(body);
 };
 
+
 RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
-	var self = this;
-    $('<p>' +
-        'The RDF schema alignment skeleton below specifies how the RDF data that will get generated from your grid-shaped data. ' +
-        'The cells in each record of your data will get placed into nodes within the skeleton. Configure the skeleton by specifying which column to substitute into which node.' +
-    '</p>').appendTo(body);
+	var self = this;    
+    self._baseUriSpan = self._elmts.baseUriSpan;
+    self._rdf_schema_prefixes = self._elmts.rdf_schema_prefixes;
+    self._elmts.baseUriSpan.text(RdfSchemaAlignment._defaultNamespace);
     
-    var html = $(
-    	'<p class="base-uri-space"><span class="emphasized">Base URI:</span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>'+
-        '<div id="rdf-schema-alignment-tabs" class="refine-tabs">' +
-            '<ul>' +
-                '<li><a href="#rdf-schema-alignment-tabs-schema">RDF Skeleton</a></li>' +
-                '<li><a href="#rdf-schema-alignment-tabs-preview">RDF Preview</a></li>' +
-            '</ul>' +
-            '<div id="rdf-schema-alignment-tabs-schema">' +
-            	'<div class="rdf-scheme-dialog-subheader"><table><tr><td><span style="display:block;width:150px;">Available Prefixes:</span></td><td><div class="rdf-schema-prefixes" bind="rdf_schema_prefixes"></div></td></tr></table></div>' + 
-                '<div class="schema-alignment-dialog-canvas rdf-schema-alignment-dialog-canvas"></div>' +
-                '<div class="rdf-schema-alignment-body-footer"><a bind="add_another_root_node" href="#">Add another root node</a><a bind="_save_skeleton" href="#" style="float:right">Save</a></div>'  +
-            '</div>' +
-            '<div id="rdf-schema-alignment-tabs-preview" style="display: none;">' +
-                '<div class="rdf-scheme-dialog-subheader">This is a sample <code>Turtle</code> representation of (up-to) the <em>first 10</em> rows</div>' + 
-                '<div class="schema-alignment-dialog-preview" id="rdf-schema-alignment-dialog-preview"></div>' +
-            '</div>' +
-        '</div>'
-    ).appendTo(body);
-    var elmts = DOM.bind(html);
-    this._baseUriSpan = elmts.baseUriSpan;
-    this._rdf_schema_prefixes = elmts.rdf_schema_prefixes;
-    elmts.baseUriSpan.text(RdfSchemaAlignment._defaultNamespace);
-    
-    elmts.editBaseUriLink.click(function(evt){
+    self._elmts.editBaseUriLink.click(function(evt){
     	evt.preventDefault();
     	self._editBaseUri($(evt.target));
     });
-    elmts._save_skeleton.click(function(e){
+    self._elmts._save_skeleton.click(function(e){
     	e.preventDefault();
     	var schema = self.getJSON();
     	Refine.postProcess(
@@ -115,7 +85,7 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
             );
     });
     
-    elmts.add_another_root_node.click(function(e){
+    self._elmts.add_another_root_node.click(function(e){
     	e.preventDefault();
     	var newRootNode = RdfSchemaAlignment.createNewRootNode(false)
     	self._schema.rootNodes.push(newRootNode);
@@ -133,7 +103,7 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
 
 RdfSchemaAlignmentDialog.prototype._previewRdf = function(){
 	var self = this;
-	var schema = this.getJSON();
+	var schema = self.getJSON();
 	self._previewPane.empty().html('<img src="images/large-spinner.gif" title="loading..."/>');
 	$.post(
 	    "command/rdf-extension/preview-rdf?" + $.param({ project: theProject.id }),
@@ -156,24 +126,27 @@ RdfSchemaAlignmentDialog.prototype._renderBody = function(body) {
     		}
     	}
     });
-    $("#rdf-schema-alignment-tabs-preview").css("display", "");
-    $("#rdf-schema-alignment-tabs-vocabulary-manager").css("display", "");
+    //$("#rdf-schema-alignment-tabs-preview").css("display", "");
+    //$("#rdf-schema-alignment-tabs-vocabulary-manager").css("display", "");
 
-    this._canvas = $(".schema-alignment-dialog-canvas");
-    this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").addClass("rdf-schema-alignment-table-layout").appendTo(this._canvas)[0];
+    self._canvas = $(".schema-alignment-dialog-canvas");
+    self._nodeTable = $('<table></table>')
+     .addClass("schema-alignment-table-layout")
+     .addClass("rdf-schema-alignment-table-layout")
+     .appendTo(self._canvas)[0];
     
-    for (var i = 0; i < this._schema.rootNodes.length; i++) {
-        this._nodeUIs.push(new RdfSchemaAlignmentDialog.UINode(
-            this,
-            this._schema.rootNodes[i], 
-            this._nodeTable, 
+    for (var i = 0; i < self._schema.rootNodes.length; i++) {
+        self._nodeUIs.push(new RdfSchemaAlignmentDialog.UINode(
+            self,
+            self._schema.rootNodes[i], 
+            self._nodeTable, 
             {
                 expanded: true,
             }
         ));
     }
     
-    this._previewPane = $("#rdf-schema-alignment-dialog-preview");
+    self._previewPane = $("#rdf-schema-alignment-dialog-preview");
 };
 
 
@@ -181,7 +154,7 @@ RdfSchemaAlignmentDialog.prototype._renderBody = function(body) {
 RdfSchemaAlignment.createNewRootNode = function(withDefaultChildren) {
     rootNode = { nodeType: "cell-as-resource", expression:"value", isRowNumberCell:true};
     var links = [];
-    if(withDefaultChildren===false){
+    if(withDefaultChildren === false){
     	rootNode.links = links;
     	return rootNode;
     }

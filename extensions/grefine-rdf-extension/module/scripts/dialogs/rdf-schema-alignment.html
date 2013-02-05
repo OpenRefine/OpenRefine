@@ -1,0 +1,44 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader">RDF Schema Alignment</div>
+  <div class="dialog-body" bind="dialogBody">
+  <p>
+	The RDF schema alignment skeleton below specifies how the RDF data that will get generated from your grid-shaped data.
+    The cells in each record of your data will get placed into nodes within the skeleton. 
+    Configure the skeleton by specifying which column to substitute into which node.
+    </p>
+  <p class="base-uri-space"><span class="emphasized">Base URI:</span> 
+  	<span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a>
+  </p>
+  <div id="rdf-schema-alignment-tabs" class="refine-tabs">
+            <ul> 
+                <li><a href="#rdf-schema-alignment-tabs-schema">RDF Skeleton</a></li>
+                <li><a href="#rdf-schema-alignment-tabs-preview">RDF Preview</a></li>
+            </ul>
+            <div id="rdf-schema-alignment-tabs-schema"> 
+            	<div class="rdf-scheme-dialog-subheader">
+            	<table>
+            	<tr>
+            		<td><span style="display:block;width:150px;">Available Prefixes:</span></td>
+            		<td><div class="rdf-schema-prefixes" bind="rdf_schema_prefixes"></div></td>
+            	</tr></table></div>  
+                <div class="schema-alignment-dialog-canvas rdf-schema-alignment-dialog-canvas">
+                </div>
+                <div class="rdf-schema-alignment-body-footer">
+                <a bind="add_another_root_node" href="#">Add another root node</a>
+                <a bind="_save_skeleton" href="#" style="float:right">Save</a>
+                </div>
+            </div>
+            <div id="rdf-schema-alignment-tabs-preview" style="display: none;">
+                <div class="rdf-scheme-dialog-subheader">
+                	This is a sample <code>Turtle</code> representation of (up-to) the <em>first 10</em> rows
+                </div> 
+                <div class="schema-alignment-dialog-preview" id="rdf-schema-alignment-dialog-preview">
+                </div>
+            </div><!--./rdf-schema-alignment-tabs-preview-->
+        </div><!-- ./rdf-schema-alignment-tabs -->
+  
+  </div><!-- ./dialog-body -->
+  <div class="dialog-footer" bind="dialogFooter">
+    <button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+    <button class="button" bind="cancelButton">Cancel</button>
+  </div>

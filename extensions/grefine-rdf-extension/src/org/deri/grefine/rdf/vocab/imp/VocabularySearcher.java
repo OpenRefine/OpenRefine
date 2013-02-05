@@ -62,27 +62,34 @@ public class VocabularySearcher implements IVocabularySearcher {
 	private Directory _directory;
 	
 	public VocabularySearcher(File dir) throws IOException {
-                _directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
-                Analyzer a = new SimpleAnalyzer(Version.LUCENE_36);
-                IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36,a);                
+				_directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
+				Analyzer a = new SimpleAnalyzer(Version.LUCENE_36);
+				IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36,a);                
 
-                writer = new IndexWriter(_directory,conf);
-                writer.commit();
-                IndexReader r = IndexReader.open(_directory);
-                searcher = new IndexSearcher(r);
-        }
+				writer = new IndexWriter(_directory,conf);
+				writer.commit();
+				IndexReader r = IndexReader.open(_directory);
+				searcher = new IndexSearcher(r);
+		}
 
 	@Override
-	public void importAndIndexVocabulary(String name, String uri, String fetchUrl,VocabularyImporter importer)throws VocabularyImportException, VocabularyIndexException,PrefixExistException, CorruptIndexException, IOException {
-		importAndIndexVocabulary(name, uri, fetchUrl, GLOBAL_VOCABULARY_PLACE_HOLDER,importer);
+	public void importAndIndexVocabulary(String name, String uri, String fetchUrl, VocabularyImporter importer) 
+			throws VocabularyImportException, VocabularyIndexException,PrefixExistException, CorruptIndexException, IOException {
+		importAndIndexVocabulary(name, uri, fetchUrl, GLOBAL_VOCABULARY_PLACE_HOLDER, importer);
 	}
 
 	@Override
-	public void importAndIndexVocabulary(String name, String uri, String fetchUrl, String projectId,VocabularyImporter importer) throws VocabularyImportException,VocabularyIndexException, PrefixExistException,
+	public void importAndIndexVocabulary(String name, String uri, String fetchUrl, String projectId, VocabularyImporter importer) throws VocabularyImportException,VocabularyIndexException, PrefixExistException,
 			CorruptIndexException, IOException {
 		List<RDFSClass> classes = new ArrayList<RDFSClass>();
 		List<RDFSProperty> properties = new ArrayList<RDFSProperty>();
-		importer.importVocabulary(name, uri, fetchUrl,classes, properties);
+		importer.importVocabulary(name, uri, fetchUrl, classes, properties);
+		
+		if(classes.size() == 0 && properties.size() == 0) {
+			String message = "Error importing vocabulary at provided URI.";
+			throw new VocabularyImportException(message, new Throwable("No classes and properties have been indexed."));
+		}
+		
 		indexTerms(name, uri, projectId, classes, properties);
 	}
 
@@ -93,7 +100,14 @@ public class VocabularySearcher implements IVocabularySearcher {
 		List<RDFSClass> classes = new ArrayList<RDFSClass>();
 		List<RDFSProperty> properties = new ArrayList<RDFSProperty>();
 		importer.importVocabulary(name, uri, repository, classes, properties);
-		indexTerms(name, uri, projectId, classes, properties);
+		
+		if(classes.size() == 0 && properties.size() == 0) {
+			String message = "Error importing vocabulary from file. ";
+			throw new VocabularyImportException(message, new Throwable("Bad URI or vocabulary file."));
+		}
+		else {
+			indexTerms(name, uri, projectId, classes, properties);
+		}
 	}
 
 	@Override
@@ -170,14 +184,11 @@ public class VocabularySearcher implements IVocabularySearcher {
 
 		BooleanQuery termsQuery = new BooleanQuery();
 		BooleanQuery typeQuery = new BooleanQuery();
-		typeQuery
-				.add(new TermQuery(new Term("type", CLASS_TYPE)), Occur.SHOULD);
-		typeQuery.add(new TermQuery(new Term("type", PROPERTY_TYPE)),
-				Occur.SHOULD);
+		typeQuery.add(new TermQuery(new Term("type", CLASS_TYPE)), Occur.SHOULD);
+		typeQuery.add(new TermQuery(new Term("type", PROPERTY_TYPE)), Occur.SHOULD);
 
 		termsQuery.add(typeQuery, Occur.MUST);
-		termsQuery.add(new TermQuery(new Term("projectId", projectId)),
-				Occur.MUST);
+		termsQuery.add(new TermQuery(new Term("projectId", projectId)), Occur.MUST);
 		termsQuery.add(new TermQuery(new Term("prefix", prefix)), Occur.MUST);
 
 		writer.deleteDocuments(termsQuery);
@@ -355,7 +366,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 			Document doc = searcher.doc(docs.scoreDocs[i].doc);
 			//TODO this needs to be changed into a more efficient impl
 			Document newdoc = new Document();
-			Iterator fieldsIter = doc.getFields().iterator();
+			Iterator<Fieldable> fieldsIter = doc.getFields().iterator();
 			while(fieldsIter.hasNext()){
 				newdoc.add((Fieldable)fieldsIter.next());
 			}

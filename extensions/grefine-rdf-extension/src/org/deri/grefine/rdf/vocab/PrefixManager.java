@@ -27,4 +27,12 @@ public class PrefixManager {
 	public String getUri(String prefix){
 		return prefixMap.get(prefix);
 	}
+	
+	public void removePrefix(String prefix) {
+	        
+        if(prefixMap.containsKey(prefix)) {
+                prefixMap.remove(prefix);
+        }
+	}
+	
 }

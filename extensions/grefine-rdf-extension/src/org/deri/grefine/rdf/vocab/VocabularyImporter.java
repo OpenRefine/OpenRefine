@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.deri.any23.Any23;
-import org.deri.any23.extractor.rdf.RDFXMLExtractor;
 import org.deri.any23.http.HTTPClient;
-import org.deri.any23.mime.NaiveMIMETypeDetector;
 import org.deri.any23.source.DocumentSource;
 import org.deri.any23.source.HTTPDocumentSource;
 import org.deri.any23.writer.ReportingTripleHandler;
@@ -30,10 +28,10 @@ public class VocabularyImporter {
 	public void importVocabulary(String name, String uri, String fetchUrl, List<RDFSClass> classes, List<RDFSProperty> properties) throws VocabularyImportException{
 		boolean strictlyRdf = faultyContentNegotiation(uri);
 		Repository repos = getModel(fetchUrl, strictlyRdf);
-		getTerms(repos, name, uri, classes, properties);
+		getTerms(repos, name, uri, classes, properties);		
 	}
 	
-	public void importVocabulary(String name, String uri,Repository repository, List<RDFSClass> classes, List<RDFSProperty> properties) throws VocabularyImportException{
+	public void importVocabulary(String name, String uri, Repository repository, List<RDFSClass> classes, List<RDFSProperty> properties) throws VocabularyImportException{
 		getTerms(repository, name, uri, classes, properties);
 	}
 	
@@ -66,7 +64,7 @@ public class VocabularyImporter {
 			+ "FILTER regex(str(?resource), \"^";
 	private static final String PROPERTIES_QUERY_P2 = "\")}";
 
-	private Repository getModel(String url,boolean strictlyRdf) throws VocabularyImportException {
+	private Repository getModel(String url, boolean strictlyRdf) throws VocabularyImportException {
 		try {
 			Any23 runner;
 			if(strictlyRdf){
@@ -74,7 +72,7 @@ public class VocabularyImporter {
 			}else{
 				runner = new Any23();
 			}
-			runner.setHTTPUserAgent("google-refine-rdf-extension");
+			runner.setHTTPUserAgent("openrefine-rdf-extension");
 			HTTPClient client = runner.getHTTPClient();
 			DocumentSource source = new HTTPDocumentSource(client, url);
 			Repository repository = new SailRepository(
@@ -83,6 +81,7 @@ public class VocabularyImporter {
 			RepositoryConnection con = repository.getConnection();
 			RepositoryWriter w = new RepositoryWriter(con);
 			ReportingTripleHandler reporter = new ReportingTripleHandler(w);
+			
 			runner.extract(source, reporter);
 			
 			return repository;
@@ -97,10 +96,11 @@ public class VocabularyImporter {
 			RepositoryConnection con = repos.getConnection();
 			try {
 
-				TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,CLASSES_QUERY_P1 + uri + CLASSES_QUERY_P2);
+				TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, CLASSES_QUERY_P1 + uri + CLASSES_QUERY_P2);
 				TupleQueryResult res = query.evaluate();
 
 				Set<String> seen = new HashSet<String>();
+				
 				while (res.hasNext()) {
 					BindingSet solution = res.next();
 					String clazzURI = solution.getValue("resource").stringValue();
