@@ -64,7 +64,6 @@
     <property name="release.name" value="lodrefine-${version}" />
     <property name="windows.dir" value="${build.dir}/windows/${release.name}" />
     <property name="linux.dir" value="${build.dir}/linux/${release.name}" />
-    <property name="dist-files.dir" value="${basedir}/dist-files" />
    
 
     <!-- ================================================================== -->
@@ -350,11 +349,9 @@
             <fileset dir="${basedir}/licenses">
                 <include name="**"/>
             </fileset>
-	</copy>
-        <copy file="${dist-files.dir}/refine.ini" tofile="${linux.dir}/refine.ini"/>
+        </copy>
         <copy file="${basedir}/LICENSE.txt" tofile="${linux.dir}/LICENSE.txt"/>
         <copy file="${basedir}/README.txt" tofile="${linux.dir}/README.txt"/>
-        <copy file="${dist-files.dir}/refine" tofile="${linux.dir}/refine"/>
         
         <mkdir dir="${dist.dir}"/>
         <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/lodrefine-${version}.tar.gz">
