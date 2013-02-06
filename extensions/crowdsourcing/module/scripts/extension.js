@@ -12,7 +12,6 @@ ZemantaCrowdSourcingExtension.handlers.storeCrowdFlowerSettings = function() {
 	          },
 	          function(o) {
 	            if (o.code == "error") {
-	            	
 	            	alert(o.message);
 	            }
 	          },
@@ -26,7 +25,6 @@ ZemantaCrowdSourcingExtension.handlers.storeCrowdFlowerSettings = function() {
 		          },
 		          function(o) {
 		            if (o.code == "error") {
-		            	
 		            	alert(o.message);
 		            }
 		          },
@@ -53,13 +51,14 @@ ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog = function()  {
 	    		  },
 	    		  function(o)
 	    		  {
-	    			  console.log("Status: " + o.status);
-	    			  if(o.status==="OK" | o.status=="200") {
+	    			  if(o.status != "ERROR") {
 	    				  if(extension.new_job === true) {
-	    					  alert("New job was created successfully.\n You can see it on your CrowdFlower account."); 
+	    					  alert("New job was created successfully.\nYou can see it on your CrowdFlower account."); 
 	    				  } else {  
-	    					  alert("Data was uploaded successfully.\n You can see it on your CrowdFlower account.");  
+	    					  alert("Data was uploaded successfully.\nYou can see it on your CrowdFlower account.");  
 	    				  }
+	    			  } else {
+	    				  alert("An error occured that prevented creating the job. \n" + o.message);
 	    			  }
 	    		  },
 	    		  "json"
@@ -84,12 +83,10 @@ ZemantaCrowdSourcingExtension.handlers.evaluateReconDialog = function()  {
 	    				  alert("There is something wrong with your data. It was not uploaded to CrowdFlower Service.");
 	    			  }
 	    			  else {
-		    			  console.log("Status: " + o.status); 
-		    			  
-		    			  if(o.status === "OK" | o.status === 200) {
+		    			  if(o.status == "ok" || o.status == 200) {
 		    				  alert("Data successfully uploaded. Check your CrowdFlower account.");
 		    			  } else {
-		    				  alert("Something went wrong while uploading. Error: \n" + o.status);
+		    				  alert("Something went wrong while uploading. \n" + o.status);
 		    			  }
 	    			  }
 	    		  },
@@ -114,29 +111,29 @@ ExtensionBar.addExtensionMenu({
 	"id": "crowdsourcing-ext",
 	"label": "Crowdsourcing",
 	"submenu": [
-				    		 {
-				    			 "id": "crowdsourcing-ext/create-crowdflower-job",
-				    			 label: "Create new job / upload data",
-				    			 click: ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog
-				    		 },
-				    		 {},
-				    		 {
-				    			 "id":"crowdsourcing-ext/templates",
-				    			 "label": "Templates",
-				    			 "submenu": [
-				    			             {
-				    			            	 "id": "crowdsourcing-ext/templates/eval-recon-data",
-				    			            	 "label": "Evaluate reconciled data",
-				    			            	 click: ZemantaCrowdSourcingExtension.handlers.evaluateReconDialog	 
-				    			             },
-				    			             ]
-				    		 },
-				    		 {},
-				     		 {
-				    			 "id": "crowdsourcing-ext/settings",
-				    			 "label": "CrowdFlower settings",
-				    			  click: ZemantaCrowdSourcingExtension.handlers.storeCrowdFlowerSettings
-				    		 }
-			              ]
+	    		 {
+	    			 "id": "crowdsourcing-ext/create-crowdflower-job",
+	    			 label: "Create new job / upload data",
+	    			 click: ZemantaCrowdSourcingExtension.handlers.openJobSettingsDialog
+	    		 },
+	    		 {},
+	    		 {
+	    			 "id":"crowdsourcing-ext/templates",
+	    			 "label": "Templates",
+	    			 "submenu": [
+	    			             {
+	    			            	 "id": "crowdsourcing-ext/templates/eval-recon-data",
+	    			            	 "label": "Evaluate reconciled data",
+	    			            	 click: ZemantaCrowdSourcingExtension.handlers.evaluateReconDialog	 
+	    			             },
+	    			             ]
+	    		 },
+	    		 {},
+	     		 {
+	    			 "id": "crowdsourcing-ext/settings",
+	    			 "label": "CrowdFlower settings",
+	    			  click: ZemantaCrowdSourcingExtension.handlers.storeCrowdFlowerSettings
+	    		 }
+              ]
 		 });
 

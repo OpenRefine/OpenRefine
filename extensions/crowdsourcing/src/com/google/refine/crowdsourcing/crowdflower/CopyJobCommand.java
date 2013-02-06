@@ -29,8 +29,7 @@ public class CopyJobCommand extends Command{
             throws ServletException, IOException {
         
         try {
-            
-            
+           
             String jsonString = request.getParameter("extension");
                         
             JSONObject extension = ParsingUtilities.evaluateJsonStringToObject(jsonString);
@@ -46,17 +45,17 @@ public class CopyJobCommand extends Command{
             
             result = copyJobAndReturnID(extension, cf_client);
             
-            if(result.has("status") && !result.isNull("status") && result.getString("status").equals("ERROR")) {
+            if(result.has("status") && !result.isNull("status") 
+                    && result.getString("status").equals("ERROR")) {
                 generateErrorResponse(response, result);
             } 
             else {
             
-                logger.info("Job copied, updating list.");
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    logger.info("Sleeping interrupted");
                 }
                 JSONObject obj = getUpdatedJobList(cf_client);
                 
@@ -78,8 +77,9 @@ public class CopyJobCommand extends Command{
             }
  
             
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            //e.printStackTrace();
+            respondException(response, e);
         } 
         
     }
@@ -140,7 +140,6 @@ public class CopyJobCommand extends Command{
             }
             else {
                 JSONObject res = obj.getJSONObject("response"); 
-                
                 if(res.has("id") && !res.isNull("id")) {
                     result.put("job_id",res.getString("id"));
                 }
@@ -149,15 +148,12 @@ public class CopyJobCommand extends Command{
                 }
             }
             
-        } else {
-            
+        } else {            
             result.put("status", "ERROR");
             result.put("message", "Cannot obtain job id: no job was selected.");
         }
         
-        
         return result;
-        
     }
     
     private void generateResponse(HttpServletResponse response, JSONObject data)

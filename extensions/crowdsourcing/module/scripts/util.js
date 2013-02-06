@@ -3,8 +3,7 @@ ZemantaCrowdSourcingExtension.util.loadCrowdFlowerApiKeyFromSettings = function(
 		      "/command/core/get-all-preferences",
 		      {},
 		      function (data) {
-		    	  console.log("All CF settings: " + data.stringify());
-		    	if (data!=null && data["crowdflower.apikey"]!=null) {
+		    	if (data != null && data["crowdflower.apikey"] != null) {
 
 		    		getApiKey(data["crowdflower.apikey"]);
 		    	}
@@ -19,12 +18,10 @@ ZemantaCrowdSourcingExtension.util.loadCrowdFlowerApiKeyFromSettings = function(
 
 ZemantaCrowdSourcingExtension.util.convert2SafeName = function(columnName) {
 
-	//console.log("Column name:" + columnName);
 	var patt = /(\s)+/ig;
 	var rep = '_';
 	var safeName = columnName.toLowerCase();
 	safeName = safeName.replace(patt, rep);
-	console.log("Safe name: " + safeName);
 	return safeName;
 	
 };
@@ -34,7 +31,6 @@ ZemantaCrowdSourcingExtension.util.generateCML = function(tabindex) {
 	var cml = '';
     $('#project-columns-'+ tabindex + ' input.zem-col:checked').each( function() {
     	cml += '{{' + ZemantaExtension.util.convert2SafeName($(this).attr('value')) + '}}' + '<br/>';
-    	console.log("CML: " + cml);
     });
     
 	return cml;
@@ -48,14 +44,11 @@ ZemantaCrowdSourcingExtension.util.loadAllExistingJobs = function(getJobs) {
   		  },
   		  function(data)
   		  {
-  			  if(data != null) {
-  	  			  console.log("Status: " + data.status);
-  	  			  
+  			  if(data != null) {  	  			  
   	  			  if(data.status != "ERROR") {
   	  				  getJobs(data['jobs'],data.status);
   	  			  } else{
-  	  				  console.log(JSON.stringify(data));
-  	  				  alert("Error occured while loading existing jobs. Error: " + data.message);  
+  	  				  alert("An error occured while loading existing jobs.\n" + data.message);  
   	  				  getJobs([], data.message);
   	  			  }
   			  }
@@ -72,14 +65,11 @@ ZemantaCrowdSourcingExtension.util.copyJob = function(extension, updateJobs) {
   		  {"extension": JSON.stringify(extension)},
   		  function(data)
   		  {
-  			  console.log("Data returned: " + JSON.stringify(data));
-  			  
-  			  if(data != null) {
-  	  			  console.log("Status: " + data.status);
-  	  			  updateJobs(data);
+  			  if(data != null && data.status != "ERROR") {
+   	  			  updateJobs(data);
   			  } 
   			  else {
-  				  alert("Could not refresh list of jobs.");
+  				  alert("Could not refresh the job list.\n" + data.message);
   			  }
   		  },
   		  "json"
@@ -94,13 +84,10 @@ ZemantaCrowdSourcingExtension.util.getJobInfo = function(extension, updateJobInf
   		  {"extension": JSON.stringify(extension)},
   		  function(data)
   		  {
-  			  console.log("Data returned: " + JSON.stringify(data));
-  			  
-  			  if(data != null) {
-  	  			  console.log("Status: " + data.status);
+  			  if(data != null && data.status != "ERROR") {
   	  			  updateJobInfo(data);
   			  } else {
-  				alert("Error occured while updating job information.");  
+  				alert("Error occured while updating job information.\n" + data.message);
   			  }
   		  },
   		  "json"

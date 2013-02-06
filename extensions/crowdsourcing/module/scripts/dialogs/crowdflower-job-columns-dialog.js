@@ -85,7 +85,6 @@ function ZemantaCrowdFlowerDialog(onDone) {
 
 	  if(tabindex === 0) {
 		  self._extension.new_job = true;  
-		  console.log("Creating new job...");
 		  
 	      if(self._elmts.chkUploadToNewJob.is(':checked')) {
 	    	  uploadData = true;
@@ -105,10 +104,8 @@ function ZemantaCrowdFlowerDialog(onDone) {
 	  } else {
 		  self._extension.new_job = false;
 		  self._extension.job_id =  self._elmts.allJobsList.children(":selected").val();
-		  console.log("Uploading to existing job...: " + self._extension.job_id);
 		  
 		  if(self._mappedFields.length > 0) {
-			  console.log("Mapped fields? Is this for templates?");
 			  $.each(self._mappedFields, function(index, value) {
 				  var col = {};
 		    	  col.name = value.column;
@@ -116,7 +113,6 @@ function ZemantaCrowdFlowerDialog(onDone) {
 		    	  self._extension.column_names.push(col);
 			  });
 		  } else {
-			  console.log("Adding other columns");
 			  $('#project-columns-' + tabindex +' input.zem-col:checked').each( function() {
 		    	  var col = {};
 		    	  col.name = $(this).attr('value');
@@ -132,8 +128,7 @@ function ZemantaCrowdFlowerDialog(onDone) {
       
 	  if(uploadData){	  	  
     	  self._extension.upload = true;
-    	  console.log("Columns: " + JSON.stringify(self._extension.column_names));
-	  } else {
+      } else {
     	  console.log("No data will be uploaded...");
     	  self._extension.upload = false;
 	  }
@@ -151,7 +146,6 @@ function ZemantaCrowdFlowerDialog(onDone) {
   
   this._elmts.jobTitle.blur(function () {
 	  var title = self._elmts.jobTitle.val();
-	  console.log("Title length: " + title.length);
 	  if(title.length > 5 && title.length < 255  ) {
 		  $('#title-warning').hide();
 	  } else {
@@ -193,7 +187,6 @@ ZemantaCrowdFlowerDialog.prototype._copyAndUpdateJob = function(jobid) {
 	
 	//add gold or all units
 	var option = $('input[name=units]:checked').val();
-	console.log("Copy option: " + option);
 	
 	if(option == "all_units") {
 		self._extension.all_units = true;
@@ -202,8 +195,7 @@ ZemantaCrowdFlowerDialog.prototype._copyAndUpdateJob = function(jobid) {
 	}
 	
 	ZemantaCrowdSourcingExtension.util.copyJob(self._extension, function(data){
-	  console.log("Copy results: " + JSON.stringify(data));
-	  if(data[status] === "ERROR") {
+	  if(data[status] == "ERROR") {
 		  alert("There was an error either during copying or updating list.");
 		  self._elmts.statusMessage.html("There was an error either during copying or updating list.");
 	  } else {
@@ -223,8 +215,6 @@ ZemantaCrowdFlowerDialog.prototype._updateJobList = function(data) {
 	var selected = "";
 	var status = data["status"];
     var dismissBusy = DialogSystem.showBusy();
-
-	//console.log("Data: " + JSON.stringify(data));
 	
 	selContainer.empty();
 	
@@ -243,8 +233,7 @@ ZemantaCrowdFlowerDialog.prototype._updateJobList = function(data) {
 		
 			for (var index = 0; index < jobs.length; index++) {
 				var value = jobs[index];
-				console.log("Value: " + value);
-				
+
 				if(value.id === data.job_id) {
 					selected = " selected";
 				} else {
@@ -291,9 +280,7 @@ ZemantaCrowdFlowerDialog.prototype._renderAllExistingJobs = function() {
 			this._extension = {};
 			this._extension.job_id = $(this).children(":selected").val();
 			this._selectedJob = this._extension.job_id;
-			
-			//console.log("Job id changed:" + JSON.stringify(this._extension));
-			
+						
 			ZemantaCrowdSourcingExtension.util.getJobInfo(this._extension, function(data){
 				 self._updateJobInfo(data);
 			});
@@ -311,7 +298,6 @@ ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
 	self._fields = [];
 	self._mappedFields = [];
 	
-	console.log("... updating job info");
 	var status = data["status"];
 	
 	if(status === "ERROR") {
@@ -340,14 +326,11 @@ ZemantaCrowdFlowerDialog.prototype._updateJobInfo = function(data) {
 		
 		
 		if(data["fields"]!= null && data["fields"].length > 0) {
-			console.log("Job has fields");
 			self._elmts.extColumnsPanel.hide();
 			self._elmts.extFieldsPanel.show();
 			self._fields = data["fields"];
 			self._renderMappings();
-		} else {
-			
-			console.log("Job has no fields, showing columns...");
+		} else {			
 			self._elmts.extFieldsPanel.hide();
 			var tabindex = 1;
 			self._renderAllColumns2(self._elmts.columnsMenu_1, self._elmts.columnList_1, tabindex);
@@ -416,8 +399,6 @@ ZemantaCrowdFlowerDialog.prototype._showColumnsDialog = function(field, mapped_c
 	  
 	  var bodyElmts = DOM.bind(body);
 	  
-	  console.log("Mapped column: " + mapped_col);
-	  
 	  $.each(columns, function(index, value){
 		
 		  var input = $('<input type="radio" name="columns" class="zem-col" value="' + value.name + '">' + value.name + '</input><br/>').appendTo(bodyElmts.projColumns);					
@@ -442,10 +423,8 @@ ZemantaCrowdFlowerDialog.prototype._showColumnsDialog = function(field, mapped_c
 	  footerElmts.cancelButton.click(dismiss);
 
 	  footerElmts.okButton.click(function() {
-		  console.log("Column selected:" + $('input[name=columns]:checked').val());
 		  var new_mapped = $('input[name=columns]:checked').val();
 		  self._addFCMapping(field, mapped_col, new_mapped);		  
-		  console.log("Updated mappings: " + JSON.stringify(self._mappedFields));
 		  dismiss();
 		  self._renderMappings();
 	  });
@@ -456,15 +435,11 @@ ZemantaCrowdFlowerDialog.prototype._renderMappings = function() {
 	var elm_fields = self._elmts.extJobFields;
 	elm_fields.empty();
 
-	console.log("Rendering mappings...");
-
 	$.each(self._fields, function(index, value) {
 		var link = $('<a title="' + value + '" href="javascript:{}">' + value + '</a>').appendTo(elm_fields);
 		$('<span>&nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;</span>').appendTo(elm_fields);
 		var mapped_column = self._getMappedColumn(value);
-		console.log("Mapped column: " + mapped_column);
 		var col_name = ((mapped_column === "") ? "(click to add column mapping)": mapped_column);
-		console.log("Getting mapped column: " + col_name);
 
 		var link2 = $('<a href="javascript:{}" data-value="' + value + '">' + col_name + '</a><br/>').appendTo(elm_fields);
 		
@@ -518,15 +493,11 @@ ZemantaCrowdFlowerDialog.prototype._updateFieldsFromTemplate = function (entityT
 	var self = this;
 	var title = "";
 	var instructions = "";
-	var cml = "";
 	var recon = "";
 	var reconSearchUrl = "";
 	
 	//get selected template
 	var template = self._elmts.jobTemplates.children(":selected").val();
-	
-	console.log("Entity type: " + entityType);
-	console.log("Template: " + template);
 	
 	if(template === "blank") {
 		alert("Choose template first.");
@@ -577,14 +548,5 @@ ZemantaCrowdFlowerDialog.prototype._updateFieldsFromTemplate = function (entityT
 	
 	self._elmts.jobTitle.val(title);
 	self._elmts.jobInstructions.val(instructions);
-	
-	
-	console.log("Updating fields from template: " + template);
-	console.log("Generated CML\n" + cml);
-
-	//todo: upload cml to created job 
-	
-	
-	
 	
 };

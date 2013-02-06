@@ -132,7 +132,8 @@ public class CreateNewJobCommand extends Command{
  
             }
         } catch(Exception e) {
-            logger.error(e.getLocalizedMessage(),e);
+            logger.error(e.getLocalizedMessage());
+            respondException(response,e);
         }
         
     }
@@ -165,7 +166,7 @@ public class CreateNewJobCommand extends Command{
             writer.key("status"); writer.value(data.get("status"));
             writer.key("message"); writer.value(data.get("message"));    
         } catch(Exception e){
-            logger.error("Generating ERROR response failed.");
+            logger.error("Generating error response failed.");
         }
         finally {
             writer.endObject();
