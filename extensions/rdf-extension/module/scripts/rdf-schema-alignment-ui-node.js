@@ -197,7 +197,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showExpandable = function() {
     };
     show();
     
-    $(this._tdToggle).html("&nbsp;");
+    //$(this._tdToggle).html("&nbsp;");
     $('<img />')
         .attr("src", this._expanded ? "images/expanded.png" : "images/collapsed.png")
         .appendTo(this._tdToggle)

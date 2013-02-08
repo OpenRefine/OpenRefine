@@ -64,6 +64,7 @@ function init() {
   RS.registerCommand(module, "preview-extend-data",   new Packages.com.google.refine.com.zemanta.commands.DBpediaPreviewExtendDataCommand());
 
   RS.registerCommand(module, "extract-entities", new Packages.com.google.refine.com.zemanta.commands.ExtractEntitiesFromTextCommand());
+  RS.registerCommand(module, "preview-extract-entities", new Packages.com.google.refine.com.zemanta.commands.ExtractEntitiesPreviewCommand());
   
   OR.registerOperation(module, "extend-data",Packages.com.google.refine.com.zemanta.operations.DBpediaExtendDataOperation);
   OR.registerOperation(module, "extract-entities",Packages.com.google.refine.com.zemanta.operations.ExtractEntitiesFromTextOperation);
@@ -78,7 +79,7 @@ function init() {
     module,
     [
       "scripts/extension.js",    
-      "scripts/util/zemanta.js",
+      "scripts/util/util.js",
       
       "scripts/dialogs/extend-data-preview-dialog.js",
       "scripts/dialogs/extract-entities-preview-dialog.js",
@@ -96,15 +97,6 @@ function init() {
   );
 }
 
-
-/*
- * Function invoked to handle each request in a custom way.
- */
-function process(path, request, response) {
-  // Analyze path and handle this request yourself.
-  //var method = request.getMethod();
-  
-}
 
 function send(request, response, template, context) {
   butterfly.sendTextFromTemplate(request, response, context, template, encoding, html);

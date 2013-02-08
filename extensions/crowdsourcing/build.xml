@@ -10,7 +10,7 @@
 
     <property environment="env"/>
 
-    <condition property="version" value="trunk">
+    <condition property="version" value="0.7">
         <not><isset property="version"/></not>
     </condition>
 
@@ -18,7 +18,7 @@
         <not><isset property="revision"/></not>
     </condition>
 
-    <condition property="full_version" value="0.0.0.0">
+    <condition property="full_version" value="0.7">
         <not><isset property="full_version"/></not>
     </condition>
 
@@ -26,7 +26,9 @@
         <not><isset property="dist.dir"/></not>
     </condition>
 
-    <property name="fullname" value="${name}-${version}-${revision}" />
+    <property name="name" value="crowdsourcing" />
+    <property name="fullname" value="${name}-${version}" />
+
     
     <property name="refine.dir" value="${basedir}/../../main" />
     <property name="refine.webinf.dir" value="${refine.dir}/webapp/WEB-INF" />
@@ -41,6 +43,7 @@
     <property name="modinf.dir" value="${module.dir}/MOD-INF" />
     <property name="lib.dir" value="${modinf.dir}/lib" />
     <property name="classes.dir" value="${modinf.dir}/classes" />
+    <property name="dist-ext.dir" value="${basedir}/dist" />
 
     <path id="class.path">
         <fileset dir="${lib.dir}" erroronmissingdir="false">
@@ -64,6 +67,22 @@
     </target>
 
     <target name="build" depends="build_java"/>
+
+    <target name="dist" depends="build_java">
+        <mkdir dir="${dist-ext.dir}"/>
+        <mkdir dir="${dist-ext.dir}/${name}"/>
+        <copy todir="${dist-ext.dir}/${name}/module">
+            <fileset dir="${module.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <zip destfile="${dist-ext.dir}/${fullname}.zip" basedir="${dist-ext.dir}/${name}/.." includes="*/**"/>
+    </target>
+
+    <target name="dist-clean">
+        <delete dir="${basedir}/dist" />
+    </target>
+
 
     <target name="clean">
         <delete dir="${classes.dir}" />

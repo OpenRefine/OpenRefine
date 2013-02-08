@@ -37,52 +37,16 @@ ZemantaDBpediaExtension.handlers.doNothing = function() {
 	alert("Zemanta extension active...");
 };
 
-
-ZemantaDBpediaExtension.util.parseZemantaApiKey = function (prefs) {
-	var apiKey = "";
-	if(prefs != null) {
-		$.each(prefs, function(key, val) {
-			if(key === "zemanta.apikey") {
-				apiKey = val;
+ZemantaDBpediaExtension.handlers.storeAllSettings = function() {
+	
+	new ZemantaDBpediaSettingsDialog(function(newApiKey, dbpediaTimeout, zemantaTimeout) 
+			{
+			ZemantaDBpediaExtension.util.saveSetting("zemanta.apikey", newApiKey);
+			ZemantaDBpediaExtension.util.saveSetting("dbpediaService.timeout", dbpediaTimeout);
+			ZemantaDBpediaExtension.util.saveSetting("zemantaService.timeout", zemantaTimeout);
 			}
-		});
-	}
-	return apiKey;
+	);
 };
-
-ZemantaDBpediaExtension.util.loadZemantaApiKeyFromSettings = function(getZemantaApiKey) {
-	$.post(
-		      "/command/core/get-all-preferences",
-		      {},
-		      function (data) {
-		    	  getZemantaApiKey(ZemantaDBpediaExtension.util.parseZemantaApiKey(data));
-		    	  },
-		      "json"
-	 );
-	
-};
-
-ZemantaDBpediaExtension.handlers.storeZemantaAPIKey = function() {
-	
-	new ZemantaDBpediaSettingsDialog(function(newApiKey) {
-		$.post(
-	          "/command/core/set-preference",
-	          {
-	            name : "zemanta.apikey",
-	            value : JSON.stringify(newApiKey)
-	          },
-	          function(o) {
-	            if (o.code == "error") {
-	              alert(o.message);
-	            }
-	          },
-	          "json"
-		);
-	});
-};
-
-
-
 
 
 ZemantaDBpediaExtension.util.getReconId = function(column, visibleRows) {
@@ -129,14 +93,6 @@ ZemantaDBpediaExtension.util.getCellText = function(column, visibleRows) {
     return cellText;
 };
 
-ZemantaDBpediaExtension.util.prepareZemantaData = function(apikey, text) {	
-    return {
-        method: 'zemanta.suggest_markup',
-        format: 'json',
-        api_key: apikey,
-        text: text
-    };
-};
 
 
 ExtensionBar.addExtensionMenu({
@@ -146,7 +102,7 @@ ExtensionBar.addExtensionMenu({
 	 {
 		 "id":"dbpedia-ext/settings",
 		        	 label: "Zemanta API settings",
-		        	 click: ZemantaDBpediaExtension.handlers.storeZemantaAPIKey
+		        	 click: ZemantaDBpediaExtension.handlers.storeAllSettings
 	}
 	]
  });
@@ -169,7 +125,10 @@ ExtensionBar.addExtensionMenu({
   }
   
   if(reconId === null || !isDBpedia) {
-	  alert("Adding columns from DBpedia requires DBpedia-reconciled values in selected column.");
+	  alert("Adding columns from DBpedia requires " +
+			"DBpedia-reconciled values in selected column.\n" + 
+			"Reconcile this column with DBpedia first.");
+	  return;
   }
 
 

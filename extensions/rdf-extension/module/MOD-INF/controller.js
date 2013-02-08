@@ -73,18 +73,20 @@ var rdfReconcileExtension = {
 /*
  * Function invoked to initialize the extension.
  */
+var RS = Packages.com.google.refine.RefineServlet;
+
+
 function init() {
-	var RefineServlet = Packages.com.google.refine.RefineServlet;
-	RefineServlet.registerClassMapping(
+	RS.registerClassMapping(
 	        "org.deri.grefine.operations.SaveRdfSchemaOperation$RdfSchemaChange",
 	        "org.deri.grefine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange");
 	
-	RefineServlet.cacheClass(Packages.org.deri.grefine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange);
+	RS.cacheClass(Packages.org.deri.grefine.rdf.operations.SaveRdfSchemaOperation$RdfSchemaChange);
 	/*
      * Context Initialization. This is mainly to allow testability. a simple attempt to mimic dependency injection
      */
     var initializer = new Packages.org.deri.grefine.rdf.app.InitilizationCommand();
-    RefineServlet.registerCommand(module, "initialize", initializer);
+    RS.registerCommand(module, "initialize", initializer);
     var ctxt = new Packages.org.deri.grefine.rdf.app.ApplicationContext();
     initializer.initRdfExportApplicationContext(ctxt);
     
@@ -122,29 +124,29 @@ function init() {
     /*
      *  Commands
      */
-    RefineServlet.registerCommand(module, "save-rdf-schema", new SaveRdfSchemaCommand(ctxt));
-    RefineServlet.registerCommand(module, "preview-rdf", new PreviewRdfCommand());
-    RefineServlet.registerCommand(module, "save-baseURI", new SaveBaseURICommand(ctxt));
-    RefineServlet.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
+    RS.registerCommand(module, "save-rdf-schema", new SaveRdfSchemaCommand(ctxt));
+    RS.registerCommand(module, "preview-rdf", new PreviewRdfCommand());
+    RS.registerCommand(module, "save-baseURI", new SaveBaseURICommand(ctxt));
+    RS.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
     //Vocabs commands
-    RefineServlet.registerCommand(module, "save-prefixes", new SavePrefixesCommand(ctxt));
-    RefineServlet.registerCommand(module, "get-default-prefixes", new GetDefaultPrefixesCommand(ctxt));
-    RefineServlet.registerCommand(module, "add-prefix", new AddPrefixCommand(ctxt));
-    RefineServlet.registerCommand(module, "remove-prefix", new RemovePrefixCommand(ctxt));
-    RefineServlet.registerCommand(module, "refresh-prefix", new RefreshPrefixCommand(ctxt));
-    RefineServlet.registerCommand(module, "suggest-term", new SuggestTermCommand(ctxt));
-    RefineServlet.registerCommand(module, "get-prefix-cc-uri", new SuggestPrefixUriCommand(ctxt));
-    RefineServlet.registerCommand(module, "upload-file-add-prefix", new AddPrefixFromFileCommand(ctxt));
+    RS.registerCommand(module, "save-prefixes", new SavePrefixesCommand(ctxt));
+    RS.registerCommand(module, "get-default-prefixes", new GetDefaultPrefixesCommand(ctxt));
+    RS.registerCommand(module, "add-prefix", new AddPrefixCommand(ctxt));
+    RS.registerCommand(module, "remove-prefix", new RemovePrefixCommand(ctxt));
+    RS.registerCommand(module, "refresh-prefix", new RefreshPrefixCommand(ctxt));
+    RS.registerCommand(module, "suggest-term", new SuggestTermCommand(ctxt));
+    RS.registerCommand(module, "get-prefix-cc-uri", new SuggestPrefixUriCommand(ctxt));
+    RS.registerCommand(module, "upload-file-add-prefix", new AddPrefixFromFileCommand(ctxt));
     //Reconcile commands
-	RefineServlet.registerCommand(module, "addService", new AddServiceCommand());
-	RefineServlet.registerCommand(module, "uploadFileAndAddService", new UploadFileAndAddServiceCommand());
-	RefineServlet.registerCommand(module, "sindiceGuessType", new SindiceGuessTypeCommand());
-	RefineServlet.registerCommand(module, "addSindiceService", new AddSindiceService());
-	RefineServlet.registerCommand(module, "addStanbolService", new AddStanbolServiceCommand());
-	RefineServlet.registerCommand(module, "initializeServices", new InitializeServicesCommand());
+	RS.registerCommand(module, "addService", new AddServiceCommand());
+	RS.registerCommand(module, "uploadFileAndAddService", new UploadFileAndAddServiceCommand());
+	RS.registerCommand(module, "sindiceGuessType", new SindiceGuessTypeCommand());
+	RS.registerCommand(module, "addSindiceService", new AddSindiceService());
+	RS.registerCommand(module, "addStanbolService", new AddStanbolServiceCommand());
+	RS.registerCommand(module, "initializeServices", new InitializeServicesCommand());
 	//RefineServlet.registerCommand(module, "sindiceReconcile", new SindiceReconcileCommand());
 	//this is just to initialize ServiceRegistry
-	RefineServlet.registerCommand(module, "reconcile-initialize", new InitializationCommand());
+	RS.registerCommand(module, "reconcile-initialize", new InitializationCommand());
        
     /*
      *  Client-side Resources

@@ -5,13 +5,13 @@
 <listEntry value="/refine/src/main/webapp/WEB-INF/classes"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/OpenRefine/main/tests/server/lib/testng-5.12.1.jar"/>
+<listEntry value="/LODRefine/main/tests/server/lib/testng-5.12.1.jar"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.testng.remote.RemoteTestNG"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="OpenRefine"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="LODRefine"/>
 <mapAttribute key="org.testng.eclipse.ALL_CLASS_METHODS"/>
 <listAttribute key="org.testng.eclipse.CLASS_TEST_LIST"/>
 <stringAttribute key="org.testng.eclipse.COMPLIANCE_LEVEL" value="JDK"/>

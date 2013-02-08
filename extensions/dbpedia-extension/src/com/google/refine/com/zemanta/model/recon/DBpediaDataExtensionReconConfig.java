@@ -7,13 +7,13 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-    * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
+ * Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+ * Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -29,7 +29,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*/
+ */
 
 package com.google.refine.com.zemanta.model.recon;
 
@@ -49,51 +49,51 @@ import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.ReconJob;
 
 public class DBpediaDataExtensionReconConfig extends DBpediaStrictReconConfig {
-    final public DBpediaType type;
-    
-    private final static String WARN = "Not implemented";
-    
-    static public ReconConfig reconstruct(JSONObject obj) throws Exception {
-        JSONObject type = obj.getJSONObject("type");
-        
-        return new DBpediaDataExtensionReconConfig(
-            new DBpediaType(
-                type.getString("id"),
-                type.getString("name")
-            )
-        );
-    }
-    
-    public DBpediaDataExtensionReconConfig(DBpediaType type) {
-        this.type = type;
-    }
+        final public DBpediaType type;
 
-    @Override
-    public ReconJob createJob(Project project, int rowIndex, Row row,
-            String columnName, Cell cell) {
-        throw new RuntimeException(WARN);
-    }
+        private final static String WARN = "Not implemented";
 
-    @Override
-    public int getBatchSize() {
-        throw new RuntimeException(WARN);
-    }
+        static public ReconConfig reconstruct(JSONObject obj) throws Exception {
+                JSONObject type = obj.getJSONObject("type");
 
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        writer.key("mode"); writer.value("extend-data");
-        writer.key("type"); type.write(writer, options); 
-        writer.endObject();
-    }
-    
-    @Override
-    public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
-        throw new RuntimeException(WARN);
-    }
+                return new DBpediaDataExtensionReconConfig(
+                                new DBpediaType(
+                                                type.getString("id"),
+                                                type.getString("name")
+                                                )
+                                );
+        }
 
-    @Override
-    public String getBriefDescription(Project project, String columnName) {
-        throw new RuntimeException(WARN);
-    }
+        public DBpediaDataExtensionReconConfig(DBpediaType type) {
+                this.type = type;
+        }
+
+        @Override
+        public ReconJob createJob(Project project, int rowIndex, Row row,
+                        String columnName, Cell cell) {
+                throw new RuntimeException(WARN);
+        }
+
+        @Override
+        public int getBatchSize() {
+                throw new RuntimeException(WARN);
+        }
+
+        @Override
+        public void write(JSONWriter writer, Properties options) throws JSONException {
+                writer.object();
+                writer.key("mode"); writer.value("extend-data");
+                writer.key("type"); type.write(writer, options); 
+                writer.endObject();
+        }
+
+        @Override
+        public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
+                throw new RuntimeException(WARN);
+        }
+
+        @Override
+        public String getBriefDescription(Project project, String columnName) {
+                throw new RuntimeException(WARN);
+        }
 }

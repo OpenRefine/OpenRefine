@@ -10,7 +10,7 @@
 
     <property environment="env"/>
 
-    <condition property="version" value="trunk">
+    <condition property="version" value="0.3">
         <not><isset property="version"/></not>
     </condition>
 
@@ -26,7 +26,8 @@
         <not><isset property="dist.dir"/></not>
     </condition>
 
-    <property name="fullname" value="${name}-${version}-${revision}" />
+    <property name="name" value="dbpedia-extension" />
+    <property name="fullname" value="${name}-${version}" />
     
     <property name="refine.dir" value="${basedir}/../../main" />
     <property name="refine.webinf.dir" value="${refine.dir}/webapp/WEB-INF" />
@@ -43,6 +44,7 @@
     <property name="lib.dir" value="${modinf.dir}/lib" />
 	<property name="test.lib.dir" value="${basedir}/tests/lib" />
     <property name="classes.dir" value="${modinf.dir}/classes" />
+    <property name="dist-ext.dir" value="${basedir}/dist" />
 
     <path id="class.path">
         <fileset dir="${lib.dir}">
@@ -90,7 +92,21 @@
             <classpath refid="test.class.path" />
         </javac>
     </target>
-	
+
+    <target name="dist" depends="build_java">
+        <mkdir dir="${dist-ext.dir}"/>
+        <mkdir dir="${dist-ext.dir}/${name}"/>
+        <copy todir="${dist-ext.dir}/${name}/module">
+            <fileset dir="${module.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <zip destfile="${dist-ext.dir}/${fullname}.zip" basedir="${dist-ext.dir}/${name}/.." includes="*/**"/>
+    </target>
+
+    <target name="dist-clean">
+        <delete dir="${dist-ext.dir}" />
+    </target>
 
     <target name="clean">
         <delete dir="${classes.dir}" />

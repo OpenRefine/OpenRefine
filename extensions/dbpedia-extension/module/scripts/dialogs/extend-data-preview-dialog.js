@@ -32,259 +32,269 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 function ZemantaExtendDataPreviewDialog(column, columnIndex, cellReconId, rowIndices, onDone) {
-  this._column = column;
-  this._columnIndex = columnIndex;
-  this._cellReconId = cellReconId;
-  this._rowIndices = rowIndices;
-  this._onDone = onDone;
-  this._extension = { properties: [] };
+	this._column = column;
+	this._columnIndex = columnIndex;
+	this._cellReconId = cellReconId;
+	this._rowIndices = rowIndices;
+	this._onDone = onDone;
+	this._extension = { properties: [] };
 
-  var self = this;
-  this._dialog = $(DOM.loadHTML("dbpedia-extension", "scripts/dialogs/extend-data-preview-dialog.html"));
-  this._elmts = DOM.bind(this._dialog);
-  this._elmts.dialogHeader.text("Add Columns from DBpedia based on Column " + column.name);
-  this._elmts.resetButton.click(function() {
-    self._extension.properties = [];
-    self._update();
-  });
-  
-  this._elmts.okButton.click(function() {
-    if (self._extension.properties.length === 0) {
-      alert("Please add some (DBpedia) properties first.");
-    } else {
-      DialogSystem.dismissUntil(self._level - 1);
-      self._onDone(self._extension);
-    }
-  });
-  this._elmts.cancelButton.click(function() {
-    DialogSystem.dismissUntil(self._level - 1);
-  });
+	var self = this;
+	this._dialog = $(DOM.loadHTML("dbpedia-extension", "scripts/dialogs/extend-data-preview-dialog.html"));
+	this._elmts = DOM.bind(this._dialog);
+	this._elmts.dialogHeader.text("Add Columns from DBpedia based on Column " + column.name);
+	this._elmts.resetButton.click(function() {
+		self._extension.properties = [];
+		self._update();
+	});
 
-  var dismissBusy = DialogSystem.showBusy();
-  var type = cellReconId;
+	this._elmts.okButton.click(function() {
+		if (self._extension.properties.length === 0) {
+			alert("Please add some (DBpedia) properties first.");
+		} else {
+			DialogSystem.dismissUntil(self._level - 1);
+			self._onDone(self._extension);
+		}
+	});
+	this._elmts.cancelButton.click(function() {
+		DialogSystem.dismissUntil(self._level - 1);
+	});
 
-  ZemantaExtendDataPreviewDialog.getAllProperties(type, function(properties) {
-    dismissBusy();
-    self._show(properties);
-  });
+	var dismissBusy = DialogSystem.showBusy();
+	var type = cellReconId;
+
+	ZemantaExtendDataPreviewDialog.getAllProperties(type, function(properties) {
+		dismissBusy();
+		self._show(properties);
+	});
 }
 
 ZemantaExtendDataPreviewDialog.getAllProperties = function(type, onDone) {
-  var done = false;
-  
-  var searchUrl = "http://dbpedia.org/sparql?";
-  var prefixes = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
-  var query =  "SELECT DISTINCT ?property ?label ";
-  query += "WHERE { <%1> ?property ?entity . ?property rdfs:label ?label . ";
-  query += "FILTER langMatches(lang(?label), 'en') ";
-  query +="} LIMIT 200";
+	var done = false;
 
-  var mySPARQLQuery = searchUrl + "query=" + escape(prefixes) + escape(String.format(query,type)) + "&format=json";
-  
+	var searchUrl = "http://dbpedia.org/sparql?";
+	var prefixes = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
+	var query =  "SELECT DISTINCT ?property ?label ";
+	query += "WHERE { <%1> ?property ?entity . ?property rdfs:label ?label . ";
+	query += "FILTER langMatches(lang(?label), 'en') ";
+	query +="} LIMIT 200";
 
-  $.ajax({
-            url: mySPARQLQuery,
-            crossDomain: true,
-            dataType: 'jsonp',
-            jsonp: 'callback',
-            success: function(data) {
-              if(done) return;
-              done = true;
-              
-              var allProperties = [];
-              var numOfProperties = data.results.bindings.length;
-              for (var i = 0; i < numOfProperties; i++) {
-                var property = data.results.bindings[i];
-                var property2 = {
-                  id: property.property.value,
-                  name: property.label.value
-                };
-                allProperties.push(property2);
-              }
-              //allProperties.sort(function(a, b) {
-              //  return a.name.localeCompare(b.name);
-              //});              
-              onDone(allProperties);
-            }
-      });
-      
-    
-  window.setTimeout(function() {
-    if (done) return;
+	var mySPARQLQuery = searchUrl + "query=" 
+	+ escape(prefixes) + escape(String.format(query,type)) + "&format=json";
 
-    done = true;
-    console.log("DBpedia timed out...");
-    alert("DBpedia request timed out... please try again later.");
-    onDone([]);
-  }, 7000); // time to give up?
+
+	$.ajax({
+		url: mySPARQLQuery,
+		crossDomain: true,
+		dataType: 'jsonp',
+		jsonp: 'callback',
+		success: function(data) {
+			console.log("Data" + data);
+			if(done) return;
+			done = true;
+
+			var allProperties = [];
+			var numOfProperties = data.results.bindings.length;
+			for (var i = 0; i < numOfProperties; i++) {
+				var property = data.results.bindings[i];
+				var property2 = {
+						id: property.property.value,
+						name: property.label.value
+				};
+				allProperties.push(property2);
+			}
+			//allProperties.sort(function(a, b) {
+			//  return a.name.localeCompare(b.name);
+			//});              
+			onDone(allProperties);
+		}
+	});
+
+
+	window.setTimeout(function() {
+		if (done) return;
+
+		done = true;
+		console.log("DBpedia timed out...");
+		alert("DBpedia request timed out, please try again later.\n" +
+		"Check your connection and availability of DBpedia service");
+		onDone([]);
+	}, 
+	3000); 
 };
 
 ZemantaExtendDataPreviewDialog.prototype._show = function(properties) {
-  this._level = DialogSystem.showDialog(this._dialog);
+	var self = this;
 
-  var n = this._elmts.suggestedPropertyContainer.outerHeight(true);
-  this._elmts.previewContainer.height(Math.floor(n));
+	if(properties.length == 0) {
+		console.log("No properties returned");
+		return;
+	}
 
-  var self = this;
-  var container = this._elmts.suggestedPropertyContainer;
-  var renderSuggestedProperty = function(property) {
-    var label = ("properties" in property) ? (property.name + " &raquo; " + 
-    		property.properties[0].name) : property.name;
-    var div = $('<div>').addClass("suggested-property").appendTo(container);
+	self._level = DialogSystem.showDialog(self._dialog);
 
-    $('<a>')
-    .attr("href", "javascript:{}")
-    .html(label)
-    .appendTo(div)
-    .click(function() {
-      self._addProperty(property);
-    });
-  };
-  for (var i = 0; i < properties.length; i++) {
-    renderSuggestedProperty(properties[i]);
-  }
+	var n = self._elmts.suggestedPropertyContainer.outerHeight(true);
+	this._elmts.previewContainer.height(Math.floor(n));
+
+	var container = self._elmts.suggestedPropertyContainer;
+	var renderSuggestedProperty = function(property) {
+		var label = ("properties" in property) ? (property.name + " &raquo; " + 
+				property.properties[0].name) : property.name;
+		var div = $('<div>').addClass("suggested-property").appendTo(container);
+
+		$('<a>')
+		.attr("href", "javascript:{}")
+		.html(label)
+		.appendTo(div)
+		.click(function() {
+			self._addProperty(property);
+		});
+	};
+	for (var i = 0; i < properties.length; i++) {
+		renderSuggestedProperty(properties[i]);
+	}
 
 };
 
 ZemantaExtendDataPreviewDialog.prototype._update = function() {
-  this._elmts.previewContainer.empty().text("Querying DBpedia ...");
+	this._elmts.previewContainer.empty().text("Querying DBpedia ...");
 
-  var self = this;
-  var params = {
-      project: theProject.id,
-      columnName: this._column.name
-  };
+	var self = this;
+	var params = {
+			project: theProject.id,
+			columnName: this._column.name
+	};
 
-  
-  $.post(
-    "/command/dbpedia-extension/preview-extend-data?" + $.param(params), 
-    {
-      rowIndices: JSON.stringify(this._rowIndices),
-      extension: JSON.stringify(this._extension)
-    },
-    function(data) {
-      self._renderPreview(data);
-    },
-    "json"
-  );
+
+	$.post(
+			"/command/dbpedia-extension/preview-extend-data?" + $.param(params), 
+			{
+				rowIndices: JSON.stringify(this._rowIndices),
+				extension: JSON.stringify(this._extension)
+			},
+			function(data) {
+				self._renderPreview(data);
+			},
+			"json"
+	);
 };
 
 ZemantaExtendDataPreviewDialog.prototype._addProperty = function(p) {
 
-  var addSeveralToList = function(properties, oldProperties) {
-    for (var i = 0; i < properties.length; i++) {
-      addToList(properties[i], oldProperties);
-    }
-  };
-  var addToList = function(property, oldProperties) {
-    for (var i = 0; i < oldProperties.length; i++) {
-      var oldProperty = oldProperties[i];
-      if (oldProperty.id == property.id) {
-        if ("included" in property) {
-          oldProperty.included = "included" in oldProperty ? 
-              (oldProperty.included || property.included) : 
-                property.included;
-        }
+	var addSeveralToList = function(properties, oldProperties) {
+		for (var i = 0; i < properties.length; i++) {
+			addToList(properties[i], oldProperties);
+		}
+	};
+	var addToList = function(property, oldProperties) {
+		for (var i = 0; i < oldProperties.length; i++) {
+			var oldProperty = oldProperties[i];
+			if (oldProperty.id == property.id) {
+				if ("included" in property) {
+					oldProperty.included = "included" in oldProperty ? 
+							(oldProperty.included || property.included) : 
+								property.included;
+				}
 
-        if ("properties" in property) {
-          if ("properties" in oldProperty) {
-            addSeveralToList(property.properties, oldProperty.properties);
-          } else {
-            oldProperty.properties = property.properties;
-          }
-        }
-        return;
-      }
-    }
+				if ("properties" in property) {
+					if ("properties" in oldProperty) {
+						addSeveralToList(property.properties, oldProperty.properties);
+					} else {
+						oldProperty.properties = property.properties;
+					}
+				}
+				return;
+			}
+		}
 
-    oldProperties.push(property);
-  };
+		oldProperties.push(property);
+	};
 
-  addToList(p, this._extension.properties);
+	addToList(p, this._extension.properties);
 
-  this._update();
+	this._update();
 };
 
 ZemantaExtendDataPreviewDialog.prototype._renderPreview = function(data) {
 
-  var self = this;
-  var container = this._elmts.previewContainer.empty();
-  if (data.code == "error") {
-    container.text("Error.");
-    return;
-  }
+	var self = this;
+	var container = this._elmts.previewContainer.empty();
+	if (data.code == "error") {
+		container.text("Error.");
+		return;
+	}
 
-  var table = $('<table>')[0];
-  var trHead = table.insertRow(table.rows.length);
-  $('<th>').appendTo(trHead).text(this._column.name);
+	var table = $('<table>')[0];
+	var trHead = table.insertRow(table.rows.length);
+	$('<th>').appendTo(trHead).text(this._column.name);
 
-  var renderColumnHeader = function(column) {
-    var th = $('<th>').appendTo(trHead);
+	var renderColumnHeader = function(column) {
+		var th = $('<th>').appendTo(trHead);
 
-    $('<span>').html(column.names.join(" &raquo; ")).appendTo(th);
-    $('<br>').appendTo(th);
+		$('<span>').html(column.names.join(" &raquo; ")).appendTo(th);
+		$('<br>').appendTo(th);
 
-    $('<a href="javascript:{}"></a>')
-    .text("remove")
-    .addClass("action")
-    .attr("title", "Remove this column")
-    .click(function() {
-      self._removeProperty(column.path);
-    }).appendTo(th);
-  };
-  for (var c = 0; c < data.columns.length; c++) {
-    renderColumnHeader(data.columns[c]);
-  }
+		$('<a href="javascript:{}"></a>')
+		.text("remove")
+		.addClass("action")
+		.attr("title", "Remove this column")
+		.click(function() {
+			self._removeProperty(column.path);
+		}).appendTo(th);
+	};
+	for (var c = 0; c < data.columns.length; c++) {
+		renderColumnHeader(data.columns[c]);
+	}
 
-  for (var r = 0; r < data.rows.length; r++) {
-    var tr = table.insertRow(table.rows.length);
-    var row = data.rows[r];
+	for (var r = 0; r < data.rows.length; r++) {
+		var tr = table.insertRow(table.rows.length);
+		var row = data.rows[r];
 
-    for (var c = 0; c < row.length; c++) {
-      var td = tr.insertCell(tr.cells.length);
-      var cell = row[c];
-      if (cell !== null) {
-        if ($.isPlainObject(cell)) {
-        	if(cell.id == "") {
-        		$('<span>').text(cell.name).appendTo(td);
-        	} else {
-                $('<a>').attr("href", cell.id).text(cell.name).appendTo(td);
-        	}
-        } else {
-          $('<span>').text(cell).appendTo(td);
-        }
-      }
-    }
-  }
+		for (var c = 0; c < row.length; c++) {
+			var td = tr.insertCell(tr.cells.length);
+			var cell = row[c];
+			if (cell !== null) {
+				if ($.isPlainObject(cell)) {
+					if(cell.id == "") {
+						$('<span>').text(cell.name).appendTo(td);
+					} else {
+						$('<a>').attr("href", cell.id).text(cell.name).appendTo(td);
+					}
+				} else {
+					$('<span>').text(cell).appendTo(td);
+				}
+			}
+		}
+	}
 
-  container.append(table);
+	container.append(table);
 };
 
 ZemantaExtendDataPreviewDialog.prototype._removeProperty = function(path) {
-  var removeFromList = function(path, index, properties) {
-    var id = path[index];
+	var removeFromList = function(path, index, properties) {
+		var id = path[index];
 
-    for (var i = properties.length - 1; i >= 0; i--) {
-      var property = properties[i];
-      if (property.id == id) {
-        if (index === path.length - 1) {
-          if ("included" in property) {
-            delete property.included;
-          }
-        } else if ("properties" in property && property.properties.length > 0) {
-          removeFromList(path, index + 1, property.properties);
-        }
+		for (var i = properties.length - 1; i >= 0; i--) {
+			var property = properties[i];
+			if (property.id == id) {
+				if (index === path.length - 1) {
+					if ("included" in property) {
+						delete property.included;
+					}
+				} else if ("properties" in property && property.properties.length > 0) {
+					removeFromList(path, index + 1, property.properties);
+				}
 
-        if (!("properties" in property) || property.properties.length === 0) {
-          properties.splice(i, 1);
-        }
+				if (!("properties" in property) || property.properties.length === 0) {
+					properties.splice(i, 1);
+				}
 
-        return;
-      }
-    }
-  };
+				return;
+			}
+		}
+	};
 
-  removeFromList(path, 0, this._extension.properties);
+	removeFromList(path, 0, this._extension.properties);
 
-  this._update();
+	this._update();
 };

@@ -14,7 +14,7 @@ RdfSchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentU
     
     $(this._tdMain).addClass("schema-alignment-link-main").attr("width", "250").addClass("padded");
     $(this._tdToggle).addClass("schema-alignment-link-toggle").attr("width", "1%").addClass("padded");
-    $(this._tdDetails).addClass("schema-alignment-link-details").attr("width", "90%");
+    $(this._tdDetails).addClass("schema-alignment-link-details");
     
     this._collapsedDetailDiv = $('<div></div>').appendTo(this._tdDetails).addClass("padded").html("...");
     this._expandedDetailDiv = $('<div></div>').appendTo(this._tdDetails).addClass("schema-alignment-detail-container");
@@ -30,7 +30,7 @@ RdfSchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentU
     };
     show();
     
-    $(this._tdToggle).html("&nbsp;");
+    //$(this._tdToggle).html("&nbsp;");
     $('<img />')
         .attr("src", this._options.expanded ? "images/expanded.png" : "images/collapsed.png")
         .appendTo(this._tdToggle)
