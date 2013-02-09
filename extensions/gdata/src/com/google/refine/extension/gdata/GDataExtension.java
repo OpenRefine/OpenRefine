@@ -65,7 +65,7 @@ abstract public class GDataExtension {
         
         return AuthSubUtil.getRequestUrl(
             authorizedUrl.toExternalForm(), // execution continues at authorized on redirect
-            "https://docs.google.com/feeds https://spreadsheets.google.com/feeds",
+            "https://docs.google.com/feeds https://spreadsheets.google.com/feeds https://www.google.com/fusiontables/api/query",
             false,
             true);
     }
