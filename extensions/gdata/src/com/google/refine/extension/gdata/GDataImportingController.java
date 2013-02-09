@@ -125,7 +125,7 @@ public class GDataImportingController implements ImportingController {
             
             try {
                 listSpreadsheets(GDataExtension.getDocsService(token), writer);
-                listFusionTables(GDataExtension.getFusionTablesGoogleService(token), writer);
+                listFusionTables(FusionTableHandler.getFusionTablesGoogleService(token), writer);
             } catch (ServiceException e) {
                 e.printStackTrace();
             }
@@ -170,14 +170,14 @@ public class GDataImportingController implements ImportingController {
     private void listFusionTables(GoogleService service, JSONWriter writer)
         throws IOException, ServiceException, JSONException {
         
-        List<List<String>> rows = GDataExtension.runFusionTablesSelect(service, "SHOW TABLES");
+        List<List<String>> rows = FusionTableHandler.listTables(service);
         if (rows.size() > 1) { // excluding headers
             for (int i = 1; i < rows.size(); i++) {
                 List<String> row = rows.get(i);
                 if (row.size() >= 2) {
                     String id = row.get(0);
                     String name = row.get(1);
-                    String link = "https://www.google.com/fusiontables/DataSource?dsrcid=" + id;
+                    String link = row.get(2);
                     
                     writer.object();
                     writer.key("docId"); writer.value(id);
