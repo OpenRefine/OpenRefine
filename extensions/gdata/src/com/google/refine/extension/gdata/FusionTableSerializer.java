@@ -142,8 +142,7 @@ final class FusionTableSerializer implements TabularSerializer {
     }
     
     public String getUrl() {
-        // FIXME: This base URL is no longer correct
         return tableId == null || exceptions.size() > 0 ? null :
-            "https://www.google.com/fusiontables/DataSource?dsrcid=" + tableId;
+            "https://www.google.com/fusiontables/DataSource?docid=" + tableId;
     }
 }

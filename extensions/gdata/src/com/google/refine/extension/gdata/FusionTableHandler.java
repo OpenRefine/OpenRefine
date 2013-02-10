@@ -150,7 +150,7 @@ public class FusionTableHandler {
                 List<String> row = rows.get(i);
                 if (row.size() >= 2) {
                     String id = row.get(0);
-                    row.add("https://www.google.com/fusiontables/DataSource?dsrcid=" + id);
+                    row.add("https://www.google.com/fusiontables/DataSource?docid=" + id);
                 }
             }
         }
