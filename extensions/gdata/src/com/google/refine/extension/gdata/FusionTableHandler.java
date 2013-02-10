@@ -30,7 +30,6 @@ package com.google.refine.extension.gdata;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -39,18 +38,11 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.Service.GDataRequest;
 import com.google.gdata.client.Service.GDataRequest.RequestType;
-import com.google.gdata.client.http.AuthSubUtil;
 import com.google.gdata.util.ContentType;
 import com.google.gdata.util.ServiceException;
-
-import com.google.refine.util.ParsingUtilities;
-
-import edu.mit.simile.butterfly.ButterflyModule;
 
 /**
  * @author Tom Morris <tfmorris@gmail.com>
@@ -61,41 +53,22 @@ public class FusionTableHandler {
 
     final static private String FUSION_TABLES_SERVICE_URL =
     "https://www.google.com/fusiontables/api/query";
+//    "https://www.googleapis.com/fusiontables/v1/query";
 
     final static private Pattern CSV_VALUE_PATTERN =
             Pattern.compile("([^,\\r\\n\"]*|\"(([^\"]*\"\")*[^\"]*)\")(,|\\r?\\n)");
-        
-    static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
-            throws MalformedURLException {
-        char[] mountPointChars = module.getMountPoint().getMountPoint().toCharArray();
-    
-        StringBuffer sb = new StringBuffer();
-        sb.append(mountPointChars, 0, mountPointChars.length);
-        sb.append("authorized?winname=");
-        sb.append(ParsingUtilities.encode(request.getParameter("winname")));
-        sb.append("&callback=");
-        sb.append(ParsingUtilities.encode(request.getParameter("callback")));
-    
-        URL thisUrl = new URL(request.getRequestURL().toString());
-        URL authorizedUrl = new URL(thisUrl, sb.toString());
-        
-        return AuthSubUtil.getRequestUrl(
-            authorizedUrl.toExternalForm(), // execution continues at authorized on redirect
-            "https://www.google.com/fusiontables/api/query",
-            false,
-            true);
-    }
     
     static public GDataRequest createFusionTablesPostRequest(
             GoogleService service, RequestType requestType, String query)
             throws IOException, ServiceException {
+        
         URL url = new URL(FUSION_TABLES_SERVICE_URL);
         GDataRequest request = service.getRequestFactory().getRequest(
             requestType, url, new ContentType("application/x-www-form-urlencoded"));
         
         OutputStreamWriter writer =
             new OutputStreamWriter(request.getRequestStream());
-        writer.append("sql=" + URLEncoder.encode(query, "UTF-8"));
+        writer.append("sql=" + URLEncoder.encode(query, "UTF-8") + "&alt=csv");
         writer.flush();
         writer.close();
         
@@ -106,7 +79,7 @@ public class FusionTableHandler {
             GoogleService service, RequestType requestType, String query)
             throws IOException, ServiceException {
         URL url = new URL(FUSION_TABLES_SERVICE_URL + "?sql=" +
-                URLEncoder.encode(query, "UTF-8"));
+                URLEncoder.encode(query, "UTF-8")+"&alt=csv");
         return service.getRequestFactory().getRequest(
                 requestType, url, ContentType.TEXT_PLAIN);
     }

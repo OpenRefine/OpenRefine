@@ -28,13 +28,22 @@
  */
 package com.google.refine.extension.gdata;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.gdata.client.docs.DocsService;
-import com.google.gdata.client.http.AuthSubUtil;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 
 import com.google.refine.util.ParsingUtilities;
@@ -48,27 +57,71 @@ import edu.mit.simile.butterfly.ButterflyModule;
  */
 abstract public class GDataExtension {
     static final String SERVICE_APP_NAME = "OpenRefine-GData-Extension";
+    static final String CLIENT_ID = "647865400439.apps.googleusercontent.com";
+    static final String CLIENT_SECRET = "0mW9OJji1yrgJk5AjJc5Pn6I"; // not really that secret, but the protocol accounts for that
+    
+    /** Global instance of the HTTP transport. */
+    static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+
+    /** Global instance of the JSON factory. */
+    static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
     static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
-        char[] mountPointChars = module.getMountPoint().getMountPoint().toCharArray();
-    
-        StringBuffer sb = new StringBuffer();
-        sb.append(mountPointChars, 0, mountPointChars.length);
+        String authorizedUrl = makeRedirectUrl(module, request);
+              
+        // New Oauth2
+        GoogleAuthorizationCodeRequestUrl url = new GoogleAuthorizationCodeRequestUrl(
+                CLIENT_ID, 
+                authorizedUrl, // execution continues at authorized on redirect
+                Arrays.asList("https://www.googleapis.com/auth/fusiontables", 
+                        "https://docs.google.com/feeds", // create new spreadsheets
+                        "https://spreadsheets.google.com/feeds"));
+        
+        return url.toString();
+
+    }
+
+    private static String makeRedirectUrl(ButterflyModule module, HttpServletRequest request)
+            throws MalformedURLException {
+        StringBuffer sb = new StringBuffer(module.getMountPoint().getMountPoint());
         sb.append("authorized?winname=");
         sb.append(ParsingUtilities.encode(request.getParameter("winname")));
-        sb.append("&callback=");
-        sb.append(ParsingUtilities.encode(request.getParameter("callback")));
+        sb.append("&cb=");
+        sb.append(ParsingUtilities.encode(request.getParameter("cb")));
     
         URL thisUrl = new URL(request.getRequestURL().toString());
         URL authorizedUrl = new URL(thisUrl, sb.toString());
-        
-        return AuthSubUtil.getRequestUrl(
-            authorizedUrl.toExternalForm(), // execution continues at authorized on redirect
-            "https://docs.google.com/feeds https://spreadsheets.google.com/feeds https://www.google.com/fusiontables/api/query",
-            false,
-            true);
+        return authorizedUrl.toExternalForm();
     }
+
+    static public String getTokenFromCode(ButterflyModule module, HttpServletRequest request) 
+            throws MalformedURLException {
+        String redirectUrl = makeRedirectUrl(module, request);
+        StringBuffer fullUrlBuf = request.getRequestURL();
+        if (request.getQueryString() != null) {
+          fullUrlBuf.append('?').append(request.getQueryString());
+        }
+        AuthorizationCodeResponseUrl authResponse =
+            new AuthorizationCodeResponseUrl(fullUrlBuf.toString());
+        // check for user-denied error
+        if (authResponse.getError() != null) {
+          // authorization denied...
+        } else {
+          // request access token using authResponse.getCode()...
+            String code = authResponse.getCode();
+            try {
+                GoogleTokenResponse response = new GoogleAuthorizationCodeTokenRequest(HTTP_TRANSPORT,
+                        JSON_FACTORY, CLIENT_ID, CLIENT_SECRET, code, redirectUrl).execute();
+                String token = response.getAccessToken();
+                return token;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return null;
+      }
 
 
     static public DocsService getDocsService(String token) {
