@@ -65,7 +65,6 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.apache.commons.io.FileCleaningTracker;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
@@ -187,7 +186,6 @@ public class ImportingUtilities {
         };
         
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
-        fileItemFactory.setFileCleaningTracker(new FileCleaningTracker());
         
         ServletFileUpload upload = new ServletFileUpload(fileItemFactory);
         upload.setProgressListener(new ProgressListener() {
@@ -212,8 +210,10 @@ public class ImportingUtilities {
             }
         });
 
+        List tempFiles = upload.parseRequest(request);
+        
         progress.setProgress("Uploading data ...", -1);
-        parts: for (Object obj : upload.parseRequest(request)) {
+        parts: for (Object obj : tempFiles) {
             if (progress.isCanceled()) {
                 break;
             }
@@ -355,6 +355,13 @@ public class ImportingUtilities {
                     uploadCount++;
                 }
             }
+            
+            stream.close();
+        }
+        
+        // Delete all temp files.
+        for (Object obj : tempFiles) {
+            ((FileItem)obj).delete();
         }
         
         JSONUtilities.safePut(retrievalRecord, "uploadCount", uploadCount);
