@@ -29,20 +29,18 @@
 package com.google.refine.extension.gdata;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.MatchResult;
-import java.util.regex.Pattern;
 
-import com.google.gdata.client.GoogleService;
-import com.google.gdata.client.Service.GDataRequest;
-import com.google.gdata.client.Service.GDataRequest.RequestType;
-import com.google.gdata.util.ContentType;
-import com.google.gdata.util.ServiceException;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.AbstractInputStreamContent;
+import com.google.api.services.fusiontables.Fusiontables;
+import com.google.api.services.fusiontables.Fusiontables.Query.Sql;
+import com.google.api.services.fusiontables.Fusiontables.Query.SqlGet;
+import com.google.api.services.fusiontables.Fusiontables.Table.ImportRows;
+import com.google.api.services.fusiontables.model.FusiontablesImport;
+import com.google.api.services.fusiontables.model.Sqlresponse;
 
 /**
  * @author Tom Morris <tfmorris@gmail.com>
@@ -51,54 +49,83 @@ import com.google.gdata.util.ServiceException;
 
 public class FusionTableHandler {
 
-    final static private String FUSION_TABLES_SERVICE_URL =
-    "https://www.google.com/fusiontables/api/query";
-//    "https://www.googleapis.com/fusiontables/v1/query";
-
-    final static private Pattern CSV_VALUE_PATTERN =
-            Pattern.compile("([^,\\r\\n\"]*|\"(([^\"]*\"\")*[^\"]*)\")(,|\\r?\\n)");
+    static private Sqlresponse executeQuery (Fusiontables service, String query)
+            throws IOException {
+        Sql sql = service.query().sql(query);
+        Sqlresponse response = sql.execute();
+        return response;
+    }
     
-    static public GDataRequest createFusionTablesPostRequest(
-            GoogleService service, RequestType requestType, String query)
-            throws IOException, ServiceException {
-        
-        URL url = new URL(FUSION_TABLES_SERVICE_URL);
-        GDataRequest request = service.getRequestFactory().getRequest(
-            requestType, url, new ContentType("application/x-www-form-urlencoded"));
-        
-        OutputStreamWriter writer =
-            new OutputStreamWriter(request.getRequestStream());
-        writer.append("sql=" + URLEncoder.encode(query, "UTF-8") + "&alt=csv");
-        writer.flush();
-        writer.close();
-        
-        return request;
+    static String createTable(Fusiontables service, String name, List<String> columnNames) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        sb.append("CREATE TABLE '");
+        sb.append(name);
+        sb.append("' (");
+        boolean first = true;
+        for (String columnName : columnNames) {            
+            if (first) {
+                first = false;
+            } else {
+                sb.append(',');
+            }
+            sb.append("'");
+            sb.append(columnName);
+            sb.append("': STRING");
+        }
+        sb.append(")");
+
+        String createQuery = sb.toString();
+
+        Sqlresponse response = executeQuery(service, createQuery);
+//        response.getTableId(); // FIXME: Oh wait, there's no such F*ing method!!!
+        return getTableId(response);
     }
 
-    static public GDataRequest createFusionTablesRequest(
-            GoogleService service, RequestType requestType, String query)
-            throws IOException, ServiceException {
-        URL url = new URL(FUSION_TABLES_SERVICE_URL + "?sql=" +
-                URLEncoder.encode(query, "UTF-8")+"&alt=csv");
-        return service.getRequestFactory().getRequest(
-                requestType, url, ContentType.TEXT_PLAIN);
+    private static String getTableId(Sqlresponse response) {
+        List<Object> row = response.getRows().get(0);
+        int i = 0;
+        for (String colname : response.getColumns()) {
+            if ("tableid".equals(colname)) {
+                return (String) row.get(i);
+            }
+        }
+        return null;
     }
+    
+
+    /**
+     * Insert a set of rows and optionally return the IDs of the new rows.
+     * 
+     * @param service a Fusiontables object
+     * @param sql SQL statement to do the inserts
+     * @param returnIds true to return the IDs of the newly inserted rows
+     * @return
+     * @throws IOException
+     */
+    static Long insertRows(Fusiontables service, String tableId, AbstractInputStreamContent mediaContent) throws IOException {
+        ImportRows importRows = service.table().importRows(tableId, mediaContent);
+        importRows.setIsStrict(false);
+        FusiontablesImport response = importRows.execute();
+        return response.getNumRowsReceived();
+    }
+
 
     static String getFusionTableKey(URL url) {
-            String tableId = getParamValue(url,"dsrcid");
-            // TODO: Any special id format considerations to worry about?
-    //        if (tableId.startsWith("p") || !tableId.contains(".")) {
-    //            return tableId;
-    //        }
+            String tableId = getParamValue(url,"dsrcid"); // old style phased out
+            if (tableId == null || tableId.isEmpty()) {
+                tableId = getParamValue(url,"docid");
+            }
             return tableId;
         }
 
-    static public GoogleService getFusionTablesGoogleService(String token) {
-        GoogleService service = new GoogleService("fusiontables", GDataExtension.SERVICE_APP_NAME);
-        if (token != null) {
-            service.setAuthSubToken(token);
-        }
-        return service;
+    static public Fusiontables getFusionTablesService(String token) {
+        Credential credential = new GoogleCredential().setAccessToken(token);
+        Fusiontables fusiontables = new Fusiontables.Builder(
+                GDataExtension.HTTP_TRANSPORT, GDataExtension.JSON_FACTORY, credential)
+        .setApplicationName(GDataExtension.SERVICE_APP_NAME)
+        .build();;
+        
+        return fusiontables;
     }
 
     static boolean isFusionTableURL(URL url) {
@@ -109,60 +136,17 @@ public class FusionTableHandler {
         }
         return url.getHost().endsWith(".google.com") 
                 && url.getPath().startsWith("/fusiontables/DataSource")
-                && query.contains("dsrcid=");
+                && (query.contains("dsrcid=")||query.contains("docid="));
     }
 
-    static public List<List<String>> parseFusionTablesResults(GDataRequest request) throws IOException {
-        List<List<String>> rows = new ArrayList<List<String>>();
-        List<String> row = null;
+    static Sqlresponse runFusionTablesSelect(Fusiontables service, String selectQuery)
+            throws IOException {
         
-        Scanner scanner = new Scanner(request.getResponseStream(), "UTF-8");
-        while (scanner.hasNextLine()) {
-            scanner.findWithinHorizon(CSV_VALUE_PATTERN, 0);
-            MatchResult match = scanner.match();
-            String quotedString = match.group(2);
-            String decoded = quotedString == null ? match.group(1) : quotedString.replaceAll("\"\"", "\"");
-            
-            if (row == null) {
-                row = new ArrayList<String>();
-            }
-            row.add(decoded);
-            
-            if (!match.group(4).equals(",")) {
-                if (row != null) {
-                    rows.add(row);
-                    row = null;
-                }
-            }
-        }
-        scanner.close();
-        if (row != null) {
-            rows.add(row);
-        }
-        return rows;
-    }
-
-    static public List<List<String>> listTables(GoogleService service) throws IOException, ServiceException {
-        List<List<String>> rows = runFusionTablesSelect(service, "SHOW TABLES");
-        // Format is id, name to which we append a link URL based on ID
-        if (rows.size() > 1) { // excluding headers
-            for (int i = 1; i < rows.size(); i++) {
-                List<String> row = rows.get(i);
-                if (row.size() >= 2) {
-                    String id = row.get(0);
-                    row.add("https://www.google.com/fusiontables/DataSource?docid=" + id);
-                }
-            }
-        }
-        return rows;
-    }
-
-    static public List<List<String>> runFusionTablesSelect(GoogleService service, String selectQuery)
-            throws IOException, ServiceException {
-        
-        GDataRequest request = createFusionTablesRequest(service, RequestType.QUERY, selectQuery);
-        request.execute();
-        return parseFusionTablesResults(request);
+        // FIXME:  alt=csv doesn't actually work! It will attempt to parse response as JSON and die
+        // perhaps use .executeUnparsed() would work?
+        SqlGet query = service.query().sqlGet(selectQuery);//.setAlt("csv"); 
+        Sqlresponse response = query.execute();
+        return response;
     }
 
     static private String getParamValue(URL url, String key) {

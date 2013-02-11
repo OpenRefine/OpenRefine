@@ -46,7 +46,6 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
@@ -292,8 +291,9 @@ public class UploadCommand extends Command {
     static private String uploadFusionTable(
             Project project, final Engine engine, final Properties params,
             String token, String name, List<Exception> exceptions) {
-        GoogleService service = FusionTableHandler.getFusionTablesGoogleService(token);
-        FusionTableSerializer serializer = new FusionTableSerializer(service, name, exceptions);
+        
+        FusionTableSerializer serializer = new FusionTableSerializer(
+                FusionTableHandler.getFusionTablesService(token), name, exceptions);
         
         CustomizableTabularExporterUtilities.exportRows(
                 project, engine, params, serializer);

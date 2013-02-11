@@ -6,15 +6,16 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.google.gdata.client.GoogleService;
-import com.google.gdata.client.Service.GDataRequest;
-import com.google.gdata.client.Service.GDataRequest.RequestType;
-import com.google.gdata.util.ServiceException;
+import com.google.api.client.http.AbstractInputStreamContent;
+import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.HttpResponseException;
+import com.google.api.services.fusiontables.Fusiontables;
 
 import com.google.refine.exporters.TabularSerializer;
 
 final class FusionTableSerializer implements TabularSerializer {
-    GoogleService service;
+    private static final int BATCH_SIZE = 20;
+    Fusiontables service;
     String tableName;
     List<Exception> exceptions;
     
@@ -23,7 +24,7 @@ final class FusionTableSerializer implements TabularSerializer {
     StringBuffer sbBatch;
     int rows;
     
-    FusionTableSerializer(GoogleService service, String tableName, List<Exception> exceptions) {
+    FusionTableSerializer(Fusiontables service, String tableName, List<Exception> exceptions) {
         this.service = service;
         this.tableName = tableName;
         this.exceptions = exceptions;
@@ -44,68 +45,75 @@ final class FusionTableSerializer implements TabularSerializer {
     public void addRow(List<CellData> cells, boolean isHeader) {
         if (isHeader) {
             columnNames = new ArrayList<String>(cells.size());
-            
-            StringBuffer sb = new StringBuffer();
-            sb.append("CREATE TABLE '");
-            sb.append(tableName);
-            sb.append("' (");
-            boolean first = true;
             for (CellData cellData : cells) {
                 columnNames.add(cellData.text);
-                
-                if (first) {
-                    first = false;
-                } else {
-                    sb.append(',');
-                }
-                sb.append("'");
-                sb.append(cellData.text);
-                sb.append("': STRING");
-            }
-            sb.append(")");
-            
+            }                
             try {
-                String createQuery = sb.toString();
-                
-                GDataRequest createTableRequest = FusionTableHandler.createFusionTablesPostRequest(
-                        service, RequestType.INSERT, createQuery);
-                createTableRequest.execute();
-                
-                List<List<String>> createTableResults =
-                        FusionTableHandler.parseFusionTablesResults(createTableRequest);
-                if (createTableResults != null && createTableResults.size() == 2) {
-                    tableId = createTableResults.get(1).get(0);
-                }
+                tableId = FusionTableHandler.createTable(service, tableName, columnNames);
             } catch (Exception e) {
+                tableId = null;
                 exceptions.add(e);
             }
         } else if (tableId != null) {
             if (sbBatch == null) {
                 sbBatch = new StringBuffer();
             }
-            formulateInsert(cells, sbBatch);
-            
+            formatCsv(cells, sbBatch);            
             rows++;
-            if (rows % 20 == 0) {
-                sendBatch();
+            if (rows % BATCH_SIZE == 0) {
+                if (!sendBatch()) {
+                    return;
+                }
             }
         }
     }
     
-    private void sendBatch() {
+    private boolean sendBatch() {
         try {
-            GDataRequest createTableRequest = FusionTableHandler.createFusionTablesPostRequest(
-                    service, RequestType.INSERT, sbBatch.toString());
-            createTableRequest.execute();
+            // FIXME: text/csv doesn't work even though that's what the content is
+          AbstractInputStreamContent content = ByteArrayContent.fromString("application/octet-stream", sbBatch.toString());
+
+//            AbstractInputStreamContent content = new InputStreamContent("application/octet-stream",
+//                    // TODO: we really want to do GZIP compression here 
+//                            new ByteArrayInputStream(sbBatch.toString().getBytes("UTF-8")));
+            Long count = FusionTableHandler.insertRows(service, tableId, content);
+            if (count != BATCH_SIZE) {
+                exceptions.add(new IOException("only imported %d of %d rows"));
+            }
         } catch (IOException e) {
             exceptions.add(e);
-        } catch (ServiceException e) {
-            exceptions.add(e);
+            if (e instanceof HttpResponseException) {
+                int code = ((HttpResponseException)e).getStatusCode();
+                if (code >= 400 && code < 500) {
+                    return false;
+                }
+                // 500s appear to be retried automatically by li
+            }
         } finally {
             sbBatch = null;
         }
+        return true;
+    }
+
+    private void formatCsv(List<CellData> cells, StringBuffer sb) {
+        boolean first = true;
+        for (int i = 0; i < cells.size() && i < columnNames.size(); i++) {
+            CellData cellData = cells.get(i);
+            if (!first) {
+                sb.append(',');
+            } else {
+                first = false;
+            }
+            sb.append("\"");
+            if (cellData != null && cellData.text != null) {
+                sb.append(cellData.text.replaceAll("\"", "\\\\\""));
+            }
+            sb.append("\"");
+        }
+        sb.append("\n");
     }
     
+    // Old-style SQL INSERT can be removed once we're sure importRows will work
     private void formulateInsert(List<CellData> cells, StringBuffer sb) {
         StringBuffer sbColumnNames = new StringBuffer();
         StringBuffer sbValues = new StringBuffer();

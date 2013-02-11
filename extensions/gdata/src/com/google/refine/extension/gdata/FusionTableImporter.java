@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Thomas F. Morris
+ * Copyright (c) 2010,2013 Thomas F. Morris and other contributors
  *        All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without 
@@ -34,8 +34,10 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.google.gdata.client.GoogleService;
-import com.google.gdata.util.ServiceException;
+import com.google.api.services.fusiontables.Fusiontables;
+import com.google.api.services.fusiontables.model.Column;
+import com.google.api.services.fusiontables.model.Sqlresponse;
+import com.google.api.services.fusiontables.model.Table;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.TabularImportingParserBase;
@@ -61,7 +63,7 @@ public class FusionTableImporter {
         JSONObject options,
         List<Exception> exceptions) {
     
-        GoogleService service = FusionTableHandler.getFusionTablesGoogleService(token);
+        Fusiontables service = FusionTableHandler.getFusionTablesService(token);
         parse(
                 service,
                 project,
@@ -89,7 +91,7 @@ public class FusionTableImporter {
             final ImportingJob job;
             final String fileSource;
             
-            final GoogleService service;
+            final Fusiontables service;
             final List<FTColumnData> columns;
             final int batchSize;
             
@@ -102,7 +104,7 @@ public class FusionTableImporter {
             boolean usedHeaders = false;
             
             public FusionTableBatchRowReader(ImportingJob job, String fileSource,
-                    GoogleService service, String tableId, List<FTColumnData> columns,
+                    Fusiontables service, String tableId, List<FTColumnData> columns,
                     int batchSize) {
                 this.job = job;
                 this.fileSource = fileSource;
@@ -143,14 +145,10 @@ public class FusionTableImporter {
                 
                 if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && !end)) {
                     int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
-                    try {
-                        rowsOfCells = getRowsOfCells(newBatchRowStart);
-                        batchRowStart = newBatchRowStart;
-                        
-                        GDataImporter.setProgress(job, fileSource, -1 /* batchRowStart * 100 / totalRows */);
-                    } catch (ServiceException e) {
-                        throw new IOException(e);
-                    }
+                    rowsOfCells = getRowsOfCells(newBatchRowStart);
+                    batchRowStart = newBatchRowStart;
+
+                    GDataImporter.setProgress(job, fileSource, -1 /* batchRowStart * 100 / totalRows */);
                 }
                 
                 if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
@@ -161,18 +159,19 @@ public class FusionTableImporter {
             }
             
             
-            private List<List<Object>> getRowsOfCells(int startRow) throws IOException, ServiceException {
+            private List<List<Object>> getRowsOfCells(int startRow) throws IOException {
                 List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
                 
                 String query = baseQuery + " OFFSET " + startRow + " LIMIT " + batchSize;
                 
-                List<List<String>> rows = FusionTableHandler.runFusionTablesSelect(service, query);
+                Sqlresponse sqlresponse = FusionTableHandler.runFusionTablesSelect(service, query);
+                List<List<Object>> rows = sqlresponse.getRows();
                 if (rows.size() > 1) {
                     for (int i = 1; i < rows.size(); i++) {
-                        List<String> row = rows.get(i);
+                        List<Object> row = rows.get(i);
                         List<Object> rowOfCells = new ArrayList<Object>(row.size());
                         for (int j = 0; j < row.size() && j < columns.size(); j++) {
-                            String text = row.get(j);
+                            String text = (String)row.get(j);
                             if (text.isEmpty()) {
                                 rowOfCells.add(null);
                             } else {
@@ -208,7 +207,7 @@ public class FusionTableImporter {
     }
 
     static public void parse(
-            GoogleService service,
+            Fusiontables service,
             Project project,
             ProjectMetadata metadata,
             final ImportingJob job,
@@ -222,37 +221,34 @@ public class FusionTableImporter {
         
         try {
             List<FTColumnData> columns = new ArrayList<FusionTableImporter.FTColumnData>();
-            List<List<String>> rows = FusionTableHandler.runFusionTablesSelect(service, "DESCRIBE " + id);
-            if (rows.size() > 1) {
-                for (int i = 1; i < rows.size(); i++) {
-                    List<String> row = rows.get(i);
-                    if (row.size() >= 2) {
-                        FTColumnData cd = new FTColumnData();
-                        cd.name = row.get(1);
-                        cd.type = FTColumnType.STRING;
-                        
-                        if (row.size() > 2) {
-                            String type = row.get(2).toLowerCase();
-                            if (type.equals("number")) {
-                                cd.type = FTColumnType.NUMBER;
-                            } else if (type.equals("datetime")) {
-                                cd.type = FTColumnType.DATETIME;
-                            } else if (type.equals("location")) {
-                                cd.type = FTColumnType.LOCATION;
-                            }
-                        }
-                        columns.add(cd);
-                    }
+            Table table = service.table().get(id).execute();
+            for (Column col : table.getColumns()) {
+                FTColumnData cd = new FTColumnData();
+                cd.name = col.getName();
+                String type = col.getType();
+                if (type.equals("STRING")) {
+                    cd.type = FTColumnType.STRING;
+                } else if (type.equals("NUMBER")) {
+                    cd.type = FTColumnType.NUMBER;
+                } else if (type.equals("DATETIME")) {
+                    cd.type = FTColumnType.DATETIME;
+                } else if (type.equals("LOCATION")) {
+                    cd.type = FTColumnType.LOCATION;
+                } else {
+                    // TODO: unknown type
+                    cd.type = FTColumnType.STRING;
                 }
-                
-                setProgress(job, docUrlString, -1);
-                
-                // Force these options for the next call because each fusion table
-                // is strictly structured with a single line of headers.
-                JSONUtilities.safePut(options, "ignoreLines", 0); // number of blank lines at the beginning to ignore
-                JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
-                
-                TabularImportingParserBase.readTable(
+                columns.add(cd);
+            }
+
+            setProgress(job, docUrlString, -1);
+
+            // Force these options for the next call because each fusion table
+            // is strictly structured with a single line of headers.
+            JSONUtilities.safePut(options, "ignoreLines", 0); // number of blank lines at the beginning to ignore
+            JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
+
+            TabularImportingParserBase.readTable(
                     project,
                     metadata,
                     job,
@@ -262,12 +258,8 @@ public class FusionTableImporter {
                     options,
                     exceptions
                 );
-                setProgress(job, docUrlString, 100);
-            }
+            setProgress(job, docUrlString, 100);
         } catch (IOException e) {
-            e.printStackTrace();
-            exceptions.add(e);
-        } catch (ServiceException e) {
             e.printStackTrace();
             exceptions.add(e);
         }
