@@ -350,8 +350,10 @@
                 <include name="**"/>
             </fileset>
         </copy>
+        <copy file="${basedir}/refine.ini" tofile="${linux.dir}/refine.ini"/>
         <copy file="${basedir}/LICENSE.txt" tofile="${linux.dir}/LICENSE.txt"/>
         <copy file="${basedir}/README.txt" tofile="${linux.dir}/README.txt"/>
+        <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
         
         <mkdir dir="${dist.dir}"/>
         <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/lodrefine-${version}.tar.gz">
