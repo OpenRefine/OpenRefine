@@ -2,6 +2,7 @@
 *.class
 sourceforge.sh
 .import-temp/
+.externalToolBuilders/
 build/
 dist/
 server/classes/
