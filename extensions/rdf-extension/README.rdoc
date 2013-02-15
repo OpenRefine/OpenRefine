@@ -1,19 +1,25 @@
-This project adds a graphical user interface(GUI) for exporting data of Google Refine projects in RDF format. The export is based on mapping the data to a template graph using the GUI.
+=RDF-Extension
 
-INSTALL
+This project was originally developed by DERI as an extension for Google Refine that added:
+* reconcilation services for registered SPARQL endpoints
+* a graphical user interface(GUI) for exporting data of Google Refine projects in RDF format. The export is based on mapping the data to a template graph using the GUI.
 
-you need to have the code of Google Refine http://code.google.com/p/google-refine/source/checkout . Then pull the code of this extension into the extensions folder available with Google Refine code. see http://code.google.com/p/google-refine/wiki/WriteAnExtension
+The repository has been forked and updated to work with OpenRefine, next (updated) version of Google Refine.
+This extension is now also a part of LODRefine -- LOD-enabled version of OpenRefine (http://github.com/sparkica/OpenRefine)
 
-* Rename the extension source folder to "rdf-extension"
-* make sure to update the extensions/build.xml file*  you need to add build and clean ant tasks to the extension.
+== INSTALL & BUILD
+
+1. Pull OpenRefine's code from repository: http://github.com/OpenRefine/OpenRefine
+2. Pull this repository into extensions folder within OpenRefine
+3. Rename this folder to "rdf-extension"
+4. Update extensions/build.xml file with two lines in build and clean ant task:
 
 The two lines that need to be added are:
 	<ant dir="rdf-export/" target="build" />
 	<ant dir="rdf-export/" target="clean" />
-	
-the whole file is shown below:
 
-
+The buil.xml should then look something like this:
+  
   <project name="google-refine-extensions" default="build" basedir=".">
   <target name="build">
     <echo message="Building extensions" />
@@ -33,3 +39,8 @@ the whole file is shown below:
     <ant dir="rdf-extension/" target="clean" />
   </target>
   </project>
+
+
+Build OpenRefine project using ./refine build and run it with ./refine run.
+If extension was loaded properly, you'll se RDF menu in extensions bar of the OpenRefine window after a project is loaded.
+
