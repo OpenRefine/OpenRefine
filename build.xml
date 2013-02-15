@@ -131,7 +131,6 @@
         <javac encoding="utf-8" destdir="${webapp.classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${webapp.src.dir}"/>
             <classpath refid="webapp.class.path" />
-        	<compilerarg value="-Xlint"/>
         </javac>
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
     </target>
