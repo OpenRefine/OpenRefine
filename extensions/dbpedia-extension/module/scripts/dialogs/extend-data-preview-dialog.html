@@ -3,11 +3,11 @@
 	<div class="dialog-header" bind="dialogHeader"></div>
 	<div class="dialog-body" bind="dialogBody">
 		<div class="grid-layout layout-normal layout-full">
-			<table rows="3">
+			<table rows="2">
 				<tr>
-					<td width="300" height="1">Suggested Properties</td>
-					<td height="1">Preview</td>
-					<td height="1" width="1%"><button class="button"
+					<td width="300" height="1"><h3>Suggested Properties</h3></td>
+					<td height="1"><h3>Preview</h3></td>
+					<td height="1" width="1%" style="text-align:right;"><button class="btn btn-inverse"
 							bind="resetButton">Reset</button></td>
 				</tr>
 				<tr>
@@ -15,13 +15,13 @@
 							class="suggested-property-container"
 							bind="suggestedPropertyContainer"></div></td>
 					<td style="vertical-align: top;" colspan="2"><div
-							class="preview-container" bind="previewContainer"></div></td>
+							class="preview-container" bind="previewContainer" style="overflow:scroll;"></div></td>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="dialog-footer" bind="dialogFooter">
-		<button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
-		<button class="button" bind="cancelButton">Cancel</button>
+		<button class="btn btn-success" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+		<button class="btn" bind="cancelButton">Cancel</button>
 	</div>
 </div>
