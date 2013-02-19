@@ -633,7 +633,7 @@ run() {
     fi
     
     if [ ! -d $REFINE_CLASSES_DIR ] ; then
-        IS_JAR=`ls $REFINE_LIB_DIR | grep google-refine`
+        IS_JAR=`ls $REFINE_LIB_DIR | grep lodrefine`
         if [ -z "$IS_JAR" ] ; then
             ant build
             echo ""
