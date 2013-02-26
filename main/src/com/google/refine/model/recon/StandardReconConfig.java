@@ -34,10 +34,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model.recon;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -289,7 +290,7 @@ public class StandardReconConfig extends ReconConfig {
         
         try {
             URL url = new URL(service);
-            URLConnection connection = url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             {
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setConnectTimeout(30000);
@@ -308,44 +309,50 @@ public class StandardReconConfig extends ReconConfig {
                 connection.connect();
             }
             
-            InputStream is = connection.getInputStream();
-            try {
-                String s = ParsingUtilities.inputStreamToString(is);
-                JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-                
-                for (int i = 0; i < jobs.size(); i++) {
-                    StandardReconJob job = (StandardReconJob) jobs.get(i);
-                    Recon recon = null;
-                    
-                    String text = job.text;
-                    String key = "q" + i;
-                    if (o.has(key)) {
-                        JSONObject o2 = o.getJSONObject(key);
-                        if (o2.has("result")) {
-                            JSONArray results = o2.getJSONArray("result");
-                            
-                            recon = createReconServiceResults(text, results, historyEntryID);
+            if (connection.getResponseCode() >= 400) {
+                // TODO: Retry with backoff on 500 errors?
+                InputStream is = connection.getErrorStream();
+                throw new IOException("Failed  - code:" 
+                + Integer.toString(connection.getResponseCode()) 
+                + " message: " + is == null ? "" : ParsingUtilities.inputStreamToString(is));
+            } else {
+                InputStream is = connection.getInputStream();
+                try {
+                    String s = ParsingUtilities.inputStreamToString(is);
+                    JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+
+                    for (int i = 0; i < jobs.size(); i++) {
+                        StandardReconJob job = (StandardReconJob) jobs.get(i);
+                        Recon recon = null;
+
+                        String text = job.text;
+                        String key = "q" + i;
+                        if (o.has(key)) {
+                            JSONObject o2 = o.getJSONObject(key);
+                            if (o2.has("result")) {
+                                JSONArray results = o2.getJSONArray("result");
+
+                                recon = createReconServiceResults(text, results, historyEntryID);
+                            } else {
+                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
+                            }
                         } else {
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
                         }
-                    } else {
-                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
+
+                        if (recon != null) {
+                            recon.service = service;
+                        }
+                        recons.add(recon);
                     }
-                    
-                    if (recon != null) {
-                        recon.service = service;
-                    }
-                    recons.add(recon);
+                } finally {
+                    is.close();
                 }
-            } finally {
-                is.close();
             }
-//        } catch (IOException e) {
-//            // TODO: Retry on HTTP 500 errors?
         } catch (Exception e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
-        
+
         while (recons.size() < jobs.size()) {
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
             recon.service = service;
