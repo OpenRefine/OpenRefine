@@ -680,6 +680,7 @@ ListFacet.prototype._editExpression = function() {
         self._config.expression = expr;
 
         self._elmts.expressionDiv.text(self._config.expression);
+        self._elmts.changeButton.attr("title", "Current Expression: " + self._config.expression);
         if (self._config.expression == "value" || self._config.expression == "grel:value") {
           self._elmts.clusterLink.show();
         } else {
@@ -689,6 +690,7 @@ ListFacet.prototype._editExpression = function() {
         self.reset();
         self._updateRest();
       }
+      self._elmts.expressionDiv.hide();
     }
   );
 };
