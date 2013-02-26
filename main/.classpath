@@ -23,7 +23,7 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/poi-ooxml-schemas-3.7-20101029.jar"/>
 	<classpathentry exported="true" kind="lib" path="webapp/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/xmlbeans-2.3.0.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/clojure-1.1.0.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/clojure-1.4.0.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jackson-core-asl-1.5.1.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/marc4j-2.4.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jrdf-0.5.6.jar"/>
