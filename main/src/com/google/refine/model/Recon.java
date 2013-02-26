@@ -253,7 +253,7 @@ public class Recon implements HasFields, Jsonizable {
         @Override
         public Object getField(String name, Properties bindings) {
             int index = s_featureMap.containsKey(name) ? s_featureMap.get(name) : -1;
-            return (index > 0 && index < features.length) ? features[index] : null;
+            return (index >= 0 && index < features.length) ? features[index] : null;
         }
 
         @Override
