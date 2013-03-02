@@ -111,6 +111,7 @@ CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
         {},
         $.suggest.suggest.defaults, {
           scoring: "schema",
+          type: "/type/property",
           css: { pane: "fbs-pane fbs-pane-property" }
         }
       )
