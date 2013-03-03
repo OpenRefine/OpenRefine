@@ -139,12 +139,12 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
   }
 
   var suggestConfig = {
-      filter: '(all type:/type/property)',
+      type: '/type/property', // NOTE: requires patched Suggest to pass this through
       // Default returns id, lang, mid, name, notable {id,name}, score
       mql_output : JSON.stringify({'name':null,'id':null,'mid':null, '/type/property/expected_type':{'name':null,'id':null}}),
   };
   if ((this._column.reconConfig) && (this._column.reconConfig.type)) {
-    suggestConfig.filter = '(all type:/type/property (any namespace:/type/object namespace:' + this._column.reconConfig.type.id + '))';
+    suggestConfig.filter = '(should (any namespace:/type/object namespace:/common/topic namespace:' + this._column.reconConfig.type.id + '))';
   }
 
   this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
