@@ -35,7 +35,7 @@ var theProject;
 var ui = {};
 
 var Refine = {
-  refineHelperService: "http://1.refine-helper.stefanomazzocchi.user.dev.freebaseapps.com"
+  refineHelperService: "http://openrefine-helper.freebaseapps.com"
 };
 
 Refine.reportException = function(e) {

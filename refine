@@ -151,8 +151,8 @@ check_running() {
     CHECK_STR="<title>LODRefine</title>"
 
     if [ "$CURL" ] ; then
-        curl -s -S $URL > /dev/null 2>&1
-        if [ "$?" = "7" ] ; then
+        curl -s -S -f $URL > /dev/null 2>&1
+        if [ "$?" = "7" ] || [ "$?" = "22" ] ; then
             NOT_RUNNING="1"
         fi
     elif [ "$WGET" ] ; then

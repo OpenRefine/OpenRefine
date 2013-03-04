@@ -1,0 +1,565 @@
+/*
+=======================================================
+
+FREEBASE SUGGEST
+
+This file is part of the freebase-suggest jQuery plugin.
+
+It is maintained by Metaweb Technologies, Inc. and
+available for use under a Creative Commons License.
+
+Author: Kai Conragan (kai@metaweb.com)
+
+    GLOSSARY
+    
+    .fbs-pane       : Outermost container for result list <div>
+    .fbs-subpane    : Inner container for result list <div>
+    .fbs-list       : Contained by .fbs-subpane, this is the actual results list <ul>
+    .fbs-item       : Individual item in results list <li>
+    .fbs-flyout-pane : Outermost container for flyout on specific object <div>
+
+=======================================================
+*/
+
+/*
+-------------------------------------------------------
+Freebase Suggest Reset
+-------------------------------------------------------
+
+reset all Freebase Suggest elements to insure consisten cross-browser rendering
+
+*/
+
+.fbs-reset,
+.fbs-reset h1,
+.fbs-reset h2,
+.fbs-reset h3,
+.fbs-reset h4,
+.fbs-reset h5,
+.fbs-reset h6,
+.fbs-reset p,
+.fbs-reset img,
+.fbs-reset dl,
+.fbs-reset dt,
+.fbs-reset dd,
+.fbs-reset ol,
+.fbs-reset ul,
+.fbs-reset li {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    font-family: inherit;
+    vertical-align: baseline;
+}
+
+/*
+-------------------------------------------------------
+Freebase Suggest Chrome
+-------------------------------------------------------
+
+You can change the colors of Freebase Suggest by overriding
+the following rules. We recommended that you copy/paste the
+below rules into your own stylesheet to customize.
+
+*/
+
+.fbs-pane,
+.fbs-flyout-pane,
+li.fbs-nomatch,
+a.fbs-more-link,
+li.fbs-selected,
+.fbs-flyout-images,
+#fbs-topic-image { 
+    background: #fff; 
+}
+
+
+.fbs-suggestnew { 
+    color: #444;
+}
+
+.fbs-pane,
+.fbs-flyout-pane,
+.fbs-flyout-subtitle,
+.fbs-topic-properties strong { 
+    color:  #666;
+}
+
+h3.fbs-topic-properties,
+.fbs-flyout-pane p { 
+    color: #444;
+}
+
+.fbs-item-name,
+li.fbs-help-on-focus,
+li.fbs-nomatch,
+.fbs-nomatch-text,
+.fbs-flyout-pane h3,
+.fbs-properties-header { 
+    color: #333;
+}
+
+.fbs-pane,
+.fbs-flyout-pane { 
+    border: 1px solid #bbb;
+    padding: 2px;
+}
+
+.fbs-flyout-pane {
+    border-color: #ccc;
+}
+
+.fbs-list,
+.fbs-list-icons,
+.fbs-flyout-content,
+.fbs-attribution, 
+.fbs-header { 
+    background-color: #f5f5f5;
+}
+
+.fbs-header { background: #fefefe; }
+
+li.fbs-help-on-focus,
+li.fbs-nomatch { 
+    border-bottom: 1px solid #dae3e9;
+}
+
+.fbs-item-name {
+    border: 1px solid #f5f5f5;
+}
+
+h1#fbs-flyout-title,
+li.fbs-selected .fbs-item-name { 
+    color: #f60;
+}
+
+li.fbs-selected .fbs-item-name {
+    border-color: #f60;
+    background: #fff;
+}
+
+
+.fbs-nomatch-text {
+    border-bottom: 1px solid #dae3e9;
+    background: #f8f8f8;
+}
+
+.fbs-suggestnew { 
+    background: #eeeeee;
+    border-top: 1px solid #dae3e9;
+}
+
+
+#fbs-flyout-title .fbs-flyout-label { 
+    color: #aaa;
+}
+
+/* topic image */
+#fbs-topic-image,
+.fbs-flyout-images {
+    border: 1px solid #a9a9a9;
+}
+
+.fbs-suggestnew-button,
+.fbs-flyout-pane { 
+    border: 1px solid #9a9a9a;
+    color: #999999;
+}
+
+.fbs-suggestnew-button {
+    color: #444444;
+}
+
+ul.fbs-list,
+.fbs-flyout-content,
+.fbs-attribution,
+.fbs-header {
+    border: 1px solid #dae3e9;
+}
+
+.fbs-header { border-bottom: 0; }
+
+li.fbs-item {
+    border-bottom: 1px solid #dae3e9;
+    list-style-type: none;
+}
+
+.fbs-attribution {
+    border-top: 0;
+}
+
+/*
+-------------------------------------------------------
+Freebase Suggest Typography
+-------------------------------------------------------
+
+    establish base typography size by:
+    1. Setting parent div to font-size 16px;
+    2. Setting inner div to font-size 62.5%, giving us a 10px baseline
+    3. Setting global style rules
+*/
+
+.fbs-pane,
+.fbs-flyout-pane {
+    font-size: 16px;
+    font-family: Helvetica Neue, Arial, Helvetica, sans-serif;
+}
+
+ul.fbs-list,
+.fbs-flyout-content,
+.fbs-attribution,
+div.fbs-header {
+  font-size: 62.5%;
+}
+
+
+/* insure <strong> displays bold */
+.fbs-pane strong,
+.fbs-flyout-pane strong {
+  font-weight: bold;
+}
+
+/*
+-------------------------------------------------------
+Freebase Suggest Structure
+-------------------------------------------------------
+*/
+
+.fbs-flyout-content,
+.fbs-attribution {
+    margin: 2px;
+}
+
+.fbs-flyout-content { margin-bottom: 0; }
+.fbs-attribution    { margin-top: 0; }
+
+.fbs-pane        { width: 325px; } /* results list container */
+.fbs-flyout-pane { width: 319px; margin-left: 3px; } /* flyout container, 3px narrower on each side to create drawer appearance */
+
+ul.fbs-list {    
+    max-height: 320px;  
+    overflow: auto;
+    overflow-x: hidden;
+    border-bottom: 0;
+    border-top: 0;
+}
+
+.fbs-flyout-content,
+.fbs-attribution {
+    padding: 5px;
+}
+
+.fbs-flyout-content:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+  
+
+/*
+-------------------------------------------------------
+Freebase Suggest Results List
+-------------------------------------------------------
+*/
+
+/* each .fbs-item is a single returned result */
+li.fbs-help-on-focus,
+li.fbs-nomatch {
+    padding: 6px 8px 7px 6px;
+    font-size: 1.4em;
+    line-height: 1;
+}
+
+/* show more results */
+li.fbs-more { padding: 0; background: transparent;}
+
+a.fbs-more-link {
+    display: block;
+    padding: 4px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.fbs-more .fbs-help {
+    display: none;
+}
+
+.fbs-header {
+    font-weight: bold;
+    padding: 4px 6px;
+    margin: 2px 2px -2px 2px;
+}
+
+.fbs-item-name label {
+    font-size: 0.9em;
+}
+
+
+.fbs-item-type,
+.fbs-item-name label {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+/*    text-overflow:ellipsis;*/
+}
+
+.fbs-item-name {
+    padding: 2px 8px 1px 6px;
+    font-size: 1.4em;
+    line-height: 1.4em;
+    background: #f4f8fb;
+}
+
+/* result name */
+.fbs-item-name strong {
+    font-weight: bold;
+}
+
+.fbs-item-type { 
+    color: #777;
+    float: right;
+    font-size: 0.7em;
+    max-width: 40%;
+    padding-left: 0.25em;    
+}
+
+/* hover state of .fbs-item */
+li.fbs-selected { 
+    cursor: pointer;
+}
+
+/*
+-------------------------------------------------------
+Freebase Suggest Status
+-------------------------------------------------------
+*/
+
+.fbs-status {
+    border: 1px solid #dae3e9;
+    padding: 4px 5px;
+    color: #000;
+    font-size: 0.7em;
+}
+
+/*
+-------------------------------------------------------
+Freebase Suggest No Results
+-------------------------------------------------------
+*/
+
+li.fbs-nomatch {
+    padding: 0;
+}
+
+.fbs-nomatch-text {
+    display: block;
+    font-weight: bold;
+    line-height: 1;
+    font-size: .9em;
+}
+
+.fbs-nomatch-text,
+.fbs-nomatch h3,
+ul.fbs-search-tips {
+    padding: 6px 8px 7px 6px;
+}
+
+.fbs-nomatch h3 {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+ul.fbs-search-tips li {
+  list-style: disc;
+  margin-left: 1.6em;
+  margin-bottom: 0.3em;
+  font-size: 0.9em;
+}
+
+/*
+-------------------------------------------------------
+Freebase Suggest Create New
+-------------------------------------------------------
+*/
+
+/* suggest new container */
+.fbs-suggestnew {
+    padding: 0.4em 0.3em 0.5em 8px;
+}
+
+.fbs-suggestnew-button {
+    cursor: pointer;
+    padding: 0.2em 0.3em;
+    margin-left: 0px !important;
+    max-width: 17em;
+    font-size: .8em;
+}
+
+.fbs-suggestnew-description { 
+    margin-bottom: 0.6em;
+    font-size: 0.7em;
+     }
+
+/* (Shift + Enter) */
+.fbs-more-shortcut,
+.fbs-suggestnew-shortcut {
+  margin-left: 0.4em;
+  font-size: 70%;
+  color: #999999;
+}
+
+/** placeholder text **/
+.fbs-placeholder {
+    color: #99a;
+    font-style: italic;
+}
+
+/*
+-------------------------------------------------------
+Freebase Suggest Flyout Elements
+-------------------------------------------------------
+*/
+
+.fbs-flyout-id {
+    color: #999 !important;
+}
+
+/* the object title */
+h1#fbs-flyout-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    margin-top: 0.3em;
+}
+
+h1#fbs-flyout-title .fbs-flyout-template-label {
+    color: #999999;
+    font-size: 0.8em;
+}
+
+
+/* denotes topic, type, view, base, etc. */
+#fbs-flyout-title .fbs-flyout-label {
+    font-weight: normal;
+}
+
+/* Image for single topic result */
+#fbs-topic-image {
+    float: left;
+    padding: 1px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* Image pair for views/base/etc. */
+.fbs-flyout-images {
+    float: left;
+    margin: 0 10px 0 0;
+    padding: 1px 0 1px 1px;
+}
+
+.fbs-flyout-images img {
+    float: left;
+    margin-right: 1px;
+}
+
+.fbs-flyout-subtitle {
+    font-size: 1.1em;
+    margin-bottom: 0.5em;
+}
+
+.fbs-flyout-pane h3 {
+    font-size: 1em;
+    line-height: 1.4;
+    margin-bottom: 0.25em;
+}
+
+.fbs-properties-header {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0.5em 0;
+}
+
+h3.fbs-topic-properties {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.fbs-topic-properties strong {
+    display: inline;
+    font-size: 0.8em;
+}
+
+.fbs-flyout-pane p {
+  font-size: 1.2em;
+  line-height: 1.4;
+}
+
+/* this class is applied with fbs-topic-flyout when a thumbnail is present
+   in order to provide a fixed margin on text to prevent poor text wrapping
+   around thumbnail
+*/
+p.fbs-flyout-image-true,
+h3.fbs-flyout-image-true,
+h1.fbs-flyout-image-true { margin-left: 85px; }
+
+.fbs-meta-info { margin-left: 110px; }
+#fbs-user-flyout li { 
+    margin-left: 100px;
+    }
+#fbs-domain-flyout .fbs-meta-info { margin-left: 145px;}
+
+/* generic flyout list */
+.fbs-flyout-list li {
+    font-size: 1em;
+    margin-left: 15px;
+}
+
+#fbs-domain-flyout #fbs-flyout-title { margin-bottom: 0.5em; }
+
+/*
+-------------------------------------------------------
+Freebase Suggest Attribution
+-------------------------------------------------------
+*/
+
+.fbs-attribution {
+    padding-right: 72px; /* accommodate attribution background image */
+    background-image: url(template/img/fbs-attribution.png);
+    background-repeat: no-repeat;
+    background-position: center right;
+    min-height: 15px;
+}
+
+.fbs-flyout-types {
+    font-style: italic;
+    line-height: 1; 
+    font-size: 1.2em;
+}
+
+/*
+-------------------------------------------------------
+Freebase SuggestIE Hacks
+-------------------------------------------------------
+We can't use conditional comments so we have to resort
+to inline Internet Explor fixes
+
+*/
+
+* html .fbs-list,
+* html .fbs-list-icons { height: expression( this.scrollHeight > 410 ? "410" : "auto" ); /* sets max-height for IE */ }
+
+* html .fbs-item-name {
+    width : 253px !important;
+}
+
+* html .fbs-item-name{ width: 100%; }
+
+* html .fbs-flyout-content:after { height: 1px; }
+

@@ -308,7 +308,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
   };
   var sourceTypeID = this._parentUINode.getExpectedType();
   if (sourceTypeID !== null) {
-    suggestOptions.filter = '(all type:/type/property (any namespace:/type/object namespace:' + sourceTypeID + '))'
+    suggestOptions.filter = '(all type:/type/property (should namespace:' + sourceTypeID + '))'
 
   }
   input.suggestP(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });

@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="module/MOD-INF/lib/tika-core-0.6.jar"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/tika-parsers-0.6.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
-	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/clojure-1.1.0.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/commons-codec-1.5.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/commons-io-1.4.jar"/>
@@ -23,7 +22,6 @@
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
-	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/opencsv-2.2.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/secondstring-20100303.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar"/>
@@ -61,5 +59,7 @@
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="/LODRefine/main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/LODRefine"/>
+	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/clojure-1.4.0.jar"/>
+	<classpathentry kind="lib" path="/LODRefine/main/webapp/WEB-INF/lib/opencsv-2.4-SNAPSHOT.jar" sourcepath="/LODRefine/main/webapp/WEB-INF/lib-src/opencsv-2.4-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>
