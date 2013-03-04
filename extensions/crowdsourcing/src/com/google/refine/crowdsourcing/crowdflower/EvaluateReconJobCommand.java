@@ -59,10 +59,15 @@ public class EvaluateReconJobCommand extends Command{
             
             if(extension.has("job_id") && !extension.isNull("job_id")) {
 
+                if(extension.has("recon_service") && !extension.isNull("recon_service")) {
+                    reconService = extension.getString("recon_service");
+                }
+                
                 StringBuffer data = generateObjectsForUpload(extension, project, engine);             
                 String msg = cf_client.bulkUploadJSONToExistingJob(extension.getString("job_id"), data.toString());
 
                 JSONObject result = ParsingUtilities.evaluateJsonStringToObject(msg);
+                
                 
                 if(result.has("response") && !result.getString("status").equals("ERROR")) {
                     generateResponse(response, result);
@@ -129,6 +134,7 @@ public class EvaluateReconJobCommand extends Command{
         String recon_col_name = extension.getString("recon_column");
         String golden_col_name = "";
         
+        
         if(extension.has("golden_column")) {
             golden_col_name = extension.getString("golden_column");
         }
@@ -186,6 +192,7 @@ public class EvaluateReconJobCommand extends Command{
         //recon information
         Column recon_col = project.columnModel.getColumnByName(recon_col_name);
         Column golden_col = null;
+        int max_candidates = 3; //default number of suggestions
         
         if(!golden_col_name.equals("")) {
             golden_col = project.columnModel.getColumnByName(golden_col_name);
@@ -203,9 +210,8 @@ public class EvaluateReconJobCommand extends Command{
                 
                 String key = column_names.getJSONObject(c).getString("safe_name");
                 Object value = project.rows.get(row_index).getCellValue(cell_index);
-                
+                                
                 if(value != null) {
-
                    obj.put(key, value.toString());
                 } else {
                     obj.put(key, "");
@@ -214,7 +220,6 @@ public class EvaluateReconJobCommand extends Command{
             
             //add recon information
             Cell recon_cell = project.rows.get(row_index).getCell(recon_cell_index);
-            System.out.println("REcon cell index: " + recon_cell_index);
             
             List<ReconCandidate> candidates =  null;
             if((recon_cell != null) && recon_cell.recon!= null)
@@ -224,22 +229,33 @@ public class EvaluateReconJobCommand extends Command{
             
             //generate gold data from column with links
             //if link == candidates(i), gold1 = suggestion_i
+           
+            if((candidates!= null) && (candidates.size() > max_candidates))
+                max_candidates = candidates.size();
+            
             
             if((candidates != null) && candidates.size() > 0) {
                
                 String gold_value = (gold_index != -1) ? (String)project.rows.get(row_index).getCellValue(gold_index) : ""; 
 
+                //in case gold index != -1, but cell value returned is null 
+                if(gold_value == null)
+                    gold_value = "";
+                
+                
                 boolean candidate_matches = false;
 
                 //both gold columns need to be defined so they get registered as columns
                 //otherwise data is ignored for next rows
+                
                 if((golden_col!= null) && gold_value.equals("")) {
-                    obj.put("best_suggestion_golden", "");
-                    obj.put("enter_link_golden", "");
+                                        
+                    obj.put("best_suggestion_gold", "");
+                    obj.put("enter_link_gold", "");
                     candidate_matches = true;
                 }            
                 
-                
+               
                 for(int i=1; i <= candidates.size(); i++) {
                     rc = candidates.get(i-1);
                     obj.put("suggestion_name_" + i, rc.name);
@@ -252,21 +268,21 @@ public class EvaluateReconJobCommand extends Command{
                     //compare cell value of golden link with candidates to generate
                     //correct answer for form
                     if((golden_col !=null) && (!candidate_matches) && (gold_value.equals(rc.id))) {
-                        obj.put("best_suggestion_golden", "Suggestion " + i);
+                        obj.put("best_suggestion_gold", "Suggestion " + i);
                         //no need for link, because we already have the right answer provided
-                        obj.put("enter_link_golden", "");
+                        obj.put("enter_link_gold", "");
                         candidate_matches = true;
                     } 
                     
                 }
                 if((golden_col !=null) && (!candidate_matches)) {
-                    obj.put("best_suggestion_golden", "None of the above");
+                    obj.put("best_suggestion_gold", "None of the above");
                     
                     if(reconService.equals("freebase") && !gold_value.contains("www.freebase.com"))
                     {
-                        obj.put("enter_link_golden", FREEBASE_VIEW_URL + gold_value);
+                        obj.put("enter_link_gold", FREEBASE_VIEW_URL + gold_value);
                     } else {
-                        obj.put("enter_link_golden", gold_value);
+                        obj.put("enter_link_gold", gold_value);
                     }
 
                 }
@@ -276,12 +292,18 @@ public class EvaluateReconJobCommand extends Command{
                 //especially if this is the first row of values
                 //otherwise these columns will not be included (CF quirk)
                 //todo: get max number of candidates
-                obj.put("suggestion_name_1", "(no suggestion)");
-                obj.put("suggestion_name_2", "(no suggestion)");
-                obj.put("suggestion_name_3", "(no suggestion)");
-                obj.put("suggestion_url_1", "#");
-                obj.put("suggestion_url_2", "#");
-                obj.put("suggestion_url_3", "#");
+                
+                for(int i = 1; i <= max_candidates; i++) {
+                    obj.put("suggestion_name_" + i, "(no suggestion)");
+                    obj.put("suggestion_url_" + i, "#");
+                }
+                
+//                obj.put("suggestion_name_1", "(no suggestion)");
+//                obj.put("suggestion_name_2", "(no suggestion)");
+//                obj.put("suggestion_name_3", "(no suggestion)");
+//                obj.put("suggestion_url_1", "#");
+//                obj.put("suggestion_url_2", "#");
+//                obj.put("suggestion_url_3", "#");
             }
         
             bf.append(obj.toString()); 

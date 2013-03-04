@@ -47,13 +47,8 @@ function ZemantaCFEvaluateReconDialog(onDone) {
       self._extension.column_names.push(tmp1);
   
       if($('#upload-gold').is(':checked')) {
-    	  console.log("Upload checked");
           self._extension.golden_column = $('option[name=gold2]:selected').val();;
       } 
-      else {
-    	  console.log("Golden data not included");
-      }
-      
 
       self._extension.recon_column = $('option[name=reconCol]:selected').val();      
       

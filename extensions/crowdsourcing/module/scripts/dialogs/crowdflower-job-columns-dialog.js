@@ -521,9 +521,14 @@ ZemantaCrowdFlowerDialog.prototype._updateFieldsFromTemplate = function (entityT
 	instructions += "<b>Check suggested options FIRST</b>. If none of them matches, try to find profile page ";
 	instructions += "using <a target=\"_blank\" href=\""+ reconSearchUrl + "\">"+ recon + " search page</a>. ";
 
+	function capitaliseFirstLetter(string)
+	{
+	    return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	
 	self._cml = "<p>" + 
-	  entityType + ":&#xA0;" +
-	  "{{anchor}}<br />" + entityType + "'s profile page:&#xA0;<a href=\"{{link}}\" target=\"_blank\" id=\"\">" +
+	capitaliseFirstLetter(entityType) + ":&#xA0;" +
+	  "{{anchor}}<br />" + capitaliseFirstLetter(entityType) + "'s profile page:&#xA0;<a href=\"{{link}}\" target=\"_blank\" id=\"\">" +
 	  "{{link}}</a></p><br />" +
 	  "<hr />" +
 	  "<p>&#xA0;<b>FIRST</b> check suggested links:</p>" +
@@ -536,13 +541,13 @@ ZemantaCrowdFlowerDialog.prototype._updateFieldsFromTemplate = function (entityT
 		"{{suggestion_name_3}}</a></li>" + 
 		"<li>None of the above matches (<a target=\"_blank\" href=\""+ reconSearchUrl + "\">find page on your own</a>)</li>" +
 		"</ol>" + 
-		"<cml:select label=\"Best suggestion\" validates=\"required\" gold=\"true\" instructions=\"Select the best option for this "+ entityType +".\">" +
+		"<cml:select label=\"Best suggestion\" validates=\"required\" gold=\"best_suggestion_gold\" instructions=\"Select the best option for this "+ entityType +".\">" +
 		"    <cml:option label=\"Suggestion 1\" value=\"Suggestion 1\"></cml:option>" +
 		"    <cml:option label=\"Suggestion 2\" value=\"Suggestion 2\"></cml:option>" +
 		"    <cml:option label=\"Suggestion 3\" value=\"Suggestion 3\"></cml:option>" +
 		"    <cml:option label=\"None of the above\" value=\"None of the above\"></cml:option>" +
 		"  </cml:select>" +
-"<cml:text label=\"Enter "+ recon + " link\" gold=\"true\" only-if=\"best_suggestion:[4]\" instructions=\"Find " + recon + " page for this " + entityType + " and paste it in this field\"  validates=\"url:['non-search']\">"  +
+"<cml:text label=\"Enter link:\" gold=\"enter_link_gold\" only-if=\"best_suggestion:[4]\" instructions=\"Find " + recon + " page for this " + entityType + " and paste it in this field\"  validates=\"url:['non-search']\">"  +
 "</cml:text>";
 	
 	
