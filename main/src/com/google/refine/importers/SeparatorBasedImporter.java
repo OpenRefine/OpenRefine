@@ -42,6 +42,7 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -126,14 +127,10 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         
         ArrayList<Object> cells = new ArrayList<Object>();
         String[] tokens = parser.parseLineMulti(line);
-        for (String s : tokens){
-            cells.add(s);
-        }
+        cells.addAll(Arrays.asList(tokens));
         while (parser.isPending()) {
             tokens = parser.parseLineMulti(lnReader.readLine());
-            for (String s : tokens) {
-                cells.add(s);
-            }
+            cells.addAll(Arrays.asList(tokens));
         }
         return cells;
     }
