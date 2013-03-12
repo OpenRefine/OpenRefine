@@ -80,15 +80,30 @@ public class FreebaseUtils {
     static final private int SAMPLE_SIZE = 300;
     static final private int JUDGES = 4;
     
+    public static final String API_KEY = "AIzaSyBAZ_EjMPKlOzyyZXv6JKXPPwJFISVji3M";
+            
     private static String getUserInfoURL(String host) {
+        // TODO: Needs to be upgraded to new APIs sandbox-freebase.com as host becomes v1sandbox as version
         return "http://api." + host + "/api/service/user_info";
     }
 
     private static String getMQLWriteURL(String host) {
+        // TODO: Needs to be upgraded to new APIs
+//      String version = "v1";
+//      if (host != null && host.contains("sandbox")) {
+//          version += "sandbox";
+//      }
+//      return "https://www.googleapis.com/freebase/"+version+"/mqlwrite?key=" + API_KEY + "&";
         return "http://api." + host + "/api/service/mqlwrite";
     }
 
     private static String getMQLReadURL(String host) {
+        // TODO: Needs to be upgraded to new APIs
+//      String version = "v1";
+//      if (host != null && host.contains("sandbox")) {
+//          version += "sandbox";
+//      }
+//      return "https://www.googleapis.com/freebase/"+version+"/mqlread?key=" + API_KEY + "&";
         return "http://api." + host + "/api/service/mqlread";
     }
     

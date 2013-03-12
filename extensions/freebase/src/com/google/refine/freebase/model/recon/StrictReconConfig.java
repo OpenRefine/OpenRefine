@@ -35,12 +35,13 @@ package com.google.refine.freebase.model.recon;
 
 import org.json.JSONObject;
 
+import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.recon.ReconConfig;
 
 abstract public class StrictReconConfig extends ReconConfig {
-    final static protected String s_mqlreadService = "https://www.googleapis.com/freebase/v1/mqlread?key=AIzaSyBAZ_EjMPKlOzyyZXv6JKXPPwJFISVji3M&";
+    final static protected String s_mqlreadService = "https://www.googleapis.com/freebase/v1/mqlread?key=" + FreebaseUtils.API_KEY + "&";
 
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {
         String match = obj.getString("match");
