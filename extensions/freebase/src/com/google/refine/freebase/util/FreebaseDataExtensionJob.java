@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2013 Google Inc. and contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,24 +36,43 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.google.refine.freebase.util;
 
-import java.io.DataOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.services.freebase.Freebase;
+import com.google.api.services.freebase.FreebaseRequestInitializer;
 
 import com.google.refine.freebase.FreebaseType;
 import com.google.refine.model.ReconCandidate;
@@ -99,32 +118,26 @@ public class FreebaseDataExtensionJob {
         formulateQuery(ids, extension, writer);
         
         String query = writer.toString();
-        InputStream is = doMqlRead(query);
-        try {
-            String s = ParsingUtilities.inputStreamToString(is);
-            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-            
-            Map<String, FreebaseDataExtensionJob.DataExtension> map = new HashMap<String, FreebaseDataExtensionJob.DataExtension>();
-            if (o.has("result")) {
-                JSONArray a = o.getJSONArray("result");
-                int l = a.length();
-                
-                for (int i = 0; i < l; i++) {
-                    JSONObject o2 = a.getJSONObject(i);
-                    String id = o2.getString("id");
-                    FreebaseDataExtensionJob.DataExtension ext = collectResult(o2, reconCandidateMap);
-                    
-                    if (ext != null) {
-                        map.put(id, ext);
-                    }
+        JSONObject o = doMqlRead(query);
+        Map<String, FreebaseDataExtensionJob.DataExtension> map = new HashMap<String, FreebaseDataExtensionJob.DataExtension>();
+        if (o.has("result")) {
+            JSONArray a = o.getJSONArray("result");
+            int l = a.length();
+
+            for (int i = 0; i < l; i++) {
+                JSONObject o2 = a.getJSONObject(i);
+                String id = o2.getString("id");
+                FreebaseDataExtensionJob.DataExtension ext = collectResult(o2, reconCandidateMap);
+
+                if (ext != null) {
+                    map.put(id, ext);
                 }
             }
-            
-            return map;
-        } finally {
-            is.close();
         }
-    }
+
+        return map;
+    } 
+
     
     protected FreebaseDataExtensionJob.DataExtension collectResult(
         JSONObject obj,
@@ -312,34 +325,167 @@ public class FreebaseDataExtensionJob {
     }
 
 
-    static protected InputStream doMqlRead(String query) throws IOException {
-        URL url = new URL("http://api.freebase.com/api/service/mqlread");
+    /**
+     * This RPC call works for the Reconcile API, but MQLread is not supported by JSONRPC
+     */
+    static private JSONObject rpcCall(String query) throws JSONException, UnsupportedEncodingException, IOException {
+        URL url = new URL("https://www.googleapis.com/rpc");
 
-        URLConnection connection = url.openConnection();
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        JSONObject params = new JSONObject();
+        params.put("query",query);
+        params.put("key", FreebaseUtils.API_KEY);
+       
+        JSONObject req1 = new JSONObject();
+        req1.put("jsonrpc","2.0");    
+        req1.put("id","q0");
+        req1.put("method","freebase.mqlread");
+        req1.put("apiVersion", "v1");
+        req1.put("params",params);
+
+        JSONArray body = new JSONArray();
+        body.put(req1);
+        
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("Content-Type", "application/json"); //
         connection.setConnectTimeout(5000);
         connection.setDoOutput(true);
         
-        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(),"utf-8");
         try {
-            String body = "extended=1&query=" + ParsingUtilities.encode(query);
-            
-            dos.writeBytes(body);
+            writer.write(body.toString());
         } finally {
-            dos.flush();
-            dos.close();
+            writer.flush();
+            writer.close();
         }
         
         connection.connect();
+        JSONArray result = null;
+        if (connection.getResponseCode() >= 400) {
+           String responseMessage = connection.getResponseMessage();
+           String errorStream = ParsingUtilities.inputStreamToString(connection.getErrorStream());
+        } else {
+            InputStream is = connection.getInputStream();
+            try {
+                String s = ParsingUtilities.inputStreamToString(is);
+                result = ParsingUtilities.evaluateJsonStringToArray(s);
+            } finally {
+                is.close();
+            }
+        }
+        return result.getJSONObject(0);
+    }
+
+    private static MimeBodyPart queryToMimeBodyPart(String query_name, 
+            String query, String service_url, String api_key) 
+                    throws MessagingException, IOException {
+        MimeBodyPart mbp = new MimeBodyPart();
+        mbp.setHeader("Content-Transfer-Encoding", "binary");
+        mbp.setHeader("Content-ID", "<" + query_name + ">");
+        mbp.setHeader("Content-type", "application/http"); 
         
-        return connection.getInputStream();
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("query",query));
+        params.add(new BasicNameValuePair("key", api_key));
+        UrlEncodedFormEntity param_string = new UrlEncodedFormEntity(params, "UTF-8");
+        
+        String body = "GET " + service_url + "?" + ParsingUtilities.inputStreamToString(param_string.getContent()) + "\n";
+        mbp.setText(body, "UTF-8");
+        mbp.getLineCount();
+        mbp.getAllHeaderLines();
+        return mbp;
+    }
+
+    
+    /**
+     * The beginnings of a homebrew attempt to generate multi-part MIME messages
+     * so that we can parse response bodies ourselves and avoid the limitations
+     * of the Google Client library.
+     */
+    static private JSONObject batchCallOld(String query) throws JSONException, MessagingException, IOException {
+        URL url = new URL("https://www.googleapis.com/batch");
+        String service_url = "https://www.googleapis.com/freebase/v1/mqlread";
+        MimeMultipart mp = new MimeMultipart("mixed");
+
+        MimeBodyPart mbp = queryToMimeBodyPart("q0", query, service_url, FreebaseUtils.API_KEY);
+        mp.addBodyPart(mbp);
+        mp.getPreamble();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("Content-Type", mp.getContentType()); 
+        connection.setConnectTimeout(5000);
+        connection.setDoOutput(true);
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        mp.writeTo(baos);
+        String foo = baos.toString("UTF-8");
+        
+        mp.writeTo(connection.getOutputStream());
+        
+        connection.connect();
+        JSONArray result = null;
+        if (connection.getResponseCode() >= 400) {
+           String responseMessage = connection.getResponseMessage();
+           String errorStream = ParsingUtilities.inputStreamToString(connection.getErrorStream());
+        } else {
+            InputStream is = connection.getInputStream();
+            try {
+                String s = ParsingUtilities.inputStreamToString(is);
+                result = ParsingUtilities.evaluateJsonStringToArray(s);
+            } finally {
+                is.close();
+            }
+        }
+        return result.getJSONObject(0);        
+    }
+
+    
+    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+
+    /** Global instance of the JSON factory. */
+    private static final JsonFactory JSON_FACTORY = new JacksonFactory();
+    
+
+    private static final FreebaseRequestInitializer REQUEST_INITIALIZER = 
+            new FreebaseRequestInitializer(FreebaseUtils.API_KEY);
+  
+    static private JSONObject batchCall1(String query) throws IOException, JSONException {
+
+        JsonBatchCallback<Freebase> callback = new JsonBatchCallback<Freebase>() {
+            public void onSuccess(Freebase res, HttpHeaders responseHeaders) {
+                System.out.println(res);
+            }
+            public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) {
+              System.out.println("Error Message: " + e.getMessage());
+            }
+          };
+
+          Freebase client = new Freebase.Builder(HTTP_TRANSPORT, JSON_FACTORY, null)
+            .setApplicationName("OpenRefine")
+            .setFreebaseRequestInitializer(REQUEST_INITIALIZER)
+            .build();
+          
+          // TODO: Batch doesn't work with MqlRead since it extends FreebaseRequest<Void>
+//          BatchRequest batch = client.batch();
+//          client.mqlread(query).queue(batch, callback); 
+//          batch.execute();
+
+          String s = ParsingUtilities.inputStreamToString(client.mqlread(query).executeAsInputStream());
+          JSONObject response = ParsingUtilities.evaluateJsonStringToObject(s);
+
+           return response;
+    }
+    
+    static protected JSONObject doMqlRead(String query) 
+            throws IOException, JSONException, MessagingException {
+//        JSONObject result = rpcCall(query);
+//        JSONObject resutl =  batchCallOld(query);
+        JSONObject result = batchCall1(query);
+
+        return result;
     }
     
     static protected void formulateQuery(Set<String> ids, JSONObject node, Writer writer) throws JSONException {
         JSONWriter jsonWriter = new JSONWriter(writer);
         
-        jsonWriter.object();
-        jsonWriter.key("query");
             jsonWriter.array();
             jsonWriter.object();
             
@@ -357,7 +503,6 @@ public class FreebaseDataExtensionJob {
             
             jsonWriter.endObject();
             jsonWriter.endArray();
-        jsonWriter.endObject();
     }
     
     static protected void formulateQueryNode(JSONObject node, JSONWriter writer) throws JSONException {
