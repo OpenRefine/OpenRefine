@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2013 Google Inc. and other contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,10 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.freebase.model.recon;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -128,8 +129,6 @@ public class IdBasedReconConfig extends StrictReconConfig {
                 StringWriter stringWriter = new StringWriter();
                 JSONWriter jsonWriter = new JSONWriter(stringWriter);
                 
-                jsonWriter.object();
-                jsonWriter.key("query");
                     jsonWriter.array();
                     jsonWriter.object();
                     
@@ -147,63 +146,71 @@ public class IdBasedReconConfig extends StrictReconConfig {
                         
                     jsonWriter.endObject();
                     jsonWriter.endArray();
-                jsonWriter.endObject();
                 
                 query = stringWriter.toString();
             }
             
             StringBuffer sb = new StringBuffer(1024);
             sb.append(s_mqlreadService);
-            sb.append("?query=");
+            sb.append("query=");
             sb.append(ParsingUtilities.encode(query));
             
             URL url = new URL(sb.toString());
-            URLConnection connection = url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(5000);
             connection.connect();
             
-            InputStream is = connection.getInputStream();
-            try {
-                String s = ParsingUtilities.inputStreamToString(is);
-                JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-                if (o.has("result")) {
-                    JSONArray results = o.getJSONArray("result");
-                    int count = results.length();
+            if (connection.getResponseCode() >= 400) {
+                String responseMessage = connection.getResponseMessage();
+                String errorString = ParsingUtilities.inputStreamToString(connection.getErrorStream());
+                LOGGER.error("HTTP response error during recon: " + connection.getResponseCode() 
+                        + " : " + responseMessage + " : " + errorString);
+            } else {
+                InputStream is = connection.getInputStream();
+                try {
+                    String s = ParsingUtilities.inputStreamToString(is);
+                    JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+                    if (o.has("result")) {
+                        JSONArray results = o.getJSONArray("result");
+                        int count = results.length();
 
-                    for (int i = 0; i < count; i++) {
-                        JSONObject result = results.getJSONObject(i);
+                        for (int i = 0; i < count; i++) {
+                            JSONObject result = results.getJSONObject(i);
 
-                        String id = result.getString("id");
+                            String id = result.getString("id");
 
-                        JSONArray types = result.getJSONArray("type");
-                        String[] typeIDs = new String[types.length()];
-                        for (int j = 0; j < typeIDs.length; j++) {
-                            typeIDs[j] = types.getString(j);
+                            JSONArray types = result.getJSONArray("type");
+                            String[] typeIDs = new String[types.length()];
+                            for (int j = 0; j < typeIDs.length; j++) {
+                                typeIDs[j] = types.getString(j);
+                            }
+
+                            ReconCandidate candidate = new ReconCandidate(
+                                    id,
+                                    result.getString("name"),
+                                    typeIDs,
+                                    100
+                                    );
+
+                            Recon recon = Recon.makeFreebaseRecon(historyEntryID);
+                            recon.addCandidate(candidate);
+                            recon.service = "mql";
+                            recon.judgment = Judgment.Matched;
+                            recon.judgmentAction = "auto";
+                            recon.match = candidate;
+                            recon.matchRank = 0;
+
+                            idToRecon.put(id, recon);
                         }
-
-                        ReconCandidate candidate = new ReconCandidate(
-                                id,
-                                result.getString("name"),
-                                typeIDs,
-                                100
-                        );
-
-                        Recon recon = Recon.makeFreebaseRecon(historyEntryID);
-                        recon.addCandidate(candidate);
-                        recon.service = "mql";
-                        recon.judgment = Judgment.Matched;
-                        recon.judgmentAction = "auto";
-                        recon.match = candidate;
-                        recon.matchRank = 0;
-
-                        idToRecon.put(id, recon);
                     }
+                } finally {
+                    is.close();
                 }
-            } finally {
-                is.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.error("IOException during recon : ",e);
+        } catch (JSONException e) {
+            LOGGER.error("JSONException during recon : ",e);
         }
 
         for (ReconJob job : jobs) {
