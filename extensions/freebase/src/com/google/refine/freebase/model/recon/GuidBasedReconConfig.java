@@ -94,7 +94,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
 
     @Override
     public int getBatchSize() {
-        return 10;
+        return 50;
     }
 
     @Override

@@ -98,7 +98,7 @@ public class IdBasedReconConfig extends StrictReconConfig {
 
     @Override
     public int getBatchSize() {
-        return 10;
+        return 40;
     }
 
     @Override
