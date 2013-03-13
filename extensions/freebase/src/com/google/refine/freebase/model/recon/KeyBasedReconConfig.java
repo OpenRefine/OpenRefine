@@ -34,10 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.freebase.model.recon;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +47,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.freebase.FreebaseTopic;
+import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -125,99 +123,41 @@ public class KeyBasedReconConfig extends StrictReconConfig {
         Map<String, Recon> keyToRecon = new HashMap<String, Recon>();
         
         try {
-            String query = null;
-            {
-                StringWriter stringWriter = new StringWriter();
-                JSONWriter jsonWriter = new JSONWriter(stringWriter);
-                
-                    jsonWriter.array();
-                    jsonWriter.object();
-                    
-                        jsonWriter.key("id"); jsonWriter.value(null);
-                        jsonWriter.key("name"); jsonWriter.value(null);
-                        jsonWriter.key("guid"); jsonWriter.value(null);
-                        jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
-                        
-                        jsonWriter.key("key");
-                            jsonWriter.array();
-                            jsonWriter.object();
-                            
-                            jsonWriter.key("namespace");
-                                jsonWriter.object();
-                                jsonWriter.key("id"); jsonWriter.value(namespace.id);
-                                jsonWriter.endObject();
-                                
-                            jsonWriter.key("value"); jsonWriter.value(null);
-                            jsonWriter.key("value|=");
-                                jsonWriter.array();
-                                for (ReconJob job : jobs) {
-                                    jsonWriter.value(((KeyBasedReconJob) job).key);
-                                }
-                                jsonWriter.endArray();
-                                
-                            jsonWriter.endObject();
-                            jsonWriter.endArray();
-                        
-                    jsonWriter.endObject();
-                    jsonWriter.endArray();
-                
-                query = stringWriter.toString();
-            }
+            String query = buildQuery(jobs);
+            String s = FreebaseUtils.mqlread(query);
             
-            StringBuffer sb = new StringBuffer(1024);
-            sb.append(s_mqlreadService);
-            sb.append("query=");
-            sb.append(ParsingUtilities.encode(query));
-            
-            URL url = new URL(sb.toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.connect();
-            if (connection.getResponseCode() >= 400) {
-                String responseMessage = connection.getResponseMessage();
-                String errorString = ParsingUtilities.inputStreamToString(connection.getErrorStream());
-                LOGGER.error("HTTP response error during recon: " + connection.getResponseCode() 
-                        + " : " + responseMessage + " : " + errorString);
-            } else {
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-                    if (o.has("result")) {
-                        JSONArray results = o.getJSONArray("result");
-                        int count = results.length();
+            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+            if (o.has("result")) {
+                JSONArray results = o.getJSONArray("result");
+                int count = results.length();
 
-                        for (int i = 0; i < count; i++) {
-                            JSONObject result = results.getJSONObject(i);
+                for (int i = 0; i < count; i++) {
+                    JSONObject result = results.getJSONObject(i);
 
-                            String key = result.getJSONArray("key").getJSONObject(0).getString("value");
+                    String key = result.getJSONArray("key").getJSONObject(0).getString("value");
 
-                            JSONArray types = result.getJSONArray("type");
-                            String[] typeIDs = new String[types.length()];
-                            for (int j = 0; j < typeIDs.length; j++) {
-                                typeIDs[j] = types.getString(j);
-                            }
-
-                            ReconCandidate candidate = new ReconCandidate(
-                                    result.getString("id"),
-                                    result.getString("name"),
-                                    typeIDs,
-                                    100
-                                    );
-
-                            Recon recon = Recon.makeFreebaseRecon(historyEntryID);
-                            recon.addCandidate(candidate);
-                            recon.service = "mql";
-                            recon.judgment = Judgment.Matched;
-                            recon.judgmentAction = "auto";
-                            recon.match = candidate;
-                            recon.matchRank = 0;
-
-                            keyToRecon.put(key, recon);
-                        }
+                    JSONArray types = result.getJSONArray("type");
+                    String[] typeIDs = new String[types.length()];
+                    for (int j = 0; j < typeIDs.length; j++) {
+                        typeIDs[j] = types.getString(j);
                     }
-                } finally {
-                    is.close();
+
+                    ReconCandidate candidate = new ReconCandidate(
+                            result.getString("id"),
+                            result.getString("name"),
+                            typeIDs,
+                            100
+                            );
+
+                    Recon recon = Recon.makeFreebaseRecon(historyEntryID);
+                    recon.addCandidate(candidate);
+                    recon.service = "mql";
+                    recon.judgment = Judgment.Matched;
+                    recon.judgmentAction = "auto";
+                    recon.match = candidate;
+                    recon.matchRank = 0;
+
+                    keyToRecon.put(key, recon);
                 }
             }
         } catch (IOException e) {
@@ -226,7 +166,6 @@ public class KeyBasedReconConfig extends StrictReconConfig {
             LOGGER.error("JSONException during recon : ",e);
         }
         
-
         for (ReconJob job : jobs) {
             String key = ((KeyBasedReconJob) job).key;
             Recon recon = keyToRecon.get(key);
@@ -237,6 +176,49 @@ public class KeyBasedReconConfig extends StrictReconConfig {
         }
         
         return recons;
+    }
+
+    private String buildQuery(List<ReconJob> jobs)
+            throws JSONException {
+        String query = null;
+        {
+            StringWriter stringWriter = new StringWriter();
+            JSONWriter jsonWriter = new JSONWriter(stringWriter);
+            
+                jsonWriter.array();
+                jsonWriter.object();
+                
+                    jsonWriter.key("id"); jsonWriter.value(null);
+                    jsonWriter.key("name"); jsonWriter.value(null);
+                    jsonWriter.key("guid"); jsonWriter.value(null);
+                    jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
+                    
+                    jsonWriter.key("key");
+                        jsonWriter.array();
+                        jsonWriter.object();
+                        
+                        jsonWriter.key("namespace");
+                            jsonWriter.object();
+                            jsonWriter.key("id"); jsonWriter.value(namespace.id);
+                            jsonWriter.endObject();
+                            
+                        jsonWriter.key("value"); jsonWriter.value(null);
+                        jsonWriter.key("value|=");
+                            jsonWriter.array();
+                            for (ReconJob job : jobs) {
+                                jsonWriter.value(((KeyBasedReconJob) job).key);
+                            }
+                            jsonWriter.endArray();
+                            
+                        jsonWriter.endObject();
+                        jsonWriter.endArray();
+                    
+                jsonWriter.endObject();
+                jsonWriter.endArray();
+            
+            query = stringWriter.toString();
+        }
+        return query;
     }
 
 }

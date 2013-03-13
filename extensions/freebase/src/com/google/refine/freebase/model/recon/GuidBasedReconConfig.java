@@ -34,10 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.freebase.model.recon;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -120,88 +118,42 @@ public class GuidBasedReconConfig extends StrictReconConfig {
         Map<String, Recon> guidToRecon = new HashMap<String, Recon>();
         
         try {
-            String query = null;
-            {
-                StringWriter stringWriter = new StringWriter();
-                JSONWriter jsonWriter = new JSONWriter(stringWriter);
-                
-                jsonWriter.array();
-                jsonWriter.object();
+            String query = buildQuery(jobs);
 
-                jsonWriter.key("id"); jsonWriter.value(null);
-                jsonWriter.key("name"); jsonWriter.value(null);
-                jsonWriter.key("guid"); jsonWriter.value(null);
-                jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
-
-                jsonWriter.key("guid|=");
-                jsonWriter.array();
-                for (ReconJob job : jobs) {
-                    jsonWriter.value(((GuidBasedReconJob) job).guid);
-                }
-                jsonWriter.endArray();
-
-                jsonWriter.endObject();
-                jsonWriter.endArray();
-
-                query = stringWriter.toString();
-            }
+            String s = FreebaseUtils.mqlread(query);
+            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
             
-            StringBuffer sb = new StringBuffer(1024);
-            sb.append(s_mqlreadService);
-            sb.append("query=");
-            sb.append(ParsingUtilities.encode(query));
-            
-            URL url = new URL(sb.toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.connect();
-            
-            if (connection.getResponseCode() >= 400) {
-                String responseMessage = connection.getResponseMessage();
-                String errorString = ParsingUtilities.inputStreamToString(connection.getErrorStream());
-                LOGGER.error("HTTP response error during recon: " + connection.getResponseCode() 
-                        + " : " + responseMessage + " : " + errorString);
-            } else {
-                InputStream is = connection.getInputStream();
+            if (o.has("result")) {
+                JSONArray results = o.getJSONArray("result");
+                int count = results.length();
 
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-                    if (o.has("result")) {
-                        JSONArray results = o.getJSONArray("result");
-                        int count = results.length();
+                for (int i = 0; i < count; i++) {
+                    JSONObject result = results.getJSONObject(i);
 
-                        for (int i = 0; i < count; i++) {
-                            JSONObject result = results.getJSONObject(i);
+                    String guid = result.getString("guid");
 
-                            String guid = result.getString("guid");
-
-                            JSONArray types = result.getJSONArray("type");
-                            String[] typeIDs = new String[types.length()];
-                            for (int j = 0; j < typeIDs.length; j++) {
-                                typeIDs[j] = types.getString(j);
-                            }
-
-                            ReconCandidate candidate = new ReconCandidate(
-                                    result.getString("id"),
-                                    result.getString("name"),
-                                    typeIDs,
-                                    100
-                                    );
-
-                            Recon recon = Recon.makeFreebaseRecon(historyEntryID);
-                            recon.addCandidate(candidate);
-                            recon.service = "mql";
-                            recon.judgment = Judgment.Matched;
-                            recon.judgmentAction = "auto";
-                            recon.match = candidate;
-                            recon.matchRank = 0;
-
-                            guidToRecon.put(guid, recon);
-                        }
+                    JSONArray types = result.getJSONArray("type");
+                    String[] typeIDs = new String[types.length()];
+                    for (int j = 0; j < typeIDs.length; j++) {
+                        typeIDs[j] = types.getString(j);
                     }
-                } finally {
-                    is.close();
+
+                    ReconCandidate candidate = new ReconCandidate(
+                            result.getString("id"),
+                            result.getString("name"),
+                            typeIDs,
+                            100
+                            );
+
+                    Recon recon = Recon.makeFreebaseRecon(historyEntryID);
+                    recon.addCandidate(candidate);
+                    recon.service = "mql";
+                    recon.judgment = Judgment.Matched;
+                    recon.judgmentAction = "auto";
+                    recon.match = candidate;
+                    recon.matchRank = 0;
+
+                    guidToRecon.put(guid, recon);
                 }
             }
         } catch (IOException e) {
@@ -209,7 +161,7 @@ public class GuidBasedReconConfig extends StrictReconConfig {
         } catch (JSONException e) {
             LOGGER.error("JSONException during recon : ",e);
         }
-        
+
         for (ReconJob job : jobs) {
             String guid = ((GuidBasedReconJob) job).guid;
             Recon recon = guidToRecon.get(guid);
@@ -220,5 +172,34 @@ public class GuidBasedReconConfig extends StrictReconConfig {
         }
         
         return recons;
+    }
+
+    private String buildQuery(List<ReconJob> jobs)
+            throws JSONException {
+        String query = null;
+
+        StringWriter stringWriter = new StringWriter();
+        JSONWriter jsonWriter = new JSONWriter(stringWriter);
+
+        jsonWriter.array();
+        jsonWriter.object();
+
+        jsonWriter.key("id"); jsonWriter.value(null);
+        jsonWriter.key("name"); jsonWriter.value(null);
+        jsonWriter.key("guid"); jsonWriter.value(null);
+        jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
+
+        jsonWriter.key("guid|=");
+        jsonWriter.array();
+        for (ReconJob job : jobs) {
+            jsonWriter.value(((GuidBasedReconJob) job).guid);
+        }
+        jsonWriter.endArray();
+
+        jsonWriter.endObject();
+        jsonWriter.endArray();
+
+        query = stringWriter.toString();
+        return query;
     }
 }

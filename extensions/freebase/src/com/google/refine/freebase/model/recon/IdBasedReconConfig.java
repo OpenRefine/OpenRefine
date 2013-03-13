@@ -34,10 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.freebase.model.recon;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -124,87 +122,41 @@ public class IdBasedReconConfig extends StrictReconConfig {
         Map<String, Recon> idToRecon = new HashMap<String, Recon>();
         
         try {
-            String query = null;
-            {
-                StringWriter stringWriter = new StringWriter();
-                JSONWriter jsonWriter = new JSONWriter(stringWriter);
-                
-                    jsonWriter.array();
-                    jsonWriter.object();
-                    
-                        jsonWriter.key("id"); jsonWriter.value(null);
-                        jsonWriter.key("name"); jsonWriter.value(null);
-                        jsonWriter.key("guid"); jsonWriter.value(null);
-                        jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
-                        
-                        jsonWriter.key("id|=");
-                            jsonWriter.array();
-                            for (ReconJob job : jobs) {
-                                jsonWriter.value(((IdBasedReconJob) job).id);
-                            }
-                            jsonWriter.endArray();
-                        
-                    jsonWriter.endObject();
-                    jsonWriter.endArray();
-                
-                query = stringWriter.toString();
-            }
-            
-            StringBuffer sb = new StringBuffer(1024);
-            sb.append(s_mqlreadService);
-            sb.append("query=");
-            sb.append(ParsingUtilities.encode(query));
-            
-            URL url = new URL(sb.toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.connect();
-            
-            if (connection.getResponseCode() >= 400) {
-                String responseMessage = connection.getResponseMessage();
-                String errorString = ParsingUtilities.inputStreamToString(connection.getErrorStream());
-                LOGGER.error("HTTP response error during recon: " + connection.getResponseCode() 
-                        + " : " + responseMessage + " : " + errorString);
-            } else {
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-                    if (o.has("result")) {
-                        JSONArray results = o.getJSONArray("result");
-                        int count = results.length();
+            String query = buildQuery(jobs);
+            String s = FreebaseUtils.mqlread(query);
 
-                        for (int i = 0; i < count; i++) {
-                            JSONObject result = results.getJSONObject(i);
+            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+            if (o.has("result")) {
+                JSONArray results = o.getJSONArray("result");
+                int count = results.length();
 
-                            String id = result.getString("id");
+                for (int i = 0; i < count; i++) {
+                    JSONObject result = results.getJSONObject(i);
 
-                            JSONArray types = result.getJSONArray("type");
-                            String[] typeIDs = new String[types.length()];
-                            for (int j = 0; j < typeIDs.length; j++) {
-                                typeIDs[j] = types.getString(j);
-                            }
+                    String id = result.getString("id");
 
-                            ReconCandidate candidate = new ReconCandidate(
-                                    id,
-                                    result.getString("name"),
-                                    typeIDs,
-                                    100
-                                    );
-
-                            Recon recon = Recon.makeFreebaseRecon(historyEntryID);
-                            recon.addCandidate(candidate);
-                            recon.service = "mql";
-                            recon.judgment = Judgment.Matched;
-                            recon.judgmentAction = "auto";
-                            recon.match = candidate;
-                            recon.matchRank = 0;
-
-                            idToRecon.put(id, recon);
-                        }
+                    JSONArray types = result.getJSONArray("type");
+                    String[] typeIDs = new String[types.length()];
+                    for (int j = 0; j < typeIDs.length; j++) {
+                        typeIDs[j] = types.getString(j);
                     }
-                } finally {
-                    is.close();
+
+                    ReconCandidate candidate = new ReconCandidate(
+                            id,
+                            result.getString("name"),
+                            typeIDs,
+                            100
+                            );
+
+                    Recon recon = Recon.makeFreebaseRecon(historyEntryID);
+                    recon.addCandidate(candidate);
+                    recon.service = "mql";
+                    recon.judgment = Judgment.Matched;
+                    recon.judgmentAction = "auto";
+                    recon.match = candidate;
+                    recon.matchRank = 0;
+
+                    idToRecon.put(id, recon);
                 }
             }
         } catch (IOException e) {
@@ -223,6 +175,36 @@ public class IdBasedReconConfig extends StrictReconConfig {
         }
         
         return recons;
+    }
+
+    private String buildQuery(List<ReconJob> jobs)
+            throws JSONException {
+        String query = null;
+        {
+            StringWriter stringWriter = new StringWriter();
+            JSONWriter jsonWriter = new JSONWriter(stringWriter);
+            
+                jsonWriter.array();
+                jsonWriter.object();
+                
+                    jsonWriter.key("id"); jsonWriter.value(null);
+                    jsonWriter.key("name"); jsonWriter.value(null);
+                    jsonWriter.key("guid"); jsonWriter.value(null);
+                    jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
+                    
+                    jsonWriter.key("id|=");
+                        jsonWriter.array();
+                        for (ReconJob job : jobs) {
+                            jsonWriter.value(((IdBasedReconJob) job).id);
+                        }
+                        jsonWriter.endArray();
+                    
+                jsonWriter.endObject();
+                jsonWriter.endArray();
+            
+            query = stringWriter.toString();
+        }
+        return query;
     }
 
 }
