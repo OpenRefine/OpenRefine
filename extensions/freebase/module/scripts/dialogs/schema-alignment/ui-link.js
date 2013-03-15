@@ -308,7 +308,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
   };
   var sourceTypeID = this._parentUINode.getExpectedType();
   if (sourceTypeID !== null) {
-    suggestOptions.filter = '(all type:/type/property (any namespace:/type/object namespace:' + sourceTypeID + '))'
+    suggestOptions.filter = '(all type:/type/property (should namespace:' + sourceTypeID + '))'
 
   }
   input.suggestP(suggestOptions).bind("fb-select", function(e, data) { commitProperty(data); });
@@ -340,15 +340,13 @@ SchemaAlignmentDialog.UILink.prototype._configureTarget = function() {
   var dismissBusy = DialogSystem.showBusy();
 
   $.getJSON(
-    "http://api.freebase.com/api/service/mqlread?query=" + JSON.stringify({
-      query: {
+    "https://www.googleapis.com/freebase/v1/mqlread?key="+ Freebase.API_KEY + "&query=" + JSON.stringify({
         "id" : this._link.property.id,
         "type" : "/type/property",
         "expected_type" : {
           "id" : null,
           "name" : null,
           "/freebase/type_hints/mediator" : null
-        }
       }
     }) + "&callback=?",
     null,

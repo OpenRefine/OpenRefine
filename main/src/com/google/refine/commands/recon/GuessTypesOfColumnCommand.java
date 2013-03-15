@@ -37,8 +37,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -86,11 +86,11 @@ public class GuessTypesOfColumnCommand extends Command {
                 writer.key("code"); writer.value("error");
                 writer.key("message"); writer.value("No such column");
             } else {
-                try {
-                    writer.key("code"); writer.value("ok");
-                    writer.key("types"); writer.array();
-                    
                     List<TypeGroup> typeGroups = guessTypes(project, column, serviceUrl);
+                    
+                    writer.key("code"); writer.value("ok");
+                    writer.key("types"); writer.array();         
+                    
                     for (TypeGroup tg : typeGroups) {
                         writer.object();
                         writer.key("id"); writer.value(tg.id);
@@ -101,9 +101,6 @@ public class GuessTypesOfColumnCommand extends Command {
                     }
                     
                     writer.endArray();
-                } catch (Exception e) {
-                    writer.key("code"); writer.value("error");
-                }
             }
             
             writer.endObject();
@@ -112,7 +109,7 @@ public class GuessTypesOfColumnCommand extends Command {
         }
     }
     
-    final static int s_sampleSize = 10;
+    final static int SAMPLE_SIZE = 10;
     
     /**
      * Run relevance searches for the first n cells in the given column and
@@ -122,13 +119,15 @@ public class GuessTypesOfColumnCommand extends Command {
      * @param project
      * @param column
      * @return
+     * @throws JSONException, IOException 
      */
-    protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl) {
+    protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl)
+            throws JSONException, IOException {
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
         
         int cellIndex = column.getCellIndex();
         
-        List<String> samples = new ArrayList<String>(s_sampleSize);
+        List<String> samples = new ArrayList<String>(SAMPLE_SIZE);
         Set<String> sampleSet = new HashSet<String>();
         
         for (Row row : project.rows) {
@@ -138,7 +137,7 @@ public class GuessTypesOfColumnCommand extends Command {
                 if (!sampleSet.contains(s)) {
                     samples.add(s);
                     sampleSet.add(s);
-                    if (samples.size() >= s_sampleSize) {
+                    if (samples.size() >= SAMPLE_SIZE) {
                         break;
                     }
                 }
@@ -160,13 +159,13 @@ public class GuessTypesOfColumnCommand extends Command {
             }
             jsonWriter.endObject();
         } catch (JSONException e) {
-            // ignore
+            logger.error("Error constructing query", e);
         }
         
         String queriesString = stringWriter.toString();
         try {
             URL url = new URL(serviceUrl);
-            URLConnection connection = url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             {
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setConnectTimeout(30000);
@@ -184,68 +183,76 @@ public class GuessTypesOfColumnCommand extends Command {
                 
                 connection.connect();
             }
-            
-            InputStream is = connection.getInputStream();
-            try {
-                String s = ParsingUtilities.inputStreamToString(is);
-                JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-                
-                for (int i = 0; i < samples.size(); i++) {
-                    String key = "q" + i;
-                    if (!o.has(key)) {
-                        continue;
-                    }
-                    
-                    JSONObject o2 = o.getJSONObject(key);
-                    if (!(o2.has("result"))) {
-                        continue;
-                    }
-                    
-                    JSONArray results = o2.getJSONArray("result");
-                    int count = results.length();
-                    
-                    for (int j = 0; j < count; j++) {
-                        JSONObject result = results.getJSONObject(j);
-                        double score = 1.0 / (1 + j); // score by each result's rank
-                        
-                        JSONArray types = result.getJSONArray("type");
-                        int typeCount = types.length();
-                        
-                        for (int t = 0; t < typeCount; t++) {
-                            Object type = types.get(t);
-                            String typeID;
-                            String typeName;
-                            
-                            if (type instanceof String) {
-                                typeID = typeName = (String) type;
-                            } else {
-                                typeID = ((JSONObject) type).getString("id");
-                                typeName = ((JSONObject) type).getString("name");
-                            }
-                            
-                            double score2 = score * (typeCount - t) / typeCount;
-                            if (map.containsKey(typeID)) {
-                                TypeGroup tg = map.get(typeID);
-                                tg.score += score2;
-                                tg.count++;
-                            } else {
-                                map.put(typeID, new TypeGroup(typeID, typeName, score2));
+
+            if (connection.getResponseCode() >= 400) {
+                InputStream is = connection.getErrorStream();
+                throw new IOException("Failed  - code:" 
+                        + Integer.toString(connection.getResponseCode()) 
+                        + " message: " + is == null ? "" : ParsingUtilities.inputStreamToString(is));
+            } else {
+                InputStream is = connection.getInputStream();
+                try {
+                    String s = ParsingUtilities.inputStreamToString(is);
+                    JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+
+                    for (int i = 0; i < samples.size(); i++) {
+                        String key = "q" + i;
+                        if (!o.has(key)) {
+                            continue;
+                        }
+
+                        JSONObject o2 = o.getJSONObject(key);
+                        if (!(o2.has("result"))) {
+                            continue;
+                        }
+
+                        JSONArray results = o2.getJSONArray("result");
+                        int count = results.length();
+
+                        for (int j = 0; j < count; j++) {
+                            JSONObject result = results.getJSONObject(j);
+                            double score = 1.0 / (1 + j); // score by each result's rank
+
+                            JSONArray types = result.getJSONArray("type");
+                            int typeCount = types.length();
+
+                            for (int t = 0; t < typeCount; t++) {
+                                Object type = types.get(t);
+                                String typeID;
+                                String typeName;
+
+                                if (type instanceof String) {
+                                    typeID = typeName = (String) type;
+                                } else {
+                                    typeID = ((JSONObject) type).getString("id");
+                                    typeName = ((JSONObject) type).getString("name");
+                                }
+
+                                double score2 = score * (typeCount - t) / typeCount;
+                                if (map.containsKey(typeID)) {
+                                    TypeGroup tg = map.get(typeID);
+                                    tg.score += score2;
+                                    tg.count++;
+                                } else {
+                                    map.put(typeID, new TypeGroup(typeID, typeName, score2));
+                                }
                             }
                         }
                     }
+                } finally {
+                    is.close();
                 }
-            } finally {
-                is.close();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Failed to guess cell types for load\n" + queriesString, e);
+            throw e;
         }
         
         List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());
         Collections.sort(types, new Comparator<TypeGroup>() {
             @Override
             public int compare(TypeGroup o1, TypeGroup o2) {
-                int c = Math.min(s_sampleSize, o2.count) - Math.min(s_sampleSize, o1.count);
+                int c = Math.min(SAMPLE_SIZE, o2.count) - Math.min(SAMPLE_SIZE, o1.count);
                 if (c != 0) {
                     return c;
                 }

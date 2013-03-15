@@ -185,7 +185,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                     }
                 }
                 
-                if (counts != null) {
+                if (counts != null && lineCount > 2) {
                     List<Integer> widths = new ArrayList<Integer>();
                     
                     int startIndex = 0;

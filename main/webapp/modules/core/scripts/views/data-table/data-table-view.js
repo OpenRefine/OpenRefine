@@ -502,7 +502,7 @@ DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-  this._showRows(Math.floor(theProject.rowModel.filtered / this._pageSize) * this._pageSize);
+  this._showRows(Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) * this._pageSize);
 };
 
 DataTableView.prototype._getSortingCriteriaCount = function() {

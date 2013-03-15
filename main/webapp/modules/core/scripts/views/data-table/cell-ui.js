@@ -148,6 +148,7 @@ DataTableCellUI.prototype._render = function() {
             .text(candidate.name)
             .appendTo(li);
 
+            // TODO: replace view URL with local code?
             if ((service) && (service.view) && (service.view.url)) {
               a.attr("href", service.view.url.replace("{{id}}", candidate.id));
             } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
@@ -378,7 +379,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
 
   var suggestOptions2 = $.extend({ align: "left" }, suggestOptions 
                           || { all_types: true, // FIXME: all_types isn't documented for Suggest.  Is it still implemented?
-                               filter: "(not type:/common/document)" }); // blacklist documents
+                               filter: "(not (any type:/common/document type:/type/content type:/common/resource))" }); // blacklist documents and images
   if (suggestOptions2.service_url) {
     // Old style suggest API
     suggestOptions2.key = null;
@@ -432,6 +433,7 @@ DataTableCellUI.topicBlockPreview = {
   height: 300
 };
 
+// TODO: Inject code to format using Suggest here?
 DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, preview) {
   var self = this;
   var id = candidate.id;

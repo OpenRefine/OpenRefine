@@ -83,7 +83,7 @@ abstract public class CustomizableTabularExporterUtilities {
         
         final boolean outputColumnHeaders = options == null ? true :
             JSONUtilities.getBoolean(options, "outputColumnHeaders", true);
-        final boolean outputBlankRows = options == null ? false :
+        final boolean outputEmptyRows = options == null ? false :
             JSONUtilities.getBoolean(options, "outputBlankRows", true);
         final int limit = options == null ? -1 :
             JSONUtilities.getInt(options, "limit", -1);
@@ -137,7 +137,7 @@ abstract public class CustomizableTabularExporterUtilities {
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
-                int nonBlankCount = 0;
+                int nonNullCount = 0;
                 
                 for (String columnName : columnNames) {
                     Column column = project.columnModel.getColumnByName(columnName);
@@ -149,11 +149,11 @@ abstract public class CustomizableTabularExporterUtilities {
                     
                     cells.add(cellData);
                     if (cellData != null) {
-                        nonBlankCount++;
+                        nonNullCount++;
                     }
                 }
                 
-                if (nonBlankCount > 0 || outputBlankRows) {
+                if (nonNullCount > 0 || outputEmptyRows) {
                     serializer.addRow(cells, false);
                     rowCount++;
                 }

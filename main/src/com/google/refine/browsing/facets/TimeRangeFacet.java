@@ -157,7 +157,7 @@ public class TimeRangeFacet extends RangeFacet {
                 
                 @Override
                 protected boolean checkValue(long t) {
-                    return t >= _from && t < _to;
+                    return t >= _from && t <= _to;
                 };
             };
         } else {

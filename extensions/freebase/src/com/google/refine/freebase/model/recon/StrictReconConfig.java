@@ -35,6 +35,7 @@ package com.google.refine.freebase.model.recon;
 
 import org.json.JSONObject;
 
+import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.recon.ReconConfig;
