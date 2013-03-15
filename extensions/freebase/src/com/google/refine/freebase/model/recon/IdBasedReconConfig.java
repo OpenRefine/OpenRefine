@@ -128,33 +128,30 @@ public class IdBasedReconConfig extends StrictReconConfig {
                 StringWriter stringWriter = new StringWriter();
                 JSONWriter jsonWriter = new JSONWriter(stringWriter);
                 
+                jsonWriter.array();
                 jsonWriter.object();
-                jsonWriter.key("query");
-                    jsonWriter.array();
-                    jsonWriter.object();
+                
+                    jsonWriter.key("id"); jsonWriter.value(null);
+                    jsonWriter.key("name"); jsonWriter.value(null);
+                    jsonWriter.key("guid"); jsonWriter.value(null);
+                    jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
                     
-                        jsonWriter.key("id"); jsonWriter.value(null);
-                        jsonWriter.key("name"); jsonWriter.value(null);
-                        jsonWriter.key("guid"); jsonWriter.value(null);
-                        jsonWriter.key("type"); jsonWriter.array(); jsonWriter.endArray();
-                        
-                        jsonWriter.key("id|=");
-                            jsonWriter.array();
-                            for (ReconJob job : jobs) {
-                                jsonWriter.value(((IdBasedReconJob) job).id);
-                            }
-                            jsonWriter.endArray();
-                        
-                    jsonWriter.endObject();
-                    jsonWriter.endArray();
+                    jsonWriter.key("id|=");
+                        jsonWriter.array();
+                        for (ReconJob job : jobs) {
+                            jsonWriter.value(((IdBasedReconJob) job).id);
+                        }
+                        jsonWriter.endArray();
+                    
                 jsonWriter.endObject();
+                jsonWriter.endArray();
                 
                 query = stringWriter.toString();
             }
             
             StringBuffer sb = new StringBuffer(1024);
-            sb.append(s_mqlreadService);
-            sb.append("?query=");
+            sb.append(getMqlreadService());
+            sb.append("&query=");
             sb.append(ParsingUtilities.encode(query));
             
             URL url = new URL(sb.toString());

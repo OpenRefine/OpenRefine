@@ -124,8 +124,6 @@ public class GuidBasedReconConfig extends StrictReconConfig {
                 StringWriter stringWriter = new StringWriter();
                 JSONWriter jsonWriter = new JSONWriter(stringWriter);
                 
-                jsonWriter.object();
-                jsonWriter.key("query");
                 jsonWriter.array();
                 jsonWriter.object();
 
@@ -143,14 +141,13 @@ public class GuidBasedReconConfig extends StrictReconConfig {
 
                 jsonWriter.endObject();
                 jsonWriter.endArray();
-                jsonWriter.endObject();
 
                 query = stringWriter.toString();
             }
             
             StringBuffer sb = new StringBuffer(1024);
-            sb.append(s_mqlreadService);
-            sb.append("?query=");
+            sb.append(getMqlreadService());
+            sb.append("&query=");
             sb.append(ParsingUtilities.encode(query));
             
             URL url = new URL(sb.toString());
