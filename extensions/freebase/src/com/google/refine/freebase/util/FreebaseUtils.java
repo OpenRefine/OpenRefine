@@ -84,6 +84,7 @@ import com.google.refine.RefineServlet;
 import com.google.refine.oauth.Credentials;
 import com.google.refine.oauth.OAuthUtilities;
 import com.google.refine.oauth.Provider;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.ParsingUtilities;
 
 public class FreebaseUtils {
@@ -109,7 +110,16 @@ public class FreebaseUtils {
     static final private int JUDGES = 4;
     
     public static final String API_KEY = "AIzaSyBAZ_EjMPKlOzyyZXv6JKXPPwJFISVji3M";
-            
+
+    public static String getApiKey() {
+        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
+        String key = (String) ps.get("freebase.api.key");
+        if (key == null) {
+            key =  System.getProperty("refine.google_api_key");
+        }
+        return key == null ? API_KEY : key;
+    }
+
     private static String getUserInfoURL(String host) {
         // TODO: Needs to be upgraded to new APIs sandbox-freebase.com as host becomes v1sandbox as version
         return "http://api." + host + "/api/service/user_info";
@@ -353,7 +363,7 @@ public class FreebaseUtils {
         
         // We could use the javax.mail package, but it's actually more trouble than it's worth
         String body = "--" + BOUNDARY + "\n" 
-            + queryToMimeBodyPart("0", query, service_url, API_KEY)
+            + queryToMimeBodyPart("0", query, service_url, FreebaseUtils.getApiKey())
             + "\n--" + BOUNDARY + "\n" ;
         
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -427,7 +437,7 @@ public class FreebaseUtils {
     
         JSONObject params = new JSONObject();
         params.put("query",query);
-        params.put("key", API_KEY);
+        params.put("key", FreebaseUtils.getApiKey());
     
         JSONObject req1 = new JSONObject();
         req1.put("jsonrpc","2.0");    
@@ -476,7 +486,7 @@ public class FreebaseUtils {
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private static final JsonFactory JSON_FACTORY = new JacksonFactory();
     private static final FreebaseRequestInitializer REQUEST_INITIALIZER = 
-            new FreebaseRequestInitializer(FreebaseUtils.API_KEY);
+        new FreebaseRequestInitializer(FreebaseUtils.getApiKey());
     
     /**
      * Submit a single MQL read query via the standard Google client library

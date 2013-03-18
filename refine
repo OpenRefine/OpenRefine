@@ -45,7 +45,9 @@ where [options] include:
 
   -m <memory> max memory heap size to use
      default: 1024M
-               
+
+  -k <google api key> a server API key for calling Google APIs
+
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
 
@@ -664,7 +666,11 @@ run() {
     if [ "$REFINE_HOST" ] ; then
         add_option "-Drefine.host=$REFINE_HOST"
     fi
-                    
+
+    if [ "$REFINE_GOOGLE_API_KEY" ] ; then
+        add_option "-Drefine.google_api_key=$REFINE_GOOGLE_API_KEY"
+    fi
+
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
@@ -701,7 +707,7 @@ broker_run() {
         add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
         add_option "-Drefine.development=true"
     fi
-                    
+
     add_option "-Drefine.webapp=broker/core"
     add_option "-Drefine.headless=true"
 
@@ -869,6 +875,7 @@ while [ $# -ne 0 ] ; do
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
     -m) shift; REFINE_MEMORY="$1"; shift; continue;;
+    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
