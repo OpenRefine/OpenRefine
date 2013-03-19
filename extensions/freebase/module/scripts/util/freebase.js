@@ -37,9 +37,6 @@ Freebase.API_KEY = "AIzaSyBAZ_EjMPKlOzyyZXv6JKXPPwJFISVji3M";
 
 Freebase.mqlread = function(query, options, onDone) {
   var params = {};
-//  var queryEnv = {
-//    "query": query
-//  };
 
   // TODO: Options need to be handled differently for new API - but this doesn't appear to be used
   if (options) {
