@@ -89,8 +89,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         "id" : data.id,
         "type" : []
       };
-      var baseUrl = "http://api.freebase.com/api/service/mqlread";
-      var url = baseUrl + "?" + $.param({ query: JSON.stringify({ query: query }) }) + "&callback=?";
+      var baseUrl = "https://www.googleapis.com/freebase/v1/mqlread?key=" + Freebase.API_KEY + "&";
+      var url = baseUrl + $.param({ query: JSON.stringify(query) }) + "&callback=?";
 
       $.getJSON(
         url,

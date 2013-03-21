@@ -44,6 +44,11 @@ import com.google.refine.freebase.util.FreebaseUtils;
 import com.google.refine.oauth.OAuthUtilities;
 import com.google.refine.oauth.Provider;
 
+/**
+ * Perform an MQLread on the server, using the client's credentials.
+ * 
+ * Currently unused.  All client code calls the Freebase API directly.
+ */
 public class MQLReadCommand extends Command {
 
     @Override
@@ -55,6 +60,7 @@ public class MQLReadCommand extends Command {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             String query = request.getParameter("query");
+            @SuppressWarnings("deprecation")
             String result = FreebaseUtils.mqlread(provider,query);
             response.getWriter().write(result);
         } catch (Exception e) {

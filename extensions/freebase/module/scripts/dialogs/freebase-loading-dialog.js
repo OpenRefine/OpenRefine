@@ -46,6 +46,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
   var authorization = this._elmts.authorization;
   var loadButton = this._elmts.loadButton;
 
+  // TODO: Does this need to be redone for the new API / freebase.com site?
   var check_authorization = function(cont) {
     var check_authorization_url = "command/freebase/check-authorization/" + provider;
     $.get(check_authorization_url, function(data) {

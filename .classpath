@@ -52,7 +52,7 @@
 	<classpathentry exported="true" kind="lib" path="server/lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="server/lib/slf4j-log4j12-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="broker/appengine/WEB-INF/lib/slf4j-jdk14-1.5.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/jython/module/MOD-INF/lib/jython-2.5.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/jython/module/MOD-INF/lib/jython-standalone-2.5.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="broker/core/module/MOD-INF/lib/bdb-je-4.0.103.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-core-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
@@ -100,5 +100,10 @@
 	<classpathentry kind="lib" path="extensions/rdf-extension/module/MOD-INF/lib/simmetrics_jar_v1_6_2_d07_02_07.jar"/>
 	<classpathentry kind="lib" path="extensions/rdf-extension/module/MOD-INF/lib/tika-core-0.6.jar"/>
 	<classpathentry kind="lib" path="extensions/rdf-extension/module/MOD-INF/lib/tika-parsers-0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-client-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-client-1.13.2-beta-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-http-client-1.13.1-beta.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-services-freebase-v1-rev25-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-services-freebase-v1-rev25-1.13.2-beta-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-http-client-jackson-1.13.1-beta.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/mail.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

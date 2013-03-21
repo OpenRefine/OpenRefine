@@ -456,6 +456,7 @@ public class StandardReconConfig extends ReconConfig {
     
     static final protected Set<String> s_stopWords = new HashSet<String>();
     static {
+        // FIXME: This is English specific
         s_stopWords.add("the");
         s_stopWords.add("a");
         s_stopWords.add("and");

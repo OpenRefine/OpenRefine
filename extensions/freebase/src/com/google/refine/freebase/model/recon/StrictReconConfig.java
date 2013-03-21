@@ -40,7 +40,6 @@ import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.recon.ReconConfig;
 
 abstract public class StrictReconConfig extends ReconConfig {
-    final static protected String s_mqlreadService = "http://api.freebase.com/api/service/mqlread";
 
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {
         String match = obj.getString("match");

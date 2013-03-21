@@ -340,15 +340,13 @@ SchemaAlignmentDialog.UILink.prototype._configureTarget = function() {
   var dismissBusy = DialogSystem.showBusy();
 
   $.getJSON(
-    "http://api.freebase.com/api/service/mqlread?query=" + JSON.stringify({
-      query: {
+    "https://www.googleapis.com/freebase/v1/mqlread?key="+ Freebase.API_KEY + "&query=" + JSON.stringify({
         "id" : this._link.property.id,
         "type" : "/type/property",
         "expected_type" : {
           "id" : null,
           "name" : null,
           "/freebase/type_hints/mediator" : null
-        }
       }
     }) + "&callback=?",
     null,

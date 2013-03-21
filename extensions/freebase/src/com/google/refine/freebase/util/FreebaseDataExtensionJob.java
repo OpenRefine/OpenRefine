@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2013 Google Inc. and contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,19 +31,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-/**
- * 
- */
 package com.google.refine.freebase.util;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,34 +89,30 @@ public class FreebaseDataExtensionJob {
     ) throws Exception {
         StringWriter writer = new StringWriter();
         formulateQuery(ids, extension, writer);
-        
         String query = writer.toString();
-        InputStream is = doMqlRead(query);
-        try {
-            String s = ParsingUtilities.inputStreamToString(is);
-            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-            
-            Map<String, FreebaseDataExtensionJob.DataExtension> map = new HashMap<String, FreebaseDataExtensionJob.DataExtension>();
-            if (o.has("result")) {
-                JSONArray a = o.getJSONArray("result");
-                int l = a.length();
-                
-                for (int i = 0; i < l; i++) {
-                    JSONObject o2 = a.getJSONObject(i);
-                    String id = o2.getString("id");
-                    FreebaseDataExtensionJob.DataExtension ext = collectResult(o2, reconCandidateMap);
-                    
-                    if (ext != null) {
-                        map.put(id, ext);
-                    }
+        
+        String result = FreebaseUtils.mqlread(query);
+        
+        JSONObject o = ParsingUtilities.evaluateJsonStringToObject(result);
+        Map<String, FreebaseDataExtensionJob.DataExtension> map = new HashMap<String, FreebaseDataExtensionJob.DataExtension>();
+        if (o.has("result")) {
+            JSONArray a = o.getJSONArray("result");
+            int l = a.length();
+
+            for (int i = 0; i < l; i++) {
+                JSONObject o2 = a.getJSONObject(i);
+                String id = o2.getString("id");
+                FreebaseDataExtensionJob.DataExtension ext = collectResult(o2, reconCandidateMap);
+
+                if (ext != null) {
+                    map.put(id, ext);
                 }
             }
-            
-            return map;
-        } finally {
-            is.close();
         }
-    }
+
+        return map;
+    } 
+
     
     protected FreebaseDataExtensionJob.DataExtension collectResult(
         JSONObject obj,
@@ -312,34 +300,10 @@ public class FreebaseDataExtensionJob {
     }
 
 
-    static protected InputStream doMqlRead(String query) throws IOException {
-        URL url = new URL("http://api.freebase.com/api/service/mqlread");
-
-        URLConnection connection = url.openConnection();
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setConnectTimeout(5000);
-        connection.setDoOutput(true);
-        
-        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-        try {
-            String body = "extended=1&query=" + ParsingUtilities.encode(query);
-            
-            dos.writeBytes(body);
-        } finally {
-            dos.flush();
-            dos.close();
-        }
-        
-        connection.connect();
-        
-        return connection.getInputStream();
-    }
-    
+  
     static protected void formulateQuery(Set<String> ids, JSONObject node, Writer writer) throws JSONException {
         JSONWriter jsonWriter = new JSONWriter(writer);
         
-        jsonWriter.object();
-        jsonWriter.key("query");
             jsonWriter.array();
             jsonWriter.object();
             
@@ -357,7 +321,6 @@ public class FreebaseDataExtensionJob {
             
             jsonWriter.endObject();
             jsonWriter.endArray();
-        jsonWriter.endObject();
     }
     
     static protected void formulateQueryNode(JSONObject node, JSONWriter writer) throws JSONException {
