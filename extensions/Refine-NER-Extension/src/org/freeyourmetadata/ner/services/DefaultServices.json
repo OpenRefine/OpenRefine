@@ -1,5 +1,6 @@
 [
-	{"name": "AlchemyAPI",     "class": "org.freeyourmetadata.ner.services.AlchemyAPI"},
-    {"name": "DBpedia Lookup", "class": "org.freeyourmetadata.ner.services.DBpediaLookup"},
-    {"name": "Zemanta",        "class": "org.freeyourmetadata.ner.services.Zemanta"}
+    {"name": "AlchemyAPI",        "class": "org.freeyourmetadata.ner.services.AlchemyAPI"},
+    {"name": "dataTXT",           "class": "org.freeyourmetadata.ner.services.DataTXT"},
+    {"name": "DBpedia Spotlight", "class": "org.freeyourmetadata.ner.services.DBpediaSpotlight"},
+    {"name": "Zemanta",           "class": "org.freeyourmetadata.ner.services.Zemanta"}
 ]

@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -33,7 +32,7 @@ public abstract class NERServiceBase implements NERService {
     protected final static NamedEntity[] EMPTY_EXTRACTION_RESULT = new NamedEntity[0];
     
     private final static Charset UTF8 = Charset.forName("UTF-8");
-    private final static URI EMPTYURI = createUri("");
+    
     
     private final URI serviceUrl;
     private final String[] propertyNames;
@@ -205,20 +204,6 @@ public abstract class NERServiceBase implements NERService {
      */
     protected NamedEntity[] parseExtractionResponseEntity(final JSONTokener tokener) throws JSONException {
         return EMPTY_EXTRACTION_RESULT;
-    }
-    
-    /**
-     * Creates a URI from the specified string without throwing a <tt>URISyntaxException</tt>.
-     * @param uri The URI in string format
-     * @return The URI
-     */
-    protected static URI createUri(String uri) {
-        try {
-            return new URI(uri);
-        }
-        catch (URISyntaxException e) {
-            return EMPTYURI;
-        }
     }
     
     /**

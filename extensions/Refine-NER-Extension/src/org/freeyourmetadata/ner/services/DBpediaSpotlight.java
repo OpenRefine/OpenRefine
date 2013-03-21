@@ -1,30 +1,29 @@
 package org.freeyourmetadata.ner.services;
 
+import static org.freeyourmetadata.util.UriUtil.createUri;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
+import org.freeyourmetadata.util.ParameterList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * DBpedia lookup service connector
+ * DBpedia spotlight service connector
  * @author Ruben Verborgh
  */
-public class DBpediaLookup extends NERServiceBase {
+public class DBpediaSpotlight extends NERServiceBase implements NERService {
     private final static URI SERVICEBASEURL = createUri("http://spotlight.dbpedia.org/rest/annotate");
     private final static String[] PROPERTYNAMES = { "Confidence", "Support" };
 
     /**
-     * Creates a new DBpedia lookup service connector
+     * Creates a new DBpedia spotlight service connector
      */
-    public DBpediaLookup() {
+    public DBpediaSpotlight() {
         super(SERVICEBASEURL, PROPERTYNAMES);
         setProperty("Confidence", "0.5");
         setProperty("Support", "30");
@@ -32,11 +31,11 @@ public class DBpediaLookup extends NERServiceBase {
     
     /** {@inheritDoc} */
     protected HttpEntity createExtractionRequestBody(final String text) throws UnsupportedEncodingException {
-        final ArrayList<NameValuePair> parameters = new ArrayList<NameValuePair>(3);
-        parameters.add(new BasicNameValuePair("confidence", getProperty("Confidence")));
-        parameters.add(new BasicNameValuePair("support", getProperty("Support")));
-        parameters.add(new BasicNameValuePair("text", text));
-        return new UrlEncodedFormEntity(parameters);
+        final ParameterList parameters = new ParameterList();
+        parameters.add("confidence", getProperty("Confidence"));
+        parameters.add("support", getProperty("Support"));
+        parameters.add("text", text);
+        return parameters.toEntity();
     }
     
     /** {@inheritDoc} */

@@ -1,13 +1,13 @@
 package org.freeyourmetadata.ner.services;
 
+import static org.freeyourmetadata.util.UriUtil.createUri;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
+import org.freeyourmetadata.util.ParameterList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,13 +36,13 @@ public class Zemanta extends NERServiceBase {
     
     /** {@inheritDoc} */
     protected HttpEntity createExtractionRequestBody(final String text) throws UnsupportedEncodingException {
-        final ArrayList<NameValuePair> parameters = new ArrayList<NameValuePair>(5);
-        parameters.add(new BasicNameValuePair("method", "zemanta.suggest_markup"));
-        parameters.add(new BasicNameValuePair("format", "json"));
-        parameters.add(new BasicNameValuePair("return_rdf_links", "1"));
-        parameters.add(new BasicNameValuePair("api_key", getProperty("API key")));
-        parameters.add(new BasicNameValuePair("text", text));
-        return new UrlEncodedFormEntity(parameters);
+        final ParameterList parameters = new ParameterList();
+        parameters.add("method", "zemanta.suggest_markup");
+        parameters.add("format", "json");
+        parameters.add("return_rdf_links", "1");
+        parameters.add("api_key", getProperty("API key"));
+        parameters.add("text", text);
+        return parameters.toEntity();
     }
     
     /** {@inheritDoc} */
@@ -63,11 +63,13 @@ public class Zemanta extends NERServiceBase {
             final JSONObject link = links.getJSONObject(i);
             final JSONArray targets = link.getJSONArray("target");
             final String label = targets.getJSONObject(0).getString("title");
-            final URI[] urls = new URI[targets.length()];
-            // Find all target URLs
-            for (int j = 0; j < targets.length(); j++)
-                urls[j] = createUri(targets.getJSONObject(j).getString("url"));
-            results.add(new NamedEntity(label, urls));
+            // Make a disambiguation from each target
+            final Disambiguation[] disambiguations = new Disambiguation[targets.length()];
+            for (int j = 0; j < targets.length(); j++) {
+                final JSONObject target = targets.getJSONObject(j);
+                disambiguations[j] = new Disambiguation(target.getString("title"), createUri(target.getString("url")));
+            }
+            results.add(new NamedEntity(label, disambiguations));
         }
         return results.toArray(new NamedEntity[results.size()]);
     }

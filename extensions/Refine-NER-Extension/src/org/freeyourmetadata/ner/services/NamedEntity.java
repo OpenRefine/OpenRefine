@@ -1,8 +1,8 @@
 package org.freeyourmetadata.ner.services;
 
+import java.lang.String;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.util.Collection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,74 +15,96 @@ import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Recon.Judgment;
 
 /**
- * A named entity with a label and URIs
+ * A named entity with a label and disambiguations
  * @author Ruben Verborgh
+ * @author Stefano Parmesan
  */
 public class NamedEntity {
-    private final static URI[] EMPTY_URI_SET = new URI[0];
     private final static String[] EMPTY_TYPE_SET = new String[0];
-    
-    private final String label;
-    private final URI[] uris;
-    
+
+    private final String extractedText;
+    private final Disambiguation[] disambiguations;
+
     /**
      * Creates a new named entity without URIs
-     * @param label The label of the entity
+     * @param extractedText The label of the entity
      */
-    public NamedEntity(final String label) {
-        this(label, EMPTY_URI_SET);
+    public NamedEntity(final String extractedText) {
+        this(extractedText, new Disambiguation[] {new Disambiguation(extractedText)});
     }
-    
+
     /**
      * Creates a new named entity with a single URI
-     * @param label The label of the entity
+     * @param extractedText The label of the entity
      * @param uri The URI of the entity
      */
-    public NamedEntity(final String label, final URI uri) {
-        this(label, new URI[]{ uri });
+    public NamedEntity(final String extractedText, final URI uri) {
+        this(extractedText, new Disambiguation[] { new Disambiguation(extractedText, uri) });
+    }
+
+    /**
+     * Creates a new named entity
+     * @param extractedText The label of the entity
+     * @param uris The URIs of the entity
+     */
+    public NamedEntity(final String extractedText, final URI[] uris) {
+        this.extractedText = extractedText;
+        this.disambiguations = new Disambiguation[uris.length];
+        for (int i = 0; i < uris.length; i++)
+            disambiguations[i] = new Disambiguation(extractedText, uris[i]);
+    }
+
+    /**
+     * Creates a new named entity
+     * @param extractedText The label matched in the original text
+     * @param disambiguations An array of disambiguations
+     */
+    public NamedEntity(final String extractedText, final Disambiguation[] disambiguations) {
+        this.extractedText = extractedText;
+        this.disambiguations = disambiguations;
     }
     
     /**
      * Creates a new named entity
-     * @param label The label of the entity
-     * @param uris The URIs of the entity
+     * @param extractedText The label matched in the original text
+     * @param disambiguations A list of disambiguations
      */
-    public NamedEntity(final String label, final URI[] uris) {
-        this.label = label;
-        this.uris = uris;
+    public NamedEntity(final String extractedText, final Collection<Disambiguation> disambiguations) {
+        this.extractedText = extractedText;
+        this.disambiguations = disambiguations.toArray(new Disambiguation[disambiguations.size()]);
     }
-    
+
     /**
      * Creates a new named entity from a JSON representation
      * @param json The JSON representation of the named entity
      * @throws JSONException if the JSON is not correctly structured
      */
     public NamedEntity(final JSONObject json) throws JSONException {
-        this.label = json.getString("label");
-        final JSONArray urisJson = json.getJSONArray("uris");
-        this.uris = new URI[urisJson.length()];
-        for (int i = 0; i < uris.length; i++) {
-            try { uris[i] = new URI(urisJson.getString(i)); }
-            catch (URISyntaxException e) {}
+        extractedText = json.getString("extractedText");
+        
+        final JSONArray jsonDisambiguations = json.getJSONArray("disambiguations");
+        disambiguations = new Disambiguation[jsonDisambiguations.length()];
+        for (int i = 0; i < disambiguations.length; i++) {
+            disambiguations[i] = new Disambiguation(jsonDisambiguations.getJSONObject(i));
         }
     }
 
     /**
-     * Gets the entity's label
-     * @return The label
+     * Gets the entity's extractedText
+     * @return The extracted text
      */
-    public String getLabel() {
-        return label;
+    public String getExtractedText() {
+        return extractedText;
     }
-    
+
     /**
-     * Gets the entity's URIs
-     * @return The URIs
+     * Gets the entity's disambiguations
+     * @return The disambiguations
      */
-    public URI[] getUris() {
-        return uris;
+    public Disambiguation[] getDisambiguations() {
+        return disambiguations;
     }
-    
+
     /**
      * Writes the named entity in a JSON representation
      * @param json The JSON writer
@@ -90,47 +112,42 @@ public class NamedEntity {
      */
     public void writeTo(final JSONWriter json) throws JSONException {
         json.object();
-        json.key("label"); json.value(getLabel());
-        json.key("uris");
+        json.key("extractedText"); json.value(getExtractedText());
+        json.key("disambiguations");
         json.array();
-        for (final URI uri : getUris())
-            json.value(uri.toString());
+        for (final Disambiguation disambiguation : getDisambiguations())
+            disambiguation.writeTo(json);
         json.endArray();
         json.endObject();
     }
-    
+
     /**
      * Convert the named entity into a Refine worksheet cell
      * @return The cell
      */
     public Cell toCell() {
-        // Find all non-empty URIs
-        final ArrayList<String> nonEmptyUris = new ArrayList<String>(getUris().length);
-        for (final URI uri : getUris()) {
-            final String uriString = uri == null ? "" : uri.toString();
-            if (uriString.length() > 0)
-                nonEmptyUris.add(uriString);
+        // Try to determine a reconciliation value for the cell
+        final Recon recon = new Recon(-1L, "", "");
+        recon.judgment = Judgment.Matched;
+        recon.judgmentAction = "auto";
+        recon.service = "NamedEntity";
+
+        // Add all reconciliation candidates
+        for (int i = 0; i < disambiguations.length; i++) {
+            final Disambiguation match = disambiguations[i];
+            final String uri = match.getUri().toString();
+            if (uri.length() > 0) {
+                final ReconCandidate candidate = new ReconCandidate(uri, match.getLabel(), EMPTY_TYPE_SET, match.getScore());
+                recon.addCandidate(candidate);
+                // If this candidate is better than the previous best candidate, make it the match
+                if (recon.match == null || match.getScore() > recon.match.score) {
+                    recon.match = candidate;
+                    recon.matchRank = i;
+                }
+            }
         }
-        
-        // Don't include a reconciliation element if there are no URIs
-        final Recon recon;
-        if (nonEmptyUris.size() == 0) {
-            recon = null;
-        }
-        // Include a reconciliation candidate for each URI
-        else {
-            recon = new Recon(-1L, "", "");
-            // Create the candidates
-            for (final String uri : nonEmptyUris)
-                recon.addCandidate(new ReconCandidate(uri, getLabel(), EMPTY_TYPE_SET, 1.0));
-            // Pick the first one as the best match
-            recon.match = recon.candidates.get(0);
-            recon.matchRank = 0;
-            recon.judgment = Judgment.Matched;
-            recon.judgmentAction = "auto";
-            // Act as a reconciliation service
-            recon.service = "NamedEntity";
-        }
-        return new Cell(getLabel(), recon);
+
+        // Return the cell, adding a reconciliation value if a match was found
+        return new Cell(getExtractedText(), recon.match == null ? null : recon);
     }
 }

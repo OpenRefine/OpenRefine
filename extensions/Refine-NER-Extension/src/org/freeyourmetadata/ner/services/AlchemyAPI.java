@@ -1,5 +1,7 @@
 package org.freeyourmetadata.ner.services;
 
+import static org.freeyourmetadata.util.UriUtil.createUri;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -8,9 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
+import org.freeyourmetadata.util.ParameterList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,10 +41,10 @@ public class AlchemyAPI extends NERServiceBase {
     
     /** {@inheritDoc} */
     protected HttpEntity createExtractionRequestBody(final String text) throws UnsupportedEncodingException {
-        final ArrayList<NameValuePair> parameters = new ArrayList<NameValuePair>(2);
-        parameters.add(new BasicNameValuePair("apikey", getProperty("API key")));
-        parameters.add(new BasicNameValuePair("text", text));
-        return new UrlEncodedFormEntity(parameters);
+        final ParameterList parameters = new ParameterList();
+        parameters.add("apikey", getProperty("API key"));
+        parameters.add("text", text);
+        return parameters.toEntity();
     }
     
     /** {@inheritDoc} */
@@ -55,25 +55,28 @@ public class AlchemyAPI extends NERServiceBase {
         final JSONObject response = (JSONObject)tokener.nextValue();
         if (!"OK".equals(response.getString("status")))
             throw new IllegalArgumentException("The AlchemyAPI request did not succeed.");
+        
         // Find all entities
         final JSONArray entities = response.getJSONArray("entities");
         final NamedEntity[] results = new NamedEntity[entities.length()];
         for (int i = 0; i < results.length; i++) {
             final JSONObject entity = entities.getJSONObject(i);
-            final String label = entity.getString("text");
-            // Find possible URLs in the entities
-            final HashSet<URI> uris = new HashSet<URI>();
+            final String entityText = entity.getString("text");
+            
+            // Find all disambiguations
+            final ArrayList<Disambiguation> disambiguations = new ArrayList<Disambiguation>();
             if (entity.has("disambiguated")) {
                 final JSONObject disambiguated = entity.getJSONObject("disambiguated");
+                final String label = disambiguated.getString("name");
                 final Iterator<String> keyIterator = disambiguated.keys();
                 while (keyIterator.hasNext()) {
                     final String key = keyIterator.next();
                     if (!NONURIFIELDS.contains(key))
-                        uris.add(createUri(disambiguated.getString(key)));
+                        disambiguations.add(new Disambiguation(label, createUri(disambiguated.getString(key))));
                 }
             }
             // Create new named entity for the result
-            results[i] = new NamedEntity(label, uris.toArray(new URI[uris.size()]));
+            results[i] = new NamedEntity(entityText, disambiguations);
         }
         return results;
     }
