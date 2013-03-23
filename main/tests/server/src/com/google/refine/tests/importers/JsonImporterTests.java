@@ -35,7 +35,6 @@ package com.google.refine.tests.importers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
@@ -228,7 +227,7 @@ public class JsonImporterTests extends ImporterTest {
         String sampleJson2 = "{\"field\":{}}";
         String sampleJson3 = "{\"field\":[{},{}]}";
         
-        JSONTreeReader parser = new JSONTreeReader(new StringReader(sampleJson));
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
         Token token = Token.Ignorable;
         int i = 0;
         try{
@@ -248,7 +247,7 @@ public class JsonImporterTests extends ImporterTest {
         }
         
         
-        parser = new JSONTreeReader(new StringReader(sampleJson2));
+        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes("UTF-8")));
         token = Token.Ignorable;
         i = 0;
         try{
@@ -267,7 +266,7 @@ public class JsonImporterTests extends ImporterTest {
             //silent
         }
         
-        parser = new JSONTreeReader(new StringReader(sampleJson3));
+        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson3.getBytes("UTF-8")));
         token = Token.Ignorable;
         i = 0;
         try{
@@ -505,7 +504,7 @@ public class JsonImporterTests extends ImporterTest {
         }
 
         try {
-            parseOneFile(SUT, inputStream, options);
+            parseOneInputStream(SUT, inputStream, options);
         } catch (Exception e) {
             Assert.fail();
         }

@@ -34,10 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.List;
 
@@ -67,7 +65,7 @@ public class JsonImporter extends TreeImportingParserBase {
     public final static String ANONYMOUS = "_";
 
     public JsonImporter() {
-        super(false);
+        super(true);
     }
     
     static private class PreviewParsingState {
@@ -84,18 +82,13 @@ public class JsonImporter extends TreeImportingParserBase {
             try {
                 JSONObject firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
-                InputStream is = new FileInputStream(file);
-                try {
-                    JsonFactory factory = new JsonFactory();
-                    JsonParser parser = factory.createJsonParser(is);
+                JsonFactory factory = new JsonFactory();
+                JsonParser parser = factory.createJsonParser(file);
 
-                    PreviewParsingState state = new PreviewParsingState();
-                    Object rootValue = parseForPreview(parser, state);
-                    if (rootValue != null) {
-                        JSONUtilities.safePut(options, "dom", rootValue);
-                    }
-                } finally {
-                    is.close();
+                PreviewParsingState state = new PreviewParsingState();
+                Object rootValue = parseForPreview(parser, state);
+                if (rootValue != null) {
+                    JSONUtilities.safePut(options, "dom", rootValue);
                 }
             } catch (IOException e) {
                 logger.error("Error generating parser UI initialization data for JSON file", e);
@@ -201,11 +194,11 @@ public class JsonImporter extends TreeImportingParserBase {
     
     @Override
     public void parseOneFile(Project project, ProjectMetadata metadata,
-            ImportingJob job, String fileSource, Reader reader,
+            ImportingJob job, String fileSource, InputStream is,
             ImportColumnGroup rootColumnGroup, int limit, JSONObject options, List<Exception> exceptions) {
         
         parseOneFile(project, metadata, job, fileSource,
-            new JSONTreeReader(reader), rootColumnGroup, limit, options, exceptions);
+            new JSONTreeReader(is), rootColumnGroup, limit, options, exceptions);
     }
     
     static public class JSONTreeReader implements TreeReader {
@@ -220,9 +213,9 @@ public class JsonImporter extends TreeImportingParserBase {
         private Serializable fieldValue = null;
 
         
-        public JSONTreeReader(Reader reader) {
+        public JSONTreeReader(InputStream is) {
             try {
-                parser = factory.createJsonParser(reader);
+                parser = factory.createJsonParser(is);
                 current = null;
                 next  = parser.nextToken(); 
             } catch (IOException e) {
