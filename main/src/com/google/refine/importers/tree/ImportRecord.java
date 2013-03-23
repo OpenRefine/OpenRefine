@@ -1,6 +1,6 @@
 package com.google.refine.importers.tree;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.refine.model.Cell;
@@ -10,5 +10,5 @@ import com.google.refine.model.Cell;
  *
  */
 public class ImportRecord {
-    public List<List<Cell>> rows = new LinkedList<List<Cell>>();
+    public List<List<Cell>> rows = new ArrayList<List<Cell>>();
 }
