@@ -553,12 +553,12 @@ mac_dist() {
     sync
     hdiutil detach $DEVICE
     
-    if [ -f "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" ] ; then
-        rm "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg"
+    if [ -f "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" ] ; then
+        rm "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg"
     fi
     
-    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
-    hdiutil internet-enable -yes "$REFINE_DIST_DIR/google-refine-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
+    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
+    hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
     
     rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
 }
@@ -573,7 +573,7 @@ ui_test() {
     
     windmill_prepare
 
-    REFINE_DATA_DIR="${TMPDIR:=/tmp}/google-refine-tests"
+    REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
     
     add_option "-Drefine.headless=true"
     
@@ -636,7 +636,7 @@ run() {
     fi
     
     if [ ! -d $REFINE_CLASSES_DIR ] ; then
-        IS_JAR=`ls $REFINE_LIB_DIR | grep google-refine`
+        IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
             ant build
             echo ""
@@ -648,7 +648,7 @@ run() {
     fi
 
     if [ "$OS" = "macosx" ] ; then
-        add_option '-Xdock:icon=graphics/icon/google-refine.icns'
+        add_option '-Xdock:icon=graphics/icon/openrefine.icns'
     fi
     
     if [ "$REFINE_DATA_DIR" ] ; then
@@ -960,6 +960,7 @@ add_option "-Dpython.path=$JYTHONPATH"
 add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 # ----- Respond to the action given --------------------------------------------
+echo $ACTION
 
 case "$ACTION" in
   build) build_prepare; ant build;;
