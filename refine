@@ -299,10 +299,10 @@ tools_prepare() {
 ant_prepare() {
     tools_prepare
 
-    VERSION="1.9.0"
-    ANT_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-${VERSION}-bin.tar.gz"
+    ANT_VERSION="1.9.0"
+    ANT_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz"
     ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
-    ANT_DIR="apache-ant-${VERSION}"
+    ANT_DIR="apache-ant-${ANT_VERSION}"
     
     ANT="`which ant 2> /dev/null`"
     if [ -z "$ANT" ] ; then
@@ -339,18 +339,18 @@ appengine_prepare() {
 launch4j_prepare() {
     tools_prepare
 
-    VERSION="3.0.2"
-    VERSION="3.1.0-beta1"
+    L4J_VERSION="3.1.0-beta1" # buggy!
+    L4J_VERSION="3.0.2"
     if [ "$OS" = "macosx" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSION}/launch4j-${VERSION}-macosx.tgz"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-macosx.tgz"
     elif [ "$OS" = "windows" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSION}/launch4j-${VERSION}-win32.zip"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-win32.zip"
     elif [ "$OS" = "linux" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSION}/launch4j-${VERSION}-linux.tgz"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-linux.tgz"
     fi
     
     LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
-    LAUNCH4J_DIR="launch4j-${VERSION}"
+    LAUNCH4J_DIR="launch4j"
     
     tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
 
@@ -417,10 +417,10 @@ windmill_prepare() {
 
 findbugs_prepare() {
     tools_prepare
-    VERSION="2.0.2"
-    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/${VERSION}/findbugs-${VERSION}.tar.gz"
+    FB_VERSION="2.0.2"
+    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/${FB_VERSION}/findbugs-${FB_VERSION}.tar.gz"
     FINDBUGS_FILE=`echo $FINDBUGS_URL | sed 's|.*/||'`
-    FINDBUGS_DIR="findbugs-${VERSION}"
+    FINDBUGS_DIR="findbugs-${FB_VERSION}"
 
     tool_download $FINDBUGS_URL $FINDBUGS_FILE $FINDBUGS_DIR
 }
@@ -428,10 +428,10 @@ findbugs_prepare() {
 pmd_prepare() {
     tools_prepare
     
-    VERSION="4.2.6"
-    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/${VERSION}/pmd-bin-${VERSION}.zip"
+    PMD_VERSION="4.2.6"
+    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/${PMD_VERSION}/pmd-bin-${PMD_VERSION}.zip"
     PMD_FILE=`echo $PMD_URL | sed 's|.*/||'`
-    PMD_DIR="pmd-bin-${VERSION}"
+    PMD_DIR="pmd-bin-${PMD_VERSION}"
 
     tool_download $PMD_URL $PMD_FILE $PMD_DIR
 }
@@ -439,10 +439,10 @@ pmd_prepare() {
 jslint_prepare() {
     tools_prepare
 
-    VERSION="2.0.3"
-    JSLINT_URL="http://jslint4java.googlecode.com/files/jslint4java-${VERSION}-dist.zip"
+    JSLINT_VERSION="2.0.3"
+    JSLINT_URL="http://jslint4java.googlecode.com/files/jslint4java-${JSLINT_VERSION}-dist.zip"
     JSLINT_FILE=`echo $JSLINT_URL | sed 's|.*/||'`
-    JSLINT_DIR="jslint4java-${VERSION}"
+    JSLINT_DIR="jslint4java-${JSLINT_VERSION}"
 
     tool_download $JSLINT_URL $JSLINT_FILE $JSLINT_DIR
 }
