@@ -265,6 +265,17 @@ load_data() {
     fi
 }
 
+display() {
+    FILE=$1
+    if [ "$OS" = "macosx" ] ; then
+	open $FILE
+    elif [ "$OS" = "linux" ] ; then
+	gnome-open $FILE
+    else
+	notepad $FILE
+    fi  
+
+}
 # ----------------------------------------------------------------------------------------------
 
 build_prepare() {
@@ -288,9 +299,10 @@ tools_prepare() {
 ant_prepare() {
     tools_prepare
 
-    ANT_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-1.8.1-bin.tar.gz"
+    VERSION="1.9.0"
+    ANT_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-${VERSION}-bin.tar.gz"
     ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
-    ANT_DIR="apache-ant-1.8.1"
+    ANT_DIR="apache-ant-${VERSION}"
     
     ANT="`which ant 2> /dev/null`"
     if [ -z "$ANT" ] ; then
@@ -326,36 +338,22 @@ appengine_prepare() {
 
 launch4j_prepare() {
     tools_prepare
-    
+
+    VERSION="3.0.2"
+    VERSION="3.1.0-beta1"
     if [ "$OS" = "macosx" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.2/launch4j-3.0.2-macosx.tgz"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSION}/launch4j-${VERSION}-macosx.tgz"
     elif [ "$OS" = "windows" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.2/launch4j-3.0.2-win32.zip"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSION}/launch4j-${VERSION}-win32.zip"
     elif [ "$OS" = "linux" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/3.0.2/launch4j-3.0.2-linux.tgz"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSON}/launch4j-${VERSION}-linux.tgz"
     fi
     
     LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
-    LAUNCH4J_DIR="launch4j"
+    LAUNCH4J_DIR="launch4j-${VERSION}"
     
     tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
 
-    # Workaround: launch4j 3.0.2 & earlier does not work on versions of MacOS
-    # without PPC support (e.g. Lion) so we patch it to include Intel binaries; 
-    # the following lines can be removed once we update to a version of 
-    # launch4j that fixes the issue (not available yet).
-    if [ "$OS" = "macosx" ] ; then
-        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak" ] ; then
-            mv "$REFINE_TOOLS_DIR/launch4j/bin/windres" "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak"
-            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/windres" $REFINE_TOOLS_DIR/launch4j/bin/windres
-            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/windres"
-        fi
-        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak" ] ; then
-            mv "$REFINE_TOOLS_DIR/launch4j/bin/ld" "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak"
-            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/ld" $REFINE_TOOLS_DIR/launch4j/bin/ld
-            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/ld"
-        fi
-    fi
 }
     
 jarbundler_prepare() {
@@ -371,7 +369,7 @@ jarbundler_prepare() {
 virtualenv_prepare() {
     check_python
 
-    VIRTUALENV_DIR="virtualenv-1.7.1.2"
+    VIRTUALENV_DIR="virtualenv-1.9.1"
     VIRTUALENV_FILE="${VIRTUALENV_DIR}.tar.gz"
     VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/${VIRTUALENV_FILE}"
 
@@ -419,10 +417,10 @@ windmill_prepare() {
 
 findbugs_prepare() {
     tools_prepare
-    
-    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/1.3.9/findbugs-1.3.9.tar.gz"
+    VERSION="2.0.2"
+    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/${VERSION}/findbugs-${VERSION}.tar.gz"
     FINDBUGS_FILE=`echo $FINDBUGS_URL | sed 's|.*/||'`
-    FINDBUGS_DIR="findbugs-1.3.9"
+    FINDBUGS_DIR="findbugs-${VERSION}"
 
     tool_download $FINDBUGS_URL $FINDBUGS_FILE $FINDBUGS_DIR
 }
@@ -430,19 +428,21 @@ findbugs_prepare() {
 pmd_prepare() {
     tools_prepare
     
-    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/4.2.5/pmd-bin-4.2.5.zip"
-    PMD_FILE="pmd-bin-4.2.5.zip"
-    PMD_DIR="pmd-4.2.5"
+    VERSION="4.2.6"
+    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/${VERSION}/pmd-bin-${VERSION}.zip"
+    PMD_FILE=`echo $PMD_URL | sed 's|.*/||'`
+    PMD_DIR="pmd-bin-${VERSION}"
 
     tool_download $PMD_URL $PMD_FILE $PMD_DIR
 }
 
 jslint_prepare() {
     tools_prepare
-    
-    JSLINT_URL="http://jslint4java.googlecode.com/files/jslint4java-1.3.3-dist.zip"
-    JSLINT_FILE="jslint4java-1.3.3-dist.zip"
-    JSLINT_DIR="jslint4java-1.3.3"
+
+    VERSION="2.0.3"
+    JSLINT_URL="http://jslint4java.googlecode.com/files/jslint4java-${VERSION}-dist.zip"
+    JSLINT_FILE=`echo $JSLINT_URL | sed 's|.*/||'`
+    JSLINT_DIR="jslint4java-${VERSION}"
 
     tool_download $JSLINT_URL $JSLINT_FILE $JSLINT_DIR
 }
@@ -766,7 +766,7 @@ findbugs() {
     ANT_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
     ant findbugs
     
-    open "$REFINE_BUILD_DIR/reports/findbugs.html"
+    display "$REFINE_BUILD_DIR/reports/findbugs.html"
 }    
 
 pmd() {
@@ -775,7 +775,7 @@ pmd() {
     ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
     ant pmd
     
-    open "$REFINE_BUILD_DIR/reports/pmd.html"
+    display "$REFINE_BUILD_DIR/reports/pmd.html"
 }    
 
 cpd() {
@@ -784,7 +784,7 @@ cpd() {
     ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
     ant cpd
 
-    open "$REFINE_BUILD_DIR/reports/cpd.txt"
+    display "$REFINE_BUILD_DIR/reports/cpd.txt"
 }    
 
 jslint() {
@@ -793,7 +793,7 @@ jslint() {
     ANT_PARAMS="-Djslint.dir=${REFINE_TOOLS_DIR}/${JSLINT_DIR}"
     ant jslint
 
-    open "$REFINE_BUILD_DIR/reports/jslint.txt"
+    display "$REFINE_BUILD_DIR/reports/jslint.txt"
 }
 
 whitespace() {
