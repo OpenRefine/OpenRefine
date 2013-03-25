@@ -209,7 +209,7 @@ get_revision() {
     if [ -d ".svn" ] ; then
         INFO=`svn info`
     elif [ -d ".git" ] ; then
-        INFO=`git svn info`
+        INFO=`git describe`
     else
         error "cannot obtain revision, exiting!"
     fi
