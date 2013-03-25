@@ -87,7 +87,7 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
 
 	self._elmts.add_another_root_node.click(function(e){
 		e.preventDefault();
-		var newRootNode = RdfSchemaAlignment.createNewRootNode(false)
+		var newRootNode = RdfSchemaAlignment.createNewRootNode(false);
 		self._schema.rootNodes.push(newRootNode);
 		self._nodeUIs.push(new RdfSchemaAlignmentDialog.UINode(
 				self,

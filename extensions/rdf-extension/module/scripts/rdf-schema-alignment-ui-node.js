@@ -5,7 +5,7 @@ RdfSchemaAlignmentDialog.UINode = function(dialog, node, table, options) {
     
     this._linkUIs = [];
     this._detailsRendered = false;
-    
+        
     this._tr = table.insertRow(table.rows.length);
     this._tdMain = this._tr.insertCell(0);
     this._tdToggle = this._tr.insertCell(1);
@@ -261,7 +261,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
     
     frame.width("610px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("RDF Node").appendTo(frame);
+    $('<div></div>').addClass("dialog-header").text("RDF Node").appendTo(frame);
     var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body rdf-schema").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -386,7 +386,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
     
     var makeRowIndexChoice = function(checked) {
         var tr = tableColumns.insertRow(tableColumns.rows.length);
-        var radio = $('<input />')
+        $('<input />')
             .attr("type", "radio")
             .attr("checked", checked)
             .attr("value","")
@@ -405,7 +405,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
     
     var makeConstantValueChoice = function(checked,value){
     	var tr = tableColumns.insertRow(tableColumns.rows.length);
-        var radio = $('<input />')
+        $('<input />')
             .attr("type", "radio")
             .attr("checked", checked)
             .attr("value","")
@@ -615,7 +615,7 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
         		node.rdfTypes = cloneDeep(self._node.rdfTypes);
         	}
         	
-            DialogSystem.dismissUntil(level - 1);
+            DialogSystem.dismissUntil(self._level - 1);
             
             self._node = node;
             /*if('columnIndex' in node){
@@ -631,15 +631,15 @@ RdfSchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function(){
     }).appendTo(footer);
     
     $('<button></button>').addClass('button').text("Cancel").click(function() {
-        DialogSystem.dismissUntil(level - 1);
+        DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
     
     
-    var level = DialogSystem.showDialog(frame);
+    self._level = DialogSystem.showDialog(frame);
 };
 
 RdfSchemaAlignmentDialog.UINode.prototype._preview = function(expr,columnName,isUri){
-	var self = this;
+	//var self = this;
 	if(isUri){
 		RdfDataTableView.previewUrisOnVisibleRows(
 				{
@@ -854,7 +854,7 @@ RdfSchemaAlignmentDialog.NewRdfResourceDialog = function(elmt,defaultVal,onDone)
 	});
 };
 RdfSchemaAlignmentDialog.RdfResourceDialog = function(elmt,lookFor,projectId,parent,prefixesManager,onDone){
-	var self = this;
+	//var self = this;
 	var menu = MenuSystem.createMenu().width('250px');
 	menu.html('<div class="schema-alignment-link-menu-type-search">' + 
 			'<span>Search for ' + lookFor + ':</span>' + 

@@ -5,7 +5,7 @@ RdfSchemaAlignmentDialog.UILink = function(dialog, link, table, options, parentU
     this._parentUINode = parentUINode;
     
     // Make sure target node is there
-    this._link.target = this._link.target || { nodeType: "cell-as-literal" }
+    this._link.target = this._link.target || { nodeType: "cell-as-literal" };
     
     this._tr = table.insertRow(table.rows.length);
     this._tdMain = this._tr.insertCell(0);

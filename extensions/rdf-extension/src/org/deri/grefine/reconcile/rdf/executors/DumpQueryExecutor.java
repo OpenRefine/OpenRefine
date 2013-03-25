@@ -22,9 +22,9 @@ import com.hp.hpl.jena.rdf.model.Property;
 
 /**
  * @author fadmaa
- * execute SPARQL queries agains Dump RDF and supports LARQ for
- * full text searc
- * as index in built with the model this calss can be costly to build
+ * execute SPARQL queries against Dump RDF and supports LARQ for
+ * full text search
+ * as index in built with the model this class can be costly to build
  * consider sharing instances of this class It is thread-safe 
  */
 public class DumpQueryExecutor implements QueryExecutor {

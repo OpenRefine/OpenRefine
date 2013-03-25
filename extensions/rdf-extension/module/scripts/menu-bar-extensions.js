@@ -14,6 +14,15 @@ ExporterManager.MenuItems.push(
 		}
 );
 
+ExporterManager.MenuItems.push(
+		{
+			"id" : "exportRdfVirtuoso",
+        	"label":"Upload RDF to Sparql endpoint ",
+        	"click": function() { RdfExporterMenuBar.exportRDF("Virtuoso", ""); }
+		}
+);
+
+
 RdfExporterMenuBar = {};
 
 RdfExporterMenuBar.exportRDF = function(format, ext) {
@@ -22,9 +31,24 @@ RdfExporterMenuBar.exportRDF = function(format, ext) {
             "You haven't done any RDF schema alignment yet!"
         );
     } else {
-        RdfExporterMenuBar.rdfExportRows(format, ext);
+    	if(format === "Virtuoso") {
+    		RdfExporterMenuBar.rdfExportTriples();
+    	}
+    	else {
+    		RdfExporterMenuBar.rdfExportRows(format, ext);
+    	}
     }
 };
+
+RdfExporterMenuBar.rdfExportTriples = function() {
+	
+	//TODO: create a form for entering SPARQL endpoint
+	//and setting a default graph (or create a new one)
+	//TODO: dealing with authentication via OAuth
+	
+	alert("Uploading triples to Virtuoso");
+};
+
 
 RdfExporterMenuBar.rdfExportRows = function(format, ext) {
     var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
@@ -136,10 +160,10 @@ function ReconciliationStanbolServiceDialog() {
 				    	$.each(data, function(i, obj) {
 				    		//check issue #579: http://code.google.com/p/google-refine/issues/detail?id=579
 				    		if (ReconciliationManager.getServiceFromUrl(obj.uri)) {
-				    			self.printAddedService(registering, obj, false)
+				    			self.printAddedService(registering, obj, false);
 				    		} else {
 					    	    ReconciliationManager.registerStandardService(obj.uri, function(index) {
-					    	    	self.printAddedService(registering, obj, true)
+					    	    	self.printAddedService(registering, obj, true);
 					    	    });	
 				    		}
 				    	});
@@ -152,7 +176,7 @@ function ReconciliationStanbolServiceDialog() {
     	} else {
     		inputUri.addClass("error");
     		inputUri.after($('<img src="extension/rdf-extension/images/no.png" width="16" height="16" alt="invalid" class="validation" id="validation-img" />'));	
-    		alert("Not valid URI")
+    		alert("Not a valid URI");
     	}
     });
 	
@@ -180,7 +204,7 @@ function ReconciliationSindiceServiceDialog(){
 	var frame = DialogSystem.createDialog();
     frame.width("400px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Add reconciliation service").appendTo(frame);
+    $('<div></div>').addClass("dialog-header").text("Add reconciliation service").appendTo(frame);
     var body = $('<div class="grid-layout layout-full"></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -252,8 +276,8 @@ function ReconciliationRdfServiceDialog(){
     
     frame.width("600px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Add file-based reconciliation service").appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").append(dialog).appendTo(frame);
+    $('<div></div>').addClass("dialog-header").text("Add file-based reconciliation service").appendTo(frame);
+    $('<div></div>').addClass("dialog-body").append(dialog).appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
 	this._level = DialogSystem.showDialog(frame);
@@ -294,7 +318,8 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 		    	return;
 		    }
 	    	
-	    	var services = ReconciliationManager.getAllServices();
+	    	//var services = ;
+	    	ReconciliationManager.getAllServices();
 	    	
 	    	$.post("command/rdf-extension/addService",
 					{"datasource":"file_url","name":name,"url":file_url,properties:prop_uris, "file_format":file_format},
@@ -341,8 +366,8 @@ function ReconciliationSparqlServiceDialog(){
     
     frame.width("600px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Add SPARQL-based reconciliation service").appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").append(dialog).appendTo(frame);
+    $('<div></div>').addClass("dialog-header").text("Add SPARQL-based reconciliation service").appendTo(frame);
+    $('<div></div>').addClass("dialog-body").append(dialog).appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
 	this._level = DialogSystem.showDialog(frame);
@@ -355,7 +380,7 @@ ReconciliationSparqlServiceDialog.prototype._footer = function(footer){
 	$('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
 		self._dismissBusy = DialogSystem.showBusy('Adding new reconciliation service');
 	    var name = self._elmts.service_name.val();
-	    var endpoint = self._elmts.endpoint_url.val()
+	    var endpoint = self._elmts.endpoint_url.val();
 	    var graph_uri = self._elmts.graph_uri.val();
 	    if(name.trim()===""){
 	    	alert("Name is required");

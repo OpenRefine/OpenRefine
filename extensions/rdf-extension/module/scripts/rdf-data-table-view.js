@@ -10,7 +10,7 @@ RdfDataTableView.previewUrisOnVisibleRows = function(column, title, expression, 
 RdfDataTableView.previewOnVisibleRows = function(isLiteral,column, title, expression, isRowNumberCell, baseUri, onDone) {
 	var o = DataTableView.sampleVisibleRows(column);
     
-    var self = this;
+    //var self = this;
     
   	function f () {}
     	
@@ -38,7 +38,7 @@ RdfDataTableView.previewOnVisibleRows = function(isLiteral,column, title, expres
         var frame = DialogSystem.createDialog();
         frame.width("700px");
         
-        var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
+        $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
         var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
         var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
         var html = $(self.generateWidgetHtmlOnlyGrel()).appendTo(body);

@@ -10,6 +10,7 @@ import org.deri.grefine.rdf.app.ApplicationContext;
 import org.deri.grefine.rdf.vocab.PrefixExistException;
 import org.deri.grefine.rdf.vocab.VocabularyImportException;
 import org.deri.grefine.rdf.vocab.VocabularyImporter;
+import org.json.JSONException;
 
 public class AddPrefixCommand extends RdfCommand{
 
@@ -23,6 +24,8 @@ public class AddPrefixCommand extends RdfCommand{
         String uri = request.getParameter("uri").trim();
         String projectId = request.getParameter("project");
         String fetchOption = request.getParameter("fetch");
+        Boolean forceImport = Boolean.valueOf(request.getParameter("force-import"));
+                
         try {    
             
             if(fetchOption.equals("web")){
@@ -38,15 +41,26 @@ public class AddPrefixCommand extends RdfCommand{
             
             
         } catch (PrefixExistException e) {
-            //in case something went wrong importing the prefix, remove it from manager
+            //in case something went wrong importing the prefix, remove it from manager            
             getRdfSchema(request).removePrefix(name);
             respondException(response, e);
             
         } catch (VocabularyImportException e) {
-            //respondException(response, e);
-            logger.warn("Vocabulary import exception: " + e.getLocalizedMessage());
-            getRdfSchema(request).removePrefix(name);
-            respondException(response,e);
+            //logger.warning("Vocabulary import exception: " + e.getLocalizedMessage());
+            //TODO: if force import was checked, respond with OK, do not remove it from manager
+           
+            if(forceImport) {
+                try {
+                    respond(response,"ok", "Vocabulary added, but not imported.");
+                } catch (JSONException e1) {
+                    respondException(response,e1);
+                }
+                
+            }
+            else {
+                getRdfSchema(request).removePrefix(name);
+                respondException(response,e);
+            }
         } 
         catch (Exception e1){
             logger.warn("General exception");

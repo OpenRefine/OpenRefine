@@ -66,7 +66,7 @@ ManageVocabsWidget.prototype.renderBody = function(){
 						}
 					}
 				);
-    	} 
+    	}; 
     };
     
     var getRefreshHandler = function(name,uri){
@@ -92,7 +92,7 @@ ManageVocabsWidget.prototype.renderBody = function(){
 		    				}
 						});
     		}
-    	} 
+    	}; 
     };
     
 	

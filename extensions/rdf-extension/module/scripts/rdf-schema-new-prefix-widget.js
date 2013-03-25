@@ -31,6 +31,8 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix, onDone){
     		return;
     	}
     	
+    	var force_import = (self._elmts.forceImport.attr('checked') !== undefined);
+    	
     	var dismissBusy;
 
     	if(fetchOption === 'file'){
@@ -51,6 +53,7 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix, onDone){
     					if (data.code === 'error')
     					{
     						alert("Error: " + data.message);
+    						
     					} else {
 	    			    	if(onDone){
 	    						onDone(name,uri);
@@ -72,13 +75,18 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix, onDone){
     				uri:uri,
     				"fetch-url":uri,
     				project: theProject.id,
+    				"force-import": force_import,
     				fetch:fetchOption
 				},
 				function(data)
 				{
 					dismissBusy();
 		    		if (data.code === "error"){
-		    			alert('Error:' + data.message)
+		    			alert('Error:' + data.message);
+						//todo: add force input option
+						console.log("Force import...");
+						console.log(force_import);
+
 		    		}else{
 		    			if(onDone){
 		    				onDone(name,uri);
@@ -105,7 +113,7 @@ NewPrefixWidget.prototype.show = function(msg,def_prefix, onDone){
         self._elmts.fetching_options_table.show();
         $('#advanced_options_button').hide();
         $('#advanced_options_button').attr("disabled", "true");
-    })
+    });
     
     self._elmts.fetching_options_table
 	.hide()
