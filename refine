@@ -213,8 +213,7 @@ get_revision() {
     else
         error "cannot obtain revision, exiting!"
     fi
-
-    REVISION=`echo $INFO | sed 's/.*Revision: /r/' | sed 's/ .*//'`
+    REVISION=`echo $INFO | sed s/^$VERSION-//`
 }
     
 download() {
