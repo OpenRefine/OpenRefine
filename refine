@@ -346,7 +346,7 @@ launch4j_prepare() {
     elif [ "$OS" = "windows" ] ; then
         LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSION}/launch4j-${VERSION}-win32.zip"
     elif [ "$OS" = "linux" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSON}/launch4j-${VERSION}-linux.tgz"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${VERSION}/launch4j-${VERSION}-linux.tgz"
     fi
     
     LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
