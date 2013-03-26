@@ -228,6 +228,7 @@
         <jarbundler 
                 dir="${mac.dir}"
                 name="OpenRefine"
+                shortname="Refine"
                 mainclass="com.google.refine.Refine" 
                 icon="${graphics.dir}/icon/openrefine.icns"
                 version="${version}"
@@ -235,7 +236,7 @@
                 aboutmenuname="OpenRefine"
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
                 jvmversion="1.6+"
-                bundleid="com.google.refine.Refine"
+                bundleid="org.openrefine.refine.Refine"
                 vmoptions="-Xms256M -Xmx1024M -Drefine.version=${revision}"
                 antialiasedgraphics="true"
                 antialiasedtext="true"
