@@ -559,7 +559,7 @@ mac_dist() {
             close
             open               
             update without registering applications
-            delay 2            
+            delay 5            
             eject
          end tell
        end tell
