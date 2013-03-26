@@ -376,8 +376,11 @@ jarbundler_prepare() {
     tools_prepare
     
     JARBUNDLER_URL="http://www.informagen.com/JarBundler/dist/jarbundler.tar.gz"
-    JARBUNDLER_FILE=`echo $JARBUNDLER_URL | sed 's|.*/||'`
     JARBUNDLER_DIR="jarbundler-2.2.0"
+    JARBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
+    JARBUNDLER_DIR="jarbundler-1.0"
+    JARBUNDLER_FILE=`echo $JARBUNDLER_URL | sed 's|.*/||'`
+
 
     tool_download $JARBUNDLER_URL $JARBUNDLER_FILE $JARBUNDLER_DIR
 }

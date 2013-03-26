@@ -217,13 +217,34 @@
     </target>
     
     <target name="mac" depends="jar, prepare_webapp">
+        <mkdir dir="${mac.dir}"/>
+        
+	<taskdef name="bundleapp"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="lib/appbundler-1.0.jar" />
+
+        <bundleapp outputdirectory="${mac.dir}"
+            name="OpenRefine"
+            displayname="OpenRefine ${version}"
+            identifier="org.openrefine.refine.Refine"
+	    shortversion="${version}"
+            mainclassname="com.google.refine.Refine">
+            <classpath>
+		<include name="${build.dir}/${fullname}-server.jar" />
+                <exclude name="${server.lib.dir}/**/.svn" />
+                <include name="${server.lib.dir}/**/*.jar" />
+            </classpath>
+            <librarypath dir="${built.webapp.dir}/..">
+                <include name="${built.webapp.name}/**" />
+            </librarypath>
+        </bundleapp>
+
+<!--- Old jarbundler code
         <taskdef 
             name="jarbundler" 
             classname="net.sourceforge.jarbundler.JarBundler" 
             classpath="${jarbundler.dir}/jarbundler-2.2.0.jar" 
         />
-        
-        <mkdir dir="${mac.dir}"/>
         
         <jarbundler 
                 dir="${mac.dir}"
@@ -251,6 +272,7 @@
                 <include name="${built.webapp.name}/**" />
             </resourcefileset>
         </jarbundler>
+-->
     </target>
     
     <target name="windows" depends="jar, prepare_webapp">
