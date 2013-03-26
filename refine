@@ -372,17 +372,14 @@ launch4j_prepare() {
     fi
 }
     
-jarbundler_prepare() {
+appbundler_prepare() {
     tools_prepare
     
-    JARBUNDLER_URL="http://www.informagen.com/JarBundler/dist/jarbundler.tar.gz"
-    JARBUNDLER_DIR="jarbundler-2.2.0"
-    JARBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
-    JARBUNDLER_DIR="jarbundler-1.0"
-    JARBUNDLER_FILE=`echo $JARBUNDLER_URL | sed 's|.*/||'`
+    APPBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
+    APPBUNDLER_DIR="."
+    APPBUNDLER_FILE=`echo $APPBUNDLER_URL | sed 's|.*/||'`
 
-
-    tool_download $JARBUNDLER_URL $JARBUNDLER_FILE $JARBUNDLER_DIR
+    tool_download $APPBUNDLER_URL $APPBUNDLER_FILE $APPBUNDLER_DIR
 }
    
 virtualenv_prepare() {
@@ -524,15 +521,15 @@ mac_dist() {
     get_version $1
     get_revision
 
-    jarbundler_prepare
+    appbundler_prepare
     
-    ANT_PARAMS="-Djarbundler.dir=${REFINE_TOOLS_DIR}/${JARBUNDLER_DIR}"
+    ANT_PARAMS="-Dappbundler.dir=${REFINE_TOOLS_DIR}/${APPBUNDLER_DIR}"
     ant mac
 
     mkdir -p "$REFINE_BUILD_DIR/mac/.background"
     cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
     
-    SIZE=60
+    SIZE=200
     
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
@@ -579,7 +576,7 @@ mac_dist() {
     hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
     hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
     
-    rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
+    #rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
 }
 
 test() {
@@ -864,8 +861,9 @@ load_configs refine.ini
 
 if [ "$OS" = "macosx" ] ; then
     if [ -z "$JAVA_HOME" ] ; then
-        # Mac OS X defaults to Java 5. So update JAVA_HOME unless the user manually set it.
-        export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
+	# We need want recent Java because we're bundling JRE - may want to warn and force developer to set JAVA_HOME
+	# The /usr/libexec/java_home utility may be tied to the Java prefs app, so could go away when Apple removes it
+        export JAVA_HOME=$(/usr/libexec/java_home)
     fi
 fi
 
@@ -979,8 +977,6 @@ add_option "-Dpython.path=$JYTHONPATH"
 add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 # ----- Respond to the action given --------------------------------------------
-echo $ACTION
-
 case "$ACTION" in
   build) build_prepare; ant build;;
   clean) ant clean;;
