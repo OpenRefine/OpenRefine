@@ -241,8 +241,6 @@
 	    </classpath>
 	    <option value="-Xms256M"/>
 	    <option value="-Xmx1024M"/>
-	    <option value="-Djava.awt.headless=true"/>
-	    <option value="-Drefine.headless=true"/>
 	    <option value="-Drefine.version=${revision}"/>
 	    <option value="-Drefine.webapp=$APP_ROOT/Contents/Resource/${built.webapp.name}"/>
         </bundleapp>
