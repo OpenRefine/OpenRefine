@@ -23,25 +23,25 @@ goto endUtils
 echo Usage %0 [options] ^<action^>
 echo where [options] include:
 echo.
-echo  /? print this message and exit
+echo  "/?" print this message and exit
 echo.
-echo  /p <port> the port that OpenRefine will listen to
+echo  "/p <port>" the port that OpenRefine will listen to
 echo     default: 3333
 echo.
-echo  /i <interface> the host interface OpenRefine should bind to
+echo  "/i <interface>" the host interface OpenRefine should bind to
 echo     default: 127.0.0.1
 echo.
-echo  /w <path> path to the webapp
+echo  "/w <path>" path to the webapp
 echo     default src\main\webapp
 echo.
-echo  /d enable JVM debugging (on port 8000)
+echo  "/d" enable JVM debugging (on port 8000)
 echo.
-echo  /m <memory> max memory heap size to use
+echo  "/m <memory>" max memory heap size to use
 echo     default: 1024M
 echo.
-echo  /x enable JMX monitoring (for jconsole and friends)
+echo  "/x" enable JMX monitoring (for jconsole and friends)
 echo.
-echo and <action> is one of
+echo "and <action> is one of
 echo.
 echo   build ..................... Build OpenRefine
 echo   run ....................... Run OpenRefine
