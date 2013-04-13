@@ -92,7 +92,8 @@ public abstract class RefineBroker extends ButterflyModuleImpl {
     
     static final protected Logger logger = LoggerFactory.getLogger("refine.broker");
     
-    static final protected String USER_INFO_URL = "http://www.freebase.com/api/service/user_info";
+    // TODO: This API is deprecated.
+    static final protected String USER_INFO_URL = "http://api.freebase.com/api/service/user_info";
     static final protected String DELEGATED_OAUTH_HEADER = "X-Freebase-Credentials";
     static final protected String OAUTH_HEADER = "Authorization";
 

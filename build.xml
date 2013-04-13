@@ -19,6 +19,8 @@
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
 
+    <property name="java_version" value="1.6"/>
+
     <property name="appengine.app_id" value="openrefine-broker"/>
     <property name="appengine.version" value="1"/>
     <property name="appengine.sdk.dir" value="/opt/appengine"/>
@@ -119,7 +121,7 @@
 
     <target name="build_server">
         <mkdir dir="${server.classes.dir}" />
-        <javac encoding="utf-8" srcdir="${server.src.dir}" destdir="${server.classes.dir}" debug="true" includeAntRuntime="no">
+        <javac source="${java_version}" target="${java_version}" encoding="utf-8" srcdir="${server.src.dir}" destdir="${server.classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="server.class.path" />
         </javac>
         <copy file="${server.src.dir}/log4j.properties" tofile="${server.classes.dir}/log4j.properties"/>
@@ -127,7 +129,7 @@
             
     <target name="build_webapp">
         <mkdir dir="${webapp.classes.dir}" />
-        <javac encoding="utf-8" destdir="${webapp.classes.dir}" debug="true" includeAntRuntime="no">
+        <javac source="${java_version}" target="${java_version}" encoding="utf-8" destdir="${webapp.classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${webapp.src.dir}"/>
             <classpath refid="webapp.class.path" />
         </javac>
@@ -136,7 +138,7 @@
 
     <target name="build_tests" depends="build_webapp, build_server">
         <mkdir dir="${server.tests.classes.dir}" />
-        <javac encoding="utf-8" srcdir="${server.tests.src.dir}" destdir="${server.tests.classes.dir}" debug="true" includeAntRuntime="no">
+        <javac source="${java_version}" target="${java_version}" encoding="utf-8" srcdir="${server.tests.src.dir}" destdir="${server.tests.classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="tests.class.path" />
         </javac>
         <copy file="${server.tests.src.dir}/tests.log4j.properties" tofile="${server.tests.classes.dir}/tests.log4j.properties"/>
@@ -150,7 +152,7 @@
 
     <target name="build_broker_core">
         <mkdir dir="${broker.core.dir}/module/MOD-INF/classes" />
-        <javac encoding="utf-8" destdir="${broker.core.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
+        <javac source="${java_version}" target="${java_version}" encoding="utf-8" destdir="${broker.core.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
             <src path="${broker.core.dir}/src/"/>
             <classpath refid="broker.class.path" />
         </javac>
@@ -158,7 +160,7 @@
 
     <target name="build_broker_appengine" depends="build_broker_core">
         <mkdir dir="${broker.appengine.dir}/module/MOD-INF/classes" />
-        <javac encoding="utf-8" destdir="${broker.appengine.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
+        <javac source="${java_version}" target="${java_version}" encoding="utf-8" destdir="${broker.appengine.dir}/module/MOD-INF/classes" debug="true" includeAntRuntime="no">
             <src path="${broker.appengine.dir}/src/"/>
             <classpath refid="broker.appengine.class.path" />
         </javac>
@@ -217,40 +219,50 @@
     </target>
     
     <target name="mac" depends="jar, prepare_webapp">
-        <taskdef 
-            name="jarbundler" 
-            classname="net.sourceforge.jarbundler.JarBundler" 
-            classpath="${jarbundler.dir}/jarbundler-2.2.0.jar" 
-        />
-        
         <mkdir dir="${mac.dir}"/>
         
-        <jarbundler 
-                dir="${mac.dir}"
-                name="OpenRefine"
-                mainclass="com.google.refine.Refine" 
-                icon="${graphics.dir}/icon/openrefine.icns"
-                version="${version}"
-                infostring="OpenRefine ${version}"
+	<taskdef name="bundleapp"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="${appbundler.dir}/appbundler-1.0.jar" />
+
+        <bundleapp outputdirectory="${mac.dir}"
+            name="OpenRefine"
+            displayname="OpenRefine ${version}"
+            icon="${graphics.dir}/icon/openrefine.icns"
+            identifier="org.openrefine.refine.Refine"
+	    shortversion="${version}"
+            mainclassname="com/google/refine/Refine">
+	    <runtime dir="${env.JAVA_HOME}"/>
+            <classpath dir="${build.dir}">
+	      <include name="${fullname}-server.jar" />
+	    </classpath>
+            <classpath dir="${server.lib.dir}">
+	      <include name="**/*.jar" />
+	    </classpath>
+	    <option value="-Xms256M"/>
+	    <option value="-Xmx1024M"/>
+	    <option value="-Djava.awt.headless=true"/>
+	    <option value="-Drefine.headless=true"/>
+	    <option value="-Drefine.version=${revision}"/>
+	    <option value="-Drefine.webapp=$APP_ROOT/Contents/Resource/${built.webapp.name}"/>
+        </bundleapp>
+
+	<copy todir="${mac.dir}/OpenRefine.app/Contents/Resource">
+          <fileset dir="${build.dir}" id="librarypathset" >
+            <include name="${built.webapp.name}/**/**" />
+            <exclude name="**/*.class" />
+          </fileset>
+	</copy>
+
+<!--- Options from old jarbundler code not supported by appbundler
                 aboutmenuname="OpenRefine"
                 workingdirectory="$APP_PACKAGE/Contents/Resources"
-                jvmversion="1.6+"
-                bundleid="com.google.refine.Refine"
-                vmoptions="-Xms256M -Xmx1024M -Drefine.version=${revision}"
                 antialiasedgraphics="true"
                 antialiasedtext="true"
                 liveresize="true"
                 growboxintrudes="true"
                 screenmenu="true">
-            <jarfilelist dir="${build.dir}" files="${fullname}-server.jar" />
-            <jarfileset dir="${server.lib.dir}">
-                <exclude name="**/.svn" />
-                <include name="**/*.jar" />
-            </jarfileset>
-            <resourcefileset dir="${built.webapp.dir}/..">
-                <include name="${built.webapp.name}/**" />
-            </resourcefileset>
-        </jarbundler>
+-->
     </target>
     
     <target name="windows" depends="jar, prepare_webapp">
@@ -277,7 +289,7 @@
                 fileVersion="${full_version}"
                 txtFileVersion="${version}"
                 fileDescription="openrefine"
-                copyright="Copyright (c) 2012 OpenRefine contributors, 2010, Google, Inc."
+                copyright="Copyright (c) 2013 OpenRefine contributors, 2010, Google, Inc."
                 productVersion="${full_version}"
                 txtProductVersion="${full_version}"
                 productName="OpenRefine"

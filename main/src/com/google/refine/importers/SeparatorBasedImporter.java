@@ -42,6 +42,7 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -95,12 +96,13 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         }
         sep = StringEscapeUtils.unescapeJava(sep);
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
+        boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
         
         final CSVParser parser = new CSVParser(
             sep.toCharArray()[0],//HACK changing string to char - won't work for multi-char separators.
             CSVParser.DEFAULT_QUOTE_CHARACTER,
             (char) 127, // we don't want escape processing try DEL as a rare character until we can turn it off
-            CSVParser.DEFAULT_STRICT_QUOTES,
+            strictQuotes,
             CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
             !processQuotes);
         
@@ -126,14 +128,10 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         
         ArrayList<Object> cells = new ArrayList<Object>();
         String[] tokens = parser.parseLineMulti(line);
-        for (String s : tokens){
-            cells.add(s);
-        }
+        cells.addAll(Arrays.asList(tokens));
         while (parser.isPending()) {
             tokens = parser.parseLineMulti(lnReader.readLine());
-            for (String s : tokens) {
-                cells.add(s);
-            }
+            cells.addAll(Arrays.asList(tokens));
         }
         return cells;
     }

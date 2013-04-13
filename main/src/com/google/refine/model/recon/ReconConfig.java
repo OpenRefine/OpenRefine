@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010,2013 Google Inc. and other contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.model.Cell;
@@ -54,6 +56,8 @@ import com.google.refine.model.Row;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 abstract public class ReconConfig implements Jsonizable {
+    final static protected Logger LOGGER = LoggerFactory.getLogger("recon-config");
+
     static final public Map<String, List<Class<? extends ReconConfig>>> s_opNameToClass =
         new HashMap<String, List<Class<? extends ReconConfig>>>();
     
@@ -96,7 +100,7 @@ abstract public class ReconConfig implements Jsonizable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Reconstruct failed",e);
         }
         return null;
     }
@@ -122,7 +126,7 @@ abstract public class ReconConfig implements Jsonizable {
         try {
             write(jsonWriter, new Properties());
         } catch (JSONException e) {
-            e.printStackTrace();
+           LOGGER.error("Save failed",e);
         }
     }
 }

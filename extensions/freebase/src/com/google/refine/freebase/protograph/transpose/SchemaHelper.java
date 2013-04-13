@@ -13,7 +13,7 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class SchemaHelper {
-    static private final String helperURL = "http://2.refine-helper.stefanomazzocchi.user.dev.freebaseapps.com/";
+    static private final String helperURL = "http://openrefine-helper.freebaseapps.com/";
     
     static private class PropertyInfo {
         String fromTypeID;

@@ -129,7 +129,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
      *              null if no candidates were found (less than 6 recurrences)
      */
     static public String[] detectRecordElement(TreeReader parser) {
-        logger.trace("detectRecordElement(inputStream)");
+        if (logger.isTraceEnabled()) {
+            logger.trace("detectRecordElement(inputStream)");
+        }
         List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
 
         try {
@@ -161,7 +163,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     static protected RecordElementCandidate detectRecordElement(TreeReader parser, String[] path) {
-        logger.trace("detectRecordElement(TreeReader, String[])");
+        if (logger.isTraceEnabled()) {
+            logger.trace("detectRecordElement(TreeReader, String[])");
+        }
         List<RecordElementCandidate> descendantCandidates = new ArrayList<RecordElementCandidate>();
 
         Map<String, Integer> immediateChildCandidateMap = new HashMap<String, Integer>();
@@ -217,7 +221,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 sortRecordElementCandidates(immediateChildCandidates);
 
                 RecordElementCandidate ourCandidate = immediateChildCandidates.get(0);
-                logger.trace("ourCandidate.count : " + ourCandidate.count + "; immediateChildCandidates.size() : " + immediateChildCandidates.size());
+                if (logger.isTraceEnabled()) {
+                    logger.trace("ourCandidate.count : " + ourCandidate.count + "; immediateChildCandidates.size() : "
+                            + immediateChildCandidates.size());
+                }
                 if (ourCandidate.count / immediateChildCandidates.size() > 5) {
                     return ourCandidate;
                 }
@@ -259,7 +266,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataType
     ) {
-        logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
+        if (logger.isTraceEnabled()) {
+            logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
+        }
         try {
             while (parser.hasNext()) {
                 Token eventType = parser.next();
@@ -305,8 +314,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataType
     ) throws TreeReaderException {
-        logger.trace("findRecord(Project, TreeReader, String[], int, ImportColumnGroup - path:"+Arrays.toString(recordPath));
-        
+        if (logger.isTraceEnabled()) {
+            logger.trace("findRecord(Project, TreeReader, String[], int, ImportColumnGroup - path:"+Arrays.toString(recordPath));
+        }
         if(parser.current() == Token.Ignorable){//XMLStreamConstants.START_DOCUMENT){
             logger.warn("Cannot use findRecord method for START_DOCUMENT event");
             return;
@@ -382,7 +392,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataType
     ) throws TreeReaderException {
-        logger.trace("processRecord(Project,TreeReader,ImportColumnGroup)");
+        if (logger.isTraceEnabled()) {
+            logger.trace("processRecord(Project,TreeReader,ImportColumnGroup)");
+        }
         ImportRecord record = new ImportRecord();
 
         processSubRecord(project, parser, rootColumnGroup, record, 0, trimStrings, storeEmptyStrings, guessDataType);
@@ -418,8 +430,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataType
     ) throws TreeReaderException {
-        logger.trace("processFieldAsRecord(Project,TreeReader,ImportColumnGroup)");
-        
+        if (logger.isTraceEnabled()) {
+            logger.trace("processFieldAsRecord(Project,TreeReader,ImportColumnGroup)");
+        }        
         Serializable value = parser.getValue();
         ImportRecord record = null;
         if (value instanceof String) {
@@ -455,20 +468,19 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     static protected void addImportRecordToProject(ImportRecord record, Project project) {
-        if (record.rows.size() > 0) {
-            for (List<Cell> row : record.rows) {
-                Row realRow = new Row(row.size());
-                int cellCount = 0;
-
+        for (List<Cell> row : record.rows) {
+            if (row.size() > 0) {
+                Row realRow = null;
                 for (int c = 0; c < row.size(); c++) {
                     Cell cell = row.get(c);
                     if (cell != null) {
+                        if (realRow == null) {
+                            realRow = new Row(row.size()); 
+                        }
                         realRow.setCell(c, cell);
-                        cellCount++;
                     }
                 }
-
-                if (cellCount > 0) {
+                if (realRow != null) {
                     project.rows.add(realRow);
                 }
             }
@@ -506,7 +518,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataType
     ) throws TreeReaderException {
-        logger.trace("processSubRecord(Project,TreeReader,ImportColumnGroup,ImportRecord) lvl:"+level+" "+columnGroup);
+        if (logger.isTraceEnabled()) {
+            logger.trace("processSubRecord(Project,TreeReader,ImportColumnGroup,ImportRecord) lvl:"+level+" "+columnGroup);
+        }
         
         if(parser.current() == Token.Ignorable) {
             return;

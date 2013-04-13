@@ -33,12 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var Freebase = {};
 
+Freebase.API_KEY = "AIzaSyBAZ_EjMPKlOzyyZXv6JKXPPwJFISVji3M";
+
 Freebase.mqlread = function(query, options, onDone) {
   var params = {};
-  var queryEnv = {
-    "query": query
-  };
 
+  // TODO: Options need to be handled differently for new API - but this doesn't appear to be used
   if (options) {
     for (var n in options) {
       if (options.hasOwnProperty(n)) {
@@ -52,10 +52,10 @@ Freebase.mqlread = function(query, options, onDone) {
     }
   }
 
-  params.query = JSON.stringify(queryEnv);
+  params.query = JSON.stringify(query);
 
   $.getJSON(
-    "http://api.freebase.com/api/service/mqlread?" + $.param(params) + "&callback=?",
+    "https://www.googleapis.com/freebase/v1/mqlread?key=" + Freebase.API_KEY + $.param(params) + "&callback=?",
     null,
     onDone,
     "jsonp"

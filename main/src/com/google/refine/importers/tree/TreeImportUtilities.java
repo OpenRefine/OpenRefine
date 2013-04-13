@@ -150,11 +150,13 @@ public abstract class TreeImportUtilities {
         int cellIndex = column.cellIndex;
 
         int rowIndex = Math.max(columnGroup.nextRowIndex, column.nextRowIndex);
-        while (rowIndex >= record.rows.size()) {
-            record.rows.add(new ArrayList<Cell>());
-        }
 
         List<Cell> row = record.rows.get(rowIndex);
+        if (row == null) {
+            row = new ArrayList<Cell>();
+            record.rows.set(rowIndex, row);
+        }
+        
         while (cellIndex >= row.size()) {
             row.add(null);
         }

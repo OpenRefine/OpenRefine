@@ -379,7 +379,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
 
   var suggestOptions2 = $.extend({ align: "left" }, suggestOptions 
                           || { all_types: true, // FIXME: all_types isn't documented for Suggest.  Is it still implemented?
-                               filter: "(not (any type:/common/document type:/type/content))" }); // blacklist documents and images
+                               filter: "(not (any type:/common/document type:/type/content type:/common/resource))" }); // blacklist documents and images
   if (suggestOptions2.service_url) {
     // Old style suggest API
     suggestOptions2.key = null;
