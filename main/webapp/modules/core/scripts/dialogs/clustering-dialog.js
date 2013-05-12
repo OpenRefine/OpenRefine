@@ -153,7 +153,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
               cluster.value = value;
               
               parent.find("input[type='text']").val(value);
-              parent.find("input:not(:checked)").attr('checked', true).change();
+              parent.find("input[type='checkbox']").attr('checked', true).change();
               return false;
             };
             for (var c = 0; c < choices.length; c++) {
@@ -202,7 +202,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 editCheck.attr("checked", "true");
             }
             
-            var input = $('<input size="25" />')
+            var input = $('<input type="text" size="25" />')
                 .attr("value", cluster.value)
                 .keyup(function() {
                     cluster.value = this.value;
