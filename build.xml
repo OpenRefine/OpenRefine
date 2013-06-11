@@ -242,7 +242,7 @@
             name="OpenRefine"
             displayname="OpenRefine ${version}"
             icon="${graphics.dir}/icon/openrefine.icns"
-            identifier="org.openrefine.refine.Refine"
+            identifier="com.google.refine.Refine"
 	    shortversion="${version}"
             mainclassname="com/google/refine/Refine">
 	    <runtime dir="${env.JAVA_HOME}"/>
@@ -254,8 +254,6 @@
 	    </classpath>
 	    <option value="-Xms256M"/>
 	    <option value="-Xmx1024M"/>
-	    <option value="-Djava.awt.headless=true"/>
-	    <option value="-Drefine.headless=true"/>
 	    <option value="-Drefine.version=${revision}"/>
 	    <option value="-Drefine.webapp=$APP_ROOT/Contents/Resource/${built.webapp.name}"/>
         </bundleapp>
