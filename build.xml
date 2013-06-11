@@ -229,7 +229,7 @@
             name="OpenRefine"
             displayname="OpenRefine ${version}"
             icon="${graphics.dir}/icon/openrefine.icns"
-            identifier="org.openrefine.refine.Refine"
+            identifier="com.google.refine.Refine"
 	    shortversion="${version}"
             mainclassname="com/google/refine/Refine">
 	    <runtime dir="${env.JAVA_HOME}"/>
