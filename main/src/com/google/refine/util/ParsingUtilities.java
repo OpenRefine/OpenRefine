@@ -54,7 +54,7 @@ import org.json.JSONTokener;
 
 public class ParsingUtilities {
 
-    static final public SimpleDateFormat s_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    static final public SimpleDateFormat ISO8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
@@ -136,6 +136,9 @@ public class ParsingUtilities {
     }
 
     private static final URLCodec codec = new URLCodec();
+    /**
+     * Encode a string as UTF-8.
+     */
     static public String encode(String s) {
         try {
             return codec.encode(s, "UTF-8");
@@ -143,6 +146,10 @@ public class ParsingUtilities {
             return s; // should not happen
         }
     }
+
+    /**
+     * Decode a string from UTF-8 encoding.
+     */
     static public String decode(String s) {
         try {
             return codec.decode(s, "UTF-8");
@@ -153,13 +160,25 @@ public class ParsingUtilities {
         }
     }
 
+    /**
+     * Convert a date/time to an ISO 8601 string
+     * 
+     * @param d the date to be written
+     * @return string with ISO 8601 formatted date & time
+     */
     static public String dateToString(Date d) {
-        return s_sdf.format(d);
+        return ISO8601_FORMAT.format(d);
     }
 
+    /**
+     * Parse an ISO 8601 formatted string into a Java Date.
+     * 
+     * @param s the string to be parsed
+     * @return Date or null if the parse failed
+     */
     static public Date stringToDate(String s) {
         try {
-            return s_sdf.parse(s);
+            return ISO8601_FORMAT.parse(s);
         } catch (ParseException e) {
             return null;
         }

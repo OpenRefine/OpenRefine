@@ -427,6 +427,7 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, b
   );
 };
 
+// FIXME: Topic Blocks are gone
 DataTableCellUI.topicBlockPreview = {
   url: 'http://www.freebase.com/widget/topic{{id}}?mode=content&blocks=[{"block":"full_info"},{"block":"article_props"}]',
   width: 430,
