@@ -623,21 +623,7 @@ ui_test() {
 }
 
 server_test() {
-    ant build_tests
-    echo ""
-    
-    CLASSPATH="$REFINE_TEST_DIR/server/classes${SEP}$REFINE_WEBAPP/WEB-INF/classes${SEP}$REFINE_CLASSES_DIR${SEP}$REFINE_TEST_DIR/server/lib/*${SEP}$REFINE_LIB_DIR/*${SEP}$REFINE_WEBAPP/WEB-INF/lib/*"
-
-    if [ -z "$1" ] ; then
-        TESTS="-excludegroups broken $REFINE_TEST_DIR/server/conf/tests.xml"
-    else 
-        TESTS="-testclass $1"
-    fi
-    
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.testng.TestNG -d $REFINE_BUILD_DIR/server_tests -listener org.testng.reporters.DotTestListener $TESTS"
-    
-    #echo "$RUN_CMD"
-    #echo ""
+    ant server_test
     
     $RUN_CMD || error "Failed passing server tests"
 }
