@@ -158,6 +158,12 @@ li.fbs-selected .fbs-item-name {
     color: #aaa;
 }
 
+.fbs-citation {
+  white-space: nowrap;
+  color: #999;
+  font-size: 11px;
+}
+
 /* topic image */
 #fbs-topic-image,
 .fbs-flyout-images {
@@ -499,6 +505,8 @@ h3.fbs-topic-properties {
 .fbs-flyout-pane p {
   font-size: 1.2em;
   line-height: 1.4;
+  max-height: 10em;
+  overflow: auto;
 }
 
 /* this class is applied with fbs-topic-flyout when a thumbnail is present

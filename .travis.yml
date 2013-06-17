@@ -1,0 +1,6 @@
+language: java
+jdk:
+  - oraclejdk7
+  - openjdk6
+  
+script: ./refine test
