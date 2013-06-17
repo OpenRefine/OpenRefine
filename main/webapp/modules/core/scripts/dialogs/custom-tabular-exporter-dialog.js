@@ -213,7 +213,7 @@ CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(opti
   
   if (options.columns !== null) {
     var self = this;
-    this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').attr('checked', '');
+    this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').attr('checked', false);
     $.each(options.columns, function() {
       var name = this.name;
       self._columnOptionMap[name] = this;
