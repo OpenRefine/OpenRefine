@@ -126,6 +126,12 @@ TextSearchFacet.prototype._initializeUI = function() {
   if (this._query) {
     elmts.input[0].value = this._query;
   }
+
+  elmts.input.change(function(evt) {
+    self._query = this.value;
+    self._scheduleUpdate();
+  });
+
   elmts.input.keyup(function(evt) {
     self._query = this.value;
     self._scheduleUpdate();
