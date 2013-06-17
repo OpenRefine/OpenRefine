@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
+import java.text.CollationKey;
 import java.text.Collator;
 
 import org.json.JSONException;
@@ -71,12 +72,12 @@ public class StringCriterion extends Criterion {
             @Override
             protected Object makeKey(Object value) {
                 return (ExpressionUtils.isNonBlankData(value) && !(value instanceof String)) ?
-                        value.toString() : value;
+                        collator.getCollationKey(value.toString()) : value;
             }
 
             @Override
             public int compareKeys(Object key1, Object key2) {
-                return collator.compare(key1, key2);
+                return ((CollationKey)key1).compareTo((CollationKey)key2);
             }
         };
     }
