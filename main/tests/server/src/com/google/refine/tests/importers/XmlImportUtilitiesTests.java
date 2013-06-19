@@ -35,7 +35,6 @@ package com.google.refine.tests.importers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,7 +196,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadSampleJson();
 
         String[] path = XmlImportUtilitiesStub.detectRecordElement(
-                new JSONTreeReader(new InputStreamReader(inputStream)));
+                new JSONTreeReader(inputStream));
         Assert.assertNotNull(path);
         Assert.assertEquals(path.length, 2);
         Assert.assertEquals(path[0], JsonImporter.ANONYMOUS);
@@ -455,7 +454,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         }
     }
     public TreeReader createJsonParser(){
-        parser = new JSONTreeReader(new InputStreamReader(inputStream));
+        parser = new JSONTreeReader(inputStream);
         return parser;
     }
 }

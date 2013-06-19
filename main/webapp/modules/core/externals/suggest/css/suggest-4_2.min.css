@@ -1,0 +1,36 @@
+
+/*
+ * Copyright 2012, Google Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Additional Licenses for Third Party components can be found here:
+ * http://wiki.freebase.com/wiki/Freebase_Site_License
+ *
+ */
+.fbs-reset,.fbs-reset h1,.fbs-reset h2,.fbs-reset h3,.fbs-reset h4,.fbs-reset h5,.fbs-reset h6,.fbs-reset p,.fbs-reset img,.fbs-reset dl,.fbs-reset dt,.fbs-reset dd,.fbs-reset ol,.fbs-reset ul,.fbs-reset li{margin:0;padding:0;border:0;outline:0;font-weight:inherit;font-style:inherit;font-size:100%;font-family:inherit;vertical-align:baseline}.fbs-pane,.fbs-flyout-pane,li.fbs-nomatch,a.fbs-more-link,li.fbs-selected,.fbs-flyout-images,#fbs-topic-image{background:#fff}.fbs-suggestnew{color:#444}.fbs-pane,.fbs-flyout-pane,.fbs-flyout-subtitle,.fbs-topic-properties strong{color:#666}h3.fbs-topic-properties,.fbs-flyout-pane p{color:#444}.fbs-item-name,li.fbs-help-on-focus,li.fbs-nomatch,.fbs-nomatch-text,.fbs-flyout-pane h3,.fbs-properties-header{color:#333}.fbs-pane,.fbs-flyout-pane{border:1px solid #bbb;padding:2px}.fbs-flyout-pane{border-color:#ccc}.fbs-list,.fbs-list-icons,.fbs-flyout-content,.fbs-attribution,.fbs-header{background-color:#f5f5f5}.fbs-header{background:#fefefe}li.fbs-help-on-focus,li.fbs-nomatch{border-bottom:1px solid #dae3e9}.fbs-item-name{border:1px solid #f5f5f5}h1#fbs-flyout-title,li.fbs-selected .fbs-item-name{color:#f60}li.fbs-selected .fbs-item-name{border-color:#f60;background:#fff}.fbs-nomatch-text{border-bottom:1px solid #dae3e9;background:#f8f8f8}.fbs-suggestnew{background:#eee;border-top:1px solid #dae3e9}#fbs-flyout-title .fbs-flyout-label{color:#aaa}.fbs-citation{white-space:nowrap;color:#999;font-size:11px}#fbs-topic-image,.fbs-flyout-images{border:1px solid #a9a9a9}.fbs-suggestnew-button,.fbs-flyout-pane{border:1px solid #9a9a9a;color:#999}.fbs-suggestnew-button{color:#444}ul.fbs-list,.fbs-flyout-content,.fbs-attribution,.fbs-header{border:1px solid #dae3e9}.fbs-header{border-bottom:0}li.fbs-item{border-bottom:1px solid #dae3e9;list-style-type:none}.fbs-attribution{border-top:0}.fbs-pane,.fbs-flyout-pane{font-size:16px;font-family:Helvetica Neue,Arial,Helvetica,sans-serif}ul.fbs-list,.fbs-flyout-content,.fbs-attribution,div.fbs-header{font-size:62.5%}.fbs-pane strong,.fbs-flyout-pane strong{font-weight:bold}.fbs-flyout-content,.fbs-attribution{margin:2px}.fbs-flyout-content{margin-bottom:0}.fbs-attribution{margin-top:0}.fbs-pane{width:325px}.fbs-flyout-pane{width:319px;margin-left:3px}ul.fbs-list{max-height:320px;overflow:auto;overflow-x:hidden;border-bottom:0;border-top:0}.fbs-flyout-content,.fbs-attribution{padding:5px}.fbs-flyout-content:after{content:".";display:block;height:0;clear:both;visibility:hidden}li.fbs-help-on-focus,li.fbs-nomatch{padding:6px 8px 7px 6px;font-size:1.4em;line-height:1}li.fbs-more{padding:0;background:transparent}a.fbs-more-link{display:block;padding:4px;font-weight:bold;font-size:12px}.fbs-more .fbs-help{display:none}.fbs-header{font-weight:bold;padding:4px 6px;margin:2px 2px -2px 2px}.fbs-item-name label{font-size:.9em}.fbs-item-type,.fbs-item-name label{display:block;overflow:hidden;white-space:nowrap}.fbs-item-name{padding:2px 8px 1px 6px;font-size:1.4em;line-height:1.4em;background:#f4f8fb}.fbs-item-name strong{font-weight:bold}.fbs-item-type{color:#777;float:right;font-size:.7em;max-width:40%;padding-left:.25em}li.fbs-selected{cursor:pointer}.fbs-status{border:1px solid #dae3e9;padding:4px 5px;color:#000;font-size:.7em}li.fbs-nomatch{padding:0}.fbs-nomatch-text{display:block;font-weight:bold;line-height:1;font-size:.9em}.fbs-nomatch-text,.fbs-nomatch h3,ul.fbs-search-tips{padding:6px 8px 7px 6px}.fbs-nomatch h3{font-weight:bold;font-size:.9em}ul.fbs-search-tips li{list-style:disc;margin-left:1.6em;margin-bottom:.3em;font-size:.9em}.fbs-suggestnew{padding:.4em .3em .5em 8px}.fbs-suggestnew-button{cursor:pointer;padding:.2em .3em;margin-left:0!important;max-width:17em;font-size:.8em}.fbs-suggestnew-description{margin-bottom:.6em;font-size:.7em}.fbs-more-shortcut,.fbs-suggestnew-shortcut{margin-left:.4em;font-size:70%;color:#999}.fbs-placeholder{color:#99a;font-style:italic}.fbs-flyout-id{color:#999!important}h1#fbs-flyout-title{font-size:1.2em;font-weight:bold;margin-bottom:.5em;margin-top:.3em}h1#fbs-flyout-title .fbs-flyout-template-label{color:#999;font-size:.8em}#fbs-flyout-title .fbs-flyout-label{font-weight:normal}#fbs-topic-image{float:left;padding:1px;margin-right:5px;margin-bottom:5px}.fbs-flyout-images{float:left;margin:0 10px 0 0;padding:1px 0 1px 1px}.fbs-flyout-images img{float:left;margin-right:1px}.fbs-flyout-subtitle{font-size:1.1em;margin-bottom:.5em}.fbs-flyout-pane h3{font-size:1em;line-height:1.4;margin-bottom:.25em}.fbs-properties-header{font-size:1em;font-weight:bold;margin:.5em 0}h3.fbs-topic-properties{font-size:1.2em;font-weight:bold}.fbs-topic-properties strong{display:inline;font-size:.8em}.fbs-flyout-pane p{font-size:1.2em;line-height:1.4;max-height:10em;overflow:auto}p.fbs-flyout-image-true,h3.fbs-flyout-image-true,h1.fbs-flyout-image-true{margin-left:85px}.fbs-meta-info{margin-left:110px}#fbs-user-flyout li{margin-left:100px}#fbs-domain-flyout .fbs-meta-info{margin-left:145px}.fbs-flyout-list li{font-size:1em;margin-left:15px}#fbs-domain-flyout #fbs-flyout-title{margin-bottom:.5em}.fbs-attribution{padding-right:72px;background-image:url("/static/129a.lib.www.tags.svn.freebase-site.googlecode.dev/template/img/fbs-attribution.png");background-repeat:no-repeat;background-position:center right;min-height:15px}.fbs-flyout-types{font-style:italic;line-height:1;font-size:1.2em}

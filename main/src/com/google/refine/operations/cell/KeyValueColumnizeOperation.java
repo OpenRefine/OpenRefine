@@ -160,7 +160,8 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             
             String keyString = key.toString();
             // Start a new row on our beginning of record key
-            if (keyString.equals(recordKey)) {
+            // TODO: Add support for processing in record mode instead of just by rows
+            if (keyString.equals(recordKey) || recordKey == null) {
                 reusableRow = new Row(newColumns.size());
                 newRows.add(reusableRow);
                 currentRows.clear();

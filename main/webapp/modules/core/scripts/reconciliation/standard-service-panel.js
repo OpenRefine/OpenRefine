@@ -245,7 +245,7 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
   } else if (this._isInFreebaseSchemaSpace()) {
     var namespace = (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
     inputs.suggestP({
-      filter : '(all type:/type/property (any namespace:/type/object namespace:' + namespace + '))'
+      filter : '(should (any namespace:/type/object namespace:' + namespace + '))'
     });
   }
 };

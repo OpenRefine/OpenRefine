@@ -270,6 +270,9 @@ public class ImportingManager {
     
     static public String getFormat(String fileName, String mimeType) {
         String fileNameFormat = getFormatFromFileName(fileName);
+        if (mimeType != null) {
+            mimeType = mimeType.split(";")[0];
+        }
         String mimeTypeFormat = mimeType == null ? null : getFormatFromMimeType(mimeType);
         if (mimeTypeFormat == null) {
             return fileNameFormat;

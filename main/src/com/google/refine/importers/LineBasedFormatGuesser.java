@@ -13,7 +13,7 @@ public class LineBasedFormatGuesser implements FormatGuesser {
             return "text/line-based/*sv";
         }
         int[] widths = FixedWidthImporter.guessColumnWidths(file, encoding);
-        if (widths != null) {
+        if (widths != null && widths.length > 0) {
             return "text/line-based/fixed-width";
         }
         return null;

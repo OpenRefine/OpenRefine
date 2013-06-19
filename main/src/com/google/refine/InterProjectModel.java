@@ -99,27 +99,33 @@ public class InterProjectModel {
             
             computeJoin(join);
             
-            _joins.put(key, join);
+            synchronized (_joins) {
+                _joins.put(key, join);
+            }
         }
         
         return _joins.get(key);
     }
     
     public void flushJoinsInvolvingProject(long projectID) {
-        for (Entry<String, ProjectJoin> entry : _joins.entrySet()) {
-            ProjectJoin join = entry.getValue();
-            if (join.fromProjectID == projectID || join.toProjectID == projectID) {
-                _joins.remove(entry.getKey());
+        synchronized (_joins) {
+            for (Entry<String, ProjectJoin> entry : _joins.entrySet()) {
+                ProjectJoin join = entry.getValue();
+                if (join.fromProjectID == projectID || join.toProjectID == projectID) {
+                    _joins.remove(entry.getKey());
+                }
             }
         }
     }
 
     public void flushJoinsInvolvingProjectColumn(long projectID, String columnName) {
-        for (Entry<String, ProjectJoin> entry : _joins.entrySet()) {
-            ProjectJoin join = entry.getValue();
-            if (join.fromProjectID == projectID && join.fromProjectColumnName.equals(columnName) || 
-                join.toProjectID == projectID && join.toProjectColumnName.equals(columnName)) {
-                _joins.remove(entry.getKey());
+        synchronized (_joins) {
+            for (Entry<String, ProjectJoin> entry : _joins.entrySet()) {
+                ProjectJoin join = entry.getValue();
+                if (join.fromProjectID == projectID && join.fromProjectColumnName.equals(columnName) || 
+                        join.toProjectID == projectID && join.toProjectColumnName.equals(columnName)) {
+                    _joins.remove(entry.getKey());
+                }
             }
         }
     }

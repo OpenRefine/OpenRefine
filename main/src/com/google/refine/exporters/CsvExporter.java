@@ -81,6 +81,7 @@ public class CsvExporter implements WriterExporter{
             JSONUtilities.getString(options, "separator", Character.toString(this.separator));
         final String lineSeparator = options == null ? CSVWriter.DEFAULT_LINE_END :
             JSONUtilities.getString(options, "lineSeparator", CSVWriter.DEFAULT_LINE_END);
+        final boolean quoteAll = options == null ? false : JSONUtilities.getBoolean(options, "quoteAll", false);
         
         final boolean printColumnHeader =
             (params != null && params.getProperty("printColumnHeader") != null) ?
@@ -110,7 +111,7 @@ public class CsvExporter implements WriterExporter{
                             cellData.text :
                             "";
                     }
-                    csvWriter.writeNext(strings, false);
+                    csvWriter.writeNext(strings, quoteAll);
                 }
             }
         };

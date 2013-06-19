@@ -75,6 +75,13 @@ abstract public class Criterion {
         }
     }
 
+
+    // TODO: We'd like things to be more strongly typed a la the following, but
+    // it's too involved to change right now
+//    abstract public class Key implements Comparable<Key> {
+//        abstract public int compareTo(Key key);
+//    }
+    
     abstract public class KeyMaker {
         public Object makeKey(Project project, Record record) {
             Object error = null;

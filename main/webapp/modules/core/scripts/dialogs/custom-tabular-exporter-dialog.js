@@ -209,7 +209,7 @@ CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(opti
   this._elmts.lineSeparatorInput[0].value = escapeJavascriptString(options.lineSeparator || '\n');
   this._elmts.encodingInput[0].value = options.encoding;
   this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : '');
-  this._elmts.outputBlankRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : '');
+  this._elmts.outputEmptyRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : '');
   
   if (options.columns !== null) {
     var self = this;
@@ -356,7 +356,7 @@ CustomTabularExporterDialog.prototype._getOptionCode = function() {
     options.encoding = this._elmts.encodingInput.val();
   }
   options.outputColumnHeaders = this._elmts.outputColumnHeadersCheckbox[0].checked;
-  options.outputBlankRows = this._elmts.outputBlankRowsCheckbox[0].checked;
+  options.outputBlankRows = this._elmts.outputEmptyRowsCheckbox[0].checked;
   
   options.columns = [];
   

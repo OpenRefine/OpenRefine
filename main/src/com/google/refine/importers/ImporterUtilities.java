@@ -57,10 +57,6 @@ public class ImporterUtilities {
 
     static public Serializable parseCellValue(String text) {
         if (text.length() > 0) {
-            if (text.length() > 1 && text.startsWith("\"") && text.endsWith("\"")) {
-                return text.substring(1, text.length() - 1);
-            }
-
             String text2 = text.trim();
             if (text2.length() > 0) {
                 try {

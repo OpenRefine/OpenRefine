@@ -99,7 +99,9 @@ SchemaAlignment._batchSearch = function(queries, onDone) {
       batch[key] = queries[key];
     }
 
-    args.push("http://api.freebase.com/api/service/search?" + 
+    // TODO: New API doesn't accept multiple queries
+//    args.push("https://www.googleapis.com/freebase/v1/search?key=" + Freebase.API_KEY + "&" + 
+    args.push("http://api.freebase.com/api/service/search?" + // FIXME:
         $.param({ "queries" : JSON.stringify(batch) }) + "&callback=?");
 
     args.push(null); // no data

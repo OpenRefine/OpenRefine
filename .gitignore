@@ -19,3 +19,4 @@ broker/core/WEB-INF/lib/
 broker/core/data/
 broker/core/test-output/
 tmp/
+/test-output

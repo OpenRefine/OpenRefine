@@ -222,6 +222,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             List<CellAtRow> responseBodies = new ArrayList<CellAtRow>(urls.size());
             for (int i = 0; i < urls.size(); i++) {
                 CellAtRow urlData = urls.get(i);
+                long start = System.currentTimeMillis();
                 CellAtRow cellAtRow = fetch(urlData);
                 if (cellAtRow != null) {
                     responseBodies.add(cellAtRow);
@@ -229,7 +230,10 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 
                 _progress = i * 100 / urls.size();
                 try {
-                    Thread.sleep(_delay);
+                    long delay = _delay - (System.currentTimeMillis() - start);
+                    if (delay > 0) {
+                        Thread.sleep(delay);
+                    }
                 } catch (InterruptedException e) {
                     if (_canceled) {
                         break;
