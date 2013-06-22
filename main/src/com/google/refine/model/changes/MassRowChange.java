@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -59,6 +60,9 @@ public class MassRowChange implements Change {
             _oldRows = new ArrayList<Row>(project.rows);
             project.rows.clear();
             project.rows.addAll(_newRows);
+            
+            project.columnModel.clearPrecomputes();
+            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(project.id);
             
             project.update();
         }
