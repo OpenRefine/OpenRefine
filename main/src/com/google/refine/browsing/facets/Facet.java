@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.refine.Jsonizable;
@@ -54,5 +55,5 @@ public interface Facet extends Jsonizable {
     
     public void computeChoices(Project project, FilteredRecords filteredRecords);
     
-    public void initializeFromJSON(Project project, JSONObject o) throws Exception;
+    public void initializeFromJSON(Project project, JSONObject o) throws JSONException;
 }
