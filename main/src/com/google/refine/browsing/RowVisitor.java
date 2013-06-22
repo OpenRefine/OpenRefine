@@ -41,13 +41,30 @@ import com.google.refine.model.Row;
  * particular criteria, such as facets' constraints.
  */
 public interface RowVisitor {
-    public void start(Project project); // called before any visit() call
+    
+    /**
+     * Called before any visit() call.
+     * 
+     * @param project
+     */
+    public void start(Project project);
 
+    /**
+     * @param project project
+     * @param rowIndex zero-based row index
+     * @param row row
+     * @return true to abort visitation early - no further visit calls will be made
+     */
     public boolean visit(
             Project project, 
-            int     rowIndex,   // zero-based row index 
+            int     rowIndex, 
             Row     row
     );
 
-    public void end(Project project); // called after all visit() calls
+    /**
+     * Called after all visit() calls.
+     * 
+     * @param project
+     */
+    public void end(Project project);
 }
