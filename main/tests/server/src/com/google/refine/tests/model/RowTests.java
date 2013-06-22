@@ -46,7 +46,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.exporters.CsvExporter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -65,12 +64,8 @@ public class RowTests extends RefineTest {
     Project project;
     Properties options;
 
-    // System Under Test
-    CsvExporter SUT;
-
     @BeforeMethod
     public void SetUp() {
-        SUT = new CsvExporter();
         writer = new StringWriter();
         project = new Project();
         options = mock(Properties.class);
@@ -78,7 +73,6 @@ public class RowTests extends RefineTest {
 
     @AfterMethod
     public void TearDown() {
-        SUT = null;
         writer = null;
         project = null;
         options = null;
