@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="main/webapp/modules/core/MOD-INF/controller.js|main/webapp/modules/core/externals/|test-output/" kind="src" path=""/>
+	<classpathentry excluding="build/**|main/webapp/modules/core/MOD-INF/controller.js|main/webapp/modules/core/externals/|test-output/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
