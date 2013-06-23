@@ -50,6 +50,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
+import com.google.refine.util.StringUtils;
 
 /**
  * Visit matched rows or records and group them into facet choices based on the values computed
@@ -174,7 +175,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         if (ExpressionUtils.isError(value)) {
             hasError = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
-            String valueString = value.toString();
+            String valueString = StringUtils.toString(value);
             IndexedNominalFacetChoice facetChoice = choices.get(valueString);
 
             if (facetChoice != null) {
@@ -236,7 +237,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         if (ExpressionUtils.isError(choiceValue)) {
             return errorCount;
         } else if (ExpressionUtils.isNonBlankData(choiceValue)) {
-            IndexedNominalFacetChoice choice = choices.get(choiceValue);
+            IndexedNominalFacetChoice choice = choices.get(StringUtils.toString(choiceValue));
             return choice != null ? choice.count : 0;
         } else {
             return blankCount;
