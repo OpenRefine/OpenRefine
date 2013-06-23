@@ -36,7 +36,6 @@ package com.google.refine.tests.model;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -85,7 +84,6 @@ public class CacheTests extends RefineTest {
     }
 
     // dependencies
-    StringWriter writer;
     Project project;
     Properties options;
     JSONObject engine_config;
@@ -94,8 +92,6 @@ public class CacheTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws JSONException, IOException, ModelException {
-        writer = new StringWriter();
-        
         Path dir = Files.createTempDirectory("openrefine-test-workspace-dir");
         FileProjectManager.initialize(dir.toFile());
         project = new Project();
@@ -121,9 +117,10 @@ public class CacheTests extends RefineTest {
 
     @AfterMethod
     public void TearDown() {
-        writer = null;
         project = null;
         options = null;
+        engine = null;
+        bindings = null;
     }
 
     /**
