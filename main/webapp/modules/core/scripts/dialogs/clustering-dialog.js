@@ -204,7 +204,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             
             var input = $('<input type="text" size="25" />')
                 .attr("value", cluster.value)
-                .keyup(function() {
+                .bind("keyup change input",function() {
                     cluster.value = this.value;
                 }).appendTo(tr.insertCell(4));
         };

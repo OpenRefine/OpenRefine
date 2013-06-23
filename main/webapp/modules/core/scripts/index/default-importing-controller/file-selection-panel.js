@@ -231,7 +231,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
 
   this._updateFileSelectionSummary();
 
-  this._fileSelectionPanelElmts.regexInput.unbind().keyup(function() {
+  this._fileSelectionPanelElmts.regexInput.unbind().bind("keyup change input",function() {
     var count = 0;
     var elmts = self._fileSelectionPanelElmts.filePanel
     .find(".default-importing-file-selection-filename")

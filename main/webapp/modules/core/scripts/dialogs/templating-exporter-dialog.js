@@ -41,7 +41,7 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     var self = this;
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/templating-exporter-dialog.html"));
     this._elmts = DOM.bind(dialog);
-    this._elmts.controls.find("textarea").keyup(function() { self._scheduleUpdate(); });
+    this._elmts.controls.find("textarea").bind("keyup change input",function() { self._scheduleUpdate(); });
     
     this._elmts.exportButton.click(function() { self._export(); self._dismiss(); });
     this._elmts.cancelButton.click(function() { self._dismiss(); });

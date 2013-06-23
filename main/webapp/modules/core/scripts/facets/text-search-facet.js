@@ -126,10 +126,12 @@ TextSearchFacet.prototype._initializeUI = function() {
   if (this._query) {
     elmts.input[0].value = this._query;
   }
-  elmts.input.keyup(function(evt) {
+  
+  elmts.input.bind("keyup change input",function(evt) {
     self._query = this.value;
     self._scheduleUpdate();
   }).focus();
+
 };
 
 TextSearchFacet.prototype.updateState = function(data) {

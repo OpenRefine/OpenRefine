@@ -131,7 +131,7 @@ ExpressionPreviewDialog.Widget = function(
     var self = this;
     this._elmts.expressionPreviewTextarea
         .attr("value", this.expression)
-        .keyup(function(){
+        .bind("keyup change input",function(){
             self._scheduleUpdate();
         })
         .select()
