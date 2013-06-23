@@ -60,8 +60,7 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
-//import java.nio.file.Files;
-//import java.nio.file.Path;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class FunctionTests extends RefineTest {
@@ -83,9 +82,7 @@ public class FunctionTests extends RefineTest {
     public void SetUp() throws IOException, ModelException {
         bindings = new Properties();
         
-        File dir = File.createTempFile("openrefine-test-workspace-dir", "");
-        dir.delete();
-        dir.mkdir();
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
         FileProjectManager.initialize(dir);
         project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
@@ -107,6 +104,7 @@ public class FunctionTests extends RefineTest {
             project.rows.add(row);
         }
     }
+
 
     @AfterMethod
     public void TearDown() {

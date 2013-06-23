@@ -35,9 +35,8 @@ package com.google.refine.tests.model;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -64,6 +63,7 @@ import com.google.refine.model.Row;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.row.RowRemovalOperation;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class CacheTests extends RefineTest {
@@ -92,8 +92,8 @@ public class CacheTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws JSONException, IOException, ModelException {
-        Path dir = Files.createTempDirectory("openrefine-test-workspace-dir");
-        FileProjectManager.initialize(dir.toFile());
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        FileProjectManager.initialize(dir);
         project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName("TNG Test Project");
