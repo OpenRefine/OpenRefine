@@ -168,7 +168,13 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-        String param = request.getParameter("project");
+        String param = null;
+	try {
+            param = request.getParameter("project");
+	} catch(Exception e) {
+            throw new ServletException("Unable to process incoming data for project parameter; may be too large");
+	}
+
         if (param == null || "".equals(param)) {
             throw new ServletException("Can't find project: missing ID parameter");
         }

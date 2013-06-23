@@ -411,7 +411,8 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   };
 
   var even = true;
-  for (var r = 0; r < rows.length; r++) {
+  /* Limit record results to 200 total rows to avoid freezing the browser. It seems that complexity increases here. It also seems like these are inserted while in the DOM instead of appended after building. */
+  for (var r = 0; r < Math.min(rows.length, 200); r++) {
     var row = rows[r];
     var tr = table.insertRow(table.rows.length);
     if (theProject.rowModel.mode == "row-based" || "j" in row) {

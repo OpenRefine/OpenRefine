@@ -131,6 +131,9 @@ ExpressionPreviewDialog.Widget = function(
     var self = this;
     this._elmts.expressionPreviewTextarea
         .attr("value", this.expression)
+        .change(function(){
+            self._scheduleUpdate();
+        })
         .keyup(function(){
             self._scheduleUpdate();
         })
@@ -396,7 +399,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     $.post(
         "command/core/preview-expression?" + $.param(params), 
         {
-            rowIndices: JSON.stringify(this._rowIndices) 
+            rowIndices: JSON.stringify(this._rowIndices.slice(0,50)) // FIXME: Set real limits for number of expressions posted here.
         },
         function(data) {
             if (data.code != "error") {
@@ -442,8 +445,9 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
         var message = (data.type == "parser") ? data.message : "Internal error";
         this._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
     }
-    
-    for (var i = 0; i < this._values.length; i++) {
+   
+    // Set a limit of up to fifty rows. 
+    for (var i = 0; i < Math.min(this._values.length,50); i++) {
         var tr = table.insertRow(table.rows.length);
         
         $(tr.insertCell(0)).attr("width", "1%").html((this._rowIndices[i] + 1) + ".");
