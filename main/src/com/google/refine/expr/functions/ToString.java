@@ -42,33 +42,33 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
+import com.google.refine.util.StringUtils;
 
 public class ToString implements Function {
 
     @Override
-    public String call(Properties bindings, Object[] args) {
+    public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
             Object o1 = args[0];
-            if (o1 != null) {
+            if (args.length == 2) {
                 if (o1 instanceof Calendar || o1 instanceof Date) {
-                    DateFormat formatter = null;
-                    if (args.length == 2) {
-                        Object o2 = args[1];
-                        if (o2 != null && o2 instanceof String) {
-                            formatter = new SimpleDateFormat((String) o2);
-                        }
+                    Object o2 = args[1];
+                    if (o2 instanceof String) {
+                        DateFormat formatter = new SimpleDateFormat((String) o2);
+                        return formatter.format(o1 instanceof Date ? ((Date) o1) : ((Calendar) o1).getTime());
                     }
-                    if (formatter == null) {
-                        formatter = DateFormat.getDateInstance();
-                    }
-                    return formatter.format(o1 instanceof Date ? ((Date) o1) : ((Calendar) o1).getTime());
-                } else {
-                    return (o1 instanceof String) ? (String) o1 : o1.toString();
                 }
+            } else if (args.length == 1) {
+                if (o1 instanceof String) {
+                    return (String) o1;
+                } else if (o1 != null) {
+                    return StringUtils.toString(o1);
+                } 
             }
         }
-        return null;
+        return new EvalError("ToString accepts an object an optional second argument containing a date format string");
     }
 
     

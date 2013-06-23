@@ -111,10 +111,8 @@ public class ToFromConversionTests extends RefineTest {
 
     @Test
     public void testToString() {
-//      Assert.assertTrue(invoke("toString") instanceof EvalError);
-      Assert.assertNull(invoke("toString"));
-//      Assert.assertTrue(invoke("toString", (Object) null) instanceof EvalError);
-      Assert.assertNull(invoke("toString", (Object) null));
+      Assert.assertTrue(invoke("toString") instanceof EvalError);
+      Assert.assertTrue(invoke("toString", (Object) null) instanceof EvalError);
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
       // Calendar
       // Date
