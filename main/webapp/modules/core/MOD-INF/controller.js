@@ -309,6 +309,7 @@ function init() {
       "externals/jquery.eventstack-0.3.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/date.js",
+      "externals/jquery.i18n.js",
       
       "externals/CFInstall.min.js",
       "scripts/chrome-frame.js",
@@ -384,6 +385,7 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
+      "externals/jquery.i18n.js",
 
       "externals/CFInstall.min.js",
       "scripts/chrome-frame.js",
@@ -489,7 +491,8 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
-      "scripts/preferences.js"
+      "scripts/preferences.js",
+      "externals/jquery.i18n.js",
     ]
   );
   ClientSideResourceManager.addPaths(
