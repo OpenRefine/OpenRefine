@@ -60,8 +60,8 @@ Refine.GDataImportingController = function(createProjectUI) {
     ui: new Refine.GDataSourceUI(this)
   });
   
-  $('#gdata-authorize').i18n._('gdata-auth')["authorize-label"]; 
-  $('#gdata-authorized').i18n._('gdata-auth')["authorized-label"];
+  $('#gdata-authorize').text($.i18n._('gdata-auth')["authorize-label"]); 
+  $('#gdata-authorized').text($.i18n._('gdata-auth')["authorized-label"]);
 };
 Refine.CreateProjectUI.controllers.push(Refine.GDataImportingController);
 
