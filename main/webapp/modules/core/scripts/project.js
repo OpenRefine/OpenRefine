@@ -183,7 +183,7 @@ Refine.reinitializeProjectData = function(f, fError) {
 };
 
 Refine._renameProject = function() {
-  var name = window.prompt("New project name:", theProject.metadata.name);
+  var name = window.prompt($.i18n._('core-index')["new-proj-name"], theProject.metadata.name);
   if (name === null) {
     return;
   }
@@ -203,7 +203,7 @@ Refine._renameProject = function() {
         theProject.metadata.name = name;
         Refine.setTitle();
       } else {
-        alert("Failed to rename project: " + data.message);
+        alert($.i18n._('core-index')["error-rename"]+" " + data.message);
       }
     }
   });

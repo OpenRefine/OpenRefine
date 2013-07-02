@@ -37,6 +37,24 @@ var Refine = {
   actionAreas: []
 };
 
+var lang = navigator.language.split("-")[0]
+		|| navigator.userLanguage.split("-")[0];
+var dictionary = "";
+$.ajax({
+	url : "/command/core/load-language?",
+	type : "POST",
+	async : false,
+	data : {
+		//lng : lang
+		lng: 'en'
+	},
+	success : function(data) {
+		dictionary = data;
+	}
+});
+$.i18n.setDictionary(dictionary);
+// End internationalization
+
 Refine.selectActionArea = function(id) {
   $('.action-area-tab').removeClass('selected');
   $('.action-area-tab-body').css('visibility', 'hidden').css('z-index', '50');
@@ -75,7 +93,7 @@ $(function() {
         function(data) {
           OpenRefineVersion = data;
 
-          $("#openrefine-version").text("Version " + OpenRefineVersion.full_version);
+          $("#openrefine-version").text($.i18n._('core-index')["version"]+" " + OpenRefineVersion.full_version);
 
           var script = $('<script></script>')
           .attr("src", "http://google-refine.googlecode.com/svn/support/releases.js")
@@ -88,12 +106,12 @@ $(function() {
                 var container = $('<div id="notification-container">')
                 .appendTo(document.body);
                 var notification = $('<div id="notification">')
-                .text('New version! ')
+                .text($.i18n._('core-index')["new-version"]+' ')
                 .appendTo(container);
                 $('<a>')
                 .addClass('notification-action')
                 .attr("href", releases.homepage)
-                .text('Download ' + releases.releases[0].description + ' now.')
+                .text($.i18n._('core-index')["download"]+' ' + releases.releases[0].description + ' '+$.i18n._('core-index')["now"]+'.')
                 .appendTo(notification);
               }
             } else {

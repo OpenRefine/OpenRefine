@@ -42,6 +42,11 @@ Encoding.selectEncoding = function(input, onDone) {
   $("#select-encodings-tabs").tabs({ selected: 0 });
   $("#select-encodings-tabs-all").css("display", "");
   
+  elmts.dialogHeader.text($.i18n._('core-util-enc')["select-enc"]);
+  elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
+  $('#or-enc-common').text($.i18n._('core-util-enc')["common"]);
+  $('#or-enc-all').text($.i18n._('core-util-enc')["all"]);
+  
   var pickEncoding = function(encoding) {
     input[0].value = encoding.code;
     DialogSystem.dismissUntil(level - 1);
@@ -62,7 +67,7 @@ Encoding.selectEncoding = function(input, onDone) {
     $(tr.insertCell(1)).text(encoding.aliases.join(', '));
   };
   var generateEncodingList = function(container, filter) {
-    var table = $('<table>').html('<tr><th>Encoding</th><th>Aliases</th></tr>').appendTo(container)[0];
+    var table = $('<table>').html('<tr><th>'+$.i18n._('core-util-enc')["encoding"]+'</th><th>'+$.i18n._('core-util-enc')["aliases"]+'</th></tr>').appendTo(container)[0];
     $.each(Refine.encodings, function() {
       if (filter === null || this.code in filter) {
         renderEncoding(table, this);
