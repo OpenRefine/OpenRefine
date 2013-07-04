@@ -31,6 +31,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+var dictionary = "";
+$.ajax({
+	url : "/command/gdata/load-language?",
+	type : "POST",
+	async : false,
+	data : {
+		lng : lang
+	},
+	success : function(data) {
+		dictionary = data;
+	}
+});
+$.i18n.setDictionary(dictionary);
+// End internationalization
+
 (function() {
   var handleUpload = function(options, exportAllRows, onDone, prompt) {
     var doUpload = function() {
