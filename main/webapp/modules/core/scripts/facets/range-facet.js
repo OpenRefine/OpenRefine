@@ -132,17 +132,17 @@ RangeFacet.prototype._initializeUI = function() {
   .html(
       '<div class="facet-title" bind="headerDiv">' +
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+      '<td width="1%"><a href="javascript:{}" title="'+$.i18n._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
       '<td>' +
-      '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
-      '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
+      '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n._('core-facets')["reset"]+'</a>' +
+      '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n._('core-facets')["change"]+'</a>' +
       '<span bind="facetTitle"></span>' +
       '</td>' +
       '</tr></table></div>' +
       '</div>' +
-      '<div class="facet-expression" bind="expressionDiv" title="Click to edit expression"></div>' +
+      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n._('core-facets')["click-to-edit"]+'"></div>' +
       '<div class="facet-range-body">' +
-      '<div class="facet-range-message" bind="messageDiv">Loading...</div>' +
+      '<div class="facet-range-message" bind="messageDiv">'+$.i18n._('core-facets')["loading"]+'</div>' +
       '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
       '<div class="facet-range-histogram" bind="histogramDiv"></div>' +
       '</div>' +
@@ -153,7 +153,7 @@ RangeFacet.prototype._initializeUI = function() {
   this._elmts = DOM.bind(this._div);
 
   this._elmts.facetTitle.text(this._config.name);
-  this._elmts.changeButton.attr("title","Current Expression: " + this._config.expression).click(function() {
+  this._elmts.changeButton.attr("title",$.i18n._('core-facets')["current-expression"]+": " + this._config.expression).click(function() {
     self._elmts.expressionDiv.slideToggle(100, function() {
       if (self._elmts.expressionDiv.css("display") != "none") {
         self._editExpression();
@@ -209,7 +209,7 @@ RangeFacet.prototype._renderOtherChoices = function() {
   if (this._selectNumeric) numericCheck.attr("checked","checked");
 
   var numericLabel = $('<label>').attr("for", facet_id + "-numeric").appendTo(numericDiv);    
-  $('<span>').text("Numeric ").addClass("facet-range-choice-label").appendTo(numericLabel);
+  $('<span>').text($.i18n._('core-facets')["numeric"]+" ").addClass("facet-range-choice-label").appendTo(numericLabel);
   $('<div>').text(this._numericCount).addClass("facet-range-choice-count").appendTo(numericLabel);
 
   // ----------------- non-numeric -----------------
@@ -315,7 +315,7 @@ RangeFacet.prototype.updateState = function(data) {
     this._errorCount = data.errorCount;
   } else {
     this._error = true;
-    this._errorMessage = "error" in data ? data.error : "Unknown error.";
+    this._errorMessage = "error" in data ? data.error : $.i18n._('core-facets')["unknown-error"]+".";
   }
 
   this.render();
@@ -375,8 +375,8 @@ RangeFacet.prototype._updateRest = function() {
 RangeFacet.prototype._editExpression = function() {
   var self = this;
   var title = (this._config.columnName) ? 
-      ("Edit Facet's Expression based on Column " + this._config.columnName) : 
-        "Edit Facet's Expression";
+      ($.i18n._('core-facets')["edit-based-col"]+" " + this._config.columnName) : 
+    	  $.i18n._('core-facets')["edit-facet-exp"];
 
       var column = Refine.columnNameToColumn(this._config.columnName);
       var o = DataTableView.sampleVisibleRows(column);
