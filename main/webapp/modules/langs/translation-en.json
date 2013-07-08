@@ -113,13 +113,6 @@
 		"quotation-mark": "Quotation marks are used<br/>to enclose cells containing<br/>column separators",
 		"click-xml": "Click on the first XML element corresponding to the first record to load."
 	},
-	"core-util-enc": {
-		"select-enc": "Select Encoding",
-		"common": "Common Encodings",
-		"all": "All Encodings",
-		"encoding": "Encoding",
-		"aliases": "Aliases"
-	},
 	"core-dialogs": {
 		"cluster-edit": "Cluster & Edit column",
 		"cluster-size": "Cluster Size",
@@ -349,6 +342,24 @@
 		"fb-key": "a Freebase key in",
 		"fb-en-ns": "the Wikipedia English namespace",
 		"this-ns": "this namespace:"
+	},
+	"core-util-enc": {
+		"select-enc": "Select Encoding",
+		"common": "Common Encodings",
+		"all": "All Encodings",
+		"encoding": "Encoding",
+		"aliases": "Aliases",
+		"today": "today",
+		"yesterday": "yesterday",
+		"days-ago": "days ago",
+		"week-ago": "a week ago",
+		"weeks-ago": "weeks ago",
+		"month-ago": "a month ago",
+		"months-ago": "months ago",
+		"year-ago": "a year ago",
+		"years-ago": "years ago",
+		"working": "Working",
+		"invalid-date": "Invalid date string"		
 	},
 	"core-buttons": {
 		"cancel": "Cancel",
