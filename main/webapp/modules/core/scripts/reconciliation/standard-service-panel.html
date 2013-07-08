@@ -2,12 +2,12 @@
   <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
     <tr>
       <td colspan="2" style="text-align: right;">
-        &raquo; Access <a href="" target="_blank" bind="rawServiceLink">Service API</a>
+        <span bind="or_proc_access"></span> <a href="" target="_blank" bind="rawServiceLink"></a>
       </td>
     </tr>
     <tr>
-      <td>Reconcile each cell to an entity of one of these types:</td>
-      <td>Also use relevant details from other columns:</td>
+      <td bind="or_proc_cellType"></td>
+      <td bind="or_proc_colDetail"></td>
     </tr>
     <tr>
       <td><div class="type-container" bind="typeContainer"></div></td>
@@ -15,18 +15,18 @@
     </tr>
     <tr>
       <td><input type="radio" name="type-choice" value="">
-        Reconcile against type: <input size="20" bind="typeInput" /></td>
+        <span bind="or_proc_againsType"></span> <input size="20" bind="typeInput" /></td>
       <td>
       </td>
     </tr>
     <tr>
       <td><input type="radio" name="type-choice" value="-">
-        Reconcile against no particular type</td>
+        <span bind="or_proc_noType"></span></td>
       <td>
       </td>
     </tr>
     <tr>
-      <td><input type="checkbox" checked bind="automatchCheck" /> Auto-match candidates with high confidence</td>
+      <td><input type="checkbox" checked bind="automatchCheck" /> <span bind="or_proc_autoMatch"></span></td>
       <td></td>
     </tr>
   </table></div>

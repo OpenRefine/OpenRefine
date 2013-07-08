@@ -60,6 +60,14 @@ ReconFreebaseQueryPanel.prototype._constructUI = function() {
   var self = this;
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/freebase-query-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
+  
+  this._elmts.or_recon_contain.html($.i18n._('core-recon')["cell-contains"]);
+  this._elmts.or_recon_fbId.html($.i18n._('core-recon')["fb-id"]);
+  this._elmts.or_recon_fbGuid.html($.i18n._('core-recon')["fb-guid"]);
+  this._elmts.or_recon_fbKey.html($.i18n._('core-recon')["fb-key"]);
+  this._elmts.or_recon_fbEnNs.html($.i18n._('core-recon')["fb-en-ns"]);
+  this._elmts.or_recon_thisNs.html($.i18n._('core-recon')["this-ns"]);
+  
   this._wireEvents();
 };
 
@@ -84,7 +92,7 @@ ReconFreebaseQueryPanel.prototype.start = function() {
     if (namespaceChoice.value == "other") {
       var suggest = this._elmts.strictNamespaceInput.data("data.suggest");
       if (!suggest) {
-        alert("Please specify a namespace.");
+        alert($.i18n._('core-recon')["specify-ns"]);
         return;
       }
       namespace = {

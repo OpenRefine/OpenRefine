@@ -320,6 +320,36 @@
 		"continue-remaining": "Continue with the remaining operations",
 		"undo": "Undo"
 	},
+	"core-recon": {
+		"access": "Access",
+		"service-api": "Service API",
+		"cell-type": "Reconcile each cell to an entity of one of these types",
+		"col-detail": "Also use relevant details from other columns",
+		"against-type": "Reconcile against type",
+		"no-type": "Reconcile against no particular type",
+		"auto-match": "Auto-match candidates with high confidence",
+		"warning-type-sugg": "Sorry, we can't suggest any type for your data. Please specify a type yourself below.",
+		"column": "Column",
+		"include": "Include",
+		"as-property": "As Property",
+		"contact-service": "Contacting reconciliation service",
+		"error-contact": "Error contacting recon service",
+		"fb-recon": "Freebase Query-based Reconciliation",
+		"recon-col": "Reconcile column",
+		"pick-service": "Pick a Service or Extension on Left",
+		"add-recon-srv": "Add Namespaced Reconciliation Service",
+		"namespace": "Namespace",
+		"ent-type": "Type of Entities (optional)",
+		"add-std-srv": "Add Standard Reconciliation Service",
+		"enter-url": "Enter the service's URL",
+		"specify-ns": "Please specify a namespace.",
+		"cell-contains": "Each cell contains:",
+		"fb-id": "a Freebase ID, e.g., /en/solar_system",
+		"fb-guid": "a Freebase GUID, e.g., #9202a8c04000641f80000000000354ae",
+		"fb-key": "a Freebase key in",
+		"fb-en-ns": "the Wikipedia English namespace",
+		"this-ns": "this namespace:"
+	},
 	"core-buttons": {
 		"cancel": "Cancel",
 		"ok": "&nbsp;&nbsp;OK&nbsp;&nbsp;",
@@ -351,6 +381,10 @@
 		"refresh": "Refresh",
 		"reset-all": "Reset All",
 		"remove-all": "Remove All",
-		"perform-op": "Perform Operations"
+		"perform-op": "Perform Operations",
+		"add-std-svc": "Add Standard Service",
+		"add-named-svc": "Add Namespaced Service",
+		"start-recon": "Start Reconciling",
+		"add-service": "Add Service"
 	}
 }
