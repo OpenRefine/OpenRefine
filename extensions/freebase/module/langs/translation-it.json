@@ -51,8 +51,8 @@
         "body-text": "Lo scheletro per l'allineamento della schema specifica come i tuoi dati in formato tabellare saranno trasformati in un formato a grafo con lo schema di Freebase.",
         "find-more": "Per saperne di più ...",
         "skeleton": "Scheletro",
-        "mql-preview": "MQL-like Preview",
-        "tripleloader-preview": "TripleLoader Preview"
+        "mql-preview": "Anteprima MQL-like",
+        "tripleloader-preview": "Anteprima TripleLoader"
     },
     "fb-dialogs": {
         "sign-in": "Accedi a Freebase",
@@ -96,8 +96,9 @@
 		"mql-constraints": "Inserisci i vincoli per la query MQL come JSON",
 		"warning-valid-json": "Assicurati che l'oggetto JSON inserito sia valido.",
 		"warning-json-obj": "Il JSON che inserisci deve essere un oggetto, cioè in questa forma: { ... }.",
-		"app-property": "Aggiungi Proprietà",
-		"suggested-properties": "Proprietà suggerite"		
+		"add-property": "Aggiungi Proprietà",
+		"suggested-properties": "Proprietà suggerite",
+		"constraint": "Vincoli"		
 	},
 	"fb-menu": {
 		"freebase": "Freebase",
@@ -114,10 +115,10 @@
         "save-load": "Salva & Carica",
         "close": "Chiudi",
         "reset": "Reset",
-        "cancel": "cancella",
+        "cancel": "Cancella",
         "align-now": "Allinea adesso",
         "settings": "Settings",
-        "preview": "Preview",
+        "preview": "Anteprima",
 		"load-sandbox": "Carica nella Sandbox",
 		"ok": "Ok"
     }

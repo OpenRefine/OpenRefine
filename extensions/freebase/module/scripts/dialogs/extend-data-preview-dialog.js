@@ -43,11 +43,11 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
   this._elmts = DOM.bind(this._dialog);
   
   this._elmts.dialogHeader.text($.i18n._('fb-extend')["add-column"]);
-  this._elmts.add_property.text($.i18n._('fb-extend')["add-property"]);
+  this._elmts.fb_add_property.html($.i18n._('fb-extend')["add-property"]);
   this._elmts.suggested_properties.text($.i18n._('fb-extend')["suggested-properties"]);
   
   this._elmts.resetButton.text($.i18n._('fb-buttons')["reset"]);
-  this._elmts.okButton.text('&nbsp;&nbsp;'+$.i18n._('fb-buttons')["ok"]+'&nbsp;&nbsp;');
+  this._elmts.okButton.html('&nbsp;&nbsp;'+$.i18n._('fb-buttons')["ok"]+'&nbsp;&nbsp;');
   this._elmts.cancelButton.text($.i18n._('fb-buttons')["cancel"]);
   
   this._elmts.resetButton.click(function() {
@@ -337,7 +337,7 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
   var frame = DialogSystem.createDialog();
   frame.width("500px");
 
-  var header = $('<div></div>').addClass("dialog-header").text("Constrain " + path.join(" > ")).appendTo(frame);
+  var header = $('<div></div>').addClass("dialog-header").text(" " + path.join(" > ")).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
@@ -360,7 +360,7 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
   }
 
   footer.html(
-    '<button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
+    '<button class="button" bind="okButton">&nbsp;&nbsp;'+$.i18n._('fb-buttons')["ok"]+'&nbsp;&nbsp;</button>' +
     '<button class="button" bind="cancelButton">'+$.i18n._('fb-buttons')["cancel"]+'</button>'
   );
   var footerElmts = DOM.bind(footer);

@@ -96,8 +96,9 @@
 		"mql-constraints": "Enter MQL query constraints as JSON",
 		"warning-valid-json": "Please ensure that the JSON you enter is valid.",
 		"warning-json-obj": "The JSON you enter must be an object, that is, it is of this form { ... }.",
-		"app-property": "Add Property",
-		"suggested-properties": "Suggested Properties"		
+		"add-property": "Add Property",
+		"suggested-properties": "Suggested Properties",
+		"constraint": "Constraint"	
 	},
     "fb-buttons": {
         "save": "Save",
