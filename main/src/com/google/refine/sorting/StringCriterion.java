@@ -71,8 +71,8 @@ public class StringCriterion extends Criterion {
         return new KeyMaker() {
             @Override
             protected Object makeKey(Object value) {
-                return (ExpressionUtils.isNonBlankData(value) && !(value instanceof String)) ?
-                        collator.getCollationKey(value.toString()) : value;
+                return collator.getCollationKey((ExpressionUtils.isNonBlankData(value) 
+                        && !(value instanceof String)) ? value.toString() : (String) value);
             }
 
             @Override
