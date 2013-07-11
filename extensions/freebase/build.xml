@@ -57,7 +57,7 @@
             
     <target name="build_java">
         <mkdir dir="${classes.dir}" />
-        <javac encoding="utf-8" destdir="${classes.dir}" debug="true" includeAntRuntime="no">
+        <javac  source="${java_version}" target="${java_version}" encoding="utf-8" destdir="${classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${src.dir}"/>
             <classpath refid="class.path" />
         </javac>
