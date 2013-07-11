@@ -239,7 +239,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
         
         this._elmts.resultSummary.html(
             (clusters.length === this._clusters.length) ?
-                ("<b>" + this._clusters.length + "</b> cluster" + ((this._clusters.length != 1) ? "s" : "") + " found") :
+                ("<b>" + this._clusters.length + "</b> cluster" + ((this._clusters.length != 1) ? "s" : "") + " "+$.i18n._('core-dialogs')["found"]) :
                 ("<b>" + clusters.length + "</b> cluster" + ((clusters.length != 1) ? "s" : "") + " "+$.i18n._('core-dialogs')["filtered-from"]+ this._clusters.length +$.i18n._('core-dialogs')["from-total"] )
         );
         

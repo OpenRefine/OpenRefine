@@ -107,7 +107,7 @@ Refine.JsonParserUI.prototype._initialize = function() {
   this._optionContainerElmts.pickRecordElementsButton.text($.i18n._('core-index-import')["warning-record-path"]);
   this._optionContainerElmts.previewButton.text($.i18n._('core-buttons')["update-preview"]);
   $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
-  $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
+  $('#or-import-rows').text($.i18n._('core-index-parser')["rows-data"]);
   $('#or-import-preserve').text($.i18n._('core-index-parser')["preserve-empty"]);
   $('#or-import-trim').html($.i18n._('core-index-parser')["trim"]);
   $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);

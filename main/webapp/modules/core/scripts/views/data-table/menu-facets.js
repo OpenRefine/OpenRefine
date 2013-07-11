@@ -35,7 +35,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doFilterByExpressionPrompt = function(expression, type) {
     DataTableView.promptExpressionOnVisibleRows(
       column,
-      (type == "list" ? $.i18n._('core-views')["custom-facet"] : $.i18n._('core-views')["custom-numeric"]) + column.name, 
+      (type == "list" ? $.i18n._('core-views')["custom-facet"] : $.i18n._('core-views')["custom-numeric-label"]) +" "+ column.name, 
       expression,
       function(expression) {
         var config = {
@@ -107,7 +107,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/custom-text-facet",
-      label: $.i18n._('core-views')["custom-facet"]+'...',
+      label: $.i18n._('core-views')["custom-text-facet"]+'...',
       click: function() {
         doFilterByExpressionPrompt(null, "list");
       }

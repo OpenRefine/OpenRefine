@@ -121,7 +121,7 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
   this._elmts.or_dialog_charEnc.html($.i18n._('core-dialogs')["char-enc"]);
   this._elmts.downloadPreviewButton.html($.i18n._('core-buttons')["preview"]);
   this._elmts.downloadButton.html($.i18n._('core-buttons')["download"]);
-  this._elmts.downloadButton.html($.i18n._('core-dialog')["upload-to"]);
+  this._elmts.or_dialog_uploadTo.html($.i18n._('core-dialogs')["upload-to"]);
   this._elmts.uploadButton.html($.i18n._('core-buttons')["upload"]);
   this._elmts.or_dialog_jsonText.html($.i18n._('core-dialogs')["json-text"]);
   this._elmts.applyOptionCodeButton.html($.i18n._('core-buttons')["apply"]);
