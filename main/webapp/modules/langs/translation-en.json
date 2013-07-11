@@ -1,5 +1,8 @@
 ﻿{
     "core-index": {
+		"slogan": "A power tool for working with messy data",
+		"help": "Help",
+		"about": "About",
 		"version": "Version",
 		"new-version": "New version!",
 		"download": "Download",
@@ -14,7 +17,10 @@
 		"edit": "Edit",
 		"delete": "Delete",
 		"new-proj-name": "New project name:",
-		"error-rename": "Failed to rename project:"
+		"error-rename": "Failed to rename project:",
+		"no-proj": "No existing project. Select 'Create Project' on the left to create a new project",
+		"try-these": "If you have no data to work with, try these",
+		"sample-data": "sample data sets"
 	},
 	"core-index-create": {
 		"create-proj": "Create Project",
@@ -79,6 +85,7 @@
 	"core-index-open": {
 		"open-proj" : "Open Project",
 		"name": "Name",
+		"rename": "rename",
 		"last-mod": "Last&nbsp;modified",
 		"del-title": "Delete this project",
 		"del-body": "Are you sure you want to delete project \"",
@@ -274,6 +281,15 @@
 		"numeric": "Numeric"
 	},
 	"core-project": {
+		"open": "Open",
+		"permalink": "Permalink",
+		"export": "Export",
+		"help": "Help",
+		"starting": "Starting up",
+		"facet-filter": "Facet / Filter",
+		"undo-redo": "Undo / Redo",
+		"extensions": "Extensions",
+		"proj-name": "Click to rename project",
 		"use-facets": "Using facets and filters",
 		"use-to-select": "Use facets and filters to select subsets of your data to act on. Choose facet and filter methods from the menus at the top of each data column.",
 		"not-sure": "Not sure how to get started?",
@@ -596,7 +612,10 @@
 		"number": "number",
 		"boolean": "boolean",
 		"date": "date",
-		"ctrl-enter": "Ctrl-Enter"
+		"ctrl-enter": "Ctrl-Enter",
+		"rows": "rows",
+		"records": "records",
+		"show": "Show"
 	},
 	"core-buttons": {
 		"cancel": "Cancel",

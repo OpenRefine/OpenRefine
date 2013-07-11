@@ -123,8 +123,8 @@ DataTableView.prototype.render = function() {
       });
     }
   };
-  renderBrowsingModeLink("rows", "row-based");
-  renderBrowsingModeLink("records", "record-based");
+  renderBrowsingModeLink($.i18n._('core-views')["rows"], "row-based");
+  renderBrowsingModeLink($.i18n._('core-views')["records"], "record-based");
 
   this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
 
@@ -181,7 +181,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     lastPage.addClass("inaction");
   }
 
-  $('<span>Show: </span>').appendTo(pageSizeControls);
+  $('<span>'+$.i18n._('core-views')["show"]+': </span>').appendTo(pageSizeControls);
   var sizes = [ 5, 10, 25, 50 ];
   var renderPageSize = function(index) {
     var pageSize = sizes[index];
@@ -202,7 +202,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   $('<span>')
-  .text(theProject.rowModel.mode == "record-based" ? ' records' : ' rows')
+  .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n._('core-views')["records"] : ' '+$.i18n._('core-views')["rows"])
   .appendTo(pageSizeControls);
 };
 

@@ -158,7 +158,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       );
 
       var renameLink = $('<a></a>')
-      .text("rename")
+      .text($.i18n._('core-index-open')["rename"])
       .addClass("secondary")
       .attr("href", "javascript:{}")
       .css("visibility", "hidden")

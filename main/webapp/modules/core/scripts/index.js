@@ -190,6 +190,13 @@ $(function() {
     renderActionArea(Refine.actionAreas[i]);
   }
   Refine.selectActionArea('create-project');
+  
+  $("#slogan").text($.i18n._('core-index')["slogan"]+".");
+  $("#or-index-help").text($.i18n._('core-index')["help"]);
+  $("#or-index-about").text($.i18n._('core-index')["about"]);
+  $("#or-index-noProj").text($.i18n._('core-index')["no-proj"]+".");
+  $("#or-index-try").text($.i18n._('core-index')["try-these"]);
+  $("#or-index-sample").text($.i18n._('core-index')["sample-data"]);
 
   showVersion();
 });
