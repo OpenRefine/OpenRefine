@@ -99,6 +99,7 @@ function registerCommands() {
   RS.registerCommand(module, "key-value-columnize", new Packages.com.google.refine.commands.cell.KeyValueColumnizeCommand());
 
   RS.registerCommand(module, "load-language", Packages.com.google.refine.commands.lang.LoadLanguageCommand());
+  RS.registerCommand(module, "set-language", Packages.com.google.refine.commands.lang.SetLanguageCommand());
   
   RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
   RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
@@ -331,6 +332,7 @@ function init() {
       "scripts/index/create-project-ui.js",
       "scripts/index/open-project-ui.js",
       "scripts/index/import-project-ui.js",
+      "scripts/index/lang-settings-ui.js",
 
       "scripts/index/default-importing-controller/controller.js",
       "scripts/index/default-importing-controller/file-selection-panel.js",

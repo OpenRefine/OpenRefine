@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 
 public class LoadLanguageCommand extends Command {
@@ -33,9 +34,14 @@ public class LoadLanguageCommand extends Command {
                 .getRealPath("extensions/freebase/module/langs/");
         String cleanedDirectory = rawDirectoryFile.replace("main" + File.separator + "webapp" + File.separator, "");
 
-        BufferedReader reader = null;
-        String[] langs = request.getParameterValues("lng");
-        langs = langs[0].split(" ");
+        BufferedReader reader = null;String param = null;
+        try {
+            param = (String) ProjectManager.singleton.getPreferenceStore().get("userLang");
+        } catch (NullPointerException e) {
+        }
+        if (param == null) param = request.getParameter("lng");
+
+        String[] langs = param.split(" ");
         try {
             String file = cleanedDirectory + File.separator + "translation-" + langs[0] + ".json";
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));

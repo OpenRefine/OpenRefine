@@ -95,6 +95,12 @@
 		"warning-data-file": "You must specify a data file to upload or a URL to retrieve.",
 		"browse": "Browse workspace directory"
 	},
+	"core-index-lang": {
+		"lang-settings": "Language Settings",
+		"label": "Select preferred language",
+		"send-req": "Send Request",
+		"page-reload": "Warning, the page will be refreshed to apply the change!"
+	},
 	"core-index-parser":{
 		"ignore-first": "Ignore first",
 		"lines-beg": "line(s) at beginning of file",

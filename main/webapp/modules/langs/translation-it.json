@@ -95,6 +95,12 @@
 		"warning-data-file": "Devi specificare un file da caricare oppure una URL da cui recuperare dati.",
 		"browse": "Naviga la cartella del workspace"
 	},
+	"core-index-lang": {
+		"lang-settings": "Impostazioni Lingua",
+		"label": "Seleziona la lingua preferita",
+		"send-req": "Invia Richiesta",
+		"page-reload": "Attenzione, la pagina verrà ricaricata per applicare la modifica"
+	},
 	"core-index-parser":{
 		"ignore-first": "Ignora la/e prima/e",
 		"lines-beg": "linea/e all'inizio del file",
