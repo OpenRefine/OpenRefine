@@ -46,7 +46,7 @@ public class Not implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1) {
+        if (args.length == 1 && args[0] instanceof Boolean) {
             return !objectToBoolean(args[0]);
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a boolean");
