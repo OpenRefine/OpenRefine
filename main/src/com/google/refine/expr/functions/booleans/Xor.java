@@ -36,15 +36,10 @@ import com.google.refine.grel.Function;
 
 public class Xor implements Function {
 
-    /* naive implementation of the XOR operation */
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && 
-                args[0] != null && args[0] instanceof Boolean && 
-                args[1] != null && args[1] instanceof Boolean) {
-            boolean o1 = ((Boolean) args[0]).booleanValue();
-            boolean o2 = ((Boolean) args[1]).booleanValue();
-            return o1 != o2;
+        if (args.length == 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
+            return (Boolean) args[0] ^ (Boolean) args[1];
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 booleans");
     }
