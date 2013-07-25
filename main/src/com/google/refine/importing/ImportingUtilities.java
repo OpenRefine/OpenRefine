@@ -147,13 +147,13 @@ public class ImportingUtilities {
     }
     
     static public void updateJobWithNewFileSelection(ImportingJob job, JSONArray fileSelectionArray) {
-        JSONUtilities.safePut(job.config, "fileSelection", fileSelectionArray);
+        job.safePutConfig("fileSelection", fileSelectionArray);
         
         String bestFormat = ImportingUtilities.getCommonFormatForSelectedFiles(job, fileSelectionArray);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
         
         JSONArray rankedFormats = new JSONArray();
-        JSONUtilities.safePut(job.config, "rankedFormats", rankedFormats);
+        job.safePutConfig("rankedFormats", rankedFormats);
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
     }
     
@@ -747,7 +747,7 @@ public class ImportingUtilities {
     }
     
     static public String getCommonFormatForSelectedFiles(ImportingJob job, JSONArray fileSelectionIndexes) {
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
+        JSONObject retrievalRecord = job.getConfigObject("retrievalRecord");
         
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
@@ -780,7 +780,7 @@ public class ImportingUtilities {
     }
     
     static String guessBetterFormat(ImportingJob job, String bestFormat) {
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
+        JSONObject retrievalRecord = job.getConfigObject("retrievalRecord");
         return retrievalRecord != null ? guessBetterFormat(job, retrievalRecord, bestFormat) : bestFormat;
     }
     
@@ -883,11 +883,11 @@ public class ImportingUtilities {
     static public List<JSONObject> getSelectedFileRecords(ImportingJob job) {
         List<JSONObject> results = new ArrayList<JSONObject>();
         
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
+        JSONObject retrievalRecord = job.getConfigObject("retrievalRecord");
         if (retrievalRecord != null) {
             JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
             if (fileRecordArray != null) {
-                JSONArray fileSelectionArray = JSONUtilities.getArray(job.config, "fileSelection");
+                JSONArray fileSelectionArray = job.getConfigArray("fileSelection");
                 if (fileSelectionArray != null) {
                     for (int i = 0; i < fileSelectionArray.length(); i++) {
                         int index = JSONUtilities.getIntElement(fileSelectionArray, i, -1);
@@ -936,7 +936,7 @@ public class ImportingUtilities {
             return -1;
         }
         
-        JSONUtilities.safePut(job.config, "state", "creating-project");
+        job.safePutConfig("state", "creating-project");
         
         final Project project = new Project();
         if (synchronous) {
@@ -988,11 +988,11 @@ public class ImportingUtilities {
                 
                 ProjectManager.singleton.registerProject(project, pm);
                 
-                JSONUtilities.safePut(job.config, "projectID", project.id);
-                JSONUtilities.safePut(job.config, "state", "created-project");
+                job.safePutConfig("projectID", project.id);
+                job.safePutConfig("state", "created-project");
             } else {
-                JSONUtilities.safePut(job.config, "state", "error");
-                JSONUtilities.safePut(job.config, "errors",
+                job.safePutConfig("state", "error");
+                job.safePutConfig("errors",
                     DefaultImportingController.convertErrorsToJsonArray(exceptions));
             }
             job.touch();
@@ -1001,14 +1001,16 @@ public class ImportingUtilities {
     }
     
     static public void setCreatingProjectProgress(ImportingJob job, String message, int percent) {
-        JSONObject progress = JSONUtilities.getObject(job.config, "progress");
-        if (progress == null) {
+        JSONObject progress = job.copyConfigObject("progress");
+        
+        if (progress == null)
             progress = new JSONObject();
-            JSONUtilities.safePut(job.config, "progress", progress);
-        }
+        
         JSONUtilities.safePut(progress, "message", message);
         JSONUtilities.safePut(progress, "percent", percent);
         JSONUtilities.safePut(progress, "memory", Runtime.getRuntime().totalMemory() / 1000000);
         JSONUtilities.safePut(progress, "maxmemory", Runtime.getRuntime().maxMemory() / 1000000);
+        
+        job.safePutConfig("progress", progress);
     }
 }

@@ -36,16 +36,19 @@ package com.google.refine.importing;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.json.JSONArray;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
+import java.util.Map;
 
 
 public class ImportingJob implements Jsonizable {
@@ -61,6 +64,8 @@ public class ImportingJob implements Jsonizable {
     public boolean updating;
     public boolean canceled;
     
+    final private Object lock = new Object();
+    
     public ImportingJob(long id, File dir) {
         this.id = id;
         this.dir = dir;
@@ -68,12 +73,104 @@ public class ImportingJob implements Jsonizable {
         dir.mkdirs();
     }
     
-    public JSONObject getOrCreateDefaultConfig() {
-        if (config == null) {
-            config = new JSONObject();
-            JSONUtilities.safePut(config, "state", "new");
-            JSONUtilities.safePut(config, "hasData", false);
+    public void safePutConfig(String key, int value)
+    {
+        synchronized(lock) {
+            JSONUtilities.safePut(config, key, value);
         }
+    }
+    
+    public void safePutConfig(String key, long value)
+    {
+        synchronized(lock) {
+            JSONUtilities.safePut(config, key, value);
+        }
+    }
+    
+    public void safePutConfig(String key, double value)
+    {
+        synchronized(lock) {
+            JSONUtilities.safePut(config, key, value);
+        }
+    }
+    
+    public void safePutConfig(String key, boolean value)
+    {
+        synchronized(lock) {
+            JSONUtilities.safePut(config, key, value);
+        }
+    }
+    
+    public void safePutConfig(String key, String value)
+    {
+        synchronized(lock) {
+            JSONUtilities.safePut(config, key, value);
+        }
+    }
+    
+    public void safePutConfig(String key, Collection<?> value)
+    {
+        synchronized(lock) {
+            JSONUtilities.safePut(config, key, value);
+        }
+    }
+    
+    public void safePutConfig(String key, Map<?, ?> value)
+    {
+        synchronized(lock) {
+            JSONUtilities.safePut(config, key, value);
+        }
+    }
+    
+    public void safePutConfig(String key, Object value)
+    {
+        synchronized(lock) {
+            JSONUtilities.safePut(config, key, value);
+        }
+    }
+    
+    public JSONObject getConfigObject(String key)
+    {
+        JSONObject jsonObject;
+        
+        synchronized(lock) {
+            jsonObject = JSONUtilities.getObject(config, key);
+        }
+        
+        return jsonObject;
+    }
+    
+    public JSONObject copyConfigObject(String key)
+    {
+        JSONObject jsonObject;
+        
+        synchronized(lock) {
+            jsonObject = new JSONObject(config, new String[] {key});
+        }
+        
+        return jsonObject;
+    }
+    
+    public JSONArray getConfigArray(String key)
+    {
+        JSONArray jsonArray;
+        
+        synchronized(lock) {
+            jsonArray = JSONUtilities.getArray(config, key);
+        }
+        
+        return jsonArray;
+    }
+    
+    public JSONObject getOrCreateDefaultConfig() {
+        synchronized(lock) {
+            if (config == null) {
+                config = new JSONObject();
+                JSONUtilities.safePut(config, "state", "new");
+                JSONUtilities.safePut(config, "hasData", false);
+            }
+        }
+        
         return config;
     }
     
@@ -111,8 +208,11 @@ public class ImportingJob implements Jsonizable {
     @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
-        writer.object();
-        writer.key("config"); writer.value(config);
-        writer.endObject();
+        
+        synchronized(lock) {
+            writer.object();
+            writer.key("config"); writer.value(config);
+            writer.endObject();
+        }
     }
 }

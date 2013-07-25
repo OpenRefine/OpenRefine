@@ -172,13 +172,15 @@ public class GDataImporter {
     }
     
     static private void setProgress(ImportingJob job, String fileSource, int percent) {
-        JSONObject progress = JSONUtilities.getObject(job.config, "progress");
-        if (progress == null) {
+        JSONObject progress = job.copyConfigObject("progress");
+        
+        if (progress == null)
             progress = new JSONObject();
-            JSONUtilities.safePut(job.config, "progress", progress);
-        }
+        
         JSONUtilities.safePut(progress, "message", "Reading " + fileSource);
         JSONUtilities.safePut(progress, "percent", percent);
+        
+        job.safePutConfig("progress", progress);
     }
     
     static private class WorksheetBatchRowReader implements TableDataReader {
