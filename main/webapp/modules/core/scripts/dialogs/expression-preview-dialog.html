@@ -1,7 +1,7 @@
 <div class="grid-layout layout-tight layout-full"><table rows="4" cols="4">
   <tr style="vertical-align: bottom;">
-    <td>Expression</td>
-    <td style="text-align: right;">Language</td>
+    <td bind="or_dialog_expr"></td>
+    <td style="text-align: right;" bind="or_dialog_lang"></td>
     <td colspan="2"><select bind="expressionPreviewLanguageSelect">$LANGUAGE_OPTIONS$</select></td>
   </tr>
   <tr>
@@ -12,10 +12,10 @@
     <td colspan="4">
       <div id="expression-preview-tabs" class="refine-tabs">
         <ul>
-          <li><a href="#expression-preview-tabs-preview">Preview</a></li>
-          <li><a href="#expression-preview-tabs-history">History</a></li>
-          <li><a href="#expression-preview-tabs-starred">Starred</a></li>
-          <li><a href="#expression-preview-tabs-help">Help</a></li>
+          <li><a href="#expression-preview-tabs-preview" bind="or_dialog_preview"></a></li>
+          <li><a href="#expression-preview-tabs-history" bind="or_dialog_history"></a></li>
+          <li><a href="#expression-preview-tabs-starred" bind="or_dialog_starred"></a></li>
+          <li><a href="#expression-preview-tabs-help" bind="or_dialog_help"></a></li>
         </ul>
         <div id="expression-preview-tabs-preview">
           <div class="expression-preview-container" bind="expressionPreviewPreviewContainer"></div>

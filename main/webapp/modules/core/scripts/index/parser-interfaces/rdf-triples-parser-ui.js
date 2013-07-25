@@ -75,6 +75,9 @@ Refine.RdfTriplesParserUI.prototype._initialize = function() {
       DOM.loadHTML("core", "scripts/index/parser-interfaces/rdf-triples-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  
+  this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
+  $('#or-import-encoding').html($.i18n._('core-index-import')["char-encoding"]);
 
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')

@@ -57,6 +57,7 @@ Refine.OpenProjectUI = function(elmt) {
     return self._onClickUploadFileButton(evt);
   });
 
+  $('#projects-workspace-open').text($.i18n._('core-index-open')["browse"]);
   $('#projects-workspace-open').click(function() {
     $.ajax({
       type: "POST",
@@ -122,8 +123,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<table class="list-table"><tr>' +
       '<th></th>' +
       '<th></th>' +
-      '<th>Last&nbsp;modified</th>' +
-      '<th>Name</th>' +
+      '<th>'+$.i18n._('core-index-open')["last-mod"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["name"]+'</th>' +
       '</tr></table>'
     ).appendTo(container)[0];
 
@@ -133,12 +134,12 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
 
       var deleteLink = $('<a></a>')
       .addClass("delete-project")
-      .attr("title","Delete this project")
+      .attr("title",$.i18n._('core-index-open')["del-title"])
       .attr("href","")
       .css("visibility", "hidden")                
       .html("<img src='images/close.png' />")
       .click(function() {
-        if (window.confirm("Are you sure you want to delete project \"" + project.name + "\"?")) {
+        if (window.confirm($.i18n._('core-index-open')["del-body"] + project.name + "\"?")) {
           $.ajax({
             type: "POST",
             url: "command/core/delete-project",
@@ -157,12 +158,12 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       );
 
       var renameLink = $('<a></a>')
-      .text("rename")
+      .text($.i18n._('core-index-open')["rename"])
       .addClass("secondary")
       .attr("href", "javascript:{}")
       .css("visibility", "hidden")
       .click(function() {
-        var name = window.prompt("New project name:", project.name);
+        var name = window.prompt($.i18n._('core-index-open')["new-title"], project.name);
         if (name === null) {
           return;
         }
@@ -181,7 +182,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
             if (data && typeof data.code != 'undefined' && data.code == "ok") {
               nameLink.text(name);
             } else {
-              alert("Failed to rename project: " + data.message);
+              alert($.i18n._('core-index-open')["warning-rename"]+" " + data.message);
             }
           }
         });
@@ -220,10 +221,10 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
   var projectName = $("#project-name-input")[0].value;
   var dataURL = $.trim($("#project-url-input")[0].value);
   if (! $.trim(projectName).length) {
-    window.alert("You must specify a project name.");
+    window.alert($.i18n._('core-index-open')["warning-proj-name"]);
 
   } else if ($("#project-file-input")[0].files.length === 0 && ! dataURL.length) {
-    window.alert("You must specify a data file to upload or a URL to retrieve.");
+    window.alert($.i18n._('core-index-open')["warning-data-file"]);
 
   } else {
     $("#file-upload-form").attr("action",
@@ -248,6 +249,6 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
 
 Refine.actionAreas.push({
   id: "open-project",
-  label: "Open Project",
+  label: $.i18n._('core-index-open')["open-proj"],
   uiClass: Refine.OpenProjectUI
 });

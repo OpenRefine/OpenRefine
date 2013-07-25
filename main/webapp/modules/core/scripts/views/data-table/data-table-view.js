@@ -91,7 +91,7 @@ DataTableView.prototype.render = function() {
 
   var html = $(
     '<div class="viewpanel-header">' +
-      '<div class="viewpanel-rowrecord" bind="rowRecordControls">Show as: ' +
+      '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n._('core-views')["show-as"]+': ' +
         '<span bind="modeSelectors"></span>' + 
       '</div>' +
       '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
@@ -123,8 +123,8 @@ DataTableView.prototype.render = function() {
       });
     }
   };
-  renderBrowsingModeLink("rows", "row-based");
-  renderBrowsingModeLink("records", "record-based");
+  renderBrowsingModeLink($.i18n._('core-views')["rows"], "row-based");
+  renderBrowsingModeLink($.i18n._('core-views')["records"], "record-based");
 
   this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
 
@@ -159,8 +159,8 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var from = (theProject.rowModel.start + 1);
   var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
 
-  var firstPage = $('<a href="javascript:{}">&laquo; first</a>').appendTo(pagingControls);
-  var previousPage = $('<a href="javascript:{}">&lsaquo; previous</a>').appendTo(pagingControls);
+  var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n._('core-views')["first"]+'</a>').appendTo(pagingControls);
+  var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n._('core-views')["previous"]+'</a>').appendTo(pagingControls);
   if (theProject.rowModel.start > 0) {
     firstPage.addClass("action").click(function(evt) { self._onClickFirstPage(this, evt); });
     previousPage.addClass("action").click(function(evt) { self._onClickPreviousPage(this, evt); });
@@ -171,8 +171,8 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
 
   $('<span>').addClass("viewpanel-pagingcount").html(" " + from + " - " + to + " ").appendTo(pagingControls);
 
-  var nextPage = $('<a href="javascript:{}">next &rsaquo;</a>').appendTo(pagingControls);
-  var lastPage = $('<a href="javascript:{}">last &raquo;</a>').appendTo(pagingControls);
+  var nextPage = $('<a href="javascript:{}">'+$.i18n._('core-views')["next"]+' &rsaquo;</a>').appendTo(pagingControls);
+  var lastPage = $('<a href="javascript:{}">'+$.i18n._('core-views')["last"]+' &raquo;</a>').appendTo(pagingControls);
   if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
     nextPage.addClass("action").click(function(evt) { self._onClickNextPage(this, evt); });
     lastPage.addClass("action").click(function(evt) { self._onClickLastPage(this, evt); });
@@ -181,7 +181,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     lastPage.addClass("inaction");
   }
 
-  $('<span>Show: </span>').appendTo(pageSizeControls);
+  $('<span>'+$.i18n._('core-views')["show"]+': </span>').appendTo(pageSizeControls);
   var sizes = [ 5, 10, 25, 50 ];
   var renderPageSize = function(index) {
     var pageSize = sizes[index];
@@ -202,7 +202,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   $('<span>')
-  .text(theProject.rowModel.mode == "record-based" ? ' records' : ' rows')
+  .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n._('core-views')["records"] : ' '+$.i18n._('core-views')["rows"])
   .appendTo(pageSizeControls);
 };
 
@@ -302,7 +302,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
       .addClass("column-header")
       .html(
         '<div class="column-header-title">' +
-          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">All</span>' +
+          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">'+$.i18n._('core-views')["all"]+'</span>' +
         '</div>'
       )
   ).dropdownMenu.click(function() {
@@ -557,18 +557,18 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
   var self = this;
   var menu = [
     {
-      label: "Facet",
+      label: $.i18n._('core-views')["facet"],
       id: "core/facets",
       width: "200px",
       submenu: [
         {
-          label: "Facet by star",
+          label: $.i18n._('core-views')["facet-star"],
           id: "core/facet-by-star",
           click: function() {
             ui.browsingEngine.addFacet(
               "list", 
               {
-                "name" : "Starred Rows",
+                "name" : $.i18n._('core-views')["starred-rows"],
                 "columnName" : "", 
                 "expression" : "row.starred"
               },
@@ -579,13 +579,13 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: "Facet by flag",
+          label: $.i18n._('core-views')["facet-flag"],
           id: "core/facet-by-flag",
           click: function() {
             ui.browsingEngine.addFacet(
               "list", 
               {
-                "name" : "Flagged Rows",
+                "name" : $.i18n._('core-views')["flagged-rows"],
                 "columnName" : "", 
                 "expression" : "row.flagged"
               },
@@ -599,19 +599,19 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     },
     {},
     {
-      label: "Edit rows",
+      label: $.i18n._('core-views')["edit-rows"],
       id: "core/edit-rows",
       width: "200px",
       submenu: [
         {
-          label: "Star rows",
+          label: $.i18n._('core-views')["star-rows"],
           id: "core/star-rows",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
           }
         },
         {
-          label: "Unstar rows",
+          label: $.i18n._('core-views')["unstar-rows"],
           id: "core/unstar-rows",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
@@ -619,14 +619,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         },
         {},
         {
-          label: "Flag rows",
+          label: $.i18n._('core-views')["flag-rows"],
           id: "core/flag-rows",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
           }
         },
         {
-          label: "Unflag rows",
+          label: $.i18n._('core-views')["unflag-rows"],
           id: "core/unflag-rows",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
@@ -634,7 +634,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         },
         {},
         {
-          label: "Remove all matching rows",
+          label: $.i18n._('core-views')["remove-matching"],
           id: "core/remove-rows",
           click: function() {
             Refine.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
@@ -643,12 +643,12 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
       ]
     },
     {
-      label: "Edit columns",
+      label: $.i18n._('core-views')["edit-col"],
       id: "core/edit-columns",
       width: "200px",
       submenu: [
         {
-          label: "Re-order / remove columns...",
+          label: $.i18n._('core-views')["reorder-remove"]+"...",
           id: "core/reorder-columns",
           click: function() {
             new ColumnReorderingDialog();
@@ -658,12 +658,12 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     },
     {},
     {
-      label: "View",
+      label: $.i18n._('core-views')["view"],
       id: "core/view",
       width: "200px",
       submenu: [
         {
-          label: "Collapse all columns",
+          label: $.i18n._('core-views')["collapse-all"],
           id: "core/collapse-all-columns",
           click: function() {
             for (var i = 0; i < theProject.columnModel.columns.length; i++) {
@@ -673,7 +673,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: "Expand all columns",
+          label: $.i18n._('core-views')["expand-all"],
           id: "core/expand-all-columns",
           click: function() {
             self._collapsedColumnNames = [];
@@ -695,14 +695,14 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
   var self = this;
   var items = [
     {
-      "label" : "Remove sort",
+      "label" : $.i18n._('core-views')["remove-sort"],
       "click" : function() {
         self._sorting.criteria = [];
         self.update();
       }
     },
     {
-      "label" : "Reorder rows permanently",
+      "label" : $.i18n._('core-views')["reorder-perma"],
       "click" : function() {
         Refine.postCoreProcess(
           "reorder-rows",
@@ -733,7 +733,7 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
     var columnHeaderUI = getColumnHeaderUI(criterion.column);
     if (columnHeaderUI !== null) {
       items.push({
-        "label" : "By " + criterion.column,
+        "label" : $.i18n._('core-views')["by"]+" " + criterion.column,
         "submenu" : columnHeaderUI.createSortingMenu()
       });
     }

@@ -124,9 +124,12 @@ SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
         .appendTo(a);
       }
 
-      $('<span>').text(this._node.columnNames.length > 1 ? " cells" : " cell").appendTo(a);
+			     $('<span>').text(
+					this._node.columnNames.length > 1 ? " "
+							+ $.i18n._('fb-schema-alignment')["cells"] : " "
+							+ $.i18n._('fb-schema-alignment')["cell"]).appendTo(a);
     } else {
-      a.html(this._options.mustBeCellTopic ? "Which column?" : "Configure...");
+      a.html(this._options.mustBeCellTopic ? $.i18n._('fb-schema-alignment')["which-column"] : $.i18n._('fb-schema-alignment')["configure"]);
     }
   } else if (this._node.nodeType == "topic") {
     if ("topic" in this._node) {
@@ -134,16 +137,16 @@ SchemaAlignmentDialog.UINode.prototype._renderMain = function() {
     } else if ("id" in this._node) {
       a.html(this._node.topic.id);
     } else {
-      a.html("Which topic?");
+      a.html($.i18n._('fb-schema-alignment')["which-topic"]);
     }
   } else if (this._node.nodeType == "value") {
     if ("value" in this._node) {
       a.html(this._node.value);
     } else {
-      a.html("What value?");
+      a.html($.i18n._('fb-schema-alignment')["what-value"]);
     }
   } else if (this._node.nodeType == "anonymous") {
-    a.html("(anonymous)");
+    a.html("("+$.i18n._('fb-schema-alignment')["anonymous"]+")");
   }
 };
 
@@ -212,7 +215,7 @@ SchemaAlignmentDialog.UINode.prototype._renderDetails = function() {
 
   $('<a href="javascript:{}"></a>')
   .addClass("action")
-  .text("add property")
+  .text($.i18n._('fb-schema-alignment')["add-property"])
   .appendTo(divFooter)
   .click(function() {
     var newLink = {
@@ -241,7 +244,7 @@ SchemaAlignmentDialog.UINode.prototype._showColumnPopupMenu = function(elmt) {
 
   if (!this._options.mustBeCellTopic) {
     menu.push({
-      label: "Anonymous Node",
+      label: $.i18n._('fb-schema-alignment')["anonymous-node"],
       click: function() {
         self._node.nodeType = "anonymous";
         self._showExpandable();
@@ -249,7 +252,7 @@ SchemaAlignmentDialog.UINode.prototype._showColumnPopupMenu = function(elmt) {
       }
     });
     menu.push({
-      label: "Freebase Topic",
+      label: $.i18n._('fb-schema-alignment')["freebase-topic"],
       click: function() {
         self._node.nodeType = "topic";
         self._hideExpandable();
@@ -257,7 +260,7 @@ SchemaAlignmentDialog.UINode.prototype._showColumnPopupMenu = function(elmt) {
       }
     });
     menu.push({
-      label: "Value",
+      label: $.i18n._('fb-schema-alignment')["value"],
       click: function() {
         self._node.nodeType = "value";
         self._hideExpandable();
@@ -292,7 +295,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
 
   frame.width("750px");
 
-  var header = $('<div></div>').addClass("dialog-header").text("Schema Alignment Skeleton Node").appendTo(frame);
+  var header = $('<div></div>').addClass("dialog-header").text($.i18n._('fb-schema-alignment')["skeleton-node"]).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
@@ -301,13 +304,13 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
    *--------------------------------------------------
    */
   var literalTypeSelectHtml =
-    '<option value="/type/text" checked>text</option>' +
-    '<option value="/type/int">int</option>' +
-    '<option value="/type/float">float</option>' +
-    '<option value="/type/double">double</option>' +
-    '<option value="/type/boolean">boolean</option>' +
-    '<option value="/type/datetime">date/time</option>' + 
-    '<option value="/type/rawstring">rawstring</option>';
+    '<option value="/type/text" checked>'+$.i18n._('fb-schema-alignment')["text"]+'</option>' +
+    '<option value="/type/int">'+$.i18n._('fb-schema-alignment')["int"]+'</option>' +
+    '<option value="/type/float">'+$.i18n._('fb-schema-alignment')["float"]+'</option>' +
+    '<option value="/type/double">'+$.i18n._('fb-schema-alignment')["double"]+'</option>' +
+    '<option value="/type/boolean">'+$.i18n._('fb-schema-alignment')["boolean"]+'</option>' +
+    '<option value="/type/datetime">'+$.i18n._('fb-schema-alignment')["date-time"]+'</option>' + 
+    '<option value="/type/rawstring">'+$.i18n._('fb-schema-alignment')["rawstring"]+'</option>';
 
   var html = $(
     '<div class="grid-layout layout-looser layout-full"><table>' +
@@ -317,7 +320,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     '<tr>' +
     '<td>' +
     '<div class="schema-align-node-dialog-node-type">' +
-    '<input type="radio" name="schema-align-node-dialog-node-type" value="cell-as" bind="radioNodeTypeCellAs" /> Set to Cell in Column' +
+    '<input type="radio" name="schema-align-node-dialog-node-type" value="cell-as" bind="radioNodeTypeCellAs" /> '+$.i18n._('fb-schema-alignment')["set-to-cell"]+'' +
     '</div>' +
     '</td>' +
     '</tr>' +
@@ -329,15 +332,15 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     '<td>' +
     '<div class="grid-layout layout-tight"><table cols="4">' +
     '<tr>' +
-    '<td colspan="4">The cell\'s content is used ...</td>' +
+    '<td colspan="4">'+$.i18n._('fb-schema-alignment')["cell-content-used"]+'</td>' +
     '</tr>' +
     '<tr>' +
     '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-topic" bind="radioNodeTypeCellAsTopic" /></td>' +
-    '<td colspan="3">to specify a Freebase topic, as reconciled</td>' +
+    '<td colspan="3">'+$.i18n._('fb-schema-alignment')["specify-fb-topic"]+'</td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
-    '<td colspan="3">Type new topics as</td>' +
+    '<td colspan="3">'+$.i18n._('fb-schema-alignment')["type-new-topic"]+'</td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
@@ -345,26 +348,26 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     '</tr>' +
     '<tr>' +
     '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-value" bind="radioNodeTypeCellAsValue" /></td>' +
-    '<td colspan="3">as a literal value</td>' +
+    '<td colspan="3">'+$.i18n._('fb-schema-alignment')["literal-value"]+'</td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
-    '<td colspan="2">Literal type</td>' +
+    '<td colspan="2">'+$.i18n._('fb-schema-alignment')["literal-type"]+'</td>' +
     '<td colspan="1"><select bind="cellAsValueTypeSelect">' + literalTypeSelectHtml + '</select></td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
-    '<td colspan="2">Text language</td>' +
+    '<td colspan="2">'+$.i18n._('fb-schema-alignment')["text-language"]+'</td>' +
     '<td colspan="1"><input bind="cellAsValueLanguageInput" /></td>' +
     '</tr>' +
 
     '<tr>' +
     '<td><input type="radio" name="schema-align-node-dialog-node-subtype" value="cell-as-key" bind="radioNodeTypeCellAsKey" /></td>' +
-    '<td colspan="3">as a key in a namespace</td>' +
+    '<td colspan="3">'+$.i18n._('fb-schema-alignment')["key-namespace"]+'</td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
-    '<td colspan="2">Namespace</td>' +
+    '<td colspan="2">'+$.i18n._('fb-schema-alignment')["namespace"]+'</td>' +
     '<td colspan="1"><input bind="cellAsKeyInput" /></td>' +
     '</tr>' +
     '</table></div>' +
@@ -381,20 +384,20 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     '<tr>' +
     '<td colspan="3">' +
     '<div class="schema-align-node-dialog-node-type">' +
-    '<input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" bind="radioNodeTypeAnonymous" /> Generate an anonymous graph node' +
+    '<input type="radio" name="schema-align-node-dialog-node-type" value="anonymous" bind="radioNodeTypeAnonymous" /> '+$.i18n._('fb-schema-alignment')["generate-anonymous"]+'' +
     '</div>' +
     '</td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
-    '<td>Assign a type to the node</td>' +
+    '<td>'+$.i18n._('fb-schema-alignment')["assign-type"]+'</td>' +
     '<td>&nbsp;<input bind="anonymousNodeTypeInput" /></td>' +
     '</tr>' +
 
     '<tr>' +
     '<td colspan="3">' +
     '<div class="schema-align-node-dialog-node-type">' +
-    '<input type="radio" name="schema-align-node-dialog-node-type" value="topic" bind="radioNodeTypeTopic" /> Use one existing Freebase topic' +
+    '<input type="radio" name="schema-align-node-dialog-node-type" value="topic" bind="radioNodeTypeTopic" /> '+$.i18n._('fb-schema-alignment')["use-existing-topic"]+'' +
     '</div>' +
     '</td>' +
     '</tr>' +
@@ -407,23 +410,23 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     '<tr>' +
     '<td colspan="3">' +
     '<div class="schema-align-node-dialog-node-type">' +
-    '<input type="radio" name="schema-align-node-dialog-node-type" value="value" bind="radioNodeTypeValue" /> Use a literal value' +
+    '<input type="radio" name="schema-align-node-dialog-node-type" value="value" bind="radioNodeTypeValue" /> '+$.i18n._('fb-schema-alignment')["use-literal-value"]+
     '</div>' +
     '</td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
-    '<td>Value</td>' +
+    '<td>'+$.i18n._('fb-schema-alignment')["value"]+'</td>' +
     '<td><input bind="valueNodeTypeValueInput" /></td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
-    '<td>Value type</td>' +
+    '<td>'+$.i18n._('fb-schema-alignment')["value-type"]+'</td>' +
     '<td><select bind="valueNodeTypeValueTypeSelect">' + literalTypeSelectHtml + '</select></td>' +
     '</tr>' +
     '<tr>' +
     '<td></td>' +
-    '<td>Language</td>' +
+    '<td>'+$.i18n._('fb-schema-alignment')["language"]+'</td>' +
     '<td><input bind="valueNodeTypeLanguageInput" /></td>' +
     '</tr>' +
     '</table></div>' +
@@ -581,14 +584,14 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
       }).get();
 
       if (node.columnNames.length == 0) {
-        alert("You must select at least one column.");
+        alert($.i18n._('fb-schema-alignment')["column-warning"]);
         return null;
       }
 
       if (node.nodeType == "cell-as-topic") {
         var t = elmts.cellAsTopicNodeTypeInput.data("data.suggest");
         if (!(t)) {
-          alert("For creating a new graph node, you need to specify a type for it.");
+          alert($.i18n._('fb-schema-alignment')["new-node-warning"]);
           elmts.cellAsTopicNodeTypeInput.focus();
           return null;
         }
@@ -606,7 +609,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
       } else if (node.nodeType == "cell-as-key") {
         var t = elmts.cellAsKeyInput.data("data.suggest");
         if (!(t)) {
-          alert("Please specify the namespace.");
+          alert($.i18n._('fb-schema-alignment')["namespace-warning"]);
           return null;
         }
         node.namespace = {
@@ -617,7 +620,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     } else if (node.nodeType == "anonymous") {
       var t = elmts.anonymousNodeTypeInput.data("data.suggest");
       if (!(t)) {
-        alert("For generating an anonymous graph node, you need to specify a type for it.");
+        alert($.i18n._('fb-schema-alignment')["anonymous-node-warning"]);
         return null;
       }
       node.type = {
@@ -627,7 +630,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     } else if (node.nodeType == "topic") {
       var t = elmts.topicNodeTypeInput.data("data.suggest");
       if (!(t)) {
-        alert("Please specify which existing Freebase topic to use.");
+        alert($.i18n._('fb-schema-alignment')["specify-topic-warning"]);
         return null;
       }
       node.topic = {
@@ -637,7 +640,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     } else if (node.nodeType == "value") {
       node.value = $.trim(elmts.valueNodeTypeValueInput[0].value);
       if (!node.value.length) {
-        alert("Please specify the value to use.");
+        alert($.i18n._('fb-schema-alignment')["specify-value-warning"]);
         return null;
       }
       node.valueType = elmts.valueNodeTypeValueTypeSelect[0].value;
@@ -662,7 +665,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     }
   }).appendTo(footer);
 
-  $('<button class="button"></button>').text("Cancel").click(function() {
+  $('<button class="button"></button>').text($.i18n._('fb-buttons')["cancel"]).click(function() {
     DialogSystem.dismissUntil(level - 1);
   }).appendTo(footer);
 

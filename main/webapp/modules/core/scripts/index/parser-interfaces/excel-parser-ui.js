@@ -118,6 +118,20 @@ Refine.ExcelParserUI.prototype._initialize = function() {
       DOM.loadHTML("core", "scripts/index/parser-interfaces/excel-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  
+  this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
+  $('#or-import-worksheet').text($.i18n._('core-index-import')["import-worksheet"]);
+  $('#or-import-ignore').text($.i18n._('core-index-parser')["ignore-first"]);
+  $('#or-import-lines').text($.i18n._('core-index-parser')["lines-beg"]);
+  $('#or-import-parse').text($.i18n._('core-index-parser')["parse-next"]);
+  $('#or-import-header').text($.i18n._('core-index-parser')["lines-header"]);
+  $('#or-import-discard').text($.i18n._('core-index-parser')["discard-initial"]);
+  $('#or-import-rows').text($.i18n._('core-index-parser')["rows-data"]);
+  $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
+  $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
+  $('#or-import-blank').text($.i18n._('core-index-parser')["store-blank"]);
+  $('#or-import-null').text($.i18n._('core-index-parser')["store-nulls"]);
+  $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
 
   var sheetTable = this._optionContainerElmts.sheetRecordContainer[0];
   $.each(this._config.sheetRecords, function(i, v) {

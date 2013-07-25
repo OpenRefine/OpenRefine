@@ -239,7 +239,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
 
   var divConditional = $('<div>')
   .addClass("schema-alignment-link-menu-section")
-  .html("Assert link when 'true' is found in column<br/>").appendTo(menu);
+  .html($.i18n._('fb-schema-alignment')["assert-link-found"]+"<br/>").appendTo(menu);
 
   var conditionalSelect = $('<select>').appendTo(divConditional);
   $('<option>')
@@ -266,7 +266,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
     divSearch = $('<div>')
     .addClass("schema-alignment-link-menu-section")
     .css("margin-bottom", "2em")
-    .html('<div>Search for a property or pick one below</div>').appendTo(menu);
+    .html('<div>'+$.i18n._('fb-schema-alignment')["search-pick-property"]+'</div>').appendTo(menu);
 
     var createSuggestion = function(suggestion) {
       var menuItem = MenuSystem.createMenuItem().appendTo(menu);
@@ -296,7 +296,7 @@ SchemaAlignmentDialog.UILink.prototype._showPropertySuggestPopup = function(elmt
   } else {
     divSearch = $('<div>')
     .addClass("schema-alignment-link-menu-section-last")
-    .html('<div>Search for a property</div>').appendTo(menu);
+    .html('<div>'+$.i18n._('fb-schema-alignment')["search-property"]+'</div>').appendTo(menu);
   }
   var input = $('<input />').appendTo($('<div>').appendTo(divSearch));
 

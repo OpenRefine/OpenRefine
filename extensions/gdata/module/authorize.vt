@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>OpenRefine - Authorization</title>
+  <title id="gdata-authorize"></title>
 </head>
 <body>
   <script>
