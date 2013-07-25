@@ -78,15 +78,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
       );
     });
-
-    var o = DataTableView.sampleVisibleRows(column);
-    var previewWidget = new ExpressionPreviewDialog.Widget(
-      elmts, 
-      column.cellIndex,
-      o.rowIndices,
-      o.values,
-      null
-    );
   };
 
   var doAddColumnByFetchingURLs = function() {
@@ -133,15 +124,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       );
       dismiss();
     });
-
-    var o = DataTableView.sampleVisibleRows(column);
-    var previewWidget = new ExpressionPreviewDialog.Widget(
-      elmts, 
-      column.cellIndex,
-      o.rowIndices,
-      o.values,
-      null
-    );
   };
 
   var doRemoveColumn = function() {
@@ -183,15 +165,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doMoveColumnBy = function(change) {
-    Refine.postCoreProcess(
-      "move-column", 
-      {
-        columnName: column.name,
-        index: Refine.columnNameToColumnIndex(column.name) + change
-      },
-      null,
-      { modelsChanged: true }
-    );
+    var newidx = Refine.columnNameToColumnIndex(column.name) + change;
+    if (newidx > 0 && newidx < Refine.columnNameToColumnIndex(column.name)) {
+      Refine.postCoreProcess(
+          "move-column", 
+          {
+            columnName: column.name,
+            index: newidx
+          },
+          null,
+          { modelsChanged: true }
+      );
+    }
   };
 
   var doSplitColumn = function() {

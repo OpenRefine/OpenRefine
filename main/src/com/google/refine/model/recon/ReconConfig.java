@@ -90,6 +90,7 @@ abstract public class ReconConfig implements Jsonizable {
                 mode = "core/" + mode;
             }
             
+            // TODO: This can fail silently if the Freebase extension is not installed.
             List<Class<? extends ReconConfig>> classes = s_opNameToClass.get(mode);
             if (classes != null && classes.size() > 0) {
                 Class<? extends ReconConfig> klass = classes.get(classes.size() - 1);
