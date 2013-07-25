@@ -34,6 +34,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var theProject;
 var ui = {};
 
+var lang = navigator.language.split("-")[0]
+		|| navigator.userLanguage.split("-")[0];
+var dictionary = "";
+$.ajax({
+	url : "/command/core/load-language?",
+	type : "POST",
+	async : false,
+	data : {
+		lng : lang
+	},
+	success : function(data) {
+		dictionary = data;
+	}
+});
+$.i18n.setDictionary(dictionary);
+// End internationalization
+
 var Refine = {
   refineHelperService: "http://openrefine-helper.freebaseapps.com"
 };
@@ -105,6 +122,16 @@ function initializeUI(uiState) {
   $("#project-title").show();
   $("#project-controls").show();
   $("#body").show();
+  
+  $("#or-proj-open").text($.i18n._('core-project')["open"]+"...");
+  $("#project-permalink-button").text($.i18n._('core-project')["permalink"]);
+  $("#project-name-button").attr("title",$.i18n._('core-project')["proj-name"]);
+  $("#or-proj-export").text($.i18n._('core-project')["export"]);
+  $("#or-proj-help").text($.i18n._('core-project')["help"]);
+  $("#or-proj-starting").text($.i18n._('core-project')["starting"]+"...");
+  $("#or-proj-facFil").text($.i18n._('core-project')["facet-filter"]);
+  $("#or-proj-undoRedo").text($.i18n._('core-project')["undo-redo"]);
+  $("#or-proj-ext").text($.i18n._('core-project')["extensions"]+":");
 
   $('#project-name-button').click(Refine._renameProject);
   $('#project-permalink-button').mouseenter(function() {
@@ -183,7 +210,7 @@ Refine.reinitializeProjectData = function(f, fError) {
 };
 
 Refine._renameProject = function() {
-  var name = window.prompt("New project name:", theProject.metadata.name);
+  var name = window.prompt($.i18n._('core-index')["new-proj-name"], theProject.metadata.name);
   if (name === null) {
     return;
   }
@@ -203,7 +230,7 @@ Refine._renameProject = function() {
         theProject.metadata.name = name;
         Refine.setTitle();
       } else {
-        alert("Failed to rename project: " + data.message);
+        alert($.i18n._('core-index')["error-rename"]+" " + data.message);
       }
     }
   });

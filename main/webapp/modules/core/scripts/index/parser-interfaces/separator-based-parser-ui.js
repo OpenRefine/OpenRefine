@@ -125,6 +125,28 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
       DOM.loadHTML("core", "scripts/index/parser-interfaces/separator-based-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  
+  this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
+  $('#or-import-encoding').html($.i18n._('core-index-import')["char-encoding"]);
+  $('#or-import-colsep').html($.i18n._('core-index-parser')["col-separated-by"]);
+  $('#or-import-commas').html($.i18n._('core-index-parser')["commas"]);
+  $('#or-import-tabs').html($.i18n._('core-index-parser')["tabs"]);
+  $('#or-import-custom').html($.i18n._('core-index-parser')["custom"]);
+  $('#or-import-escape').html($.i18n._('core-index-parser')["escape"]);
+  
+  $('#or-import-ignore').text($.i18n._('core-index-parser')["ignore-first"]);
+  $('#or-import-lines').text($.i18n._('core-index-parser')["lines-beg"]);
+  $('#or-import-parse').text($.i18n._('core-index-parser')["parse-next"]);
+  $('#or-import-header').text($.i18n._('core-index-parser')["lines-header"]);
+  $('#or-import-discard').text($.i18n._('core-index-parser')["discard-initial"]);
+  $('#or-import-rows').text($.i18n._('core-index-parser')["rows-data"]);
+  $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
+  $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
+  $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
+  $('#or-import-quote').html($.i18n._('core-index-parser')["quotation-mark"]);
+  $('#or-import-blank').text($.i18n._('core-index-parser')["store-blank"]);
+  $('#or-import-null').text($.i18n._('core-index-parser')["store-nulls"]);
+  $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
 
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')

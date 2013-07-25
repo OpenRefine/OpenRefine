@@ -41,6 +41,18 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   this._body.html(DOM.loadHTML("gdata", "scripts/index/import-from-gdata-form.html"));
   this._elmts = DOM.bind(this._body);
   
+  $('#gdata-title').text($.i18n._("gdata-import")["title"]);
+  $('#gdata-import').html($.i18n._("gdata-import")["import-by-url"]);
+  $('#gdata-next').html($.i18n._("gdata-import")["next->"]);
+  $('#gdata-auth-doc').text($.i18n._("gdata-import")["auth-doc"]);
+  $('#gdata-please').text($.i18n._("gdata-import")["please"]);
+  $('#gdata-signin-btn').text($.i18n._("gdata-import")["sign-in"]);
+  $('#gdata-access-data').text($.i18n._("gdata-import")["access-data"]);
+  $('#gdata-retrieving').text($.i18n._("gdata-import")["retrieving"]);
+  $('#gdata-retrieving').text($.i18n._("gdata-import")["sign-out"]);
+  $('#gdata-resignin').text($.i18n._("gdata-import")["re-sign-in"]);
+  $('#gdata-another-account').text($.i18n._("gdata-import")["another-account"]);
+  
   var self = this;
   this._body.find('.gdata-signin.button').click(function() {
     GdataExtension.showAuthorizationDialog(
@@ -62,7 +74,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   this._elmts.urlNextButton.click(function(evt) {
     var url = $.trim(self._elmts.urlInput[0].value);
     if (url.length === 0) {
-      window.alert("You must specify a web address (URL) to import.");
+      window.alert($.i18n._('gdata-source')["alert-url"]);
     } else {
       var doc = {};
       doc.docSelfLink = url;
@@ -112,10 +124,10 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
   var table = $(
     '<table><tr>' +
       '<th></th>' + // starred
-      '<th>Type</th>' +
-      '<th>Title</th>' +
-      '<th>Authors</th>' +
-      '<th>Updated</th>' +
+      '<th>'+$.i18n._('gdata-source')["type"]+'</th>' +
+      '<th>'+$.i18n._('gdata-source')["title"]+'</th>' +
+      '<th>'+$.i18n._('gdata-source')["authors"]+'</th>' +
+      '<th>'+$.i18n._('gdata-source')["updated"]+'</th>' +
     '</tr></table>'
   ).appendTo(this._elmts.listingContainer)[0];
   

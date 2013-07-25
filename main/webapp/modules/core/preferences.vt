@@ -47,7 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </div>
 
   <div id="body-info">
-    <div id="loading-message"><img src="images/large-spinner.gif" /> Loading...</div>
+    <div id="loading-message"><img src="images/large-spinner.gif" /> <span id="or-proj-starting"></span></div>
   </div>
 </body>
 </html>

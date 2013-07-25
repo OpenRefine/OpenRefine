@@ -4,40 +4,38 @@
     <div class="grid-layout layout-normal layout-full"><table>
       <tr>
         <td colspan="4">
-          This feature helps you find groups of different cell values that might be
-          alternative representations of the same thing. For example, the two strings
-          "New York" and "new york" are very likely to refer to the same concept and 
-          just have capitalization differences, and "Gödel" and "Godel" probably refer
-          to the same person.
-          <a href="https://github.com/OpenRefine/OpenRefine/wiki/Clustering" target="_blank">Find out more ...</a>
+          <span bind="or_dialog_descr"></span>
+          <a href="https://github.com/OpenRefine/OpenRefine/wiki/Clustering" target="_blank" bind="or_dialog_findMore"></a>
         </td>
       </tr>
       <tr>
         <td>
-            Method&nbsp;<select bind="methodSelector">
-              <option selected="true">key collision</option>
-              <option>nearest neighbor</option>
+            <span bind="or_dialog_method"></span><select bind="methodSelector">
+              <option selected="true" bind="or_dialog_keyCollision"></option>
+              <option bind="or_dialog_neighbor"></option>
             </select>
         </td>
         <td>
-          <div class="binning-controls">Keying&nbsp;Function&nbsp;<select bind="keyingFunctionSelector">
-            <option selected="true">fingerprint</option>
-            <option>ngram-fingerprint</option>
-            <option>metaphone3</option>
-            <option>cologne-phonetic</option>
+          <div class="binning-controls"><span bind="or_dialog_keying"></span>
+          <select bind="keyingFunctionSelector">
+            <option selected="true" bind="or_dialog_fingerprint"></option>
+            <option bind="or_dialog_ngram"></option>
+            <option bind="or_dialog_metaphone"></option>
+            <option bind="or_dialog_phonetic"></option>
           </select></div>
-          <div class="knn-controls hidden">Distance&nbsp;Function&nbsp;<select bind="distanceFunctionSelector">
-            <option selected="true">levenshtein</option>
-            <option>PPM</option>
+          <div class="knn-controls hidden"><span bind="or_dialog_distance"></span>
+          <select bind="distanceFunctionSelector">
+            <option selected="true" bind="or_dialog_leven"></option>
+            <option bind="or_dialog_ppm"></option>
           </select></div>
         </td>
         <td>
           <div id="ngram-fingerprint-params" class="function-params hidden">
-            Ngram&nbsp;Size&nbsp;<input type="text" value="2" bind="ngramSize" name="ngram-size" size="2" class="param" datatype="int">
+            <span bind="or_dialog_ngramSize"></span><input type="text" value="2" bind="ngramSize" name="ngram-size" size="2" class="param" datatype="int">
           </div> 
           <div class="knn-controls hidden">
-            <span style="margin-right: 1em">Radius&nbsp;<input type="text" value="1.0" bind="radius" name="radius" size="2" class="param" datatype="float"></span>
-            <span>Block&nbsp;Chars&nbsp;<input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="2" class="param" datatype="int"></span>
+            <span style="margin-right: 1em"><span bind="or_dialog_radius"></span><input type="text" value="1.0" bind="radius" name="radius" size="2" class="param" datatype="float"></span>
+            <span><span bind="or_dialog_blockChars"></span><input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="2" class="param" datatype="int"></span>
           </div> 
         </td>
         <td bind="resultSummary" style="text-align:right;">
@@ -54,13 +52,13 @@
   <div class="dialog-footer" bind="dialogFooter">
     <table width="100%"><tr>
       <td class="left" style="text-align: left">
-        <button class="button" bind="selectAllButton">Select All</button>
-        <button class="button" bind="deselectAllButton">Deselect All</button>
+        <button class="button" bind="selectAllButton"></button>
+        <button class="button" bind="deselectAllButton"></button>
       </td> 
       <td class="right" style="text-align: right">
-        <button class="button button-primary" bind="applyReClusterButton">Merge Selected &amp; Re-Cluster</button>
-        <button class="button" bind="applyCloseButton">Merge Selected &amp; Close</button>
-        <button class="button" bind="closeButton">Close</button>
+        <button class="button button-primary" bind="applyReClusterButton"></button>
+        <button class="button" bind="applyCloseButton"></button>
+        <button class="button" bind="closeButton"></button>
       </td>
     </tr></table>
   </div>

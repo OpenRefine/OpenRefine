@@ -35,7 +35,7 @@ function ThisComputerImportingSourceUI(controller) {
   this._controller = controller;
 }
 Refine.DefaultImportingController.sources.push({
-  "label": "This Computer",
+  "label": $.i18n._('core-index-import')["this-computer"],
   "id": "upload",
   "uiClass": ThisComputerImportingSourceUI
 });
@@ -46,11 +46,16 @@ ThisComputerImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-computer-form.html"));
 
   this._elmts = DOM.bind(bodyDiv);
+  
+  $('#or-import-locate').text($.i18n._('core-index-import')["locate-files"]);
+  $('#or-import-locate').text($.i18n._('core-index-import')["locate-files"]);
+  this._elmts.nextButton.html($.i18n._('core-buttons')["next"]);
+  
   this._elmts.nextButton.click(function(evt) {
     if (self._elmts.fileInput[0].files.length === 0) {
-      window.alert("You must specify a data file to import.");
+      window.alert($.i18n._('core-index-import')["warning-data-file"]);
     } else {
-      self._controller.startImportJob(self._elmts.form, "Uploading data ...");
+      self._controller.startImportJob(self._elmts.form, $.i18n._('core-index-import')["uploading-data"]);
     }
   });
 };
@@ -62,7 +67,7 @@ function UrlImportingSourceUI(controller) {
   this._controller = controller;
 }
 Refine.DefaultImportingController.sources.push({
-  "label": "Web Addresses (URLs)",
+  "label": $.i18n._('core-index-import')["web-address"],
   "id": "download",
   "uiClass": UrlImportingSourceUI
 });
@@ -73,11 +78,16 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-web-form.html"));
 
   this._elmts = DOM.bind(bodyDiv);
+  
+  $('#or-import-enterurl').text($.i18n._('core-index-import')["enter-url"]);
+  this._elmts.addButton.html($.i18n._('core-buttons')["add-url"]);
+  this._elmts.nextButton.html($.i18n._('core-buttons')["next"]);
+  
   this._elmts.nextButton.click(function(evt) {
     if ($.trim(self._elmts.urlInput[0].value).length === 0) {
-      window.alert("You must specify a web address (URL) to import.");
+      window.alert($.i18n._('core-index-import')["warning-web-address"]);
     } else {
-      self._controller.startImportJob(self._elmts.form, "Downloading data ...");
+      self._controller.startImportJob(self._elmts.form, $.i18n._('core-index-import')["downloading-data"]);
     }
   });
   this._elmts.addButton.click(function(evt) {
@@ -93,7 +103,7 @@ function ClipboardImportingSourceUI(controller) {
   this._controller = controller;
 }
 Refine.DefaultImportingController.sources.push({
-  "label": "Clipboard",
+  "label": $.i18n._('core-index-import')["clipboard"],
   "id": "clipboard",
   "uiClass": ClipboardImportingSourceUI
 });
@@ -104,11 +114,15 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-clipboard-form.html"));
 
   this._elmts = DOM.bind(bodyDiv);
+  
+  $('#or-import-clipboard').text($.i18n._('core-index-import')["clipboard-label"]);
+  this._elmts.nextButton.html($.i18n._('core-buttons')["next"]);
+  
   this._elmts.nextButton.click(function(evt) {
     if ($.trim(self._elmts.textInput[0].value).length === 0) {
-      window.alert("You must paste some data to import.");
+      window.alert($.i18n._('core-index-import')["warning-clipboard"]);
     } else {
-      self._controller.startImportJob(self._elmts.form, "Uploading pasted data ...");
+      self._controller.startImportJob(self._elmts.form, $.i18n._('core-index-import')["uploading-pasted-data"]);
     }
   });
 };

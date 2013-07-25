@@ -44,7 +44,13 @@ ReconDialog.prototype._createDialog = function() {
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/recon-dialog.html"));
 
   this._elmts = DOM.bind(dialog);
-  this._elmts.dialogHeader.text('Reconcile column "' + this._column.name + '"');
+  this._elmts.dialogHeader.text($.i18n._('core-recon')["recon-col"]+' "' + this._column.name + '"');
+  
+  this._elmts.servicePanelMessage.html($.i18n._('core-recon')["pick-service"]);
+  this._elmts.addStandardServiceButton.html($.i18n._('core-buttons')["add-std-svc"]+"...");
+  this._elmts.addNamespacedServiceButton.html($.i18n._('core-buttons')["add-named-svc"]+"...");
+  this._elmts.reconcileButton.html($.i18n._('core-buttons')["start-recon"]);
+  this._elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
 
   this._elmts.addStandardServiceButton.click(function() { self._onAddStandardService(); });
   this._elmts.addNamespacedServiceButton.click(function() { self._onAddNamespacedService(); });
@@ -173,6 +179,11 @@ ReconDialog.prototype._onAddStandardService = function() {
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-standard-service-dialog.html"));
   var elmts = DOM.bind(dialog);
 
+  elmts.dialogHeader.html($.i18n._('core-recon')["add-std-srv"]);
+  elmts.or_recon_enterUrl.html($.i18n._('core-recon')["enter-url"]+":");
+  elmts.addButton.html($.i18n._('core-buttons')["add-service"]);
+  elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
+  
   var level = DialogSystem.showDialog(dialog);
   var dismiss = function() {
     DialogSystem.dismissUntil(level - 1);
@@ -196,6 +207,12 @@ ReconDialog.prototype._onAddNamespacedService = function() {
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-namespaced-service-dialog.html"));
   var elmts = DOM.bind(dialog);
 
+  elmts.dialogHeader.html($.i18n._('core-recon')["add-recon-srv"]);
+  elmts.or_recon_namespace.html($.i18n._('core-recon')["namespace"]+":");
+  elmts.or_recon_entType.html($.i18n._('core-recon')["ent-type"]+":");
+  elmts.addButton.html($.i18n._('core-buttons')["add-service"]);
+  elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
+  
   var level = DialogSystem.showDialog(dialog);
   var dismiss = function() {
     DialogSystem.dismissUntil(level - 1);

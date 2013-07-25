@@ -44,8 +44,8 @@ function PreferenceUI(tr, key, value) {
 
   var td2 = tr.insertCell(2);
 
-  $('<button class="button">').text("Edit").appendTo(td2).click(function() {
-    var newValue = window.prompt("Change value of preference key " + key, value);
+  $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
+    var newValue = window.prompt($.i18n._('core-index')["change-value"]+" " + key, value);
     if (newValue !== null) {
       $(td1).text(newValue);
       $.post(
@@ -64,8 +64,8 @@ function PreferenceUI(tr, key, value) {
     }
   });
 
-  $('<button class="button">').text("Delete").appendTo(td2).click(function() {
-    if (window.confirm("Delete preference key " + key + "?")) {
+  $('<button class="button">').text($.i18n._('core-index')["delete"]).appendTo(td2).click(function() {
+    if (window.confirm($.i18n._('core-index')["delete-key"]+" " + key + "?")) {
       $.post(
         "command/core/set-preference",
         {
@@ -94,12 +94,13 @@ function PreferenceUI(tr, key, value) {
 function populatePreferences(prefs) {
   var body = $("#body-info").empty();
 
-  $('<h1>').text("Preferences").appendTo(body);
+  $("#or-proj-starting").text($.i18n._('core-project')["starting"]+"...");
+  $('<h1>').text($.i18n._('core-index')["preferences"]).appendTo(body);
 
   var table = $('<table>')
   .addClass("list-table")
   .addClass("preferences")
-  .html('<tr><th>Key</th><th>Value</th><th></th></tr>')
+  .html('<tr><th>'+$.i18n._('core-index')["key"]+'</th><th>'+$.i18n._('core-index')["value"]+'</th><th></th></tr>')
   .appendTo(body)[0];
 
   for (var k in prefs) {
@@ -111,10 +112,10 @@ function populatePreferences(prefs) {
   var tdLast0 = trLast.insertCell(0);
   trLast.insertCell(1);
   trLast.insertCell(2);
-  $('<button class="button">').text("Add Preference").appendTo(tdLast0).click(function() {
-    var key = window.prompt("Preference key:");
+  $('<button class="button">').text().appendTo(tdLast0).click(function() {
+    var key = window.prompt($.i18n._('core-index')["add-pref"]);
     if (key) {
-      var value = window.prompt("Preference key value:");
+      var value = window.prompt($.i18n._('core-index')["pref-key"]);
       if (value !== null) {
         var tr = table.insertRow(table.rows.length - 1);
         preferenceUIs.push(new PreferenceUI(tr, key, value));

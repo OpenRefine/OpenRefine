@@ -33,6 +33,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var FreebaseExtension = { handlers: {} };
 
+
+// Internationalization init
+var lang = navigator.language.split("-")[0]
+		|| navigator.userLanguage.split("-")[0];
+var dictionary = "";
+$.ajax({
+	url : "/command/freebase/load-language?",
+	type : "POST",
+	async : false,
+	data : {
+		lng : lang
+	},
+	success : function(data) {
+		dictionary = data;
+	}
+});
+$.i18n.setDictionary(dictionary);
+// End internationalization
+
 FreebaseExtension.handlers.setFreebaseApiKey = function() {
   var value = window.prompt("Set Freebase API Key:");
   if (value !== null) {
@@ -79,7 +98,7 @@ FreebaseExtension.handlers.browseToDataLoad = function() {
     null,
     function(data) {
       if (data.value == null) {
-        alert("You have not tried to load the data in this project into Freebase yet.");
+        alert($.i18n._('fb-menu')["warning-load"]);
       } else {
         $(form).attr("action", "http://refinery.freebaseapps.com/load/" + data.value);
         form.submit();
@@ -101,33 +120,35 @@ FreebaseExtension.handlers.importQAData = function() {
 };
 
 ExtensionBar.addExtensionMenu({
+	
+	
   "id" : "freebase",
-  "label" : "Freebase",
+  "label" : $.i18n._('fb-menu')["freebase"],
   "submenu" : [
     {
       "id" : "freebase/set-api-key",
-      label: "Set Freebase API Key",
+      label: $.i18n._('fb-menu')["set-api-key"],
       click: FreebaseExtension.handlers.setFreebaseApiKey
     },
     {
       "id" : "freebase/schema-alignment",
-      label: "Align to Freebase's schemas...",
+      label: $.i18n._('fb-menu')["align-schema"],
       click: function() { FreebaseExtension.handlers.editSchemaAlignment(false); }
     },
     {
       "id" : "freebase/load-info-freebase",
-      label: "Load into Freebase...",
+      label: $.i18n._('fb-menu')["load"],
       click: function() { FreebaseExtension.handlers.loadIntoFreebase(); }
     },
     {},
     {
       "id" : "freebase/browse-load",
-      label: "Browse data load details...",
+      label: $.i18n._('fb-menu')["browse-data-load"],
       click: function() { FreebaseExtension.handlers.browseToDataLoad(); }
     },
     {
       "id" : "freebase/import-qa-data",
-      label: "Import QA data",
+      label: $.i18n._('fb-menu')["import-qa"],
       click: function() { FreebaseExtension.handlers.importQAData(); }
     }
   ]
@@ -163,7 +184,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     [ "core/edit-column", "core/add-column-by-fetching-urls" ],
     {
       id: "freebase/add-columns-from-freebase",
-      label: "Add columns from Freebase ...",
+      label: $.i18n._('fb-menu')["add-columns"],
       click: doAddColumnFromFreebase
     }
   );

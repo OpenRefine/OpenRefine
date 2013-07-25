@@ -8,20 +8,20 @@
           <td>On error</td>
           <td>
             <input type="radio" name="text-transform-dialog-onerror-choice" value="keep-original" checked id="$text-transform-error-keep-original" />
-              <label for="$text-transform-error-keep-original">keep original</label><br/>
+              <label for="$text-transform-error-keep-original" bind="or_views_keepOr"></label><br/>
             <input type="radio" name="text-transform-dialog-onerror-choice" value="set-to-blank" id="$text-transform-error-set-to-blank" />
-              <label for="$text-transform-error-set-to-blank">set to blank</label><br/>
+              <label for="$text-transform-error-set-to-blank" bind="or_views_setBlank"></label><br/>
             <input type="radio" name="text-transform-dialog-onerror-choice" value="store-error" id="$text-transform-error-store-error" />
-              <label for="$text-transform-error-store-error">store error</label></td>
+              <label for="$text-transform-error-store-error" bind="or_views_storeErr"></label></td>
           <td><input type="checkbox" bind="repeatCheckbox" id="$text-transform-repeat" />
-            <label for="$text-transform-repeat">Re-transform up to</label> <input bind="repeatCountInput" value="10" size="2" />
-            <label for="$text-transform-repeat">times until no change</label></td>
+            <label for="$text-transform-repeat" bind="or_views_reTrans"></label> <input bind="repeatCountInput" value="10" size="2" />
+            <label for="$text-transform-repeat" bind="or_views_timesChang"></label></td>
         </tr>
       </table>
     </div>
   </div>
   <div class="dialog-footer" bind="dialogFooter">
-    <button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
-    <button class="button" bind="cancelButton">Cancel</button>
+    <button class="button" bind="okButton"></button>
+    <button class="button" bind="cancelButton"></button>
   </div>
 </div>

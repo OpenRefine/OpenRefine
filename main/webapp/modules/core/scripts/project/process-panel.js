@@ -43,6 +43,8 @@ function ProcessPanel(div) {
   this._div.html(DOM.loadHTML("core", "scripts/project/progress-panel.html"));
   this._elmts = DOM.bind(this._div);
 
+  this._elmts.undoLink.html($.i18n._('core-project')["undo"]);
+  
   var self = this;
   $(window).keypress(function(evt) {
     if (evt.charCode == 26 || (evt.charCode == 122 && (evt.ctrlKey || evt.metaKey))) { // ctrl-z or meta-z
@@ -147,9 +149,9 @@ ProcessPanel.prototype._render = function(newData) {
     for (var i = 0; i < processes.length; i++) {
       var process = processes[i];
       if (process.status != "pending") {
-        Refine.setTitle(process.progress + "% complete");
+        Refine.setTitle(process.progress + "% "+elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
         this._elmts.progressDescription.text(process.description);
-        this._elmts.progressSpan.text(process.progress  + '% complete');
+        this._elmts.progressSpan.text(process.progress  + '% '+elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
       }
       if ("onDone" in process) {
         newProcessMap[process.id] = process;
@@ -158,16 +160,16 @@ ProcessPanel.prototype._render = function(newData) {
     
     if (processes.length > 1) {
       var pending = processes.length - 1;
-      this._elmts.countSpan.text('(' + pending + (pending > 1 ? ' other pending processes)' : ' other pending process)'));
+      this._elmts.countSpan.text('(' + pending + (pending > 1 ? ' '+$.i18n._('core-project')["other-processes"]+')' : ' '+$.i18n._('core-project')["other-process"]+')'));
     } else {
       this._elmts.countSpan.empty();
     }
     this._elmts.cancelLink
       .unbind()
-      .text(processes.length > 1 ? "Cancel All" : "Cancel")
+      .text(processes.length > 1 ? $.i18n._('core-project')["cancel-all"] : $.i18n._('core-project')["cancel"])
       .click(function() {
         self._cancelAll();
-        $(this).text("Canceling...").unbind();
+        $(this).text($.i18n._('core-project')["canceling"]).unbind();
       })
     
     this._div.fadeIn(200);
@@ -190,10 +192,10 @@ ProcessPanel.prototype._render = function(newData) {
     }).join('\n');
     
     if (this._data.processes.length == 0) {
-      window.alert('The last operation encountered some errors:\n' + messages);
+      window.alert($.i18n._('core-project')["last-op-er"]+':\n' + messages);
     } else {
-      if (window.confirm('The last operation encountered some errors:\n' + messages +
-            '\n\nContinue with the remaining operations?')) {
+      if (window.confirm($.i18n._('core-project')["last-op-er"]+':\n' + messages +
+            '\n\n'+$.i18n._('core-project')["continue-remaining"]+'?')) {
         $.post(
           "command/core/apply-operations?" + $.param({ project: theProject.id }), 
           { operations: '[]' },

@@ -59,6 +59,7 @@ function init() {
   RS.registerCommand(module, "import-qa-data",        new Packages.com.google.refine.freebase.commands.ImportQADataCommand());
   RS.registerCommand(module, "mqlread",               new Packages.com.google.refine.freebase.commands.MQLReadCommand());
   RS.registerCommand(module, "mqlwrite",              new Packages.com.google.refine.freebase.commands.MQLWriteCommand());
+  RS.registerCommand(module, "load-language",		  new Packages.com.google.refine.freebase.commands.LoadLanguageCommand());
 
   var OR = Packages.com.google.refine.operations.OperationRegistry;
 
