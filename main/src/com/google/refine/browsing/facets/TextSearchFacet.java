@@ -84,7 +84,7 @@ public class TextSearchFacet implements Facet {
     }
 
     @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws Exception {
+    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
         _name = o.getString("name");
         _columnName = o.getString("columnName");
         

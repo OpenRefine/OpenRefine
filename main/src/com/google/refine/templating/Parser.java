@@ -48,12 +48,18 @@ public class Parser {
         int start = 0, current = 0;
         while (current < s.length() - 1) {
             char c = s.charAt(current);
+            char c2 = s.charAt(current + 1);
             if (c == '\\') {
-                current += 2;
+                if (c2 == '\\' || c2 == '{' || c2 == '$') {
+                    fragments.add(new StaticFragment(s.substring(start, current).concat(Character.toString(c2))));
+                    start = current += 2;
+                } else {
+                    // Invalid escape - just leave it in the template
+                    current += 1; 
+                }
                 continue;
             }
 
-            char c2 = s.charAt(current + 1);
             if (c == '$' && c2 == '{') {
                 int closeBrace = s.indexOf('}', current + 2);
                 if (closeBrace > current + 1) {

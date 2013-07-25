@@ -206,7 +206,7 @@ public class ScatterplotFacet implements Facet {
     }
 
     @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws Exception {
+    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
         name = o.getString(NAME);
         l = size = (o.has(SIZE)) ? o.getInt(SIZE) : 100;
         dot = (o.has(DOT)) ? o.getInt(DOT) : 0.5d;

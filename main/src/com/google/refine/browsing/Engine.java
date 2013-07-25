@@ -172,7 +172,7 @@ public class Engine implements Jsonizable {
         throw new InternalError("This method should not be called when the engine is not in record mode.");
     }
 
-    public void initializeFromJSON(JSONObject o) throws Exception {
+    public void initializeFromJSON(JSONObject o) throws JSONException {
         if (o == null) {
             return;
         }

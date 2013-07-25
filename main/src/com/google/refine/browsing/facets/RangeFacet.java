@@ -159,7 +159,7 @@ public class RangeFacet implements Facet {
     }
 
     @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws Exception {
+    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
         _name = o.getString("name");
         _expression = o.getString("expression");
         _columnName = o.getString("columnName");

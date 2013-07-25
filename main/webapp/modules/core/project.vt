@@ -47,24 +47,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <div id="header">
       <a id="app-home-button" href="./"><img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" /></a>
       <div id="project-title">
-        <span id="project-name-button" class="app-path-section" title="Click to rename project"></span>
-        <a id="project-permalink-button" href="javascript:{}" class="secondary">Permalink</a>
+        <span id="project-name-button" class="app-path-section"></span>
+        <a id="project-permalink-button" href="javascript:{}" class="secondary"></a>
       </div>
       <div id="project-controls">
-        <a href="./" class="button" target="_blank">Open...</a>
-        <a class="button" bind="exportButton" id="export-button" href="#export"><span class="button-menu">Export</span></a>
-        <a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers" target="_blank" class="button">Help</a>
+        <a href="./" class="button" target="_blank"><span id="or-proj-open"></span></a>
+        <a class="button" bind="exportButton" id="export-button" href="#export"><span class="button-menu" id="or-proj-export"></span></a>
+        <a href="https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users" target="_blank" class="button"><span id="or-proj-help"></span></a>
       </div>
     </div>
     
-    <div id="loading-message"><img src="images/large-spinner.gif" /> Starting up...</div>
+    <div id="loading-message"><img src="images/large-spinner.gif" /> <span id="or-proj-starting"></span></div>
       
     <div id="body">
       <div bind="leftPanelDiv" id="left-panel">
         <div bind="leftPanelTabs" class="refine-tabs">
           <ul>
-            <li><a href="#refine-tabs-facets">Facet / Filter</a></li>
-            <li><a href="#refine-tabs-history" bind="historyTabHeader">Undo / Redo</a></li>
+            <li><a href="#refine-tabs-facets" id="or-proj-facFil"></a></li>
+            <li><a href="#refine-tabs-history" bind="historyTabHeader" id="or-proj-undoRedo"></a></li>
           </ul>
           <div id="refine-tabs-facets" bind="facetPanelDiv" id="facet-panel"></div>
           <div id="refine-tabs-history" bind="historyPanelDiv" id="history-panel"></div>
@@ -76,7 +76,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <!-- row/record counts -->
           </div>
           <div bind="extensionBarDiv" id="extension-bar">
-            Extensions: <span bind="menuContainer" id="extension-bar-menu-container"></span>
+            <span id="or-proj-ext"></span> <span bind="menuContainer" id="extension-bar-menu-container"></span>
           </div>
         </div>
         <div bind="viewPanelDiv" id="view-panel"></div>

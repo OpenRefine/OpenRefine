@@ -82,6 +82,51 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
     this._elmts.uploadTabBody.remove();
   }
   
+  this._elmts.dialogHeader.html($.i18n._('core-dialogs')["custom-tab-exp"]);
+  this._elmts.or_dialog_content.html($.i18n._('core-dialogs')["content"]);
+  this._elmts.or_dialog_download.html($.i18n._('core-dialogs')["download"]);
+  this._elmts.or_dialog_upload.html($.i18n._('core-dialogs')["upload"]);
+  this._elmts.or_dialog_optCode.html($.i18n._('core-dialogs')["opt-code"]);
+  this._elmts.or_dialog_selAndOrd.html($.i18n._('core-dialogs')["sel-and-ord"]);
+  this._elmts.or_dialog_optFor.html($.i18n._('core-dialogs')["opt-for"]+" ");
+  this._elmts.or_dialog_forReconCell.html($.i18n._('core-dialogs')["for-recon-cell"]);
+  this._elmts.or_dialog_matchedName.html($.i18n._('core-dialogs')["match-ent-name"]);
+  this._elmts.or_dialog_cellCont.html($.i18n._('core-dialogs')["cell-content"]);
+  this._elmts.or_dialog_matchedId.html($.i18n._('core-dialogs')["match-ent-id"]);
+  this._elmts.or_dialog_linkMatch.html($.i18n._('core-dialogs')["link-match"]);
+  this._elmts.or_dialog_outNotUnMatch.html($.i18n._('core-dialogs')["out-not-unmatch"]);
+  this._elmts.or_dialog_dateIso.html($.i18n._('core-dialogs')["date-iso"]);
+  this._elmts.or_dialog_shortFormat.html($.i18n._('core-dialogs')["short-format"]);
+  this._elmts.or_dialog_mediumFormat.html($.i18n._('core-dialogs')["medium-format"]);
+  this._elmts.or_dialog_longFormat.html($.i18n._('core-dialogs')["long-format"]);
+  this._elmts.or_dialog_fullFormat.html($.i18n._('core-dialogs')["full-format"]);
+  this._elmts.or_dialog_custom.html($.i18n._('core-dialogs')["custom"]);
+  this._elmts.or_dialog_help.html($.i18n._('core-dialogs')["help"]);
+  this._elmts.or_dialog_localTime.html($.i18n._('core-dialogs')["local-time"]);
+  this._elmts.or_dialog_omitTime.html($.i18n._('core-dialogs')["omit-time"]);
+  this._elmts.selectAllButton.html($.i18n._('core-buttons')["select-all"]);
+  this._elmts.deselectAllButton.html($.i18n._('core-buttons')["deselect-all"]);
+  this._elmts.or_dialog_outColHeader.html($.i18n._('core-dialogs')["out-col-header"]);
+  this._elmts.or_dialog_outEmptyRow.html($.i18n._('core-dialogs')["out-empty-row"]);
+  this._elmts.or_dialog_ignoreFacets.html($.i18n._('core-dialogs')["ignore-facets"]);
+  this._elmts.or_dialog_lineFormat.html($.i18n._('core-dialogs')["line-based"]);
+  this._elmts.or_dialog_otherFormat.html($.i18n._('core-dialogs')["other-format"]);
+  this._elmts.or_dialog_tsv.html($.i18n._('core-dialogs')["tsv"]);
+  this._elmts.or_dialog_csv.html($.i18n._('core-dialogs')["csv"]);
+  this._elmts.or_dialog_customSep.html($.i18n._('core-dialogs')["custom-separator"]);
+  this._elmts.or_dialog_excel.html($.i18n._('core-dialogs')["excel"]);
+  this._elmts.or_dialog_excelXml.html($.i18n._('core-dialogs')["excel-xml"]);
+  this._elmts.or_dialog_htmlTable.html($.i18n._('core-dialogs')["html-table"]);
+  this._elmts.or_dialog_lineSep.html($.i18n._('core-dialogs')["line-sep"]);
+  this._elmts.or_dialog_charEnc.html($.i18n._('core-dialogs')["char-enc"]);
+  this._elmts.downloadPreviewButton.html($.i18n._('core-buttons')["preview"]);
+  this._elmts.downloadButton.html($.i18n._('core-buttons')["download"]);
+  this._elmts.or_dialog_uploadTo.html($.i18n._('core-dialogs')["upload-to"]);
+  this._elmts.uploadButton.html($.i18n._('core-buttons')["upload"]);
+  this._elmts.or_dialog_jsonText.html($.i18n._('core-dialogs')["json-text"]);
+  this._elmts.applyOptionCodeButton.html($.i18n._('core-buttons')["apply"]);
+  this._elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
+ 
   $("#custom-tabular-exporter-tabs-content").css("display", "");
   $("#custom-tabular-exporter-tabs-download").css("display", "");
   $("#custom-tabular-exporter-tabs-upload").css("display", "");
@@ -213,7 +258,7 @@ CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(opti
   
   if (options.columns !== null) {
     var self = this;
-    this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').attr('checked', '');
+    this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').attr('checked', false);
     $.each(options.columns, function() {
       var name = this.name;
       self._columnOptionMap[name] = this;
@@ -326,9 +371,9 @@ CustomTabularExporterDialog.prototype._applyOptionCode = function() {
     var json = JSON.parse(s);
     this._configureUIFromOptionCode(json);
     
-    alert('Option code successfully applied.');
+    alert($.i18n._('core-dialogs')["opt-code-applied"]);
   } catch (e) {
-    alert('Error applying option code: ' + e);
+    alert($.i18n._('core-dialogs')["error-apply-code"]+': ' + e);
   }
 };
 

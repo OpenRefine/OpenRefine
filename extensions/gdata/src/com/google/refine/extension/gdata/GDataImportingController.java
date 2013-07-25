@@ -302,9 +302,6 @@ public class GDataImportingController implements ImportingController {
         
         job.updating = true;
         try {
-            // This is for setting progress during the parsing process.
-            job.config = new JSONObject();
-            
             JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
                 request.getParameter("options"));
             
@@ -373,7 +370,7 @@ public class GDataImportingController implements ImportingController {
             
             final List<Exception> exceptions = new LinkedList<Exception>();
             
-            JSONUtilities.safePut(job.config, "state", "creating-project");
+            job.setState("creating-project");
             
             final Project project = new Project();
             new Thread() {
@@ -395,16 +392,14 @@ public class GDataImportingController implements ImportingController {
                     
                     if (!job.canceled) {
                         if (exceptions.size() > 0) {
-                            JSONUtilities.safePut(job.config, "errors",
-                                DefaultImportingController.convertErrorsToJsonArray(exceptions));
-                            JSONUtilities.safePut(job.config, "state", "error");
+                            job.setError(exceptions);
                         } else {
                             project.update(); // update all internal models, indexes, caches, etc.
                             
                             ProjectManager.singleton.registerProject(project, pm);
                             
-                            JSONUtilities.safePut(job.config, "state", "created-project");
-                            JSONUtilities.safePut(job.config, "projectID", project.id);
+                            job.setState("created-project");
+                            job.setProjectID(project.id);
                         }
                         
                         job.touch();

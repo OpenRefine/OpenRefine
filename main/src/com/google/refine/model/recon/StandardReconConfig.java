@@ -40,6 +40,8 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -250,6 +252,10 @@ public class StandardReconConfig extends ReconConfig {
                                 jsonWriter.key("id"); jsonWriter.value(cell2.recon.match.id);
                                 jsonWriter.key("name"); jsonWriter.value(cell2.recon.match.name);
                                 jsonWriter.endObject();
+                            } else if (cell2.value instanceof Calendar) {
+                                jsonWriter.value(ParsingUtilities.dateToString(((Calendar) cell2.value).getTime()));
+                            } else if (cell2.value instanceof Date) {
+                                jsonWriter.value(ParsingUtilities.dateToString((Date) cell2.value));
                             } else {
                                 jsonWriter.value(cell2.value.toString());
                             }

@@ -41,13 +41,17 @@ import org.apache.commons.lang.StringUtils;
 
 public class FingerprintKeyer extends Keyer {
 
-    static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}");
+    // Punctuation and control characters (except for TAB which we need for split to work)
+    static final Pattern punctctrl = Pattern.compile("\\p{Punct}|[\\x00-\\x08\\x0A-\\x1F\\x7F]");
     
     @Override
     public String key(String s, Object... o) {
+        if (s == null || o !=null && o.length > 0) {
+            throw new IllegalArgumentException("Fingerprint keyer accepts a single string parameter");
+        }
         s = s.trim(); // first off, remove whitespace around the string
         s = s.toLowerCase(); // then lowercase it
-        s = alphanum.matcher(s).replaceAll(""); // then remove all punctuation and control chars
+        s = punctctrl.matcher(s).replaceAll(""); // then remove all punctuation and control chars
         String[] frags = StringUtils.split(s); // split by whitespace
         TreeSet<String> set = new TreeSet<String>();
         for (String ss : frags) {
@@ -57,7 +61,9 @@ public class FingerprintKeyer extends Keyer {
         Iterator<String> i = set.iterator();
         while (i.hasNext()) {  // join ordered fragments back together
             b.append(i.next());
-            b.append(' ');
+            if (i.hasNext()) {
+                b.append(' ');
+            }
         }
         return asciify(b.toString()); // find ASCII equivalent to characters 
     }

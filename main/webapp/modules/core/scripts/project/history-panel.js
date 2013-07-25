@@ -69,11 +69,19 @@ HistoryPanel.prototype.update = function(onDone) {
 HistoryPanel.prototype._render = function() {
   var self = this;
 
-  this._tabHeader.html('Undo / Redo <span class="count">' + this._data.past.length + '</span>');
+  this._tabHeader.html($.i18n._('core-project')["undo-redo"]+' <span class="count">' + this._data.past.length + '</span>');
 
   this._div.empty().unbind().html(DOM.loadHTML("core", "scripts/project/history-panel.html"));
 
   var elmts = DOM.bind(this._div);
+  
+  elmts.or_proj_undo.html($.i18n._('core-project')["undo-history"]);
+  elmts.or_proj_mistakes.html($.i18n._('core-project')["mistakes"]);
+  elmts.or_proj_learnMore.html($.i18n._('core-project')["learn-more"]);
+  elmts.applyLink.html($.i18n._('core-project')["apply"]);
+  elmts.extractLink.html($.i18n._('core-project')["extract"]);
+  elmts.or_proj_mistakes.html($.i18n._('core-project')["mistakes"]);
+  elmts.or_proj_filter.html($.i18n._('core-project')["filter"]);
 
   var renderEntry = function(container, index, entry, lastDoneID, past) {
     var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);
@@ -131,7 +139,7 @@ HistoryPanel.prototype._render = function() {
 
     elmts.helpDiv.hide();
 
-    elmts.filterInput.keyup(function() {
+    elmts.filterInput.bind("keyup change input",function() {
       var filter = $.trim(this.value.toLowerCase());
       if (filter.length === 0) {
         elmts.bodyDiv.find(".history-entry").removeClass("filtered-out");
@@ -186,6 +194,12 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
   var self = this;
   var frame = $(DOM.loadHTML("core", "scripts/project/history-extract-dialog.html"));
   var elmts = DOM.bind(frame);
+
+  elmts.dialogHeader.html($.i18n._('core-project')["extract-history"]);
+  elmts.or_proj_extractSave.html($.i18n._('core-project')["extract-save"]);
+  elmts.selectAllButton.html($.i18n._('core-buttons')["select-all"]);
+  elmts.unselectAllButton.html($.i18n._('core-buttons')["unselect-all"]);
+  elmts.closeButton.html($.i18n._('core-buttons')["close"]);
 
   var entryTable = elmts.entryTable[0];
   var createEntry = function(entry) {
@@ -250,6 +264,12 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
   var self = this;
   var frame = $(DOM.loadHTML("core", "scripts/project/history-apply-dialog.html"));
   var elmts = DOM.bind(frame);
+  
+  elmts.dialogHeader.html($.i18n._('core-project')["apply-operation"]);
+  elmts.or_proj_pasteJson.html($.i18n._('core-project')["paste-json"]);
+  
+  elmts.applyButton.html($.i18n._('core-buttons')["perform-op"]);
+  elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
 
   var fixJson = function(json) {
     json = json.trim();
@@ -271,7 +291,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
       json = fixJson(json);
       json = JSON.parse(json);
     } catch (e) {
-      alert("The JSON you pasted is invalid.");
+      alert($.i18n._('core-project')["json-invalid"]+".");
       return;
     }
 

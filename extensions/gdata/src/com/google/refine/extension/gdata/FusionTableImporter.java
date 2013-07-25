@@ -77,13 +77,7 @@ public class FusionTableImporter {
     }
     
     static void setProgress(ImportingJob job, String fileSource, int percent) {
-        JSONObject progress = JSONUtilities.getObject(job.config, "progress");
-        if (progress == null) {
-            progress = new JSONObject();
-            JSONUtilities.safePut(job.config, "progress", progress);
-        }
-        JSONUtilities.safePut(progress, "message", "Reading " + fileSource);
-        JSONUtilities.safePut(progress, "percent", percent);
+        job.setProgress(percent, "Reading " + fileSource);
     }
     
     
@@ -148,7 +142,7 @@ public class FusionTableImporter {
                     rowsOfCells = getRowsOfCells(newBatchRowStart);
                     batchRowStart = newBatchRowStart;
 
-                    GDataImporter.setProgress(job, fileSource, -1 /* batchRowStart * 100 / totalRows */);
+                    setProgress(job, fileSource, -1 /* batchRowStart * 100 / totalRows */);
                 }
                 
                 if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {

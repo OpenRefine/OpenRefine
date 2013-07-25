@@ -101,7 +101,7 @@ SchemaAlignment._batchSearch = function(queries, onDone) {
 
     // TODO: New API doesn't accept multiple queries
 //    args.push("https://www.googleapis.com/freebase/v1/search?key=" + Freebase.API_KEY + "&" + 
-    args.push("http://api.freebase.com/api/service/search?" + 
+    args.push("http://api.freebase.com/api/service/search?" + // FIXME:
         $.param({ "queries" : JSON.stringify(batch) }) + "&callback=?");
 
     args.push(null); // no data
@@ -234,6 +234,17 @@ SchemaAlignmentDialog.prototype._createDialog = function() {
     DialogSystem.dismissUntil(self._level - 1);
   };
 
+  elmts.dialogHeader.text($.i18n._('fb-interface')["dialog-header"]);
+  elmts.body_text.text($.i18n._('fb-interface')["body-text"]);
+  elmts.find_more.text($.i18n._('fb-interface')["find-more"]);
+  elmts.skeleton.text($.i18n._('fb-interface')["skeleton"]);
+  elmts.skeleton.text($.i18n._('fb-interface')["mql-preview"]);
+  elmts.skeleton.text($.i18n._('fb-interface')["tripleloader-preview"]);
+  elmts.saveButton.text($.i18n._('fb-buttons')["save"]);
+  elmts.saveAndLoadButton.text($.i18n._('fb-buttons')["save-load"]);
+  elmts.closeButton.text($.i18n._('fb-buttons')["close"]);
+  elmts.resetButton.text($.i18n._('fb-buttons')["reset"]);
+  
   elmts.saveButton.click(function() {
     self._save();
   });
@@ -247,7 +258,7 @@ SchemaAlignmentDialog.prototype._createDialog = function() {
     self._reset(null);
   });
   elmts.closeButton.click(function() {
-    if (!self._hasUnsavedChanges || window.confirm("There are unsaved changes. Close anyway?")) {
+    if (!self._hasUnsavedChanges || window.confirm($.i18n._('fb-schema-alignment')["close-confirm"])) {
       dismiss();
     }
   });
@@ -281,7 +292,7 @@ SchemaAlignmentDialog.prototype.preview = function(initial) {
 
   this._previewPanes.empty();
   if (!(initial)) {
-    this._elmts.statusIndicator.show().text("There are unsaved changes.");
+    this._elmts.statusIndicator.show().text($.i18n._('fb-schema-alignment')["status-warning"]);
     this._hasUnsavedChanges = true;
   }
 

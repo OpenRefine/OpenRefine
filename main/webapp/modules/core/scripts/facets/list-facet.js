@@ -148,23 +148,23 @@ ListFacet.prototype._initializeUI = function() {
   this._div.empty().show().html(
       '<div class="facet-title">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-          '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+          '<td width="1%"><a href="javascript:{}" title="'+$.i18n._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
           '<td>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">invert</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n._('core-facets')["reset"]+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n._('core-facets')["invert"]+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n._('core-facets')["change"]+'</a>' +
             '<span bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
-      '<div class="facet-expression" bind="expressionDiv" title="Click to edit expression"></div>' +
+      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n._('core-facets')["click-to-edit"]+'"></div>' +
       '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
         '<a bind="choiceCountContainer" class="action" href="javascript:{}"></a> ' +
-        '<span class="facet-controls-sortControls" bind="sortGroup">Sort by: ' +
-          '<a href="javascript:{}" bind="sortByNameLink">name</a>' +
-          '<a href="javascript:{}" bind="sortByCountLink">count</a>' +
+        '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n._('core-facets')["sort-by"]+': ' +
+          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n._('core-facets')["name"]+'</a>' +
+          '<a href="javascript:{}" bind="sortByCountLink">'+$.i18n._('core-facets')["count"]+'</a>' +
         '</span>' +
-        '<button bind="clusterLink" class="facet-controls-button button">Cluster</button>' +
+        '<button bind="clusterLink" class="facet-controls-button button">'+$.i18n._('core-facets')["cluster"]+'</button>' +
       '</div>' +
       '<div class="facet-body" bind="bodyDiv">' +
         '<div class="facet-body-inner" bind="bodyInnerDiv"></div>' +
@@ -173,7 +173,7 @@ ListFacet.prototype._initializeUI = function() {
   this._elmts = DOM.bind(this._div);
 
   this._elmts.titleSpan.text(this._config.name);
-  this._elmts.changeButton.attr("title","Current Expression: " + this._config.expression).click(function() {
+  this._elmts.changeButton.attr("title",$.i18n._('core-facets')["current-exp"]+": " + this._config.expression).click(function() {
     self._elmts.expressionDiv.slideToggle(100, function() {
       if (self._elmts.expressionDiv.css("display") != "none") {
         self._editExpression();
@@ -223,14 +223,14 @@ ListFacet.prototype._copyChoices = function() {
   var frame = DialogSystem.createDialog();
   frame.width("600px");
 
-  var header = $('<div></div>').addClass("dialog-header").text("Facet Choices as Tab Separated Values").appendTo(frame);
+  var header = $('<div></div>').addClass("dialog-header").text($.i18n._('core-facets')["facet-choices"]).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
   body.html('<textarea wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
   var elmts = DOM.bind(body);
 
-  $('<button class="button"></button>').text("Close").click(function() {
+  $('<button class="button"></button>').text($.i18n._('core-button')["close"]).click(function() {
     DialogSystem.dismissUntil(level - 1);
   }).appendTo(footer);
 
@@ -270,7 +270,7 @@ ListFacet.prototype._update = function(resetScroll) {
     //this._elmts.statusDiv.hide();
     this._elmts.controlsDiv.hide();
     this._elmts.bodyInnerDiv.empty().append(
-        $('<div>').text("Loading...").addClass("facet-body-message"));
+        $('<div>').text($.i18n._('core-facets')["loading"]).addClass("facet-body-message"));
 
     return;
   } else if ("error" in this._data) {
@@ -281,12 +281,12 @@ ListFacet.prototype._update = function(resetScroll) {
       this._elmts.bodyInnerDiv.empty();
       
       var messageDiv = $('<div>')
-        .text(this._data.choiceCount + " choices total, too many to display")
+        .text(this._data.choiceCount + " "+$.i18n._('core-facets')["too-many-choices"])
         .addClass("facet-body-message")
         .appendTo(this._elmts.bodyInnerDiv);
       $('<br>').appendTo(messageDiv);
       $('<a>')
-      .text("Set choice count limit")
+      .text($.i18n._('core-facets')["set-choice-count"])
       .attr("href", "javascript:{}")
       .addClass("action")
       .addClass("secondary")
@@ -362,7 +362,7 @@ ListFacet.prototype._update = function(resetScroll) {
 
     // edit link
     if (renderEdit) {
-      html.push('<a href="javascript:{}" class="facet-choice-link facet-choice-edit" style="visibility: hidden">edit</a>');
+      html.push('<a href="javascript:{}" class="facet-choice-link facet-choice-edit" style="visibility: hidden">'+$.i18n._('core-facets')["edit"]+'</a>');
     }
 
     html.push('<a href="javascript:{}" class="facet-choice-label">' + encodeHtml(label) + '</a>');
@@ -463,7 +463,7 @@ ListFacet.prototype._renderBodyControls = function() {
   .appendTo(this._elmts.bodyInnerDiv);
 
   $('<a>')
-  .text("Facet by choice counts")
+  .text($.i18n._('core-facets')["facet-by-count"])
   .attr("href", "javascript:{}")
   .addClass("action")
   .addClass("secondary")
@@ -505,12 +505,12 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
       '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
       '<div id="data-table-cell-editor-actions">' +
         '<div class="data-table-cell-editor-action">' +
-          '<button class="button" bind="okButton">Apply</button>' +
-          '<div class="data-table-cell-editor-key">Enter</div>' +
+          '<button class="button" bind="okButton">'+$.i18n._('core-buttons')["apply"]+'</button>' +
+          '<div class="data-table-cell-editor-key">'+$.i18n._('core-buttons')["enter"]+'</div>' +
         '</div>' +
         '<div class="data-table-cell-editor-action">' +
-          '<button class="button" bind="cancelButton">Cancel</button>' +
-          '<div class="data-table-cell-editor-key">Esc</div>' +
+          '<button class="button" bind="cancelButton">'+$.i18n._('core-buttons')["cancel"]+'</button>' +
+          '<div class="data-table-cell-editor-key">'+$.i18n._('core-buttons')["esc"]+'</div>' +
         '</div>' +
       '</div>'
   );
@@ -663,8 +663,8 @@ ListFacet.prototype._updateRest = function() {
 ListFacet.prototype._editExpression = function() {
   var self = this;
   var title = (this._config.columnName) ? 
-      ("Edit Facet's Expression based on Column " + this._config.columnName) : 
-        "Edit Facet's Expression";
+      ($.i18n._('core-facets')["edit-based-col"]+" " + this._config.columnName) : 
+    	  $.i18n._('core-facets')["edit-facet-exp"];
 
   var column = Refine.columnNameToColumn(this._config.columnName);
   var o = DataTableView.sampleVisibleRows(column);
@@ -680,7 +680,7 @@ ListFacet.prototype._editExpression = function() {
         self._config.expression = expr;
 
         self._elmts.expressionDiv.text(self._config.expression);
-        self._elmts.changeButton.attr("title", "Current Expression: " + self._config.expression);
+        self._elmts.changeButton.attr("title", $.i18n._('core-facets')["current-exp"]+": " + self._config.expression);
         if (self._config.expression == "value" || self._config.expression == "grel:value") {
           self._elmts.clusterLink.show();
         } else {
@@ -697,7 +697,7 @@ ListFacet.prototype._editExpression = function() {
 
 ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
   var limit = Math.ceil(choiceCount / 1000) * 1000;
-  var s = window.prompt('Set the maximum number of choices shown in each text facet (too many will slow down the application)', limit);
+  var s = window.prompt($.i18n._('core-facets')["set-max-choices"], limit);
   if (s) {
     var n = parseInt(s,10);
 

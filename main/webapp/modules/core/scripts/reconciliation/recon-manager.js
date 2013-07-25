@@ -75,7 +75,7 @@ ReconciliationManager.registerService = function(service) {
 };
 
 ReconciliationManager.registerStandardService = function(url, f) {
-  var dismissBusy = DialogSystem.showBusy("Contacting reconciliation service...");
+  var dismissBusy = DialogSystem.showBusy($.i18n._('core-recon')["contact-service"]+"...");
 
   $.ajax(
     url,
@@ -103,7 +103,7 @@ ReconciliationManager.registerStandardService = function(url, f) {
   })
   .error(function(jqXHR, textStatus, errorThrown) {
     dismissBusy(); 
-    alert('Error contacting recon service: ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+    alert($.i18n._('core-recon')["error-contact"]+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
   });
 };
 
@@ -141,7 +141,7 @@ ReconciliationManager.save = function(f) {
 
 (function() {
   ReconciliationManager.customServices.push({
-    "name" : "Freebase Query-based Reconciliation",
+    "name" : $.i18n._('core-recon')["fb-recon"],
     "ui" : { "handler" : "ReconFreebaseQueryPanel" }
   });
 

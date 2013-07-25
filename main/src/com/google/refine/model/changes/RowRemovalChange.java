@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -69,6 +70,9 @@ public class RowRemovalChange implements Change {
                 
                 offset--;
             }
+            
+            project.columnModel.clearPrecomputes();
+            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(project.id);
             
             project.update();
         }

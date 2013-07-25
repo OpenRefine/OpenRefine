@@ -51,6 +51,7 @@ function init() {
   RS.registerCommand(module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
   RS.registerCommand(module, "upload", Packages.com.google.refine.extension.gdata.UploadCommand());
   // TODO: Need a new OAUTH2 authorize command for FusionTables
+  RS.registerCommand(module, "load-language", Packages.com.google.refine.extension.gdata.commands.LoadLanguageCommand());
 
   // Register importer and exporter
   var IM = Packages.com.google.refine.importing.ImportingManager;

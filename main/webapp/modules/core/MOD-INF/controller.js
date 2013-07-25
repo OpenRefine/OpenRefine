@@ -98,6 +98,9 @@ function registerCommands() {
   RS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.refine.commands.cell.TransposeRowsIntoColumnsCommand());
   RS.registerCommand(module, "key-value-columnize", new Packages.com.google.refine.commands.cell.KeyValueColumnizeCommand());
 
+  RS.registerCommand(module, "load-language", Packages.com.google.refine.commands.lang.LoadLanguageCommand());
+  RS.registerCommand(module, "set-language", Packages.com.google.refine.commands.lang.SetLanguageCommand());
+  
   RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
   RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
   RS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
@@ -309,6 +312,7 @@ function init() {
       "externals/jquery.eventstack-0.3.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/date.js",
+      "externals/jquery.i18n.js",
       
       "externals/CFInstall.min.js",
       "scripts/chrome-frame.js",
@@ -328,6 +332,7 @@ function init() {
       "scripts/index/create-project-ui.js",
       "scripts/index/open-project-ui.js",
       "scripts/index/import-project-ui.js",
+      "scripts/index/lang-settings-ui.js",
 
       "scripts/index/default-importing-controller/controller.js",
       "scripts/index/default-importing-controller/file-selection-panel.js",
@@ -380,10 +385,11 @@ function init() {
       "externals/jquery-1.7.2.min.js",
       "externals/jquery.cookie.js",
       "externals/jquery.eventstack-0.3.js",
-      "externals/suggest/suggest-4_1.min.js",
+      "externals/suggest/suggest-4_2.min.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
+      "externals/jquery.i18n.js",
 
       "externals/CFInstall.min.js",
       "scripts/chrome-frame.js",
@@ -445,7 +451,7 @@ function init() {
     "project/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_1.min.css",
+      "externals/suggest/css/suggest-4_2.min.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
@@ -485,18 +491,19 @@ function init() {
     [
       "externals/jquery-1.7.2.min.js",
       "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_1.min.js",
+      "externals/suggest/suggest-4_2.min.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
-      "scripts/preferences.js"
+      "scripts/preferences.js",
+      "externals/jquery.i18n.js",
     ]
   );
   ClientSideResourceManager.addPaths(
     "preferences/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_1.min.css",
+      "externals/suggest/css/suggest-4_2.min.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",

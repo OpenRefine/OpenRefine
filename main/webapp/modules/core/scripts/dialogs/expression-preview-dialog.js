@@ -45,12 +45,12 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
     
     this._elmts = DOM.bind(html);
     
-    $('<button class="button"></button>').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    $('<button class="button"></button>').html($.i18n._('core-buttons')["ok"]).click(function() {
         DialogSystem.dismissUntil(self._level - 1);
         self._onDone(self._previewWidget.getExpression(true));
     }).appendTo(footer);
     
-    $('<button class="button"></button>').text("Cancel").click(function() {
+    $('<button class="button"></button>').text($.i18n._('core-buttons')["cancel"]).click(function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
     
@@ -131,13 +131,20 @@ ExpressionPreviewDialog.Widget = function(
     var self = this;
     this._elmts.expressionPreviewTextarea
         .attr("value", this.expression)
-        .keyup(function(){
+        .bind("keyup change input",function(){
             self._scheduleUpdate();
         })
         .select()
         .focus();
         
     this._tabContentWidth = this._elmts.expressionPreviewPreviewContainer.width() + "px";
+    
+    this._elmts.or_dialog_expr.html($.i18n._('core-dialogs')["expression"]);
+    this._elmts.or_dialog_lang.html($.i18n._('core-dialogs')["language"]);
+    this._elmts.or_dialog_preview.html($.i18n._('core-dialogs')["preview"]);
+    this._elmts.or_dialog_history.html($.i18n._('core-dialogs')["history"]);
+    this._elmts.or_dialog_starred.html($.i18n._('core-dialogs')["starred"]);
+    this._elmts.or_dialog_help.html($.i18n._('core-dialogs')["help"]);
     
     this.update();
     this._renderExpressionHistoryTab();
@@ -188,21 +195,19 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
     var varTable = $('<table cellspacing="5"></table>').appendTo(elmt)[0];
     var vars = [
         {   name: "cell",
-            description: "The current cell. It has a few fields: 'value' and 'recon'."
+            description: $.i18n._('core-dialogs')["cell-fields"]
         },
         {   name: "value",
-            description: "The current cell's value. This is a shortcut for 'cell.value'."
+            description: $.i18n._('core-dialogs')["cell-value"]
         },
         {   name: "row",
-            description: "The current row. It has 5 fields: 'flagged', 'starred', 'index', 'cells', and 'record'."
+            description: $.i18n._('core-dialogs')["row-fields"]
         },
         {   name: "cells",
-            description: "The cells of the current row. This is a shortcut for 'row.cells'. " +
-                "A particular cell can be retrieved with 'cells.<column name>' if the <column name> is a single word, " +
-                "or with 'cells[\"<column name>\"] otherwise."
+            description: $.i18n._('core-dialogs')["cells-of-row"]
         },
         {   name: "rowIndex",
-            description: "The current row's index. This is a shortcut for 'row.index'."
+            description: $.i18n._('core-dialogs')["row-index"]
         }
     ];
     for (var i = 0; i < vars.length; i++) {
@@ -221,7 +226,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
         $(tr0.insertCell(1)).addClass("expression-preview-doc-item-params").text("(" + entry.params + ")");
         
         $(tr1.insertCell(0));
-        $(tr1.insertCell(1)).addClass("expression-preview-doc-item-returns").text("returns: " + entry.returns);
+        $(tr1.insertCell(1)).addClass("expression-preview-doc-item-returns").text($.i18n._('core-dialogs')["returns"]+": " + entry.returns);
         
         $(tr2.insertCell(0));
         $(tr2.insertCell(1)).addClass("expression-preview-doc-item-desc").text(entry.description);
@@ -268,7 +273,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
     
     var table = $(
         '<table>' +
-            '<tr><th></th><th></th><th>From</th><th colspan="2">Expression</th><th></th></tr>' +
+            '<tr><th></th><th></th><th>'+$.i18n._('core-dialogs')["from"]+'</th><th colspan="2">'+$.i18n._('core-dialogs')["expression"]+'</th><th></th></tr>' +
         '</table>'
     ).appendTo($('<div>').addClass("expression-preview-table-wrapper").appendTo(elmt))[0];
     
@@ -291,7 +296,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
                     );
                 });
         
-        $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(1)).click(function() {
+        $('<a href="javascript:{}">'+$.i18n._('core-dialogs')["reuse"]+'</a>').appendTo(tr.insertCell(1)).click(function() {
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
             
@@ -334,7 +339,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
     
     var table = $(
         '<table>' +
-            '<tr><th></th><th></th><th colspan="2">Expression</th><th></th></tr>' +
+            '<tr><th></th><th></th><th colspan="2">'+$.i18n._('core-dialogs')["expression"]+'</th><th></th></tr>' +
         '</table>'
     ).appendTo($('<div>').addClass("expression-preview-table-wrapper").appendTo(elmt))[0];
     
@@ -342,7 +347,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
         var tr = table.insertRow(table.rows.length);
         var o = Scripting.parse(entry.code);
         
-        $('<a href="javascript:{}">Remove</a>').appendTo(tr.insertCell(0)).click(function() {
+        $('<a href="javascript:{}">'+$.i18n._('core-dialogs')["remove"]+'</a>').appendTo(tr.insertCell(0)).click(function() {
             $.post(
                 "command/core/toggle-starred-expression",
                 { expression: entry.code, returnList: true },
@@ -427,7 +432,7 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
     var renderValue = function(td, v) {
         if (v !== null && v !== undefined) {
             if ($.isPlainObject(v)) {
-                $('<span></span>').addClass("expression-preview-special-value").text("Error: " + v.message).appendTo(td);
+                $('<span></span>').addClass("expression-preview-special-value").text($.i18n._('core-dialogs')["error"]+": " + v.message).appendTo(td);
             } else {
                 td.text(v);
             }
@@ -437,9 +442,9 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
     };
     
     if (this._results !== null) {
-        this._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text("No syntax error.");
+        this._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n._('core-dialogs')["no-syntax-err"]+".");
     } else {
-        var message = (data.type == "parser") ? data.message : "Internal error";
+        var message = (data.type == "parser") ? data.message : $.i18n._('core-dialogs')["internal-err"];
         this._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
     }
     

@@ -41,7 +41,16 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     var self = this;
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/templating-exporter-dialog.html"));
     this._elmts = DOM.bind(dialog);
-    this._elmts.controls.find("textarea").keyup(function() { self._scheduleUpdate(); });
+    this._elmts.controls.find("textarea").bind("keyup change input",function() { self._scheduleUpdate(); });
+    
+    this._elmts.dialogHeader.html($.i18n._('core-dialogs')["template-export"]);
+    this._elmts.or_dialog_prefix.html($.i18n._('core-dialogs')["template-prefix"]);
+    this._elmts.or_dialog_rowTmpl.html($.i18n._('core-dialogs')["template-rowt"]);
+    this._elmts.or_dialog_rowSep.html($.i18n._('core-dialogs')["template-rows"]);
+    this._elmts.or_dialog_suffix.html($.i18n._('core-dialogs')["template-suffix"]);
+    this._elmts.resetButton.html($.i18n._('core-buttons')["reset-template"]);
+    this._elmts.exportButton.html($.i18n._('core-buttons')["export"]);
+    this._elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
     
     this._elmts.exportButton.click(function() { self._export(); self._dismiss(); });
     this._elmts.cancelButton.click(function() { self._dismiss(); });
@@ -98,10 +107,10 @@ TemplatingExporterDialog.prototype._scheduleUpdate = function() {
         window.clearTimeout(this._timerID);
     }
     
-    this._elmts.previewTextarea[0].value = "Idling...";
+    this._elmts.previewTextarea[0].value = $.i18n._('core-dialogs')["idling"];
     this._timerID = window.setTimeout(function() {
         self._timerID = null;
-        self._elmts.previewTextarea[0].value = "Updating...";
+        self._elmts.previewTextarea[0].value = $.i18n._('core-dialogs')["updating"];
         self._updatePreview();
     }, 1000);
 };

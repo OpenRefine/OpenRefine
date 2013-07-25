@@ -1,20 +1,20 @@
 <div class="recon-dialog-service-panel">
-  <p>Each cell contains:</p>
+  <p bind="or_recon_contain"></p>
   <div class="grid-layout layout-normal layout-full"><table>
-    <tr><td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="id" checked /></td><td>a Freebase ID, e.g., /en/solar_system</td></tr>
-    <tr><td><input type="radio" name="recon-dialog-strict-choice" value="guid" /></td><td>a Freebase GUID, e.g., #9202a8c04000641f80000000000354ae</td></tr>
+    <tr><td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="id" checked /></td><td bind="or_recon_fbId"></td></tr>
+    <tr><td><input type="radio" name="recon-dialog-strict-choice" value="guid" /></td><td bind="or_recon_fbGuid"></td></tr>
     <tr>
       <td width="1%"><input type="radio" name="recon-dialog-strict-choice" value="key" /></td>
       <td>
         <div class="grid-layout layout-tighter layout-full"><table>
-          <tr><td colspan="2">a Freebase key in</td></tr>
+          <tr><td colspan="2" bind="or_recon_fbKey"></td></tr>
           <tr>
             <td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="/wikipedia/en" nsName="Wikipedia EN" checked /></td>
-            <td>the Wikipedia English namespace</td>
+            <td bind="or_recon_fbEnNs"></td>
           </tr>
           <tr>
             <td width="1%"><input type="radio" name="recon-dialog-strict-namespace-choice" value="other" /></td>
-            <td>this namespace: <input bind="strictNamespaceInput" /></td>
+            <td><span bind="or_recon_thisNs"></span><input bind="strictNamespaceInput" /></td>
           </tr>
         </table></div>
       </td>

@@ -35,7 +35,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doFilterByExpressionPrompt = function(expression, type) {
     DataTableView.promptExpressionOnVisibleRows(
       column,
-      (type == "list" ? "Custom Facet on column " : "Custom Numeric Facet on column") + column.name, 
+      (type == "list" ? $.i18n._('core-views')["custom-facet"] : $.i18n._('core-views')["custom-numeric-label"]) +" "+ column.name, 
       expression,
       function(expression) {
         var config = {
@@ -55,7 +55,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/facet" ], [
     {
       id: "core/text-facet",
-      label: "Text facet",
+      label: $.i18n._('core-views')["text-facet"],
       click: function() {
         ui.browsingEngine.addFacet(
             "list",
@@ -69,7 +69,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/numeric-facet",
-      label: "Numeric facet",
+      label:  $.i18n._('core-views')["numeric-facet"],
       click: function() {
         ui.browsingEngine.addFacet(
             "range",
@@ -84,7 +84,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/time-facet",
-      label: "Timeline facet",
+      label: $.i18n._('core-views')["timeline-facet"],
       click: function() {
         ui.browsingEngine.addFacet(
             "timerange",
@@ -99,7 +99,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/scatterplot-facet",
-      label: "Scatterplot facet",
+      label: $.i18n._('core-views')["scatterplot-facet"],
       click: function() {
         new ScatterplotDialog(column.name);
       }
@@ -107,25 +107,25 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/custom-text-facet",
-      label: "Custom text facet...",
+      label: $.i18n._('core-views')["custom-text-facet"]+'...',
       click: function() {
         doFilterByExpressionPrompt(null, "list");
       }
     },
     {
       id: "core/custom-numeric-facet",
-      label: "Custom numeric facet...",
+      label: $.i18n._('core-views')["custom-numeric"]+'...',
       click: function() {
         doFilterByExpressionPrompt(null, "range");
       }
     },
     {
       id: "core/customized-facets",
-      label: "Customized facets",
+      label: $.i18n._('core-views')["custom-facets"],
       submenu: [
         {
           id: "core/word-facet",
-          label: "Word facet",
+          label: $.i18n._('core-views')["word-facet"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -140,7 +140,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/duplicates-facet",
-          label: "Duplicates facet",
+          label: $.i18n._('core-views')["duplicates-facet"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -156,7 +156,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/numeric-log-facet",
-          label: "Numeric log facet",
+          label: $.i18n._('core-views')["numeric-log-facet"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -171,7 +171,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/bounded-numeric-log-facet",
-          label: "1-bounded numeric log facet",
+          label: $.i18n._('core-views')["bounded-log-facet"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -187,7 +187,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/text-length-facet",
-          label: "Text length facet",
+          label: $.i18n._('core-views')["text-length-facet"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -202,7 +202,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/log-text-length-facet",
-          label: "Log of text length facet",
+          label: $.i18n._('core-views')["log-length-facet"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -217,7 +217,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/unicode-charcode-facet",
-          label: "Unicode char-code facet",
+          label: $.i18n._('core-views')["unicode-facet"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -233,7 +233,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/error-facet",
-          label: "Facet by error",
+          label: $.i18n._('core-views')["facet-error"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -247,7 +247,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/blank-facet",
-          label: "Facet by blank",
+          label: $.i18n._('core-views')["facet-blank"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -265,7 +265,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   MenuSystem.insertAfter(menu, [ "core/facet" ], [
     {
-      label: "Text filter",
+      label: $.i18n._('core-views')["text-filter"],
       click: function() {
         ui.browsingEngine.addFacet(
             "text", 

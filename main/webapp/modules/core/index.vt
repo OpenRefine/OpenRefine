@@ -45,7 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <body>
   <div id="header">
     <img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" />
-    <span id="slogan">A power tool for working with messy data.</span>
+    <span id="slogan"></span>
   </div>
   
   <div id="left-panel" class="main-layout-panel"><div id="left-panel-body">
@@ -58,8 +58,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <div id="openrefine-version"></div>
       </div>
       <ul>
-        <li><a href="http://code.google.com/p/google-refine/wiki/DocumentationForUsers">Help</a></li>
-        <li><a href="about.html">About</a></li>
+        <li><a href="https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users" id="or-index-help"></a></li>
+        <li><a href="about.html" id="or-index-about"></a></li>
       </ul>
     </div>
   </div></div> <!-- left-panel -->
@@ -68,9 +68,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </div></div> <!-- right-panel -->
   
   <div id="no-project-message" class="message" style="display: none;">
-    No existing project. Select "Create Project" on the left to create a new project.<br/>
-    If you have no data to work with, try these
-    <a href="http://code.google.com/p/google-refine/wiki/SampleDatasets" target="_blank">sample data sets</a>.
+    <span id="or-index-noProj"></span><br/>
+    <span id="or-index-try"></span>
+    <a href="https://github.com/OpenRefine/OpenRefine/wiki/Sample-Datasets" target="_blank" id="or-index-sample"></a>.
   </div>
 </body>
 </html>

@@ -121,6 +121,26 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self.updatePreview(); });
 
+  this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
+  $('#or-import-encoding').html($.i18n._('core-index-import')["char-encoding"]);
+  $('#or-import-columnWidth').text($.i18n._('core-index-import')["column-widths"]);
+  $('#or-import-columnNames').text($.i18n._('core-index-import')["column-names"]);
+  $('#or-import-comma').text($.i18n._('core-index-import')["comma-separated"]);
+  $('#or-import-optional').text($.i18n._('core-index-import')["optional-separated"]);
+  
+  $('#or-import-ignore').text($.i18n._('core-index-parser')["ignore-first"]);
+  $('#or-import-lines').text($.i18n._('core-index-parser')["lines-beg"]);
+  $('#or-import-parse').text($.i18n._('core-index-parser')["parse-next"]);
+  $('#or-import-header').text($.i18n._('core-index-parser')["lines-header"]);
+  $('#or-import-discard').text($.i18n._('core-index-parser')["discard-initial"]);
+  $('#or-import-rows').text($.i18n._('core-index-parser')["rows-data"]);
+  $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
+  $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
+  $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
+  $('#or-import-blank').text($.i18n._('core-index-parser')["store-blank"]);
+  $('#or-import-null').text($.i18n._('core-index-parser')["store-nulls"]);
+  $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
+  
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')
     .click(function() {

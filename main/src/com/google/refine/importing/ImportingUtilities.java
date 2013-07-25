@@ -147,14 +147,14 @@ public class ImportingUtilities {
     }
     
     static public void updateJobWithNewFileSelection(ImportingJob job, JSONArray fileSelectionArray) {
-        JSONUtilities.safePut(job.config, "fileSelection", fileSelectionArray);
+        job.setFileSelection(fileSelectionArray);
         
         String bestFormat = ImportingUtilities.getCommonFormatForSelectedFiles(job, fileSelectionArray);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
         
         JSONArray rankedFormats = new JSONArray();
-        JSONUtilities.safePut(job.config, "rankedFormats", rankedFormats);
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
+        job.setRankedFormats(rankedFormats);
     }
     
     static public void retrieveContentFromPostRequest(
@@ -210,6 +210,7 @@ public class ImportingUtilities {
             }
         });
 
+        @SuppressWarnings("rawtypes")
         List tempFiles = upload.parseRequest(request);
         
         progress.setProgress("Uploading data ...", -1);
@@ -747,7 +748,7 @@ public class ImportingUtilities {
     }
     
     static public String getCommonFormatForSelectedFiles(ImportingJob job, JSONArray fileSelectionIndexes) {
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
+        JSONObject retrievalRecord = job.getRetrievalRecord();
         
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
@@ -780,7 +781,7 @@ public class ImportingUtilities {
     }
     
     static String guessBetterFormat(ImportingJob job, String bestFormat) {
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
+        JSONObject retrievalRecord = job.getRetrievalRecord();
         return retrievalRecord != null ? guessBetterFormat(job, retrievalRecord, bestFormat) : bestFormat;
     }
     
@@ -879,27 +880,7 @@ public class ImportingUtilities {
             JSONUtilities.append(rankedFormats, format);
         }
     }
-    
-    static public List<JSONObject> getSelectedFileRecords(ImportingJob job) {
-        List<JSONObject> results = new ArrayList<JSONObject>();
-        
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
-        if (retrievalRecord != null) {
-            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
-            if (fileRecordArray != null) {
-                JSONArray fileSelectionArray = JSONUtilities.getArray(job.config, "fileSelection");
-                if (fileSelectionArray != null) {
-                    for (int i = 0; i < fileSelectionArray.length(); i++) {
-                        int index = JSONUtilities.getIntElement(fileSelectionArray, i, -1);
-                        if (index >= 0 && index < fileRecordArray.length()) {
-                            results.add(JSONUtilities.getObjectElement(fileRecordArray, index));
-                        }
-                    }
-                }
-            }
-        }
-        return results;
-    }
+
     
     static public void previewParse(ImportingJob job, String format, JSONObject optionObj, List<Exception> exceptions) {
         Format record = ImportingManager.formatToRecord.get(format);
@@ -914,7 +895,7 @@ public class ImportingUtilities {
             job.project,
             job.metadata,
             job,
-            getSelectedFileRecords(job),
+            job.getSelectedFileRecords(),
             format,
             100,
             optionObj,
@@ -936,7 +917,7 @@ public class ImportingUtilities {
             return -1;
         }
         
-        JSONUtilities.safePut(job.config, "state", "creating-project");
+        job.setState("creating-project");
         
         final Project project = new Project();
         if (synchronous) {
@@ -975,7 +956,7 @@ public class ImportingUtilities {
             project,
             pm,
             job,
-            getSelectedFileRecords(job),
+            job.getSelectedFileRecords(),
             format,
             -1,
             optionObj,
@@ -988,27 +969,15 @@ public class ImportingUtilities {
                 
                 ProjectManager.singleton.registerProject(project, pm);
                 
-                JSONUtilities.safePut(job.config, "projectID", project.id);
-                JSONUtilities.safePut(job.config, "state", "created-project");
+                job.setProjectID(project.id);
+                job.setState("created-project");
             } else {
-                JSONUtilities.safePut(job.config, "state", "error");
-                JSONUtilities.safePut(job.config, "errors",
-                    DefaultImportingController.convertErrorsToJsonArray(exceptions));
+                job.setError(exceptions);
             }
             job.touch();
             job.updating = false;
         }
     }
     
-    static public void setCreatingProjectProgress(ImportingJob job, String message, int percent) {
-        JSONObject progress = JSONUtilities.getObject(job.config, "progress");
-        if (progress == null) {
-            progress = new JSONObject();
-            JSONUtilities.safePut(job.config, "progress", progress);
-        }
-        JSONUtilities.safePut(progress, "message", message);
-        JSONUtilities.safePut(progress, "percent", percent);
-        JSONUtilities.safePut(progress, "memory", Runtime.getRuntime().totalMemory() / 1000000);
-        JSONUtilities.safePut(progress, "maxmemory", Runtime.getRuntime().maxMemory() / 1000000);
-    }
+
 }

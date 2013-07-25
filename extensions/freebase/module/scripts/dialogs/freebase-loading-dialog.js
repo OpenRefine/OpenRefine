@@ -45,13 +45,37 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
   var provider = "freebase.com";
   var authorization = this._elmts.authorization;
   var loadButton = this._elmts.loadButton;
-
+  
+  this._elmts.dialogHeader.text($.i18n._('fb-dialogs')["dialog-header"]);
+  this._elmts.no_triples_dataset.text($.i18n._('fb-dialogs')["no-triples-dataset"]);
+  this._elmts.warning_aligned.text($.i18n._('fb-dialogs')["warning-aligned"]);
+  this._elmts.alignButton.text($.i18n._('fb-buttons')["align-now"]);
+  this._elmts.settingsBtn.text($.i18n._('fb-buttons')["settings"]);
+  this._elmts.previewBtn.text($.i18n._('fb-buttons')["preview"]);
+  this._elmts.name_of_data.text($.i18n._('fb-dialogs')["name-of-data"]);
+  this._elmts.source_id_label.text($.i18n._('fb-dialogs')["source-id"]);
+  this._elmts.bodytext1.text($.i18n._('fb-dialogs')["bodytext-1"]);
+  this._elmts.bodytext2.text($.i18n._('fb-dialogs')["bodytext-2"]);
+  this._elmts.bodytext3.text($.i18n._('fb-dialogs')["bodytext-3"]);
+  this._elmts.sandbox_link.text($.i18n._('fb-dialogs')["sandbox-link"]);
+  this._elmts.freebase_link.text($.i18n._('fb-dialogs')["freebase-link"]);
+  this._elmts.refreshed_link.text($.i18n._('fb-dialogs')["refreshed-link"]);
+  this._elmts.bodytext4.text($.i18n._('fb-dialogs')["bodytext-4"]);
+  this._elmts.findOutMore.text($.i18n._('fb-interface')["find-more"]);
+  this._elmts.quality_assurance.text($.i18n._('fb-dialogs')["quality-assurance"]);
+  this._elmts.bodytext5.text($.i18n._('fb-dialogs')["bodytext-5"]);
+  this._elmts.triple_success_load.text($.i18n._('fb-dialogs')["triple-schedule"]);
+  this._elmts.follow_progress.text($.i18n._('fb-dialogs')["follow-progress"]);
+  this._elmts.refineryLink.text($.i18n._('fb-dialogs')["refinery-link"]);
+  this._elmts.cancelButton.text($.i18n._('fb-buttons')["cancel"]);
+  this._elmts.loadButton.text($.i18n._('fb-buttons')["load-sandbox"]);
+  
   // TODO: Does this need to be redone for the new API / freebase.com site?
   var check_authorization = function(cont) {
     var check_authorization_url = "command/freebase/check-authorization/" + provider;
     $.get(check_authorization_url, function(data) {
       if ("status" in data && data.code == "/api/status/ok") {
-        authorization.html('Signed in as: <a target="_new" href="http://www.freebase.com/view/user/' + data.username + '">' + data.username + '</a> | <a href="javascript:{}" bind="signout">Sign Out</a>').show();
+        authorization.html($.i18n._('fb-dialogs')["signed-as"]+' <a target="_new" href="http://www.freebase.com/view/user/' + data.username + '">' + data.username + '</a> | <a href="javascript:{}" bind="signout">'+$.i18n._('fb-dialogs')["sign-out"]+'</a>').show();
         DOM.bind(authorization).signout.click(function() {
           self._signedin = false;
           loadButton.attr("disabled","disabled");
@@ -71,7 +95,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
 
         if (typeof cont == "function") cont(data);
       } else {
-        authorization.html('<a href="javascript:{}" bind="signin">Sign into Freebase</a> to enable loading').show();
+        authorization.html('<a href="javascript:{}" bind="signin">'+$.i18n._('fb-dialogs')["sign-in"]+'</a> '+$.i18n._('fb-dialogs')["enable-loading"]).show();
 
         self._signedin = false;
         $("#freebase-loading-source-name").keyup();
@@ -104,7 +128,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
             self._elmts.source_id.val(data.result[0].id);
             if (typeof cont == "function") cont();
           } else {
-            self._show_error("Error creating new topic", data);
+            self._show_error($.i18n._('fb-dialogs')["error-new-topic"], data);
           }
         },
         "json"
@@ -137,7 +161,7 @@ FreebaseLoadingDialog.prototype._createDialog = function() {
 
           self._elmts.source_id.suggest({
             filter: "(all type:/dataworld/information_source)",
-            suggest_new: "Click here to add a new information source"
+            suggest_new: $.i18n._('fb-dialogs')["add-info-source"]
           }).bind("fb-select", function(e, data) {
             self._elmts.source_id.val(data.id);
           }).bind("fb-select-new", function(e, val) {
@@ -202,7 +226,7 @@ FreebaseLoadingDialog.prototype._load = function() {
           self._elmts.loadedCase.show();
           self._end();
         } else {
-          self._show_error("Error loading data",data);
+          self._show_error($.i18n._('fb-dialogs')["error-loading-data"],data);
         }
       },
       "json"
@@ -216,6 +240,13 @@ FreebaseLoadingDialog.prototype._load = function() {
     var dismiss = function() {
       DialogSystem.dismissUntil(level - 1);
     };
+    
+    this._elmts.refineryLink.text($.i18n._('fb-qa')["header"]);
+    this._elmts.bodytext1.text($.i18n._('fb-qa')["bodytext-1"]);
+    this._elmts.bodytext2.text($.i18n._('fb-qa')["bodytext-2"]);
+    this._elmts.tellMore.text($.i18n._('fb-qa')["tell-more"]);
+    this._elmts.okButton.text($.i18n._('fb-qa')["ok-button"]);
+    this._elmts.cancelButton.text($.i18n._('fb-qa')["ok-button"]);
 
     elmts.okButton.click(function() {
       doLoad();

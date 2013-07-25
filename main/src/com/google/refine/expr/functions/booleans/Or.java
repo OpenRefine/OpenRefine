@@ -38,18 +38,23 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class Or implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        for (Object o : args) {
-            if (Not.objectToBoolean(o)) {
-                return true;
+        if (args.length == 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
+            for (Object o : args) {
+                if (Not.objectToBoolean(o)) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two booleans");
     }
     
     @Override

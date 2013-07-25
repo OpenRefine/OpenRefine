@@ -133,17 +133,17 @@ TimeRangeFacet.prototype._initializeUI = function() {
   .html(
       '<div class="facet-title" bind="headerDiv">' +
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+      '<td width="1%"><a href="javascript:{}" title="'+$.i18n._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
       '<td>' +
-      '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">reset</a>' +
-      '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">change</a>' +
+      '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n._('core-facets')["reset"]+'</a>' +
+      '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n._('core-facets')["change"]+'</a>' +
       '<span bind="facetTitle"></span>' +
       '</td>' +
       '</tr></table></div>' +
       '</div>' +
-      '<div class="facet-expression" bind="expressionDiv" title="Click to edit expression"></div>' +
+      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n._('core-facets')["click-to-edit"]+'"></div>' +
       '<div class="facet-range-body">' +
-      '<div class="facet-range-message" bind="messageDiv">Loading...</div>' +
+      '<div class="facet-range-message" bind="messageDiv">'+$.i18n._('core-facets')["loading"]+'</div>' +
       '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
       '<div class="facet-range-histogram" bind="histogramDiv"></div>' +
       '</div>' +
@@ -154,7 +154,7 @@ TimeRangeFacet.prototype._initializeUI = function() {
   this._elmts = DOM.bind(this._div);
 
   this._elmts.facetTitle.text(this._config.name);
-  this._elmts.changeButton.attr("title","Current Expression: " + this._config.expression).click(function() {
+  this._elmts.changeButton.attr("title",$.i18n._('core-facets')["current-exp"]+": " + this._config.expression).click(function() {
     self._elmts.expressionDiv.slideToggle(100, function() {
       if (self._elmts.expressionDiv.css("display") != "none") {
         self._editExpression();
@@ -210,7 +210,7 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
   if (this._selectTime) timeCheck.attr("checked","checked");
 
   var timeLabel = $('<label>').attr("for", facet_id + "-time").appendTo(timeDiv);    
-  $('<span>').text("Time ").addClass("facet-range-choice-label").appendTo(timeLabel);
+  $('<span>').text($.i18n._('core-facets')["time"]+" ").addClass("facet-range-choice-label").appendTo(timeLabel);
   $('<div>').text(this._timeCount).addClass("facet-range-choice-count").appendTo(timeLabel);
 
   // ----------------- non-Time -----------------
@@ -223,7 +223,7 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
   if (this._selectNonTime) nonTimeCheck.attr("checked","checked");
 
   var nonTimeLabel = $('<label>').attr("for", facet_id + "-non-time").appendTo(nonTimeDiv);    
-  $('<span>').text("Non-Time ").addClass("facet-range-choice-label").appendTo(nonTimeLabel);
+  $('<span>').text($.i18n._('core-facets')["non-time"]+" ").addClass("facet-range-choice-label").appendTo(nonTimeLabel);
   $('<div>').text(this._nonTimeCount).addClass("facet-range-choice-count").appendTo(nonTimeLabel);
 
   if (this._baseNonTimeCount === 0) nonTimeCheck.removeAttr("checked");
@@ -238,7 +238,7 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
   if (this._selectBlank) blankCheck.attr("checked","checked");
 
   var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(blankDiv);    
-  $('<span>').text("Blank ").addClass("facet-range-choice-label").appendTo(blankLabel);
+  $('<span>').text($.i18n._('core-facets')["blank"]+" ").addClass("facet-range-choice-label").appendTo(blankLabel);
   $('<div>').text(this._blankCount).addClass("facet-range-choice-count").appendTo(blankLabel);
 
   if (this._baseBlankCount === 0) blankCheck.removeAttr("checked");
@@ -253,7 +253,7 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
   if (this._selectError) errorCheck.attr("checked","checked");
 
   var errorLabel = $('<label>').attr("for", facet_id + "-error").appendTo(errorDiv);    
-  $('<span>').text("Error ").addClass("facet-range-choice-label").appendTo(errorLabel);
+  $('<span>').text($.i18n._('core-facets')["error"]+" ").addClass("facet-range-choice-label").appendTo(errorLabel);
   $('<div>').text(this._errorCount).addClass("facet-range-choice-count").appendTo(errorLabel);
 
   if (this._baseErrorCount === 0) errorCheck.removeAttr("checked");
@@ -342,7 +342,7 @@ TimeRangeFacet.prototype.updateState = function(data) {
     this._errorCount = data.errorCount;
   } else {
     this._error = true;
-    this._errorMessage = "error" in data ? data.error : "Unknown error.";
+    this._errorMessage = "error" in data ? data.error : $.i18n._('core-facets')["unknown-error"]+".";
   }
 
   this.render();
@@ -402,8 +402,8 @@ TimeRangeFacet.prototype._updateRest = function() {
 TimeRangeFacet.prototype._editExpression = function() {
   var self = this;
   var title = (this._config.columnName) ? 
-      ("Edit Facet's Expression based on Column " + this._config.columnName) : 
-        "Edit Facet's Expression";
+      ($.i18n._('core-facets')["edit-based-col"]+" " + this._config.columnName) : 
+    	  $.i18n._('core-facets')["edit-facet-exp"];
 
       var column = Refine.columnNameToColumn(this._config.columnName);
       var o = DataTableView.sampleVisibleRows(column);

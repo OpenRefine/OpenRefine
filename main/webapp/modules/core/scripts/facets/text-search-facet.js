@@ -84,7 +84,7 @@ TextSearchFacet.prototype._initializeUI = function() {
   this._div.empty().show().html(
       '<div class="facet-title">' + 
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="Remove this facet" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+      '<td width="1%"><a href="javascript:{}" title="'+$.i18n._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
       '<td>' +
       '<span>' + this._config.name + '</span>' +
       '</td>' +
@@ -93,8 +93,8 @@ TextSearchFacet.prototype._initializeUI = function() {
       '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
       '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
       '<tr>' +
-      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" /></td><td>case sensitive</td>' +
-      '<td width="1%"><input type="checkbox" bind="regexCheckbox" /></td><td>regular expression</td>' +
+      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" /></td><td>'+$.i18n._('core-facets')["case-sensitive"]+'</td>' +
+      '<td width="1%"><input type="checkbox" bind="regexCheckbox" /></td><td>'+$.i18n._('core-facets')["regular-exp"]+'</td>' +
       '</tr>' +
       '</table></div></div>'
   );
@@ -126,10 +126,12 @@ TextSearchFacet.prototype._initializeUI = function() {
   if (this._query) {
     elmts.input[0].value = this._query;
   }
-  elmts.input.keyup(function(evt) {
+  
+  elmts.input.bind("keyup change input",function(evt) {
     self._query = this.value;
     self._scheduleUpdate();
   }).focus();
+
 };
 
 TextSearchFacet.prototype.updateState = function(data) {

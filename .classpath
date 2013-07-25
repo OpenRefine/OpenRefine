@@ -13,7 +13,7 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-trunk-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-io-1.4.jar"/>
@@ -42,7 +42,7 @@
 	<classpathentry exported="true" kind="lib" path="server/lib/jetty-6.1.22.jar" sourcepath="server/lib-src/jetty-6.1.22-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="server/lib/jetty-util-6.1.22.jar" sourcepath="server/lib-src/jetty-util-6.1.22-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="server/lib/log4j-1.2.15.jar"/>
-	<classpathentry exported="true" kind="lib" path="server/lib/servlet-api-2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="server/lib/servlet-api-2.5.jar" sourcepath="server/lib-src/servlet-api-2.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="server/lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="server/lib/slf4j-log4j12-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="broker/appengine/WEB-INF/lib/slf4j-jdk14-1.5.6.jar"/>
@@ -51,8 +51,8 @@
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-core-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/mockito-all-1.8.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/testng-5.12.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/mockito-all-1.9.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/testng-6.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-meta-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-media-1.0.jar"/>
@@ -66,8 +66,8 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/serializer.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xercesImpl-2.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xml-apis.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpclient-4.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/httpclient-4.1.2-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.1.3.jar" sourcepath="main/webapp/WEB-INF/lib-src/httpcore-4.1.3-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpclient-4.2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
@@ -84,5 +84,8 @@
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-servlet-1.13.1-beta.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/guava-jdk5-13.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/jsr305-1.3.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

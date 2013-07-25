@@ -143,14 +143,11 @@
       o.flyout_lang = null;
       if (o.ac_param.lang) {
         var lang = o.ac_param.lang;
-        if ($.type(lang) === "string") {
-            lang = lang.split(",");
-        }
         if ($.isArray(lang) && lang.length) {
-            lang = $.trim(lang[0]);
-            if (lang) {
-                o.flyout_lang = lang;
-            }
+          lang = lang.join(',');
+        }
+        if (lang) {
+          o.flyout_lang = lang;
         }
       }
 
@@ -462,6 +459,7 @@
         if (e.shiftKey) {
           this.shift_enter(e);
           e.preventDefault();
+          return;
         }
         else if ($("." + o.css.item, this.list).length) {
           var s = this.get_selected();
@@ -469,18 +467,28 @@
             this.onselect(s);
             this.hide_all();
             e.preventDefault();
+            return;
           }
-          else {
+          else if (!o.soft) {
             var data = this.input.data("data.suggest");
             if ($("."+this.options.css.item + ":visible", this.list).length) {
               this.updown(false);
               e.preventDefault();
+              return;
             }
           }
         }
-        //console.log("enter preventDefault");
+      }
+      if (o.soft) {
+        // submit form
+        this.soft_enter();
+      }
+      else {
+        e.preventDefault();
       }
     },
+
+    soft_enter: function(e) {},
 
     shift_enter: function(e) {},
 
@@ -869,7 +877,7 @@
         label: label,
         value: value
       });
-      console.log("trackEvent", category, action, label, value);
+      //console.log("trackEvent", category, action, label, value);
     },
 
     hide_all: function(e) {
@@ -1053,6 +1061,13 @@
         else {
             return false;
         }
+    },
+
+    is_system_type: function(type_id) {
+      if (type_id == null) {
+        return false;
+      }
+      return (type_id.indexOf("/type/") === 0);
     }
   });
 
@@ -1076,7 +1091,7 @@
       if (o.flyout_service_path) {
           this.flyout_url += o.flyout_service_path;
       }
-      // set api key for flyout/topic api
+      // set api key for flyout service (search)
       this.flyout_url = this.flyout_url.replace(/\$\{key\}/g, o.key);
       if (o.flyout_image_service_url == null) {
         o.flyout_image_service_url = o.service_url;
@@ -1179,8 +1194,11 @@
           }
           extend_ac_param = structured[2];
           if ($.suggest.check_mql_id(query)) {
-              // handle anything that looks like a valid mql id
-              filter.push("(all mid:\"" + query + "\")");
+              // handle anything that looks like a valid mql id:
+              // filter=(all%20alias{start}:/people/pers)&prefixed=true
+              filter.push("(any alias{start}:\"" + query + "\" mid:\"" +
+                          query + "\")");
+              extend_ac_param['prefixed'] = true;
               query = "";
           }
       }
@@ -1219,7 +1237,6 @@
           self.input.data("request.count.suggest", calls);
         },
         success: function(data) {
-          // FIXME: bad mql_output param can end up here with data: {'error':{'code':400,'errors':[...],'message':'Type /type/object does not have property lang'}}
           $.suggest.cache[url] = data;
           data.prefix = val;  // keep track of prefix to match up response with input value
           self.response(data, cursor ? cursor : -1);
@@ -1254,16 +1271,17 @@
         .append($.suggest.strongify(data.name || data.id, response_data.prefix));
       var name = $("<div>").addClass(css.item_name)
         .append(label);
+      var nt = data.notable;
       if (data.under) {
         $(":first", label).append($("<small>").text(" ("+data.under+")"));
       }
-      if (this.options.scoring != null  &&
-          this.options.scoring.toUpperCase() === 'SCHEMA') {
+      if ((nt != null && $.suggest.is_system_type(nt.id)) ||
+          (this.options.scoring != null  &&
+           this.options.scoring.toUpperCase() === 'SCHEMA')) {
         $(":first", label).append($("<small>").text(" ("+data.id+")"));
       }
       var types = data.type;
       li.append(name);
-      var nt = data.notable;
       var type = $("<div>").addClass(css.item_type);
       if (nt && nt.name) {
         type.text(nt.name);
@@ -1450,7 +1468,11 @@
         },
         success: function(data) {
           data["req:id"] = flyout_id;
-          data.html = $.suggest.suggest.create_flyout(data, self.flyout_image_url);
+          if (data['result'] && data['result'].length) {
+            data.html =
+                $.suggest.suggest.create_flyout(data['result'][0],
+                    self.flyout_image_url);
+          }
           $.suggest.flyout.cache[flyout_id] = data;
           self.flyout_response(data);
         },
@@ -1635,13 +1657,15 @@
       flyout_service_url: null,
 
       // flyout_service_url + flyout_service_path =
-      // url to topic api with filter=suggest
-      flyout_service_path: "/topic${id}?filter=suggest&filter=/common/topic/article&key=${key}",
+      // url to search with output=(notable:/client/summary description type).
+      flyout_service_path: "/search?filter=(all mid:${id})&" +
+          "output=(notable:/client/summary description type)&key=${key}",
 
       // default is service_url if NULL
       flyout_image_service_url: null,
 
-      flyout_image_service_path: "/image${id}?maxwidth=75&key=${key}",
+      flyout_image_service_path:
+          "/image${id}?maxwidth=75&key=${key}&errorid=/freebase/no_image_png",
 
       // jQuery selector to specify where the flyout
       // will be appended to (defaults to document.body).
@@ -1675,131 +1699,194 @@
       xhr_delay: 200
     },
 
-
-    // utility methods to get property, values from the topic api result
-    get_property: function(topic_result, prop_id) {
-      var props = topic_result.property;
-      if (props) {
-        return props[prop_id];
-      }
-      else {
+    /**
+     * Utility method to get values of an object specified by one or more
+     * (nested) keys. For example:
+     * <code>
+     *   get_value(my_dict, ['foo', 'bar'])
+     *   // Would resolve to my_dict['foo']['bar'];
+     * </code>
+     * The method will return null, if any of the path specified refers to
+     * a null or undefined value in the object.
+     *
+     * If resolved_search_values is TRUE, this will flatten search api
+     * values that are arrays of entities ({mid, name})
+     * to an array of their names and ALWAYS return an array of strings
+     * of length >= 0.
+     */
+    get_value: function(obj, path, resolve_search_values) {
+      if (obj == null || path == null || path.length == 0) {
         return null;
       }
+      if (!$.isArray(path)) {
+        path = [path];
+      }
+      var v = null;
+      $.each(path, function(i, p){
+        v = obj[p];
+        if (v == null) {
+          return false;
+        }
+        obj = v;
+        return true;
+      });
+      if (resolve_search_values) {
+        if (v == null) {
+          return [];
+        }
+        if (!$.isArray(v)) {
+          v = [v];
+        }
+        var values = [];
+        $.each(v, function(i, value) {
+          if ($.type(value) === 'object') {
+            if (value['name'] != null) {
+              value = value['name'];
+            }
+            else if (value['id'] || value['mid']) {
+              value = value['id'] || value['mid'];
+            }
+            else if (value['value'] != null) {
+              // For cvts, value may contain other useful info (like date, etc.)
+              var cvts = [];
+              $.each(value, function(k, v) {
+                if (k !== 'value') {
+                  cvts.push(v);
+                }
+              });
+              value = value['value'];
+              if (cvts.length) {
+                value += ' (' + cvts.join(', ') + ')';
+              }
+            }
+          }
+          if ($.isArray(value) && value.length) {
+            value = value[0].value;
+          }
+          if (value != null) {
+            values.push(value);
+          }
+        });
+        return values;
+      }
+      // Cast undefined to null.
+      return v == null ? null : v;
     },
 
-    get_values: function(topic_result, prop_id) {
-      var prop = $.suggest.suggest.get_property(topic_result, prop_id);
-      if (prop && prop.values) {
-        return prop.values;
+    is_commons_id: function(id) {
+      if (/^\/base\//.test(id) || /^\/user\//.test(id)) {
+        return false;
       }
-      else {
-          return null;
-      }
-    },
-
-    get_first_value: function(topic_result, prop_id) {
-      var values = $.suggest.suggest.get_values(topic_result, prop_id);
-      if (values && values.length > 0) {
-        return values[0];
-      }
-      return null;
+      return true;
     },
 
     /**
-     * Create the flyout html content given the topic api result
-     * (i.e., .../topic/some/id?filter=suggest). The resulting html
-     * will be cached for optimization.
+     * Create the flyout html content given the search result
+     * containing output=(notable:/client/summary description type).
+     * The resulting html will be cached for optimization.
      *
-     * @param data:Object - The topic api result with ?filter=suggest
-     * @param flyout_image_url:Object - The url template for the image url.
+     * @param data:Object - The search result with
+     *     output=(notable:/client/summary description type).
+     * @param flyout_image_url:String - The url template for the image url.
      *   The substring, "${id}", will be replaced by data.id. It is assumed all
      *   parameters to the flyout image service (api key, dimensions, etc.) is
      *   already encoded into the url template.
      */
     create_flyout: function(data, flyout_image_url) {
-        var get_property = $.suggest.suggest.get_property;
-        var get_values =  $.suggest.suggest.get_values;
-        var get_first_value = $.suggest.suggest.get_first_value;
-        var name = get_first_value(data, "/type/object/name");
-        if (name) {
-            name = name.text;
-        }
-        // prefer /common/topic/description over /common/topic/article
-        var article =
-            get_first_value(data, "/common/topic/description") ||
-            get_first_value(data, "/common/topic/article") || false;
-        if (article) {
-            article = article.text;
-        }
-        var image = get_first_value(data, "/common/topic/image") || false;
-        if (image) {
-            image = flyout_image_url.replace(/\$\{id\}/g, data.id);
-        }
-        var notable_props = [];
-        var notability = [data.id];
+      var get_value = $.suggest.suggest.get_value;
+      var is_system_type = $.suggest.is_system_type;
+      var is_commons_id = $.suggest.suggest.is_commons_id;
 
-        // notable (disambiguating) properties
-        var values = get_values(data, "/common/topic/notable_properties");
-        if (values) {
-            $.each(values, function(i, prop) {
-                var p = get_property(data, prop.id);
-                if (p && p.valuetype !== 'compound') {
-                  var prop_values = get_values(data, prop.id);
-                  if (prop_values && prop_values.length) {
-                    prop_values = $.map(prop_values, function(v) {
-                      return v.text;
-                    }).join(", ");
-                    notable_props.push([prop.text || prop.id, prop_values]);
-                  }
-                }
-            });
+      var name = data['name'];
+      var id = null;
+      var image = null;
+      var notable_props = [];
+      var notable_types = [];
+      var notable_seen = {}; // Notable types already added
+      var notable = get_value(data, 'notable');
+      if (notable && notable['name']) {
+        notable_types.push(notable['name']);
+        notable_seen[notable['name']] = true;
+      }
+      if (notable && is_system_type(notable['id'])) {
+        id = data['id'];
+      }
+      else {
+        id = data['mid'];
+        image = flyout_image_url.replace(/\$\{id\}/g, id);
+      }
+      var description_src = 'freebase';
+      var description = get_value(
+          data, ['output', 'description', 'wikipedia'], true);
+      if (description && description.length) {
+        description_src = 'wikipedia';
+      }
+      else {
+        description = get_value(
+            data, ['output', 'description', 'freebase'], true);
+      }
+      if (description && description.length) {
+        description = description[0];
+      }
+      else {
+        description = null;
+      }
+      var summary = get_value(data, ['output', 'notable:/client/summary']);
+      if (summary) {
+        var notable_paths = get_value(summary, '/common/topic/notable_paths');
+        if (notable_paths && notable_paths.length) {
+          $.each(notable_paths, function(i, path) {
+            var values = get_value(summary, path, true);
+            if (values && values.length) {
+              var prop_text = path.split('/').pop();
+              notable_props.push([prop_text, values.join(', ')]);
+            }
+          });
         }
-
-        // notability (notable_for and notable_types)
-        var notable_for = get_values(data, "/common/topic/notable_for");
-        var notable_types = get_values(data, "/common/topic/notable_types");
-        if (notable_for || notable_types) {
-            var seen = {};
-            notability = [];
-            $.each([notable_for, notable_types], function(i, notable) {
-                if (notable) {
-                    notable.forEach(function(n) {
-                        if (n.id && !seen[n.id]) {
-                            notability.push(n.text);
-                            seen[n.id] = true;
-                        }
-                    });
-                }
-            });
-        }
-
-        notability = notability.join(", ");
-
-        var content = $('<div class="fbs-flyout-content">');
-        if (name) {
-          content.append($('<h1 id="fbs-flyout-title">').text(name));
-        }
-        content.append($('<h3 class="fbs-topic-properties fbs-flyout-id">').text(data.id));
-        $.each(notable_props, function(i, prop) {
-            content.append($('<h3 class="fbs-topic-properties">')
-                .append($('<strong>').text(prop[0] + ': '))
-                .append(document.createTextNode(prop[1])));
+      }
+      var types = get_value(
+          data, ['output', 'type', '/type/object/type'], true);
+      if (types && types.length) {
+        $.each(types, function(i, t) {
+          if (!notable_seen[t]) {
+            notable_types.push(t);
+            notable_seen[t] = true;
+          }
         });
-        if (article) {
-            content.append($('<p class="fbs-topic-article">').text(article));
-        }
-        if (image) {
-            content.children().addClass('fbs-flyout-image-true');
-            content.prepend($('<img id="fbs-topic-image" class="fbs-flyout-image-true" src="' + image + '">'));
-        }
+      }
+      var content = $('<div class="fbs-flyout-content">');
+      if (name) {
+        content.append($('<h1 id="fbs-flyout-title">').text(name));
+      }
+      content
+          .append($('<h3 class="fbs-topic-properties fbs-flyout-id">')
+          .text(id));
+      $.each(notable_props, function(i, prop) {
+          content.append($('<h3 class="fbs-topic-properties">')
+              .append($('<strong>').text(prop[0] + ': '))
+              .append(document.createTextNode(prop[1])));
+          });
+      if (description) {
+        content.append(
+            $('<p class="fbs-topic-article">')
+                .append($('<em class="fbs-citation">')
+                    .text('[' + description_src + '] '))
+                .append(document.createTextNode(description)));
+      }
+      if (image) {
+        content.children().addClass('fbs-flyout-image-true');
+        content.prepend(
+          $('<img id="fbs-topic-image" class="fbs-flyout-image-true" src="' +
+              image + '">'));
+      }
+      var flyout_types = $('<span class="fbs-flyout-types">')
+        .text(notable_types.slice(0, 10).join(', '));
+      var footer = $('<div class="fbs-attribution">').append(flyout_types);
 
-        var types = $('<span class="fbs-flyout-types">').text(notability);
-        var footer = $('<div class="fbs-attribution">').append(types);
-
-        return $('<div>')
-            .append(content)
-            .append(footer)
-            .html();
+      return $('<div>')
+          .append(content)
+          .append(footer)
+          .html();
     }
   });
 

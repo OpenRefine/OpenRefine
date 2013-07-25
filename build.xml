@@ -88,6 +88,9 @@
 
     <path id="tests.class.path">
         <path refid="webapp.class.path"/>
+        <path refid="server.class.path"/>
+    	<pathelement location="${server.tests.classes.dir}"/>
+        <pathelement location="${server.tests.lib.dir}/testng-6.8.jar"/>
         <fileset dir="${server.tests.lib.dir}">
             <include name="**/*.jar" />
         </fileset>
@@ -136,7 +139,7 @@
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
     </target>
 
-    <target name="build_tests" depends="build_webapp, build_server">
+    <target name="build_tests" depends="build">
         <mkdir dir="${server.tests.classes.dir}" />
         <javac source="${java_version}" target="${java_version}" encoding="utf-8" srcdir="${server.tests.src.dir}" destdir="${server.tests.classes.dir}" debug="true" includeAntRuntime="no">
             <classpath refid="tests.class.path" />
@@ -167,6 +170,16 @@
     </target>
 
     <target name="build_broker" depends="build_broker_core, build_broker_appengine"/>
+
+    <taskdef resource="testngtasks" classpath="${server.tests.lib.dir}/testng-6.8.jar"/>
+    <mkdir dir="${build.dir}/server_tests"/>
+    <target name="server_test" depends="build_tests">
+    	<testng workingdir="${build.dir}/server_tests"
+    		listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
+    		classpathref="tests.class.path">
+    	  <xmlfileset file="${server.tests.dir}/conf/tests.xml"/>
+    	</testng>
+    </target>
 
     <!-- ================================================================== -->
 
@@ -229,7 +242,7 @@
             name="OpenRefine"
             displayname="OpenRefine ${version}"
             icon="${graphics.dir}/icon/openrefine.icns"
-            identifier="org.openrefine.refine.Refine"
+            identifier="com.google.refine.Refine"
 	    shortversion="${version}"
             mainclassname="com/google/refine/Refine">
 	    <runtime dir="${env.JAVA_HOME}"/>
@@ -241,8 +254,6 @@
 	    </classpath>
 	    <option value="-Xms256M"/>
 	    <option value="-Xmx1024M"/>
-	    <option value="-Djava.awt.headless=true"/>
-	    <option value="-Drefine.headless=true"/>
 	    <option value="-Drefine.version=${revision}"/>
 	    <option value="-Drefine.webapp=$APP_ROOT/Contents/Resource/${built.webapp.name}"/>
         </bundleapp>

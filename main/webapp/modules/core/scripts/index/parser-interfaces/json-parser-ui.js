@@ -61,7 +61,7 @@ Refine.JsonParserUI.prototype.confirmReadyToCreateProject = function() {
   if ((this._config.recordPath) && this._config.recordPath.length > 0) {
     return true;
   } else {
-    window.alert('Please specify a record path first.');
+    window.alert($.i18n._('core-index-import')["warning-record-path"]);
   }
 };
 
@@ -104,6 +104,16 @@ Refine.JsonParserUI.prototype._initialize = function() {
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
 
+  this._optionContainerElmts.pickRecordElementsButton.text($.i18n._('core-index-import')["warning-record-path"]);
+  this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
+  $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
+  $('#or-import-rows').text($.i18n._('core-index-parser')["rows-data"]);
+  $('#or-import-preserve').text($.i18n._('core-index-parser')["preserve-empty"]);
+  $('#or-import-trim').html($.i18n._('core-index-parser')["trim"]);
+  $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
+  $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
+  $('#or-import-jsonParser').text($.i18n._('core-index-parser')["json-parser"]);
+  
   if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.attr("checked", "checked");
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();

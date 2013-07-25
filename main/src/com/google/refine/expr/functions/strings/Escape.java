@@ -42,9 +42,9 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.ToString;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.StringUtils;
 
 public class Escape implements Function {
 
@@ -60,8 +60,7 @@ public class Escape implements Function {
                 s = "";
             } else {
                 // Use our own ToString so that formatting is consistent
-                ToString toString = new ToString();
-                s = toString.call(bindings,new Object[] {o1});
+                s = StringUtils.toString(o1);
             }
             if (o2 instanceof String) {
                 String mode = ((String) o2).toLowerCase();

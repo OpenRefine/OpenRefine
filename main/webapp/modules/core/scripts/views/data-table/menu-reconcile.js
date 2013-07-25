@@ -76,11 +76,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var frame = DialogSystem.createDialog();
     frame.width("400px");
 
-    var header = $('<div></div>').addClass("dialog-header").text("Search for Match").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text($.i18n._('core-views')["search-match"]).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
-    $('<p></p>').text("Search Freebase for a topic to match all filtered cells:").appendTo(body);
+    $('<p></p>').text($.i18n._('core-views')["search-fb-topic"]).appendTo(body);
 
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
 
@@ -116,7 +116,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       );
     });
 
-    $('<button class="button"></button>').text("Cancel").click(function() {
+    $('<button class="button"></button>').text($.i18n._('core-buttons')["cancel"]).click(function() {
       DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
 
@@ -127,7 +127,16 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doCopyAcrossColumns = function() {
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/copy-recon-across-columns-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text("Copy recon judgments from column " + column.name);
+    elmts.dialogHeader.text($.i18n._('core-views')["copy-recon-judg"]+" " + column.name);
+    
+    elmts.or_views_copyToCol.text($.i18n._('core-views')["copy-to-col"]);
+    elmts.or_views_copyOpt.text($.i18n._('core-views')["copy-opt"]);
+    elmts.or_views_applyToCell.text($.i18n._('core-views')["apply-to-cell"]);
+    elmts.or_views_whatToCopy.text($.i18n._('core-views')["what-to-copy"]);
+    elmts.or_views_newRecon.text($.i18n._('core-views')["new-recon"]);
+    elmts.or_views_matchRecon.text($.i18n._('core-views')["match-recon"]);
+    elmts.okButton.text($.i18n._('core-buttons')["copy"]);
+    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
 
     var columns = theProject.columnModel.columns;
     for (var i = 0; i < columns.length; i++) {
@@ -162,9 +171,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       });
 
       if (config.toColumnName.length === 0) {
-        alert("Please select some other column to copy to.");
+        alert($.i18n._('core-views')["warning-other-col"]);
       } else if (config.judgment.length === 0) {
-        alert("Please select at least one kind of judgment to copy.");
+        alert($.i18n._('core-views')["warning-sel-judg"]);
       } else {
         Refine.postCoreProcess(
           "recon-copy-across-columns", 
@@ -180,18 +189,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/reconcile" ], [
     {
       id: "core/reconcile",
-      label: "Start reconciling...",
-      tooltip: "Reconcile text in this column with topics on Freebase",
+      label: $.i18n._('core-views')["start-recon"]+'...',
+      tooltip: $.i18n._('core-views')["recon-text-fb"],
       click: doReconcile
     },
     {},
     {
       id: "core/facets",
-      label: "Facets",
+      label: $.i18n._('core-views')["facets"],
       submenu: [
         {
           id: "core/by-judgment",
-          label: "By judgment",
+          label: $.i18n._('core-views')["by-judg"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list", 
@@ -209,12 +218,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/by-best-candidates-score",
-          label: "Best candidate's score",
+          label: $.i18n._('core-views')["best-score"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": best candidate's score",
+                  "name" : column.name + ": "+$.i18n._('core-views')["best-cand-score"],
                   "columnName" : column.name, 
                   "expression" : "cell.recon.best.score",
                   "mode" : "range"
@@ -226,12 +235,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/by-best-candidates-type-match",
-          label: "Best candidate's type match",
+          label: $.i18n._('core-views')["best-type-match"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": best candidate's types match?",
+                  "name" : column.name + ": "+$.i18n._('core-views')["best-cand-type.match"],
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
@@ -243,12 +252,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/by-best-candidates-name-match",
-          label: "Best candidate's name match",
+          label: $.i18n._('core-views')["best-name"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": best candidate's name match?",
+                  "name" : column.name + ": "+ $.i18n._('core-views')["best-cand-name"],
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
@@ -261,12 +270,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/by-best-candidates-name-edit-distance",
-          label: "Best candidate's name edit distance",
+          label: $.i18n._('core-views')["best-edit-dist"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": best candidate's name edit distance",
+                  "name" : column.name + ": "+$.i18n._('core-views')["best-cand-edit-dist"],
                   "columnName" : column.name, 
                   "expression" : "cell.recon.features.nameLevenshtein",
                   "mode" : "range"
@@ -278,12 +287,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/by-best-candidates-name-word-similarity",
-          label: "Best candidate's name word similarity",
+          label: $.i18n._('core-views')["best-word-sim"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": best candidate's name word similarity",
+                  "name" : column.name + ": "+$.i18n._('core-views')["best-cand-word-sim"],
                   "columnName" : column.name, 
                   "expression" : "cell.recon.features.nameWordDistance",
                   "mode" : "range"
@@ -296,7 +305,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/by-best-candidates-types",
-          label: "Best candidate's types",
+          label: $.i18n._('core-views')["best-type"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list", 
@@ -312,16 +321,16 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/qa-facets",
-      label: "QA facets",
+      label: $.i18n._('core-views')["qa-facets"],
       submenu: [
         {
           id: "core/by-qa-results",
-          label: "QA results",
+          label: $.i18n._('core-views')["qa-results"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + " QA Results",
+                  "name" : column.name + " "+$.i18n._('core-views')["qa-results2"],
                   "columnName" : column.name, 
                   "expression" : "cell.recon.features.qaResult"
                 }
@@ -330,12 +339,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/by-judgment-actions",
-          label: "Judgment actions",
+          label: $.i18n._('core-views')["judg-actions"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + " Judgment Actions",
+                  "name" : column.name + " "+$.i18n._('core-views')["judg-actions2"],
                   "columnName" : column.name, 
                   "expression" : "cell.recon.judgmentAction"
                 }
@@ -344,12 +353,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/by-judgment-history-entries",
-          label: "Judgment history entries",
+          label: $.i18n._('core-views')["judg-hist"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + " History Entries",
+                  "name" : column.name + " "+$.i18n._('core-views')["hist-entries"],
                   "columnName" : column.name, 
                   "expression" : "cell.recon.judgmentHistoryEntry"
                 }
@@ -360,18 +369,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/actions",
-      label: "Actions",
+      label: $.i18n._('core-views')["actions"],
       submenu: [
         {
           id: "core/match-to-best-candidate",
-          label: "Match each cell to its best candidate",
-          tooltip: "Match each cell to its best candidate in this column for all current filtered rows",
+          label: $.i18n._('core-views')["best-cand"],
+          tooltip: $.i18n._('core-views')["best-cand2"],
           click: doReconMatchBestCandidates
         },
         {
           id: "core/match-to-new-topic",
-          label: "Create a new topic for each cell",
-          tooltip: "Mark to create one new topic for each cell in this column for all current filtered rows",
+          label: $.i18n._('core-views')["new-topic"],
+          tooltip: $.i18n._('core-views')["new-topic2"],
           click: function() {
             doReconMarkNewTopics(false);
           }
@@ -379,29 +388,29 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/match-similar-to-new-topic",
-          label: "Create one new topic for similar cells",
-          tooltip: "Mark to create one new topic for each group of similar cells in this column for all current filtered rows",
+          label: $.i18n._('core-views')["new-topic"],
+          tooltip: $.i18n._('core-views')["new-topic2"],
           click: function() {
             doReconMarkNewTopics(true);
           }
         },
         {
           id: "core/match-to-specific",
-          label: "Match all filtered cells to...",
-          tooltip: "Search for a topic to match all filtered cells to",
+          label: $.i18n._('core-views')["filtered-cell"],
+          tooltip: $.i18n._('core-views')["filtered-cell2"],
           click: doSearchToMatch
         },
         {},
         {
           id: "core/discard-judgments",
-          label: "Discard reconciliation judgments",
-          tooltip: "Discard reconciliation judgments in this column for all current filtered rows",
+          label: $.i18n._('core-views')["discard-judg"],
+          tooltip: $.i18n._('core-views')["discard-judg2"],
           click: doReconDiscardJudgments
         },
         {
           id: "core/clear-recon-data",
-          label: "Clear reconciliation data",
-          tooltip: "Clear reconciliation data in this column for all current filtered rows",
+          label: $.i18n._('core-views')["clear-recon"],
+          tooltip: $.i18n._('core-views')["clear-recon2"],
           click: doClearReconData
         }
       ]
@@ -409,8 +418,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/copy-across-columns",
-      label: "Copy reconciliation data...",
-      tooltip: "Copy this column's reconciliation data to other columns",
+      label: $.i18n._('core-views')["copy-recon"],
+      tooltip: $.i18n._('core-views')["copy-recon2"],
       click: doCopyAcrossColumns
     }
   ]);
