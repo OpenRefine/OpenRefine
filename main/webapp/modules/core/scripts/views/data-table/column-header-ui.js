@@ -76,7 +76,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
       var newPercent = Math.ceil(100 * stats.newTopics / stats.nonBlanks);
       var matchPercent = Math.ceil(100 * stats.matchedTopics / stats.nonBlanks);
       var unreconciledPercent = Math.ceil(100 * (stats.nonBlanks - stats.matchedTopics - stats.newTopics) / stats.nonBlanks);
-      var title = matchPercent + "% matched, " + newPercent + "% new, " + unreconciledPercent + "% to be reconciled";
+      var title = matchPercent + "% "+$.i18n._('core-views')["matched"]+", " + newPercent + "% "+$.i18n._('core-views')["new"]+", " + unreconciledPercent + "% "+$.i18n._('core-views')["to-be-recon"];
 
       var whole = $('<div>')
       .addClass("column-header-recon-stats-bar")
@@ -101,25 +101,25 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
   var menu = [
     {
       id: "core/facet",
-      label: "Facet",
+      label: $.i18n._('core-views')["facet"],
       width: "170px",
       submenu: []
     },
     {},
     {
       id: "core/edit-cells",
-      label: "Edit cells",
+      label: $.i18n._('core-views')["edit-cells"],
       width: "170px",
       submenu: []
     },
     {
       id: "core/edit-column",
-      label: "Edit column",
+      label: $.i18n._('core-views')["edit-column"],
       submenu: []
     },
     {
       id: "core/transpose",
-      label: "Transpose",
+      label: $.i18n._('core-views')["transpose"],
       submenu: []
     },
     {},
@@ -127,31 +127,31 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
       this._dataTableView._getSortingCriterionForColumn(this._column.name) === null ?
         {
           id: "core/sort",
-          "label": "Sort...",
+          "label": $.i18n._('core-views')["sort"]+"...",
           "click": function() {
             self._showSortingCriterion(null, self._dataTableView._getSortingCriteriaCount() > 0);
           }
         } :
         {
           id: "core/sort",
-          label: "Sort",
+          label: $.i18n._('core-views')["sort"],
           submenu: this.createSortingMenu()
         }
     ),
     {
       id: "core/view",
       label: "View",
-      tooltip: "Collapse/expand columns to make viewing the data more convenient",
+      tooltip: $.i18n._('core-views')["collapse-expand"],
       submenu: [
         {
-          label: "Collapse this column",
+          label: $.i18n._('core-views')["collapse-this"],
           click: function() {
             self._dataTableView._collapsedColumnNames[self._column.name] = true;
             self._dataTableView.render();
           }
         },
         {
-          label: "Collapse all other columns",
+          label: $.i18n._('core-views')["collapse-all"],
           click: function() {
             var collapsedColumnNames = {};
             for (var i = 0; i < theProject.columnModel.columns.length; i++) {
@@ -164,7 +164,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
           }
         },
         {
-          label: "Collapse all columns to left",
+          label: $.i18n._('core-views')["collapse-left"],
           click: function() {
             for (var i = 0; i < self._columnIndex; i++) {
               self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
@@ -173,7 +173,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
           }
         },
         {
-          label: "Collapse all columns to right",
+          label: $.i18n._('core-views')["collapse-right"],
           click: function() {
             for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
               self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
@@ -186,8 +186,8 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     {},
     {
       id: "core/reconcile",
-      label: "Reconcile",
-      tooltip: "Match this column's cells to topics on Freebase",
+      label: $.i18n._('core-views')["reconcile"],
+      tooltip: $.i18n._('core-views')["match-fb"],
       width: "170px",
       submenu: []
     }
@@ -208,7 +208,7 @@ DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
 
   var items = [
     {
-      "label": "Sort...",
+      "label": $.i18n._('core-views')["sort"]+"...",
       "click": function() {
         self._showSortingCriterion(criterion, hasOtherCriteria);
       }
@@ -217,14 +217,14 @@ DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
 
   if (criterion !== null) {
     items.push({
-      "label": "Reverse",
+      "label": $.i18n._('core-views')["reverse"],
       "click": function() {
         criterion.reverse = !criterion.reverse;
         self._dataTableView._addSortingCriterion(criterion);
       }
     });
     items.push({
-      "label": "Remove sort",
+      "label": $.i18n._('core-views')["remove-sort"],
       "click": function() {
         self._dataTableView._removeSortingCriterionOfColumn(criterion.column);
       }
@@ -247,7 +247,22 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
   var frame = $(DOM.loadHTML("core", "scripts/views/data-table/sorting-criterion-dialog.html"));
   var elmts = DOM.bind(frame);
 
-  elmts.dialogHeader.text('Sort by ' + this._column.name);
+  elmts.dialogHeader.text($.i18n._('core-views')["sort-by"]+' ' + this._column.name);
+  
+  elmts.or_views_sortAs.text($.i18n._('core-views')["sort-cell"]);
+  elmts.or_views_positionBlank.text($.i18n._('core-views')["pos-blank"]);
+  
+  elmts.or_views_text.text($.i18n._('core-views')["text"]);
+  elmts.or_views_caseSens.text($.i18n._('core-views')["case-sensitive"]);
+  elmts.or_views_numbers.text($.i18n._('core-views')["numbers"]);
+  elmts.or_views_dates.text($.i18n._('core-views')["dates"]);
+  elmts.or_views_booleans.text($.i18n._('core-views')["booleans"]);
+  elmts.or_views_dragDrop.text($.i18n._('core-views')["drag-drop"]);
+  elmts.directionForwardLabel.text($.i18n._('core-views')["forward"]);
+  elmts.directionReverseLabel.text($.i18n._('core-views')["reverse"]);
+  elmts.or_views_sortByCol.text($.i18n._('core-views')["sort-by-col"]);
+  elmts.okButton.html($.i18n._('core-buttons')["ok"]);
+  elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
 
   elmts.valueTypeOptions
   .find("input[type='radio'][value='" + criterion.valueType + "']")
@@ -260,14 +275,14 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
       forward.html("a - z");
       reverse.html("z - a");
     } else if (valueType == "number") {
-      forward.html("smallest first");
-      reverse.html("largest first");
+      forward.html($.i18n._('core-views')["smallest-first"]);
+      reverse.html($.i18n._('core-views')["largest-first"]);
     } else if (valueType == "date") {
-      forward.html("earliest first");
-      reverse.html("latest first");
+      forward.html($.i18n._('core-views')["earliest-first"]);
+      reverse.html($.i18n._('core-views')["latest-first"]);
     } else if (valueType == "boolean") {
-      forward.html("false then true");
-      reverse.html("true then false");
+      forward.html($.i18n._('core-views')["false-true"]);
+      reverse.html($.i18n._('core-views')["true-false"]);
     }
   };
   elmts.valueTypeOptions
@@ -288,9 +303,9 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
     elmts.sortAloneContainer.show();
   }
 
-  var validValuesHtml = '<li kind="value">Valid values</li>';
-  var blankValuesHtml = '<li kind="blank">Blanks</li>';
-  var errorValuesHtml = '<li kind="error">Errors</li>';
+  var validValuesHtml = '<li kind="value">'+$.i18n._('core-views')["valid-values"]+'</li>';
+  var blankValuesHtml = '<li kind="blank">'+$.i18n._('core-views')["blanks"]+'</li>';
+  var errorValuesHtml = '<li kind="error">'+$.i18n._('core-views')["errors"]+'</li>';
   var positionsHtml;
   if (criterion.blankPosition < 0) {
     if (criterion.errorPosition > 0) {

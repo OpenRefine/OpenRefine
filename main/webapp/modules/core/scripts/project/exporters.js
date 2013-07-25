@@ -41,55 +41,55 @@ ExporterManager.handlers = {};
 ExporterManager.MenuItems = [
   {
     "id" : "core/export-project",
-    "label": "Export project",
+    "label": $.i18n._('core-project')["export-project"],
     "click": function() { ExporterManager.handlers.exportProject(); }
   },
   {},
   {
     "id" : "core/export-tsv",
-    "label": "Tab-separated value",
+    "label": $.i18n._('core-project')["tab-value"],
     "click": function() { ExporterManager.handlers.exportRows("tsv", "tsv"); }
   },
   {
     "id" : "core/export-csv",
-    "label": "Comma-separated value",
+    "label": $.i18n._('core-project')["comma-sep"],
     "click": function() { ExporterManager.handlers.exportRows("csv", "csv"); }
   },
   {
     "id" : "core/export-html-table",
-    "label": "HTML table",
+    "label": $.i18n._('core-project')["html-table"],
     "click": function() { ExporterManager.handlers.exportRows("html", "html"); }
   },
   {
     "id" : "core/export-excel",
-    "label": "Excel",
+    "label": $.i18n._('core-project')["excel"],
     "click": function() { ExporterManager.handlers.exportRows("xls", "xls"); }
   },
   {
     "id" : "core/export-ods",
-    "label": "ODF spreadsheet",
+    "label": $.i18n._('core-project')["odf"],
     "click": function() { ExporterManager.handlers.exportRows("ods", "ods"); }
   },
   {},
   {
     "id" : "core/export-tripleloader",
-    "label": "Triple loader",
+    "label": $.i18n._('core-project')["triple-loader"],
     "click": function() { ExporterManager.handlers.exportTripleloader("tripleloader"); }
   },
   {
     "id" : "core/export-mqlwrite",
-    "label": "MQLWrite",
+    "label": $.i18n._('core-project')["mqlwrite"],
     "click": function() { ExporterManager.handlers.exportTripleloader("mqlwrite"); }
   },
   {},
   {
     "id" : "core/export-custom-tabular",
-    "label": "Custom tabular exporter...",
+    "label": $.i18n._('core-project')["custom-tabular"],
     "click": function() { new CustomTabularExporterDialog(); }
   },
   {
     "id" : "core/export-templating",
-    "label": "Templating...",
+    "label": $.i18n._('core-project')["templating"],
     "click": function() { new TemplatingExporterDialog(); }
   }
 ];
@@ -109,10 +109,7 @@ ExporterManager.prototype._initializeUI = function() {
 
 ExporterManager.handlers.exportTripleloader = function(format) {
   if (!theProject.overlayModels.freebaseProtograph) {
-    alert(
-        "You haven't done any schema alignment yet,\nso there is no triple to export.\n\n" +
-        "Use the Freebase > Edit Schema Alignment Skeleton...\ncommand to align your data with Freebase schemas first."
-    );
+    alert($.i18n._('triple-loader')["warning-align"]);
   } else {
     ExporterManager.handlers.exportRows(format, "txt");
   }

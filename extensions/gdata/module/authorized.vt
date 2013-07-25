@@ -37,7 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <title>OpenRefine - Authorized</title>
 </head>
 <body>
-  Authorization process completed. Close this window and return to OpenRefine.
+  <span id="gdata-authorized"></span>
   
   <script>
     var windowName = "$winname";

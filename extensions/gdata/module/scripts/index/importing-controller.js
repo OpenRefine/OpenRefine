@@ -31,6 +31,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+//Internationalization init
+var lang = navigator.language.split("-")[0]
+		|| navigator.userLanguage.split("-")[0];
+var dictionary = "";
+$.ajax({
+	url : "/command/gdata/load-language?",
+	type : "POST",
+	async : false,
+	data : {
+		lng : lang
+	},
+	success : function(data) {
+		dictionary = data;
+	}
+});
+$.i18n.setDictionary(dictionary);
+// End internationalization
+
 Refine.GDataImportingController = function(createProjectUI) {
   this._createProjectUI = createProjectUI;
   
@@ -41,11 +59,14 @@ Refine.GDataImportingController = function(createProjectUI) {
     id: "gdata-source",
     ui: new Refine.GDataSourceUI(this)
   });
+  
+  $('#gdata-authorize').text($.i18n._('gdata-auth')["authorize-label"]); 
+  $('#gdata-authorized').text($.i18n._('gdata-auth')["authorized-label"]);
 };
 Refine.CreateProjectUI.controllers.push(Refine.GDataImportingController);
 
 Refine.GDataImportingController.prototype.startImportingDocument = function(doc) {
-  var dismiss = DialogSystem.showBusy("Preparing ...");
+  var dismiss = DialogSystem.showBusy($.i18n._('gdata-import')["preparing"]);
   
   var self = this;
   $.post(
@@ -142,6 +163,27 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
           'scripts/index/gdata-fusion-tables-parsing-panel.html' :
           'scripts/index/gdata-parsing-panel.html'));
   this._parsingPanelElmts = DOM.bind(this._parsingPanel);
+  
+  if(this._doc.type != 'table'){
+	  this._parsingPanelElmts.gdata-worksheet.html($.i18n._('gdata-parsing')["worksheet"]); 
+	  this._parsingPanelElmts.gdata_ignore_first.html($.i18n._('gdata-parsing')["ignore-first"]);
+	  this._parsingPanelElmts.gdata_ignore.html($.i18n._('gdata-parsing')["ignore"]);
+	  this._parsingPanelElmts.gdata_parse_next.html($.i18n._('gdata-parsing')["parse-next"]);
+	  this._parsingPanelElmts.gdata_parse.html($.i18n._('gdata-parsing')["parse"]);
+  }
+  this._parsingPanelElmts.startOverButton.html($.i18n._('gdata-parsing')["start-over"]);
+  this._parsingPanelElmts.gdata_conf_pars.html($.i18n._('gdata-parsing')["conf-pars"]);
+  this._parsingPanelElmts.gdata_proj_name.html($.i18n._('gdata-parsing')["proj-name"]);
+  this._parsingPanelElmts.createProjectButton.html($.i18n._('gdata-parsing')["create-proj"]);
+  this._parsingPanelElmts.gdata-options.html($.i18n._('gdata-parsing')["option"]);
+  this._parsingPanelElmts.previewButton.html($.i18n._('gdata-parsing')["preview-button"]);
+  this._parsingPanelElmts.gdata-updating.html($.i18n._('gdata-parsing')["updating-preview"]);
+  this._parsingPanelElmts.gdata_discard_next.html($.i18n._('gdata-parsing')["discard-next"]);
+  this._parsingPanelElmts.gdata_discard.html($.i18n._('gdata-parsing')["discard"]);
+  this._parsingPanelElmts.gdata_limit_next.html($.i18n._('gdata-parsing')["limit-next"]);
+  this._parsingPanelElmts.gdata_limit.html($.i18n._('gdata-parsing')["limit"]);
+  this._parsingPanelElmts.gdata_store_row.html($.i18n._('gdata-parsing')["store-row"]);
+  this._parsingPanelElmts.gdata_store_cell.html($.i18n._('gdata-parsing')["store-cell"]);
   
   if (this._parsingPanelResizer) {
     $(window).unbind('resize', this._parsingPanelResizer);
@@ -376,7 +418,7 @@ Refine.GDataImportingController.prototype._createProject = function() {
           },
           1000
         );
-        self._createProjectUI.showImportProgressPanel("Creating project ...", function() {
+        self._createProjectUI.showImportProgressPanel($.i18n._('gdata-import')["creating"], function() {
           // stop the timed polling
           window.clearInterval(timerID);
 

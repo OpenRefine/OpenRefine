@@ -1,15 +1,13 @@
 <div class="dialog-frame" style="width: 800px;">
   <div class="dialog-border">
-    <div class="dialog-header" bind="dialogHeader">Apply Operation History</div>
+    <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body" bind="dialogBody">
-      <div class="dialog-instruction">
-        Paste an extracted JSON history of operations to perform:
-      </div>  
+      <div class="dialog-instruction" bind="or_proj_pasteJson"></div>  
       <div class="input-container"><textarea wrap="off" bind="textarea" class="history-operation-json" /></div>
     </div>
     <div class="dialog-footer" bind="dialogFooter">
-    <button class="button" bind="applyButton">Perform Operations</button>
-    <button class="button" bind="cancelButton">Cancel</button>
+    <button class="button" bind="applyButton"></button>
+    <button class="button" bind="cancelButton"></button>
     </div>
   </div>
 </div>

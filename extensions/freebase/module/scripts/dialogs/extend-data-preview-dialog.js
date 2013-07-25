@@ -41,15 +41,23 @@ function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
   var self = this;
   this._dialog = $(DOM.loadHTML("freebase", "scripts/dialogs/extend-data-preview-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
-  this._elmts.dialogHeader.text("Add Columns from Freebase Based on Column " + column.name);
+  
+  this._elmts.dialogHeader.text($.i18n._('fb-extend')["add-column"]);
+  this._elmts.fb_add_property.html($.i18n._('fb-extend')["add-property"]);
+  this._elmts.suggested_properties.text($.i18n._('fb-extend')["suggested-properties"]);
+  
+  this._elmts.resetButton.text($.i18n._('fb-buttons')["reset"]);
+  this._elmts.okButton.html('&nbsp;&nbsp;'+$.i18n._('fb-buttons')["ok"]+'&nbsp;&nbsp;');
+  this._elmts.cancelButton.text($.i18n._('fb-buttons')["cancel"]);
+  
   this._elmts.resetButton.click(function() {
     self._extension.properties = [];
     self._update();
   });
-
+  
   this._elmts.okButton.click(function() {
     if (self._extension.properties.length === 0) {
-      alert("Please add some properties first.");
+      alert($.i18n._('fb-extend')["warning-add-properties"]);
     } else {
       DialogSystem.dismissUntil(self._level - 1);
       self._onDone(self._extension);
@@ -157,7 +165,7 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
 };
 
 ExtendDataPreviewDialog.prototype._update = function() {
-  this._elmts.previewContainer.empty().text("Querying Freebase ...");
+  this._elmts.previewContainer.empty().text($.i18n._('fb-extend')["querying-freebase"]);
 
   var self = this;
   var params = {
@@ -234,7 +242,7 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
     $('<a href="javascript:{}"></a>')
     .text("remove")
     .addClass("action")
-    .attr("title", "Remove this column")
+    .attr("title", $.i18n._('fb-extend')["remove-column"])
     .click(function() {
       self._removeProperty(column.path);
     }).appendTo(th);
@@ -242,7 +250,7 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
     $('<a href="javascript:{}"></a>')
     .text("constrain")
     .addClass("action")
-    .attr("title", "Add constraints to this column")
+    .attr("title", $.i18n._('fb-extend')["add-constraints"])
     .click(function() {
       self._constrainProperty(column.path);
     }).appendTo(th);
@@ -329,14 +337,14 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
   var frame = DialogSystem.createDialog();
   frame.width("500px");
 
-  var header = $('<div></div>').addClass("dialog-header").text("Constrain " + path.join(" > ")).appendTo(frame);
+  var header = $('<div></div>').addClass("dialog-header").text(" " + path.join(" > ")).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
   body.html(
     '<div class="grid-layout layout-normal layout-full"><table>' +
     '<tr><td>' +
-    'Enter MQL query constraints as JSON' +
+    $.i18n._('fb-extend')["mql-constraints"] +
     '</td></tr>' +
     '<tr><td>' +
     '<textarea style="width: 100%; height: 300px; font-family: monospace;" bind="textarea"></textarea>' +
@@ -352,8 +360,8 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
   }
 
   footer.html(
-    '<button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-    '<button class="button" bind="cancelButton">Cancel</button>'
+    '<button class="button" bind="okButton">&nbsp;&nbsp;'+$.i18n._('fb-buttons')["ok"]+'&nbsp;&nbsp;</button>' +
+    '<button class="button" bind="cancelButton">'+$.i18n._('fb-buttons')["cancel"]+'</button>'
   );
   var footerElmts = DOM.bind(footer);
 
@@ -367,7 +375,7 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
     try {
       var o = JSON.parse(bodyElmts.textarea[0].value);
       if (o === undefined) {
-        alert("Please ensure that the JSON you enter is valid.");
+        alert($.i18n._('fb-extend')["warning-valid-json"]);
         return;
       }
 
@@ -375,7 +383,7 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
         o = o[0];
       }
       if (!$.isPlainObject(o)) {
-        alert("The JSON you enter must be an object, that is, it is of this form { ... }.");
+        alert($.i18n._('fb-extend')["warning-json-obj"]);
         return;
       }
 

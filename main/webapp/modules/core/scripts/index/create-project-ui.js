@@ -49,6 +49,13 @@ Refine.CreateProjectUI = function(elmt) {
   this._errorPanel = this.addCustomPanel();
   this._errorPanel.html(DOM.loadHTML("core", "scripts/index/create-project-error-panel.html"));
   
+  $('#or-create-question').text($.i18n._('core-index-create')["question"]);
+  $('#or-create-formats').text($.i18n._('core-index-create')["formats"]);
+  $('#or-create-from').text($.i18n._('core-index-create')["from"]);
+  
+  $('#create-project-progress-cancel-button').text($.i18n._('core-buttons')["cancel"]);
+  $('#create-project-error-ok-button').text($.i18n._('core-buttons')["ok"]);
+  
   $.post(
     "command/core/get-importing-configuration",
     null,
@@ -155,7 +162,7 @@ Refine.CreateProjectUI.prototype.showSourceSelectionPanel = function() {
 
 Refine.actionAreas.push({
   id: "create-project",
-  label: "Create Project",
+  label: $.i18n._('core-index-create')["create-proj"],
   uiClass: Refine.CreateProjectUI
 });
 
@@ -166,7 +173,7 @@ Refine.CreateProjectUI.prototype.showImportProgressPanel = function(progressMess
 
   $('#create-project-progress-message').text(progressMessage);
   $('#create-project-progress-bar-body').css("width", "0%");
-  $('#create-project-progress-message-left').text('Starting');
+  $('#create-project-progress-message-left').text($.i18n._('core-index-create')["starting"]);
   $('#create-project-progress-message-center').empty();
   $('#create-project-progress-message-right').empty();
   $('#create-project-progress-timing').empty();
@@ -196,7 +203,7 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
         
         onError(job);
       } else if (checkDone(job)) {
-        $('#create-project-progress-message').text('Done.');
+        $('#create-project-progress-message').text($.i18n._('core-index-create')["done"]);
 
         window.clearInterval(timerID);
         if (callback) {
@@ -215,13 +222,13 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
           if (secondsRemaining > 1) {
             if (secondsRemaining > 60) {
               $('#create-project-progress-timing').text(
-                  Math.ceil(secondsRemaining / 60) + " minutes remaining");
+                  Math.ceil(secondsRemaining / 60) + " "+$.i18n._('core-index-create')["min-remaining"]);
             } else {
               $('#create-project-progress-timing').text(
-                  Math.ceil(secondsRemaining) + " seconds remaining");
+                  Math.ceil(secondsRemaining) + " "+$.i18n._('core-index-create')["sec-remaining"]);
             }
           } else {
-            $('#create-project-progress-timing').text('almost done ...');
+            $('#create-project-progress-timing').text($.i18n._('core-index-create')["almost-done"]);
           }
         } else {
           $('#create-project-progress-bar-body').addClass('indefinite');
@@ -230,7 +237,7 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
         $('#create-project-progress-message').text(progress.message);
         if ('memory' in progress) {
           var percent = progress.memory * 100.0 / progress.maxmemory;
-          $('#create-project-progress-memory').text("Memory usage: "+percent.toFixed()+'% ('+progress.memory+'/'+progress.maxmemory+"MB)");
+          $('#create-project-progress-memory').text($.i18n._('core-index-create')["memory-usage"]+" "+percent.toFixed()+'% ('+progress.memory+'/'+progress.maxmemory+"MB)");
           if (percent > 90) {
             $('#create-project-progress-memory').addClass('warning');
           } else {
@@ -247,7 +254,7 @@ Refine.CreateProjectUI.prototype.showImportJobError = function(message, stack) {
   var self = this;
 
   $('#create-project-error-message').text(message);
-  $('#create-project-error-stack').text(stack || 'No technical details.');
+  $('#create-project-error-stack').text(stack || $.i18n._('core-index-create')["no-details"]);
 
   this.showCustomPanel(this._errorPanel);
   $('#create-project-error-ok-button').unbind().click(function() {

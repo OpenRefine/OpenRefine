@@ -31,12 +31,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+var dictionary = "";
+$.ajax({
+	url : "/command/gdata/load-language?",
+	type : "POST",
+	async : false,
+	data : {
+		lng : lang
+	},
+	success : function(data) {
+		dictionary = data;
+	}
+});
+$.i18n.setDictionary(dictionary);
+// End internationalization
+
 (function() {
   var handleUpload = function(options, exportAllRows, onDone, prompt) {
     var doUpload = function() {
       var name = window.prompt(prompt, theProject.metadata.name);
       if (name) {
-        var dismiss = DialogSystem.showBusy('Uploading...');
+        var dismiss = DialogSystem.showBusy($.i18n._('gdata-exporter')["uploading"]);
         $.post(
           "command/gdata/upload",
           {
@@ -52,7 +67,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             if (o.url) {
               window.open(o.url, '_blank');
             } else {
-                alert('Upload error: ' + o.message)
+                alert($.i18n._('gdata-exporter')["upload-error"] + o.message)
             }
             onDone();
           },
@@ -70,16 +85,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   
   CustomTabularExporterDialog.uploadTargets.push({
     id: 'gdata/google-spreadsheet',
-    label: 'A new Google spreadsheet',
+    label: $.i18n._('gdata-exporter')["new-spreadsheet"],
     handler: function(options, exportAllRows, onDone) {
-      handleUpload(options, exportAllRows, onDone, 'Enter a name for the new Google spreadsheet');
+      handleUpload(options, exportAllRows, onDone, $.i18n._('gdata-exporter')["enter-spreadsheet"]);
     }
   });
   CustomTabularExporterDialog.uploadTargets.push({
     id: 'gdata/fusion-table',
-    label: 'A new Google Fusion table',
+    label: $.i18n._('gdata-exporter')["new-fusion"],
     handler: function(options, exportAllRows, onDone) {
-      handleUpload(options, exportAllRows, onDone, 'Enter a name for the new Google Fusion table');
+      handleUpload(options, exportAllRows, onDone, $.i18n._('gdata-exporter')["enter-fusion"]);
     }
   });
 })();

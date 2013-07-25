@@ -96,7 +96,7 @@ DateTimeUtil.setIso8601Date = function(dateObject, string) {
      
     var d = string.match(DateTimeUtil._dateRegexp);
     if(!d) {
-        throw new Error("Invalid date string: " + string);
+        throw new Error($.i18n._('core-util-enc')["invalid-date"]+": " + string);
     }
     
     var sign = (d[1] == "-") ? -1 : 1; // BC or AD
@@ -153,7 +153,7 @@ DateTimeUtil.setIso8601Time = function (dateObject, string) {
     
     var d = string.match(DateTimeUtil._timeRegexp);
     if(!d) {
-        SimileAjax.Debug.warn("Invalid time string: " + string);
+        SimileAjax.Debug.warn($.i18n._('core-util-enc')["invalid-date"]+": " + string);
         return false;
     }
     var hours = d[1];

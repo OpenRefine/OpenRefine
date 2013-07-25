@@ -174,7 +174,7 @@ Refine.DefaultImportingController.prototype._prepareData = function() {
 Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializationData = function(format, onDone) {
   if (!(format in this._parserOptions)) {
     var self = this;
-    var dismissBusy = DialogSystem.showBusy("Inspecting selected files ...");
+    var dismissBusy = DialogSystem.showBusy($.i18n._('core-index-import')["inspecting"]);
     $.post(
       "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
@@ -263,7 +263,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
   if ((this._formatParserUI) && this._formatParserUI.confirmReadyToCreateProject()) {
     var projectName = $.trim(this._parsingPanelElmts.projectNameInput[0].value);
     if (projectName.length === 0) {
-      window.alert("Please name the project.");
+      window.alert($.i18n._('core-index-import')["warning-name"]);
       this._parsingPanelElmts.projectNameInput.focus();
       return;
     }
@@ -302,14 +302,14 @@ Refine.DefaultImportingController.prototype._createProject = function() {
                   document.location = "project?project=" + job.config.projectID;
                 },
                 function(job) {
-                  alert('Errors:\n' + Refine.CreateProjectUI.composeErrorMessage(job));
+                  alert($.i18n._('core-index-import')["errors"]+'\n' + Refine.CreateProjectUI.composeErrorMessage(job));
                   self._onImportJobReady();
                 }
             );
           },
           1000
         );
-        self._createProjectUI.showImportProgressPanel("Creating project ...", function() {
+        self._createProjectUI.showImportProgressPanel($.i18n._('core-index-import')["creating-proj"], function() {
           // stop the timed polling
           window.clearInterval(timerID);
 
