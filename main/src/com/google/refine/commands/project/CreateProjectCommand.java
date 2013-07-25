@@ -112,7 +112,7 @@ public class CreateProjectCommand extends Command {
             } else {
                 Format formatRecord = ImportingManager.formatToRecord.get(format);
                 optionObj = formatRecord.parser.createParserUIInitializationData(
-                    job, ImportingUtilities.getSelectedFileRecords(job), format);
+                    job, job.getSelectedFileRecords(), format);
             }
             adjustLegacyOptions(format, parameters, optionObj);
             

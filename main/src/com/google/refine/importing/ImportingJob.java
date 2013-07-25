@@ -35,9 +35,12 @@ package com.google.refine.importing;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -52,7 +55,7 @@ public class ImportingJob implements Jsonizable {
     final public long id;
     final public File dir; // Temporary directory where the data about this job is stored
     
-    public JSONObject config = null;
+    private JSONObject config;
     
     public Project project;
     public ProjectMetadata metadata;
@@ -61,21 +64,100 @@ public class ImportingJob implements Jsonizable {
     public boolean updating;
     public boolean canceled;
     
+    final private Object lock = new Object();
+    
     public ImportingJob(long id, File dir) {
         this.id = id;
         this.dir = dir;
+
+        JSONObject cfg = new JSONObject();
+        JSONUtilities.safePut(cfg, "state", "new");
+        JSONUtilities.safePut(cfg, "hasData", false);
+        this.config = cfg;
         
         dir.mkdirs();
     }
     
+    
     public JSONObject getOrCreateDefaultConfig() {
-        if (config == null) {
-            config = new JSONObject();
-            JSONUtilities.safePut(config, "state", "new");
-            JSONUtilities.safePut(config, "hasData", false);
-        }
         return config;
     }
+    
+    public void setState(String state) {
+        synchronized(config) {
+            JSONUtilities.safePut(config, "state", state);        
+        }
+    }
+
+    public void setError(List<Exception> exceptions) {
+        synchronized(config) {
+            JSONUtilities.safePut(config, "errors", 
+                    DefaultImportingController.convertErrorsToJsonArray(exceptions));
+            setState("error");
+        }
+    }
+    
+    public void setProjectID(long id2) {
+        synchronized (config) {
+            JSONUtilities.safePut(config, "projectID", project.id);
+        }
+    }
+
+    public void setProgress(int percent, String message) {
+        synchronized (config) {
+            JSONObject progress = JSONUtilities.getObject(config, "progress");
+            if (progress == null) {
+                progress = new JSONObject();
+                JSONUtilities.safePut(config, "progress", progress);
+            }
+            JSONUtilities.safePut(progress, "message", message);
+            JSONUtilities.safePut(progress, "percent", percent);
+            JSONUtilities.safePut(progress, "memory", Runtime.getRuntime().totalMemory() / 1000000);
+            JSONUtilities.safePut(progress, "maxmemory", Runtime.getRuntime().maxMemory() / 1000000);
+        }
+    }
+
+    public void setFileSelection(JSONArray fileSelectionArray) {
+        synchronized (config) {
+            JSONUtilities.safePut(config, "fileSelection", fileSelectionArray);
+        }
+    }
+    
+    public void setRankedFormats(JSONArray rankedFormats) {
+        synchronized (config) {
+            JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
+        }
+    }
+
+
+    public JSONObject getRetrievalRecord() {
+        synchronized(config) {
+            return JSONUtilities.getObject(config,"retrievalRecord");
+        }
+    }
+    
+    
+    public List<JSONObject> getSelectedFileRecords() {
+        List<JSONObject> results = new ArrayList<JSONObject>();
+        
+        JSONObject retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
+        if (retrievalRecord != null) {
+            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
+            if (fileRecordArray != null) {
+                JSONArray fileSelectionArray = JSONUtilities.getArray(config,"fileSelection");
+                if (fileSelectionArray != null) {
+                    for (int i = 0; i < fileSelectionArray.length(); i++) {
+                        int index = JSONUtilities.getIntElement(fileSelectionArray, i, -1);
+                        if (index >= 0 && index < fileRecordArray.length()) {
+                            results.add(JSONUtilities.getObjectElement(fileRecordArray, index));
+                        }
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
     
     public void touch() {
         lastTouched = System.currentTimeMillis();
@@ -111,8 +193,12 @@ public class ImportingJob implements Jsonizable {
     @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
-        writer.object();
-        writer.key("config"); writer.value(config);
-        writer.endObject();
+        
+        synchronized(lock) {
+            writer.object();
+            writer.key("config"); writer.value(config);
+            writer.endObject();
+        }
     }
+    
 }
