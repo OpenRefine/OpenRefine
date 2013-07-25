@@ -56,6 +56,7 @@ import com.google.refine.expr.functions.arrays.Uniques;
 import com.google.refine.expr.functions.booleans.And;
 import com.google.refine.expr.functions.booleans.Not;
 import com.google.refine.expr.functions.booleans.Or;
+import com.google.refine.expr.functions.booleans.Xor;
 import com.google.refine.expr.functions.date.DatePart;
 import com.google.refine.expr.functions.date.Inc;
 import com.google.refine.expr.functions.date.Now;
@@ -284,6 +285,7 @@ public class ControlFunctionRegistry {
         registerFunction("and", new And());
         registerFunction("or", new Or());
         registerFunction("not", new Not());
+        registerFunction("xor", new Xor());
 
         registerFunction("cross", new Cross());
 
