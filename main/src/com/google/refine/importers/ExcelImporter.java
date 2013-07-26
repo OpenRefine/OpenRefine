@@ -115,6 +115,8 @@ public class ExcelImporter extends TabularImportingParserBase {
             }                
         } catch (IOException e) {
             logger.error("Error generating parser UI initialization data for Excel file", e);
+        } catch (IllegalArgumentException e) {
+            logger.error("Error generating parser UI initialization data for Excel file (only Excel 97 & later supported)", e);
         }
         
         return options;
@@ -153,6 +155,13 @@ public class ExcelImporter extends TabularImportingParserBase {
                e
            ));
             return;
+        } catch (IllegalArgumentException e) {
+            exceptions.add(new ImportException(
+                    "Attempted to parse as an Excel file but failed. " +
+                    "Only Excel 97 and later formats are supported.",
+                    e
+                ));
+                return;
         }
         
         int[] sheets = JSONUtilities.getIntArray(options, "sheets");
