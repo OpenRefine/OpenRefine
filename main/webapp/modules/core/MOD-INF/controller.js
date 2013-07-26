@@ -385,7 +385,7 @@ function init() {
       "externals/jquery-1.7.2.min.js",
       "externals/jquery.cookie.js",
       "externals/jquery.eventstack-0.3.js",
-      "externals/suggest/suggest-4_2.min.js",
+      "externals/suggest/suggest-4_2.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
@@ -451,7 +451,7 @@ function init() {
     "project/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_2.min.css",
+      "externals/suggest/css/suggest-4_2.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
@@ -491,7 +491,7 @@ function init() {
     [
       "externals/jquery-1.7.2.min.js",
       "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_2.min.js",
+      "externals/suggest/suggest-4_2.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
@@ -503,7 +503,7 @@ function init() {
     "preferences/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_2.min.css",
+      "externals/suggest/css/suggest-4_2.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
