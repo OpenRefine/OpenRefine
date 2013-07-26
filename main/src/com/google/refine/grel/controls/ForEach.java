@@ -81,7 +81,11 @@ public class ForEach implements Control {
                 
                 results = new ArrayList<Object>(values.length);
                 for (Object v : values) {
-                    bindings.put(name, v);
+                    if (v != null) {
+                        bindings.put(name, v);
+                    } else {
+                        bindings.remove(name);
+                    }
                     
                     Object r = args[2].evaluate(bindings);
                     
@@ -96,7 +100,11 @@ public class ForEach implements Control {
                     try {
                         Object v = a.get(i);
                         
-                        bindings.put(name, v);
+                        if (v != null) {
+                            bindings.put(name, v);
+                        } else {
+                            bindings.remove(name);
+                        }
                         
                         Object r = args[2].evaluate(bindings);
                         
@@ -111,7 +119,11 @@ public class ForEach implements Control {
                 results = new ArrayList<Object>(collection.size());
                 
                 for (Object v : collection) {
-                    bindings.put(name, v);
+                    if (v != null) {
+                        bindings.put(name, v);
+                    } else {
+                        bindings.remove(name);
+                    }
                     
                     Object r = args[2].evaluate(bindings);
                     

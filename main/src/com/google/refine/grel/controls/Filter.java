@@ -81,7 +81,11 @@ public class Filter implements Control {
                 
                 results = new ArrayList<Object>(values.length);
                 for (Object v : values) {
-                    bindings.put(name, v);
+                    if (v != null) {
+                        bindings.put(name, v);
+                    } else {
+                        bindings.remove(name);
+                    }
                     
                     Object r = args[2].evaluate(bindings);
                     if (r instanceof Boolean && ((Boolean) r).booleanValue()) {
@@ -97,7 +101,11 @@ public class Filter implements Control {
                     try {
                         Object v = a.get(i);
                         
-                        bindings.put(name, v);
+                        if (v != null) {
+                            bindings.put(name, v);
+                        } else {
+                            bindings.remove(name);
+                        }
                         
                         Object r = args[2].evaluate(bindings);
                         if (r instanceof Boolean && ((Boolean) r).booleanValue()) {
@@ -113,7 +121,11 @@ public class Filter implements Control {
                 results = new ArrayList<Object>(collection.size());
                 
                 for (Object v : collection) {
-                    bindings.put(name, v);
+                    if (v != null) {
+                        bindings.put(name, v);
+                    } else {
+                        bindings.remove(name);
+                    }
                     
                     Object r = args[2].evaluate(bindings);
                     if (r instanceof Boolean && ((Boolean) r).booleanValue()) {
