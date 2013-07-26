@@ -97,9 +97,9 @@ public class ImportingJob implements Jsonizable {
         }
     }
     
-    public void setProjectID(long id2) {
+    public void setProjectID(long projectID) {
         synchronized (config) {
-            JSONUtilities.safePut(config, "projectID", project.id);
+            JSONUtilities.safePut(config, "projectID", projectID);
         }
     }
 
