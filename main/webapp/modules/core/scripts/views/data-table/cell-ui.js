@@ -156,10 +156,11 @@ DataTableCellUI.prototype._render = function() {
             }
 
             var preview = null;
-            if ((service) && (service.preview)) {
+            if ((service) && (service.preview) 
+                && service.preview.url.indexOf("http://www.freebase.com/widget/topic") < 0) {
               preview = service.preview;
             } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
-              preview = DataTableCellUI.topicBlockPreview;
+              preview = DataTableCellUI.internalPreview;
             }
             if (preview) {
               a.click(function(evt) {
@@ -436,30 +437,37 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, b
   );
 };
 
-// FIXME: Topic Blocks are gone
-DataTableCellUI.topicBlockPreview = {
-  url: 'http://www.freebase.com/widget/topic{{id}}?mode=content&blocks=[{"block":"full_info"},{"block":"article_props"}]',
+DataTableCellUI.internalPreview = {
+  srchurl: 'https://www.googleapis.com/freebase/v1/search?filter=(all mid:${id})&output=(notable:/client/summary description type)&key='+CustomSuggest.FREEBASE_API_KEY+"&callback=?",
+  imgurl : 'https://www.googleapis.com/freebase/v1/image${id}?maxwidth=75&errorid=/freebase/no_image_png&key='+CustomSuggest.FREEBASE_API_KEY,
   width: 430,
   height: 300
 };
 
-// TODO: Inject code to format using Suggest here?
 DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, preview) {
   var self = this;
   var id = candidate.id;
-  var url = preview.url.replace("{{id}}", id);
-
   var fakeMenu = MenuSystem.createMenu();
   fakeMenu
   .width(414)
   .addClass('data-table-topic-popup')
   .html(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-preview-popup-header.html"));
 
-  var iframe = $('<iframe></iframe>')
-  .width(preview.width)
-  .height(preview.height)
-  .attr("src", url)
-  .appendTo(fakeMenu);
+  if (preview && preview.url) { // Service has a preview URL associated with it
+    var url = preview.srch.replace("{{id}}", id);
+    var iframe = $('<iframe></iframe>')
+    .width(preview.width)
+    .height(preview.height)
+    .attr("src", url)
+    .appendTo(fakeMenu);
+  } else { // Otherwise use our internal preview
+    var url = DataTableCellUI.internalPreview.srchurl.replace("\${id}",id);
+    $.ajax(url,{dataType:"jsonp"}).done(function(searchResponse) {
+      var data = searchResponse.result[0];
+      var html = $.suggest.suggest.create_flyout(data, preview.imgurl);
+      fakeMenu.append(html);
+    });
+  }
 
   MenuSystem.showMenu(fakeMenu, function(){});
   MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
