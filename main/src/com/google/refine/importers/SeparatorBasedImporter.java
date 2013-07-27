@@ -73,7 +73,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         String separator = guessSeparator(job, fileRecords);
         JSONUtilities.safePut(options, "separator", separator != null ? separator : "\\t");
         
-        JSONUtilities.safePut(options, "guessCellValueTypes", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", true);
 
         return options;

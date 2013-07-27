@@ -119,10 +119,10 @@ Refine.JsonParserUI.prototype._initialize = function() {
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
   }
   if (this._config.trimStrings) {
-    this._optionContainerElmts.trimStringsCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.trimStringsCheckbox.attr("checked", "unchecked");
   }
   if (this._config.guessCellValueTypes) {
-    this._optionContainerElmts.guessCellValueTypesCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.guessCellValueTypesCheckbox.attr("checked", "unchecked");
   }
   if (this._config.storeEmptyStrings) {
     this._optionContainerElmts.storeEmptyStringsCheckbox.attr("checked", "checked");

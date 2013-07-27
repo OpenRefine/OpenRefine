@@ -46,7 +46,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
 
             JSONUtilities.safePut(options, "headerLines", 0);
             JSONUtilities.safePut(options, "columnWidths", columnWidths);
-            JSONUtilities.safePut(options, "guessCellValueTypes", true);
+            JSONUtilities.safePut(options, "guessCellValueTypes", false);
         }
         return options;
     }

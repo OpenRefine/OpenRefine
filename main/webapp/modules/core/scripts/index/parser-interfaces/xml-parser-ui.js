@@ -107,19 +107,19 @@ Refine.XmlParserUI.prototype._initialize = function() {
   $('#or-import-rows').text($.i18n._('core-index-parser')["rows-data"]);
   $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
   $('#or-import-preserve').text($.i18n._('core-index-parser')["preserve-empty"]);
-  $('#or-import-trim').text($.i18n._('core-index-parser')["trim"]);
-  $('#or-import-parseCell').text($.i18n._('core-index-parser')["parse-cell"]);
-  $('#or-import-store').text($.i18n._('core-index-parser')["store-source"]);
+  $('#or-import-trim').html($.i18n._('core-index-parser')["trim"]);
+  $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
+  $('#or-import-store').html($.i18n._('core-index-parser')["store-source"]);
   
   if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.attr("checked", "checked");
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
   }
   if (this._config.trimStrings) {
-    this._optionContainerElmts.trimStringsCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.trimStringsCheckbox.attr("checked", "unchecked");
   }
   if (this._config.guessCellValueTypes) {
-    this._optionContainerElmts.guessCellValueTypesCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.guessCellValueTypesCheckbox.attr("checked", "unchecked");
   }
   if (this._config.storeEmptyStrings) {
     this._optionContainerElmts.storeEmptyStringsCheckbox.attr("checked", "checked");
