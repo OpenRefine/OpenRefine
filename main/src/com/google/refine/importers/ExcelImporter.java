@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -117,6 +118,8 @@ public class ExcelImporter extends TabularImportingParserBase {
             logger.error("Error generating parser UI initialization data for Excel file", e);
         } catch (IllegalArgumentException e) {
             logger.error("Error generating parser UI initialization data for Excel file (only Excel 97 & later supported)", e);
+        } catch (POIXMLException e) {
+            logger.error("Error generating parser UI initialization data for Excel file - invalid XML", e);
         }
         
         return options;
@@ -159,6 +162,13 @@ public class ExcelImporter extends TabularImportingParserBase {
             exceptions.add(new ImportException(
                     "Attempted to parse as an Excel file but failed. " +
                     "Only Excel 97 and later formats are supported.",
+                    e
+                ));
+                return;
+        } catch (POIXMLException e) {
+            exceptions.add(new ImportException(
+                    "Attempted to parse as an Excel file but failed. " +
+                    "Invalid XML.",
                     e
                 ));
                 return;
