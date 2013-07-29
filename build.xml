@@ -14,7 +14,6 @@
     <property environment="env"/>
 
     <property name="version" value="trunk"/>
-    <property name="revision" value="rXXXX"/>
     <property name="full_version" value="0.0.0.0"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
@@ -25,7 +24,7 @@
     <property name="appengine.version" value="1"/>
     <property name="appengine.sdk.dir" value="/opt/appengine"/>
         
-    <property name="fullname" value="openrefine-${version}-${revision}" />
+    <property name="fullname" value="openrefine-${version}" />
     
     <property name="main.dir" value="${basedir}/main" />
 
@@ -222,7 +221,6 @@
         
         <replace file="${built.webapp.dir}/WEB-INF/web.xml">
             <replacefilter token="$VERSION" value="${version}"/>
-            <replacefilter token="$REVISION" value="${revision}"/>
         </replace>
 
         <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
@@ -254,7 +252,7 @@
 	    </classpath>
 	    <option value="-Xms256M"/>
 	    <option value="-Xmx1024M"/>
-	    <option value="-Drefine.version=${revision}"/>
+	    <option value="-Drefine.version=${version}"/>
 	    <option value="-Drefine.webapp=$APP_ROOT/Contents/Resource/${built.webapp.name}"/>
         </bundleapp>
 
@@ -294,7 +292,7 @@
                 <cp>server/lib/*.jar</cp>
             </classPath>
             <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
-                <opt>-Djava.library.path=server/lib/native/windows -Drefine.version=${revision}</opt>
+                <opt>-Djava.library.path=server/lib/native/windows </opt>
             </jre>
             <versionInfo
                 fileVersion="${full_version}"
@@ -341,7 +339,7 @@
         <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
         
         <mkdir dir="${dist.dir}"/>
-        <zip destfile="${dist.dir}/openrefine-${version}-${revision}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
+        <zip destfile="${dist.dir}/openrefine-win-${version}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
     </target>
     
     <target name="linux" depends="jar, prepare_webapp">
@@ -372,7 +370,7 @@
         <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
         
         <mkdir dir="${dist.dir}"/>
-        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/openrefine-${version}-${revision}.tar.gz">
+        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/openrefine-linux-${version}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
                <include name="${release.name}/refine"/>
            </tarfileset>        

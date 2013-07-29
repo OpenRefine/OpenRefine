@@ -470,7 +470,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
+    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -482,9 +482,9 @@ dist() {
     
     echo "All distributions were built and are located at $REFINE_DIST_DIR"
     echo 
-    echo "Upload them to the distibution site, then prepend the GoogleRefineReleases array at"
+    echo "Upload them to the distibution site, then prepend the releases array at"
     echo
-    echo "   http://code.google.com/p/google-refine/source/browse/support/releases2.js"
+    echo "   https://github.com/OpenRefine/OpenRefine/tree/gh-pages/javascript/releases.js"
     echo
     echo "with"
     echo 
@@ -534,6 +534,12 @@ mac_dist() {
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
     fi
+
+# Experimental code signing stuff
+#    codesign -s "OpenRefine Code Signing" "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+#    spctl --assess --type execute "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+
+# TODO add unsign code here
     
     TITLE="OpenRefine $VERSION"
     echo "Building MacOSX DMG for $TITLE"
@@ -569,14 +575,14 @@ mac_dist() {
     sync
     hdiutil detach $DEVICE
     
-    if [ -f "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" ] ; then
-        rm "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg"
+    if [ -f "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" ] ; then
+        rm "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg"
     fi
     
-    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
-    hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
+    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error compressing DMG"
+    hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error internet-enabling DMG"
     
-    #rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
+    rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
 }
 
 test() {
