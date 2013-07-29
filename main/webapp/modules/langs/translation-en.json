@@ -358,6 +358,7 @@
 		"ent-type": "Type of Entities (optional)",
 		"add-std-srv": "Add Standard Reconciliation Service",
 		"enter-url": "Enter the service's URL",
+		"enter-api-key": "Enter API key (if required)",
 		"specify-ns": "Please specify a namespace.",
 		"cell-contains": "Each cell contains:",
 		"fb-id": "a Freebase ID, e.g., /en/solar_system",
@@ -382,7 +383,7 @@
 		"year-ago": "a year ago",
 		"years-ago": "years ago",
 		"working": "Working",
-		"invalid-date": "Invalid date string"		
+		"invalid-date": "Invalid date string"
 	},
 	"core-views": {
 		"edit-cell": "Edit this cell",
@@ -572,7 +573,7 @@
 		"transform": "Transform",
 		"common-transform": "Common transforms",
 		"trim-all": "Trim leading and trailing whitespace",
-		"collapse-white": "Collapse consecutive whitespace",	
+		"collapse-white": "Collapse consecutive whitespace",
 		"unescape-html": "Unescape HTML entities",
 		"titlecase": "To titlecase",
 		"uppercase": "To uppercase",

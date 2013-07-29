@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -74,20 +74,22 @@ ReconciliationManager.registerService = function(service) {
   return ReconciliationManager.customServices.length - 1;
 };
 
-ReconciliationManager.registerStandardService = function(url, f) {
+ReconciliationManager.registerStandardService = function(url, apiKey, f) {
   var dismissBusy = DialogSystem.showBusy($.i18n._('core-recon')["contact-service"]+"...");
 
   $.ajax(
     url,
     { "dataType" : "jsonp",
+    "data": {'api_key': apiKey},
     "timeout":10000
      }
   )
   .success(function(data, textStatus, jqXHR) {
     data.url = url;
+    data.api_key = apiKey;
     data.ui = { "handler" : "ReconStandardServicePanel" };
 
-    index = ReconciliationManager.customServices.length + 
+    index = ReconciliationManager.customServices.length +
     ReconciliationManager.standardServices.length;
 
     ReconciliationManager.standardServices.push(data);
@@ -102,7 +104,7 @@ ReconciliationManager.registerStandardService = function(url, f) {
     }
   })
   .error(function(jqXHR, textStatus, errorThrown) {
-    dismissBusy(); 
+    dismissBusy();
     alert($.i18n._('core-recon')["error-contact"]+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
   });
 };
@@ -128,8 +130,8 @@ ReconciliationManager.save = function(f) {
   $.ajax({
     async: false,
     type: "POST",
-    url: "command/core/set-preference?" + $.param({ 
-      name: "reconciliation.standardServices" 
+    url: "command/core/set-preference?" + $.param({
+      name: "reconciliation.standardServices"
     }),
     data: { "value" : JSON.stringify(ReconciliationManager.standardServices) },
     success: function(data) {
@@ -147,8 +149,8 @@ ReconciliationManager.save = function(f) {
 
   $.ajax({
     async: false,
-    url: "command/core/get-preference?" + $.param({ 
-      name: "reconciliation.standardServices" 
+    url: "command/core/get-preference?" + $.param({
+      name: "reconciliation.standardServices"
     }),
     success: function(data) {
       if (data.value && data.value != "null") {
@@ -157,7 +159,7 @@ ReconciliationManager.save = function(f) {
       } else {
         ReconciliationManager.registerStandardService(
 //            "http://reconcile.freebaseapps.com/reconcile"
-            "http://standard-reconcile.freebaseapps.com/reconcile"
+            "http://standard-reconcile.freebaseapps.com/reconcile",""
             );
       }
     },

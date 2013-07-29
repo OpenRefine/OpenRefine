@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -45,7 +45,7 @@ ReconDialog.prototype._createDialog = function() {
 
   this._elmts = DOM.bind(dialog);
   this._elmts.dialogHeader.text($.i18n._('core-recon')["recon-col"]+' "' + this._column.name + '"');
-  
+
   this._elmts.servicePanelMessage.html($.i18n._('core-recon')["pick-service"]);
   this._elmts.addStandardServiceButton.html($.i18n._('core-buttons')["add-std-svc"]+"...");
   this._elmts.addNamespacedServiceButton.html($.i18n._('core-buttons')["add-named-svc"]+"...");
@@ -181,9 +181,10 @@ ReconDialog.prototype._onAddStandardService = function() {
 
   elmts.dialogHeader.html($.i18n._('core-recon')["add-std-srv"]);
   elmts.or_recon_enterUrl.html($.i18n._('core-recon')["enter-url"]+":");
+  elmts.or_recon_enterAPIKey.html($.i18n._('core-recon')["enter-api-key"]+":");
   elmts.addButton.html($.i18n._('core-buttons')["add-service"]);
   elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
-  
+
   var level = DialogSystem.showDialog(dialog);
   var dismiss = function() {
     DialogSystem.dismissUntil(level - 1);
@@ -192,8 +193,10 @@ ReconDialog.prototype._onAddStandardService = function() {
   elmts.cancelButton.click(dismiss);
   elmts.addButton.click(function() {
     var url = $.trim(elmts.input[0].value);
+    var apiKey = $.trim(elmts.inputAPIKey[0].value)
+
     if (url.length > 0) {
-      ReconciliationManager.registerStandardService(url, function(index) {
+      ReconciliationManager.registerStandardService(url, apiKey, function(index) {
         self._refresh(index);
       });
     }
@@ -209,10 +212,11 @@ ReconDialog.prototype._onAddNamespacedService = function() {
 
   elmts.dialogHeader.html($.i18n._('core-recon')["add-recon-srv"]);
   elmts.or_recon_namespace.html($.i18n._('core-recon')["namespace"]+":");
+  elmts.or_recon_enterAPIKey.html($.i18n._('core-recon')["enter-api-key"]+":");
   elmts.or_recon_entType.html($.i18n._('core-recon')["ent-type"]+":");
   elmts.addButton.html($.i18n._('core-buttons')["add-service"]);
   elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
-  
+
   var level = DialogSystem.showDialog(dialog);
   var dismiss = function() {
     DialogSystem.dismissUntil(level - 1);
@@ -230,6 +234,8 @@ ReconDialog.prototype._onAddNamespacedService = function() {
   elmts.addButton.click(function() {
     var namespaceData = elmts.namespaceInput.data("data.suggest");
     var typeData = elmts.typeInput.data("data.suggest");
+    var apiKey = elmts.inputAPIKey[0].value;
+
     if (namespaceData) {
       var url = "http://reconcile.freebaseapps.com/namespace_reconcile?namespace="
         + escape(namespaceData.id);
@@ -237,7 +243,7 @@ ReconDialog.prototype._onAddNamespacedService = function() {
         url += "&type=" + typeData.id;
       }
 
-      ReconciliationManager.registerStandardService(url, function(index) {
+      ReconciliationManager.registerStandardService(url, apiKey, function(index) {
         self._refresh(index);
       });
     }

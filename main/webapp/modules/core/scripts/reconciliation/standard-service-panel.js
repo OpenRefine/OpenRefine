@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -46,11 +46,12 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
 
   $.post(
     "command/core/guess-types-of-column?" + $.param({
-      project: theProject.id, 
+      project: theProject.id,
       columnName: this._column.name,
-      service: this._service.url
+      service: this._service.url,
+      api_key: this._service.api_key
     }),
-    null, 
+    null,
     function(data) {
       self._types = data.types;
 
@@ -82,7 +83,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   var self = this;
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
-  
+
   this._elmts.or_proc_access.html("&raquo; "+$.i18n._('core-recon')["access"]);
   this._elmts.rawServiceLink.html($.i18n._('core-recon')["service-api"]);
   this._elmts.or_proc_cellType.html($.i18n._('core-recon')["cell-type"]+":");
@@ -154,7 +155,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
         $(td1).html(typeName);
       } else {
         $(td1).html(
-            typeName + 
+            typeName +
             '<br/>' +
             '<span class="type-id">' + typeID + '</span>');
       }
@@ -325,6 +326,7 @@ ReconStandardServicePanel.prototype.start = function() {
       config: JSON.stringify({
         mode: "standard-service",
         service: this._service.url,
+        api_key: this._service.api_key,
         identifierSpace: this._service.identifierSpace,
         schemaSpace: this._service.schemaSpace,
         type: (type) ? { id: type.id, name: type.name } : null,
