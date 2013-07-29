@@ -186,7 +186,7 @@ get_version() {
         fail "Must specify a version number"
     fi
 
-    NUM_VERSION=`echo $VERSION | sed -E 's/[a-zA-Z]+/./g'`
+    NUM_VERSION=`echo $VERSION | sed -E 's/-.*//g'`
     
     if [ "${NUM_VERSION}" = "" ] ; then
         fail "${VERSION} is not a valid version number"

@@ -275,6 +275,7 @@
     </target>
     
     <target name="windows" depends="jar, prepare_webapp">
+      <echo message="Full version ${full_version} and version ${version}"/>
         <mkdir dir="${windows.dir}"/>
         <taskdef 
             name="launch4j" 
@@ -300,7 +301,7 @@
                 fileDescription="openrefine"
                 copyright="Copyright (c) 2013 OpenRefine contributors, 2010, Google, Inc."
                 productVersion="${full_version}"
-                txtProductVersion="${full_version}"
+                txtProductVersion="${version}"
                 productName="OpenRefine"
                 companyName="OpenRefine team"
                 internalName="openrefine"
