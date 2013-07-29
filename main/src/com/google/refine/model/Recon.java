@@ -98,6 +98,7 @@ public class Recon implements HasFields, Jsonizable {
     
     final public long            id;
     public String                service = "unknown";
+    public String                apiKey = "";
     public String                identifierSpace = null;
     public String                schemaSpace = null;
     
@@ -157,6 +158,7 @@ public class Recon implements HasFields, Jsonizable {
         }
         
         r.service = service;
+        r.apiKey = apiKey;
         
         r.judgment = judgment;
         
@@ -275,6 +277,7 @@ public class Recon implements HasFields, Jsonizable {
         }
         
         writer.key("service"); writer.value(service);
+        writer.key("apiKey"); writer.value(apiKey);
         writer.key("identifierSpace"); writer.value(identifierSpace);
         writer.key("schemaSpace"); writer.value(schemaSpace);
         
@@ -396,6 +399,8 @@ public class Recon implements HasFields, Jsonizable {
                     }
                 } else if ("service".equals(fieldName)) {
                     recon.service = jp.getText();
+                } else if ("apiKey".equals(fieldName)) {
+                    recon.apiKey = jp.getText();
                 } else if ("identifierSpace".equals(fieldName)) {
                     recon.identifierSpace = jp.getText();
                     if ("null".equals(recon.identifierSpace)) {

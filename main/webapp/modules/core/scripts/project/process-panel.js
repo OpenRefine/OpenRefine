@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,12 +39,12 @@ function ProcessPanel(div) {
   this._updateOptions = {};
   this._onDones = [];
   this._latestHistoryEntry = null;
-  
+
   this._div.html(DOM.loadHTML("core", "scripts/project/progress-panel.html"));
   this._elmts = DOM.bind(this._div);
 
   this._elmts.undoLink.html($.i18n._('core-project')["undo"]);
-  
+
   var self = this;
   $(window).keypress(function(evt) {
     if (evt.charCode == 26 || (evt.charCode == 122 && (evt.ctrlKey || evt.metaKey))) { // ctrl-z or meta-z
@@ -101,7 +101,7 @@ ProcessPanel.prototype.showUndo = function(historyEntry) {
   this._elmts.undoDiv.show();
   this._elmts.undoDescription.text(historyEntry.description);
   this._elmts.undoLink.unbind().click(function() { self.undo(); });
-  
+
   this._div
     .fadeIn(200)
     .delay(10000)
@@ -122,7 +122,7 @@ ProcessPanel.prototype.undo = function() {
 ProcessPanel.prototype._cancelAll = function() {
   var self = this;
   $.post(
-      "command/core/cancel-processes?" + $.param({ project: theProject.id }), 
+      "command/core/cancel-processes?" + $.param({ project: theProject.id }),
       null,
       function(o) {
         self._data = null;
@@ -145,19 +145,19 @@ ProcessPanel.prototype._render = function(newData) {
   } else {
     this._elmts.undoDiv.hide();
     this._elmts.progressDiv.show();
-    
+
     for (var i = 0; i < processes.length; i++) {
       var process = processes[i];
       if (process.status != "pending") {
-        Refine.setTitle(process.progress + "% "+elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
+        Refine.setTitle(process.progress + "% "+ $.i18n._('core-project')["complete"]);
         this._elmts.progressDescription.text(process.description);
-        this._elmts.progressSpan.text(process.progress  + '% '+elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
+        this._elmts.progressSpan.text(process.progress  + '% '+ $.i18n._('core-project')["complete"]);
       }
       if ("onDone" in process) {
         newProcessMap[process.id] = process;
       }
     }
-    
+
     if (processes.length > 1) {
       var pending = processes.length - 1;
       this._elmts.countSpan.text('(' + pending + (pending > 1 ? ' '+$.i18n._('core-project')["other-processes"]+')' : ' '+$.i18n._('core-project')["other-process"]+')'));
@@ -171,7 +171,7 @@ ProcessPanel.prototype._render = function(newData) {
         self._cancelAll();
         $(this).text($.i18n._('core-project')["canceling"]).unbind();
       })
-    
+
     this._div.fadeIn(200);
   }
 
@@ -185,19 +185,19 @@ ProcessPanel.prototype._render = function(newData) {
     }
   }
   this._data = newData;
-  
+
   if (this._data.exceptions) {
     var messages = $.map(this._data.exceptions, function(e) {
       return e.message;
     }).join('\n');
-    
+
     if (this._data.processes.length == 0) {
       window.alert($.i18n._('core-project')["last-op-er"]+':\n' + messages);
     } else {
       if (window.confirm($.i18n._('core-project')["last-op-er"]+':\n' + messages +
             '\n\n'+$.i18n._('core-project')["continue-remaining"]+'?')) {
         $.post(
-          "command/core/apply-operations?" + $.param({ project: theProject.id }), 
+          "command/core/apply-operations?" + $.param({ project: theProject.id }),
           { operations: '[]' },
           function(o) {},
           "json"
@@ -207,7 +207,7 @@ ProcessPanel.prototype._render = function(newData) {
       }
     }
   }
-  
+
   if (this._data.processes.length && !this._timerID) {
     this._timerID = window.setTimeout(function() {
       self._timerID = null;

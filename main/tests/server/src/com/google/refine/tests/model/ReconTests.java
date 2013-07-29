@@ -20,7 +20,7 @@ public class ReconTests extends RefineTest {
 
     private class StandardReconConfigTest extends StandardReconConfig {
         public StandardReconConfigTest() {
-            super("", "", "", "", "", false, new ArrayList<ColumnDetail>());
+            super("","", "", "", "", "", false, new ArrayList<ColumnDetail>());
         }
 
         public double wordDistanceTest(String s1, String s2) {
