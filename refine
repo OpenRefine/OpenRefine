@@ -535,16 +535,15 @@ mac_dist() {
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
     fi
 
-# Experimental code signing stuff
-#    codesign -s "OpenRefine Code Signing" "$REFINE_BUILD_DIR/mac/OpenRefine.app"
-#    spctl --assess --type execute "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+# Sign the bundle with a self-signed cert so OS X doesn't frustrate users by making app invisible
+    codesign -s "OpenRefine Code Signing" "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+    spctl --assess --type execute --verbose=4 "$REFINE_BUILD_DIR/mac/OpenRefine.app"
 
-# TODO add unsign code here
-    
     TITLE="OpenRefine $VERSION"
     echo "Building MacOSX DMG for $TITLE"
     hdiutil create -srcfolder "$REFINE_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$REFINE_BUILD_DIR/temp_refine.dmg" || error "can't create empty DMG"
-    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}'`
+    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed -e "s/^\/dev\///g" -e 1q  | awk '{print $1}'`
+    echo $DEVICE
     hdiutil attach "$REFINE_BUILD_DIR/temp_refine.dmg" || error "Can't attach temp DMG"
     
     echo '
@@ -573,6 +572,7 @@ mac_dist() {
     
     sync
     sync
+    sleep 3
     hdiutil detach $DEVICE
     
     if [ -f "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" ] ; then
