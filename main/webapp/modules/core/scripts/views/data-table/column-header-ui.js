@@ -151,7 +151,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
           }
         },
         {
-          label: $.i18n._('core-views')["collapse-all"],
+          label: $.i18n._('core-views')["collapse-other"],
           click: function() {
             var collapsedColumnNames = {};
             for (var i = 0; i < theProject.columnModel.columns.length; i++) {

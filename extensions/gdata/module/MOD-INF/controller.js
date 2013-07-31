@@ -43,7 +43,6 @@ function init() {
   var RS = Packages.com.google.refine.RefineServlet;
   RS.registerCommand(module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
   RS.registerCommand(module, "upload", Packages.com.google.refine.extension.gdata.UploadCommand());
-  RS.registerCommand(module, "load-language", Packages.com.google.refine.extension.gdata.commands.LoadLanguageCommand());
 
   // Register importer and exporter
   var IM = Packages.com.google.refine.importing.ImportingManager;

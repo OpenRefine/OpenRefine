@@ -1,4 +1,4 @@
-﻿{
+{
     "core-index": {
 		"slogan": "Uno strumento potente, per lavorare con dati sporchi",
 		"help": "Aiuto",
@@ -226,7 +226,6 @@
 		"long-format": "Formato lungo",
 		"full-format": "Formato completo",
 		"custom": "Personalizzato",
-		"help": "Aiuto",
 		"local-time": "Usa fuso orario locale",
 		"omit-time": "Ometti orario",
 		"out-col-header": "Esporta le intestazioni delle colonne",
@@ -264,7 +263,6 @@
 		"facet-by-count": "Faccetta per quantità alternative",
 		"edit-based-col": "Modifica l'espressione della faccetta basandoti sulla colonna",
 		"edit-facet-exp": "Modifica l'espressione della faccetta",
-		"current-exp": "Espressione corrente",
 		"set-max-choices": "Imposta il massimo numero di alternative da mostrare in ogni faccetta di testo (se troppe l'applicazione subirà rallentamenti)",
 		"case-sensitive": "case sensitive",
 		"regular-exp": "espressione regolare",
@@ -410,7 +408,7 @@
 		"sort": "Ordina",
 		"collapse-expand": "Collassa/espandi colonne per rendere più comoda la visualizzazione",
 		"collapse-this": "Collassa questa colonna",
-		"collapse-all": "Collassa tutte le altre colonne",
+		"collapse-other": "Collassa tutte le altre colonne",
 		"collapse-left": "Collassa tutte le colonne a sinistra",
 		"collapse-right": "Collassa tutte le colonne a destra",
 		"reconcile": "Riconcilia",
@@ -560,7 +558,6 @@
 		"view": "Vista",
 		"collapse-all": "Collassa tutte le colonne",
 		"expand-all": "Espandi tutte le colonne",
-		"remove-sort": "Rimuovi ordinamento",
 		"reorder-perma": "Riordina righe permanentemente",
 		"by": "Per",
 		"custom-text-trans": "Trasformazione di testo personalizzata sulla colonna",

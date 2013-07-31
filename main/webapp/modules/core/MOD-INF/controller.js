@@ -99,7 +99,6 @@ function registerCommands() {
   RS.registerCommand(module, "key-value-columnize", new Packages.com.google.refine.commands.cell.KeyValueColumnizeCommand());
 
   RS.registerCommand(module, "load-language", Packages.com.google.refine.commands.lang.LoadLanguageCommand());
-  RS.registerCommand(module, "set-language", Packages.com.google.refine.commands.lang.SetLanguageCommand());
   
   RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
   RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());

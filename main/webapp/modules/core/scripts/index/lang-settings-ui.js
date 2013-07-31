@@ -11,11 +11,12 @@ Refine.SetLanguageUI = function(elmt) {
 	
 	this._elmts.set_lan_btn.bind('click', function(e) {		
 		$.ajax({
-			url : "/command/core/set-language?",
+			url : "/command/core/set-preference?",
 			type : "POST",
 			async : false,
 			data : {
-				lng : $("#langDD option:selected").val()
+			  name : "userLang",
+				value : $("#langDD option:selected").val()
 			},
 			success : function(data) {
 				alert($.i18n._('core-index-lang')["page-reload"]);
