@@ -168,6 +168,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         return guessSeparator(file, encoding, false); // quotes off for backward compatibility
     }
 
+    // TODO: Move this to the CSV project?
     static public Separator guessSeparator(File file, String encoding, boolean handleQuotes) {
         try {
             InputStream is = new FileInputStream(file);
@@ -190,7 +191,9 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     if (s.length() == 0) {
                         continue;
                     }
-                    lineCount++;
+                    if (!inQuote) {
+                        lineCount++;
+                    }
                     
                     for (int i = 0; i < s.length(); i++) {
                         char c = s.charAt(i);
@@ -212,10 +215,12 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                         }
                     }
                     
-                    for (Separator separator : separators) {
-                        separator.totalCount += separator.currentLineCount;
-                        separator.totalOfSquaredCount += separator.currentLineCount * separator.currentLineCount;
-                        separator.currentLineCount = 0;
+                    if (!inQuote) {
+                        for (Separator separator : separators) {
+                            separator.totalCount += separator.currentLineCount;
+                            separator.totalOfSquaredCount += separator.currentLineCount * separator.currentLineCount;
+                            separator.currentLineCount = 0;
+                        }
                     }
                 }
                 
@@ -231,14 +236,16 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     Collections.sort(separators, new Comparator<Separator>() {
                         @Override
                         public int compare(Separator sep0, Separator sep1) {
-                            return Double.compare(sep0.stddev, sep1.stddev);
+                            return Double.compare(sep0.stddev / sep0.averagePerLine, 
+                            sep1.stddev / sep1.averagePerLine);
                         }
                     });
-                    for (Separator separator : separators) {
-                        if (separator.stddev / separator.averagePerLine < 0.1) {
-                            return separator;
-                        }
+                    
+                    Separator separator = separators.get(0);
+                    if (separator.stddev / separator.averagePerLine < 0.1) {
+                        return separator;
                     }
+                   
                 }
             } finally {
                 lineNumberReader.close();
