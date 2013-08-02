@@ -66,6 +66,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -277,11 +279,26 @@ public class ImportingUtilities {
                     }
 
                     if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                        DefaultHttpClient client = new DefaultHttpClient();
                         DecompressingHttpClient httpclient = 
-                                new DecompressingHttpClient(new DefaultHttpClient());
+                                new DecompressingHttpClient(client);
                         HttpGet httpGet = new HttpGet(url.toURI());
                         httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
-
+                        if ("https".equals(url.getProtocol())) {
+                            // HTTPS only - no sending password in the clear over HTTP
+                            String userinfo = url.getUserInfo();
+                            if (userinfo != null) {
+                                int s = userinfo.indexOf(':');
+                                if (s > 0) {
+                                    String user = userinfo.substring(0, s);
+                                    String pw = userinfo.substring(s + 1, userinfo.length());
+                                    client.getCredentialsProvider().setCredentials(
+                                            new AuthScope(url.getHost(), 443),
+                                            new UsernamePasswordCredentials(user, pw));
+                                }
+                            }
+                        }
+ 
                         HttpResponse response = httpclient.execute(httpGet);
                         
                         try {
