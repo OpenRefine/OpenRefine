@@ -105,7 +105,7 @@ DataTableCellUI.prototype._render = function() {
       .appendTo(divContent);
 
       if (service && (service.view) && (service.view.url)) {
-        a.attr("href", service.view.url.replace("{{id}}", match.id));
+        a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(match.id)));
       } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
         a.attr("href", "http://www.freebase.com/view" + match.id);
       }
@@ -148,9 +148,8 @@ DataTableCellUI.prototype._render = function() {
             .text(candidate.name)
             .appendTo(li);
 
-            // TODO: replace view URL with local code?
             if ((service) && (service.view) && (service.view.url)) {
-              a.attr("href", service.view.url.replace("{{id}}", candidate.id));
+              a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(candidate.id)));
             } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
               a.attr("href", "http://www.freebase.com/view" + candidate.id);
             }
@@ -454,14 +453,14 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
   .html(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-preview-popup-header.html"));
 
   if (preview && preview.url) { // Service has a preview URL associated with it
-    var url = preview.srch.replace("{{id}}", id);
+    var url = preview.srch.replace("{{id}}", encodeURIComponent(id));
     var iframe = $('<iframe></iframe>')
     .width(preview.width)
     .height(preview.height)
     .attr("src", url)
     .appendTo(fakeMenu);
   } else { // Otherwise use our internal preview
-    var url = DataTableCellUI.internalPreview.srchurl.replace("\${id}",id);
+    var url = DataTableCellUI.internalPreview.srchurl.replace("\${id}",encodeURIComponent(id));
     $.ajax(url,{dataType:"jsonp"}).done(function(searchResponse) {
       var data = searchResponse.result[0];
       var html = $.suggest.suggest.create_flyout(data, preview.imgurl);
