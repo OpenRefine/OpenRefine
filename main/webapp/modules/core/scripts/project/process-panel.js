@@ -149,9 +149,9 @@ ProcessPanel.prototype._render = function(newData) {
     for (var i = 0; i < processes.length; i++) {
       var process = processes[i];
       if (process.status != "pending") {
-        Refine.setTitle(process.progress + "% "+elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
+        Refine.setTitle(process.progress + "% "+_elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
         this._elmts.progressDescription.text(process.description);
-        this._elmts.progressSpan.text(process.progress  + '% '+elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
+        this._elmts.progressSpan.text(process.progress  + '% '+_elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
       }
       if ("onDone" in process) {
         newProcessMap[process.id] = process;
