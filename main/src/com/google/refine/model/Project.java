@@ -98,6 +98,9 @@ public class Project {
         this.history = new History(this);
     }
     
+    /**
+     * Free/dispose of project data from memory.
+     */
     public void dispose() {
         for (OverlayModel overlayModel : overlayModels.values()) {
             try {
@@ -107,6 +110,7 @@ public class Project {
             }
         }
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(this.id);
+        // The rest of the project should get garbage collected when we return.
     }
 
     public Date getLastSave(){
