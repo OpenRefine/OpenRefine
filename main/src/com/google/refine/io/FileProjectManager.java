@@ -217,7 +217,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    protected void saveProject(Project project){
+    protected void saveProject(Project project) throws IOException{
         ProjectUtilities.save(project);
     }
 

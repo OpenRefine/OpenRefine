@@ -119,7 +119,6 @@ public abstract class ProjectManager {
             _projectsMetadata.put(project.id, projectMetadata);
         }
     }
- //----------Load from data store to memory----------------
 
     /**
      * Load project metadata from data storage
@@ -135,7 +134,6 @@ public abstract class ProjectManager {
      */
     protected abstract Project loadProject(long id);
 
-    //------------Import and Export from Refine archive-----------------
     /**
      * Import project from a Refine archive
      * @param projectID
@@ -154,7 +152,6 @@ public abstract class ProjectManager {
     public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
 
 
- //------------Save to record store------------
     /**
      * Saves a project and its metadata to the data store
      * @param id
@@ -194,8 +191,9 @@ public abstract class ProjectManager {
     /**
      * Save project to the data store
      * @param project
+     * @throws IOException 
      */
-    protected abstract void saveProject(Project project);
+    protected abstract void saveProject(Project project) throws IOException;
 
     /**
      * Save workspace and all projects to data store
@@ -204,6 +202,7 @@ public abstract class ProjectManager {
     public void save(boolean allModified) {
         if (allModified || _busy == 0) {
             saveProjects(allModified);
+            // TODO: Only save workspace if it's dirty
             saveWorkspace();
         }
     }
@@ -227,7 +226,7 @@ public abstract class ProjectManager {
         }
     }
 
-    static protected final int s_projectFlushDelay = 1000 * 60 * 60; // 1 hour
+    static protected final int s_projectFlushDelay = 1000 * 60 * 15; // 15 minutes
     static protected final int s_quickSaveTimeout = 1000 * 30; // 30 secs
 
     /**
@@ -296,12 +295,29 @@ public abstract class ProjectManager {
                     saveProject(records.get(i).project);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // In case we're running low on memory, free as much as we can
+                    disposeUnmodifiedProjects();
                 }
             }
         }
     }
 
-    //--------------Get from memory--------------
+    /**
+     * Flush all unmodified projects from memory.
+     */
+    protected void disposeUnmodifiedProjects() {
+        synchronized (this) {
+            for (long id : _projectsMetadata.keySet()) {
+                ProjectMetadata metadata = getProjectMetadata(id);
+                Project project = _projects.get(id);
+                if (project != null && !project.getProcessManager().hasPending() 
+                        && metadata.getModified().getTime() < project.getLastSave().getTime()) {
+                        _projects.remove(id).dispose();
+                }
+            }
+        }
+    }
+
     /**
      * Gets the InterProjectModel from memory
      */
@@ -405,7 +421,6 @@ public abstract class ProjectManager {
      */
     public abstract HistoryEntryManager getHistoryEntryManager();
 
-    //-------------remove project-----------
 
     /**
      * Remove the project from the data store
@@ -434,7 +449,6 @@ public abstract class ProjectManager {
         }
     }
 
-    //--------------Miscellaneous-----------
 
     /**
      * Sets the flag for long running operations.  This will prevent
