@@ -105,7 +105,7 @@ public class ProjectMetadata implements Jsonizable {
         writer.endObject();
     }
     
-    public void write(JSONWriter jsonWriter) throws Exception {
+    public void write(JSONWriter jsonWriter) throws JSONException  {
         Properties options = new Properties();
         options.setProperty("mode", "save");
 

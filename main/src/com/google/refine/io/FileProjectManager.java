@@ -231,6 +231,9 @@ public class FileProjectManager extends ProjectManager {
     /**
      * Save the workspace's data out to file in a safe way: save to a temporary file first
      * and rename it to the real file.
+     * <p>
+     * FIXME: Even though this attempts to be safe by writing new file and renaming,
+     * it's still possible for it to corrupt things.
      */
     @Override
     protected void saveWorkspace() {
@@ -273,11 +276,7 @@ public class FileProjectManager extends ProjectManager {
                 if (metadata != null) {
                     jsonWriter.value(id);
 
-                    try {
-                        ProjectMetadataUtilities.save(metadata, getProjectDir(id));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    ProjectMetadataUtilities.save(metadata, getProjectDir(id));
                 }
             }
             jsonWriter.endArray();

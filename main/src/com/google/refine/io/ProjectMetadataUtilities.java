@@ -36,9 +36,11 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONWriter;
@@ -51,16 +53,9 @@ import com.google.refine.ProjectMetadata;
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
 
-    public static void save(ProjectMetadata projectMeta, File projectDir) throws Exception {
+    public static void save(ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
         File tempFile = new File(projectDir, "metadata.temp.json");
-        try {
-            saveToFile(projectMeta, tempFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            logger.warn("Failed to save project metadata");
-            return;
-        }
+        saveToFile(projectMeta, tempFile);
 
         File file = new File(projectDir, "metadata.json");
         File oldFile = new File(projectDir, "metadata.old.json");
@@ -75,7 +70,7 @@ public class ProjectMetadataUtilities {
         }
     }
 
-    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws Exception {
+    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
         Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
         try {
             JSONWriter jsonWriter = new JSONWriter(writer);
