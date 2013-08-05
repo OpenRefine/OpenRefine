@@ -748,6 +748,15 @@ public class ImportingUtilities {
         return encoding;
     }
 
+    /**
+     * Figure out the best (most common) format for the set of files, select
+     * all files which match that format, and return the format found.
+     * 
+     * @param job ImportingJob object
+     * @param retrievalRecord JSON object containing "files" key with all our files
+     * @param fileSelectionIndexes JSON array of selected file indices matching best format
+     * @return best (highest frequency) format
+     */
     static public String autoSelectFiles(ImportingJob job, JSONObject retrievalRecord, JSONArray fileSelectionIndexes) {
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
