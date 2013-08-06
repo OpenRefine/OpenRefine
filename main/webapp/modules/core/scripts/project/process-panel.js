@@ -149,9 +149,10 @@ ProcessPanel.prototype._render = function(newData) {
     for (var i = 0; i < processes.length; i++) {
       var process = processes[i];
       if (process.status != "pending") {
-        Refine.setTitle(process.progress + "% "+_elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
+        // TODO: We should be using formatting, not string concatenation here
+        Refine.setTitle(process.progress + "% "+$.i18n._('core-project')["complete"]);
         this._elmts.progressDescription.text(process.description);
-        this._elmts.progressSpan.text(process.progress  + '% '+_elmts.or_proj_undo.html($.i18n._('core-project')["complete"]));
+        this._elmts.progressSpan.text(process.progress  + '% '+$.i18n._('core-project')["complete"]);
       }
       if ("onDone" in process) {
         newProcessMap[process.id] = process;
@@ -170,7 +171,7 @@ ProcessPanel.prototype._render = function(newData) {
       .click(function() {
         self._cancelAll();
         $(this).text($.i18n._('core-project')["canceling"]).unbind();
-      })
+      });
     
     this._div.fadeIn(200);
   }
