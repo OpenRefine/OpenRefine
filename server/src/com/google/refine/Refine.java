@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.BindException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -114,7 +115,8 @@ public class Refine {
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
         if (headless) {
-            System.setProperty("java.awt.headless", "true"); 
+            System.setProperty("java.awt.headless", "true");
+            logger.info("Running in headless mode");
         } else {
             try {
                 RefineClient client = new RefineClient();
@@ -195,7 +197,12 @@ class RefineServer extends Server {
         }
         
         // start the server
-        this.start();
+        try {
+            this.start();
+        } catch (BindException e) {
+            logger.error("Failed to start server - is there another copy running already on this port/address?");
+            throw e;
+        }
         
         configure(context);
     }
@@ -434,6 +441,8 @@ class RefineClient extends JFrame implements ActionListener {
     
     private static final long serialVersionUID = 7886547342175227132L;
 
+    final static Logger logger = LoggerFactory.getLogger("refine-client");
+
     public static boolean MACOSX = (System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
     
     private URI uri;
@@ -484,6 +493,9 @@ class RefineClient extends JFrame implements ActionListener {
     } 
     
     private void openBrowser() {
+        if (!Desktop.isDesktopSupported()) {
+            logger.warn("Java Desktop class not supported on this platform.  Please open %s in your browser",uri.toString());
+        }
         try {
             Desktop.getDesktop().browse(uri);
         } catch (IOException e) {
