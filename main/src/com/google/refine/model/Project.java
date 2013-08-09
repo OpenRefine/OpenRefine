@@ -194,6 +194,7 @@ public class Project {
     ) throws Exception {
         long start = System.currentTimeMillis();
         
+        // version of Refine which wrote the file
         /* String version = */ reader.readLine();
         
         Project project = new Project(id);

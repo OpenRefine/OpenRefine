@@ -62,6 +62,13 @@ public abstract class ProjectManager {
     // last n expressions used across all projects
     static protected final int s_expressionHistoryMax = 100;
 
+    // If a project has been idle this long, flush it from memory
+    static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
+    
+    // Don't spend more than this much time saving projects if doing a quick save
+    static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
+
+
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected PreferenceStore            _preferenceStore;
 
@@ -202,7 +209,6 @@ public abstract class ProjectManager {
     public void save(boolean allModified) {
         if (allModified || _busy == 0) {
             saveProjects(allModified);
-            // TODO: Only save workspace if it's dirty
             saveWorkspace();
         }
     }
@@ -225,9 +231,6 @@ public abstract class ProjectManager {
             this.overdue = overdue;
         }
     }
-
-    static protected final int s_projectFlushDelay = 1000 * 60 * 15; // 15 minutes
-    static protected final int s_quickSaveTimeout = 1000 * 30; // 30 secs
 
     /**
      * Saves all projects to the data store
@@ -255,7 +258,7 @@ public abstract class ProjectManager {
                         records.add(new SaveRecord(project, msecsOverdue));
 
                     } else if (!project.getProcessManager().hasPending()
-                              && startTimeOfSave.getTime() - project.getLastSave().getTime() > s_projectFlushDelay) {
+                              && startTimeOfSave.getTime() - project.getLastSave().getTime() > PROJECT_FLUSH_DELAY) {
                         
                         /*
                          *  It's been a while since the project was last saved and it hasn't been
@@ -288,7 +291,7 @@ public abstract class ProjectManager {
 
             for (int i = 0;
                  i < records.size() &&
-                    (allModified || (new Date().getTime() - startTimeOfSave.getTime() < s_quickSaveTimeout));
+                    (allModified || (new Date().getTime() - startTimeOfSave.getTime() < QUICK_SAVE_MAX_TIME));
                  i++) {
 
                 try {
