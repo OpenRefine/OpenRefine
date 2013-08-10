@@ -384,7 +384,7 @@ function init() {
       "externals/jquery-1.7.2.min.js",
       "externals/jquery.cookie.js",
       "externals/jquery.eventstack-0.3.js",
-      "externals/suggest/suggest-4_3.min.js",
+      "externals/suggest/suggest-4_3.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
@@ -490,7 +490,7 @@ function init() {
     [
       "externals/jquery-1.7.2.min.js",
       "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_3.min.js",
+      "externals/suggest/suggest-4_3.js",
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",

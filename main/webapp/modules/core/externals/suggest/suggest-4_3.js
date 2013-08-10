@@ -87,7 +87,7 @@
   var SEARCH_PARAMS = {
       key:1, filter:1, spell:1, exact:1,
       lang:1, scoring:1, prefixed:1, stemmed:1, format:1, mql_output:1,
-      output:1
+      output:1, type:1
   };
 
   $.suggest = function(name, prototype) {
