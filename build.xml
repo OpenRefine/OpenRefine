@@ -224,7 +224,7 @@
         </replace>
 
         <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
-            <replacefilter token="../../extensions/" value="extensions"/>
+            <replacefilter token="../../extensions" value="extensions"/>
         </replace>
 
     </target>
