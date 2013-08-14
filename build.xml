@@ -259,7 +259,6 @@
 	<copy todir="${mac.dir}/OpenRefine.app/Contents/Resource">
           <fileset dir="${build.dir}" id="librarypathset" >
             <include name="${built.webapp.name}/**/**" />
-            <exclude name="**/*.class" />
           </fileset>
 	</copy>
 
