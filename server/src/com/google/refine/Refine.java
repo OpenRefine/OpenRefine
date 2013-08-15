@@ -309,6 +309,7 @@ class RefineServer extends Server {
         }
         
         File dataDir = null;
+        File grefineDir = null;
         File gridworksDir = null;
         
         String os = System.getProperty("os.name").toLowerCase();
@@ -319,10 +320,13 @@ class RefineServer extends Server {
                 // so we're using a library that uses JNI to ask directly the win32 APIs, 
                 // it's not elegant but it's the safest bet.
                 
+                dataDir = new File(fixWindowsUnicodePath(JDataPathSystem.getLocalSystem()
+                        .getLocalDataPath("OpenRefine").getPath()));
+
                 DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Google");
 
                 // new: ./Google/Refine old: ./Gridworks
-                dataDir = new File(new File(fixWindowsUnicodePath(localDataPath.getPath())), "Refine");
+                grefineDir = new File(new File(fixWindowsUnicodePath(localDataPath.getPath())), "Refine");
                 gridworksDir = new File(fixWindowsUnicodePath(JDataPathSystem.getLocalSystem()
                         .getLocalDataPath("Gridworks").getPath()));
             } catch (Error e) {
@@ -351,16 +355,19 @@ class RefineServer extends Server {
                     parentDir = new File(".");
                 }
                 
-                dataDir = new File(new File(parentDir, "Google"), "Refine");
+                dataDir = new File(parentDir, "OpenRefine");
+                grefineDir = new File(new File(parentDir, "Google"), "Refine");
                 gridworksDir = new File(parentDir, "Gridworks");
             }
         } else if (os.contains("mac os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
             
-            // TODO: Update needed (again)
-            String data_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine";
+            String data_home = (home != null) ? home + "/Library/Application Support/OpenRefine" : ".openrefine";
             dataDir = new File(data_home);
+            
+            String grefine_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine";
+            grefineDir = new File(grefine_home);
             
             String gridworks_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks"; 
             gridworksDir = new File(gridworks_home);
@@ -376,16 +383,27 @@ class RefineServer extends Server {
                 data_home = home + "/.local/share";
             }
             
-            dataDir = new File(data_home + "/google/refine");
+            dataDir = new File(data_home + "/openrefine");
+            grefineDir = new File(data_home + "/google/refine");
             gridworksDir = new File(data_home + "/gridworks");
         }
         
-        // If refine data dir doesn't exist, try to find and move gridworks data dir over
-        if (!dataDir.exists() && gridworksDir.exists()) {
-            if (!dataDir.getParentFile().mkdirs()) {
-                logger.error("FAILED to create parent directory for workspace rename target " 
-                        + dataDir.getParent());
-            } else {
+        // If refine data dir doesn't exist, try to find and move Google Refine or Gridworks data dir over
+        if (!dataDir.exists()) {
+            if (grefineDir.exists()) {
+                if (gridworksDir.exists()) {
+                    logger.warn("Found both Gridworks: " + gridworksDir
+                            + " & Googld Refine dirs " + grefineDir) ;
+                }
+                if (grefineDir.renameTo(dataDir)) {
+                    logger.info("Renamed Google Refine directory " + grefineDir 
+                            + " to " + dataDir);
+                } else {
+                    logger.error("FAILED to rename Google Refine directory " 
+                            + grefineDir 
+                            + " to " + dataDir);
+                } 
+            } else if (gridworksDir.exists()) {
                 if (gridworksDir.renameTo(dataDir)) {
                     logger.info("Renamed Gridworks directory " + gridworksDir 
                             + " to " + dataDir);
