@@ -40,7 +40,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.Locale.Category;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
@@ -103,7 +102,7 @@ public class ToDate implements Function {
         }
 
         // "o, format1, format2 (optional), ..."
-        Locale locale = Locale.getDefault(Category.FORMAT);
+        Locale locale = Locale.getDefault();
         if (args.length>=2) {
             for (int i=1;i<args.length;i++) {
                 if (!(args[i] instanceof String)) {
