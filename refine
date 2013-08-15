@@ -211,7 +211,8 @@ get_revision() {
         REVISION=`echo $INFO | sed s/^$VERSION-//`
     elif [ -d ".git" ] ; then
         INFO=`git describe`
-        REVISION=${`echo $INFO`:3}
+        REVISION=`echo $INFO`
+	REVISION=${REVISION:4}
     else
         error "cannot obtain revision, exiting!"
     fi
