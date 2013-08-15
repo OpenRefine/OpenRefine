@@ -208,12 +208,13 @@ get_version() {
 get_revision() {
     if [ -d ".svn" ] ; then
         INFO=`svn info`
+        REVISION=`echo $INFO | sed s/^$VERSION-//`
     elif [ -d ".git" ] ; then
         INFO=`git describe`
+        REVISION=${`echo $INFO`:3}
     else
         error "cannot obtain revision, exiting!"
     fi
-    REVISION=`echo $INFO | sed s/^$VERSION-//`
 }
     
 download() {
@@ -491,6 +492,7 @@ dist() {
     echo "    {"
     echo "        \"description\": \"OpenRefine ${VERSION}\","
     echo "        \"version\": \"${VERSION}\","
+    # TODO: We need to modify version checking for the future
     echo "        \"revision\": \"${REVISION}\""
     echo "    },"
     echo
