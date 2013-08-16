@@ -186,7 +186,7 @@ get_version() {
         fail "Must specify a version number"
     fi
 
-    NUM_VERSION=`echo $VERSION | sed -E 's/[a-zA-Z]+/./g'`
+    NUM_VERSION=`echo $VERSION | sed -E 's/-.*//g'`
     
     if [ "${NUM_VERSION}" = "" ] ; then
         fail "${VERSION} is not a valid version number"
@@ -208,12 +208,14 @@ get_version() {
 get_revision() {
     if [ -d ".svn" ] ; then
         INFO=`svn info`
+        REVISION=`echo $INFO | sed s/^$VERSION-//`
     elif [ -d ".git" ] ; then
         INFO=`git describe`
+        REVISION=`echo $INFO`
+	REVISION=${REVISION:4}
     else
         error "cannot obtain revision, exiting!"
     fi
-    REVISION=`echo $INFO | sed s/^$VERSION-//`
 }
     
 download() {
@@ -470,7 +472,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION" -Drevision="$REVISION" $1 || error "Error while running ant task '$1'"
+    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -482,15 +484,16 @@ dist() {
     
     echo "All distributions were built and are located at $REFINE_DIST_DIR"
     echo 
-    echo "Upload them to the distibution site, then prepend the GoogleRefineReleases array at"
+    echo "Upload them to the distibution site, then prepend the releases array at"
     echo
-    echo "   http://code.google.com/p/google-refine/source/browse/support/releases2.js"
+    echo "   https://github.com/OpenRefine/OpenRefine/tree/gh-pages/javascript/releases.js"
     echo
     echo "with"
     echo 
     echo "    {"
     echo "        \"description\": \"OpenRefine ${VERSION}\","
     echo "        \"version\": \"${VERSION}\","
+    # TODO: We need to modify version checking for the future
     echo "        \"revision\": \"${REVISION}\""
     echo "    },"
     echo
@@ -534,11 +537,16 @@ mac_dist() {
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
     fi
-    
+
+# Sign the bundle with a self-signed cert so OS X doesn't frustrate users by making app invisible
+    codesign -s "OpenRefine Code Signing" "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+    spctl --assess --type execute --verbose=4 "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+
     TITLE="OpenRefine $VERSION"
     echo "Building MacOSX DMG for $TITLE"
     hdiutil create -srcfolder "$REFINE_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$REFINE_BUILD_DIR/temp_refine.dmg" || error "can't create empty DMG"
-    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed 1q | awk '{print $1}'`
+    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed -e "s/^\/dev\///g" -e 1q  | awk '{print $1}'`
+    echo $DEVICE
     hdiutil attach "$REFINE_BUILD_DIR/temp_refine.dmg" || error "Can't attach temp DMG"
     
     echo '
@@ -567,16 +575,17 @@ mac_dist() {
     
     sync
     sync
+    sleep 3
     hdiutil detach $DEVICE
     
-    if [ -f "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" ] ; then
-        rm "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg"
+    if [ -f "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" ] ; then
+        rm "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg"
     fi
     
-    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" || error "Error compressing DMG"
-    hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-$VERSION-$REVISION.dmg" || error "Error internet-enabling DMG"
+    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error compressing DMG"
+    hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error internet-enabling DMG"
     
-    #rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
+    rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
 }
 
 test() {

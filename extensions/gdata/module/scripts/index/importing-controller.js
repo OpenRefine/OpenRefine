@@ -36,11 +36,12 @@ var lang = navigator.language.split("-")[0]
 		|| navigator.userLanguage.split("-")[0];
 var dictionary = "";
 $.ajax({
-	url : "/command/gdata/load-language?",
+	url : "/command/core/load-language?",
 	type : "POST",
 	async : false,
 	data : {
-		lng : lang
+	  module : "gdata",
+//		lang : lang
 	},
 	success : function(data) {
 		dictionary = data;

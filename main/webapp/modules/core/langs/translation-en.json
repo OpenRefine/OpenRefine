@@ -1,4 +1,4 @@
-﻿{
+{
     "core-index": {
 		"slogan": "A power tool for working with messy data",
 		"help": "Help",
@@ -226,7 +226,6 @@
 		"long-format": "Long locale format",
 		"full-format": "Full locale format",
 		"custom": "Custom",
-		"help": "Help",
 		"local-time": "Use local time zone",
 		"omit-time": "Omit time",
 		"out-col-header": "Output column headers",
@@ -264,7 +263,6 @@
 		"facet-by-count": "Facet by choice counts",
 		"edit-based-col": "Edit Facet's Expression based on Column",
 		"edit-facet-exp": "Edit Facet's Expression",
-		"current-exp": "Current Expression",
 		"set-max-choices": "Set the maximum number of choices shown in each text facet (too many will slow down the application)",
 		"case-sensitive": "case sensitive",
 		"regular-exp": "regular expression",
@@ -410,7 +408,7 @@
 		"sort": "Sort",
 		"collapse-expand": "Collapse/expand columns to make viewing the data more convenient",
 		"collapse-this": "Collapse this column",
-		"collapse-all": "Collapse all other columns",
+		"collapse-other": "Collapse all other columns",
 		"collapse-left": "Collapse all columns to left",
 		"collapse-right": "Collapse all columns to right",
 		"reconcile": "Reconcile",
@@ -560,7 +558,6 @@
 		"view": "View",
 		"collapse-all": "Collapse all columns",
 		"expand-all": "Expand all columns",
-		"remove-sort": "Remove sort",
 		"reorder-perma": "Reorder rows permanently",
 		"by": "By",
 		"custom-text-trans": "Custom text transform on column",

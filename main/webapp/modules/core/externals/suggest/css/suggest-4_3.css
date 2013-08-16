@@ -539,7 +539,7 @@ Freebase Suggest Attribution
 
 .fbs-attribution {
     padding-right: 72px; /* accommodate attribution background image */
-    background-image: url(template/img/fbs-attribution.png);
+    background-image: url(//www.gstatic.com/freebase/img/freebase-cc-by-61x23.png);
     background-repeat: no-repeat;
     background-position: center right;
     min-height: 15px;

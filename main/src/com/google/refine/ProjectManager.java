@@ -62,6 +62,13 @@ public abstract class ProjectManager {
     // last n expressions used across all projects
     static protected final int s_expressionHistoryMax = 100;
 
+    // If a project has been idle this long, flush it from memory
+    static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
+    
+    // Don't spend more than this much time saving projects if doing a quick save
+    static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
+
+
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected PreferenceStore            _preferenceStore;
 
@@ -119,7 +126,6 @@ public abstract class ProjectManager {
             _projectsMetadata.put(project.id, projectMetadata);
         }
     }
- //----------Load from data store to memory----------------
 
     /**
      * Load project metadata from data storage
@@ -135,7 +141,6 @@ public abstract class ProjectManager {
      */
     protected abstract Project loadProject(long id);
 
-    //------------Import and Export from Refine archive-----------------
     /**
      * Import project from a Refine archive
      * @param projectID
@@ -154,7 +159,6 @@ public abstract class ProjectManager {
     public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
 
 
- //------------Save to record store------------
     /**
      * Saves a project and its metadata to the data store
      * @param id
@@ -194,8 +198,9 @@ public abstract class ProjectManager {
     /**
      * Save project to the data store
      * @param project
+     * @throws IOException 
      */
-    protected abstract void saveProject(Project project);
+    protected abstract void saveProject(Project project) throws IOException;
 
     /**
      * Save workspace and all projects to data store
@@ -227,9 +232,6 @@ public abstract class ProjectManager {
         }
     }
 
-    static protected final int s_projectFlushDelay = 1000 * 60 * 60; // 1 hour
-    static protected final int s_quickSaveTimeout = 1000 * 30; // 30 secs
-
     /**
      * Saves all projects to the data store
      * @param allModified
@@ -256,7 +258,7 @@ public abstract class ProjectManager {
                         records.add(new SaveRecord(project, msecsOverdue));
 
                     } else if (!project.getProcessManager().hasPending()
-                              && startTimeOfSave.getTime() - project.getLastSave().getTime() > s_projectFlushDelay) {
+                              && startTimeOfSave.getTime() - project.getLastSave().getTime() > PROJECT_FLUSH_DELAY) {
                         
                         /*
                          *  It's been a while since the project was last saved and it hasn't been
@@ -289,19 +291,36 @@ public abstract class ProjectManager {
 
             for (int i = 0;
                  i < records.size() &&
-                    (allModified || (new Date().getTime() - startTimeOfSave.getTime() < s_quickSaveTimeout));
+                    (allModified || (new Date().getTime() - startTimeOfSave.getTime() < QUICK_SAVE_MAX_TIME));
                  i++) {
 
                 try {
                     saveProject(records.get(i).project);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // In case we're running low on memory, free as much as we can
+                    disposeUnmodifiedProjects();
                 }
             }
         }
     }
 
-    //--------------Get from memory--------------
+    /**
+     * Flush all unmodified projects from memory.
+     */
+    protected void disposeUnmodifiedProjects() {
+        synchronized (this) {
+            for (long id : _projectsMetadata.keySet()) {
+                ProjectMetadata metadata = getProjectMetadata(id);
+                Project project = _projects.get(id);
+                if (project != null && !project.getProcessManager().hasPending() 
+                        && metadata.getModified().getTime() < project.getLastSave().getTime()) {
+                        _projects.remove(id).dispose();
+                }
+            }
+        }
+    }
+
     /**
      * Gets the InterProjectModel from memory
      */
@@ -405,7 +424,6 @@ public abstract class ProjectManager {
      */
     public abstract HistoryEntryManager getHistoryEntryManager();
 
-    //-------------remove project-----------
 
     /**
      * Remove the project from the data store
@@ -434,7 +452,6 @@ public abstract class ProjectManager {
         }
     }
 
-    //--------------Miscellaneous-----------
 
     /**
      * Sets the flag for long running operations.  This will prevent

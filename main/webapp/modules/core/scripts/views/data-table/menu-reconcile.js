@@ -240,7 +240,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": "+$.i18n._('core-views')["best-cand-type.match"],
+                  "name" : column.name + ": "+$.i18n._('core-views')["best-cand-type-match"],
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },

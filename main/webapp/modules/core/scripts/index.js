@@ -45,7 +45,8 @@ $.ajax({
 	type : "POST",
 	async : false,
 	data : {
-		lng : lang
+	  module : "core",
+//		lang : lang
 	},
 	success : function(data) {
 		dictionary = data;

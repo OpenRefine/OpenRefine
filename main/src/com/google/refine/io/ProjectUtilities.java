@@ -35,6 +35,7 @@ package com.google.refine.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -50,7 +51,7 @@ import com.google.refine.util.Pool;
 public class ProjectUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_utilities");
 
-    synchronized public static void save(Project project) {
+    synchronized public static void save(Project project) throws IOException {
         synchronized (project) {
             long id = project.id;
             File dir = ((FileProjectManager)ProjectManager.singleton).getProjectDir(id);
@@ -58,11 +59,15 @@ public class ProjectUtilities {
             File tempFile = new File(dir, "data.temp.zip");
             try {
                 saveToFile(project, tempFile);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
-
                 logger.warn("Failed to save project {}", id);
-                return;
+                try {
+                    tempFile.delete();
+                } catch (Exception e2) {
+                    // just ignore - file probably was never created.
+                }
+                throw e;
             }
 
             File file = new File(dir, "data.zip");
@@ -83,7 +88,7 @@ public class ProjectUtilities {
         }
     }
 
-    protected static void saveToFile(Project project, File file) throws Exception {
+    protected static void saveToFile(Project project, File file) throws IOException  {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
         try {
             Pool pool = new Pool();

@@ -430,6 +430,9 @@ public class FreebaseUtils {
 
     /**
      * This RPC call works for the Reconcile API, but MQLread is not supported over JSONRPC
+     * 
+     * NOTE: JSONRPC has been deprecated and replaced by HTTP Batch (which also
+     * doesn't support MQLread, so perhaps we should just remove this))
      */
     @SuppressWarnings("unused")
     static private JSONObject mqlreadRpc(String query) throws JSONException, UnsupportedEncodingException, IOException {

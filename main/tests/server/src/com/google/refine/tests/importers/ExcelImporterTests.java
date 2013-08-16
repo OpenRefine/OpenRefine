@@ -183,7 +183,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         File file = null;
         try {
-            file = File.createTempFile("oepnrefine-importer-test", xml ? ".xlsx" : ".xls");
+            file = File.createTempFile("openrefine-importer-test", xml ? ".xlsx" : ".xls");
             file.deleteOnExit();
             OutputStream outputStream = new FileOutputStream(file);
             wb.write(outputStream);

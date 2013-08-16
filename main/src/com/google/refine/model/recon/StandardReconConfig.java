@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model.recon;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -316,11 +315,11 @@ public class StandardReconConfig extends ReconConfig {
             }
             
             if (connection.getResponseCode() >= 400) {
-                // TODO: Retry with backoff on 500 errors?
                 InputStream is = connection.getErrorStream();
-                throw new IOException("Failed  - code:" 
-                + Integer.toString(connection.getResponseCode()) 
-                + " message: " + is == null ? "" : ParsingUtilities.inputStreamToString(is));
+                logger.error("Failed  - code:" 
+                        + Integer.toString(connection.getResponseCode()) 
+                        + " message: " + is == null ? ""
+                                : ParsingUtilities.inputStreamToString(is));
             } else {
                 InputStream is = connection.getInputStream();
                 try {

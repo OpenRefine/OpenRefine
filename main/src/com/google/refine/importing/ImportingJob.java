@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
+import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
@@ -97,9 +98,9 @@ public class ImportingJob implements Jsonizable {
         }
     }
     
-    public void setProjectID(long id2) {
+    public void setProjectID(long projectID) {
         synchronized (config) {
-            JSONUtilities.safePut(config, "projectID", project.id);
+            JSONUtilities.safePut(config, "projectID", projectID);
         }
     }
 
@@ -167,6 +168,11 @@ public class ImportingJob implements Jsonizable {
         if (project != null) {
             project.dispose();
         }
+        
+        // Make sure all projects have been saved in case we run out of memory 
+        // or have some other catastrophe on import
+        ProjectManager.singleton.save(true);
+        
         project = new Project();
         metadata = new ProjectMetadata();
     }

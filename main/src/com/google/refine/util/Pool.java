@@ -55,6 +55,10 @@ import com.google.refine.RefineServlet;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 
+/**
+ * A serializable pool of ReconCandidates indexed by ID.
+ *
+ */
 public class Pool implements Jsonizable {
     final protected Map<String, Recon> recons = new HashMap<String, Recon>();
     

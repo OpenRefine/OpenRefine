@@ -29,7 +29,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
         
         JSONUtilities.safePut(options, "linesPerRow", 1);
         JSONUtilities.safePut(options, "headerLines", 0);
-        JSONUtilities.safePut(options, "guessCellValueTypes", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
         
         return options;
     }

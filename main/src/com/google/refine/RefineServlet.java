@@ -370,7 +370,10 @@ public class RefineServlet extends Butterfly {
     }
     
     static public void setUserAgent(HttpURLConnection httpConnection) {
-        httpConnection.addRequestProperty("User-Agent", "OpenRefine/" + FULL_VERSION);
+        httpConnection.addRequestProperty("User-Agent", getUserAgent());
     }
 
+    static public String getUserAgent() {
+        return "OpenRefine/" + FULL_VERSION;
+    }
 }
