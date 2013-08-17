@@ -69,13 +69,13 @@ public class FileProjectManager extends ProjectManager {
     final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
     static public synchronized void initialize(File dir) {
-        if (singleton == null) {
-            logger.info("Using workspace directory: {}", dir.getAbsolutePath());
-            singleton = new FileProjectManager(dir);
-            // This needs our singleton set, thus the unconventional control flow
-            ((FileProjectManager) singleton).recover();
+        if (singleton != null) {
+            logger.warn("Overwriting singleton already set: " + singleton);
         }
-
+        logger.info("Using workspace directory: {}", dir.getAbsolutePath());
+        singleton = new FileProjectManager(dir);
+        // This needs our singleton set, thus the unconventional control flow
+        ((FileProjectManager) singleton).recover();
     }
 
     protected FileProjectManager(File dir) {
