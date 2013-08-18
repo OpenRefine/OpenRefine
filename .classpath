@@ -11,7 +11,7 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-trunk-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
