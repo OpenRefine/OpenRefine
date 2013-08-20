@@ -464,7 +464,9 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     $.ajax(url,{dataType:"jsonp"}).done(function(searchResponse) {
       var data = searchResponse.result[0];
       var html = $.suggest.suggest.create_flyout(data, preview.imgurl);
-      fakeMenu.append(html);
+      var container = $('<div></div>').css({fontSize:16}); // Suggest assumes this as a base font size
+      container.append(html);
+      fakeMenu.append(container);
     });
   }
 
