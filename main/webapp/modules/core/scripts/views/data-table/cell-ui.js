@@ -437,7 +437,9 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, b
 };
 
 DataTableCellUI.internalPreview = {
-  srchurl: 'https://www.googleapis.com/freebase/v1/search?filter=(all mid:${id})&output=(notable:/client/summary description type)&key='+CustomSuggest.FREEBASE_API_KEY+"&callback=?",
+  srchurl: 'https://www.googleapis.com/freebase/v1/search?filter=(all mid:${id})'
+    + '&output=(notable:/client/summary (description citation provenance) type)'
+    + '&key='+CustomSuggest.FREEBASE_API_KEY+'&callback=?',
   imgurl : 'https://www.googleapis.com/freebase/v1/image${id}?maxwidth=75&errorid=/freebase/no_image_png&key='+CustomSuggest.FREEBASE_API_KEY,
   width: 430,
   height: 300
