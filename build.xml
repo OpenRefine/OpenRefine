@@ -206,6 +206,7 @@
                 <include name="**/*"/>
                 <exclude name="WEB-INF/classes/**"/>
                 <exclude name="WEB-INF/lib-src/**"/>
+                <exclude name="WEB-INF/lib/marc4j*.jar"/>
             </fileset>
         </copy>
         
