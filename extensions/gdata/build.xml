@@ -63,7 +63,9 @@
      
          <copy todir="${ext.dir}/module">
              <fileset dir="module">
-                 <include name="**/*.*"/>
+                 <include name="**/*"/>
+                 <exclude name="**/lib-src/*"/>
+                 <exclude name="**/src/*"/>
              </fileset>
          </copy>
 

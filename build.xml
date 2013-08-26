@@ -216,6 +216,7 @@
                 <include name="**/*"/>
                 <exclude name="**/build.xml"/>
                 <exclude name="**/src/**"/>
+                <exclude name="**/lib-src/**"/>
             </fileset>
         </copy>
         
