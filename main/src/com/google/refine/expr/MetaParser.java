@@ -40,6 +40,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import clojure.lang.IFn;
+import clojure.lang.RT;
 
 import com.google.refine.grel.Parser;
 
@@ -58,6 +59,10 @@ abstract public class MetaParser {
     }
     
     static final protected Map<String, LanguageInfo> s_languages = new HashMap<String, LanguageInfo>();
+
+    // TODO: We should switch from using the internal compiler class 
+//    final static private Var CLOJURE_READ_STRING = RT.var("clojure.core", "read-string");
+//    final static private Var CLOJURE_EVAL = RT.var("clojure.core", "eval");
     
     static {
         registerLanguageParser("grel", "Google Refine Expression Language (GREL)", new LanguageSpecificParser() {
@@ -73,9 +78,17 @@ abstract public class MetaParser {
             @Override
             public Evaluable parse(String s) throws ParsingException {
                 try {
+//                    RT.load("clojure/core"); // Make sure RT is initialized
+                    Object foo = RT.CURRENT_NS; // Make sure RT is initialized
                     IFn fn = (IFn) clojure.lang.Compiler.load(new StringReader(
-                        "(fn [value cell cells row rowIndex] " + s + ")"
-                    ));
+                            "(fn [value cell cells row rowIndex] " + s + ")"
+                        ));
+
+                    // TODO: We should to switch from using Compiler.load
+                    // because it's technically an internal interface
+//                    Object code = CLOJURE_READ_STRING.invoke(
+//                            "(fn [value cell cells row rowIndex] " + s + ")"
+//                            );
                     
                     return new Evaluable() {
                         private IFn _fn;

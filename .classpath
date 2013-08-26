@@ -12,7 +12,7 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.5.1-slim.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
