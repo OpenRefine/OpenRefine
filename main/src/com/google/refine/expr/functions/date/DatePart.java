@@ -75,6 +75,8 @@ public class DatePart implements Function {
             return c.get(Calendar.MINUTE);
         } else if ("seconds".equals(part) || "sec".equals(part) || "s".equals(part)) {
             return c.get(Calendar.SECOND);
+        } else if ("milliseconds".equals(part) || "ms".equals(part) || "S".equals(part)) {
+            return c.get(Calendar.MILLISECOND);
         } else if ("years".equals(part) || "year".equals(part)) {
             return c.get(Calendar.YEAR);
         } else if ("months".equals(part) || "month".equals(part)) { // avoid 'm' to avoid confusion with minute
