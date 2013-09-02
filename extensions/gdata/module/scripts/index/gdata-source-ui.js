@@ -49,7 +49,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   $('#gdata-signin-btn').text($.i18n._("gdata-import")["sign-in"]);
   $('#gdata-access-data').text($.i18n._("gdata-import")["access-data"]);
   $('#gdata-retrieving').text($.i18n._("gdata-import")["retrieving"]);
-  $('#gdata-retrieving').text($.i18n._("gdata-import")["sign-out"]);
+  $('#gdata-signout').text($.i18n._("gdata-import")["sign-out"]);
   $('#gdata-resignin').text($.i18n._("gdata-import")["re-sign-in"]);
   $('#gdata-another-account').text($.i18n._("gdata-import")["another-account"]);
   
@@ -143,7 +143,7 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
     $('<span>').text(doc.type).appendTo(td);
     
     td = tr.insertCell(tr.cells.length);
-    var title = $('<a>')
+    $('<a>')
     .addClass('gdata-doc-title')
     .attr('href', 'javascript:{}')
     .text(doc.title)
