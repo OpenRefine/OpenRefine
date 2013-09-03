@@ -166,7 +166,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   this._parsingPanelElmts = DOM.bind(this._parsingPanel);
   
   if(this._doc.type != 'table'){
-	  this._parsingPanelElmts.gdata-worksheet.html($.i18n._('gdata-parsing')["worksheet"]); 
+	  this._parsingPanelElmts.gdata_worksheet.html($.i18n._('gdata-parsing')["worksheet"]); 
 	  this._parsingPanelElmts.gdata_ignore_first.html($.i18n._('gdata-parsing')["ignore-first"]);
 	  this._parsingPanelElmts.gdata_ignore.html($.i18n._('gdata-parsing')["ignore"]);
 	  this._parsingPanelElmts.gdata_parse_next.html($.i18n._('gdata-parsing')["parse-next"]);
@@ -176,9 +176,9 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   this._parsingPanelElmts.gdata_conf_pars.html($.i18n._('gdata-parsing')["conf-pars"]);
   this._parsingPanelElmts.gdata_proj_name.html($.i18n._('gdata-parsing')["proj-name"]);
   this._parsingPanelElmts.createProjectButton.html($.i18n._('gdata-parsing')["create-proj"]);
-  this._parsingPanelElmts.gdata-options.html($.i18n._('gdata-parsing')["option"]);
+  this._parsingPanelElmts.gdata_options.html($.i18n._('gdata-parsing')["option"]);
   this._parsingPanelElmts.previewButton.html($.i18n._('gdata-parsing')["preview-button"]);
-  this._parsingPanelElmts.gdata-updating.html($.i18n._('gdata-parsing')["updating-preview"]);
+  this._parsingPanelElmts.gdata_updating.html($.i18n._('gdata-parsing')["updating-preview"]);
   this._parsingPanelElmts.gdata_discard_next.html($.i18n._('gdata-parsing')["discard-next"]);
   this._parsingPanelElmts.gdata_discard.html($.i18n._('gdata-parsing')["discard"]);
   this._parsingPanelElmts.gdata_limit_next.html($.i18n._('gdata-parsing')["limit-next"]);
@@ -235,7 +235,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   if (this._doc.type != 'table') {
     var sheetTable = this._parsingPanelElmts.sheetRecordContainer[0];
     $.each(this._options.worksheets, function(i, v) {
-      var id = 'gdata-worksheet-' + Math.round(Math.random() * 1000000);
+      var id = 'gdata_worksheet-' + Math.round(Math.random() * 1000000);
       
       var tr = sheetTable.insertRow(sheetTable.rows.length);
       var td0 = $(tr.insertCell(0)).attr('width', '1%');
