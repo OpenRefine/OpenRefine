@@ -145,7 +145,7 @@ DataTableCellUI.prototype._render = function() {
             var a = $('<a></a>')
             .addClass("data-table-recon-topic")
             .attr("target", "_blank")
-            .text(candidate.name)
+            .text(_.unescape(candidate.name))
             .appendTo(li);
 
             if ((service) && (service.view) && (service.view.url)) {

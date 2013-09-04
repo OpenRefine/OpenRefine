@@ -389,6 +389,7 @@ function init() {
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/underscore-min.js",
 
       "externals/CFInstall.min.js",
       "scripts/chrome-frame.js",
