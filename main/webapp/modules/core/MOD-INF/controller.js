@@ -494,8 +494,8 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
-      "scripts/preferences.js",
       "externals/jquery.i18n.js",
+      "scripts/preferences.js",
     ]
   );
   ClientSideResourceManager.addPaths(

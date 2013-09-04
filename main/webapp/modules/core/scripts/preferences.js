@@ -33,6 +33,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var preferenceUIs = [];
 
+var lang = navigator.language.split("-")[0]
+|| navigator.userLanguage.split("-")[0];
+var dictionary = "";
+$.ajax({
+url : "/command/core/load-language?",
+type : "POST",
+async : false,
+data : {
+module : "core",
+//lang : lang
+},
+success : function(data) {
+dictionary = data;
+}
+});
+$.i18n.setDictionary(dictionary);
+//End internationalization
+
+
 function PreferenceUI(tr, key, value) {
   var self = this;
 
@@ -112,7 +131,7 @@ function populatePreferences(prefs) {
   var tdLast0 = trLast.insertCell(0);
   trLast.insertCell(1);
   trLast.insertCell(2);
-  $('<button class="button">').text().appendTo(tdLast0).click(function() {
+  $('<button class="button">').text($.i18n._('core-index')["add-pref"]).appendTo(tdLast0).click(function() {
     var key = window.prompt($.i18n._('core-index')["add-pref"]);
     if (key) {
       var value = window.prompt($.i18n._('core-index')["pref-key"]);
