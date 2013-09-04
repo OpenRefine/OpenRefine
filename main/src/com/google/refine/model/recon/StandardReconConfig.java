@@ -110,6 +110,8 @@ public class StandardReconConfig extends ReconConfig {
         
         JSONObject t = obj.has("type") && !obj.isNull("type") ? obj.getJSONObject("type") : null;
         
+        int limit = obj.has("limit") ? obj.getInt("limit") : 0;
+        
         return new StandardReconConfig(
             obj.getString("service"),
             obj.has("identifierSpace") ? obj.getString("identifierSpace") : null,
@@ -117,7 +119,8 @@ public class StandardReconConfig extends ReconConfig {
             t == null ? null : t.getString("id"),
             t == null ? null : (t.has("name") ? t.getString("name") : null),
             obj.getBoolean("autoMatch"),
-            columnDetails
+            columnDetails,
+            limit
         );
     }
     
@@ -139,16 +142,41 @@ public class StandardReconConfig extends ReconConfig {
     final public String     typeName;
     final public boolean    autoMatch;
     final public List<ColumnDetail> columnDetails;
+    final private int limit;
+
+    public StandardReconConfig(
+            String service,
+            String identifierSpace,
+            String schemaSpace,
+            
+            String typeID, 
+            String typeName,
+            boolean autoMatch,
+            List<ColumnDetail> columnDetails
+        ) {
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, columnDetails, 0);
+    }
     
+    
+    /**
+     * @param service
+     * @param identifierSpace
+     * @param schemaSpace
+     * @param typeID
+     * @param typeName
+     * @param autoMatch
+     * @param columnDetails
+     * @param limit maximum number of results to return (0 = default)
+     */
     public StandardReconConfig(
         String service,
         String identifierSpace,
         String schemaSpace,
-        
         String typeID, 
         String typeName,
         boolean autoMatch,
-        List<ColumnDetail> columnDetails
+        List<ColumnDetail> columnDetails,
+        int limit
     ) {
         this.service = service;
         this.identifierSpace = identifierSpace;
@@ -158,6 +186,7 @@ public class StandardReconConfig extends ReconConfig {
         this.typeName = typeName;
         this.autoMatch = autoMatch;
         this.columnDetails = columnDetails;
+        this.limit = limit;
     }
 
     @Override
@@ -189,6 +218,7 @@ public class StandardReconConfig extends ReconConfig {
                 writer.endObject();
             }
             writer.endArray();
+          writer.key("limit"); writer.value(limit);
         writer.endObject();
     }
 
@@ -265,6 +295,13 @@ public class StandardReconConfig extends ReconConfig {
                     
                     jsonWriter.endArray();
                 }
+                
+            // Only send limit if it's non-default to preserve backward compatibility with
+            // services which might choke on this
+            if (limit != 0) {
+                jsonWriter.key("limit"); jsonWriter.value(limit);
+            }
+                
             jsonWriter.endObject();
             
             job.text = cell.value.toString();
@@ -382,7 +419,7 @@ public class StandardReconConfig extends ReconConfig {
         try {
             int length = results.length();
             int count = 0;
-            for (int i = 0; i < length && count < 3; i++) {
+            for (int i = 0; i < length; i++) {
                 JSONObject result = results.getJSONObject(i);
                 if (!result.has("name")) {
                     continue;

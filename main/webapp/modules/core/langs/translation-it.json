@@ -362,7 +362,9 @@
 		"fb-guid": "un Freebase GUID, es: #9202a8c04000641f80000000000354ae",
 		"fb-key": "Una chiave Freebase nel",
 		"fb-en-ns": "namespace di Wikipedia inglese",
-		"this-ns": "questo namespace:"
+		"this-ns": "questo namespace:",
+		// TODO: Translation required
+//		 "max-candidates" : "Maximum number of candidates to return"		
 	},
 	"core-util-enc": {
 		"select-enc": "Seleziona la codifica",
