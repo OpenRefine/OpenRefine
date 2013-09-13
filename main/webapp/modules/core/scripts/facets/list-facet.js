@@ -230,7 +230,7 @@ ListFacet.prototype._copyChoices = function() {
   body.html('<textarea wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
   var elmts = DOM.bind(body);
 
-  $('<button class="button"></button>').text($.i18n._('core-button')["close"]).click(function() {
+  $('<button class="button"></button>').text($.i18n._('core-buttons')["close"]).click(function() {
     DialogSystem.dismissUntil(level - 1);
   }).appendTo(footer);
 
