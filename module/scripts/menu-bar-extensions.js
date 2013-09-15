@@ -310,6 +310,7 @@ ReconciliationRdfServiceDialog.prototype._footer = function(footer){
 	    
 	    self._elmts.file_upload_form.ajaxSubmit({
 	    	dataType:  'json',
+	    	type:'post',
 	    	success: function(data) {
 	    		self._dismissBusy();
 	    		RdfReconciliationManager.registerService(data,self._level);

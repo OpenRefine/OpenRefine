@@ -40,7 +40,9 @@ public class UploadFileAndAddServiceCommand extends AbstractAddServiceCommand{
 	public void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		try{
 			//write results
-			PrintWriter out = response.getWriter();
+			response.setCharacterEncoding("UTF-8");
+	        response.setHeader("Content-Type", "application/json");
+	        PrintWriter out = response.getWriter();
 			StringWriter sw = new StringWriter();
 			JSONWriter w = new JSONWriter(sw);
 			w.object();
@@ -50,8 +52,9 @@ public class UploadFileAndAddServiceCommand extends AbstractAddServiceCommand{
 	        service.writeAsJson(w);
 	        w.endObject();
 	        sw.flush();
-			out.print("<html><body><textarea>" + sw.toString() + "</textarea></body></html>");
-			out.flush();
+			//out.print("<html><body><textarea>" + sw.toString() + "</textarea></body></html>");
+	        out.print(sw.toString());
+	        out.flush();
 		} catch (Exception e) {
 			respondError(response,e);
 		}

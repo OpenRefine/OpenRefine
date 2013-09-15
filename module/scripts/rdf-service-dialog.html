@@ -15,7 +15,7 @@
   </table>
   <fieldset class="rdf-reconcile-fieldset">
     <legend>File details</legend>
-    <form id="file-upload-form" bind="file_upload_form" action="command/rdf-extension/uploadFileAndAddService" enctype="multipart/form-data">
+    <form id="file-upload-form" bind="file_upload_form" method="POST" action="command/rdf-extension/uploadFileAndAddService" enctype="multipart/form-data">
       <input type="hidden" name="service_name" bind="hidden_service_name" />
       <input type="hidden" name="properties" bind="hidden_properties" />
       <table>
