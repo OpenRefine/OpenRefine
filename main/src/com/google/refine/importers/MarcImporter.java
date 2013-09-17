@@ -35,12 +35,10 @@ package com.google.refine.importers;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import org.json.JSONObject;
 import org.marc4j.MarcPermissiveStreamReader;
@@ -48,62 +46,58 @@ import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
 import org.marc4j.marc.Record;
 
-import com.google.refine.ProjectMetadata;
-import com.google.refine.importers.tree.ImportColumnGroup;
 import com.google.refine.importing.ImportingJob;
-import com.google.refine.model.Project;
+import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.util.JSONUtilities;
 
 public class MarcImporter extends XmlImporter {
-    @Override
-    public void parseOneFile(Project project, ProjectMetadata metadata,
-            ImportingJob job, String fileSource, InputStream inputStream,
-            ImportColumnGroup rootColumnGroup, int limit, JSONObject options,
-            List<Exception> exceptions) {
-        
-        File tempFile;
-        try {
-            tempFile = File.createTempFile("refine-import-", ".marc.xml");
-        } catch (IOException e) {
-            exceptions.add(new ImportException("Unexpected error creating temp file", e));
-            return;
-        }
-        
-        try {
-            OutputStream os = new FileOutputStream(tempFile);
-            try {
-                MarcWriter writer = new MarcXmlWriter(os, true);
-                
-                MarcPermissiveStreamReader reader = new MarcPermissiveStreamReader(
-                    inputStream, true, true);
-                while (reader.hasNext()) {
-                    Record record = reader.next();
-                    writer.write(record);
-                }
-                writer.close();
-            } finally {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    // Just ignore - not much we can do anyway
-                }
-            }
-
-            InputStream is = new FileInputStream(tempFile);
-            try {
-                super.parseOneFile(project, metadata, job, fileSource, inputStream,
-                        rootColumnGroup, limit, options, exceptions);
-            } finally {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // Just ignore - not much we can do anyway
-                }
-            }
-        } catch (FileNotFoundException e) {
-            exceptions.add(new ImportException("Input file not found", e));
-            return;
-        } finally {
-            tempFile.delete();
-        }
+    
+    public MarcImporter() {
+        super();
     }
+    
+    @Override
+    public JSONObject createParserUIInitializationData(ImportingJob job, java.util.List<JSONObject> fileRecords, String format) {
+
+        if (fileRecords.size() > 0) {
+            JSONObject firstFileRecord = fileRecords.get(0);
+            File file = ImportingUtilities.getFile(job, firstFileRecord);
+            File tempFile = new File(file.getAbsolutePath()+".xml");
+
+            JSONUtilities.safePut(firstFileRecord, "location", 
+                    JSONUtilities.getString(firstFileRecord, "location", "")+".xml");
+
+            try {
+                InputStream inputStream = new FileInputStream(file);
+                OutputStream outputStream = new FileOutputStream(tempFile);
+                try {
+                    MarcWriter writer = new MarcXmlWriter(outputStream, true);
+
+                    MarcPermissiveStreamReader reader = new MarcPermissiveStreamReader(
+                            inputStream, true, true);
+                    while (reader.hasNext()) {
+                        Record record = reader.next();
+                        writer.write(record);
+                    }
+                    writer.close();
+                } finally {
+                    try {
+                        outputStream.close();
+                        inputStream.close();
+                        file.delete(); // get rid of our original file
+                    } catch (IOException e) {
+                        // Just ignore - not much we can do anyway
+                    }
+                }
+            } catch (IOException e) {
+                logger.error("Failed to create temporary XML file from MARC file", e);
+            }
+        }
+        
+        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+
+        return options;
+    };
+    
+
 }
