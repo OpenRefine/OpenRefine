@@ -111,9 +111,8 @@ public class FixedWidthImporter extends TabularImportingParserBase {
     
     /**
      * Splits the line into columns
-     * @param line
-     * @param lnReader
-     * @param splitIntoColumns
+     * @param line Line to be split
+     * @param widths array of integers with field sizes
      * @return
      */
     static private ArrayList<Object> getCells(String line, int[] widths) {
