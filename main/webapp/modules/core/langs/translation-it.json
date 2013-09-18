@@ -1,4 +1,5 @@
 {
+    "name" : "Italiano",
     "core-index": {
 		"slogan": "Uno strumento potente, per lavorare con dati sporchi",
 		"help": "Aiuto",
@@ -363,8 +364,7 @@
 		"fb-key": "Una chiave Freebase nel",
 		"fb-en-ns": "namespace di Wikipedia inglese",
 		"this-ns": "questo namespace:",
-		// TODO: Translation required
-//		 "max-candidates" : "Maximum number of candidates to return"		
+                "max-candidates" : "Maximum number of candidates to return [TODO - translate]",	
 	},
 	"core-util-enc": {
 		"select-enc": "Seleziona la codifica",
