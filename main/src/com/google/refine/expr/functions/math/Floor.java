@@ -57,7 +57,7 @@ public class Floor implements Function {
         throws JSONException {
     
         writer.object();
-        writer.key("description"); writer.value("Returns the floor of a number");
+        writer.key("description"); writer.value("Returns the floor of a number as an integer");
         writer.key("params"); writer.value("number d");
         writer.key("returns"); writer.value("number");
         writer.endObject();
