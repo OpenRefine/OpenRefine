@@ -98,8 +98,8 @@
 	"core-index-lang": {
 		"lang-settings": "Language Settings",
 		"label": "Select preferred language",
-		"send-req": "Send Request",
-		"page-reload": "Warning, the page will be refreshed to apply the change!"
+		"send-req": "Change Language",
+		"page-reload": "The page will be refreshed to apply the change."
 	},
 	"core-index-parser":{
 		"ignore-first": "Ignore first",
