@@ -33,75 +33,50 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.tools.tar.TarOutputStream;
+import java.io.File;
+import java.io.Writer;
+import java.util.Properties;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
+import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
-import com.google.refine.model.Project;
+import com.google.refine.io.FileProjectManager;
 
-/**
- * Stub used to make protected methods public for testing
- *
- */
-public class ProjectManagerStub extends ProjectManager {
+
+public class HistoryEntryManagerStub implements HistoryEntryManager{
 
     @Override
-    public void deleteProject(long projectID) {
-        // empty
-
+    public void delete(HistoryEntry historyEntry) {
     }
 
     @Override
-    public void exportProject(long projectId, TarOutputStream tos) throws IOException {
-        // empty
+    public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
     }
 
     @Override
-    public HistoryEntryManager getHistoryEntryManager() {
-        return new HistoryEntryManagerStub();
+    public void loadChange(HistoryEntry historyEntry) {
+    }
+
+    protected void loadChange(HistoryEntry historyEntry, File file) throws Exception {
     }
 
     @Override
-    public void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException {
-        // empty
+    public void saveChange(HistoryEntry historyEntry) throws Exception {
     }
 
-    @Override
-    protected Project loadProject(long id) {
-        // empty
-        return null;
+    protected void saveChange(HistoryEntry historyEntry, File file) throws Exception {
     }
 
-    @Override
-    public boolean loadProjectMetadata(long projectID) {
-        // empty
-        return false;
+    protected File getChangeFile(HistoryEntry historyEntry) {
+        return new File(getHistoryDir(historyEntry), historyEntry.id + ".change.zip");
     }
 
-    @Override
-    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
-        // empty
+    protected File getHistoryDir(HistoryEntry historyEntry) {
+        File dir = new File(((FileProjectManager)ProjectManager.singleton)
+                .getProjectDir(historyEntry.projectID),
+                "history");
+        dir.mkdirs();
 
+        return dir;
     }
-
-    @Override
-    public void saveProject(Project project) {
-        // empty
-    }
-
-    //Overridden to make public for testing
-    @Override
-    public void saveProjects(boolean allModified){
-        super.saveProjects(allModified);
-    }
-
-    @Override
-    protected void saveWorkspace() {
-        // empty
-    }
-
 }
