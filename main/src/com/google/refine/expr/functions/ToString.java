@@ -52,13 +52,13 @@ public class ToString implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
             Object o1 = args[0];
-            if (args.length == 2) {
+            if (args.length == 2 && args[1] instanceof String) {
+                Object o2 = args[1];
                 if (o1 instanceof Calendar || o1 instanceof Date) {
-                    Object o2 = args[1];
-                    if (o2 instanceof String) {
-                        DateFormat formatter = new SimpleDateFormat((String) o2);
-                        return formatter.format(o1 instanceof Date ? ((Date) o1) : ((Calendar) o1).getTime());
-                    }
+                    DateFormat formatter = new SimpleDateFormat((String) o2);
+                    return formatter.format(o1 instanceof Date ? ((Date) o1) : ((Calendar) o1).getTime());
+                } else if (o1 instanceof Number) {
+                    return String.format((String) o2, (Number) o1);
                 }
             } else if (args.length == 1) {
                 if (o1 instanceof String) {
