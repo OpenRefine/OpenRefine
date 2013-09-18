@@ -306,7 +306,7 @@ function init() {
     module,
     [
       
-      "externals/jquery-1.10.2.min.js",
+      "externals/jquery-1.9.1.js",
       "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
@@ -381,11 +381,11 @@ function init() {
     "project/scripts",
     module,
     [
-      "externals/jquery-1.10.2.min.js",
+      "externals/jquery-1.9.1.js",
       "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
       "externals/suggest/suggest-4_3.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.min.js",
+      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
@@ -489,11 +489,11 @@ function init() {
     "preferences/scripts",
     module,
     [
-      "externals/jquery-1.10.2.min.js",
+      "externals/jquery-1.9.1.js",
       "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
       "externals/suggest/suggest-4_3.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.min.js",
+      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
