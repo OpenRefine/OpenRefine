@@ -246,7 +246,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
       .attr('sheetUrl', this.link)
       .appendTo(td0);
       if (i === 0) {
-        checkbox.attr('checked', 'true');
+        checkbox.prop("checked", true);
       }
       
       $('<label>')
@@ -261,28 +261,28 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
     });
 
     if (this._options.ignoreLines > 0) {
-      this._parsingPanelElmts.ignoreCheckbox.attr("checked", "checked");
+      this._parsingPanelElmts.ignoreCheckbox.prop("checked", true);
       this._parsingPanelElmts.ignoreInput[0].value = this._options.ignoreLines.toString();
     }
     if (this._options.headerLines > 0) {
-      this._parsingPanelElmts.headerLinesCheckbox.attr("checked", "checked");
+      this._parsingPanelElmts.headerLinesCheckbox.prop("checked", true);
       this._parsingPanelElmts.headerLinesInput[0].value = this._options.headerLines.toString();
     }
   }
   
   if (this._options.limit > 0) {
-    this._parsingPanelElmts.limitCheckbox.attr("checked", "checked");
+    this._parsingPanelElmts.limitCheckbox.prop("checked", true);
     this._parsingPanelElmts.limitInput[0].value = this._options.limit.toString();
   }
   if (this._options.skipDataLines > 0) {
-    this._parsingPanelElmts.skipCheckbox.attr("checked", "checked");
+    this._parsingPanelElmts.skipCheckbox.prop("checked", true);
     this._parsingPanelElmts.skipInput.value[0].value = this._options.skipDataLines.toString();
   }
   if (this._options.storeBlankRows) {
-    this._parsingPanelElmts.storeBlankRowsCheckbox.attr("checked", "checked");
+    this._parsingPanelElmts.storeBlankRowsCheckbox.prop("checked", true);
   }
   if (this._options.storeBlankCellsAsNulls) {
-    this._parsingPanelElmts.storeBlankCellsAsNullsCheckbox.attr("checked", "checked");
+    this._parsingPanelElmts.storeBlankCellsAsNullsCheckbox.prop("checked", true);
   }
 
   var onChange = function() {

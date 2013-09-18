@@ -471,7 +471,7 @@ SchemaAlignmentDialog.UINode.prototype._showNodeConfigDialog = function() {
     });
 
     if (column.name in columnMap) {
-      radio.attr("checked", "true");
+      radio.prop("checked", true);
     }
 
     $('<span></span>').text(column.name).appendTo(tr.insertCell(1));

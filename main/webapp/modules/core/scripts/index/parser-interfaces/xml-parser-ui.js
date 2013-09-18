@@ -112,20 +112,20 @@ Refine.XmlParserUI.prototype._initialize = function() {
   $('#or-import-store').html($.i18n._('core-index-parser')["store-source"]);
   
   if (this._config.limit > 0) {
-    this._optionContainerElmts.limitCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.limitCheckbox.prop("checked", true);
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
   }
   if (this._config.trimStrings) {
-    this._optionContainerElmts.trimStringsCheckbox.attr("checked", "unchecked");
+    this._optionContainerElmts.trimStringsCheckbox.prop("checked", false);
   }
   if (this._config.guessCellValueTypes) {
-    this._optionContainerElmts.guessCellValueTypesCheckbox.attr("checked", "unchecked");
+    this._optionContainerElmts.guessCellValueTypesCheckbox.prop("checked", false);
   }
   if (this._config.storeEmptyStrings) {
-    this._optionContainerElmts.storeEmptyStringsCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.storeEmptyStringsCheckbox.prop("checked", true);
   }
   if (this._config.includeFileSources) {
-    this._optionContainerElmts.includeFileSourcesCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
   }
   this._optionContainerElmts.pickRecordElementsButton.click(function() {
     self._showPickRecordElementsUI();
