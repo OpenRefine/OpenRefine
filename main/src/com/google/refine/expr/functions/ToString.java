@@ -63,12 +63,12 @@ public class ToString implements Function {
             } else if (args.length == 1) {
                 if (o1 instanceof String) {
                     return (String) o1;
-                } else if (o1 != null) {
+                } else {
                     return StringUtils.toString(o1);
                 } 
             }
         }
-        return new EvalError("ToString accepts an object an optional second argument containing a date format string");
+        return new EvalError("ToString accepts an object and an optional second argument containing a date format string");
     }
 
     

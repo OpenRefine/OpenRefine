@@ -16,6 +16,8 @@ public class StringUtils {
         if (o instanceof Calendar || o instanceof Date) {
             DateFormat formatter = DateFormat.getDateInstance();
             return formatter.format(o instanceof Date ? ((Date) o) : ((Calendar) o).getTime());
+        } else if (o == null) {
+            return "null";
         } else {
             return o.toString();
         }
