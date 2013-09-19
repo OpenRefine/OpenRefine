@@ -120,7 +120,7 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01")),"Jun 1, 2013");
       Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01").getTime()),"Jun 1, 2013");
       Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy"),"2013");      
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"YYYY-MM-dd"),"2013-06-01");
+      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy-MM-dd"),"2013-06-01");
     }
     
     @Test
