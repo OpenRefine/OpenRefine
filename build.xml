@@ -173,7 +173,7 @@
     <taskdef resource="testngtasks" classpath="${server.tests.lib.dir}/testng-6.8.jar"/>
     <mkdir dir="${build.dir}/server_tests"/>
     <target name="server_test" depends="build_tests">
-    	<testng verbose="5" haltOnFailure="true" workingdir="${build.dir}/server_tests"
+    	<testng verbose="2" haltOnFailure="true" workingdir="${build.dir}/server_tests"
     		listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
     		classpathref="tests.class.path">
     	  <xmlfileset file="${server.tests.dir}/conf/tests.xml"/>
