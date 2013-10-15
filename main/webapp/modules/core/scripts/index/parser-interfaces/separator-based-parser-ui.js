@@ -159,41 +159,41 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   var columnSeparatorValue = (this._config.separator == ",") ? 'comma' :
     ((this._config.separator == "\\t") ? 'tab' : 'custom');
   this._optionContainer.find(
-      "input[name='column-separator'][value='" + columnSeparatorValue + "']").attr("checked", "checked");
+      "input[name='column-separator'][value='" + columnSeparatorValue + "']").prop("checked", true);
   this._optionContainerElmts.columnSeparatorInput[0].value = this._config.separator;
 
   if (this._config.ignoreLines > 0) {
-    this._optionContainerElmts.ignoreCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.ignoreCheckbox.prop("checked", true);
     this._optionContainerElmts.ignoreInput[0].value = this._config.ignoreLines.toString();
   }
   if (this._config.headerLines > 0) {
-    this._optionContainerElmts.headerLinesCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.headerLinesCheckbox.prop("checked", true);
     this._optionContainerElmts.headerLinesInput[0].value = this._config.headerLines.toString();
   }
   if (this._config.limit > 0) {
-    this._optionContainerElmts.limitCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.limitCheckbox.prop("checked", true);
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
   }
   if (this._config.skipDataLines > 0) {
-    this._optionContainerElmts.skipCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.skipCheckbox.prop("checked", true);
     this._optionContainerElmts.skipInput.value[0].value = this._config.skipDataLines.toString();
   }
   if (this._config.storeBlankRows) {
-    this._optionContainerElmts.storeBlankRowsCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.storeBlankRowsCheckbox.prop("checked", true);
   }
 
   if (this._config.guessCellValueTypes) {
-    this._optionContainerElmts.guessCellValueTypesCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.guessCellValueTypesCheckbox.prop("checked", true);
   }
   if (this._config.processQuotes) {
-    this._optionContainerElmts.processQuoteMarksCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.processQuoteMarksCheckbox.prop("checked", true);
   }
 
   if (this._config.storeBlankCellsAsNulls) {
-    this._optionContainerElmts.storeBlankCellsAsNullsCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.storeBlankCellsAsNullsCheckbox.prop("checked", true);
   }
   if (this._config.includeFileSources) {
-    this._optionContainerElmts.includeFileSourcesCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
   }
 
   var onChange = function() {

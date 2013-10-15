@@ -54,6 +54,7 @@ import com.google.refine.util.ParsingUtilities;
 public class ProjectMetadata implements Jsonizable {
     private final Date     _created;
     private Date           _modified;
+    private Date written = null;
     private String         _name;
     private String         _password;
 
@@ -71,11 +72,16 @@ public class ProjectMetadata implements Jsonizable {
     }
 
     public ProjectMetadata() {
-        _created = new Date();
+        this(new Date());
         _modified = _created;
-        preparePreferenceStore(_preferenceStore);
     }
 
+    public ProjectMetadata(Date created, Date modified, String name) {
+        this(created);
+        _modified = modified;
+        _name = name;
+    }
+    
     @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
@@ -103,16 +109,36 @@ public class ProjectMetadata implements Jsonizable {
         }
         
         writer.endObject();
+        
+        if ("save".equals(options.getProperty("mode"))) {
+            written = new Date();
+        }
+    }
+
+    public boolean isDirty() {
+        return written == null || _modified.after(written);
     }
     
-    public void write(JSONWriter jsonWriter) throws Exception {
-        Properties options = new Properties();
-        options.setProperty("mode", "save");
+    public void write(JSONWriter jsonWriter) throws JSONException  {
+        write(jsonWriter, false);
+    }
+    
+    /**
+     * @param jsonWriter writer to save metadatea to
+     * @param onlyIfDirty true to not write unchanged metadata
+     * @throws JSONException
+     */
+    public void write(JSONWriter jsonWriter, boolean onlyIfDirty) throws JSONException  {
+        if (!onlyIfDirty || isDirty()) {
+            Properties options = new Properties();
+            options.setProperty("mode", "save");
 
-        write(jsonWriter, options);
+            write(jsonWriter, options);
+        }
     }
     
     static public ProjectMetadata loadFromJSON(JSONObject obj) {
+        // TODO: Is this correct?  It's using modified date for creation date
         ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getDate(obj, "modified", new Date()));
 
         pm._modified = JSONUtilities.getDate(obj, "modified", new Date());
@@ -156,6 +182,8 @@ public class ProjectMetadata implements Jsonizable {
                 // ignore
             }
         }
+
+        pm.written = new Date(); // Mark it as not needing writing until modified
         
         return pm;
     }

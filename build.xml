@@ -14,7 +14,6 @@
     <property environment="env"/>
 
     <property name="version" value="trunk"/>
-    <property name="revision" value="rXXXX"/>
     <property name="full_version" value="0.0.0.0"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
@@ -25,7 +24,7 @@
     <property name="appengine.version" value="1"/>
     <property name="appengine.sdk.dir" value="/opt/appengine"/>
         
-    <property name="fullname" value="openrefine-${version}-${revision}" />
+    <property name="fullname" value="openrefine-${version}" />
     
     <property name="main.dir" value="${basedir}/main" />
 
@@ -174,7 +173,7 @@
     <taskdef resource="testngtasks" classpath="${server.tests.lib.dir}/testng-6.8.jar"/>
     <mkdir dir="${build.dir}/server_tests"/>
     <target name="server_test" depends="build_tests">
-    	<testng workingdir="${build.dir}/server_tests"
+    	<testng verbose="5" haltOnFailure="true" workingdir="${build.dir}/server_tests"
     		listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
     		classpathref="tests.class.path">
     	  <xmlfileset file="${server.tests.dir}/conf/tests.xml"/>
@@ -207,6 +206,7 @@
                 <include name="**/*"/>
                 <exclude name="WEB-INF/classes/**"/>
                 <exclude name="WEB-INF/lib-src/**"/>
+                <exclude name="WEB-INF/lib/icu4j*.jar"/>
             </fileset>
         </copy>
         
@@ -217,16 +217,17 @@
                 <include name="**/*"/>
                 <exclude name="**/build.xml"/>
                 <exclude name="**/src/**"/>
+                <exclude name="**/lib-src/**"/>
+                <exclude name="**/libsrc/**"/>
             </fileset>
         </copy>
         
         <replace file="${built.webapp.dir}/WEB-INF/web.xml">
             <replacefilter token="$VERSION" value="${version}"/>
-            <replacefilter token="$REVISION" value="${revision}"/>
         </replace>
 
         <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
-            <replacefilter token="../../extensions/" value="extensions"/>
+            <replacefilter token="../../extensions" value="extensions"/>
         </replace>
 
     </target>
@@ -254,14 +255,13 @@
 	    </classpath>
 	    <option value="-Xms256M"/>
 	    <option value="-Xmx1024M"/>
-	    <option value="-Drefine.version=${revision}"/>
+	    <option value="-Drefine.version=${version}"/>
 	    <option value="-Drefine.webapp=$APP_ROOT/Contents/Resource/${built.webapp.name}"/>
         </bundleapp>
 
 	<copy todir="${mac.dir}/OpenRefine.app/Contents/Resource">
           <fileset dir="${build.dir}" id="librarypathset" >
             <include name="${built.webapp.name}/**/**" />
-            <exclude name="**/*.class" />
           </fileset>
 	</copy>
 
@@ -277,6 +277,7 @@
     </target>
     
     <target name="windows" depends="jar, prepare_webapp">
+      <echo message="Full version ${full_version} and version ${version}"/>
         <mkdir dir="${windows.dir}"/>
         <taskdef 
             name="launch4j" 
@@ -294,7 +295,7 @@
                 <cp>server/lib/*.jar</cp>
             </classPath>
             <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
-                <opt>-Djava.library.path=server/lib/native/windows -Drefine.version=${revision}</opt>
+                <opt>-Djava.library.path=server/lib/native/windows </opt>
             </jre>
             <versionInfo
                 fileVersion="${full_version}"
@@ -302,7 +303,7 @@
                 fileDescription="openrefine"
                 copyright="Copyright (c) 2013 OpenRefine contributors, 2010, Google, Inc."
                 productVersion="${full_version}"
-                txtProductVersion="${full_version}"
+                txtProductVersion="${version}"
                 productName="OpenRefine"
                 companyName="OpenRefine team"
                 internalName="openrefine"
@@ -341,7 +342,7 @@
         <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
         
         <mkdir dir="${dist.dir}"/>
-        <zip destfile="${dist.dir}/openrefine-${version}-${revision}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
+        <zip destfile="${dist.dir}/openrefine-win-${version}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
     </target>
     
     <target name="linux" depends="jar, prepare_webapp">
@@ -372,7 +373,7 @@
         <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
         
         <mkdir dir="${dist.dir}"/>
-        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/openrefine-${version}-${revision}.tar.gz">
+        <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/openrefine-linux-${version}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">
                <include name="${release.name}/refine"/>
            </tarfileset>        

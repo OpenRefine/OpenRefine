@@ -1,5 +1,8 @@
+*~
+\#*#
 *.DS_Store
 *.class
+.com.apple.timemachine.supported
 .import-temp/
 build/
 dist/
@@ -18,4 +21,5 @@ broker/core/module/MOD-INF/classes/
 broker/core/WEB-INF/lib/
 broker/core/data/
 broker/core/test-output/
+tmp/
 /test-output

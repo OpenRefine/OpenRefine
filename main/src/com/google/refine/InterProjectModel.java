@@ -35,6 +35,7 @@ package com.google.refine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -109,10 +110,11 @@ public class InterProjectModel {
     
     public void flushJoinsInvolvingProject(long projectID) {
         synchronized (_joins) {
-            for (Entry<String, ProjectJoin> entry : _joins.entrySet()) {
+            for (Iterator<Entry<String, ProjectJoin>> it = _joins.entrySet().iterator(); it.hasNext();) {
+                Entry<String, ProjectJoin> entry = it.next();
                 ProjectJoin join = entry.getValue();
                 if (join.fromProjectID == projectID || join.toProjectID == projectID) {
-                    _joins.remove(entry.getKey());
+                    it.remove();
                 }
             }
         }
@@ -120,11 +122,12 @@ public class InterProjectModel {
 
     public void flushJoinsInvolvingProjectColumn(long projectID, String columnName) {
         synchronized (_joins) {
-            for (Entry<String, ProjectJoin> entry : _joins.entrySet()) {
+            for (Iterator<Entry<String, ProjectJoin>> it = _joins.entrySet().iterator(); it.hasNext();) {
+                Entry<String, ProjectJoin> entry = it.next();
                 ProjectJoin join = entry.getValue();
                 if (join.fromProjectID == projectID && join.fromProjectColumnName.equals(columnName) || 
                         join.toProjectID == projectID && join.toProjectColumnName.equals(columnName)) {
-                    _joins.remove(entry.getKey());
+                    it.remove();
                 }
             }
         }

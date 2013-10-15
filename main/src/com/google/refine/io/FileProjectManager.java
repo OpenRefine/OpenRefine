@@ -62,18 +62,20 @@ import com.google.refine.model.Project;
 import com.google.refine.preference.TopList;
 
 public class FileProjectManager extends ProjectManager {
-    final static protected String s_projectDirNameSuffix = ".project";
+    final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File                       _workspaceDir;
 
     final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
     static public synchronized void initialize(File dir) {
-        if (singleton == null) {
-            logger.info("Using workspace directory: {}", dir.getAbsolutePath());
-            singleton = new FileProjectManager(dir);
+        if (singleton != null) {
+            logger.warn("Overwriting singleton already set: " + singleton);
         }
-
+        logger.info("Using workspace directory: {}", dir.getAbsolutePath());
+        singleton = new FileProjectManager(dir);
+        // This needs our singleton set, thus the unconventional control flow
+        ((FileProjectManager) singleton).recover();
     }
 
     protected FileProjectManager(File dir) {
@@ -85,7 +87,6 @@ public class FileProjectManager extends ProjectManager {
         }
 
         load();
-        recover();
     }
 
     public File getWorkspaceDir() {
@@ -93,7 +94,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     static public File getProjectDir(File workspaceDir, long projectID) {
-        File dir = new File(workspaceDir, projectID + s_projectDirNameSuffix);
+        File dir = new File(workspaceDir, projectID + PROJECT_DIR_SUFFIX);
         if (!dir.exists()) {
             dir.mkdir();
         }
@@ -114,6 +115,9 @@ public class FileProjectManager extends ProjectManager {
     public boolean loadProjectMetadata(long projectID) {
         synchronized (this) {
             ProjectMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
+            if (metadata == null) {
+                metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
+            }
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
                 return true;
@@ -217,7 +221,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    protected void saveProject(Project project){
+    protected void saveProject(Project project) throws IOException{
         ProjectUtilities.save(project);
     }
 
@@ -225,7 +229,6 @@ public class FileProjectManager extends ProjectManager {
     public Project loadProject(long id) {
         return ProjectUtilities.load(getProjectDir(id), id);
     }
-
 
 
     /**
@@ -237,7 +240,12 @@ public class FileProjectManager extends ProjectManager {
         synchronized (this) {
             File tempFile = new File(_workspaceDir, "workspace.temp.json");
             try {
-                saveToFile(tempFile);
+                if (!saveToFile(tempFile)) {
+                    // If the save wasn't really needed, just keep what we had
+                    tempFile.delete();
+                    logger.info("Skipping unnecessary workspace save");
+                    return;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -248,21 +256,23 @@ public class FileProjectManager extends ProjectManager {
             File file = new File(_workspaceDir, "workspace.json");
             File oldFile = new File(_workspaceDir, "workspace.old.json");
 
+            if (oldFile.exists()) {
+                oldFile.delete();
+            }
+            
             if (file.exists()) {
                 file.renameTo(oldFile);
             }
 
             tempFile.renameTo(file);
-            if (oldFile.exists()) {
-                oldFile.delete();
-            }
 
             logger.info("Saved workspace");
         }
     }
 
-    protected void saveToFile(File file) throws IOException, JSONException {
+    protected boolean saveToFile(File file) throws IOException, JSONException {
         FileWriter writer = new FileWriter(file);
+        boolean saveWasNeeded = false;
         try {
             JSONWriter jsonWriter = new JSONWriter(writer);
             jsonWriter.object();
@@ -272,11 +282,9 @@ public class FileProjectManager extends ProjectManager {
                 ProjectMetadata metadata = _projectsMetadata.get(id);
                 if (metadata != null) {
                     jsonWriter.value(id);
-
-                    try {
+                    if (metadata.isDirty()) {
                         ProjectMetadataUtilities.save(metadata, getProjectDir(id));
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        saveWasNeeded = true;
                     }
                 }
             }
@@ -284,12 +292,14 @@ public class FileProjectManager extends ProjectManager {
             writer.write('\n');
 
             jsonWriter.key("preferences");
+            saveWasNeeded |= _preferenceStore.isDirty();
             _preferenceStore.write(jsonWriter, new Properties());
 
             jsonWriter.endObject();
         } finally {
             writer.close();
         }
+        return saveWasNeeded;
     }
 
 
@@ -386,11 +396,12 @@ public class FileProjectManager extends ProjectManager {
     }
 
     protected void recover() {
+        boolean recovered = false;
         for (File file : _workspaceDir.listFiles()) {
             if (file.isDirectory() && !file.isHidden()) {
-                String name = file.getName();
-                if (file.getName().endsWith(s_projectDirNameSuffix)) {
-                    String idString = name.substring(0, name.length() - s_projectDirNameSuffix.length());
+                String dirName = file.getName();
+                if (file.getName().endsWith(PROJECT_DIR_SUFFIX)) {
+                    String idString = dirName.substring(0, dirName.length() - PROJECT_DIR_SUFFIX.length());
                     long id = -1;
                     try {
                         id = Long.parseLong(idString);
@@ -400,18 +411,21 @@ public class FileProjectManager extends ProjectManager {
 
                     if (id > 0 && !_projectsMetadata.containsKey(id)) {
                         if (loadProjectMetadata(id)) {
-                            logger.info(
-                                    "Recovered project named " + 
-                                            getProjectMetadata(id).getName() +
-                                            " in directory " + name);
+                            logger.info("Recovered project named " 
+                                    + getProjectMetadata(id).getName()
+                                    + " in directory " + dirName);
+                            recovered = true;
                         } else {
-                            logger.warn("Failed to recover project in directory " + name);
+                            logger.warn("Failed to recover project in directory " + dirName);
 
-                            file.renameTo(new File(file.getParentFile(), name + ".corrupted"));
+                            file.renameTo(new File(file.getParentFile(), dirName + ".corrupted"));
                         }
                     }
                 }
             }
+        }
+        if (recovered) {
+            saveWorkspace();
         }
     }
 

@@ -35,6 +35,9 @@ package com.google.refine.importing;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -42,8 +45,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
@@ -82,7 +86,7 @@ public class ImportingManager {
     
     static private RefineServlet servlet;
     static private File importDir;
-    final static private Map<Long, ImportingJob> jobs = new HashMap<Long, ImportingJob>();
+    final static private Map<Long, ImportingJob> jobs = Collections.synchronizedMap(new HashMap<Long, ImportingJob>());
     
     // Mapping from format to label, e.g., "text" to "Text files", "text/xml" to "XML files"
     final static public Map<String, Format> formatToRecord = new HashMap<String, Format>();
@@ -103,29 +107,25 @@ public class ImportingManager {
     final static public Map<String, ImportingController> controllers = new HashMap<String, ImportingController>();
     
     // timer for periodically deleting stale importing jobs
-    static private Timer _timer;
+    static private ScheduledExecutorService service;
 
-    final static private long s_timerPeriod = 1000 * 60 * 10; // 10 minutes
-    final static private long s_stalePeriod = 1000 * 60 * 60; // 60 minutes
+    final static private long TIMER_PERIOD = 10; // 10 minutes
+    final static private long STALE_PERIOD = 60; // 60 minutes
     
-    static private class CleaningTimerTask extends TimerTask {
+    static private class CleaningTimerTask implements Runnable {
         @Override
         public void run() {
-            try {
-                cleanUpStaleJobs();
-            } finally {
-                _timer.schedule(new CleaningTimerTask(), s_timerPeriod);
-                // we don't use scheduleAtFixedRate because that might result in
-                // bunched up events when the computer is put in sleep mode
-            }
+            // An exception here will keep future runs of this task from happening, 
+            // but won't affect other timer tasks
+            cleanUpStaleJobs();
         }
     }
     
     static public void initialize(RefineServlet servlet) {
         ImportingManager.servlet = servlet;
         
-        _timer = new Timer("autosave");
-        _timer.schedule(new CleaningTimerTask(), s_timerPeriod);
+        service =  Executors.newSingleThreadScheduledExecutor();
+        service.scheduleWithFixedDelay(new CleaningTimerTask(), TIMER_PERIOD, TIMER_PERIOD, TimeUnit.MINUTES);
     }
     
     static public void registerFormat(String format, String label) {
@@ -288,12 +288,15 @@ public class ImportingManager {
     
     static private void cleanUpStaleJobs() {
         long now = System.currentTimeMillis();
-        for (Long id : new HashSet<Long>(jobs.keySet())) {
+        Collection<Long> keys;
+        synchronized(jobs) {
+            keys = new ArrayList<Long>(jobs.keySet());
+        }
+        for (Long id : keys) {
             ImportingJob job = jobs.get(id);
-            if (job != null && !job.updating && now - job.lastTouched > s_stalePeriod) {
+            if (job != null && !job.updating && now - job.lastTouched > STALE_PERIOD) {
                 job.dispose();
                 jobs.remove(id);
-                
                 logger.info("Disposed " + id);
             }
         }

@@ -46,7 +46,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
 
             JSONUtilities.safePut(options, "headerLines", 0);
             JSONUtilities.safePut(options, "columnWidths", columnWidths);
-            JSONUtilities.safePut(options, "guessCellValueTypes", true);
+            JSONUtilities.safePut(options, "guessCellValueTypes", false);
         }
         return options;
     }
@@ -111,9 +111,8 @@ public class FixedWidthImporter extends TabularImportingParserBase {
     
     /**
      * Splits the line into columns
-     * @param line
-     * @param lnReader
-     * @param splitIntoColumns
+     * @param line Line to be split
+     * @param widths array of integers with field sizes
      * @return
      */
     static private ArrayList<Object> getCells(String line, int[] widths) {

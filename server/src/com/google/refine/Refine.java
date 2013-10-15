@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.BindException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -114,7 +115,8 @@ public class Refine {
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
         if (headless) {
-            System.setProperty("java.awt.headless", "true"); 
+            System.setProperty("java.awt.headless", "true");
+            logger.info("Running in headless mode");
         } else {
             try {
                 RefineClient client = new RefineClient();
@@ -195,7 +197,12 @@ class RefineServer extends Server {
         }
         
         // start the server
-        this.start();
+        try {
+            this.start();
+        } catch (BindException e) {
+            logger.error("Failed to start server - is there another copy running already on this port/address?");
+            throw e;
+        }
         
         configure(context);
     }
@@ -302,6 +309,7 @@ class RefineServer extends Server {
         }
         
         File dataDir = null;
+        File grefineDir = null;
         File gridworksDir = null;
         
         String os = System.getProperty("os.name").toLowerCase();
@@ -312,10 +320,13 @@ class RefineServer extends Server {
                 // so we're using a library that uses JNI to ask directly the win32 APIs, 
                 // it's not elegant but it's the safest bet.
                 
+                dataDir = new File(fixWindowsUnicodePath(JDataPathSystem.getLocalSystem()
+                        .getLocalDataPath("OpenRefine").getPath()));
+
                 DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Google");
 
                 // new: ./Google/Refine old: ./Gridworks
-                dataDir = new File(new File(fixWindowsUnicodePath(localDataPath.getPath())), "Refine");
+                grefineDir = new File(new File(fixWindowsUnicodePath(localDataPath.getPath())), "Refine");
                 gridworksDir = new File(fixWindowsUnicodePath(JDataPathSystem.getLocalSystem()
                         .getLocalDataPath("Gridworks").getPath()));
             } catch (Error e) {
@@ -344,16 +355,19 @@ class RefineServer extends Server {
                     parentDir = new File(".");
                 }
                 
-                dataDir = new File(new File(parentDir, "Google"), "Refine");
+                dataDir = new File(parentDir, "OpenRefine");
+                grefineDir = new File(new File(parentDir, "Google"), "Refine");
                 gridworksDir = new File(parentDir, "Gridworks");
             }
         } else if (os.contains("mac os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
             
-            // TODO: Update needed (again)
-            String data_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine";
+            String data_home = (home != null) ? home + "/Library/Application Support/OpenRefine" : ".openrefine";
             dataDir = new File(data_home);
+            
+            String grefine_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine";
+            grefineDir = new File(grefine_home);
             
             String gridworks_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks"; 
             gridworksDir = new File(gridworks_home);
@@ -369,16 +383,27 @@ class RefineServer extends Server {
                 data_home = home + "/.local/share";
             }
             
-            dataDir = new File(data_home + "/google/refine");
+            dataDir = new File(data_home + "/openrefine");
+            grefineDir = new File(data_home + "/google/refine");
             gridworksDir = new File(data_home + "/gridworks");
         }
         
-        // If refine data dir doesn't exist, try to find and move gridworks data dir over
-        if (!dataDir.exists() && gridworksDir.exists()) {
-            if (!dataDir.getParentFile().mkdirs()) {
-                logger.error("FAILED to create parent directory for workspace rename target " 
-                        + dataDir.getParent());
-            } else {
+        // If refine data dir doesn't exist, try to find and move Google Refine or Gridworks data dir over
+        if (!dataDir.exists()) {
+            if (grefineDir.exists()) {
+                if (gridworksDir.exists()) {
+                    logger.warn("Found both Gridworks: " + gridworksDir
+                            + " & Googld Refine dirs " + grefineDir) ;
+                }
+                if (grefineDir.renameTo(dataDir)) {
+                    logger.info("Renamed Google Refine directory " + grefineDir 
+                            + " to " + dataDir);
+                } else {
+                    logger.error("FAILED to rename Google Refine directory " 
+                            + grefineDir 
+                            + " to " + dataDir);
+                } 
+            } else if (gridworksDir.exists()) {
                 if (gridworksDir.renameTo(dataDir)) {
                     logger.info("Renamed Gridworks directory " + gridworksDir 
                             + " to " + dataDir);
@@ -434,6 +459,8 @@ class RefineClient extends JFrame implements ActionListener {
     
     private static final long serialVersionUID = 7886547342175227132L;
 
+    final static Logger logger = LoggerFactory.getLogger("refine-client");
+
     public static boolean MACOSX = (System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
     
     private URI uri;
@@ -484,6 +511,9 @@ class RefineClient extends JFrame implements ActionListener {
     } 
     
     private void openBrowser() {
+        if (!Desktop.isDesktopSupported()) {
+            logger.warn("Java Desktop class not supported on this platform.  Please open %s in your browser",uri.toString());
+        }
         try {
             Desktop.getDesktop().browse(uri);
         } catch (IOException e) {

@@ -62,8 +62,7 @@ public class ProjectManagerStub extends ProjectManager {
 
     @Override
     public HistoryEntryManager getHistoryEntryManager() {
-        // empty
-        return null;
+        return new HistoryEntryManagerStub();
     }
 
     @Override

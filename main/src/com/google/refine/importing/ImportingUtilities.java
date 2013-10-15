@@ -42,9 +42,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,6 +65,14 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DecompressingHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
@@ -72,8 +80,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.ibm.icu.text.NumberFormat;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
@@ -147,14 +153,14 @@ public class ImportingUtilities {
     }
     
     static public void updateJobWithNewFileSelection(ImportingJob job, JSONArray fileSelectionArray) {
-        JSONUtilities.safePut(job.config, "fileSelection", fileSelectionArray);
+        job.setFileSelection(fileSelectionArray);
         
         String bestFormat = ImportingUtilities.getCommonFormatForSelectedFiles(job, fileSelectionArray);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
         
         JSONArray rankedFormats = new JSONArray();
-        JSONUtilities.safePut(job.config, "rankedFormats", rankedFormats);
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
+        job.setRankedFormats(rankedFormats);
     }
     
     static public void retrieveContentFromPostRequest(
@@ -210,15 +216,15 @@ public class ImportingUtilities {
             }
         });
 
-        List tempFiles = upload.parseRequest(request);
+        @SuppressWarnings("unchecked")
+        List<FileItem> tempFiles = (List<FileItem>)upload.parseRequest(request);
         
         progress.setProgress("Uploading data ...", -1);
-        parts: for (Object obj : tempFiles) {
+        parts: for (FileItem fileItem : tempFiles) {
             if (progress.isCanceled()) {
                 break;
             }
             
-            FileItem fileItem = (FileItem) obj;
             InputStream stream = fileItem.getInputStream();
             
             String name = fileItem.getFieldName().toLowerCase();
@@ -243,10 +249,10 @@ public class ImportingUtilities {
                         calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                     
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
+                    JSONUtilities.append(fileRecords, fileRecord);
                     
                     clipboardCount++;
                     
-                    JSONUtilities.append(fileRecords, fileRecord);
                 } else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
                     URL url = new URL(urlString);
@@ -270,56 +276,77 @@ public class ImportingUtilities {
                             }
                         }
                     }
-                    
-                    URLConnection urlConnection = url.openConnection();
-                    urlConnection.setConnectTimeout(5000);
-                    if (urlConnection instanceof HttpURLConnection) {
-                        HttpURLConnection httpConnection = (HttpURLConnection) urlConnection;
-                        RefineServlet.setUserAgent(httpConnection);
-                    }
-                    // TODO: Set Accept-Encoding on connection so we don't get stuff we can't handle?
-                    urlConnection.connect();
-                    
-                    InputStream stream2 = urlConnection.getInputStream();
-                    try {
-                        String localname = url.getPath();
-                        if (localname.isEmpty() || localname.endsWith("/")) {
-                            localname = localname + "temp";
-                        }
-                        File file = allocateFile(rawDataDir, localname);
-                        
-                        int contentLength = urlConnection.getContentLength();
-                        if (contentLength > 0) {
-                            update.totalExpectedSize += contentLength;
-                        }
-                        
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding", urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType", urlConnection.getContentType());
-                        JSONUtilities.safePut(fileRecord, "fileName", file.getName());
-                        JSONUtilities.safePut(fileRecord, "location", getRelativePath(file, rawDataDir));
 
-                        progress.setProgress("Downloading " + urlString,
-                            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
-                        
-                        long actualLength = saveStreamToFile(stream2, file, update);
-                        JSONUtilities.safePut(fileRecord, "size", actualLength);
-                        if (actualLength == 0) {
-                            throw new Exception("No content found in " + urlString);
-                        } else if (contentLength >= 0) {
-                            update.totalExpectedSize += (actualLength - contentLength);
-                        } else {
-                            update.totalExpectedSize += actualLength;
+                    if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                        DefaultHttpClient client = new DefaultHttpClient();
+                        DecompressingHttpClient httpclient = 
+                                new DecompressingHttpClient(client);
+                        HttpGet httpGet = new HttpGet(url.toURI());
+                        httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
+                        if ("https".equals(url.getProtocol())) {
+                            // HTTPS only - no sending password in the clear over HTTP
+                            String userinfo = url.getUserInfo();
+                            if (userinfo != null) {
+                                int s = userinfo.indexOf(':');
+                                if (s > 0) {
+                                    String user = userinfo.substring(0, s);
+                                    String pw = userinfo.substring(s + 1, userinfo.length());
+                                    client.getCredentialsProvider().setCredentials(
+                                            new AuthScope(url.getHost(), 443),
+                                            new UsernamePasswordCredentials(user, pw));
+                                }
+                            }
                         }
-                        progress.setProgress("Saving " + urlString + " locally",
-                            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+ 
+                        HttpResponse response = httpclient.execute(httpGet);
                         
-                        if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
-                            archiveCount++;
+                        try {
+                            response.getStatusLine();
+                            HttpEntity entity = response.getEntity();
+                            if (entity == null) {
+                                throw new Exception("No content found in " + url.toString());
+                            }
+                            InputStream stream2 = entity.getContent();
+                            String encoding = null;
+                            if (entity.getContentEncoding() != null) {
+                                encoding = entity.getContentEncoding().getValue();
+                            }
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
+                            String contentType = null;
+                            if (entity.getContentType().getValue() != null) {
+                                contentType = entity.getContentType().getValue();
+                            }
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
+                            if (saveStream(stream2, url, rawDataDir, progress, update, 
+                                    fileRecord, fileRecords,
+                                    entity.getContentLength())) {
+                                archiveCount++;
+                            }
+                            downloadCount++;
+                            EntityUtils.consume(entity);
+                        } finally {
+                            httpGet.releaseConnection();
                         }
-
-                        downloadCount++;
-                    } finally {
-                        stream2.close();
+                    } else {
+                        // Fallback handling for non HTTP connections (only FTP?)
+                        URLConnection urlConnection = url.openConnection();
+                        urlConnection.setConnectTimeout(5000);
+                        urlConnection.connect();
+                        InputStream stream2 = urlConnection.getInputStream();
+                        JSONUtilities.safePut(fileRecord, "declaredEncoding", 
+                                urlConnection.getContentEncoding());
+                        JSONUtilities.safePut(fileRecord, "declaredMimeType", 
+                                urlConnection.getContentType());
+                        try {
+                            if (saveStream(stream2, url, rawDataDir, progress, 
+                                    update, fileRecord, fileRecords,
+                                    urlConnection.getContentLength())) {
+                                archiveCount++;
+                            }
+                            downloadCount++;
+                        } finally {
+                            stream2.close();
+                        }
                     }
                 } else {
                     String value = Streams.asString(stream);
@@ -360,14 +387,45 @@ public class ImportingUtilities {
         }
         
         // Delete all temp files.
-        for (Object obj : tempFiles) {
-            ((FileItem)obj).delete();
+        for (FileItem fileItem : tempFiles) {
+            fileItem.delete();
         }
         
         JSONUtilities.safePut(retrievalRecord, "uploadCount", uploadCount);
         JSONUtilities.safePut(retrievalRecord, "downloadCount", downloadCount);
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
         JSONUtilities.safePut(retrievalRecord, "archiveCount", archiveCount);
+    }
+
+    private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,
+            final SavingUpdate update, JSONObject fileRecord, JSONArray fileRecords, long length)
+            throws IOException, Exception {
+        String localname = url.getPath();
+        if (localname.isEmpty() || localname.endsWith("/")) {
+            localname = localname + "temp";
+        }
+        File file = allocateFile(rawDataDir, localname);
+
+        JSONUtilities.safePut(fileRecord, "fileName", file.getName());
+        JSONUtilities.safePut(fileRecord, "location", getRelativePath(file, rawDataDir));
+
+        update.totalExpectedSize += length;
+
+        progress.setProgress("Downloading " + url.toString(),
+            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+        
+        long actualLength = saveStreamToFile(stream, file, update);
+        JSONUtilities.safePut(fileRecord, "size", actualLength);
+        if (actualLength == 0) {
+            throw new Exception("No content found in " + url.toString());
+        } else if (length >= 0) {
+            update.totalExpectedSize += (actualLength - length);
+        } else {
+            update.totalExpectedSize += actualLength;
+        }
+        progress.setProgress("Saving " + url.toString() + " locally",
+            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+        return postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress);
     }
     
     static public String getRelativePath(File file, File dir) {
@@ -626,17 +684,13 @@ public class ImportingUtilities {
     static public InputStream tryOpenAsCompressedFile(File file, String mimeType, String contentEncoding) {
         String fileName = file.getName();
         try {
-            /*
-             * TODO: Do we need to support MIME types as well as content encodings?
-             * application/x-bzip2
-             * application/x-gzip
-             * multipart/x-gzip
-             */
             if (fileName.endsWith(".gz") 
                     || "gzip".equals(contentEncoding) 
-                    || "x-gzip".equals(contentEncoding)) {                
+                    || "x-gzip".equals(contentEncoding)
+                    || "application/x-gzip".equals(mimeType)) {                
                 return new GZIPInputStream(new FileInputStream(file));
-            } else if (fileName.endsWith(".bz2")) {
+            } else if (fileName.endsWith(".bz2")
+                    ||"application/x-bzip2".equals(mimeType)) {
                 InputStream is = new FileInputStream(file);
                 is.mark(4);
                 if (!(is.read() == 'B' && is.read() == 'Z')) {
@@ -693,6 +747,15 @@ public class ImportingUtilities {
         return encoding;
     }
 
+    /**
+     * Figure out the best (most common) format for the set of files, select
+     * all files which match that format, and return the format found.
+     * 
+     * @param job ImportingJob object
+     * @param retrievalRecord JSON object containing "files" key with all our files
+     * @param fileSelectionIndexes JSON array of selected file indices matching best format
+     * @return best (highest frequency) format
+     */
     static public String autoSelectFiles(ImportingJob job, JSONObject retrievalRecord, JSONArray fileSelectionIndexes) {
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
@@ -747,7 +810,7 @@ public class ImportingUtilities {
     }
     
     static public String getCommonFormatForSelectedFiles(ImportingJob job, JSONArray fileSelectionIndexes) {
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
+        JSONObject retrievalRecord = job.getRetrievalRecord();
         
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
@@ -780,7 +843,7 @@ public class ImportingUtilities {
     }
     
     static String guessBetterFormat(ImportingJob job, String bestFormat) {
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
+        JSONObject retrievalRecord = job.getRetrievalRecord();
         return retrievalRecord != null ? guessBetterFormat(job, retrievalRecord, bestFormat) : bestFormat;
     }
     
@@ -879,27 +942,7 @@ public class ImportingUtilities {
             JSONUtilities.append(rankedFormats, format);
         }
     }
-    
-    static public List<JSONObject> getSelectedFileRecords(ImportingJob job) {
-        List<JSONObject> results = new ArrayList<JSONObject>();
-        
-        JSONObject retrievalRecord = JSONUtilities.getObject(job.config, "retrievalRecord");
-        if (retrievalRecord != null) {
-            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
-            if (fileRecordArray != null) {
-                JSONArray fileSelectionArray = JSONUtilities.getArray(job.config, "fileSelection");
-                if (fileSelectionArray != null) {
-                    for (int i = 0; i < fileSelectionArray.length(); i++) {
-                        int index = JSONUtilities.getIntElement(fileSelectionArray, i, -1);
-                        if (index >= 0 && index < fileRecordArray.length()) {
-                            results.add(JSONUtilities.getObjectElement(fileRecordArray, index));
-                        }
-                    }
-                }
-            }
-        }
-        return results;
-    }
+
     
     static public void previewParse(ImportingJob job, String format, JSONObject optionObj, List<Exception> exceptions) {
         Format record = ImportingManager.formatToRecord.get(format);
@@ -914,7 +957,7 @@ public class ImportingUtilities {
             job.project,
             job.metadata,
             job,
-            getSelectedFileRecords(job),
+            job.getSelectedFileRecords(),
             format,
             100,
             optionObj,
@@ -936,7 +979,7 @@ public class ImportingUtilities {
             return -1;
         }
         
-        JSONUtilities.safePut(job.config, "state", "creating-project");
+        job.setState("creating-project");
         
         final Project project = new Project();
         if (synchronous) {
@@ -975,7 +1018,7 @@ public class ImportingUtilities {
             project,
             pm,
             job,
-            getSelectedFileRecords(job),
+            job.getSelectedFileRecords(),
             format,
             -1,
             optionObj,
@@ -988,27 +1031,15 @@ public class ImportingUtilities {
                 
                 ProjectManager.singleton.registerProject(project, pm);
                 
-                JSONUtilities.safePut(job.config, "projectID", project.id);
-                JSONUtilities.safePut(job.config, "state", "created-project");
+                job.setProjectID(project.id);
+                job.setState("created-project");
             } else {
-                JSONUtilities.safePut(job.config, "state", "error");
-                JSONUtilities.safePut(job.config, "errors",
-                    DefaultImportingController.convertErrorsToJsonArray(exceptions));
+                job.setError(exceptions);
             }
             job.touch();
             job.updating = false;
         }
     }
     
-    static public void setCreatingProjectProgress(ImportingJob job, String message, int percent) {
-        JSONObject progress = JSONUtilities.getObject(job.config, "progress");
-        if (progress == null) {
-            progress = new JSONObject();
-            JSONUtilities.safePut(job.config, "progress", progress);
-        }
-        JSONUtilities.safePut(progress, "message", message);
-        JSONUtilities.safePut(progress, "percent", percent);
-        JSONUtilities.safePut(progress, "memory", Runtime.getRuntime().totalMemory() / 1000000);
-        JSONUtilities.safePut(progress, "maxmemory", Runtime.getRuntime().maxMemory() / 1000000);
-    }
+
 }

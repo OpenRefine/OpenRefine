@@ -1657,9 +1657,11 @@
       flyout_service_url: null,
 
       // flyout_service_url + flyout_service_path =
-      // url to search with output=(notable:/client/summary description type).
+      // url to search with
+      // output=(notable:/client/summary (description citation) type).
       flyout_service_path: "/search?filter=(all mid:${id})&" +
-          "output=(notable:/client/summary description type)&key=${key}",
+          "output=(notable:/client/summary " +
+          "(description citation provenance) type)&key=${key}",
 
       // default is service_url if NULL
       flyout_image_service_url: null,
@@ -1700,6 +1702,21 @@
     },
 
     /**
+     * Get a value from an object multiple levels deep.
+     */
+     get_value_by_keys: function(obj, var_args) {
+       var keys = $.isArray(var_args) ? var_args :
+           Array.prototype.slice.call(arguments, 1);
+       for (var i = 0; i < keys.length; i++) {
+         obj = obj[keys[i]];
+         if (obj == null) {
+           break;
+         }
+       }
+       return obj;
+     },
+
+    /**
      * Utility method to get values of an object specified by one or more
      * (nested) keys. For example:
      * <code>
@@ -1721,15 +1738,7 @@
       if (!$.isArray(path)) {
         path = [path];
       }
-      var v = null;
-      $.each(path, function(i, p){
-        v = obj[p];
-        if (v == null) {
-          return false;
-        }
-        obj = v;
-        return true;
-      });
+      var v =  $.suggest.suggest.get_value_by_keys(obj, path);
       if (resolve_search_values) {
         if (v == null) {
           return [];
@@ -1782,17 +1791,20 @@
 
     /**
      * Create the flyout html content given the search result
-     * containing output=(notable:/client/summary description type).
+     * containing output=(notable:/client/summary \
+     * (description citation provenance) type).
      * The resulting html will be cached for optimization.
      *
      * @param data:Object - The search result with
-     *     output=(notable:/client/summary description type).
+     *   output=(notable:/client/summary \
+     *   (description citation provenance) type)
      * @param flyout_image_url:String - The url template for the image url.
      *   The substring, "${id}", will be replaced by data.id. It is assumed all
      *   parameters to the flyout image service (api key, dimensions, etc.) is
      *   already encoded into the url template.
      */
     create_flyout: function(data, flyout_image_url) {
+      var get_value_by_keys = $.suggest.suggest.get_value_by_keys;
       var get_value = $.suggest.suggest.get_value;
       var is_system_type = $.suggest.is_system_type;
       var is_commons_id = $.suggest.suggest.is_commons_id;
@@ -1815,21 +1827,53 @@
         id = data['mid'];
         image = flyout_image_url.replace(/\$\{id\}/g, id);
       }
-      var description_src = 'freebase';
-      var description = get_value(
-          data, ['output', 'description', 'wikipedia'], true);
-      if (description && description.length) {
-        description_src = 'wikipedia';
-      }
-      else {
-        description = get_value(
-            data, ['output', 'description', 'freebase'], true);
-      }
-      if (description && description.length) {
-        description = description[0];
-      }
-      else {
-        description = null;
+
+      var desc_text = null;
+      var desc_source = null;
+      var desc_provider = null;
+      var desc_statement = null;
+      var descs = get_value_by_keys(
+          data, 'output', 'description', '/common/topic/description') || [];
+      if (descs.length) {
+        var best = descs[0];
+        $.each(descs, function(i, desc) {
+          if (get_value_by_keys(desc, 'citation', 0, 'mid') == '/m/0d07ph') {
+            // Prefer 'Wikipedia" descriptions (/m/0d07ph).
+            best = desc;
+            return false;
+          }
+          return true;
+        });
+        if ($.isArray(best.value) && best.value.length) {
+          desc_text = best.value[0].value;
+        } else {
+          desc_text = best.value;
+        }
+        if (get_value_by_keys(best, 'provenance', 0, 'restrictions', 0) ==
+            'REQUIRES_CITATION') {
+          desc_source = get_value_by_keys(best, 'provenance', 0, 'source', 0);
+          desc_provider =
+              get_value_by_keys(best, 'citation', 'provider', 0, 'name');
+          if (desc_provider && $.isArray(desc_provider) &&
+              desc_provider.length) {
+            desc_provider = desc_provider[0].value;
+          }
+          desc_statement = get_value_by_keys(best, 'citation', 'statement', 0);
+          if (desc_statement && desc_statement.value) {
+            desc_statement = desc_statement.value;
+          }
+        }
+      } else {
+        // Handle "old" output description format.
+        $.each(['wikipedia', 'freebase'], function(i, key) {
+          descs = get_value(data, ['output', 'description', key], true);
+          if (descs && descs.length) {
+            desc_text = descs[0];
+            desc_provider = key;
+            return false;
+          }
+          return true;
+        });
       }
       var summary = get_value(data, ['output', 'notable:/client/summary']);
       if (summary) {
@@ -1838,6 +1882,7 @@
           $.each(notable_paths, function(i, path) {
             var values = get_value(summary, path, true);
             if (values && values.length) {
+              values = values.slice(0, 3);
               var prop_text = path.split('/').pop();
               notable_props.push([prop_text, values.join(', ')]);
             }
@@ -1861,17 +1906,28 @@
       content
           .append($('<h3 class="fbs-topic-properties fbs-flyout-id">')
           .text(id));
+      notable_props = notable_props.slice(0, 3);
       $.each(notable_props, function(i, prop) {
           content.append($('<h3 class="fbs-topic-properties">')
               .append($('<strong>').text(prop[0] + ': '))
               .append(document.createTextNode(prop[1])));
           });
-      if (description) {
-        content.append(
-            $('<p class="fbs-topic-article">')
-                .append($('<em class="fbs-citation">')
-                    .text('[' + description_src + '] '))
-                .append(document.createTextNode(description)));
+      if (desc_text) {
+        var article = $('<p class="fbs-topic-article">');
+        if (desc_provider) {
+          if (desc_source) {
+            article.append($('<a class="fbs-citation">')
+                .attr('href', desc_source)
+                .attr('title', desc_statement || desc_provider)
+                .text('[' + desc_provider + ']'));
+          } else {
+            article.append($('<em class="fbs-citation">')
+                .attr('title', desc_statement || desc_provider)
+                .text('[' + desc_provider + '] '));
+          }
+        }
+        article.append(document.createTextNode(' ' + desc_text));
+        content.append(article);
       }
       if (image) {
         content.children().addClass('fbs-flyout-image-true');
@@ -1880,7 +1936,7 @@
               image + '">'));
       }
       var flyout_types = $('<span class="fbs-flyout-types">')
-        .text(notable_types.slice(0, 10).join(', '));
+        .text(notable_types.slice(0, 3).join(', '));
       var footer = $('<div class="fbs-attribution">').append(flyout_types);
 
       return $('<div>')

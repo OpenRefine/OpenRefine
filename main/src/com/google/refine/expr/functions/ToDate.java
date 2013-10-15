@@ -33,12 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -99,35 +102,74 @@ public class ToDate implements Function {
         }
 
         // "o, format1, format2 (optional), ..."
+        Locale locale = Locale.getDefault();
         if (args.length>=2) {
             for (int i=1;i<args.length;i++) {
                 if (!(args[i] instanceof String)) {
                     // skip formats that aren't strings
                     continue;
                 }
-                String format  = (String) args[i];
-                SimpleDateFormat formatter;
+                String format  = StringUtils.trim((String) args[i]);
+                DateFormat formatter;
+                // Attempt to parse first string as a language tag
+                if (i == 1) {
+                    // Locale possibleLocale = Locale.forLanguageTag(format); // Java 1.7+ only
+                    Locale possibleLocale;
+                    int c = format.indexOf('_');
+                    if (c > 0) {
+                        possibleLocale = new Locale(format.substring(0, c),format.substring(c+1));
+                    } else {
+                        possibleLocale = new Locale(format);
+                    }
+                    boolean valid = false;
+                    for (Locale l : DateFormat.getAvailableLocales()) {
+                        if (l.equals(possibleLocale)) {
+                            locale = possibleLocale;
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if (valid) { // If we got a valid locale
+                        if (args.length == 2) { // No format strings to try, process using default
+                          formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+                          formatter.setLenient(true);
+                          GregorianCalendar date = parse(o1, formatter);
+                          if (date != null) {
+                              return date;
+                          } else {
+                              return new EvalError("Unable to parse as date");
+                          }
+                        }
+                        continue; // Don't try to process locale string as a format string if it was valid
+                    }
+                }
                 try {
-                    formatter = new SimpleDateFormat(format);
+                    formatter = new SimpleDateFormat(format,locale);
                 } catch (IllegalArgumentException e) {
                     return new EvalError("Unknown date format");
                 }
-                Date date = null;
-                try {
-                    date = formatter.parse(o1);
-                } catch (java.text.ParseException e) {
-                    continue;
-                }
+                formatter.setLenient(true);
+                GregorianCalendar date = parse(o1, formatter);
                 if (date != null) {
-                    GregorianCalendar c = new GregorianCalendar();
-                    c.setTime(date);
-                    return c;
+                    return date;
                 }
             }
             return new EvalError("Unable to parse as date");
         }
 
         return null;
+    }
+
+
+    private GregorianCalendar parse(String o1, DateFormat formatter) {
+        try {
+            Date date = formatter.parse(o1);
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(date);
+            return c;
+        } catch (java.text.ParseException e) {
+            return null;
+        }
     }
 
 

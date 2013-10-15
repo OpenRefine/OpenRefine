@@ -103,6 +103,7 @@ public class ToFromConversionTests extends RefineTest {
         Assert.assertNull(invoke("toNumber", (Object) null));
         Assert.assertTrue(invoke("toNumber", "string") instanceof EvalError);
         Assert.assertEquals(invoke("toNumber", "0.0"), 0.0);
+        Assert.assertEquals(invoke("toNumber", "123"), Long.valueOf(123));
         Assert.assertTrue(Math.abs((Double) invoke("toNumber", "123.456") - 123.456) < EPSILON);
         Assert.assertTrue(Math.abs((Double) invoke("toNumber", "001.234") - 1.234) < EPSILON);
         Assert.assertTrue(Math.abs((Double) invoke("toNumber", "1e2") - 100.0) < EPSILON);
@@ -110,13 +111,16 @@ public class ToFromConversionTests extends RefineTest {
     }
 
     @Test
-    public void testToString() {
+    public void testToString() throws CalendarParserException {
       Assert.assertTrue(invoke("toString") instanceof EvalError);
-      Assert.assertTrue(invoke("toString", (Object) null) instanceof EvalError);
+      Assert.assertEquals(invoke("toString", (Object) null), "null");
+      Assert.assertEquals(invoke("toString", Long.valueOf(100)),"100");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
-      // Calendar
-      // Date
-      // Date&Calendar with 2nd parameter with format
+      Assert.assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
+      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01")),"Jun 1, 2013");
+      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01").getTime()),"Jun 1, 2013");
+      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy"),"2013");      
+      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy-MM-dd"),"2013-06-01");
     }
     
     @Test
@@ -131,6 +135,13 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalendarParser.parse("2012-03-01"));
       // Multiple format strings should get tried sequentially until one succeeds or all are exhausted
       Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalendarParser.parse("2012-03-01"));
+      // First string can be a locale identifier instead of a format string
+      Assert.assertEquals(invoke("toDate", "2013-06-01","zh"), CalendarParser.parse("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_HK","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_TW","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_CN","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
+
         // Date
         // Calendar
         // String

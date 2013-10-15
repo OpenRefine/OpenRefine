@@ -40,6 +40,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
@@ -53,6 +55,7 @@ import com.google.refine.util.ParsingUtilities;
  * obtain information about a change without actually loading the change.
  */
 public class HistoryEntry implements Jsonizable {
+    final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
     final public long   id;
     final public long   projectID;
     final public String description;
@@ -82,13 +85,7 @@ public class HistoryEntry implements Jsonizable {
     }
 
     public HistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change) {
-        this.id = id;
-        this.projectID = project.id;
-        this.description = description;
-        this.operation = operation;
-        this.time = new Date();
-
-        this._manager = ProjectManager.singleton.getHistoryEntryManager();
+        this(id,project.id,description,operation,new Date());
         setChange(change);
     }
 
@@ -99,6 +96,10 @@ public class HistoryEntry implements Jsonizable {
         this.operation = operation;
         this.time = time;
         this._manager = ProjectManager.singleton.getHistoryEntryManager();
+        if (this._manager == null) {
+            logger.error("Failed to get history entry manager from project manager: " 
+                    + ProjectManager.singleton );
+        }
     }
 
     @Override

@@ -31,6 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+/*
+ * Controller for GData extension.
+ * 
+ * This is run in the Butterfly (ie Refine) server context using the Rhino
+ * Javascript interpreter.
+ */
+
 var html = "text/html";
 var encoding = "UTF-8";
 var version = "0.2";
@@ -43,7 +50,7 @@ function init() {
   var RS = Packages.com.google.refine.RefineServlet;
   RS.registerCommand(module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
   RS.registerCommand(module, "upload", Packages.com.google.refine.extension.gdata.UploadCommand());
-  RS.registerCommand(module, "load-language", Packages.com.google.refine.extension.gdata.commands.LoadLanguageCommand());
+  // TODO: Need a new OAUTH2 authorize command for FusionTables
 
   // Register importer and exporter
   var IM = Packages.com.google.refine.importing.ImportingManager;
@@ -101,21 +108,13 @@ function process(path, request, response) {
   } else if (path == "authorized") {
     var context = {};
     context.winname = request.getParameter("winname");
-    context.callback = request.getParameter("callback");
+    context.callback = request.getParameter("cb");
     
     (function() {
-      var queryString = request.getQueryString();
-      if (queryString != null) {
-        var AuthSubUtil = Packages.com.google.gdata.client.http.AuthSubUtil;
-      
-        // FIXME(SM): can we safely assume UTF-8 encoding here?
-        var onetimeUseToken = AuthSubUtil.getTokenFromReply(
-          Packages.java.net.URLDecoder.decode(queryString, "UTF-8"));
-        if (onetimeUseToken) {
-          var sessionToken = AuthSubUtil.exchangeForSessionToken(onetimeUseToken, null);
-          Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, sessionToken);
-          return;
-        }
+      var token =  Packages.com.google.refine.extension.gdata.GDataExtension.getTokenFromCode(module,request);
+      if (token) {
+        Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, token);
+        return;
       }
       Packages.com.google.refine.extension.gdata.TokenCookie.deleteToken(request, response);
     })();

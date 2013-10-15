@@ -98,8 +98,8 @@ function registerCommands() {
   RS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.refine.commands.cell.TransposeRowsIntoColumnsCommand());
   RS.registerCommand(module, "key-value-columnize", new Packages.com.google.refine.commands.cell.KeyValueColumnizeCommand());
 
+  RS.registerCommand(module, "get-languages", Packages.com.google.refine.commands.lang.GetLanguagesCommand());
   RS.registerCommand(module, "load-language", Packages.com.google.refine.commands.lang.LoadLanguageCommand());
-  RS.registerCommand(module, "set-language", Packages.com.google.refine.commands.lang.SetLanguageCommand());
   
   RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
   RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
@@ -205,11 +205,10 @@ function registerImporting() {
 
   IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
   IM.registerFormat("text/xml/xlsx", "Excel (.xlsx) files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
-  // TODO: Can we get away with just reusing Excel importer UI?
   IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
   IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
   IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
-  IM.registerFormat("text/marc", "MARC files");
+  IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
 
   IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
   IM.registerFormat("binary/xls", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
@@ -307,10 +306,10 @@ function init() {
     module,
     [
       
-      "externals/jquery-1.7.2.min.js",
+      "externals/jquery-1.9.1.js",
+      "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
-      "externals/jquery.eventstack-0.3.js",
-      "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
+      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
       
@@ -354,7 +353,7 @@ function init() {
     "index/styles",
     module,
     [
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
@@ -382,14 +381,15 @@ function init() {
     "project/scripts",
     module,
     [
-      "externals/jquery-1.7.2.min.js",
+      "externals/jquery-1.9.1.js",
+      "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
-      "externals/jquery.eventstack-0.3.js",
-      "externals/suggest/suggest-4_2.min.js",
-      "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
+      "externals/suggest/suggest-4_3.js",
+      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/underscore-min.js",
 
       "externals/CFInstall.min.js",
       "scripts/chrome-frame.js",
@@ -451,8 +451,8 @@ function init() {
     "project/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_2.min.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
+      "externals/suggest/css/suggest-4_3.min.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
       "styles/jquery-ui-overrides.less",
@@ -489,22 +489,23 @@ function init() {
     "preferences/scripts",
     module,
     [
-      "externals/jquery-1.7.2.min.js",
+      "externals/jquery-1.9.1.js",
+      "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_2.min.js",
-      "externals/jquery-ui/jquery-ui-1.8.20.custom.min.js",
+      "externals/suggest/suggest-4_3.js",
+      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
-      "scripts/preferences.js",
       "externals/jquery.i18n.js",
+      "scripts/preferences.js",
     ]
   );
   ClientSideResourceManager.addPaths(
     "preferences/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_2.min.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.20.custom.css",
+      "externals/suggest/css/suggest-4_3.min.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",

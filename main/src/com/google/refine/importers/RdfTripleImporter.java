@@ -86,18 +86,23 @@ public class RdfTripleImporter extends ImportingParserBase {
             JSONObject options, List<Exception> exceptions) {
         
         Graph graph;
-        switch (mode) {
-        case NT:
-            graph = rdfReader.parseNTriples(input);
-            break;
-        case N3:
-            graph = rdfReader.parseN3(input);
-            break;
-        case RDFXML:
-            graph = rdfReader.parseRdfXml(input);             
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown parsing mode");    
+        try {
+            switch (mode) {
+            case NT:
+                graph = rdfReader.parseNTriples(input);
+                break;
+            case N3:
+                graph = rdfReader.parseN3(input);
+                break;
+            case RDFXML:
+                graph = rdfReader.parseRdfXml(input);             
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown parsing mode");    
+            }
+        } catch (Exception e) {
+            exceptions.add(e);
+            return;
         }
         
         ClosableIterable<Triple> triples = graph.find(ANY_SUBJECT_NODE, ANY_PREDICATE_NODE, ANY_OBJECT_NODE);

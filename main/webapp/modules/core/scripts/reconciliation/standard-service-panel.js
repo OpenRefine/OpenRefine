@@ -90,6 +90,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.or_proc_againsType.html($.i18n._('core-recon')["against-type"]+":");
   this._elmts.or_proc_noType.html($.i18n._('core-recon')["no-type"]);
   this._elmts.or_proc_autoMatch.html($.i18n._('core-recon')["auto-match"]);
+  this._elmts.or_proc_max_candidates.html($.i18n._('core-recon')["max-candidates"]);
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
 
@@ -328,8 +329,9 @@ ReconStandardServicePanel.prototype.start = function() {
         identifierSpace: this._service.identifierSpace,
         schemaSpace: this._service.schemaSpace,
         type: (type) ? { id: type.id, name: type.name } : null,
-            autoMatch: this._elmts.automatchCheck[0].checked,
-            columnDetails: columnDetails
+        autoMatch: this._elmts.automatchCheck[0].checked,
+        columnDetails: columnDetails,
+        limit: this._elmts.maxCandidates[0].value
       })
     },
     { cellsChanged: true, columnStatsChanged: true }

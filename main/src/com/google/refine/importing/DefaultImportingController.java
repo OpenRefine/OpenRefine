@@ -228,7 +228,7 @@ public class DefaultImportingController implements ImportingController {
         Format formatRecord = ImportingManager.formatToRecord.get(format);
         if (formatRecord != null && formatRecord.parser != null) {
             JSONObject options = formatRecord.parser.createParserUIInitializationData(
-                    job, ImportingUtilities.getSelectedFileRecords(job), format);
+                    job, job.getSelectedFileRecords(), format);
             JSONObject result = new JSONObject();
             JSONUtilities.safePut(result, "status", "ok");
             JSONUtilities.safePut(result, "options", options);

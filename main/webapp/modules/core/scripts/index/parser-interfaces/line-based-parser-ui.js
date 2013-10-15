@@ -138,25 +138,25 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
     this._config.linesPerRow.toString();
 
   if (this._config.ignoreLines > 0) {
-    this._optionContainerElmts.ignoreCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.ignoreCheckbox.prop("checked", true);
     this._optionContainerElmts.ignoreInput[0].value = this._config.ignoreLines.toString();
   }
   if (this._config.limit > 0) {
-    this._optionContainerElmts.limitCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.limitCheckbox.prop("checked", true);
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
   }
   if (this._config.skipDataLines > 0) {
-    this._optionContainerElmts.skipCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.skipCheckbox.prop("checked", true);
     this._optionContainerElmts.skipInput.value[0].value = this._config.skipDataLines.toString();
   }
   if (this._config.storeBlankRows) {
-    this._optionContainerElmts.storeBlankRowsCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.storeBlankRowsCheckbox.prop("checked", true);
   }
   if (this._config.storeBlankCellsAsNulls) {
-    this._optionContainerElmts.storeBlankCellsAsNullsCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.storeBlankCellsAsNullsCheckbox.prop("checked", true);
   }
   if (this._config.includeFileSources) {
-    this._optionContainerElmts.includeFileSourcesCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
   }
 
   var onChange = function() {

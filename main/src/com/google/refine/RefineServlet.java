@@ -41,8 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -80,23 +81,19 @@ public class RefineServlet extends Butterfly {
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
     // timer for periodically saving projects
-    static private Timer _timer = new Timer("autosave");
+    static private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     static final Logger logger = LoggerFactory.getLogger("refine");
 
-    static final protected long s_autoSavePeriod = 1000 * 60 * 5; // 5 minutes
+    static final protected long AUTOSAVE_PERIOD = 5; // 5 minutes
     
-    static protected class AutoSaveTimerTask extends TimerTask {
+    static protected class AutoSaveTimerTask implements Runnable {
         @Override
         public void run() {
             try {
                 ProjectManager.singleton.save(false); // quick, potentially incomplete save
-            } finally {
-                if (_timer != null) {
-                    _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
-                    // we don't use scheduleAtFixedRate because that might result in
-                    // bunched up events when the computer is put in sleep mode
-                }
+            } catch (final Throwable e) {
+                // Not the best, but we REALLY want this to keep trying
             }
         }
     }
@@ -134,7 +131,8 @@ public class RefineServlet extends Butterfly {
         FileProjectManager.initialize(s_dataDir);
         ImportingManager.initialize(this);
 
-        _timer.schedule(new AutoSaveTimerTask(), s_autoSavePeriod);
+        service.scheduleWithFixedDelay(new AutoSaveTimerTask(), AUTOSAVE_PERIOD, 
+                AUTOSAVE_PERIOD, TimeUnit.MINUTES);
 
         logger.trace("< initialize");
     }
@@ -370,7 +368,10 @@ public class RefineServlet extends Butterfly {
     }
     
     static public void setUserAgent(HttpURLConnection httpConnection) {
-        httpConnection.addRequestProperty("User-Agent", "OpenRefine/" + FULL_VERSION);
+        httpConnection.addRequestProperty("User-Agent", getUserAgent());
     }
 
+    static public String getUserAgent() {
+        return "OpenRefine/" + FULL_VERSION;
+    }
 }

@@ -36,11 +36,12 @@ var lang = navigator.language.split("-")[0]
 		|| navigator.userLanguage.split("-")[0];
 var dictionary = "";
 $.ajax({
-	url : "/command/gdata/load-language?",
+	url : "/command/core/load-language?",
 	type : "POST",
 	async : false,
 	data : {
-		lng : lang
+	  module : "gdata",
+//		lang : lang
 	},
 	success : function(data) {
 		dictionary = data;
@@ -165,7 +166,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   this._parsingPanelElmts = DOM.bind(this._parsingPanel);
   
   if(this._doc.type != 'table'){
-	  this._parsingPanelElmts.gdata-worksheet.html($.i18n._('gdata-parsing')["worksheet"]); 
+	  this._parsingPanelElmts.gdata_worksheet.html($.i18n._('gdata-parsing')["worksheet"]); 
 	  this._parsingPanelElmts.gdata_ignore_first.html($.i18n._('gdata-parsing')["ignore-first"]);
 	  this._parsingPanelElmts.gdata_ignore.html($.i18n._('gdata-parsing')["ignore"]);
 	  this._parsingPanelElmts.gdata_parse_next.html($.i18n._('gdata-parsing')["parse-next"]);
@@ -175,9 +176,9 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   this._parsingPanelElmts.gdata_conf_pars.html($.i18n._('gdata-parsing')["conf-pars"]);
   this._parsingPanelElmts.gdata_proj_name.html($.i18n._('gdata-parsing')["proj-name"]);
   this._parsingPanelElmts.createProjectButton.html($.i18n._('gdata-parsing')["create-proj"]);
-  this._parsingPanelElmts.gdata-options.html($.i18n._('gdata-parsing')["option"]);
+  this._parsingPanelElmts.gdata_options.html($.i18n._('gdata-parsing')["option"]);
   this._parsingPanelElmts.previewButton.html($.i18n._('gdata-parsing')["preview-button"]);
-  this._parsingPanelElmts.gdata-updating.html($.i18n._('gdata-parsing')["updating-preview"]);
+  this._parsingPanelElmts.gdata_updating.html($.i18n._('gdata-parsing')["updating-preview"]);
   this._parsingPanelElmts.gdata_discard_next.html($.i18n._('gdata-parsing')["discard-next"]);
   this._parsingPanelElmts.gdata_discard.html($.i18n._('gdata-parsing')["discard"]);
   this._parsingPanelElmts.gdata_limit_next.html($.i18n._('gdata-parsing')["limit-next"]);
@@ -234,7 +235,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   if (this._doc.type != 'table') {
     var sheetTable = this._parsingPanelElmts.sheetRecordContainer[0];
     $.each(this._options.worksheets, function(i, v) {
-      var id = 'gdata-worksheet-' + Math.round(Math.random() * 1000000);
+      var id = 'gdata_worksheet-' + Math.round(Math.random() * 1000000);
       
       var tr = sheetTable.insertRow(sheetTable.rows.length);
       var td0 = $(tr.insertCell(0)).attr('width', '1%');
@@ -245,7 +246,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
       .attr('sheetUrl', this.link)
       .appendTo(td0);
       if (i === 0) {
-        checkbox.attr('checked', 'true');
+        checkbox.prop("checked", true);
       }
       
       $('<label>')
@@ -260,28 +261,28 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
     });
 
     if (this._options.ignoreLines > 0) {
-      this._parsingPanelElmts.ignoreCheckbox.attr("checked", "checked");
+      this._parsingPanelElmts.ignoreCheckbox.prop("checked", true);
       this._parsingPanelElmts.ignoreInput[0].value = this._options.ignoreLines.toString();
     }
     if (this._options.headerLines > 0) {
-      this._parsingPanelElmts.headerLinesCheckbox.attr("checked", "checked");
+      this._parsingPanelElmts.headerLinesCheckbox.prop("checked", true);
       this._parsingPanelElmts.headerLinesInput[0].value = this._options.headerLines.toString();
     }
   }
   
   if (this._options.limit > 0) {
-    this._parsingPanelElmts.limitCheckbox.attr("checked", "checked");
+    this._parsingPanelElmts.limitCheckbox.prop("checked", true);
     this._parsingPanelElmts.limitInput[0].value = this._options.limit.toString();
   }
   if (this._options.skipDataLines > 0) {
-    this._parsingPanelElmts.skipCheckbox.attr("checked", "checked");
+    this._parsingPanelElmts.skipCheckbox.prop("checked", true);
     this._parsingPanelElmts.skipInput.value[0].value = this._options.skipDataLines.toString();
   }
   if (this._options.storeBlankRows) {
-    this._parsingPanelElmts.storeBlankRowsCheckbox.attr("checked", "checked");
+    this._parsingPanelElmts.storeBlankRowsCheckbox.prop("checked", true);
   }
   if (this._options.storeBlankCellsAsNulls) {
-    this._parsingPanelElmts.storeBlankCellsAsNullsCheckbox.attr("checked", "checked");
+    this._parsingPanelElmts.storeBlankCellsAsNullsCheckbox.prop("checked", true);
   }
 
   var onChange = function() {

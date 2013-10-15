@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var GdataExtension = {};
 
 GdataExtension.isAuthorized = function() {
-  return $.cookie('authsub_token') !== null;
+  return $.cookie('oauth2_token') !== null;
 };
 
 GdataExtension.showAuthorizationDialog = function(onAuthorized, onNotAuthorized) {
@@ -57,6 +57,6 @@ GdataExtension.showAuthorizationDialog = function(onAuthorized, onNotAuthorized)
   };
   window[callbackName] = callback;
   
-  var url = ModuleWirings['gdata'] + "authorize?winname=" + escape(windowName) + "&callback=" + escape(callbackName);
+  var url = ModuleWirings['gdata'] + "authorize?winname=" + escape(windowName) + "&cb=" + escape(callbackName);
   var win = window.open(url, "openrefinegdataauth", "resizable=1,width=800,height=600");
 };

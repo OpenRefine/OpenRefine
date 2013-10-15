@@ -52,6 +52,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
+    var o = DataTableView.sampleVisibleRows(column);
+    var previewWidget = new ExpressionPreviewDialog.Widget(
+      elmts, 
+      column.cellIndex,
+      o.rowIndices,
+      o.values,
+      null
+    );
+    
     elmts.cancelButton.click(dismiss);
     elmts.okButton.click(function() {
       var columnName = $.trim(elmts.columnNameInput[0].value);
@@ -101,6 +110,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
+    var o = DataTableView.sampleVisibleRows(column);
+    var previewWidget = new ExpressionPreviewDialog.Widget(
+      elmts, 
+      column.cellIndex,
+      o.rowIndices,
+      o.values,
+      null
+    );
+    
     elmts.cancelButton.click(dismiss);
     elmts.okButton.click(function() {
       var columnName = $.trim(elmts.columnNameInput[0].value);

@@ -55,19 +55,6 @@ MenuSystem.showMenu = function(elmt, onDismiss) {
 
   var level = MenuSystem._layers.length;
 
-  layer.keyHandler = function(evt) {
-    if (evt.keyCode == 27 && !evt.shiftKey && !evt.metaKey && !evt.altKey && !evt.ctrlKey &&
-        evt.target.tagName.toLowerCase() != "input" &&
-        evt.target.tagName.toLowerCase() != "textarea") {
-      MenuSystem.dismissUntil(level - 1);
-      evt.stopImmediatePropagation();
-      evt.stopPropagation();
-      evt.preventDefault();
-      return false;
-    }
-  };
-  $(document).stack("keydown", layer.keyHandler);
-
   return level;
 };
 

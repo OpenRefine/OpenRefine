@@ -49,7 +49,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.google.gdata.client.GoogleService;
+import com.google.api.services.fusiontables.Fusiontables;
+import com.google.api.services.fusiontables.model.Table;
+import com.google.api.services.fusiontables.model.TableList;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
@@ -59,6 +61,7 @@ import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetFeed;
+import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
 import com.google.refine.ProjectManager;
@@ -125,13 +128,15 @@ public class GDataImportingController implements ImportingController {
             
             try {
                 listSpreadsheets(GDataExtension.getDocsService(token), writer);
-                listFusionTables(GDataExtension.getFusionTablesGoogleService(token), writer);
+                listFusionTables(FusionTableHandler.getFusionTablesService(token), writer);
+            } catch (AuthenticationException e) {
+                TokenCookie.deleteToken(request, response);
             } catch (ServiceException e) {
                 e.printStackTrace();
+            } finally {
+                writer.endArray();
+                writer.endObject();
             }
-            
-            writer.endArray();
-            writer.endObject();
         } catch (JSONException e) {
             throw new ServletException(e);
         } finally {
@@ -167,27 +172,24 @@ public class GDataImportingController implements ImportingController {
         }
     }
     
-    private void listFusionTables(GoogleService service, JSONWriter writer)
+    private void listFusionTables(Fusiontables service, JSONWriter writer)
         throws IOException, ServiceException, JSONException {
         
-        List<List<String>> rows = GDataExtension.runFusionTablesSelect(service, "SHOW TABLES");
-        if (rows.size() > 1) { // excluding headers
-            for (int i = 1; i < rows.size(); i++) {
-                List<String> row = rows.get(i);
-                if (row.size() >= 2) {
-                    String id = row.get(0);
-                    String name = row.get(1);
-                    String link = "https://www.google.com/fusiontables/DataSource?dsrcid=" + id;
-                    
-                    writer.object();
-                    writer.key("docId"); writer.value(id);
-                    writer.key("docLink"); writer.value(link);
-                    writer.key("docSelfLink"); writer.value(link);
-                    writer.key("title"); writer.value(name);
-                    writer.key("type"); writer.value("table");
-                    writer.endObject();
-                }
-            }
+        Fusiontables.Table.List listTables = service.table().list();
+        TableList tablelist = listTables.execute();
+        for (Table table : tablelist.getItems()) {
+            String id = table.getTableId();
+            String name = table.getName();
+            String link = "https://www.google.com/fusiontables/DataSource?docid=" + id;
+            
+            // Add JSON object to our stream
+            writer.object();
+            writer.key("docId"); writer.value(id);
+            writer.key("docLink"); writer.value(link);
+            writer.key("docSelfLink"); writer.value(link);
+            writer.key("title"); writer.value(name);
+            writer.key("type"); writer.value("table");
+            writer.endObject();
         }
     }
     
@@ -300,9 +302,6 @@ public class GDataImportingController implements ImportingController {
         
         job.updating = true;
         try {
-            // This is for setting progress during the parsing process.
-            job.config = new JSONObject();
-            
             JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
                 request.getParameter("options"));
             
@@ -371,7 +370,7 @@ public class GDataImportingController implements ImportingController {
             
             final List<Exception> exceptions = new LinkedList<Exception>();
             
-            JSONUtilities.safePut(job.config, "state", "creating-project");
+            job.setState("creating-project");
             
             final Project project = new Project();
             new Thread() {
@@ -393,16 +392,14 @@ public class GDataImportingController implements ImportingController {
                     
                     if (!job.canceled) {
                         if (exceptions.size() > 0) {
-                            JSONUtilities.safePut(job.config, "errors",
-                                DefaultImportingController.convertErrorsToJsonArray(exceptions));
-                            JSONUtilities.safePut(job.config, "state", "error");
+                            job.setError(exceptions);
                         } else {
                             project.update(); // update all internal models, indexes, caches, etc.
                             
                             ProjectManager.singleton.registerProject(project, pm);
                             
-                            JSONUtilities.safePut(job.config, "state", "created-project");
-                            JSONUtilities.safePut(job.config, "projectID", project.id);
+                            job.setState("created-project");
+                            job.setProjectID(project.id);
                         }
                         
                         job.touch();

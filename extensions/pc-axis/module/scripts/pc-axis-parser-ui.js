@@ -110,15 +110,15 @@ Refine.PCAxisParserUI.prototype._initialize = function() {
     });
 
   if (this._config.limit > 0) {
-    this._optionContainerElmts.limitCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.limitCheckbox.prop("checked", true);
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
   }
   if (this._config.skipDataLines > 0) {
-    this._optionContainerElmts.skipCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.skipCheckbox.prop("checked", true);
     this._optionContainerElmts.skipInput.value[0].value = this._config.skipDataLines.toString();
   }
   if (this._config.includeFileSources) {
-    this._optionContainerElmts.includeFileSourcesCheckbox.attr("checked", "checked");
+    this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
   }
 
   var onChange = function() {

@@ -9,13 +9,32 @@ Refine.SetLanguageUI = function(elmt) {
 	this._elmts.or_lang_label.text($.i18n._('core-index-lang')["label"]+":");
 	this._elmts.set_lan_btn.attr("value", $.i18n._('core-index-lang')["send-req"]);
 	
+
+  $.ajax({
+    url : "/command/core/get-languages?",
+    type : "GET",
+    async : false,
+    data : {
+      name : "module",
+      value : "core"
+    },
+    success : function(data) {
+      for( var i = 0; i < data.languages.length; i++) {
+        var l = data.languages[i];
+        $('<option>').val(l.code).text(l.label).appendTo('#langDD');
+      }
+    }
+    
+  });
+
 	this._elmts.set_lan_btn.bind('click', function(e) {		
 		$.ajax({
-			url : "/command/core/set-language?",
+			url : "/command/core/set-preference?",
 			type : "POST",
 			async : false,
 			data : {
-				lng : $("#langDD option:selected").val()
+			  name : "userLang",
+				value : $("#langDD option:selected").val()
 			},
 			success : function(data) {
 				alert($.i18n._('core-index-lang')["page-reload"]);

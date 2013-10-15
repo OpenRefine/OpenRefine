@@ -1,4 +1,4 @@
-﻿{
+{
     "fb-schema-alignment": {
         "close-confirm": "There are unsaved changes. Close anyway?",
         "status-warning": "There are unsaved changes.",
@@ -42,7 +42,7 @@
         "column-warning": "You must select at least one column",
         "new-node-warning": "For creating a new graph node, you need to specify a type for it.",
         "namespace-warning": "Please specify the namespace.",
-        "anonymous-node-warning": "For generating an anonymous graph node, you need to specify a type for it",
+        "anonymous-node-warning": "For generating an anonymous graph node, you need to specify a type for it.",
         "specify-topic-warning": "Please specify which existing Freebase topic to use",
         "specify-value-warning": "Please specify the value to use"
     },
@@ -98,7 +98,17 @@
 		"warning-json-obj": "The JSON you enter must be an object, that is, it is of this form { ... }.",
 		"add-property": "Add Property",
 		"suggested-properties": "Suggested Properties",
-		"constraint": "Constraint"	
+		"constraint": "Constraint"		
+	},
+	"fb-menu": {
+		"freebase": "Freebase",
+		"set-api-key": "Set Freebase API Key",
+		"align-schema": "Align to Freebase's schemas...",
+		"load": "Load into Freebase...",
+		"browse-data-load": "Browse data load details...",
+		"import-qa": "Import QA data",
+		"add-columns": "Add columns from Freebase ...",
+		"warning-load": "You have not tried to load the data in this project into Freebase yet."
 	},
     "fb-buttons": {
         "save": "Save",

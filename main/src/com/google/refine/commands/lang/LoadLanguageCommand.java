@@ -7,18 +7,30 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import com.google.refine.ProjectManager;
+import com.google.refine.RefineServlet;
 import com.google.refine.commands.Command;
+import com.google.refine.preference.PreferenceStore;
+
+import edu.mit.simile.butterfly.ButterflyModule;
+
 
 public class LoadLanguageCommand extends Command {
 
     public LoadLanguageCommand() {
-        // TODO Auto-generated constructor stub
+    	super();
     }
 
     @Override
@@ -30,44 +42,60 @@ public class LoadLanguageCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String rawDirectoryFile = request.getSession().getServletContext().getRealPath("webapp/modules/langs/");
-        String cleanedDirectory = rawDirectoryFile.replace("main" + File.separator + "webapp" + File.separator, "main"
-                + File.separator);
-
-        BufferedReader reader = null;
-        String param = null;
-        try {
-            param = (String) ProjectManager.singleton.getPreferenceStore().get("userLang");
-        } catch (NullPointerException e) {
+        String modname = request.getParameter("module");
+        if (modname == null) {
+            modname = "core";
         }
-        if (param == null) param = request.getParameter("lng");
 
-        String[] langs = param.split(" ");
+        String[] langs = request.getParameterValues("lang");
+        if (langs == null || "".equals(langs[0])) {
+            PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
+            if (ps != null) {
+                langs = new String[] {(String) ps.get("userLang")};
+            }
+        }
+        
+        // TODO: Switch this to just use English as the default language so we
+        // so we don't have to maintain a separate redundant file.
+        langs = Arrays.copyOf(langs, langs.length+1);
+        langs[langs.length-1] = "default";
+
+        JSONObject json = null;
+        boolean loaded = false;
+        for (String lang : langs) {
+            json = loadLanguage(this.servlet, modname, lang);
+            if (json != null) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                try {
+                    json.write(response.getWriter());
+                } catch (JSONException e) {
+                    logger.error("Error writing language labels to response stream");
+                }
+                response.getWriter().flush();
+                response.getWriter().close();
+                loaded = true;
+                break;
+            }
+        }
+        if (!loaded) {
+        	logger.error("Failed to load any language files");
+        }
+    }
+    
+    static JSONObject loadLanguage(RefineServlet servlet, String modname, String lang) throws UnsupportedEncodingException {
+        
+        ButterflyModule module = servlet.getModule(modname);
+        JSONObject json = null;
+        File langFile = new File(module.getPath(), "langs" + File.separator + "translation-" + lang + ".json");
         try {
-            String file = cleanedDirectory + File.separator + "translation-" + langs[0] + ".json";
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
+            json = new JSONObject(new JSONTokener(reader));
         } catch (FileNotFoundException e1) {
-            try {
-                String file = cleanedDirectory + File.separator + "translation-default.json";
-                reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-            } catch (FileNotFoundException e3) {
-                e3.printStackTrace();
-            }
+            // Could be normal if we've got a list of languages as fallbacks
+        } catch (JSONException e) {
+            logger.error("JSON error reading/writing language file: " + langFile, e);
         }
-
-        String line = null;
-        String message = new String();
-        if (reader != null) {
-            while ((line = reader.readLine()) != null) {
-                // buffer.append(line);
-                message += line + System.getProperty("line.separator");
-            }
-        }
-
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        response.getWriter().println(message);
-        response.getWriter().flush();
-        response.getWriter().close();
+        return json;
     }
 }
