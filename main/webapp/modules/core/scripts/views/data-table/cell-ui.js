@@ -451,7 +451,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
 
   var fakeMenu = MenuSystem.createMenu();
   fakeMenu
-  .width(414)
+  .width(preview.width?preview.width:414)
   .addClass('data-table-topic-popup')
   .html(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-preview-popup-header.html"));
 
