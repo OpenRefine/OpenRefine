@@ -124,12 +124,8 @@ public class ExpressionUtils {
     }
 
     static public boolean sameValue(Object v1, Object v2) {
-        if (v1 == null) {
-            return (v2 == null)
-                    || (v2 instanceof String && ((String) v2).length() == 0);
-        } else if (v2 == null) {
-            return (v1 == null)
-                    || (v1 instanceof String && ((String) v1).length() == 0);
+        if (v1 == null || v2 == null) {
+            return (v1 == v2);
         } else {
             return v1.equals(v2);
         }
