@@ -14,7 +14,7 @@ var test_facets = new function() {
     test = newTest();
     action (test, "click",        { link:    "Food" });
     wait   (test, "forPageLoad",  { timeout: "20000" });
-    assert (test, "assertTest", {xpath: "//div[@id='summary-bar']/span",validator: "7413 rows"});
+    assert (test, "assertText", {xpath: "//div[@id='summary-bar']/span",validator: "7413 rows"});
     this.test_open_project = test;
 
     // create text facet from 1st word of Short Description column
