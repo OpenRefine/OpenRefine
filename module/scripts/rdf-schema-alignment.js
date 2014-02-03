@@ -85,7 +85,7 @@ RdfSchemaAlignmentDialog.prototype._constructBody = function(body) {
             '</div>' +
             '<div id="rdf-schema-alignment-tabs-preview" style="display: none;">' +
                 '<div class="rdf-scheme-dialog-subheader">This is a sample <code>Turtle</code> representation of (up-to) the <em>first 10</em> rows</div>' + 
-                '<div class="schema-alignment-dialog-preview" id="rdf-schema-alignment-dialog-preview"></div>' +
+                '<div class="rdf-schema-alignment-dialog-preview" id="rdf-schema-alignment-dialog-preview"></div>' +
             '</div>' +
         '</div>'
     ).appendTo(body);
@@ -140,7 +140,7 @@ RdfSchemaAlignmentDialog.prototype._previewRdf = function(){
         { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
         function(data) {
         	self._previewPane.empty();
-        	self._previewPane.html(linkify(data.v));
+        	self._previewPane.html(linkify('<pre>' + data.v + '</pre>'));
 	    },
 	    "json"
 	);
@@ -150,14 +150,14 @@ RdfSchemaAlignmentDialog.prototype._renderBody = function(body) {
     var self = this;
     
     $("#rdf-schema-alignment-tabs").tabs({
-    	select:function(evt,tabs){
-    		if(tabs.index===1){
+    	activate:function(evt,tabs){
+    		if(tabs.newPanel.index()===2){
     			self._previewRdf();
     		}
     	}
     });
-    $("#rdf-schema-alignment-tabs-preview").css("display", "");
-    $("#rdf-schema-alignment-tabs-vocabulary-manager").css("display", "");
+   // $("#rdf-schema-alignment-tabs-preview").css("display", "");
+   // $("#rdf-schema-alignment-tabs-vocabulary-manager").css("display", "");
 
     this._canvas = $(".schema-alignment-dialog-canvas");
     this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").addClass("rdf-schema-alignment-table-layout").appendTo(this._canvas)[0];

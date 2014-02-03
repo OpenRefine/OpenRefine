@@ -36,7 +36,7 @@
 	                             
 	                             clearTimeout(this.request.timeout);
                     	    	 data["prefix"] = query;
-                    	    	 data["type_strict"] = "classes";
+                    	    	 data["type_strict"] = o.type_strict;
                     	    	 data["type"] = theProject.id;
 	                            
                     	    	 var url = o.service_url + o.service_path + "?" + $.param(data, true);
