@@ -86,7 +86,10 @@ public class ImportingManager {
     
     static private RefineServlet servlet;
     static private File importDir;
+    
     final static private Map<Long, ImportingJob> jobs = Collections.synchronizedMap(new HashMap<Long, ImportingJob>());
+    static private long jobIdCounter = 0;
+    final static private Object jobIdLock = new Object();
     
     // Mapping from format to label, e.g., "text" to "Text files", "text/xml" to "XML files"
     final static public Map<String, Format> formatToRecord = new HashMap<String, Format>();
@@ -187,7 +190,18 @@ public class ImportingManager {
     }
     
     static public ImportingJob createJob() {
-        long id = System.currentTimeMillis() + (long) (Math.random() * 1000000);
+        long id;
+        
+        synchronized(jobIdLock) {
+            ++jobIdCounter;
+            
+            // Avoid negative job id's when the counter wraps around.
+            if (jobIdCounter < 0)
+                jobIdCounter = 1;
+            
+            id = jobIdCounter;
+        }
+        
         File jobDir = new File(getImportDir(), Long.toString(id));
         
         ImportingJob job = new ImportingJob(id, jobDir);
