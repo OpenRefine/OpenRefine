@@ -150,13 +150,13 @@ RdfSchemaAlignmentDialog.prototype._renderBody = function(body) {
     var self = this;
     
     $("#rdf-schema-alignment-tabs").tabs({
-    	activate:function(evt,tabs){
-    		if(tabs.newPanel.index()===2){
+    	select:function(evt,ui){
+    		if(ui.index===1){
     			self._previewRdf();
     		}
     	}
     });
-   // $("#rdf-schema-alignment-tabs-preview").css("display", "");
+    $("#rdf-schema-alignment-tabs-preview").css("display", "");
    // $("#rdf-schema-alignment-tabs-vocabulary-manager").css("display", "");
 
     this._canvas = $(".schema-alignment-dialog-canvas");

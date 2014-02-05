@@ -4,21 +4,24 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.jena.larq.IndexBuilderString;
-import org.apache.jena.larq.IndexLARQ;
-import org.apache.jena.larq.LARQ;
+import org.apache.jena.query.text.EntityDefinition;
+import org.apache.jena.query.text.TextDatasetFactory;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.RAMDirectory;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.DatasetFactory;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
 
 /**
  * @author fadmaa
@@ -29,8 +32,7 @@ import com.hp.hpl.jena.rdf.model.Property;
  */
 public class DumpQueryExecutor implements QueryExecutor {
 
-	private Model model;
-	private IndexLARQ index;
+	private Dataset index;
 	private boolean loaded = false;
 	//property used for index/search (only if one property is used)
 	private String propertyUri;
@@ -63,18 +65,18 @@ public class DumpQueryExecutor implements QueryExecutor {
 	
 	public DumpQueryExecutor(Model m, String propertyUri, boolean ngramIndex,int minGram, int maxGram){
 		loaded = true;
-		this.model = m;
 		this.propertyUri = propertyUri;
-		IndexBuilderString larqBuilder;
-		if(propertyUri != null){
-			Property p = model.getProperty(propertyUri);
-			larqBuilder= new IndexBuilderString(p) ;
-		}else{
-			larqBuilder= new IndexBuilderString() ;
-		}
-		larqBuilder.indexStatements(model.listStatements()) ;
-		larqBuilder.closeWriter() ;
-		this.index = larqBuilder.getIndex() ;
+		
+		Dataset ds1 = DatasetFactory.createMem();
+		EntityDefinition entDef = new EntityDefinition("uri", "text",m.getResource(propertyUri)) ;
+
+        // Lucene, in memory.
+        Directory dir =  new RAMDirectory();
+        
+        // Join together into a dataset
+        this.index = TextDatasetFactory.createLucene(ds1, dir, entDef) ;
+        this.index.getDefaultModel().add(m);
+        //this.index.commit();
 	}
 	
 	@Override
@@ -82,9 +84,9 @@ public class DumpQueryExecutor implements QueryExecutor {
 		if(!loaded){
 			throw new RuntimeException("Model is not loaded");
 		}
+		//this.index.begin(ReadWrite.READ) ;
 		Query query = QueryFactory.create(sparql, Syntax.syntaxSPARQL_11);
-		QueryExecution qExec = QueryExecutionFactory.create(query, model);
-		LARQ.setDefaultIndex(qExec.getContext(), index);
+		QueryExecution qExec = QueryExecutionFactory.create(query, this.index);
 		ResultSet result =  qExec.execSelect();
 		return result;
 	}
@@ -101,7 +103,8 @@ public class DumpQueryExecutor implements QueryExecutor {
 	}
 	
 	public void dispose(){
-		model = null; //free the memory used for the model
+		this.index.close();
+		this.index = null; //free the memory used for the model
 	}
 	
 	public synchronized void initialize(FileInputStream in) {
@@ -110,22 +113,19 @@ public class DumpQueryExecutor implements QueryExecutor {
 		}
 		loaded = true;
 		// -- Read and index all literal strings.
-		IndexBuilderString larqBuilder;
-		model = ModelFactory.createDefaultModel();
+		Model model = ModelFactory.createDefaultModel();
 		model.read(in, null,"TTL");
-		if(propertyUri==null){
-			larqBuilder = new IndexBuilderString() ;
-		}else{
-			Property p = model.getProperty(propertyUri);
-			larqBuilder = new IndexBuilderString(p);
-		}
+		
+		Dataset ds1 = DatasetFactory.createMem();
+		EntityDefinition entDef = new EntityDefinition("uri", "text",model.getResource(propertyUri)) ;
 
-		larqBuilder.indexStatements(model.listStatements()) ;
-		// -- Finish indexing
-		larqBuilder.closeWriter() ;
-
-		// -- Create the access index  
-		index = larqBuilder.getIndex() ;
+        // Lucene, in memory.
+        Directory dir =  new RAMDirectory();
+        
+        // Join together into a dataset
+        this.index = TextDatasetFactory.createLucene(ds1, dir, entDef) ;
+        this.index.getDefaultModel().add(model);
+        this.index.commit();
 	}
 	
 	private static final int DEFAULT_MIN_NGRAM = 3;
@@ -133,7 +133,7 @@ public class DumpQueryExecutor implements QueryExecutor {
 
 	@Override
 	public void save(String serviceId, FileOutputStream out) throws IOException {
-		model.write(out, "TTL");
+		this.index.getDefaultModel().write(out, "TTL");
 		out.close();
 	}
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.queryParser.ParseException;
 import org.openrdf.repository.Repository;
 
 
@@ -32,9 +31,9 @@ public interface IVocabularySearcher {
 	public void importAndIndexVocabulary(String name, String uri, String fetchUrl,String projectId,VocabularyImporter importer) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
 	public void importAndIndexVocabulary(String name, String uri, Repository repository, String projectId,VocabularyImporter importer) throws VocabularyImportException, VocabularyIndexException, PrefixExistException, CorruptIndexException, IOException;
 	
-	public List<SearchResultItem> searchClasses(String str, String projectId) throws ParseException,IOException;
+	public List<SearchResultItem> searchClasses(String str, String projectId) throws IOException;
 	
-	public List<SearchResultItem> searchProperties(String str, String projectId) throws ParseException,IOException;
+	public List<SearchResultItem> searchProperties(String str, String projectId) throws IOException;
 	
 	public void deleteTermsOfVocabs(Set<Vocabulary> toRemove,String projectId) throws CorruptIndexException, IOException;
 	public void deleteTermsOfVocab(String vocabName, String projectId) throws CorruptIndexException, IOException;

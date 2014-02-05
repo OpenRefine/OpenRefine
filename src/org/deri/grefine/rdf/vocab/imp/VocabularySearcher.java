@@ -10,18 +10,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -58,17 +58,18 @@ public class VocabularySearcher implements IVocabularySearcher {
 
 	private IndexWriter writer;
 	private IndexSearcher searcher;
+	private IndexReader r;
 
 	private Directory _directory;
 	
 	public VocabularySearcher(File dir) throws IOException {
                 _directory = new SimpleFSDirectory(new File(dir, "luceneIndex"));
-                Analyzer a = new SimpleAnalyzer(Version.LUCENE_36);
-                IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36,a);                
+                Analyzer a = new SimpleAnalyzer(Version.LUCENE_43);
+                IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_43,a);                
 
                 writer = new IndexWriter(_directory,conf);
                 writer.commit();
-                IndexReader r = IndexReader.open(_directory);
+                r = DirectoryReader.open(_directory);
                 searcher = new IndexSearcher(r);
         }
 
@@ -98,7 +99,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 
 	@Override
 	public List<SearchResultItem> searchClasses(String str, String projectId)
-			throws ParseException, IOException {
+			throws IOException {
 		Query query = prepareQuery(str, CLASS_TYPE, projectId);
 		TopDocs docs = searcher.search(query, getMaxDoc());		
 		return prepareSearchResults(docs);
@@ -106,7 +107,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 
 	@Override
 	public List<SearchResultItem> searchProperties(String str, String projectId)
-			throws ParseException, IOException {
+			throws IOException {
 		Query query = prepareQuery(str, PROPERTY_TYPE, projectId);
 		TopDocs docs = searcher.search(query, getMaxDoc());
 		return prepareSearchResults(docs);
@@ -136,8 +137,9 @@ public class VocabularySearcher implements IVocabularySearcher {
 		writer.commit();
 		// TODO this shouldn't be required but it is not working without it...
 		// check
-		searcher.close();
-		searcher = new IndexSearcher(IndexReader.open(_directory));
+		r.close();
+		r = IndexReader.open(_directory);
+		searcher = new IndexSearcher(r);
 	}
 	
 	@Override
@@ -220,7 +222,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 	}
 
 	private Query prepareQuery(String s, String type, String projectId)
-			throws ParseException, IOException {
+			throws IOException {
 		BooleanQuery q1 = new BooleanQuery();
 		// q1.add(new TermQuery(new
 		// Term("projectId",GLOBAL_VOCABULARY_PLACE_HOLDER)), Occur.SHOULD);
@@ -357,7 +359,7 @@ public class VocabularySearcher implements IVocabularySearcher {
 			Document newdoc = new Document();
 			Iterator fieldsIter = doc.getFields().iterator();
 			while(fieldsIter.hasNext()){
-				newdoc.add((Fieldable)fieldsIter.next());
+				newdoc.add((IndexableField)fieldsIter.next());
 			}
 			newdoc.removeField("projectId");
 			newdoc.add(new Field("projectId",projectId,Field.Store.YES,Field.Index.NOT_ANALYZED));
@@ -407,6 +409,6 @@ public class VocabularySearcher implements IVocabularySearcher {
 	}
 	
 	private int getMaxDoc() throws IOException {
-		return searcher.maxDoc() > 0 ? searcher.maxDoc() : 100000;
+		return r.maxDoc() > 0 ? r.maxDoc() : 100000;
 	}
 }

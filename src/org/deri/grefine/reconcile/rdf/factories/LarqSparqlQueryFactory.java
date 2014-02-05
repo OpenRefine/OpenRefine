@@ -3,7 +3,7 @@ package org.deri.grefine.reconcile.rdf.factories;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.deri.grefine.reconcile.model.ReconciliationRequest;
 import org.deri.grefine.reconcile.model.SearchResultItem;
 import org.deri.grefine.reconcile.model.ReconciliationRequestContext.PropertyContext;
@@ -70,6 +70,7 @@ public class LarqSparqlQueryFactory extends AbstractSparqlQueryFactory{
 		//the answers are ordered according to their scores descendingly. thus we need to pick only the *first* request.getLimit() *unique* entity answer
 		int calculatedLimit = Math.max(searchPropertyUris.size(),1) * limit;
 		return queryTemplate.replace("[[QUERY]]", escapedQuery)
+						.replace(labelPlaceHolder, labelFilter)
 						.replace(labelPlaceHolder, labelFilter)
 						.replace("[[TYPE_FILTER]]", typesFilter)
 						.replace("[[CONTEXT_FILTER]]", contextFilter)
@@ -233,13 +234,13 @@ public class LarqSparqlQueryFactory extends AbstractSparqlQueryFactory{
 				"ORDER BY DESC(?score1) LIMIT [[LIMIT]]";
 	private static final String SINGLE_LABEL_PROPERTY_RECONCILE_QUERY_TEMPLATE =
 		"PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> " + 
-		"PREFIX pf:<http://jena.hpl.hp.com/ARQ/property#> " +
+		"PREFIX text:<http://jena.apache.org/text#> " +
 		"PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "+  
-		"SELECT ?entity ?label (MAX(?score) AS ?score1) " +
-		"WHERE" +
-		"{" +
-			"?entity <[[LABEL_PROPERTY_URI]]> ?label." +
-			"(?label ?score) pf:textMatch '[[QUERY]]'. " +
+		"SELECT ?entity ?label " +
+		"WHERE " +
+		"{ " +
+			"?entity text:query (<[[LABEL_PROPERTY_URI]]> '[[QUERY]]' [[LIMIT]]) . " +
+			"?entity <[[LABEL_PROPERTY_URI]]> ?label ." +
 			"[[TYPE_FILTER]]" +
 			"[[CONTEXT_FILTER]]" +
 		"}GROUP BY ?entity ?label " +
