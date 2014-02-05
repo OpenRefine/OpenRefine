@@ -110,7 +110,7 @@ public class ImportingManager {
     static private ScheduledExecutorService service;
 
     final static private long TIMER_PERIOD = 10; // 10 minutes
-    final static private long STALE_PERIOD = 60; // 60 minutes
+    final static private long STALE_PERIOD = 60 * 60 * 1000; // 60 minutes in milliseconds
     
     static private class CleaningTimerTask implements Runnable {
         @Override
