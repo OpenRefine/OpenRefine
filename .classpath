@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="main/src"/>
-	<classpathentry kind="src" path="server/src"/>
-	<classpathentry kind="src" path="extensions/freebase/src"/>
-	<classpathentry kind="src" path="extensions/gdata/src"/>
-	<classpathentry kind="src" path="extensions/jython/src"/>
-	<classpathentry kind="src" path="extensions/pc-axis/src"/>
-	<classpathentry kind="src" path="extensions/sample/src"/>
-	<classpathentry kind="src" path="main/tests/server/src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>

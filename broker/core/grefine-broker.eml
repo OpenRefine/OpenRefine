@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component jdk="JavaSE-1.6">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="servlet-api-2.5.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../server/lib-src/servlet-api-2.5-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/server/lib-src/servlet-api-2.5-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/server/lib/servlet-api-2.5.jar!/"/>
+	</lib>
+	<lib name="butterfly-trunk.jar" scope="COMPILE">
+		<srcroot url="file:///grefine/webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
+	</lib>
+	<lib name="json-20100208.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/webapp/WEB-INF/lib-src/json-20100208-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/json-20100208-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/json-20100208.jar!/"/>
+	</lib>
+	<lib name="bdb-je-4.0.103.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/module/MOD-INF/lib-src/bdb-je-4.0.103-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/broker/core/module/MOD-INF/lib-src/bdb-je-4.0.103-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/broker/core/module/MOD-INF/lib/bdb-je-4.0.103.jar!/"/>
+	</lib>
+	<lib name="httpclient-4.0.1.jar" scope="COMPILE">
+		<srcroot url="file:///grefine/webapp/WEB-INF/lib-src/httpclient-4.0.1-sources.jar"/>
+	</lib>
+	<lib name="httpcore-4.0.1.jar" scope="COMPILE">
+		<srcroot url="file:///grefine/webapp/WEB-INF/lib-src/httpcore-4.0.1-sources.jar"/>
+	</lib>
+	<lib name="slf4j-api-1.5.6.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/webapp/WEB-INF/lib-src/slf4j-api-1.5.6-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/slf4j-api-1.5.6-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar!/"/>
+	</lib>
+	<lib name="mockito-all-1.8.4.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/tests/server/lib-src/mockito-all-1.8.4-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/tests/server/lib-src/mockito-all-1.8.4-sources.jar!/"/>
+	</lib>
+	<lib name="testng-5.12.1.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/tests/server/lib-src/testng-5.12.1-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/tests/server/lib-src/testng-5.12.1-sources.jar!/"/>
+	</lib>
+	<lib name="log4j-1.2.15.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/webapp/WEB-INF/lib-src/log4j-1.2.15-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/log4j-1.2.15-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/log4j-1.2.15.jar!/"/>
+	</lib>
+	<lib name="slf4j-log4j12-1.5.6.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/webapp/WEB-INF/lib-src/slf4j-log4j12-1.5.6-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/slf4j-log4j12-1.5.6-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar!/"/>
+	</lib>
+	<lib name="rhino-1.7R2.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/rhino-1.7R2.jar!/"/>
+	</lib>
+	<lib name="lessen-trunk-r8.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/lessen-trunk-r8.jar!/"/>
+	</lib>
+	<lib name="commons-collections-3.2.1.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar!/"/>
+	</lib>
+	<lib name="jcl-over-slf4j-1.5.6.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/webapp/WEB-INF/lib-src/jcl-over-slf4j-1.5.6-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/jcl-over-slf4j-1.5.6-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar!/"/>
+	</lib>
+	<lib name="velocity-1.5.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/velocity-1.5.jar!/"/>
+	</lib>
+</component>

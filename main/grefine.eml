@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component jdk="1.7" jdk_type="JavaSDK">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="butterfly-trunk.jar" scope="COMPILE">
+		<srcroot url="file://webapp/WEB-INF/lib-src/butterfly-trunk-sources.jar"/>
+	</lib>
+	<lib name="commons-codec-1.5.jar" scope="COMPILE">
+		<srcroot url="file://webapp/WEB-INF/lib-src/commons-codec-1.4-sources.jar"/>
+	</lib>
+	<lib name="commons-lang-2.5.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/commons-lang-2.5.jar!/"/>
+	</lib>
+	<lib name="commons-fileupload-1.2.1.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/commons-fileupload-1.2.1-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/commons-fileupload-1.2.1-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar!/"/>
+	</lib>
+	<lib name="json-20100208.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/json-20100208-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/json-20100208-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/json-20100208.jar!/"/>
+	</lib>
+	<lib name="icu4j-4.2.1.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/icu4j-4.2.1-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/icu4j-4.2.1-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/icu4j-4.2.1.jar!/"/>
+	</lib>
+	<lib name="arithcode-1.1.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/arithcode-1.1-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/arithcode-1.1-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/arithcode-1.1.jar!/"/>
+	</lib>
+	<lib name="secondstring-20100303.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/secondstring-20100303-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/secondstring-20100303-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/secondstring-20100303.jar!/"/>
+	</lib>
+	<lib name="ant-tools-1.8.0.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/ant-tools-1.8.0-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/ant-tools-1.8.0-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar!/"/>
+	</lib>
+	<lib name="vicino-1.1.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/vicino-1.1-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/vicino-1.1-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/vicino-1.1.jar!/"/>
+	</lib>
+	<lib name="opencsv-2.2.jar" scope="COMPILE">
+		<srcroot url="file://tests/java/lib-src/opencsv-2.2-sources.jar"/>
+	</lib>
+	<lib name="jcl-over-slf4j-1.5.6.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/jcl-over-slf4j-1.5.6-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/jcl-over-slf4j-1.5.6-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar!/"/>
+	</lib>
+	<lib name="slf4j-api-1.5.6.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar!/"/>
+	</lib>
+	<lib name="slf4j-log4j12-1.5.6.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/slf4j-log4j12-1.5.6-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/slf4j-log4j12-1.5.6-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar!/"/>
+	</lib>
+	<lib name="log4j-1.2.15.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/webapp/WEB-INF/lib-src/log4j-1.2.15-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/log4j-1.2.15-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/log4j-1.2.15.jar!/"/>
+	</lib>
+	<lib name="poi-3.7-20101029.jar" scope="COMPILE">
+		<srcroot url="file://webapp/WEB-INF/lib-src/poi-3.6-sources.jar"/>
+	</lib>
+	<lib name="dom4j-1.6.1.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/dom4j-1.6.1.jar!/"/>
+	</lib>
+	<lib name="xmlbeans-2.3.0.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/xmlbeans-2.3.0.jar!/"/>
+	</lib>
+	<lib name="marc4j-2.4.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/marc4j-2.4.jar!/"/>
+	</lib>
+	<lib name="jrdf-0.5.6.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/jrdf-0.5.6.jar!/"/>
+	</lib>
+	<lib name="commons-collections-3.2.1.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar!/"/>
+	</lib>
+	<lib name="commons-io-1.4.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/commons-io-1.4.jar!/"/>
+	</lib>
+	<lib name="rhino-1.7R2.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/rhino-1.7R2.jar!/"/>
+	</lib>
+	<lib name="velocity-1.5.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/velocity-1.5.jar!/"/>
+	</lib>
+	<lib name="lessen-trunk-r8.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/lessen-trunk-r8.jar!/"/>
+	</lib>
+	<lib name="mockito-all-1.8.4.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/tests/server/lib-src/mockito-all-1.8.4-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/tests/server/lib-src/mockito-all-1.8.4-sources.jar!/"/>
+	</lib>
+	<lib name="testng-5.12.1.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/tests/server/lib-src/testng-5.12.1-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/tests/server/lib-src/testng-5.12.1-sources.jar!/"/>
+	</lib>
+	<lib name="servlet-api-2.5.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../server/lib-src/servlet-api-2.5-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/server/lib-src/servlet-api-2.5-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/server/lib/servlet-api-2.5.jar!/"/>
+	</lib>
+	<lib name="httpclient-4.0.1.jar" scope="COMPILE">
+		<srcroot url="file://webapp/WEB-INF/lib-src/httpclient-4.0.1-sources.jar"/>
+	</lib>
+	<lib name="httpcore-4.0.1.jar" scope="COMPILE">
+		<srcroot url="file://webapp/WEB-INF/lib-src/httpcore-4.0.1-sources.jar"/>
+	</lib>
+	<lib name="jsoup-1.4.1.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/jsoup-1.4.1.jar!/"/>
+	</lib>
+</component>
