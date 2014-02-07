@@ -37,7 +37,7 @@ final class FusionTableSerializer implements TabularSerializer {
     @Override
     public void endFile() {
         if (sbBatch != null) {
-            sendBatch();
+            sendBatch(rows % BATCH_SIZE);
         }
     }
 
@@ -61,14 +61,14 @@ final class FusionTableSerializer implements TabularSerializer {
             formatCsv(cells, sbBatch);            
             rows++;
             if (rows % BATCH_SIZE == 0) {
-                if (!sendBatch()) {
+                if (!sendBatch(BATCH_SIZE)) {
                     return;
                 }
             }
         }
     }
     
-    private boolean sendBatch() {
+    private boolean sendBatch(int batchSize) {
         try {
             // FIXME: text/csv doesn't work even though that's what the content is
           AbstractInputStreamContent content = ByteArrayContent.fromString("application/octet-stream", sbBatch.toString());
@@ -77,8 +77,8 @@ final class FusionTableSerializer implements TabularSerializer {
 //                    // TODO: we really want to do GZIP compression here 
 //                            new ByteArrayInputStream(sbBatch.toString().getBytes("UTF-8")));
             Long count = FusionTableHandler.insertRows(service, tableId, content);
-            if (count != BATCH_SIZE) {
-                exceptions.add(new IOException("only imported %d of %d rows"));
+            if (count != null && count.intValue() != batchSize) {
+                exceptions.add(new IOException("only imported " + count + " of " + batchSize + " rows"));
             }
         } catch (IOException e) {
             exceptions.add(e);
@@ -106,7 +106,7 @@ final class FusionTableSerializer implements TabularSerializer {
             }
             sb.append("\"");
             if (cellData != null && cellData.text != null) {
-                sb.append(cellData.text.replaceAll("\"", "\\\\\""));
+                sb.append(cellData.text.replaceAll("\"", "\"\""));
             }
             sb.append("\"");
         }
