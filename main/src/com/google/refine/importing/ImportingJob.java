@@ -65,8 +65,6 @@ public class ImportingJob implements Jsonizable {
     public boolean updating;
     public boolean canceled;
     
-    final private Object lock = new Object();
-    
     public ImportingJob(long id, File dir) {
         this.id = id;
         this.dir = dir;
@@ -79,14 +77,27 @@ public class ImportingJob implements Jsonizable {
         dir.mkdirs();
     }
     
-    
-    public JSONObject getOrCreateDefaultConfig() {
-        return config;
+    public String getState() {
+        String state; 
+        
+        synchronized(config) {
+            state = JSONUtilities.getString(config, "state", null);
+        }
+        
+        return state;
     }
     
     public void setState(String state) {
         synchronized(config) {
             JSONUtilities.safePut(config, "state", state);        
+        }
+    }
+    
+    public void setError(String error, String details) {
+        synchronized(config) {
+            JSONUtilities.safePut(config, "error", error);
+            JSONUtilities.safePut(config, "errorDetails", details);
+            setState("error");
         }
     }
 
@@ -107,50 +118,101 @@ public class ImportingJob implements Jsonizable {
     public void setProgress(int percent, String message) {
         synchronized (config) {
             JSONObject progress = JSONUtilities.getObject(config, "progress");
+            
             if (progress == null) {
                 progress = new JSONObject();
                 JSONUtilities.safePut(config, "progress", progress);
             }
-            JSONUtilities.safePut(progress, "message", message);
+            
+            if (message != null) {
+                JSONUtilities.safePut(progress, "message", message);
+            }
+            
             JSONUtilities.safePut(progress, "percent", percent);
+        }
+    }
+    
+    public void setProgressAndMemUsage(int percent, String message) {
+        synchronized (config) {
+            setProgress(percent, message);
+            
+            JSONObject progress = JSONUtilities.getObject(config, "progress");
+            
             JSONUtilities.safePut(progress, "memory", Runtime.getRuntime().totalMemory() / 1000000);
             JSONUtilities.safePut(progress, "maxmemory", Runtime.getRuntime().maxMemory() / 1000000);
         }
     }
+    
+    public void removeProgress() {
+        synchronized(config) {
+            config.remove("progress");
+        }
+    }
+    
+    public void setHasData(boolean hasData) {
+        synchronized(config) {
+            JSONUtilities.safePut(config, "hasData", hasData);
+        }
+    }
 
-    public void setFileSelection(JSONArray fileSelectionArray) {
+    public void setFileSelection(List<Integer> fileSelectionArray) {
         synchronized (config) {
+            // Thread-safe as the elements in the provided list will be added to a new JSONArray in JSONObject.put(String, Collection).
             JSONUtilities.safePut(config, "fileSelection", fileSelectionArray);
         }
     }
     
-    public void setRankedFormats(JSONArray rankedFormats) {
+    public List<String> getRankedFormats() {
+        List<String> list = new ArrayList<String>();
+        
+        synchronized(config) {
+            JSONUtilities.getStringList(config, "rankedFormats", list);
+        }
+        
+        return list;
+    }
+    
+    public void setRankedFormats(List<String> rankedFormats) {
         synchronized (config) {
+            // Thread-safe as the elements in the provided list will be added to a new JSONArray in JSONObject.put(String, Collection).
             JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
         }
     }
-
-
+    
     public JSONObject getRetrievalRecord() {
+        JSONObject retrievalRecordClone = null;
+        
         synchronized(config) {
-            return JSONUtilities.getObject(config,"retrievalRecord");
+            JSONObject retrievalRecord = JSONUtilities.getObject(config, "retrievalRecord");
+            retrievalRecordClone = JSONUtilities.cloneObject(retrievalRecord);
         }
+        
+        return retrievalRecordClone;
     }
     
+    public void setRetrievalRecord(JSONObject retrievalRecord) {
+        JSONObject retrievalRecordClone = JSONUtilities.cloneObject(retrievalRecord);
+        
+        synchronized(config) {
+            JSONUtilities.safePut(config, "retrievalRecord", retrievalRecordClone);
+        }
+    }
     
     public List<JSONObject> getSelectedFileRecords() {
         List<JSONObject> results = new ArrayList<JSONObject>();
         
-        JSONObject retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
-        if (retrievalRecord != null) {
-            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
-            if (fileRecordArray != null) {
-                JSONArray fileSelectionArray = JSONUtilities.getArray(config,"fileSelection");
-                if (fileSelectionArray != null) {
-                    for (int i = 0; i < fileSelectionArray.length(); i++) {
-                        int index = JSONUtilities.getIntElement(fileSelectionArray, i, -1);
-                        if (index >= 0 && index < fileRecordArray.length()) {
-                            results.add(JSONUtilities.getObjectElement(fileRecordArray, index));
+        synchronized(config) {
+            JSONObject retrievalRecord = getRetrievalRecord();
+            if (retrievalRecord != null) {
+                JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
+                if (fileRecordArray != null) {
+                    JSONArray fileSelectionArray = JSONUtilities.getArray(config,"fileSelection");
+                    if (fileSelectionArray != null) {
+                        for (int i = 0; i < fileSelectionArray.length(); i++) {
+                            int index = JSONUtilities.getIntElement(fileSelectionArray, i, -1);
+                            if (index >= 0 && index < fileRecordArray.length()) {
+                                results.add(JSONUtilities.getObjectElement(fileRecordArray, index));
+                            }
                         }
                     }
                 }
@@ -199,12 +261,15 @@ public class ImportingJob implements Jsonizable {
     @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
+
+        writer.object();
+        writer.key("config");
         
-        synchronized(lock) {
-            writer.object();
-            writer.key("config"); writer.value(config);
-            writer.endObject();
+        synchronized(config) {
+            writer.value(config);
         }
+        
+        writer.endObject();
     }
     
 }

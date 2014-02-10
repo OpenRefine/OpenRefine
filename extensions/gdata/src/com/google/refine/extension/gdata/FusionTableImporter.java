@@ -77,7 +77,7 @@ public class FusionTableImporter {
     }
     
     static void setProgress(ImportingJob job, String fileSource, int percent) {
-        job.setProgress(percent, "Reading " + fileSource);
+        job.setProgressAndMemUsage(percent, "Reading " + fileSource);
     }
     
     

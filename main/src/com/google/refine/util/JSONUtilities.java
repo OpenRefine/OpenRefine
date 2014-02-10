@@ -330,6 +330,17 @@ public class JSONUtilities {
         return a2;
     }
     
+    static public List<Integer> toIntList(JSONArray a) throws JSONException {
+        int l = a.length();
+        
+        List<Integer> list = new ArrayList<Integer>();
+        for (int i = 0; i < l; i++) {
+            list.add(a.getInt(i));
+        }
+        
+        return list;
+    }
+    
     static public List<String> toStringList(JSONArray a) throws JSONException {
         int l = a.length();
         
@@ -339,5 +350,19 @@ public class JSONUtilities {
         }
         
         return list;
+    }
+    
+    static public JSONObject cloneObject(JSONObject obj) {
+        JSONObject objClone = null;
+        
+        try {
+            objClone = new JSONObject(obj.toString());
+        }
+        catch (JSONException ex) {
+            // This shouldn't happen unless JSONObject.toString() returns incorrect syntax.
+            throw new RuntimeException(ex);
+        }
+        
+        return objClone;
     }
 }
