@@ -38,6 +38,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Calendar;
@@ -53,12 +54,14 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.CsvExporter;
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.ParsingUtilities;
 
 public class CsvExporterTests extends RefineTest {
@@ -79,7 +82,10 @@ public class CsvExporterTests extends RefineTest {
     CsvExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() throws IOException {
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        FileProjectManager.initialize(dir);
+        
         SUT = new CsvExporter();
         writer = new StringWriter();
         project = new Project();

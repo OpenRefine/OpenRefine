@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.tools.tar.TarOutputStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -58,6 +59,8 @@ import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
+import com.google.refine.history.HistoryEntry;
+import com.google.refine.io.ProjectDataStore;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
@@ -81,6 +84,7 @@ public class Project {
     
     transient public ProcessManager processManager = new ProcessManager();
     transient private Date _lastSave = new Date();
+    transient private ProjectDataStore _dataStore;
 
     final static Logger logger = LoggerFactory.getLogger("project");
 
@@ -91,11 +95,13 @@ public class Project {
     public Project() {
         id = generateID();
         history = new History(this);
+        _dataStore = ProjectManager.singleton.getProjectDataStore(this);
     }
 
-    protected Project(long id) {
+    public Project(long id) {
         this.id = id;
         this.history = new History(this);
+        _dataStore = ProjectManager.singleton.getProjectDataStore(this);
     }
     
     /**
@@ -125,6 +131,10 @@ public class Project {
 
     public ProjectMetadata getMetadata() {
         return ProjectManager.singleton.getProjectMetadata(id);
+    }
+    
+    public void save() throws IOException {
+        _dataStore.save();
     }
 
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
@@ -156,7 +166,7 @@ public class Project {
         }
     }
 
-    protected void saveToWriter(Writer writer, Properties options) throws IOException {
+    private void saveToWriter(Writer writer, Properties options) throws IOException {
         writer.write(RefineServlet.VERSION); writer.write('\n');
         
         writer.write("columnModel=\n"); columnModel.save(writer, options);
@@ -183,21 +193,20 @@ public class Project {
         }
     }
     
-    static public Project loadFromInputStream(InputStream is, long id, Pool pool) throws Exception {
-        return loadFromReader(new LineNumberReader(new InputStreamReader(is, "UTF-8")), id, pool);
+    public boolean load() {
+        return _dataStore.load();
     }
     
-    static private Project loadFromReader(
-        LineNumberReader reader,
-        long id,
-        Pool pool
-    ) throws Exception {
+    public void loadFromInputStream(InputStream is, Pool pool) throws Exception {
+        loadFromReader(new LineNumberReader(new InputStreamReader(is, "UTF-8")), pool);
+    }
+    
+    private void loadFromReader(LineNumberReader reader, Pool pool) throws Exception {
         long start = System.currentTimeMillis();
         
         // version of Refine which wrote the file
         /* String version = */ reader.readLine();
         
-        Project project = new Project(id);
         int maxCellCount = 0;
         
         String line;
@@ -212,9 +221,9 @@ public class Project {
             }
             
             if ("columnModel".equals(field)) {
-                project.columnModel.load(reader);
+                columnModel.load(reader);
             } else if ("history".equals(field)) {
-                project.history.load(project, reader);
+                history.load(this, reader);
             } else if ("rowCount".equals(field)) {
                 int count = Integer.parseInt(value);
 
@@ -222,7 +231,7 @@ public class Project {
                     line = reader.readLine();
                     if (line != null) {
                         Row row = Row.load(line, pool);
-                        project.rows.add(row);
+                        rows.add(row);
                         maxCellCount = Math.max(maxCellCount, row.cells.size());
                     }
                 }
@@ -235,9 +244,9 @@ public class Project {
                         Method loadMethod = klass.getMethod("load", Project.class, JSONObject.class);
                         JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(value);
                     
-                        OverlayModel overlayModel = (OverlayModel) loadMethod.invoke(null, project, obj);
+                        OverlayModel overlayModel = (OverlayModel) loadMethod.invoke(null, this, obj);
                         
-                        project.overlayModels.put(modelName, overlayModel);
+                        overlayModels.put(modelName, overlayModel);
                     } catch (Exception e) {
                         logger.error("Failed to load overlay model " + modelName);
                     }
@@ -245,15 +254,49 @@ public class Project {
             }
         }
 
-        project.columnModel.setMaxCellIndex(maxCellCount - 1);
+        columnModel.setMaxCellIndex(maxCellCount - 1);
 
         logger.info(
-            "Loaded project {} from disk in {} sec(s)",id,Long.toString((System.currentTimeMillis() - start) / 1000)
+            "Loaded project {} from disk in {} sec(s)", id, Long.toString((System.currentTimeMillis() - start) / 1000)
         );
 
-        project.update();
+        update();
+    }
+    
+    public void delete() {
+        _dataStore.delete();
+    }
+    
+    public void doExport(TarOutputStream tos) throws IOException {
+        _dataStore.exportProject(tos);
+    }
+    
+    public void doImport(InputStream inputStream, boolean gziped) throws IOException {
+        _dataStore.importProject(inputStream, gziped);
+    }
+    
+    public void deleteChange(long historyEntryId){
+        _dataStore.deleteChange(historyEntryId);
+    }
+    
+    public void loadChange(HistoryEntry historyEntry) {
+        _dataStore.loadChange(historyEntry);
+    }
+    
+    public void saveChange(HistoryEntry historyEntry) throws IOException {
+        _dataStore.saveChange(historyEntry);
+    }
+    
+    public ProjectMetadata loadMetadata() {
+        return _dataStore.loadMetadata();
+    }
+    
+    public void saveMetadata(ProjectMetadata metadata) throws JSONException, IOException {
+        _dataStore.saveMetadata(metadata);
+    }
 
-        return project;
+    public Project.ProjectInfo getInfo() {
+        return _dataStore.getProjectInfo();
     }
 
     public void update() {
@@ -261,10 +304,21 @@ public class Project {
         recordModel.update(this);
     }
 
-
     //wrapper of processManager variable to allow unit testing
     //TODO make the processManager variable private, and force all calls through this method
     public ProcessManager getProcessManager() {
         return this.processManager;
+    }
+    
+    public static class ProjectInfo {
+        public final long created;
+        public final long modified;
+        public final String location;
+        
+        public ProjectInfo(long created, long modified, String location) {
+            this.created = created;
+            this.modified = modified;
+            this.location = location;
+        }
     }
 }

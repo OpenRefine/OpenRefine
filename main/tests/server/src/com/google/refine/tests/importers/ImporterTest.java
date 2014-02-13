@@ -1,5 +1,6 @@
 package com.google.refine.tests.importers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,9 +19,11 @@ import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importers.tree.XmlImportUtilities;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 abstract class ImporterTest extends RefineTest {
     //mock dependencies
@@ -31,9 +34,12 @@ abstract class ImporterTest extends RefineTest {
     
     protected JSONObject options;
     
-    public void setUp(){
+    public void setUp() throws IOException {
         //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
 
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        FileProjectManager.initialize(dir);
+        
         servlet = new RefineServletStub();
         ImportingManager.initialize(servlet);
         project = new Project();

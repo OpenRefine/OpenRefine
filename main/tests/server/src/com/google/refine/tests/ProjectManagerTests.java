@@ -113,7 +113,7 @@ public class ProjectManagerTests extends RefineTest {
         //assert and verify
         AssertProjectRegistered();
         try {
-            verify(SUT, times(1)).saveMetadata(metadata, project.id);
+            verify(SUT, times(1)).saveMetadata(metadata, project);
         } catch (Exception e) {
             Assert.fail();
         }

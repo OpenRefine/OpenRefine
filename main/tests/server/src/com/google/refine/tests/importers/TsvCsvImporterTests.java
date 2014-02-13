@@ -36,6 +36,7 @@ package com.google.refine.tests.importers;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import org.json.JSONException;
@@ -65,7 +66,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         super.setUp();
         SUT = new SeparatorBasedImporter();
     }

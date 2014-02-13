@@ -71,9 +71,13 @@ public class ImportProjectCommand extends Command {
             long projectID = Project.generateID();
             logger.info("Importing existing project using new ID {}", projectID);
 
-            internalImport(request, options, projectID);
-
-            ProjectManager.singleton.loadProjectMetadata(projectID);
+            Project project = new Project(projectID);
+            
+            internalImport(request, options, project);
+            
+            ProjectManager.singleton.loadProjectMetadata(project);
+            
+            project.dispose();
 
             ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(projectID);
             if (pm != null) {
@@ -98,7 +102,7 @@ public class ImportProjectCommand extends Command {
     protected void internalImport(
         HttpServletRequest    request,
         Properties            options,
-        long                  projectID
+        Project               project
     ) throws Exception {
 
         String url = null;
@@ -119,7 +123,7 @@ public class ImportProjectCommand extends Command {
             } else {
                 String fileName = item.getName().toLowerCase();
                 try {
-                    ProjectManager.singleton.importProject(projectID, stream, !fileName.endsWith(".tar"));
+                    ProjectManager.singleton.importProject(project, stream, !fileName.endsWith(".tar"));
                 } finally {
                     stream.close();
                 }
@@ -127,14 +131,14 @@ public class ImportProjectCommand extends Command {
         }
 
         if (url != null && url.length() > 0) {
-            internalImportURL(request, options, projectID, url);
+            internalImportURL(request, options, project, url);
         }
     }
 
     protected void internalImportURL(
         HttpServletRequest    request,
         Properties            options,
-        long                  projectID,
+        Project               project,
         String                urlString
     ) throws Exception {
         URL url = new URL(urlString);
@@ -156,7 +160,7 @@ public class ImportProjectCommand extends Command {
         }
 
         try {
-            ProjectManager.singleton.importProject(projectID, inputStream, !urlString.endsWith(".tar"));
+            ProjectManager.singleton.importProject(project, inputStream, !urlString.endsWith(".tar"));
         } finally {
             inputStream.close();
         }

@@ -36,10 +36,41 @@ package com.google.refine.history;
 import java.io.Writer;
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
 
-public interface HistoryEntryManager {
-    public void loadChange(HistoryEntry historyEntry);
-    public void saveChange(HistoryEntry historyEntry) throws Exception;
-    public void save(HistoryEntry historyEntry, Writer writer, Properties options);
-    public void delete(HistoryEntry historyEntry);
+import com.google.refine.ProjectManager;
+import com.google.refine.model.Project;
+
+
+public class HistoryEntryManager {
+    public void delete(HistoryEntry historyEntry) {
+        Project project = ProjectManager.singleton.getProject(historyEntry.projectID);
+        
+        if (project != null)
+            project.deleteChange(historyEntry.id);
+    }
+
+    public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        try {
+            historyEntry.write(jsonWriter, options);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadChange(HistoryEntry historyEntry) {
+        Project project = ProjectManager.singleton.getProject(historyEntry.projectID);
+        
+        if (project != null)
+            project.loadChange(historyEntry);
+    }
+
+    public void saveChange(HistoryEntry historyEntry) throws Exception {
+        Project project = ProjectManager.singleton.getProject(historyEntry.projectID);
+        
+        if (project != null)
+            project.saveChange(historyEntry);
+    }
 }

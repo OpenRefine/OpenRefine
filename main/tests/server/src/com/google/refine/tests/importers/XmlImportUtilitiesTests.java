@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.tests.importers;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -56,9 +57,11 @@ import com.google.refine.importers.tree.ImportColumnGroup;
 import com.google.refine.importers.tree.ImportRecord;
 import com.google.refine.importers.tree.TreeReader;
 import com.google.refine.importers.tree.TreeReaderException;
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class XmlImportUtilitiesTests extends RefineTest {
@@ -80,7 +83,10 @@ public class XmlImportUtilitiesTests extends RefineTest {
     XmlImportUtilitiesStub SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() throws IOException {
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        FileProjectManager.initialize(dir);
+        
         SUT = new XmlImportUtilitiesStub();
         project = new Project();
         columnGroup = new ImportColumnGroup();

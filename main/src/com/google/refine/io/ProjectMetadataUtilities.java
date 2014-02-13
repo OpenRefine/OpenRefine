@@ -33,20 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.io;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,102 +46,29 @@ import com.google.refine.model.Project;
 
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
-
-    public static void save(ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
-        File tempFile = new File(projectDir, "metadata.temp.json");
-        saveToFile(projectMeta, tempFile);
-
-        File file = new File(projectDir, "metadata.json");
-        File oldFile = new File(projectDir, "metadata.old.json");
-
-        if (oldFile.exists()) {
-            oldFile.delete();
-        }
-        
-        if (file.exists()) {
-            file.renameTo(oldFile);
-        }
-
-        tempFile.renameTo(file);
-    }
-
-    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
-        try {
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            projectMeta.write(jsonWriter);
-        } finally {
-            writer.close();
-        }
-    }
-
-    static public ProjectMetadata load(File projectDir) {
-        try {
-            return loadFromFile(new File(projectDir, "metadata.json"));
-        } catch (Exception e) {
-        }
-
-        try {
-            return loadFromFile(new File(projectDir, "metadata.temp.json"));
-        } catch (Exception e) {
-        }
-
-        try {
-            return loadFromFile(new File(projectDir, "metadata.old.json"));
-        } catch (Exception e) {
-        }
-
-        return null;
-    }
     
     /**
      * Reconstruct the project metadata on a best efforts basis.  The name is
      * gone, so build something descriptive from the column names.  Recover the
      * creation and modification times based on whatever files are available.
      * 
-     * @param projectDir the project directory
-     * @param id the proejct id
+     * @param project
      * @return
      */
-    static public ProjectMetadata recover(File projectDir, long id) {
+    static public ProjectMetadata recover(Project project) {
         ProjectMetadata pm = null;
-        Project p = ProjectUtilities.load(projectDir, id);
-        if (p != null) {
-            List<String> columnNames = p.columnModel.getColumnNames();
+        
+        if (project.load()) {
+            List<String> columnNames = project.columnModel.getColumnNames();
             String tempName = "<recovered project> - " + columnNames.size() 
-                    + " cols X " + p.rows.size() + " rows - "
+                    + " cols X " + project.rows.size() + " rows - "
                     + StringUtils.join(columnNames,'|');
-            p.dispose();
-            long ctime = System.currentTimeMillis();
-            long mtime = 0;
-
-            File dataFile = new File(projectDir, "data.zip");
-            ctime = mtime = dataFile.lastModified();
-
-            File historyDir = new File(projectDir,"history");
-            File[] files = historyDir.listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    long time = f.lastModified();
-                    ctime = Math.min(ctime, time);
-                    mtime = Math.max(mtime, time);
-                }
-            }
-            pm = new ProjectMetadata(new Date(ctime),new Date(mtime), tempName);
-            logger.error("Partially recovered missing metadata project in directory " + projectDir + " - " + tempName);
+            
+            Project.ProjectInfo projectInfo = project.getInfo();
+            
+            pm = new ProjectMetadata(new Date(projectInfo.created),new Date(projectInfo.modified), tempName);
+            logger.error("Partially recovered missing metadata project in directory " + projectInfo.location + " - " + tempName);
         }
         return pm;
-    }
-
-    static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
-        FileReader reader = new FileReader(metadataFile);
-        try {
-            JSONTokener tokener = new JSONTokener(reader);
-            JSONObject obj = (JSONObject) tokener.nextValue();
-
-            return ProjectMetadata.loadFromJSON(obj);
-        } finally {
-            reader.close();
-        }
     }
 }

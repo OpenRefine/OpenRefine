@@ -34,18 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.io;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Properties;
-import java.util.zip.GZIPInputStream;
 
-import org.apache.tools.tar.TarEntry;
-import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,9 +67,13 @@ public class FileProjectManager extends ProjectManager {
             logger.warn("Overwriting singleton already set: " + singleton);
         }
         logger.info("Using workspace directory: {}", dir.getAbsolutePath());
-        singleton = new FileProjectManager(dir);
-        // This needs our singleton set, thus the unconventional control flow
-        ((FileProjectManager) singleton).recover();
+        
+        FileProjectManager instance = new FileProjectManager(dir); 
+        singleton = instance;
+        
+        // These calls need our singleton set, thus the unconventional control flow
+        instance.load();
+        instance.recover();
     }
 
     protected FileProjectManager(File dir) {
@@ -85,41 +83,32 @@ public class FileProjectManager extends ProjectManager {
             logger.error("Failed to create directory : " + _workspaceDir);
             return;
         }
-
-        load();
     }
 
     public File getWorkspaceDir() {
         return _workspaceDir;
     }
-
-    static public File getProjectDir(File workspaceDir, long projectID) {
-        File dir = new File(workspaceDir, projectID + PROJECT_DIR_SUFFIX);
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        return dir;
-    }
-
-    public File getProjectDir(long projectID) {
-        return getProjectDir(_workspaceDir, projectID);
+    
+    @Override
+    public ProjectDataStore getProjectDataStore(Project project) {
+        return new FileProjectDataStore(project, _workspaceDir, PROJECT_DIR_SUFFIX);
     }
 
     /**
      * Import an external project that has been received as a .tar file, expanded, and
      * copied into our workspace directory.
      *
-     * @param projectID
+     * @param project
      */
     @Override
-    public boolean loadProjectMetadata(long projectID) {
+    public boolean loadProjectMetadata(Project project) {
         synchronized (this) {
-            ProjectMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
+            ProjectMetadata metadata = project.loadMetadata();
             if (metadata == null) {
-                metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
+                metadata = ProjectMetadataUtilities.recover(project);
             }
             if (metadata != null) {
-                _projectsMetadata.put(projectID, metadata);
+                _projectsMetadata.put(project.id, metadata);
                 return true;
             } else {
                 return false;
@@ -128,108 +117,34 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    public void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException {
-        File destDir = this.getProjectDir(projectID);
-        destDir.mkdirs();
-
-        if (gziped) {
-            GZIPInputStream gis = new GZIPInputStream(inputStream);
-            untar(destDir, gis);
-        } else {
-            untar(destDir, inputStream);
-        }
-    }
-
-    protected void untar(File destDir, InputStream inputStream) throws IOException {
-        TarInputStream tin = new TarInputStream(inputStream);
-        TarEntry tarEntry = null;
-
-        while ((tarEntry = tin.getNextEntry()) != null) {
-            File destEntry = new File(destDir, tarEntry.getName());
-            File parent = destEntry.getParentFile();
-
-            if (!parent.exists()) {
-                parent.mkdirs();
-            }
-
-            if (tarEntry.isDirectory()) {
-                destEntry.mkdirs();
-            } else {
-                FileOutputStream fout = new FileOutputStream(destEntry);
-                try {
-                    tin.copyEntryContents(fout);
-                } finally {
-                    fout.close();
-                }
-            }
-        }
-        
-        tin.close();
+    public void importProject(Project project, InputStream inputStream, boolean gziped) throws IOException {
+        project.doImport(inputStream, gziped);
     }
 
     @Override
-    public void exportProject(long projectId, TarOutputStream tos) throws IOException {
-        File dir = this.getProjectDir(projectId);
-        this.tarDir("", dir, tos);
-    }
-
-    protected void tarDir(String relative, File dir, TarOutputStream tos) throws IOException{
-        File[] files = dir.listFiles();
-        for (File file : files) {
-            if (!file.isHidden()) {
-                String path = relative + file.getName();
-
-                if (file.isDirectory()) {
-                    tarDir(path + File.separator, file, tos);
-                } else {
-                    TarEntry entry = new TarEntry(path);
-
-                    entry.setMode(TarEntry.DEFAULT_FILE_MODE);
-                    entry.setSize(file.length());
-                    entry.setModTime(file.lastModified());
-
-                    tos.putNextEntry(entry);
-
-                    copyFile(file, tos);
-
-                    tos.closeEntry();
-                }
-            }
-        }
-    }
-
-    protected void copyFile(File file, OutputStream os) throws IOException {
-        final int buffersize = 4096;
-
-        FileInputStream fis = new FileInputStream(file);
-        try {
-            byte[] buf = new byte[buffersize];
-            int count;
-
-            while((count = fis.read(buf, 0, buffersize)) != -1) {
-                os.write(buf, 0, count);
-            }
-        } finally {
-            fis.close();
-        }
+    public void exportProject(Project project, TarOutputStream tos) throws IOException {
+        project.doExport(tos);
     }
 
     @Override
-    protected void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
-        File projectDir = getProjectDir(projectId);
-        ProjectMetadataUtilities.save(metadata, projectDir);
+    protected void saveMetadata(ProjectMetadata metadata, Project project) throws Exception {
+        project.saveMetadata(metadata);
     }
 
     @Override
     protected void saveProject(Project project) throws IOException{
-        ProjectUtilities.save(project);
+        project.save();
     }
 
     @Override
-    public Project loadProject(long id) {
-        return ProjectUtilities.load(getProjectDir(id), id);
+    protected Project loadProject(long id) {
+        Project project = new Project(id);
+        
+        if (project.load())
+            return project;
+        else
+            return null;
     }
-
 
     /**
      * Save the workspace's data out to file in a safe way: save to a temporary file first
@@ -283,7 +198,12 @@ public class FileProjectManager extends ProjectManager {
                 if (metadata != null) {
                     jsonWriter.value(id);
                     if (metadata.isDirty()) {
-                        ProjectMetadataUtilities.save(metadata, getProjectDir(id));
+                        Project project = _projects.get(id);
+                        
+                        if (project == null)
+                            project = new Project(id);
+                        
+                        project.saveMetadata(metadata);
                         saveWasNeeded = true;
                     }
                 }
@@ -307,26 +227,16 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public void deleteProject(long projectID) {
         synchronized (this) {
-            removeProject(projectID);
-
-            File dir = getProjectDir(projectID);
-            if (dir.exists()) {
-                deleteDir(dir);
-            }
+            Project project = removeProject(projectID);
+            
+            // In case the project has been removed from memory, create a new instance to delete from data store.
+            if (project == null)
+                project = new Project(projectID);
+            
+            project.delete();
         }
 
         saveWorkspace();
-    }
-
-    static protected void deleteDir(File dir) {
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                deleteDir(file);
-            } else {
-                file.delete();
-            }
-        }
-        dir.delete();
     }
 
     protected void load() {
@@ -361,8 +271,8 @@ public class FileProjectManager extends ProjectManager {
                 for (int i = 0; i < count; i++) {
                     long id = a.getLong(i);
 
-                    File projectDir = getProjectDir(id);
-                    ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
+                    Project project = new Project(id);
+                    ProjectMetadata metadata = project.loadMetadata();
 
                     _projectsMetadata.put(id, metadata);
                 }
@@ -410,7 +320,9 @@ public class FileProjectManager extends ProjectManager {
                     }
 
                     if (id > 0 && !_projectsMetadata.containsKey(id)) {
-                        if (loadProjectMetadata(id)) {
+                        Project project = new Project(id);
+                        
+                        if (loadProjectMetadata(project)) {
                             logger.info("Recovered project named " 
                                     + getProjectMetadata(id).getName()
                                     + " in directory " + dirName);
@@ -431,6 +343,6 @@ public class FileProjectManager extends ProjectManager {
 
     @Override
     public HistoryEntryManager getHistoryEntryManager(){
-        return new FileHistoryEntryManager();
+        return new HistoryEntryManager();
     }
 }

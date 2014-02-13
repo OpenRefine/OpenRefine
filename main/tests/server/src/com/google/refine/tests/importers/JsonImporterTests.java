@@ -71,7 +71,7 @@ public class JsonImporterTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() throws IOException {
         super.setUp();
         SUT = new JsonImporter();
     }
