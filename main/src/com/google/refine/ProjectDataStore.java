@@ -1,4 +1,4 @@
-package com.google.refine.io;
+package com.google.refine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,7 +6,6 @@ import java.io.InputStream;
 import org.apache.tools.tar.TarOutputStream;
 import org.json.JSONException;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 
