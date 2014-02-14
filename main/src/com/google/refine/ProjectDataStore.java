@@ -26,5 +26,5 @@ public abstract class ProjectDataStore {
     public abstract void saveChange(HistoryEntry historyEntry) throws IOException;
     public abstract ProjectMetadata loadMetadata();
     public abstract void saveMetadata(ProjectMetadata metadata) throws JSONException, IOException;
-    public abstract Project.ProjectInfo getProjectInfo();
+    public abstract ProjectMetadata recoverMetadata();
 }

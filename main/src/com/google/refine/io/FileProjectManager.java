@@ -106,7 +106,7 @@ public class FileProjectManager extends ProjectManager {
         synchronized (this) {
             ProjectMetadata metadata = project.loadMetadata();
             if (metadata == null) {
-                metadata = ProjectMetadataUtilities.recover(project);
+                metadata = project.recoverMetadata();
             }
             if (metadata != null) {
                 _projectsMetadata.put(project.id, metadata);

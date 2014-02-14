@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
@@ -17,6 +19,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
@@ -487,24 +490,50 @@ public class FileProjectDataStore extends ProjectDataStore {
         }
     }
     
+
+    /**
+     * Reconstruct the project metadata on a best efforts basis.  The name is
+     * gone, so build something descriptive from the column names.  Recover the
+     * creation and modification times based on whatever files are available.
+     * 
+     * @return
+     */
     @Override
-    public Project.ProjectInfo getProjectInfo() {
-        long ctime = System.currentTimeMillis();
-        long mtime = 0;
+    public ProjectMetadata recoverMetadata() {
+        ProjectMetadata pm = null;
+        
+        readLock.lock();
+        
+        try {
+            if (load()) {
+                List<String> columnNames = project.columnModel.getColumnNames();
+                String tempName = "<recovered project> - " + columnNames.size() 
+                        + " cols X " + project.rows.size() + " rows - "
+                        + StringUtils.join(columnNames,'|');
+                
+                long createdTime = System.currentTimeMillis();
+                long lastModifiedTime = 0;
 
-        File dataFile = new File(projectDir, "data.zip");
-        ctime = mtime = dataFile.lastModified();
+                File dataFile = new File(projectDir, "data.zip");
+                createdTime = lastModifiedTime = dataFile.lastModified();
 
-        File historyDir = new File(projectDir,"history");
-        File[] files = historyDir.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                long time = f.lastModified();
-                ctime = Math.min(ctime, time);
-                mtime = Math.max(mtime, time);
+                File historyDir = new File(projectDir,"history");
+                File[] files = historyDir.listFiles();
+                if (files != null) {
+                    for (File f : files) {
+                        long time = f.lastModified();
+                        createdTime = Math.min(createdTime, time);
+                        lastModifiedTime = Math.max(lastModifiedTime, time);
+                    }
+                }
+                
+                pm = new ProjectMetadata(new Date(createdTime),new Date(lastModifiedTime), tempName);
+                logger.error("Partially recovered missing metadata project in directory " + projectDir.getAbsolutePath() + " - " + tempName);
             }
+        } finally {
+            readLock.unlock();
         }
         
-        return new Project.ProjectInfo(ctime, mtime, projectDir.getAbsolutePath());
+        return pm;
     }
 }
