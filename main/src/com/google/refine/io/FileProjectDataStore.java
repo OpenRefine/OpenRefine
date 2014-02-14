@@ -360,12 +360,12 @@ public class FileProjectDataStore extends ProjectDataStore {
     }
     
     public void saveChange(HistoryEntry historyEntry) throws IOException {
-        if (deleted)
-            return;
-        
         writeLock.lock();
         
         try {
+            if (deleted)
+                return;
+            
             File changeFile = getChangeFile(historyEntry.id);
             
             if (!(changeFile.exists())) {
@@ -448,12 +448,12 @@ public class FileProjectDataStore extends ProjectDataStore {
     }
     
     public void saveMetadata(ProjectMetadata metadata) throws JSONException, IOException {
-        if (deleted)
-            return;
-        
         writeLock.lock();
         
         try {
+            if (deleted)
+                return;
+            
             if (!projectDir.exists())
                 projectDir.mkdir();
             
