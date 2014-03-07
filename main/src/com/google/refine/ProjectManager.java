@@ -48,7 +48,6 @@ import org.apache.tools.tar.TarOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
@@ -422,12 +421,6 @@ public abstract class ProjectManager {
     public List<String> getExpressions() {
         return ((TopList) _preferenceStore.get("scripting.expressions")).getList();
     }
-
-    /**
-     * The history entry manager deals with changes
-     * @return manager for handling history
-     */
-    public abstract HistoryEntryManager getHistoryEntryManager();
 
 
     /**

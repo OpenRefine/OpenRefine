@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectDataStore;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.TopList;
 
@@ -340,10 +339,5 @@ public class FileProjectManager extends ProjectManager {
         if (recovered) {
             saveWorkspace();
         }
-    }
-
-    @Override
-    public HistoryEntryManager getHistoryEntryManager(){
-        return new HistoryEntryManager();
     }
 }

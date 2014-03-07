@@ -56,47 +56,52 @@ public class FileProjectDataStore extends ProjectDataStore {
     
     @Override
     public boolean save() throws IOException {
-        writeLock.lock();
-        
-        try {
-            if (deleted)
-                return false;
+        /* History.addEntry locks on the project, then on itself and lastly the file access lock.
+         * This method will lock the file access lock and on the history in reverse order.
+         * Locking on the project first avoids a race condition. */
+        synchronized(project) {
+            writeLock.lock();
             
-            if (!projectDir.exists())
-                projectDir.mkdir();
-            
-            File tempFile = new File(projectDir, "data.temp.zip");
             try {
-                saveToFile(tempFile);
-            } catch (IOException e) {
-                logger.error("Could not save project. projectDir.exists():" + projectDir.exists() + " tempFile.exists():" + tempFile.exists(), e);
-                logger.warn("Failed to save project {}", project.id);
+                if (deleted)
+                    return false;
+                
+                if (!projectDir.exists())
+                    projectDir.mkdir();
+                
+                File tempFile = new File(projectDir, "data.temp.zip");
                 try {
-                    tempFile.delete();
-                } catch (Exception e2) {
-                    // just ignore - file probably was never created.
+                    saveToFile(tempFile);
+                } catch (IOException e) {
+                    logger.error("Could not save project. projectDir.exists():" + projectDir.exists() + " tempFile.exists():" + tempFile.exists(), e);
+                    logger.warn("Failed to save project {}", project.id);
+                    try {
+                        tempFile.delete();
+                    } catch (Exception e2) {
+                        // just ignore - file probably was never created.
+                    }
+                    throw e;
                 }
-                throw e;
+    
+                File file = new File(projectDir, "data.zip");
+                File oldFile = new File(projectDir, "data.old.zip");
+    
+                if (file.exists()) {
+                    file.renameTo(oldFile);
+                }
+    
+                tempFile.renameTo(file);
+                if (oldFile.exists()) {
+                    oldFile.delete();
+                }
+    
+                project.setLastSave();
+    
+                logger.info("Saved project '{}'", project.id);
             }
-
-            File file = new File(projectDir, "data.zip");
-            File oldFile = new File(projectDir, "data.old.zip");
-
-            if (file.exists()) {
-                file.renameTo(oldFile);
+            finally {
+                writeLock.unlock();
             }
-
-            tempFile.renameTo(file);
-            if (oldFile.exists()) {
-                oldFile.delete();
-            }
-
-            project.setLastSave();
-
-            logger.info("Saved project '{}'", project.id);
-        }
-        finally {
-            writeLock.unlock();
         }
         
         return true;

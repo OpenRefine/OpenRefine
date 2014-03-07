@@ -145,7 +145,7 @@ public class History implements Jsonizable {
                 for (HistoryEntry entry2 : futureEntries) {
                     try {
                         // remove residual data on disk
-                        entry2.delete();
+                        project.deleteChange(entry2.id);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -41,7 +41,6 @@ import org.apache.tools.tar.TarOutputStream;
 import com.google.refine.ProjectDataStore;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 
 /**
@@ -59,11 +58,6 @@ public class ProjectManagerStub extends ProjectManager {
     @Override
     public void exportProject(Project project, TarOutputStream tos) throws IOException {
         // empty
-    }
-
-    @Override
-    public HistoryEntryManager getHistoryEntryManager() {
-        return new HistoryEntryManagerStub();
     }
     
     @Override

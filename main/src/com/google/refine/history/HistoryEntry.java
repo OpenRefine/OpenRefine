@@ -44,7 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.Jsonizable;
-import com.google.refine.ProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
@@ -60,9 +59,6 @@ public class HistoryEntry implements Jsonizable {
     final public long   projectID;
     final public String description;
     final public Date   time;
-
-    // the manager (deals with IO systems or databases etc.)
-    final public HistoryEntryManager _manager;
 
     // the abstract operation, if any, that results in the change
     final public AbstractOperation operation;
@@ -95,11 +91,6 @@ public class HistoryEntry implements Jsonizable {
         this.description = description;
         this.operation = operation;
         this.time = time;
-        this._manager = ProjectManager.singleton.getHistoryEntryManager();
-        if (this._manager == null) {
-            logger.error("Failed to get history entry manager from project manager: " 
-                    + ProjectManager.singleton );
-        }
     }
 
     @Override
@@ -117,7 +108,12 @@ public class HistoryEntry implements Jsonizable {
     }
 
     public void save(Writer writer, Properties options){
-        _manager.save(this, writer, options);
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        try {
+            write(jsonWriter, options);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -128,7 +124,7 @@ public class HistoryEntry implements Jsonizable {
      */
     public void apply(Project project) {
         if (getChange() == null) {
-            ProjectManager.singleton.getHistoryEntryManager().loadChange(this);
+            project.loadChange(this);
         }
 
         synchronized (project) {
@@ -138,7 +134,7 @@ public class HistoryEntry implements Jsonizable {
             // to revert later). Hence, we need to save the change out.
 
             try {
-                _manager.saveChange(this);
+                project.saveChange(this);
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -151,7 +147,7 @@ public class HistoryEntry implements Jsonizable {
 
     public void revert(Project project) {
         if (getChange() == null) {
-            _manager.loadChange(this);
+            project.loadChange(this);
         }
         getChange().revert(project);
     }
@@ -172,9 +168,4 @@ public class HistoryEntry implements Jsonizable {
             ParsingUtilities.stringToDate(obj.getString("time"))
         );
     }
-
-    public void delete(){
-        _manager.delete(this);
-    }
-
 }
