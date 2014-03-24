@@ -11,7 +11,7 @@ import org.deri.grefine.reconcile.model.ReconciliationCandidate;
 import org.deri.grefine.reconcile.model.ReconciliationRequest;
 import org.deri.grefine.reconcile.model.SearchResultItem;
 import org.deri.grefine.reconcile.model.ReconciliationRequestContext.PropertyContext;
-import org.deri.grefine.reconcile.rdf.factories.LarqSparqlQueryFactory.ScoredLabel;
+import org.deri.grefine.reconcile.rdf.factories.JenaTextSparqlQueryFactory.ScoredLabel;
 import org.deri.grefine.reconcile.util.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;

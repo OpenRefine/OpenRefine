@@ -20,7 +20,7 @@ import org.deri.grefine.reconcile.rdf.executors.QueryExecutor;
 import org.deri.grefine.reconcile.rdf.executors.RemoteQueryExecutor;
 import org.deri.grefine.reconcile.rdf.executors.VirtuosoRemoteQueryExecutor;
 import org.deri.grefine.reconcile.rdf.factories.BigOwlImSparqlQueryFactory;
-import org.deri.grefine.reconcile.rdf.factories.LarqSparqlQueryFactory;
+import org.deri.grefine.reconcile.rdf.factories.JenaTextSparqlQueryFactory;
 import org.deri.grefine.reconcile.rdf.factories.PlainSparqlQueryFactory;
 import org.deri.grefine.reconcile.rdf.factories.SparqlQueryFactory;
 import org.deri.grefine.reconcile.rdf.factories.VirtuosoSparqlQueryFactory;
@@ -78,7 +78,7 @@ public class AddServiceCommand extends AbstractAddServiceCommand{
 		}else{
 			queryExecutor = new DumpQueryExecutor(model);
 		}
-		SparqlQueryFactory queryFactory = new LarqSparqlQueryFactory();
+		SparqlQueryFactory queryFactory = new JenaTextSparqlQueryFactory();
 		QueryEndpoint queryEndpoint = new QueryEndpointImpl(queryFactory, queryExecutor);
 		return new RdfReconciliationService(id, name, queryEndpoint, DEFAULT_MATCH_THRESHOLD);
 	}
@@ -89,8 +89,8 @@ public class AddServiceCommand extends AbstractAddServiceCommand{
 
 		graph = graph==null || graph.trim().isEmpty()?null:graph;
 		QueryEndpoint queryEndpoint;
-		if(type.equals("larq")){
-			SparqlQueryFactory queryFactory = new LarqSparqlQueryFactory();
+		if(type.equals("jena-text")){
+			SparqlQueryFactory queryFactory = new JenaTextSparqlQueryFactory();
 			QueryExecutor queryExecutor = new RemoteQueryExecutor(url, graph);
 			queryEndpoint = new QueryEndpointImpl(queryFactory, queryExecutor);
 		}else if(type.equals("virtuoso")){

@@ -33,7 +33,7 @@ import org.deri.grefine.reconcile.rdf.executors.QueryExecutor;
 import org.deri.grefine.reconcile.rdf.executors.RemoteQueryExecutor;
 import org.deri.grefine.reconcile.rdf.executors.VirtuosoRemoteQueryExecutor;
 import org.deri.grefine.reconcile.rdf.factories.BigOwlImSparqlQueryFactory;
-import org.deri.grefine.reconcile.rdf.factories.LarqSparqlQueryFactory;
+import org.deri.grefine.reconcile.rdf.factories.JenaTextSparqlQueryFactory;
 import org.deri.grefine.reconcile.rdf.factories.PlainSparqlQueryFactory;
 import org.deri.grefine.reconcile.rdf.factories.SparqlQueryFactory;
 import org.deri.grefine.reconcile.rdf.factories.VirtuosoSparqlQueryFactory;
@@ -267,8 +267,8 @@ public class ServiceRegistry {
 		String type = factoryObj.getString("type");
 		if(type.equals("virtuoso")){
 			return new VirtuosoSparqlQueryFactory();
-		}else if(type.equals("larq")){
-			return new LarqSparqlQueryFactory();
+		}else if(type.equals("jena-text")){
+			return new JenaTextSparqlQueryFactory();
 		}else if(type.equals("bigowlim")){
 			return new BigOwlImSparqlQueryFactory();
 		}else{

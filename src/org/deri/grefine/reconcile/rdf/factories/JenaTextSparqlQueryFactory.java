@@ -23,11 +23,11 @@ import com.hp.hpl.jena.rdf.model.Literal;
  * @author fadmaa
  *
  */
-public class LarqSparqlQueryFactory extends AbstractSparqlQueryFactory{
+public class JenaTextSparqlQueryFactory extends AbstractSparqlQueryFactory{
 
 	@Override
 	public String getTypeSuggestSparqlQuery(String prefix, int limit) {
-		return SUGGEST_TYPE_QUERY_TEMPLATE.replace("[[QUERY]]", escapeQuery(prefix)).replace("[[LIMIT]]", String.valueOf(limit));
+		return SUGGEST_TYPE_QUERY_TEMPLATE.replace("[[QUERY]]", escapeQuery(prefix)).replaceAll("\\[\\[LIMIT\\]\\]", String.valueOf(limit));
 	}
 	
 	/**
@@ -74,6 +74,7 @@ public class LarqSparqlQueryFactory extends AbstractSparqlQueryFactory{
 						.replace(labelPlaceHolder, labelFilter)
 						.replace("[[TYPE_FILTER]]", typesFilter)
 						.replace("[[CONTEXT_FILTER]]", contextFilter)
+						.replace("[[LIMIT]]", String.valueOf(calculatedLimit))
 						.replace("[[LIMIT]]", String.valueOf(calculatedLimit));
 		
 	}
@@ -81,13 +82,13 @@ public class LarqSparqlQueryFactory extends AbstractSparqlQueryFactory{
 	@Override
 	public String getPropertySuggestSparqlQuery(String prefix, String typeUri, int limit) {
 		return SUGGEST_PROPERTY_WITH_SPECIFIC_SUBJECT_TYPE_QUERY_TEMPLATE.replaceAll("\\[\\[QUERY\\]\\]", escapeQuery(prefix)).
-										replace("[[LIMIT]]", String.valueOf(limit))
+										replaceAll("\\[\\[LIMIT\\]\\]", String.valueOf(limit))
 										.replace("[[TYPE_URI]]", typeUri);
 	}
 	
 	@Override
 	public String getPropertySuggestSparqlQuery(String prefix, int limit) {
-		return SUGGEST_PROPERTY_QUERY_TEMPLATE.replaceAll("\\[\\[QUERY\\]\\]", prefix).replace("[[LIMIT]]", String.valueOf(limit));
+		return SUGGEST_PROPERTY_QUERY_TEMPLATE.replaceAll("\\[\\[QUERY\\]\\]", prefix).replaceAll("\\[\\[LIMIT\\]\\]", String.valueOf(limit));
 	}
 	
 	@Override
@@ -129,6 +130,7 @@ public class LarqSparqlQueryFactory extends AbstractSparqlQueryFactory{
 		int calculatedLimit = searchPropertyUris.size() * limit;//because we want the maximum possible number
 		return SEARCH_ENTITY_QUERY_TEMPLATE.replace("[[QUERY]]", escapeQuery(prefix))
 											.replace("[[LABEL_PROPERTY_FILTER]]", labelFilter)
+											.replace("[[LIMIT]]",String.valueOf(calculatedLimit))
 											.replace("[[LIMIT]]",String.valueOf(calculatedLimit));
 	}
 	
@@ -176,62 +178,62 @@ public class LarqSparqlQueryFactory extends AbstractSparqlQueryFactory{
 	}
 	
 	private static final String SUGGEST_TYPE_QUERY_TEMPLATE =
-				"PREFIX pf:<http://jena.hpl.hp.com/ARQ/property#> " +
-				"SELECT DISTINCT ?type ?label1 ?score1 ?label2 ?score2 " +
+			"PREFIX text:<http://jena.apache.org/text#> " +
+				"SELECT DISTINCT ?type ?label1 ?label2  " +
 				"WHERE{" +
 				"[] a ?type. " +
 				"{" +
-				"OPTIONAL {?type <http://www.w3.org/2000/01/rdf-schema#label> ?label1. " +
-				"(?label1 ?score1) pf:textMatch '[[QUERY]]*'. }" +
-				"OPTIONAL {?type <http://www.w3.org/2004/02/skos/core#prefLabel> ?label2. " +
-				"(?label2 ?score2) pf:textMatch '[[QUERY]]*'. } " +
+				"OPTIONAL {?type <http://www.w3.org/2000/01/rdf-schema#label> (?label1  '[[QUERY]]*' [[LIMIT]] ) . " +
+				"?type <http://www.w3.org/2000/01/rdf-schema#label>  ?label1 . }" +
+				"OPTIONAL {?type <http://www.w3.org/2004/02/skos/core#prefLabel> (?label2 '[[QUERY]]*' [[LIMIT]] )." +
+				"?type <http://www.w3.org/2004/02/skos/core#prefLabel> ?label2.} " +
 				"FILTER (bound(?label1) || bound(?label2))" +
 				"}" +
-				"} ORDER BY desc(?score1) LIMIT [[LIMIT]]";
+				"} LIMIT [[LIMIT]]";
 	
 	private static final String SUGGEST_PROPERTY_WITH_SPECIFIC_SUBJECT_TYPE_QUERY_TEMPLATE =
-				"PREFIX pf:<http://jena.hpl.hp.com/ARQ/property#> " +
-				"SELECT DISTINCT ?p ?label1 ?score1 ?label2 ?score2 " +
+				"PREFIX text:<http://jena.apache.org/text#> " +
+				"SELECT DISTINCT ?p ?label1  ?label2 " +
 				"WHERE{" +
 				"[] a <[[TYPE_URI]]>; " +
 				"?p ?v. " +
 				"{" +
-				"OPTIONAL {?p <http://www.w3.org/2000/01/rdf-schema#label> ?label1. " +
-				"(?label1 ?score1) pf:textMatch '[[QUERY]]*'. }" +
-				"OPTIONAL {?p <http://www.w3.org/2004/02/skos/core#prefLabel> ?label2. " +
-				"(?label2 ?score2) pf:textMatch '[[QUERY]]*'. } " +
+				"OPTIONAL {?p <http://www.w3.org/2000/01/rdf-schema#label> (?label1 '[[QUERY]]*' [[LIMIT]]). " +
+				"?p <http://www.w3.org/2000/01/rdf-schema#label> ?label1. }" +
+				"OPTIONAL {?p <http://www.w3.org/2004/02/skos/core#prefLabel> (?label2 '[[QUERY]]*' [[LIMIT]]). " +
+				"?p <http://www.w3.org/2004/02/skos/core#prefLabel> ?label2. }" +
 				"FILTER (bound(?label1) || bound(?label2))" +
 				"}" +
-				"} ORDER BY desc(?score1) LIMIT [[LIMIT]]";
+				"} LIMIT [[LIMIT]]";
 	
 	private static final String SUGGEST_PROPERTY_QUERY_TEMPLATE =
-		"PREFIX pf:<http://jena.hpl.hp.com/ARQ/property#> " +
-		"SELECT DISTINCT ?p ?label1 ?score1 ?label2 ?score2 " +
+		"PREFIX text:<http://jena.apache.org/text#> " +
+		"SELECT DISTINCT ?p ?label1 ?label2 " +
 		"WHERE{" +
 		"[] ?p ?v. " +
 		"{" +
-		"OPTIONAL {?p <http://www.w3.org/2000/01/rdf-schema#label> ?label1. " +
-		"(?label1 ?score1) pf:textMatch '[[QUERY]]*'. }" +
-		"OPTIONAL {?p <http://www.w3.org/2004/02/skos/core#prefLabel> ?label2. " +
-		"(?label2 ?score2) pf:textMatch '[[QUERY]]*'. } " +
+		"OPTIONAL {?p <http://www.w3.org/2000/01/rdf-schema#label> (?label1 '[[QUERY]]*'  [[LIMIT]]). " +
+		"?p <http://www.w3.org/2000/01/rdf-schema#label> ?label1. }" +
+		"OPTIONAL {?p <http://www.w3.org/2004/02/skos/core#prefLabel> (?label2 '[[QUERY]]*' [[LIMIT]]). " +
+		"?p <http://www.w3.org/2004/02/skos/core#prefLabel> ?label2. }" +
 		"FILTER (bound(?label1) || bound(?label2))" +
 		"}" +
-		"} ORDER BY desc(?score1) LIMIT [[LIMIT]]";
+		"} LIMIT [[LIMIT]]";
 	
 	private static final String RECONCILE_QUERY_TEMPLATE =
 				"PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> " + 
-				"PREFIX pf:<http://jena.hpl.hp.com/ARQ/property#> " +
+				"PREFIX text:<http://jena.apache.org/text#> " +
 				"PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "+  
-				"SELECT ?entity ?label (MAX(?score) AS ?score1) " +
+				"SELECT ?entity ?label " +
 				"WHERE" +
 				"{" +
+					"?entity ?p (?label '[[QUERY]]' [[LIMIT]])." +
 					"?entity ?p ?label." +
-					"(?label ?score) pf:textMatch '[[QUERY]]'. " +
 					"[[LABEL_PROPERTY_FILTER]]" +
 					"[[TYPE_FILTER]]" +
 					"[[CONTEXT_FILTER]]" +
 				" FILTER (isIRI(?entity))}GROUP BY ?entity ?label " +
-				"ORDER BY DESC(?score1) LIMIT [[LIMIT]]";
+				"LIMIT [[LIMIT]]";
 	private static final String SINGLE_LABEL_PROPERTY_RECONCILE_QUERY_TEMPLATE =
 		"PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> " + 
 		"PREFIX text:<http://jena.apache.org/text#> " +
@@ -255,11 +257,11 @@ public class LarqSparqlQueryFactory extends AbstractSparqlQueryFactory{
 			"}GROUP BY ?entity LIMIT [[LIMIT]]";
 	
 	private static final String SEARCH_ENTITY_QUERY_TEMPLATE =
-			"PREFIX pf:<http://jena.hpl.hp.com/ARQ/property#> " +
+			"PREFIX text:<http://jena.apache.org/text#> " +
 			"SELECT ?entity ?label " +
 			"WHERE{" +
-			"?entity ?label_prop ?label. " +
+			"?entity ?label_prop (?label '[[QUERY]]*' [[LIMIT]]) . " +
+			"?entity ?label_prop ?label . " +
 			"[[LABEL_PROPERTY_FILTER]]. " +
-			"(?label ?score1) pf:textMatch '[[QUERY]]*'. " +
-			"} ORDER BY desc(?score1) LIMIT [[LIMIT]]";
+			"} LIMIT [[LIMIT]]";
 }

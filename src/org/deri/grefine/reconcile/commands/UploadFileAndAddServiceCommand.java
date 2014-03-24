@@ -23,7 +23,7 @@ import org.deri.grefine.reconcile.rdf.endpoints.QueryEndpoint;
 import org.deri.grefine.reconcile.rdf.endpoints.QueryEndpointImpl;
 import org.deri.grefine.reconcile.rdf.executors.DumpQueryExecutor;
 import org.deri.grefine.reconcile.rdf.executors.QueryExecutor;
-import org.deri.grefine.reconcile.rdf.factories.LarqSparqlQueryFactory;
+import org.deri.grefine.reconcile.rdf.factories.JenaTextSparqlQueryFactory;
 import org.deri.grefine.reconcile.rdf.factories.SparqlQueryFactory;
 
 import org.json.JSONException;
@@ -105,7 +105,7 @@ public class UploadFileAndAddServiceCommand extends AbstractAddServiceCommand{
 				throw new RuntimeException("name and at least one label property ar needed");
 			}
 			
-			SparqlQueryFactory queryFactory = new LarqSparqlQueryFactory();
+			SparqlQueryFactory queryFactory = new JenaTextSparqlQueryFactory();
 			QueryExecutor queryExecutor;
 			if(propUris.size()==1){
 				queryExecutor = new DumpQueryExecutor(model,propUris.get(0));

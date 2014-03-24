@@ -17,7 +17,6 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -52,16 +51,6 @@ public class DumpQueryExecutor implements QueryExecutor {
 	public DumpQueryExecutor(Model m){
 		this(m,null,false,DEFAULT_MIN_NGRAM, DEFAULT_MAX_NGRAM);
 	}
-	
-	/*public DumpQueryExecutor(Model m, boolean ngramIndex,int minGram, int maxGram){
-		loaded = true;
-		LARQ.setMinGram(minGram);LARQ.setMaxGram(maxGram);
-		this.model = m;
-		IndexBuilderString larqBuilder = new IndexBuilderString(ngramIndex?LARQ.NGRAM_INDEX:LARQ.STANDARD_INDEX) ;
-		larqBuilder.indexStatements(model.listStatements()) ;
-		larqBuilder.closeWriter() ;
-		this.index = larqBuilder.getIndex() ;
-	}*/
 	
 	public DumpQueryExecutor(Model m, String propertyUri, boolean ngramIndex,int minGram, int maxGram){
 		loaded = true;

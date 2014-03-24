@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-import org.deri.grefine.reconcile.rdf.factories.LarqSparqlQueryFactory;
+import org.deri.grefine.reconcile.rdf.factories.JenaTextSparqlQueryFactory;
 import org.deri.grefine.reconcile.rdf.factories.SparqlQueryFactory;
 import org.deri.grefine.reconcile.util.GRefineJsonUtilities;
 import org.json.JSONArray;
@@ -27,7 +27,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 public class SindiceBroker {
 	final static Logger logger = LoggerFactory.getLogger("SindiceBroker");
 	private final String sindiceSearchUrl = "http://api.sindice.com/v2/search";
-	private SparqlQueryFactory queryFactory = new LarqSparqlQueryFactory();
+	private SparqlQueryFactory queryFactory = new JenaTextSparqlQueryFactory();
 	
 	public List<String> guessDomain(String query, int limit, GRefineJsonUtilities jsonUtilities) {
 		Model model;
