@@ -102,6 +102,7 @@ public class XlsExporter implements StreamExporter {
                     Cell c = r.createCell(i);
                     if (i == 255 && cells.size() > 256) {
                         c.setCellValue("ERROR: TOO MANY COLUMNS");
+                        break;
                     } else {
                         CellData cellData = cells.get(i);
                         
