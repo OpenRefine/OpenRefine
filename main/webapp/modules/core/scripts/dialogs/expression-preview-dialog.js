@@ -118,9 +118,6 @@ ExpressionPreviewDialog.Widget = function(
     this._timerID = null;
     
     $("#expression-preview-tabs").tabs();
-    $("#expression-preview-tabs-history").css("display", "");
-    $("#expression-preview-tabs-starred").css("display", "");
-    $("#expression-preview-tabs-help").css("display", "");
     
     this._elmts.expressionPreviewLanguageSelect[0].value = language;
     this._elmts.expressionPreviewLanguageSelect.bind("change", function() {
