@@ -182,10 +182,11 @@ class RefineServer extends Server {
         }
 
         final String contextPath = Configurations.get("refine.context_path","/");
+        final int maxFormContentSize = Configurations.getInteger("refine.max_form_content_size", 1048576);
         
         logger.info("Initializing context: '" + contextPath + "' from '" + webapp.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
-        context.setMaxFormContentSize(1048576);
+        context.setMaxFormContentSize(maxFormContentSize);
 
         this.setHandler(context);
         this.setStopAtShutdown(true);
