@@ -423,6 +423,7 @@ ListFacet.prototype._update = function(resetScroll) {
 
   var wireEvents = function() {
     var bodyInnerDiv = self._elmts.bodyInnerDiv;
+    bodyInnerDiv.off(); // remove all old handlers
     bodyInnerDiv.on('click', '.facet-choice-label', function(e) {
       e.preventDefault();
       var choice = findChoice($(this));
