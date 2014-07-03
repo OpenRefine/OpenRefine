@@ -66,6 +66,9 @@ Refine.XmlParserUI.prototype.confirmReadyToCreateProject = function() {
 };
 
 Refine.XmlParserUI.prototype.getOptions = function() {
+  if(!this._config.recordPath){
+    this._setRecordPath(this._config.defaultRecordPath);
+  }
   var options = {
       recordPath: this._config.recordPath
   };
@@ -229,6 +232,7 @@ Refine.XmlParserUI.prototype._showPickRecordElementsUI = function() {
     }
   };
   if (this._config.dom) {
+    this._config.defaultRecordPath=[];
     renderNode(this._config.dom, elmts.domContainer, []);
   }
 };

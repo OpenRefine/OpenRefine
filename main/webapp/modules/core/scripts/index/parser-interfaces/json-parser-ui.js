@@ -66,6 +66,9 @@ Refine.JsonParserUI.prototype.confirmReadyToCreateProject = function() {
 };
 
 Refine.JsonParserUI.prototype.getOptions = function() {
+  if(!this._config.recordPath){
+    this._setRecordPath(this._config.defaultRecordPath);
+  }
   var options = {
     recordPath: this._config.recordPath
   };
@@ -236,6 +239,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
     }
   };
   rootNode = $('<div>').addClass('node').addClass('indented').appendTo(elmts.domContainer);
+  this._config.defaultRecordPath=[ANONYMOUS_NODE_NAME];
   renderNode(this._config.dom, rootNode, [ANONYMOUS_NODE_NAME]);
 };
 
