@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9;chrome=1;">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>OpenRefine</title>
   <link rel="icon" type="image/png" href="images/favicon.png">
   <script type="text/javascript" src="wirings.js"></script>
