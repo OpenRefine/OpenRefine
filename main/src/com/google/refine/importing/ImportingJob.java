@@ -76,6 +76,8 @@ public class ImportingJob implements Jsonizable {
         JSONUtilities.safePut(cfg, "hasData", false);
         this.config = cfg;
         
+        lastTouched = System.currentTimeMillis();
+        
         dir.mkdirs();
     }
     
