@@ -364,7 +364,8 @@
         "fb-key": "a Freebase key in",
         "fb-en-ns": "英文维基命名空间",
         "this-ns": "该命名空间:",
-        "max-candidates" : "最大候选服务返回数量"
+        "max-candidates" : "最大候选服务返回数量",
+        "service-title": "Services"
         
     },
     "core-util-enc": {
