@@ -365,6 +365,7 @@
 		"fb-en-ns": "namespace di Wikipedia inglese",
 		"this-ns": "questo namespace:",
                 "max-candidates" : "Maximum number of candidates to return [TODO - translate]",	
+        "service-title": "Servizi"
 	},
 	"core-util-enc": {
 		"select-enc": "Seleziona la codifica",

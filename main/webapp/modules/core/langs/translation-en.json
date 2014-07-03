@@ -364,8 +364,8 @@
 		"fb-key": "a Freebase key in",
 		"fb-en-ns": "the Wikipedia English namespace",
 		"this-ns": "this namespace:",
-		"max-candidates" : "Maximum number of candidates to return"
-		
+		"max-candidates" : "Maximum number of candidates to return",
+		"service-title": "Services"
 	},
 	"core-util-enc": {
 		"select-enc": "Select Encoding",

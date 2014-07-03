@@ -33,12 +33,59 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @import-less url("../theme.less");
 
-.recon-dialog-service-list {
-  border: 1px solid #aaa;
-  padding: 1px;
-  overflow: auto;
-  width: 200px;
+.recon-dialog-service {
   height: 500px;
+  padding: 0 0 10px;
+ }
+ 
+.recon-dialog-service-list-container {
+  position: absolute;
+  }
+
+.recon-dialog-service-list {
+  background: none repeat scroll 0 0 #FFFFFF;
+  border: 1px solid #AAAAAA;
+  height: 470px;
+  margin-left: 10px;
+  overflow: auto;
+  padding: 1px;
+  width: 200px;
+  }
+  
+.recon-dialog-service-opener {
+  height: 25px;
+  margin-left: -5px;
+  }
+  
+.recon-dialog-service-opener:hover {
+  cursor: pointer;
+  }
+  
+.recon-dialog-service-opener-title {
+  background: none repeat scroll 0 0 #E0EDFE;
+  float: left;
+  font-size: 18px;
+  height: 100%;
+  text-align: center;
+  width: 220px;
+  }
+  
+.recon-dialog-service-opener-img {
+  background: none repeat scroll 0 0 #E0EDFE;
+  border-bottom-right-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 4px 2px;
+  }
+  
+.recon-dialog-service-opener-img:hover {
+  background: none repeat scroll 0 0 #BFDBFF;
+  }
+  
+.recon-dialog-service-panel-container {
+  float: left;
+  height: 500px;
+  margin-left: 20px;
+  width: 850px;
   }
 
 a.recon-dialog-service-selector {

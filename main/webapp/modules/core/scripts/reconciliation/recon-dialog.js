@@ -47,6 +47,7 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.dialogHeader.text($.i18n._('core-recon')["recon-col"]+' "' + this._column.name + '"');
   
   this._elmts.servicePanelMessage.html($.i18n._('core-recon')["pick-service"]);
+  this._elmts.serviceListTitle.html($.i18n._('core-recon')["service-title"]);
   this._elmts.addStandardServiceButton.html($.i18n._('core-buttons')["add-std-svc"]+"...");
   this._elmts.addNamespacedServiceButton.html($.i18n._('core-buttons')["add-named-svc"]+"...");
   this._elmts.reconcileButton.html($.i18n._('core-buttons')["start-recon"]);
@@ -113,6 +114,7 @@ ReconDialog.prototype._populateDialog = function() {
       .text(service.name)
       .appendTo(self._elmts.serviceList)
       .click(function() {
+    	self._toggleServices();
         self._selectService(record);
       });
 
@@ -132,7 +134,30 @@ ReconDialog.prototype._populateDialog = function() {
     for (var i = 0; i < services.length; i++) {
       renderService(services[i]);
     }
+    
+
+    $('.recon-dialog-service-opener').click(function() {
+      self._toggleServices();
+    });
   }
+};
+
+ReconDialog.prototype._toggleServices = function() {
+  var self = this;
+  self._toggleServiceTitle(500);
+  self._toggleServiceList(500);
+};
+
+ReconDialog.prototype._toggleServiceTitle = function(duration) {
+  var title = $('.recon-dialog-service-opener-title');
+  title.animate({
+	width : 'toggle'
+	}, duration, 'swing', function() {
+  });
+};
+
+ReconDialog.prototype._toggleServiceList = function(duration) {
+  $(".recon-dialog-service-list").toggle("slide", duration);
 };
 
 ReconDialog.prototype._selectService = function(record) {
