@@ -196,8 +196,9 @@ public class ImportingManager {
             ++jobIdCounter;
             
             // Avoid negative job id's when the counter wraps around.
-            if (jobIdCounter < 0)
+            if (jobIdCounter < 0) {
                 jobIdCounter = 1;
+            }
             
             id = jobIdCounter;
         }
