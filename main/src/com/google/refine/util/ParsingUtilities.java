@@ -54,7 +54,14 @@ import org.json.JSONTokener;
 
 public class ParsingUtilities {
 
-    static final public SimpleDateFormat ISO8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    static final private ThreadLocal<SimpleDateFormat> ISO8601_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        }
+
+    };
 
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
@@ -167,7 +174,7 @@ public class ParsingUtilities {
      * @return string with ISO 8601 formatted date & time
      */
     static public String dateToString(Date d) {
-        return ISO8601_FORMAT.format(d);
+        return ISO8601_FORMAT.get().format(d);
     }
 
     /**
@@ -178,7 +185,7 @@ public class ParsingUtilities {
      */
     static public Date stringToDate(String s) {
         try {
-            return ISO8601_FORMAT.parse(s);
+            return ISO8601_FORMAT.get().parse(s);
         } catch (ParseException e) {
             return null;
         }

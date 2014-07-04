@@ -313,7 +313,21 @@ ListFacet.prototype._update = function(resetScroll) {
     }
   }
 
+  // FIXME: this is very slow for large numbers of choices (e.g. 18 seconds for 13K choices)
   this._elmts.bodyInnerDiv.empty();
+  
+  // None of the following alternatives are significantly faster
+  
+//  this._elmts.bodyInnerDiv.innerHtml = '';
+  
+//  this._elmts.bodyInnerDiv.detach();
+//  this._elmts.bodyInnerDiv.children().remove();
+//  this._elmts.bodyInnerDiv.appendTo('.facet-body');
+  
+//  this._elmts.bodyInnerDiv.remove();
+//  this._elmts.bodyInnerDiv.html('<div class="facet-body-inner" bind="bodyInnerDiv"></div>');
+//  this._elmts.bodyInnerDiv.appendTo('.facet-body');
+
   //this._elmts.statusDiv.show();
   this._elmts.controlsDiv.show();
 
@@ -409,7 +423,9 @@ ListFacet.prototype._update = function(resetScroll) {
 
   var wireEvents = function() {
     var bodyInnerDiv = self._elmts.bodyInnerDiv;
-    bodyInnerDiv.find('.facet-choice-label').click(function() {
+    bodyInnerDiv.off(); // remove all old handlers
+    bodyInnerDiv.on('click', '.facet-choice-label', function(e) {
+      e.preventDefault();
       var choice = findChoice($(this));
       if (choice.s) {
         if (selectionCount > 1) {
@@ -423,28 +439,28 @@ ListFacet.prototype._update = function(resetScroll) {
         select(choice);
       }
     });
-    bodyInnerDiv.find('.facet-choice-edit').click(function() {
+    bodyInnerDiv.on('click', '.facet-choice-edit', function(e) {
+      e.preventDefault();
       var choice = findChoice($(this));
       self._editChoice(choice, $(this).closest('.facet-choice'));
     });
 
-    bodyInnerDiv.find('.facet-choice').mouseenter(function() {
-      $(this).find('.facet-choice-edit').css("visibility", "visible");
-
-      var choice = getChoice($(this));
-      if (!choice.s) {
-        $(this).find('.facet-choice-toggle').css("visibility", "visible");
+    bodyInnerDiv.on('mouseenter mouseleave', '.facet-choice', function(e) {
+      e.preventDefault();
+      var visibility = 'visible';
+      if (e.type == 'mouseleave') {
+        visibility = 'hidden';
       }
-    }).mouseleave(function() {
-      $(this).find('.facet-choice-edit').css("visibility", "hidden");
+      $(this).find('.facet-choice-edit').css("visibility", visibility);
 
       var choice = getChoice($(this));
       if (!choice.s) {
-        $(this).find('.facet-choice-toggle').css("visibility", "hidden");
+        $(this).find('.facet-choice-toggle').css("visibility", visibility);
       }
     });
 
-    bodyInnerDiv.find('.facet-choice-toggle').click(function() {
+    bodyInnerDiv.on('click', '.facet-choice-toggle', function(e) {
+      e.preventDefault();
       var choice = findChoice($(this));
       if (choice.s) {
         deselect(choice);
@@ -454,7 +470,7 @@ ListFacet.prototype._update = function(resetScroll) {
     });
   };
   window.setTimeout(wireEvents, 100);
-};
+}; // end _update()
 
 ListFacet.prototype._renderBodyControls = function() {
   var self = this;

@@ -37,8 +37,7 @@ var Refine = {
   actionAreas: []
 };
 
-var lang = navigator.language.split("-")[0]
-		|| navigator.userLanguage.split("-")[0];
+var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
 var dictionary = "";
 $.ajax({
 	url : "/command/core/load-language?",

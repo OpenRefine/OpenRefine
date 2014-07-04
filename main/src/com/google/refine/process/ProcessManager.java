@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.process;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -45,7 +46,7 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryProcess;
 
 public class ProcessManager implements Jsonizable {
-    protected List<Process> _processes = new LinkedList<Process>();
+    protected List<Process> _processes = Collections.synchronizedList(new LinkedList<Process>());
     protected List<Exception> _latestExceptions = null;
     
     public ProcessManager() {
@@ -58,8 +59,10 @@ public class ProcessManager implements Jsonizable {
         
         writer.object();
         writer.key("processes"); writer.array();
-        for (Process p : _processes) {
-            p.write(writer, options);
+        synchronized (_processes) {
+            for (Process p : _processes) {
+                p.write(writer, options);
+            }
         }
         writer.endArray();
         

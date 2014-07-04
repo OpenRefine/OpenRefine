@@ -58,31 +58,45 @@ public class Phonetic implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2) {
+        String str;
+        if (args.length > 0 && args[0] != null) {
             Object o1 = args[0];
+            str = (o1 instanceof String) ? (String) o1 : o1.toString();
+        } else {
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+        }
+        String encoding = "metaphone3";
+        if (args.length > 1) {
             Object o2 = args[1];
-            if (o1 != null && o2 != null && o2 instanceof String) {
-                String str = (o1 instanceof String) ? (String) o1 : o1.toString();
-                String encoding = ((String) o2).toLowerCase();
-                if (encoding == null) {
-                    encoding = "metaphone3";
-                }
-                if ("doublemetaphone".equalsIgnoreCase(encoding)) {
-                    return metaphone2.key(str);
-                } else if ("metaphone3".equalsIgnoreCase(encoding)) {
-                    return metaphone3.key(str);
-                } else if ("metaphone".equalsIgnoreCase(encoding)) {
-                    return metaphone.key(str);
-                } else if ("soundex".equalsIgnoreCase(encoding)) {
-                    return soundex.key(str);
-                } else if ("cologne".equalsIgnoreCase(encoding)) {
-                    return cologne.key(str);
+            if (o2 != null) {
+                if (o2 instanceof String) {
+                    encoding = ((String) o2).toLowerCase();
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " doesn't know how to handle the '" + encoding + "' encoding.");
+                    return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                            + " expects a string for the second argument");
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
+        if (args.length < 3) {
+            if ("doublemetaphone".equalsIgnoreCase(encoding)) {
+                return metaphone2.key(str);
+            } else if ("metaphone3".equalsIgnoreCase(encoding)) {
+                return metaphone3.key(str);
+            } else if ("metaphone".equalsIgnoreCase(encoding)) {
+                return metaphone.key(str);
+            } else if ("soundex".equalsIgnoreCase(encoding)) {
+                return soundex.key(str);
+            } else if ("cologne".equalsIgnoreCase(encoding)) {
+                return cologne.key(str);
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                        + " doesn't know how to handle the '"
+                        + encoding + "' encoding.");
+            }
+        } else {
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                    + " expects one or two string arguments");   
+        }
     }
     
     @Override

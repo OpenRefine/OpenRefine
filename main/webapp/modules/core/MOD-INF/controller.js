@@ -306,15 +306,12 @@ function init() {
     module,
     [
       
-      "externals/jquery-1.9.1.js",
+      "externals/jquery-1.11.1.js",
       "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
-      
-      "externals/CFInstall.min.js",
-      "scripts/chrome-frame.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -381,7 +378,7 @@ function init() {
     "project/scripts",
     module,
     [
-      "externals/jquery-1.9.1.js",
+      "externals/jquery-1.11.1.js",
       "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
       "externals/suggest/suggest-4_3.js",
@@ -390,9 +387,6 @@ function init() {
       "externals/date.js",
       "externals/jquery.i18n.js",
       "externals/underscore-min.js",
-
-      "externals/CFInstall.min.js",
-      "scripts/chrome-frame.js",
 
       "scripts/project.js",
 
@@ -489,7 +483,7 @@ function init() {
     "preferences/scripts",
     module,
     [
-      "externals/jquery-1.9.1.js",
+      "externals/jquery-1.11.1.js",
       "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
       "externals/suggest/suggest-4_3.js",
