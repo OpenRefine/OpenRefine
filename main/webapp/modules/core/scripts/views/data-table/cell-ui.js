@@ -455,7 +455,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
   .html(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-preview-popup-header.html"));
 
   if (preview && preview.url) { // Service has a preview URL associated with it
-    var url = encodeURI(preview.srch.replace("{{id}}", id));
+    var url = encodeURI(preview.url.replace("{{id}}", id));
     var iframe = $('<iframe></iframe>')
     .width(preview.width)
     .height(preview.height)
