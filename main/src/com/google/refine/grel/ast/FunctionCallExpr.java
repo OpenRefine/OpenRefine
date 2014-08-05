@@ -68,7 +68,7 @@ public class FunctionCallExpr implements Evaluable {
         try {
             return _function.call(bindings, args);
         } catch (Exception e) {
-            return new EvalError(e.toString());
+            return new EvalError(e);
         }
     }
 
