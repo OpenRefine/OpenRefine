@@ -291,7 +291,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                                 urlData.row,
                                 new Cell(
                                         ParsingUtilities.inputStreamToString(
-                                                is, encoding != null ? encoding : "UTF-8"),
+                                                is, (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding),
                                                 null));
 
                     } finally {
