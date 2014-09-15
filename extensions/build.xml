@@ -14,6 +14,7 @@
     <ant dir="freebase/" target="build" />
     <ant dir="gdata/" target="build" />
     <ant dir="pc-axis/" target="build" />
+    <ant dir="kew/" target="build" />
   </target>
 
   <target name="clean">
@@ -23,5 +24,6 @@
     <ant dir="freebase/" target="clean" />
     <ant dir="gdata/" target="clean" />
     <ant dir="pc-axis/" target="clean" />
+    <ant dir="kew/" target="clean" />
   </target>
 </project>

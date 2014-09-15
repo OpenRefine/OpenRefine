@@ -8,6 +8,7 @@
 	<classpathentry kind="src" path="extensions/pc-axis/src"/>
 	<classpathentry kind="src" path="extensions/sample/src"/>
 	<classpathentry kind="src" path="main/tests/server/src"/>
+	<classpathentry kind="src" path="extensions/kew/src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
