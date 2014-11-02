@@ -1,0 +1,3 @@
+[submodule "extensions/kew"]
+	path = extensions/kew
+	url = git@github.com:RBGKew/OpenRefine-Kew-Extension.git
