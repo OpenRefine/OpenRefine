@@ -66,6 +66,11 @@ ExporterManager.MenuItems = [
     "click": function() { ExporterManager.handlers.exportRows("xls", "xls"); }
   },
   {
+    "id" : "core/export-excel-xml",
+    "label": $.i18n._('core-project')["excel-xml"],
+    "click": function() { ExporterManager.handlers.exportRows("xlsx", "xlsx"); }
+  },
+  {
     "id" : "core/export-ods",
     "label": $.i18n._('core-project')["odf"],
     "click": function() { ExporterManager.handlers.exportRows("ods", "ods"); }
