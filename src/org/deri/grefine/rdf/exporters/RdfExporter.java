@@ -32,11 +32,15 @@ import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RdfExporter implements WriterExporter{
 
     private RDFFormat format;
     private ApplicationContext applicationContext;
-    
+    final static Logger logger = LoggerFactory.getLogger("RdfExporter");
+
 	public RdfExporter(ApplicationContext ctxt, RDFFormat f){
         this.format = f;
         this.applicationContext = ctxt;
@@ -48,51 +52,33 @@ public class RdfExporter implements WriterExporter{
     
     public void export(Project project, Properties options, Engine engine,
             OutputStream outputStream) throws IOException {
-    	RdfSchema schema;
-    	try{
-    		schema = Util.getProjectSchema(applicationContext,project);
-    	}catch(VocabularyIndexException ve){
-    		throw new IOException("Unable to create index for RDF schema",ve);
-    	}
-        Repository model = buildModel(project, engine, schema);
-        try{
-        	RepositoryConnection con = model.getConnection();
-        	try{
-        		RDFWriter writer = Rio.createWriter(format, outputStream);
-        		for(Vocabulary v:schema.getPrefixesMap().values()){
-        			writer.handleNamespace(v.getName(), v.getUri());
-        		}
-        		con.export(writer);
-			}finally{
-        		con.close();
-        	}
-        }catch(RepositoryException ex){
-        	throw new RuntimeException(ex);
-        }catch(RDFHandlerException ex){
-        	throw new RuntimeException(ex);
-        }
+	    export(project, options, engine, Rio.createWriter(format, outputStream));
     }
 
-    
-    public void export(Project project, Properties options, Engine engine,
-            Writer writer) throws IOException {
+	public void export(Project project, Properties options, Engine engine,
+					   Writer writer) throws IOException {
+		export(project, options, engine, Rio.createWriter(format, writer));
+	}
+
+	private void export(Project project, Properties options, Engine engine,
+						RDFWriter writer) throws IOException {
     	RdfSchema schema;
     	try{
     		schema = Util.getProjectSchema(applicationContext,project);
     	}catch(VocabularyIndexException ve){
     		throw new IOException("Unable to create index for RDF schema",ve);
     	}
-        Repository model = buildModel(project, engine, schema);
         try{
-        	RepositoryConnection con = model.getConnection();
-        	try{
-        		RDFWriter w = Rio.createWriter(format, writer);
-        		for(Vocabulary v:schema.getPrefixesMap().values()){
-        			w.handleNamespace(v.getName(),v.getUri());
-        		}
-        		con.export(w);
-			}finally{
-        		con.close();
+		for(Vocabulary v:schema.getPrefixesMap().values()){
+		        writer.handleNamespace(v.getName(), v.getUri());
+		}
+
+		Repository model = buildModel(project, engine, schema);
+		RepositoryConnection con = model.getConnection();
+		try{
+			con.export(writer);
+		}finally{
+        	        con.close();
         	}
         }catch(RepositoryException ex){
         	throw new RuntimeException(ex);
