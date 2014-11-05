@@ -13,8 +13,7 @@ import org.deri.grefine.rdf.Util;
 import org.deri.grefine.rdf.app.ApplicationContext;
 import org.deri.grefine.rdf.vocab.Vocabulary;
 import org.deri.grefine.rdf.vocab.VocabularyIndexException;
-import org.openrdf.model.BNode;
-import org.openrdf.model.ValueFactory;
+import org.openrdf.model.*;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -24,6 +23,8 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 import org.openrdf.sail.memory.MemoryStore;
+
+import info.aduna.iteration.CloseableIteration
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
@@ -73,34 +74,50 @@ public class RdfExporter implements WriterExporter{
 		        writer.handleNamespace(v.getName(), v.getUri());
 		}
 
-		Repository model = buildModel(project, engine, schema);
-		RepositoryConnection con = model.getConnection();
-		try{
-			con.export(writer);
-		}finally{
-        	        con.close();
-        	}
-        }catch(RepositoryException ex){
-        	throw new RuntimeException(ex);
+		exportModel(project, engine, schema, writer);
         }catch(RDFHandlerException ex){
         	throw new RuntimeException(ex);
         }
     }
 
-    public Repository buildModel(final Project project, Engine engine, RdfSchema schema) throws IOException{
-    	RdfRowVisitor visitor = new RdfRowVisitor(schema) {
+    public Repository exportModel(final Project project, Engine engine, RdfSchema schema, RDFWriter writer) throws IOException{
+    	RdfRowVisitor visitor = new RdfRowVisitor(schema, writer) {
 			
 			@Override
 			public boolean visit(Project project, int rowIndex, Row row) {
 				for(Node root:roots){
 					root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
 				}
-	            return false;
+				try {
+					List<Resource> resourceList = con.getContextIDs().asList();
+					Resource[] resources = resourceList.toArray(new Resource[resourceList.size()]);
+
+					// Export statements
+					CloseableIteration<? extends Statement, RepositoryException> stIter =
+							con.getStatements(null, null, null, false, resources);
+
+					try {
+						while (stIter.hasNext()) {
+							this.writer.handleStatement(stIter.next());
+						}
+					} finally {
+						stIter.close();
+					}
+
+					// empty the repository
+					con.clear();
+				} catch (RepositoryException e) {
+					e.printStackTrace();
+					return true;
+				} catch (RDFHandlerException e) {
+					e.printStackTrace();
+					return true;
+				}
+
+				return false;
 			}
 		};
-		Repository model = buildModel(project, engine,visitor);
-		
-        return model;
+		return buildModel(project, engine, visitor);
     }
     
     public static Repository buildModel(Project project, Engine engine, RdfRowVisitor visitor) {
@@ -132,13 +149,15 @@ public class RdfExporter implements WriterExporter{
         
         protected ValueFactory factory;
         protected RepositoryConnection con;
+	    protected RDFWriter writer;
         
         public Repository getModel() {
 			return model;
 		}
 
-        public RdfRowVisitor(RdfSchema schema){
+        public RdfRowVisitor(RdfSchema schema, RDFWriter writer){
         	this.schema = schema;
+	        this.writer = writer;
         	baseUri = schema.getBaseUri();
             roots = schema.getRoots();
 
@@ -162,21 +181,41 @@ public class RdfExporter implements WriterExporter{
         }
         public void end(Project project) {
         	try {
+		        writer.endRDF();
 				if(con.isOpen()){
 					con.close();
 				}
 			} catch (RepositoryException e) {
 				throw new RuntimeException("",e);
-			}
+			} catch (RDFHandlerException e) {
+		        throw new RuntimeException("",e);
+	        }
         }
 
         public void start(Project project) {
         	try{
         		con = model.getConnection();
         		factory = con.getValueFactory();
+
+		        // Open RDF output
+		        writer.startRDF();
+
+		        // Export namespace information
+		        CloseableIteration<? extends Namespace, RepositoryException> nsIter = con.getNamespaces();
+		        try {
+			    	while (nsIter.hasNext()) {
+						Namespace ns = nsIter.next();
+						writer.handleNamespace(ns.getPrefix(), ns.getName());
+					}
+			    } finally {
+		            nsIter.close();
+		        }
+
         	}catch(RepositoryException ex){
         		throw new RuntimeException("",ex);
-        	}
+        	} catch (RDFHandlerException e) {
+		        e.printStackTrace();
+	        }
         }
 
         abstract public boolean visit(Project project, int rowIndex, Row row);
