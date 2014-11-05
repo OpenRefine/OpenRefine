@@ -24,7 +24,7 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 import org.openrdf.sail.memory.MemoryStore;
 
-import info.aduna.iteration.CloseableIteration
+import info.aduna.iteration.CloseableIteration;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
@@ -88,30 +88,13 @@ public class RdfExporter implements WriterExporter{
 				for(Node root:roots){
 					root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
 				}
+
 				try {
-					List<Resource> resourceList = con.getContextIDs().asList();
-					Resource[] resources = resourceList.toArray(new Resource[resourceList.size()]);
-
-					// Export statements
-					CloseableIteration<? extends Statement, RepositoryException> stIter =
-							con.getStatements(null, null, null, false, resources);
-
-					try {
-						while (stIter.hasNext()) {
-							this.writer.handleStatement(stIter.next());
-						}
-					} finally {
-						stIter.close();
-					}
-
-					// empty the repository
-					con.clear();
+					flushStatements();
 				} catch (RepositoryException e) {
 					e.printStackTrace();
-					return true;
 				} catch (RDFHandlerException e) {
 					e.printStackTrace();
-					return true;
 				}
 
 				return false;
@@ -217,6 +200,26 @@ public class RdfExporter implements WriterExporter{
 		        e.printStackTrace();
 	        }
         }
+
+	    protected void flushStatements() throws RepositoryException, RDFHandlerException{
+		    List<Resource> resourceList = con.getContextIDs().asList();
+		    Resource[] resources = resourceList.toArray(new Resource[resourceList.size()]);
+
+		    // Export statements
+		    CloseableIteration<? extends Statement, RepositoryException> stIter =
+				    con.getStatements(null, null, null, false, resources);
+
+		    try {
+			    while (stIter.hasNext()) {
+				    this.writer.handleStatement(stIter.next());
+			    }
+		    } finally {
+			    stIter.close();
+		    }
+
+		    // empty the repository
+		    con.clear();
+	    }
 
         abstract public boolean visit(Project project, int rowIndex, Row row);
         public RdfSchema getRdfSchema(){
