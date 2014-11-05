@@ -87,14 +87,15 @@ public class RdfExporter implements WriterExporter{
 			public boolean visit(Project project, int rowIndex, Row row) {
 				for(Node root:roots){
 					root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
-				}
 
-				try {
-					flushStatements();
-				} catch (RepositoryException e) {
-					e.printStackTrace();
-				} catch (RDFHandlerException e) {
-					e.printStackTrace();
+					try {
+					    // flush here to preserve root ordering in the output file
+					    flushStatements();
+					} catch (RepositoryException e) {
+					    e.printStackTrace();
+					} catch (RDFHandlerException e) {
+					    e.printStackTrace();
+					}
 				}
 
 				return false;
