@@ -917,6 +917,11 @@ if [ -z "$REFINE_MEMORY" ] ; then
 fi
 add_option "-Xms256M -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY"
 
+if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
+    REFINE_MAX_FORM_CONTENT_SIZE="1048576"
+fi
+add_option "-Drefine.max_form_content_size=$REFINE_MAX_FORM_CONTENT_SIZE"
+
 if [ -z "$REFINE_PORT" ] ; then
     REFINE_PORT="3333"
 fi
