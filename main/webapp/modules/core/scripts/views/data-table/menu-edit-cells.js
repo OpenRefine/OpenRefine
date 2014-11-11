@@ -36,13 +36,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     Refine.postCoreProcess(
       "text-transform",
       {
-        columnName: column.name, 
-        expression: expression, 
+        columnName: column.name,  
         onError: onError,
         repeat: repeat,
         repeatCount: repeatCount
       },
-      null,
+      { expression: expression },
       { cellsChanged: true }
     );
   };
