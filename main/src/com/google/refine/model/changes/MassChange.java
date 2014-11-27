@@ -70,8 +70,8 @@ public class MassChange implements Change {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            for (Change change : _changes) {
-                change.revert(project);
+            for (int i = _changes.size() - 1; i >= 0; i--){
+                _changes.get(i).revert(project);
             }
             
             if (_updateRowContextDependencies) {
