@@ -167,7 +167,7 @@ public class GuessTypesOfColumnCommand extends Command {
             URL url = new URL(serviceUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                 connection.setConnectTimeout(30000);
                 connection.setDoOutput(true);
                 
