@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var dictionary = "";
 $.ajax({
-	url : "/command/core/load-language?",
+	url : "command/core/load-language?",
 	type : "POST",
 	async : false,
 	data : {
