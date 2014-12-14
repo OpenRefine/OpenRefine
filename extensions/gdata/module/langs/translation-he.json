@@ -1,18 +1,18 @@
 {
     "gdata-import": {
-		"preparing": "Preparing ...",
-		"creating": "Creating project ...",
-		"title": "Public Documents",
-		"import-by-url": "Import a <em>public</em> Google Spreadsheet or Fusion Table by its URL:",
-		"next->": "Next &raquo;",
-		"auth-doc": "Authorized Documents",
-		"please": "Please",
-		"sign-in": "sign in and authorize",
-		"sign-out": "sign out",
-		"access-data": "access to your Google data.",
-		"retrieving": "Retrieving Google Docs documents ...",
-		"re-sign-in": "re-sign in",
-		"another-account": "with another account"
+		"preparing": "הכנה ...",
+		"creating": "יצירת פרוייקט ...",
+		"title": "מסמכים ציבוריים",
+		"import-by-url": "יבוא גליון נתונים של גוגל או פיוזן מסמך <em>ציבורי </em> לפי כתובת:",
+		"next->": "הבא &raquo;",
+		"auth-doc": "מסמכים מאושרים",
+		"please": "בבקשה",
+		"sign-in": "התחברו ואשרו",
+		"sign-out": "התנתקות",
+		"access-data": "גשו לנתוני הגוגל שלכם",
+		"retrieving": "אחזור מסמכי גוגל ...",
+		"re-sign-in": "התחברו מחדש",
+		"another-account": "עם חשבון אחר"
     },
 	"gdata-parsing": {
 		"start-over": "&laquo; Start Over",
