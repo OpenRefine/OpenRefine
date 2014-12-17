@@ -84,17 +84,17 @@
 		"char-encoding": "Character&nbsp;encoding"
 	},
 	"core-index-open": {
-		"open-proj" : "Open Project",
-		"name": "Name",
-		"rename": "rename",
-		"last-mod": "Last&nbsp;modified",
-		"del-title": "Delete this project",
-		"del-body": "Are you sure you want to delete project \"",
-		"new-title": "New project name:",
-		"warning-rename": "Failed to rename project:",
-		"warning-proj-name": "You must specify a project name.",
-		"warning-data-file": "You must specify a data file to upload or a URL to retrieve.",
-		"browse": "Browse workspace directory"
+		"open-proj" : "פתיחת פרוייקט",
+		"name": "שם",
+		"rename": "שינוי שם",
+		"last-mod": "שונה&nbsp;לאחרונה",
+		"del-title": "מחיקת פרוייקט זה",
+		"del-body": "האם אתם בטוחים שברצונכם למחוק את הפרוייקט \"",
+		"new-title": "שם פרוייקט חדש:",
+		"warning-rename": "שינוי שם הפרוייקט נכשל:",
+		"warning-proj-name": "עליכם לפרט שם פרוייקט.",
+		"warning-data-file": "עליכם לספק קובץ נתונים להעלות או כתוב למשוך ממנה נתונים.",
+		"browse": "שיטוט בספריית העבודה"
 	},
 	"core-index-lang": {
 		"lang-settings": "Language Settings",
