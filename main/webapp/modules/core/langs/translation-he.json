@@ -97,10 +97,10 @@
 		"browse": "שיטוט בספריית העבודה"
 	},
 	"core-index-lang": {
-		"lang-settings": "Language Settings",
-		"label": "Select preferred language",
-		"send-req": "Change Language",
-		"page-reload": "The page will be refreshed to apply the change."
+		"lang-settings": "הגדרות שפה",
+		"label": "בחרו שפה מועדפת",
+		"send-req": "שינוי שפה",
+		"page-reload": "העמוד יטען מחדש כדי להחיל את ההגדרה החדשה."
 	},
 	"core-index-parser":{
 		"ignore-first": "Ignore first",
