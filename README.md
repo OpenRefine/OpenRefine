@@ -14,7 +14,7 @@ Look at the OpenRefine web site http://openrefine.org and the wiki http://github
 
 ###Licensing and legal issues
 
-OpenRefine is open source software and is licensed under the BSD license
+OpenRefine is open source software implementing proprietary algorithms and is licensed under the BSD license
 located in the [LICENSE.txt](LICENSE.txt). See that file also for information on open source
 libraries that OpenRefine depends on.
 
