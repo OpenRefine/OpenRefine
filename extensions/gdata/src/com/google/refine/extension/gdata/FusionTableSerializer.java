@@ -71,7 +71,7 @@ final class FusionTableSerializer implements TabularSerializer {
     private boolean sendBatch(boolean isLastChunk) {
         try {
             // FIXME: text/csv doesn't work even though that's what the content is
-          AbstractInputStreamContent content = ByteArrayContent.fromString("application/octet-stream", sbBatch.toString());
+            AbstractInputStreamContent content = ByteArrayContent.fromString("application/octet-stream", sbBatch.toString());
 
 //            AbstractInputStreamContent content = new InputStreamContent("application/octet-stream",
 //                    // TODO: we really want to do GZIP compression here 
@@ -112,42 +112,6 @@ final class FusionTableSerializer implements TabularSerializer {
             sb.append("\"");
         }
         sb.append("\n");
-    }
-    
-    // Old-style SQL INSERT can be removed once we're sure importRows will work
-    private void formulateInsert(List<CellData> cells, StringBuffer sb) {
-        StringBuffer sbColumnNames = new StringBuffer();
-        StringBuffer sbValues = new StringBuffer();
-        boolean first = true;
-        for (int i = 0; i < cells.size() && i < columnNames.size(); i++) {
-            CellData cellData = cells.get(i);
-            if (first) {
-                first = false;
-            } else {
-                sbColumnNames.append(',');
-                sbValues.append(',');
-            }
-            sbColumnNames.append("'");
-            sbColumnNames.append(columnNames.get(i));
-            sbColumnNames.append("'");
-            
-            sbValues.append("'");
-            if (cellData != null && cellData.text != null) {
-                sbValues.append(cellData.text.replaceAll("'", "\\\\'"));
-            }
-            sbValues.append("'");
-        }
-        
-        if (sb.length() > 0) {
-            sb.append(';');
-        }
-        sb.append("INSERT INTO ");
-        sb.append(tableId);
-        sb.append("(");
-        sb.append(sbColumnNames.toString());
-        sb.append(") values (");
-        sb.append(sbValues.toString());
-        sb.append(")");
     }
     
     public String getUrl() {
