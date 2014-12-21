@@ -155,10 +155,11 @@ ReconciliationManager.save = function(f) {
         ReconciliationManager.standardServices = JSON.parse(data.value);
         ReconciliationManager._rebuildMap();
       } else {
-        ReconciliationManager.registerStandardService(
+      // FIXME: Standard recon service needs to be replaced
+//        ReconciliationManager.registerStandardService(
 //            "http://reconcile.freebaseapps.com/reconcile"
-            "http://standard-reconcile.freebaseapps.com/reconcile"
-            );
+//            "http://standard-reconcile.freebaseapps.com/reconcile"
+//            );
       }
     },
     dataType: "json"
