@@ -41,6 +41,6 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/odfdom-java-0.8.7.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/guava-13.0.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/guava-18.0.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
