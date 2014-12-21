@@ -335,7 +335,7 @@ public class StandardReconConfig extends ReconConfig {
             URL url = new URL(service);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                 connection.setConnectTimeout(30000);
                 connection.setDoOutput(true);
                 
