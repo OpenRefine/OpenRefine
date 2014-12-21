@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component jdk="JavaSE-1.6">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="butterfly-trunk.jar" scope="COMPILE">
+		<srcroot url="file:///grefine/webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
+	</lib>
+	<lib name="servlet-api-2.5.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../server/lib-src/servlet-api-2.5-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/server/lib-src/servlet-api-2.5-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/server/lib/servlet-api-2.5.jar!/"/>
+	</lib>
+	<lib name="json-20100208.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/webapp/WEB-INF/lib-src/json-20100208-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/json-20100208-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/json-20100208.jar!/"/>
+	</lib>
+	<lib name="httpclient-4.0.1.jar" scope="COMPILE">
+		<srcroot url="file:///grefine/webapp/WEB-INF/lib-src/httpclient-4.0.1-sources.jar"/>
+	</lib>
+	<lib name="httpcore-4.0.1.jar" scope="COMPILE">
+		<srcroot url="file:///grefine/webapp/WEB-INF/lib-src/httpcore-4.0.1-sources.jar"/>
+	</lib>
+	<lib name="slf4j-api-1.5.6.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../main/webapp/WEB-INF/lib-src/slf4j-api-1.5.6-sources.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib-src/slf4j-api-1.5.6-sources.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar!/"/>
+	</lib>
+	<lib name="rhino-1.7R2.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/rhino-1.7R2.jar!/"/>
+	</lib>
+	<lib name="velocity-1.5.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/velocity-1.5.jar!/"/>
+	</lib>
+	<lib name="commons-collections-3.2.1.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar!/"/>
+	</lib>
+</component>
