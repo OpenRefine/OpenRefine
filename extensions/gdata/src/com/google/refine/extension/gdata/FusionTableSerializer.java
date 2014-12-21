@@ -37,7 +37,7 @@ final class FusionTableSerializer implements TabularSerializer {
     @Override
     public void endFile() {
         if (sbBatch != null) {
-            sendBatch(true);
+            sendBatch(rows % BATCH_SIZE);
         }
     }
 
@@ -61,25 +61,21 @@ final class FusionTableSerializer implements TabularSerializer {
             formatCsv(cells, sbBatch);            
             rows++;
             if (rows % BATCH_SIZE == 0) {
-                if (!sendBatch(false)) {
+                if (!sendBatch(BATCH_SIZE)) {
                     return;
                 }
             }
         }
     }
     
-    private boolean sendBatch(boolean isLastChunk) {
+    private boolean sendBatch(int batchSize) {
         try {
+            // TODO: we really want to do GZIP compression here 
             // FIXME: text/csv doesn't work even though that's what the content is
             AbstractInputStreamContent content = ByteArrayContent.fromString("application/octet-stream", sbBatch.toString());
-
-//            AbstractInputStreamContent content = new InputStreamContent("application/octet-stream",
-//                    // TODO: we really want to do GZIP compression here 
-//                            new ByteArrayInputStream(sbBatch.toString().getBytes("UTF-8")));
             Long count = FusionTableHandler.insertRows(service, tableId, content);
-            if (!isLastChunk && count != BATCH_SIZE) {
-                // FIXME: this message should say numbers instead of %d but we'd need to know the batch number for this
-                exceptions.add(new IOException("Only imported %d of %d rows"));
+            if (count != null && count.intValue() != batchSize) {
+                exceptions.add(new IOException("only imported " + count + " of " + batchSize + " rows"));
             }
         } catch (IOException e) {
             exceptions.add(e);
