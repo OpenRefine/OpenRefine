@@ -107,7 +107,7 @@ final class FusionTableSerializer implements TabularSerializer {
             }
             sb.append("\"");
             if (cellData != null && cellData.text != null) {
-                sb.append(cellData.text.replaceAll("\"", "\\\\\""));
+                sb.append(cellData.text.replaceAll("\"", "\"\""));
             }
             sb.append("\"");
         }
