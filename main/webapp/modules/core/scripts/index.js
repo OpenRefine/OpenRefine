@@ -40,7 +40,7 @@ var Refine = {
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
 var dictionary = "";
 $.ajax({
-	url : "/command/core/load-language?",
+	url : "command/core/load-language?",
 	type : "POST",
 	async : false,
 	data : {

@@ -11,7 +11,7 @@ Refine.SetLanguageUI = function(elmt) {
 	
 
   $.ajax({
-    url : "/command/core/get-languages?",
+    url : "command/core/get-languages?",
     type : "GET",
     async : false,
     data : {
@@ -29,7 +29,7 @@ Refine.SetLanguageUI = function(elmt) {
 
 	this._elmts.set_lan_btn.bind('click', function(e) {		
 		$.ajax({
-			url : "/command/core/set-preference?",
+			url : "command/core/set-preference?",
 			type : "POST",
 			async : false,
 			data : {
