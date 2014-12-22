@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.changes;
 
- import java.io.IOException;
+import java.io.IOException;
+import com.google.common.collect.Lists;
+ 
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -70,8 +72,8 @@ public class MassChange implements Change {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            for (int i = _changes.size() - 1; i >= 0; i--){
-                _changes.get(i).revert(project);
+            for (Change change : Lists.reverse(_changes)){
+                change.revert(project);
             }
             
             if (_updateRowContextDependencies) {
