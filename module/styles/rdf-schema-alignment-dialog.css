@@ -11,6 +11,11 @@ div.rdf-schema-alignment-dialog-preview {
     height: 375px;
 }
 
+div.rdf-schema-alignment-dialog-preview pre {
+    overflow: auto;
+    height: 100%;
+}
+
 div.rdf-schema-alignment-dialog-canvas {
 	height: 350px;
 }
