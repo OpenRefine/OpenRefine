@@ -92,9 +92,9 @@ public class RdfExporter implements WriterExporter{
 					    // flush here to preserve root ordering in the output file
 					    flushStatements();
 					} catch (RepositoryException e) {
-					    e.printStackTrace();
+					    throw new RuntimeException(e);
 					} catch (RDFHandlerException e) {
-					    e.printStackTrace();
+						throw new RuntimeException(e);
 					}
 				}
 
