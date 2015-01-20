@@ -78,6 +78,7 @@
     <path id="webapp.class.path">
         <fileset dir="${server.lib.dir}">
             <include name="**/servlet-api*.jar" />
+			<include name="**/slf4j*.jar" />
         </fileset>
         <fileset dir="${webapp.lib.dir}">
             <include name="**/*.jar" />
