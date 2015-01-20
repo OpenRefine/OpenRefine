@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.thread.*;
+import org.eclipse.jetty.util.thread.ThreadPool;;
 
 /**
  * Jetty {@link ThreadPool} that bridges requests to a

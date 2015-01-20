@@ -157,14 +157,14 @@ class RefineServer extends Server {
             logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
         }
         
-        // HTTP Configuration
-        HttpConfiguration http_config = new HttpConfiguration();
-        http_config.setSecureScheme("https");
-        http_config.setSecurePort(443);
-        http_config.setOutputBufferSize(32768);
+        // HTTP Configuration, hard code for now. Later can be read from configuration file when adding the embedding SSL feature
+        HttpConfiguration httpConfig = new HttpConfiguration();
+        httpConfig.setSecureScheme("https");
+        httpConfig.setSecurePort(443);
+        httpConfig.setOutputBufferSize(32768);
 
         // HTTP connector
-        ServerConnector connector = new ServerConnector(this,new HttpConnectionFactory(http_config));        
+        ServerConnector connector = new ServerConnector(this,new HttpConnectionFactory(httpConfig));        
         connector.setPort(port);
         connector.setHost(host);
         connector.setIdleTimeout(Configurations.getInteger("refine.connection.max_idle_time",60000));
@@ -272,7 +272,8 @@ class RefineServer extends Server {
         try {
             scanner.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Starting scanner failed: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
     
