@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
@@ -55,7 +56,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.Scanner;
+import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,9 +111,11 @@ public class Refine {
 //        RefineServer server = new RefineServer();
         int maxThreads = Configurations.getInteger("refine.queue.size", 30);
         int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
-        int keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
+        long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
 
-        QueuedThreadPool threadPool = new QueuedThreadPool(maxQueue, maxThreads, keepAliveTime);
+        // use ExecutorThreadPool instead of QueuedThreadPool
+        // http://stackoverflow.com/questions/5619735/jetty-configuration-threadpool
+        ExecutorThreadPool threadPool = new ExecutorThreadPool(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS);
         RefineServer server = new RefineServer(threadPool);
         
         server.init(host,port);
@@ -145,7 +150,7 @@ class RefineServer extends Server {
         
     private ThreadPoolExecutor threadPool;
     
-    public RefineServer(QueuedThreadPool threadPool) {
+    public RefineServer(ThreadPool threadPool) {
         super(threadPool);
     }
 
