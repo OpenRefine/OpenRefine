@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ########################################################## 
 #               OpenRefine Control System             #
@@ -15,12 +15,12 @@ exit 1
 }
 
 error() {
-    echo "$1"
+    echo "Error: $1"
     exit 1
 }
 
 warn() {
-    echo "$1"
+    echo "Warning: $1"
     exit 0
 }
 
@@ -633,8 +633,6 @@ ui_test() {
 
 server_test() {
     ant server_test
-    
-    $RUN_CMD || error "Failed passing server tests"
 }
 
 run() {
