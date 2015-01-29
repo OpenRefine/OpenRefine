@@ -12,46 +12,36 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.5.1-slim.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-io-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.5.1-slim.jar" sourcepath="main/webapp/WEB-INF/lib-src/clojure-1.5.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.6.jar" sourcepath="main/webapp/WEB-INF/lib-src/commons-codec-1.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/commons-collections-3.2.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/commons-fileupload-1.2.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-io-1.4.jar" sourcepath="main/webapp/WEB-INF/lib-src/commons-io-1.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-lang-2.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/dom4j-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-asl-1.9.12.jar" sourcepath="main/webapp/WEB-INF/lib-src/jackson-src-1.9.9.zip"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/dom4j-1.6.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/dom4j-1.6.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-asl-1.9.12.jar" sourcepath="main/webapp/WEB-INF/lib-src/jackson-core-asl-1.9.12-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar" sourcepath="main/webapp/WEB-INF/lib-src/jcl-over-slf4j-1.5.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jrdf-0.5.6.jar" sourcepath="main/webapp/WEB-INF/lib-src/jrdf-0.5.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/json-20100208.jar" sourcepath="main/webapp/WEB-INF/lib-src/json-20100208-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/opencsv-2.4-SNAPSHOT.jar" sourcepath="main/webapp/WEB-INF/lib-src/opencsv-2.4-SNAPSHOT-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-3.8-20120326.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.8-20120326.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-3.8-20120326.jar" sourcepath="main/webapp/WEB-INF/lib-src/poi-3.8-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.8-20120326.jar" sourcepath="main/webapp/WEB-INF/lib-src/poi-ooxml-3.8-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.8-20120326.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/secondstring-20100303.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/velocity-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/velocity-1.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/velocity-1.5.zip"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/vicino-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xmlbeans-2.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xmlbeans-2.3.0.jar" sourcepath="main/webapp/WEB-INF/lib-src/xmlbeans-2.3.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="server/lib/jdatapath-alpha2.jar"/>
-	<classpathentry exported="true" kind="lib" path="server/lib/jetty-6.1.22.jar" sourcepath="server/lib-src/jetty-6.1.22-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="server/lib/jetty-util-6.1.22.jar" sourcepath="server/lib-src/jetty-util-6.1.22-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="server/lib/log4j-1.2.15.jar"/>
-	<classpathentry exported="true" kind="lib" path="server/lib/servlet-api-2.5.jar" sourcepath="server/lib-src/servlet-api-2.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="server/lib/slf4j-api-1.5.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="server/lib/slf4j-log4j12-1.5.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="broker/appengine/WEB-INF/lib/slf4j-jdk14-1.5.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/jython/module/MOD-INF/lib/jython-standalone-2.5.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/jython/module/MOD-INF/lib/jython-standalone-2.5.3.jar" sourcepath="main/webapp/WEB-INF/lib-src/jython-standalone-2.5.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="broker/core/module/MOD-INF/lib/bdb-je-4.0.103.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-core-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/mockito-all-1.9.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/testng-6.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/jsoup-1.4.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/mockito-all-1.9.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/mockito-all-1.9.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/testng-6.8.jar" sourcepath="main/webapp/WEB-INF/lib-src/testng-6.8-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-meta-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-media-1.0.jar"/>
@@ -59,31 +49,44 @@
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-client-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-client-meta-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-meta-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/mail.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/mail.jar" sourcepath="main/webapp/WEB-INF/lib-src/javax.mail-1.4.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/odfdom-java-0.8.7.jar" sourcepath="main/webapp/WEB-INF/lib-src/odfdom-java-0.8.7-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/resolver.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/resolver.jar" sourcepath="main/webapp/WEB-INF/lib-src/xml-resolver-1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/serializer.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xercesImpl-2.11.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xml-apis.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpclient-4.2.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xercesImpl-2.11.jar" sourcepath="main/webapp/WEB-INF/lib-src/xercesImpl-2.11.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xml-apis.jar" sourcepath="main/webapp/WEB-INF/lib-src/xml-apis-1.4.01-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpclient-4.2.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/httpclient-4.2.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.2.4.jar" sourcepath="main/webapp/WEB-INF/lib-src/httpcore-4.2.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-18.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-18.0.jar" sourcepath="main/webapp/WEB-INF/lib-src/guava-18.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-client-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-client-1.13.2-beta-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-http-client-1.13.1-beta.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-http-client-1.13.1-beta.jar" sourcepath="main/webapp/WEB-INF/lib-src/google-http-client-1.13.1-beta-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-services-freebase-v1-rev25-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-services-freebase-v1-rev25-1.13.2-beta-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-http-client-jackson-1.13.1-beta.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/mail.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-1.13.2-beta.jar" sourcepath="extensions/gdata/module/MOD-INF/lib-src/google-api-client-1.13.2-beta-sources.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-fusiontables-v1-rev17-1.13.2-beta.jar" sourcepath="extensions/gdata/module/MOD-INF/lib-src/google-api-services-fusiontables-v1-rev17-1.13.2-beta-sources.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-1.13.1-beta.jar" sourcepath="extensions/gdata/module/MOD-INF/lib-src/google-http-client-1.13.1-beta-sources.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-jackson-1.13.1-beta.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-1.13.1-beta.jar" sourcepath="extensions/gdata/module/MOD-INF/lib-src/google-oauth-client-1.13.1-beta-sources.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-servlet-1.13.1-beta.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/jsr305-1.3.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/mail.jar" sourcepath="main/webapp/WEB-INF/lib-src/javax.mail-1.4.4-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-1.13.2-beta.jar" sourcepath="main/webapp/WEB-INF/lib-src/google-api-client-1.13.2-beta-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-fusiontables-v1-rev17-1.13.2-beta.jar" sourcepath="extensions/gdata/module/MOD-INF/lib-src/google-api-services-fusiontables-v1-rev17-1.13.2-beta-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-1.13.1-beta.jar" sourcepath="extensions/gdata/module/MOD-INF/lib-src/google-http-client-1.13.1-beta-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-jackson-1.13.1-beta.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-1.13.1-beta.jar" sourcepath="extensions/gdata/module/MOD-INF/lib-src/google-oauth-client-1.13.1-beta-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-servlet-1.13.1-beta.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/jsr305-1.3.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/commons-logging-1.1.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/fluent-hc-4.2.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/httpmime-4.2.5-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-server-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-server-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-servlet-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-servlet-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-webapp-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-webapp-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-util-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-util-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-http-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-http-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/slf4j-api-1.7.10.jar" sourcepath="main/webapp/WEB-INF/lib-src/slf4j-api-1.7.10-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/slf4j-log4j12-1.7.10.jar" sourcepath="main/webapp/WEB-INF/lib-src/slf4j-log4j12-1.7.10-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-io-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-io-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-security-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-security-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/servlet-api-3.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/javax.servlet-api-3.1.0-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-xml-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-xml-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/jetty-servlets-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-servlets-9.2.6.v20141205-sources.jar"/>
+	<classpathentry kind="lib" path="server/lib/log4j-1.2.17.jar" sourcepath="main/webapp/WEB-INF/lib-src/log4j-1.2.17-sources.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

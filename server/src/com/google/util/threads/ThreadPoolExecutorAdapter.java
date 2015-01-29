@@ -19,9 +19,9 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.mortbay.component.LifeCycle;
-import org.mortbay.log.Log;
-import org.mortbay.thread.ThreadPool;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.thread.ThreadPool;;
 
 /**
  * Jetty {@link ThreadPool} that bridges requests to a
@@ -35,14 +35,13 @@ public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
         this.executor = executor;
     }
 
+    // When migrate from jetty 6 to jetty 9.2.6, dispatch renamed to void Executor.execute(Runnable)
     @Override
-    public boolean dispatch(Runnable job) {
+    public void execute(Runnable job) {
         try {
             executor.execute(job);
-            return true;
         } catch (RejectedExecutionException e) {
-            Log.warn(e);
-            return false;
+            Log.getLog().warn(e);
         }
     }
 

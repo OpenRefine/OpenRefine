@@ -39,35 +39,32 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.BindException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 import org.apache.log4j.Level;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.util.Scanner;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.Scanner;
+import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codeberry.jdatapath.DataPath;
 import com.codeberry.jdatapath.JDataPathSystem;
-
-import com.google.util.threads.ThreadPoolExecutorAdapter;
 
 /**
  * Main class for Refine server application.  Starts an instance of the
@@ -87,7 +84,8 @@ public class Refine {
         
         // tell jetty to use SLF4J for logging instead of its own stuff
         System.setProperty("VERBOSE","false");
-        System.setProperty("org.mortbay.log.class","org.mortbay.log.Slf4jLog");
+        
+        System.setProperty("org.eclipse.jetty.util.log.class","org.eclipse.jetty.util.log.Slf4jLog");
         
         // tell macosx to keep the menu associated with the screen and what the app title is
         System.setProperty("apple.laf.useScreenMenuBar", "true");  
@@ -109,8 +107,17 @@ public class Refine {
     }
 
     public void init(String[] args) throws Exception {
+        // in jetty 9, the thread pool is passed as a constructor argument:
+//        RefineServer server = new RefineServer();
+        int maxThreads = Configurations.getInteger("refine.queue.size", 30);
+        int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
+        long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
 
-        RefineServer server = new RefineServer();
+        // use ExecutorThreadPool instead of QueuedThreadPool
+        // http://stackoverflow.com/questions/5619735/jetty-configuration-threadpool
+        ExecutorThreadPool threadPool = new ExecutorThreadPool(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS);
+        RefineServer server = new RefineServer(threadPool);
+        
         server.init(host,port);
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
@@ -143,6 +150,10 @@ class RefineServer extends Server {
         
     private ThreadPoolExecutor threadPool;
     
+    public RefineServer(ThreadPool threadPool) {
+        super(threadPool);
+    }
+
     public void init(String host, int port) throws Exception {
         logger.info("Starting Server bound to '" + host + ":" + port + "'");
 
@@ -151,21 +162,20 @@ class RefineServer extends Server {
             logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
         }
         
-        int maxThreads = Configurations.getInteger("refine.queue.size", 30);
-        int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
-        long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
+        // HTTP Configuration, hard code for now. Later can be read from configuration file when adding the embedding SSL feature
+        HttpConfiguration httpConfig = new HttpConfiguration();
+        httpConfig.setSecureScheme("https");
+        httpConfig.setSecurePort(443);
+        httpConfig.setOutputBufferSize(32768);
 
-        LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
-        
-        threadPool = new ThreadPoolExecutor(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS, queue);
-
-        this.setThreadPool(new ThreadPoolExecutorAdapter(threadPool));
-        
-        Connector connector = new SocketConnector();
+        // HTTP connector
+        ServerConnector connector = new ServerConnector(this,new HttpConnectionFactory(httpConfig));        
         connector.setPort(port);
         connector.setHost(host);
-        connector.setMaxIdleTime(Configurations.getInteger("refine.connection.max_idle_time",60000));
-        connector.setStatsOn(false);
+        connector.setIdleTimeout(Configurations.getInteger("refine.connection.max_idle_time",60000));
+        // Jetty 9 does not have the equivalence??
+//        connector.setStatsOn(false);
+        
         this.addConnector(connector);
 
         File webapp = new File(Configurations.get("refine.webapp","main/webapp"));
@@ -190,8 +200,7 @@ class RefineServer extends Server {
 
         this.setHandler(context);
         this.setStopAtShutdown(true);
-        this.setSendServerVersion(true);
-
+        
         // Enable context autoreloading
         if (Configurations.getBoolean("refine.autoreload",false)) {
             scanForUpdates(webapp, context);
@@ -265,7 +274,12 @@ class RefineServer extends Server {
             }
         });
 
-        scanner.start();
+        try {
+            scanner.start();
+        } catch (Exception e) {
+            logger.error("Starting scanner failed: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
     
     static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
@@ -292,6 +306,9 @@ class RefineServer extends Server {
             servlet.setInitParameter("butterfly.modules.path", getDataDir() + "/extensions");
             servlet.setInitOrder(1);
             servlet.doStart();
+            
+            // TODO: need a decent way to do ServletHolder.initServlet() 
+            servlet.getServlet();
         }
 
         servlet = context.getServletHandler().getServlet("refine-broker");
@@ -508,7 +525,8 @@ class ShutdownSignalHandler implements Runnable {
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         //       that _server.stop() will rely on
-        _server.setGracefulShutdown(3000);
+        
+        _server.setStopTimeout(3000);
 
         try {
             _server.stop();
