@@ -39,7 +39,7 @@ import static org.jrdf.graph.AnySubjectNode.ANY_SUBJECT_NODE;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,7 +107,7 @@ public class RdfTripleImporter extends ImportingParserBase {
         
         ClosableIterable<Triple> triples = graph.find(ANY_SUBJECT_NODE, ANY_PREDICATE_NODE, ANY_OBJECT_NODE);
         try {
-            Map<String, List<Row>> subjectToRows = new HashMap<String, List<Row>>();
+            Map<String, List<Row>> subjectToRows = new LinkedHashMap<String, List<Row>>();
             Column subjectColumn = new Column(project.columnModel.allocateNewCellIndex(), "subject");
             project.columnModel.addColumn(0, subjectColumn, false);
             project.columnModel.setKeyColumnIndex(0);
