@@ -73,6 +73,10 @@ public class DataExtensionChange implements Change {
     final protected List<Integer>       _rowIndices;
     final protected List<DataExtension> _dataExtensions;
     
+    final protected String              _reconServiceUrl;
+    final protected String              _identifierSpace;
+    final protected String              _schemaSpace;
+
     protected long                      _historyEntryID;
     protected int                       _firstNewCellIndex = -1;
     protected List<Row>                 _oldRows;
@@ -85,8 +89,11 @@ public class DataExtensionChange implements Change {
         List<FreebaseType> columnTypes,
         List<Integer> rowIndices,
         List<DataExtension> dataExtensions,
+        String reconServiceUrl,
+        String identifierSpace,
+        String schemaSpace,
         long historyEntryID
-    ) {
+        ) {
         _baseColumnName = baseColumnName;
         _columnInsertIndex = columnInsertIndex;
         
@@ -95,9 +102,13 @@ public class DataExtensionChange implements Change {
         
         _rowIndices = rowIndices;
         _dataExtensions = dataExtensions;
+
+        _reconServiceUrl = reconServiceUrl;
+        _identifierSpace = identifierSpace;
+        _schemaSpace = schemaSpace;
         
         _historyEntryID = historyEntryID;
-    }
+        }
 
     protected DataExtensionChange(
         String              baseColumnName, 
@@ -108,6 +119,9 @@ public class DataExtensionChange implements Change {
         
         List<Integer>       rowIndices,
         List<DataExtension> dataExtensions,
+        String reconServiceUrl,
+        String identifierSpace,
+        String schemaSpace,
         int                 firstNewCellIndex,
         List<Row>           oldRows,
         List<Row>           newRows
@@ -121,6 +135,10 @@ public class DataExtensionChange implements Change {
         _rowIndices = rowIndices;
         _dataExtensions = dataExtensions;
         
+        _reconServiceUrl = reconServiceUrl;
+        _identifierSpace = identifierSpace;
+        _schemaSpace = schemaSpace;
+
         _firstNewCellIndex = firstNewCellIndex;
         _oldRows = oldRows;
         _newRows = newRows;
@@ -158,14 +176,17 @@ public class DataExtensionChange implements Change {
                     }
                     
                     if (dataExtension == null || dataExtension.data.length == 0) {
+                        // Rows without a MQL result
                         _newRows.add(oldRow);
                     } else {
+                        // Rows with a MQL result
                         Row firstNewRow = oldRow.dup();
                         extendRow(firstNewRow, dataExtension, 0, reconMap);
                         _newRows.add(firstNewRow);
                         
                         int r2 = r + 1;
                         for (int subR = 1; subR < dataExtension.data.length; subR++) {
+                            // Rows with more than one MQL result
                             if (r2 < project.rows.size()) {
                                 Row oldRow2 = project.rows.get(r2);
                                 if (oldRow2.isCellBlank(cellIndex) && 
@@ -238,9 +259,9 @@ public class DataExtensionChange implements Change {
                 if (reconMap.containsKey(rc.id)) {
                     recon = reconMap.get(rc.id);
                 } else {
-                    recon = Recon.makeFreebaseRecon(_historyEntryID);
+                    recon = new Recon(_historyEntryID, _identifierSpace, _schemaSpace);
+                    recon.service = _reconServiceUrl;
                     recon.addCandidate(rc);
-                    recon.service = "mql";
                     recon.match = rc;
                     recon.matchRank = 0;
                     recon.judgment = Judgment.Matched;
@@ -350,6 +371,10 @@ public class DataExtensionChange implements Change {
         List<Integer> rowIndices = null;
         List<DataExtension> dataExtensions = null;
         
+        String reconServiceUrl = null;
+        String identifierSpace = null;
+        String schemaSpace = null;
+
         List<Row> oldRows = null;
         List<Row> newRows = null;
         
@@ -427,6 +452,12 @@ public class DataExtensionChange implements Change {
                     
                     dataExtensions.add(new DataExtension(data));
                 }
+            } else if ("reconServiceUrl".equals(field)) {
+                reconServiceUrl = value;
+            } else if ("identifierSpace".equals(field)) {
+                identifierSpace = value;
+            } else if ("schemaSpace".equals(field)) {
+                schemaSpace = value;
             } else if ("oldRowCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
@@ -458,6 +489,9 @@ public class DataExtensionChange implements Change {
             columnTypes,
             rowIndices,
             dataExtensions,
+            reconServiceUrl,
+            identifierSpace,
+            schemaSpace,
             firstNewCellIndex,
             oldRows,
             newRows

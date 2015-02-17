@@ -32,55 +32,223 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 function ExtendDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
+  this._serviceRecords = [];
+  this._selectedServiceRecordIndex = -1;
+
   this._column = column;
   this._columnIndex = columnIndex;
   this._rowIndices = rowIndices;
   this._onDone = onDone;
-  this._extension = { properties: [] };
+  this._extension = { properties: [], service: null };
 
+  this._createDialog();
+}
+
+ExtendDataPreviewDialog.prototype._createDialog = function() {
   var self = this;
   this._dialog = $(DOM.loadHTML("freebase", "scripts/dialogs/extend-data-preview-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
-  
-  this._elmts.dialogHeader.text($.i18n._('fb-extend')["add-column"]);
-  this._elmts.fb_add_property.html($.i18n._('fb-extend')["add-property"]);
-  this._elmts.suggested_properties.text($.i18n._('fb-extend')["suggested-properties"]);
+
+  this._elmts.dialogHeader.text($.i18n._('fb-extend')["add-column"]+' "' + this._column.name + '"');
+  this._elmts.addProperty.html($.i18n._('fb-extend')["add-property"]);
+  this._elmts.suggestedProperties.text($.i18n._('fb-extend')["suggested-properties"]);
+  this._elmts.preview.text($.i18n._('fb-extend')["preview"]);
+
+  this._elmts.servicePanelMessage.html($.i18n._('fb-extend')["pick-service"]);
+  this._elmts.serviceListTitle.html($.i18n._('fb-extend')["service-title"]);
+  this._elmts.addServiceButton.html($.i18n._('core-buttons')["add-service"]+"...");
   
   this._elmts.resetButton.text($.i18n._('fb-buttons')["reset"]);
   this._elmts.okButton.html('&nbsp;&nbsp;'+$.i18n._('fb-buttons')["ok"]+'&nbsp;&nbsp;');
   this._elmts.cancelButton.text($.i18n._('fb-buttons')["cancel"]);
   
+  this._elmts.servicePanel.hide();
+
+  this._elmts.addServiceButton.click(function() { self._onAddService(); });
+
   this._elmts.resetButton.click(function() {
     self._extension.properties = [];
     self._update();
   });
-  
-  this._elmts.okButton.click(function() {
-    if (self._extension.properties.length === 0) {
-      alert($.i18n._('fb-extend')["warning-add-properties"]);
-    } else {
-      DialogSystem.dismissUntil(self._level - 1);
-      self._onDone(self._extension);
+
+  this._elmts.okButton.click(function() { self._onOK(); });
+  this._elmts.cancelButton.click(function() { self._dismiss(); });
+
+  this._level = DialogSystem.showDialog(this._dialog);
+
+  this._populateDialog();
+};
+
+ExtendDataPreviewDialog.prototype._onOK = function() {
+  if (this._extension.properties.length === 0) {
+    alert($.i18n._('fb-extend')["warning-add-properties"]);
+  }
+  else {
+    DialogSystem.dismissUntil(this._level - 1);
+    this._onDone(this._extension);
+  }
+};
+
+ExtendDataPreviewDialog.prototype._dismiss = function() {
+  this._cleanDialog();
+  DialogSystem.dismissUntil(this._level - 1);
+};
+
+ExtendDataPreviewDialog.prototype._cleanDialog = function() {
+  for (var i = 0; i < this._serviceRecords.length; i++) {
+    var record = this._serviceRecords[i];
+    record.selector.remove();
+  }
+  this._serviceRecords = [];
+  this._selectedServiceRecordIndex = -1;
+  this._elmts.servicePanel.hide();
+  this._elmts.servicePanelMessage.show();
+  this._elmts.suggestedPropertyContainer.empty();
+  this._elmts.previewContainer.empty();
+};
+
+ExtendDataPreviewDialog.prototype._populateDialog = function() {
+  var self = this;
+
+  var services = ExtendDataManager.getAllServices();
+  if (services.length > 0) {
+    var renderService = function(service) {
+      var record = {
+          service: service,
+      };
+
+      record.selector = $('<a>')
+      .attr("href", "javascript:{}")
+      .addClass("recon-dialog-service-selector")
+      .text(service.name)
+      .appendTo(self._elmts.serviceList)
+      .click(function() {
+        self._toggleServices();
+        self._selectService(record);
+      });
+
+      $('<a>')
+      .html("&nbsp;")
+      .addClass("recon-dialog-service-selector-remove")
+      .prependTo(record.selector)
+      .click(function() {
+        ExtendDataManager.unregisterService(service, function() {
+          self._refresh(-1);
+        });
+      });
+
+      self._serviceRecords.push(record);
+    };
+
+    for (var i = 0; i < services.length; i++) {
+      renderService(services[i]);
     }
-  });
-  this._elmts.cancelButton.click(function() {
-    DialogSystem.dismissUntil(self._level - 1);
-  });
 
-  var dismissBusy = DialogSystem.showBusy();
-  var type = (column.reconConfig) && (column.reconConfig.type) ? column.reconConfig.type.id : "/common/topic";
+    $('.recon-dialog-service-opener').click(function() {
+      self._toggleServices();
+    });
+  }
+};
 
-  ExtendDataPreviewDialog.getAllProperties(type, function(properties) {
-    dismissBusy();
-    self._show(properties);
+ExtendDataPreviewDialog.prototype._toggleServices = function() {
+  var self = this;
+  self._toggleServiceTitle(500);
+  self._toggleServiceList(500);
+};
+
+ExtendDataPreviewDialog.prototype._toggleServiceTitle = function(duration) {
+  var title = $('.recon-dialog-service-opener-title');
+  title.animate({
+    width : 'toggle'
+  }, duration, 'swing', function() {
   });
-}
+};
 
-ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
+ExtendDataPreviewDialog.prototype._toggleServiceList = function(duration) {
+  $(".recon-dialog-service-list").toggle("slide", duration);
+};
+
+ExtendDataPreviewDialog.prototype._refresh = function(newSelectIndex) {
+  this._cleanDialog();
+  this._populateDialog();
+  if (newSelectIndex >= 0) {
+    this._selectService(this._serviceRecords[newSelectIndex]);
+  }
+};
+
+ExtendDataPreviewDialog.prototype._onAddService = function() {
+  var self = this;
+  var dialog = $(DOM.loadHTML("freebase", "scripts/dialogs/add-service-dialog.html"));
+  var elmts = DOM.bind(dialog);
+
+  elmts.dialogHeader.html($.i18n._('fb-extend')["add-mql-srv"]);
+  elmts.or_recon_enterName.html($.i18n._('fb-extend')["enter-name"]+":");
+  elmts.or_recon_enterUrl.html($.i18n._('core-recon')["enter-url"]+":");
+  elmts.addButton.html($.i18n._('core-buttons')["add-service"]);
+  elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
+
+  var level = DialogSystem.showDialog(dialog);
+  var dismiss = function() {
+    DialogSystem.dismissUntil(level - 1);
+  };
+
+  elmts.cancelButton.click(dismiss);
+  elmts.addButton.click(function() {
+    var name = $.trim(elmts.inputName.val());
+    var url = $.trim(elmts.inputUrl.val());
+    if (url.length > 0) {
+      if (name.length == 0) {
+        name = url;
+      }
+      ExtendDataManager.registerStandardService(url, name, function(index) {
+        self._refresh(index);
+      });
+    }
+    dismiss();
+  });
+  elmts.inputName.focus().select();
+};
+
+ExtendDataPreviewDialog.prototype._selectService = function(record) {
+  var self = this;
+
+  for (var i = 0; i < this._serviceRecords.length; i++) {
+    if (record === this._serviceRecords[i]) {
+      if (i !== this._selectedServiceRecordIndex) {
+        if (this._selectedServiceRecordIndex >= 0) {
+          var oldRecord = this._serviceRecords[this._selectedServiceRecordIndex];
+          oldRecord.selector.removeClass("selected");
+        }
+
+        this._elmts.servicePanelMessage.hide();
+        this._elmts.servicePanel.show();
+
+        record.selector.addClass("selected");
+
+        var dismissBusy = DialogSystem.showBusy();
+        var type = (this._column.reconConfig) && (this._column.reconConfig.type) ? this._column.reconConfig.type.id : "/common/topic";
+
+        this._extension.service = record.service;
+
+        // This should happen only after a service is chosen
+        ExtendDataPreviewDialog.getAllProperties(record.service, type, function(properties) {
+          dismissBusy();
+          self._show(properties);
+        });
+
+        this._selectedServiceRecordIndex = i;
+        return;
+      }
+    }
+  }
+};
+
+ExtendDataPreviewDialog.getAllProperties = function(service, typeID, onDone) {
   var done = false;
 
+  // First try using /get_properties_of_type
   $.getJSON(
-    Refine.refineHelperService + "/get_properties_of_type?type=" + typeID + "&callback=?",
+    service.url + "/get_properties_of_type?type=" + typeID + "&callback=?",
     null,
     function(data) {
       if (done) return;
@@ -113,15 +281,66 @@ ExtendDataPreviewDialog.getAllProperties = function(typeID, onDone) {
 
   window.setTimeout(function() {
     if (done) return;
-
     done = true;
-    onDone([]);
+
+    var done2 = false;
+
+    // That failed, so try an MQL read for finding properties, and fake the "expected" object keys.
+
+    var query = [{
+      "type": "/type/property",
+      "schema": { "id": typeID },
+      "id": null,
+      "name": null
+    }];
+
+    $.getJSON(
+      service.url + "/mqlread/?lang=/lang/en&query=" + JSON.stringify(query) + "&callback=?",
+      null,
+      function(data) {
+        if (done2) return;
+        done2 = true;
+
+        var allProperties = [];
+        for (var i = 0; i < data.result.length; i++) {
+          var property = data.result[i];
+          var property2 = {
+            id: property.id,
+            name: property.name
+          };
+          if ("id2" in property) {
+            property2.expected = property.schema2;
+            property2.properties = [{
+              id: property.id2,
+              name: property.name2,
+              expected: property.expects
+            }];
+          } else {
+            if ("expects" in property) {
+              property2.expected = property.expects;
+            }
+            else {
+              property2.expected = { "id": "/type/text", "name": "Text" };
+            }
+          }
+          allProperties.push(property2);
+        }
+        allProperties.sort(function(a, b) { return a.name.localeCompare(b.name); });
+
+        onDone(allProperties);
+      }
+    );
+
+    window.setTimeout(function() {
+      if (done2) return;
+      done2 = true;
+      onDone([]);
+    }, 7000);
+
   }, 7000); // time to give up?
 };
 
 ExtendDataPreviewDialog.prototype._show = function(properties) {
-  this._level = DialogSystem.showDialog(this._dialog);
-
   var n = this._elmts.suggestedPropertyContainer.offset().top +
   this._elmts.suggestedPropertyContainer.outerHeight(true) -
   this._elmts.addPropertyInput.offset().top;
@@ -129,7 +348,7 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
   this._elmts.previewContainer.height(Math.floor(n));
 
   var self = this;
-  var container = this._elmts.suggestedPropertyContainer;
+  var container = this._elmts.suggestedPropertyContainer.empty();
   var renderSuggestedProperty = function(property) {
     var label = ("properties" in property) ? (property.name + " &raquo; " + property.properties[0].name) : property.name;
     var div = $('<div>').addClass("suggested-property").appendTo(container);
@@ -155,13 +374,25 @@ ExtendDataPreviewDialog.prototype._show = function(properties) {
     suggestConfig.filter = '(should (any namespace:/type/object namespace:/common/topic namespace:' + this._column.reconConfig.type.id + '))';
   }
 
-  this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-    self._addProperty({
-      id : data.id,
-      name: data.name,
-      expected: data["/type/property/expected_type"]
+  // Disable Add Property box for non-Freebase services
+  // TODO: Find out with an API call (which doesn't exist?) whether there's a suggest service.
+  if (this._extension.service.url.indexOf('freebase') > -1) {
+    this._elmts.addPropertyInput.prop('disabled', false);
+    this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
+      var expected = data['/type/property/expected_type'];
+      self._addProperty({
+        id : data.id,
+        name: data.name,
+        expected: {
+          id: expected.id,
+          name: expected.name
+        }
+      });
     });
-  });
+  }
+  else {
+    this._elmts.addPropertyInput.prop('disabled', true);
+  }
 };
 
 ExtendDataPreviewDialog.prototype._update = function() {
@@ -225,7 +456,7 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
   var self = this;
   var container = this._elmts.previewContainer.empty();
   if (data.code == "error") {
-    container.text("Error.");
+    container.text($.i18n._('core-dialogs')["error"]);
     return;
   }
 
@@ -268,7 +499,7 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
       var cell = row[c];
       if (cell !== null) {
         if ($.isPlainObject(cell)) {
-          $('<a>').attr("href", "http://www.freebase.com/view" + cell.id).text(cell.name).appendTo(td);
+          $('<a>').attr("href", self._extension.service.viewUrl.replace("{{id}}", cell.id)).text(cell.name).appendTo(td);
         } else {
           $('<span>').text(cell).appendTo(td);
         }
@@ -399,4 +630,3 @@ ExtendDataPreviewDialog.prototype._constrainProperty = function(path) {
 
   bodyElmts.textarea.focus();
 };
-

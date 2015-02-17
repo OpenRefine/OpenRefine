@@ -33,9 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.freebase.util;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +56,10 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class FreebaseDataExtensionJob {
+
+    private static final String FREEBASE_SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
+    private static final String FREEBASE_IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/type.object.mid";
+
     static public class DataExtension {
         final public Object[][] data;
         
@@ -73,6 +80,11 @@ public class FreebaseDataExtensionJob {
         }
     }
     
+    final public String mqlUrl;
+    final public String reconServiceUrl;
+    final public String identifierSpace;
+    final public String schemaSpace;
+
     final public JSONObject         extension;
     final public int                columnCount;
     final public List<ColumnInfo>   columns = new ArrayList<ColumnInfo>();
@@ -81,6 +93,26 @@ public class FreebaseDataExtensionJob {
         this.extension = obj;
         this.columnCount = (obj.has("properties") && !obj.isNull("properties")) ?
                 countColumns(obj.getJSONArray("properties"), columns, new ArrayList<String>(), new ArrayList<String>()) : 0;
+        if (obj.has("service") && !obj.isNull("service")) {
+            JSONObject service = obj.getJSONObject("service");
+            this.mqlUrl = (service.has("url") && !service.isNull("url")) ? service.getString("url") : null;
+            // Add the Freebase identifierSpace and schemaSpace if the service is Freebase
+            if (this.mqlUrl.startsWith("https://www.googleapis.com/freebase/v1")) {
+                this.reconServiceUrl = "mql";
+                this.identifierSpace = FREEBASE_IDENTIFIER_SPACE;
+                this.schemaSpace = FREEBASE_SCHEMA_SPACE;
+            } else {
+                this.reconServiceUrl = (service.has("reconServiceUrl") && !service.isNull("reconServiceUrl")) ? service.getString("reconServiceUrl") : null;
+                this.identifierSpace = (service.has("identifierSpace") && !service.isNull("identifierSpace")) ? service.getString("identifierSpace") : null;
+                this.schemaSpace = (service.has("schemaSpace") && !service.isNull("schemaSpace")) ? service.getString("schemaSpace") : null;
+            }
+        }
+        else {
+            this.mqlUrl = null;
+            this.reconServiceUrl = null;
+            this.identifierSpace = null;
+            this.schemaSpace = null;
+        }
     }
     
     public Map<String, FreebaseDataExtensionJob.DataExtension> extend(
@@ -91,7 +123,7 @@ public class FreebaseDataExtensionJob {
         formulateQuery(ids, extension, writer);
         String query = writer.toString();
         
-        String result = FreebaseUtils.mqlread(query);
+        String result = doMqlRead(query);
         
         JSONObject o = ParsingUtilities.evaluateJsonStringToObject(result);
         Map<String, FreebaseDataExtensionJob.DataExtension> map = new HashMap<String, FreebaseDataExtensionJob.DataExtension>();
@@ -113,7 +145,33 @@ public class FreebaseDataExtensionJob {
         return map;
     } 
 
-    
+    protected String doMqlRead(String query) throws IOException {
+        if (mqlUrl == null) {
+            throw new IOException("No MQL service URL defined");
+        }
+
+        String queryString = "?query=" + ParsingUtilities.encode(query);
+        URL url = new URL(mqlUrl + "/mqlread" + queryString);
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(5000);
+
+        connection.connect();
+
+        boolean isError = connection.getResponseCode() >= 400;
+
+        if (isError) {
+            String s = ParsingUtilities.inputStreamToString(connection.getErrorStream());
+            throw new IOException("MQL error "+s);
+        }
+        else {
+            String s = ParsingUtilities.inputStreamToString(connection.getInputStream());
+            connection.getInputStream().close();
+            return s;
+        }
+    }
+
     protected FreebaseDataExtensionJob.DataExtension collectResult(
         JSONObject obj,
         Map<String, ReconCandidate> reconCandidateMap
