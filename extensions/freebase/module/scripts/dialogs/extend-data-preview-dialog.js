@@ -499,7 +499,7 @@ ExtendDataPreviewDialog.prototype._renderPreview = function(data) {
       var cell = row[c];
       if (cell !== null) {
         if ($.isPlainObject(cell)) {
-          $('<a>').attr("href", self._extension.service.viewUrl.replace("{{id}}", cell.id)).text(cell.name).appendTo(td);
+          $('<a>').attr("href", (self._extension.service.viewUrl != null) ? self._extension.service.viewUrl.replace("{{id}}", cell.id) : cell.id).text(cell.name).appendTo(td);
         } else {
           $('<span>').text(cell).appendTo(td);
         }
