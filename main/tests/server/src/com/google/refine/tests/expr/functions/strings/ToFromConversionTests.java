@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.expr.functions.strings;
 
+import java.text.DateFormat;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 
@@ -117,8 +118,10 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("toString", Long.valueOf(100)),"100");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01")),"Jun 1, 2013");
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01").getTime()),"Jun 1, 2013");
+      
+      String expectedDate = DateFormat.getDateInstance().format(new GregorianCalendar(2013,5,1).getTime());
+      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01")), expectedDate);
+      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01").getTime()), expectedDate);
       Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy"),"2013");      
       Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy-MM-dd"),"2013-06-01");
     }

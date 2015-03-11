@@ -71,9 +71,7 @@ public class MassReconChange implements Change {
     
     protected void switchRecons(Project project, Map<Long, Recon> reconMap) {
         synchronized (project) {
-            for (int r = 0; r < project.rows.size(); r++) {
-                Row row = project.rows.get(r);
-                
+            for (Row row : project.rows) {
                 for (int c = 0; c < row.cells.size(); c++) {
                     Cell cell = row.cells.get(c);
                     if (cell != null && cell.recon != null) {

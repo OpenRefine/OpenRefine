@@ -37,7 +37,7 @@ final class FusionTableSerializer implements TabularSerializer {
     @Override
     public void endFile() {
         if (sbBatch != null) {
-            sendBatch(true);
+            sendBatch(rows % BATCH_SIZE);
         }
     }
 
@@ -61,25 +61,21 @@ final class FusionTableSerializer implements TabularSerializer {
             formatCsv(cells, sbBatch);            
             rows++;
             if (rows % BATCH_SIZE == 0) {
-                if (!sendBatch(false)) {
+                if (!sendBatch(BATCH_SIZE)) {
                     return;
                 }
             }
         }
     }
     
-    private boolean sendBatch(boolean isLastChunk) {
+    private boolean sendBatch(int batchSize) {
         try {
+            // TODO: we really want to do GZIP compression here 
             // FIXME: text/csv doesn't work even though that's what the content is
-          AbstractInputStreamContent content = ByteArrayContent.fromString("application/octet-stream", sbBatch.toString());
-
-//            AbstractInputStreamContent content = new InputStreamContent("application/octet-stream",
-//                    // TODO: we really want to do GZIP compression here 
-//                            new ByteArrayInputStream(sbBatch.toString().getBytes("UTF-8")));
+            AbstractInputStreamContent content = ByteArrayContent.fromString("application/octet-stream", sbBatch.toString());
             Long count = FusionTableHandler.insertRows(service, tableId, content);
-            if (!isLastChunk && count != BATCH_SIZE) {
-                // FIXME: this message should say numbers instead of %d but we'd need to know the batch number for this
-                exceptions.add(new IOException("Only imported %d of %d rows"));
+            if (count != null && count.intValue() != batchSize) {
+                exceptions.add(new IOException("only imported " + count + " of " + batchSize + " rows"));
             }
         } catch (IOException e) {
             exceptions.add(e);
@@ -107,47 +103,11 @@ final class FusionTableSerializer implements TabularSerializer {
             }
             sb.append("\"");
             if (cellData != null && cellData.text != null) {
-                sb.append(cellData.text.replaceAll("\"", "\\\\\""));
+                sb.append(cellData.text.replaceAll("\"", "\"\""));
             }
             sb.append("\"");
         }
         sb.append("\n");
-    }
-    
-    // Old-style SQL INSERT can be removed once we're sure importRows will work
-    private void formulateInsert(List<CellData> cells, StringBuffer sb) {
-        StringBuffer sbColumnNames = new StringBuffer();
-        StringBuffer sbValues = new StringBuffer();
-        boolean first = true;
-        for (int i = 0; i < cells.size() && i < columnNames.size(); i++) {
-            CellData cellData = cells.get(i);
-            if (first) {
-                first = false;
-            } else {
-                sbColumnNames.append(',');
-                sbValues.append(',');
-            }
-            sbColumnNames.append("'");
-            sbColumnNames.append(columnNames.get(i));
-            sbColumnNames.append("'");
-            
-            sbValues.append("'");
-            if (cellData != null && cellData.text != null) {
-                sbValues.append(cellData.text.replaceAll("'", "\\\\'"));
-            }
-            sbValues.append("'");
-        }
-        
-        if (sb.length() > 0) {
-            sb.append(';');
-        }
-        sb.append("INSERT INTO ");
-        sb.append(tableId);
-        sb.append("(");
-        sb.append(sbColumnNames.toString());
-        sb.append(") values (");
-        sb.append(sbValues.toString());
-        sb.append(")");
     }
     
     public String getUrl() {

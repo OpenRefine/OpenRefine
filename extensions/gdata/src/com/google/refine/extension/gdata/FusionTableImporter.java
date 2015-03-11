@@ -165,7 +165,7 @@ public class FusionTableImporter {
                         List<Object> row = rows.get(i);
                         List<Object> rowOfCells = new ArrayList<Object>(row.size());
                         for (int j = 0; j < row.size() && j < columns.size(); j++) {
-                            String text = (String)row.get(j);
+                            String text = String.valueOf(row.get(j));
                             if (text.isEmpty()) {
                                 rowOfCells.add(null);
                             } else {

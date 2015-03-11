@@ -1,6 +1,6 @@
 package com.google.refine.importers.tree;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,8 +9,8 @@ import org.apache.commons.lang.StringUtils;
  * A column group describes a branch in tree structured data
  */
 public class ImportColumnGroup extends ImportVertical {
-    public Map<String, ImportColumnGroup> subgroups = new HashMap<String, ImportColumnGroup>();
-    public Map<String, ImportColumn> columns = new HashMap<String, ImportColumn>();
+    public Map<String, ImportColumnGroup> subgroups = new LinkedHashMap<String, ImportColumnGroup>();
+    public Map<String, ImportColumn> columns = new LinkedHashMap<String, ImportColumn>();
     public int nextRowIndex; // TODO: this can be hoisted into superclass
 
     @Override

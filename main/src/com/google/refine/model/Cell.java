@@ -51,6 +51,7 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+import com.google.refine.util.StringUtils;
 
 public class Cell implements HasFields, Jsonizable {
     final public Serializable   value;
@@ -193,6 +194,6 @@ public class Cell implements HasFields, Jsonizable {
     
     @Override
     public String toString() {
-        return value.toString();
+        return StringUtils.toString(value);
     }
 }

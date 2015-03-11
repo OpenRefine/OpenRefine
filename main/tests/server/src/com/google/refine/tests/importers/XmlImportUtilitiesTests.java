@@ -264,10 +264,10 @@ public class XmlImportUtilitiesTests extends RefineTest {
         XmlImportUtilitiesStub.createColumnsFromImport(project, columnGroup);
         log(project);
         assertProjectCreated(project, 4, 0);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "world");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "hello");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "bar");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "foo");
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "hello");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "world");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "foo");
+        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "bar");
         Assert.assertEquals(project.columnModel.columnGroups.get(0).keyColumnIndex, 2);
         Assert.assertEquals(project.columnModel.columnGroups.get(0).startColumnIndex, 2);
         Assert.assertEquals(project.columnModel.columnGroups.get(0).columnSpan, 2);
