@@ -1,0 +1,56 @@
+{
+    "gdata-import": {
+		"preparing": "Préparation...",
+		"creating": "Création du projet...",
+		"title": "Documents publics",
+		"import-by-url": "Importer un tableau <em>public</em> Google Spreadsheet ou Google Fusion par son URL :",
+		"next->": "Suivant &raquo;",
+		"auth-doc": "Documents autorisés",
+		"please": "Merci",
+		"sign-in": "de se connecter et d’autoriser",
+		"sign-out": "se déconnecter",
+		"access-data": "l’accès à vos données Google.",
+		"retrieving": "Récupération des documents de Google Docs...",
+		"re-sign-in": "se reconnecter",
+		"another-account": "avec un autre compte"
+    },
+	"gdata-parsing": {
+		"start-over": "&laquo; Recommencer",
+		"conf-pars": "Configurer les options d’analyse",
+		"proj-name": "Nom du projet",
+		"create-proj": "Créer un projet &raquo;",
+		"updating-preview": "Mise à jour de l’aperçu...",
+		"worksheet": "Feuilles",
+		"option": "Options",
+		"preview-button": "Mettre à jour l’aperçu",
+		"ignore-first": "Ignorer la ou les premières",
+		"ignore": "lignes du début du fichier",
+		"parse-next": "Analyser la ou les",
+		"parse": "lignes suivantes comme entêtes de colonnes",
+		"discard-next": "Ignorer la ou les",
+		"discard": "premières lignes de données",
+		"limit-next": "Charger au plus",
+		"limit": "lignes de données",
+		"store-row": "Conserver les lignes vides",
+		"store-cell": "Analyser les cellules vides comme nulles"
+	},
+	"gdata-source": {
+		"alert-url": "Vous devez indiquer une adresse web (URL) à importer.",
+		"type": "Type",
+		"title": "Titre",
+		"authors": "Auteurs",
+		"updated": "Mis à jour"
+	},
+	"gdata-exporter": {
+		"uploading": "Téléversement...",
+		"upload-error": "Erreur de téléversement :",
+		"new-spreadsheet": "Un nouveau tableau Google Spreadsheet",
+		"enter-spreadsheet": "Indiquer un nom pour le nouveau tableau Google Spreadsheet",
+		"new-fusion": "Une nouvelle table Google Fusion",
+		"enter-fusion": "Indiquer un nom pour la nouvelle table Google Fusion"
+	},
+	"gdata-auth": {
+		"authorize-label": "OpenRefine - Autorisation",
+		"authorized-label": "Procédure d’autorisation terminée. Fermer cette fenêtre et revenir à OpenRefine."
+	}
+}
