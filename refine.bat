@@ -138,6 +138,11 @@ set REFINE_MEMORY=1024M
 :gotMemory
 set OPTS=%OPTS% -Xms256M -Xmx%REFINE_MEMORY% -Drefine.memory=%REFINE_MEMORY%
 
+if not "%REFINE_MAX_FORM_CONTENT_SIZE%" == "" goto gotMaxFormContentSize
+set REFINE_MAX_FORM_CONTENT_SIZE=1048576
+:gotMaxFormContentSize
+set OPTS=%OPTS% -Drefine.max_form_content_size=%REFINE_MAX_FORM_CONTENT_SIZE%
+
 if not "%REFINE_PORT%" == "" goto gotPort
 set REFINE_PORT=3333
 :gotPort
