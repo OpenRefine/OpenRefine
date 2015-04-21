@@ -65,7 +65,7 @@ abstract public class MetaParser {
 //    final static private Var CLOJURE_EVAL = RT.var("clojure.core", "eval");
     
     static {
-        registerLanguageParser("grel", "Google Refine Expression Language (GREL)", new LanguageSpecificParser() {
+        registerLanguageParser("grel", "General Refine Expression Language (GREL)", new LanguageSpecificParser() {
             
             @Override
             public Evaluable parse(String s) throws ParsingException {
