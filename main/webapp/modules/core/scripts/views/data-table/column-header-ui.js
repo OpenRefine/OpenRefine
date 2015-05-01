@@ -327,7 +327,7 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
   elmts.blankErrorPositions.html(positionsHtml.join("")).sortable().disableSelection();
 
   var level = DialogSystem.showDialog(frame);
-  var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+  var dismiss = function() { DialogSystem.dismissLevel(level - 1); };
 
   setValueType(criterion.valueType); 
 

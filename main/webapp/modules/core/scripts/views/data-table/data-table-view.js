@@ -544,13 +544,21 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     for (var i = 0; i < this._sorting.criteria.length; i++) {
       if (this._sorting.criteria[i].column == criterion.column) {
         this._sorting.criteria[i] = criterion;
-        this.update();
+    	var dismissBusy = DialogSystem.showBusy();
+        var onDone = function() {
+          dismissBusy();
+    	}
+        this.update(onDone);
         return;
       }
     }
   }
   this._sorting.criteria.push(criterion);
-  this.update();
+  var dismissBusy = DialogSystem.showBusy();
+  var onDone = function() {
+    dismissBusy();
+  }
+  this.update(onDone);
 };
 
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
