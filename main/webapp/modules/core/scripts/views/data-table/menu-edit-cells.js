@@ -55,6 +55,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n._('core-views')["custom-text-trans"]+" " + column.name);
     
+    elmts.or_views_errorOn.text($.i18n._('core-views')["on-error"]);
     elmts.or_views_keepOr.text($.i18n._('core-views')["keep-or"]);
     elmts.or_views_setBlank.text($.i18n._('core-views')["set-blank"]);
     elmts.or_views_storeErr.text($.i18n._('core-views')["store-err"]);
