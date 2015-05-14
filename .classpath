@@ -69,7 +69,7 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-18.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-client-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-client-1.13.2-beta-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-http-client-1.13.1-beta.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-services-freebase-v1-rev25-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-services-freebase-v1-rev25-1.13.2-beta-sources.jar"/>
