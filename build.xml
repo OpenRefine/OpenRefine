@@ -18,7 +18,7 @@
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
 
-    <property name="java_version" value="1.6"/>
+    <property name="java_version" value="1.7"/>
 
     <property name="appengine.app_id" value="openrefine-broker"/>
     <property name="appengine.version" value="1"/>
