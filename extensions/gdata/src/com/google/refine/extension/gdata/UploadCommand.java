@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010,2011 Thomas F. Morris
+ * Copyright (c) 2010,2011,2015 Thomas F. Morris <tfmorris@gmail.com>
  *        All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without 
@@ -46,7 +46,8 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gdata.client.docs.DocsService;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.Link;
@@ -54,10 +55,11 @@ import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.batch.BatchOperationType;
 import com.google.gdata.data.batch.BatchStatus;
 import com.google.gdata.data.batch.BatchUtils;
-import com.google.gdata.data.docs.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.Cell;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
+import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
+import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
@@ -72,6 +74,7 @@ import com.google.refine.model.Project;
 
 public class UploadCommand extends Command {
     static final Logger logger = LoggerFactory.getLogger("gdata_upload");
+    private static final String SPREADSHEET_FEED = "https://spreadsheets.google.com/feeds/spreadsheets/private/full";
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -145,16 +148,34 @@ public class UploadCommand extends Command {
             final Project project, final Engine engine, final Properties params,
             String token, String name, List<Exception> exceptions) {
         
-        DocsService docsService = GDataExtension.getDocsService(token);
+        Drive driveService = GDataExtension.getDriveService(token);
         final SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
         
         try {
-            SpreadsheetEntry spreadsheetEntry = new SpreadsheetEntry();
-            spreadsheetEntry.setTitle(new PlainTextConstruct(name));
+            File body = new File();
+            body.setTitle(name);
+            body.setDescription("Spreadsheet uploaded from OpenRefine project: " + name);
+            body.setMimeType("application/vnd.google-apps.spreadsheet");
+
+            File file = driveService.files().insert(body).execute();
+            String fileID =  file.getId();
+
+            // Iterate through all spreadsheets to find one with our ID
+            SpreadsheetEntry spreadsheetEntry2 = null;
+            SpreadsheetFeed feed = spreadsheetService.getFeed(new URL(SPREADSHEET_FEED), SpreadsheetFeed.class);
+            List<com.google.gdata.data.spreadsheet.SpreadsheetEntry> spreadsheets = feed.getEntries();
+            for (com.google.gdata.data.spreadsheet.SpreadsheetEntry spreadsheet : spreadsheets) {
+                if (spreadsheet.getId().endsWith(fileID)) {
+                    spreadsheetEntry2 = spreadsheet;
+                }
+            }
             
-            final SpreadsheetEntry spreadsheetEntry2 = docsService.insert(
-                new URL("https://docs.google.com/feeds/default/private/full/"), spreadsheetEntry);
-            
+            // Bail if we didn't find our spreadsheet (shouldn't happen)
+            if (spreadsheetEntry2 == null) {
+                logger.error("Failed to find match for ID: " + fileID);
+                return null;
+            }
+
             int[] size = CustomizableTabularExporterUtilities.countColumnsRows(
                     project, engine, params);
             
@@ -167,15 +188,16 @@ public class UploadCommand extends Command {
             
             spreadsheetEntry2.getDefaultWorksheet().delete();
             
+            final SpreadsheetEntry spreadsheetEntry3 = spreadsheetEntry2;
             new Thread() {
                 @Override
                 public void run() {
-                    spreadsheetService.setProtocolVersion(SpreadsheetService.Versions.V1);
+                    spreadsheetService.setProtocolVersion(SpreadsheetService.Versions.V3);
                     try {
                         uploadToCellFeed(
                             project, engine, params,
                             spreadsheetService,
-                            spreadsheetEntry2,
+                            spreadsheetEntry3,
                             worksheetEntry2);
                     } catch (Exception e) {
                         logger.error("Error uploading data to Google Spreadsheets", e);
@@ -183,12 +205,8 @@ public class UploadCommand extends Command {
                 }
             }.start();
             
-            return spreadsheetEntry2.getDocumentLink().getHref();
-        } catch (MalformedURLException e) {
-            exceptions.add(e);
-        } catch (IOException e) {
-            exceptions.add(e);
-        } catch (ServiceException e) {
+            return spreadsheetEntry2.getSpreadsheetLink().getHref();
+        } catch (IOException | ServiceException e) {
             exceptions.add(e);
         }
         return null;

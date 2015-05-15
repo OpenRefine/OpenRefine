@@ -75,7 +75,7 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.freebase.Freebase;
 import com.google.api.services.freebase.FreebaseRequestInitializer;
 

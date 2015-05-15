@@ -38,11 +38,13 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.drive.Drive;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 
@@ -75,7 +77,7 @@ abstract public class GDataExtension {
                 CLIENT_ID, 
                 authorizedUrl, // execution continues at authorized on redirect
                 Arrays.asList("https://www.googleapis.com/auth/fusiontables", 
-                        "https://docs.google.com/feeds", // create new spreadsheets
+                        "https://www.googleapis.com/auth/drive", // create new spreadsheets
                         "https://spreadsheets.google.com/feeds"));
         
         return url.toString();
@@ -138,6 +140,12 @@ abstract public class GDataExtension {
             service.setAuthSubToken(token);
         }
         return service;
+    }
+    
+    static public Drive getDriveService(String token) {
+        GoogleCredential credential = new GoogleCredential().setAccessToken(token);
+        return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                        .setApplicationName(SERVICE_APP_NAME).build();
     }
     
     static boolean isSpreadsheetURL(String url) {
