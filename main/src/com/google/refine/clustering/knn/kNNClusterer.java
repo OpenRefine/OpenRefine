@@ -71,6 +71,8 @@ import edu.mit.simile.vicino.distances.JaroWinklerTFIDFDistance;
 import edu.mit.simile.vicino.distances.LevenshteinDistance;
 import edu.mit.simile.vicino.distances.PPMDistance;
 
+import edu.tsinghua.dbgroup.EditDistanceClusterer;
+
 public class kNNClusterer extends Clusterer {
 
     private Distance _distance;
@@ -148,7 +150,6 @@ public class kNNClusterer extends Clusterer {
         int _blockingNgramSize = 6;
         HashSet<String> _data;
         NGramClusterer _clusterer;
-        
         public BlockingClusteringRowVisitor(Distance d, JSONObject o) {
             _distance = d;
             _config = o;
@@ -191,6 +192,48 @@ public class kNNClusterer extends Clusterer {
             return _clusterer.getClusters(_radius);
         }
     }
+
+    class EditDistanceClusteringRowVisitor implements RowVisitor {
+
+        int _radius = 2;
+        EditDistanceClusterer _clusterer;
+        public EditDistanceClusteringRowVisitor(JSONObject o) {
+            try {
+                JSONObject params = o.getJSONObject("params");
+                _radius = params.getInt("radius");
+                logger.debug("Use radius: {}", _radius);
+            } catch (JSONException e) {
+                logger.debug("No parameters found, using defaults");
+            }
+            _clusterer = new EditDistanceClusterer(_radius);
+        }
+        
+        @Override
+        public void start(Project project) {
+            // nothing to do
+        }
+
+        @Override
+        public void end(Project project) {
+            // nothing to do
+        }
+        
+        @Override
+        public boolean visit(Project project, int rowIndex, Row row) {
+            Cell cell = row.getCell(_colindex);
+            if (cell != null && cell.value != null) {
+                Object v = cell.value;
+                String s = (v instanceof String) ? ((String) v) : v.toString().intern();
+                _clusterer.populate(s);
+                count(s);
+            }
+            return false;
+        }
+        
+        public List<Set<Serializable>> getClusters() {
+            return _clusterer.getClusters();
+        }
+    }
         
     @Override
     public void initializeFromJSON(Project project, JSONObject o) throws Exception {
@@ -200,12 +243,21 @@ public class kNNClusterer extends Clusterer {
 
     @Override
     public void computeClusters(Engine engine) {
-        //VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
-        BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance,_config);
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(_project, visitor);
-     
-        _clusters = visitor.getClusters();
+        if(_distance != _distances.get("levenshtein")) {
+            //VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
+            BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance,_config);
+            FilteredRows filteredRows = engine.getAllFilteredRows();
+            filteredRows.accept(_project, visitor);
+         
+            _clusters = visitor.getClusters();
+        } else {
+            EditDistanceClusteringRowVisitor visitor = 
+                new EditDistanceClusteringRowVisitor(_config);
+            FilteredRows filteredRows = engine.getAllFilteredRows();
+            filteredRows.accept(_project, visitor);
+         
+            _clusters = visitor.getClusters();
+        }
     }
 
     public static class ValuesComparator implements Comparator<Entry<Serializable,Integer>>, Serializable {
