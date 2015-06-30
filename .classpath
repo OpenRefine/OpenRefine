@@ -8,7 +8,7 @@
 	<classpathentry kind="src" path="extensions/pc-axis/src"/>
 	<classpathentry kind="src" path="extensions/sample/src"/>
 	<classpathentry kind="src" path="main/tests/server/src"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
@@ -59,6 +59,7 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.2.4.jar" sourcepath="main/webapp/WEB-INF/lib-src/httpcore-4.2.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
+<<<<<<< HEAD
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-18.0.jar" sourcepath="main/webapp/WEB-INF/lib-src/guava-18.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-client-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-client-1.13.2-beta-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-http-client-1.13.1-beta.jar" sourcepath="main/webapp/WEB-INF/lib-src/google-http-client-1.13.1-beta-sources.jar"/>
@@ -88,5 +89,24 @@
 	<classpathentry kind="lib" path="server/lib/jetty-xml-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-xml-9.2.6.v20141205-sources.jar"/>
 	<classpathentry kind="lib" path="server/lib/jetty-servlets-9.2.6.v20141205.jar" sourcepath="main/webapp/WEB-INF/lib-src/jetty-servlets-9.2.6.v20141205-sources.jar"/>
 	<classpathentry kind="lib" path="server/lib/log4j-1.2.17.jar" sourcepath="main/webapp/WEB-INF/lib-src/log4j-1.2.17-sources.jar"/>
+=======
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-services-freebase-v1-rev25-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-services-freebase-v1-rev25-1.13.2-beta-sources.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/jsr305-1.3.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-1.20.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-servlet-1.20.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-drive-v2-rev168-1.20.0.jar" sourcepath="C:/Users/tfmorris/.sourceattacher/google-api-services-drive-v2-rev168-1.20.0-sources.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-fusiontables-v2-rev3-1.20.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-1.20.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-jackson2-1.20.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-1.20.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-servlet-1.20.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/jackson-core-2.1.3.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/transaction-api-1.1.jar"/>
+>>>>>>> fa7733e03eb7bafffc0ae16108c59a79720c7080
 	<classpathentry kind="output" path="build"/>
 </classpath>

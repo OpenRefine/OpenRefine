@@ -47,8 +47,7 @@ ThisComputerImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 
   this._elmts = DOM.bind(bodyDiv);
   
-  $('#or-import-locate').text($.i18n._('core-index-import')["locate-files"]);
-  $('#or-import-locate').text($.i18n._('core-index-import')["locate-files"]);
+  $('#or-import-locate-files').text($.i18n._('core-index-import')["locate-files"]);
   this._elmts.nextButton.html($.i18n._('core-buttons')["next"]);
   
   this._elmts.nextButton.click(function(evt) {

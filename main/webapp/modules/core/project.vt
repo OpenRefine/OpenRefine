@@ -36,11 +36,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>OpenRefine</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    $styleInjection
     <script type="text/javascript">var theProject = { id : $projectID };</script>
     <script type="text/javascript" src="wirings.js"></script>
-    <link rel="icon" type="image/png" href="images/favicon.png">
     $scriptInjection
-    $styleInjection
     <script>Refine.encodings = $encodingJson; Refine.defaultEncoding = $defaultEncoding;</script>
   </head>
   <body>

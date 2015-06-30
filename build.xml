@@ -330,18 +330,17 @@
             </fileset>
         </copy>
 
-        <copy todir="${windows.dir}/licenses">
-            <fileset dir="${basedir}/licenses">
-                <include name="**"/>
-            </fileset>
-        </copy>
+        <mkdir dir="${windows.dir}/licenses"/>
+        <fixcrlf srcDir="${basedir}/licenses" destDir="${windows.dir}/licenses" eol="crlf"/>
 
-        <copy file="${conf.dir}/openrefine.l4j.ini" tofile="${windows.dir}/openrefine.l4j.ini"/>
-        <copy file="${basedir}/refine.bat" tofile="${windows.dir}/refine.bat"/>
-        <copy file="${basedir}/refine.ini" tofile="${windows.dir}/refine.ini"/>
-        <copy file="${basedir}/README.txt" tofile="${windows.dir}/README.txt"/>
-        <copy file="${basedir}/LICENSE.txt" tofile="${windows.dir}/LICENSE.txt"/>
-        
+        <fixcrlf srcDir="${basedir}" destDir="${windows.dir}" eol="crlf">
+            <include name="refine.bat"/>
+            <include name="refine.ini"/>
+            <include name="README.txt"/>
+            <include name="LICENSE.txt"/>
+        </fixcrlf>
+        <fixcrlf file="${conf.dir}/openrefine.l4j.ini" destDir="${windows.dir}" eol="crlf"/>
+
         <mkdir dir="${dist.dir}"/>
         <zip destfile="${dist.dir}/openrefine-win-${version}.zip" basedir="${windows.dir}/.." includes="${release.name}/**"/>
     </target>
@@ -363,16 +362,16 @@
             </fileset>
         </copy>
 
-        <copy todir="${linux.dir}/licenses">
-            <fileset dir="${basedir}/licenses">
-                <include name="**"/>
-            </fileset>
-        </copy>
-        <copy file="${basedir}/refine.ini" tofile="${linux.dir}/refine.ini"/>
-        <copy file="${basedir}/LICENSE.txt" tofile="${linux.dir}/LICENSE.txt"/>
-        <copy file="${basedir}/README.txt" tofile="${linux.dir}/README.txt"/>
-        <copy file="${basedir}/refine" tofile="${linux.dir}/refine"/>
-        
+        <mkdir dir="${linux.dir}/licenses"/>
+        <fixcrlf srcDir="${basedir}/licenses" destDir="${linux.dir}/licenses" eol="lf"/>
+
+        <fixcrlf srcDir="${basedir}" destDir="${linux.dir}" eol="lf">
+            <include name="refine"/>
+            <include name="refine.ini"/>
+            <include name="README.txt"/>
+            <include name="LICENSE.txt"/>
+        </fixcrlf>
+
         <mkdir dir="${dist.dir}"/>
         <tar longfile="gnu" compression="gzip" destfile="${dist.dir}/openrefine-linux-${version}.tar.gz">
            <tarfileset dir="${linux.dir}/.." filemode="755">

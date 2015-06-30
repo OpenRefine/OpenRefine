@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ########################################################## 
 #               OpenRefine Control System             #
@@ -15,12 +15,12 @@ exit 1
 }
 
 error() {
-    echo "$1"
+    echo "Error: $1"
     exit 1
 }
 
 warn() {
-    echo "$1"
+    echo "Warning: $1"
     exit 0
 }
 
@@ -532,14 +532,14 @@ mac_dist() {
     mkdir -p "$REFINE_BUILD_DIR/mac/.background"
     cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
     
-    SIZE=200
+    SIZE=250
     
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
     fi
 
 # Sign the bundle with a self-signed cert so OS X doesn't frustrate users by making app invisible
-    codesign -s "OpenRefine Code Signing" "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+    codesign --deep -s "OpenRefine Code Signing" "$REFINE_BUILD_DIR/mac/OpenRefine.app"
     spctl --assess --type execute --verbose=4 "$REFINE_BUILD_DIR/mac/OpenRefine.app"
 
     TITLE="OpenRefine $VERSION"
@@ -633,8 +633,6 @@ ui_test() {
 
 server_test() {
     ant server_test
-    
-    $RUN_CMD || error "Failed passing server tests"
 }
 
 run() {

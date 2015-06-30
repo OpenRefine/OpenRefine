@@ -11,7 +11,7 @@
     <echo message="Building extensions" />
     <ant dir="sample/" target="build" />
     <ant dir="jython/" target="build" />
-    <ant dir="freebase/" target="build" />
+<!--    <ant dir="freebase/" target="build" /> -->
     <ant dir="gdata/" target="build" />
     <ant dir="pc-axis/" target="build" />
   </target>

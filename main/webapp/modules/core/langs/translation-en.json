@@ -148,7 +148,7 @@
 		"found": "found",
 		"filtered-from": "filtered from <b>",
 		"from-total": "</b> total",
-		"cluster-descr": "This feature helps you find groups of different cell values that might be alternative representations of the same thing. For example, the two strings \"New York\" and \"new york\" are very likely to refer to the same concept and just have capitalization differences, and \"GÃ¶del\" and \"Godel\" probably refer to the same person.",
+		"cluster-descr": "This feature helps you find groups of different cell values that might be alternative representations of the same thing. For example, the two strings \"New York\" and \"new york\" are very likely to refer to the same concept and just have capitalization differences, and \"Gödel\" and \"Godel\" probably refer to the same person.",
 		"find-more": "Find out more ...",
 		"method": "Method&nbsp;",
 		"key-collision": "key collision",

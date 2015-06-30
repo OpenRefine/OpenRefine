@@ -95,6 +95,7 @@ public class GDataImportingController implements ImportingController {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
+        response.setCharacterEncoding("UTF-8");
         Properties parameters = ParsingUtilities.parseUrlParameters(request);
         String subCommand = parameters.getProperty("subCommand");
         if ("list-documents".equals(subCommand)) {
