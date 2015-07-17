@@ -125,7 +125,7 @@
 		"custom": "autre",
 		"escape": "Protéger les caractères spéciaux avec \\",
 		"quotation-mark": "Des guillemets sont utilisés<br/>pour délimiter les cellules qui contiennent<br/>des séparateurs de colonne",
-		"click-xml": "Cliquer sur le premier élément XML correspondant ) la première ligne à charger."
+		"click-xml": "Cliquer sur le premier élément XML correspondant à la première ligne à charger."
 	},
 	"core-dialogs": {
 		"cluster-edit": "Regrouper & éditer une colonne",
