@@ -184,7 +184,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   var doMoveColumnBy = function(change) {
     var newidx = Refine.columnNameToColumnIndex(column.name) + change;
-    if (newidx > 0 && newidx < Refine.columnNameToColumnIndex(column.name)) {
+    if (newidx >= 0) {
       Refine.postCoreProcess(
           "move-column", 
           {
