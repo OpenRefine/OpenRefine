@@ -340,10 +340,9 @@ appengine_prepare() {
 launch4j_prepare() {
     tools_prepare
 
-    L4J_VERSION="3.1.0-beta1" # buggy!
-    L4J_VERSION="3.0.2"
+    L4J_VERSION="3.8"
     if [ "$OS" = "macosx" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-macosx.tgz"
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-macosx-x86-10.8.tgz"
     elif [ "$OS" = "windows" ] ; then
         LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-win32.zip"
     elif [ "$OS" = "linux" ] ; then
