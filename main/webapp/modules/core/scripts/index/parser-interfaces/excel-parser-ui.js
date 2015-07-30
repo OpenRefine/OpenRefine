@@ -62,7 +62,6 @@ Refine.ExcelParserUI.prototype.confirmReadyToCreateProject = function() {
 
 Refine.ExcelParserUI.prototype.getOptions = function() {
   var options = {
-    xmlBased: this._config.xmlBased,
     sheets: []
   };
 
