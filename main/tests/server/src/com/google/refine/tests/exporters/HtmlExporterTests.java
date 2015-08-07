@@ -117,7 +117,7 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head><title>" + TEST_PROJECT_NAME + "</title>" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
                 "<meta charset=\"utf-8\" />\n" + 
                 "</head>\n" +
                 "<body>\n" +
@@ -144,7 +144,7 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head><title>" + TEST_PROJECT_NAME + "</title>" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
                 "<meta charset=\"utf-8\" />\n" + 
                 "</head>\n" +
                 "<body>\n" +
@@ -171,7 +171,9 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head><title>" + TEST_PROJECT_NAME + "</title></head>\n" +
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
+                "<meta charset=\"utf-8\" />\n" +
+                "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
                 "<tr><th>column0</th><th>column1</th><th>column2</th></tr>\n" +
