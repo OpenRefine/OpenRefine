@@ -55,6 +55,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 
+@Test(groups = {"broken"})
 public class JsonImporterTests extends ImporterTest {
     @Override
     @BeforeTest

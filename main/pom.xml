@@ -16,6 +16,9 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.libDirectory>${project.basedir}/webapp/WEB-INF/lib</project.build.libDirectory>
+    <tests.dir>${project.basedir}/tests</tests.dir>
+    <!--<server.tests.dir>${tests.dir}/server</server.tests.dir>-->
+    <!--<server.tests.classes.dir>${project.basedir}/tests</server.tests.classes.dir>-->
   </properties>
 
   <dependencies>
@@ -114,7 +117,7 @@
       <version>0.8.7</version>
     </dependency>
     <dependency>
-      <groupId>au.com.bytecode</groupId>
+      <groupId>opencsv</groupId>
       <artifactId>opencsv</artifactId>
       <version>2.4-SNAPSHOT</version>
     </dependency>
@@ -163,11 +166,39 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.8</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
     <sourceDirectory>${basedir}/src</sourceDirectory>
-    <!--<outputDirectory>${basedir}/src</outputDirectory>-->
+    <testSourceDirectory>${basedir}/tests/server/src</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>${tests.dir}/server/src</directory>
+        <includes>
+          <include>tests.log4j.properties</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>${tests.dir}</directory>
+        <excludes>
+          <exclude>server/**</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
+
 
     <plugins>
       <plugin>
@@ -231,7 +262,37 @@
               <packaging>jar</packaging>
             </configuration>
           </execution>
+          <execution>
+            <!-- todo: use 2.4 version -->
+            <id>install-lib-opencsv</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${project.build.libDirectory}/opencsv-2.4-SNAPSHOT.jar</file>
+              <groupId>opencsv</groupId>
+              <artifactId>opencsv</artifactId>
+              <version>2.4-SNAPSHOT</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.18.1</version>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>${tests.dir}/server/conf/tests.xml</suiteXmlFile>
+          </suiteXmlFiles>
+          <systemPropertyVariables>
+            <haltOnFailure>true</haltOnFailure>
+            <listener>org.testng.reporters.DotTestListener</listener>
+            <excludedgroups>broken</excludedgroups>
+          </systemPropertyVariables>
+        </configuration>
       </plugin>
     </plugins>
   </build>

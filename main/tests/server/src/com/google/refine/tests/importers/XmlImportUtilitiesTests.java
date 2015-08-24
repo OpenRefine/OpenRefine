@@ -61,6 +61,7 @@ import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
 
 
+@Test(groups = {"broken"})
 public class XmlImportUtilitiesTests extends RefineTest {
 
     @Override

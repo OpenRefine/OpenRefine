@@ -17,12 +17,6 @@
   </properties>
 
   <dependencies>
-    <!--<dependency>-->
-      <!--<groupId>org.openrefine.openrefine</groupId>-->
-      <!--<artifactId>openrefine-extensions-jython</artifactId>-->
-      <!--<version>${project.version}</version>-->
-    <!--</dependency>-->
-
     <dependency>
       <groupId>org.openrefine.openrefine</groupId>
       <artifactId>openrefine-core</artifactId>
