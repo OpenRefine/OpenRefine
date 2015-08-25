@@ -89,11 +89,10 @@
       <artifactId>jrdf</artifactId>
       <version>0.5.6</version>
     </dependency>
-    <!--todo: version check json-20100208.jar-->
     <dependency>
-      <groupId>org.json</groupId>
+      <groupId>json</groupId>
       <artifactId>json</artifactId>
-      <version>20131018</version>
+      <version>20100208</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
@@ -159,13 +158,13 @@
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <!-- todo: version check -->
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>junit</groupId>-->
+      <!--<artifactId>junit</artifactId>-->
+      <!--&lt;!&ndash; todo: version check &ndash;&gt;-->
+      <!--<version>3.8.1</version>-->
+      <!--<scope>test</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -263,7 +262,6 @@
             </configuration>
           </execution>
           <execution>
-            <!-- todo: use 2.4 version -->
             <id>install-lib-opencsv</id>
             <phase>initialize</phase>
             <goals>
@@ -274,6 +272,20 @@
               <groupId>opencsv</groupId>
               <artifactId>opencsv</artifactId>
               <version>2.4-SNAPSHOT</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-lib-json</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${project.build.libDirectory}/json-20100208.jar</file>
+              <groupId>json</groupId>
+              <artifactId>json</artifactId>
+              <version>20100208</version>
               <packaging>jar</packaging>
             </configuration>
           </execution>
@@ -288,6 +300,7 @@
             <suiteXmlFile>${tests.dir}/server/conf/tests.xml</suiteXmlFile>
           </suiteXmlFiles>
           <systemPropertyVariables>
+            <verbose>2</verbose>
             <haltOnFailure>true</haltOnFailure>
             <listener>org.testng.reporters.DotTestListener</listener>
             <excludedgroups>broken</excludedgroups>
