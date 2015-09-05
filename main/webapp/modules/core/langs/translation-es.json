@@ -626,7 +626,7 @@
 	},
 	"core-buttons": {
 		"cancel": "Cancelar",
-		"ok": "&nbsp;&nbsp;Acéptar&nbsp;&nbsp;",
+		"ok": "&nbsp;&nbsp;Aceptar&nbsp;&nbsp;",
 		"import-proj": "Importar projecto",
 		"select-all": "Seleccionar todos",
 		"unselect-all": "Seleccionar ninguno",
