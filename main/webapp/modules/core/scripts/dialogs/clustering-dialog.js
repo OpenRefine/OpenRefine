@@ -175,7 +175,9 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
               cluster.value = value;
               
               parent.find("input[type='text']").val(value);
-              parent.find("input[type='checkbox']").attr('checked', true).change();
+              var checkbox = parent.find("input[type='checkbox']");
+              if (!checkbox.attr('checked'))
+            		  checkbox.attr('checked', true).change();
               return false;
             };
             for (var c = 0; c < choices.length; c++) {
