@@ -48,7 +48,11 @@ import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
 import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
+import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 
 /**
@@ -210,8 +214,22 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", true);
         boolean storeEmptyStrings = JSONUtilities.getBoolean(options, "storeEmptyStrings", false);
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", true);
-
-        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2, trimStrings,
-                storeEmptyStrings,guessCellValueTypes);
+        
+        // copied from TabularImportingParserBase
+        boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
+        String fileNameColumnName = "File";
+        if (includeFileSources) {
+            if (project.columnModel.getColumnByName(fileNameColumnName) == null) {
+                try {
+                    project.columnModel.addColumn(
+                        0, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
+                } catch (ModelException e) {
+                    // Ignore: We already checked for duplicate name.
+                }
+            }
+        }
+        
+        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2, 
+                new ImportParameters(trimStrings, storeEmptyStrings,guessCellValueTypes, includeFileSources,fileSource));
     }
 }
