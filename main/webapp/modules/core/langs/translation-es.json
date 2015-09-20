@@ -533,6 +533,7 @@
 		"specify-sep": "Por favor especifique un separador.",
 		"warning-no-length": "No se especificó un valor de longitud.",
 		"warning-format": "Los valores de longitud no cumplen con el formato.",
+		"check-format": "Favor verificar el formato de archivo.",
 		"split-into-col": "Dividir en varias columnas",
 		"add-based-col": "Agregar columna basada en esta columna",
 		"add-by-urls": "Agregar columna accediendo a URLs",

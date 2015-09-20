@@ -534,6 +534,7 @@
         "specify-sep": "请制定一个分隔符.",
         "warning-no-length": "No field length is specified.",
         "warning-format": "The given field lengths are not properly formatted.",
+        "check-format": "请检查文件格式.",
         "split-into-col": "分割此列",
         "add-based-col": "由此列派生新列",
         "add-by-urls": "添加远程数据为新列",
