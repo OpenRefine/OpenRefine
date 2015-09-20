@@ -64,13 +64,8 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   return level;
 };
 
-DialogSystem.dismissAll = function() {
-  DialogSystem.dismissUntil(0);
-};
-
-DialogSystem.dismissUntil = function(level) {
-  for (var i = DialogSystem._layers.length - 1; i >= level; i--) {
-    var layer = DialogSystem._layers[i];
+DialogSystem.dismissLevel = function(level) {
+    var layer = DialogSystem._layers[level];
 
     $(document).unbind("keydown", layer.keyHandler);
 
@@ -85,6 +80,15 @@ DialogSystem.dismissUntil = function(level) {
         Refine.reportException(e);
       }
     }
+};
+
+DialogSystem.dismissAll = function() {
+  DialogSystem.dismissUntil(0);
+};
+
+DialogSystem.dismissUntil = function(level) {
+  for (var i = DialogSystem._layers.length - 1; i >= level; i--) {
+	  DialogSystem.dismissLevel(i);
   }
   DialogSystem._layers = DialogSystem._layers.slice(0, level);
 };
@@ -107,3 +111,4 @@ DialogSystem.showBusy = function(message) {
     DialogSystem.dismissUntil(level - 1);
   };
 };
+

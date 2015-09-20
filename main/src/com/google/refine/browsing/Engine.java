@@ -91,7 +91,7 @@ public class Engine implements Jsonizable {
         _mode = mode;
     }
 
-    public FilteredRows getAllRows() {
+    public synchronized FilteredRows getAllRows() {
         return new FilteredRows() {
             @Override
             public void accept(Project project, RowVisitor visitor) {
@@ -134,7 +134,7 @@ public class Engine implements Jsonizable {
         throw new InternalError("Unknown mode.");
     }
 
-    public FilteredRecords getAllRecords() {
+    public synchronized FilteredRecords getAllRecords() {
         return new FilteredRecords() {
             @Override
             public void accept(Project project, RecordVisitor visitor) {
