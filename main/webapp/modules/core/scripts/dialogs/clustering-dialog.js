@@ -66,6 +66,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_ppm.html($.i18n._('core-dialogs')["ppm"]);
     this._elmts.or_dialog_ngramSize.html($.i18n._('core-dialogs')["ngram-size"]);
     this._elmts.or_dialog_radius.html($.i18n._('core-dialogs')["ngram-radius"]);
+    this._elmts.or_dialog_distance.html($.i18n._('core-dialogs')["ngram-radius"]);
     this._elmts.or_dialog_blockChars.html($.i18n._('core-dialogs')["block-chars"]);  
     this._elmts.selectAllButton.html($.i18n._('core-buttons')["select-all"]);
     this._elmts.deselectAllButton.html($.i18n._('core-buttons')["unselect-all"]);
@@ -118,6 +119,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.ngramSize.change(params_changer);
     this._elmts.radius.change(params_changer);
     this._elmts.ngramBlock.change(params_changer);
+    this._elmts.editDistance.change(params_changer);
     
     this._elmts.selectAllButton.click(function() { self._selectAll(); });
     this._elmts.deselectAllButton.click(function() { self._deselectAll(); });
