@@ -429,7 +429,6 @@ function init() {
 
       "scripts/reconciliation/recon-manager.js",
       "scripts/reconciliation/recon-dialog.js",
-      "scripts/reconciliation/freebase-query-panel.js",
       "scripts/reconciliation/standard-service-panel.js",
 
       "scripts/dialogs/expression-preview-dialog.js",
