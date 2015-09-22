@@ -88,9 +88,9 @@
 		"ok-button": "Si, Caricamento dati con analisi qualitativa"
 	},
 	"fb-extend": {
-		"add-column": "Aggiungi colonne da Freebase basandoti sulla colonna",
+		"add-column": "Aggiungi colonne da Freebase basandoti sulla colonna", // New translation required
 		"warning-add-properties": "Prima aggiungi delle proprietà.",
-		"querying-freebase": "Interrogando Freebase ...",
+		"querying-freebase": "Interrogando Freebase ...", // New translation required
 		"remove-column": "Rimuovi questa colonna",
 		"add-constraints": "Aggiungi vincoli a questa colonna",
 		"mql-constraints": "Inserisci i vincoli per la query MQL come JSON",
@@ -98,7 +98,12 @@
 		"warning-json-obj": "Il JSON che inserisci deve essere un oggetto, cioè in questa forma: { ... }.",
 		"add-property": "Aggiungi Proprietà",
 		"suggested-properties": "Proprietà suggerite",
-		"constraint": "Vincoli"		
+		"constraint": "Vincoli",
+		"add-mql-srv": "Add MQL (Metaweb Query Language) Service", // Translation required
+		"pick-service": "Pick a service on the left", // Translation required
+		"service-title": "Services", // Translation required
+		"enter-name": "Enter the service's name", // Translation required
+		"preview": "Preview" // New translation required
 	},
 	"fb-menu": {
 		"freebase": "Freebase",
@@ -107,7 +112,7 @@
 		"load": "Carica in Freebase...",
 		"browse-data-load": "Vedi i dettagli per il caricamento dati...",
 		"import-qa": "Importa dati con controllo qualità",
-		"add-columns": "Aggiungi colonne da Freebase ...",
+		"add-columns": "Aggiungi colonne da Freebase ...", // New translation required
 		"warning-load": "Non hai ancora provato a caricare i dati di questo progetto in Freebase."
 	},
     "fb-buttons": {

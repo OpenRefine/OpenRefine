@@ -304,6 +304,9 @@ public class ExtendDataOperation extends EngineDependentOperation {
                         columnTypes,
                         rowIndices,
                         dataExtensions,
+                        _job.reconServiceUrl,
+                        _job.identifierSpace,
+                        _job.schemaSpace,
                         _historyEntryID)
                 );
                 

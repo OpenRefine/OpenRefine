@@ -51,9 +51,7 @@ $.ajax({
 $.i18n.setDictionary(dictionary);
 // End internationalization
 
-var Refine = {
-  refineHelperService: "http://openrefine-helper.freebaseapps.com"
-};
+var Refine = {};
 
 Refine.reportException = function(e) {
   if (window.console) {

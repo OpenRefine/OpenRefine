@@ -91,6 +91,8 @@ function init() {
     [
       "scripts/extension.js",
 
+      "scripts/dialogs/extend-data-manager.js",
+
       "scripts/util/freebase.js",
 
       "scripts/dialogs/freebase-loading-dialog.js",

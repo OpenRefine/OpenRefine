@@ -108,6 +108,8 @@ DataTableCellUI.prototype._render = function() {
         a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
       } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
         a.attr("href", "http://www.freebase.com/view" + match.id);
+      } else if (URL.looksLikeUrl(r.identifierSpace + match.id)) {
+        a.attr("href", r.identifierSpace + match.id);
       }
 
       $('<span> </span>').appendTo(divContent);
@@ -152,6 +154,8 @@ DataTableCellUI.prototype._render = function() {
               a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
             } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
               a.attr("href", "http://www.freebase.com/view" + candidate.id);
+            } else if (URL.looksLikeUrl(r.identifierSpace + candidate.id)) {
+                a.attr("href", r.identifierSpace + candidate.id);
             }
 
             var preview = null;

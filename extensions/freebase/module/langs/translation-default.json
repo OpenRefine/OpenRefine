@@ -88,9 +88,9 @@
 		"ok-button": "Yes, QA Data Load"
 	},
 	"fb-extend": {
-		"add-column": "Add Columns from Freebase Based on Column",
+		"add-column": "Add Columns using MQL Based on Column",
 		"warning-add-properties": "Please add some properties first.",
-		"querying-freebase": "Querying Freebase ...",
+		"querying-freebase": "Querying MQL service...",
 		"remove-column": "Remove this column",
 		"add-constraints": "Add constraints to this column",
 		"mql-constraints": "Enter MQL query constraints as JSON",
@@ -98,7 +98,12 @@
 		"warning-json-obj": "The JSON you enter must be an object, that is, it is of this form { ... }.",
 		"add-property": "Add Property",
 		"suggested-properties": "Suggested Properties",
-		"constraint": "Constraint"		
+		"constraint": "Constraint",
+		"add-mql-srv": "Add MQL (Metaweb Query Language) Service",
+		"pick-service": "Pick a service on the left",
+		"service-title": "Services",
+		"enter-name": "Enter the service's name",
+		"preview": "Preview"
 	},
 	"fb-menu": {
 		"freebase": "Freebase",
@@ -107,7 +112,7 @@
 		"load": "Load into Freebase...",
 		"browse-data-load": "Browse data load details...",
 		"import-qa": "Import QA data",
-		"add-columns": "Add columns from Freebase ...",
+		"add-columns": "Add columns using MQL ...",
 		"warning-load": "You have not tried to load the data in this project into Freebase yet."
 	},
     "fb-buttons": {
