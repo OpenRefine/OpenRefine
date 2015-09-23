@@ -360,7 +360,7 @@ class RefineServer extends Server {
                 grefineDir = new File(new File(parentDir, "Google"), "Refine");
                 gridworksDir = new File(parentDir, "Gridworks");
             }
-        } else if (os.contains("mac os x")) {
+        } else if (os.contains("os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
             
