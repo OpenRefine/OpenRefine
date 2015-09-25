@@ -33,10 +33,7 @@
           <div id="ngram-fingerprint-params" class="function-params hidden">
             <span bind="or_dialog_ngramSize"></span><input type="text" value="2" bind="ngramSize" name="ngram-size" size="2" class="param" datatype="int">
           </div> 
-          <div id="levenshtein-params" class="knn-controls function-params hidden">
-            <span style="margin-right: 1em"><span bind="or_dialog_distance"></span><input type="text" value="2" bind="editDistance" name="radius" size="2" class="param" datatype="int"></span>
-          </div> 
-          <div id="PPM-params" class="knn-controls function-params hidden">
+          <div class="knn-controls hidden">
             <span style="margin-right: 1em"><span bind="or_dialog_radius"></span><input type="text" value="1.0" bind="radius" name="radius" size="2" class="param" datatype="float"></span>
             <span><span bind="or_dialog_blockChars"></span><input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="2" class="param" datatype="int"></span>
           </div> 
