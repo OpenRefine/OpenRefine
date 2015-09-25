@@ -62,7 +62,6 @@ Refine.ExcelParserUI.prototype.confirmReadyToCreateProject = function() {
 
 Refine.ExcelParserUI.prototype.getOptions = function() {
   var options = {
-    xmlBased: this._config.xmlBased,
     sheets: []
   };
 
@@ -217,5 +216,7 @@ Refine.ExcelParserUI.prototype._updatePreview = function() {
         new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
       });
     }
+  }, function() {
+	  self._progressContainer.hide();
   });
 };

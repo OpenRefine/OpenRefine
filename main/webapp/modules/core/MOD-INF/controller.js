@@ -204,14 +204,13 @@ function registerImporting() {
   IM.registerFormat("text/rdf+n3", "RDF/N3 files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
 
   IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
-  IM.registerFormat("text/xml/xlsx", "Excel (.xlsx) files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+  IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
   IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
   IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
   IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
 
   IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
-  IM.registerFormat("binary/xls", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
 
   IM.registerFormat("service", "Services"); // generic format, no parser to handle it
 
@@ -228,8 +227,8 @@ function registerImporting() {
   IM.registerExtension(".json", "text/json");
   IM.registerExtension(".js", "text/json");
 
-  IM.registerExtension(".xls", "binary/xls");
-  IM.registerExtension(".xlsx", "text/xml/xlsx");
+  IM.registerExtension(".xls", "binary/text/xml/xls/xlsx");
+  IM.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
 
   IM.registerExtension(".ods", "text/xml/ods");
   
@@ -250,13 +249,13 @@ function registerImporting() {
   
   IM.registerMimeType("text/rdf+n3", "text/rdf+n3");
 
-  IM.registerMimeType("application/msexcel", "binary/xls");
-  IM.registerMimeType("application/x-msexcel", "binary/xls");
-  IM.registerMimeType("application/x-ms-excel", "binary/xls");
-  IM.registerMimeType("application/vnd.ms-excel", "binary/xls");
-  IM.registerMimeType("application/x-excel", "binary/xls");
-  IM.registerMimeType("application/xls", "binary/xls");
-  IM.registerMimeType("application/x-xls", "text/xml/xlsx");
+  IM.registerMimeType("application/msexcel", "binary/text/xml/xls/xlsx");
+  IM.registerMimeType("application/x-msexcel", "binary/text/xml/xls/xlsx");
+  IM.registerMimeType("application/x-ms-excel", "binary/text/xml/xls/xlsx");
+  IM.registerMimeType("application/vnd.ms-excel", "binary/text/xml/xls/xlsx");
+  IM.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
+  IM.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
+  IM.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
   
   IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
@@ -429,7 +428,6 @@ function init() {
 
       "scripts/reconciliation/recon-manager.js",
       "scripts/reconciliation/recon-dialog.js",
-      "scripts/reconciliation/freebase-query-panel.js",
       "scripts/reconciliation/standard-service-panel.js",
 
       "scripts/dialogs/expression-preview-dialog.js",

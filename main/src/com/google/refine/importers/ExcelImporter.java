@@ -37,12 +37,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -77,10 +79,7 @@ public class ExcelImporter extends TabularImportingParserBase {
     public JSONObject createParserUIInitializationData(
             ImportingJob job, List<JSONObject> fileRecords, String format) {
         JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
-        
-        boolean xmlBased = "text/xml/xlsx".equals(format);
-        JSONUtilities.safePut(options, "xmlBased", xmlBased);
-        
+
         JSONArray sheetRecords = new JSONArray();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
@@ -88,8 +87,13 @@ public class ExcelImporter extends TabularImportingParserBase {
                 JSONObject firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
                 InputStream is = new FileInputStream(file);
+
+                if (!is.markSupported()) {
+                  is = new PushbackInputStream(is, 8);
+                }
+
                 try {
-                    Workbook wb = xmlBased ?
+                    Workbook wb = POIXMLDocument.hasOOXMLHeader(is) ?
                             new XSSFWorkbook(is) :
                                 new HSSFWorkbook(new POIFSFileSystem(is));
 
@@ -136,10 +140,13 @@ public class ExcelImporter extends TabularImportingParserBase {
         JSONObject options,
         List<Exception> exceptions
     ) {
-        boolean xmlBased = JSONUtilities.getBoolean(options, "xmlBased", false);
         Workbook wb = null;
+        if (!inputStream.markSupported()) {
+          inputStream = new PushbackInputStream(inputStream, 8);
+        }
+        
         try {
-            wb = xmlBased ?
+            wb = POIXMLDocument.hasOOXMLHeader(inputStream) ?
                 new XSSFWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
