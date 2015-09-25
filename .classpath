@@ -84,6 +84,5 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-3.12-20150511.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.12-20150511.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.12-20150511.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/EditDistanceJoiner.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
