@@ -18,11 +18,7 @@ public class ImportParameters {
     }
 
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes) {
-        this.trimStrings = trimStrings;
-        this.storeEmptyStrings = storeEmptyStrings;
-        this.guessDataType = guessCellValueTypes;
-        this.includeFileSources = false;
-        this.fileSource = "";
+        this(trimStrings, storeEmptyStrings, guessCellValueTypes, false, "");
     }
     
 }
