@@ -215,9 +215,9 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         int filenameColumnIndex = -1;
         if (includeFileSources) {
             filenameColumnIndex = addFilenameColumn(project);
+            // If the column add fails for any reason, we'll end up overwriting data in the first column
+            assert filenameColumnIndex == 0;
         }
-        // If the column add fails for any reason, we'll end up overwriting data in the first column
-        assert filenameColumnIndex == 0;
         
         XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2, 
                 new ImportParameters(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
