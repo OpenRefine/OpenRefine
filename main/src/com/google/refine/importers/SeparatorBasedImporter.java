@@ -242,9 +242,9 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     });
                     
                     Separator separator = separators.get(0);
-                    if (separator.stddev / separator.averagePerLine < 0.1) {
+                    //if (separator.stddev / separator.averagePerLine < 0.1) {
                         return separator;
-                    }
+                    //}
                    
                 }
             } finally {
