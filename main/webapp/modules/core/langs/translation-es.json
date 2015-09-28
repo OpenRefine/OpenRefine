@@ -513,7 +513,7 @@
 		"copy-val": "copiar valor de la columna original",
 		"warning-col-name": "Debe ingresar un nombre para la columna.",
 		"add-col-fetch": "Agregar columna accediendo a URls basada en la columna",
-		"throttle-delay": "Tiempo de espera",
+		"throttle-delay": "Tiempo de retraso",
 		"milli": "milisegundos",
 		"url-fetch": "Ingrese las URLs a acceder:",
 		"enter-col-name": "Nuevo nombre de la columna",
