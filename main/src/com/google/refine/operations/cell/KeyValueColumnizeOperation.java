@@ -130,13 +130,9 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         List<Row> newRows = new ArrayList<Row>();
         List<Row> oldRows = project.rows;
         Row reusableRow = null;
-        List<Row> currentRows = new ArrayList<Row>();
-        String recordKey = null; // key which indicates the start of a record
         if (unchangedColumns.isEmpty()) {
             reusableRow = new Row(1);
             newRows.add(reusableRow);
-            currentRows.clear();
-            currentRows.add(reusableRow);
         }
 
         for (int r = 0; r < oldRows.size(); r++) {
@@ -149,8 +145,6 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     // start a new row when we hit a blank line
                     reusableRow = new Row(newColumns.size());
                     newRows.add(reusableRow);
-                    currentRows.clear();
-                    currentRows.add(reusableRow);
                 } else {
                     // Copy rows with no key
                     newRows.add(buildNewRow(unchangedColumns, oldRow, unchangedColumns.size()));
@@ -161,12 +155,6 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             String keyString = key.toString();
             // Start a new row on our beginning of record key
             // TODO: Add support for processing in record mode instead of just by rows
-            if (keyString.equals(recordKey) || recordKey == null) {
-                reusableRow = new Row(newColumns.size());
-                newRows.add(reusableRow);
-                currentRows.clear();
-                currentRows.add(reusableRow);
-            }
             Column newColumn = keyValueToColumn.get(keyString);
             if (newColumn == null) {
                 // Allocate new column
@@ -175,12 +163,6 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     project.columnModel.getUnduplicatedColumnName(keyString));
                 keyValueToColumn.put(keyString, newColumn);
                 newColumns.add(newColumn);
-
-                // We assume first key encountered is the beginning of record key
-                // TODO: make customizable?
-                if (recordKey == null) {
-                    recordKey = keyString;
-                }
             }
             
             /*
@@ -209,11 +191,11 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     newRows.add(reusableRow);
                 }
             }
-            
             Cell cell = oldRow.getCell(valueColumn.getCellIndex());
             if (unchangedColumns.size() == 0) {
                 int index = newColumn.getCellIndex();
-                Row row = getAvailableRow(currentRows, newRows, index);
+                Row row = new Row(index);
+                newRows.add(row);
                 row.setCell(index, cell);
             } else {
                 // TODO: support repeating keys in this mode too
@@ -250,7 +232,6 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         List<Column> allColumns = new ArrayList<Column>(unchangedColumns);
         allColumns.addAll(newColumns);
         allColumns.addAll(newNoteColumns);
-        
         return new HistoryEntry(
             historyEntryID,
             project, 
@@ -258,19 +239,6 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             this, 
             new MassRowColumnChange(allColumns, newRows)
         );
-    }
-
-    private Row getAvailableRow(List<Row> currentRows, List<Row> newRows, int index) {
-        for (Row row : currentRows) {
-            if (row.getCell(index) == null) {
-                return row;
-            }
-        }
-        // If we couldn't find a row with an empty spot, we'll need a new row
-        Row row = new Row(index);
-        newRows.add(row);
-        currentRows.add(row);
-        return row;
     }
 
     private Row buildNewRow(List<Column> unchangedColumns, Row oldRow, int size) {
