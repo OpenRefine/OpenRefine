@@ -81,6 +81,14 @@ public class ColumnModel implements Jsonizable {
         return ++_maxCellIndex;
     }
     
+    synchronized public void removeCellIndex(int index) {
+        if (index > _maxCellIndex - 1)
+            return;
+        
+        columns.remove(index);
+        _maxCellIndex--;
+    }
+    
     synchronized public void setKeyColumnIndex(int keyColumnIndex) {
         // TODO: check validity of new cell index, e.g., it's not in any group
         this._keyColumnIndex = keyColumnIndex;
