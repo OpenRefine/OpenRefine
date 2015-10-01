@@ -53,6 +53,7 @@ import com.google.refine.importers.JsonImporter.JSONTreeReader;
 import com.google.refine.importers.XmlImporter.XmlParser;
 import com.google.refine.importers.tree.ImportColumn;
 import com.google.refine.importers.tree.ImportColumnGroup;
+import com.google.refine.importers.tree.ImportParameters;
 import com.google.refine.importers.tree.ImportRecord;
 import com.google.refine.importers.tree.TreeReader;
 import com.google.refine.importers.tree.TreeReaderException;
@@ -208,8 +209,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadSampleXml();
 
         String[] recordPath = new String[]{"library","book"};
-        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, false, true,
-                false);
+        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, 
+                new ImportParameters(false, true, false));
 
         log(project);
         assertProjectCreated(project, 0, 6);
@@ -229,8 +230,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadData(XmlImporterTests.getSampleWithVaryingStructure());
 
         String[] recordPath = new String[]{"library", "book"};
-        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, false, true,
-                false);
+        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, 
+                new ImportParameters(false, true, false));
 
         log(project);
         assertProjectCreated(project, 0, 6);
@@ -283,7 +284,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
         int pathIndex = 0;
 
         try {
-            SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup);
+            SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup,
+                    false, false, false);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -302,7 +304,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         try {
-            SUT.processRecordWrapper(project, parser, columnGroup);
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -323,7 +325,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         try {
-            SUT.processRecordWrapper(project, parser, columnGroup);
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -348,7 +350,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         try {
-            SUT.processRecordWrapper(project, parser, columnGroup);
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -372,7 +374,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         try {
-            SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record,0);
+            SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record,0, 
+                    new ImportParameters(false, false, false));
         } catch (Exception e) {
             Assert.fail();
         }

@@ -73,6 +73,11 @@ Refine.DefaultImportingController.prototype._startOver = function() {
 
 Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, callback) {
   var self = this;
+  
+  $(form).find('input:text').filter(function() { 
+		return this.value === ""; 
+  }).attr("disabled", "disabled");
+  
   $.post(
       "command/core/create-importing-job",
       null,
@@ -192,13 +197,17 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
         }
       },
       "json"
-    );
+    )
+    .fail(function() {
+    	dismissBusy();
+    	alert($.i18n._('core-views')["check-format"]);
+    });
   } else {
     onDone();
   }
 };
 
-Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(options, callback) {
+Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(options, callback, finallyCallBack) {
   var self = this;
   $.post(
     "command/core/importing-controller?" + $.param({
@@ -213,12 +222,13 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
     function(o) {
       if (o.status == 'error') {
         if (o.message) {
-          alert(o.message);
+          alert(o.message);					
         } else {
           var messages = [];
           $.each(o.errors, function() { messages.push(this.message); });
           alert(messages.join('\n\n'));
         }
+        finallyCallBack();
       } else {
         callback(o);
       }

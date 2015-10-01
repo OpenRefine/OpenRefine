@@ -216,5 +216,7 @@ Refine.ExcelParserUI.prototype._updatePreview = function() {
         new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
       });
     }
+  }, function() {
+	  self._progressContainer.hide();
   });
 };

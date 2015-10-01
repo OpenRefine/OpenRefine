@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.json.JSONObject;
+import org.marc4j.MarcException;
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
@@ -58,14 +59,11 @@ public class MarcImporter extends XmlImporter {
     
     @Override
     public JSONObject createParserUIInitializationData(ImportingJob job, java.util.List<JSONObject> fileRecords, String format) {
-
         if (fileRecords.size() > 0) {
             JSONObject firstFileRecord = fileRecords.get(0);
             File file = ImportingUtilities.getFile(job, firstFileRecord);
             File tempFile = new File(file.getAbsolutePath()+".xml");
 
-            JSONUtilities.safePut(firstFileRecord, "location", 
-                    JSONUtilities.getString(firstFileRecord, "location", "")+".xml");
 
             try {
                 InputStream inputStream = new FileInputStream(file);
@@ -84,7 +82,14 @@ public class MarcImporter extends XmlImporter {
                     try {
                         outputStream.close();
                         inputStream.close();
-                        file.delete(); // get rid of our original file
+                        
+                        if (tempFile.length() == 0)             // write failed. Most of time because of wrong Marc format
+                            tempFile.delete();
+                        else                    // only set json if write the temp file successfully:
+                            JSONUtilities.safePut(firstFileRecord, "location", 
+                                    JSONUtilities.getString(firstFileRecord, "location", "")+".xml");
+                        
+//                        file.delete(); // get rid of our original file
                     } catch (IOException e) {
                         // Just ignore - not much we can do anyway
                     }
@@ -93,11 +98,8 @@ public class MarcImporter extends XmlImporter {
                 logger.error("Failed to create temporary XML file from MARC file", e);
             }
         }
-        
         JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
-
         return options;
     };
     
-
 }

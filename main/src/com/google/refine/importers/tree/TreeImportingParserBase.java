@@ -210,8 +210,17 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", true);
         boolean storeEmptyStrings = JSONUtilities.getBoolean(options, "storeEmptyStrings", false);
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", true);
-
-        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2, trimStrings,
-                storeEmptyStrings,guessCellValueTypes);
+        
+        boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
+        int filenameColumnIndex = -1;
+        if (includeFileSources) {
+            filenameColumnIndex = addFilenameColumn(project);
+            // If the column add fails for any reason, we'll end up overwriting data in the first column
+            assert filenameColumnIndex == 0;
+        }
+        
+        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2, 
+                new ImportParameters(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
+                        fileSource));
     }
 }

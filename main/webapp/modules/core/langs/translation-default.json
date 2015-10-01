@@ -533,6 +533,7 @@
 		"specify-sep": "Please specify a separator.",
 		"warning-no-length": "No field length is specified.",
 		"warning-format": "The given field lengths are not properly formatted.",
+		"check-format": "Please check the file format.",
 		"split-into-col": "Split into several columns",
 		"add-based-col": "Add column based on this column",
 		"add-by-urls": "Add column by fetching URLs",

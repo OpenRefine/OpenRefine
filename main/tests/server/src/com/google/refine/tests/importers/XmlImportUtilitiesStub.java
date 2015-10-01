@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.google.refine.importers.tree.ImportColumnGroup;
+import com.google.refine.importers.tree.ImportParameters;
 import com.google.refine.importers.tree.ImportRecord;
 import com.google.refine.importers.tree.TreeReader;
 import com.google.refine.importers.tree.XmlImportUtilities;
@@ -49,42 +50,24 @@ public class XmlImportUtilitiesStub extends XmlImportUtilities {
     }
 
     public void ProcessSubRecordWrapper(Project project, TreeReader parser, ImportColumnGroup columnGroup,
-            ImportRecord record, int level,boolean trimStrings, boolean storeEmptyStrings, boolean guessDataType)
+            ImportRecord record, int level, ImportParameters parameter)
             throws Exception {
-        super.processSubRecord(project, parser, columnGroup, record, level, trimStrings, storeEmptyStrings, guessDataType);
-    }
-
-    @Deprecated
-    public void ProcessSubRecordWrapper(Project project, TreeReader parser, ImportColumnGroup columnGroup,
-            ImportRecord record, int level)
-            throws Exception {
-        super.processSubRecord(project, parser, columnGroup, record, level, false, true, false);
+        super.processSubRecord(project, parser, columnGroup, record, level, parameter);
     }
 
     public void findRecordWrapper(Project project, TreeReader parser, String[] recordPath, int pathIndex,
             ImportColumnGroup rootColumnGroup, boolean trimStrings, boolean storeEmptyStrings, boolean guessDataType)
             throws Exception {
-        super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, -1, trimStrings, storeEmptyStrings, guessDataType);
-    }
-
-    @Deprecated
-    public void findRecordWrapper(Project project, TreeReader parser, String[] recordPath, int pathIndex,
-            ImportColumnGroup rootColumnGroup)
-            throws Exception {
-        super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, -1, true, false, true);
+        super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, -1, 
+                new ImportParameters(trimStrings, storeEmptyStrings, guessDataType));
     }
 
     public void processRecordWrapper(Project project, TreeReader parser, ImportColumnGroup rootColumnGroup,
             boolean trimStrings, boolean storeEmptyStrings, boolean guessDataType)
             throws Exception {
-        super.processRecord(project, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataType);
+        super.processRecord(project, parser, rootColumnGroup, 
+                new ImportParameters(trimStrings, storeEmptyStrings, guessDataType));
     }    
-    
-    @Deprecated
-    public void processRecordWrapper(Project project, TreeReader parser, ImportColumnGroup rootColumnGroup)
-            throws Exception {
-        super.processRecord(project, parser, rootColumnGroup, true, false, true);
-    }
 
     public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName, Serializable value, int commonStartingRowIndex) {
         super.addCell(project, columnGroup, record, columnLocalName, value);
@@ -92,10 +75,5 @@ public class XmlImportUtilitiesStub extends XmlImportUtilities {
 
     public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName, String text, int commonStartingRowIndex, boolean trimStrings, boolean storeEmptyStrings) {
         super.addCell(project, columnGroup, record, columnLocalName, text, trimStrings, storeEmptyStrings);
-    }
-    
-    @Deprecated
-    public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName, String text, int commonStartingRowIndex) {
-        super.addCell(project, columnGroup, record, columnLocalName, text, false, true);
     }
 }

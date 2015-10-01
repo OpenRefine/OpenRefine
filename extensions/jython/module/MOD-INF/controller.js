@@ -45,7 +45,7 @@ function init() {
 
   Packages.com.google.refine.expr.MetaParser.registerLanguageParser(
     "jython",
-    "Jython",
+    "Python / Jython",
     Packages.com.google.refine.jython.JythonEvaluable.createParser(),
     "return value"
   );

@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
 	<classpathentry kind="src" path="server/src"/>
-	<classpathentry kind="src" path="extensions/freebase/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
 	<classpathentry kind="src" path="extensions/jython/src"/>
 	<classpathentry kind="src" path="extensions/pc-axis/src"/>
@@ -27,9 +26,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/opencsv-2.4-SNAPSHOT.jar" sourcepath="main/webapp/WEB-INF/lib-src/opencsv-2.4-SNAPSHOT-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-3.8-20120326.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.8-20120326.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.8-20120326.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/secondstring-20100303.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
@@ -70,7 +66,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/freebase/module/MOD-INF/lib/google-api-services-freebase-v1-rev25-1.13.2-beta.jar" sourcepath="extensions/freebase/module/MOD-INF/libsrc/google-api-services-freebase-v1-rev25-1.13.2-beta-sources.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/jsr305-1.3.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
@@ -86,5 +81,8 @@
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-servlet-1.20.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/jackson-core-2.1.3.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/transaction-api-1.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-3.13-20150929.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.13-20150929.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.13-20150929.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
