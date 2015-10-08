@@ -251,6 +251,18 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         allColumns.addAll(newColumns);
         allColumns.addAll(newNoteColumns);
         
+        // clean up the reused column model and row model
+        int smallIndex = Math.min(keyColumnIndex, valueColumnIndex);
+        int bigIndex = Math.max(keyColumnIndex, valueColumnIndex);
+        
+        project.columnModel.removeCellIndex(bigIndex);
+        project.columnModel.removeCellIndex(smallIndex);
+        
+        for (Row row : newRows) {
+            row.cells.remove(bigIndex);
+            row.cells.remove(smallIndex);
+        }
+        
         return new HistoryEntry(
             historyEntryID,
             project, 
