@@ -196,13 +196,13 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             }
             
             var params = [
-                "project=" + escape(theProject.id),
-                "ui=" + escape(JSON.stringify({
+                "project=" + encodeURIComponent(theProject.id),
+                "ui=" + encodeURIComponent(JSON.stringify({
                     "facets" : [ facet ]
                 }))
             ];
             var url = "project?" + params.join("&");
-                            
+
             var div = $('<div></div>').addClass("clustering-dialog-value-focus");
             
             var browseLink = $('<a target="_new" title="'+$.i18n._('core-dialogs')["browse-only-these"]+'">'+$.i18n._('core-dialogs')["browse-this-cluster"]+'</a>')
