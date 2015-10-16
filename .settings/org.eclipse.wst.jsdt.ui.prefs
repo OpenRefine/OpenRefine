@@ -1,2 +1,4 @@
 eclipse.preferences.version=1
+formatter_profile=_OpenRefine
+formatter_settings_version=11
 org.eclipse.wst.jsdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
