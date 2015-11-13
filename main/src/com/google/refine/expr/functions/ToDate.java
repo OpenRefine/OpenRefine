@@ -178,7 +178,7 @@ public class ToDate implements Function {
     throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html");
+        writer.key("description"); writer.value("Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html");
         writer.key("params"); writer.value("o, boolean month_first / format1, format2, ... (all optional)");
         writer.key("returns"); writer.value("date");
         writer.endObject();
