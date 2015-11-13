@@ -62,8 +62,6 @@ Refine.reportException = function(e) {
 };
 
 function resize() {
-  var header = $("#header");
-
   var leftPanelWidth = 300;
   var width = $(window).width();
   var top = $("#header").outerHeight();
@@ -457,8 +455,8 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
 
 Refine.getPermanentLink = function() {
   var params = [
-    "project=" + escape(theProject.id),
-    "ui=" + escape(JSON.stringify({
+    "project=" + encodeURIComponent(theProject.id),
+    "ui=" + encodeURIComponent(JSON.stringify({
       facets: ui.browsingEngine.getFacetUIStates()
     }))
   ];
@@ -475,7 +473,7 @@ function onLoad() {
     var uiState = {};
     if ("ui" in params) {
       try {
-        uiState = JSON.parse(params.ui);
+        uiState = JSON.parse(decodeURIComponent(params.ui));
       } catch (e) {
       }
     }

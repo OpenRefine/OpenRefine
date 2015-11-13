@@ -176,8 +176,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
               
               parent.find("input[type='text']").val(value);
               var checkbox = parent.find("input[type='checkbox']");
-              if (!checkbox.attr('checked'))
-            		  checkbox.attr('checked', true).change();
+              checkbox.prop('checked', true).change();
               return false;
             };
             for (var c = 0; c < choices.length; c++) {
@@ -196,13 +195,13 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             }
             
             var params = [
-                "project=" + escape(theProject.id),
-                "ui=" + escape(JSON.stringify({
+                "project=" + encodeURIComponent(theProject.id),
+                "ui=" + encodeURIComponent(JSON.stringify({
                     "facets" : [ facet ]
                 }))
             ];
             var url = "project?" + params.join("&");
-                            
+
             var div = $('<div></div>').addClass("clustering-dialog-value-focus");
             
             var browseLink = $('<a target="_new" title="'+$.i18n._('core-dialogs')["browse-only-these"]+'">'+$.i18n._('core-dialogs')["browse-this-cluster"]+'</a>')
@@ -219,7 +218,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             
             var editCheck = $('<input type="checkbox" />')
                 .change(function() {
-                    cluster.edit = !cluster.edit;
+                    cluster.edit = this.checked;
                 }).appendTo(tr.insertCell(3));
 
             if (cluster.edit) {

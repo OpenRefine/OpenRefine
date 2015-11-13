@@ -102,10 +102,11 @@ public class HtmlTableExporter implements WriterExporter {
                             if (cellData != null && cellData.text != null) {
                                 if (cellData.link != null) {
                                     writer.write("<a href=\"");
+                                    // TODO: The escape below looks wrong, but is probably harmless in most cases
                                     writer.write(StringEscapeUtils.escapeHtml(cellData.link));
                                     writer.write("\">");
                                 }
-                                writer.write(cellData.text);
+                                writer.write(StringEscapeUtils.escapeXml(cellData.text));
                                 if (cellData.link != null) {
                                     writer.write("</a>");
                                 }
