@@ -51,3 +51,16 @@ Thank you for your interest.
 ----
 The OpenRefine Development Team
 http://openrefine.org
+
+
+### For Advanced Users using Maven
+For now, you can build OpenRefine in the `${project.basedir}` by following command
+```sh
+mvn initialize
+mvn clean package
+```
+and start refine by
+```sh
+java -jar server/target/openrefine-server-2.7.0-SNAPSHOT.jar
+```
+More maven feature will be added sonner.

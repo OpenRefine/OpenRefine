@@ -206,7 +206,9 @@ public class UploadCommand extends Command {
             }.start();
             
             return spreadsheetEntry2.getSpreadsheetLink().getHref();
-        } catch (IOException | ServiceException e) {
+        } catch (IOException e) {
+            exceptions.add(e);
+        } catch (ServiceException e) {
             exceptions.add(e);
         }
         return null;

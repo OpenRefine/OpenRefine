@@ -506,6 +506,8 @@ public class JsonImporterTests extends ImporterTest {
         try {
             parseOneInputStream(SUT, inputStream, options);
         } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
             Assert.fail();
         }
     }

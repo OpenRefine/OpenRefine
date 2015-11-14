@@ -25,3 +25,8 @@ broker/core/test-output/
 tmp/
 /test-output
 /bin
+# IntelliJ IDEA
+*.iml
+.idea/
+# Maven
+target/

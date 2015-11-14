@@ -54,7 +54,6 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 
-
 public class XmlImporterTests extends ImporterTest {
 
     @Override
