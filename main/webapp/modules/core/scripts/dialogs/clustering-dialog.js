@@ -384,15 +384,17 @@ ClusteringDialog.prototype._export = function() {
     var clusters = this._getRestrictedClusters();
     var projectName = theProject.metadata.name;
     var columnName = this._columnName;
+    var timeStamp = (new Date()).toISOString();
     var obj = {
         'projectName': projectName,
         'columnName': columnName,
+        'timeStamp': timeStamp,
         'clusters': clusters,
     };
     var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
     var link=document.createElement('a');
     link.href='data:' + data;
-    link.download="clusters_" + projectName + "_" + columnName + "_" + (new Date()).toISOString() + ".json";
+    link.download="clusters_" + projectName + "_" + columnName + "_" + timeStamp + ".json";
     link.click();
 };
 
