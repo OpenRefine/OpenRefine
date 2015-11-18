@@ -382,10 +382,17 @@ ClusteringDialog.prototype._apply = function(onDone) {
 
 ClusteringDialog.prototype._export = function() {
     var clusters = this._getRestrictedClusters();
-    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(clusters));
+    var projectName = theProject.metadata.name;
+    var columnName = this._columnName;
+    var obj = {
+        'projectName': projectName,
+        'columnName': columnName,
+        'clusters': clusters,
+    };
+    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
     var link=document.createElement('a');
     link.href='data:' + data;
-    link.download="clusters" + (new Date()).toISOString() + ".json";
+    link.download="clusters_" + projectName + "_" + columnName + "_" + (new Date()).toISOString() + ".json";
     link.click();
 };
 
