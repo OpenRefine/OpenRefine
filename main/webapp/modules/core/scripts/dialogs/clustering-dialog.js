@@ -389,6 +389,8 @@ ClusteringDialog.prototype._export = function() {
         'projectName': projectName,
         'columnName': columnName,
         'timeStamp': timeStamp,
+        'clusterMethod': this._method,
+        'keyingFunction': this._function,
         'clusters': clusters,
     };
     var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
