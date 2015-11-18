@@ -69,6 +69,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_blockChars.html($.i18n._('core-dialogs')["block-chars"]);  
     this._elmts.selectAllButton.html($.i18n._('core-buttons')["select-all"]);
     this._elmts.deselectAllButton.html($.i18n._('core-buttons')["unselect-all"]);
+    this._elmts.exportClusterButton.html($.i18n._('core-buttons')["export-cluster"]);
     this._elmts.applyReClusterButton.html($.i18n._('core-buttons')["merge-cluster"]);
     this._elmts.applyCloseButton.html($.i18n._('core-buttons')["merge-close"]);
     this._elmts.closeButton.html($.i18n._('core-buttons')["close"]);
@@ -121,6 +122,7 @@ ClusteringDialog.prototype._createDialog = function() {
     
     this._elmts.selectAllButton.click(function() { self._selectAll(); });
     this._elmts.deselectAllButton.click(function() { self._deselectAll(); });
+    this._elmts.exportClusterButton.click(function() { self._onExportCluster(); });
     this._elmts.applyReClusterButton.click(function() { self._onApplyReCluster(); });
     this._elmts.applyCloseButton.click(function() { self._onApplyClose(); });
     this._elmts.closeButton.click(function() { self._dismiss(); });
@@ -333,6 +335,11 @@ ClusteringDialog.prototype._onApplyReCluster = function() {
     });
 };
 
+ClusteringDialog.prototype._onExportCluster = function() {
+    var self = this;        
+    self._export();
+};
+
 ClusteringDialog.prototype._apply = function(onDone) {
     var clusters = this._getRestrictedClusters();
     var edits = [];
@@ -371,6 +378,15 @@ ClusteringDialog.prototype._apply = function(onDone) {
     } else {
         alert($.i18n._('core-dialogs')["warning-check-boxes"]);
     }
+};
+
+ClusteringDialog.prototype._export = function() {
+    var clusters = this._getRestrictedClusters();
+    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(clusters));
+    var link=document.createElement('a');
+    link.href='data:' + data;
+    link.download="clusters" + (new Date()).toISOString() + ".json";
+    link.click();
 };
 
 ClusteringDialog.prototype._dismiss = function() {
