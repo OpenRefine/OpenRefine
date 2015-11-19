@@ -4,22 +4,37 @@
 
 OpenRefine is a power tool that allows you to load data, understand it,
 clean it up, reconcile it, and augment it with data coming from
-the web. All with the comfort and privacy of 
-your own computer.
+the web. All with the comfort and privacy of your own computer.
 
+Download
+-----------------------
+* [Latest Beta 2.6 rc2 - Recommended](https://github.com/OpenRefine/OpenRefine/releases)
+* [Latest Stable 2.5](https://github.com/OpenRefine/OpenRefine/releases/latest)
 
-###Where can I get more information?
+Documentation and Videos
+-------------------------
+* [Documentation Wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users)
+* [FAQ](https://github.com/OpenRefine/OpenRefine/wiki/FAQ)
+* [Official Website and tutorial videos](http://openrefine.org)
 
-Look at the OpenRefine web site http://openrefine.org and the wiki http://github.com/OpenRefine/OpenRefine/wiki
+Contributing to the project
+---------------------------
+* [Donate $](https://www.bountysource.com/teams/openrefine/issues)
+* [Developers Guide & Architecture](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers)
 
-###Licensing and legal issues
+Contact us
+----------
+* [Mailing List](https://groups.google.com/forum/#!forum/openrefine)
+* [Twitter](http://www.twitter.com/openrefine)
 
+Licensing and legal issues
+--------------------------
 OpenRefine is open source software and is licensed under the BSD license
 located in the [LICENSE.txt](LICENSE.txt). See that file also for information on open source
 libraries that OpenRefine depends on.
 
-###Credits
-
+Credits
+-------
 This software was created by Metaweb Technologies, Inc. and originally written
 and conceived by David Huynh <dfhuynh@google.com>. Metaweb Technologies, Inc.
 was acquired by Google, Inc. in July 2010 and the product was renamed Google Refine.
@@ -43,11 +58,5 @@ This is the full list of contributors (in chronological order):
  - Gabriel Sjoberg <GabrielSjoberg@gmail.com>
  - Rod Salazar <rodrod.salazar@gmail.com>
  - pxb <pxb1988@gmail.com>
- 
-We welcome additional contributors if you'd like to help out.
 
-Thank you for your interest.
 
-----
-The OpenRefine Development Team
-http://openrefine.org
