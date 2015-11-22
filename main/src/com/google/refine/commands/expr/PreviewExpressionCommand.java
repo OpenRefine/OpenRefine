@@ -146,6 +146,13 @@ public class PreviewExpressionCommand extends Command {
                         writer.object();
                         writer.key("message"); writer.value(((EvalError) result).message);
                         writer.endObject();
+                    } else if (ExpressionUtils.isArrayOrList(result)) {
+                        writer.object();
+                        writer.key("message");
+                        StringBuffer sb = new StringBuffer();
+                        writeValue(sb, result, false);
+                        writer.value(sb.toString());
+                        writer.endObject();
                     } else {
                         StringBuffer sb = new StringBuffer();
                         
@@ -188,7 +195,7 @@ public class PreviewExpressionCommand extends Command {
                     sb.append(((JSONArray) v).toString());
                 } else if (ExpressionUtils.isArray(v)) {
                     Object[] a = (Object[]) v;
-                    sb.append("[ ");
+                    sb.append("add join() to store array: [ ");
                     for (int i = 0; i < a.length; i++) {
                         if (i > 0) {
                             sb.append(", ");
@@ -198,7 +205,7 @@ public class PreviewExpressionCommand extends Command {
                     sb.append(" ]");
                 } else if (ExpressionUtils.isArrayOrList(v)) {
                     List<Object> list = ExpressionUtils.toObjectList(v);
-                    sb.append("[ ");
+                    sb.append("add join() to store array: [ ");
                     for (int i = 0; i < list.size(); i++) {
                         if (i > 0) {
                             sb.append(", ");
