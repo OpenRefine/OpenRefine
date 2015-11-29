@@ -129,9 +129,9 @@ public class TransposeTests extends RefineTest {
         // Expected output
         
 //        ID;a;b;c;d
-//        1;1;3;;
-//        2;;4;5;
-//        3;2;5;;3
+//        1;null;null;1;3
+//        2;null;null;null;4;5
+//        3;null;null;2;5;null;3
         
         Assert.assertEquals(project.columnModel.columns.size(), 5);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "ID");
@@ -139,16 +139,28 @@ public class TransposeTests extends RefineTest {
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "b");
         Assert.assertEquals(project.columnModel.columns.get(3).getName(), "c");
         Assert.assertEquals(project.columnModel.columns.get(4).getName(), "d");
-        Assert.assertEquals(project.rows.size(), 3);
+        Assert.assertEquals(project.rows.size(), 3);          
         
-        // the last 2 cells are not added as expected, the size is 5-2
-        Assert.assertEquals(project.rows.get(0).cells.size(), 5 - 2);
-        Assert.assertEquals(project.rows.get(1).cells.size(), 5 - 1);
-        Assert.assertEquals(project.rows.get(2).cells.size(), 5);
+        // need to count the columns used for key and value
+        Assert.assertEquals(project.rows.get(0).cells.size(), 5);
+        Assert.assertEquals(project.rows.get(1).cells.size(), 6);
+        Assert.assertEquals(project.rows.get(2).cells.size(), 7);
         
+        // row 1
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "1");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "3");
+        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "1");
+        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "3");
+        
+        // row 2
+        Assert.assertEquals(project.rows.get(1).cells.get(0).value, "2");
+        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "4");
+        Assert.assertEquals(project.rows.get(1).cells.get(5).value, "5");
+        
+        // row 3
+        Assert.assertEquals(project.rows.get(2).cells.get(0).value, "3");
+        Assert.assertEquals(project.rows.get(2).cells.get(3).value, "2");
+        Assert.assertEquals(project.rows.get(2).cells.get(4).value, "5");
+        Assert.assertEquals(project.rows.get(2).cells.get(6).value, "3");
     }
 
 
