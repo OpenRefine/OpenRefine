@@ -8,6 +8,17 @@ Our issue list is only for reporting specific bugs and requesting specific featu
 
 If you really want to file a bug or request a feature, go to this [issue list](https://github.com/OpenRefine/OpenRefine/issues). Please use the search function first to make sure a similar issue doesn't already exist. 
 
+### Guidelines for Reporting a Bug
+
+When reporting a bug please provide the following information to help reproduce the bug:
+- Version of OpenRefine used (Google Refine 2.6, OpenRefine2.6, an other distribution?)
+- Operating Systems and version
+- Browser + version used - Please note that OpenRefine doesn't support Internet Explorer
+- Steps followed to create the issues
+- If you are allowed, it is awesome if you can join the data generating the issue
+- Current Results
+- Expected Results
+
 
 ## Promote OpenRefine
 
