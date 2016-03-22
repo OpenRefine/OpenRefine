@@ -313,7 +313,7 @@ public class ImportingUtilities {
                             }
                             JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
                             String contentType = null;
-                            if (entity.getContentType().getValue() != null) {
+                            if (entity.getContentType() != null) {
                                 contentType = entity.getContentType().getValue();
                             }
                             JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
