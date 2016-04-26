@@ -53,6 +53,7 @@ public class GetImportingConfigurationCommand extends Command {
             throws ServletException, IOException {
 
         Writer w = response.getWriter();
+        response.setContentType("application/json");
         JSONWriter writer = new JSONWriter(w);
         try {
             writer.object();
