@@ -229,7 +229,7 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
   } else {
     $("#file-upload-form").attr("action",
         "command/core/create-project-from-upload?" + [
-          "url=" +                encodeURICompnent(dataURL),
+          "url=" +                encodeURIComponent(dataURL),
           "split-into-columns=" + $("#split-into-columns-input")[0].checked,
           "separator=" +          $("#separator-input")[0].value,
           "ignore=" +             $("#ignore-input")[0].value,
