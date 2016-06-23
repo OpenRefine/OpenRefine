@@ -90,7 +90,7 @@ public class JythonEvaluable implements Evaluable {
         // indent and create a function out of the code
         String[] lines = s.split("\r\n|\r|\n");
         
-        StringBuffer sb = new StringBuffer(1024);
+        StringBuffer sb = new StringBuffer(102400);
         sb.append("# coding=utf-8\n");
         sb.append("import sys\n");
         sb.append("reload(sys)\n");

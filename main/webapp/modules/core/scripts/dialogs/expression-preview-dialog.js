@@ -391,15 +391,16 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     var params = {
         project: theProject.id,
         expression: this._getLanguage() + ":" + expression,
-        cellIndex: this._cellIndex
+        cellIndex: this._cellIndex,
+        rowIndices: JSON.stringify(this._rowIndices)
     };
     this._prepareUpdate(params);
     
+    
+    
     $.post(
-        "command/core/preview-expression?" + $.param(params), 
-        {
-            rowIndices: JSON.stringify(this._rowIndices) 
-        },
+        "command/core/preview-expression", //+ $.param(params), 
+        params,
         function(data) {
             if (data.code != "error") {
                 self._results = data.results;
