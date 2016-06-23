@@ -391,7 +391,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     var params = {
         project: theProject.id,
         expression: this._getLanguage() + ":" + expression,
-        cellIndex: this._cellIndex,
+        cellIndex: JSON.stringify(this._cellIndex),
         rowIndices: JSON.stringify(this._rowIndices)
     };
     this._prepareUpdate(params);
