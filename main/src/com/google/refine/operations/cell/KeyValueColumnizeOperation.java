@@ -35,6 +35,7 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -258,9 +259,17 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         project.columnModel.removeCellIndex(bigIndex);
         project.columnModel.removeCellIndex(smallIndex);
         
-        for (Row row : newRows) {
-            row.cells.remove(bigIndex);
-            row.cells.remove(smallIndex);
+        Iterator<Row> iter = newRows.iterator();
+        while(iter.hasNext()){
+            Row row = iter.next();
+            if (row.cells.size() == 0)
+                iter.remove();
+            
+            if (row.cells.size() > bigIndex)
+                row.cells.remove(bigIndex);
+            
+            if (row.cells.size() > smallIndex)
+                row.cells.remove(smallIndex);
         }
         
         return new HistoryEntry(
