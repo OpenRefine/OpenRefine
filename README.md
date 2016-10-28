@@ -7,9 +7,9 @@ Depenencies:
 
 Building
 ========
-  To buld run ant in the folder FAIR-ifier.
-  Then run ant in FAIR-ifier/extensions.
-  Then run ant in FAIR-ifier/extensions/grefine-rdf-extension.
+  To buld run ant in the folder FAIRifier.
+  Then run ant in FAIRifier/extensions.
+  Then run ant in FAIRifier/extensions/grefine-rdf-extension.
   
 
 Running
