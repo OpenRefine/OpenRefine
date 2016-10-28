@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--+
-    |
-    |  OpenRefine Extensions Build File    
-    |                
-    +-->
-    
 <project name="openrefine-extensions" default="build" basedir=".">
   <target name="build">
     <echo message="Building extensions" />

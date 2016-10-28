@@ -13,6 +13,15 @@ ExporterManager.MenuItems.push(
         	"click": function() { RdfExporterMenuBar.exportRDF("Turtle", "ttl"); }
 		}
 );
+ExporterManager.MenuItems.push({});//add separator
+ExporterManager.MenuItems.push(
+		{
+			"id" : "postToFdp",
+          	"label":"POST to FairDatapoint",
+          	"click": function() {new fairDataPointPostDialog(); }
+		}
+);
+
 
 RdfExporterMenuBar = {};
 

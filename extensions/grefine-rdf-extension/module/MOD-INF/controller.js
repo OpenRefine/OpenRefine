@@ -1,4 +1,3 @@
-
 importPackage(org.deri.grefine.rdf.commands);
 importPackage(org.deri.grefine.reconcile.commands);
 var GRefineServiceManager = Packages.org.deri.grefine.reconcile.GRefineServiceManager;
@@ -156,6 +155,8 @@ function init() {
         "project/scripts",
         module,
         [
+            "scripts/fairDatapointPost.js",
+            
             "scripts/rdf-data-table-view.js",
             "scripts/menu-bar-extensions.js",
             "scripts/rdf-schema-alignment.js",
@@ -166,6 +167,7 @@ function init() {
             "scripts/rdf-schema-vocabulary-manager.js",
             "scripts/rdf-schema-new-prefix-widget.js",
             "scripts/externals/jquery.form.js",
+            "scripts/externals/n3-min.js",
             "scripts/sindice/sindice-dialog.js",
             "scripts/common.js"
 		]
