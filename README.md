@@ -2,7 +2,7 @@
 
 Depenencies:
   - java 8
-  - java Ant
+  - Apache Ant
 
 
 Building
